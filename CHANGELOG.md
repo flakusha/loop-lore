@@ -42,12 +42,12 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 - **Actor licensing panel split** — `src/frontend/alpine/actor-licensing.ts` divided into the view layer (`actor-licensing.ts`) and its state model (`actor-licensing-model.ts`); both stale `size-allow` budget headers removed since the files now fit the default budget.
 
 - **Repo orchestration synced to the pinned `giwt`** — `scripts/worktree/commands/sync.ts` spawned a bare `giwt` off PATH, which resolves through `~/.local/bin/giwt` to a _mutable local checkout_ rather than the `bun.lock` pin; it now resolves the pinned `node_modules/giwt/src/cli.ts` (`giwtArgv`, with tests). `plan:backlog:sync{,fix}` call the dedicated `giwt backlog sync` instead of routing through `giwt plan validate --gates backlog`; new `plan:matrix{,check}` scripts and a `plan - matrix` freshness gate cover the generated `.plan/feature-matrix.md`. AGENTS.md documents the pin rule, the `status-vocab` gate's canonical `**Status:**` values, and the `matrix`/`status-vocab` gates.
+- **In-repo `scripts/worktree/` CLI deleted in favour of the pinned `giwt`** — the fork duplicated `giwt`'s worktree surface; `giwt` is now the only entry point and 99 tracked files are gone (`scripts/worktree/**`, `tests/worktree-flow.test.ts`, `scripts/gpg-unlock.mjs`, `scripts/lib/{colors,assertions,src-refs}.ts`, and the `scripts/plan/*` helpers that `giwt plan {metadata,report,validate,status,gen-docs,code-map}` now cover). Five scripts are **kept** because `giwt` does not yet replace them, each carrying an inline note naming the upstream ticket that supersedes it: `scripts/check-spdx.ts` (giwt's SPDX gate walks only `.plan/` markdown and only the `SPDX-License-Identifier` token, while `AGENTS.md` mandates both tokens on every tracked file — `FEAT-repo-wide-spdx-header-check-…`), `scripts/check-md-links.ts` (`giwt plan check-links --fix` does not exist — `FEAT-plan-check-links-fix-to-auto-repair-…`), `scripts/plan/normalize-statuses.ts` (`giwt plan normalize-statuses` does not exist — `FEAT-plan-normalize-statuses-subcommand-…`), `scripts/check-file-size.ts` (giwt's scans only `src/**/*.ts` and exempts nothing but `*.test.*`, so it reports 7 false positives against the generated DB-type modules and `src/db/migrations/`), and `scripts/docs/sync-plan.mjs` (a site-shaped `.plan/` → `docs/plan-gen/` generator; giwt ships the generic `docs sync-agents --dir` primitive, but baking one consumer's layout into the shared CLI is the consumer's call). `scripts/check/parallel/gpg.mjs` imports giwt's gpg helpers by deep path and re-implements the two unexported ones inline until `FEAT-export-a-reusable-cold-cache-gpg-warm-helper-…` lands. **Coverage loss:** `tests/worktree-flow.test.ts` (47 scenarios) went with the CLI; `bun test` excludes `node_modules`, so `giwt finalize` has no coverage in this repo until that suite is wired in.
 
 ### Fixed
 
 - **Asset transform PUT no longer leaks internal error text** — `src/assets/controller.ts` answered every `upsertAssetTransform` throw with `badRequestResponse(err.message)`, so a driver failure (or the "Transform upsert did not persist" invariant) sailed into the response body as a `400`. The transform service now throws the tagged `InvalidTransformError` for the three range-validation cases (400 with their message); `transformErrorResponse` classifies anything else as a logged, sanitized `500` (`Transform could not be saved`). Both paths pinned in `transform.routes.test.ts`.
 - **Fire-and-forget promises carry a `.catch`** — the genuinely unhandled `void` sites could turn a rejected promise into an `unhandledRejection` crash or a swallowed diagnostic: the shutdown runners in `src/server/start.ts` (all five signal/fatal handlers now route through `runShutdown`, which writes the failure to stderr and exits 1 instead of re-entering the rejection handler), the access log in `src/server/handler.ts` (its handle-resolver `await` sat outside the internal try), and the async-store flush in `elysia-app.ts`'s `onStop`. Callees that swallow internally got the contract written down instead: `telemetry/service.ts record()` documents "never rejects", both `src/chat/title-suggest.ts` async helpers say "never rejects", and the notifications stream `tick` closure states its documented beat-skip swallow.
-
 - **`plan:metadata` index-write guard failed OPEN** — `isLinkedWorktree` returned `false` whenever the git probe could not be run (git off `PATH`, a `safe.directory` refusal, a spawn failure) or exited non-zero, and that `false` satisfied `!linkedWorktree` at the write site. So `plan:metadata` wrote a worktree-local `.plan/tickets/index.json` — the exact merge-conflict generator giwt refuses to create (`sync-index-write.ts:20`) — in the population most likely to hit a probe failure (agents working in `tree/` worktrees), while printing a clean unqualified `tags backfilled: N` and no `NOT WRITTEN` notice. The guard is now split into `probeWorktree` (the only subprocess) and the pure `decideIndexWrite`, which fails CLOSED: a probe that cannot be evaluated resolves to `skip-probe-failed`, never `write`, and names the cause on stderr and in the report. The decision is also carried in `--json` as `indexWrite`, and only a probe that answers with exactly the two paths it was asked for authorizes anything — an empty answer or any other line count resolves to `skip-probe-failed` with the shape named, so a truncated pipe or a `git` wrapper that prints usage cannot read as "main checkout". Separately, a malformed `index.json` (conflict markers left by a ticket-branch merge) used to abort the run only AFTER N `.md` files had already been rewritten on disk — the index is now parsed BEFORE the markdown pass, so a failed run leaves the tree untouched, while a _missing_ index still degrades to the `.md` pass alone. Covered by table-driven and end-to-end tests over a fixture tree; `scripts/plan/README.md` now documents all four CLIs, the shared module layout, and each CLI's real flags.
 
 - **INSERT/UPDATE ... RETURNING now return their rows** — the bun:sqlite Kysely wrapper (`src/db/index.ts`) classified a statement as a reader with a `SELECT`/`WITH`/`PRAGMA` string-prefix test, so Kysely's `SqliteConnection` routed every `INSERT`/`UPDATE ... RETURNING` through `stmt.run()` and handed back `rows: []` — `executeTakeFirstOrThrow()` threw "no result" while the row itself was written. `POST /api/plans` and `POST /api/plans/:id/links` answered 500 with the write applied, and `POST /api/plans/:id/advance` / `PATCH /api/plans/:id` answered 404 after applying the update. The wrapper now asks SQLite for the prepared statement's result columns (`statement.columnNames.length > 0`), which is the actual reader test Kysely expects and is immune to the word `returning` appearing in a literal, a column name or a comment.
@@ -66,6 +66,11 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.
 
+7: 
+8: 
+9: 
+10: 
+11: 
 ## [0.1.0] - 2026-08-15
 
 First release. Clean-room reimplementation of SillyTavern-style RPG chat.
@@ -83,21 +88,49 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Auth & safety** — authentication + sessions, NSFW gate + moderation, profanity filter, age gate, rate limiting, solo-user mode.
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
 
+7: 
+8: 
+9: 
+10: 
+11: 
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
 
+7: 
+8: 
+9: 
+10: 
+11: 
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
 
+7: 
+8: 
+9: 
+10: 
+11: 
 ### Removed
 
+7: 
+8: 
+9: 
+10: 
+11: 
 ### Security
 
 - Actor-scoped access control on RPG routes (`requireActorAccess`); pre-push hook blocks agent pushes (human-attested release pushes).
+
+
+### Fixed
+
+- **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
+- **Non-retryable provider errors keep their identity when the request is cancelled** — `withProviderRetry` classified an aborted signal before checking whether the failure was already a non-retryable `ProviderError`, so a 401 raised in the same tick as a user cancel surfaced as `Request cancelled` (no status) instead of the auth error. `callWithFailover` maps the two down different paths, which would have swallowed auth failures. Precedence now matches the hand-rolled loops these call sites replaced, and `retry.test.ts` pins it.
+
+- **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
 ### Fixed
 

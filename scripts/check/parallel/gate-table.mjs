@@ -18,10 +18,18 @@ export const checks = {
   "typecheck - coverage": "bun run typecheck:coverage",
   "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend", // 95% floor each (re-enabled after TS5.9 unblock; type-coverage-core uses ts.SyntaxKind.Unknown, TS7-incompatible)
   // BUG-typecheck-scripts-worktree-referenceerror-class-bugs-ship-gr:
-  // scripts/worktree CLI ships outside tsconfig.backend.json (src/** only).
+  // the in-repo scripts/ CLI ships outside tsconfig.backend.json (src/** only).
   // Scoped tsconfig.scripts.json relaxes strict debt but keeps name
   // resolution so unimported identifiers (TS2304/TS2552 ReferenceError
   // class) fail the gate instead of crashing at runtime.
+  //
+  // Scope narrowed 2026-10-12 (scripts-migration-delete) to scripts/plan/ +
+  // scripts/check/ — the islands that survived the worktree/ CLI deletion.
+  // A blanket scripts/**/*.ts include does NOT work: it reports ~64
+  // pre-existing noUncheckedIndexedAccess / test-cast errors, and relaxing
+  // strict for the whole tree breaks discriminated-union narrowing in the
+  // src/ modules those scripts import (1000+ errors). Widen per-island as
+  // that debt clears.
   "typecheck - scripts": "bunx tsgo --noEmit -p tsconfig.scripts.json",
   // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
   // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
