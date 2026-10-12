@@ -12,4 +12,5 @@ export * from "./parse";
 export * from "./redirect";
 export * from "./responses";
 export * from "./status";
+export * from "./tagged-boundary";
 export * from "./types";

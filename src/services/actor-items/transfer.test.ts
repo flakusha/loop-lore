@@ -69,46 +69,46 @@ afterAll(async () => {
 
 describe("transferItems — input validation", () => {
   test("rejects transfer when from === to (same actor)", async () => {
-    const result = await transferItems(db, fromActor, fromActor, itemId, 1,);
-    expect(result.ok,).toBe(false,);
-    expect(result.reason,).toBe("Source and target are the same",);
+    await expect(transferItems(db, fromActor, fromActor, itemId, 1,),).rejects.toMatchObject({
+      tag: "actor-item-self-transfer",
+    },);
   });
 
   test("rejects quantity = 0", async () => {
-    const result = await transferItems(db, fromActor, toActor, itemId, 0,);
-    expect(result.ok,).toBe(false,);
-    expect(result.reason,).toMatch(/positive integer/,);
+    await expect(transferItems(db, fromActor, toActor, itemId, 0,),).rejects.toMatchObject({
+      tag: "actor-item-invalid-quantity",
+    },);
   });
 
   test("rejects quantity < 0", async () => {
-    const result = await transferItems(db, fromActor, toActor, itemId, -1,);
-    expect(result.ok,).toBe(false,);
-    expect(result.reason,).toMatch(/positive integer/,);
+    await expect(transferItems(db, fromActor, toActor, itemId, -1,),).rejects.toMatchObject({
+      tag: "actor-item-invalid-quantity",
+    },);
   });
 
   test("rejects non-integer quantity (1.5)", async () => {
-    const result = await transferItems(db, fromActor, toActor, itemId, 1.5,);
-    expect(result.ok,).toBe(false,);
-    expect(result.reason,).toMatch(/positive integer/,);
+    await expect(transferItems(db, fromActor, toActor, itemId, 1.5,),).rejects.toMatchObject({
+      tag: "actor-item-invalid-quantity",
+    },);
   });
 
   test("rejects NaN quantity", async () => {
-    const result = await transferItems(db, fromActor, toActor, itemId, Number.NaN,);
-    expect(result.ok,).toBe(false,);
-    expect(result.reason,).toMatch(/positive integer/,);
+    await expect(transferItems(db, fromActor, toActor, itemId, Number.NaN,),).rejects.toMatchObject({
+      tag: "actor-item-invalid-quantity",
+    },);
   });
 
   test("rejects Infinity quantity", async () => {
-    const result = await transferItems(db, fromActor, toActor, itemId, Number.POSITIVE_INFINITY,);
-    expect(result.ok,).toBe(false,);
-    expect(result.reason,).toMatch(/positive integer/,);
+    await expect(transferItems(db, fromActor, toActor, itemId, Number.POSITIVE_INFINITY,),).rejects.toMatchObject({
+      tag: "actor-item-invalid-quantity",
+    },);
   });
 
   test("validation guards run before any DB read (no item lookup)", async () => {
     // Even with a non-existent itemId, validation runs first.
-    const result = await transferItems(db, fromActor, toActor, "no-such-id", 0,);
-    expect(result.ok,).toBe(false,);
-    expect(result.reason,).toMatch(/positive integer/,);
+    await expect(transferItems(db, fromActor, toActor, "no-such-id", 0,),).rejects.toMatchObject({
+      tag: "actor-item-invalid-quantity",
+    },);
   });
 });
 
