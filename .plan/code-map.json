@@ -13157,6 +13157,12 @@
       "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
     }
   ],
+  "src/crypto/e2e/e2e-session.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
+    }
+  ],
   "src/crypto/e2e/e2e-session.ts": [
     {
       "kind": "epic",
@@ -13230,6 +13236,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal.md"
     }
   ],
@@ -13243,6 +13253,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crypto.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
     }
   ],
   "src/crypto/e2e/server-registry.ts": [
@@ -13253,6 +13267,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
     },
     {
       "kind": "ticket",
@@ -21885,6 +21903,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
+    }
+  ],
+  "src/frontend/e2e/e2e-roundtrip.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
     }
   ],
   "src/frontend/e2e/encrypt-message.ts": [

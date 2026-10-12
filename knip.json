@@ -1,6 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
+    // The two app roots. knip hints "Remove redundant entry pattern" for them
+    // (it dedupes them against `project`), but that is WRONG here: deleting them
+    // makes pass 1 of `bun run dead:code` report `blessed` + `@types/blessed`
+    // as unused, because src/ is invisible there and these entries are the only
+    // thing that seeds the src/tui graph. Measured, then reverted.
     "src/server/index.ts",
     "src/tui/app.ts",
     // Migrations are discovered by filename (getMigrationFiles in
@@ -16,6 +21,10 @@
     "src/frontend/wasm-loader.ts",
     "src/frontend/alpine/local-engine.worker.ts",
     "src/frontend/alpine/wllama-engine.worker.ts",
+    // Plugin roots, discovered at runtime by the manifest loader
+    // src/plugins/loader.ts:40-44 (PLUGIN_DIRS: core -> community -> local),
+    // which builds `join(pluginDir, "plugin.ts")` and dynamic-imports it at
+    // loader.ts:149-156 — a string path knip cannot follow.
     "plugins/core/*/plugin.ts",
     "plugins/core/*/index.ts",
     "plugins/community/*/plugin.ts",
@@ -28,13 +37,27 @@
     "scripts/lib/colors.ts"
   ],
   "project": [
-    // src/** is only scanned by the --no-gitignore scripts (dead:code:src*):
-    // src/.gitignore contains `.` to keep untracked junk out of git, which
-    // otherwise makes knip skip every src/ file. The BLOCKING gate
-    // `dead - code (knip)` is plain `knip` (gitignore-respecting), so it never
-    // sees src/ at all — which is why deps imported only from src/ must stay in
-    // ignoreDependencies below. Proof: `bun run dead:code:src:full` (same
-    // config + --no-gitignore) reports zero unused dependencies.
+    // src/ is INVISIBLE to a gitignore-respecting knip run: src/.gitignore is a
+    // blanket `.` (it keeps untracked scratch out of git) and knip honours
+    // gitignore, so plain `knip` resolves ZERO src files and reports
+    // `src/**/*.ts  Refine project pattern (no matches)` on every run.
+    // src/.gitignore stays exactly as it is; the gate compensates instead —
+    // `bun run dead:code` runs knip TWICE:
+    //   pass 1  plain knip (gitignore respected) — files/exports/types AND
+    //           dependencies for scripts/, tests/, plugins/. src/ is absent here
+    //           by construction, which is why the src-only deps below still have
+    //           to sit in ignoreDependencies.
+    //   pass 2  `--no-gitignore --include dependencies,unlisted,binaries` —
+    //           dependency analysis over EVERYTHING, src/ included. This is the
+    //           pass that makes src/ coverage real: a dependency imported only
+    //           from src/ is traced, and one that is genuinely unused fails the
+    //           BLOCKING gate instead of hiding behind the ignore list.
+    //           (Pass 2 is scoped because `knip --no-gitignore` on its own is
+    //           not an option: src export analysis is unreviewable symbol-level
+    //           debt owned by the cleanup tickets.)
+    // src/ files and src/ exports are deliberately out of the blocking pass:
+    // `files` is the advisory `dead - code (src files)` gate (src carries a
+    // known dead-file backlog owned by the cleanup tickets).
     "src/**/*.ts",
     "scripts/**/*.ts",
     "scripts/**/*.mjs",
@@ -45,23 +68,30 @@
   // public type re-exports (test factories, plugin sample surface) carry
   // /** @knipignore */ tags at their declaration instead of a global gag.
   "ignoreDependencies": [
-    // Runtime/string-resolved -- used via plugin manifest paths, build scripts,
-    // or dynamic imports knip can't follow (blessed TUI internals, htmx
-    // extensions, html build plugin).
-    "blessed-contrib",
-    "htmx-ext-alpine-morph",
-    "bun-plugin-html",
-    // SRC-ONLY IMPORTERS. This gate is plain `knip`, which honours
-    // src/.gitignore (a blanket `.`), so it never scans src/ — every dep below
-    // is really imported there (cited) and shows up unused here. The
-    // --no-gitignore script `dead:code:src:full` reports ZERO unused deps.
-    // Imported by src/content/minify.ts: frontend asset minifier pipeline.
+    // Every entry below is unused *as seen by pass 1* (plain knip). For the
+    // src-only ones that is expected: pass 2 of `bun run dead:code` traces the
+    // real src/ import edges. The `Remove from ignoreDependencies` hints pass 2
+    // emits for them are the proof, not a request.
+    //
+    // NO IMPORT EDGE ANYWHERE (swept across src/, tests/, scripts/, plugins/,
+    // configs/, bunfig.toml and .github/workflows): these three are unreferenced
+    // runtime dependencies, not dynamic imports. Retained rather than removed —
+    // deleting a dependency is a separate decision from a knip-config edit, and
+    // no importer can honestly be cited for them.
+    "blessed-contrib", // AGENTS.md:162 + docs/spec/terminal-ui.md:8 name it as the TUI stack; every src/tui/* import is plain "blessed"
+    "htmx-ext-alpine-morph", // src/frontend/vendor.ts registers htmx-ext-sse + @alpinejs/morph directly; this extension has no registration site
+    "bun-plugin-html", // Bun html-bundler plugin; no Bun.plugin()/preload registration in bunfig.toml or scripts/build-frontend.mjs
+    //
+    // SRC-ONLY IMPORTERS (each cited below). Real import edges under src/ that
+    // the gitignore-respecting pass 1 cannot see; pass 2 traces them.
+    // Imported by src/content/minify.ts:4-6 (frontend asset minifier pipeline).
     "clean-css",
     "html-minifier-terser",
     "terser",
     "@types/clean-css", // ambient types for clean-css above
     "@types/html-minifier-terser",
-    // Imported by src/characters/charx.ts and src/routes/{export,export-sse,export-shared}/.
+    // Imported by src/characters/charx.ts:11, src/routes/assets.ts:34 and
+    // src/routes/export-shared/*.ts.
     "jszip",
     // Imported by src/profanity/service.ts (TextCensor / RegExpMatcher NSFW gate).
     "obscenity",
@@ -84,11 +114,13 @@
     // Imported by src/routes/v1/openapi.ts; the OpenAPI document is attached
     // to the app via Elysia's plugin chain, not a static edge from src/server.
     "@elysia/openapi",
-    "@markuplint/html-spec",
-    "@markuplint/mustache-parser", // referenced by .markuplintrc.json (config), not imported in code
-    "@types/dompurify",
-    "@types/js-yaml",
-    "@types/jszip",
+    "@markuplint/html-spec", // referenced by .markuplintrc.json (config), not imported in code
+    "@markuplint/mustache-parser",
+    // Type-only companions of packages imported above; no runtime import edge
+    // exists for them, which is exactly why they need an ignore.
+    "@types/dompurify", // dompurify is imported by src/frontend/chat-vendor.ts:9
+    "@types/js-yaml", // js-yaml is imported by src/admin/config.ts:12, src/characters/parser.ts:13, src/characters/exporters/yaml.ts:22, ...
+    "@types/jszip", // jszip is imported by src/characters/charx.ts:11, src/routes/assets.ts:34, ...
     // Mermaid docs stack: resolved via docs/.vitepress/{config.mts,theme/index.ts}
     // (not in knip's entry list) + invoked by bun run mermaid:lint (shell
     // string, not import). Same class as @markuplint.
@@ -157,12 +189,21 @@
     "scripts/check/coverage.mjs",
     // Sub-modules of the coverage gate: statically imported only by the
     // ignored standalone CLI above, so unreachable from knip entrypoints —
-    // same class as scripts/fe-be-harmonization/** below.
+    // same class as scripts/fe-be-harmonization/** below. knip hints "Remove
+    // from ignore" here, but that is wrong for this repo: dropping it makes
+    // `bun run dead:code:src` report diff-mode.mjs / lcov.mjs / waivers.mjs as
+    // unused files. Measured, then reverted.
     "scripts/check/coverage/**",
     // Generated epic title lookup: produced by epic-owner-pick.ts --gen
     // (run manually, not import-wired); consumed by the epic-owner rule
     // through in-process scanEpicTitles(), never via an import edge.
     "scripts/plan/epic-titles.generated.ts",
+
+    // The six src/ ignore entries below exist for the --no-gitignore passes
+    // only. A plain knip run resolves zero src/ files and therefore reports
+    // them as "Remove from ignore"; knip emits no such hint under
+    // --no-gitignore, because there the files are visible and genuinely need
+    // excluding.
 
     // Ambient window typings for the Alpine scope: consumed through the
     // tsconfig include, never imported — knip cannot see that edge.

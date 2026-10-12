@@ -35,22 +35,29 @@ export const checks = {
   // mmdlint is headless (jsdom-backed), no browser, bun-native, <30s on the whole tree.
   "mermaid - lint (mmdlint)": "bun run mermaid:lint",
 
-  // Dead-code analysis (knip)
+  // Dead-code analysis (knip). BLOCKING, and it runs knip TWICE — see the
+  // `project` comment in knip.json for why. Pass 1 is plain `knip`
+  // (gitignore-respecting); src/.gitignore is a blanket `.`, so pass 1 alone
+  // resolves zero src/ files. Pass 2 (`--no-gitignore`) is what makes src/
+  // coverage real for dependency analysis, the one src-covered analysis that is
+  // clean today.
   "dead - code (knip)": "bun run dead:code",
 
-  // src-covered dead-code gate. `knip.json` `project` covers `src/**/*.ts`,
-  // but `src/.gitignore` is a blanket `.` (it keeps untracked scratch out of
-  // git), and knip honors gitignore -- so without `--no-gitignore` every src
-  // file is invisible and the scan cannot report anything under src/. This gate
-  // is the enforcement point for that: it re-runs knip with the gitignore layer
-  // lifted, so the src coverage declared in knip.json is actually live and
-  // cannot silently regress to a no-op.
+  // src dead-FILE scan. `knip.json` `project` covers `src/**/*.ts`, but
+  // `src/.gitignore` is a blanket `.` (it keeps untracked scratch out of git)
+  // and knip honors gitignore -- so without `--no-gitignore` every src file is
+  // invisible. This gate lifts that layer, which is how src file coverage
+  // actually works: `bun run dead:code` (BLOCKING) covers src/ DEPENDENCIES,
+  // this gate covers src/ FILES.
   //
   // Scoped to `--include files` (unused MODULES, not unused exports): the
   // export-level analysis of src/ is a separate and much larger sweep tracked
   // by its own ticket, and gating on it here would block every branch until
   // that bulk cleanup lands. The unused-file list is the reviewable slice -- a
   // whole unreferenced file can be deleted outright.
+  //
+  // CURRENTLY FAILING -- see the ADVISORY_GATES entry below; do not report this
+  // gate as passing.
   "dead - code (src files)": "bun run dead:code:src",
 
   // Circular-import check remains manual; current debt is non-blocking.
@@ -172,10 +179,19 @@ export const ADVISORY_GATES = new Set([
   // merges add or remove clones concurrently.
   "jscpd ratchet",
   // src dead-file scan: the src tree currently carries confirmed-unreachable
-  // modules, enumerated by path in the cleanup ticket. ADVISORY while that
-  // debt is outstanding — the gate still RUNS, so a reopened blindspot (knip
-  // silently skipping src/ again) is visible in the report instead of being
-  // invisible. Flip to blocking once the enumerated files are deleted and
-  // `bun run dead:code:src` exits 0.
+  // modules, enumerated by path in the cleanup tickets.
+  //
+  // THIS GATE IS CURRENTLY FAILING. `bun run dead:code:src` exits non-zero
+  // because it lists the dead src/ files. Because it sits in ADVISORY_GATES the
+  // runner prints `Failed: 0` and `=== All checks passed ===` — that is runner
+  // accounting, NOT a pass. Never cite this gate as green: run the command and
+  // report its exit status. (The file count is deliberately not quoted here — it
+  // moves as cleanup lands.) The gate still RUNS, so a reopened blindspot (knip
+  // silently skipping src/ again) shows up in the report instead of vanishing.
+  //
+  // FLIP CONDITION: drop it out of ADVISORY_GATES (and delete this comment)
+  // when `bun run dead:code:src` exits 0, i.e. once the enumerated dead src/
+  // files have actually been deleted. Advisory until then — the debt is real,
+  // large, and not reviewable in a single sweep.
   "dead - code (src files)",
 ],);
