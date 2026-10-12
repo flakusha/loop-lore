@@ -13,7 +13,7 @@ Remove three zero-importer type/interface declarations from the routes and valid
 
 **Context:**
 
-These three `shrink:` findings from `.tmp/simplification/routes.md` (findings 17, 21, 23) are within files already covered by `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md`, but that ticket's scope ends at the module/file level and does not explicitly name these within-file dead type declarations. All three are zero-importer symbols whose removal changes no behaviour.
+These three `shrink:` findings from the routes slice of the over-engineering audit (scratch, not on disk; findings 17, 21, 23) are within files already covered by `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md`, but that ticket's scope ends at the module/file level and does not explicitly name these within-file dead type declarations. All three are zero-importer symbols whose removal changes no behaviour.
 
 **Scope:**
 
