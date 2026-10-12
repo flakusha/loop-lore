@@ -12,6 +12,7 @@
 
 import { decodeContent, encodeContent, } from "../content";
 import type { ContentEncoding, } from "../content/types";
+import { getChildLogger, } from "../logger";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
 import type { CompressThenEncryptOpts, EncryptedPayload, PipelineConfig, } from "./pipeline-types";
 
@@ -43,7 +44,10 @@ export function isEncryptedPayload(storedContent: string,): boolean {
   let nonceBytes: Uint8Array;
   try {
     nonceBytes = Uint8Array.fromBase64(p.nonce,);
-  } catch {
+  } catch (error) {
+    // Probe on the hot content-read path: trace, not debug, keeps per-message
+    // sniffing quiet while still surfacing the malformed-nonce cause.
+    getChildLogger("crypto/pipeline",)?.trace("isEncryptedPayload: nonce is not valid base64", { err: error, },);
     return false;
   }
 
@@ -54,7 +58,8 @@ export function isEncryptedPayload(storedContent: string,): boolean {
   // itself; the read path's decryption failure catches the rest.
   try {
     Uint8Array.fromBase64(p.enc,);
-  } catch {
+  } catch (error) {
+    getChildLogger("crypto/pipeline",)?.trace("isEncryptedPayload: ciphertext is not valid base64", { err: error, },);
     return false;
   }
 

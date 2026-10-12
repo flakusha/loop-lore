@@ -10,6 +10,7 @@
 // runtimes expose no client-certificate handle on fetch. Injectable for tests.
 
 import type { FederationPeerTrustConfig, } from "../config/schema";
+import { getChildLogger, } from "../logger";
 import { safeFetch, } from "../utils/safe-fetch";
 
 /** Per-poll fetch timeout for peer advertisements. */
@@ -66,7 +67,12 @@ export function canonicalOrigin(raw: unknown,): string | null {
   let url: URL;
   try {
     url = new URL(raw,);
-  } catch {
+  } catch (error) {
+    getChildLogger("federation/peer-fetch",)?.debug("canonicalOrigin: peer origin is not a valid URL", {
+      origin: raw,
+      err: error,
+    },);
+
     return null;
   }
 

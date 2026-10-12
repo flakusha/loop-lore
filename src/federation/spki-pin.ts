@@ -17,6 +17,7 @@
 
 import { createHash, X509Certificate, } from "node:crypto";
 import * as tls from "node:tls";
+import { getChildLogger, } from "../logger";
 import { safeJsonStringify, } from "../utils/safe-json";
 import { canonicalOrigin, } from "./peer-fetch";
 
@@ -142,7 +143,12 @@ function parsePinTarget(
   let url: URL;
   try {
     url = new URL(origin,);
-  } catch {
+  } catch (error) {
+    getChildLogger("federation/spki-pin",)?.debug("parsePinTarget: peer origin is not a valid URL", {
+      origin,
+      err: error,
+    },);
+
     return null;
   }
 
@@ -181,7 +187,12 @@ export async function verifyPeerPin(
     },);
 
     return pinsMatch(pin, target.pins,);
-  } catch {
+  } catch (error) {
+    getChildLogger("federation/spki-pin",)?.debug("verifyPeerPin: probe failed (unreachable, timeout, or TLS error)", {
+      origin,
+      err: error,
+    },);
+
     return false;
   }
 }
@@ -233,7 +244,12 @@ export function createPeerPinVerifier(opts: {
       },);
 
       if (!pinsMatch(pin, target.pins,)) { return false; }
-    } catch {
+    } catch (error) {
+      getChildLogger("federation/spki-pin",)?.debug(
+        "cached pin verifier: probe failed (unreachable, timeout, or TLS error)",
+        { origin: cacheOrigin, err: error, },
+      );
+
       return false;
     }
 
