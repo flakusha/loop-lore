@@ -8,21 +8,23 @@
  * state is exported for the report's provenance field.
  */
 
+import { spawnSync, } from "node:child_process";
 // oxlint-disable-next-line import/no-nodejs-modules
 import { existsSync, readFileSync, } from "node:fs";
 // oxlint-disable-next-line import/no-nodejs-modules
-import path from "node:path";
+import path, { join, } from "node:path";
 import {
   effectiveCacheTtl,
   probeCachedPassphrase,
   warmCacheViaPassphrase,
 } from "../../../node_modules/giwt/src/gpg-unlock";
+import { MODE, PROJECT_ROOT, } from "./config.mjs";
 
-// giwt's warmCacheViaPinentry and passphraseSource are not exported;
-// inline equivalents matching the deleted scripts/gpg-unlock.mjs behavior.
-
+// giwt's warmCacheViaPinentry and passphraseSource are not exported upstream
+// (FEAT-export-a-reusable-cold-cache-gpg-warm-helper-…). Inline equivalents
+// here until then. Both run only on the COLD path, so a typo in either is a
+// crash exactly when the operator most needs the hint.
 function warmCacheViaPinentry(keyId,) {
-  const { spawnSync, } = require("bun",);
   const r = spawnSync(
     ["gpg", "--batch", "--yes", "--local-user", keyId, "--output", "/dev/null", "--detach-sign", "/dev/null",],
     { stdout: "pipe", stderr: "pipe", },
@@ -41,7 +43,6 @@ function passphraseSource() {
     return null;
   }
 }
-import { MODE, PROJECT_ROOT, } from "./config.mjs";
 
 // ── GPG pre-flight ──────────────────────────────────────────────
 // Tracks the cache state for provenance in the report. Shape:

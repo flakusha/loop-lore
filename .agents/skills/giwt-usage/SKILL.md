@@ -24,11 +24,11 @@ loop-lore (git dependency `github:flakusha/giwt`, resolved and pinned by
 
 ## Availability & Pinning
 
-| Invocation                                | Notes                                                                                                                                             |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bun node_modules/giwt/src/cli.ts <args>` | Pinned copy — matches `bun.lock`. Repo code that shells out to giwt MUST spawn this path (see `giwtArgv` in `scripts/worktree/commands/sync.ts`). |
-| `bun run <script>`                        | `plan:*` scripts resolve the pinned copy (`node_modules/.bin` ahead of `~/.local/bin` on PATH).                                                   |
-| `giwt <args>`                             | `~/.local/bin/giwt` symlink points at a mutable local checkout; may drift from the locked ref.                                                    |
+| Invocation                                | Notes                                                                                                                                                                                                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun node_modules/giwt/src/cli.ts <args>` | Pinned copy — matches `bun.lock`. Repo code that shells out to giwt MUST spawn this path (the deleted `scripts/worktree/` CLI's `giwtArgv` seam used to be the in-repo example; see `scripts/check/parallel/gpg.mjs` for the current deep-path import idiom). |
+| `bun run <script>`                        | `plan:*` scripts resolve the pinned copy (`node_modules/.bin` ahead of `~/.local/bin` on PATH).                                                                                                                                                               |
+| `giwt <args>`                             | `~/.local/bin/giwt` symlink points at a mutable local checkout; may drift from the locked ref.                                                                                                                                                                |
 
 ## Safety-gated git passthrough
 

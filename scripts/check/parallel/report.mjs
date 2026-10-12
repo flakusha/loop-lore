@@ -176,7 +176,7 @@ export function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
     gitHead: GIT_CONTEXT.gitHead,
     gitDirty: GIT_CONTEXT.gitDirty,
     // Cache state at run start. `cold` + exitCode !== 0 means the runner
-    // refused to start — re-run after `bun run scripts/gpg-unlock.mjs`.
+    // refused to start — re-run after `giwt gpg-unlock`.
     gpgPrecheck: gpgPrecheck ?? null,
     passed: failedCount === 0,
     exitCode,
