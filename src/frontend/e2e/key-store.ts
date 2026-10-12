@@ -30,7 +30,7 @@ import {
   importKeyPair,
   type KeyPairJwk,
 } from "../../crypto/e2e/key-pairs";
-import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 
 const STORAGE_PREFIX = "ll-e2e-privkey-v1";
 const DEFAULT_ALGORITHM = "ECDH-P256" as const;

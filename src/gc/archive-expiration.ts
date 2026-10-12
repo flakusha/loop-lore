@@ -11,8 +11,8 @@ import { PinnedState, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger/types";
+import { safeJsonStringify, } from "../utils";
 import { toDate, } from "../utils/date";
-import { safeJsonStringify, } from "../utils/safe-json";
 
 export interface ArchiveExpirationSummary {
   scanned: number;

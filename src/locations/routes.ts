@@ -20,7 +20,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import type { TransportKind, } from "../db/enums-story/world";
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, } from "../utils";
 import type { TravelRouteStopRow, } from "../validation/schemas/travel-wire";
 
 export interface CreateTravelRouteInput {

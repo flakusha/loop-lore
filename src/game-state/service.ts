@@ -14,7 +14,7 @@ import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { extractGameStateBlock, } from "../regex/game-state";
-import { jsonStringifyOr, safeJsonParse, } from "../utils/safe-json";
+import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import { analyzeGameState, type GameState, type GameStateAnalysis, } from "./analyze";
 
 /** Shared options-object shape: a typed Kysely database handle. */

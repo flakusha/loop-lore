@@ -26,7 +26,7 @@
  * @module characters/world-boundary
  */
 
-import type { JsonResult, } from "../utils/safe-json";
+import type { JsonResult, } from "../utils";
 
 // ── Layer field lists (request-body keys) ────────────────────
 

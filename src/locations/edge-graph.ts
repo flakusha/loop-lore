@@ -5,7 +5,7 @@ import { type Kysely, type Selectable, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { LocationEdgeMode as LocationEdgeModeType, } from "../db/enums-story/world";
 import type { DB, LocationEdges, } from "../db/schema";
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, } from "../utils";
 import { EDGE_MODE_SET, type EdgeCost, LocationEdgeError, parseEdgeCost, sqlStamp, } from "./edge-core";
 
 /** A location_edges row as SELECT/RETURNING delivers it. */

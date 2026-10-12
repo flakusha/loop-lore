@@ -10,8 +10,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { uid, } from "../utils";
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, uid, } from "../utils";
 
 /**
  * @param db

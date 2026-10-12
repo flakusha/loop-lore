@@ -22,7 +22,7 @@
 import { Elysia, t, } from "elysia";
 import type { Db, } from "../../db";
 import { TradeService, } from "../../services/trade";
-import { safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonStringify, } from "../../utils";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
 import { badRequestResponse, jsonResponse, } from "../http-utils";

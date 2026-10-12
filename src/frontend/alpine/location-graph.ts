@@ -17,7 +17,7 @@
 // /api/v1/worlds/:worldId/locations/:locId/edges and /worlds/:worldId/edges.
 
 import { Type, } from "@sinclair/typebox";
-import { jsonStringifyOr, safeJsonParse, } from "../../utils/safe-json";
+import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { apiFetch, } from "./htmx";
 import { log as rootLog, } from "./logger";
 import { parseOr, } from "./validation";

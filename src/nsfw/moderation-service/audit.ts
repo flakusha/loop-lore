@@ -7,7 +7,7 @@
  * Recording moderation actions (with user notification), reading a user's
  * audit trail, and mapping action rows.
  */
-import { jsonParseOr, jsonStringifyOr, } from "../../utils/safe-json";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
 /** */

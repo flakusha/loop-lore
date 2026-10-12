@@ -3,7 +3,7 @@
 
 // size-allow: 20
 
-import { jsonParseOr, } from "../utils/safe-json";
+import { jsonParseOr, } from "../utils";
 
 /**
  * @param raw

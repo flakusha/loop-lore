@@ -24,8 +24,7 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { uid, } from "../../utils";
-import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, uid, } from "../../utils";
 
 const DEFAULT_ALGORITHM = "ECDH-P256" as const;
 
