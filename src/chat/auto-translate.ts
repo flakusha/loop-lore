@@ -23,7 +23,7 @@ import { LANGUAGES, runTranslate, type TranslateDeps, } from "../assistant/comma
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { resolveProvider, } from "../generation/providers/registry";
-import { safeJsonParse, safeJsonStringify, } from "../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, } from "../utils";
 
 /** `story_state` JSON key holding the per-chat translation target. */
 export const STORY_STATE_KEY = "autoTranslateLang";

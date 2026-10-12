@@ -8,7 +8,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
-import { safeJsonParse, } from "../../../utils/safe-json";
+import { safeJsonParse, } from "../../../utils";
 import { walkMessagePath, } from "../branch-helpers";
 import type { MergeHunk, } from "./merge-diff";
 import type { MergeSourceTip, } from "./merge-graph";

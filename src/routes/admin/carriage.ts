@@ -14,7 +14,7 @@ import { fetchUnrevealedShadowNotes, } from "../../assistant/prompt/sections/gm-
 import { listCarriage, } from "../../chat/service/carriage";
 import type { GmConfig, } from "../../chat/types/config";
 import { can, } from "../../users/permissions";
-import { safeJsonParse, } from "../../utils/safe-json";
+import { safeJsonParse, } from "../../utils";
 import { healCarriage, } from "../../utils/structured-output";
 import { ChatIdParams, ErrorResponse, } from "../../validation/schemas";
 import { forbiddenResponse, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";

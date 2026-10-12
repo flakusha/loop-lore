@@ -15,7 +15,7 @@
 // with the spam gate as the bridge's inboundGate — §7).
 
 import { createHash, randomUUID, } from "node:crypto";
-import { safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonStringify, } from "../../utils";
 import type { AdapterMessage, AdapterMessageHandler, ProtocolAdapter, } from "../adapter";
 import { senderAddress, } from "./spam-gate";
 

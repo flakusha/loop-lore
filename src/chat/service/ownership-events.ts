@@ -12,7 +12,7 @@ import { NotificationType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { NotificationService, } from "../../notifications/service";
-import { safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonStringify, } from "../../utils";
 
 /** Fields identifying one completed ownership transfer. */
 export interface OwnershipTransferEvent {

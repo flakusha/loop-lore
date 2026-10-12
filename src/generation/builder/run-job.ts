@@ -12,7 +12,7 @@
 import { handleRun, } from "../../image-edit/routes";
 import type { HandleRunAuth, } from "../../image-edit/run-authz";
 import type { ImageEditRequest, } from "../../image-edit/types";
-import { jsonStringifyOr, } from "../../utils/safe-json";
+import { jsonStringifyOr, } from "../../utils";
 import type { ChainStep, } from "./chain-types";
 import { type ChainRunJob, createRunJob, } from "./run-job-store";
 

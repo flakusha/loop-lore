@@ -10,7 +10,7 @@
  * Resolves: TASK-world-lore-lifecycle-confidence-decay-distortion,
  *           BUG-lore-load-ts-uses-any-for-db-eb-instead-of-kysely-expression.
  */
-import { safeJsonParse, } from "@/utils/safe-json";
+import { safeJsonParse, } from "@/utils";
 import type { ExpressionBuilder, Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { resolveLifecycleConfig, } from "../../lore/lifecycle";

@@ -14,7 +14,7 @@ import {
   toEquipmentItem,
 } from "../../battle";
 import { ItemsService, } from "../../story/items";
-import { jsonParseOr, } from "../../utils/safe-json";
+import { jsonParseOr, } from "../../utils";
 import { SuccessResponse, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";

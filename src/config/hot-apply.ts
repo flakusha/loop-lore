@@ -17,7 +17,7 @@
 
 import { REQUIRES_RESTART_KEYS, } from "../admin/config-keys";
 import { getLogger, } from "../logger";
-import { safeJsonStringify, } from "../utils/safe-json";
+import { safeJsonStringify, } from "../utils";
 import { coerceValue, getTypeOfPath, setByPath, } from "./load/parse";
 import type { Config, } from "./schema/config";
 

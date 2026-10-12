@@ -5,7 +5,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { can, } from "../users/permissions";
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, } from "../utils";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 /**

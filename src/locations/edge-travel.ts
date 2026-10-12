@@ -4,7 +4,7 @@
 import { type Kysely, } from "kysely";
 import type { LocationEdgeMode as LocationEdgeModeType, } from "../db/enums-story/world";
 import type { DB, } from "../db/schema";
-import { safeJsonParse, } from "../utils/safe-json";
+import { safeJsonParse, } from "../utils";
 import { EDGE_MODE_SET, type EdgeCost, LocationEdgeError, parseEdgeCost, sqlStamp, } from "./edge-core";
 import { freeJumpOnCooldown, latchDiscovered, recordHop, } from "./edge-discovery";
 

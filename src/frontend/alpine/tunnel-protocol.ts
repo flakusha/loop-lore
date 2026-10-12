@@ -14,7 +14,7 @@
  * @module alpine/tunnel-protocol
  */
 import { exponentialBackoffMs, } from "../../utils/backoff";
-import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 
 /** Sampling params forwarded to the tunnel server. */
 export interface TunnelParams {

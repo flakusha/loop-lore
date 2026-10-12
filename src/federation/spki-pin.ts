@@ -18,7 +18,7 @@
 import { createHash, X509Certificate, } from "node:crypto";
 import * as tls from "node:tls";
 import { getChildLogger, } from "../logger";
-import { safeJsonStringify, } from "../utils/safe-json";
+import { safeJsonStringify, } from "../utils";
 import { canonicalOrigin, } from "./peer-fetch";
 
 /** Base64 SPKI pin, bare (`<base64>`) or prefixed (`sha256:<base64>`). */

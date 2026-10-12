@@ -55,7 +55,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { travelDb, } from "../../rpg/world-travel";
-import { jsonParseOr, } from "../../utils/safe-json";
+import { jsonParseOr, } from "../../utils";
 import { emitWorldEvent, tradeRouteKey, } from "./events";
 import { discoveryDb, TRADE_ROUTE, type TradeResult, } from "./types";
 
