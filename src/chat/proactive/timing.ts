@@ -7,6 +7,7 @@
  * Quiet hours, backoff calculation, and time utilities.
  * Extracted from the main service to stay under size limits.
  */
+import { exponentialBackoffMs, } from "../../utils/backoff";
 
 /** Frequency presets — maps to interval in milliseconds */
 export const PROACTIVE_FREQUENCY_MS = {
@@ -52,13 +53,13 @@ export function isInQuietHours(start: string | null, end: string | null, now: Da
 
 /**
  * Calculate the wait time with exponential backoff.
- * Each unanswered message doubles the wait time.
+ * Each unanswered message doubles the wait time (uncapped).
  * @param baseMs
- * @param backoffCount
+ * @param backoffCount - 0-based count of unanswered messages
  * @returns void
  */
 export function backoffMs(baseMs: number, backoffCount: number,): number {
-  return baseMs * Math.pow(2, backoffCount,);
+  return exponentialBackoffMs({ baseMs, attempt: backoffCount + 1, },);
 }
 
 /**

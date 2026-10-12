@@ -13,6 +13,7 @@
  *
  * @module alpine/tunnel-protocol
  */
+import { exponentialBackoffMs, } from "../../utils/backoff";
 import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 
 /** Sampling params forwarded to the tunnel server. */
@@ -41,7 +42,7 @@ export const RECONNECT_CAP_MS = 30_000;
  * @returns Capped exponential delay in ms.
  */
 export function reconnectDelayMs(attempt: number,): number {
-  return Math.min(RECONNECT_BASE_MS * 2 ** (attempt - 1), RECONNECT_CAP_MS,);
+  return exponentialBackoffMs({ baseMs: RECONNECT_BASE_MS, attempt, capMs: RECONNECT_CAP_MS, },);
 }
 
 /**
