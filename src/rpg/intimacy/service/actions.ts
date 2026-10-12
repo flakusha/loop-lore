@@ -35,7 +35,7 @@ const MAX_HISTORY = 50;
  * Updates score, records history, and fires threshold events.
  * @param db
  * @param opts
- * @throws {Error}
+ * @throws {Error} When the NSFW capability gate denies the action (propagated unchanged).
  * @returns {Promise<ApplyIntimacyResult>}
  */
 export async function applyAction(

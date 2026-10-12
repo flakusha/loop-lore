@@ -20,8 +20,7 @@ function getLog() {
  * @param endingId
  * @param endingType
  * @param completionTime
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} When the playthrough is missing or already completed.
  * @returns {Promise<Playthrough>}
  */
 export async function completePlaythrough(

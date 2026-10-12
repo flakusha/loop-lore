@@ -75,6 +75,7 @@ function parseArgs(): MigrationOptions {
 /**
  * @param filePath
  * @returns string
+ * @throws {Error} If the config file has an unknown extension or fails to parse.
  */
 function parseConfigFile(filePath: string,): Record<string, unknown> {
   const content = readFileSync(filePath, "utf8",);

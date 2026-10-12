@@ -17,8 +17,7 @@ function getLog() {
  * Start new game plus
  * @param db
  * @param input
- * @throws {Error}
- * @throws {Error}
+ * @throws {Error} When the previous playthrough is missing or not completed.
  * @returns {Promise<Playthrough>}
  */
 export async function startNewGamePlus(

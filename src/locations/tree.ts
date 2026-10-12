@@ -100,6 +100,7 @@ export class LocationTreeService {
    * Insert a Location with depth + cross-world checks at the application layer.
    * The trigger on `path` materializes the path automatically. Returns the new id.
    * @param input
+   * @throws {Error} If the parent is missing, cross-world, or depth limit exceeded.
    */
   async insertLocation(input: InsertLocationInput,): Promise<string> {
     if (input.parentLocationId !== null) {
