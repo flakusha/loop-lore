@@ -19,8 +19,8 @@ import { AssetType, AssetVisibility, TransformContext, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertAssets, insertUsers, } from "../test-utils/insert-helpers";
-import { assetRoutes, } from "./controller";
-import { getAssetTransform, seedBaseTransform, } from "./service/transforms";
+import { assetRoutes, transformErrorResponse, } from "./controller";
+import { getAssetTransform, InvalidTransformError, seedBaseTransform, } from "./service/transforms";
 
 const OWNER_ID = randomUUID();
 const OUTSIDER_ID = randomUUID();
@@ -187,5 +187,22 @@ describe("PUT /api/assets/:id/transform", () => {
 
     expect(res.status,).toBe(400,);
     await db.destroy();
+  });
+});
+
+describe("transformErrorResponse — internal-error leak guard", () => {
+  test("validation failure keeps its message (400)", () => {
+    const res = transformErrorResponse(new InvalidTransformError("zoom must be > 0",),);
+    expect(res.status,).toBe(400,);
+  });
+
+  test("unexpected failure is a sanitized 500 without internals", async () => {
+    const res = transformErrorResponse(new Error("sqlite: no such table: asset_transforms",),);
+    expect(res.status,).toBe(500,);
+    const body = await res.json() as { error?: string };
+    expect(body.error,).toBe("Transform could not be saved",);
+    const text = JSON.stringify(body,);
+    expect(text,).not.toContain("sqlite",);
+    expect(text,).not.toContain("no such table",);
   });
 });

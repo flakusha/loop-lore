@@ -228,7 +228,7 @@ describe("actorItemsGameplayRoutes", () => {
     expect(list2Body,).toHaveLength(0,);
   });
 
-  test("equip rejects an unknown item with a 400 + reason", async () => {
+  test("equip rejects an unknown item with a 404 + reason", async () => {
     const db = await makeDb();
     await seed(db,);
     const app = makeApp(db, OWNER,);
@@ -236,13 +236,13 @@ describe("actorItemsGameplayRoutes", () => {
       new Request(`${BASE}/${randomUUID()}/equip`, { method: "POST", },),
     );
 
-    expect(res.status,).toBe(400,);
+    expect(res.status,).toBe(404,);
     const body = await res.json() as { error?: string; code?: string };
     expect(body.error,).toBeTruthy();
-    expect(body.code,).toBeTruthy();
+    expect(body.code,).toBe("NOT_FOUND",);
   });
 
-  test("equip rejects a second weapon in the same weapon slot", async () => {
+  test("slot conflict denial carries its reason", async () => {
     const db = await makeDb();
     await seed(db,);
     const first = await insertItem(db, { type: ItemCategory.Weapon, name: "Sword A", },);
@@ -259,7 +259,7 @@ describe("actorItemsGameplayRoutes", () => {
       new Request(`${BASE}/${second}/equip`, { method: "POST", },),
     );
 
-    expect(conflict.status,).toBe(400,);
+    expect(conflict.status,).toBe(409,);
     const body = await conflict.json() as { error?: string };
     expect(body.error,).toMatch(/weapon/i,);
   });

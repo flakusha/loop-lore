@@ -62,9 +62,8 @@ export interface CarryStatus {
   canCarry: (additionalWeight: number,) => boolean;
 }
 
-/** Equip attempt result. */
+/** Equip attempt success — denials throw the tagged errors in `./errors`. */
 export interface EquipResult {
-  ok: boolean;
-  itemId?: string;
-  reason?: string;
+  ok: true;
+  itemId: string;
 }
