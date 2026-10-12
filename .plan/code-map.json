@@ -45375,6 +45375,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
     }
   ],
   "src/tui/app.test.ts": [

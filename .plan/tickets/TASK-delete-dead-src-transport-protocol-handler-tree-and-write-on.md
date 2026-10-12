@@ -66,12 +66,24 @@ returns exactly two rows — `src/middleware/dynamic-response.ts:36` and
 
 **Caveats / constraints:**
 
-- Open tickets `TASK-transport-layer-expansion`, `TASK-TRANSPORT-SERVER-WIRING`,
-  `EPIC-TRANSPORT-LAYER-EXPANSION`, `TASK-TRANSPORT-EXPANSION` and
-  `TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3` describe *expanding* this layer.
-  Deleting it is a product decision, not mechanical cleanup: either close/redirect those tickets
-  first, or keep `negotiation-parsers.ts` + `peer-table.ts` as the surviving kernel and delete only
-  the handlers. Do not silently strand those epics.
+- **BLOCKING GATE — do not start the delete until the epic conflict is resolved.** Reachability is
+  settled (nothing imports the handler half), but this tree is *active planning*, not abandoned code:
+  - `TASK-transport-layer-expansion` is **In Progress**, status note **"Built"**, epic
+    `epic-transport-expansion`.
+  - `epic-transport-expansion.md` tracks `http1.ts`, `h2.ts`, `ws.ts`, `negotiation.ts`, `upgrade.ts`,
+    `compression.ts`, `factory.ts`, `index.ts` and `test/harness.ts` as **✅ Built** deliverables, with
+    HTTP/3 and WebTransport listed as the missing remainder.
+  - Five epics name `src/transport/ws.ts` as a load-bearing dependency: `epic-embeddable-backend`,
+    `epic-embeddable-engine-game-frontend`, `epic-game-frontend-scenes`, `epic-game-engine-sdks`,
+    `epic-desktop-app` (the last three are all *blocked on* the transport epic).
+  So deleting the tree contradicts open planning. Record an owner decision first: either wire it behind
+  `Bun.serve`, or close/redirect `epic-transport-expansion` and its dependent epics, *then* delete.
+  Re-derive: `grep -rn "src/transport/" .plan/epics .plan/tickets`.
+- Related but weaker: `TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3` is a recorded
+  deferral of the HTTP/3 half. If it survives, closing the epic above strands it — resolve them together.
+- Note the ticket IDs cited in earlier drafts of this caveat that do **not** exist on disk:
+  `TASK-TRANSPORT-SERVER-WIRING`, `EPIC-TRANSPORT-LAYER-EXPANSION`, `TASK-TRANSPORT-EXPANSION`.
+  The real ones are `TASK-transport-layer-expansion` and `epic-transport-expansion.md`.
 - Do NOT touch `src/routes/worlds/fractal-travel-routes.ts`, `travel-status.ts` or
   `src/validation/schemas/travel-wire.ts` — those "transport" hits are the RPG travel feature.
 - Closed BUGs against this tree (`BUG-http1handler-send-is-a-silent-no-op`,
