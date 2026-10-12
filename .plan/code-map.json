@@ -11324,6 +11324,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
     },
     {
@@ -12717,6 +12721,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick.md"
     },
     {
       "kind": "ticket",
