@@ -30,7 +30,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 | `plan:backlog:sync*` | `giwt backlog sync [--fix]` | stays (try 1) | done (try-7: script deleted; re-pointed in try-9 — the `giwt plan backlog-sync` subcommand named here never existed) |
 | `plan:docs` | `giwt plan gen-docs [--check]` | stays (try 1) | done (try-7: script deleted) |
 | `plan:map*`, `plan:find` | `giwt plan code-map [--check \| --find <path>]` | stays (try 1) | done (try-7: script deleted; `extractSrcRefs` + `stripMarkdownCode` + `SRC_REF_RE` dropped from `scripts/lib/src-refs.ts`) |
-| worktree ops (`scripts/worktree/`) | deleted | deleted | **done (2026-10-12):** `scripts/worktree/`, `scripts/lib/colors.ts`, `scripts/lib/assertions.ts`, `scripts/gpg-unlock.mjs`, `tests/worktree-flow.test.ts` all deleted; `giwt` is the sole entry point. |
+| worktree ops (`scripts/worktree/`) | deleted | deleted | **in flight, NOT on `dev`:** the deletion lives on the unmerged `scripts-migration-delete` branch. `scripts/worktree/` (62 tracked files), `scripts/lib/colors.ts`, `scripts/lib/assertions.ts`, `scripts/gpg-unlock.mjs` and `tests/worktree-flow.test.ts` are all still present on `dev`. Blocked on re-pointing the live imports first — see the try-6 open-items list. |
 | `gpg-unlock` | `giwt gpg-unlock` | done | `giwt gpg-unlock` (exists upstream) |
 
 ## Try-1 scope (this branch)

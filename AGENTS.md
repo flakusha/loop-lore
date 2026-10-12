@@ -401,8 +401,14 @@ giwt task "<directive>" -w                # render an agent task prompt
 ```
 
 > **Note**: `giwt` is the canonical CLI — all worktree work goes through it.
-> The in-repo `scripts/worktree/` CLI has been **deleted** (2026-10-12); the
-> canonical implementation is `giwt` from the pinned git dependency. `giwt`
+> The in-repo `scripts/worktree/` CLI is **still present**; its deletion is
+> in-flight on the unmerged `scripts-migration-delete` branch, not on `dev`.
+> Do not assume the fork is gone: `scripts/lib/colors.ts`,
+> `scripts/lib/assertions.ts` and `scripts/gpg-unlock.mjs` still import from it
+> (their `giwt` counterparts are not drop-in), and
+> `tests/worktree-flow.test.ts` drives it directly.
+>
+> The canonical implementation is `giwt` from the pinned git dependency. `giwt`
 > carries features the fork lacked: Step 5.5 scoped-worktree reconciliation,
 > the FIFO finalize lock queue, `--jobs`, and `--gates`/`--skip-gates`/`--plan-gates`.
 >
