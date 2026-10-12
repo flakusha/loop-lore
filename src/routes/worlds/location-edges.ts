@@ -7,7 +7,7 @@ import { EDGE_MODES, LocationEdgeError, parseEdgeCost, } from "../../locations/e
 import { forceDiscover, worldGraph, } from "../../locations/edge-discovery";
 import { LocationEdgeService, } from "../../locations/edge-graph";
 import { EdgeTravelService, } from "../../locations/edge-travel";
-import { jsonParseOr, } from "../../utils/safe-json";
+import { jsonParseOr, } from "../../utils";
 import { ErrorResponse, } from "../../validation/schemas";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";

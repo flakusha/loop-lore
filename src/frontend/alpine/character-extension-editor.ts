@@ -16,7 +16,7 @@
 // the plugin loader, and resolving it drags the whole backend into the frontend
 // tsc project (ES2026 target, no `@/` paths).
 import type { BundleCharacterRequirements, } from "../../plugins/types";
-import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";

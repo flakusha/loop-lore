@@ -13,12 +13,11 @@
  *
  * Modules intentionally included:
  *   - Barrels that re-export from a co-located dir (combat, dice, loot, xp,
- *     body, seduction, encounters, fantasies, intimacy, nsfw-skills, mood,
+ *     seduction, encounters, fantasies, intimacy, nsfw-skills, mood,
  *     quests, stats)
  *   - Canonical flat files (chemistry, reproduction, reputation,
  *     status-effects, trauma) - these define their classes inline.
  */
-export * from "./body";
 export * from "./chemistry";
 export * from "./combat";
 export * from "./dice";

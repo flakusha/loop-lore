@@ -10,7 +10,7 @@ import type { Config, } from "../../../config/schema";
 import { defaultTokenCount, } from "../../../generation/context-window-config";
 import type { GenerationMessage, } from "../../../generation/types";
 import { resolveSystemPrompt, } from "../../../prompts";
-import { safeJsonParse, } from "../../../utils/safe-json";
+import { safeJsonParse, } from "../../../utils";
 import type { MergeDraftMessage, MergeError, } from "./merge-criteria";
 import { baseOrdinal, modeInstruction, overlayOrdinal, } from "./merge-criteria";
 

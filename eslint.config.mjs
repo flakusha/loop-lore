@@ -107,6 +107,14 @@ const tsPlugins = {
 const tsRules = {
   "no-restricted-syntax": ["error", ...customRestrictedSyntax],
   "import/no-cycle": ["error", { maxDepth: 1 }],
+  // Safe JSON helpers are public API via the src/utils.ts barrel (AGENTS.md:
+  // barrels are the public surface); ban direct utils/safe-json imports.
+  "no-restricted-imports": ["error", {
+    patterns: [{
+      regex: "^(?:\\./|\\.\\./)+utils/safe-json$|^@/utils/safe-json$",
+      message: "Import safe JSON helpers from the utils barrel (src/utils.ts).",
+    }],
+  }],
   "import/first": "error",
   "import/no-mutable-exports": "error",
   "import/no-duplicates": "error",
@@ -434,6 +442,13 @@ export default [
     files: ["src/tui/app.ts"],
     rules: {
       "unicorn/no-process-exit": "off",
+    },
+  },
+  // src/utils.ts barrel: the safe-json re-export itself is the convention.
+  {
+    files: ["src/utils.ts"],
+    rules: {
+      "no-restricted-imports": "off",
     },
   },
   // Scripts (JS modules): provide stub rule definitions so eslint-disable comments

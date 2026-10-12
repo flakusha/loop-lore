@@ -11,7 +11,7 @@
  * toggle, LLM-assist toggle, and arc-stage save.
  */
 
-import { jsonStringifyOr, } from "../../utils/safe-json";
+import { jsonStringifyOr, } from "../../utils";
 import { escapeHtml, } from "./escape-html";
 
 /** Input values for the growth section */

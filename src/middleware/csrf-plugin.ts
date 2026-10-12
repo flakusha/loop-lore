@@ -18,7 +18,7 @@
  * plugin runs.
  */
 
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, } from "../utils";
 import {
   cookieForDecision,
   decideCsrf,

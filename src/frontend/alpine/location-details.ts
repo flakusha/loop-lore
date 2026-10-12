@@ -9,7 +9,7 @@
  * feed (`GET /worlds/:worldId/npcs-at/:locId`). The quick actions live in
  * location-actions.ts; this slice is the read-only picture of a place.
  */
-import { parseJsonList, } from "../../utils/safe-json";
+import { parseJsonList, } from "../../utils";
 import { fetchWorldJson, } from "./world-fetch";
 import type { NpcPresent, WorldLocationDetail, WorldPageState, } from "./world-types";
 

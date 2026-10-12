@@ -11,7 +11,7 @@
 import type { callAux, } from "../../aux-pipeline";
 import { getLogger, } from "../../logger";
 import { resolveSystemPrompt, } from "../../prompts";
-import { jsonParseOr, } from "../../utils/safe-json";
+import { jsonParseOr, } from "../../utils";
 import type { HookContext, } from "./types";
 
 /**

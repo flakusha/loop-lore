@@ -16,7 +16,7 @@
 // loadChats(), applyChatFilters() persists on every change. Active filters
 // surface as removable chips (activeChatFilterChips + clearChatFilter /
 // clearAllChatFilters).
-import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import type { ChatState, } from "./types";
 
 const STORAGE_KEY = "chat-sidebar-filters";

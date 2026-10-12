@@ -21,7 +21,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { jsonParseOr, } from "../utils/safe-json";
+import { jsonParseOr, } from "../utils";
 import { apply, type Write, } from "./apply";
 
 /** Lifecycle states mirrored in the `status` column. */

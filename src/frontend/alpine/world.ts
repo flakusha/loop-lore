@@ -16,8 +16,7 @@
  * the EventSource never outlives the page.
  */
 import { Type, } from "@sinclair/typebox";
-import { jsonParseOr, } from "../../utils";
-import { parseJsonList, } from "../../utils/safe-json";
+import { jsonParseOr, parseJsonList, } from "../../utils";
 import { locationActions, } from "./location-actions";
 import { locationDetails, } from "./location-details";
 import { timeWeatherWidget, } from "./time-weather";

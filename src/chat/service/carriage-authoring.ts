@@ -17,7 +17,7 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { GenerationMessage, } from "../../generation/gen-types-options";
 import { getLogger, } from "../../logger";
-import { safeJsonParse, } from "../../utils/safe-json";
+import { safeJsonParse, } from "../../utils";
 import { healCarriage, type HealingCancelReason, } from "../../utils/structured-output";
 import type { GmConfig, } from "../types/config";
 import { type CarriageRecord, listCarriage, recordCarriage, } from "./carriage";

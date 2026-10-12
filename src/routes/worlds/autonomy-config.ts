@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { EMPTY_AUTONOMY_OVERRIDE, } from "../../autonomy/config";
-import { jsonStringifyOr, safeJsonParse, } from "../../utils/safe-json";
+import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { HttpStatus, jsonError, } from "../http-utils";
 
 type AutonomyUpdateResult =

@@ -10,7 +10,7 @@
  *   2. `executeReversal` (this file) performs the actual user-side lift
  *      (unblock / unban / unshadow), closed under dual-admin confirmation.
  */
-import { jsonStringifyOr, } from "../../utils/safe-json";
+import { jsonStringifyOr, } from "../../utils";
 import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
 /** */

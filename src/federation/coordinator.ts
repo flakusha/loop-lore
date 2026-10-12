@@ -13,7 +13,7 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
-import { safeJsonStringify, } from "../utils/safe-json";
+import { safeJsonStringify, } from "../utils";
 import {
   canonicalOrigin,
   fetchPeerAdvertisement,

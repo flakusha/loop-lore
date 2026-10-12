@@ -13,8 +13,8 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import type { ModelInfo, } from "../generation/providers/types";
 import { getLogger, } from "../logger";
+import { jsonParseOr, jsonStringifyOr, } from "../utils";
 import { toDate, } from "../utils/date";
-import { jsonParseOr, jsonStringifyOr, } from "../utils/safe-json";
 import type { ResolvedModelCapabilities, } from "./model-capabilities-types";
 
 export type { ModelCapabilityRow, ResolvedModelCapabilities, } from "./model-capabilities-types";

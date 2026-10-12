@@ -22,7 +22,7 @@ import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../../gene
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertCarriageRecords, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
-import { safeJsonParse, } from "../../utils/safe-json";
+import { safeJsonParse, } from "../../utils";
 import { CARRIAGE_REPAIR_HINT, healCarriage, } from "../../utils/structured-output";
 import { listCarriage, } from "./carriage";
 import { authorCarriage, authorCarriageIfEnabled, } from "./carriage-authoring";

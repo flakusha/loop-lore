@@ -26,7 +26,7 @@ import {
   insertShadowNotes,
   insertUsers,
 } from "../../test-utils/insert-helpers";
-import { safeJsonParse, } from "../../utils/safe-json";
+import { safeJsonParse, } from "../../utils";
 import { CARRIAGE_REPAIR_HINT, } from "../../utils/structured-output";
 import { annotationRoutes, } from "../chats/annotations";
 import { carriageRoutes, } from "./carriage";

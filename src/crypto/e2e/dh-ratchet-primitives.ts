@@ -9,8 +9,8 @@
  * decryptWithMessageKey, canonicalJwk — so the state-machine code in
  * `dh-ratchet.ts` can stay focused on the protocol flow.
  */
+import { safeJsonStringify, } from "../../utils";
 import { fromBase64, toBase64, } from "../../utils/base64";
-import { safeJsonStringify, } from "../../utils/safe-json";
 /** */
 export interface DhMessagePayload {
   ephemeralPublicJwk: JsonWebKey;

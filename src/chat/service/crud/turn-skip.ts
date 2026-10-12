@@ -26,7 +26,7 @@ import {
 } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { isTelemetryEnabled, record as recordTelemetryEvent, } from "../../../telemetry/service";
-import { safeJsonStringify, } from "../../../utils/safe-json";
+import { safeJsonStringify, } from "../../../utils";
 import { checkChatAccess, } from "../access";
 import { auditForcedSkip, checkForcedSkipAuthority, } from "./turn-skip-forced";
 

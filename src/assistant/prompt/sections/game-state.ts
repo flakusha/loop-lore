@@ -8,7 +8,7 @@
  *
  * Absent state → renders the emission instruction only.
  */
-import { jsonParseOr, } from "../../../utils/safe-json";
+import { jsonParseOr, } from "../../../utils";
 import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
 

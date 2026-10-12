@@ -5,7 +5,7 @@ import { type Kysely, sql, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { LocationEdgeMode, } from "../db/enums-story/world";
 import type { DB, } from "../db/schema";
-import { jsonStringifyOr, } from "../utils/safe-json";
+import { jsonStringifyOr, } from "../utils";
 import { LocationEdgeError, sqlStamp, } from "./edge-core";
 import type { EdgeRow, } from "./edge-graph";
 

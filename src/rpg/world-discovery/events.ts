@@ -19,7 +19,7 @@
  *      events on one tick must never swap places between pages or between
  *      runs, and `id` is the only unique tie-break available.
  */
-import { jsonStringifyOr, } from "../../utils/safe-json";
+import { jsonStringifyOr, } from "../../utils";
 import type { DiscoveryDb, WorldEventInput, WorldEventListQuery, WorldEventPage, } from "./types";
 
 /** Hard ceiling on a page, so a caller cannot ask for the whole log. */
