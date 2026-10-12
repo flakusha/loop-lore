@@ -34,7 +34,7 @@ export function deriveChatTitleFallback(text: string,): string {
 /**
  * Suggest a short chat title via the shared AUX runner. Returns trimmed AUX
  * content (capped at 60 chars) or the rule-based fallback on null/throw.
- * Advisory-only: never throws.
+ * Advisory-only: never rejects — fire-and-forget callers need no `.catch`.
  * @param args - Config, db, optional user/chat ids, and the first message
  * @param args.config
  * @param args.db
@@ -90,7 +90,7 @@ export function isUntitledChatName(name: string | null,): boolean {
 /**
  * Advisory first-message title for untitled non-direct chats. Direct chats
  * keep the rule-based auto-rename (character + location); group/solo chats
- * otherwise keep the placeholder forever. Never throws — skips titled or
+ * otherwise keep the placeholder forever. Never rejects — skips titled or
  * direct chats, logs update failures.
  * @param args - Config, db, chat/user ids, the chat record, first message
  * @param args.config

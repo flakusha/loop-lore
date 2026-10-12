@@ -125,6 +125,9 @@ export class NotificationStreamer {
       }
     };
 
+    /** Load + diff the snapshot; never rejects — transient DB errors skip
+     * @param controller
+     *  the beat and the catch below keeps the stream alive. */
     const tick = async (controller: ReadableStreamDefaultController,): Promise<void> => {
       // loadNotificationSnapshot never rejects for query failures (allSettled
       // → empty defaults), so only transport-level throws land in catch.

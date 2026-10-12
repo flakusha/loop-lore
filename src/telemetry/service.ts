@@ -52,6 +52,8 @@ interface EventParams {
 }
 
 /**
+ * Record one telemetry event. Never rejects — a sink failure is logged at
+ * warn and dropped, so fire-and-forget callers need no `.catch`.
  * @param db
  * @param root0
  * @param root0.eventType
