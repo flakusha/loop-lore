@@ -93,7 +93,20 @@ async function main() {
     process.exit(1,);
   }
 
-  console.log("\n=== All checks passed ===",);
+  // `failed` excludes advisory gates by design (see ADVISORY_GATES in
+  // check/parallel/gates.mjs), so a run with a red advisory gate reaches here
+  // with failed === 0. Printing "All checks passed" then is the blind spot: an
+  // auditor skims the terminal line and concludes the suite is green. Exit code
+  // is deliberately unchanged — advisory gates must not fail the run.
+  const advisoryFailed = results.filter((r,) => r.advisory && !r.passed && !r.skipped,).length;
+  if (advisoryFailed > 0) {
+    console.log(
+      `\n=== All blocking checks passed, but ${advisoryFailed} ADVISORY gate(s) failed ===`,
+    );
+    console.log("!!! This run is NOT green. See the ADVISORY entries above.");
+  } else {
+    console.log("\n=== All checks passed ===",);
+  }
 }
 
 // CLI guard: `main()` runs only when this file is executed directly, so an

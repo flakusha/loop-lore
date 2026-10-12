@@ -146,6 +146,19 @@ export function reportResults(results,) {
   console.log(`Advisory: ${advisory}`,);
   console.log(`Failed: ${failed}`,);
 
+  // `Failed: 0` plus a terminal "All checks passed" reads as a clean bill of
+  // health even when an advisory gate is red. Advisory gates do not fail the
+  // run (they are generated-artifact freshness checks, reconciled post-merge),
+  // so the exit code is untouched — but the summary must say so loudly enough
+  // that nobody cites this run as green.
+  if (advisory > 0) {
+    console.log(`\n!!! ADVISORY FAILURES: ${advisory} — NOT a clean run.`,);
+    console.log(
+      "!!! These gates exited non-zero. They do not block, but the run is NOT green;",
+    );
+    console.log("!!! re-run each `ADVISORY:` command above and report its real status.");
+  }
+
   return failed;
 }
 
