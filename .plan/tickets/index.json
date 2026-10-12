@@ -127,6 +127,19 @@
     "title": "ActivityPub federation does not leverage the blog system (Lemmy/Mastodon primitive)",
     "type": "BUG"
   },
+  "BUG-ACTOR-MEMORY-TABLES-CARRY-NO-EMOTION-IMPACT-SO-EMOTION-TO-ME": {
+    "hash": "9d6ac7f",
+    "git_issue": "9d6ac7f",
+    "extid": "BUG-ACTOR-MEMORY-TABLES-CARRY-NO-EMOTION-IMPACT-SO-EMOTION-TO-ME",
+    "type": "BUG",
+    "title": "Actor memory tables carry no emotion_impact, so emotion-to-memory integration has no persistence",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "tags": [],
+    "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md",
+    "status": "Not Started"
+  },
   "BUG-ACTORTYPE-PERSONA-422-ON-VALID-UI-INPUT": {
     "epic": "epic-actors",
     "extid": "BUG-ACTORTYPE-PERSONA-422-ON-VALID-UI-INPUT",
@@ -284,6 +297,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-system-config-delete-passes-user-controlled-key-withou.md",
+    "status": "Not Started"
+  },
+  "BUG-ADMIN-SYSTEM-CONFIG-DELETE-RETURNS-400-FOR-KEYS-THE-TEST-EXP": {
+    "hash": "d69dc94",
+    "git_issue": "d69dc94",
+    "extid": "BUG-ADMIN-SYSTEM-CONFIG-DELETE-RETURNS-400-FOR-KEYS-THE-TEST-EXP",
+    "type": "BUG",
+    "title": "Admin system-config DELETE returns 400 for keys the test expects to delete as 204",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp.md",
     "status": "Not Started"
   },
   "BUG-ADMIN-TEMPLATE-UPDATE-WRITES-TO-UNVALIDATED-DETAIL-MODE-KEYS": {
@@ -3437,6 +3463,32 @@
     "tags": [],
     "title": "FE-BE: character-growth arc/confirm/reject declare unsatisfiable actorId param, Elysia 422s every call",
     "type": "BUG"
+  },
+  "BUG-FE-BE-HARMONIZATION-GATE-IS-BLOCKING-CONTRADICTING-ITS-OWN-A": {
+    "hash": "3db1677",
+    "git_issue": "3db1677",
+    "extid": "BUG-FE-BE-HARMONIZATION-GATE-IS-BLOCKING-CONTRADICTING-ITS-OWN-A",
+    "type": "BUG",
+    "title": "FE-BE harmonization gate is blocking, contradicting its own advisory acceptance criterion",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-fe-be-harmonization",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fe-be-harmonization-gate-is-blocking-contradicting-its-own-a.md",
+    "status": "Not Started"
+  },
+  "BUG-FE-BE-HARMONIZATION-SCRIPT-VIOLATES-ITS-OWN-NO-CONSOLE-ACCEP": {
+    "hash": "a5f1d91",
+    "git_issue": "a5f1d91",
+    "extid": "BUG-FE-BE-HARMONIZATION-SCRIPT-VIOLATES-ITS-OWN-NO-CONSOLE-ACCEP",
+    "type": "BUG",
+    "title": "FE-BE harmonization script violates its own no-console acceptance criterion",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-fe-be-harmonization",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fe-be-harmonization-script-violates-its-own-no-console-accep.md",
+    "status": "Not Started"
   },
   "BUG-FE-BE-HARMONY-CHECKER-BLIND-TO-ELYSIA-APP-DIRECT-ROUTES-FACT": {
     "epic": "",
@@ -9490,7 +9542,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-actor-autonomy-story-drive.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [
       "autonomy",
       "npc",
@@ -9882,7 +9934,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-archival-workflow.md",
-    "status": "draft",
+    "status": "done",
     "tags": [
       "archival",
       "soft-delete",
@@ -10525,6 +10577,26 @@
     "title": "Per-World Character Setup & Overlay",
     "type": "EPIC"
   },
+  "EPIC-CHARACTER-XP-LEVELING": {
+    "hash": "pending",
+    "extid": "EPIC-CHARACTER-XP-LEVELING",
+    "type": "EPIC",
+    "title": "Character XP, Leveling & Stat Progression in World",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "rpg",
+      "xp",
+      "leveling",
+      "stats",
+      "progression",
+      "world",
+      "autonomous-actors"
+    ],
+    "source": ".plan/tickets/epic-character-xp-leveling.md",
+    "status": "Not Started"
+  },
   "EPIC-CHAT-COMPOSER-FLOWS": {
     "epic": "",
     "extid": "EPIC-CHAT-COMPOSER-FLOWS",
@@ -10895,7 +10967,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-config-templates.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [
       "llm",
       "sd",
@@ -14647,7 +14719,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-script-migration.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [
       "(none)"
     ],
@@ -14893,7 +14965,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-task-management-integration.md",
-    "status": "draft",
+    "status": "done",
     "tags": [
       "task-management",
       "planning",
@@ -16721,6 +16793,19 @@
     "title": "Automated Balance Playtest Bot",
     "type": "FEAT"
   },
+  "FEAT-AUTOMATIC-ORGANIC-STAT-GROWTH-AND-ALLOCATABLE-ABILITY-POINTS": {
+    "hash": "f58bb71",
+    "git_issue": "f58bb71",
+    "extid": "FEAT-AUTOMATIC-ORGANIC-STAT-GROWTH-AND-ALLOCATABLE-ABILITY-POINTS",
+    "type": "FEAT",
+    "title": "Automatic organic stat growth and allocatable ability points on level-up",
+    "label": "feat",
+    "priority": "high",
+    "epic": "character-xp-leveling",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md",
+    "status": "Not Started"
+  },
   "FEAT-AVATAR-EXPRESSION-SYSTEM": {
     "epic": "epic-character-core-system",
     "extid": "FEAT-AVATAR-EXPRESSION-SYSTEM",
@@ -16771,6 +16856,19 @@
     ],
     "title": "Battle Core Implementation",
     "type": "FEAT"
+  },
+  "FEAT-BATTLE-REWARDS-GRANT-CHARACTER-XP-ON-ENEMY-DEFEAT": {
+    "hash": "c284d3d",
+    "git_issue": "c284d3d",
+    "extid": "FEAT-BATTLE-REWARDS-GRANT-CHARACTER-XP-ON-ENEMY-DEFEAT",
+    "type": "FEAT",
+    "title": "Battle rewards: grant character XP on enemy defeat",
+    "label": "feat",
+    "priority": "high",
+    "epic": "character-xp-leveling",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md",
+    "status": "Not Started"
   },
   "FEAT-BLADES-IN-THE-DARK-POSITION-EFFECT-CLOCKS": {
     "epic": "epic-resolution-system",
@@ -17710,6 +17808,23 @@
     "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md",
     "status": "in_progress"
   },
+  "FEAT-GATE-XP-AND-SKILL-XP-AWARDS-BEHIND-THE-PER-WORLD-RPG-XP-OPT-": {
+    "hash": "d493389",
+    "git_issue": "d493389",
+    "extid": "FEAT-GATE-XP-AND-SKILL-XP-AWARDS-BEHIND-THE-PER-WORLD-RPG-XP-OPT-",
+    "type": "FEAT",
+    "title": "Gate XP and skill XP awards behind the per-world rpg_xp opt-in",
+    "label": "feat",
+    "priority": "high",
+    "epic": "character-xp-leveling",
+    "tags": [
+      "rpg",
+      "xp",
+      "world-opt-in"
+    ],
+    "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md",
+    "status": "Not Started"
+  },
   "FEAT-GDPR-USER-DATA-RIGHTS": {
     "epic": "proposed:epic-gdpr-data-rights",
     "extid": "FEAT-GDPR-USER-DATA-RIGHTS",
@@ -17827,6 +17942,23 @@
     "title": "In-story character generation via assistant chat handoff",
     "type": "FEAT"
   },
+  "FEAT-INTEGRATE-SKILL-PROGRESSION-WITH-LEVELSERVICE-AS-ONE-GUARDED": {
+    "hash": "89fef2a",
+    "git_issue": "89fef2a",
+    "extid": "FEAT-INTEGRATE-SKILL-PROGRESSION-WITH-LEVELSERVICE-AS-ONE-GUARDED",
+    "type": "FEAT",
+    "title": "Integrate skill progression with LevelService as one guarded award pipeline",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "character-xp-leveling",
+    "tags": [
+      "rpg",
+      "xp",
+      "skills"
+    ],
+    "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md",
+    "status": "Not Started"
+  },
   "FEAT-INVENTORY-MANAGEMENT-UI": {
     "epic": "epic-inventory-ui",
     "extid": "FEAT-INVENTORY-MANAGEMENT-UI",
@@ -17933,6 +18065,32 @@
     "tags": [],
     "title": "Item System Extensions",
     "type": "FEAT"
+  },
+  "FEAT-LEVEL-UP-DECISION-INTERFACE-FOR-AUTONOMOUS-LLM-ACTORS-WITH-A": {
+    "hash": "e64d7f7",
+    "git_issue": "e64d7f7",
+    "extid": "FEAT-LEVEL-UP-DECISION-INTERFACE-FOR-AUTONOMOUS-LLM-ACTORS-WITH-A",
+    "type": "FEAT",
+    "title": "Level-up decision interface for autonomous LLM actors with affinity auto-allocation",
+    "label": "feat",
+    "priority": "high",
+    "epic": "character-xp-leveling",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md",
+    "status": "Not Started"
+  },
+  "FEAT-LEVELSERVICE-APPLY-AWARDED-XP-TO-CHARACTER-STATS-AND-LEVEL-U": {
+    "hash": "319ce79",
+    "git_issue": "319ce79",
+    "extid": "FEAT-LEVELSERVICE-APPLY-AWARDED-XP-TO-CHARACTER-STATS-AND-LEVEL-U",
+    "type": "FEAT",
+    "title": "LevelService: apply awarded XP to character_stats and level-up benefits",
+    "label": "feat",
+    "priority": "high",
+    "epic": "character-xp-leveling",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md",
+    "status": "Not Started"
   },
   "FEAT-LIVENESS-READINESS-ENDPOINTS-OPT-IN-CONFIG": {
     "epic": "epic-api-telemetry",
@@ -18381,6 +18539,23 @@
     "title": "Per-chat Assistant/GM Frontend",
     "type": "FEAT"
   },
+  "FEAT-PER-WORLD-SKILLS-MECHANIC-FLAG-AND-WORLD-CREATION-OPT-IN-UI": {
+    "hash": "430dd89",
+    "git_issue": "430dd89",
+    "extid": "FEAT-PER-WORLD-SKILLS-MECHANIC-FLAG-AND-WORLD-CREATION-OPT-IN-UI",
+    "type": "FEAT",
+    "title": "Per-world skills mechanic flag and world-creation opt-in UI",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "character-xp-leveling",
+    "tags": [
+      "rpg",
+      "skills",
+      "world-opt-in"
+    ],
+    "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md",
+    "status": "Not Started"
+  },
   "FEAT-PLOT-AUTOPILOT-AI-PROPOSES-NEXT-PLOT-BEATS": {
     "epic": "proposed:epic-plot-autopilot",
     "extid": "FEAT-PLOT-AUTOPILOT-AI-PROPOSES-NEXT-PLOT-BEATS",
@@ -18438,6 +18613,19 @@
     ],
     "title": "Procedural Asset Pipelines (maps/portraits/music/sfx)",
     "type": "FEAT"
+  },
+  "FEAT-PROGRESSION-API-AND-CHARACTER-MENU-SURFACE-FOR-XP-LEVEL-AND-": {
+    "hash": "a300746",
+    "git_issue": "a300746",
+    "extid": "FEAT-PROGRESSION-API-AND-CHARACTER-MENU-SURFACE-FOR-XP-LEVEL-AND-",
+    "type": "FEAT",
+    "title": "Progression API and character menu surface for XP, level, and stats in world",
+    "label": "feat",
+    "priority": "high",
+    "epic": "character-xp-leveling",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md",
+    "status": "Not Started"
   },
   "FEAT-PROMPT-LOREBOOK-MARKETPLACE-COMMUNITY-SHARED": {
     "epic": "proposed:epic-marketplace",
@@ -18771,6 +18959,23 @@
     ],
     "title": "Shared Persistent Worlds (multiplayer co-op storytelling)",
     "type": "FEAT"
+  },
+  "FEAT-SKILL-USAGE-XP-AWARD-SKILL-AND-CHARACTER-XP-WHEN-SKILLS-ARE-": {
+    "hash": "d735eda",
+    "git_issue": "d735eda",
+    "extid": "FEAT-SKILL-USAGE-XP-AWARD-SKILL-AND-CHARACTER-XP-WHEN-SKILLS-ARE-",
+    "type": "FEAT",
+    "title": "Skill usage XP: award skill and character XP when skills are exercised",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "character-xp-leveling",
+    "tags": [
+      "rpg",
+      "xp",
+      "skills"
+    ],
+    "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md",
+    "status": "Not Started"
   },
   "FEAT-SKILLS": {
     "epic": "epic-skills",
@@ -19219,6 +19424,19 @@
     ],
     "title": "Worlds Frontend (list/detail, timeline, location travel UI)",
     "type": "FEAT"
+  },
+  "FEAT-XP-SOURCES-FOR-QUESTS-SKILL-CHALLENGES-DISCOVERY-AND-TRAVEL": {
+    "hash": "0d94df3",
+    "git_issue": "0d94df3",
+    "extid": "FEAT-XP-SOURCES-FOR-QUESTS-SKILL-CHALLENGES-DISCOVERY-AND-TRAVEL",
+    "type": "FEAT",
+    "title": "XP sources for quests, skill challenges, discovery, and travel",
+    "label": "feat",
+    "priority": "high",
+    "epic": "character-xp-leveling",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md",
+    "status": "Not Started"
   },
   "FIX-ADD-JITTER-TO-THE-FINALIZE-LOCK-RETRY-BACKOFF": {
     "hash": "a2c4b9b",
@@ -24652,6 +24870,19 @@
     "tags": [],
     "title": "Audit t.UnionEnum schema fields: absent value silently defaults to first member (Elysia 1.4)",
     "type": "TASK"
+  },
+  "TASK-AUDIT-UNDOCUMENTED-SRC-CONTENT-SRC-AUX-PIPELINE-AND-SRC-IMAG": {
+    "hash": "21ba343",
+    "git_issue": "21ba343",
+    "extid": "TASK-AUDIT-UNDOCUMENTED-SRC-CONTENT-SRC-AUX-PIPELINE-AND-SRC-IMAG",
+    "type": "TASK",
+    "title": "Audit undocumented src/content, src/aux-pipeline and src/image-edit modules",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag.md",
+    "status": "Not Started"
   },
   "TASK-AUTH-FACTORS-SCHEMA-AND-SERVICE-CORE-F1": {
     "epic": "Authentication Channel Provisioning",
@@ -32670,6 +32901,19 @@
     "title": "Emergent Narrative Design Principles",
     "type": "TASK"
   },
+  "TASK-EMIT-EXPLORATION-ENCOUNTER-TRIGGERED-FROM-THE-DISCOVERY-EVEN": {
+    "hash": "a2b45ee",
+    "git_issue": "a2b45ee",
+    "extid": "TASK-EMIT-EXPLORATION-ENCOUNTER-TRIGGERED-FROM-THE-DISCOVERY-EVEN",
+    "type": "TASK",
+    "title": "Emit exploration.encounter_triggered from the discovery event bus",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-exploration-discovery",
+    "tags": [],
+    "source": ".plan/tickets/TASK-emit-exploration-encounter-triggered-from-the-discovery-even.md",
+    "status": "Not Started"
+  },
   "TASK-EMOJI-COLON-FORMAT-FRONTEND": {
     "epic": "epic-frontend-emoji-reactions",
     "extid": "TASK-EMOJI-COLON-FORMAT-FRONTEND",
@@ -35816,7 +36060,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-group-chat-turn-orchestration.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Group Chat Turn Orchestration",
     "type": "TASK"
@@ -37051,6 +37295,19 @@
     "tags": [],
     "title": "Implement reusable bulk ticket-resolution helper",
     "type": "TASK"
+  },
+  "TASK-IMPLEMENT-THE-CRYPTO-ALGORITHM-REGISTRY-AND-FACTORY-CRYPTOAL": {
+    "hash": "e816aca",
+    "git_issue": "e816aca",
+    "extid": "TASK-IMPLEMENT-THE-CRYPTO-ALGORITHM-REGISTRY-AND-FACTORY-CRYPTOAL",
+    "type": "TASK",
+    "title": "Implement the crypto algorithm registry and factory (CryptoAlgorithm, createEncryptor/createDecryptor)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal.md",
+    "status": "Not Started"
   },
   "TASK-IMPLEMENT-TRADE": {
     "epic": "epic-item-systems-unification",
@@ -38898,6 +39155,19 @@
     "epic": "epic-local-multi-instance-federation",
     "tags": [],
     "source": ".plan/tickets/TASK-make-the-federation-config-panel-editable-in-the-config-ui.md",
+    "status": "Not Started"
+  },
+  "TASK-MAKE-WORLD-ITEM-TRANSFER-ATOMIC-WHEN-THE-DESTINATION-ACTOR-I": {
+    "hash": "1beccfa",
+    "git_issue": "1beccfa",
+    "extid": "TASK-MAKE-WORLD-ITEM-TRANSFER-ATOMIC-WHEN-THE-DESTINATION-ACTOR-I",
+    "type": "TASK",
+    "title": "Make world-item transfer atomic when the destination actor insert fails",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-inventory",
+    "tags": [],
+    "source": ".plan/tickets/TASK-make-world-item-transfer-atomic-when-the-destination-actor-i.md",
     "status": "Not Started"
   },
   "TASK-MANAGEMENT-INTEGRATION": {
@@ -50545,6 +50815,19 @@
     "tags": [],
     "title": "Wire NPC Navigation Routes",
     "type": "TASK"
+  },
+  "TASK-WIRE-NSFW-5-TIER-RATING-INTO-ENFORCEMENT-EPIC-OPEN-ITEM-B4": {
+    "hash": "9338886",
+    "git_issue": "9338886",
+    "extid": "TASK-WIRE-NSFW-5-TIER-RATING-INTO-ENFORCEMENT-EPIC-OPEN-ITEM-B4",
+    "type": "TASK",
+    "title": "Wire NSFW 5-tier rating into enforcement (epic open item B4)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-nsfw-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-nsfw-5-tier-rating-into-enforcement-epic-open-item-b4.md",
+    "status": "Not Started"
   },
   "TASK-WIRE-PLUGIN-BUNDLES-TO-RICHER-CHARACTER-EXTENSIONS": {
     "epic": "",
