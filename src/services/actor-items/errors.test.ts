@@ -35,10 +35,10 @@ describe("actor-items tagged errors", () => {
   });
 
   test("SlotConflictError names the occupied slot", () => {
-    const err = new SlotConflictError("head",);
+    const err = new SlotConflictError("armor",);
     expect(err.tag,).toBe("actor-item-slot-conflict",);
     expect(err.name,).toBe("SlotConflictError",);
-    expect(err.message,).toBe("Another head is already equipped",);
+    expect(err.message,).toBe("Another armor is already equipped",);
   });
 
   test("AffordanceDeniedError carries the denial reason", () => {
