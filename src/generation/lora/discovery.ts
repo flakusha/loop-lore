@@ -36,11 +36,6 @@ const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000;
  * @param options.timeoutMs
  * @param options.forceRefresh
  * @returns Discovery result with available LoRA models
- * @example
- * ```ts
- * const result = await discoverLoras("comfyui", "http://localhost:8188");
- * console.log("Found", result.models.length, "LoRA models");
- * ```
  */
 export async function discoverLoras(
   backend: "comfyui" | "sd-server",
@@ -103,13 +98,6 @@ export async function discoverLoras(
  * @param options.timeoutMs
  * @param options.forceRefresh
  * @returns Combined discovery results
- * @example
- * ```ts
- * const results = await discoverAllLoras([
- *   { backend: "comfyui", baseUrl: "http://localhost:8188" },
- *   { backend: "sd-server", baseUrl: "http://localhost:9010" },
- * ]);
- * ```
  */
 export async function discoverAllLoras(
   backends: { backend: "comfyui" | "sd-server"; baseUrl: string }[],

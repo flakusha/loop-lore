@@ -48,11 +48,6 @@ export const DEFAULT_GLOBAL_CAP: Required<TimeCapTier> = {
  * admin `maxMs` instead of discarding it.
  * @param config - 3-tier config
  * @returns effective caps
- * @example
- * ```ts
- * resolveTimeCap({ global: { defaultMs: 500, maxMs: 2000 }, user: { maxMs: 300 } });
- * // → { defaultMs: 500, maxMs: 300 }
- * ```
  */
 export function resolveTimeCap(config: SearchTimeCapConfig,): ResolvedTimeCap {
   const pick = (

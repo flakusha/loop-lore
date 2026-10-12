@@ -26,9 +26,6 @@ export const DEFAULT_TOOL_TIMEOUT_MS = 30_000;
  * @param params - Parameters for the handler.
  * @param ctx - Optional per-request execution context.
  * @returns The handler result, or an `isError` result on throw/timeout.
- * @example
- * const res = await executePluginTool(tool, { q: "hi" }, ctx);
- * if (res.isError) return fallback(res.content);
  */
 export async function executePluginTool(
   tool: ToolDefinition,

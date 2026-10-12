@@ -31,14 +31,6 @@ export interface UpgradeConnectionOpts {
  * @param opts.config - Transport config for the new handler
  * @returns New ProtocolHandler on target protocol
  * @throws TransportError if upgrade fails and fallback also fails
- * @example
- * ```ts
- * const http1 = createProtocol({ protocol: "http/1.1" });
- * await http1.connect();
- * // ... HTTP/1.1 communication ...
- * const ws = await upgradeConnection({ current: http1, targetProtocol: "websocket", config: { protocol: "websocket" } });
- * // ... WebSocket communication ...
- * ```
  */
 export async function upgradeConnection({
   current,

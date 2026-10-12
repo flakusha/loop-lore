@@ -32,11 +32,6 @@ const HEX_DIGIT = /^[0-9a-fA-F]$/;
  * predictable key would let anyone holding the DB compute the blind tokens
  * offline and confirm guessed words.
  * @returns 64-char hex string, safe to store directly in the TEXT column.
- * @example
- * ```ts
- * const secret = generateEncryptionSecret();
- * await db.updateTable("users").set({ encryption_secret: secret }).execute();
- * ```
  */
 export function generateEncryptionSecret(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(ENCRYPTION_SECRET_BYTES,),);

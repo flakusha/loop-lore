@@ -23,10 +23,6 @@ export const RRF_K = 60;
  * @param topK - max fused hits to return
  * @param k - RRF damping constant
  * @returns fused hits sorted by score descending
- * @example
- * ```ts
- * reciprocalRankFusion([[keywordHit], [vectorHit]], 10);
- * ```
  */
 export function reciprocalRankFusion<T,>(
   lists: SearchHit<T>[][],
@@ -62,10 +58,6 @@ export function reciprocalRankFusion<T,>(
  * @param query - raw user input
  * @param haystack - candidate text (asset name, character name, …)
  * @returns 1 for exact match, (0, 1) for substring, 0 for no match
- * @example
- * ```ts
- * fuzzyScore("tav", "Tavern interior"); // → 0.95 (prefix at 0)
- * ```
  */
 export function fuzzyScore(query: string, haystack: string,): number {
   const q = query.trim().toLowerCase();
@@ -85,10 +77,6 @@ export function fuzzyScore(query: string, haystack: string,): number {
  * therefore a non-negative rank where lower is better, mapped monotonically.
  * @param rank - negated bm25 value (≥ 0, lower is better)
  * @returns score in (0, 1], higher is better
- * @example
- * ```ts
- * bm25ToScore(-row.matchScore); // bm25() is negative
- * ```
  */
 export function bm25ToScore(rank: number,): number {
   return 1 / (1 + Math.max(0, rank,));

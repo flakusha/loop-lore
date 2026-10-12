@@ -219,9 +219,6 @@ export interface DateFormatOptions {
  * @param input - Date, epoch ms, or ISO string.
  * @param options - locale/tz/humanStyle controls
  * @returns formatted display string (empty for invalid input).
- * @example
- * formatHuman("2026-07-04T14:30:00Z", { locale: "de-DE", tz: "Europe/Berlin" })
- * // "4. Juli 2026, 16:30"
  */
 export function formatHuman(
   input?: Date | number | string,
@@ -261,9 +258,6 @@ export function formatHuman(
  * @param format - output format (`"iso"` default).
  * @param options - locale/tz for display formats.
  * @returns formatted date (number for `"unix"`, string otherwise; `""` for invalid display input).
- * @example
- * serializeDate(1751639400000, "iso", { tz: "America/New_York" })
- * // "2026-07-04T10:30:00.000-04:00"
  */
 export function serializeDate(
   input?: Date | number | string,
@@ -297,11 +291,6 @@ export function serializeDate(
  * expires" rather than "expiry unparseable".
  * @param input - value to parse; anything non-string returns `null`.
  * @returns epoch milliseconds, or `null` if the input is not a parseable date.
- * @example
- *   parseExpiryMs("2026-12-31T23:59:59Z"); // 1798809599000
- *   parseExpiryMs("");                     // null
- *   parseExpiryMs("not a date");           // null
- *   parseExpiryMs(undefined);              // null
  */
 export function parseExpiryMs(input: unknown,): number | null {
   if (typeof input !== "string" || input.length === 0) { return null; }

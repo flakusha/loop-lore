@@ -76,9 +76,6 @@ export function resolveKey(options: ResolveKeyOptions,): string | undefined {
  * @param template - translated string with `{name}` placeholders
  * @param params - substitution map
  * @returns interpolated string.
- * @example
- * interpolate("Hello, {name}!", { name: "World" })
- * // => "Hello, World!"
  */
 export function interpolate(
   template: string,
