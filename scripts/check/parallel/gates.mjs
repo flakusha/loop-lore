@@ -215,10 +215,12 @@ checks["weave - damage scan"] = process.env.WEAVE_BASE
   ? "bun run scripts/check/weave-damage.mjs"
   : NOOP_OK;
 
+// Size gates use giwt's check-file-size (local scripts/check-file-size.ts deleted 2026-10-12)
+checks["size - check"] = "bun run node_modules/giwt/scripts/check-file-size.ts";
+checks["size - strict"] = "bun run node_modules/giwt/scripts/check-file-size.ts --strict";
+
 // Narrow lint + md:lint to the diff when `--diff-base` is set. Before the
 // --gates filter, so the filter narrows the SCOPED table rather than the
 // static one.
 applyDiffScopedStaticGates(checks,);
 applyGateFilter(checks,);
-
-// Resolved: deletion commit (dynamic assignments) + dev's giwt size gate paths
