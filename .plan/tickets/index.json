@@ -5114,6 +5114,19 @@
     "title": "keynav stale unsubscribe deletes live handler set",
     "type": "BUG"
   },
+  "BUG-KYSELY-ANY-TYPE-SAFETY-GAPS-IN-DB-LAYER": {
+    "hash": "6738d32",
+    "git_issue": "6738d32",
+    "extid": "BUG-KYSELY-ANY-TYPE-SAFETY-GAPS-IN-DB-LAYER",
+    "type": "BUG",
+    "title": "Kysely<any> type safety gaps in DB layer",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-kysely-any-type-safety-gaps-in-db-layer.md",
+    "status": "Not Started"
+  },
   "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT": {
     "epic": "",
     "extid": "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT",
@@ -5968,6 +5981,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-notification-bell-visible-on-login-register-pages.md",
+    "status": "Not Started"
+  },
+  "BUG-NOTIFICATION-SSE-TICK-SWALLOWS-ERRORS-SILENTLY": {
+    "hash": "a139965",
+    "git_issue": "a139965",
+    "extid": "BUG-NOTIFICATION-SSE-TICK-SWALLOWS-ERRORS-SILENTLY",
+    "type": "BUG",
+    "title": "Notification SSE tick swallows errors silently",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-notification-sse-tick-swallows-errors-silently.md",
     "status": "Not Started"
   },
   "BUG-NOTIFICATION-STREAM-ERROR-UNREACHABLE": {
@@ -31480,6 +31506,58 @@
     "title": "Delete dead migration-helpers.ts boolToEnum",
     "type": "TASK"
   },
+  "TASK-DELETE-DEAD-RPG-REGEX-BATTLE-PLUGINS-SUBTREES-AND-SHIM-BARRE": {
+    "hash": "d7289fb",
+    "git_issue": "d7289fb",
+    "extid": "TASK-DELETE-DEAD-RPG-REGEX-BATTLE-PLUGINS-SUBTREES-AND-SHIM-BARRE",
+    "type": "TASK",
+    "title": "Delete dead rpg/regex/battle/plugins subtrees and shim barrels",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre.md",
+    "status": "Not Started"
+  },
+  "TASK-DELETE-DEAD-SRC-TRANSPORT-PROTOCOL-HANDLER-TREE-AND-WRITE-ON": {
+    "hash": "f4b51c5",
+    "git_issue": "f4b51c5",
+    "extid": "TASK-DELETE-DEAD-SRC-TRANSPORT-PROTOCOL-HANDLER-TREE-AND-WRITE-ON",
+    "type": "TASK",
+    "title": "Delete dead src/transport/ protocol-handler tree and write-only config.transport keys",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on.md",
+    "status": "Not Started"
+  },
+  "TASK-DELETE-DUPLICATE-CONFIG-SCHEMA-SHIM-LAYERS-DEAD-CONFIG-EMITT": {
+    "hash": "1857af3",
+    "git_issue": "1857af3",
+    "extid": "TASK-DELETE-DUPLICATE-CONFIG-SCHEMA-SHIM-LAYERS-DEAD-CONFIG-EMITT",
+    "type": "TASK",
+    "title": "Delete duplicate config schema/shim layers, dead config emitters and one-shot migration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt.md",
+    "status": "Not Started"
+  },
+  "TASK-DELETE-ORPHANED-LOCALE-KEYS-ACROSS-ALL-10-LOCALE-FILES-LEAVE": {
+    "hash": "041ce61",
+    "git_issue": "041ce61",
+    "extid": "TASK-DELETE-ORPHANED-LOCALE-KEYS-ACROSS-ALL-10-LOCALE-FILES-LEAVE",
+    "type": "TASK",
+    "title": "Delete orphaned locale keys across all 10 locale files (leave harness.* untouched)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave.md",
+    "status": "Not Started"
+  },
   "TASK-DELETE-SCENARIO-CATALOG-TOOLING": {
     "epic": "",
     "extid": "TASK-DELETE-SCENARIO-CATALOG-TOOLING",
@@ -31505,6 +31583,71 @@
     "tags": [],
     "source": ".plan/tickets/TASK-delete-the-in-repo-scripts-worktree-fork-giwt-is-the-only-wo.md",
     "status": "done"
+  },
+  "TASK-DELETE-UNREACHABLE-VIEW-PARTIALS-ORPHAN-PARTIAL-AND-DEAD-CSS": {
+    "hash": "15a6ca4",
+    "git_issue": "15a6ca4",
+    "extid": "TASK-DELETE-UNREACHABLE-VIEW-PARTIALS-ORPHAN-PARTIAL-AND-DEAD-CSS",
+    "type": "TASK",
+    "title": "Delete unreachable view partials, orphan partial and dead CSS blocks",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css.md",
+    "status": "Not Started"
+  },
+  "TASK-DELETE-UNREFERENCED-GENERATION-STORY-ASSISTANT-AND-CHAT-CODE": {
+    "hash": "e68bb66",
+    "git_issue": "e68bb66",
+    "extid": "TASK-DELETE-UNREFERENCED-GENERATION-STORY-ASSISTANT-AND-CHAT-CODE",
+    "type": "TASK",
+    "title": "Delete unreferenced generation, story, assistant and chat code (nsfw-context section needs an owner decision)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-unreferenced-generation-story-assistant-and-chat-code.md",
+    "status": "Not Started"
+  },
+  "TASK-DELETE-UNREFERENCED-PLATFORM-SERVICE-UTIL-MODULES-DEAD-BARRE": {
+    "hash": "426265c",
+    "git_issue": "426265c",
+    "extid": "TASK-DELETE-UNREFERENCED-PLATFORM-SERVICE-UTIL-MODULES-DEAD-BARRE",
+    "type": "TASK",
+    "title": "Delete unreferenced platform service/util modules, dead barrels and two unused dependencies",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-unreferenced-platform-service-util-modules-dead-barre.md",
+    "status": "Not Started"
+  },
+  "TASK-DELETE-UNREFERENCED-ROUTE-VALIDATION-MODULES-DEAD-HELPERS-AN": {
+    "hash": "76f9d62",
+    "git_issue": "76f9d62",
+    "extid": "TASK-DELETE-UNREFERENCED-ROUTE-VALIDATION-MODULES-DEAD-HELPERS-AN",
+    "type": "TASK",
+    "title": "Delete unreferenced route/validation modules, dead helpers and character error classes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md",
+    "status": "Not Started"
+  },
+  "TASK-DELETE-UNWIRED-DH-RATCHET-E2E-SUBTREE-IN-SRC-CRYPTO-E2E-AND-": {
+    "hash": "7d4e07c",
+    "git_issue": "7d4e07c",
+    "extid": "TASK-DELETE-UNWIRED-DH-RATCHET-E2E-SUBTREE-IN-SRC-CRYPTO-E2E-AND-",
+    "type": "TASK",
+    "title": "Delete unwired DH-ratchet E2E subtree in src/crypto/e2e/ and dead activitypub-keys.ts",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md",
+    "status": "Not Started"
   },
   "TASK-DELETECHAT-RUNS-9-SEQUENTIAL-DELETES-WITHOUT-TRANSACTION-ORP": {
     "epic": "",
@@ -45250,6 +45393,19 @@
     "source": ".plan/tickets/TASK-replace-concurrency-limiter-core-with-effect-semaphore.md",
     "status": "done"
   },
+  "TASK-REPLACE-HAND-ROLLED-IMAGE-HEADER-PROBING-IN-SRC-ASSETS-WITH-": {
+    "hash": "af02262",
+    "git_issue": "af02262",
+    "extid": "TASK-REPLACE-HAND-ROLLED-IMAGE-HEADER-PROBING-IN-SRC-ASSETS-WITH-",
+    "type": "TASK",
+    "title": "Replace hand-rolled image header probing in src/assets with sharp().metadata()",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-.md",
+    "status": "Not Started"
+  },
   "TASK-REPLACE-KNIP-GLOBAL-TYPES-EXCLUSION-WITH-PER-SYMBOL-KNIPIGNO": {
     "epic": "",
     "extid": "TASK-REPLACE-KNIP-GLOBAL-TYPES-EXCLUSION-WITH-PER-SYMBOL-KNIPIGNO",
@@ -46984,6 +47140,19 @@
     "title": "Server-Side i18n Middleware",
     "type": "TASK"
   },
+  "TASK-SERVICES-ACTOR-ITEMS-TS-VS-SERVICES-ACTOR-ITEMS-NAME-COLLISI": {
+    "hash": "1f9ebc1",
+    "git_issue": "1f9ebc1",
+    "extid": "TASK-SERVICES-ACTOR-ITEMS-TS-VS-SERVICES-ACTOR-ITEMS-NAME-COLLISI",
+    "type": "TASK",
+    "title": "services/actor-items.ts vs services/actor-items/ name collision",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-services-actor-items-ts-vs-services-actor-items-name-collisi.md",
+    "status": "Not Started"
+  },
   "TASK-SESSIONS-API-ROUTES": {
     "epic": "epic-multi-session",
     "extid": "TASK-SESSIONS-API-ROUTES",
@@ -47118,6 +47287,19 @@
     "tags": [],
     "title": "Signed URLs for Asset Downloads",
     "type": "TASK"
+  },
+  "TASK-SIMPLIFICATION-SWEEP-MICRO-CLEANUPS-AND-SINGLE-IMPLEMENTATIO": {
+    "hash": "f22f183",
+    "git_issue": "f22f183",
+    "extid": "TASK-SIMPLIFICATION-SWEEP-MICRO-CLEANUPS-AND-SINGLE-IMPLEMENTATIO",
+    "type": "TASK",
+    "title": "Simplification sweep: micro-cleanups and single-implementation wrappers (low priority)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md",
+    "status": "Not Started"
   },
   "TASK-SINGLE-SOURCE-OF-TRUTH-FOR-CONFIG-SCHEMA-MIRRORS": {
     "epic": "",
@@ -48996,6 +49178,19 @@
     "title": "Travel Scheduler Tick",
     "type": "TASK"
   },
+  "TASK-TRIAGE-KNIP-SRC-FINDINGS": {
+    "hash": "9b90505",
+    "git_issue": "9b90505",
+    "extid": "TASK-TRIAGE-KNIP-SRC-FINDINGS",
+    "type": "TASK",
+    "title": "Triage knip src findings",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-triage-knip-src-findings.md",
+    "status": "Not Started"
+  },
   "TASK-TTS-EDGE-INTEGRATION": {
     "epic": "epic-audio-video-sound",
     "extid": "TASK-TTS-EDGE-INTEGRATION",
@@ -49364,6 +49559,19 @@
     "tags": [],
     "title": "Unify logging output to canonical JSONL",
     "type": "TASK"
+  },
+  "TASK-UNIFY-SAFE-JSON-IMPORT-CONVENTION": {
+    "hash": "8fa9c2f",
+    "git_issue": "8fa9c2f",
+    "extid": "TASK-UNIFY-SAFE-JSON-IMPORT-CONVENTION",
+    "type": "TASK",
+    "title": "Unify safe-json import convention",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unify-safe-json-import-convention.md",
+    "status": "Not Started"
   },
   "TASK-UNIT-TESTS-UNTESTED-BATCH": {
     "epic": "epic-testing-qa",
