@@ -45,11 +45,6 @@ export interface BackfillSummary {
  * @param opts - `dryRun` reports counts without writing
  * @param opts.dryRun
  * @returns counts of rows considered and written
- * @example
- * ```ts
- * const first = await runBackfill(db, {});
- * const second = await runBackfill(db, {}); // second.updated === 0
- * ```
  */
 export async function runBackfill(
   db: Kysely<DB>,

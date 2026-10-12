@@ -75,10 +75,6 @@ function bytesToHex(bytes: Uint8Array,): string {
  * realistic client-side fan-out).
  * @param opts - Optional overrides for timestamp or randomness source.
  * @returns A new UUIDv7 string.
- * @example
- * ```ts
- * const id = browserRandomUUIDv7(); // "018e4c5a-7b21-7a23-9f12-3c9d8e7b2a4f"
- * ```
  * @throws {Error}
  */
 export function browserRandomUUIDv7(opts: BrowserUUIDv7Options = {},): string {

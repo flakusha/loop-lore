@@ -14,10 +14,6 @@ import type { Config, } from "../../../config/schema";
  * `apiFamily` field and falls back to a sensible localhost default.
  * @param config - App config (may be undefined)
  * @returns Resolved backend URLs
- * @example
- * ```ts
- * const { comfyUrl, sdServerUrl } = resolveBackendUrls(config);
- * ```
  */
 export function resolveBackendUrls(config?: Config,): { comfyUrl: string; sdServerUrl: string } {
   const sdProviders = config?.generation?.providers?.sd ?? [];

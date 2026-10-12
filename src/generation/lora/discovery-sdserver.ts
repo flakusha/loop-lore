@@ -42,15 +42,6 @@ interface SdCppModel {
  * @param baseUrl - sd.cpp server base URL (e.g., "http://localhost:9010")
  * @param timeoutMs - Request timeout in milliseconds
  * @returns Discovery result with available LoRA models
- * @example
- * ```ts
- * const result = await discoverSdCppLoras("http://localhost:9010");
- * if (result.error) {
- *   console.error("Discovery failed:", result.error);
- * } else {
- *   console.log("Found", result.models.length, "LoRA models");
- * }
- * ```
  */
 export async function discoverSdCppLoras(
   baseUrl: string,
@@ -123,11 +114,6 @@ export async function discoverSdCppLoras(
  * @param name - LoRA model name (without extension)
  * @param strength - Application strength (0.1-1.0)
  * @returns Prompt prefix string
- * @example
- * ```ts
- * const prefix = buildSdCppLoraPrefix("my_character", 0.7);
- * // prefix === "[lora:my_character:0.7]"
- * ```
  */
 export function buildSdCppLoraPrefix(name: string, strength: number,): string {
   return `[lora:${name}:${strength}]`;
@@ -139,11 +125,6 @@ export function buildSdCppLoraPrefix(name: string, strength: number,): string {
  * @param name - LoRA model name
  * @param strength - Application strength
  * @returns Modified prompt with LoRA prefix
- * @example
- * ```ts
- * const prompt = injectSdCppLora("a beautiful portrait", "my_character", 0.7);
- * // prompt === "[lora:my_character:0.7] a beautiful portrait"
- * ```
  */
 export function injectSdCppLora(prompt: string, name: string, strength: number,): string {
   const prefix = buildSdCppLoraPrefix(name, strength,);

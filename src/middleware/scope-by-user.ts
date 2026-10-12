@@ -45,10 +45,6 @@ export interface SessionActor {
  * raised. This keeps route handlers free of try/catch around the
  * actor lookup.
  *
- * @example
- *   const actor = requireActorFromSession(ctx);
- *   if (!("userId" in actor)) { return actor; } // 401
- *   const { userId } = actor;
  * @param ctx - Elysia request context (typed `unknown` to avoid
  *             coupling this helper to the full request shape).
  * @returns {Response | SessionActor}

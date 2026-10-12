@@ -102,9 +102,6 @@ export function safeJsonStringify(
  * @param value - value to serialize
  * @param fallback - string returned on serialization failure (default `"{}"`)
  * @returns JSON string, or `fallback` if serialization fails.
- * @example
- *   jsonStringifyOr({ a: 1 })         // '{"a":1}'
- *   jsonStringifyOr(bad, "[]")         // '[]'
  */
 export function jsonStringifyOr(value: unknown, fallback = "{}",): string {
   const r = safeJsonStringify(value,);

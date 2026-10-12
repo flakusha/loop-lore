@@ -59,11 +59,6 @@ function activeLocale(): Locale {
  * @param map
  * @param key
  * @param count
- * @example
- * resolveKey({ common: { save: "Save" } }, "common.save") // => "Save"
- * resolveKey({ common: { save: "Save" } }, "missing") // => undefined
- * resolveKey({ i: { item: { one: "{count} item", other: "{count} items" } } }, "i.item", 1)
- * // => "{count} item"
  * @returns {string | undefined}
  */
 export function resolveKey(
@@ -102,9 +97,6 @@ export function resolveKey(
  * Flatten a nested translation map into dot-notation keys.
  * @param map
  * @param prefix
- * @example
- * flattenTranslations({ common: { save: "Save" } })
- * // => Map { "common.save" => "Save" }
  * @returns {Map<string, string>}
  */
 export function flattenTranslations(
@@ -142,8 +134,6 @@ export const INTERPOLATE_RE = /\{(\w+)\}/g;
  * Accepts numbers so a plural-selected `{count}` renders as "1 item", not "1".
  * @param template
  * @param params
- * @example
- * interpolate("Hello {name}", { name: "World" }) // => "Hello World"
  * @returns {string}
  */
 export function interpolate(

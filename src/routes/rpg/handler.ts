@@ -24,15 +24,6 @@ export interface RpgRouteContext {
  * unhandled exception.
  * @param fn
  * @param errorLabel
- * @example
- * .post(
- *   "/api/rpg/dice/roll",
- *   rpgHandler(async (_userId, ctx) => {
- *     const body = ctx.body as DiceRollBody;
- *     return rollDice(body.sides, body.count ?? 1, body.modifier ?? 0);
- *   }, "Failed to roll dice"),
- *   rpgRouteConfig(DiceRollBody, "Roll dice", "...", "Dice"),
- * )
  * @returns {(ctx: RpgRouteContext) => Promise<Response | T>}
  */
 export function rpgHandler<T = unknown,>(

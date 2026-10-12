@@ -6,10 +6,6 @@
  *
  * Designed to be compatible with the existing `feFetch` frontend utility while
  * also working on the backend (Node.js/Bun server-side).
- * @example
- * // Basic GET with JSON response
- * const result = await safeFetch<MyData>("/api/data");
- * if (result.ok) { console.log(result.data); }
  */
 import type { JsonResult, } from "../safe-json";
 import { safeJsonParse, safeJsonStringify, } from "../safe-json";

@@ -65,10 +65,6 @@ export async function classifyIntent(
  *
  * @param content - Raw LLM response text
  * @returns Classification, or null if the response is missing `intent`
- *
- * @example
- * parseIntentClassification('{"intent":"chat","confidence":0.8,"shortReply":false}')
- * // { intent: "chat", confidence: 0.8, shortReply: false }
  */
 export function parseIntentClassification(content: string,): IntentClassification | null {
   const parsed = jsonParseOr<Partial<IntentClassification>>(content, {},);
