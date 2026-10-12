@@ -8119,6 +8119,19 @@
     "title": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22: Closeout — Resolved by post-Aug-22 commits",
     "type": "BUG"
   },
+  "BUG-TEST-UNHANDLED-JSON-CASCADE-UNEXPLAINED-AFTER-CHAT-EXPORT-FI": {
+    "epic": "",
+    "extid": "BUG-TEST-UNHANDLED-JSON-CASCADE-UNEXPLAINED-AFTER-CHAT-EXPORT-FI",
+    "git_issue": "d17b7a7",
+    "hash": "d17b7a7",
+    "label": "bug",
+    "priority": "medium",
+    "source": ".plan/tickets/BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi.md",
+    "status": "Not Started",
+    "tags": [],
+    "title": "test - unhandled JSON cascade unexplained after chat-export fix",
+    "type": "BUG"
+  },
   "BUG-TESTS-DELETE-APP-INSTALLED-GLOBALS-BREAKING-EVERY-LATER-TEST": {
     "hash": "8bb511f",
     "git_issue": "8bb511f",
@@ -10578,7 +10591,7 @@
     "type": "EPIC"
   },
   "EPIC-CHARACTER-XP-LEVELING": {
-    "hash": "pending",
+    "hash": "3b5fc7b",
     "extid": "EPIC-CHARACTER-XP-LEVELING",
     "type": "EPIC",
     "title": "Character XP, Leveling & Stat Progression in World",
@@ -10594,8 +10607,9 @@
       "world",
       "autonomous-actors"
     ],
-    "source": ".plan/tickets/epic-character-xp-leveling.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-character-xp-leveling.md",
+    "status": "Not Started",
+    "git_issue": "3b5fc7b"
   },
   "EPIC-CHAT-COMPOSER-FLOWS": {
     "epic": "",
@@ -12900,6 +12914,28 @@
     "status": "Proposed",
     "git_issue": "04ef186"
   },
+  "EPIC-LOCAL-MODEL-FILE-DISCOVERY": {
+    "hash": "ae64753",
+    "extid": "EPIC-LOCAL-MODEL-FILE-DISCOVERY",
+    "type": "EPIC",
+    "title": "Local Model File Discovery",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "models",
+      "discovery",
+      "scanning",
+      "safetensors",
+      "gguf",
+      "sd",
+      "llama",
+      "file-indexing"
+    ],
+    "source": ".plan/epics/epic-local-model-file-discovery.md",
+    "status": "Not Started",
+    "git_issue": "ae64753"
+  },
   "EPIC-LOCAL-PROCESS-SWARM": {
     "epic": "",
     "extid": "EPIC-LOCAL-PROCESS-SWARM",
@@ -13461,6 +13497,49 @@
     ],
     "title": "Model Family Presets",
     "type": "EPIC"
+  },
+  "EPIC-MODEL-INFO-FRONTEND": {
+    "hash": "f243720",
+    "extid": "EPIC-MODEL-INFO-FRONTEND",
+    "type": "EPIC",
+    "title": "Model Info Frontend (Cards, Tags, Filters)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "frontend",
+      "models",
+      "cards",
+      "tags",
+      "search",
+      "alpine",
+      "admin"
+    ],
+    "source": ".plan/epics/epic-model-info-frontend.md",
+    "status": "Not Started",
+    "git_issue": "f243720"
+  },
+  "EPIC-MODEL-METADATA-READ": {
+    "hash": "51f7108",
+    "extid": "EPIC-MODEL-METADATA-READ",
+    "type": "EPIC",
+    "title": "Model Metadata Read (Headers, Hashing, Classification)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "models",
+      "metadata",
+      "safetensors",
+      "gguf",
+      "hashing",
+      "blake3",
+      "classification",
+      "dedup"
+    ],
+    "source": ".plan/epics/epic-model-metadata-read.md",
+    "status": "Not Started",
+    "git_issue": "51f7108"
   },
   "EPIC-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "",
@@ -17509,6 +17588,22 @@
     "title": "Expose full VN settings from spec",
     "type": "FEAT"
   },
+  "FEAT-EXTRA-MODEL-PATHS-YAML-CONFIG": {
+    "hash": "2feaa09",
+    "git_issue": "2feaa09",
+    "extid": "FEAT-EXTRA-MODEL-PATHS-YAML-CONFIG",
+    "type": "FEAT",
+    "title": "Extra model paths YAML config",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "local-model-file-discovery",
+    "tags": [
+      "models",
+      "config"
+    ],
+    "source": ".plan/tickets/FEAT-extra-model-paths-yaml-config.md",
+    "status": "Not Started"
+  },
   "FEAT-FACTION-SYSTEM-BACKEND": {
     "epic": "epic-faction-reputation",
     "extid": "FEAT-FACTION-SYSTEM-BACKEND",
@@ -17854,6 +17949,23 @@
     "source": ".plan/tickets/FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas.md",
     "status": "Not Started"
   },
+  "FEAT-GGUF-KV-TYPED-READER-WITH-ARCH-TEMPLATED-KEY-REGISTRY": {
+    "hash": "9de27af",
+    "git_issue": "9de27af",
+    "extid": "FEAT-GGUF-KV-TYPED-READER-WITH-ARCH-TEMPLATED-KEY-REGISTRY",
+    "type": "FEAT",
+    "title": "GGUF KV typed reader with arch-templated key registry",
+    "label": "feat",
+    "priority": "high",
+    "epic": "model-metadata-read",
+    "tags": [
+      "models",
+      "metadata",
+      "gguf"
+    ],
+    "source": ".plan/tickets/FEAT-gguf-kv-typed-reader-with-arch-templated-key-registry.md",
+    "status": "Not Started"
+  },
   "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION": {
     "epic": "epic-character-spec",
     "extid": "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION",
@@ -17870,6 +17982,23 @@
     ],
     "title": "GURPS Point-Buy Character Creation",
     "type": "FEAT"
+  },
+  "FEAT-HEADER-ONLY-SAFETENSORS-METADATA-PARSER": {
+    "hash": "d612ca3",
+    "git_issue": "d612ca3",
+    "extid": "FEAT-HEADER-ONLY-SAFETENSORS-METADATA-PARSER",
+    "type": "FEAT",
+    "title": "Header-only safetensors metadata parser",
+    "label": "feat",
+    "priority": "high",
+    "epic": "model-metadata-read",
+    "tags": [
+      "models",
+      "metadata",
+      "safetensors"
+    ],
+    "source": ".plan/tickets/FEAT-header-only-safetensors-metadata-parser.md",
+    "status": "Not Started"
   },
   "FEAT-HUMAN-IN-THE-LOOP-APPROVAL-GATES": {
     "epic": "proposed:epic-approval-gates",
@@ -18118,6 +18247,23 @@
     "status": "Not Started",
     "git_issue": "2eaea4f"
   },
+  "FEAT-LLAMA-SWAP-STYLE-ON-DEMAND-LOAD-UNLOAD-LIFECYCLE-WITH-HEALTH": {
+    "hash": "afd6244",
+    "git_issue": "afd6244",
+    "extid": "FEAT-LLAMA-SWAP-STYLE-ON-DEMAND-LOAD-UNLOAD-LIFECYCLE-WITH-HEALTH",
+    "type": "FEAT",
+    "title": "Llama-swap style on-demand load unload lifecycle with health gating",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "llama-swap",
+    "tags": [
+      "models",
+      "lifecycle",
+      "llama-swap"
+    ],
+    "source": ".plan/tickets/FEAT-llama-swap-style-on-demand-load-unload-lifecycle-with-health.md",
+    "status": "Not Started"
+  },
   "FEAT-LLM-ENHANCE-ANY-TEXT-SURFACE": {
     "hash": "d441d46",
     "git_issue": "d441d46",
@@ -18357,6 +18503,39 @@
     "title": "Mobile-native UX (haptics, swipe, voice, thumb layout)",
     "type": "FEAT"
   },
+  "FEAT-MODEL-CARDS-WITH-METADATA-PANELS-AND-SIZE-VRAM-SURFACING": {
+    "hash": "ad4a1ab",
+    "git_issue": "ad4a1ab",
+    "extid": "FEAT-MODEL-CARDS-WITH-METADATA-PANELS-AND-SIZE-VRAM-SURFACING",
+    "type": "FEAT",
+    "title": "Model cards with metadata panels and size VRAM surfacing",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "model-info-frontend",
+    "tags": [
+      "frontend",
+      "models"
+    ],
+    "source": ".plan/tickets/FEAT-model-cards-with-metadata-panels-and-size-vram-surfacing.md",
+    "status": "Not Started"
+  },
+  "FEAT-MODEL-CATEGORY-REGISTRY-WITH-MTIME-CACHE-LISTING": {
+    "hash": "064d963",
+    "git_issue": "064d963",
+    "extid": "FEAT-MODEL-CATEGORY-REGISTRY-WITH-MTIME-CACHE-LISTING",
+    "type": "FEAT",
+    "title": "Model category registry with mtime-cache listing",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "local-model-file-discovery",
+    "tags": [
+      "models",
+      "discovery",
+      "scanning"
+    ],
+    "source": ".plan/tickets/FEAT-model-category-registry-with-mtime-cache-listing.md",
+    "status": "Not Started"
+  },
   "FEAT-MODEL-COMPARISON-DASHBOARD": {
     "epic": "proposed:epic-model-dashboard",
     "extid": "FEAT-MODEL-COMPARISON-DASHBOARD",
@@ -18372,6 +18551,57 @@
     ],
     "title": "Model-comparison Dashboard",
     "type": "FEAT"
+  },
+  "FEAT-MODEL-HASH-BLAKE3-AND-SHA256-WITH-CROSS-MODEL-DEDUP": {
+    "hash": "201e01d",
+    "git_issue": "201e01d",
+    "extid": "FEAT-MODEL-HASH-BLAKE3-AND-SHA256-WITH-CROSS-MODEL-DEDUP",
+    "type": "FEAT",
+    "title": "Model hash blake3 and sha256 with cross-model dedup",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "model-metadata-read",
+    "tags": [
+      "models",
+      "hashing",
+      "dedup"
+    ],
+    "source": ".plan/tickets/FEAT-model-hash-blake3-and-sha256-with-cross-model-dedup.md",
+    "status": "Not Started"
+  },
+  "FEAT-MODEL-PREVIEW-IMAGE-SERVING-WITH-TRAVERSAL-GUARDS": {
+    "hash": "65c8233",
+    "git_issue": "65c8233",
+    "extid": "FEAT-MODEL-PREVIEW-IMAGE-SERVING-WITH-TRAVERSAL-GUARDS",
+    "type": "FEAT",
+    "title": "Model preview image serving with traversal guards",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "local-model-file-discovery",
+    "tags": [
+      "models",
+      "previews",
+      "security"
+    ],
+    "source": ".plan/tickets/FEAT-model-preview-image-serving-with-traversal-guards.md",
+    "status": "Not Started"
+  },
+  "FEAT-MODEL-TAGS-SEARCH-AND-FILTER-OVER-LOCAL-INDEX": {
+    "hash": "01b2e8b",
+    "git_issue": "01b2e8b",
+    "extid": "FEAT-MODEL-TAGS-SEARCH-AND-FILTER-OVER-LOCAL-INDEX",
+    "type": "FEAT",
+    "title": "Model tags search and filter over local index",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "model-info-frontend",
+    "tags": [
+      "frontend",
+      "models",
+      "search"
+    ],
+    "source": ".plan/tickets/FEAT-model-tags-search-and-filter-over-local-index.md",
+    "status": "Not Started"
   },
   "FEAT-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "epic-multi-instance-reconciliation",
@@ -19112,6 +19342,22 @@
     "tags": [],
     "title": "Temporary / ephemeral chats",
     "type": "FEAT"
+  },
+  "FEAT-TENSOR-KEY-PREFIX-MODEL-CLASSIFIER": {
+    "hash": "2a53aef",
+    "git_issue": "2a53aef",
+    "extid": "FEAT-TENSOR-KEY-PREFIX-MODEL-CLASSIFIER",
+    "type": "FEAT",
+    "title": "Tensor-key-prefix model classifier",
+    "label": "feat",
+    "priority": "high",
+    "epic": "model-metadata-read",
+    "tags": [
+      "models",
+      "classification"
+    ],
+    "source": ".plan/tickets/FEAT-tensor-key-prefix-model-classifier.md",
+    "status": "Not Started"
   },
   "FEAT-TESTING-INFRASTRUCTURE": {
     "epic": "",
@@ -26461,6 +26707,23 @@
     ],
     "title": "# TASK-BROWSER-E2E-UI-SURFACE-GAPS: Browser e2e — remaining untested UI surfaces",
     "type": "TASK"
+  },
+  "TASK-BROWSER-SIDE-GGUF-KV-EXTRACTION-FOR-LOCAL-BYOK-MODELS": {
+    "hash": "74d9989",
+    "git_issue": "74d9989",
+    "extid": "TASK-BROWSER-SIDE-GGUF-KV-EXTRACTION-FOR-LOCAL-BYOK-MODELS",
+    "type": "TASK",
+    "title": "Browser-side GGUF KV extraction for local BYOK models",
+    "label": "task",
+    "priority": "medium",
+    "epic": "byok-local-models",
+    "tags": [
+      "frontend",
+      "gguf",
+      "byok"
+    ],
+    "source": ".plan/tickets/TASK-browser-side-gguf-kv-extraction-for-local-byok-models.md",
+    "status": "Not Started"
   },
   "TASK-BROWSER-SIDE-RANDOMUUIDV7-FOR-TIME-SORTABLE-IDS": {
     "epic": "",
@@ -36752,6 +37015,22 @@
     "title": "/help full command list with descriptions",
     "type": "TASK"
   },
+  "TASK-HF-ID-TO-DISPLAY-NAME-HEURISTICS": {
+    "hash": "dd22dd8",
+    "git_issue": "dd22dd8",
+    "extid": "TASK-HF-ID-TO-DISPLAY-NAME-HEURISTICS",
+    "type": "TASK",
+    "title": "HF id to display-name heuristics",
+    "label": "task",
+    "priority": "low",
+    "epic": "model-metadata-read",
+    "tags": [
+      "models",
+      "metadata"
+    ],
+    "source": ".plan/tickets/TASK-hf-id-to-display-name-heuristics.md",
+    "status": "Not Started"
+  },
   "TASK-HIDDEN-CARRIAGE-TOML-CONTEXT": {
     "epic": "epic-hidden-carriage-context",
     "extid": "TASK-HIDDEN-CARRIAGE-TOML-CONTEXT",
@@ -38998,6 +39277,23 @@
     "title": "Loot Table Constructor Frontend Editor",
     "type": "TASK"
   },
+  "TASK-LORA-BASE-MODEL-LINEAGE-VIA-CHECKPOINT-METADATA": {
+    "hash": "b646054",
+    "git_issue": "b646054",
+    "extid": "TASK-LORA-BASE-MODEL-LINEAGE-VIA-CHECKPOINT-METADATA",
+    "type": "TASK",
+    "title": "LoRA base-model lineage via checkpoint metadata",
+    "label": "task",
+    "priority": "medium",
+    "epic": "lora-discovery-application",
+    "tags": [
+      "lora",
+      "metadata",
+      "lineage"
+    ],
+    "source": ".plan/tickets/TASK-lora-base-model-lineage-via-checkpoint-metadata.md",
+    "status": "Not Started"
+  },
   "TASK-LORA-DISCOVERY-APPLICATION": {
     "epic": "epic-lora-discovery-application",
     "extid": "TASK-LORA-DISCOVERY-APPLICATION",
@@ -40500,6 +40796,39 @@
     "tags": [],
     "title": "Model Comparison Reactions",
     "type": "TASK"
+  },
+  "TASK-MODEL-METADATA-SIDECAR-CACHE-AND-HASH-LOOKUP-CASCADE": {
+    "hash": "257ba0e",
+    "git_issue": "257ba0e",
+    "extid": "TASK-MODEL-METADATA-SIDECAR-CACHE-AND-HASH-LOOKUP-CASCADE",
+    "type": "TASK",
+    "title": "Model metadata sidecar cache and hash lookup cascade",
+    "label": "task",
+    "priority": "medium",
+    "epic": "model-metadata-read",
+    "tags": [
+      "models",
+      "metadata",
+      "caching"
+    ],
+    "source": ".plan/tickets/TASK-model-metadata-sidecar-cache-and-hash-lookup-cascade.md",
+    "status": "Not Started"
+  },
+  "TASK-MODEL-WEIGHT-SNIFFING-FALLBACK-DETECT-FROM-WEIGHTS": {
+    "hash": "7e0ca3e",
+    "git_issue": "7e0ca3e",
+    "extid": "TASK-MODEL-WEIGHT-SNIFFING-FALLBACK-DETECT-FROM-WEIGHTS",
+    "type": "TASK",
+    "title": "Model weight-sniffing fallback (detect_from_weights)",
+    "label": "task",
+    "priority": "low",
+    "epic": "model-metadata-read",
+    "tags": [
+      "models",
+      "metadata"
+    ],
+    "source": ".plan/tickets/TASK-model-weight-sniffing-fallback-detect-from-weights.md",
+    "status": "Not Started"
   },
   "TASK-MODERATION-ACTIONS-FRONTEND": {
     "epic": "epic-world-chat-channels-invites",
@@ -48107,6 +48436,23 @@
     "source": ".plan/tickets/TASK-src-rpg-nit-1-4-barrel-organization-implementations.md",
     "status": "Done",
     "git_issue": "f96b4dd"
+  },
+  "TASK-SSE-LIVE-MODEL-STATUS-AND-IN-FLIGHT-TRACKING": {
+    "hash": "70319ce",
+    "git_issue": "70319ce",
+    "extid": "TASK-SSE-LIVE-MODEL-STATUS-AND-IN-FLIGHT-TRACKING",
+    "type": "TASK",
+    "title": "SSE live model status and in-flight tracking",
+    "label": "task",
+    "priority": "medium",
+    "epic": "llama-swap",
+    "tags": [
+      "models",
+      "sse",
+      "observability"
+    ],
+    "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md",
+    "status": "Not Started"
   },
   "TASK-STABLE-STORED-CHAT-KEY-FUTURE": {
     "epic": "epic-encryption-foundation",
