@@ -14,6 +14,13 @@
  *   hop; unclosed front matter gains its closing fence. Mermaid fences and
  *   everything else stay as-is.
  *
+ * KEEP LOCAL — consumer-side, by design. giwt ships the generic corpus
+ * primitive (`docs sync-agents --dir`), but a generator that mirrors .plan into
+ * docs/plan-gen with THIS site's layout is loop-lore's concern, not the shared
+ * CLI's: baking one consumer's layout into giwt would break the next consumer.
+ * docs/.vitepress/config.mts still references the gitignored docs/plan-gen
+ * output, and docs:dev / docs:build / docs:preview invoke this script.
+ *
  * Usage:
  *   bun run scripts/docs/sync-plan.mjs
  */
