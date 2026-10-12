@@ -48,15 +48,6 @@ interface ComfyUILoraLoaderInfo {
  * @param baseUrl - ComfyUI server base URL (e.g., "http://localhost:8188")
  * @param timeoutMs - Request timeout in milliseconds
  * @returns Discovery result with available LoRA models
- * @example
- * ```ts
- * const result = await discoverComfyUILoras("http://localhost:8188");
- * if (result.error) {
- *   console.error("Discovery failed:", result.error);
- * } else {
- *   console.log("Found", result.models.length, "LoRA models");
- * }
- * ```
  */
 export async function discoverComfyUILoras(
   baseUrl: string,
@@ -143,13 +134,6 @@ export async function discoverComfyUILoras(
  * @param strengthClip - CLIP strength (defaults to model strength)
  * @param previousNodeId - Node ID to connect as input (optional)
  * @returns ComfyUI workflow node
- * @example
- * ```ts
- * const node = buildComfyUILoraNode("my_character.safetensors", 0.7);
- * // node.class_type === "LoraLoader"
- * // node.inputs.lora_name === "my_character.safetensors"
- * // node.inputs.strength_model === 0.7
- * ```
  */
 export function buildComfyUILoraNode(
   loraName: string,
@@ -183,11 +167,6 @@ export function buildComfyUILoraNode(
  * @param strengthClip - CLIP strength (optional, defaults to model strength)
  * @param targetNodeId - Node ID to inject after (optional, uses first MODEL/CLIP output)
  * @returns Modified workflow with LoraLoader node inserted
- * @example
- * ```ts
- * const modified = injectComfyUILora(workflow, "my_character.safetensors", 0.7);
- * // modified now contains a LoraLoader node
- * ```
  */
 export function injectComfyUILora(
   workflow: Record<string, unknown>,

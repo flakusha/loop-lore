@@ -19,10 +19,6 @@ const PARAM_SIZE_PATTERN = /^(\d+(?:\.\d+)?)\s*(b|billion|m|million|k|thousand)?
  * @param text - Raw parameter-size label.
  * @param fallback - Value returned when the label is unparseable.
  * @returns Size in billions of parameters, or `fallback`.
- * @example
- * parseParamSizeOr("8B", Number.NaN,); // 8
- * parseParamSizeOr("110M", Number.NaN,); // 0.11
- * parseParamSizeOr("n/a", Number.NaN,); // NaN
  */
 export function parseParamSizeOr(text: string, fallback: number,): number {
   const match = PARAM_SIZE_PATTERN.exec(text.trim(),);

@@ -32,11 +32,6 @@ export interface ParsedCommand {
  * Returns null if the input does not start with "/" or has no command name.
  * @param input - User message text
  * @returns Parsed command or null
- * @example
- * parseCommand("/roll 2d6+3")  → { command: "roll", args: ["2d6+3"], raw: "/roll 2d6+3" }
- * parseCommand("/help")        → { command: "help", args: [], raw: "/help" }
- * parseCommand("hello")        → null
- * parseCommand("/")            → null
  */
 export function parseCommand(input: string,): ParsedCommand | null {
   const trimmed = input.trim();

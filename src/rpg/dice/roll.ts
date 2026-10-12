@@ -27,10 +27,6 @@ function cryptoRandomInt(max: number,): number {
  * Roll a single die with crypto-grade entropy.
  * @param sides - Number of sides (4, 6, 8, 10, 12, 20, 100)
  * @returns Face value in [1, sides]
- * @example
- * ```ts
- * const result = rollDie(20); // 1–20
- * ```
  */
 export function rollDie(sides: DiceSides,): number {
   return cryptoRandomInt(sides,);

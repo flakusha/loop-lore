@@ -17,9 +17,6 @@ import type { I18nConfig, Locale, } from "../i18n/types";
 /**
  * Parse Accept-Language header and extract locale preferences.
  * @param header
- * @example
- * parseAcceptLanguage("ja,en-US;q=0.9,en;q=0.8")
- * // => ["ja", "en-US", "en"]
  * @returns {string[]}
  */
 export function parseAcceptLanguage(header: string,): string[] {

@@ -27,8 +27,6 @@ export type MountPointLocation = (typeof KNOWN_MOUNT_POINTS)[number] | string;
  * @param components - All registered UI components.
  * @param location - Mount-point location to resolve.
  * @returns Components targeting `location`, in registration order.
- * @example
- * getComponentsForMountPoint(registry.getAllUIComponents(), "chat.sidebar");
  */
 export function getComponentsForMountPoint(
   components: UIComponentDefinition[],

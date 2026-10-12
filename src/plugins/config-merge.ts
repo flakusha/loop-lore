@@ -28,9 +28,6 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
  * @param schema - Optional schema; `required` keys must survive the merge.
  * @returns Merged config; `stored` wins per key.
  * @throws When a `required` schema key is missing from the merged result.
- * @example
- * mergePluginConfig({ ui: { theme: "dark", page: 1 } }, { ui: { page: 2 } });
- * // { ui: { theme: "dark", page: 2 } }
  */
 export function mergePluginConfig(
   defaults: Record<string, unknown>,

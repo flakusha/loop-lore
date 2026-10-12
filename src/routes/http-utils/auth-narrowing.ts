@@ -54,8 +54,6 @@ export function requirePermissionUserId(
  * @param permission - Permission string (see users/permissions.ts)
  * @param fn - body invoked with the resolved userId
  * @returns the fn's return value or the 401/403 Response to return verbatim
- * @example
- *   return withPermissionAuth(ctx, "admin.system", (userId) => svc.list(userId,));
  */
 export function withPermissionAuth<T,>(
   ctx: PermissionGuardCtx,
@@ -72,10 +70,6 @@ export function withPermissionAuth<T,>(
  * @param ctx - Elysia request context (only `userId` is read)
  * @param fn - body invoked with the resolved userId
  * @returns the fn's return value or a 401 Response
- * @example
- *   return withUserAuth(ctx, async (userId) => {
- *     return await svc.doThing(userId, ctx.params.id);
- *   });
  */
 export async function withUserAuth<T,>(
   ctx: unknown,
@@ -97,10 +91,6 @@ export async function withUserAuth<T,>(
  * @param resolveOwner - ownership check: receives (userId, userRole), returns denial Response or null
  * @param fn - body invoked with the resolved userId
  * @returns the fn's return value or a denial Response
- * @example
- *   return withOwnerAuth(ctx, (uid, role) => resolveActorOwner(db, actorId, uid, role), async (userId) => {
- *     return await svc.equip(actorId, itemId, userId);
- *   });
  */
 export async function withOwnerAuth<T,>(
   ctx: unknown,

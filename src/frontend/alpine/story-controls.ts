@@ -43,7 +43,6 @@ const inFlight = new Set<string>();
  * @param action — orchestration action (pause/resume/step/escalate/narration)
  * @param body — optional payload (e.g. narration text)
  * @returns — ok=false carries a user-facing failure reason
- * @example await storyControl(chatId, "step")
  */
 export async function storyControl(
   chatId: string,

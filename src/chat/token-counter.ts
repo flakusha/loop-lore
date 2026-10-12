@@ -76,11 +76,6 @@ export function getStatus(percentage: number,): ContextStatus {
  * @param threshold - Critical threshold override (default: 0.85)
  * @param tokenCountFn
  * @returns Token count result with status
- * @example
- * ```typescript
- * const result = computeContextWindow(messages, 32000);
- * // { currentTokens: 15000, maxTokens: 32000, percentage: 0.47, status: "ok", threshold: 0.85 }
- * ```
  */
 export function computeContextWindow(
   messages: CountableMessage[],

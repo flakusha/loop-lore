@@ -51,17 +51,6 @@ const DEFAULT_CACHE_TTL_MS = 1000;
  * consumer. NOT a process singleton: each consumer owns its instance
  * (single instance per scheduler is fine; multiple instances across
  * workers read/write the same DB table).
- *
- * @example
- * ```ts
- * const governor = new AutonomyGovernor();
- * const r = await governor.tryConsume(db,
- *   { kind: "actor", id: actorId, },
- *   "per_minute_generation",
- *   { cap: cfg.perAgentCap, chatId, sessionId, });
- * if (!r.ok) { return; }
- * await runGeneration();
- * ```
  */
 export class AutonomyGovernor {
   readonly #cache: BudgetCache;

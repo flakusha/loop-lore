@@ -62,9 +62,6 @@ const DEFAULT_TITLE = "Loop Lore API";
  * fills `paths` at request time via the `@elysia/openapi` plugin.
  * @param options - Version and optional title.
  * @returns OpenAPI 3.1 document with versioned server URL and empty paths.
- * @example
- * const spec = buildVersionedOpenApiSpec({ version: "1" });
- * // spec.servers[0].url === "/api/v1"
  */
 export function buildVersionedOpenApiSpec(
   options: VersionedOpenApiOptions,
@@ -92,10 +89,6 @@ export function buildVersionedOpenApiSpec(
  * versioned prefix explicitly.
  * @param opts - Version string and optional title.
  * @returns Elysia plugin that serves the versioned OpenAPI spec.
- * @example
- * app.use(versionedOpenApiPlugin({ version: "1", }));
- * // → GET /api/v1/openapi      — Scalar UI
- * // → GET /api/v1/openapi/json — JSON spec
  */
 export function versionedOpenApiPlugin(
   opts: VersionedOpenApiOptions,

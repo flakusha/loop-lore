@@ -80,12 +80,6 @@ export function toErrorMessage(error: unknown,): string {
  * to guarantee all enum/union variants are handled at compile time.
  * @param value - value asserted as never (TS exhaustiveness marker)
  * @throws {Error} `"Unhandled case: <json>"` always (function returns never).
- * @example
- * switch (status) {
- *   case GenerationStatus.Pending: return "waiting";
- *   case GenerationStatus.Completed: return "done";
- *   default: return assertNever(status);
- * }
  * @returns {never}
  */
 export function assertNever(value: never,): never {

@@ -48,12 +48,6 @@ function isEnabled(enabled: DeprecationConfig["enabled"],): boolean {
  * @param response - Outgoing response to annotate.
  * @param options - Deprecated/successor versions and sunset date.
  * @returns New response carrying `Sunset`, `Deprecation`, and `Link` headers.
- * @example
- * return withDeprecationHeaders(res, {
- *   deprecatedVersion: "1",
- *   successorVersion: "2",
- *   sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
- * },);
  */
 export function withDeprecationHeaders(
   response: Response,
@@ -81,13 +75,6 @@ export function withDeprecationHeaders(
  * @param response - Outgoing response.
  * @param config - Deprecation config (checked for `enabled`).
  * @returns Wrapped response when enabled, the input response otherwise.
- * @example
- * return applyDeprecationHeaders(res, {
- *   enabled: true,
- *   deprecatedVersion: "1",
- *   successorVersion: "2",
- *   sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
- * },);
  */
 export function applyDeprecationHeaders(
   response: Response,
@@ -117,8 +104,6 @@ export function applyDeprecationHeaders(
  * is the single mechanism Elysia applies uniformly.
  * @param config - Deprecation config.
  * @returns AfterHandle handler that annotates `ctx.set.headers` in place.
- * @example
- * app.onAfterHandle(deprecationAfterHandle({ enabled: () => process.env.API_V1_DEPRECATED === "1", ... }));
  */
 export function deprecationAfterHandle(
   config: DeprecationConfig,

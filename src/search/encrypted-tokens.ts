@@ -32,10 +32,6 @@ export const TOKEN_HEX_LENGTH = 16;
  * Exported so the backfill migration reuses the exact same tokenizer.
  * @param plaintext - message content (decrypted)
  * @returns unique tokens in first-seen order
- * @example
- * ```ts
- * tokenizeForSearch("Hello, hello tavern!"); // → ["hello", "tavern"]
- * ```
  */
 export function tokenizeForSearch(plaintext: string,): string[] {
   const seen = new Set<string>();
@@ -62,10 +58,6 @@ async function importHmacKey(userKey: string | Uint8Array,): Promise<CryptoKey> 
  * @param userKey - per-user HMAC key (`users.encryption_secret` once migrated)
  * @returns hex token strings, one per unique word
  * @throws Error when userKey is empty
- * @example
- * ```ts
- * await deriveSearchTokens("tavern song", key); // → ["a3f9…", "71c0…"]
- * ```
  */
 export async function deriveSearchTokens(
   plaintext: string,

@@ -35,9 +35,6 @@ export interface RpgCreateFlags {
  * value, so an RPG world starts fully armed and a plain world stays off.
  * @param body - Raw request-body values (camelCase flag names).
  * @returns Snake_case columns ready to spread into the insert.
- * @example
- * rpgCreateFlags({ rpgEnabled: true, rpgCombat: false })
- * // → { rpg_enabled: 1, rpg_dice: 1, …, rpg_combat: 0, … }
  */
 export function rpgCreateFlags(body: Record<string, unknown>,): RpgCreateFlags {
   const rpgEnabled = toRpgFlag(body.rpgEnabled,) ?? 0;

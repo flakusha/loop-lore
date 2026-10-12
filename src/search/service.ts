@@ -62,11 +62,6 @@ export interface UnifiedSearchService {
  * Create a unified search service from injected tier providers.
  * @param opts - providers + time-cap config
  * @returns service with a single `search` entry point
- * @example
- * ```ts
- * const svc = createUnifiedSearchService({ providers: { keyword, vector }, timeCaps });
- * await svc.search({ q: "tavern", mode: "hybrid", topK: 10 }, { kind: "messages", userId });
- * ```
  */
 export function createUnifiedSearchService(opts: ServiceOptions,): UnifiedSearchService {
   const { providers, timeCaps, } = opts;

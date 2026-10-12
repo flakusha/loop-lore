@@ -177,9 +177,6 @@ export async function checkMechanicEnabled(
  * handler should send with `handled: true` — the mechanic never runs
  * and no game state is written.
  *
- * @example
- *   const denial = await checkCommandMechanic(ctx.db, ctx.activeChat?.worldId, RpgMechanic.Dice);
- *   if (denial) { return { systemMessage: denial, handled: true, }; }
  * @param database - Kysely handle, or undefined when the caller has none.
  * @param worldId - Resolved world id, or undefined outside a world chat.
  * @param mechanic - Mechanic under test (see `RpgMechanic`).

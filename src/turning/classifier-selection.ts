@@ -83,10 +83,6 @@ function extractJsonObject(content: string,): string | null {
  * @param content - Raw LLM response text
  * @param candidates - Participant labels the classifier chose from
  * @returns The validated pick, or null when any label is unknown
- *
- * @example
- * parseTurnSelection('{"actorId":"a2","beatType":"action"}', [{ actorId: "a2", displayName: "Bo" }])
- * // { actorId: "a2", beatType: "action" }
  */
 export function parseTurnSelection(
   content: string,

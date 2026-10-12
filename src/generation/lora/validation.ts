@@ -88,14 +88,6 @@ function validateRecommendedStrength(value: unknown,): string | null {
  * Validate a LoRA configuration object.
  * @param config - Configuration to validate
  * @returns Validation error message or null if valid
- * @example
- * ```ts
- * const error = validateLoRAConfig({ name: "my_lora", strength: 0.5, backend: "comfyui" });
- * // error === null
- *
- * const error2 = validateLoRAConfig({ name: "", strength: 1.5, backend: "invalid" });
- * // error2 === "Invalid LoRA name"
- * ```
  */
 export function validateLoRAConfig(config: unknown,): string | null {
   if (!config || typeof config !== "object") {

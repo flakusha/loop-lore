@@ -61,9 +61,6 @@ const VALID_TOOL_NAMES = new Set<string>(GM_TOOL_NAMES,);
  * Pure and side-effect free — unit-testable without a live provider.
  * @param content - Raw LLM response text
  * @returns Detection, or null if the response is malformed or the tool name is unknown
- * @example
- * parseGmToolDetection('{"toolCall":{"name":"roll_dice","params":{"dice":"d20"},"confidence":0.9}}')
- * // { requested: true, name: "roll_dice", params: { dice: "d20" }, confidence: 0.9, source: "aux-llm" }
  */
 export function parseGmToolDetection(content: string,): GmToolDetection | null {
   const parsed = jsonParseOr<{ toolCall?: { name?: unknown; params?: unknown; confidence?: unknown } }>(

@@ -50,9 +50,6 @@ const SUMMARY_PREFIX = "[Conversation Summary]";
 
 /**
  * Compacts conversation history to fit a token budget.
- * @example
- * const compactor = new ContextCompactor();
- * const { messages, compacted } = await compactor.compact(history, 32000);
  */
 export class ContextCompactor {
   private readonly threshold: number;

@@ -24,8 +24,6 @@ export type Blake3Implementation = "rust" | "ts";
  * BLAKE3 hash of `data` — native (Rust cdylib) when available, else pure TS.
  * @param data - Input bytes (empty input is valid).
  * @returns 32-byte BLAKE3 digest.
- * @example
- * const digest = blake3Hash(new TextEncoder().encode("abc"));
  */
 export function blake3Hash(data: Uint8Array,): Uint8Array {
   const native = getNativeModule();
