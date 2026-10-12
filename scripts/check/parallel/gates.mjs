@@ -215,7 +215,6 @@ checks["weave - damage scan"] = process.env.WEAVE_BASE
   ? "bun run scripts/check/weave-damage.mjs"
   : NOOP_OK;
 
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 // Size gates use giwt's check-file-size (local scripts/check-file-size.ts deleted 2026-10-12)
 checks["size - check"] = "bun run node_modules/giwt/scripts/check-file-size.ts";
 checks["size - strict"] = "bun run node_modules/giwt/scripts/check-file-size.ts --strict";
