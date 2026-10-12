@@ -58,6 +58,21 @@ export const checks = {
   // Dead-code analysis (knip)
   "dead - code (knip)": "bun run dead:code",
 
+  // src-covered dead-code gate. `knip.json` `project` covers `src/**/*.ts`,
+  // but `src/.gitignore` is a blanket `.` (it keeps untracked scratch out of
+  // git), and knip honors gitignore -- so without `--no-gitignore` every src
+  // file is invisible and the scan cannot report anything under src/. This gate
+  // is the enforcement point for that: it re-runs knip with the gitignore layer
+  // lifted, so the src coverage declared in knip.json is actually live and
+  // cannot silently regress to a no-op.
+  //
+  // Scoped to `--include files` (unused MODULES, not unused exports): the
+  // export-level analysis of src/ is a separate and much larger sweep tracked
+  // by its own ticket, and gating on it here would block every branch until
+  // that bulk cleanup lands. The unused-file list is the reviewable slice -- a
+  // whole unreferenced file can be deleted outright.
+  "dead - code (src files)": "bun run dead:code:src",
+
   // Circular-import check remains manual; current debt is non-blocking.
 
   // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
@@ -176,6 +191,13 @@ export const ADVISORY_GATES = new Set([
   // jscpd ratchet: clone count vs committed baseline — drifts when dev
   // merges add or remove clones concurrently.
   "jscpd ratchet",
+  // src dead-file scan: the src tree currently carries confirmed-unreachable
+  // modules, enumerated by path in the cleanup ticket. ADVISORY while that
+  // debt is outstanding — the gate still RUNS, so a reopened blindspot (knip
+  // silently skipping src/ again) is visible in the report instead of being
+  // invisible. Flip to blocking once the enumerated files are deleted and
+  // `bun run dead:code:src` exits 0.
+  "dead - code (src files)",
 ],);
 
 /**

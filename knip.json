@@ -131,6 +131,18 @@
     // tsconfig include, never imported — knip cannot see that edge.
     "src/frontend/alpine/window-types.ts",
 
+    // GENERATED DB ARTIFACTS (`bun run db:sync-types` / `db:sync-manifest`,
+    // both writing scripts/generate-db-types.ts). Each file exports one symbol
+    // per table/column regardless of whether the route layer imports it today,
+    // so per-symbol analysis is meaningless: the generator is the only producer
+    // and it emits the full surface by construction. Excluding the files (not
+    // their consumers) is the narrow form — nothing hand-written is gaged.
+    "src/db/schema.ts",
+    "src/db/schema-*.ts", // src/db/schema-{domain}.ts, one per domain (generate-db-types.ts:628)
+    "src/db/schema-manifest.ts", // generate-schema-manifest.ts: parses migrations/ into a table manifest
+    "src/validation/db-schemas.ts", // generate-db-types.ts:603 — TypeBox schema per DB table
+    "src/test-utils/insert-helpers.ts", // generate-db-types.ts:479 — typed insert fn per table
+
     // API reference drift gate: run via check-parallel.mjs shell string
     // ("api - doc drift": bun run scripts/check/api-doc-drift.mjs), not
     // import-reachable — same class as weave-damage.mjs above.
