@@ -3,7 +3,8 @@
 
 # TASK: Serve view-models as JSON on Accept: application/json
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Extract a pure view-model seam from one htmx view route and expose it as JSON
 **Priority:** medium
 **Effort:** Medium
 **Epic:** `epic-experimental-egui-frontend`
