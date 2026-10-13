@@ -222,19 +222,19 @@ one element inside an htmx page. The maintainers know this is a real scenario:
 scrollable page" (`crates/eframe/src/web/mod.rs` → `focus_without_scroll`,
 same commit, citing [emilk/egui#8295](https://github.com/emilk/egui/issues/8295)).
 
-**What you do not get: DOM interop.** Upstream says so directly — the `eframe`
-README's "Limitations when running egui on the web" section states that `eframe`
-and egui "compiles to Wasm using either WebGPU (when available) or WebGL2 for
-rendering, and almost nothing else from the web tech stack", and that "you
-cannot search an egui web page like you would a normal web page"
-(<https://github.com/emilk/egui/blob/main/crates/eframe/README.md>, read
-2026-10-13). A page whose contents are not searchable is not a page whose
-contents are DOM-addressable.
+**What you do not get: DOM interop.** Upstream never uses that phrase. What it
+does say — the `eframe` README's "Limitations when running egui on the web"
+section — is that `eframe` and egui "compiles to Wasm using either WebGPU (when
+available) or WebGL2 for rendering, and almost nothing else from the web tech
+stack", and that "you cannot search an egui web page like you would a normal
+web page" (<https://github.com/emilk/egui/blob/main/crates/eframe/README.md>,
+read 2026-10-13).
 
-**Inference from the two sources below — not an upstream statement:** egui
-cannot emit an HTML fragment for htmx to insert, cannot render into an
-htmx-swapped subtree, and cannot read Alpine `x-data` state. Two independent
-primary sources support that reading; neither states it outright.
+**Inference from that quote plus the two sources below — not an upstream
+statement:** a page whose contents are not searchable is not a page whose
+contents are DOM-addressable, and egui cannot emit an HTML fragment for htmx
+to insert, cannot render into an htmx-swapped subtree, and cannot read Alpine
+`x-data` state. No source states this outright.
 
 - `egui::FullOutput` is documented as "What egui emits each frame from
   `Context::run_ui`", and its entire field set is `platform_output`,
