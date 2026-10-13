@@ -1,5 +1,11 @@
 /**
  * Tests for views/plugin-dynamic dynamicRoutes (htmx partial endpoints).
+ *
+ * Resource contract: FILE owns exactly one :memory: SQLite DB (created in beforeAll,
+ * seeded with fixed ids owner/actor-aria/world-elm/chat-a/g1, closed in afterAll).
+ * Tests share that DB; the "characters grid — JSON view-model negotiation" block
+ * inserts NOTHING and reads only the seeded rows — order-independent within the block
+ * and against the rest of the file.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -219,6 +225,9 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
     expect(res.status,).toBe(200,);
   });
 
+  /**
+   * Owns nothing beyond the file-level seeded DB read-only view — no clock, no network.
+   */
   describe("characters grid — JSON view-model negotiation", () => {
     /**
      * @param headers

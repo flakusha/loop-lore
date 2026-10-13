@@ -1,5 +1,8 @@
 /**
  * Tests for the pure characters-grid view-model.
+ *
+ * Resource contract: OWNS NOTHING. No database, clock, filesystem, network, or env.
+ * Pure projection over caller-supplied rows — order-independent, needs no teardown.
  */
 import { describe, expect, test, } from "bun:test";
 import { buildCharactersGridViewModel, type CharacterGridActorRow, } from "./characters-grid";
