@@ -129,8 +129,12 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
             // control characters (C0 + DEL) are stripped: they carry no
             // meaning, break the one-line prompt rendering, and are a
             // log-injection vector.
-            trigger_condition: body.triggerCondition?.replace(/[\u0000-\u001F\u007F]/g, "",) ??
-              null,
+            //
+            // `\p{Cc}` is C0 + DEL + C1(0080-009F); the callback drops only
+            // C0 + DEL and passes C1 back, matching the previous literal class
+            // exactly. Not a `v`-flag class difference: the tsconfig targets
+            // ES6, where `v` does not exist.
+            trigger_condition: body.triggerCondition?.replace(/\p{Cc}/gu, (ch,) => ch >= "\u{80}" ? ch : "",) ?? null,
           };
 
           assertValidWrite("shadow_notes", noteRow,);
