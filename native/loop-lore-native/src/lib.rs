@@ -48,14 +48,14 @@ pub extern "C" fn ll_version() -> i32 {
 /// requested module is compiled, keeping download sizes small.
 #[cfg(feature = "blake3")]
 pub mod blake3;
-#[cfg(feature = "zstd")]
-pub mod zstd;
 #[cfg(feature = "gguf")]
 pub mod gguf;
+#[cfg(feature = "zstd")]
+pub mod zstd;
 
 #[cfg(feature = "blake3")]
 pub use blake3::ll_blake3;
-#[cfg(feature = "zstd")]
-pub use zstd::{ll_zstd_compress, ll_zstd_decompress, ll_zstd_decompress_bound};
 #[cfg(feature = "gguf")]
 pub use gguf::ll_gguf_probe;
+#[cfg(feature = "zstd")]
+pub use zstd::{ll_zstd_compress, ll_zstd_decompress, ll_zstd_decompress_bound};

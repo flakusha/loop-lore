@@ -84,11 +84,11 @@ impl<'a> Cursor<'a> {
 /// Array elements share the same tags (strings nest one level only).
 fn skip_value(cursor: &mut Cursor, tag: u32) -> Option<()> {
   match tag {
-    0 | 1 => cursor.skip(1),          // uint8 | int8
-    2 | 3 => cursor.skip(2),          // uint16 | int16
-    4..=7 => cursor.skip(4),     // uint32 | int32 | float32 | bool
-    10..=12 => cursor.skip(8),   // uint64 | int64 | float64
-    8 => cursor.gguf_string(),        // string
+    0 | 1 => cursor.skip(1),   // uint8 | int8
+    2 | 3 => cursor.skip(2),   // uint16 | int16
+    4..=7 => cursor.skip(4),   // uint32 | int32 | float32 | bool
+    10..=12 => cursor.skip(8), // uint64 | int64 | float64
+    8 => cursor.gguf_string(), // string
     9 => {
       let elem = cursor.u32()?;
       let count = cursor.u64()?;
@@ -153,12 +153,7 @@ fn probe(data: &[u8]) -> Result<(u32, u64, u64), i32> {
 /// Returns `0` on success, `-1` on bad args, `-2` on bad magic,
 /// `-3` on truncation, `-4` on corrupt values.
 #[no_mangle]
-pub unsafe extern "C" fn ll_gguf_probe(
-  data: *const u8,
-  len: usize,
-  out: *mut u8,
-  out_len: usize,
-) -> i32 {
+pub unsafe extern "C" fn ll_gguf_probe(data: *const u8, len: usize, out: *mut u8, out_len: usize) -> i32 {
   if out.is_null() || out_len < GGUF_PROBE_LEN {
     return -1;
   }
@@ -192,7 +187,7 @@ mod tests {
     blob.extend_from_slice(&3u32.to_le_bytes()); // version
     blob.extend_from_slice(&1u64.to_le_bytes()); // n_tensors
     blob.extend_from_slice(&1u64.to_le_bytes()); // n_kv
-    // KV: key "general.name", type string, value "tiny".
+                                                 // KV: key "general.name", type string, value "tiny".
     blob.extend_from_slice(&12u64.to_le_bytes());
     blob.extend_from_slice(b"general.name");
     blob.extend_from_slice(&8u32.to_le_bytes());
@@ -272,8 +267,7 @@ mod tests {
   #[test]
   fn null_out_rejected() {
     let blob = minimal_blob();
-    let status =
-      unsafe { ll_gguf_probe(blob.as_ptr(), blob.len(), std::ptr::null_mut(), GGUF_PROBE_LEN) };
+    let status = unsafe { ll_gguf_probe(blob.as_ptr(), blob.len(), std::ptr::null_mut(), GGUF_PROBE_LEN) };
     assert_eq!(status, -1);
   }
 
