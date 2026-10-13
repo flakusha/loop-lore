@@ -245,6 +245,8 @@ export async function selectVnChoice(
  * matching and the chat would stay permanently blocked.
  * @param database
  * @param params
+ * @param params.chatId - Chat session ID
+ * @param params.choiceId - Choice ID to dismiss
  * @returns {Promise<DismissVnChoiceResult>}
  */
 export async function dismissVnChoice(
