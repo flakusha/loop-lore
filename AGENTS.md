@@ -122,14 +122,16 @@ Agents must not scatter temporary files across the repo (`src/`, `tests/`,
 - **Rules**: Auto-ignored by git (no `.gitignore` edit needed); delete before finalize/merge; never import from `@/` aliases outside the repo root (module resolution breaks) — run debug scripts from inside `.tmp/` with relative imports or `bun --cwd`
 - **Enforcement**: `giwt finalize` now prunes a worktree's scratchpad at Step 6a,
   immediately before removing the worktree, so "delete before finalize" is no
-  longer advisory. It only prunes the four scanner classes (`*.tmp` spills,
-  `lcov.*.tmp` + aged `cov-*` dirs, aged `jscpd-report.json`, and root-level
-  `check-report*.json` past the newest 20) — research notes, probe scripts and
-  anything else are unclassified and preserved. Two consequences for handoff:
-  do not rely on `cov-*` or `check-report*.json` under a worktree `.tmp/`
-  surviving the finalize of that worktree, and note that `giwt finalize
-  --dry-run` reports the prune plan without deleting anything (the merge,
-  worktree removal and branch delete still run).
+  longer advisory. It only prunes the four scanner classes (`*.tmp` files older
+  than `tmpMaxAgeDays`, `lcov.*.tmp` files anywhere under root (age-independent),
+  all but the newest `lcovKeepLatest` `cov-*` directories by mtime, `jscpd-report.json`
+  files older than `jscpdMaxAgeDays`, and root-level `check-report*.json` past the
+  newest `checkReportKeep`) — research notes, probe scripts and anything else are
+  unclassified and preserved. Two consequences for handoff: do not rely on
+  `cov-*` or `check-report*.json` under a worktree `.tmp/` surviving the
+  finalize of that worktree, and note that `giwt finalize --dry-run` reports
+  the prune plan without deleting anything (the merge, worktree removal and
+  branch delete still run).
 - **Handoff**: Include `.tmp/` paths in `ctx_handoff(paths=[...])`; cleanup after merge
 
 ### Default cache for tooling
