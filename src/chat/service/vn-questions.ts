@@ -155,6 +155,8 @@ export async function answerVnQuestion(
  * pending query would keep matching forever.
  * @param database
  * @param params
+ * @param params.chatId - Chat session ID
+ * @param params.questionId - Question ID to dismiss
  * @returns {Promise<DismissVnQuestionResult>}
  */
 export async function dismissVnQuestion(
