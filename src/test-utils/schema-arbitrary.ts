@@ -150,7 +150,8 @@ const patternPropertiesArb = (node: SchemaNode,): fc.Arbitrary<[string, unknown,
  * @returns One object node holding every merged property and required key.
  */
 const mergeAllOf = (node: SchemaNode,): SchemaNode => {
-  const properties: Record<string, SchemaNode> = { ...node.properties ?? {}, };
+  // Spreading `undefined` adds no keys, so the `?? {}` fallback was a no-op.
+  const properties: Record<string, SchemaNode> = { ...node.properties, };
   const required = new Set(node.required ?? [],);
   for (const raw of node.allOf ?? []) {
     const sub = asNode(raw as TSchema,);

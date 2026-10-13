@@ -21,7 +21,7 @@ import type { ChatState, } from "./types";
 export { editDistance, };
 
 /** Match a `:`-prefixed emoji token ending at the caret (start/whitespace-anchored, like slashTokenRe). */
-export const emojiTokenRe = /(?:^|\s):([a-z0-9_+\-]*)(?=\s|$)/i;
+export const emojiTokenRe = /(?:^|\s):([a-z0-9_+-]*)(?=\s|$)/i;
 
 export interface EmojiCandidate {
   name: string;
@@ -52,7 +52,7 @@ export function extractEmojiQuery(beforeCursor: string,): string | null {
 
   if (!match) { return null; }
   // A fully-closed `:name:` token is a completed shortcode, not an open query.
-  if (/:[a-z0-9_+\-]+:\s*$/i.test(beforeCursor,)) { return null; }
+  if (/:[a-z0-9_+-]+:\s*$/i.test(beforeCursor,)) { return null; }
 
   return (match[1] ?? "").toLowerCase();
 }

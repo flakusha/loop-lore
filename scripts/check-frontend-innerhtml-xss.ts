@@ -23,30 +23,6 @@ import path from "node:path";
 const ROOT = path.resolve(import.meta.dir, "..",);
 const TARGET = path.join(ROOT, "src", "frontend",);
 
-// Member properties that are numeric/primitive and safe to interpolate raw.
-const SAFE_PRIMITIVES = new Set([
-  "round",
-  "count",
-  "total",
-  "length",
-  "index",
-  "idx",
-  "page",
-  "size",
-  "width",
-  "height",
-  "pct",
-  "percent",
-  "year",
-  "month",
-  "day",
-  "score",
-  "level",
-  "hp",
-  "maxHp",
-  "num",
-],);
-
 function walk(dir: string,): string[] {
   const out: string[] = [];
   if (!statSync(dir,).isDirectory()) { return out; }
@@ -94,7 +70,7 @@ function scan(): Finding[] {
     const rel = path.relative(ROOT, file,);
     // For every `innerHTML =` / `+=`, capture the RHS respecting template-literal
     // nesting so a CSS ";" inside style="..." does NOT truncate the scan.
-    const assignRe = /\.innerHTML\s*[+\-]?=\s*/g;
+    const assignRe = /\.innerHTML\s*[+-]?=\s*/g;
     let am: RegExpExecArray | null;
     while ((am = assignRe.exec(src,)) !== null) {
       const rhsStart = am.index + am[0].length;
