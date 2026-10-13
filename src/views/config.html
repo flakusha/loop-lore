@@ -197,9 +197,27 @@
                         ></textarea>
                       </template>
                       <!-- String / default -->
-                      <template x-if="f.type === 'string'">
+                      <!--
+                        Static type per branch: a dynamic :type leaves markuplint unable to
+                        resolve the element, so it cannot rule out type="hidden" (where
+                        autocomplete is disallowed) and reports autocomplete on a valid text/
+                        password field. x-if renders exactly one branch, so the id is unique.
+                      -->
+                      <template x-if="f.type === 'string' && f.secret">
                         <input
-                          :type="f.secret ? 'password' : 'text'"
+                          type="password"
+                          class="form-input"
+                          style="font-size: 13px"
+                          autocomplete="off"
+                          :id="'cf-' + f.key"
+                          :value="values[f.key]"
+                          :disabled="!f.editable"
+                          @input="setValue(f, $event.target.value)"
+                        />
+                      </template>
+                      <template x-if="f.type === 'string' && !f.secret">
+                        <input
+                          type="text"
                           class="form-input"
                           style="font-size: 13px"
                           autocomplete="off"
