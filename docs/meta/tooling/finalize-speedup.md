@@ -283,11 +283,12 @@ each is currently mitigated *per worker process*, not per file.
    test. `tests/setup-globals.ts:14-18` sets `LOOP_LORE_DB_PATH` once per
    process, keyed `pid-Date.now()`, which is correct across workers and shared
    across files inside one.
-4. **Fixed temp paths.** `src/generation/matting/job-store.test.ts:33,82` uses
-   `/tmp/loop-lore-jobstore-test` and `/tmp/loop-lore-jobstore-test-2`;
-   `src/characters/services/emotion-avatar-service/*.test.ts` uses
-   `/tmp/test-uploads`. Two concurrent runs of the same file, or two files
-   sharing a directory, collide. They are not pid-qualified.
+4. **Fixed temp paths.** Hardcoded `/tmp/...` upload directories were shared
+   across files and not pid-qualified, so two concurrent runs of the same file,
+   or two files writing to the same directory, collided. Resolved: the matting
+   job store and the emotion-avatar tests now allocate
+   `mkdtempSync(join(tmpdir(), ...))` — per call and per file respectively — and
+   remove them in `afterAll`, so concurrent `bun test` workers cannot collide.
 5. **Ports.** No hardcoded LISTEN port in tests: `src/memory/embeddings.test.ts`
    and `rerank.test.ts` bind a real server and read `server.port`. The fixed
    ports in the tree (`7860`, `9010`, `8188`, `3000`) are config VALUES passed to
