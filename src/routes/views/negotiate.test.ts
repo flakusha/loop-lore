@@ -1,5 +1,10 @@
 /**
  * Tests for view-route content negotiation.
+ *
+ * Resource contract: OWNS NOTHING. Parses caller-supplied Accept strings;
+ * produces view-models from caller-supplied data. Must never gain Date.now(),
+ * Math.random(), or any real network call — any of those would make the suite
+ * order- or run-dependent under parallel execution.
  */
 import { describe, expect, test, } from "bun:test";
 import { jsonViewModelResponse, wantsJsonViewModel, } from "./negotiate";
