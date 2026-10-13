@@ -2,14 +2,32 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Unit tests for the matting in-memory job store: list filtering, ordering, cancel. */
-import { describe, expect, test, } from "bun:test";
+import { afterAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { cancelJob, getJob, listJobs, MattingService, } from "./index";
 import type { MattingProvider, } from "./types";
+
+const tmpDirs: string[] = [];
+
+/** Unique per-call upload dir so concurrent bun test workers never collide. */
+function makeUploadDir(): string {
+  const dir = mkdtempSync(join(tmpdir(), "ll-jobstore-",),);
+  tmpDirs.push(dir,);
+  return dir;
+}
+
+afterAll(() => {
+  for (const dir of tmpDirs) {
+    rmSync(dir, { recursive: true, force: true, },);
+  }
+},);
 
 function pngProvider(): MattingProvider {
   const png = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 1,],);
@@ -30,7 +48,7 @@ function makeService(db: Kysely<DB>, uploadDir: string,): MattingService {
 describe("matting job store", () => {
   test("listJobs filters by owner and sorts newest first", async () => {
     const { db, } = await createTestDb();
-    const uploadDir = "/tmp/loop-lore-jobstore-test";
+    const uploadDir = makeUploadDir();
     const ownerA = randomUUID();
     const ownerB = randomUUID();
     await insertUsers(db, `a-${ownerA}`, "A", { id: ownerA, } as never,);
@@ -79,7 +97,7 @@ describe("matting job store", () => {
 
   test("cancelJob marks a pending job cancelled", async () => {
     const { db, } = await createTestDb();
-    const uploadDir = "/tmp/loop-lore-jobstore-test-2";
+    const uploadDir = makeUploadDir();
     const owner = randomUUID();
     await insertUsers(db, `c-${owner}`, "C", { id: owner, } as never,);
 

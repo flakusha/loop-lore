@@ -5,9 +5,12 @@
  * and batch job lifecycle for emotion avatar generation.
  */
 
-import { afterEach, beforeAll, describe, expect, it, mock, } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, it, mock, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import { extractImageMetadata, } from "../../assets/metadata";
 import {
   makeMinimalJpeg,
@@ -22,6 +25,13 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { AvatarService, } from "./avatar-service";
 import { EmotionAvatarService, } from "./emotion-avatar-service";
 import { createTestActors, } from "./test-helpers";
+
+/** Per-file upload dir (mkdtemp) so concurrent runs never share one path. */
+const UPLOAD_DIR = mkdtempSync(join(tmpdir(), "ll-avatar-service-",),);
+
+afterAll(() => {
+  rmSync(UPLOAD_DIR, { recursive: true, force: true, },);
+},);
 
 // Bun's mock.module is process-global and cannot be unmocked: without
 // --isolate, an earlier file (e.g.
@@ -178,7 +188,7 @@ describeReal("EmotionAvatarService", () => {
         actorId: testActorId,
         emotion: EmotionType.Happy,
         sdConfig: { ...baseSdConfig, apiFamily: "openai", },
-        uploadDir: "/tmp/test-uploads",
+        uploadDir: UPLOAD_DIR,
       },);
 
       expect(capturedUrls.some((u,) => u.includes("/v1/images/generations",)),).toBe(true,);
@@ -203,7 +213,7 @@ describeReal("EmotionAvatarService", () => {
         actorId: testActorId,
         emotion: EmotionType.Sad,
         sdConfig: { ...baseSdConfig, apiFamily: "sdapi", },
-        uploadDir: "/tmp/test-uploads",
+        uploadDir: UPLOAD_DIR,
       },);
 
       expect(capturedUrls.some((u,) => u.includes("/sdapi/v1/txt2img",)),).toBe(true,);
@@ -233,7 +243,7 @@ describeReal("EmotionAvatarService", () => {
         actorId: testActorId,
         emotion: EmotionType.Angry,
         sdConfig: { ...baseSdConfig, apiFamily: "sdcpp", },
-        uploadDir: "/tmp/test-uploads",
+        uploadDir: UPLOAD_DIR,
       },);
 
       expect(capturedUrls.some((u,) => u.includes("/sdcpp/v1/img_gen",)),).toBe(true,);
@@ -250,7 +260,7 @@ describeReal("EmotionAvatarService", () => {
         actorId: testActorId,
         emotion: EmotionType.Neutral,
         sdConfig: { ...baseSdConfig, apiFamily: "unsupported" as any, },
-        uploadDir: "/tmp/test-uploads",
+        uploadDir: UPLOAD_DIR,
       },),).rejects.toThrow("not supported",);
     });
   });
