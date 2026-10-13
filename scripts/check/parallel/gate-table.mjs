@@ -81,6 +81,10 @@ export const checks = {
   // same commit that would have to touch them.
   "api - doc drift": "bun run scripts/check/api-doc-drift.mjs",
 
+  // OpenAPI spec validity: the served spec must be valid OpenAPI 3.1 and
+  // contain the paths the reference TUI client depends on.
+  "spec - drift": "bun run scripts/check/spec-drift.mjs",
+
   // Changelog gate (Keep-a-Changelog structure; latest tag must have a section)
   "changelog - gate": "bun run scripts/check-changelog.ts",
 
