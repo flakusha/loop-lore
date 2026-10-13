@@ -11794,6 +11794,20 @@
     "title": "Error Envelope",
     "type": "EPIC"
   },
+  "EPIC-EXPERIMENTAL-EGUI-FRONTEND": {
+    "hash": "pending",
+    "extid": "EPIC-EXPERIMENTAL-EGUI-FRONTEND",
+    "type": "EPIC",
+    "title": "Experimental egui Frontend (adoption decision + client-agnostic view-model layer)",
+    "label": "epic",
+    "priority": "Low",
+    "epic": "",
+    "tags": [
+      "(none)"
+    ],
+    "source": ".plan/tickets/epic-experimental-egui-frontend.md",
+    "status": "Not Started"
+  },
   "EPIC-EXPLORATION-DISCOVERY": {
     "epic": "",
     "extid": "EPIC-EXPLORATION-DISCOVERY",
@@ -33073,6 +33087,25 @@
     "title": "Effect v4 scoped concurrency and interruption spike",
     "type": "TASK"
   },
+  "TASK-EGUI-WASM-EMBED-SPIKE": {
+    "hash": "pending",
+    "extid": "TASK-EGUI-WASM-EMBED-SPIKE",
+    "type": "TASK",
+    "title": "egui→WASM embed spike — measure, do not ship",
+    "label": "task",
+    "priority": "low",
+    "epic": "`epic-experimental-egui-frontend`",
+    "tags": [
+      "egui",
+      "rust",
+      "wasm",
+      "spike",
+      "research",
+      "experimental"
+    ],
+    "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md",
+    "status": "Not Started"
+  },
   "TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE": {
     "hash": "89f510b",
     "git_issue": "89f510b",
@@ -35160,6 +35193,23 @@
     "title": "Frontend — Chat Setup Templates (edit/delete)",
     "type": "TASK"
   },
+  "TASK-FRONTEND-CLIENT-CONTRACT-DOC": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CLIENT-CONTRACT-DOC",
+    "type": "TASK",
+    "title": "Document /api/v1/openapi/json as the client contract, with a codegen check",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-experimental-egui-frontend`",
+    "tags": [
+      "api",
+      "openapi",
+      "docs",
+      "client-contract"
+    ],
+    "source": ".plan/tickets/TASK-frontend-client-contract-doc.md",
+    "status": "Not Started"
+  },
   "TASK-FRONTEND-COMPRESSION": {
     "epic": "epic-frontend-bundle-optimization",
     "extid": "TASK-FRONTEND-COMPRESSION",
@@ -35461,6 +35511,40 @@
     ],
     "title": "Frontend tsconfig Strictness Alignment",
     "type": "TASK"
+  },
+  "TASK-FRONTEND-VIEW-MODEL-EXTRACTION": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-VIEW-MODEL-EXTRACTION",
+    "type": "TASK",
+    "title": "Extract client-agnostic view-models from view handlers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-experimental-egui-frontend`",
+    "tags": [
+      "frontend",
+      "refactor",
+      "api",
+      "client-contract"
+    ],
+    "source": ".plan/tickets/TASK-frontend-view-model-extraction.md",
+    "status": "Not Started"
+  },
+  "TASK-FRONTEND-VIEW-MODEL-JSON-NEGOTIATION": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-VIEW-MODEL-JSON-NEGOTIATION",
+    "type": "TASK",
+    "title": "Serve view-models as JSON on Accept: application/json",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-experimental-egui-frontend`",
+    "tags": [
+      "frontend",
+      "api",
+      "content-negotiation",
+      "client-contract"
+    ],
+    "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md",
+    "status": "Not Started"
   },
   "TASK-FRONTEND-WORLD-LORE-ENTRIES-UI": {
     "epic": "epic-world-locations",
@@ -49967,6 +50051,23 @@
     "tags": [],
     "title": "Terminal UI (TUI)",
     "type": "TASK"
+  },
+  "TASK-TUI-API-CONTRACT-SMOKE-TESTS": {
+    "hash": "pending",
+    "extid": "TASK-TUI-API-CONTRACT-SMOKE-TESTS",
+    "type": "TASK",
+    "title": "Extend the TUI into a live /api/v1 contract smoke suite",
+    "label": "task",
+    "priority": "low",
+    "epic": "`epic-experimental-egui-frontend`",
+    "tags": [
+      "tui",
+      "testing",
+      "api",
+      "client-contract"
+    ],
+    "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md",
+    "status": "Not Started"
   },
   "TASK-TUI-ASSET-VIEW-REMOVE-SILENT-CATCH-AND-VOID-ASYNC-IIFE": {
     "epic": "epic-terminal-ui",
