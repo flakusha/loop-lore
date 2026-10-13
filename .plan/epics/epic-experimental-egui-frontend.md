@@ -44,10 +44,15 @@ the hub's own sequencing (API-First Foundation → Shared Client SDK) depends on
 Four findings drove it, all sourced in the research doc:
 
 1. **egui has no DOM interop.** It paints its own canvas and cannot emit an
-   HTML fragment for htmx or read `x-data`. The v1 frontend's strongest
-   property — one template serving both fragment and page via the
-   `HX-Request` branch at `src/routes/views/layout.ts:186-188` — has no egui
-   analogue.
+   HTML fragment for htmx or read `x-data`. The upstream README says egui
+   "compiles to Wasm using either WebGPU (when available) or WebGL2 for
+   rendering, and almost nothing else from the web tech stack"
+   (<https://github.com/emilk/egui/blob/main/crates/eframe/README.md>, read
+   2026-10-13); the "cannot emit HTML / read `x-data`" half is an inference
+   from egui's emit surface carrying no markup, documented and labelled as
+   such in research §2.2. The v1 frontend's strongest property — one template
+   serving both fragment and page via the `HX-Request` branch at
+   `src/routes/views/layout.ts:186-188` — has no egui analogue.
 2. **Bundle size is measured, not guessed.** `egui_demo_app_bg.wasm` at
    <https://www.egui.rs/> is 11,707,366 raw / 4,389,649 transfer bytes
    (brotli/gzip), read 2026-10-13. The maintainers' own figure for the same
