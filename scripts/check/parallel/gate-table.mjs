@@ -43,14 +43,23 @@ export const checks = {
   // build) and 0.2s warm on the dev host — inside the default gate budget, so
   // this is a gate and not a CI-only step.
   //
-  // The rustfmt counterpart (`format:native:check`) is deliberately NOT
-  // registered: `cargo fmt --check` exits 1 today on pre-existing debt in
-  // src/gguf.rs and src/lib.rs, and a blocking entry would redden `bun run check`
-  // on every branch until that Rust source is reformatted.
+  // Both native gates landed only after the crate was rustfmt-clean. The
+  // crate shipped with 6 hunks of drift (gguf.rs comment/signature realignment,
+  // lib.rs reorder_modules); wiring `format - native (rustfmt)` before clearing
+  // that would have reddened `bun run check` on every branch. Debt first, gate
+  // second — the sequence is the point, not the gate.
   "lint - native (clippy)": "bun run lint:native",
 
   // Formatting
   "format - dprint": "bun run format",
+
+  // rustfmt for the native crate, the Rust-side peer of `format - dprint`.
+  // Measured 0.03s cold AND warm: `cargo fmt` parses only the crate's own 5
+  // files (~24 KB) and never touches the dependency graph, which is why this is
+  // ~400x cheaper than the clippy gate above. Style comes from the crate's own
+  // native/loop-lore-native/rustfmt.toml (2-space, max_width 120), which cargo
+  // resolves from the manifest dir — no config needed here.
+  "format - native (rustfmt)": "bun run format:native:check",
   "md - lint": "bun run md:lint",
   // Mermaid block lint — every ```mermaid fence in docs/ and .plan/ must parse.
   // mmdlint is headless (jsdom-backed), no browser, bun-native, <30s on the whole tree.
