@@ -199,8 +199,8 @@ does not change. Both unknowns the research doc flagged are immaterial: build
 time is 93 s/143 s cold on 32 threads, and the marginal audit surface is
 +73/+95 crates over a baseline that already carries 2. The cost that does
 matter is 1.59 MB brotli (`glow`) to 2.30 MB (`wgpu`) for a *one-panel* app —
-~25× `src/views/admin.html` (157,755 bytes) — before a single product screen
-exists. The DOM verdict got more specific and no friendlier. `glow`, not
+~10× `src/views/admin.html` (157,755 bytes), 14.6× for `wgpu` — before a
+single product screen exists. The DOM verdict got more specific and no friendlier. `glow`, not
 `wgpu`, is the backend worth choosing if this is ever revisited, and it has to
 live outside the htmx swap lifecycle.
 
