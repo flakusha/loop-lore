@@ -17,7 +17,7 @@
  * Nothing caught any of it: the generator only ran when someone typed
  * `bun run openapi`.
  *
- * Two invariants, both BLOCKING:
+ * Three invariants, all BLOCKING:
  *
  *   1. No phantom. Every operation api.md documents must exist in the spec at
  *      the same method AND path. This is the direction that is actually
@@ -28,6 +28,9 @@
  *      deleting a section is indistinguishable from fixing drift, and coverage
  *      erodes silently. Regenerate with `--update-baseline` after documenting
  *      more surface.
+ *   3. OpenAPI validity. The regenerated spec must be a well-formed OpenAPI 3.1
+ *      document with at least one path. A malformed or empty spec passes the
+ *      ratchet silently and would produce a broken client on generation.
  *
  * The reverse direction (spec operations with no api.md section — 660 of 807 at
  * the time of writing) is REPORTED, never enforced: it is a 492-path backlog,
@@ -97,6 +100,19 @@ async function generateSpec() {
 
 async function main() {
   const spec = await generateSpec();
+
+  // Invariant 3: the spec must be valid OpenAPI 3.1 with at least one path.
+  if (
+    !spec.openapi?.startsWith("3.1",) || typeof spec.paths !== "object" || spec.paths === null ||
+    Object.keys(spec.paths,).length === 0
+  ) {
+    console.error(
+      "api - doc drift: spec is not valid OpenAPI 3.1 with paths — openapi=" + JSON.stringify(spec.openapi,) +
+        ", paths type=" + typeof spec.paths + ", count=" + Object.keys(spec.paths ?? {},).length,
+    );
+    process.exit(1,);
+  }
+
   const markdown = await Bun.file(path.join(PROJECT_ROOT, DOC_REL,),).text();
   const documented = documentedOperations(markdown,);
 

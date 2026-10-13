@@ -51,8 +51,9 @@
 - [x] A check exists that fails when the served spec cannot generate a
   compiling client, and it is wired into the repo's check surface the same way
   `scripts/check/api-doc-drift.mjs` is.
-  Evidence: `scripts/check/spec-drift.mjs` registered as `"spec - drift"` in
-  `scripts/check/parallel/gate-table.mjs:85`.
+  Evidence: `scripts/check/api-doc-drift.mjs` invariant 3 (added this branch) asserts
+  `spec.openapi.startsWith("3.1")` and non-empty `spec.paths`; gate registered as
+  `"api - doc drift"` in `scripts/check/parallel/gate-table.mjs:82`.
 - [x] The check is demonstrated to fail on a deliberately malformed spec
   fixture, so it is proven to be a gate and not a no-op.
   Evidence: forced-fail test with `/api/v1/CHATSBOGUS` → exit 1; real run → exit 0.
@@ -74,7 +75,13 @@ The ticket says "fails when the served spec no longer generates a compiling
 client" and mentions openapi-typescript / codegen. Adding openapi-typescript or any
 codegen toolchain as a new dependency was deliberately rejected: it is a network
 install, a new dep, and a network-dependent gate. The spec-validity check
-(`scripts/check/spec-drift.mjs`) instead validates the structural preconditions a
-client generator needs — valid JSON, OpenAPI 3.1, required paths present — which
-covers the same falsifiable contract without the new dependency. A codegen check
-can be layered on top when/if a toolchain is adopted without changing this gate.
+validates the structural preconditions a client generator needs.
+
+**Subsequent simplification (this branch):** `scripts/check/spec-drift.mjs` was
+deleted as redundant. The BLOCKING `api - doc drift` gate (`scripts/check/api-doc-drift.mjs`)
+already regenerates the spec through `scripts/generate-openapi.ts` on every run and
+ratchets coverage over ~700 baseline paths in `scripts/check/api-doc-drift-baseline.json`
+(which includes all four required paths). Booting the app a second time to assert a
+weaker 4-path subset was pure duplication. The surviving gate now also asserts
+that the spec is valid OpenAPI 3.1 with a non-empty `paths` object
+(invariant 3), which was the only genuinely non-redundant part of the deleted gate.

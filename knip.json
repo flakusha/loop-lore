@@ -218,7 +218,6 @@
     // ("api - doc drift": bun run scripts/check/api-doc-drift.mjs), not
     // import-reachable — same class as weave-damage.mjs above.
     "scripts/check/api-doc-drift.mjs",
-    "scripts/check/spec-drift.mjs",
     // Frontend audit scripts: standalone CLI reporters (bun run scripts/...),
     // not import-reachable. Promoted from .tmp/ investigation scripts.
     "scripts/check-frontend-banned-patterns.ts",
