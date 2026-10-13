@@ -15,7 +15,12 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { serveCharacterChatListDb, serveCharacterEditForm, serveCharactersGrid, } from "./characters";
+import {
+  loadCharactersGridViewModel,
+  serveCharacterChatListDb,
+  serveCharacterEditForm,
+  serveCharactersGrid,
+} from "./characters";
 
 describe("views/characters", () => {
   let db: Kysely<DB>;
@@ -37,6 +42,34 @@ describe("views/characters", () => {
       expect(res.status,).toBe(200,);
       expect(html,).toContain("characters-empty",);
       expect(html,).toContain("No characters found",);
+    });
+
+    test("loadCharactersGridViewModel returns the same rows the fragment renders", async () => {
+      const viewModel = await loadCharactersGridViewModel(db,);
+      const html = await (await serveCharactersGrid(db,)).text();
+
+      expect(viewModel.characters,).toEqual([],);
+      expect(html,).toContain("characters-empty",);
+
+      await insertActors(db, "Grid Actor", {
+        id: "actor-grid" as never,
+        actor_type: "character" as never,
+        description: "Grid desc",
+        review_state: "approved",
+      },);
+
+      const populated = await loadCharactersGridViewModel(db,);
+      const populatedHtml = await (await serveCharactersGrid(db,)).text();
+
+      expect(populated.characters.length,).toBe(1,);
+      const [only,] = populated.characters;
+      expect(only?.id,).toBe("actor-grid",);
+      expect(only?.displayName,).toBe("Grid Actor",);
+      expect(only?.description,).toBe("Grid desc",);
+      expect(only?.reviewState,).toBe("approved",);
+      expect(only?.avatarUrl,).toBeNull();
+      expect(populatedHtml,).toContain('data-testid="character-card-actor-grid"',);
+      expect(populatedHtml,).toContain(only?.displayName ?? "",);
     });
 
     test("renders cards for non-user actors sorted by name", async () => {
