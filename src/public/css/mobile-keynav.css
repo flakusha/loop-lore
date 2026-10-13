@@ -44,6 +44,7 @@
   align-items: center;
   justify-content: center;
 }
+
 @media (prefers-reduced-motion: reduce) {
   .mobile-composer {
     transition: none;
@@ -54,7 +55,7 @@
 .keynav-help-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(0 0 0 / 60%);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -128,6 +129,7 @@
   color: var(--text-secondary);
   text-align: center;
 }
+
 @media (prefers-reduced-motion: reduce) {
   .keynav-help-overlay {
     transition: none;

@@ -4,27 +4,61 @@
     ".html$": "@markuplint/mustache-parser"
   },
   "rules": {
-    "invalid-attr": {
+    "no-unknown-attr": {
       "options": {
         "ignoreAttrNamePrefix": ["hx-", "x-", "x-on:", ":", "@"],
         "allowAttrs": ["autofocus"]
       }
     },
-    "id-duplication": true,
-    "attr-duplication": true,
+    "no-disallowed-attr": {
+      "options": {
+        "ignoreAttrNamePrefix": ["hx-", "x-", "x-on:", ":", "@"],
+        "allowAttrs": ["autofocus"]
+      }
+    },
+    "no-invalid-attr-value": {
+      "options": {
+        "allowAttrs": ["autofocus"]
+      }
+    },
+    "no-duplicate-id": true,
+    "no-duplicate-attr": true,
     "case-sensitive-attr-name": true,
     "case-sensitive-tag-name": true,
     "no-orphaned-end-tag": true,
     "no-refer-to-non-existent-id": true,
-    "wai-aria": true,
+    "no-aria-on-unsupported-element": true,
+    "no-unknown-role": true,
+    "no-abstract-role": true,
+    "require-parent-role": true,
+    "require-aria-prop": true,
+    "no-deprecated-role": true,
+    "no-redundant-role": true,
+    "permitted-roles": true,
+    "no-prohibited-naming": true,
+    "element-supports-aria-prop": true,
+    "role-supports-aria-prop": true,
+    "no-deprecated-aria-prop": true,
+    "no-redundant-aria-prop": true,
+    "no-contradictory-aria-prop": true,
+    "no-invalid-aria-prop-value": true,
+    "no-default-aria-value": true,
+    "aria-prop-requires-role": true,
+    "require-owned-elements": true,
+    "no-aria-on-presentational-children": true,
+    "no-focusable-in-aria-hidden": true,
+    "tab-requires-tabpanel": true,
     "label-has-control": "warning",
-    "use-list": "warning",
-    "landmark-roles": "warning",
-    "heading-levels": false,
-    "doctype": false,
-    "required-h1": false,
-    "required-element": false,
-    "required-attr": false,
+    "no-pseudo-list": "warning",
+    "no-nested-top-level-landmark": "warning",
+    "require-landmark-label": "warning",
+    "no-skipped-heading-level": false,
+    "require-doctype": false,
+    "no-obsolete-doctype": false,
+    "require-h1": false,
+    "no-duplicate-h1": false,
+    "require-element": false,
+    "require-attr": false,
     "require-accessible-name": false
   }
 }
