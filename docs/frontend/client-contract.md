@@ -40,17 +40,24 @@ export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:
 
 ## Authentication
 
-The server uses **session-token authentication**. The credential is placed in the
-`auth` option of `safeFetch`, not a header:
+The TUI sends **session-token authentication** via an `Authorization: Bearer`
+header. `safeFetch` injects this automatically:
 
 ```typescript
-// src/tui/chat/api.ts:33-34
-auth: host.sessionToken ? { sessionToken: host.sessionToken } : undefined,
+// src/utils/safe-fetch/headers.ts:29-30
+if (auth.sessionToken) {
+  headers.Authorization = `Bearer ${auth.sessionToken}`;
+}
 ```
 
-When `sessionToken` is set, the auth helper reads it from the `Authorization:
-Bearer <token>` header. Unauthenticated requests receive a `401` response.
-No cookie-based auth is used for the API surface today.
+When `sessionToken` is set, the auth helper (`src/utils/safe-fetch/fetch.ts:buildRequestHeaders`)
+reads it from the `Authorization: Bearer <token>` header. Unauthenticated requests
+receive a `401` response.
+
+The server also accepts the `ll_token` cookie for the same purpose
+(`src/middleware/auth/authenticate.ts:41-54` — `extractToken` checks both the
+`Authorization: Bearer` header and the `ll_token` cookie). No other cookie-based
+auth is used for the API surface today.
 
 ## Content negotiation
 
@@ -66,35 +73,48 @@ The server operates in **dual-mode**:
 htmx/Alpine frontend. Clients MUST use `Accept: application/json`. See
 `TASK-frontend-view-model-json-negotiation.md` for the JSON read-path.
 
-## Response envelope
+## Response shapes
 
-All JSON API responses follow this discriminated union:
+The server does not use a single response envelope — shapes differ by route group.
+The TUI wraps every response in `FetchResult<T>`
+(`src/utils/safe-fetch/types.ts:9-11`):
 
 ```typescript
-// src/tui/chat/api.ts:29-31 -- TUI parses this shape
-type JsonResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; error: { message: string; status: number } };
+// src/utils/safe-fetch/types.ts:9-11 -- TUI result wrapper
+type FetchResult<T> =
+  | { ok: true; data: T; status: number; headers: Headers }
+  | { ok: false; error: Error; status?: number; headers?: Headers };
 ```
 
-The TUI reads errors as `result.error.message` (`src/tui/chat/api.ts:42`).
+The TUI reads errors as `result.error.message`
+(`src/tui/chat/api.ts:42`).
+
+Server-side response helpers (not an exhaustive list):
+
+| Route group | Helper | Shape |
+|-------------|--------|-------|
+| List endpoints (`GET /api/v1/chats`, etc.) | `jsonPaginated` (`src/routes/http-utils/responses.ts:56-83`) | `{ data, pagination: { total, page, pageSize, totalPages } }` |
+| Create endpoints (`POST /api/v1/chats`) | `jsonCreated` (`src/routes/http-utils/responses.ts:89-104`) | `{ id }` (201) |
+| Error responses | `jsonError` (`src/routes/http-utils/errors.ts`) | `{ error, message, status }` |
 
 ## Live streaming: SSE only, no WebSocket
 
 Live streaming uses **Server-Sent Events (SSE)**. There is **no WebSocket** mount:
 
-- `src/routes/export-sse/` serves SSE streams for export progress.
+- `src/routes/export-sse/start.ts:120-162` serves SSE streams for export progress.
 - `src/elysia-app.ts` has **no** `.ws()` call (grep confirmed zero matches under `src/`).
 - `src/transport/` is a standalone protocol library, not the server live transport.
 
-SSE event types from export-sse handler schemas:
+SSE event types emitted by the export start endpoint:
 
 ```typescript
-type ExportEvent =
-  | { type: "started"; exportId: string }
-  | { type: "progress"; percent: number; message: string }
-  | { type: "completed"; downloadUrl: string }
-  | { type: "error"; message: string };
+// src/routes/export-sse/start.ts:123-162 -- actual emitted event shapes
+{ type: "job_created"; jobId: string; status: "queued" }
+{ type: "progress"; jobId: string; progress: number; total: number;
+  percentage: number; currentStep: string }
+{ type: "completed"; jobId: string; downloadUrl: string;
+  totalItems: number; completedAt: string }
+{ type: "failed"; jobId: string; error: string }
 ```
 
 SSE replay semantics are not documented. A new client should treat each stream as
@@ -120,7 +140,7 @@ The server applies CSRF double-submit cookie protection via
 
 - Include the `csrf_token` cookie and send `x-csrf-token` on state-mutating
   requests (`POST`, `PUT`, `PATCH`, `DELETE`); or
-- Use a route listed in `CSRF_EXEMPT_ROUTES` (`src/middleware/csrf.ts`) which
+- Use a route listed in `CSRF_EXEMPT_ROUTES` (`src/middleware/csrf.ts:23-33`) which
   bypasses the check.
 
 ### SSE replay
@@ -144,12 +164,14 @@ curl -s http://localhost:3000/api/v1/openapi/json > openapi.json
 npx openapi-typescript openapi.json --output src/client.ts
 ```
 
-No generated client is committed. The `spec-drift` check in `scripts/check/`
-fails when the served spec is no longer valid OpenAPI 3.1 or drops required paths.
+No generated client is committed. The `api - doc drift` gate
+(`scripts/check/api-doc-drift.mjs`) fails when the served spec is no longer
+valid OpenAPI 3.1 or when `docs/reference/api.md` documents operations that do
+not exist in the spec. It also ratchets coverage of spec paths documented in
+`scripts/check/api-doc-drift-baseline.json`.
 
-## Required paths
-
-The spec must contain these paths (verified by `scripts/check/spec-drift.mjs`):
+The spec must contain these paths (listed here as a client-side sanity check;
+they are covered by the `api - doc drift` gate's ratchet over ~700 baseline paths):
 
 | Path | Why required |
 |------|-------------|
@@ -157,5 +179,3 @@ The spec must contain these paths (verified by `scripts/check/spec-drift.mjs`):
 | `/api/v1/chats/{id}` | Single chat CRUD |
 | `/api/v1/chats/{id}/messages` | Message send/receive -- TUI primary path |
 | `/api/v1/actors` | Actor listing |
-
-If any are absent, the check exits non-zero.
