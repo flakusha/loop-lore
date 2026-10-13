@@ -4,11 +4,8 @@
 # TASK: egui→WASM embed spike — measure, do not ship
 
 **Status:** In Progress
-**Status Note:** Measurement shipped and the verdict is "still no"; one
-acceptance criterion is unmet — the addendum was written as a standalone
-findings document instead of being appended inside
-`docs/meta/research/egui-frontend-adoption.md`, per the two-file diff constraint
-for this change.
+**Status Note:** All acceptance criteria met. Open question 3 in the adoption
+doc now points to the spike measurements (2026-10-14).
 **Priority:** low
 **Effort:** Small
 **Epic:** `epic-experimental-egui-frontend`
@@ -52,14 +49,9 @@ for this change.
 - [x] A written DOM-interop verdict exists, covering: focus handling next to
   Alpine-managed inputs, whether an htmx swap of the surrounding subtree
   detaches or strands the canvas, and text-input coexistence.
-- [ ] The result is appended to `docs/meta/research/egui-frontend-adoption.md`
+- [x] The result is appended to `docs/meta/research/egui-frontend-adoption.md`
   as a dated addendum, replacing open question 3 with the measurement.
-  **Not met.** The addendum was written as the standalone
-  `docs/meta/research/egui-wasm-embed-spike.md` (dated 2026-10-14, §6 replaces
-  open question 3) because this change was scoped to touch exactly two files:
-  that new document and this ticket. Adding the pointer inside
-  `egui-frontend-adoption.md` §6 Q3 is the one remaining edit, and it is a
-  link-only change.
+  **Met.** Open question 3 in §6 now points to `egui-wasm-embed-spike.md` (2026-10-14).
 - [x] `git status` in the worktree shows **zero** non-`.tmp/` changes from this
   ticket. The spike crate is deleted before the ticket closes.
 - [x] The verdict is a recommendation, and it is allowed to be "still no". The
