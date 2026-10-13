@@ -190,7 +190,7 @@ git push origin release/0
 
 ### E2E Tests Flaky
 
-- Run with `E2E_SAFEGUARD=1` (uses `:memory:` DB, `/tmp/` uploads)
+- Run with `E2E_SAFEGUARD=1` (uses `:memory:` DB, OS-temp uploads)
 - Check Playwright trace in workflow artifacts
 
 ### Version Prediction Wrong
