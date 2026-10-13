@@ -209,22 +209,49 @@ pulls `wasm-bindgen`, `js-sys`, `web-sys` (with a long explicit feature list),
 (<https://github.com/emilk/egui/blob/main/crates/eframe/Cargo.toml>).
 One hard requirement: on web you must enable exactly one of `glow` or `wgpu`
 or the crate fails to compile —
-`crates/eframe/src/web/mod.rs:29-30` is a `compile_error!`.
+`crates/eframe/src/web/mod.rs` → `compile_error!` (`emilk/egui@b25d2d45`, read
+2026-10-13).
 
 **Embedding in an existing page is technically supported.**
 `eframe::WebRunner::start(canvas: web_sys::HtmlCanvasElement, web_options,
 app_creator)` takes a caller-supplied canvas
-(`crates/eframe/src/web/web_runner.rs:58-63`), so a WASM build can be mounted
-into one element inside an htmx page. The maintainers know this is a real
-scenario: `focus_without_scroll` exists precisely "when the app is embedded in
-a larger scrollable page" (`crates/eframe/src/web/mod.rs:89-98`, citing
-[emilk/egui#8295](https://github.com/emilk/egui/issues/8295)).
+(`crates/eframe/src/web/web_runner.rs` → `WebRunner::start`,
+`emilk/egui@b25d2d45`, read 2026-10-13), so a WASM build can be mounted into
+one element inside an htmx page. The maintainers know this is a real scenario:
+`focus_without_scroll` exists precisely "when the app is embedded in a larger
+scrollable page" (`crates/eframe/src/web/mod.rs` → `focus_without_scroll`,
+same commit, citing [emilk/egui#8295](https://github.com/emilk/egui/issues/8295)).
 
-What you do **not** get: DOM interop. egui paints its own canvas. It cannot
-render into an htmx-swapped subtree, read `x-data` state, or emit an HTML
-fragment for htmx to insert. Any htmx page embedding egui gets an
-isolated canvas island beside the server-rendered DOM, and every state handoff
-crosses a Rust↔JS boundary (`wasm_bindgen` externs, or a JS bridge).
+**What you do not get: DOM interop.** Upstream says so directly — the `eframe`
+README's "Limitations when running egui on the web" section states that `eframe`
+and egui "compiles to Wasm using either WebGPU (when available) or WebGL2 for
+rendering, and almost nothing else from the web tech stack", and that "you
+cannot search an egui web page like you would a normal web page"
+(<https://github.com/emilk/egui/blob/main/crates/eframe/README.md>, read
+2026-10-13). A page whose contents are not searchable is not a page whose
+contents are DOM-addressable.
+
+**Inference from the two sources below — not an upstream statement:** egui
+cannot emit an HTML fragment for htmx to insert, cannot render into an
+htmx-swapped subtree, and cannot read Alpine `x-data` state. Two independent
+primary sources support that reading; neither states it outright.
+
+- `egui::FullOutput` is documented as "What egui emits each frame from
+  `Context::run_ui`", and its entire field set is `platform_output`,
+  `textures_delta`, `shapes`, `pixels_per_point` and `viewport_output` —
+  geometry, textures, cursor/IME/window events and native viewport handles. No
+  field carries markup (<https://docs.rs/egui/0.36.2/egui/struct.FullOutput.html>,
+  read 2026-10-13). The inference rests on the absence of a DOM emit surface;
+  upstream never writes "egui cannot emit HTML".
+- The shipped demo's `index.html` is a bare `<canvas id="the_canvas_id">` plus a
+  loading `<div>`; the only DOM writes in it are the panic handler replacing
+  `#center_text`'s `innerHTML` after a crash
+  (<https://www.egui.rs/index.html>, read 2026-10-13). Nothing in the page
+  mutates DOM on the app's behalf.
+
+Consequence for htmx: any page embedding egui gets an isolated canvas island
+beside the server-rendered DOM, and every state handoff crosses a
+Rust↔JS boundary (`wasm_bindgen` externs, or a JS bridge).
 
 ### 2.3 Bundle size — measured, 2026-10-13
 
@@ -377,10 +404,10 @@ shapes, in the near term.**
 The deciding facts are not aesthetic — they are the ones in §2:
 
 1. **egui's web story does not compose with htmx.** It paints a canvas; it
-   cannot emit HTML fragments or read Alpine state. The v1 frontend's
-   strongest property — one template serving both fragment and page — has no
-   egui analogue, so adopting it means paying for a second implementation of
-   every screen.
+   cannot emit HTML fragments or read Alpine state (§2.2, sourced). The v1
+   frontend's strongest property — one template serving both fragment and page
+   — has no egui analogue, so adopting it means paying for a second
+   implementation of every screen.
 2. **The price of entry is 4.4 MB compressed** for the demo app alone, against
    a 154 KB largest template, on a page whose entire point is instant htmx
    swaps.
