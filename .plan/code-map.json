@@ -17724,6 +17724,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
     },
     {
@@ -17897,6 +17901,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fractal-locations-api-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-client-contract-doc.md"
     },
     {
       "kind": "ticket",
@@ -20388,6 +20396,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-component-architecture.md"
     },
     {
@@ -20397,6 +20409,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     },
     {
       "kind": "ticket",
@@ -22937,6 +22953,10 @@
       "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/federation-instance-switcher.md"
     }
@@ -23461,6 +23481,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
+    }
+  ],
+  "src/frontend/wasm-loader.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
     }
   ],
   "src/frontend/world/location-actions.ts": [
@@ -34945,6 +34971,16 @@
       "source": ".plan/epics/epic-worlds-extension.md"
     }
   ],
+  "src/routes/export-sse": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-client-contract-doc.md"
+    }
+  ],
   "src/routes/export-sse.ts": [
     {
       "kind": "epic",
@@ -38000,7 +38036,15 @@
   "src/routes/v1/admin-surface.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-chat-commands.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-client-contract-doc.md"
     }
   ],
   "src/routes/v1/base-surface.ts": [
@@ -38205,6 +38249,10 @@
   ],
   "src/routes/v1/openapi.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-039.md"
     },
@@ -38215,6 +38263,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-client-contract-doc.md"
     },
     {
       "kind": "ticket",
@@ -38415,6 +38467,10 @@
       "source": ".plan/epics/epic-docs-reconciliation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
     },
@@ -38432,11 +38488,25 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-template-preflight-production-resolver-gate.md"
+    }
+  ],
+  "src/routes/views/negotiate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
     }
   ],
   "src/routes/views/nsfw-audit.ts": [
@@ -38459,6 +38529,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-search-401s-anonymous-users-while-grid-serves-them.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     }
   ],
   "src/routes/views/plugin-pages.ts": [
@@ -38469,6 +38543,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     },
     {
       "kind": "ticket",
@@ -38495,6 +38573,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    }
+  ],
+  "src/routes/views/view-serving.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
     }
   ],
   "src/routes/views/worlds.ts": [
@@ -45590,6 +45678,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md"
     },
     {
@@ -45637,6 +45729,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     },
     {
       "kind": "ticket",
@@ -45749,6 +45845,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-topic-tui-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     }
   ],
   "src/tui/harness/display.ts": [
@@ -47014,6 +47114,10 @@
   "src/views/admin.html": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
     },
     {
@@ -47139,6 +47243,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     }
   ],
   "src/views/character-edit.html": [
@@ -47347,6 +47455,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-browser-pre-encrypt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     },
     {
       "kind": "ticket",
@@ -47801,9 +47913,17 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     }
   ],
   "src/views/world-edit.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-npc-management-ui.md"
@@ -47859,6 +47979,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-management-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    }
+  ],
+  "src/web/mod.rs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md"
     }
   ],
   "src/world/conditions.ts": [
