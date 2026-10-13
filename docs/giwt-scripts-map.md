@@ -44,7 +44,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 
 - `check:report-ls` → `giwt report`: REJECTED. Different worktree roots and `giwt report` flags loop-lore's valid reports malformed (missing `gates` section — schema drift). Stays in-repo.
 - `scripts/sync-ticket-index.ts` deletion: BLOCKED. `scripts/worktree/commands/sync.ts` shells out to it; removal waits for the worktree-shim phase.
-- `scripts/gpg-unlock.mjs`: STAYS. Load-bearing for worktree commit paths and `check-parallel`; design doc pins it as the human-facing unlock command.
+- `scripts/gpg-unlock.mjs`: DELETED (try-10). Capability lives in `giwt gpg-unlock`; the only remaining import is in `scripts/check/parallel/gpg.mjs` which points to `node_modules/giwt/src/gpg-unlock`.
 - `plan:backlog:sync*`, `plan:docs`, `plan:map*`, `plan:find`: NO UPSTREAM → done in try-7 (`giwt plan` added in upstream commit `c53ffb5`; subsumes backlog-sync, code-map, gen-docs + adds check-links, validate, status).
 - `version:*`, `commit:*` (`src/scripts/`): OUT OF SCOPE (denylist: `src/`).
 - `bun install` of the git dep needs a GitHub SSH key in every install env (harness shell has none; CI has no SSH setup) — see Try-3.
@@ -118,8 +118,7 @@ implementation detail that callers stop invoking directly.
     gate-failure mining no in-repo script provided. The remaining question is
     no longer schema drift but whether to retire `check:report-ls` in favour of
     the pinned `giwt report` — an owner call, not a parity blocker.
-  - `scripts/gpg-unlock.mjs` → `giwt gpg-unlock` rewrite is unblocked by
-    try-5 (no worktree-shim dependency); lands when owner authorizes.
+
 
 ## Try-6 cosmetic (giwt ASCII output)
 
@@ -172,11 +171,7 @@ no longer ahead — upstream re-verified: detached-root finalize guard at
 rebase default target at `rebase.ts:25`, and `commit`/`commit-wt` spread the
 filtered env with only `GIT_COMMITTER_*` re-set (`commit.ts:99`,
 `commit-wt.ts:118`). Deletion is **blocked**, not by the parity question but by
-live imports: `scripts/lib/colors.ts`, `scripts/lib/assertions.ts`, and
-`scripts/gpg-unlock.mjs` (the last via `worktree/utils/credentials.mjs`) still
-import from the fork, and their `giwt` counterparts are not drop-in
-(`colors` 93 vs 49 lines, `credentials` 90 vs 134, `gpg` 172 vs 165 — all
-diverged). `tests/worktree-flow.test.ts` also drives the fork directly. The
+all three files and `tests/worktree-flow.test.ts` were deleted in try-10; the only remaining import is `scripts/check/parallel/gpg.mjs` which points to `node_modules/giwt/src/gpg-unlock` and imports nothing from the fork. The
 "Upstream divergence, deliberately not mirrored" note below is likewise stale:
 upstream now refuses protected rebase targets, and the fork's copy of that
 refusal is what upstream adopted.
