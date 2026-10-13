@@ -5,9 +5,15 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { SuccessResponse, } from "../../validation/schemas";
-import { serveCharacterChatListDb, serveCharacterEditForm, serveCharactersGrid, } from "./characters";
+import {
+  loadCharactersGridViewModel,
+  serveCharacterChatListDb,
+  serveCharacterEditForm,
+  serveCharactersGrid,
+} from "./characters";
 import { serveChatsListDb, serveChatsSearch, } from "./chats";
 import { serveGalleryGrid, } from "./gallery";
+import { jsonViewModelResponse, wantsJsonViewModel, } from "./negotiate";
 import { serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 import { serveWorldDetailContent, serveWorldsListDb, } from "./worlds";
 
@@ -19,9 +25,14 @@ export function dynamicRoutes(database: Kysely<DB>,) {
   return new Elysia({ name: "views-dynamic", },)
     // ── Dynamic partials (server-rendered data) ─────────────
     .get("/dynamic/characters/grid", async (ctx,) => {
+      const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
       const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
+      if (!isHtmx && !wantsJson) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
+      }
+
+      if (wantsJson) {
+        return jsonViewModelResponse(await loadCharactersGridViewModel(database,),);
       }
 
       return await serveCharactersGrid(database,);

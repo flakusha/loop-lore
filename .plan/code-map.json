@@ -38397,10 +38397,20 @@
       "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
     }
   ],
+  "src/routes/views/characters.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    }
+  ],
   "src/routes/views/characters.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     },
     {
       "kind": "ticket",
@@ -38503,6 +38513,12 @@
       "source": ".plan/tickets/TASK-template-preflight-production-resolver-gate.md"
     }
   ],
+  "src/routes/views/negotiate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
+    }
+  ],
   "src/routes/views/negotiate.ts": [
     {
       "kind": "ticket",
@@ -38519,6 +38535,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
     }
   ],
   "src/routes/views/plugin-dynamic.ts": [
@@ -38533,6 +38553,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
     }
   ],
   "src/routes/views/plugin-pages.ts": [
@@ -38573,6 +38597,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    }
+  ],
+  "src/routes/views/view-models/characters-grid.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    }
+  ],
+  "src/routes/views/view-models/characters-grid.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     }
   ],
   "src/routes/views/view-serving.ts": [
@@ -46707,6 +46743,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-fuzzing-infrastructure.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     },
     {
       "kind": "ticket",

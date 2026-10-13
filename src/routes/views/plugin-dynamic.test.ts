@@ -14,6 +14,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
+import { safeJsonParse, } from "../../utils";
 import { dynamicRoutes, } from "./plugin-dynamic";
 
 /**
@@ -217,4 +218,118 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
 
     expect(res.status,).toBe(200,);
   });
+
+  describe("characters grid — JSON view-model negotiation", () => {
+    /**
+     * @param headers
+     */
+    function gridRequest(headers: Record<string, string>,): Request {
+      return new Request("http://localhost/dynamic/characters/grid", { headers, },);
+    }
+
+    test("Accept: application/json returns the view-model and nothing else", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(
+        gridRequest({ "Accept": "application/json", },),
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(res.headers.get("content-type",),).toBe("application/json",);
+
+      const body = await res.text();
+      expect(body,).not.toContain("<div",);
+      expect(body,).not.toContain("character-card",);
+    });
+
+    test("JSON and the htmx fragment agree on rows, counts and field values", async () => {
+      const jsonRes = await makeApp(db, "owner", "user",).handle(
+        gridRequest({ "Accept": "application/json", },),
+      );
+
+      const htmlRes = await makeApp(db, "owner", "user",).handle(
+        gridRequest({ "HX-Request": "true", },),
+      );
+
+      const parsed = safeJsonParse<CharactersGridBody>(await jsonRes.text(),);
+      expect(parsed.ok,).toBe(true,);
+      if (!parsed.ok) {
+        return;
+      }
+
+      const { characters, } = parsed.value;
+      const html = await htmlRes.text();
+
+      expect(characters.length,).toBeGreaterThan(0,);
+      const renderedCards = html.match(/data-testid="character-card-/g,) ?? [];
+      expect(renderedCards.length,).toBe(characters.length,);
+
+      for (const character of characters) {
+        expect(html,).toContain(`data-testid="character-card-${character.id}"`,);
+        expect(html,).toContain(`window.selectCharacterCard('${character.id}')`,);
+        expect(html,).toContain(escapeHtmlForTest(character.displayName,),);
+        expect(html,).toContain(escapeHtmlForTest(character.description,),);
+        expect(html,).toContain(character.reviewState.replace(/_/g, " ",),);
+        if (character.avatarUrl) {
+          expect(html,).toContain(`src="${character.avatarUrl}"`,);
+        }
+      }
+    });
+
+    test("an explicit text/html outranks a wildcard application/json and keeps the redirect", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(
+        gridRequest({ "Accept": "text/html, application/json;q=0.9", },),
+      );
+
+      expect(res.status,).toBe(302,);
+      expect(res.headers.get("location",),).toBe("/views/",);
+    });
+
+    test("an any-media wildcard without HX-Request keeps the redirect", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(gridRequest({ "Accept": "*/*", },),);
+
+      expect(res.status,).toBe(302,);
+    });
+
+    test("an explicit JSON Accept outranks the HX-Request fragment hint", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(
+        gridRequest({ "HX-Request": "true", "Accept": "application/json", },),
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(res.headers.get("content-type",),).toBe("application/json",);
+    });
+
+    test("an htmx request with a wildcard Accept keeps the html fragment", async () => {
+      const res = await makeApp(db, "owner", "user",).handle(
+        gridRequest({ "HX-Request": "true", "Accept": "*/*", },),
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(res.headers.get("content-type",),).toBe("text/html; charset=utf-8",);
+      expect(await res.text(),).toContain("character-card-",);
+    });
+  });
 });
+
+/** The JSON shape the characters grid serves. */
+interface CharactersGridBody {
+  characters: Array<{
+    id: string;
+    displayName: string;
+    description: string;
+    avatarUrl: string | null;
+    reviewState: string;
+  }>;
+}
+
+/**
+ * Minimal HTML escaping mirroring `escapeHtml` — the parity test asserts the
+ * markup renders the view-model's raw text escaped, not echoed verbatim.
+ * @param str
+ */
+function escapeHtmlForTest(str: string,): string {
+  return str
+    .replaceAll("&", "&amp;",)
+    .replaceAll("<", "&lt;",)
+    .replaceAll(">", "&gt;",)
+    .replaceAll('"', "&quot;",);
+}
