@@ -4,10 +4,11 @@
 import { spawnSync, } from "bun";
 import { Database, } from "bun:sqlite";
 import { existsSync, mkdirSync, readdirSync, rmSync, statSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
-const BACKUP_DIR = process.env.BACKUP_DIR ?? "/tmp";
-const VALIDATION_DIR = process.env.VALIDATION_DIR ?? "/tmp/validation";
+const BACKUP_DIR = process.env.BACKUP_DIR ?? tmpdir();
+const VALIDATION_DIR = process.env.VALIDATION_DIR ?? join(tmpdir(), "validation",);
 const SOURCE_DB_PATH = process.env.DB_PATH ?? "/data/loop-lore.db";
 
 function log(msg: string,): void {
