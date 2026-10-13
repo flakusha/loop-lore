@@ -460,9 +460,13 @@ forbids.
    against a view route was not checked.
 3. **What does `eframe` with the default `wgpu` backend cost in compile time
    and in `cargo audit` surface** on top of the existing
-   `native/loop-lore-native` crate? Not measured — deliberately deferred to
+   `native/loop-lore-native` crate? ~~Not measured — deliberately deferred to
    `TASK-egui-wasm-embed-spike.md`, which must record real numbers rather than
-   inherit these estimates.
+   inherit these estimates.~~ **Answered** — see
+   [`egui-wasm-embed-spike.md`](../research/egui-wasm-embed-spike.md) (2026-10-14).
+   Verdict: **still no.** `glow` backend: 1.59 MB brotli, 93 s cold build; `wgpu`:
+   2.30 MB brotli, 143 s. Build time is immaterial; bundle size is the blocker (~10×
+   `admin.html`). The DOM-interop verdict also worsened.
 4. **Would a Rust client need SSE replay/idempotency semantics?** Export
    progress streams over SSE (`src/routes/export-sse`); the TUI currently
    polls instead. A richer client probably needs the stream contract, and
