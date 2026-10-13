@@ -216,8 +216,9 @@ cargo tree --prefix none --target wasm32-unknown-unknown \
   one button — costs 5.9 MB raw / **1.59 MB brotli** (`glow`) or 9.7 MB raw /
   **2.30 MB brotli** (`wgpu`). For scale in the same worktree:
   `src/views/admin.html` is 157,755 bytes raw and `src/public/locales/en.json`
-  is 65,919 bytes. The `glow` brotli figure is ~25× the largest template and
-  ~24× the largest locale bundle, before a single product screen exists.
+  is 65,919 bytes. The `glow` brotli figure is ~10× the largest
+  template (14.6× for `wgpu`) and ~24× the largest locale bundle, before a
+  single product screen exists.
 - This is consistent with the maintainers' own demo figures (5.9 MiB glow vs
   8.3 MiB wgpu, uncompressed, [emilk/egui#5889](https://github.com/emilk/egui/issues/5889)).
   Those are MiB against the MB used here and a different app, so treat this as
