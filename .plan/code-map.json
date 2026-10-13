@@ -17947,6 +17947,10 @@
       "source": ".plan/tickets/TASK-wire-llm-resource-manager-into-generation-dispatch.md"
     },
     {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/api-routes.md"
     },
@@ -28975,6 +28979,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/middleware/csrf-wiring.ts": [
@@ -29027,6 +29035,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/middleware/dynamic-response.ts": [
@@ -38045,6 +38057,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-client-contract-doc.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/routes/v1/base-surface.ts": [
@@ -38271,6 +38287,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/routes/views.test.ts": [
@@ -45789,6 +45809,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/tui/chat/display.test.ts": [

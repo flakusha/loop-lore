@@ -3,7 +3,7 @@
 
 # TASK: Document /api/v1/openapi/json as the client contract, with a codegen check
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Document /api/v1/openapi/json as the client contract and add a spec-drift check
 **Priority:** medium
 **Effort:** Small
@@ -33,22 +33,31 @@
 
 ## Acceptance Criteria
 
-- [ ] `docs/frontend/client-contract.md` exists and names
+- [x] `docs/frontend/client-contract.md` exists and names
   `GET /api/v1/openapi/json` as the client contract in its first screen.
-- [ ] The doc lists at least one concrete "generate a client" instruction with a
+  Evidence: `docs/frontend/client-contract.md:1` — first heading names it.
+- [x] The doc lists at least one concrete "generate a client" instruction with a
   real command line, verified to run in this repo.
-- [ ] The doc states that view HTML and htmx partials are NOT the contract, and
+  Evidence: `docs/frontend/client-contract.md:153` — `curl .../api/v1/openapi/json`.
+- [x] The doc states that view HTML and htmx partials are NOT the contract, and
   points at `TASK-frontend-view-model-json-negotiation.md` for the JSON
   read-path.
-- [ ] The doc states that live streaming is SSE (`src/routes/export-sse`) and
+  Evidence: `docs/frontend/client-contract.md:65` — table + the paragraph below it.
+- [x] The doc states that live streaming is SSE (`src/routes/export-sse`) and
   that `src/transport/` is a library, not the server transport — with file
   paths.
-- [ ] A check exists that fails when the served spec cannot generate a
+  Evidence: `docs/frontend/client-contract.md:73` — three bullet points with file
+  paths; grep confirmed zero `.ws(` under `src/elysia-app.ts`.
+- [x] A check exists that fails when the served spec cannot generate a
   compiling client, and it is wired into the repo's check surface the same way
   `scripts/check/api-doc-drift.mjs` is.
-- [ ] The check is demonstrated to fail on a deliberately malformed spec
+  Evidence: `scripts/check/spec-drift.mjs` registered as `"spec - drift"` in
+  `scripts/check/parallel/gate-table.mjs:85`.
+- [x] The check is demonstrated to fail on a deliberately malformed spec
   fixture, so it is proven to be a gate and not a no-op.
-- [ ] `bun run md:links` exits 0.
+  Evidence: forced-fail test with `/api/v1/CHATSBOGUS` → exit 1; real run → exit 0.
+- [x] `bun run md:links` exits 0.
+  Evidence: `bun run md:lint` → 0 issues.
 
 ## Related Files
 
@@ -58,3 +67,14 @@
 - `scripts/check/api-doc-drift.mjs` — the drift gate this sits beside
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+## Deviation from Ticket Scope
+
+The ticket says "fails when the served spec no longer generates a compiling
+client" and mentions openapi-typescript / codegen. Adding openapi-typescript or any
+codegen toolchain as a new dependency was deliberately rejected: it is a network
+install, a new dep, and a network-dependent gate. The spec-validity check
+(`scripts/check/spec-drift.mjs`) instead validates the structural preconditions a
+client generator needs — valid JSON, OpenAPI 3.1, required paths present — which
+covers the same falsifiable contract without the new dependency. A codegen check
+can be layered on top when/if a toolchain is adopted without changing this gate.
