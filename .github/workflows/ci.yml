@@ -53,6 +53,13 @@ jobs:
       - name: Build frontend
         run: bun run build:frontend
 
+      # Rust toolchain for the `lint - native (clippy)` gate in the suite below.
+      # The runner image ships cargo/rustc/rustfmt but does not list clippy, and
+      # `stable` is what actually gets exercised: the crate's rust-toolchain.toml
+      # pin sits in native/loop-lore-native/ while every cargo invocation runs
+      # from the repo root, so rustup never resolves it.
+      - uses: dtolnay/rust-toolchain@stable
+
       - name: Run local gate suite
         run: bun run check:ci
 

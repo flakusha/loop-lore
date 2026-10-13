@@ -36,6 +36,19 @@ export const checks = {
   "lint - eslint": "bun run lint:eslint",
   // oxlint remains manual; the canonical runner does not report it as correctness evidence.
 
+  // Clippy for the native crate (native/loop-lore-native) — the Rust-side peer
+  // of `lint - eslint`. The crate's own Cargo.toml [lints.clippy] already sets
+  // all+pedantic to warn, so `--all-targets -- -D warnings` needs no config here.
+  // Measured 11.6s COLD (isolated CARGO_TARGET_DIR: full blake3 + zstd-sys C
+  // build) and 0.2s warm on the dev host — inside the default gate budget, so
+  // this is a gate and not a CI-only step.
+  //
+  // The rustfmt counterpart (`format:native:check`) is deliberately NOT
+  // registered: `cargo fmt --check` exits 1 today on pre-existing debt in
+  // src/gguf.rs and src/lib.rs, and a blocking entry would redden `bun run check`
+  // on every branch until that Rust source is reformatted.
+  "lint - native (clippy)": "bun run lint:native",
+
   // Formatting
   "format - dprint": "bun run format",
   "md - lint": "bun run md:lint",
