@@ -8,12 +8,61 @@ import { getNonce, } from "../../middleware/csp-nonce";
 import { sqliteUtcToIso, } from "../../utils/date";
 import { buildEditFormHtml, } from "./character-edit-form";
 import { escapeHtml, htmlResponse, } from "./layout";
+import type { CharactersGridViewModel, } from "./view-models/characters-grid";
+import { buildCharactersGridViewModel, } from "./view-models/characters-grid";
+
+/**
+ * @param reviewState
+ */
+function reviewBadgeClass(reviewState: string,): string {
+  return reviewState === "approved"
+    ? "badge-success"
+    : reviewState === "rejected"
+    ? "badge-danger"
+    : "badge-warning";
+}
+
+/**
+ * Render the characters grid fragment from its view-model.
+ * @param viewModel
+ */
+function renderCharactersGrid(viewModel: CharactersGridViewModel,): string {
+  const { characters, } = viewModel;
+  if (characters.length === 0) {
+    return `<div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
+      <div class="icon">👤</div>
+      <div class="title">No characters found</div>
+      <div class="description">Create your first character to start roleplaying.</div>
+    </div>`;
+  }
+
+  return characters.map((character,) => {
+    const avatar = character.avatarUrl
+      ? `<img src="${character.avatarUrl}" alt="Avatar" />`
+      : "<span>👤</span>";
+
+    const name = escapeHtml(character.displayName,);
+    const desc = escapeHtml(character.description,);
+    const badgeLabel = character.reviewState.replace(/_/g, " ",);
+    return `<div class="character-card" x-on:click="window.selectCharacterCard('${character.id}')" data-testid="character-card-${character.id}">
+      <div class="card-img">${avatar}</div>
+      <div class="card-body">
+        <div class="name">${name}</div>
+        <div class="description">${desc}</div>
+        <span class="review-badge ${
+      reviewBadgeClass(character.reviewState,)
+    }" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px">${badgeLabel}</span>
+      </div>
+    </div>`;
+  },).join("",);
+}
 
 /**
  * @param database - database handle
- * @returns the characters grid HTML response
+ * @returns the characters grid view-model: the query plus the pure projection,
+ *   shared by the HTML fragment and the `application/json` branch
  */
-async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
+async function loadCharactersGridViewModel(database: Kysely<DB>,): Promise<CharactersGridViewModel> {
   const actors = await database
     .selectFrom("actors",)
     .selectAll()
@@ -22,40 +71,15 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
     .limit(200,)
     .execute();
 
-  if (actors.length === 0) {
-    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
-      <div class="icon">👤</div>
-      <div class="title">No characters found</div>
-      <div class="description">Create your first character to start roleplaying.</div>
-    </div>`,);
-  }
+  return buildCharactersGridViewModel({ actors, },);
+}
 
-  const cards = Array.from(actors, (c,) => {
-    const avatar = c.avatar_asset_id
-      ? `<img src="/api/v1/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
-      : "<span>👤</span>";
-
-    const name = escapeHtml(c.display_name,);
-    const desc = escapeHtml(c.description || "",);
-    const reviewState = c.review_state || "pending_review";
-    const badgeClass = reviewState === "approved"
-      ? "badge-success"
-      : reviewState === "rejected"
-      ? "badge-danger"
-      : "badge-warning";
-
-    const badgeLabel = reviewState.replace(/_/g, " ",);
-    return `<div class="character-card" x-on:click="window.selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
-      <div class="card-img">${avatar}</div>
-      <div class="card-body">
-        <div class="name">${name}</div>
-        <div class="description">${desc}</div>
-        <span class="review-badge ${badgeClass}" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px">${badgeLabel}</span>
-      </div>
-    </div>`;
-  },).join("",);
-
-  return htmlResponse(cards,);
+/**
+ * @param database - database handle
+ * @returns the characters grid HTML response
+ */
+async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
+  return htmlResponse(renderCharactersGrid(await loadCharactersGridViewModel(database,),),);
 }
 
 /**
@@ -197,4 +221,9 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Pr
   return htmlResponse(items,);
 }
 
-export { serveCharacterChatListDb, serveCharacterEditForm, serveCharactersGrid, };
+export {
+  loadCharactersGridViewModel,
+  serveCharacterChatListDb,
+  serveCharacterEditForm,
+  serveCharactersGrid,
+};
