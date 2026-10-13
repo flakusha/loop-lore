@@ -3,6 +3,7 @@
 
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
+import { tmpdir, } from "node:os";
 import { loadConfig, } from "../config/load";
 import { createSqliteDialect, } from "../db/index";
 import { up, } from "../db/migrations/001_init";
@@ -29,7 +30,7 @@ await up(db as Kysely<unknown>,);
 const config = loadConfig();
 config.db.sqliteFilename = ":memory:";
 config.auth.required = false;
-config.assets.uploadDir = "/tmp/";
+config.assets.uploadDir = tmpdir();
 
 const app = createApp({
   database: db,

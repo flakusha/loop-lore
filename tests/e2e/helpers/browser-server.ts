@@ -31,6 +31,7 @@ import { MockLLMProvider, } from "@/test-utils/mock-provider";
 import { type Browser, type BrowserContext, chromium, type Page, } from "@playwright/test";
 import type { Kysely, } from "kysely";
 import { existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { ensureFrontendBuild, } from "./browser-frontend-build";
 import { seedSolo, } from "./seed";
@@ -118,7 +119,7 @@ export async function createBrowserTest(
     const config = loadTestConfig(overrides,);
 
     // Temp upload dir
-    const testUploadDir = join("/tmp", testRunId, "uploads",);
+    const testUploadDir = join(tmpdir(), testRunId, "uploads",);
     config.assets.uploadDir = testUploadDir;
     mkdirSync(testUploadDir, { recursive: true, },);
 

@@ -13,7 +13,8 @@ import { runMigrations as runAllMigrations, } from "@/db/migrate";
 import { Database, } from "bun:sqlite";
 import { type Dialect, Kysely, } from "kysely";
 import { existsSync, mkdirSync, rmSync, } from "node:fs";
-import { resolve, } from "node:path";
+import { tmpdir, } from "node:os";
+import { resolve, sep, } from "node:path";
 import "./logger-init";
 import { initAgeGate, } from "@/age-gate/controller";
 import { flushActiveStore, } from "@/async";
@@ -28,6 +29,9 @@ import { resetSoloUserCache, } from "@/middleware/index";
 import { resetLoginRateLimiter, } from "@/routes/auth";
 import { createRequestHandler, handleApiRequest, } from "@/server";
 import { MockLLMProvider, } from "@/test-utils/mock-provider";
+
+/** OS temp dir with a trailing separator — the only location e2e may write to. */
+const TMP_PREFIX = `${tmpdir()}${sep}`;
 
 /**
  * Handle import route before Elysia (body consumed by Elysia otherwise).
@@ -218,7 +222,7 @@ export async function runMigrations(db: Kysely<DB>,): Promise<void> {
 /**
  * E2E_SAFEGUARD: prevent accidental runs against real data.
  * When E2E_SAFEGUARD=1 (default), validates DB is :memory: and
- * upload dir is under /tmp/. Logs warnings for each check.
+ * upload dir is under the OS temp dir. Logs warnings for each check.
  * Set E2E_SAFEGUARD=0 to bypass.
  */
 function enforceE2eSafeguard(config: Config,): void {
@@ -234,8 +238,8 @@ function enforceE2eSafeguard(config: Config,): void {
     issues.push(`db.sqliteFilename is "${config.db.sqliteFilename}", expected ":memory:"`,);
   }
 
-  if (!config.assets.uploadDir?.startsWith("/tmp/",)) {
-    issues.push(`assets.uploadDir is "${config.assets.uploadDir}", expected under /tmp/`,);
+  if (!config.assets.uploadDir?.startsWith(TMP_PREFIX,)) {
+    issues.push(`assets.uploadDir is "${config.assets.uploadDir}", expected under ${TMP_PREFIX}`,);
   }
 
   if (config.auth.required) {
@@ -259,7 +263,7 @@ function enforceE2eSafeguard(config: Config,): void {
  * Load config with test-safe overrides.
  *
  * When E2E_SAFEGUARD env is 1 (default): verifies DB is :memory:,
- * upload dir is under /tmp/, and auth is disabled. Prevents
+ * upload dir is under the OS temp dir, and auth is disabled. Prevents
  * accidental runs against real data.
  *
  * Port 0 = random free port.
@@ -280,7 +284,7 @@ export function loadTestConfig(
   config.db.sqliteFilename = ":memory:";
   config.assets.enabled = true;
   config.assets.maxFileSize = 10 * 1024 * 1024; // 10 MB
-  config.assets.uploadDir = "/tmp/loop-lore-e2e-placeholder";
+  config.assets.uploadDir = resolve(tmpdir(), "loop-lore-e2e-placeholder",);
   config.auth.required = false;
   // JWT secret is required by all login handlers (demo-login, login, register).
   // Use a deterministic test secret so JWT verify works in authenticate().
@@ -351,7 +355,7 @@ export async function createTestServer(
   registerMock = false,
 ): Promise<TestServer> {
   const db = createTestDb();
-  // Create temp upload dir under /tmp/ — NEVER in project dir or user home.
+  // Create temp upload dir under the OS temp dir — NEVER in project dir or user home.
   // Use crypto.randomUUID() so concurrent workers can't collide on
   // millisecond+Math.random() (BUG-test-run-id-uses-Date-now-collision-risk-under-parallel).
   // Declared outside try so the close() closure can still reach it.
@@ -368,7 +372,7 @@ export async function createTestServer(
 
     const config = loadTestConfig(overrides,);
 
-    const testUploadDir = resolve("/tmp", testRunId, "uploads",);
+    const testUploadDir = resolve(tmpdir(), testRunId, "uploads",);
     config.assets.uploadDir = testUploadDir;
     mkdirSync(testUploadDir, { recursive: true, },);
 

@@ -21,8 +21,9 @@ describe("resolveUploadDir", () => {
   });
 
   test("returns a normalised absolute path for an absolute input", () => {
-    const dir = resolveUploadDir("/tmp/absolute-upload",);
-    expect(dir,).toBe("/tmp/absolute-upload",);
+    const absolute = join(tmpdir(), "absolute-upload",);
+    const dir = resolveUploadDir(absolute,);
+    expect(dir,).toBe(absolute,);
   });
 
   test("throws for the root filesystem path", () => {
