@@ -94,11 +94,9 @@ function collectCommits(range,) {
 }
 
 function parseRecords(raw,) {
-  // Each record is prefixed with SOH (\x01) by `git log`; strip it by comparing
-  // the leading code point instead of matching it inside a regex pattern, which
-  // keeps the control character out of a literal.
+  // Strip the SOH (\x01) prefix `git log` adds per record, keeping the control
+  // character out of a regex literal (no-control-regex).
   const stripRecordPrefix = (r,) => r.startsWith("\x01",) ? r.slice(1,) : r;
-
   return raw.split("\x03",).map(stripRecordPrefix,).filter((r,) => r.trim())
     .map((record,) => {
       const [sha, ident = "", committer = "", message = "",] = record.split("\x02",);
