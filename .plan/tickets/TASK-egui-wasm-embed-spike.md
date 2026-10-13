@@ -3,7 +3,7 @@
 
 # TASK: egui→WASM embed spike — measure, do not ship
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** All acceptance criteria met. Open question 3 in the adoption
 doc now points to the spike measurements (2026-10-14).
 **Priority:** low
