@@ -94,7 +94,12 @@ function collectCommits(range,) {
 }
 
 function parseRecords(raw,) {
-  return raw.split("\x03",).map((r,) => r.replace(/^\x01/, "",)).filter((r,) => r.trim())
+  // Each record is prefixed with SOH (\x01) by `git log`; strip it by comparing
+  // the leading code point instead of matching it inside a regex pattern, which
+  // keeps the control character out of a literal.
+  const stripRecordPrefix = (r,) => r.startsWith("\x01",) ? r.slice(1,) : r;
+
+  return raw.split("\x03",).map(stripRecordPrefix,).filter((r,) => r.trim())
     .map((record,) => {
       const [sha, ident = "", committer = "", message = "",] = record.split("\x02",);
       // "..." is rtk's truncation marker; a clipped email would be an identity

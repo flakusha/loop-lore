@@ -180,8 +180,13 @@ function createAttachments(
  * @param container
  */
 function removeRenderedScenes(container: HTMLElement,): void {
-  for (const child of [...container.children,]) {
-    if (child.classList.contains("vn-scene",)) { child.remove(); }
+  // `container.children` is LIVE: removing a child shifts every later index down
+  // by one, so forward iteration skips adjacent `.vn-scene` siblings. Walking the
+  // index backwards removes only indices below the cursor, so no snapshot (and
+  // no spread wrapper) is needed.
+  for (let i = container.children.length - 1; i >= 0; i--) {
+    const child = container.children[i];
+    if (child?.classList.contains("vn-scene",)) { child.remove(); }
   }
 }
 

@@ -191,6 +191,29 @@ describe("renderCurrentScene structure", () => {
     expect(sceneEls,).toHaveLength(1,);
     expect(sceneEls[0]!.querySelector(".vn-text",)!.textContent,).toBe("Second.",);
   });
+
+  test("removes every stale scene, including adjacent ones", async () => {
+    // `children` is live: removing one element shifts every later index down.
+    // Forward iteration therefore skips whichever scene follows the one it just
+    // removed, so adjacent stale scenes survive the sweep. Seed them adjacent
+    // so the skip leaves observable residue.
+    const container = install([baseScene({},),], 0,);
+    for (const label of ["stale-a", "stale-b", "stale-c",]) {
+      const stale = makeEl();
+      stale.className = "vn-scene";
+      const text = makeEl();
+      text.className = "vn-text";
+      text.textContent = label;
+      stale.append(text,);
+      container.append(stale,);
+    }
+
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    const sceneEls = container.children.filter((c,) => c.className.startsWith("vn-scene",));
+    expect(sceneEls,).toHaveLength(1,);
+    expect(sceneEls[0]!.querySelector(".vn-text",)!.textContent,).toBe("Well met.",);
+  });
 });
 
 // ── Guards & clicks ─────────────────────────────────────────────────────────

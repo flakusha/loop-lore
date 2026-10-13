@@ -53,7 +53,8 @@ function commonSuffix(a: string[], b: string[], prefix: number,): number {
 function lcsOps(a: string[], b: string[],): DiffOp[] {
   const rows = a.length + 1;
   const cols = b.length + 1;
-  const table: number[] = new Array(rows * cols,).fill(0,);
+  // `new Array(n)` reads as "n copies of undefined"; this is a length.
+  const table = Array.from({ length: rows * cols, }, () => 0,);
   for (let i = a.length - 1; i >= 0; i--) {
     for (let j = b.length - 1; j >= 0; j--) {
       table[i * cols + j] = a[i] === b[j]

@@ -27,14 +27,28 @@ const RESET = "\u{1B}[0m";
 // sink (JSONL escapes these correctly; only the human-readable console path is
 // vulnerable). Tabs are preserved (common in message text); all other C0 chars
 // are replaced with a space and CR/LF are collapsed to a single space.
-const CONTROL_CHAR_RE = /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g;
+//
+// `\p{Cc}` is C0 + DEL + C1(0080-009F), a superset of what we strip, so the
+// callback passes back the code points this sink deliberately leaves alone: TAB
+// and CR/LF (NEWLINE_RE below owns them) and the C1 block (never matched).
+// Expressed as a callback rather than a `v`-flag class difference because the
+// frontend tsconfig targets ES6, where the `v` flag does not exist.
+const CONTROL_CHAR_RE = /\p{Cc}/gu;
 const NEWLINE_RE = /[\r\n]+/g;
 
 /**
  * @param text
  */
 function sanitizeConsoleText(text: string,): string {
-  return text.replace(CONTROL_CHAR_RE, " ",).replace(NEWLINE_RE, " ",);
+  const neutralized = text.replace(
+    CONTROL_CHAR_RE,
+    (ch,) =>
+      ch === "\t" || ch === "\n" || ch === "\r" || (ch >= "\u{80}" && ch <= "\u{9f}")
+        ? ch
+        : " ",
+  );
+
+  return neutralized.replace(NEWLINE_RE, " ",);
 }
 
 /**

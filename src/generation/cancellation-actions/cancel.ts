@@ -57,7 +57,9 @@ export function cancelGeneration({ attemptId, reason, source, detail, }: CancelG
   // a single job is caught and logged so one misbehaving job cannot
   // prevent the rest from being torn down (the user's Stop click must
   // always take effect end-to-end).
-  if (active.sideEffectJobs?.size ?? 0 > 0) {
+  // `??` binds looser than `>`, so the unparenthesised form parsed as
+  // `size ?? (0 > 0)` -- it happened to behave, but only by accident.
+  if ((active.sideEffectJobs?.size ?? 0) > 0) {
     for (const [jobId, job,] of active.sideEffectJobs ?? new Map()) {
       try {
         const result = job.cancel();

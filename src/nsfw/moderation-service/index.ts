@@ -9,11 +9,11 @@
  * flags / overrides / data / appeals), reassembled here into the exported
  * `NsfwModerationService`.
  *
- * `NsfwModerationService` is a single source of truth: the interface (in
- * `types.ts`) IS the API type and the class value shares the same exported
- * name (TS declaration merge), so there is no parallel interface to keep in
- * sync. Callers construct it via `new NsfwModerationService(db)` — preserved
- * from the original class so every existing call site keeps working unchanged.
+ * `NsfwModerationService` is a single source of truth: the interface in
+ * `types.ts` is the API contract and this class implements it, so there is no
+ * parallel interface to keep in sync. Callers construct it via
+ * `new NsfwModerationService(db)` — preserved from the original class so every
+ * existing call site keeps working unchanged.
  */
 import { type Kysely, } from "kysely";
 import { type DB, } from "../../db/schema";
@@ -39,14 +39,6 @@ export type {
 
 export type { FlagQueueView, ResolvedFlagView, } from "./flags";
 export { clampFlagLimit, hashReporterId, toQueueView, toResolvedView, } from "./flags";
-
-/**
- * Public API type — declaration-merged with the class value below so one name
- * is both the instance type and the `new`-able constructor.
- */
-
-/** */
-export interface NsfwModerationService extends NsfwModerationServiceIface {}
 
 /**
  * NSFW Moderation Service.

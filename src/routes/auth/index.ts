@@ -131,7 +131,7 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
   return new Elysia({ name: "auth-protected", },)
     .post(
       `${prefix}/auth/logout`,
-      async ({ request, server, ...rest },) => {
+      async ({ request, ...rest },) => {
         const userId = "userId" in rest && typeof rest.userId === "string"
           ? rest.userId
           : null;
@@ -156,7 +156,7 @@ export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, pre
     )
     .get(
       `${prefix}/auth/me`,
-      async ({ request, server, ...rest },) => {
+      async ({ request, ...rest },) => {
         const userId = "userId" in rest && typeof rest.userId === "string"
           ? rest.userId
           : null;

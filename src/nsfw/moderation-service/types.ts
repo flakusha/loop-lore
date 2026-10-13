@@ -72,10 +72,10 @@ export interface ModerationDeps {
 /**
  * NSFW Moderation Service — public API (single source of truth).
  *
- * Declaration-merged with the {@link NsfwModerationService} value (a class)
- * in `index.ts`, so one exported name is both the instance type and the
- * constructor used as `new NsfwModerationService(db)`. Do not hand-roll a
- * parallel interface alongside it.
+ * The API contract for the {@link NsfwModerationService} class in `index.ts`,
+ * which implements this interface and is the export callers construct with
+ * `new NsfwModerationService(db)`. Do not hand-roll a parallel interface
+ * alongside the class.
  */
 export interface NsfwModerationService {
   getPreferences(userId: string,): Promise<NsfwUserPrefs | null>;

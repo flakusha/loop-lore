@@ -350,7 +350,7 @@ function main() {
     cwd: resolve(import.meta.dir, "..",),
   },);
   if (fmt.exitCode !== 0) {
-    console.warn("  [warn] dprint fmt on generated manifest failed; run \`bun run format:fix\` manually",);
+    console.warn("  [warn] dprint fmt on generated manifest failed; run `bun run format:fix` manually",);
   }
 
   console.log(`Run \`bun test src/db/schema-sync.test.ts\` to verify`,);
