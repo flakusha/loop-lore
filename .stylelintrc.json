@@ -9,8 +9,8 @@
     "no-descending-specificity": null,
     "keyframes-name-pattern": null,
     "selector-class-pattern": [
-      "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
-      { "message": "Expected class selector to be kebab-case" }
+      "^([a-z][a-z0-9]*)(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+      { "message": "Expected class selector to be kebab-case (BEM __element/--modifier suffixes allowed)" }
     ],
     "custom-property-pattern": "^([a-z][a-z0-9]*(-[a-z0-9]+)*)$",
     "color-function-notation": "modern",
