@@ -13,13 +13,13 @@
   border-top: 1px solid var(--border-default);
   z-index: 30;
 }
-.mobile-composer__form {
+.mobile-composer-form {
   display: flex;
   flex: 1;
   align-items: center;
   gap: var(--space-2);
 }
-.mobile-composer__input {
+.mobile-composer-input {
   flex: 1;
   min-width: 0;
   height: 36px;
@@ -30,7 +30,7 @@
   color: var(--text-primary);
   font-size: 14px;
 }
-.mobile-composer__send {
+.mobile-composer-send {
   flex-shrink: 0;
   width: 36px;
   height: 36px;
@@ -62,7 +62,7 @@
   justify-content: center;
   padding: var(--space-4);
 }
-.keynav-help__panel {
+.keynav-help-panel {
   background: var(--bg-secondary);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
@@ -71,19 +71,19 @@
   max-height: 80vh;
   overflow-y: auto;
 }
-.keynav-help__header {
+.keynav-help-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-default);
 }
-.keynav-help__header h2 {
+.keynav-help-header h2 {
   font-size: 16px;
   font-weight: 600;
   margin: 0;
 }
-.keynav-help__close {
+.keynav-help-close {
   background: none;
   border: none;
   font-size: 18px;
@@ -92,29 +92,29 @@
   padding: var(--space-1);
   border-radius: var(--radius-sm);
 }
-.keynav-help__close:hover {
+.keynav-help-close:hover {
   color: var(--text-primary);
   background: var(--bg-tertiary);
 }
-.keynav-help__table {
+.keynav-help-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
 }
-.keynav-help__table th,
-.keynav-help__table td {
+.keynav-help-table th,
+.keynav-help-table td {
   padding: var(--space-2) var(--space-4);
   text-align: left;
   border-bottom: 1px solid var(--border-default);
 }
-.keynav-help__table th {
+.keynav-help-table th {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-tertiary);
 }
-.keynav-help__table kbd {
+.keynav-help-table kbd {
   display: inline-block;
   padding: 2px 6px;
   font-family: monospace;
@@ -123,7 +123,7 @@
   border-radius: 3px;
   font-size: 0.9em;
 }
-.keynav-help__footer {
+.keynav-help-footer {
   padding: var(--space-3) var(--space-4);
   font-size: 12px;
   color: var(--text-secondary);
