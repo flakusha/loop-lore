@@ -3,7 +3,8 @@
 
 # TASK: Document /api/v1/openapi/json as the client contract, with a codegen check
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Document /api/v1/openapi/json as the client contract and add a spec-drift check
 **Priority:** medium
 **Effort:** Small
 **Epic:** `epic-experimental-egui-frontend`
