@@ -28883,6 +28883,10 @@
       "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
     },
     {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
     },
@@ -35041,6 +35045,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/routes/export-sse/status.ts": [
@@ -35439,6 +35447,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/routes/http-utils/index.ts": [
@@ -35465,6 +35477,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/EPIC-2026-24.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/routes/http-utils/status.ts": [
@@ -46499,6 +46515,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/utils/safe-fetch/headers.ts": [
@@ -46529,6 +46549,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-migrate-safe-fetch-retry-loop-to-effect-schedule.md"
+    }
+  ],
+  "src/utils/safe-fetch/types.ts": [
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/utils/safe-json.ts": [
