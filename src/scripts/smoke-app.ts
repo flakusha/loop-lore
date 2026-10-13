@@ -8,6 +8,7 @@ import { createLogger, getChildLogger, type Logger, } from "../logger";
 import { createSqliteDialect, } from "../db/index";
 import { loadConfig, } from "../config/load";
 import { safeFetch, } from "../utils";
+import { tmpdir, } from "node:os";
 import { up, } from "../db/migrations/001_init";
 
 // Console-only logger: a one-shot smoke run has no host process to seed one.
@@ -22,7 +23,7 @@ await up(db as Kysely<unknown>,);
 const config = loadConfig();
 config.db.sqliteFilename = ":memory:";
 config.auth.required = false;
-config.assets.uploadDir = "/tmp/";
+config.assets.uploadDir = tmpdir();
 
 const app = createApp({
   database: db,

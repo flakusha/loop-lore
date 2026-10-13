@@ -3,8 +3,11 @@
  * @module characters/services/emotion-avatar-fallback.test
  */
 
-import { beforeAll, describe, expect, it, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import { createAsset, } from "../../assets/service";
 import { makeMinimalPng, } from "../../assets/test-helpers";
 import { EmotionType, } from "../../db/enums";
@@ -12,6 +15,13 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { type AvatarMetadata, buildEmotionPrompt, extractAvatarMetadata, } from "./emotion-avatar-fallback";
 import { createTestActors, } from "./test-helpers";
+
+/** Per-file upload dir (mkdtemp) so concurrent runs never share one path. */
+const UPLOAD_DIR = mkdtempSync(join(tmpdir(), "ll-avatar-fallback-",),);
+
+afterAll(() => {
+  rmSync(UPLOAD_DIR, { recursive: true, force: true, },);
+},);
 
 // Bun's mock.module is process-global and cannot be unmocked: without
 // --isolate, an earlier file (e.g.
@@ -43,7 +53,7 @@ const assetFallbackPristine = await (async () => {
         sizeBytes: buffer.length,
         buffer,
       },
-      uploadDir: "/tmp/test-uploads",
+      uploadDir: UPLOAD_DIR,
     },);
 
     const result = await extractAvatarMetadata(probe.db, asset.id, { actorId, },);
@@ -171,7 +181,7 @@ describeReal("extractAvatarMetadata", () => {
         buffer,
         altText: "Aria, the elven mage",
       },
-      uploadDir: "/tmp/test-uploads",
+      uploadDir: UPLOAD_DIR,
     },);
 
     const result = await extractAvatarMetadata(db, asset.id,);
@@ -200,7 +210,7 @@ describeReal("extractAvatarMetadata", () => {
         sizeBytes: buffer.length,
         buffer,
       },
-      uploadDir: "/tmp/test-uploads",
+      uploadDir: UPLOAD_DIR,
     },);
 
     const result = await extractAvatarMetadata(db, asset.id, { actorId, },);
@@ -228,7 +238,7 @@ describeReal("extractAvatarMetadata", () => {
         buffer,
         altText: "from alt text",
       },
-      uploadDir: "/tmp/test-uploads",
+      uploadDir: UPLOAD_DIR,
     },);
 
     const result = await extractAvatarMetadata(db, asset.id, { actorId, },);
@@ -249,7 +259,7 @@ describeReal("extractAvatarMetadata", () => {
         sizeBytes: buffer.length,
         buffer,
       },
-      uploadDir: "/tmp/test-uploads",
+      uploadDir: UPLOAD_DIR,
     },);
 
     const now = new Date().toISOString();
@@ -289,7 +299,7 @@ describeReal("extractAvatarMetadata", () => {
         sizeBytes: buffer.length,
         buffer,
       },
-      uploadDir: "/tmp/test-uploads",
+      uploadDir: UPLOAD_DIR,
     },);
 
     await db
@@ -324,7 +334,7 @@ describeReal("extractAvatarMetadata", () => {
         buffer,
         altText: "drop-in",
       },
-      uploadDir: "/tmp/test-uploads",
+      uploadDir: UPLOAD_DIR,
     },);
 
     const result = await extractAvatarMetadata(db, asset.id,);
