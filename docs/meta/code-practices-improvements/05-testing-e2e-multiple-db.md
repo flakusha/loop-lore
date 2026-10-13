@@ -7,14 +7,15 @@
 
 - **E2E safeguard** (`tests/e2e/helpers/server.ts` `enforceE2eSafeguard`):
   refuses to run unless `db.sqliteFilename === ":memory:"`, upload dir
-  under `/tmp/`, and `auth.required === false`. `E2E_SAFEGUARD=0` bypasses.
+  under the OS temp dir (`os.tmpdir()`), and `auth.required === false`.
+  `E2E_SAFEGUARD=0` bypasses.
 - **In-memory test DB**: `createTestDb()` builds `bun:sqlite :memory:`,
   runs `migrate`, and calls `setTestDatabase(db)` so all `getDatabase()`
   calls resolve to the test instance.
 - **Mock LLM provider** (`src/test-utils/mock-provider.ts`) injected via
   `registerProvider` — generation paths testable without network.
 - **`loadTestConfig`** applies safe defaults (port 0, `:memory:`,
-  `/tmp/...` uploads, auth off) _before_ the safeguard check.
+  OS-temp uploads, auth off) _before_ the safeguard check.
 - **Multi-layer gates in `check`**: `typecheck` + `typecheck:frontend` +
   `typecheck:coverage` (85%) + `lint` + `format` + `md:lint`; the CI job
   runs `lint:css` + `lint:html` as separate steps
