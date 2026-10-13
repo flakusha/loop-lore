@@ -184,7 +184,7 @@ function cycleIssues(nodes: NormalizedNode[], edges: Array<{ from: string; to: s
     outgoing.set(edge.from, targets,);
   }
 
-  const queue = [...indegree.entries(),].filter(([_, degree,],) => degree === 0).map(([id,],) => id);
+  const queue = [...indegree.entries(),].filter(([, degree,],) => degree === 0).map(([id,],) => id);
   let visited = 0;
   while (queue.length > 0) {
     const id = queue.shift() as string;
@@ -197,7 +197,7 @@ function cycleIssues(nodes: NormalizedNode[], edges: Array<{ from: string; to: s
   }
 
   if (visited === indegree.size) { return []; }
-  const stuck = [...indegree.entries(),].filter(([_, degree,],) => degree > 0).map(([id,],) => id);
+  const stuck = [...indegree.entries(),].filter(([, degree,],) => degree > 0).map(([id,],) => id);
   return [{ kind: "cycle", message: `cycle detected among nodes: ${stuck.join(", ",)}`, },];
 }
 

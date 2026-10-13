@@ -77,15 +77,12 @@ export function collectPlaceholders(obj: unknown,): Set<string> {
  * Strings containing `{{...}}` are processed. All other types pass through unchanged.
  * @param obj - JSON value to process (object, array, string, number, boolean, null)
  * @param vars - Variable map for simple replacements
- * @param nodeOverrides - Optional node-targeted overrides (nodeId → field path → value)
- * @param _nodeOverrides
  * @returns New object with placeholders replaced; string leaves may widen to
  *   the substituted variable's own type
  */
 export function substituteWorkflow<T,>(
   obj: T,
   vars: SubstitutionVars,
-  _nodeOverrides?: Map<string, Record<string, unknown>>,
 ): Substituted<T> {
   if (obj === null || obj === undefined) { return obj as Substituted<T>; }
 
@@ -94,13 +91,13 @@ export function substituteWorkflow<T,>(
   }
 
   if (Array.isArray(obj,)) {
-    return Array.from(obj, (item,) => substituteWorkflow(item, vars, _nodeOverrides,),) as Substituted<T>;
+    return Array.from(obj, (item,) => substituteWorkflow(item, vars,),) as Substituted<T>;
   }
 
   if (typeof obj === "object") {
     const result: Record<string, unknown> = {};
     for (const [key, value,] of Object.entries(obj as Record<string, unknown>,)) {
-      result[key] = substituteWorkflow(value, vars, _nodeOverrides,);
+      result[key] = substituteWorkflow(value, vars,);
     }
 
     return result as Substituted<T>;

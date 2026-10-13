@@ -269,7 +269,8 @@ async function writeAuditPair(
     reason,
     severity: args.severity,
     ...(args.durationMs !== undefined ? { duration_ms: args.durationMs, } : {}),
-    ...(args.extraMeta ?? {}),
+    // Spreading `undefined` adds no keys, so the `?? {}` fallback was a no-op.
+    ...args.extraMeta,
   };
 
   await trx
