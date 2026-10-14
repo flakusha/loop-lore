@@ -23993,12 +23993,20 @@
   ],
   "src/generation/audio-gen-route.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-ambient-music-sfx.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-prompt-library-expanded.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-sub-audio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/generation/audio-prompt-": [
@@ -24063,6 +24071,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-ambient-music-sfx.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
+  "src/generation/audio/engine.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
+  "src/generation/audio/engine.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/generation/audio/music.ts": [
@@ -24071,7 +24095,7 @@
       "source": ".plan/epics/epic-ambient-music-sfx.md"
     }
   ],
-  "src/generation/audio/providers.ts": [
+  "src/generation/audio/providers/comfyui.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-ambient-music-sfx.md"
@@ -24083,7 +24107,21 @@
       "source": ".plan/epics/epic-ambient-music-sfx.md"
     }
   ],
+  "src/generation/audio/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-ambient-music-sfx.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
   "src/generation/audio/wav.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-ambient-music-sfx.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ambient-sound-system.md"
@@ -26345,6 +26383,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     },
     {
       "kind": "ticket",
@@ -33779,12 +33821,6 @@
       "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
     }
   ],
-  "src/routes/audio.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-ambient-music-sfx.md"
-    }
-  ],
   "src/routes/auth.ts": [
     {
       "kind": "epic",
@@ -38745,6 +38781,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md"
+    }
+  ],
+  "src/routes/templates/modality.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/routes/templates/modality.ts": [

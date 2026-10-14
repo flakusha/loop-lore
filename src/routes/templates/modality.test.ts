@@ -288,7 +288,25 @@ describe("per-modality template routes", () => {
     expect(imageRes.status,).toBe(404,);
   });
 
-  test("audio apply answers 501 with an audio-specific message", async () => {
+  test("audio apply renders the body and dispatches to the ambient pipeline", async () => {
+    const app = makeApp(db, userId,);
+    const created = await post(app, "/api/templates/audio", {
+      name: "Scene bed",
+      payload: { body: "{{location}}", },
+    },);
+
+    const body = (await created.json()) as TemplateIdRow;
+    const res = await post(app, `/api/templates/audio/${body.template.id}/apply`, {
+      context: { location: "rainy forest", },
+    },);
+
+    expect(res.status,).toBe(200,);
+    const payload = (await res.json()) as { data: { url: string; layers: { tag: string }[] } };
+    expect(payload.data.url,).toContain("/api/assets/",);
+    expect(payload.data.layers.map((l,) => l.tag),).toContain("rainy forest",);
+  });
+
+  test("audio apply 400s when the body renders no scene tags", async () => {
     const app = makeApp(db, userId,);
     const created = await post(app, "/api/templates/audio", {
       name: "TTS line",
@@ -297,7 +315,7 @@ describe("per-modality template routes", () => {
 
     const body = (await created.json()) as TemplateIdRow;
     const res = await post(app, `/api/templates/audio/${body.template.id}/apply`, {},);
-    expect(res.status,).toBe(501,);
+    expect(res.status,).toBe(400,);
     const errBody = (await res.json()) as ErrorBody;
     expect(errBody.error,).toContain("audio",);
   });
