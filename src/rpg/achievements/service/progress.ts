@@ -185,7 +185,7 @@ export async function claimRewards(
 
       // Bun's sqlite dialect reports `numUpdatedRows` on UpdateResult.
       const affected = Number(
-        (claimUpdate[0] as Record<string, unknown> | undefined)?.numUpdatedRows ?? 0n,
+        (claimUpdate[0] as unknown as Record<string, unknown> | undefined)?.numUpdatedRows ?? 0n,
       );
 
       if (affected === 0) {

@@ -125,6 +125,18 @@ describe("findCompressedVariant", () => {
     },);
   });
 
+  test("strips q-value parameters from accepted encodings", () => {
+    expect(findCompressedVariant(cssPath, "gzip;q=0.8, br;q=1.0",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+
+    expect(findCompressedVariant(cssPath, "br;q=0.5, gzip;q=0.5",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+  });
+
   test("normalizes accept-encoding: trims whitespace and lowercases tokens", () => {
     expect(findCompressedVariant(cssPath, "  BR ,  GZIP ",),).toEqual({
       path: `${cssPath}.br`,

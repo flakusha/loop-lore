@@ -1,13 +1,21 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "files": {
-    "ignore": ["node_modules", "dist", "data", ".tmp", ".hermes", "docs/.vitepress", "plugins"],
-    "include": ["docs/**/*.md"]
+    "includes": [
+      "**/docs/**/*.md",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/data",
+      "!**/.tmp",
+      "!**/.hermes",
+      "!**/docs/.vitepress",
+      "!**/plugins"
+    ]
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUnusedImports": "warn",
         "noUnusedVariables": "warn"
@@ -31,12 +39,6 @@
     "formatter": {
       "quoteStyle": "double",
       "semicolons": "always"
-    }
-  },
-  "markdown": {
-    "formatter": {
-      "lineWidth": 100,
-      "proseWrap": "preserve"
     }
   }
 }

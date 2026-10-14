@@ -41,7 +41,7 @@ declare global {
   var worldEditState: Record<string, unknown>;
 
   // ── UI functions ───────────────────────────────────────────────────────
-  var showToast: (msg: string, type?: string,) => void;
+  var showToast: (type: string, message: string,) => void;
   var closeSidebar: () => void;
   var toggleSidebar: () => void;
   var applyTheme: (themeId: string,) => void;

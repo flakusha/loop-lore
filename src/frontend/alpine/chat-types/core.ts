@@ -246,4 +246,6 @@ export interface ChatCoreState
   checkGenerationStatus(chatId: string,): Promise<void>;
   registerPanelHandlers(): void;
   unregisterPanelHandlers(): void;
+  _startFireAndForgetLoaders(): void;
+  _loadChatFromUrl(): Promise<void>;
 }
