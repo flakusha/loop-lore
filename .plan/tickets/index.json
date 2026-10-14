@@ -48427,6 +48427,19 @@
     "title": "Scene-asset precedence rule — world vs location",
     "type": "TASK"
   },
+  "TASK-SCENE-AWARE-MUSIC-GENERATION-AMBIENT-MUSIC-SFX-EPIC-PHASE-2": {
+    "hash": "602ed6e",
+    "git_issue": "602ed6e",
+    "extid": "TASK-SCENE-AWARE-MUSIC-GENERATION-AMBIENT-MUSIC-SFX-EPIC-PHASE-2",
+    "type": "TASK",
+    "title": "Scene-Aware Music Generation (Ambient & Music SFX Epic, Phase 2)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-ambient-music-sfx",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scene-aware-music-generation-ambient-music-sfx-epic-phase-2.md",
+    "status": "Not Started"
+  },
   "TASK-SCENE-CHAT-TRANSITION-CONTEXT": {
     "epic": "epic-chat-transfer-location",
     "extid": "TASK-SCENE-CHAT-TRANSITION-CONTEXT",
@@ -48836,6 +48849,19 @@
     "tags": [],
     "title": "Settings PATCH uses t.Any body allowing mass assignment",
     "type": "TASK"
+  },
+  "TASK-SFX-TRIGGER-DETECTION-AND-LIBRARY-AMBIENT-MUSIC-SFX-EPIC-PHA": {
+    "hash": "6477a8f",
+    "git_issue": "6477a8f",
+    "extid": "TASK-SFX-TRIGGER-DETECTION-AND-LIBRARY-AMBIENT-MUSIC-SFX-EPIC-PHA",
+    "type": "TASK",
+    "title": "SFX Trigger Detection and Library (Ambient & Music SFX Epic, Phase 3)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-ambient-music-sfx",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sfx-trigger-detection-and-library-ambient-music-sfx-epic-pha.md",
+    "status": "Not Started"
   },
   "TASK-SHADOW-CONTEXT-ISOLATION": {
     "epic": "epic-hidden-carriage-context",
