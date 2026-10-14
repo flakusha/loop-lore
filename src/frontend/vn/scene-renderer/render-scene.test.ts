@@ -121,6 +121,17 @@ describe("renderCurrentScene structure", () => {
     expect(sceneEl.querySelector(".vn-counter",)!.textContent,).toBe("1 / 2",);
   });
 
+  test("sanitizes backgroundUrl with ) to prevent CSS injection", async () => {
+    const container = install([
+      baseScene({ backgroundUrl: "bg.png);evil", },),
+    ], 0,);
+
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    const bg = container.querySelector(".vn-background",)!;
+    expect(bg.style.backgroundImage,).toBe("url()",);
+  });
+
   test("overlay layout omits the portrait; narration speaks as Narrator", async () => {
     const container = install([baseScene({ role: "narration", },),], 0,);
     state.settings = { ...SETTINGS, layout: "overlay", };
