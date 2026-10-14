@@ -17,24 +17,58 @@ import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { extname, } from "node:path";
 import { HASH_INJECTION_LINK, HASH_INJECTION_SCRIPT, } from "../regex/html-sanitize";
 
-const HASH_PATTERN = /^(.+)-([a-z0-9]{8})\.((?:js|css))$/;
+/** Bun's content-hash alphabet (base32, no i/l/o/u) — 8 chars per build. */
+const HASH_ALPHABET = "[0-9a-hj-km-np-tv-z]";
+
+/** Matches a content-hashed asset basename: `<name>-<8-char bun hash>.<js|css>`. */
+const HASH_PATTERN = new RegExp(`^(.+)-(${HASH_ALPHABET}{8})\\.(js|css)$`,);
 
 /**
- * Build a map of logical → hashed filenames from a directory listing.
+ * Shared predicate for hashed-asset detection (used by static-files.ts and
+ * response-headers.ts). Matches the end of a path: `-<8-char bun hash>.<ext>`.
+ */
+export const HASHED_ASSET_PATTERN = new RegExp(
+  `-${HASH_ALPHABET}{8}\\.(?:js|css|svg|png|jpe?g|webp|gif|woff2?)$`,
+);
+
+/**
+ * Recursively collect file paths relative to `dir`.
+ * @param dir - directory to scan
+ * @param prefix - path prefix for recursion ("" at root)
+ * @param out - output array for relative paths
+ */
+function collectFiles(dir: string, prefix: string, out: string[],): void {
+  if (!existsSync(dir,)) { return; }
+  const entries = readdirSync(dir, { withFileTypes: true, },);
+  for (const entry of entries) {
+    const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      collectFiles(`${dir}/${entry.name}`, rel, out,);
+    } else if (entry.isFile()) {
+      out.push(rel,);
+    }
+  }
+}
+
+/**
+ * Build a map of logical → hashed filenames from a directory tree.
+ * Keys are root-relative paths (e.g., `css/app.js`); values are basenames
+ * of the hashed variant (e.g., `app-abc12345.css`).
  * @param dir
- * @returns string
+ * @returns Map from root-relative logical path to hashed basename
  */
 function buildHashLookup(dir: string,): Map<string, string> {
   const map = new Map<string, string>();
-  if (!existsSync(dir,)) { return map; }
-
-  const entries = readdirSync(dir, { withFileTypes: true, },);
-  for (const entry of entries) {
-    if (!entry.isFile()) { continue; }
-    const match = HASH_PATTERN.exec(entry.name,);
+  const files: string[] = [];
+  collectFiles(dir, "", files,);
+  for (const rel of files) {
+    const basename = rel.split("/",).pop() ?? "";
+    const match = HASH_PATTERN.exec(basename,);
     if (match) {
       const logical = `${match[1]}.${match[3]}`;
-      map.set(logical, entry.name,);
+      const slash = rel.lastIndexOf("/",);
+      const key = slash === -1 ? logical : `${rel.slice(0, slash + 1,)}${logical}`;
+      map.set(key, rel,);
     }
   }
 
@@ -56,12 +90,14 @@ export function injectContentHashes(directory: string,): { replaced: number; ski
   let totalReplaced = 0;
   let totalSkipped = 0;
 
-  const entries = readdirSync(directory, { withFileTypes: true, },);
-  for (const entry of entries) {
-    if (!entry.isFile() || extname(entry.name,).toLowerCase() !== ".html") { continue; }
+  const htmlFiles: string[] = [];
+  collectFiles(directory, "", htmlFiles,);
+  for (const rel of htmlFiles) {
+    if (extname(rel,).toLowerCase() !== ".html") { continue; }
 
-    const filePath = `${directory}/${entry.name}`;
+    const filePath = `${directory}/${rel}`;
     let content = readFileSync(filePath, "utf8",);
+    let fileReplaced = false;
 
     // Replace <script src="/foo.js">  →  <script src="/foo-hash.js">
     // Replace <link rel="stylesheet" href="/foo.css">  →  <link href="/foo-hash.css">
@@ -71,6 +107,7 @@ export function injectContentHashes(directory: string,): { replaced: number; ski
         const hashed = hashLookup.get(filename,);
         if (hashed) {
           totalReplaced++;
+          fileReplaced = true;
           return `${prefix}${hashed}${suffix}`;
         }
 
@@ -85,6 +122,7 @@ export function injectContentHashes(directory: string,): { replaced: number; ski
         const hashed = hashLookup.get(filename,);
         if (hashed) {
           totalReplaced++;
+          fileReplaced = true;
           return `${prefix}${hashed}${suffix}`;
         }
 
@@ -93,7 +131,7 @@ export function injectContentHashes(directory: string,): { replaced: number; ski
       },
     );
 
-    if (totalReplaced > 0) {
+    if (fileReplaced) {
       writeFileSync(filePath, content, "utf8",);
     }
   }

@@ -17,6 +17,7 @@
  */
 
 import type { HeadersConfig, } from "../config/schema";
+import { HASHED_ASSET_PATTERN, } from "../content/hash-injection";
 import { jsonStringifyOr, } from "../utils";
 import { getNonce, } from "./csp-nonce";
 
@@ -83,9 +84,6 @@ export function normalizeHeaderKey(key: string,): string {
 
 /** Classification of an outgoing response, driving which headers apply. */
 export type RouteKind = "html" | "api" | "static" | "sse";
-
-/** Matches bun's content-hashed asset names, e.g. `alpine-tx4kdwfm.js`. */
-const HASHED_ASSET_PATTERN = /-[a-z0-9]{8}\.(?:js|css|svg|png|jpe?g|webp|gif|woff2?)$/;
 
 /** Max-age at/above which `immutable` is semantically valid (1 year, matching static-files hashed assets). */
 const IMMUTABLE_CACHE_MAX_AGE = 31_536_000;
