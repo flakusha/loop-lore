@@ -41,6 +41,7 @@ export const ARCHIVE_RETENTION_DAYS_DEFAULT = 90;
 /**
  * Return all system config entries ordered by key.
  * @param db
+ * @returns every `system_config` row, key-ascending
  */
 export async function getAllConfig(db: Kysely<DB>,): Promise<ConfigEntry[]> {
   return db.selectFrom("system_config",).selectAll().orderBy("key",).execute();
@@ -50,6 +51,7 @@ export async function getAllConfig(db: Kysely<DB>,): Promise<ConfigEntry[]> {
  * Return a single config entry by key, or undefined if missing.
  * @param db
  * @param key
+ * @returns the entry, or `undefined` when the key was never written
  */
 export async function getConfig(db: Kysely<DB>, key: string,): Promise<ConfigEntry | undefined> {
   return db.selectFrom("system_config",).selectAll().where("key", "=", key,).executeTakeFirst();
@@ -59,6 +61,7 @@ export async function getConfig(db: Kysely<DB>, key: string,): Promise<ConfigEnt
  * Return the raw string value for a key, or undefined if missing.
  * @param db
  * @param key
+ * @returns the stored value verbatim, or `undefined` when the key was never written
  */
 export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<string | undefined> {
   const row = await db.selectFrom("system_config",).select("value",).where("key", "=", key,).executeTakeFirst();
