@@ -8,7 +8,10 @@
  *   1. Token presented + valid JWT → authenticated user context
  *   2. No token + !required → solo/demo user context (cached)
  *   3. No token + required → 401 Unauthorized
- *   4. Token presented + invalid + !required → solo/demo fallback
+ *   4. Token presented + invalid → 401 Unauthorized (a *missing* token may fall
+ *      back to solo; a *bad* one never does)
+ *   5. Token presented + no jwtSecret configured → solo fallback + warn (server
+ *      misconfiguration; single-user local setups depend on it)
  */
 import type { Kysely, } from "kysely";
 import { verifyJwt, } from "../../auth/jwt";
@@ -85,11 +88,12 @@ async function verifyTokenContext(
   }
 
   const nowMs = Date.now();
-  // parseExpiryMs returns null for null / empty / unparseable; treat both
-  // null and corrupt as "not expired" (matches the original `Date.parse()`/NaN
-  // path which incidentally allowed these rows through).
+  // parseExpiryMs returns null for null / empty / unparseable. `sessions.expires_at`
+  // is NOT NULL and its only writer (routes/auth/session.ts) always stores a
+  // valid ISO instant, so null means a corrupt row — not "never expires". Fail
+  // closed instead of minting an eternal session out of unparseable data.
   const expiresMs = parseExpiryMs(session.expires_at,);
-  const notExpired = expiresMs === null || expiresMs > nowMs;
+  const notExpired = expiresMs !== null && expiresMs > nowMs;
   if (!notExpired) {
     getLog()?.debug("JWT session not found (logged out?)", { sid: payload.sid, },);
     return null;
@@ -131,9 +135,9 @@ async function verifyTokenContext(
  * Attempt to authenticate the request.
  *
  * Priority: try JWT (Bearer header > cookie) first. If valid, return
- * that user's context. Otherwise, fall back to solo/demo user if
- * authConfig.required === false. If auth is required and no valid
- * token is provided, return 401.
+ * that user's context. If a token was presented but failed verification,
+ * return 401 — solo fallback applies only when NO token was presented and
+ * authConfig.required === false.
  * @param root0
  * @param root0.request
  * @param root0.database
@@ -153,6 +157,16 @@ export async function authenticate({
     if (context) {
       return { context, };
     }
+
+    // A presented-but-invalid token (expired, tampered, revoked session) is a
+    // client error — never an invitation to fall back to solo. The solo path is
+    // only for requests that present NO token at all.
+    getLog()?.warn("JWT presented but failed verification — rejecting",);
+    return jsonError({
+      message: "Invalid or expired token",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    },);
   } else if (rawToken) {
     getLog()?.warn("JWT secret not configured — falling back to solo mode",);
   }
