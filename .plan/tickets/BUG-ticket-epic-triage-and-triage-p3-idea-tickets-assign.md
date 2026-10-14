@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # BUG: ticket-epic-triage and triage-p3-idea-tickets assign mutually exclusive metadata to epic-npc-to-npc-social

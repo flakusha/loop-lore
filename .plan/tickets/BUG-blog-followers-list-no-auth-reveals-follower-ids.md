@@ -4,6 +4,9 @@ hash: pending
 git issue: 5ccf305
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 **Summary:** `GET /api/blog/authors/:authorId/followers` is fully unauthenticated and leaks the complete follower-id list for any author.
 **Context:** `src/routes/blog/follows.ts` (followers handler); `src/rpg/blog/service/follows.ts` (`getFollowers`).
 **Acceptance Criteria:** route requires auth (401 unauthenticated); only the author themselves or an admin may list followers (403 otherwise); response schema declares 401/403; route-level tests cover the branches.

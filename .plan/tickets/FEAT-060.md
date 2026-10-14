@@ -7,6 +7,8 @@ epic: epic-byok-api-keys
 related: [FEAT-067, FEAT-062, FEAT-068]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 **Status:** Not Started
 **Priority:** medium
