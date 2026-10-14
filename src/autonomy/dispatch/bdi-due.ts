@@ -21,6 +21,7 @@ import type { DB, } from "../../db";
  * @param planDate
  * @param limit
  * @param stepInterval
+ * @returns actor IDs due for this plan date, in id order.
  */
 export async function dueActors(
   db: Kysely<DB>,

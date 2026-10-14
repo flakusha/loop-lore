@@ -14,7 +14,12 @@ import { record, } from "../../telemetry/service";
 import { TELEMETRY_EVENT_TRIPPED, } from "./limits";
 import type { AutonomyScope, GovernorLimitName, } from "./types";
 
-/** Emit `governor.budget.exceeded` without ever throwing (log-on-failure). */
+/** Emit `governor.budget.exceeded` without ever throwing (log-on-failure).
+ * @param db
+ * @param opts Session/chat the trip belongs to, if any.
+ * @param data The tripped limit, its scope, cap and current window count.
+ * @returns nothing; telemetry write failures are logged, not raised.
+ */
 export function emitBudgetExceeded(
   db: Kysely<DB>,
   opts: { sessionId?: string; chatId?: string },

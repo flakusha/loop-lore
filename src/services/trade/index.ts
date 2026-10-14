@@ -50,6 +50,7 @@ export class TradeService extends OfferService {
    * @param actorId
    * @param worldId
    * @param currency
+   * @returns the actor's spendable balance in that currency.
    */
   getBalance(
     actorId: string,
@@ -65,6 +66,7 @@ export class TradeService extends OfferService {
    * @param worldId
    * @param amount
    * @param currency
+   * @returns the balance after the credit.
    */
   credit(
     actorId: string,
@@ -81,6 +83,7 @@ export class TradeService extends OfferService {
    * @param worldId
    * @param amount
    * @param currency
+   * @returns whether the funds were removed.
    */
   debit(
     actorId: string,
@@ -98,6 +101,7 @@ export class TradeService extends OfferService {
    * @param worldId
    * @param amount
    * @param currency
+   * @returns whether the transfer completed.
    */
   transferCurrency(
     fromActorId: string,
@@ -118,6 +122,7 @@ export class TradeService extends OfferService {
    * @param opts.buyerItems
    * @param opts.sellerItems
    * @param opts.price
+   * @returns the trade outcome, successful or rejected with a reason.
    */
   trade(opts: {
     worldId: string;
@@ -135,6 +140,7 @@ export class TradeService extends OfferService {
    * @param worldId
    * @param actorId
    * @param limit
+   * @returns history entries, newest first, capped at `limit`.
    */
   getTradeHistory(
     worldId: string,
@@ -152,6 +158,7 @@ export class TradeService extends OfferService {
    * @param opts.npcActorId
    * @param opts.sellerItems
    * @param opts.price
+   * @returns the purchase outcome, successful or rejected with a reason.
    */
   buyFromNpc(opts: {
     worldId: string;
@@ -171,6 +178,7 @@ export class TradeService extends OfferService {
    * @param opts.npcActorId
    * @param opts.buyerItems
    * @param opts.price
+   * @returns the sale outcome, successful or rejected with a reason.
    */
   sellToNpc(opts: {
     worldId: string;

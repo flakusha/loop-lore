@@ -45,6 +45,7 @@ export class OfferService {
    * @param opts.buyerItems
    * @param opts.price
    * @param opts.deadline
+   * @returns the new offer's ID.
    */
   createOffer(opts: {
     worldId: string;
@@ -62,6 +63,7 @@ export class OfferService {
    * a `countered` offer is accepted by the buyer. Expired deadlines reject.
    * @param offerId
    * @param acceptorActorId
+   * @returns the settled trade, or a failure carrying the reason.
    */
   async acceptOffer(
     offerId: string,
@@ -100,6 +102,7 @@ export class OfferService {
    * @param opts.buyerItems
    * @param opts.sellerItems
    * @param opts.price
+   * @returns whether the counter was recorded, with a reason when not.
    */
   counterOffer(opts: {
     offerId: string;
@@ -115,6 +118,7 @@ export class OfferService {
    * Cancel a pending trade offer. Only the offer creator can cancel.
    * @param offerId
    * @param cancellerActorId
+   * @returns whether the offer was cancelled, with a reason when not.
    */
   cancelOffer(
     offerId: string,
@@ -127,6 +131,7 @@ export class OfferService {
    * List pending trade offers for an actor.
    * @param worldId
    * @param actorId
+   * @returns the actor's open offers, with buyer, seller, price and items.
    */
   listOffers(
     worldId: string,
