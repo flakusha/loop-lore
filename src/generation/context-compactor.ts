@@ -68,6 +68,7 @@ export class ContextCompactor {
   /**
    * Total estimated tokens across a message list.
    * @param messages
+   * @returns The summed token estimate over every message content.
    */
   totalTokens(messages: GenerationMessage[],): number {
     let sum = 0;
@@ -80,6 +81,8 @@ export class ContextCompactor {
    * returned unchanged (compacted: false).
    * @param messages
    * @param tokenBudget
+   * @returns The original list untouched when under threshold, otherwise the
+   *   trimmed list with older turns replaced by one summary message.
    */
   async compact(messages: GenerationMessage[], tokenBudget: number,): Promise<CompactResult> {
     const total = this.totalTokens(messages,);

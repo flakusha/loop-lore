@@ -61,6 +61,7 @@ export class MattingService {
    * @param root0
    * @param root0.assetId
    * @param root0.ownerId
+   * @returns The job handle to poll, or the reason the asset was rejected.
    */
   async startMatting({ assetId, ownerId, }: StartMattingOpts,): Promise<StartMattingResult> {
     const asset = await this.#loadAsset(assetId,);
@@ -100,6 +101,7 @@ export class MattingService {
   /**
    * Get a job by id.
    * @param jobId
+   * @returns The job record, or undefined once the job has been evicted.
    */
   getJob(jobId: MattingJobId,): MattingJob | undefined {
     return getJob(jobId,);
@@ -108,6 +110,7 @@ export class MattingService {
   /**
    * List this owner's matting jobs, newest first.
    * @param ownerId
+   * @returns Every job started by this owner, most recent first.
    */
   listJobs(ownerId: string,): MattingJob[] {
     return listJobs(ownerId,);
@@ -159,6 +162,9 @@ export class MattingService {
   /**
    * Read the raw source bytes; encrypted assets are not supported yet.
    * @param assetId
+   * @returns The asset's raw file bytes.
+   * @throws {Error} When the asset row vanished mid-matting or its tier is not public.
+   * @throws The sized-buffer error from `safeFromUint8Array` when the bytes exceed the limit.
    */
   async #readSourceFile(assetId: string,): Promise<Buffer> {
     const asset = await this.#loadAsset(assetId,);
@@ -178,6 +184,8 @@ export class MattingService {
    * Store the matted PNG as a new asset and link it to the raw asset.
    * @param job
    * @param matted
+   * @returns The newly created derivative asset row.
+   * @throws {Error} When the source asset vanished before the derivative was stored.
    */
   async #storeDerivative(job: MattingJob, matted: Buffer,): Promise<AssetRecord> {
     const source = await this.#loadAsset(job.assetId,);

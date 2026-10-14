@@ -20,6 +20,7 @@ import type { OpenAiCompatibleState, OpenAIResponse, OpenAIStreamChunk, } from "
 /**
  * @param state
  * @param req
+ * @returns The assistant message with tool calls, finish reason and token usage.
  * @throws {Error} When the provider rejects or returns a non-OK response.
  */
 export async function completeDispatch(
@@ -60,6 +61,7 @@ export async function completeDispatch(
  * @param state
  * @param req
  * @param handler
+ * @returns The content, thinking, tool calls, finish reason and usage accumulated from the stream.
  * @throws {Error} When the provider rejects or returns a non-OK response.
  */
 export async function streamDispatch(

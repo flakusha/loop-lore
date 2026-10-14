@@ -25,6 +25,7 @@ export class EmotionHook implements HookHandler {
   /**
    * @param content
    * @param context
+   * @returns False for private conversations or content too short to carry indicators.
    */
   async canHandle(content: string, context: HookContext,): Promise<boolean> {
     // Private content opt-out: skip emotion detection entirely so private
@@ -36,6 +37,7 @@ export class EmotionHook implements HookHandler {
   /**
    * @param content
    * @param context
+   * @returns An emotion_change event carrying the dominant emotion and every matched indicator.
    */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();

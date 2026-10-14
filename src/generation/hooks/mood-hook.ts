@@ -27,6 +27,7 @@ export class MoodHook implements HookHandler {
   /**
    * @param content
    * @param context
+   * @returns False for private conversations or content too short to carry indicators.
    */
   async canHandle(content: string, context: HookContext,): Promise<boolean> {
     // Private content opt-out: skip mood detection entirely so private
@@ -38,6 +39,7 @@ export class MoodHook implements HookHandler {
   /**
    * @param content
    * @param context
+   * @returns A mood_shift event carrying the dominant mood and its delta.
    */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();

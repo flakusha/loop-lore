@@ -82,6 +82,7 @@ export class ComfyUIClient {
    * Submit a workflow for execution.
    * @param workflow - ComfyUI API-format workflow JSON
    * @returns prompt_id for tracking execution
+   * @throws {Error} When ComfyUI rejects the prompt with a non-OK status.
    */
   async submitWorkflow(workflow: ComfyUIWorkflow,): Promise<ComfyUIPromptResult> {
     const url = `${this.baseUrl}/prompt`;
@@ -111,6 +112,7 @@ export class ComfyUIClient {
    * Returns null if not yet complete, throws on failure.
    * @param promptId - prompt id from submitWorkflow
    * @returns completion state with images or error
+   * @throws {Error} When the history fetch returns a non-OK status.
    */
   async pollResult(promptId: string,): Promise<{
     done: boolean;
@@ -159,6 +161,7 @@ export class ComfyUIClient {
    * @param promptId - the prompt_id from submitWorkflow
    * @param timeoutMs - max wait time in ms (overrides client timeout)
    * @returns list of generated image filenames
+   * @throws {Error} When execution reports failure or the deadline elapses first.
    */
   async waitForCompletion(promptId: string, timeoutMs?: number,): Promise<string[]> {
     const deadline = Date.now() + (timeoutMs ?? this.timeout);
@@ -195,6 +198,7 @@ export class ComfyUIClient {
   /**
    * Discover available nodes and their inputs.
    * @returns node info keyed by node name
+   * @throws {Error} When object_info returns a non-OK status.
    */
   async getNodeInfo(): Promise<Record<string, ComfyUINodeInfo>> {
     const url = `${this.baseUrl}/object_info`;
@@ -215,6 +219,7 @@ export class ComfyUIClient {
    * @param subfolder - optional subfolder from ComfyUI output
    * @param type - output type ("output" default, "temp")
    * @returns the image bytes
+   * @throws {Error} When the image fetch returns a non-OK status, or the bytes exceed the buffer limit.
    */
   async downloadImage(
     filename: string,

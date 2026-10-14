@@ -97,6 +97,7 @@ export class ModerationHook implements HookHandler {
   /**
    * @param content
    * @param _context
+   * @returns True for any non-empty content; short text can still carry moderation tokens.
    */
   async canHandle(content: string, _context: HookContext,): Promise<boolean> {
     // No length bypass: short content can carry moderation tokens. The
@@ -108,6 +109,8 @@ export class ModerationHook implements HookHandler {
   /**
    * @param content
    * @param context
+   * @returns A moderation_flag event with severity and matched terms, or an
+   *   unhandled result when nothing flagged.
    */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
@@ -179,6 +182,7 @@ export class ModerationHook implements HookHandler {
    * `count × weight` per matched keyword; overall severity is "severe" when any
    * severe keyword matched, otherwise "moderate".
    * @param content
+   * @returns The aggregated flags with severity and per-term counts, or null when no keyword matched.
    */
   detectModerationFlags(content: string,): ModerationFlags | null {
     const tokenCounts = new Map<string, number>();
