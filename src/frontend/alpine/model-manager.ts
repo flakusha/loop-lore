@@ -61,6 +61,7 @@ export interface ModelManagerState {
 /**
  * Alpine component state; `deps` are injectable seams for tests.
  * @param deps
+ * @returns the model manager state.
  */
 export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerState {
   const loadCatalog = deps.loadCatalog ?? fetchCatalog;

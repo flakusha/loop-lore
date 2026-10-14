@@ -8,7 +8,10 @@
 
 const KEY_PREFIX = "vn:last-location:";
 
-/** Persist (or clear with null) the last-seen location for a chat. */
+/** Persist (or clear with null) the last-seen location for a chat.
+ * @param chatId - the chat to store the location for.
+ * @param locationId - the location to remember, or null to clear.
+ */
 export function saveLastLocation(chatId: string, locationId: string | null,): void {
   try {
     const storage = globalThis.localStorage;
@@ -20,7 +23,10 @@ export function saveLastLocation(chatId: string, locationId: string | null,): vo
   }
 }
 
-/** Read the stored last-seen location; `{}` when absent. Never throws. */
+/** Read the stored last-seen location; `{}` when absent. Never throws.
+ * @param chatId - the chat to read the location for.
+ * @returns an object with currentLocationId, or empty object when absent.
+ */
 export function getLocationContext(chatId: string,): { currentLocationId?: string; previousLocationId?: string } {
   try {
     const storage = globalThis.localStorage;

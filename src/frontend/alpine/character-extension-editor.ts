@@ -85,6 +85,7 @@ const emptyPayload = (): CharacterExtensionsPayload => ({});
 /**
  * Pure: build the JSON string posted to `PUT /api/actors/:actorId`.
  * @param draft
+ * @returns the JSON string representation of the extensions payload.
  */
 export function serializeExtensions(
   draft: CharacterExtensionsPayload,
@@ -97,6 +98,7 @@ export function serializeExtensions(
  * Pure: validate a draft against bundle requirements.
  * @param draft
  * @param requirements
+ * @returns the validation report listing any missing required fields.
  */
 export function checkBundle(
   draft: CharacterExtensionsPayload,
@@ -251,6 +253,7 @@ function safeParse(raw: string,): CharacterExtensionsPayload {
  * @param actorId
  * @param requirements
  * @param fetcher
+ * @returns a fresh editor state instance bound to the actor.
  */
 export function characterExtensionEditorFactory(
   actorId: string,

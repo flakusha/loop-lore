@@ -55,6 +55,7 @@ export function applyChatViewDefaults(store: unknown,): void {
  * Accepts the wider `unknown` parameter on purpose: this runs against the
  * loosely-typed Alpine store payload before the chat view has narrowed it.
  * @param store
+ * @throws {TypeError} when the store is not an object or is missing a required field (non-production only).
  */
 export function assertChatViewShape(store: unknown,): void {
   // Guarded for the browser bundle: `process` is undefined there. Bun and Node

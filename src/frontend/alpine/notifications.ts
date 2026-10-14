@@ -102,6 +102,7 @@ export class NotificationsManager {
   /**
    * Read unseen count for a specific chat.
    * @param chatId
+   * @returns the number of unseen messages in the chat.
    */
   getUnseenCount(chatId: string,): number {
     return this.state.unseen[chatId] ?? 0;

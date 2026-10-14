@@ -11,6 +11,7 @@ import type { VnChoice, } from "./choice-cards";
  * @param container
  * @param choices
  * @param onSelect
+ * @param onSkip - called with every available choice id when the skip button is clicked.
  * @returns {void}
  */
 export function renderChoiceCards(

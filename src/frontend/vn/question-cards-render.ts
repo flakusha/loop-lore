@@ -7,7 +7,9 @@ import type { VnQuestion, VnQuestionOption, } from "./question-cards";
 
 // ── Internal ────────────────────────────────────────────────────────────────
 
-/** "+12" / "−12" / "" for a signed impact value. */
+/** "+12" / "−12" / "" for a signed impact value.
+ * @param value - the signed impact number.
+ */
 function impactLabel(value: number,): string {
   if (!Number.isFinite(value,) || value === 0) { return ""; }
   return value > 0 ? `+${value}` : String(value,);
@@ -21,6 +23,7 @@ function impactLabel(value: number,): string {
  * @param container
  * @param questions
  * @param onAnswer
+ * @param onSkip - called with every available question id when the skip button is clicked.
  * @returns {void}
  */
 export function renderQuestionCards(

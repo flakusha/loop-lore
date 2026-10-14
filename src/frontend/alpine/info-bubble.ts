@@ -32,6 +32,7 @@ const PLACEMENTS: readonly InfoBubblePlacement[] = ["top", "right", "bottom", "l
 /**
  * Coerce an unknown placement to a known one; anything else falls back to "top".
  * @param value
+ * @returns a valid placement string.
  */
 export function normalizePlacement(value: unknown,): InfoBubblePlacement {
   return (PLACEMENTS as readonly string[]).includes(value as string,)
@@ -44,6 +45,7 @@ export function normalizePlacement(value: unknown,): InfoBubblePlacement {
  * (touch/keyboard users get click + focus instead).
  * @param mode
  * @param hoverCapable - matchMedia("(hover: hover) and (pointer: fine)")
+ * @returns true when hover should be used as the trigger mode.
  */
 export function shouldHover(mode: InfoBubbleMode, hoverCapable: boolean,): boolean {
   return mode === "hover" || (mode === "auto" && hoverCapable);
