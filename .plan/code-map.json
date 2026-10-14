@@ -1016,6 +1016,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
     },
     {
@@ -5913,6 +5917,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/content-compression.md"
+    }
+  ],
+  "src/build/copy-icons.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-69-dead-src-files-reported-by-knip.md"
     }
   ],
   "src/build/identity.test.ts": [
@@ -17828,6 +17838,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
     },
     {
@@ -21104,10 +21118,18 @@
   "src/frontend/alpine/story-controls.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
     }
   ],
   "src/frontend/alpine/story-state.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-alpine.md"
@@ -37787,6 +37809,12 @@
       "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
+  "src/routes/story-orchestration/api-versioning.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md"
+    }
+  ],
   "src/routes/story-orchestration/helpers.ts": [
     {
       "kind": "ticket",
@@ -37797,6 +37825,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-001-missing-data-id-start-chat-button.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md"
     }
   ],
   "src/routes/story-states/npc.ts": [
@@ -46439,6 +46471,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-worktree-git-helpers-pass-no-isolated-env-so-hook-context-le.md"
+    }
+  ],
+  "src/utils/http-retryable.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-69-dead-src-files-reported-by-knip.md"
     }
   ],
   "src/utils/image-diff.ts": [
