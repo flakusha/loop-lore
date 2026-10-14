@@ -10,6 +10,7 @@ import { htmlResponse, } from "./layout";
 /**
  * @param database
  * @param params
+ * @returns the paginated chat-list HTML fragment
  */
 async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
   const page = Math.max(1, parseIntOr(params.get("page",) ?? "1", 1,),);
@@ -73,6 +74,7 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
 /**
  * @param database
  * @param params
+ * @returns the paginated chat-search HTML fragment
  */
 async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";

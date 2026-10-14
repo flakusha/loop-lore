@@ -43,6 +43,7 @@ export function parseHazards(raw: string | null,): string[] {
  * corrupt rows degrade to empty lists.
  * @param database
  * @param worldId
+ * @returns the world's in-flight transports and unlocked routes
  */
 export async function loadTravelStatus(database: Kysely<DB>, worldId: string,): Promise<TravelStatusPayload> {
   const transports = await database

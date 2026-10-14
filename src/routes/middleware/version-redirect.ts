@@ -7,6 +7,7 @@
  * Redirects unversioned `/api/{resource}` requests to `/api/v1/{resource}`
  * for backward compatibility during the versioning migration.
  * @param targetVersion
+ * @returns middleware answering every request with the 308 redirect to the versioned path
  * @see docs/spec/api-versioning.md
  */
 export function versionRedirect(targetVersion: string,) {

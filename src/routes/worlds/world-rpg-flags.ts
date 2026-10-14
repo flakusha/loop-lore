@@ -10,6 +10,7 @@
  * per-mechanic flags; these helpers keep the stored columns consistent with
  * what the API caller asked for.
  * @param value
+ * @returns 1 or 0 for a recognized boolean, or null when the caller said nothing
  */
 export function toRpgFlag(value: unknown,): 0 | 1 | null {
   if (value === true || value === 1) { return 1; }

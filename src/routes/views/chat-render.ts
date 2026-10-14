@@ -10,6 +10,7 @@ import { escapeHtml, } from "./layout";
 /**
  * @param database
  * @param chats
+ * @returns the chats annotated with participant counts and their last message
  */
 async function enrichChats(
   database: Kysely<DB>,
@@ -73,6 +74,7 @@ async function enrichChats(
 
 /**
  * @param rows
+ * @returns the HTML markup for the chat list rows
  */
 function renderChatListItems(rows: {
   id: string;

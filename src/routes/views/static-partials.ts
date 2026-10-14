@@ -8,6 +8,7 @@ import { ALLOWED_PARTIALS, COMPONENTS_DIR, PARTIALS_DIR, } from "./constants";
 /**
  * @param name
  * @param searchParams
+ * @returns the partial markup, or null when the name is not allow-listed or the file is missing
  */
 function serveStaticPartial(name: string, searchParams?: URLSearchParams,): string | null {
   if (!ALLOWED_PARTIALS.has(name,)) { return null; }

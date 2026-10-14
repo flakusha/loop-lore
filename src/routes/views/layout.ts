@@ -140,6 +140,7 @@ function resolveIcons(content: string,): string {
 
 /**
  * @param viewName
+ * @returns the resolved view markup, or "" when the view does not exist
  */
 function loadView(viewName: string,): string {
   const cached = viewCache.get(viewName,);
@@ -171,6 +172,7 @@ export function applyI18n(content: string, t?: (key: string,) => string,): strin
  * @param sessionId
  * @param request
  * @param t
+ * @returns the HTML response, layout-wrapped unless this is an htmx fragment
  */
 function respond(
   content: string,
@@ -201,6 +203,7 @@ function respond(
  * @param sessionId
  * @param request
  * @param t
+ * @returns the empty-state HTML response for the missing entity
  */
 function notFoundView(
   message: string,
@@ -222,6 +225,7 @@ function notFoundView(
 
 /**
  * @param body
+ * @returns the HTML fragment response with the text/html content type
  */
 function htmlResponse(body: string,): Response {
   return new Response(body, {

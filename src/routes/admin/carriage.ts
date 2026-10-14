@@ -36,6 +36,7 @@ export type CarriageDebugVerdict =
  * unrevealed shadow note labeled `visibility: "gm"`.
  * @param opts
  * @param prefix
+ * @returns the mounted carriage admin plugin
  */
 export function carriageRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const app = new Elysia({ name: "admin-carriage", },);

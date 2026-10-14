@@ -61,6 +61,7 @@ function toWire(edge: {
 /**
  * @param error thrown service error
  * @returns mapped HTTP response; 404 for absent/locked, 400 otherwise
+ * @throws {unknown} rethrows any non-`LocationEdgeError` unchanged
  */
 function edgeErrorResponse(error: unknown,): Response {
   if (error instanceof LocationEdgeError) {

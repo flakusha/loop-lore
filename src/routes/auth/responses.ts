@@ -8,6 +8,7 @@ import { HttpStatus, type HttpStatusCode, } from "../http-utils";
 
 /**
  * @param str
+ * @returns `str` with the five HTML-significant characters escaped
  */
 function escapeHtml(str: string,): string {
   return str
@@ -19,6 +20,7 @@ function escapeHtml(str: string,): string {
 
 /**
  * @param msg
+ * @returns a 200 HTML page holding the inline error swap fragment
  */
 function errorHtml(msg: string,): Response {
   return new Response(`<p class="error-msg">${escapeHtml(msg,)}</p>`, {
@@ -36,6 +38,7 @@ function errorHtml(msg: string,): Response {
  * BUG-auth-login-silent-fail / BUG-auth-register-silent-fail: this is
  * the content-negotiating answer to the silent-200 HTML bug.
  * @param request
+ * @returns true when the caller should get a JSON envelope rather than HTML
  */
 function wantsJson(request: Request,): boolean {
   if (request.headers.get("HX-Request",) === "true") { return false; }
@@ -59,6 +62,7 @@ function wantsJson(request: Request,): boolean {
  * @param status
  * @param message
  * @param t
+ * @returns the JSON error envelope with the requested status
  */
 function errorJson(status: HttpStatusCode, message: string, t?: TranslatorFn,): Response {
   const resolved = t ? t(message,) : message;
@@ -97,6 +101,7 @@ function errorJson(status: HttpStatusCode, message: string, t?: TranslatorFn,): 
  * @param message
  * @param t
  * @param fallback
+ * @returns the negotiated error response, JSON for API clients and inline HTML otherwise
  */
 function errorResponse(
   request: Request,
@@ -126,6 +131,7 @@ function errorResponse(
 
 /**
  * @param request
+ * @returns the `ll_token` cookie value, or null when absent
  */
 function getTokenFromCookie(request: Request,): string | null {
   const cookieHeader = request.headers.get("Cookie",);

@@ -72,6 +72,7 @@ const IdParams = Type.Object({ id: Type.String(), },);
  * @param root0 - Handler options
  * @param root0.database - Kysely database handle
  * @param prefix - Route prefix
+ * @returns the mounted CRUD + apply plugin for this modality
  */
 export function modalityTemplateRoutes(
   modality: Extract<TemplateModality, "video" | "audio">,

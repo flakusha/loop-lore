@@ -62,6 +62,7 @@ const fingerprint = (snap: WorldConditionsSnapshot,): string =>
  * location_states yet resolves to the empty snapshot.
  * @param database
  * @param worldId
+ * @returns the freshest conditions snapshot, empty when the world has no location states
  */
 export async function loadWorldConditions(
   database: Kysely<DB>,
