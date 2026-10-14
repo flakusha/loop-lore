@@ -135,6 +135,36 @@ describe("handlePanelKey", () => {
     press(deps, "Enter",);
     expect(deps.events,).toContain("item:potion",);
   });
+
+  it("enter calls preventDefault to suppress double-post", () => {
+    const deps = makeDeps();
+    buildFocusTargets(deps,);
+    deps.focusedIndex = 0;
+    let prevented = false;
+    handlePanelKey({
+      key: "Enter",
+      preventDefault: () => {
+        prevented = true;
+      },
+    } as KeyboardEvent, deps,);
+
+    expect(prevented,).toBe(true,);
+  });
+
+  it("space calls preventDefault to suppress double-post", () => {
+    const deps = makeDeps();
+    buildFocusTargets(deps,);
+    deps.focusedIndex = 0;
+    let prevented = false;
+    handlePanelKey({
+      key: " ",
+      preventDefault: () => {
+        prevented = true;
+      },
+    } as KeyboardEvent, deps,);
+
+    expect(prevented,).toBe(true,);
+  });
 });
 
 describe("rebuildFocus", () => {

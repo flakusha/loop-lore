@@ -239,7 +239,8 @@
     "nsfwBlocked": "Blocked",
     "nsfwBanned": "Banned",
     "nsfwShadow": "Shadow-restricted",
-    "nsfwConsentUnavailable": "Could not load NSFW consent state."
+    "nsfwConsentUnavailable": "Could not load NSFW consent state.",
+    "templates": "Templates"
   },
   "admin": {
     "title": "Administration",
@@ -378,7 +379,6 @@
     "sessions": "Sessions",
     "activeUsers": "Active Users",
     "dailyEvents": "Daily Events",
-    "noDailyData": "No daily data available",
     "recentErrors": "Recent Errors",
     "noErrorsRecorded": "No errors recorded",
     "loadingHealthStatus": "Loading health status...",
@@ -405,7 +405,6 @@
     "saveDefaults": "Save Defaults",
     "noTemplatesFound": "No templates found",
     "empty": "(empty)",
-    "messages": "Messages",
     "characters": "Characters",
     "assets": "Assets",
     "id": "ID",
@@ -459,7 +458,9 @@
     "unsupportedFormat": "Unsupported format",
     "apiError": "API error",
     "connectionFailed": "Connection failed",
-    "timeout": "Request timed out"
+    "timeout": "Request timed out",
+    "createFailed": "Failed to create",
+    "loadFailed": "Failed to load"
   },
   "filter": {
     "allTypes": "All types",
@@ -530,7 +531,12 @@
     "displayNameRequired": "displayName is required",
     "invalidAvatarData": "Invalid avatar data",
     "emotionJobNotFound": "Job not found",
-    "emotionJobAlreadyCompleted": "Job not found or already completed"
+    "emotionJobAlreadyCompleted": "Job not found or already completed",
+    "appearance": "Appearance",
+    "defaultOutfit": "Default Outfit",
+    "searchCharacters": "Search characters...",
+    "switchToGrid": "Switch to grid view",
+    "switchToList": "Switch to list view"
   },
   "worlds": {
     "title": "Worlds",
@@ -589,7 +595,14 @@
     "revokeInviteConfirm": "Revoke invite {code}?",
     "deleteItemConfirm": "Delete this item? Its placed instances will also be removed.",
     "destroyInstanceConfirm": "Destroy this item instance?",
-    "deleteLocationConfirm": "Delete this location?"
+    "deleteLocationConfirm": "Delete this location?",
+    "createTimeline": "Create Timeline",
+    "searchWorlds": "Search worlds...",
+    "timeline": "Timeline",
+    "timelineDesc": "Description",
+    "timelineDescPlaceholder": "Enter description",
+    "timelineName": "Timeline Name",
+    "timelineNamePlaceholder": "Enter timeline name"
   },
   "gallery": {
     "title": "Gallery",
@@ -615,7 +628,11 @@
     "downloadSelected": "Download Selected",
     "preview": "Preview",
     "assetFallback": "Asset",
-    "previewFailed": "Failed to load asset preview"
+    "previewFailed": "Failed to load asset preview",
+    "characterInfo": "Character Info",
+    "chatSettings": "Chat Settings",
+    "toggleGallery": "Toggle Gallery",
+    "userPreferences": "User Preferences"
   },
   "blog": {
     "title": "Blog",
@@ -969,7 +986,19 @@
     "tabAudit": "Audit",
     "auditAll": "All",
     "auditEmpty": "No audit entries yet",
-    "auditLoadMore": "Load more"
+    "auditLoadMore": "Load more",
+    "assetPickerEmpty": "No assets available",
+    "assetPickerLoading": "Loading...",
+    "assetPickerTitle": "Attach Asset",
+    "attachAsset": "Attach",
+    "chatVariant": "Variant",
+    "improveMessage": "Improve",
+    "ownerMessage": "Owner",
+    "searchInChat": "Search in this chat...",
+    "seenBy": "Seen by",
+    "variantRpg": "RPG",
+    "variantRpgGroup": "RPG Group",
+    "variantStandard": "Standard"
   },
   "participants": {
     "title": "Participants",
@@ -1373,7 +1402,17 @@
     "failedCreateEntity": "Failed to create entity",
     "networkErrorCreatingEntity": "Network error — could not create entity",
     "keyphrasesSaved": "Keyphrases saved ({count})",
-    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved"
+    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved",
+    "captioningStarted": "Captioning started",
+    "dangerActionDone": "Danger action completed",
+    "failedChangeLocation": "Failed to change location",
+    "failedTransferChat": "Failed to transfer chat",
+    "failedUnarchiveChat": "Failed to unarchive chat",
+    "failedUpdatePinState": "Failed to update pin state",
+    "gmGuidanceApplied": "GM guidance applied",
+    "messageNoContentForImage": "Message has no content for image",
+    "networkErrorCreatingQuest": "Network error creating quest",
+    "networkErrorDuringRetry": "Network error during retry"
   },
   "wizard": {
     "previewTitle": "Create {type} — Preview",
@@ -1409,7 +1448,34 @@
     "emotionAvatarsProgress": "{done} of {total} variants",
     "generationTimedOut": "Generation timed out.",
     "generationOutcome": "Generation {status}.",
-    "resumingFromStep": "Resuming from step {step} of {total}..."
+    "resumingFromStep": "Resuming from step {step} of {total}...",
+    "emotionAvatarsBaseRequired": "Base avatar is required",
+    "emotionAvatarsCancelFailed": "Failed to cancel emotion avatar generation",
+    "emotionAvatarsLoadFailed": "Failed to load emotion avatars",
+    "emotionAvatarsStartFailed": "Failed to start emotion avatar generation",
+    "emotionAvatarsStarted": "Emotion avatar generation started",
+    "entitiesCreateFailed": "Failed to create entity",
+    "entitiesLoadFailed": "Failed to load entities",
+    "entitiesSaveFailed": "Failed to save entities",
+    "exportStartFailed": "Failed to start export",
+    "traitsCreateFailed": "Failed to create traits",
+    "traitsLoadFailed": "Failed to load traits",
+    "traitsSaveFailed": "Failed to save traits",
+    "traitsUpdated": "Traits updated",
+    "licensingDeleteFailed": "Failed to delete license",
+    "licensingLoadFailed": "Failed to load license",
+    "licensingSaveFailed": "Failed to save license",
+    "systemsExportComplete": "Export complete",
+    "systemsExportFailed": "Export failed",
+    "systemsImportComplete": "Import complete",
+    "systemsImportFailed": "Import failed",
+    "systemsImportInvalidJson": "Invalid JSON in import",
+    "systemsImportNoPayload": "No import payload",
+    "systemsImportNoUrl": "No import URL",
+    "traitsCreated": "Traits created",
+    "traitsDeleted": "Traits deleted",
+    "traitsDeleteFailed": "Failed to delete traits",
+    "traitsNameRequired": "Name is required"
   },
   "analyze": {
     "ready": "Prompt analyzed",
@@ -1432,14 +1498,12 @@
     "rateLimited": "Too many skips — try again in a minute.",
     "failed": "Could not skip the turn."
   },
-
   "scheduled": {
     "scheduled": "Scheduled — it'll send itself.",
     "pickTime": "Pick a time to send at.",
     "emptyDraft": "Type a message before scheduling.",
     "failed": "Could not schedule that message."
   },
-
   "reminders": {
     "menu": "Remind me",
     "in10": "in 10 minutes",
@@ -1478,7 +1542,6 @@
     "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
     "skip": "GM: skip a character's turn (/skip <character>)"
   },
-
   "branches": {
     "title": "Branches",
     "none": "No branches yet",
@@ -1567,36 +1630,6 @@
     "mergeFailedConfirm": "Failed to confirm merge",
     "mergeFailedContinue": "Failed to continue from merge"
   },
-  "commands": {
-    "help": "Show available commands",
-    "roll": "Roll dice (e.g., /roll 2d6+3)",
-    "summarize": "Summarize recent messages",
-    "impersonate": "Play as a character",
-    "narrate": "Inject narration text",
-    "ooc": "Out-of-character message",
-    "debug": "Toggle prompt debug view",
-    "detail": "Set detail level (immersion/basic/detailed)",
-    "improve": "Improve text with AI",
-    "context": "Show conversation context",
-    "image": "Generate image from prompt",
-    "quest": "Manage quests (list/create/status)",
-    "video": "Generate video from prompt",
-    "sfx": "Generate sound effect",
-    "sound": "Alias for /sfx",
-    "music": "Generate music or link external source",
-    "caption": "Caption the last image",
-    "create": "Create char/loc/world/item",
-    "review": "Review entity data for completeness",
-    "clear": "Clear chat",
-    "stats": "Show chat statistics",
-    "link": "Attach a gallery asset to this chat",
-    "guide": "GM: give narrative direction (/guide <direction>)",
-    "target": "GM: pick the character to respond next (/target <character>)",
-    "constraint": "GM: add a narrative constraint (/constraint <rule>)",
-    "scene": "GM: set the scene description (/scene <description>)",
-    "priority": "GM: set a character's turn priority (/priority <character> <high|medium|low>)",
-    "skip": "GM: skip a character's turn (/skip <character>)"
-  },
   "wardrobe": {
     "baseOutfit": "Base outfit",
     "sceneDefault": "Scene default",
@@ -1681,5 +1714,34 @@
       "harnessReview": "Review",
       "harnessCreative": "Creative"
     }
+  },
+  "keys": {
+    "generate": "Generate New Key",
+    "generateTitle": "Generate New Key",
+    "nameLabel": "Key Name",
+    "namePlaceholder": "e.g., backup-key",
+    "noKeys": "No encryption keys found.",
+    "revoke": "Revoke Key",
+    "revokeConfirm": "Key to revoke:",
+    "revokeConfirmButton": "Revoke Key",
+    "revokeTitle": "Revoke Key",
+    "revokeWarning": "Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.",
+    "rotate": "Rotate Primary Key",
+    "title": "Encryption Keys"
+  },
+  "templates": {
+    "allModalities": "All Modalities",
+    "copy": "Copy",
+    "delete": "Delete",
+    "description": "Description",
+    "edit": "Edit",
+    "empty": "No templates yet",
+    "export": "Export",
+    "import": "Import",
+    "modality": "Modality",
+    "name": "Name",
+    "new": "New Template",
+    "payload": "Payload (JSON)",
+    "preset": "Preset"
   }
 }
