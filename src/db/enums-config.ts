@@ -140,6 +140,13 @@ export const SdModelType = {
 /** */
 export type SdModelType = (typeof SdModelType)[keyof typeof SdModelType];
 
+// ── Audio Generation ──────────────────────────────────────
+export const AudioApiFamily = {
+  Comfyui: "comfyui",
+} as const;
+
+export type AudioApiFamily = (typeof AudioApiFamily)[keyof typeof AudioApiFamily];
+
 // ── HTTP Security Headers ─────────────────────────────────
 export const XFrameOption = {
   Deny: "DENY",

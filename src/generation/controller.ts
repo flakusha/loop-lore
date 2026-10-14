@@ -15,6 +15,7 @@
  *   POST /api/v1/generation/continue       — Continue partial/cancelled message
  *   POST /api/v1/generation/regenerate     — Replace AI response
  *   POST /api/v1/generation/image          — Generate image from prompt
+ *   POST /api/v1/generation/audio/ambient  — Generate layered ambient scene audio
  *   POST /api/v1/generation/caption        — Caption image assets
  *   POST /api/v1/generation/prompt         — Improve/analyze prompt drafts
  */
@@ -23,6 +24,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
+import { handleAmbientGeneration, } from "./audio-gen-route";
 import { handleImageCaption, } from "./caption-route";
 import { handleGenerate, } from "./generate-route";
 import {
@@ -126,6 +128,11 @@ export function generationRoutes(
   app.post(`${prefix}/generation/caption`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string; userRole?: string | null };
     return handleImageCaption(readBody(ctx,), database, auth.userId, auth.userRole,);
+  },);
+
+  app.post(`${prefix}/generation/audio/ambient`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string | null; userRole?: string | null };
+    return handleAmbientGeneration(readBody(ctx,), database, auth.userId ?? undefined, auth.userRole,);
   },);
 
   app.post(`${prefix}/generation/prompt`, async (ctx,) => {

@@ -5,7 +5,7 @@
 //
 // Enum types sourced from ../db/enums.
 
-import type { ImageApiFamily, } from "../../db/enums";
+import type { AudioApiFamily, ImageApiFamily, } from "../../db/enums";
 
 /** */
 export interface ModelLimits {
@@ -83,6 +83,22 @@ export interface ImageProviderConfig {
   generationTimeout: number;
 }
 
+/** Audio generation provider (ComfyUI workflow based). */
+export interface AudioProviderConfig {
+  /** Unique provider instance name */
+  name: string;
+  /** Base URL of the ComfyUI server */
+  baseUrl: string;
+  /** API family: comfyui (audio workflow) */
+  apiFamily: AudioApiFamily;
+  /** ComfyUI workflow file under configs/workflows/ (e.g. "txt2audio") */
+  workflow: string;
+  /** Connection timeout in ms */
+  timeout: number;
+  /** Audio generation timeout in ms */
+  generationTimeout: number;
+}
+
 /** */
 export interface GenerationProvidersConfig {
   /** OpenAI-compatible providers (llama.cpp, vLLM, Ollama, LM Studio, etc.) */
@@ -95,6 +111,8 @@ export interface GenerationProvidersConfig {
   sd?: ImageProviderConfig[];
   /** AWS Bedrock provider (Claude, Llama, Titan models) */
   bedrock?: BedrockProviderConfig;
+  /** Audio generation providers (ComfyUI); empty means local synthesis only */
+  audio?: AudioProviderConfig[];
 }
 
 /** */
