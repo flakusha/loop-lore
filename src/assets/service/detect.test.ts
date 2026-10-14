@@ -8,7 +8,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import { AssetType, } from "../../db/enums";
-import { detectAssetType, mimeFromExtension, } from "./detect";
+import { detectAssetType, extensionForMime, mimeFromExtension, } from "./detect";
 
 describe("detectAssetType", () => {
   test("maps image/* to Image", () => {
@@ -90,5 +90,33 @@ describe("mimeFromExtension", () => {
 
   test("falls back to octet-stream for an empty filename", () => {
     expect(mimeFromExtension("",),).toBe("application/octet-stream",);
+  });
+});
+
+describe("extensionForMime", () => {
+  test("maps known MIME types to extensions", () => {
+    expect(extensionForMime("image/jpeg",),).toBe("jpeg",);
+    expect(extensionForMime("image/png",),).toBe("png",);
+    expect(extensionForMime("image/webp",),).toBe("webp",);
+    expect(extensionForMime("image/avif",),).toBe("avif",);
+    expect(extensionForMime("image/gif",),).toBe("gif",);
+    expect(extensionForMime("image/svg+xml",),).toBe("svg",);
+    expect(extensionForMime("audio/ogg",),).toBe("ogg",);
+    expect(extensionForMime("audio/opus",),).toBe("opus",);
+    expect(extensionForMime("audio/mpeg",),).toBe("mp3",);
+    expect(extensionForMime("audio/flac",),).toBe("flac",);
+    expect(extensionForMime("audio/wav",),).toBe("wav",);
+    expect(extensionForMime("video/webm",),).toBe("webm",);
+    expect(extensionForMime("video/mp4",),).toBe("mp4",);
+    expect(extensionForMime("video/x-matroska",),).toBe("mkv",);
+    expect(extensionForMime("application/pdf",),).toBe("pdf",);
+    expect(extensionForMime("application/json",),).toBe("json",);
+    expect(extensionForMime("text/plain",),).toBe("txt",);
+  });
+
+  test("falls back to bin for unknown MIME types", () => {
+    expect(extensionForMime("application/octet-stream",),).toBe("bin",);
+    expect(extensionForMime("image/tiff",),).toBe("bin",);
+    expect(extensionForMime("",),).toBe("bin",);
   });
 });

@@ -18,7 +18,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { describePristine, } from "../../test-utils/pristine";
 import { makeMinimalPng, } from "../test-helpers";
-import { createAsset, } from "./create";
+import { createAsset, hashBuffer, } from "./create";
 
 // image-gen-route.test.ts replaces ../assets/service/create process-wide
 // with mockCreateAsset (fixed fixture row); skip rather than assert the stub.
@@ -175,6 +175,17 @@ describeReal("createAsset coverage", () => {
     } finally {
       sqlite.close();
     }
+  });
+
+  test("hashBuffer returns SHA-256 hex digest", () => {
+    expect(hashBuffer(Buffer.from("hello",),),).toBe(
+      "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+    );
+  });
+
+  test("hashBuffer returns 64-char hex for any input", () => {
+    expect(hashBuffer(Buffer.from("test",),),).toHaveLength(64,);
+    expect(hashBuffer(Buffer.from("",),),).toHaveLength(64,);
   });
 
   afterAll(() => {
