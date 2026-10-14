@@ -4,7 +4,7 @@
 # BUG: useBattleItem consumes inventory and persists battle outside one transaction
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Critical
 **Effort:** Medium
 
 **Summary:**

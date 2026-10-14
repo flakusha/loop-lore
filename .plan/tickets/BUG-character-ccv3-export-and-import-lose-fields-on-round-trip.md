@@ -4,7 +4,7 @@
 # BUG: Character CCv3 export and import lose fields on round-trip
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Critical
 **Effort:** Medium
 
 **Summary:**

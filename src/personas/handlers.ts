@@ -145,6 +145,20 @@ export async function handleUpdatePersona({
     },);
   }
 
+  // Reject a present-but-wrong-typed tuning field rather than storing it: a
+  // string temperature lands in a REAL column and a non-numeric maxTokens is
+  // written verbatim. The create path drops these fields instead, so the two
+  // paths disagreed on the only thing that matters here — not corrupting the row.
+  const TUNING_TYPES = { temperature: "number", maxTokens: "number", model: "string", } as const;
+  for (const [field, expected,] of Object.entries(TUNING_TYPES,)) {
+    if (field in body && body[field] !== undefined && typeof body[field] !== expected) {
+      return jsonError({
+        message: `${field} must be a ${expected}`,
+        status: HttpStatus.BadRequest,
+      },);
+    }
+  }
+
   const service = new PersonasService(database,);
   try {
     const tuningUpdates: Record<string, unknown> = {};

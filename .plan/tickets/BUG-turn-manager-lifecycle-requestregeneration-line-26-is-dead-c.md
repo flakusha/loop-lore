@@ -4,7 +4,7 @@
 # BUG: turn-manager lifecycle requestRegeneration line 26 is dead code
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Low
 **Effort:** Medium
 
 **Summary:**

@@ -4,7 +4,7 @@
 # TASK: Memory, DB and config residual defects from the cat-jam sweep
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Critical
 **Effort:** Medium
 
 **Summary:**

@@ -30,6 +30,9 @@ import type { TradeHistoryEntry, TradeLine, TradeResult, TradeType, } from "./ty
  * @param opts.buyerItems
  * @param opts.sellerItems
  * @param opts.price
+ * @param opts.tradeType - ledger classification; defaults to `"player_player"`.
+ *   Set by NPC callers so the single in-transaction row is typed correctly
+ *   instead of a second row being appended after the commit.
  * @returns {Promise<TradeResult>}
  */
 export async function tradeCore(
@@ -41,9 +44,11 @@ export async function tradeCore(
     buyerItems: TradeLine[];
     sellerItems: TradeLine[];
     price: number;
+    tradeType?: TradeType;
   },
 ): Promise<TradeResult> {
   const { worldId, buyerActorId, sellerActorId, buyerItems, sellerItems, price, } = opts;
+  const tradeType = opts.tradeType ?? "player_player";
   if (buyerActorId === sellerActorId) {
     return { success: false, reason: "cannot trade with yourself", };
   }
@@ -124,7 +129,7 @@ export async function tradeCore(
         currency: DEFAULT_CURRENCY,
         itemsOffered: moved.itemsOffered,
         itemsRequested: moved.itemsRequested,
-        tradeType: "player_player",
+        tradeType,
         trx,
       },);
     }
