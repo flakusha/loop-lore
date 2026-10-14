@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # TASK-math-resolver-pbta-2d6 — 2d6 + stat resolution

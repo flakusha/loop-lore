@@ -1,5 +1,5 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # BUG: lore lifecycle fields have no producers (last_verified, source_count, distortion_level)
 

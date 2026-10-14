@@ -7,6 +7,8 @@ epic: epic-character-core-system
 related: [FEAT-055, FEAT-059, FEAT-062]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 **Status:** Not Started
 **Priority:** medium

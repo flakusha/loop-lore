@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # TASK-affordance-action-parser: Two-stage parser (regex + constrained-LLM) for free-form chat -> typed Action
