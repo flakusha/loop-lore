@@ -156,6 +156,11 @@ export const checks = {
   // cannot drift from a concurrent dev merge. `bun run i18n:fix` repairs.
   "i18n - reconcile": "bun run scripts/i18n-reconcile.ts --ci",
 
+  // Static t() key gate: every t("...") call site in src/ must resolve to a
+  // key in en.json. BLOCKING: t() returns the raw dotted key on miss, so a
+  // missing catalog entry means users see key paths.
+  "i18n - static keys": "bun run scripts/check/i18n-keys.mjs",
+
   // Test-gap ratchet: runtime exports no test file names, vs a committed
   // baseline. BLOCKING, not advisory: the matcher requires a real import
   // edge (not an incidental token), so the signal is trustworthy enough to

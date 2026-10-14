@@ -62,6 +62,10 @@ export function handlePanelKey(e: KeyboardEvent, deps: PanelFocusDeps,): void {
   }
 
   if (e.key === "Enter" || e.key === " ") {
+    // Suppress the browser's synthesized click on the focused control: without
+    // this, Enter/Space on a focused <button> dispatches a click after keydown
+    // and the action command posts twice (keydown path + click path).
+    e.preventDefault();
     activateFocused(deps,);
   }
 }

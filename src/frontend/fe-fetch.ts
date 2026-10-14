@@ -64,6 +64,11 @@ export async function feFetch(
   const result = await safeFetch<string>(API_BASE + url, {
     method: options.method,
     headers,
+    // Forward the caller's AbortSignal so a caller abort reaches the network
+    // request. safeFetch combines it with its own timeout signal
+    // (combineSignals), so passing it here cancels the fetch without disabling
+    // the timeout.
+    signal: options.signal ?? undefined,
     body: options.body as unknown,
     credentials: options.credentials,
     mode: options.mode,
