@@ -2721,6 +2721,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/assistant/commands/stats.ts": [
@@ -23987,6 +23991,12 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
+  "src/generation/audio-gen-route.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
   "src/generation/audio-gen-route.ts": [
     {
       "kind": "epic",
@@ -23999,6 +24009,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-sub-audio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/generation/audio-prompt-": [
@@ -24015,6 +24029,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-audio-video-sound.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     },
     {
       "kind": "ticket",
@@ -24044,6 +24062,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-authoring-creation.md"
     },
     {
@@ -24055,6 +24077,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-ambient-music-sfx.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
+  "src/generation/audio/engine.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
+  "src/generation/audio/engine.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/generation/audio/music.ts": [
@@ -24063,10 +24101,22 @@
       "source": ".plan/epics/epic-ambient-music-sfx.md"
     }
   ],
+  "src/generation/audio/providers/comfyui.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
   "src/generation/audio/providers/comfyui.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-ambient-music-sfx.md"
+    }
+  ],
+  "src/generation/audio/providers/local.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/generation/audio/sfx.ts": [
@@ -24079,12 +24129,20 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-ambient-music-sfx.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/generation/audio/wav.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-ambient-music-sfx.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/generation/auto-gen-cascade.test.ts": [
@@ -26346,6 +26404,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md"
     },
     {
@@ -26405,6 +26467,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-epic-asset-consistency-generation-2026-09-26.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     },
     {
       "kind": "ticket",
@@ -38735,6 +38801,12 @@
       "source": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md"
     }
   ],
+  "src/routes/templates/modality.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
   "src/routes/templates/modality.ts": [
     {
       "kind": "epic",
@@ -38751,6 +38823,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-template-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/routes/templates/templates.test.ts": [
