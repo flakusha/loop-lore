@@ -225,6 +225,31 @@ describe("ComfyUIClient", () => {
     });
   });
 
+  describe("waitForFiles", () => {
+    test("returns audio and video files when completed", async () => {
+      await withMockFetch(
+        async () =>
+          jsonResponse({
+            p1: {
+              status: "completed",
+              outputs: {
+                "9": { audio: [{ filename: "a.wav", subfolder: "sfx", type: "output", },], },
+                "10": { gifs: [{ filename: "g.mp4", },], },
+              },
+            },
+          },),
+        async () => {
+          const client = new ComfyUIClient({ baseUrl: "http://localhost:8188", },);
+          const files = await client.waitForFiles("p1",);
+          expect(files,).toEqual([
+            { kind: "audio", file: { filename: "a.wav", subfolder: "sfx", type: "output", }, },
+            { kind: "video", file: { filename: "g.mp4", }, },
+          ],);
+        },
+      );
+    });
+  });
+
   describe("waitForCompletion", () => {
     test("returns image filenames when the execution completes", async () => {
       await withMockFetch(
@@ -422,6 +447,40 @@ describe("ComfyUIClient", () => {
       );
 
       expect(calls.filter((u,) => u.includes("/view?",)),).toHaveLength(2,);
+    });
+  });
+
+  describe("runWorkflowFiles", () => {
+    test("tags audio outputs and downloads each file", async () => {
+      const calls: string[] = [];
+      await withMockFetch(
+        async (url,) => {
+          calls.push(url,);
+          if (url.endsWith("/prompt",)) {
+            return jsonResponse({ prompt_id: "p1", },);
+          }
+
+          if (url.includes("/history/",)) {
+            return jsonResponse({
+              p1: {
+                status: "completed",
+                outputs: { "9": { audio: [{ filename: "track.wav", },], }, },
+              },
+            },);
+          }
+
+          return new Response(new Uint8Array([1, 2, 3,],), { status: 200, },);
+        },
+        async () => {
+          const client = new ComfyUIClient({ baseUrl: "http://localhost:8188", },);
+          const files = await client.runWorkflowFiles(workflow,);
+          expect(files,).toHaveLength(1,);
+          expect(files[0]?.kind,).toBe("audio",);
+          expect(files[0]?.buffer.length,).toBe(3,);
+        },
+      );
+
+      expect(calls.filter((u,) => u.includes("/view?",)),).toHaveLength(1,);
     });
   });
 });
