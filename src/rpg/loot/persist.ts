@@ -63,6 +63,7 @@ const LOOSE_TYPE_TO_CATEGORY: Record<string, ItemCategory> = {
  * Map a loose loot `type` string to a unified `ItemCategory`.
  * @param type
  * @param fallback
+ * @returns the matching category, or the fallback when the type is unknown
  */
 function toCategory(type: string, fallback: ItemCategory,): ItemCategory {
   const value = type.toLowerCase().trim();

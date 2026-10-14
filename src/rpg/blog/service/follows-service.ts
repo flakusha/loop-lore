@@ -25,6 +25,7 @@ export class BlogFollowsService {
    * Follow an author.
    * @param followerId
    * @param authorId
+   * @returns the stored follow row
    */
   async follow(
     followerId: string,
@@ -37,6 +38,7 @@ export class BlogFollowsService {
    * Unfollow an author.
    * @param followerId
    * @param authorId
+   * @returns true when a follow row was actually removed
    */
   async unfollow(
     followerId: string,
@@ -48,6 +50,7 @@ export class BlogFollowsService {
   /**
    * Get followers for an author.
    * @param authorId
+   * @returns the follower user IDs
    */
   async getFollowers(authorId: string,): Promise<string[]> {
     return getFollowersDispatch(this.db, authorId,);
@@ -57,6 +60,7 @@ export class BlogFollowsService {
    * Check if a user follows an author.
    * @param followerId
    * @param authorId
+   * @returns true when the follow exists
    */
   async isFollowing(
     followerId: string,
@@ -69,6 +73,7 @@ export class BlogFollowsService {
    * Get follow status for a user.
    * @param followerId
    * @param authorId
+   * @returns the follow state for this pair
    */
   async getFollowStatus(
     followerId: string,
@@ -82,6 +87,7 @@ export class BlogFollowsService {
    * Add a RAG source to a post.
    * @param postId
    * @param source
+   * @returns the stored source row, id and timestamp filled in
    */
   async addRAGSource(
     postId: string,
@@ -93,6 +99,7 @@ export class BlogFollowsService {
   /**
    * Get RAG sources for a post.
    * @param postId
+   * @returns every source attached to the post
    */
   async getRAGSources(postId: string,): Promise<BlogRAGSourceRow[]> {
     return getRAGSourcesDispatch(this.db, postId,);

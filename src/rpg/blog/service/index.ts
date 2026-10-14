@@ -64,6 +64,7 @@ export class BlogService extends BlogFollowsService {
   /**
    * Create a post.
    * @param input
+   * @returns the stored post row
    */
   async createPost(input: CreateBlogPostInput,): Promise<BlogPostRow> {
     return createPostDispatch(this.db, input,);
@@ -72,6 +73,7 @@ export class BlogService extends BlogFollowsService {
   /**
    * Get a post by ID.
    * @param id
+   * @returns the post with its tags, or undefined when no such post exists
    */
   async getPost(id: string,): Promise<BlogPostWithTags | undefined> {
     return getPostDispatch(this.db, id,);
@@ -88,6 +90,7 @@ export class BlogService extends BlogFollowsService {
    * @param filters.limit
    * @param filters.offset
    * @param filters.userId
+   * @returns posts matching every supplied filter, newest first
    */
   async listPosts(filters: {
     author_id?: string;
@@ -108,6 +111,7 @@ export class BlogService extends BlogFollowsService {
    * @param input
    * @param callerUserId
    * @param isAdmin
+   * @returns the updated post, or undefined when it is missing or the caller is neither author nor admin
    */
   async updatePost(
     id: string,
@@ -123,6 +127,7 @@ export class BlogService extends BlogFollowsService {
    * @param id
    * @param callerUserId
    * @param isAdmin
+   * @returns true when the post was deleted
    */
   async deletePost(id: string, callerUserId: string, isAdmin = false,): Promise<boolean> {
     return deletePostDispatch(this.db, id, callerUserId, isAdmin,);
@@ -130,6 +135,7 @@ export class BlogService extends BlogFollowsService {
   /**
    * Increment a post's view count.
    * @param id
+   * @returns nothing; the counter is bumped in place
    */
   async incrementViewCount(id: string,): Promise<void> {
     return incrementViewCountDispatch(this.db, id,);
@@ -139,6 +145,7 @@ export class BlogService extends BlogFollowsService {
   /**
    * Create a comment.
    * @param input
+   * @returns the stored comment row
    */
   async createComment(input: CreateCommentInput,): Promise<BlogCommentRow> {
     return createCommentDispatch(this.db, input,);
@@ -147,6 +154,7 @@ export class BlogService extends BlogFollowsService {
   /**
    * Get a comment.
    * @param id
+   * @returns the comment, or undefined when no such comment exists
    */
   async getComment(id: string,): Promise<BlogCommentRow | undefined> {
     return getCommentDispatch(this.db, id,);
@@ -158,6 +166,7 @@ export class BlogService extends BlogFollowsService {
    * @param opts
    * @param opts.limit
    * @param opts.offset
+   * @returns a flat page of the post's comments
    */
   async listComments(
     postId: string,
@@ -172,6 +181,7 @@ export class BlogService extends BlogFollowsService {
    * @param opts
    * @param opts.limit
    * @param opts.offset
+   * @returns the post's comments as nested reply trees
    */
   async listCommentsThreaded(
     postId: string,
@@ -187,6 +197,7 @@ export class BlogService extends BlogFollowsService {
    * @param caller
    * @param caller.userId
    * @param caller.role
+   * @returns true when the comment's status was changed
    */
   async moderateComment(
     id: string,

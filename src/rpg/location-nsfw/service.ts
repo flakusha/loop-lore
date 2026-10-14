@@ -45,6 +45,7 @@ export class LocationNsfwService {
   /**
    * Get or create NSFW config for a location.
    * @param locationId
+   * @returns the location's config, a default one seeded on first access
    */
   async getConfig(locationId: string,): Promise<LocationNsfwConfig> {
     return this.store.getConfig(locationId,);
@@ -54,6 +55,7 @@ export class LocationNsfwService {
    * Update a location's NSFW config.
    * @param locationId
    * @param updates
+   * @returns true when the config row was written
    */
   async updateConfig(
     locationId: string,
@@ -66,6 +68,7 @@ export class LocationNsfwService {
   /**
    * Get NSFW configs for multiple locations.
    * @param locationIds
+   * @returns the configs that exist for the requested locations
    */
   async getConfigs(locationIds: string[],): Promise<LocationNsfwConfig[]> {
     return this.store.getConfigs(locationIds,);
@@ -74,6 +77,7 @@ export class LocationNsfwService {
   /**
    * Delete a location's NSFW config.
    * @param locationId
+   * @returns true when a config row was removed
    */
   async deleteConfig(locationId: string,): Promise<boolean> {
     assertNsfwConfigEnabled();
@@ -84,6 +88,7 @@ export class LocationNsfwService {
    * Check if a location is suitable for NSFW encounters.
    * @param locationId
    * @param minPrivacy
+   * @returns whether the location clears the privacy bar, with the reason when it does not
    */
   async isSuitableForEncounter(
     locationId: string,
@@ -122,6 +127,7 @@ export class LocationNsfwService {
    * default through `getConfig`, so every canonical location resolves.
    * @param worldId
    * @param minPrivacy
+   * @returns the world's locations whose config clears the privacy bar
    */
   async listAvailable(
     worldId: string,
@@ -153,6 +159,7 @@ export class LocationNsfwService {
    * in exactly one place. No parallel weather cache — a future
    * `weather.changed` subscriber adjusts the stored config, not a copy.
    * @param locationId
+   * @returns the location's stored atmosphere scores
    */
   async resolveAtmosphere(locationId: string,): Promise<LocationAtmosphere> {
     const config = await this.getConfig(locationId,);
@@ -162,6 +169,7 @@ export class LocationNsfwService {
   /**
    * Whether a location counts as private (private or isolated tier).
    * @param locationId
+   * @returns true when the location sits in the private or isolated tier
    */
   async isPrivate(locationId: string,): Promise<boolean> {
     const config = await this.getConfig(locationId,);

@@ -17,6 +17,7 @@ import type {
  * @param db
  * @param playerId
  * @param achievementId
+ * @returns the player's progress row, or null when they have no entry for it
  */
 export async function getPlayerAchievement(
   db: Kysely<DB>,
@@ -37,6 +38,7 @@ export async function getPlayerAchievement(
  * Get all achievements for a player.
  * @param db
  * @param playerId
+ * @returns every progress row belonging to the player
  */
 export async function getPlayerAchievements(db: Kysely<DB>, playerId: string,): Promise<PlayerAchievement[]> {
   const rows = await (db as any)
@@ -56,6 +58,7 @@ export async function getPlayerAchievements(db: Kysely<DB>, playerId: string,): 
  * @param achievementId
  * @param progressIncrement
  * @throws {Error} When the achievement does not exist.
+ * @returns the new progress total and whether this call unlocked the achievement
  */
 export async function updateProgress(
   db: Kysely<DB>,
@@ -143,6 +146,7 @@ export async function updateProgress(
  * @param playerId
  * @param achievementId
  * @throws {Error} On missing/locked player achievement, prior claim, or missing achievement.
+ * @returns the rewards credited by this claim
  */
 export async function claimRewards(
   db: Kysely<DB>,
@@ -208,6 +212,7 @@ export async function claimRewards(
  * @param db
  * @param playerId
  * @param achievementId
+ * @returns true once the player has unlocked this achievement
  */
 export async function isUnlocked(db: Kysely<DB>, playerId: string, achievementId: string,): Promise<boolean> {
   const playerAchievement = await getPlayerAchievement(db, playerId, achievementId,);
@@ -218,6 +223,7 @@ export async function isUnlocked(db: Kysely<DB>, playerId: string, achievementId
  * Get achievement statistics (unlock totals, per-category and per-tier) for a player.
  * @param db
  * @param playerId
+ * @returns unlocked/total counts plus per-category and per-tier unlock breakdowns
  */
 export async function getPlayerStats(db: Kysely<DB>, playerId: string,): Promise<{
   totalUnlocked: number;
