@@ -3,7 +3,7 @@
 
 # BUG: Locale JSON is embedded in a script tag without HTML escaping
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -33,3 +33,5 @@ Source: .tmp/cat-jam/review-frontend.md F1 and F3.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-14 registry-driven close: git issue 89387d0 (registry tip: 24b0186b8 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-LOCALE-JSON-IS-EMBEDDED-IN-A)

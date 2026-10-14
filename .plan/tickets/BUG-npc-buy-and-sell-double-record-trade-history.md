@@ -3,7 +3,7 @@
 
 # BUG: NPC buy and sell double-record trade history
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -32,3 +32,5 @@ Source: .tmp/longcat/review-plugins-services.md C1 and C2.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-14 registry-driven close: git issue 2749949 (registry tip: 892130a2e Konstantin Fedotov Auto-closed: appended .md marker marks BUG-NPC-BUY-AND-SELL-DOUBLE-RECO)
