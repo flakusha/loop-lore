@@ -73,6 +73,7 @@ export class ServerExternalManager implements ServerExternalHost {
    * modelPath accepts local path (/path/to/model.gguf) or HuggingFace ID (org/repo:quant).
    * Skips (returns null) if binary not found or port unavailable.
    * @param opts
+   * @returns the started instance, or null when it could not be started.
    */
   async startLlamaCpp(opts: LlamaCppOptions,): Promise<ServerInstance | null> {
     return startLlamaCppDispatch(this, opts,);
@@ -81,6 +82,7 @@ export class ServerExternalManager implements ServerExternalHost {
   /**
    * Start llama-swap proxy with a config file.
    * @param opts
+   * @returns the started proxy instance, or null when it could not be started.
    */
   async startLlamaSwap(opts: LlamaSwapOptions,): Promise<ServerInstance | null> {
     return startLlamaSwapDispatch(this, opts,);
@@ -93,6 +95,7 @@ export class ServerExternalManager implements ServerExternalHost {
    * - checkpoint (default): -m modelPath — standalone full model, no llm/vae needed
    * - diffusion: --diffusion-model modelPath — requires --llm (text encoder), --vae optional
    * @param opts
+   * @returns the started instance, or null when it could not be started.
    */
   async startSdCpp(opts: SdCppOptions,): Promise<ServerInstance | null> {
     return startSdCppDispatch(this, opts,);
@@ -101,6 +104,7 @@ export class ServerExternalManager implements ServerExternalHost {
   /**
    * Stop a specific instance by type + port
    * @param instance
+   * @returns once the instance has been stopped.
    */
   async stop(instance: ServerInstance,): Promise<void> {
     return stopDispatch(this, instance,);
@@ -117,6 +121,7 @@ export class ServerExternalManager implements ServerExternalHost {
   /**
    * Synchronous kill of all instances — for process.on('exit') handler.
    * Does not await, does not log (no event loop).
+   * @returns nothing.
    */
   killAllSync(): void {
     return killAllSyncDispatch(this,);
@@ -127,6 +132,7 @@ export class ServerExternalManager implements ServerExternalHost {
   /**
    * Start periodic health checks on all managed servers.
    * Logs warning on first failure, error on repeated failures.
+   * @returns nothing; probing runs on the manager's own interval.
    */
   startLivenessProbes(): void {
     return startLivenessProbesDispatch(this,);

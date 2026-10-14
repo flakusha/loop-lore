@@ -106,6 +106,7 @@ export class AutonomyScheduler {
    * the human-in-the-loop step control. The pause survives the step.
    * @param worldId
    * @param nowMs
+   * @returns that world's tick outcome, skipped or errored
    */
   async stepOnce(worldId: string, nowMs: number = Date.now(),): Promise<WorldTickResult> {
     return this.#tickWorld({ worldId, state: await this.#store.load(worldId,), }, nowMs,);
@@ -123,6 +124,7 @@ export class AutonomyScheduler {
    *  already carried — an overdue `next_tick_at` means the very
    *  next tickOnce picks it up.
    * @param worldId
+   * @returns the persisted state after the resume
    */
   async resume(worldId: string,): Promise<SimulationState> {
     return this.#store.setPaused(worldId, 0,);

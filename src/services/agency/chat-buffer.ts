@@ -15,7 +15,10 @@ import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db";
 import { toDate, } from "../../utils/date";
 
-/** Random hex id from the DB engine (same generator the cycle uses). */
+/** Random hex id from the DB engine (same generator the cycle uses).
+ * @param db
+ * @returns a fresh 32-character lowercase hex id.
+ */
 export async function newId(db: Kysely<DB>,): Promise<string> {
   const row = await sql<{ id: string }>`SELECT lower(hex(randomblob(16))) AS id`.execute(db,);
   return row.rows[0]!.id;
