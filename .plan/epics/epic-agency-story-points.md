@@ -8,7 +8,7 @@
 
 
 **Status:** Not Started
-**Status Note:** code audit 2026-10-08: `actor_story_points` table ships (migration 019); spend validation + pipeline hook + gradient acceptance open in `TASK-storypoints-acceptance.md`
+**Status Note:** migration 019 ships (actor_story_points table); earn/spend/balance service implemented in src/services/agency/story-points/; GET /api/agency/balance + POST /api/agency/spend + POST /api/agency/earn all wired (src/routes/agency/); spend validation + pipeline hook + gradient acceptance open in TASK-storypoints-acceptance; BDI loop shipped under epic-research-agency-decision.md
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -220,5 +220,10 @@ Autonomy orchestration + rate governance (scheduler, budgets, kill switch): `epi
 
 ## Linked Tasks
 
-- TASK-agency-story-points.md
+- TASK-agency-story-points — schema ships (migration 019); earn/spend/balance service implemented; spend validation + pipeline hook open in TASK-storypoints-acceptance
 - `TASK-storypoints-acceptance.md` — spend validation, generation-pipeline hook, gradient levels (open)
+- `TASK-http-expose-agency-earn-and-status-alongside-spend.md` — POST /api/agency/earn + GET /api/agency/balance wired (closed)
+- `TASK-npc-planning-prompt.md` — superseded by epic-research-agency-decision.md (closed)
+- `TASK-npc-planning-tests.md` — superseded by epic-research-agency-decision.md (closed)
+- `TASK-rpg-player-agency-story-points.md` — duplicate of TASK-agency-story-points (closed)
+- `FEAT-fate-aspects-system-invocable-lore.md` — duplicate, closed

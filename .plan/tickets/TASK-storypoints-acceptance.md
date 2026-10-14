@@ -14,10 +14,12 @@ Define story-points acceptance: spend validation rules, generation-pipeline hook
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+actor_story_points table ships (migration 019). Need to define: (1) spend validation rules — what spends are allowed, how much, what reasons; (2) generation-pipeline hook contract — how story points bias/retry generation; (3) gradient (non-binary) point levels — points are a gradient not a binary unlock.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
+- [ ] Spend validation rules defined and documented
+- [ ] Generation-pipeline hook contract specified
+- [ ] Gradient (non-binary) point levels documented
 - [ ] Tests passing
 - [ ] Documentation updated

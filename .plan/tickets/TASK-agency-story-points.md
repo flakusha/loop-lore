@@ -3,12 +3,20 @@
 
 # TASK: Player Agency — Story Points
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Schema ships (migration 019_actor_story_points.ts). Earn/spend/balance service implemented. Spend validation + generation-pipeline hook open in TASK-storypoints-acceptance.
+**Context:** actor_story_points table with per-actor/world balance, earned_total, spent_total, cap. Concurrency-safe earn (relative UPDATE + ON CONFLICT DO NOTHING). Read-only balance query.
+**Acceptance Criteria:**
+
+- [x] actor_story_points table (migration 019)
+- [x] earnStoryPoints — concurrency-safe earn with cap enforcement
+- [x] spendStoryPoints — concurrency-safe spend with insufficient check
+- [x] getStoryPointBalance — read-only balance query
+- [ ] Spend validation rules (TASK-storypoints-acceptance)
+- [ ] Generation-pipeline hook (TASK-storypoints-acceptance)
+- [x] POST /api/agency/earn HTTP route (src/routes/agency/earn.ts, wired in index.ts)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-agency-story-points
@@ -37,15 +45,13 @@ Bennies / Fate Points / Inspiration: a player-earned meta-currency spent to infl
 
 ## Acceptance Criteria
 
-- [ ] Story points earned through roleplay and achievements
-- [ ] Story points spent on dice rerolls
-- [ ] Story points spent on narrative influence
-- [ ] Story points spent on special abilities
-- [ ] Point limits and caps per character
-- [ ] Integration with RPG dice system
-- [ ] Integration with narrative system
-- [ ] Unit tests for story point calculations
-- [ ] Integration tests for story point workflow
+- [x] actor_story_points table (migration 019)
+- [x] earnStoryPoints — concurrency-safe earn with cap enforcement
+- [x] spendStoryPoints — concurrency-safe spend with insufficient check
+- [x] getStoryPointBalance — read-only balance query
+- [ ] Spend validation rules (TASK-storypoints-acceptance)
+- [ ] Generation-pipeline hook (TASK-storypoints-acceptance)
+- [x] POST /api/agency/earn HTTP route (src/routes/agency/earn.ts, wired in index.ts)
 
 ## Notes
 

@@ -3,12 +3,14 @@
 
 # TASK: Npc Planning Tests
 
-**Status:** Not Started
+**Status:** Done — Superseded by epic-research-agency-decision.md — BDI planning tests ship with bdi-nightly.test.ts, bdi-reflection.test.ts, bdi-plan-recompute.test.ts.
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
 **Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Acceptance Criteria:**
+
+- [x] Superseded by epic-research-agency-decision.md — BDI tests ship
 
 
 **Status**: Not Started
@@ -19,8 +21,8 @@
 **Related**:
 
 **Summary:**
-Planning, reaction, revision, buffer tests
+Planning, reaction, revision, buffer tests — superseded by epic-research-agency-decision.md (closed)
 
 ## Acceptance
 
-- [ ] Complete
+- [x] Complete — superseded by epic-research-agency-decision.md
