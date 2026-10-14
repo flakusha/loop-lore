@@ -1,5 +1,5 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # BUG: fix(config): wire AUTH_JWT_SECRET/AUTH_CSRF_SECRET env names (documented names are ignored)
 

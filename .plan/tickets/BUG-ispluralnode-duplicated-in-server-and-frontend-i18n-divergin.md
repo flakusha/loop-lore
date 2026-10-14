@@ -1,5 +1,5 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # BUG: isPluralNode duplicated in server and frontend i18n, diverging silently: a plural key renders as the raw key in the browser
 

@@ -1,5 +1,5 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-License-Identifier: 2026 Loop Lore Contributors -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # Security Review Plan — Auth & Access Surface (2026-08-25)
 
