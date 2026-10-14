@@ -35,7 +35,14 @@ function walk(dir: string,): string[] {
   return out;
 }
 
-function isSafe(expr: string,): boolean {
+interface Finding {
+  file: string;
+  line: number;
+  expr: string;
+  snippet: string;
+}
+
+function isSafe(expr: string, src?: string,): boolean {
   const ex = expr.trim();
   if (/^\d+$/.test(ex,)) { return true; }
   if (
@@ -43,22 +50,20 @@ function isSafe(expr: string,): boolean {
       ex,
     )
   ) { return true; }
-  if (/^(escapeHtml|DOMPurify\s*\.sanitize)\s*\(/.test(ex,)) { return true; }
-  if (/escapeHtml\s*\(|DOMPurify/.test(ex,)) { return true; }
+  if (/^(escapeHtml|DOMPurify\s*\.sanitize|sanitizeCssUrl)\s*\(/.test(ex,)) { return true; }
+  if (/escapeHtml\s*\(|DOMPurify|sanitizeCssUrl/.test(ex,)) { return true; }
   if (
     /\.(round|count|total|length|index|idx|page|size|width|height|pct|percent|year|month|day|score|level|hp|maxHp|num)\b/
       .test(ex,)
   ) { return true; }
   // ternary whose branches are string literals only (e.g. `acting ? " ➤" : ""`)
   if (/^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(ex,)) { return true; }
+  // variable whose definition is a string-literal ternary
+  if (src) {
+    const m = new RegExp(`(?:const|let|var)\s+${ex}\s*=\s*([\s\S]*?);`,).exec(src,);
+    if (m && /^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(m[1].trim(),)) { return true; }
+  }
   return false;
-}
-
-interface Finding {
-  file: string;
-  line: number;
-  expr: string;
-  snippet: string;
 }
 
 function scan(): Finding[] {
