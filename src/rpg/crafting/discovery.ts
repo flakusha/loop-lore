@@ -113,7 +113,7 @@ export async function getDiscovery(
  * @param db
  * @param opts
  * @returns the new discovery row, or null when the actor already knew the recipe
- * @throws {Error} the insert failed for a reason other than a lost uniqueness race
+ * @throws {unknown} the insert failed for a reason other than a lost uniqueness race
  */
 export async function insertDiscovery(
   db: Kysely<DB>,
