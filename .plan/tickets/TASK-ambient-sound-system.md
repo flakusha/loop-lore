@@ -10,7 +10,7 @@
 
 
 **Priority:** Medium
-**Status:** Not Started
+**Status:** Done
 **Epic:** epic-audio-video-sound
 
 ## Description
@@ -34,3 +34,5 @@ audio based on scene tags (forest, night, rain, city, etc.).
 - ComfyUI with audio models (Stable Audio Open) for generation
 - Audio layers should be mixable with Web Audio API
 - Consider caching generated ambient tracks per location
+
+**Resolved:** 2026-10-14 registry-driven close: git issue 464d1ba (registry tip: 80003208d Konstantin Fedotov Auto-closed: appended .md marker marks TASK-AMBIENT-SOUND-SYSTEM done)
