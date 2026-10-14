@@ -79,6 +79,7 @@ export class NpcMovementIndicatorService {
   /**
    * Get movement events for a chat.
    * @param query
+   * @returns Every movement event recorded in the chat, filtered by query
    */
   async getMovementEvents(query: MovementQuery,): Promise<MovementEvent[]> {
     let qb = this.db
@@ -120,6 +121,7 @@ export class NpcMovementIndicatorService {
    * Get recent movement events for display in chat.
    * @param chatId
    * @param limit
+   * @returns The most recent movement events, newest last
    */
   async getRecentMovements(
     chatId: string,

@@ -47,6 +47,7 @@ export class ProactiveMessagingService {
    * Get proactive config for a chat+actor pair.
    * @param chatId
    * @param actorId
+   * @returns the stored config, or null when this pair has never been configured
    */
   async getConfig(chatId: string, actorId: string,): Promise<ProactiveConfig | null> {
     return selectConfig(this.db, chatId, actorId,);
@@ -55,6 +56,7 @@ export class ProactiveMessagingService {
   /**
    * Get all proactive configs for a chat.
    * @param chatId
+   * @returns every configured actor in the chat, empty when none are
    */
   async getChatConfigs(chatId: string,): Promise<ProactiveConfig[]> {
     return selectChatConfigs(this.db, chatId,);
@@ -65,6 +67,7 @@ export class ProactiveMessagingService {
    * @param chatId
    * @param actorId
    * @param input
+   * @returns the config as it stands after the write, with defaults materialised
    */
   async upsertConfig(
     chatId: string,
@@ -88,6 +91,7 @@ export class ProactiveMessagingService {
    * Evaluates: enabled flag, quiet hours, frequency timing, anti-spam backoff.
    * @param chatId
    * @param actorId
+   * @returns the verdict plus the reason it carries and when to re-check
    */
   async checkShouldMessage(chatId: string, actorId: string,): Promise<ProactiveCheckResult> {
     const config = await this.getConfig(chatId, actorId,);
@@ -211,6 +215,7 @@ export class ProactiveMessagingService {
    * Delete proactive config for a chat+actor pair.
    * @param chatId
    * @param actorId
+   * @returns whether a row was actually removed
    */
   async deleteConfig(chatId: string, actorId: string,): Promise<boolean> {
     const result = await this.db
