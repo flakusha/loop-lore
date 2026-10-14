@@ -3,8 +3,9 @@
 
 # BUG: addXp accepts negative XP producing NaN level stored in DB
 
-**Status:** Not Started
-**Priority:** high
+**Status:** Done
+**Status Note:** fixed — guard is `!Number.isFinite(xpAmount) || xpAmount < 0` (the ticket's `< 0` alone leaves NaN/Infinity through); resolution in commit `fix-critical-review-findings`.
+**Priority:** High
 **Effort:** Medium
 
 **Summary:**

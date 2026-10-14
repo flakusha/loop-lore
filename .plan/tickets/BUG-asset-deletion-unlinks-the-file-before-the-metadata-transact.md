@@ -3,8 +3,9 @@
 
 # BUG: Asset deletion unlinks the file before the metadata transaction commits
 
-**Status:** Not Started
-**Priority:** Medium
+**Status:** Done
+**Status Note:** fixed — severity raised Medium → High (irreversible data loss: unlink ordered before the recording transaction); resolution in commit `fix-critical-review-findings`.
+**Priority:** High
 **Effort:** Medium
 
 **Summary:**

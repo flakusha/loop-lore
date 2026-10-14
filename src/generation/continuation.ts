@@ -18,6 +18,30 @@ const partialContentStore = new Map<string, string>();
 const messageToAttempt = new Map<string, string>();
 
 /**
+ * Both maps are process-lifetime caches with no eviction path other than
+ * `clearPartialContent`, so a long-running server grows them without bound.
+ * Map iteration is insertion-ordered, so the first key is the oldest entry.
+ */
+const MAX_CACHED_ENTRIES = 1000;
+
+/**
+ * Set an entry, evicting the oldest entries once the cache exceeds the cap.
+ * @param store - the cache map
+ * @param key - entry key
+ * @param value - entry value
+ * @returns {void}
+ */
+function setBounded(store: Map<string, string>, key: string, value: string,): void {
+  store.delete(key,);
+  store.set(key, value,);
+  while (store.size > MAX_CACHED_ENTRIES) {
+    const oldest = store.keys().next().value;
+    if (oldest === undefined) { break; }
+    store.delete(oldest,);
+  }
+}
+
+/**
  * Get partial content for a generation attempt.
  * Checks in-memory store first, falls back to DB.
  * @param attemptId — the generation attempt ID
@@ -40,7 +64,7 @@ export async function getPartialContent(
     .executeTakeFirst();
 
   if (attempt && attempt.partial_content !== null) {
-    partialContentStore.set(attemptId, attempt.partial_content,);
+    setBounded(partialContentStore, attemptId, attempt.partial_content,);
     return { content: attempt.partial_content, };
   }
 
@@ -55,7 +79,7 @@ export async function getPartialContent(
  * @returns {void}
  */
 export function storePartialContent(attemptId: string, content: string,): void {
-  partialContentStore.set(attemptId, content,);
+  setBounded(partialContentStore, attemptId, content,);
 }
 
 /**
@@ -66,7 +90,7 @@ export function storePartialContent(attemptId: string, content: string,): void {
  * @returns {void}
  */
 export function mapMessageToAttempt(messageId: string, attemptId: string,): void {
-  messageToAttempt.set(messageId, attemptId,);
+  setBounded(messageToAttempt, messageId, attemptId,);
 }
 
 /**
