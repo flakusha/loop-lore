@@ -13,6 +13,7 @@ import type { DB, } from "../../db/schema";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { charactersHandler, } from "./characters";
 import { chatDetailHandler, } from "./chats";
+import { knowledgeGraphHandler, } from "./knowledge-graph";
 import { overviewHandler, } from "./overview";
 import type { AnalyticsCtx, } from "./types";
 
@@ -42,6 +43,11 @@ export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): El
     .get(
       `${prefix}/analytics/characters`,
       (ctx,) => charactersHandler(database, ctx as unknown as AnalyticsCtx,),
+      hooks,
+    )
+    .get(
+      `${prefix}/memory/knowledge-graph`,
+      (ctx,) => knowledgeGraphHandler(database, ctx as unknown as AnalyticsCtx,),
       hooks,
     );
 }
