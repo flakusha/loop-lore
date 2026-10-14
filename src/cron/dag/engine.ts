@@ -93,6 +93,7 @@ export class WorkflowDagEngine {
   /**
    * Prerequisite ids for a node — its slice of the graph.
    * @param taskId
+   * @returns the prerequisite ids, sorted; empty for a root
    */
   dependsOn(taskId: string,): string[] {
     return this.#graph.dependsOn(taskId,);

@@ -23,6 +23,8 @@ const DEFAULT_PIPELINE_CONFIG: PipelineConfig = { threshold: DEFAULT_THRESHOLD, 
 /**
  * Write: plaintext → compress → encrypt → EncryptedPayload JSON.
  * @param storedContent
+ * @returns true when the string parses as an aes-256-gcm payload with a 12-byte
+ *   base64 nonce and base64 ciphertext
  */
 export function isEncryptedPayload(storedContent: string,): boolean {
   if (typeof storedContent !== "string") { return false; }

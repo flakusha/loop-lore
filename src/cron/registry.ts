@@ -43,6 +43,7 @@ export function defineJob(def: CronJobDef,): CronJobDef {
  * @param name
  * @param schedule
  * @returns void
+ * @throws {Error} when the expression is malformed or yields no next fire time
  */
 function assertValidSchedule(name: string, schedule: string,): void {
   let parsed: Date | null = null;

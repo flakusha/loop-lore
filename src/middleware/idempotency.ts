@@ -247,6 +247,7 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
  * restart resilience.
  * @param config
  * @param backend
+ * @throws {Error} when the `table` backend was selected without an `asyncStore`
  */
 function requireAsyncStore(config: IdempotencyConfig, backend: "table",): AsyncStore {
   if (!config.asyncStore) {
