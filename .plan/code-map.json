@@ -1837,12 +1837,6 @@
       "source": "docs/spec/assets.md"
     }
   ],
-  "src/assets/upload-fail-closed.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-asset-upload-chat-key-derivation-failure-silently-downgrades.md"
-    }
-  ],
   "src/assets/variant-path.ts": [
     {
       "kind": "ticket",
@@ -27347,12 +27341,6 @@
       "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md"
     }
   ],
-  "src/harness/run-context.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-git-commands-in-commit-check-and-version-bump-are-built-by-s.md"
-    }
-  ],
   "src/hash/record-hash.test.ts": [
     {
       "kind": "ticket",
@@ -31074,10 +31062,6 @@
     }
   ],
   "src/personas/handlers.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-handleupdatepersona-stores-untyped-tuning-fields-verbatim.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md"
@@ -38851,12 +38835,6 @@
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
     }
   ],
-  "src/routes/users-settings-allowlist.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-put-api-users-id-settings-mass-assigns-the-request-body-and-.md"
-    }
-  ],
   "src/routes/users/manage.ts": [
     {
       "kind": "ticket",
@@ -39313,18 +39291,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css.md"
-    }
-  ],
-  "src/routes/views/escape-html.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin.md"
-    }
-  ],
-  "src/routes/views/escape-json-for-script.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin.md"
     }
   ],
   "src/routes/views/gallery.ts": [
@@ -43731,12 +43697,6 @@
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     }
   ],
-  "src/scripts/commit-check.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-git-commands-in-commit-check-and-version-bump-are-built-by-s.md"
-    }
-  ],
   "src/scripts/commit-check.ts": [
     {
       "kind": "epic",
@@ -43793,12 +43753,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
-    }
-  ],
-  "src/scripts/version-bump-git-injection.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-git-commands-in-commit-check-and-version-bump-are-built-by-s.md"
     }
   ],
   "src/scripts/version-bump.ts": [
@@ -45173,12 +45127,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-.md"
-    }
-  ],
-  "src/services/trade/npc-ledger.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-npc-buy-and-sell-double-record-trade-history.md"
     }
   ],
   "src/services/trade/npc.ts": [
