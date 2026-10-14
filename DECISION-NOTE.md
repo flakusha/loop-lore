@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # DECISION-NOTE: deferred removal of epic-local-multi-instance-federation
 
 Parked deletion intent — do NOT finalize until the owning decision is made.
