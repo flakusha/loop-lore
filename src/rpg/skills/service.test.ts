@@ -85,6 +85,20 @@ describe("SkillsService", () => {
       expect(await service.getSkill(skill.id,),).toBeNull();
     });
 
+    it("rejects negative and non-finite XP instead of storing NaN", async () => {
+      const skill = await service.createSkill({ actorId, name: "Guarded", category: SkillCategory.Combat, },);
+
+      await expect(service.addXp(skill.id, -50,),).rejects.toThrow();
+      await expect(service.addXp(skill.id, Number.NaN,),).rejects.toThrow();
+      await expect(service.addXp(skill.id, Number.POSITIVE_INFINITY,),).rejects.toThrow();
+
+      const after = await service.getSkill(skill.id,);
+      expect(after!.xp,).toBe(0,);
+      expect(after!.level,).toBe(1,);
+
+      await service.deleteSkill(skill.id,);
+    });
+
     it("builds a skill tree from prerequisites", async () => {
       const base = await service.createSkill({ actorId, name: "Combat Basics", category: SkillCategory.Combat, },);
       const advanced = await service.createSkill({

@@ -8,11 +8,27 @@
  * linked to it with `entity_type: "asset"`). Deleting a matted derivative
  * reverts the source asset's `alpha_status` to `raw` so matting can re-run.
  */
+
 import { AssetAlphaStatus, AssetLinkEntity, } from "../../db/enums";
 import { MATTING_SOURCE_LABEL, } from "../../generation/matting/service";
+import { getLogger, } from "../../logger";
 import { deleteFile, } from "./file-system";
 import { deleteAssetTags, } from "./tags";
 import type { DeleteAssetOpts, } from "./types";
+
+let _log: ReturnType<typeof getLogger> | null = null;
+/**
+ * Lazily resolve the module logger (null before logger init).
+ * @returns the cached child logger, or null outside test/logger contexts
+ */
+function getLog() {
+  try {
+    _log ??= getLogger().child({ module: "assets/service/delete", },);
+    return _log;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Delete an asset record and its file.
@@ -53,8 +69,9 @@ export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAsset
     .where("entity_id", "=", assetId,)
     .execute();
 
-  // Remove file
-  deleteFile(uploadDir, asset.storage_path,);
+  // NOTE: the file unlink deliberately happens AFTER the transaction below.
+  // Unlinking first meant a failed commit left a live row pointing at a file
+  // that no longer existed, with no way to recover the bytes.
 
   // Remove child rows that reference assets.id via FK, inside one transaction
   // so a failure cannot leave partial state. Order matters:
@@ -77,6 +94,19 @@ export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAsset
     await deleteAssetTags(trx, assetId,);
     await trx.deleteFrom("assets",).where("id", "=", assetId,).execute();
   },);
+
+  // The record is committed gone; only now is it safe to unlink. A missing file
+  // degrades the read path to null (service/read.ts), so a row-then-file window
+  // is the safer failure mode than a file-then-row one.
+  try {
+    deleteFile(uploadDir, asset.storage_path,);
+  } catch (error: unknown) {
+    getLog()?.warn("asset file unlink failed after row deletion", {
+      assetId,
+      storagePath: asset.storage_path,
+      error: error instanceof Error ? error.message : String(error,),
+    },);
+  }
 
   // Delete derivatives after the raw record is gone (recursive, depth-bounded
   // by the link structure: derivatives never link to other derivatives).

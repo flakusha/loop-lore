@@ -9,6 +9,7 @@
  * IPs and localhost (the common local inference pattern). Remote URLs
  * require explicit allowlist entries.
  */
+import { lookup, } from "node:dns/promises";
 import { isIP, } from "node:net";
 
 const LOCAL_IPV4_RANGES: { network: number; mask: number }[] = [
@@ -179,9 +180,110 @@ function isLocalIPv4(ip: string,): boolean {
 
 /**
  * @param ip - IPv6 string to classify
- * @returns `true` if `ip` is `::1` (loopback) or starts with `fe80:` (link-local); `false` otherwise.
+ * @returns `true` if `ip` is loopback (`::1`), unspecified (`::`), link-local
+ * (`fe80::/10`) or unique-local (`fc00::/7`); `false` otherwise.
  */
 function isLocalIPv6(ip: string,): boolean {
-  const lower = ip.toLowerCase();
-  return lower === "::1" || lower.startsWith("fe80:",);
+  const lower = ip.toLowerCase().replace(/^\[|\]$/g, "",);
+  if (lower === "::1" || lower === "::") { return true; }
+
+  // IPv4-mapped and IPv4-compatible forms embed a v4 address, in either the
+  // dotted form (::ffff:10.0.0.1) or the hex form URL parsing produces
+  // (::ffff:a00:1). The v4 address is the last two hextets in the hex form.
+  const mapped = /^::(?:ffff:)?(\d{1,3}(?:\.\d{1,3}){3})$/.exec(lower,);
+  if (mapped?.[1]) { return isLocalIPv4(mapped[1],); }
+  const hexMapped = /^::(?:ffff:)?([\da-f]{1,4}):([\da-f]{1,4})$/.exec(lower,);
+  if (hexMapped) {
+    const high = parseInt(hexMapped[1]!, 16,);
+    const low = parseInt(hexMapped[2]!, 16,);
+    if (!Number.isNaN(high,) && !Number.isNaN(low,)) {
+      return isLocalIPv4(`${high >> 8}.${high & 0xff}.${low >> 8}.${low & 0xff}`,);
+    }
+  }
+
+  // fe80::/10 spans fe80-febf; fc00::/7 spans fc00-fdff (compare the first hextet).
+  const first = (lower.split(":",)[0] ?? "").padStart(4, "0",).slice(0, 4,);
+  const bits = parseInt(first || "0", 16,);
+  if (Number.isNaN(bits,)) { return false; }
+  return (bits >= 0xfe80 && bits <= 0xfebf) || (bits >= 0xfc00 && bits <= 0xfdff);
+}
+
+/**
+ * Resolve a hostname to every address it maps to (A + AAAA).
+ * Injected in tests so no network access is required.
+ */
+export type HostResolver = (hostname: string,) => Promise<string[]>;
+
+/** */
+export interface FetchUrlOptions {
+  /** DNS resolver seam. Defaults to node:dns `lookup` with `all: true`. */
+  resolve?: HostResolver;
+}
+
+const defaultResolve: HostResolver = async (hostname: string,) => {
+  const records = await lookup(hostname, { all: true, verbatim: true, },);
+  return records.map((r,) => r.address);
+};
+
+/**
+ * Validate a user-supplied URL before the server fetches it.
+ *
+ * This is the inverse of {@link validateProviderUrl}: local and private
+ * addresses are BLOCKED and public ones allowed. The hostname's DNS records are
+ * resolved first, so a public hostname pointing at a private address cannot
+ * smuggle a request past a string test on the hostname. Failures fail closed.
+ * @param urlString - raw URL from the request
+ * @param options - resolver seam
+ * @returns result with ok flag; on failure `error` explains why
+ */
+export async function validateFetchUrl(
+  urlString: string,
+  options: FetchUrlOptions = {},
+): Promise<UrlValidationResult> {
+  let parsed: URL;
+  try {
+    parsed = new URL(urlString,);
+  } catch {
+    return { ok: false, url: urlString, error: "Invalid URL", };
+  }
+
+  const scheme = parsed.protocol.replace(":", "",);
+  if (scheme !== "http" && scheme !== "https") {
+    return { ok: false, url: urlString, error: `Scheme ${scheme} not allowed`, };
+  }
+
+  const hostname = parsed.hostname.replace(/^\[|\]$/g, "",);
+  const reject = (error: string, local: boolean,): UrlValidationResult => ({
+    ok: false,
+    url: urlString,
+    error,
+    local,
+  });
+
+  // A literal address needs no resolution.
+  if (isIP(hostname,)) {
+    return isLocalIPv4(hostname,) || isLocalIPv6(hostname,)
+      ? reject(`Address ${hostname} is private or restricted`, true,)
+      : { ok: true, url: urlString, local: false, };
+  }
+
+  const resolve = options.resolve ?? defaultResolve;
+  let addresses: string[];
+  try {
+    addresses = await resolve(hostname,);
+  } catch (error: unknown) {
+    const why = error instanceof Error ? error.message : String(error,);
+    return reject(`Could not resolve host: ${why}`, false,);
+  }
+
+  if (addresses.length === 0) { return reject("Host resolved to no addresses", false,); }
+
+  for (const address of addresses) {
+    const bare = address.replace(/^\[|\]$/g, "",);
+    if (isIP(bare,) && (isLocalIPv4(bare,) || isLocalIPv6(bare,))) {
+      return reject(`Host resolves to the private address ${bare}`, true,);
+    }
+  }
+
+  return { ok: true, url: urlString, local: false, };
 }
