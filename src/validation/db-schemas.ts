@@ -55,6 +55,7 @@ export const AssetTagScopeSchema = t.UnionEnum(["user", "global",],);
 export const AssetTagSourceSchema = t.UnionEnum(["manual", "rag",],);
 export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
 export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
+export const AudioApiFamilySchema = t.UnionEnum(["comfyui",],);
 export const AvailabilityStatusSchema = t.UnionEnum(["available", "restricted", "unavailable",],);
 export const AvatarSelectionRuleSchema = t.UnionEnum([
   "emotion_first",
