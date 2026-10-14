@@ -93,6 +93,7 @@ if (ISOLATED) {
   }),);
 
   mock.module("../content/hash-injection", () => ({
+    HASHED_ASSET_PATTERN: /mock-hash/,
     injectContentHashes: (dir: string,) => {
       injectContentHashesCalls.push(dir,);
       return { replaced: 0, skipped: 0, };
