@@ -3,6 +3,7 @@
 
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import { join, normalize, } from "node:path";
+import { HASHED_ASSET_PATTERN, } from "../content/hash-injection";
 import { findCompressedVariant, getContentType, } from "./static-mime";
 
 export const DOCS_PATH = join(import.meta.dir, "..", "..", "docs", ".vitepress", "dist",);
@@ -38,14 +39,14 @@ function computeEtag(filePath: string,): string {
 
 /**
  * Detect whether a file path contains a content hash (build output).
- * Hash format: filename.HASH.ext where HASH is ~8+ hex chars.
+ * Uses the shared HASHED_ASSET_PATTERN from content/hash-injection.ts,
+ * which matches bun's `name-<8-char-base32-hash>.ext` format.
  * @param filePath - file path
- * @returns `true` when the basename matches `<name>.<8+ hex>.<ext>`.
+ * @returns `true` when the basename matches `<name>-<8-char hash>.<ext>`.
  */
 function isHashedAsset(filePath: string,): boolean {
   const name = filePath.split("/",).pop() ?? "";
-  // Match segments that look like content hashes (8+ hex chars).
-  return /\.[0-9a-f]{8,}\.[a-z0-9]+$/i.test(name,);
+  return HASHED_ASSET_PATTERN.test(name,);
 }
 
 // Dev cache TTL. Prod: bump hashed files to IMMUTABLE_CACHE_MAX_AGE + immutable,
