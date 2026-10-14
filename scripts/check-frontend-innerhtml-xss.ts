@@ -110,7 +110,7 @@ function scanAssignments(assignRe: RegExp,): Finding[] {
         let im: RegExpExecArray | null;
         while ((im = interp.exec(template,)) !== null) {
           const expr = im[1].trim();
-          if (isSafe(expr,)) { continue; }
+          if (isSafe(expr, src,)) { continue; }
           const line = tmplLine + template.slice(0, im.index,).split("\n",).length - 1;
           findings.push({
             file: rel,
@@ -143,6 +143,7 @@ function isSafe(expr: string, src?: string,): boolean {
   if (/^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(ex,)) { return true; }
   // variable whose definition is a string-literal ternary
   if (src) {
+// hint: Structural and logic conflict. Both design and behavior differ.
     const m = new RegExp(`(?:const|let|var)\s+${ex}\s*=\s*([\s\S]*?);`,).exec(src,);
     if (m && /^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(m[1].trim(),)) { return true; }
   }
