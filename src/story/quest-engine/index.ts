@@ -77,6 +77,7 @@ export class QuestEngine {
    * @param params.deadline
    * @param params.rewards
    * @param params.narrativeHooks
+   * @returns the id of the newly created quest
    */
   async createQuest(params: {
     worldId: string;
@@ -101,6 +102,7 @@ export class QuestEngine {
    * @param worldId
    * @param chatId
    * @param events
+   * @returns quest progress entries for all quests that advanced
    */
   async processEvent(worldId: string, chatId: string, events: WorldEvent[],): Promise<QuestProgressEntry[]> {
     return processEventDispatch(this.state, worldId, chatId, events,);
@@ -112,6 +114,7 @@ export class QuestEngine {
    * @param chatId
    * @param delta
    * @param sourceMessageId
+   * @returns the updated quest progress entry
    */
   async advanceProgress(
     questId: string,
@@ -125,6 +128,7 @@ export class QuestEngine {
   /**
    * Get all active quests for a world
    * @param worldId
+   * @returns all active (non-failed, non-completed) quests in the world
    */
   async getActiveQuests(worldId: string,) {
     return getActiveQuestsDispatch(this.state, worldId,);
@@ -134,6 +138,7 @@ export class QuestEngine {
    * Get quest progress for a specific chat
    * @param questId
    * @param chatId
+   * @returns the quest progress entry for this quest and chat pair
    */
   async getChatProgress(questId: string, chatId: string,) {
     return getChatProgressDispatch(this.state, questId, chatId,);
@@ -158,6 +163,7 @@ export class QuestEngine {
   /**
    * Get completion percentage for a quest
    * @param questId
+   * @returns the quest's current progress, target, and percentage complete
    */
   async getCompletion(questId: string,): Promise<{ progress: number; target: number; percentage: number }> {
     return getCompletionDispatch(this.state, questId,);
@@ -166,6 +172,7 @@ export class QuestEngine {
   /**
    * Check time-based quests for deadline expiry
    * @param worldId
+   * @returns ids of quests whose deadline has passed
    */
   async checkTimeQuests(worldId: string,): Promise<string[]> {
     return checkTimeQuestsDispatch(this.state, worldId,);

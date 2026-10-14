@@ -132,6 +132,7 @@ export class GameMasterService {
    * scheduler's own movement dispatch.
    * @param debugActorId
    * @param options
+   * @returns the turn result including narrative and escalation decisions
    */
   async executeTurn(debugActorId?: string, options: ExecuteTurnOptions = {},): Promise<GmTurnResult> {
     return executeTurnDispatch(this.state, debugActorId, options,);
@@ -141,6 +142,7 @@ export class GameMasterService {
    * Accept a response and process it through the full pipeline
    * @param turnId
    * @param response
+   * @returns the processed turn result
    */
   async acceptResponse(turnId: string, response: string,): Promise<GmTurnResult> {
     return acceptResponseDispatch(this.state, turnId, response,);
@@ -151,6 +153,7 @@ export class GameMasterService {
    * @param _chatId
    * @param turnId
    * @param decision
+   * @returns void
    */
   async humanOverride(_chatId: string, turnId: string, decision: GameMasterDecision,): Promise<void> {
     return humanOverrideDispatch(this.state, _chatId, turnId, decision,);
@@ -160,6 +163,7 @@ export class GameMasterService {
    * Inject narration message into the story timeline
    * @param worldId
    * @param text
+   * @returns void
    */
   async injectNarration(worldId: string, text: string,): Promise<void> {
     return injectNarrationDispatch(this.state, worldId, text,);

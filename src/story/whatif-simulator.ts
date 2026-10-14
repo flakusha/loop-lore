@@ -92,6 +92,7 @@ export interface WhatIfSimulatorService {
 
 /**
  * @param opts
+ * @returns a new simulator instance with fork, diff, and compare operations
  */
 export function createWhatIfSimulator(
   opts: WhatIfSimulatorOptions,

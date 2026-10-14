@@ -58,6 +58,7 @@ export class SyntheticGenerator {
    * Generate synthetic scenarios for a chat across the requested types.
    * @param chatId
    * @param types
+   * @returns ids of the persisted synthetic data rows created
    */
   async generateForChat(chatId: string, types?: SyntheticDataType[],): Promise<string[]> {
     const source = await fetchSource(this.state, chatId,);
@@ -81,6 +82,7 @@ export class SyntheticGenerator {
    * @param id
    * @param to
    * @param validatedBy
+   * @returns true if the transition was valid and applied, false if disallowed
    */
   async transitionStatus(id: string, to: SyntheticDataStatus, validatedBy?: string,): Promise<boolean> {
     return transitionStatus(this.state, id, to, validatedBy,);

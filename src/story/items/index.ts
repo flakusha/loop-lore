@@ -77,6 +77,7 @@ export class ItemsService {
   /**
    * Create a new item definition
    * @param def
+   * @returns the id of the newly created definition
    */
   async createDefinition(def: ItemDefinition,): Promise<string> {
     return createDefinitionDispatch(this.state, def,);
@@ -86,6 +87,7 @@ export class ItemsService {
    * Get item definition by ID. Requires worldId to prevent cross-world IDOR.
    * @param itemId
    * @param worldId
+   * @returns the item row, or null if not found
    */
   async getDefinition(itemId: string, worldId: string,) {
     return getDefinitionDispatch(this.state, itemId, worldId,);
@@ -95,6 +97,7 @@ export class ItemsService {
    * List item definitions in a world
    * @param worldId
    * @param category
+   * @returns all item rows in the world, optionally filtered by category
    */
   async listDefinitions(worldId: string, category?: ItemCategory,) {
     return listDefinitionsDispatch(this.state, worldId, category,);
@@ -110,6 +113,7 @@ export class ItemsService {
    * @param respawnable
    * @param spawnCondition
    * @param durability
+   * @returns the world_item id of the placed item
    */
   async placeInLocation(
     itemId: string,
@@ -141,6 +145,7 @@ export class ItemsService {
    * @param worldId
    * @param quantity
    * @param durability
+   * @returns the world_item id of the given item
    */
   async giveToNpc(
     itemId: string,
@@ -157,6 +162,7 @@ export class ItemsService {
    * @param locationId
    * @param worldId
    * @param includeHidden
+   * @returns all item instances at the location, optionally including hidden ones
    */
   async getAtLocation(locationId: string, worldId: string, includeHidden = false,) {
     return getAtLocationDispatch(this.state, locationId, worldId, includeHidden,);
@@ -166,6 +172,7 @@ export class ItemsService {
    * Get items carried by an NPC
    * @param actorId
    * @param worldId
+   * @returns all item instances owned by the NPC in this world
    */
   async getNpcInventory(actorId: string, worldId: string,) {
     return getNpcInventoryDispatch(this.state, actorId, worldId,);
@@ -176,17 +183,18 @@ export class ItemsService {
    * Returns actorId -> inventory. BUG-n-1-queries-in-story-world-state-context-per-participant.
    * @param actorIds
    * @param worldId
+   * @returns a map of actorId to their inventory of item instances
    */
   async getNpcInventoryBatch(actorIds: string[], worldId: string,): Promise<Map<string, ItemInstance[]>> {
     return getNpcInventoryBatchDispatch(this.state, actorIds, worldId,);
   }
 
   /**
-   * @param {string} worldItemId
-   * @param {string} worldId
-   * @param {number} amount
-   * @param {Transaction<DB>} trx
-   * @returns {Promise<DurabilityResult>}
+   * @param worldItemId
+   * @param worldId
+   * @param amount
+   * @param trx
+   * @returns the durability after the decrement, including damage dealt
    */
   async decrementDurability(
     worldItemId: string,
@@ -198,11 +206,11 @@ export class ItemsService {
   }
 
   /**
-   * @param {string} worldItemId
-   * @param {string} worldId
-   * @param {ItemDriftEvent} event
-   * @param {Transaction<DB>} trx
-   * @returns {Promise<ItemDrift | null>}
+   * @param worldItemId
+   * @param worldId
+   * @param event
+   * @param trx
+   * @returns the updated drift state, or null if the item was not found
    */
   async applyDrift(
     worldItemId: string,
@@ -214,9 +222,9 @@ export class ItemsService {
   }
 
   /**
-   * @param {string} itemId
-   * @param {string} worldId
-   * @returns {Promise<{ id: string; created_at: string; updated_at: string; world_id: string; properties: string; visibility: ItemVisibility; location_id: string | null; item_id: string; owner_actor_id: string | null; ... 5 more ...; is_active: number; } | null>}
+   * @param itemId
+   * @param worldId
+   * @returns the active world_item row for this unique item, or null
    */
   async getUniqueItem(itemId: string, worldId: string,) {
     return getUniqueItemDispatch(this.state, itemId, worldId,);
@@ -230,6 +238,7 @@ export class ItemsService {
    * @param toLocationId
    * @param toActorId
    * @param trx
+   * @returns the outcome of the transfer including remaining quantity
    */
   async transfer(
     worldItemId: string,
@@ -248,6 +257,7 @@ export class ItemsService {
    * @param worldId
    * @param quantity
    * @param trx
+   * @returns true if the item was fully destroyed, false if insufficient quantity existed
    */
   async destroy(worldItemId: string, worldId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
     return destroyDispatch(this.state, worldItemId, worldId, quantity, trx,);
