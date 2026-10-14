@@ -16,7 +16,7 @@
  * Exit codes: 0 all keys resolve, 1 missing keys found.
  */
 import { readdirSync, readFileSync, statSync, } from "node:fs";
-import { join, extname, relative, } from "node:path";
+import { extname, join, relative, } from "node:path";
 
 // TODO(env): bun-only — import.meta.dir is bun-specific. Add node shim when node target lands.
 const PROJECT_ROOT = import.meta.dir.replace(/\/scripts\/check$/, "",);
@@ -29,9 +29,9 @@ function flatten(obj, prefix = "",) {
   for (const [k, v,] of Object.entries(obj,)) {
     const key = prefix ? `${prefix}.${k}` : k;
     if (v && typeof v === "object" && !Array.isArray(v,)) {
-      for (const sub of flatten(v, key,)) result.add(sub);
+      for (const sub of flatten(v, key,)) { result.add(sub,); }
     } else {
-      result.add(key);
+      result.add(key,);
     }
   }
   return result;
@@ -43,12 +43,12 @@ function collectFiles(dir,) {
   for (const entry of readdirSync(dir, { withFileTypes: true, },)) {
     const full = join(dir, entry.name,);
     if (entry.isDirectory()) {
-      if (entry.name === "node_modules" || entry.name === ".git" || entry.name === "__tests__") continue;
+      if (entry.name === "node_modules" || entry.name === ".git" || entry.name === "__tests__") { continue; }
       out.push(...collectFiles(full,),);
     } else if (/\.(ts|tsx|html|js|jsx)$/.test(entry.name,)) {
       // Skip test files — they intentionally use fake keys as fixtures
-      if (/\.test\.(ts|tsx|js|jsx)$/.test(entry.name,)) continue;
-      out.push(full);
+      if (/\.test\.(ts|tsx|js|jsx)$/.test(entry.name,)) { continue; }
+      out.push(full,);
     }
   }
   return out;
@@ -76,12 +76,16 @@ function extractKeys(text, file,) {
       for (; j < line.length && depth > 0; j++) {
         const ch = line[j];
         if (inStr) {
-          if (ch === "\\") { j++; continue; }
-          if (ch === strCh) inStr = false;
+          if (ch === "\\") {
+            j++;
+            continue;
+          }
+          if (ch === strCh) { inStr = false; }
         } else if (ch === '"' || ch === "'") {
-          inStr = true; strCh = ch;
-        } else if (ch === "(") depth++;
-        else if (ch === ")") depth--;
+          inStr = true;
+          strCh = ch;
+        } else if (ch === "(") { depth++; }
+        else if (ch === ")") { depth--; }
       }
       const argSpan = line.slice(cm.index + 2, j - 1,);
       // Extract all string literals from the argument span
@@ -89,12 +93,12 @@ function extractKeys(text, file,) {
       let lm;
       while ((lm = litRe.exec(argSpan,)) !== null) {
         const key = lm[2];
-        if (key.includes("${")) continue;
+        if (key.includes("${",)) { continue; }
         // Check for + concatenation adjacent to this literal
         const before = argSpan.slice(0, lm.index,).trimEnd();
         const after = argSpan.slice(lm.index + lm[0].length,).trimStart();
-        if (before.endsWith("+") || after.startsWith("+")) continue;
-        if (!/^[a-zA-Z][\w]*(\.[\w]+)+$/.test(key,)) continue;
+        if (before.endsWith("+",) || after.startsWith("+",)) { continue; }
+        if (!/^[a-zA-Z][\w]*(\.[\w]+)+$/.test(key,)) { continue; }
         results.push({ key, file: relative(SRC_DIR, file,), line: i + 1, },);
       }
     }
@@ -116,7 +120,7 @@ function main() {
   const missing = [];
   const seen = new Set();
   for (const { key, file, line, } of allKeys) {
-    if (seen.has(key,)) continue;
+    if (seen.has(key,)) { continue; }
     seen.add(key,);
     if (!catalog.has(key,)) {
       missing.push({ key, file, line, },);
@@ -128,8 +132,8 @@ function main() {
     return;
   }
 
-  console.log(`i18n - keys: ${missing.length} key(s) missing from en.json:`);
-  for (const { key, file, line, } of missing.sort((a, b,) => a.key.localeCompare(b.key,),)) {
+  console.log(`i18n - keys: ${missing.length} key(s) missing from en.json:`,);
+  for (const { key, file, line, } of missing.sort((a, b,) => a.key.localeCompare(b.key,))) {
     console.log(`  ${key}  (${file}:${line})`,);
   }
   console.log("Add the missing keys to en.json and run `bun run i18n:fix` to propagate.",);
