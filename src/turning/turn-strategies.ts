@@ -63,6 +63,7 @@ function weightedRandomSelect(
  * @param turnOrder
  * @param _context
  * @param lastActorId
+ * @returns the next actorId in the cycle, skipping the previous speaker while alternatives remain
  */
 export const roundRobinSelect: TurnStrategyFn = (
   participants,
@@ -159,6 +160,7 @@ function classifierPickActorId(
  * @param turnOrder
  * @param context
  * @param lastActorId
+ * @returns the classifier's actorId when it is an eligible, non-repeating participant, else the round-robin pick
  */
 export const questDrivenSelect: TurnStrategyFn = (
   participants,
@@ -183,6 +185,8 @@ export const questDrivenSelect: TurnStrategyFn = (
  * @param turnOrder
  * @param context
  * @param lastActorId
+ * @returns the actorId to speak next — mention, classifier pick, or weighted
+ *   pick in group mode; quest-driven every 5th turn, scene-based otherwise
  */
 export const hybridSelect: TurnStrategyFn = (
   participants,

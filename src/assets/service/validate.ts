@@ -5,6 +5,7 @@
  * Asset Service — input validation
  * @param sizeBytes
  * @param maxSize
+ * @returns the rejection message with the cap in MB, or null when the size fits
  */
 export function validateFileSize(sizeBytes: number, maxSize: number,): string | null {
   if (sizeBytes > maxSize) {

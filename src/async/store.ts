@@ -84,6 +84,7 @@ const DEFAULT_QUEUE_LIMIT = 10_000;
  * Drain `destroy()` at shutdown to flush the in-flight queue.
  * @param database
  * @param config
+ * @returns the store to hand to callers; `destroy()` flushes the pending writes
  */
 export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig = {},): AsyncStore {
   const cfg: Required<AsyncStoreConfig> = {
