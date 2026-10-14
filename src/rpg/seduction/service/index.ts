@@ -68,6 +68,7 @@ export class SeductionService {
   /**
    * Get or create a desire profile for an actor.
    * @param actorId
+   * @returns the actor's profile, a default one created on first access
    */
   async getDesireProfile(actorId: string,): Promise<DesireProfile> {
     return getDesireProfileDispatch(this.db, actorId,);
@@ -77,6 +78,7 @@ export class SeductionService {
    * Update a desire profile.
    * @param actorId
    * @param updates
+   * @returns true when the profile row was written
    */
   async updateDesireProfile(
     actorId: string,
@@ -95,6 +97,7 @@ export class SeductionService {
    * @param actorId
    * @param category
    * @param name
+   * @returns the skill, a default one created on first access
    */
   async getSkill(
     actorId: string,
@@ -110,6 +113,7 @@ export class SeductionService {
    * @param category
    * @param name
    * @param amount
+   * @returns whether the award crossed a threshold, and the level now held
    */
   async awardXp(
     actorId: string,
@@ -124,6 +128,7 @@ export class SeductionService {
   /**
    * Get all seduction skills for an actor.
    * @param actorId
+   * @returns every seduction skill the actor holds
    */
   async getActorSkills(actorId: string,): Promise<SeductionSkill[]> {
     return getActorSkillsDispatch(this.db, actorId,);
@@ -135,6 +140,7 @@ export class SeductionService {
    * Get or create arousal state for an actor.
    * @param actorId
    * @param worldId
+   * @returns the arousal state, created on first access
    */
   async getArousal(
     actorId: string,
@@ -152,6 +158,7 @@ export class SeductionService {
    * @param intensityTier - Content-intensity tier bounding the ceiling
    *   (defaults to Moderate); deltas clamp at AROUSAL_CEILING[tier]
    *   (TASK-034).
+   * @returns the arousal level after the delta, clamped at the tier ceiling
    */
   async modifyArousal(
     actorId: string,
@@ -168,6 +175,7 @@ export class SeductionService {
    * Decay arousal over time.
    * @param actorId
    * @param worldId
+   * @returns the arousal level after decay
    */
   async decayArousal(actorId: string, worldId: string | null = null,): Promise<number> {
     assertNsfwConfigEnabled();
@@ -179,6 +187,7 @@ export class SeductionService {
    * @param actorId
    * @param modifier
    * @param worldId
+   * @returns nothing; the modifier is added to the stored state
    */
   async addModifier(
     actorId: string,
@@ -194,6 +203,7 @@ export class SeductionService {
   /**
    * Attempt a seduction action.
    * @param opts
+   * @returns the outcome, including what moved on failure as well as success
    */
   async attemptSeduction(opts: SeductionAttemptOpts,): Promise<SeductionResult> {
     assertNsfwConfigEnabled();

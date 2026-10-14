@@ -76,6 +76,7 @@ export async function emitWorldEvent(db: DiscoveryDb, event: WorldEventInput,): 
  * them.
  * @param worldId
  * @param locationId
+ * @returns the dedupe key shared by every charting of this location
  */
 export function discoveredKey(worldId: string, locationId: string,): string {
   return `discovered:${worldId}:${locationId}`;
@@ -88,6 +89,7 @@ export function discoveredKey(worldId: string, locationId: string,): string {
  * @param worldId
  * @param tick
  * @param partyId
+ * @returns the dedupe key for this party's convoy on this tick
  */
 export function tradeRouteKey(worldId: string, tick: number, partyId: string,): string {
   return `trade-route:${worldId}:${tick}:${partyId}`;
@@ -101,6 +103,7 @@ export function tradeRouteKey(worldId: string, tick: number, partyId: string,): 
  * unfiltered read would scan every world in the database.
  * @param db
  * @param query
+ * @returns one page of events, newest tick first, with the filtered total
  */
 export async function listWorldEvents(db: DiscoveryDb, query: WorldEventListQuery,): Promise<WorldEventPage> {
   const pageSize = Math.min(Math.max(1, query.pageSize,), MAX_PAGE_SIZE,);

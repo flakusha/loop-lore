@@ -49,6 +49,7 @@ export class NpcNavigationService {
    * Get NPC movement state from npc_states table
    * @param actorId
    * @param worldId
+   * @returns the NPC's movement state, or null when it has never been recorded
    */
   async getMovementState(actorId: string, worldId: string,): Promise<NpcMovementState | null> {
     return getMovementStateDispatch(this.db, actorId, worldId,);
@@ -59,6 +60,7 @@ export class NpcNavigationService {
    * @param actorId
    * @param worldId
    * @param updates
+   * @returns nothing; the supplied fields are merged into the stored state
    */
   async updateMovementState(
     actorId: string,
@@ -78,6 +80,7 @@ export class NpcNavigationService {
    * @param config.wanderRadius
    * @param config.followTargetId
    * @param config.speed
+   * @returns nothing; the pattern and its config are stored on the state row
    */
   async setMovementPattern(
     actorId: string,
@@ -98,6 +101,7 @@ export class NpcNavigationService {
    * @param actorId
    * @param worldId
    * @param targetLocationId
+   * @returns whether the NPC reached the location and where it ended up
    */
   async moveToLocation(
     actorId: string,
@@ -111,6 +115,7 @@ export class NpcNavigationService {
    * Process NPC movement tick — advance NPCs based on their movement patterns
    * @param worldId
    * @param opts Injected rng / clock for a reproducible tick.
+   * @returns one movement result per NPC this tick actually moved
    */
   async processMovementTick(
     worldId: string,

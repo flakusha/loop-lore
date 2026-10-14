@@ -53,6 +53,7 @@ export class RecipesService {
   /**
    * Create a recipe with materials in a single transaction.
    * @param opts
+   * @returns the id of the new recipe
    */
   async createRecipe(opts: CreateRecipeOpts,): Promise<string> {
     return createRecipeDispatch(this.db, opts,);
@@ -61,6 +62,7 @@ export class RecipesService {
   /**
    * Get a recipe with all its materials.
    * @param recipeId
+   * @returns the recipe and its material lines, or null when no such recipe exists
    */
   async getRecipe(recipeId: string,): Promise<RecipeWithMaterials | null> {
     return getRecipeDispatch(this.db, recipeId,);
@@ -72,6 +74,7 @@ export class RecipesService {
    * @param opts
    * @param opts.discipline
    * @param opts.tier
+   * @returns the world's recipes with their materials, narrowed by any supplied filter
    */
   async listRecipes(
     worldId: string,
@@ -84,6 +87,7 @@ export class RecipesService {
    * Update a recipe's base properties.
    * @param recipeId
    * @param opts
+   * @returns true when the recipe row was written
    */
   async updateRecipe(recipeId: string, opts: UpdateRecipeOpts,): Promise<boolean> {
     return updateRecipeDispatch(this.db, recipeId, opts,);
@@ -92,6 +96,7 @@ export class RecipesService {
   /**
    * Delete a recipe and its materials (cascade handles materials).
    * @param recipeId
+   * @returns true when the recipe was deleted
    */
   async deleteRecipe(recipeId: string,): Promise<boolean> {
     return deleteRecipeDispatch(this.db, recipeId,);
@@ -101,6 +106,7 @@ export class RecipesService {
    * Replace all materials for a recipe.
    * @param recipeId
    * @param materials
+   * @returns nothing; the recipe's material set is swapped wholesale
    */
   async replaceMaterials(recipeId: string, materials: CreateRecipeMaterialOpts[],): Promise<void> {
     return replaceMaterialsDispatch(this.db, recipeId, materials,);

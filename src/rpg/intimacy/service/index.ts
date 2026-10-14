@@ -58,6 +58,7 @@ export class IntimacyService {
    * @param actorId
    * @param targetActorId
    * @param worldId
+   * @returns the shared score for the pair, created on first access
    */
   async getPair(
     actorId: string,
@@ -77,6 +78,7 @@ export class IntimacyService {
    *
    * Updates score, records history, and fires threshold events.
    * @param opts
+   * @returns the post-action score and any threshold events the crossing fired
    */
   async applyAction(opts: ApplyIntimacyActionOpts,): Promise<ApplyIntimacyResult> {
     assertNsfwConfigEnabled();
@@ -118,6 +120,7 @@ export class IntimacyService {
    * Get all intimacy pairs for an actor (optionally in a world).
    * @param actorId
    * @param worldId
+   * @returns every pair the actor is part of, world-scoped when one is given
    */
   async getActorPairs(
     actorId: string,
@@ -129,6 +132,7 @@ export class IntimacyService {
   /**
    * Get the intimacy level label for a numeric score.
    * @param score
+   * @returns the label for the band this score falls in
    */
   static getLevelLabel(score: number,): string {
     return getLevelLabelDispatch(score,);
@@ -138,6 +142,7 @@ export class IntimacyService {
    * Decay intimacy over time (natural drift toward 0).
    * @param actorId
    * @param decayAmount - How much to decay per call (default 1).
+   * @returns how many pairs were actually moved
    */
   async decayAll(actorId: string, decayAmount = 1,): Promise<number> {
     assertNsfwConfigEnabled();

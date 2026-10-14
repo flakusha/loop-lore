@@ -91,6 +91,7 @@ export class ReproductionService {
    * @param encounter
    * @param carrierSpecies - override (default: heat-cycle row)
    * @param sireSpecies - override (default: heat-cycle row)
+   * @returns the id of the pregnancy row on conception, or null when any gate or the roll declined
    */
   async rollPregnancy(
     carrierId: string,
@@ -180,6 +181,7 @@ export class ReproductionService {
    * without bespoke wiring. Returns the updated status.
    * @param characterId - the pregnant actor
    * @param weeks
+   * @returns the status after the advance, unchanged when the actor is not pregnant
    */
   async advanceGestation(characterId: string, weeks = 1,): Promise<PregnancyStatus> {
     assertNsfwConfigEnabled();
@@ -235,6 +237,7 @@ export class ReproductionService {
    * when no active pregnancy exists.
    * @param characterId - the pregnant actor (carrier)
    * @param childName
+   * @returns the id of the new child actor, or null when no pregnancy was active
    */
   async birth(characterId: string, childName: string,): Promise<string | null> {
     assertNsfwConfigEnabled();
@@ -245,6 +248,7 @@ export class ReproductionService {
    * Current pregnancy status for an actor (null-safe: not pregnant when
    * no active row).
    * @param characterId
+   * @returns the current pregnancy status, reporting not-pregnant when no row exists
    */
   async getPregnancy(characterId: string,): Promise<PregnancyStatus> {
     return getPregnancyFromStore(this.db, characterId,);
