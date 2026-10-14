@@ -90,6 +90,7 @@ export class SyntheticTestRunner {
    * @param mutationParams
    * @param mutationParams.temperatureVariance
    * @param mutationParams.promptVariations
+   * @returns the aggregated run results with per-case status
    */
   async run(
     scenarioIds: string[],

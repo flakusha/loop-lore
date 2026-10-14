@@ -66,6 +66,7 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
  * @param state
  * @param itemId
  * @param worldId
+ * @returns the item row, or null if not found or mismatched worldId
  */
 export async function getDefinition(state: ItemState, itemId: string, worldId: string,) {
   return (await state.db.selectFrom("items",).selectAll().where("id", "=", itemId,).where("world_id", "=", worldId,)
@@ -77,7 +78,7 @@ export async function getDefinition(state: ItemState, itemId: string, worldId: s
  * @param state
  * @param worldId
  * @param category
- * @returns {Promise<{ id: string; name: string; created_at: string; updated_at: string; world_id: string; value: number; properties: string; description: string | null; category: ItemCategory; weight: number; rarity: ItemRarity; stackable: StackableState; max_stack: number; }[]>}
+ * @returns all item rows in the world, optionally filtered by category
  */
 export async function listDefinitions(state: ItemState, worldId: string, category?: ItemCategory,) {
   let query = state.db.selectFrom("items",).selectAll().where("world_id", "=", worldId,);
