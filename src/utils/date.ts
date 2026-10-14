@@ -8,6 +8,7 @@
  *
  * Shared across logger, chat messages, story events, DB timestamps.
  * All functions use system TZ unless overridden via `tz` param or `TZ` env var.
+ * @returns epoch milliseconds
  */
 export function unixMs(): number {
   return Date.now();

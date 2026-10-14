@@ -125,6 +125,7 @@ export function safeFromBase64Url(encoded: string, maxSize = DEFAULT_MAX_SIZE,):
  * Decode standard base64 or throw `SafeBufferError`.
  * @param encoded
  * @param maxSize
+ * @returns the decoded buffer
  * @throws {SafeBufferError} when the input is empty, oversized, or malformed
  */
 export function mustFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Buffer {
@@ -135,6 +136,7 @@ export function mustFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Bu
  * Decode base64url or throw `SafeBufferError`.
  * @param encoded
  * @param maxSize
+ * @returns the decoded buffer
  * @throws {SafeBufferError} when the input is empty, oversized, or malformed
  */
 export function mustFromBase64Url(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Buffer {
