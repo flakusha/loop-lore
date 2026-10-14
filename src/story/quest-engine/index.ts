@@ -147,6 +147,7 @@ export class QuestEngine {
   /**
    * Fail a quest (e.g., deadline passed)
    * @param questId
+   * @returns {Promise<void>}
    */
   async fail(questId: string,): Promise<void> {
     return failDispatch(this.state, questId,);
@@ -155,6 +156,7 @@ export class QuestEngine {
   /**
    * Abandon a quest (GM action)
    * @param questId
+   * @returns {Promise<void>}
    */
   async abandon(questId: string,): Promise<void> {
     return abandonDispatch(this.state, questId,);
