@@ -81,9 +81,18 @@ export function storeFile(uploadDir: string, assetId: string, filename: string, 
  * @param uploadDir
  * @param storagePath
  * @returns void
+ * @throws Error when the resolved path escapes the upload root.
  */
 export function deleteFile(uploadDir: string, storagePath: string,): void {
-  const fullPath = join(resolveUploadDir(uploadDir,), storagePath,);
+  const root = resolveUploadDir(uploadDir,);
+  // Containment assert: `storage_path` is DB-controlled, so a tampered row
+  // (`../../etc/passwd`, an absolute path, or a sibling-prefix trap such as
+  // `../uploads-evil/x`) must never unlink a file outside the upload root.
+  const fullPath = resolve(root, storagePath,);
+  if (!fullPath.startsWith(`${root}/`,)) {
+    throw new Error(`Refusing to delete outside upload dir: ${fullPath}`,);
+  }
+
   if (existsSync(fullPath,)) { unlinkSync(fullPath,); }
 }
 
@@ -91,8 +100,17 @@ export function deleteFile(uploadDir: string, storagePath: string,): void {
  * Resolve the full file path for serving.
  * @param uploadDir
  * @param storagePath
- * @returns void
+ * @returns the resolved absolute path, guaranteed inside the upload root
+ * @throws Error when the resolved path escapes the upload root.
  */
 export function getAssetFilePath(uploadDir: string, storagePath: string,): string {
-  return join(resolveUploadDir(uploadDir,), storagePath,);
+  const root = resolveUploadDir(uploadDir,);
+  // Containment assert: `storage_path` is DB-controlled, so a tampered row
+  // must never redirect a read outside the upload root.
+  const fullPath = resolve(root, storagePath,);
+  if (!fullPath.startsWith(`${root}/`,)) {
+    throw new Error(`Refusing to serve outside upload dir: ${fullPath}`,);
+  }
+
+  return fullPath;
 }
