@@ -49,6 +49,7 @@ export class NodeStates {
   /**
    * The raw record, or undefined if the node is unknown.
    * @param taskId
+   * @returns the live record; mutating it edits the node in place
    */
   get(taskId: string,): NodeRecord | undefined {
     return this.#nodes.get(taskId,);
@@ -57,6 +58,7 @@ export class NodeStates {
   /** Register a node if new. A fresh node reads as `blocked`; the first
    *  pass promotes it once its prerequisites land.
    * @param taskId
+   * @returns nothing — a node already registered keeps its state
    */
   touch(taskId: string,): void {
     if (this.#nodes.has(taskId,)) { return; }
@@ -69,6 +71,7 @@ export class NodeStates {
    * @param taskId
    * @param hasBody whether a body is registered for it this pass
    * @param prerequisitesDone whether every prerequisite reached `done`
+   * @returns true only for a known, unsettled node with a body and all prerequisites `done`
    */
   dispatchable(taskId: string, hasBody: boolean, prerequisitesDone: boolean,): boolean {
     if (!hasBody) { return false; }
@@ -120,6 +123,7 @@ export class NodeStates {
    * re-attempted. It goes to `ready` rather than straight to dispatch: a
    * later pass picks it up once its prerequisites are `done`.
    * @param taskId
+   * @returns nothing — an unknown node stays absent
    */
   reset(taskId: string,): void {
     const node = this.#nodes.get(taskId,);
@@ -131,6 +135,7 @@ export class NodeStates {
   /**
    * The status view for one node, defaulting an unseen one to `blocked`.
    * @param taskId
+   * @returns the node's state, last error and attempt count, defaulted when never seen
    */
   statusFor(taskId: string,): TaskNodeStatus {
     const node = this.#nodes.get(taskId,);

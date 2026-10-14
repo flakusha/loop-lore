@@ -145,6 +145,7 @@ export class GossipService {
   /**
    * Get a peer entry by canonical origin.
    * @param origin
+   * @returns a copy of the peer entry, or `undefined` when the origin is not known
    */
   getPeer(origin: string,): PeerEntry | undefined {
     return this.table.getPeer(origin,);

@@ -39,6 +39,8 @@ function getLog() {
 /**
  * Translate a `RequestResultRow` into the beforeHandle replay entry shape.
  * @param row
+ * @returns a settled entry; missing status/body become `0`/`""` and unparsable
+ *   timestamps fall back to now, so the entry is live for a full TTL
  */
 function rowToEntry(row: RequestResultRow,): InMemoryEntry {
   const headers = row.responseHeaders ?? {};
@@ -62,6 +64,8 @@ function rowToEntry(row: RequestResultRow,): InMemoryEntry {
  * Build a table backend. `asyncStore` must target the same `request_results` table.
  * @param ttlMs
  * @param asyncStore
+ * @returns a backend whose local cache is the fast path and whose misses hydrate
+ *   from `request_results` in the background
  */
 export function createTableBackend(ttlMs: number, asyncStore: AsyncStore,): IdempotencyBackendApi {
   // Process-local fast path. Hydrated lazily from the table on first miss.
@@ -217,6 +221,7 @@ async function hydrateFromTable(
  * PII-safe log identifier: the key embeds userId + requestId, so keep only the
  * `METHOD ROUTE` prefix — the access log's requestId carries the correlation.
  * @param key
+ * @returns the first two tokens, or the key unchanged when it holds no space
  */
 export function redactKeyForLog(key: string,): string {
   // Cache key format (fixed by `makeKey`):

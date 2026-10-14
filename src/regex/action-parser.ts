@@ -166,6 +166,8 @@ function extractTarget(input: string, verbMatchIndex: number,): TargetRef | unde
  * @param input
  * @param stage2
  * @param ctx
+ * @returns the stage-1 action, the stage-2 action when stage 1 declines, or `null`
+ *   when neither parses the input
  */
 export async function parseAction(
   input: string,
@@ -192,6 +194,8 @@ export async function parseAction(
 /**
  * Map a parsed {@link Action} onto the pre-verb-parser intent shape.
  * @param action
+ * @returns the intent, the target display name (empty when absent) and the
+ *   action's own confidence, passed through unadjusted
  */
 export function actionToLegacyIntent(
   action: Action,
@@ -231,6 +235,7 @@ export function actionToLegacyIntent(
 /**
  * Stage-1 only — no `stage2` fallback.
  * @param input
+ * @returns the first verb-pattern match with its target attached, or `null`
  */
 export function parseActionStage1(input: string,): Action | null {
   const trimmed = input.trim();
