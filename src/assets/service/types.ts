@@ -54,6 +54,13 @@ export interface CreateAssetInput {
   keyId?: string | null;
   pipelineConfig?: PipelineConfig;
   /**
+   * Pre-computed SHA-256 hex of `buffer`, used as the content-addressed key
+   * and filename base. Defaults to a hash of `buffer`. Callers that already
+   * hashed the bytes (or key on something other than the raw buffer) pass it
+   * to avoid a second pass.
+   */
+  contentHash?: string;
+  /**
    * Whether to reuse a pre-existing asset with identical content+owner instead
    * of inserting a new row. Defaults to true. Derivative-creating callers (edits,
    * matting, generated output) MUST pass `false`: a new iteration that happens to

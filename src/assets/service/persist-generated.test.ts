@@ -47,7 +47,7 @@ describeReal("persistGeneratedImages", () => {
         mimeType: "image/png",
         ownerId,
         altText: "generated sprite",
-        link: { entityType: AssetLinkEntity.Character, entityId: "char-7", label: "emotion:happy", },
+        links: [{ entityType: AssetLinkEntity.Character, entityId: "char-7", label: "emotion:happy", },],
         makeFilename: (index,) => `gen-${index}.png`,
       },);
 
@@ -66,7 +66,7 @@ describeReal("persistGeneratedImages", () => {
     }
   });
 
-  test("repeat persist of identical bytes creates a distinct item", async () => {
+  test("repeat persist of identical bytes with makeFilename creates a distinct item", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       await insertUsers(db, "dup-owner", "Dup Owner",);
@@ -83,15 +83,15 @@ describeReal("persistGeneratedImages", () => {
         mimeType: "image/png",
         ownerId,
         altText: "repeat",
-        link: { entityType: AssetLinkEntity.Character, entityId: "char-8", },
+        links: [{ entityType: AssetLinkEntity.Character, entityId: "char-8", },],
         makeFilename: () => "repeat.png",
-      } as const;
+      };
 
       const first = await persistGeneratedImages({ ...opts, images: [...opts.images,], },);
       const second = await persistGeneratedImages({ ...opts, images: [...opts.images,], },);
 
-      // Identical bytes, but a generated run is a new iteration — it must not
-      // collapse onto the earlier row and inherit its id or visibility.
+      // Label-keyed (makeFilename supplied): dedupe is off, so a regeneration
+      // is a distinct row rather than inheriting the old one.
       expect(first[0]!.duplicate,).toBe(false,);
       expect(second[0]!.duplicate,).toBe(false,);
       expect(second[0]!.asset.id,).not.toBe(first[0]!.asset.id,);
@@ -99,6 +99,46 @@ describeReal("persistGeneratedImages", () => {
 
       const rows = await db.selectFrom("assets",).select("id",).execute();
       expect(rows.length,).toBe(2,);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("content-addressed default dedupes identical bytes onto the existing row", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertUsers(db, "ca-owner", "CA Owner",);
+      const ownerId = (await db.selectFrom("users",).select("id",).where(
+        "username",
+        "=",
+        "ca-owner",
+      ).executeTakeFirstOrThrow()).id;
+
+      const image = makeMinimalPng(2, 2,);
+      const opts = {
+        database: db,
+        uploadDir,
+        images: [image,],
+        mimeType: "image/png",
+        ownerId,
+        altText: "content-addressed",
+        links: [{ entityType: AssetLinkEntity.Character, entityId: "char-9", },],
+      };
+
+      const first = await persistGeneratedImages({ ...opts, },);
+      const second = await persistGeneratedImages({ ...opts, },);
+
+      // No makeFilename → content-addressed: the second run collapses onto the
+      // existing row via the content_hash unique index.
+      expect(first[0]!.duplicate,).toBe(false,);
+      expect(second[0]!.duplicate,).toBe(true,);
+      expect(second[0]!.asset.id,).toBe(first[0]!.asset.id,);
+
+      // Filename is the SHA-256 of the bytes, not a UUID.
+      expect(first[0]!.asset.filename,).toMatch(/^[0-9a-f]{64}\.png$/,);
+
+      const rows = await db.selectFrom("assets",).select("id",).execute();
+      expect(rows.length,).toBe(1,);
     } finally {
       sqlite.close();
     }
@@ -114,11 +154,41 @@ describeReal("persistGeneratedImages", () => {
         mimeType: "image/png",
         ownerId: "nobody",
         altText: "nothing",
-        link: { entityType: AssetLinkEntity.Character, entityId: "char-0", },
-        makeFilename: () => "nothing.png",
+        links: [{ entityType: AssetLinkEntity.Character, entityId: "char-0", },],
       },);
 
       expect(persisted,).toEqual([],);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("passes encryption context through to createAsset", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertUsers(db, "enc-owner", "Enc Owner",);
+      const ownerId = (await db.selectFrom("users",).select("id",).where(
+        "username",
+        "=",
+        "enc-owner",
+      ).executeTakeFirstOrThrow()).id;
+
+      const persisted = await persistGeneratedImages({
+        database: db,
+        uploadDir,
+        images: [makeMinimalPng(2, 2,),],
+        mimeType: "image/png",
+        ownerId,
+        altText: "encrypted",
+        links: [{ entityType: AssetLinkEntity.Character, entityId: "char-enc", },],
+        encryptionTier: "standard",
+        chatKey: null,
+        keyId: null,
+        pipelineConfig: undefined,
+      },);
+
+      expect(persisted,).toHaveLength(1,);
+      expect(persisted[0]!.asset.encryption_tier,).toBe("standard",);
     } finally {
       sqlite.close();
     }
