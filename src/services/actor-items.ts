@@ -95,7 +95,7 @@ export class ActorItemsService {
    * Current load vs capacity + encumbrance level.
    * @param actorId
    * @returns carried and capacity weight, the encumbrance level, and a canCarry check
-   * @throws {Error} rethrows the weight or capacity lookup failure rather than reporting an encumbrance it cannot compute
+   * @throws {unknown} rethrows the weight or capacity lookup failure rather than reporting an encumbrance it cannot compute
    */
   async getCarryStatus(actorId: string,): Promise<CarryStatus> {
     const [carriedResult, capacityResult,] = await Promise.allSettled([

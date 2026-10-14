@@ -94,7 +94,7 @@ async function nextFreeAutoName(db: Kysely<DB>, chatId: string,): Promise<string
  * @param params.parentMessageId
  * @param params.name
  * @returns {Promise<{ name: string } | ServiceError>}
- * @throws {Error} a driver error that is not a branch-name conflict; name conflicts resolve to a `bad_request` result instead
+ * @throws {unknown} a driver error that is not a branch-name conflict; name conflicts resolve to a `bad_request` result instead
  */
 export async function insertForkRow(
   db: Kysely<DB>,
