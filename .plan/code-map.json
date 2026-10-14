@@ -35535,6 +35535,12 @@
       "source": ".plan/tickets/EPIC-2026-24.md"
     }
   ],
+  "src/routes/http-utils/redirect.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
+    }
+  ],
   "src/routes/http-utils/responses.ts": [
     {
       "kind": "epic",
@@ -38727,6 +38733,12 @@
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
     }
   ],
+  "src/routes/views/static-partials.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
+    }
+  ],
   "src/routes/views/view-models/characters-grid.test.ts": [
     {
       "kind": "ticket",
@@ -38747,6 +38759,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
     }
   ],
   "src/routes/views/worlds.ts": [
@@ -41337,6 +41353,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-replayability.md"
+    }
+  ],
+  "src/rpg/replayability/service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
     }
   ],
   "src/rpg/replayability/service/playthrough.ts": [
@@ -44077,6 +44099,12 @@
       "source": ".plan/tickets/FEAT-llama-swap-style-on-demand-load-unload-lifecycle-with-health.md"
     }
   ],
+  "src/services/server-external-manager/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
+    }
+  ],
   "src/services/server-external-manager/lifecycle.ts": [
     {
       "kind": "epic",
@@ -45107,6 +45135,12 @@
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
     }
   ],
+  "src/story/world-state/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
+    }
+  ],
   "src/story/world-state/init.coverage.test.ts": [
     {
       "kind": "ticket",
@@ -45489,6 +45523,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
     }
   ],
   "src/transport/errors.ts": [
