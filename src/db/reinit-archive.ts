@@ -20,7 +20,8 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /** Resolve the archive directory. Env override beats the data-dir sibling —
  * operations may store archives on a separate volume (e.g. cheap object
- * storage) to keep the data volume small.  * @returns {string}
+ * storage) to keep the data volume small.
+ * @returns the directory archives are written to
  */
 export function archiveDir(): string {
   return process.env.LOOP_LORE_BACKUP_DIR ??

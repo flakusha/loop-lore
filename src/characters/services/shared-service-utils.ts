@@ -15,6 +15,7 @@
  * @param qb
  * @param worldId
  * @param worldCol
+ * @returns the same query builder, narrowed to the world when one was given
  */
 export function withWorldId<T,>(qb: T, worldId: string | undefined, worldCol = "world_id",): T {
   // Kysely's $if is typed per-table; the generic cast is unavoidable here.
