@@ -158,6 +158,7 @@ export function getThresholdState(
  * Respects remaining token budget — memories that don't fit are rejected.
  * @param context - Current context window state
  * @param memories - Memories to inject
+ * @param thresholds - Threshold configuration used to recompute willTrim
  * @returns Updated context window with memories added
  */
 export function injectMemories(
@@ -196,6 +197,7 @@ export function injectMemories(
  * Respects remaining token budget — events that don't fit are rejected.
  * @param context - Current context window state
  * @param events - Events to inject
+ * @param thresholds - Threshold configuration used to recompute willTrim
  * @returns Updated context window with events added
  */
 export function injectEvents(
