@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Smoke tests for the --gates / --skip-gates selective filter in
  * `scripts/check-parallel.mjs`. Invokes the runner as a subprocess against
