@@ -11,7 +11,7 @@
  * rewritten.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { injectContentHashes, } from "./hash-injection";
@@ -95,6 +95,40 @@ describe("injectContentHashes", () => {
       writeFileSync(join(sub, "page.html",), '<script src="/app.js"></script>',);
       expect(injectContentHashes(sub,),).toEqual({ replaced: 0, skipped: 0, },);
       expect(readFileSync(join(sub, "page.html",), "utf8",),).toContain('src="/app.js"',);
+    } finally {
+      rmSync(sub, { recursive: true, force: true, },);
+    }
+  });
+
+  test("resolves references to hashed assets in subdirectories", () => {
+    const sub = mkdtempSync(join(tmpdir(), "loop-lore-hash-inject-subdir-",),);
+    try {
+      mkdirSync(join(sub, "css",), { recursive: true, },);
+      writeFileSync(join(sub, "css", "app-abc12345.css",), "/* stub */",);
+      const htmlPath = join(sub, "page.html",);
+      writeFileSync(htmlPath, '<link rel="stylesheet" href="/css/app.css">',);
+
+      const result = injectContentHashes(sub,);
+
+      expect(result.replaced,).toBe(1,);
+      expect(readFileSync(htmlPath, "utf8",),).toContain('href="/css/app-abc12345.css"',);
+    } finally {
+      rmSync(sub, { recursive: true, force: true, },);
+    }
+  });
+
+  test("hyphenated non-hash names are not treated as hashed variants", () => {
+    const sub = mkdtempSync(join(tmpdir(), "loop-lore-hash-inject-collision-",),);
+    try {
+      writeFileSync(join(sub, "theme-colorful.css",), "/* stub */",);
+      const htmlPath = join(sub, "page.html",);
+      writeFileSync(htmlPath, '<link rel="stylesheet" href="/theme.css">',);
+
+      const result = injectContentHashes(sub,);
+
+      // `colorful` contains o/l/u — not a valid bun base32 hash.
+      expect(result,).toEqual({ replaced: 0, skipped: 0, },);
+      expect(readFileSync(htmlPath, "utf8",),).toContain('href="/theme.css"',);
     } finally {
       rmSync(sub, { recursive: true, force: true, },);
     }
