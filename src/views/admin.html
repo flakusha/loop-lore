@@ -1013,7 +1013,7 @@
                               <span
                                 x-show="m.modalities && m.modalities.length"
                                 style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
-                                x-text="m.modalities.join(',')"
+                                x-text="(m.modalities || []).join(',')"
                               ></span>
                             </div>
                           </div>
