@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Build identity verifier — recomputes the local build hash and (optionally)
  * compares it against the value served by a remote instance at
