@@ -7858,6 +7858,19 @@
     "title": "Stored XSS — unescaped server-derived asset IDs/labels in innerHTML",
     "type": "BUG"
   },
+  "BUG-STORY-CONTROLS-CALLS-API-V1-BUT-STORY-ORCHESTRATION-ROUTES-M": {
+    "hash": "7ff9731",
+    "git_issue": "7ff9731",
+    "extid": "BUG-STORY-CONTROLS-CALLS-API-V1-BUT-STORY-ORCHESTRATION-ROUTES-M",
+    "type": "BUG",
+    "title": "story-controls calls /api/v1 but story-orchestration routes mount only at /api",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md",
+    "status": "Not Started"
+  },
   "BUG-STORY-DESTROY-PARTIAL-QUANTITY-UPDATE-PATH-MISSING-WORLD-ID-": {
     "epic": "",
     "extid": "BUG-STORY-DESTROY-PARTIAL-QUANTITY-UPDATE-PATH-MISSING-WORLD-ID-",
@@ -32043,6 +32056,19 @@
     "title": "Defined-but-not-enforced debt: unused schemas and dead validators",
     "type": "TASK"
   },
+  "TASK-DELETE-69-DEAD-SRC-FILES-REPORTED-BY-KNIP": {
+    "hash": "4612157",
+    "git_issue": "4612157",
+    "extid": "TASK-DELETE-69-DEAD-SRC-FILES-REPORTED-BY-KNIP",
+    "type": "TASK",
+    "title": "Delete 69 dead src files reported by knip",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-69-dead-src-files-reported-by-knip.md",
+    "status": "Not Started"
+  },
   "TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM": {
     "epic": "",
     "extid": "TASK-DELETE-DEAD-MIGRATION-HELPERS-TS-BOOLTOENUM",
@@ -45682,6 +45708,19 @@
     "source": ".plan/tickets/TASK-recursive-self-improvement-weekly-failure-cluster-mining-cron.md",
     "status": "Not Started",
     "git_issue": "7b76f23"
+  },
+  "TASK-REDO-OPTIONS-OBJECT-PARAMS-REFACTOR-INCREMENTALLY": {
+    "hash": "37d451c",
+    "git_issue": "37d451c",
+    "extid": "TASK-REDO-OPTIONS-OBJECT-PARAMS-REFACTOR-INCREMENTALLY",
+    "type": "TASK",
+    "title": "Redo options-object-params refactor incrementally",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-redo-options-object-params-refactor-incrementally.md",
+    "status": "Not Started"
   },
   "TASK-REDOS-CONFIG-TRANSFORMS-BUILD-REGEXP-FROM-UNTRUSTED-PATTERN": {
     "epic": "",
