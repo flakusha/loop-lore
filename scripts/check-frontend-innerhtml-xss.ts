@@ -19,9 +19,20 @@
 
 import { readdirSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
+import { argument, object, runScript, string, withDefault, } from "../src/cli/parser";
 
 const ROOT = path.resolve(import.meta.dir, "..",);
-const TARGET = path.join(ROOT, "src", "frontend",);
+
+const parser = object({
+  target: withDefault(argument(string(),), path.join(ROOT, "src", "frontend",),),
+},);
+
+const { target, } = runScript(parser, {
+  programName: "check-frontend-innerhtml-xss",
+  brief: "Blocking XSS check for innerHTML and CSS assignments in frontend code.",
+  help: "option",
+},);
+const TARGET = path.resolve(target,);
 
 function walk(dir: string,): string[] {
   const out: string[] = [];
@@ -42,46 +53,19 @@ interface Finding {
   snippet: string;
 }
 
-function isSafe(expr: string, src?: string,): boolean {
-  const ex = expr.trim();
-  if (/^\d+$/.test(ex,)) { return true; }
-  if (
-    /^(pct|percent|count|total|num|length|width|height|score|level|hp|maxHp|year|month|day|page|size|index|idx)\b/.test(
-      ex,
-    )
-  ) { return true; }
-  if (/^(escapeHtml|DOMPurify\s*\.sanitize|sanitizeCssUrl)\s*\(/.test(ex,)) { return true; }
-  if (/escapeHtml\s*\(|DOMPurify|sanitizeCssUrl/.test(ex,)) { return true; }
-  if (
-    /\.(round|count|total|length|index|idx|page|size|width|height|pct|percent|year|month|day|score|level|hp|maxHp|num)\b/
-      .test(ex,)
-  ) { return true; }
-  // ternary whose branches are string literals only (e.g. `acting ? " ➤" : ""`)
-  if (/^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(ex,)) { return true; }
-  // variable whose definition is a string-literal ternary
-  if (src) {
-    const m = new RegExp(`(?:const|let|var)\s+${ex}\s*=\s*([\s\S]*?);`,).exec(src,);
-    if (m && /^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(m[1].trim(),)) { return true; }
-  }
-  return false;
-}
-
-function scan(): Finding[] {
+function scanAssignments(assignRe: RegExp,): Finding[] {
   const findings: Finding[] = [];
   if (!statSync(TARGET,).isDirectory()) { return findings; }
   for (const file of walk(TARGET,)) {
     const src = readFileSync(file, "utf8",);
     const lines = src.split("\n",);
     const rel = path.relative(ROOT, file,);
-    // For every `innerHTML =` / `+=`, capture the RHS respecting template-literal
-    // nesting so a CSS ";" inside style="..." does NOT truncate the scan.
-    const assignRe = /\.innerHTML\s*[+-]?=\s*/g;
     let am: RegExpExecArray | null;
     while ((am = assignRe.exec(src,)) !== null) {
       const rhsStart = am.index + am[0].length;
       let i = rhsStart;
-      let depth = 0; // backtick depth
-      let inStr = 0; // 0 none, 1 ", 2 '
+      let depth = 0;
+      let inStr = 0;
       let rhsEnd = src.length;
       while (i < src.length) {
         const ch = src[i];
@@ -141,10 +125,41 @@ function scan(): Finding[] {
   return findings;
 }
 
+function isSafe(expr: string, src?: string,): boolean {
+  const ex = expr.trim();
+  if (/^\d+$/.test(ex,)) { return true; }
+  if (
+    /^(pct|percent|count|total|num|length|width|height|score|level|hp|maxHp|year|month|day|page|size|index|idx)\b/.test(
+      ex,
+    )
+  ) { return true; }
+  if (/^(escapeHtml|DOMPurify\s*\.sanitize|sanitizeCssUrl)\s*\(/.test(ex,)) { return true; }
+  if (/escapeHtml\s*\(|DOMPurify|sanitizeCssUrl/.test(ex,)) { return true; }
+  if (
+    /\.(round|count|total|length|index|idx|page|size|width|height|pct|percent|year|month|day|score|level|hp|maxHp|num)\b/
+      .test(ex,)
+  ) { return true; }
+  // ternary whose branches are string literals only (e.g. `acting ? " ➤" : ""`)
+  if (/^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(ex,)) { return true; }
+  // variable whose definition is a string-literal ternary
+  if (src) {
+    const m = new RegExp(`(?:const|let|var)\s+${ex}\s*=\s*([\s\S]*?);`,).exec(src,);
+    if (m && /^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(m[1].trim(),)) { return true; }
+  }
+  return false;
+}
+
+function scan(): Finding[] {
+  return [
+    ...scanAssignments(/\.innerHTML\s*[+-]?=\s*/g,),
+    ...scanAssignments(/\.style\.(backgroundImage|cssText)\s*[+-]?=\s*/g,),
+  ];
+}
+
 const findings = scan();
-console.log("=== Frontend innerHTML XSS check (blocking) ===",);
+console.log("=== Frontend innerHTML/CSS-injection XSS check (blocking) ===",);
 if (findings.length === 0) {
-  console.log("OK: No unescaped interpolations in innerHTML assignments.",);
+  console.log("OK: No unescaped interpolations in innerHTML or CSS assignments.",);
   process.exit(0,);
 }
 const seen = new Set<string>();
