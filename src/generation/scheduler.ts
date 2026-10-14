@@ -25,7 +25,10 @@ export const SCHEDULER_DEFAULT_MAX = 32;
 
 let manager: ResourceManager | null = null;
 
-/** Process-wide scheduler (no policy yet — see epic-llm-request-scheduler). */
+/**
+ * Process-wide scheduler (no policy yet — see epic-llm-request-scheduler).
+ * @returns The lazily-created manager shared by every dispatch.
+ */
 export function getSchedulerManager(): ResourceManager {
   if (!manager) {
     manager = new ResourceManager({ defaultMax: SCHEDULER_DEFAULT_MAX, },);
@@ -37,6 +40,7 @@ export function getSchedulerManager(): ResourceManager {
 /**
  * Test seam: swap/reset the process-wide scheduler.
  * @param next
+ * @returns The manager now installed process-wide.
  */
 export function resetSchedulerManager(next?: ResourceManager,): ResourceManager {
   manager = next ?? new ResourceManager({ defaultMax: SCHEDULER_DEFAULT_MAX, },);

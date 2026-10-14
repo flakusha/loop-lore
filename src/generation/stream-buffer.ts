@@ -43,6 +43,7 @@ export class StreamBuffer {
    * Append an event to the buffer. Returns sequence number for replay tracking.
    * @param type
    * @param html
+   * @returns The sequence number assigned to this event.
    */
   append(type: string, html: string,): number {
     const seq = this.sequence++;
@@ -81,6 +82,7 @@ export class StreamBuffer {
   /**
    * Replay events from a given sequence number (0 = all)
    * @param fromSequence
+   * @returns Every buffered event at or after that sequence, in order.
    */
   replay(fromSequence = 0,): StreamEvent[] {
     const out: StreamEvent[] = [];
@@ -96,6 +98,7 @@ export class StreamBuffer {
    * @param cb
    * @param onDone
    * @param onError
+   * @returns A function that detaches all three subscribers.
    */
   subscribe(cb: EventSubscriber, onDone?: DoneSubscriber, onError?: ErrorSubscriber,): () => void {
     this.onEvent.add(cb,);

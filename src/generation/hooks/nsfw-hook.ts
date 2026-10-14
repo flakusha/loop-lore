@@ -78,6 +78,7 @@ export class NsfwHook implements HookHandler {
   /**
    * @param _content
    * @param _context
+   * @returns True only when the effective config allows NSFW content.
    */
   async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
     // No length bypass: short content can carry NSFW tokens. canHandle only
@@ -88,6 +89,7 @@ export class NsfwHook implements HookHandler {
   /**
    * @param _content
    * @param _context
+   * @returns An nsfw_gate event with the detected level and whether content was blocked; unhandled when the content is SFW.
    */
   async execute(_content: string, _context: HookContext,): Promise<HookResult> {
     const log = getLogger();

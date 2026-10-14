@@ -68,6 +68,7 @@ export class CircuitBreaker {
    * Returns true if closed or half-open, false if open.
    * Half-open probes are allowed — one request passes through to test recovery.
    * @param providerName
+   * @returns True while the circuit is closed or half-open, false while open and still cooling down.
    */
   allowRequest(providerName: string,): boolean {
     const cfg = this.configs.get(providerName,);
@@ -155,6 +156,7 @@ export class CircuitBreaker {
   /**
    * Get current state for a provider (read-only).
    * @param providerName
+   * @returns The provider's state and cooldown remaining, or undefined if unregistered.
    */
   getState(
     providerName: string,
@@ -171,6 +173,7 @@ export class CircuitBreaker {
 
   /**
    * Get state for all providers.
+   * @returns One snapshot per registered provider.
    */
   getAllStates(): {
     name: string;

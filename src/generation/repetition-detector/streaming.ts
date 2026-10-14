@@ -27,6 +27,7 @@ export class StreamingRepetitionDetector {
    * Add a chunk of text to the buffer and check for repetition.
    * Returns an analysis if the minimum threshold is met.
    * @param chunk
+   * @returns The analysis when repetition was detected, else null.
    */
   addChunk(chunk: string,): RepetitionAnalysis | null {
     this.buffer.push(chunk,);

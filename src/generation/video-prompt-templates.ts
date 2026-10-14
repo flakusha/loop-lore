@@ -107,6 +107,7 @@ export interface VideoPromptMessage {
  * @param mode
  * @param detail - Falls back to the `balanced` body, mirroring the image resolver.
  * @param opts
+ * @returns The matched profile plus the resolved template body for the mode.
  */
 export function resolveVideoProfile(
   mode: VideoGenMode,
@@ -127,6 +128,7 @@ export { resolveModalityTemplate as resolveTemplate, } from "./modality-template
  * format (same pattern as the image `buildImageSystemPrompt`).
  * @param profile
  * @param detail
+ * @returns The role-switch system message for this profile's output format.
  */
 export function buildVideoSystemPrompt(profile: VideoModelProfile, detail: TemplateDetailLevel,): string {
   const verbosity = detailVerbosity(detail,);
@@ -149,6 +151,7 @@ export function buildVideoSystemPrompt(profile: VideoModelProfile, detail: Templ
  * @param detail
  * @param ctx
  * @param opts
+ * @returns The [system, user] message pair for the video generation call.
  */
 export function buildVideoPromptMessages(
   mode: VideoGenMode,
