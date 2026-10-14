@@ -112,6 +112,7 @@ export interface AudioPromptMessage {
  * @param subtype - Audio sub-type the prompt targets
  * @param detail - Falls back to the `balanced` body, mirroring the image resolver.
  * @param opts
+ * @returns The matched profile plus the resolved template body for the subtype.
  * @throws {Error} When the resolved profile does not support `subtype`.
  */
 export function resolveAudioProfile(
@@ -135,6 +136,7 @@ export function resolveAudioProfile(
  * @param profile
  * @param subtype
  * @param detail
+ * @returns The role-switch system message for this profile's output format.
  */
 export function buildAudioSystemPrompt(
   profile: AudioModelProfile,
@@ -161,6 +163,7 @@ export function buildAudioSystemPrompt(
  * @param detail
  * @param ctx
  * @param opts
+ * @returns The [system, user] message pair for the audio generation call.
  */
 export function buildAudioPromptMessages(
   subtype: AudioSubtype,

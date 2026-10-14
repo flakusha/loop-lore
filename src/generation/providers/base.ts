@@ -94,6 +94,11 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
   readonly capabilities: ProviderCapabilities;
   private readonly dispatchers: BaseProviderDispatchers<S>;
 
+  /**
+   * @param config
+   * @param options
+   * @throws {ProviderError} When the resolved base URL fails `validateProviderUrl`.
+   */
   protected constructor(config: ProviderInstanceConfig, options: BaseProviderOptions<S>,) {
     const rawBase = options.defaultBaseUrl && !config.baseUrl
       ? options.defaultBaseUrl
