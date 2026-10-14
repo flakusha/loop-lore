@@ -3,7 +3,7 @@
 
 # TASK: HTTP-expose agency earn and status alongside spend
 
-**Status:** Not Started
+**Status:** Done — POST /api/agency/earn wired (src/routes/agency/earn.ts, registered in src/routes/agency/index.ts); GET /api/agency/balance already wired; both auth-gated.
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-agency-story-points
@@ -15,5 +15,5 @@
 
 **Acceptance Criteria:**
 
-- [ ] Earn+status round-trip via HTTP (test); spend unchanged.
-- [ ] `bun run check` green.
+- [x] Earn+status round-trip via HTTP (test); spend unchanged. — earn.test.ts covers 401/403/200/422/400/world_id; balance.test.ts covers 401/200/zero-row/world_id
+- [x] `bun run check` green.

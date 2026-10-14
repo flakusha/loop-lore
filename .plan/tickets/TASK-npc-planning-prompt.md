@@ -3,12 +3,14 @@
 
 # TASK: Npc Planning Prompt
 
-**Status:** Not Started
+**Status:** Done — Superseded by epic-research-agency-decision.md — BDI planning loop shipped (migration 011, bdi-nightly.ts, bdi-reflection.ts, TASK-npc-bdi-planning).
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
 **Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Acceptance Criteria:**
+
+- [x] Superseded by epic-research-agency-decision.md — BDI planning loop shipped
 
 
 **Status**: Not Started
@@ -19,8 +21,8 @@
 **Related**:
 
 **Summary:**
-Prompt assembly for planning and reactions
+Prompt assembly for planning and reactions — superseded by epic-research-agency-decision.md (closed)
 
 ## Acceptance
 
-- [ ] Complete
+- [x] Complete — superseded by epic-research-agency-decision.md
