@@ -8,6 +8,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { analyticsRoutes, } from "./index";
+import { knowledgeGraphHandler, } from "./knowledge-graph";
 
 function createApp(db: Kysely<DB>, userId: string | null,) {
   return new Elysia({ name: "test-kg", },)
@@ -141,5 +142,18 @@ describe("GET /api/memory/knowledge-graph", () => {
     const charNodes = body.nodes.filter((n,) => n.id === "entity:character:char-1");
     expect(charNodes.length,).toBe(1,);
     expect(body.edges.length,).toBe(4,);
+  });
+
+  test("knowledgeGraphHandler returns nodes + edges directly", async () => {
+    const res = await knowledgeGraphHandler(db, { userId, } as never,);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { nodes: { id: string }[]; edges: unknown[] };
+    expect(body.nodes.length,).toBe(6,);
+    expect(body.edges.length,).toBe(4,);
+  });
+
+  test("knowledgeGraphHandler returns 401 without userId", async () => {
+    const res = await knowledgeGraphHandler(db, { userId: null, } as never,);
+    expect(res.status,).toBe(401,);
   });
 });
