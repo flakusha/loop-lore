@@ -1616,7 +1616,7 @@ Total tickets: **3628** — untagged: **2430** — unbound to epic: **1463**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2430 | 912 | 45 | 914 | 32 | 0 | 527 |
+| (untagged) | 2430 | 916 | 45 | 914 | 32 | 0 | 523 |
 
 ## By epic × status
 
@@ -2027,7 +2027,7 @@ Total tickets: **3628** — untagged: **2430** — unbound to epic: **1463**
 | review-dev-2026-08-26-security-data-integrity-merges | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | routing-versioning-consolidation | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | server-hardening | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
-| (unbound) | 1463 | 576 | 53 | 262 | 47 | 0 | 525 |
+| (unbound) | 1463 | 580 | 53 | 262 | 47 | 0 | 521 |
 
 ## Ticket detail
 

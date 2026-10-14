@@ -193,7 +193,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-addxp-accepts-negative-xp-producing-nan-level-stored-in-db.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-ANALYTICS-TAB-CRASHES-WHEN-API-OMITS-FIELDS": {
     "hash": "05bcb6e",
@@ -607,7 +607,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA": {
     "epic": "",
@@ -1896,7 +1896,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-character-import-ssrf-guard-matches-hostname-strings-instead.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED": {
     "epic": "",
@@ -4334,7 +4334,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-generation-continuation-maps-never-evicted-unbounded-process.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GENERATION-CONTROL-PLANE-ROUTES-LACK-AUTHORIZATION": {
     "epic": "epic-auth-permissions",
