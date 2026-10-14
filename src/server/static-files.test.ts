@@ -233,9 +233,9 @@ describeOrSkip("handleDocsRequest", () => {
 
   test("sets immutable cache control for hashed assets and max-age otherwise", () => {
     const fx = getFixtures();
-    writeFixture(fx.docs, "app.3c4f5a2b.js", "hashed",);
+    writeFixture(fx.docs, "app-3c4f5a2b.js", "hashed",);
     writeFixture(fx.docs, "app.js", "plain",);
-    const hashed = handleDocsRequest(...docsRequest("/docs/app.3c4f5a2b.js",), {},);
+    const hashed = handleDocsRequest(...docsRequest("/docs/app-3c4f5a2b.js",), {},);
     expect(hashed?.headers.get("cache-control",),).toBe("public, max-age=31536000, immutable",);
     const plain = handleDocsRequest(...docsRequest("/docs/app.js",), {},);
     expect(plain?.headers.get("cache-control",),).toBe("public, max-age=60",);
@@ -256,18 +256,25 @@ describeOrSkip("handleDocsRequest", () => {
     );
   });
 
-  test("treats uppercase hex hashes as immutable", () => {
+  test("treats lowercase base32 hashes as immutable", () => {
     const fx = getFixtures();
-    writeFixture(fx.docs, "app.ABCDEF12.js", "hashed",);
-    const res = handleDocsRequest(...docsRequest("/docs/app.ABCDEF12.js",), {},);
+    writeFixture(fx.docs, "app-abcdef12.js", "hashed",);
+    const res = handleDocsRequest(...docsRequest("/docs/app-abcdef12.js",), {},);
     expect(res?.headers.get("cache-control",),).toBe("public, max-age=31536000, immutable",);
   });
 
   test("does not treat short hashes as immutable", () => {
     const fx = getFixtures();
-    writeFixture(fx.docs, "app.abc123.js", "short-hash",);
-    const res = handleDocsRequest(...docsRequest("/docs/app.abc123.js",), {},);
+    writeFixture(fx.docs, "app-abc123.js", "short-hash",);
+    const res = handleDocsRequest(...docsRequest("/docs/app-abc123.js",), {},);
     expect(res?.headers.get("cache-control",),).toBe("public, max-age=60",);
+  });
+
+  test("treats real bun base32 hashes as immutable", () => {
+    const fx = getFixtures();
+    writeFixture(fx.docs, "alpine-tx4kdwfm.js", "hashed",);
+    const res = handleDocsRequest(...docsRequest("/docs/alpine-tx4kdwfm.js",), {},);
+    expect(res?.headers.get("cache-control",),).toBe("public, max-age=31536000, immutable",);
   });
 },);
 
