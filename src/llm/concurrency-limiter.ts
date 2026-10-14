@@ -44,6 +44,10 @@ export class ConcurrencyLimiter {
    */
   private readonly semaphore: SemaphoreIntrospection;
 
+  /**
+   * @param opts - the permit ceiling and its overflow behaviour
+   * @throws {RangeError} `opts.max` is not a positive integer
+   */
   constructor(opts: SemaphoreOptions,) {
     if (!Number.isInteger(opts.max,) || opts.max < 1) {
       throw new RangeError(`ConcurrencyLimiter: max must be a positive integer, got ${opts.max}`,);

@@ -78,6 +78,7 @@ export class EmotionAvatarService {
    * after avatar addition.
    * @param opts - Generation options
    * @returns Batch job ID for tracking
+   * @throws {Error} the base avatar is missing, or belongs to a different actor than `opts.actorId`
    */
   async startBatchGeneration(opts: GenerateEmotionAvatarsOpts,): Promise<BatchJobId> {
     const jobId = randomUUID() as BatchJobId;
