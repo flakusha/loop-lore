@@ -63,6 +63,8 @@ export class ChemistryService {
    * @param durationSeconds - overrides the effect default when given
    * @param magnitude - overrides the effect default when given
    * @param source
+   * @returns the id of the status row now carrying the effect
+   * @throws {Error} `effectId` is outside the known chemistry family
    */
   async applyEffect(
     targetActorId: string,
@@ -111,6 +113,7 @@ export class ChemistryService {
    * expired, or outside the chemistry family.
    * @param targetActorId
    * @param effectId
+   * @returns the narration metadata for the active row, or null when it is not active
    */
   async describeEffect(
     targetActorId: string,

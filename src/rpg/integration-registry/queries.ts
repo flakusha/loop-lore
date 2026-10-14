@@ -36,6 +36,7 @@ export interface GetContractArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.id
+ * @returns the contract definition, or undefined when the ID is unknown
  */
 export function getContract({ thisL, id, }: GetContractArgs,): InterfaceContract | undefined {
   return thisL.contracts.get(id,);
@@ -52,6 +53,7 @@ export interface GetDependenciesArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.systemId
+ * @returns the outgoing DependsOn and Bidirectional edges
  */
 export function getDependencies({ thisL, systemId, }: GetDependenciesArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
@@ -77,6 +79,7 @@ export interface GetDependentsArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.systemId
+ * @returns the incoming DependedBy and Bidirectional edges
  */
 export function getDependents({ thisL, systemId, }: GetDependentsArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
@@ -104,6 +107,7 @@ export interface GetEdgeArgs {
  * @param root0.thisL
  * @param root0.source
  * @param root0.target
+ * @returns the edge in either orientation, or undefined when the pair is unconnected
  */
 export function getEdge({ thisL, source, target, }: GetEdgeArgs,): IntegrationEdge | undefined {
   return (
@@ -125,6 +129,7 @@ export interface GetGapArgs {
  * @param root0.thisL
  * @param root0.source
  * @param root0.target
+ * @returns the recorded gap, or undefined when the pair has none
  */
 export function getGap({ thisL, source, target, }: GetGapArgs,): GapStatus | undefined {
   return getEdge({ thisL, source, target, },)?.gap;
@@ -139,6 +144,7 @@ export interface GetUnresolvedGapsArgs {
  * All unresolved gaps, severity-sorted.
  * @param root0
  * @param root0.thisL
+ * @returns the edges carrying an unresolved gap, worst severity first
  */
 export function getUnresolvedGaps({ thisL, }: GetUnresolvedGapsArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
@@ -165,6 +171,7 @@ export interface GetEventsArgs {
  * @param root0.thisL
  * @param root0.systemId
  * @param root0.direction
+ * @returns cross-system events touching this system on either side
  */
 export function getEvents(
   { thisL, systemId, direction, }: GetEventsArgs,
@@ -195,6 +202,7 @@ export interface GetSharedTypesArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.systemId
+ * @returns the contracts this system is listed as a sharer of
  */
 export function getSharedTypes({ thisL, systemId, }: GetSharedTypesArgs,): InterfaceContract[] {
   const out: InterfaceContract[] = [];
@@ -216,6 +224,7 @@ export interface ResolveEdgeInterfacesArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.edge
+ * @returns the contracts the edge names, skipping ids with no definition
  */
 export function resolveEdgeInterfaces({ thisL, edge, }: ResolveEdgeInterfacesArgs,): InterfaceContract[] {
   const out: InterfaceContract[] = [];
@@ -238,6 +247,7 @@ export interface GetStateLayersArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.systemId
+ * @returns the state layers this system owns
  */
 export function getStateLayers({ thisL, systemId, }: GetStateLayersArgs,): PlayerStateLayer[] {
   const out: PlayerStateLayer[] = [];
@@ -257,6 +267,7 @@ export interface GetGraphArgs {
  * Full adjacency list for Mermaid/graph rendering.
  * @param root0
  * @param root0.thisL
+ * @returns each system mapped to the systems it points at
  */
 export function getGraph({ thisL, }: GetGraphArgs,): Map<SystemId, SystemId[]> {
   const adj = new Map<SystemId, SystemId[]>();

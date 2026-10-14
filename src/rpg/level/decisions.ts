@@ -161,6 +161,7 @@ export async function resolveLevelUpDecision(
  * so a level threshold can never block an LLM actor's turn.
  * @param db
  * @param actorId
+ * @returns the resolution applied to the pending decision, or null for a player-controlled actor
  */
 export async function autoResolveIfAutonomous(
   db: Kysely<DB>,

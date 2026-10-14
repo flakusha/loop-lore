@@ -56,6 +56,7 @@ export class ReplayabilityService {
   /**
    * Start a new playthrough
    * @param input
+   * @returns the stored playthrough
    */
   async startPlaythrough(input: CreatePlaythroughInput,): Promise<Playthrough> {
     return startPlaythroughDispatch(this.db, input,);
@@ -64,6 +65,7 @@ export class ReplayabilityService {
   /**
    * Get playthrough by ID
    * @param playthroughId
+   * @returns the playthrough, or null when no such ID exists
    */
   async getPlaythrough(playthroughId: string,): Promise<Playthrough | null> {
     return getPlaythroughDispatch(this.db, playthroughId,);
@@ -73,6 +75,7 @@ export class ReplayabilityService {
    * Get all playthroughs for a player
    * @param playerId
    * @param worldId
+   * @returns the player's playthroughs, world-scoped when one is given
    */
   async getPlayerPlaythroughs(playerId: string, worldId?: string,): Promise<Playthrough[]> {
     return getPlayerPlaythroughsDispatch(this.db, playerId, worldId,);
@@ -84,6 +87,7 @@ export class ReplayabilityService {
    * @param endingId
    * @param endingType
    * @param completionTime
+   * @returns the playthrough as it stands once completed
    */
   async completePlaythrough(
     playthroughId: string,
@@ -97,6 +101,7 @@ export class ReplayabilityService {
   /**
    * Start new game plus
    * @param input
+   * @returns the new playthrough seeded from the previous run's ending
    */
   async startNewGamePlus(input: NewGamePlusInput,): Promise<Playthrough> {
     return startNewGamePlusDispatch(this.db, input,);
@@ -105,6 +110,7 @@ export class ReplayabilityService {
   /**
    * Record a choice made during playthrough
    * @param playthroughId
+   * @returns nothing; the choice is appended to the playthrough's history
    */
   async recordChoice(playthroughId: string,): Promise<void> {
     return recordChoiceDispatch(this.db, playthroughId,);
@@ -114,6 +120,7 @@ export class ReplayabilityService {
    * Record a secret found during playthrough
    * @param playthroughId
    * @param secretId
+   * @returns nothing; the secret is marked as found for this playthrough
    */
   async recordSecretFound(playthroughId: string, secretId: string,): Promise<void> {
     return recordSecretFoundDispatch(this.db, playthroughId, secretId,);
@@ -122,6 +129,7 @@ export class ReplayabilityService {
   /**
    * Get meta-progression for a player
    * @param playerId
+   * @returns the player's carried-over unlocks, endings and completion totals
    */
   async getMetaProgression(playerId: string,): Promise<MetaProgression> {
     return getMetaProgressionDispatch(this.db, playerId,);

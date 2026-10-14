@@ -55,6 +55,7 @@ export class EncounterService {
   /**
    * Create a new NSFW encounter.
    * @param opts
+   * @returns the stored encounter at its opening phase
    */
   async createEncounter(opts: CreateEncounterOpts,): Promise<NsfwEncounter> {
     assertNsfwConfigEnabled();
@@ -64,6 +65,7 @@ export class EncounterService {
   /**
    * Get an encounter by ID.
    * @param encounterId
+   * @returns the encounter, or null when no such ID exists
    */
   async getEncounter(encounterId: string,): Promise<NsfwEncounter | null> {
     return getEncounterDispatch(this.db, encounterId,);
@@ -74,6 +76,7 @@ export class EncounterService {
    *
    * Returns triggered outcomes if the encounter completes.
    * @param encounterId
+   * @returns the new phase plus any outcomes the completed encounter triggered
    */
   async advancePhase(encounterId: string,): Promise<AdvancePhaseResult> {
     assertNsfwConfigEnabled();
@@ -86,6 +89,7 @@ export class EncounterService {
    * @param opts
    * @param opts.completed
    * @param opts.type
+   * @returns the world's encounters, narrowed by any supplied filter
    */
   async listEncounters(
     worldId: string,
@@ -97,6 +101,7 @@ export class EncounterService {
   /**
    * Delete an encounter.
    * @param encounterId
+   * @returns true when the encounter was deleted
    */
   async deleteEncounter(encounterId: string,): Promise<boolean> {
     assertNsfwConfigEnabled();

@@ -20,6 +20,7 @@ import { type AwardXpResult, } from "./types.js";
  * @param db Transaction-scoped handle.
  * @param grant
  * @param ledgerId The already-recorded ledger row id.
+ * @returns the reconciled sheet result, marked deduped in both branches
  */
 export async function replayGrant(db: Kysely<DB>, grant: LedgerGrant, ledgerId: string,): Promise<AwardXpResult> {
   const stats = await ensureCharacterStats(db, grant.actorId,);
@@ -55,6 +56,7 @@ export async function replayGrant(db: Kysely<DB>, grant: LedgerGrant, ledgerId: 
  * Detect the (actor, source, reference_id) unique-constraint violation from
  * a concurrent winner so the loser can downgrade to a replay.
  * @param cause
+ * @returns true when the error is the xp_ledger unique-constraint collision
  */
 export function isLedgerUniqueViolation(cause: unknown,): boolean {
   const code = (cause as { code?: unknown } | null)?.code;

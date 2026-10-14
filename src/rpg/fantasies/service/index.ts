@@ -57,6 +57,7 @@ export class FantasyService {
   /**
    * Create a fantasy for an actor.
    * @param opts
+   * @returns the stored fantasy
    */
   async createFantasy(opts: CreateFantasyOpts,): Promise<Fantasy> {
     assertNsfwConfigEnabled();
@@ -66,6 +67,7 @@ export class FantasyService {
   /**
    * Get all fantasies for an actor.
    * @param actorId
+   * @returns every fantasy the actor has recorded
    */
   async getActorFantasies(actorId: string,): Promise<Fantasy[]> {
     return getActorFantasiesDispatch(this.db, actorId,);
@@ -75,6 +77,7 @@ export class FantasyService {
    * Get fantasies by category.
    * @param actorId
    * @param category
+   * @returns the actor's fantasies in that one category
    */
   async getByCategory(
     actorId: string,
@@ -88,6 +91,7 @@ export class FantasyService {
    * @param actorId
    * @param context
    * @param discoveryChance
+   * @returns the fantasy just discovered, or null when the roll came up short
    */
   async attemptDiscovery(
     actorId: string,
@@ -102,6 +106,7 @@ export class FantasyService {
    * Record exploration of a fantasy (after encounter).
    * @param fantasyId
    * @param feeling
+   * @returns true when the exploration was recorded
    */
   async recordExploration(
     fantasyId: string,
@@ -118,6 +123,7 @@ export class FantasyService {
    * @param forTarget
    * @param forTarget.actorId
    * @param forTarget.worldId
+   * @returns the intimacy and mood effects applied, or null when the fantasy was not fulfillable
    */
   async fulfill(
     fantasyId: string,
@@ -136,6 +142,7 @@ export class FantasyService {
    * (`character_mood`), never in an NSFW-private store.
    * @param actorId
    * @param worldId
+   * @returns the actor's current mood state, or undefined when none is recorded
    */
   async getMood(actorId: string, worldId?: string,): Promise<MoodState | undefined> {
     return MoodService(this.db,).getMood(actorId, worldId,);
@@ -152,6 +159,7 @@ export class FantasyService {
    * @param source
    * @param delta
    * @param worldId
+   * @returns the id of the logged mood event
    */
   async applyDelta(
     actorId: string,
@@ -173,6 +181,7 @@ export class FantasyService {
   /**
    * Delete a fantasy.
    * @param fantasyId
+   * @returns true when the fantasy was deleted
    */
   async deleteFantasy(fantasyId: string,): Promise<boolean> {
     assertNsfwConfigEnabled();
