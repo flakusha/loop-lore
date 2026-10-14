@@ -111,6 +111,42 @@ describe("safeFetchWithRetry — non-retryable failures", () => {
   });
 });
 
+describe("safeFetchWithRetry — non-idempotent methods (N21)", () => {
+  test("does not retry POST on 5xx", async () => {
+    const fetchMock = sequenceFetch([500, 200,],);
+    await withMockFetch(fetchMock, async () => {
+      const result = await safeFetchWithRetry("https://example.com/api", { method: "POST", body: {}, }, 3, 1,);
+      expect(result.ok,).toBe(false,);
+      if (!result.ok) { expect(result.error.message,).toContain("HTTP 500",); }
+      expect(fetchMock,).toHaveBeenCalledTimes(1,);
+    },);
+  });
+
+  test("does not retry PATCH on network error", async () => {
+    let i = 0;
+    const fetchMock = mock(() => {
+      i++;
+      return Promise.reject(new Error("ECONNRESET",),);
+    },);
+
+    await withMockFetch(fetchMock, async () => {
+      const result = await safeFetchWithRetry("https://example.com/api", { method: "PATCH", body: {}, }, 3, 1,);
+      expect(result.ok,).toBe(false,);
+      if (!result.ok) { expect(result.error.message,).toBe("ECONNRESET",); }
+      expect(fetchMock,).toHaveBeenCalledTimes(1,);
+    },);
+  });
+
+  test("still retries idempotent PUT on 5xx", async () => {
+    const fetchMock = sequenceFetch([500, 200,],);
+    await withMockFetch(fetchMock, async () => {
+      const result = await safeFetchWithRetry("https://example.com/api", { method: "PUT", body: {}, }, 3, 1,);
+      expect(result.ok,).toBe(true,);
+      expect(fetchMock,).toHaveBeenCalledTimes(2,);
+    },);
+  });
+});
+
 describe("safeFetchWithRetry — exhaustion", () => {
   test("gives up after retries+1 attempts and returns last error", async () => {
     const fetchMock = sequenceFetch([500,],);

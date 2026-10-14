@@ -151,7 +151,7 @@ describe("safeFetch — timeout and abort", () => {
     },);
   });
 
-  test("external abort surfaces as timeout error (current behavior)", async () => {
+  test("external abort surfaces as an abort, not a timeout (N20)", async () => {
     const controller = new AbortController();
     const promise = withMockFetch(neverResolvingFetch(), async () => {
       const result = await safeFetch("https://example.com/slow", {
@@ -160,7 +160,7 @@ describe("safeFetch — timeout and abort", () => {
       },);
 
       expect(result.ok,).toBe(false,);
-      if (!result.ok) { expect(result.error.message,).toBe("Request timed out after 5000ms",); }
+      if (!result.ok) { expect(result.error.message,).toBe("Request aborted",); }
     },);
 
     setTimeout(() => controller.abort(), 10,);

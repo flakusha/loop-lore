@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { ErrorEvent, } from "../../validation/schemas/responses";
+import { SANITIZE_CONFIG, } from "./chat-utils/sanitize";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
@@ -11,7 +12,8 @@ import type { ChatState, } from "./types";
 import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "chat", },);
-const getDOMPurify = () => (globalThis as any).__DOMPurify as { sanitize(html: string,): string } | undefined;
+const getDOMPurify = () =>
+  (globalThis as any).__DOMPurify as { sanitize(html: string, config?: unknown,): string } | undefined;
 
 export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
   /**
@@ -208,7 +210,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     const DOMPurify = getDOMPurify();
     const html = `${this._streamToolCalls.join("",)}${this._streamContent}`;
     if (DOMPurify) {
-      container.innerHTML = DOMPurify.sanitize(html,);
+      container.innerHTML = DOMPurify.sanitize(html, SANITIZE_CONFIG,);
       return;
     }
 

@@ -26,13 +26,13 @@ function runOrExit(args: string[],): Buffer {
 }
 
 function tableNames(db: Database,): string[] {
-  return db.query<{ name: string }>(
+  return db.query<{ name: string }, []>(
     "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name;",
   ).all().map((row,) => row.name);
 }
 
 function rowCount(db: Database, table: string,): number {
-  const row = db.query<{ total: number }>(`SELECT count(*) AS total FROM "${table.replaceAll('"', '""',)}"`,).get();
+  const row = db.query<{ total: number }, []>(`SELECT count(*) AS total FROM "${table.replaceAll('"', '""',)}"`,).get();
   return row?.total ?? 0;
 }
 
@@ -119,7 +119,7 @@ function runValidation(): void {
 
     // Step 3: Database integrity check via bun:sqlite
     const db = new Database(decryptedFile,);
-    const integrityResult = db.query<{ integrity_check: string }>("PRAGMA integrity_check;",).get();
+    const integrityResult = db.query<{ integrity_check: string }, []>("PRAGMA integrity_check;",).get();
     if (!integrityResult || integrityResult.integrity_check !== "ok") {
       log(`ERROR: Database integrity check failed: ${JSON.stringify(integrityResult,)}`,);
       db.close();
