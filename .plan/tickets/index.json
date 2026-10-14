@@ -690,7 +690,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-asset-upload-chat-key-derivation-failure-silently-downgrades.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES": {
     "epic": "",
@@ -4477,7 +4477,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-git-commands-in-commit-check-and-version-bump-are-built-by-s.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GIWT-ABORT-RUNS-UNSCOPED-GIT-RESET-HARD-THAT-DESTROYS-UNRELA": {
     "hash": "369910b",
@@ -4895,7 +4895,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-handleupdatepersona-stores-untyped-tuning-fields-verbatim.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-HARDEN-AUTH-REFUSE-OR-LOUDLY-GATE-NON-LOOPBACK-BIND-WHILE-AU": {
     "hash": "efe1b48",
@@ -5515,7 +5515,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-LOCATION-CONNECTIONS-VALIDATION-ACCEPTS-JUNK-AND-PERSISTS-IT": {
     "epic": "",
@@ -6462,7 +6462,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-npc-buy-and-sell-double-record-trade-history.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-NPC-MIGRATION-WITH-DELETED-DESTINATION-LEAVES-NPC-STUCK-AT-O": {
     "hash": "e70009f",
@@ -7263,7 +7263,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-put-api-users-id-settings-mass-assigns-the-request-body-and-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PUT-MESSAGES-ID-VARIANT-SILENTLY-RETURNS-200-WITH-NO-VARIANT": {
     "epic": "",
