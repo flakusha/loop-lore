@@ -2673,6 +2673,19 @@
     "source": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md",
     "status": "Not Started"
   },
+  "BUG-CONTENT-HASH-NAMING-FOR-GENERATED-ASSETS": {
+    "hash": "f7527f0",
+    "git_issue": "f7527f0",
+    "extid": "BUG-CONTENT-HASH-NAMING-FOR-GENERATED-ASSETS",
+    "type": "BUG",
+    "title": "Content-hash naming for generated assets",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/BUG-content-hash-naming-for-generated-assets.md",
+    "status": "Not Started"
+  },
   "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK": {
     "epic": "",
     "extid": "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK",
@@ -9247,6 +9260,19 @@
     "tags": [],
     "title": "whitenote UI types rejected 422",
     "type": "BUG"
+  },
+  "BUG-WIRE-ENCRYPTION-FOR-GENERATED-IMAGES": {
+    "hash": "df32ec9",
+    "git_issue": "df32ec9",
+    "extid": "BUG-WIRE-ENCRYPTION-FOR-GENERATED-IMAGES",
+    "type": "BUG",
+    "title": "Wire encryption for generated images",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-wire-encryption-for-generated-images.md",
+    "status": "Not Started"
   },
   "BUG-WORKFLOW-CONFIRM-SESSION-TREATS-OPTIONAL-STEPS-AS-REQUIRED": {
     "epic": "",
@@ -18581,6 +18607,19 @@
     "source": ".plan/tickets/FEAT-gguf-kv-typed-reader-with-arch-templated-key-registry.md",
     "status": "Not Started"
   },
+  "FEAT-GROUP-BLOG-ACCESS-CONTROL-FOR-GENERATED-ASSETS": {
+    "hash": "1c7ec59",
+    "git_issue": "1c7ec59",
+    "extid": "FEAT-GROUP-BLOG-ACCESS-CONTROL-FOR-GENERATED-ASSETS",
+    "type": "FEAT",
+    "title": "Group/blog access control for generated assets",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-group-blog-access-control-for-generated-assets.md",
+    "status": "Not Started"
+  },
   "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION": {
     "epic": "epic-character-spec",
     "extid": "FEAT-GURPS-POINT-BUY-CHARACTER-CREATION",
@@ -19351,6 +19390,19 @@
     "tags": [],
     "title": "Output styling: custom genres via ECE",
     "type": "FEAT"
+  },
+  "FEAT-OUTPUT-TEMPLATE-VARIABLE-SUPPORT": {
+    "hash": "33519cb",
+    "git_issue": "33519cb",
+    "extid": "FEAT-OUTPUT-TEMPLATE-VARIABLE-SUPPORT",
+    "type": "FEAT",
+    "title": "{{output}} template variable support",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-output-template-variable-support.md",
+    "status": "Not Started"
   },
   "FEAT-PER-AGENT-USER-COST-GOVERNANCE": {
     "epic": "proposed:epic-cost-governance",
@@ -30977,6 +31029,19 @@
     "source": ".plan/tickets/TASK-consolidate-duplicated-token-estimation.md",
     "status": "Not Started"
   },
+  "TASK-CONSOLIDATE-IMAGE-GEN-ROUTE-TO-PERSISTGENERATEDIMAGES": {
+    "hash": "14a6c18",
+    "git_issue": "14a6c18",
+    "extid": "TASK-CONSOLIDATE-IMAGE-GEN-ROUTE-TO-PERSISTGENERATEDIMAGES",
+    "type": "TASK",
+    "title": "Consolidate image-gen-route to persistGeneratedImages",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consolidate-image-gen-route-to-persistgeneratedimages.md",
+    "status": "Not Started"
+  },
   "TASK-CONSOLIDATE-QUEST-ENGINES": {
     "epic": "epic-quests-encounters",
     "extid": "TASK-CONSOLIDATE-QUEST-ENGINES",
@@ -38393,6 +38458,19 @@
     "tags": [],
     "title": "Implement crafting UI",
     "type": "TASK"
+  },
+  "TASK-IMPLEMENT-ENTITY-BASED-ASSET-ACCESS-VIA-ASSET-LINKS": {
+    "hash": "5596548",
+    "git_issue": "5596548",
+    "extid": "TASK-IMPLEMENT-ENTITY-BASED-ASSET-ACCESS-VIA-ASSET-LINKS",
+    "type": "TASK",
+    "title": "Implement entity-based asset access via asset_links",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "tags": [],
+    "source": ".plan/tickets/TASK-implement-entity-based-asset-access-via-asset-links.md",
+    "status": "Not Started"
   },
   "TASK-IMPLEMENT-ITEM-TRANSFER-EVENT": {
     "epic": "epic-item-systems-unification",
