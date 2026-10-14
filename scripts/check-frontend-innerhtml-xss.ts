@@ -143,7 +143,7 @@ function isSafe(expr: string, src?: string,): boolean {
   if (/^\s*[\w$.]+\s*\?\s*"[^"]*"\s*:\s*"[^"]*"\s*$/.test(ex,)) { return true; }
   // variable whose definition is a string-literal ternary
   if (src) {
-    const m = new RegExp(`(?:const|let|var)\\s+${ex}\\s*=\\s*([\w$.]+\\s*\\?\\s*"[^"]*"\\s*:\\s*"[^"]*")`,).exec(src,);
+    const m = new RegExp(`(?:const|let|var)\\s+${ex}\\s*=\\s*([\\w$.]+\\s*\\?\\s*"[^"]*"\\s*:\\s*"[^"]*")`,).exec(src,);
     if (m) { return true; }
   }
   return false;
