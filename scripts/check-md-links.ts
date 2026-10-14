@@ -3,12 +3,14 @@
 // size-allow: 300
 
 /**
- * KEEP LOCAL. Superseded by upstream giwt ticket
- * FEAT-plan-check-links-fix-to-auto-repair-… (filed at giwt b4d1928; still
- * unimplemented — `giwt plan check-links --fix` exits 1, `--fix` rejected as
- * an unknown arg). The no-flag `giwt plan check-links` DOES work, but it has
- * no repair mode, so `md:links:fix` must keep resolving here. When the
- * ticket lands, repoint `md:links:fix` and delete this file.
+ * KEEP LOCAL. `giwt plan check-links` exists and works, but it has no repair
+ * mode: `giwt plan check-links --fix` prints the usage line and exits 1, so
+ * `md:links:fix` must keep resolving here. Coverage also differs — both exit 0
+ * on this tree, but over 7500 markdown files giwt reports 2752 source files
+ * scanned against this script's 4260, so this script checks a wider src/ set
+ * for stale doc/plan citations.
+ * When upstream adds `--fix`, repoint `md:links:fix` and delete this file
+ * plus scripts/lib/src-refs.ts.
  *
  * Markdown stale-link guard.
  *

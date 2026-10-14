@@ -7,5 +7,5 @@
     "noUncheckedIndexedAccess": false,
     "typeRoots": ["./node_modules/@types", "./node_modules/bun-types"]
   },
-  "include": ["scripts/plan/**/*.ts", "scripts/check/**/*.ts"]
+  "include": ["scripts/check/**/*.ts"]
 }
