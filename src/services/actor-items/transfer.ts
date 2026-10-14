@@ -33,6 +33,8 @@ export interface TransferResult {
  * @param quantity
  * @param trx
  * @returns {Promise<TransferResult>}
+ * @throws {SelfTransferError} source and destination are the same actor
+ * @throws {InvalidQuantityError} `quantity` is not a positive integer
  */
 export async function transferItems(
   db: Kysely<DB>,
