@@ -85,6 +85,7 @@ const CREATED_AT_PATTERN = /^\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2})?)?/;
 /**
  * Normalise ISO-8601 into SQLite's `created_at` text form.
  * @param iso
+ * @returns the timestamp in SQLite `created_at` form; a date-only input is padded to midnight
  * @throws {Error} when `iso` is not a recognisable date/datetime
  */
 export function normalizeTimestamp(iso: string,): string {
@@ -104,6 +105,7 @@ export function normalizeTimestamp(iso: string,): string {
 /**
  * Split a `<type>[:<id>]` selector; `entityId` is absent when not supplied.
  * @param value
+ * @returns the entity type, plus the id half only when the selector carried one
  * @throws {Error} when either half of the selector is empty
  */
 export function parseEntitySelector(
@@ -122,6 +124,7 @@ export function parseEntitySelector(
 /**
  * Clamp a requested row count into `[1, LIMIT_CAP]` (`undefined` yields `DEFAULT_LIMIT`).
  * @param limit
+ * @returns the row count to query with: `DEFAULT_LIMIT` when unset, otherwise clamped into `[1, LIMIT_CAP]`
  */
 export function clampLimit(limit?: number,): number {
   if (limit === undefined) { return DEFAULT_LIMIT; }
@@ -134,6 +137,7 @@ export function clampLimit(limit?: number,): number {
  * narrows the leading column.
  * @param db
  * @param opts
+ * @returns the matching rows, newest first
  * @throws {Error} on a malformed `--entity` selector or ISO timestamp
  */
 export async function queryLogEntries(
@@ -176,7 +180,10 @@ export async function queryLogEntries(
   return query.execute() as Promise<LogEntry[]>;
 }
 
-/** CLI entry point. @returns 0 on success, 1 on a bad selector/timestamp or unreadable DB */
+/**
+ * CLI entry point.
+ * @returns 0 on success, 1 on a bad selector/timestamp or unreadable DB
+ */
 export async function main(): Promise<number> {
   const parser = object({
     event: optional(option("--event", string(),),),
