@@ -22,6 +22,7 @@ export interface LogTableRow {
 /**
  * Render rows as a fixed-width table for humans.
  * @param entries
+ * @returns the header row and one padded line per entry, joined by newlines
  */
 export function formatTable(entries: LogTableRow[],): string {
   const header = ["CREATED_AT", "LEVEL", "EVENT", "ENTITY", "USER", "MESSAGE",];

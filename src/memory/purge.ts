@@ -30,6 +30,7 @@ const DEFAULT_STALE_AFTER_CHATS = 10;
  * @param db
  * @param opts
  * @param opts.now
+ * @returns how many memories had their strength reduced
  */
 export async function applyDecay(
   db: Kysely<DB>,

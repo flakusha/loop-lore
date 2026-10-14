@@ -70,6 +70,7 @@ export interface PlanningService {
 
 /**
  * @param database
+ * @returns a `PlanningService` bound to this database
  */
 export function createPlanningService(database: Kysely<DB>,): PlanningService {
   return {

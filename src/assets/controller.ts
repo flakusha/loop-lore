@@ -83,6 +83,7 @@ import { isSignedUrlAction, resolveSignedUrlSecret, signAssetUrl, } from "./sign
  * sanitized 500, internals logged. Split out of the PUT handler so the
  * unexpected path (and its no-leak contract) is unit-testable.
  * @param err - Thrown value from the transform upsert
+ * @returns a 400 carrying the validation message, or a sanitized 500 for anything unexpected
  */
 export function transformErrorResponse(err: unknown,): Response {
   if (err instanceof InvalidTransformError) { return badRequestResponse(err.message,); }

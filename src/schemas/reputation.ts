@@ -95,6 +95,7 @@ export function getReputationTier(value: number): ReputationTier {
 /**
  * Clamp a reputation value to the valid range [-100, +100].
  * @param value
+ * @returns the value bounded into range — equal to the input when it is already inside it
  */
 export function clampReputation(value: number): number {
   return Math.max(-100, Math.min(100, value,));
@@ -106,6 +107,7 @@ export function clampReputation(value: number): number {
  * @param params.source
  * @param params.initial_value
  * @param params.decay_rate
+ * @returns a score whose value is the clamped `initial_value` and whose tier is derived from it
  */
 export function createReputationScore(params: {
   source: ReputationSource;
