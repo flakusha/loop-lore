@@ -88,6 +88,14 @@ describe("v1 API versioning", () => {
     expect(res.status,).toBe(401,);
   });
 
+  // A barrel that swallowed unknown /api/v1/* paths would let a typo'd or
+  // unversioned client call succeed as a no-op instead of 404ing.
+  test("GET /api/v1/<unknown> is 404 — the barrel is not a catch-all", async () => {
+    const app = createV1App(db, userId,);
+    const res = await app.handle(new Request("http://localhost/api/v1/definitely-not-a-route",),);
+    expect(res.status,).toBe(404,);
+  });
+
   test("GET /api/v1/users/me returns 200 (userId flows through v1 barrel)", async () => {
     const app = createV1App(db, userId,);
     const res = await app.handle(new Request("http://localhost/api/v1/users/me",),);
