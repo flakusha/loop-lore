@@ -8,15 +8,13 @@
  * generateImages is mocked so no real image generation occurs.
  */
 import { beforeEach, expect, it, mock, } from "bun:test";
-import { randomUUID, } from "node:crypto";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 // Capture real modules before mocking so each mock re-exposes the module's
 // other exports and overrides only the specific function under test. Bun's
 // mock.module leaks across files without --isolate; mocking a whole module
 // clobbers every other export it provides (e.g. safeJsonParse in ../utils),
 // breaking unrelated tests that import the same barrel/module.
-import * as realAssetCreate from "../assets/service/create";
-import * as realAssetLinks from "../assets/service/links";
+import * as realPersistGenerated from "../assets/service/persist-generated";
 import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
 // (no realDb import: ../db/index is intentionally unstubbed; see NOTE above)
@@ -25,14 +23,13 @@ import type { TemplateModality, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, } from "../test-utils/insert-helpers";
-import * as realUtils from "../utils";
 import * as realImageEngine from "./image-engine";
 import type * as imageGenRoute from "./image-gen-route";
 
 // ── Mutable call-history containers (mutated in beforeEach, read in tests) ──────
 
 const generateImagesCalls: Array<[unknown, Record<string, unknown>,]> = [];
-const linkAssetCalls: Array<{ entityType: string; entityId: string; label: string }> = [];
+const persistGeneratedCalls: Array<{ links: Array<{ entityType: string; entityId: string; label: string }> }> = [];
 /** When set, mockGenerateImages fails with this outcome (provider-error path). */
 let generateError: { ok: false; error: string; status: number } | null = null;
 
@@ -55,11 +52,6 @@ async function mockGenerateImages(
   };
 }
 
-/** */
-function mockUid() {
-  return randomUUID();
-}
-
 const mockAsset = {
   id: "asset-1",
   filename: "generated-abc12345.png",
@@ -69,15 +61,11 @@ const mockAsset = {
 /**
  * @param _opts
  */
-async function mockCreateAsset(_opts: unknown,) {
-  return { asset: mockAsset, };
-}
-
-/**
- * @param _opts
- */
-async function mockLinkAsset(opts: { link: { entityType: string; entityId: string; label: string } },) {
-  linkAssetCalls.push(opts.link,);
+async function mockPersistGeneratedImages(
+  opts: { links: Array<{ entityType: string; entityId: string; label: string }> },
+) {
+  persistGeneratedCalls.push({ links: opts.links, },);
+  return [{ asset: mockAsset, duplicate: false, },];
 }
 
 // NOTE: no getDatabase stub on purpose. The SUT only threads the handle to
@@ -143,22 +131,12 @@ if (ISOLATED) {
     generateImages: mockGenerateImages,
   }),);
 
-  mock.module("../utils", () => ({
-    ...realUtils,
-    uid: mockUid,
-  }),);
-
   // Narrow mocks to the specific submodules the SUT imports. Mocking the
   // whole `../assets/service` barrel would clobber
   // detectAssetType/unlinkAsset/getAsset/etc.
-  mock.module("../assets/service/create", () => ({
-    ...realAssetCreate,
-    createAsset: mockCreateAsset,
-  }),);
-
-  mock.module("../assets/service/links", () => ({
-    ...realAssetLinks,
-    linkAsset: mockLinkAsset,
+  mock.module("../assets/service/persist-generated", () => ({
+    ...realPersistGenerated,
+    persistGeneratedImages: mockPersistGeneratedImages,
   }),);
 
   // No ../db/index stub (see NOTE above).
@@ -230,7 +208,7 @@ const COMFYUI_CONFIG = {
 describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
-    linkAssetCalls.length = 0;
+    persistGeneratedCalls.length = 0;
     generateError = null;
   },);
 
@@ -574,8 +552,18 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       );
 
       expect(res.status,).toBe(200,);
-      expect(linkAssetCalls,).toContainEqual({ entityType: "message", entityId: "msg-1", label: "generated", },);
-      expect(linkAssetCalls,).toContainEqual({ entityType: "chat", entityId: "chat-1", label: "generated", },);
+      expect(persistGeneratedCalls,).toHaveLength(1,);
+      expect(persistGeneratedCalls[0]!.links,).toContainEqual({
+        entityType: "message",
+        entityId: "msg-1",
+        label: "generated",
+      },);
+
+      expect(persistGeneratedCalls[0]!.links,).toContainEqual({
+        entityType: "chat",
+        entityId: "chat-1",
+        label: "generated",
+      },);
     } finally {
       await db.destroy();
     }
