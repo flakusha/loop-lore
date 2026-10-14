@@ -3,19 +3,28 @@
 
 /**
  * KEEP LOCAL (not one of the four provider gaps, but the same principle).
- * giwt ships this check at node_modules/giwt/scripts/ and is expected to
- * export it once TASK-expose-file-size-check-via-public-api lands. It is NOT
- * a drop-in yet: its scan covers only src glob TS and exempts nothing but
- * test files, so against this repo it exits 1 on 7 generated DB-type modules
- * and src/db/migrations entries that this script exempts via the generated
- * banner and the migrations rule. Verified: giwt copy EXIT=1, this EXIT=0.
+ * giwt ships this check at node_modules/giwt/scripts/. It is NOT a drop-in:
+ * its scan covers only the src TS glob and exempts nothing but test files, so
+ * against this repo it reports generated DB-type modules and src/db/migrations
+ * entries that this script exempts via the generated banner and the migrations
+ * rule. Verified on the pinned build — --strict flags 10 files (db-schemas.ts,
+ * insert-helpers.ts, schema-{core,story,character,manifest}.ts, 001_init.ts and
+ * 3 real offenders) where this script flags 3, so repointing the gate would
+ * block on 7 non-defects.
  *
- * Line-count guard for source files.
+ * CODE-line guard for source files.
  *
  * Surfaces source files exceeding the 250L soft ceiling so agents can split
  * them before they become god-modules. Mirrors
  * `docs/meta/code-practices-improvements/04-code-organization-and-splitting.md`
  * (the <200L AGENTS.md convention, 250L soft limit).
+ *
+ * The budget counts CODE lines only: comment and documentation lines do not
+ * count toward it. A file's complexity is its executable lines, so a JSDoc
+ * sweep adding `@param`/`@returns` must not push an already-fine module over
+ * budget. Comment detection is the TypeScript scanner's, so a `//` inside a
+ * string literal, a URL or a regex is CODE, and a trailing comment never
+ * demotes the code line it sits on.
  *
  * Exclusions:
  * - Test files (`*.test.ts`) and migrations may legitimately be large.
@@ -34,6 +43,7 @@
  * Usage: `bun run scripts/check-file-size.ts [--strict] [--limit N]`
  */
 import { Glob, } from "bun";
+import ts from "typescript";
 import {
   flag,
   integer,
@@ -61,41 +71,86 @@ const GENERATED_MARKER = "DO NOT EDIT MANUALLY";
 const SIZE_ALLOW_RE = /^\/\/\s*size-allow:\s*(\d+)\s*$/m;
 const HEADER_BYTES = 512;
 
+// Whitespace-only characters tallyLines skips, and the one line terminator.
+const TAB = 9;
+const NEWLINE = 10;
+const CARRIAGE_RETURN = 13;
+const SPACE = 32;
+
 /**
- * Count non-blank content lines.
+ * Lines that carry code vs. lines that carry only comments.
  *
- * Blank lines (empty or whitespace-only) are separators, not content, so the
- * padding-line rule's paragraph breaks never push a file over budget.
+ * A line is CODE when it holds at least one non-whitespace character outside a
+ * comment; otherwise a line holding only a comment is a COMMENT line, and a
+ * blank line is neither. So `code + comment` is the non-blank line count, a
+ * trailing comment costs nothing (`const x = 1; // note` is one CODE line), and
+ * 500 lines of JSDoc above 30 lines of code counts as 30.
  *
- * A trailing newline TERMINATES the last line; it does not begin a new one.
- * `split("\n").length` counts that empty tail as a line, so every
- * newline-terminated file was reported one line over its true size and was
- * failed even when it sat exactly at its declared `size-allow`.
+ * Comment ranges come from `ts.createScanner`, NOT from a `//` string test: the
+ * scanner knows when a `//` sits inside a string, template or regex, so URLs
+ * and regex literals count as code. Its raw token stream mis-lexes a template
+ * literal's tail (it never rescans template tokens), which can only leave a
+ * comment UNrecognised there — that over-counts code, the safe direction for a
+ * size gate.
  *
- * Stripping the single trailing newline — rather than counting "\n"
- * occurrences the way `wc -l` does — also counts the final partial line of a
- * file that has no trailing newline. `wc -l` under-reports those by one, which
- * would only trade this bug for its mirror image.
+ * The scan classifies token KINDS; the tally below classifies CHARACTERS, so a
+ * line holding only a closing brace (`}`, `);`, `},`) still counts as code — an
+ * AST walk over node start positions misses those, and a `getChildren()` walk
+ * re-counts JSDoc.
  *
  * @param text - full file contents
- * @returns number of non-blank lines of content
+ * @returns the code-line and comment-line counts
  */
-export function countContentLines(text: string,): number {
-  if (text === "") { return 0; }
-  const body = text.endsWith("\n",) ? text.slice(0, -1,) : text;
-  return body.split("\n",).filter((line,) => line.trim() !== "").length;
+export function tallyLines(text: string,): { code: number; comment: number } {
+  const isComment = new Uint8Array(text.length,);
+  const scanner = ts.createScanner(
+    ts.ScriptTarget.Latest,
+    false,
+    ts.LanguageVariant.Standard,
+    text,
+    () => {},
+  );
+  for (let kind = scanner.scan(); kind !== ts.SyntaxKind.EndOfFileToken; kind = scanner.scan()) {
+    if (
+      kind === ts.SyntaxKind.SingleLineCommentTrivia || kind === ts.SyntaxKind.MultiLineCommentTrivia
+    ) {
+      isComment.fill(1, scanner.getTokenStart(), scanner.getTokenEnd(),);
+    }
+  }
+
+  let code = 0;
+  let comment = 0;
+  let sawCode = false;
+  let sawComment = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text.charCodeAt(i,);
+    if (ch === NEWLINE) {
+      if (sawCode) { code++; }
+      else if (sawComment) { comment++; }
+      sawCode = false;
+      sawComment = false;
+    } else if (ch !== SPACE && ch !== TAB && ch !== CARRIAGE_RETURN) {
+      if (isComment[i] === 1) { sawComment = true; }
+      else { sawCode = true; }
+    }
+  }
+  // A trailing newline TERMINATES the last line, it does not start a new one,
+  // so the final partial line is only tallied when the file lacks that newline.
+  if (sawCode) { code++; }
+  else if (sawComment) { comment++; }
+  return { code, comment, };
 }
 
 /**
- * Whether a file's content lines exceed its budget. A file sitting exactly at
- * its limit is compliant; only going over fails.
+ * Whether a file's CODE lines exceed its budget. A file sitting exactly at its
+ * limit is compliant; only going over fails.
  *
- * @param text - full file contents
+ * @param code - the file's code-line count, from tallyLines
  * @param limit - the line budget to compare against
  * @returns true when the file is over budget
  */
-export function exceedsSizeAllow(text: string, limit: number,): boolean {
-  return countContentLines(text,) > limit;
+export function exceedsSizeAllow(code: number, limit: number,): boolean {
+  return code > limit;
 }
 
 /**
@@ -122,7 +177,7 @@ if (import.meta.main) {
     },),
     {
       programName: "check-file-size",
-      brief: "Report source files over the per-file line budget (250 by default).",
+      brief: "Report source files over the per-file CODE-line budget (250 code lines by default).",
       help: "option",
     },
   );
@@ -138,8 +193,10 @@ if (import.meta.main) {
       const text = await Bun.file(file,).text();
       if (text.includes(GENERATED_MARKER,)) { continue; }
       const fileLimit = sizeAllowFor(text, LIMIT,);
-      if (exceedsSizeAllow(text, fileLimit,)) {
-        const msg = `[size] ${file}: ${countContentLines(text,)}L exceeds ${fileLimit}L limit`;
+      const { code, comment, } = tallyLines(text,);
+      if (exceedsSizeAllow(code, fileLimit,)) {
+        const tally = `${code + comment} lines (${code} code, ${comment} comment)`;
+        const msg = `[size] ${file}: ${tally} — limit ${fileLimit}`;
         if (STRICT) {
           console.error(msg + " - must split (see 04)",);
           errors++;
@@ -152,12 +209,12 @@ if (import.meta.main) {
   }
 
   if (STRICT && errors > 0) {
-    console.error(`[size] ${errors} file(s) over ${LIMIT}L - CI gate failed.`,);
+    console.error(`[size] ${errors} file(s) over ${LIMIT} code lines - CI gate failed.`,);
     process.exit(1,);
   }
 
   if (warnings > 0) {
-    console.warn(`[size] ${warnings} file(s) over ${LIMIT}L. Non-blocking - split when convenient.`,);
+    console.warn(`[size] ${warnings} file(s) over ${LIMIT} code lines. Non-blocking - split when convenient.`,);
   }
   process.exit(0,);
 }

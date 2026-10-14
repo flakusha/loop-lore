@@ -60,5 +60,104 @@
     "require-element": false,
     "require-attr": false,
     "require-accessible-name": false
+  },
+  "overrideMode": "merge",
+  "overrides": {
+    "src/components/{asset-preview-modal,autonomy-panel,edge-mode-options,filter-bar,filter-chips,key-management,location-options}.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/components/3d/view-mode-switcher.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/components/character/{emotion-avatars-panel,entities-panel,extension-editor-panel,licensing-panel,systems-panel,traits-panel,wardrobe-panel}.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/components/chat/{_gm-guidance-body,assistant-panel,background-panel,branch-list-panel,branch-merge-modal,chat-header,chat-list-panel,chat-settings-modal,emotion-avatars-panel,gallery-sidebar,gm-panel,gm-quests-panel,gm-story-panel,input-area,keynav-help,location-panel,memory-panel,message-list,mood-panel,music-panel,participant-mgmt,pins-panel,rpg-questions,sections-panel,story-view,wizard-panel}.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/components/harness/admin-harness-panel.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/components/modals/settings.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/views/{admin,blog,config,layout,notifications,personas,quests,settings,world-detail,world-edit}.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
+    "src/views/partials/character-growth-editor.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    }
   }
 }
