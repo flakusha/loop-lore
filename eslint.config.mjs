@@ -240,8 +240,15 @@ export default [
       jsdoc,
     },
     rules: {
-      "jsdoc/require-param": "warn",
-      "jsdoc/require-returns": "warn",
+      // Options chosen so the rules enforce AGENTS.md rather than contradict it:
+      // `@param`/`@returns` only when the signature does not already say it.
+      // `checkDestructured: false` — a destructured options object is typed in the
+      // destructuring annotation; `@param opts.sessionId` restates the type.
+      // `checkGetters: false` — a getter's name and type state what it returns.
+      // `publicOnly` — only exported API is held to the coverage bar, so the
+      // remaining findings are real contract gaps (see TASK-jsdoc-coverage-cleanup-public-exports).
+      "jsdoc/require-param": ["warn", { checkDestructured: false }],
+      "jsdoc/require-returns": ["warn", { checkGetters: false, publicOnly: true }],
       "jsdoc/require-throws": "warn",
       // Descriptions and example are optional — keep JSDoc terse to avoid
       // inflating files past the 200-line ceiling.
