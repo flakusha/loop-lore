@@ -11,6 +11,7 @@
  * @param value
  * @param min
  * @param max
+ * @returns `value` pulled inside `[min, max]`
  */
 export function clamp(value: number, min: number, max: number,): number {
   if (value < min) { return min; }
