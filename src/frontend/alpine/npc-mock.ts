@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later,// SPDX-FileCopyrightText: 2026 Loop Lore Contributors,,/**, * Mock NPC data + standing tiers for the NPC management UI (frontend dev)., */
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { NpcData, NpcRelationship, StandingTier, } from "./chat-types/npc.js";
 
