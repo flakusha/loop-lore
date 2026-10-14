@@ -118,7 +118,12 @@ function toCraftAttempt(r: {
 /**
  * Consume each recipe material from the actor's inventory inside the craft
  * transaction, deleting rows that reach zero.
+ * @param trx the craft transaction every read and write must join
+ * @param actorId whose inventory the materials are drawn from
+ * @param matRows the recipe's material lines to satisfy
+ * @param defMap item id to inventory name lookup
  * @throws {Error} when an item definition or the stocked quantity is missing
+ * @returns what was taken, one record per material line
  */
 async function consumeRecipeMaterials(
   trx: Kysely<DB>,
@@ -156,6 +161,9 @@ async function consumeRecipeMaterials(
 /**
  * EPIC-036 discovery gate: a recipe not flagged `discovered_by_default` must
  * be discovered first; an experimentation attempt bypasses the gate.
+ * @param db handle used for the discovery lookup
+ * @param opts the attempt being gated
+ * @param recipe row whose `discovered_by_default` flag decides the gate
  * @returns true when this attempt experiments on an undiscovered recipe
  * @throws {Error} when the recipe is undiscovered and not an experiment
  */
@@ -173,6 +181,10 @@ async function requireDiscovery(
 /**
  * Record an experimentation discovery inside the craft transaction: only on
  * a successful roll; unique on (actor, recipe) makes it idempotent.
+ * @param trx the craft transaction the discovery is written into
+ * @param opts the attempt whose recipe is being recorded
+ * @param success whether the roll succeeded
+ * @returns the new discovery row, or null on a failed roll or an already-known recipe
  */
 async function recordExperimentation(
   trx: Kysely<DB>,
@@ -200,6 +212,7 @@ export class CraftingProcessService {
   /**
    * @param opts
    * @throws {Error} When the recipe, materials, or station are missing/invalid.
+   * @returns the recorded attempt, its quality and output, plus any recipe discovered by experimenting
    */
   async attemptCraft(opts: CraftAttemptOpts,): Promise<CraftResult> {
     const recipe = await this.db.selectFrom("crafting_recipes",).selectAll()
@@ -369,6 +382,7 @@ export class CraftingProcessService {
 
   /**
    * @param id
+   * @returns the attempt row, or null when no such attempt exists
    */
   async getAttempt(id: string,): Promise<CraftAttempt | null> {
     const r = await this.db.selectFrom("crafting_attempts",).selectAll()
@@ -379,6 +393,7 @@ export class CraftingProcessService {
   /**
    * @param actorId
    * @param worldId
+   * @returns the actor's attempts in that world, newest first
    */
   async listAttempts(actorId: string, worldId: string,): Promise<CraftAttempt[]> {
     const rows = await this.db.selectFrom("crafting_attempts",).selectAll()

@@ -69,6 +69,7 @@ function toDiscovery(r: Selectable<RecipeDiscoveries>,): RecipeDiscovery {
  * @param db
  * @param actorId
  * @param recipeId
+ * @returns true when the actor has an explicit discovery row
  */
 export async function hasDiscovery(
   db: Kysely<DB>,
@@ -89,6 +90,7 @@ export async function hasDiscovery(
  * @param db
  * @param actorId
  * @param recipeId
+ * @returns the discovery row, or null when the actor has not discovered it
  */
 export async function getDiscovery(
   db: Kysely<DB>,
@@ -110,6 +112,8 @@ export async function getDiscovery(
  * instead of throwing. Accepts a transaction handle.
  * @param db
  * @param opts
+ * @returns the new discovery row, or null when the actor already knew the recipe
+ * @throws {Error} the insert failed for a reason other than a lost uniqueness race
  */
 export async function insertDiscovery(
   db: Kysely<DB>,
@@ -154,6 +158,7 @@ export async function insertDiscovery(
  * Handler errors are isolated inside `emitPluginEvent` and never propagate;
  * logging is skipped when the logger is not initialized (unit tests).
  * @param payload
+ * @returns nothing; handlers and the log are notified in place
  */
 export async function emitRecipeDiscovered(
   payload: RecipeDiscoveredPayload,
@@ -179,6 +184,7 @@ export class DiscoveryService {
    * for the full "may craft" answer (see `CraftingProcessService`).
    * @param actorId
    * @param recipeId
+   * @returns true when a discovery row exists for this pair
    */
   async hasDiscovered(actorId: string, recipeId: string,): Promise<boolean> {
     return hasDiscovery(this.db, actorId, recipeId,);
@@ -188,6 +194,7 @@ export class DiscoveryService {
    * Get one discovery row.
    * @param actorId
    * @param recipeId
+   * @returns the discovery row, or null when the actor has not discovered it
    */
   async get(actorId: string, recipeId: string,): Promise<RecipeDiscovery | null> {
     return getDiscovery(this.db, actorId, recipeId,);
@@ -200,6 +207,7 @@ export class DiscoveryService {
    * emits no event.
    * @param opts
    * @throws {Error} When the discovery record vanished before read-back.
+   * @returns the discovery row and whether this call is what created it
    */
   async recordDiscovery(
     opts: RecordDiscoveryOpts,
@@ -230,6 +238,7 @@ export class DiscoveryService {
    * joined with the recipe's name/discipline/tier.
    * @param actorId
    * @param worldId
+   * @returns the actor's discovered recipes with their name, discipline and tier
    */
   async listDiscovered(actorId: string, worldId: string,): Promise<DiscoveredRecipe[]> {
     const rows = await this.db

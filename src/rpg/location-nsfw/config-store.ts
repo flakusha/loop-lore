@@ -89,6 +89,7 @@ export class LocationNsfwConfigStore {
   /**
    * Get or create NSFW config for a location.
    * @param locationId
+   * @returns the location's config, a default one seeded on first access
    */
   async getConfig(locationId: string,): Promise<LocationNsfwConfig> {
     const row = await this.db
@@ -140,6 +141,7 @@ export class LocationNsfwConfigStore {
    * Update a location's NSFW config.
    * @param locationId
    * @param updates
+   * @returns true when the config row was written
    */
   async updateConfig(
     locationId: string,
@@ -173,6 +175,7 @@ export class LocationNsfwConfigStore {
   /**
    * Get NSFW configs for multiple locations.
    * @param locationIds
+   * @returns the configs that exist for the requested locations
    */
   async getConfigs(locationIds: string[],): Promise<LocationNsfwConfig[]> {
     if (locationIds.length === 0) { return []; }
@@ -189,6 +192,7 @@ export class LocationNsfwConfigStore {
   /**
    * Delete a location's NSFW config.
    * @param locationId
+   * @returns true when a config row was removed
    */
   async deleteConfig(locationId: string,): Promise<boolean> {
     const result = await this.db

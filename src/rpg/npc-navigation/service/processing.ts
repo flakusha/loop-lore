@@ -38,6 +38,7 @@ interface TickCtx {
  * @param db
  * @param worldId
  * @param opts
+ * @returns one movement result per NPC that actually moved this tick
  */
 export async function processMovementTick(
   db: Kysely<DB>,
@@ -97,6 +98,7 @@ export async function processMovementTick(
  * @param currentLocationId
  * @param schedule
  * @param ctx
+ * @returns the movement performed, or null when the pattern is stationary or the move failed
  */
 export async function processNpcMovement(
   db: Kysely<DB>,
@@ -139,6 +141,7 @@ export async function processNpcMovement(
  * @param currentLocationId
  * @param schedule
  * @param ctx
+ * @returns the step taken along the route, or null when no waypoint was available
  */
 export async function processPatrolMovement(
   db: Kysely<DB>,
@@ -228,6 +231,7 @@ async function moveToRandomNeighbor(
  * @param currentLocationId
  * @param schedule
  * @param ctx
+ * @returns the step toward the target, or null when there was nothing to follow
  */
 export async function processFollowMovement(
   db: Kysely<DB>,

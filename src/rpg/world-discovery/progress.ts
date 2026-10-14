@@ -78,6 +78,7 @@ export interface Recomputed {
  * @param row
  * @param present
  * @param tick
+ * @returns the progress to persist and whether this tick is the one that crossed the threshold
  */
 export function recompute(row: ProgressRow, present: boolean, tick: number,): Recomputed {
   const elapsed = Math.max(1, tick - row.last_explored_tick,);
@@ -89,6 +90,7 @@ export function recompute(row: ProgressRow, present: boolean, tick: number,): Re
 /**
  * SQLite has no date type; the rest of the schema stores `datetime('now')`.
  * @param nowMs
+ * @returns the timestamp in the `datetime('now')` text form the schema stores
  */
 function stamp(nowMs: number,): string {
   return toDate(nowMs,).toISOString().replace("T", " ",).slice(0, 19,);
@@ -105,6 +107,7 @@ function stamp(nowMs: number,): string {
  * total and identical on every run.
  * @param db
  * @param worldId
+ * @returns where every located NPC in the world currently is
  */
 export async function readPresence(db: DiscoveryDb, worldId: string,): Promise<Presence[]> {
   return db
@@ -128,6 +131,7 @@ export async function readPresence(db: DiscoveryDb, worldId: string,): Promise<P
  * of row 2 must not depend on whether row 1 won a conflict.
  * @param db
  * @param worldId
+ * @returns the world's progress rows in a stable order
  */
 export async function readProgress(db: DiscoveryDb, worldId: string,): Promise<ProgressRow[]> {
   return db
@@ -152,6 +156,7 @@ export async function readProgress(db: DiscoveryDb, worldId: string,): Promise<P
  * @param next
  * @param tick
  * @param nowMs
+ * @returns true when this tick actually wrote, false when a replay lost the guard
  */
 export async function persist(
   db: DiscoveryDb,

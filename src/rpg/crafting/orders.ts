@@ -79,6 +79,7 @@ export class CraftingOrderService {
   /**
    * Open a new crafting commission in the `open` state. Returns the new order id.
    * @param input
+   * @returns the id of the newly created order
    */
   async placeOrder(input: PlaceOrderInput,): Promise<string> {
     const now = new Date().toISOString();
@@ -107,6 +108,7 @@ export class CraftingOrderService {
    * List orders for a world; when `actorId` is given, scope to orders touching that actor.
    * @param worldId
    * @param actorId
+   * @returns the world's orders, narrowed to ones involving the actor when one is given
    */
   async listOrders(worldId: string, actorId?: string,): Promise<CraftingOrder[]> {
     let query = this.db.selectFrom("crafting_orders",)
@@ -130,6 +132,7 @@ export class CraftingOrderService {
    * A crafter claims an order; only succeeds while the order is still `open`.
    * @param orderId
    * @param crafterActorId
+   * @returns true when this crafter won the claim
    */
   async acceptOrder(orderId: string, crafterActorId: string,): Promise<boolean> {
     const now = new Date().toISOString();
@@ -146,6 +149,7 @@ export class CraftingOrderService {
    * Fulfil an accepted order: run the recipe as the requester, transfer the
    * offered payment from requester to crafter, then mark the order fulfilled.
    * @param orderId
+   * @returns the craft attempt id on success, or the reason it could not be fulfilled
    */
   async fulfillOrder(orderId: string,): Promise<FulfillResult> {
     const order = await this.db.selectFrom("crafting_orders",)
@@ -194,6 +198,7 @@ export class CraftingOrderService {
    * Requester cancels an order that is still `open` or `accepted`.
    * @param orderId
    * @param actorId
+   * @returns true when the requester's order was cancelled
    */
   async cancelOrder(orderId: string, actorId: string,): Promise<boolean> {
     const order = await this.db.selectFrom("crafting_orders",)

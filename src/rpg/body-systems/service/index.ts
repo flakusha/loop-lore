@@ -70,6 +70,7 @@ export class BodySystemService {
   /**
    * Get or create a body profile for an actor.
    * @param actorId
+   * @returns the actor's profile, a default one created on first access
    */
   async getProfile(actorId: string,): Promise<BodyProfile> {
     return getProfileDispatch(this.db, actorId,);
@@ -79,6 +80,7 @@ export class BodySystemService {
    * Update a body profile.
    * @param actorId
    * @param updates
+   * @returns true when the profile row was written
    */
   async updateProfile(
     actorId: string,
@@ -91,6 +93,7 @@ export class BodySystemService {
    * Add a body modification.
    * @param actorId
    * @param modification
+   * @returns nothing; the modification is appended to the profile's list
    */
   async addModification(
     actorId: string,
@@ -103,6 +106,7 @@ export class BodySystemService {
    * Remove a body modification by index.
    * @param actorId
    * @param index
+   * @returns true when that index existed and was removed
    */
   async removeModification(actorId: string, index: number,): Promise<boolean> {
     return removeModificationDispatch(this.db, actorId, index,);
@@ -114,6 +118,7 @@ export class BodySystemService {
    * Get or create a heat cycle for an actor.
    * @param actorId
    * @param species
+   * @returns the cycle's current state, created on first access
    */
   async getHeatCycle(
     actorId: string,
@@ -126,6 +131,7 @@ export class BodySystemService {
    * Advance the heat cycle by a number of days.
    * @param actorId
    * @param days
+   * @returns the phase now in effect and the days remaining until the next one
    */
   async advanceHeatCycle(
     actorId: string,
@@ -138,6 +144,7 @@ export class BodySystemService {
    * Get the current heat effects for an actor.
    * Returns nullified effects for non-heat species.
    * @param actorId
+   * @returns the live heat effects, zeroed out for species without a heat cycle
    */
   async getHeatEffects(actorId: string,): Promise<HeatEffects> {
     return getHeatEffectsDispatch(this.db, actorId,);
@@ -155,6 +162,7 @@ export class BodySystemService {
    * modifier arrives from the unified stat path, defaulting to 0 when
    * no `character_stats` row exists.
    * @param actorId
+   * @returns the physique profile with live transient drains and the resulting stamina and encounter duration
    */
   async getPhysicalStatus(actorId: string,): Promise<{
     profile: BodyProfile;
@@ -199,6 +207,7 @@ export class BodySystemService {
    * Calculate effective encounter duration based on stamina + endurance.
    * @param profile
    * @param conModifier - CON modifier from the unified stat path (default 0)
+   * @returns the encounter length in seconds stamina and endurance allow
    */
   static calculateEncounterDuration(profile: BodyProfile, conModifier = 0,): number {
     return calculateEncounterDurationDispatch(profile, conModifier,);
@@ -207,6 +216,7 @@ export class BodySystemService {
   /**
    * Calculate available positions/actions based on flexibility + build.
    * @param profile
+   * @returns how many distinct positions/actions the body can sustain
    */
   static calculateAvailableActions(profile: BodyProfile,): number {
     return calculateAvailableActionsDispatch(profile,);
@@ -215,6 +225,7 @@ export class BodySystemService {
   /**
    * Calculate arousal buildup modifier from sensitivity + body.
    * @param profile
+   * @returns the multiplier applied to arousal accumulation
    */
   static calculateArousalModifier(profile: BodyProfile,): number {
     return calculateArousalModifierDispatch(profile,);

@@ -76,6 +76,7 @@ export function resolveAnswer(
 /**
  * Validate a free_text value: non-empty trimmed string within bounds.
  * @param value
+ * @throws {QuestionError} `invalid_input` when the value is not a string, is blank, or is over the length cap.
  */
 function resolveFreeText(value: string | number,): Pick<ResolvedAnswer, "answerValue" | "display"> {
   if (typeof value !== "string") {
@@ -102,6 +103,7 @@ function resolveFreeText(value: string | number,): Pick<ResolvedAnswer, "answerV
  * stored `min_value`/`max_value` bounds.
  * @param row
  * @param value
+ * @throws {QuestionError} `invalid_value` when the value is not finite or falls outside the stored bounds.
  */
 function resolveNumeric(
   row: Selectable<DB["rpg_questions"]>,

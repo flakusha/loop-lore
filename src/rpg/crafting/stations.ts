@@ -51,6 +51,7 @@ export class StationsService {
   /**
    * Create a new station definition. Returns the new ID.
    * @param opts
+   * @returns the id of the new station definition
    */
   async createStationDef(opts: CreateStationDefOpts,): Promise<string> {
     const id = uid();
@@ -77,6 +78,7 @@ export class StationsService {
   /**
    * Get a single station definition by ID.
    * @param id
+   * @returns the definition, or null when no such ID exists
    */
   async getStationDef(id: string,): Promise<StationDef | null> {
     const row = await this.db.selectFrom("crafting_station_defs",)
@@ -91,6 +93,7 @@ export class StationsService {
    * List station definitions for a world, optionally filtered by type.
    * @param worldId
    * @param type
+   * @returns the world's station definitions, by tier then name
    */
   async listStationDefs(
     worldId: string,
@@ -109,6 +112,7 @@ export class StationsService {
    * Update a station definition. Returns false when not found.
    * @param id
    * @param opts
+   * @returns true when the definition exists and was written
    */
   async updateStationDef(id: string, opts: UpdateStationDefOpts,): Promise<boolean> {
     const u: Record<string, unknown> = {};
@@ -134,6 +138,7 @@ export class StationsService {
   /**
    * Delete a station definition. Returns false when not found.
    * @param id
+   * @returns true when a definition row was removed
    */
   async deleteStationDef(id: string,): Promise<boolean> {
     const r = await this.db.deleteFrom("crafting_station_defs",)
@@ -148,6 +153,7 @@ export class StationsService {
   /**
    * Place a new station instance. Returns the new ID.
    * @param opts
+   * @returns the id of the placed instance
    */
   async createInstance(opts: CreateStationInstanceOpts,): Promise<string> {
     const id = uid();
@@ -171,6 +177,7 @@ export class StationsService {
    * Get a single station instance by ID, scoped to a world.
    * @param worldId
    * @param id
+   * @returns the instance, or null when it is missing or lives in another world
    */
   async getInstance(worldId: string, id: string,): Promise<StationInstance | null> {
     const row = await this.db.selectFrom("crafting_station_instances",)
@@ -188,6 +195,7 @@ export class StationsService {
    * before performing a scoped mutation. Prefer {@link getInstance} (with
    * worldId) for direct reads from request handlers.
    * @param id
+   * @returns the instance, or null when no such ID exists
    */
   async getInstanceById(id: string,): Promise<StationInstance | null> {
     const row = await this.db.selectFrom("crafting_station_instances",)
@@ -202,6 +210,7 @@ export class StationsService {
    * List station instances for a world, optionally filtered by location.
    * @param worldId
    * @param locationId
+   * @returns the world's placed stations, oldest first
    */
   async listInstances(
     worldId: string,
@@ -220,6 +229,7 @@ export class StationsService {
    * @param worldId
    * @param id
    * @param opts
+   * @returns true when the instance exists in that world and was written
    */
   async updateInstance(worldId: string, id: string, opts: UpdateStationInstanceOpts,): Promise<boolean> {
     const u: Record<string, unknown> = {};
@@ -242,6 +252,7 @@ export class StationsService {
    * Delete a station instance, scoped to a world. Returns false when not found.
    * @param worldId
    * @param id
+   * @returns true when an instance row was removed
    */
   async deleteInstance(worldId: string, id: string,): Promise<boolean> {
     const r = await this.db.deleteFrom("crafting_station_instances",)

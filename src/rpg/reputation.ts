@@ -55,6 +55,7 @@ export class ReputationService {
    * @param source - provenance label (encounter id, `manual:...`, ...)
    * @param delta
    * @param axis - social context axis (`private` | `public` | `group`)
+   * @returns the score after folding this delta in
    */
   async applyDelta(
     actorId: string,
@@ -109,6 +110,7 @@ export class ReputationService {
    * @param actorId
    * @param axis
    * @param source
+   * @returns the replayed score for this axis with its tier
    */
   async getScore(
     actorId: string,
@@ -141,6 +143,7 @@ export class ReputationService {
    * stored rows. Returns one rumor string per qualifying row (public /
    * group axes, or deltas with |delta| ≥ 10).
    * @param actorId
+   * @returns one derived rumor line per row that clears the visibility or magnitude bar
    */
   async deriveRumors(actorId: string,): Promise<string[]> {
     const actor = await this.db.selectFrom("actors",).select("display_name",).where("id", "=", actorId,)
@@ -173,6 +176,7 @@ export class ReputationService {
    * @param success
    * @param socialContext
    * @param intimacyLevel
+   * @returns the score after the encounter's derived delta is applied
    */
   async applyEncounterReputation(
     encounterId: string,

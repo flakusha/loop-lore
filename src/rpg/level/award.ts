@@ -97,6 +97,7 @@ export async function ensureCharacterStats(
  * @param db Transaction-scoped handle.
  * @param stats Current sheet row (already ensured).
  * @param grant
+ * @returns the HP and ASI gained, plus the sheet as it stands after the write
  */
 export async function applySheetBenefits(
   db: Kysely<DB>,
@@ -162,6 +163,7 @@ export async function applySheetBenefits(
  * decision staging, then the ledger row. Caller owns the transaction.
  * @param db Transaction-scoped handle.
  * @param grant
+ * @returns the sheet after the grant with the ledger entry that recorded it
  */
 export async function applyGrant(db: Kysely<DB>, grant: LedgerGrant,): Promise<AwardXpResult> {
   const before = await ensureCharacterStats(db, grant.actorId,);

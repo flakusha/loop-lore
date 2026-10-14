@@ -59,6 +59,7 @@ export class WorldLocationTraitsService {
   // ── World Traits (Layer 2) ───────────────────────────
   /**
    * @param input
+   * @returns the stored world trait row
    */
   async createWorldTrait(
     input: CreateWorldTraitInput,
@@ -69,6 +70,7 @@ export class WorldLocationTraitsService {
   /**
    * @param actorId
    * @param worldId
+   * @returns the world traits recorded in that world
    */
   async getWorldTraits(
     actorId: string,
@@ -80,6 +82,7 @@ export class WorldLocationTraitsService {
   /**
    * @param id
    * @param input
+   * @returns the trait after the update, or undefined when no such trait exists
    */
   async updateWorldTrait(
     id: string,
@@ -90,6 +93,7 @@ export class WorldLocationTraitsService {
 
   /**
    * @param id
+   * @returns true when the trait was deleted
    */
   async deleteWorldTrait(id: string,): Promise<boolean> {
     return deleteWorldTraitDispatch(this.db, id,);
@@ -98,6 +102,7 @@ export class WorldLocationTraitsService {
   // ── Location Traits (Layer 3) ────────────────────────
   /**
    * @param input
+   * @returns the stored location trait row
    */
   async createLocationTrait(
     input: CreateLocationTraitInput,
@@ -108,6 +113,7 @@ export class WorldLocationTraitsService {
   /**
    * @param actorId
    * @param locationId
+   * @returns the traits recorded at that location
    */
   async getLocationTraits(
     actorId: string,
@@ -119,6 +125,7 @@ export class WorldLocationTraitsService {
   /**
    * @param id
    * @param input
+   * @returns the trait after the update, or undefined when no such trait exists
    */
   async updateLocationTrait(
     id: string,
@@ -129,6 +136,7 @@ export class WorldLocationTraitsService {
 
   /**
    * @param id
+   * @returns true when the trait was deleted
    */
   async deleteLocationTrait(id: string,): Promise<boolean> {
     return deleteLocationTraitDispatch(this.db, id,);
@@ -137,6 +145,7 @@ export class WorldLocationTraitsService {
   // ── Aggregate queries ────────────────────────────────
   /**
    * @param actorId
+   * @returns the actor's world and location traits, grouped by layer
    */
   async getAllTraitsForActor(
     actorId: string,

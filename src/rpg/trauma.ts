@@ -89,6 +89,7 @@ export class TraumaService {
    * @param actorId
    * @param severity
    * @param sourceId - encounter id for provenance
+   * @returns the id of the trauma row, or null at severity 0
    */
   async applyTrauma(
     actorId: string,
@@ -129,6 +130,7 @@ export class TraumaService {
    * @param outcome
    * @param nonConsensual
    * @param sourceId
+   * @returns the id of the trauma row, or null when the outcome warrants none
    */
   async applyFromOutcome(
     actorId: string,
@@ -146,6 +148,7 @@ export class TraumaService {
    * applies sev1 as the violation baseline.
    * @param actorId
    * @param sourceId - gate/encounter id for provenance
+   * @returns the id of the escalated trauma row
    */
   async escalateViolation(actorId: string, sourceId?: string,): Promise<string> {
     const active = await getActiveEffects(this.db, actorId, { category: "trauma", },);
@@ -159,6 +162,7 @@ export class TraumaService {
    * for this actor (the shared sweep handles global expiry; this is the
    * per-actor explicit step). Returns rows cleared.
    * @param actorId
+   * @returns how many expired trauma rows were cleared
    */
   async advanceRecovery(actorId: string,): Promise<number> {
     const now = new Date().toISOString();
@@ -176,6 +180,7 @@ export class TraumaService {
   /**
    * Current trauma status: active rows (highest severity first).
    * @param actorId
+   * @returns the peak active severity plus every active trauma row
    */
   async getStatus(actorId: string,): Promise<{
     severity: number;

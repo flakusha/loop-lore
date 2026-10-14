@@ -83,6 +83,7 @@ export async function awardXpToActor(
  * coerced), non-finite, negative and fractional amounts; normalize -0 to +0;
  * clamp to the safe-integer ceiling.
  * @param input
+ * @throws {LevelServiceError} When the amount is not a finite, non-negative integer.
  */
 function validateGrant(input: AwardXpInput,): LedgerGrant {
   const { amount, } = input;
