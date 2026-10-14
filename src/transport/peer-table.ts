@@ -173,6 +173,7 @@ export class PeerTable {
   /**
    * Get a single peer by origin.
    * @param origin
+   * @returns a copy of the peer entry, or undefined when the origin is unknown
    */
   getPeer(origin: string,): PeerEntry | undefined {
     const peer = this.peers.get(origin,);
