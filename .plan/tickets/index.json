@@ -33104,7 +33104,7 @@
       "experimental"
     ],
     "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE": {
     "hash": "89f510b",
@@ -35208,7 +35208,7 @@
       "client-contract"
     ],
     "source": ".plan/tickets/TASK-frontend-client-contract-doc.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-FRONTEND-COMPRESSION": {
     "epic": "epic-frontend-bundle-optimization",

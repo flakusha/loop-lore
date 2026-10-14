@@ -27764,6 +27764,10 @@
   "src/lib.rs": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
     }
   ],
@@ -47272,6 +47276,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-setup-wizard-import-system-config-from-yaml-toml.md"
     },
     {
@@ -48076,6 +48084,18 @@
     }
   ],
   "src/web/mod.rs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md"
+    }
+  ],
+  "src/web/text_agent.rs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md"
+    }
+  ],
+  "src/web/web_runner.rs": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md"

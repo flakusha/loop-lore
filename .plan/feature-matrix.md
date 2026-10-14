@@ -90,7 +90,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | anomalies | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | anonymous | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | anthropic | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| api | 23 | 3 | 4 | 3 | 1 | 0 | 12 |
+| api | 23 | 4 | 4 | 3 | 1 | 0 | 11 |
 | api-contracts | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | api-keys | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | api-surface | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -286,7 +286,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | cli | 4 | 2 | 1 | 0 | 0 | 0 | 1 |
 | click-to-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | client | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| client-contract | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
+| client-contract | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
 | client-id | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | climate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | clocks | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -464,7 +464,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | distribution | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | divine | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | docker | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| docs | 16 | 2 | 4 | 5 | 1 | 0 | 4 |
+| docs | 16 | 3 | 4 | 5 | 1 | 0 | 3 |
 | docs-gap | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | document-list | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | document-processing | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
@@ -498,7 +498,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | editor | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | effect | 9 | 7 | 0 | 0 | 1 | 0 | 1 |
 | effects | 4 | 1 | 0 | 1 | 0 | 0 | 2 |
-| egui | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| egui | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | electron | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | elements | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | elysia | 5 | 2 | 0 | 0 | 1 | 0 | 2 |
@@ -566,7 +566,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | examples | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | exif | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | expedition | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| experimental | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| experimental | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | exploration | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
 | export | 6 | 4 | 0 | 1 | 0 | 0 | 1 |
 | expression | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
@@ -974,7 +974,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | on-the-fly | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | onboarding | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | onnx | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| openapi | 8 | 1 | 1 | 0 | 0 | 0 | 6 |
+| openapi | 8 | 2 | 1 | 0 | 0 | 0 | 5 |
 | opencode | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | openspec | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | opentelemetry | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1210,7 +1210,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | reputation | 7 | 2 | 0 | 1 | 0 | 0 | 4 |
 | reranking | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | reroll | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| research | 10 | 1 | 0 | 5 | 2 | 0 | 2 |
+| research | 10 | 2 | 0 | 5 | 2 | 0 | 1 |
 | resistance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | resolution | 7 | 0 | 0 | 0 | 1 | 0 | 6 |
 | resource-provision | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -1251,7 +1251,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | ruleset | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | runtime | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
 | runtime-config | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| rust | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
+| rust | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | safetensors | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | safety | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | sage | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1362,7 +1362,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | speech | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | spell-crafting | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | spells | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| spike | 6 | 4 | 0 | 0 | 0 | 0 | 2 |
+| spike | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
 | spine | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | sprite-pipeline | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | sqlite | 5 | 1 | 0 | 2 | 1 | 0 | 1 |
@@ -1570,7 +1570,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | wan | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | wardrobe | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | warnings | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| wasm | 7 | 1 | 1 | 2 | 0 | 0 | 3 |
+| wasm | 7 | 2 | 1 | 2 | 0 | 0 | 2 |
 | watchdog | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | weather | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
 | weaviate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1637,7 +1637,7 @@ Total tickets: **3564** — untagged: **2368** — unbound to epic: **1399**
 | `epic-assistant-generation-extensions` (Phase 1) | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | `epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`) | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | `epic-character-spec.md` | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| `epic-experimental-egui-frontend` | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
+| `epic-experimental-egui-frontend` | 5 | 2 | 0 | 0 | 0 | 0 | 3 |
 | `epic-frontend-keynav-mobile` | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
 | `epic-harness-integration` | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | `epic-locations` | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
