@@ -126,8 +126,8 @@ interface AudioLayer {
 - Parent hub: Audio, Video & Sound Generation (`epic-audio-video-sound.md`)
 - Sibling: TTS Foundation (`epic-tts-foundation.md`) - shared player/settings infra,
   not a blocker for Phases 2-3
-- Existing: `src/generation/providers/comfyui.ts` - ComfyUI client (image-only today;
-  needs audio output extraction, not a rewrite)
+- Existing: `src/generation/providers/comfyui.ts` - ComfyUI client (already reads
+  terminal `audio`/`gifs` outputs and downloads them)
 - Existing: `src/assets/` (asset storage + linking - `createAsset` with `assetType: audio`)
 
 ## Files

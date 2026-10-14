@@ -23991,6 +23991,12 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
+  "src/generation/audio-gen-route.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
   "src/generation/audio-gen-route.ts": [
     {
       "kind": "epic",
@@ -24093,6 +24099,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-ambient-music-sfx.md"
+    }
+  ],
+  "src/generation/audio/providers/comfyui.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ambient-sound-system.md"
     }
   ],
   "src/generation/audio/providers/comfyui.ts": [
