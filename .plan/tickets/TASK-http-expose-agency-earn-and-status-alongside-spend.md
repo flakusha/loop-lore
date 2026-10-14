@@ -3,7 +3,7 @@
 
 # TASK: HTTP-expose agency earn and status alongside spend
 
-**Status:** Done — POST /api/agency/earn wired (src/routes/agency/earn.ts, registered in src/routes/agency/index.ts); GET /api/agency/balance already wired; both auth-gated.
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-agency-story-points
