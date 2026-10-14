@@ -27,7 +27,11 @@ import { characterIoRoutes, } from "./character-io";
 function createIoApp(db: TestDb["db"], userId: string | null,): Elysia {
   return new Elysia({ name: "test-character-io", },)
     .derive(() => ({ userId, }))
-    .use(characterIoRoutes({ database: db, },),) as unknown as Elysia;
+    // The URL-import guard resolves DNS before fetching, so the tests need a
+    // resolver seam: a real lookup would fail closed in the sandbox.
+    .use(
+      characterIoRoutes({ database: db, resolveHost: () => Promise.resolve(["93.184.216.34",],), },),
+    ) as unknown as Elysia;
 }
 
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
