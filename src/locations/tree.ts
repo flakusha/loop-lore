@@ -81,6 +81,7 @@ export class LocationTreeService {
    * Compute the canonical path for a location, given its parent's path.
    * @param parentPath
    * @param childId
+   * @returns the slash-delimited path, leading and trailing separator included
    */
   static computeChildPath(parentPath: string | null, childId: string,): string {
     // Strip trailing '/' from parent, then format as '/parent/child/' (canonical: leading + trailing).
@@ -91,6 +92,7 @@ export class LocationTreeService {
   /**
    * Depth (separator count in path) of a given location.
    * @param parentPath
+   * @returns the depth a child of `parentPath` would sit at; 1 for a root
    */
   static depth(parentPath: string | null,): number {
     if (parentPath === null || parentPath === "") { return 1; }
@@ -101,6 +103,7 @@ export class LocationTreeService {
    * Insert a Location with depth + cross-world checks at the application layer.
    * The trigger on `path` materializes the path automatically. Returns the new id.
    * @param input
+   * @returns the new location's id
    * @throws {Error} If the parent is missing, cross-world, or depth limit exceeded.
    */
   async insertLocation(input: InsertLocationInput,): Promise<string> {
@@ -194,6 +197,7 @@ export class LocationTreeService {
   /**
    * Walk down — direct children first.
    * @param locationId
+   * @returns every location below it, breadth-first, excluding the location itself
    */
   async getDescendants(locationId: string,): Promise<LocationTreeNode[]> {
     const result = await sql<LocationTreeNode>`
@@ -217,6 +221,7 @@ export class LocationTreeService {
    * Roots are locations with parent_location_id IS NULL.
    * Each node carries its immediate children.
    * @param worldId
+   * @returns the world's root locations, each carrying its own immediate children
    */
   async tree(worldId: string,): Promise<LocationTreeBranch[]> {
     // Load all locations for the world once, then assemble the tree in memory.
