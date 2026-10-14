@@ -219,7 +219,8 @@ export class ComfyUIClient {
    * @param subfolder - optional subfolder from ComfyUI output
    * @param type - output type ("output" default, "temp")
    * @returns the image bytes
-   * @throws {Error} When the image fetch returns a non-OK status, or the bytes exceed the buffer limit.
+   * @throws {Error} When the image fetch returns a non-OK status.
+   * @throws {SafeBufferError} When the bytes exceed the safe buffer limit.
    */
   async downloadImage(
     filename: string,

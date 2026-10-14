@@ -164,7 +164,7 @@ export class MattingService {
    * @param assetId
    * @returns The asset's raw file bytes.
    * @throws {Error} When the asset row vanished mid-matting or its tier is not public.
-   * @throws The sized-buffer error from `safeFromUint8Array` when the bytes exceed the limit.
+   * @throws {SafeBufferError} When the bytes exceed the safe buffer limit.
    */
   async #readSourceFile(assetId: string,): Promise<Buffer> {
     const asset = await this.#loadAsset(assetId,);

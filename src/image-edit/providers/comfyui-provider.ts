@@ -122,6 +122,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * @param opts
    * @returns the rendered images for this request
    * @throws {Error} when the workflow build or the ComfyUI prompt submission fails
+   * @throws {SafeBufferError} when an output image exceeds the safe buffer limit during download
    */
   async execute(
     request: ImageEditRequest,
