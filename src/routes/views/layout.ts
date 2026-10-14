@@ -11,7 +11,7 @@ import { detectLocale, } from "../../middleware/i18n";
 import { isFrontendTelemetryEnabled, } from "../../telemetry/service";
 import { jsonStringifyOr, } from "../../utils";
 import { COMPONENTS_DIR, I18N_TEMPLATE_RE, ICONS_DIR, VIEWS_DIR, } from "./constants";
-import { escapeHtml, } from "./escape-html";
+import { escapeHtml, escapeJsonForScript, } from "./escape-html";
 import { resolvePluginMounts, } from "./plugin-mounts";
 
 const viewCache = new Map<string, string>();
@@ -64,8 +64,12 @@ function wrapWithLayout(
   layout = layout.replace("{{{content}}}", () => content,);
   layout = layout.replace("{{telemetryEnabled}}", () => (isFrontendTelemetryEnabled() ? "true" : "false"),);
   layout = layout.replace("{{docsNav}}", () => (isDocsServed() ? DOCS_NAV_HTML : ""),);
-  layout = layout.replace("{{userId}}", () => jsonStringifyOr(userId ?? null, "null",),);
-  layout = layout.replace("{{sessionId}}", () => jsonStringifyOr(sessionId ?? null, "null",),);
+  // Both land in an inline <script> block (views/layout.html), so they get the
+  // same `</script>` breakout escape as the locale data below. Not reachable
+  // with a payload today (they come from the DB row and the session), but the
+  // hole is the same one and lives 15 lines from the locale-data fix.
+  layout = layout.replace("{{userId}}", () => escapeJsonForScript(jsonStringifyOr(userId ?? null, "null",),),);
+  layout = layout.replace("{{sessionId}}", () => escapeJsonForScript(jsonStringifyOr(sessionId ?? null, "null",),),);
   layout = layout.replaceAll("{{cspNonce}}", () => cspNonce ?? "",);
   // i18n: html lang/dir follow the detected request locale (RTL-aware).
   const safeLocale = locale && isLocale(locale,) ? locale : "en";
@@ -79,7 +83,7 @@ function wrapWithLayout(
     const rawTranslations = getRawTranslations(locale as Locale,);
     if (rawTranslations) {
       const nonceAttr = cspNonce ? ` nonce="${cspNonce}"` : "";
-      const jsonData = jsonStringifyOr(rawTranslations, "{}",);
+      const jsonData = escapeJsonForScript(jsonStringifyOr(rawTranslations, "{}",),);
       const injectScript =
         `<script type="application/json" id="locale-data"${nonceAttr}>${jsonData}</script><script${nonceAttr}>try{globalThis.__localeStrings = JSON.parse(document.getElementById("locale-data").textContent);}catch{}</script>`;
 

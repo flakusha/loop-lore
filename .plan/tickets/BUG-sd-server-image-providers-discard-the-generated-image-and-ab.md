@@ -4,7 +4,7 @@
 # BUG: sd-server image providers discard the generated image and abort the job on one bad poll
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Critical
 **Effort:** Medium
 
 **Summary:**

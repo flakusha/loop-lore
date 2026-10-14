@@ -4,7 +4,7 @@
 # BUG: Trade offer accept and sentinel creation are check-then-act races
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Critical
 **Effort:** Medium
 
 **Summary:**

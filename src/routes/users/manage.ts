@@ -13,7 +13,13 @@ import { Elysia, t, } from "elysia";
 import { can, } from "../../users/permissions";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { forbidden, notFound, } from "../../validation/middleware";
-import { ErrorResponse, SuccessResponse, UserIdParams, UserProfileUpdateBody, } from "../../validation/schemas";
+import {
+  ErrorResponse,
+  SettingsUpdateAllowedKeys,
+  SuccessResponse,
+  UserIdParams,
+  UserProfileUpdateBody,
+} from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
@@ -135,7 +141,30 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
             .where("id", "=", targetId,)
             .executeTakeFirst();
 
-          const currentSettings = current?.settings ? jsonParseOr(current.settings, {},) : {};
+          if (!current) {
+            return jsonError({ message: "User not found", status: HttpStatus.NotFound, },);
+          }
+
+          // Closed allowlist, same one PATCH /api/settings enforces: without it
+          // the whole body is spread into another user's settings blob.
+          const rejectedKeys = Object.keys(body,).filter(
+            (key,) => !(SettingsUpdateAllowedKeys as readonly string[]).includes(key,),
+          );
+
+          if (rejectedKeys.length > 0) {
+            // Same envelope PATCH /api/settings returns for the same rejection.
+            return Response.json(
+              {
+                error: "Unknown settings keys are not allowed",
+                code: "BAD_REQUEST",
+                details: { rejectedKeys, allowedKeys: [...SettingsUpdateAllowedKeys,], },
+                meta: { api_version: "1", },
+              },
+              { status: HttpStatus.BadRequest, },
+            );
+          }
+
+          const currentSettings = current.settings ? jsonParseOr(current.settings, {},) : {};
           const merged = { ...currentSettings, ...body, };
 
           const mergedResult = safeJsonStringify(merged,);
@@ -158,6 +187,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
             400: ErrorResponse,
             401: ErrorResponse,
             403: ErrorResponse,
+            404: ErrorResponse,
           },
           detail: {
             summary: "Replace user settings",
