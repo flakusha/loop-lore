@@ -9,7 +9,7 @@
  * during prediction. Run with --help for full usage.
  */
 
-import { execSync, } from "child_process";
+import { execFileSync, } from "child_process";
 import { resolve, } from "path";
 import {
   choice,
@@ -20,6 +20,7 @@ import {
   runScript,
   withDefault,
 } from "../cli/parser";
+import { runGit, } from "../harness/run-context";
 import { createLogger, getChildLogger, type Logger, } from "../logger";
 import {
   readPackageJsonOrNull,
@@ -70,19 +71,37 @@ function formatVersion(v: Version,): string {
 }
 
 /**
+ * Numeric comparator for bare `x.y.z[-pre]` tag names — the in-process
+ * equivalent of the `sort -t. -k1 -k2 -k3 -n | tail -1` this replaced.
+ * @param a - first tag name
+ * @param b - second tag name
+ * @returns negative/zero/positive ordering, as `Array.sort` expects.
+ */
+function compareNumericTag(a: string, b: string,): number {
+  const parts = (tag: string,): number[] => (tag.split(/[-+]/,)[0] ?? "0.0.0").split(".",).map((n,) => Number(n,) || 0);
+
+  const [ap = 0, am = 0, ax = 0,] = parts(a,);
+  const [bp = 0, bm = 0, bx = 0,] = parts(b,);
+  return (ap - bp) || (am - bm) || (ax - bx) || a.localeCompare(b,);
+}
+
+/**
  * @param major - optional major version filter (`undefined` returns latest overall)
  * @returns latest matching tag string, or `null` if none found / `git` failed.
  */
 function getLatestTag(major?: number,): string | null {
   try {
-    // Bare `x.y.z` tags (no `v` prefix). `dev-*` tags never match.
-    const pattern = major === undefined ? "^[0-9]" : `^${major}\\.`;
-    const tag = execSync(
-      `git tag | grep "${pattern}" | sort -t. -k1 -k2 -k3 -n | tail -1`,
-      { encoding: "utf-8", },
-    ).trim();
+    // Bare `x.y.z` tags (no `v` prefix). `dev-*` tags never match. Filtering and
+    // numeric sort happen in-process: tag names are attacker-controlled (anyone
+    // with push access picks them) and must never reach a shell string.
+    const pattern = major === undefined ? /^[0-9]/ : new RegExp(`^${major}\\.`,);
+    const tags = runGit(["tag",],)
+      .split("\n",)
+      .filter((line,) => pattern.test(line,))
+      .filter((line,) => /^\d+\.\d+\.\d+(?:[-+].*)?$/.test(line,))
+      .sort(compareNumericTag,);
 
-    if (tag) { return tag; }
+    if (tags.length > 0) { return tags.at(-1,) ?? null; }
     return null;
   } catch {
     return null;
@@ -95,11 +114,8 @@ function getLatestTag(major?: number,): string | null {
  */
 function getCommitsSinceTag(tag: string,): string[] {
   try {
-    const range = tag ? `${tag}..HEAD` : "";
-    const result = execSync(
-      `git log --pretty=format:%s --no-merges ${range}`,
-      { encoding: "utf-8", },
-    );
+    const range = tag ? [`${tag}..HEAD`,] : [];
+    const result = runGit(["log", "--pretty=format:%s", "--no-merges", ...range,],);
 
     return result.split("\n",).filter(Boolean,);
   } catch {
@@ -142,7 +158,7 @@ function determineBump(commits: string[],): "major" | "minor" | "patch" | null {
  * @returns current git branch name (e.g. `"main"`, `"dev"`, `"feature/foo"`).
  */
 function getCurrentBranch(): string {
-  return execSync("git branch --show-current", { encoding: "utf-8", },).trim();
+  return runGit(["branch", "--show-current",],);
 }
 
 /**
@@ -200,7 +216,7 @@ function predictVersion(): string {
   // Feature branch -> dev version
   if (!isMaster && !releaseMajor) {
     const date = new Date().toISOString().slice(0, 10,).replaceAll("-", "",);
-    const commitSha = execSync("git rev-parse --short=7 HEAD", { encoding: "utf-8", },).trim();
+    const commitSha = runGit(["rev-parse", "--short=7", "HEAD",],);
     return formatVersion({
       ...baseVersion,
       prerelease: `${baseVersion.major}.${baseVersion.minor}.${baseVersion.patch}-dev.${date}.${commitSha}`,
@@ -266,8 +282,9 @@ function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,)
     // Release narration, see above.
     // eslint-disable-next-line no-console
     console.log(`Creating tag: ${next}`,);
-    execSync(`git tag -a "${next}" -m "Release ${next}"`, { stdio: "inherit", },);
-    execSync(`git push origin "${next}"`, { stdio: "inherit", },);
+    // argv array, but `stdio: inherit` so the operator still sees git's output.
+    execFileSync("git", ["tag", "-a", next, "-m", `Release ${next}`,], { stdio: "inherit", },);
+    execFileSync("git", ["push", "origin", next,], { stdio: "inherit", },);
   } else {
     // Release narration, see above.
     // eslint-disable-next-line no-console

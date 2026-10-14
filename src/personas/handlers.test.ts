@@ -282,6 +282,46 @@ describe("handleUpdatePersona", () => {
     expect(stored?.model,).toBe("tuned-model",);
   });
 
+  test("rejects a string temperature instead of writing it to the REAL column", async () => {
+    const id = await service.create({ userId: OWNER_ID, name: "BadTemp", },);
+
+    const res = await handleUpdatePersona({
+      database: db,
+      personaId: id,
+      body: { temperature: "hot", } as never,
+      context: ctxFor(OWNER_ID,),
+    },);
+
+    expect(res.status,).toBe(400,);
+    // The rejected write must not have reached the row.
+    const stored = await service.getById(id, OWNER_ID,);
+    expect(stored?.temperature ?? 0,).toBe(0,);
+  });
+
+  test("rejects a non-numeric maxTokens and a non-string model", async () => {
+    const id = await service.create({ userId: OWNER_ID, name: "BadTokens", },);
+
+    const tokens = await handleUpdatePersona({
+      database: db,
+      personaId: id,
+      body: { maxTokens: "lots", } as never,
+      context: ctxFor(OWNER_ID,),
+    },);
+
+    const model = await handleUpdatePersona({
+      database: db,
+      personaId: id,
+      body: { model: 42, } as never,
+      context: ctxFor(OWNER_ID,),
+    },);
+
+    expect(tokens.status,).toBe(400,);
+    expect(model.status,).toBe(400,);
+    const stored = await service.getById(id, OWNER_ID,);
+    expect(stored?.max_tokens ?? 0,).toBe(0,);
+    expect(stored?.model ?? "",).toBe("",);
+  });
+
   test("accepts an empty body without touching fields", async () => {
     const id = await service.create({ userId: OWNER_ID, name: "Untouched", },);
     const res = await handleUpdatePersona({ database: db, personaId: id, body: {}, context: ctxFor(OWNER_ID,), },);

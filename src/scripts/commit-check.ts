@@ -13,8 +13,8 @@
  * Supports: type(scope): subject, type!: subject (breaking change)
  */
 
-import { execSync, } from "child_process";
 import { flag, object, runScript, withDefault, } from "../cli/parser";
+import { runGit, } from "../harness/run-context";
 import { createLogger, getChildLogger, type Logger, } from "../logger";
 
 // Console-only logger: the githook runs this file as a bare process, with no
@@ -153,13 +153,23 @@ function green(text: string,): string {
  * @returns array of commit subject strings; empty array on `git` failure.
  */
 function getCommitsSinceLastTag(): string[] {
+  let range: string[] = [];
+  // `describe` exits 128 when no tag is reachable: a never-tagged repo, a fresh
+  // clone without tags, or a shallow clone. Absence of a tag is a legitimate
+  // state, not a failure — it means "validate everything". Letting the throw
+  // escape to the outer catch returned [] and made the whole check pass
+  // vacuously, which is exactly where validation matters most.
   try {
-    const tag = execSync("git describe --tags --abbrev=0 2>/dev/null || echo ''", {
-      encoding: "utf-8",
-    },).trim();
+    // argv-array execution: a tag name is attacker-controlled (anyone with push
+    // access picks it), so it must never reach a shell string.
+    const tag = runGit(["describe", "--tags", "--abbrev=0",],);
+    if (tag) { range = [`${tag}..HEAD`,]; }
+  } catch {
+    range = [];
+  }
 
-    const range = tag ? `${tag}..HEAD` : "";
-    const result = execSync(`git log --pretty=format:%s --no-merges ${range}`, { encoding: "utf-8", },);
+  try {
+    const result = runGit(["log", "--pretty=format:%s", "--no-merges", ...range,],);
     return result.split("\n",).filter(Boolean,);
   } catch {
     return [];
