@@ -244,7 +244,7 @@ describe("error paths", () => {
     expect((err as Error & { status?: number }).status,).toBe(404,);
   });
 
-  test("fetch abort surfaces as a timeout error", async () => {
+  test("fetch abort surfaces as an abort error", async () => {
     fetchImpl = async () => {
       const e = new Error("The operation was aborted",);
       e.name = "AbortError";
@@ -254,7 +254,7 @@ describe("error paths", () => {
     const { feFetch, } = await importFeFetch();
     const err = await feFetch("/x",).catch((e,) => e);
     expect(err,).toBeInstanceOf(Error,);
-    expect((err as Error).message,).toMatch(/^Request timed out after \d+ms$/,);
+    expect((err as Error).message,).toBe("Request aborted",);
   });
 
   test("oversized content-length is rejected before the body is read", async () => {
