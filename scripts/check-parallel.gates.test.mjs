@@ -345,4 +345,20 @@ describe("selective gate filter — mutual exclusion", () => {
     // they invented while unevaluated (see GIWT_ISSUE_CLI_UNAVAILABLE).
     expect(r.exit,).toBe(0,);
   },);
+
+  test("bare trailing --gates (no value at all) exits 2, never runs the whole suite", { timeout: 120_000, }, () => {
+    // Regression (N12): `--gates` with no following token parsed to null and
+    // silently ran the ENTIRE suite - the exact opposite of the caller's ask,
+    // and indistinguishable from the flag being absent. It is a usage error
+    // like an unknown name, so it must exit 2 with a message.
+    const r = runRunner(["--gates",], { defaultSkip: [], },);
+    expect(r.exit,).toBe(2,);
+    expect(r.stderr,).toMatch(/error: --gates requires a comma-separated list of gate names/,);
+  },);
+
+  test("empty equals form --gates= exits 2 (no value at all)", { timeout: 120_000, }, () => {
+    const r = runRunner(["--gates=",], { defaultSkip: [], },);
+    expect(r.exit,).toBe(2,);
+    expect(r.stderr,).toMatch(/error: --gates requires a comma-separated list of gate names/,);
+  },);
 });
