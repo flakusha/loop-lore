@@ -227,4 +227,48 @@ export const WAIVERS = {
     reason:
       "comparisons-export route exercised by browser e2e, not unit; 66.9 measured under diff-files; TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-",
   },
+  // Gate pass: the JSDoc-contract branch (fix-jsdoc-contracts) touched these
+  // seven files with COMMENT-ONLY edits, which still pulls them into the
+  // diff-scoped coverage gate: SCOPED_DIFF_SRC_FILES filters by path shape and
+  // never asks whether the diff changed code (the same blind spot WS-8 fixed
+  // on the size gate). Every percentage below is unchanged on dev; lcov does
+  // not count comment lines. These are pre-existing coverage debt, not a
+  // regression. Owning ticket (the real work — raise these modules and delete
+  // each waiver as it recovers):
+  // .plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md
+  "routes:src/routes/http-utils/redirect.ts": {
+    floor: 50,
+    reason:
+      "pre-existing debt surfaced by JSDoc-only documentation; 50.0 measured under diff-files (identical on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+  },
+  "services:src/services/server-external-manager/index.ts": {
+    floor: 45,
+    reason:
+      "pre-existing debt surfaced by JSDoc-only documentation; 45.0 measured under diff-files (27 hits / 60 statements, unchanged on dev); most genuinely under-tested of the seven; TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+  },
+  "routes:src/routes/views/view-serving.ts": {
+    floor: 63,
+    reason:
+      "pre-existing debt surfaced by JSDoc-only documentation; 63.8 measured under diff-files (unchanged on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+  },
+  "story:src/story/world-state/index.ts": {
+    floor: 66,
+    reason:
+      "pre-existing debt surfaced by JSDoc-only documentation; 66.7 measured under diff-files (below floor on dev too); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+  },
+  "routes:src/routes/views/static-partials.ts": {
+    floor: 68,
+    reason:
+      "pre-existing debt surfaced by JSDoc-only documentation; 68.4 measured under diff-files (identical on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+  },
+  "transport:src/transport/compression.ts": {
+    floor: 76,
+    reason:
+      "pre-existing debt surfaced by JSDoc-only documentation; 76.7 measured under diff-files (identical on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+  },
+  "rpg:src/rpg/replayability/service/index.ts": {
+    floor: 78,
+    reason:
+      "pre-existing debt surfaced by JSDoc-only documentation; 78.1 measured under diff-files (32 hits, same as dev); sibling playthrough.ts is waived above for the same reason; TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+  },
 };
