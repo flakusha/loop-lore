@@ -211,9 +211,9 @@ export function createNonApiHandler(
  * @returns the existing file path (possibly with `.html` appended), or `null` if neither exists.
  */
 function resolveFilePath(publicPath: string,): string | null {
-  if (existsSync(publicPath,)) { return publicPath; }
+  if (existsSync(publicPath,) && !statSync(publicPath,).isDirectory()) { return publicPath; }
   const htmlPath = `${publicPath}.html`;
-  return existsSync(htmlPath,) ? htmlPath : null;
+  return (existsSync(htmlPath,) && !statSync(htmlPath,).isDirectory()) ? htmlPath : null;
 }
 
 /**

@@ -285,6 +285,13 @@ describeOrSkip("createNonApiHandler", () => {
     expect(res.status,).toBe(404,);
   });
 
+  test("404s for a directory path (no EISDIR crash)", async () => {
+    const fx = getFixtures();
+    mkdirSync(join(fx.public, "subdir",), { recursive: true, },);
+    const res = await createNonApiHandler({},)(new Request("http://localhost/subdir",),);
+    expect(res.status,).toBe(404,);
+  });
+
   test("resolves .html extension when the bare path is missing", async () => {
     const fx = getFixtures();
     writeFixture(fx.public, "page.html", "<html>Page</html>",);
