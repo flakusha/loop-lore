@@ -2,18 +2,21 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * KEEP LOCAL. Superseded by upstream giwt ticket
- * FEAT-repo-wide-spdx-header-check-… (filed at giwt b4d1928; still
- * unimplemented — giwt's `checkSpdx` at src/plan/validate/content-gates.ts
- * walks only `.plan/*.md` and substring-tests a single `SPDX-License-Identifier`
- * token: no `SPDX-FileCopyrightText`, no files outside `.plan/`, no `--fix`, and
- * it is not in FIXABLE_GATES). REUSE.toml is the repo's own policy source:
- * 7 [[annotations]] blocks whose path globs cover src/**, data/**, scripts/**,
- * tests/**, docs/**, .plan/** and the root config files, each requiring BOTH
- * SPDX-FileCopyrightText and SPDX-License-Identifier. giwt's check would miss
- * every one of those outside .plan/. When the ticket lands, repoint
- * `spdx:check`/`spdx:fix` and delete this file plus
- * scripts/lib/{spdx-discovery,spdx-fix,reuse-toml}.ts.
+ * KEEP LOCAL. giwt now ships `spdx-check` / `spdx-fix` commands, but they
+ * read REUSE.toml with a DIFFERENT dialect than this repo's: giwt's
+ * parseReuseToml looks for `paths` / `license` / `copyright` keys, while
+ * REUSE.toml here uses `path` plus SPDX-FileCopyrightText /
+ * SPDX-License-Identifier. Verified against the pinned build:
+ *   `giwt spdx-check` -> "REUSE.toml has no [[annotations]] blocks — nothing
+ *   to check" and exits 0, i.e. it silently checks NOTHING here.
+ * Two further gaps even if the dialect matched: giwt's exclusion list has no
+ * generated-DB-artifact rules (this file exempts src/db/schema*.ts,
+ * src/validation/db-schemas.ts, src/test-utils/insert-helpers.ts so the
+ * `db - schema gate` does not report STALE), and its copyright check
+ * substring-matches rule.copyright rather than requiring the
+ * SPDX-FileCopyrightText tag this repo's policy mandates on every covered
+ * file. Do not repoint `spdx:check`/`spdx:fix` at giwt unless upstream parses
+ * this REUSE.toml dialect AND carries the generated-artifact exemptions.
  *
  * SPDX license header guard — reads REUSE.toml for per-directory rules.
  *
