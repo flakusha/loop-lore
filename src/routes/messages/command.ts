@@ -113,6 +113,7 @@ export interface CommandChatRow {
 /**
  * Build the `activeChat` field of a {@link CommandContext} from a chat row.
  * @param chatRecord
+ * @returns the command context's chat descriptor, or undefined when no row exists
  */
 export function commandActiveChat(
   chatRecord: CommandChatRow | undefined,
@@ -134,6 +135,7 @@ export function commandActiveChat(
  * @param database - Kysely instance
  * @param chatId - Target chat
  * @param actorId - Acting actor id
+ * @returns the chat row and the actor's role, either undefined on a failed read
  */
 export async function fetchChatAndRole(
   database: Kysely<DB>,

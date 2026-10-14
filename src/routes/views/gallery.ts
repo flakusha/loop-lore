@@ -79,6 +79,7 @@ export function applyGalleryAssetFilters<QB extends SelectQueryBuilder<DB, "asse
 
 /**
  * @param bytes
+ * @returns the asset size as a short human-readable string
  */
 function formatSize(bytes: number,): string {
   if (bytes < 1024) { return `${bytes} B`; }
@@ -97,6 +98,7 @@ function formatSize(bytes: number,): string {
  *
  * Returns the set of asset IDs to hide. Non-owner viewers see nothing of the
  * private character's assets; admins (admin.character) see all.
+ * @returns the asset IDs this viewer must not see
  * @param database
  * @param assetIds
  * @param actorId
@@ -137,6 +139,7 @@ async function inheritedHiddenAssetIds(
  * @param params
  * @param actorId
  * @param actorRole
+ * @returns the paginated gallery-grid HTML fragment
  */
 async function serveGalleryGrid(
   database: Kysely<DB>,

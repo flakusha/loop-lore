@@ -25,6 +25,7 @@ import {
  * @param value
  * @param validValues
  * @param fallback
+ * @returns the value when it is a member of the enum, otherwise the fallback
  */
 export function enumOr<T extends string,>(value: unknown, validValues: readonly T[], fallback: T,): T {
   return typeof value === "string" && (validValues as readonly string[]).includes(value,)

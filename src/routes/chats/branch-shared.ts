@@ -49,6 +49,7 @@ export const BranchName = t.String({
 /**
  * Map service errors to HTTP status.
  * @param code
+ * @returns the HTTP status matching the service error code
  */
 export function statusFor(
   code: string,

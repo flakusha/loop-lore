@@ -17,6 +17,7 @@ import { escapeHtml, } from "./responses";
  * explicit `application/x-www-form-urlencoded` (or absent) Content-Type
  * and reject bodies whose first non-whitespace char is `{` or `[`.
  * @param request
+ * @returns the parsed form fields, or null when the body is not an accepted form encoding
  */
 async function parseCredentials(
   request: Request,
@@ -57,6 +58,7 @@ async function parseCredentials(
  * @param options.limit - limiter decision carrying the reset window
  * @param options.t - translator; when absent `fallbackMessage` is shown
  * @param options.fallbackMessage - English fallback for the shared key
+ * @returns the 429 HTML response carrying the rate-limit headers
  */
 function rateLimitHtml(
   options: { limit: RateLimitResult; t?: TranslatorFn; fallbackMessage: string },

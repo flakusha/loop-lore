@@ -80,6 +80,7 @@ function renderNsfwAuditRows(actions: ModAction[],): string {
  * @param sessionId
  * @param request
  * @param t
+ * @returns the rendered audit view, or null when the target user does not exist
  */
 async function serveNsfwModerationAudit(
   database: Kysely<DB>,

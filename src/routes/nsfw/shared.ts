@@ -10,7 +10,10 @@ import { checkNsfwWithConsent, } from "../../middleware/nsfw-gate/consent";
 import { checkActorOwnership, } from "../actor-auth";
 import { forbiddenResponse, jsonError, requireUserId, } from "../http-utils";
 
-/** */
+/**
+ * Logger bound to the NSFW routes module namespace.
+ * @returns the nsfw-routes-namespaced child logger
+ */
 function log(): Logger {
   return getLogger().child({ module: "nsfw-routes", },);
 }
