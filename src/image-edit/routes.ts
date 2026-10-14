@@ -39,6 +39,8 @@ const sdServerProvider = new SDServerEditProvider();
 
 /**
  * @param backend
+ * @returns the shared provider instance for the backend
+ * @throws {Error} when the backend is neither `comfyui` nor `sd-server`
  */
 function getProvider(backend: ImageEditBackend,): ImageEditProvider {
   switch (backend) {
