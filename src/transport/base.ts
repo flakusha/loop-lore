@@ -93,6 +93,7 @@ export abstract class TransportBase<
 
   /**
    * @param signature
+   * @returns the metadata value for the signature, or "" when it is absent or not a string
    */
   get(signature: string,): Promise<string> {
     const conn = this.ensureConnected();

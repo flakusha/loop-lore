@@ -32,6 +32,8 @@ function strictUint8(buf: Buffer,): Uint8Array<ArrayBuffer> {
  * @param data
  * @param algorithm
  * @param options
+ * @returns the compressed bytes, or the input unchanged below the threshold or for "none"
+ * @throws {SafeBufferError} when the input exceeds the safe buffer size cap
  */
 function compress(
   data: Uint8Array,
@@ -86,6 +88,8 @@ function compress(
  * Decompress incoming data using the specified algorithm.
  * @param data
  * @param algorithm
+ * @returns the decompressed bytes, or the input unchanged for the "none" algorithm
+ * @throws {SafeBufferError} when the input exceeds the safe buffer size cap
  */
 function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Array {
   if (algorithm === "none") {
