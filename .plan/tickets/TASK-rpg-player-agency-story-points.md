@@ -3,12 +3,14 @@
 
 # TASK: Player Agency — Story Points
 
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Duplicate of TASK-agency-story-points — same scope, same epic. Closed.
+**Context:** Duplicate ticket — same scope as TASK-agency-story-points. No independent work.
+**Acceptance Criteria:**
+
+- [x] Closed as duplicate of TASK-agency-story-points
 
 
-**Status:** Not Started
+**Status:** Done — Duplicate of TASK-agency-story-points — same scope, same epic.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-agency-story-points
@@ -37,18 +39,8 @@ Bennies / Fate Points / Inspiration: a player-earned meta-currency spent to infl
 
 ## Acceptance Criteria
 
-- [ ] Story points earned through roleplay and achievements
-- [ ] Story points spent on dice rerolls
-- [ ] Story points spent on narrative influence
-- [ ] Story points spent on special abilities
-- [ ] Point limits and caps per character
-- [ ] Integration with RPG dice system
-- [ ] Integration with narrative system
-- [ ] Unit tests for story point calculations
-- [ ] Integration tests for story point workflow
+- [x] Closed as duplicate of TASK-agency-story-points
 
 ## Notes
 
-- Reference `epic-agency-story-points.md` for full system design
-- Consider balance between earning and spending
-- Reference TTRPG systems (Savage Worlds, FATE, D&D Inspiration)
+- Duplicate of TASK-agency-story-points — closed
