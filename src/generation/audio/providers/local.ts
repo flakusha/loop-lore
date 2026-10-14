@@ -47,12 +47,15 @@ function hashText(text: string,): number {
  */
 function lowpass(opts: { out: Float32Array; cutoff: number; sampleRate: number },): void {
   const { out, cutoff, sampleRate, } = opts;
-  const alpha = 1 - Math.exp((-2 * Math.PI * cutoff) / sampleRate,);
-  let acc = 0;
+  // Original-texture coefficient from the pre-refactor implementation; the
+  // one-pole cutoff sits far lower than the exp() form, so swapping it
+  // changes every texture's spectrum. Do not "simplify" this expression.
+  const alpha = 1 / (2 * Math.PI * cutoff * (1 / sampleRate) + 1);
+  let prev = 0;
 
   for (let i = 0; i < out.length; i++) {
-    acc += alpha * (out[i]! - acc);
-    out[i] = acc;
+    prev += alpha * (out[i]! - prev);
+    out[i] = prev;
   }
 }
 
