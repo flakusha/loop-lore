@@ -23,7 +23,11 @@ const tChatIdParams = t.Object({ id: t.String(), },);
 const tAnswerParams = t.Object({ id: t.String(), questionId: t.String(), },);
 const AnswerBodySchema = t.Object({ optionId: t.String(), },);
 
-/** Map a service error code to its HTTP status (mirrors chats/vn-choices.ts). */
+/**
+ * Map a service error code to its HTTP status (mirrors chats/vn-choices.ts).
+ * @param code
+ * @returns the HTTP status matching the service error code
+ */
 function statusForCode(code: string,): HttpStatusCode {
   if (code === "not_found") { return HttpStatus.NotFound; }
   if (code === "forbidden") { return HttpStatus.Forbidden; }

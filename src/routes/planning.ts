@@ -27,6 +27,7 @@ import { jsonError, jsonResponse, requireUserId, } from "./http-utils";
  * @param opts
  * @param opts.database
  * @param prefix
+ * @returns the mounted planning plugin
  */
 export function planningRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   const service: PlanningService = createPlanningService(database,);

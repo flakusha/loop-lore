@@ -13,6 +13,7 @@ import { loadView, notFoundView, respond, } from "./layout";
  * @param sessionId
  * @param request
  * @param t
+ * @returns the rendered view, or null when the view is not allow-listed or missing
  */
 function serveView(
   viewName: string,
@@ -39,6 +40,7 @@ function serveView(
  * @param sessionId
  * @param request
  * @param t
+ * @returns the rendered character chat list, or null when the view is missing
  */
 function serveCharacterChatList(
   slug: string,
@@ -63,6 +65,7 @@ function serveCharacterChatList(
  * @param sessionId
  * @param request
  * @param t
+ * @returns the rendered chat view for the character, or null when the view is missing
  */
 function serveCharacterChat(
   slug: string,
@@ -85,6 +88,7 @@ function serveCharacterChat(
  * @param sessionId
  * @param request
  * @param t
+ * @returns the rendered worlds list view, or null when the view is missing
  */
 function serveWorldsList(
   isHtmx = false,
@@ -104,6 +108,7 @@ function serveWorldsList(
  * @param sessionId
  * @param request
  * @param t
+ * @returns the rendered world detail view, not-found page when no such world exists
  */
 async function serveWorldDetail(
   worldId: string,
@@ -132,6 +137,7 @@ async function serveWorldDetail(
  * @param sessionId
  * @param request
  * @param t
+ * @returns the rendered world edit view, not-found page when no such world exists
  */
 async function serveWorldEdit(
   worldId: string,
@@ -160,6 +166,7 @@ async function serveWorldEdit(
  * @param sessionId
  * @param request
  * @param t
+ * @returns the rendered character edit view, not-found page when no such character exists
  */
 async function serveCharacterEdit(
   characterId: string,

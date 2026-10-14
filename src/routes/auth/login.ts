@@ -28,6 +28,7 @@ import {
  * @param peerIp
  * @param limiter Optional per-call limiter override (tests); defaults to the
  *   module singleton.
+ * @returns the login response, redirecting to the app on success
  */
 async function handleLogin(
   request: Request,
@@ -124,6 +125,7 @@ async function handleLogin(
  * @param peerIp
  * @param limiter Optional per-call limiter override (tests); defaults to the
  *   module singleton.
+ * @returns the demo-login response, redirecting to the app on success
  */
 async function handleDemoLogin(
   request: Request,

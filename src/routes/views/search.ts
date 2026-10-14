@@ -14,6 +14,7 @@ import { escapeHtml, htmlResponse, } from "./layout";
  * @param params
  * @param actorId
  * @param actorRole
+ * @returns the matching gallery asset cards as HTML
  */
 async function serveGallerySearch(
   database: Kysely<DB>,
@@ -115,6 +116,7 @@ async function serveGallerySearch(
 /**
  * @param database
  * @param params
+ * @returns the matching character cards as HTML
  */
 async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
@@ -164,6 +166,7 @@ async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchPara
  * @param params
  * @param userId
  * @param userRole
+ * @returns the worlds visible to this user matching the query, as HTML
  */
 async function serveWorldsSearch(
   database: Kysely<DB>,

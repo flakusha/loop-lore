@@ -60,6 +60,7 @@ function checkRegisterGate(
  * @param peerIp
  * @param limiter Optional per-call limiter override (tests); defaults to the
  *   module singleton.
+ * @returns the registration response, redirecting to the app on success
  */
 async function handleRegister(
   request: Request,

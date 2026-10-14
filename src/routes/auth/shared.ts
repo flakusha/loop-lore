@@ -76,6 +76,7 @@ const COOKIE_PATH = "/";
 /**
  * @param token
  * @param maxAgeSecs
+ * @returns the `Set-Cookie` header value for the auth token
  */
 function setTokenCookie(token: string, maxAgeSecs: number,): string {
   // `Secure` is omitted unless the deployment is reachable over HTTPS.
@@ -110,6 +111,7 @@ function setTokenCookie(token: string, maxAgeSecs: number,): string {
 /**
  * Rightmost XFF entry = the one the nearest trusted proxy appended.
  * @param request
+ * @returns the proxy-appended client IP, or null when the header is absent or empty
  */
 function forwardedForLast(request: Request,): string | null {
   const entries = request.headers.get("X-Forwarded-For",)?.split(",",);
@@ -133,6 +135,7 @@ function forwardedForLast(request: Request,): string | null {
  * @param request
  * @param config
  * @param peerIp
+ * @returns the rate-limiter bucket key for this request
  */
 function getClientIp(request: Request, config: Config, peerIp?: string | null,): string {
   if (!peerIp) { return "unknown"; }
