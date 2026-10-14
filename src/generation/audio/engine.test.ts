@@ -7,7 +7,7 @@
 import { describe, expect, test, } from "bun:test";
 import type { Config, } from "../../config/schema/config";
 import { generateAudio, registerAudioProviders, resolveAudioProvider, } from "./engine";
-import { listAudioProviders, unregisterAudioProvider, } from "./types";
+import { getAudioProvider, listAudioProviders, unregisterAudioProvider, } from "./types";
 
 /** Minimal config stub — only the generation.providers.audio slice matters. */
 function configWithAudio(audio: { baseUrl: string; workflow: string }[],): Config {
@@ -39,6 +39,8 @@ describe("registerAudioProviders", () => {
     expect(ids,).toContain("local",);
     expect(ids,).toContain("comfyui:txt2audio",);
     expect(ids,).toContain("comfyui:txt2music",);
+    expect(getAudioProvider("comfyui:txt2audio",)?.id,).toBe("comfyui:txt2audio",);
+    expect(getAudioProvider("comfyui:absent",),).toBeUndefined();
   });
 });
 

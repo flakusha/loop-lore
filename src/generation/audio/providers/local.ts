@@ -42,17 +42,17 @@ function hashText(text: string,): number {
 }
 
 /**
- * One-pole low-pass in place; `cutoff` in Hz.
- * @param out
- * @param cutoff
- * @param sampleRate
+ * One-pole low-pass in place.
+ * @param opts
  */
-function lowpass(out: Float32Array, cutoff: number, sampleRate: number,): void {
-  const alpha = 1 / (2 * Math.PI * cutoff * (1 / sampleRate) + 1);
-  let prev = 0;
+function lowpass(opts: { out: Float32Array; cutoff: number; sampleRate: number },): void {
+  const { out, cutoff, sampleRate, } = opts;
+  const alpha = 1 - Math.exp((-2 * Math.PI * cutoff) / sampleRate,);
+  let acc = 0;
+
   for (let i = 0; i < out.length; i++) {
-    prev += alpha * (out[i]! - prev);
-    out[i] = prev;
+    acc += alpha * (out[i]! - acc);
+    out[i] = acc;
   }
 }
 
@@ -82,21 +82,17 @@ function brown(out: Float32Array, rng: () => number,): void {
 
 /**
  * One decaying sine burst written at `start`.
- * @param out
- * @param start
- * @param freq
- * @param decaySec
- * @param amp
- * @param sampleRate
+ * @param opts
  */
-function burst(
-  out: Float32Array,
-  start: number,
-  freq: number,
-  decaySec: number,
-  amp: number,
-  sampleRate: number,
-): void {
+function burst(opts: {
+  out: Float32Array;
+  start: number;
+  freq: number;
+  decaySec: number;
+  amp: number;
+  sampleRate: number;
+},): void {
+  const { out, start, freq, decaySec, amp, sampleRate, } = opts;
   const len = Math.round(decaySec * sampleRate,);
   for (let i = 0; i < len && start + i < out.length; i++) {
     const env = Math.exp(-8 * (i / len),);
@@ -106,23 +102,18 @@ function burst(
 
 /**
  * Sine sweep burst (horns).
- * @param out
- * @param start
- * @param fromHz
- * @param toHz
- * @param durSec
- * @param amp
- * @param sampleRate
+ * @param opts
  */
-function sweep(
-  out: Float32Array,
-  start: number,
-  fromHz: number,
-  toHz: number,
-  durSec: number,
-  amp: number,
-  sampleRate: number,
-): void {
+function sweep(opts: {
+  out: Float32Array;
+  start: number;
+  fromHz: number;
+  toHz: number;
+  durSec: number;
+  amp: number;
+  sampleRate: number;
+},): void {
+  const { out, start, fromHz, toHz, durSec, amp, sampleRate, } = opts;
   const len = Math.round(durSec * sampleRate,);
   let phase = 0;
   for (let i = 0; i < len && start + i < out.length; i++) {
@@ -134,12 +125,10 @@ function sweep(
 
 /**
  * Slow amplitude LFO applied in place (0..1 → 0..depth).
- * @param out
- * @param rateHz
- * @param depth
- * @param sampleRate
+ * @param opts
  */
-function lfo(out: Float32Array, rateHz: number, depth: number, sampleRate: number,): void {
+function lfo(opts: { out: Float32Array; rateHz: number; depth: number; sampleRate: number },): void {
+  const { out, rateHz, depth, sampleRate, } = opts;
   for (let i = 0; i < out.length; i++) {
     const mod = 1 - depth * (0.5 + 0.5 * Math.sin(2 * Math.PI * rateHz * (i / sampleRate),));
     out[i]! *= mod;
@@ -165,31 +154,31 @@ type TextureFn = (out: Float32Array, rng: () => number, sampleRate: number,) => 
 const TEXTURES: Record<string, TextureFn> = {
   rain: (out, rng, sr,) => {
     white(out, rng,);
-    lowpass(out, 2_500, sr,);
-    lfo(out, 0.08, 0.25, sr,);
+    lowpass({ out, cutoff: 2_500, sampleRate: sr, },);
+    lfo({ out, rateHz: 0.08, depth: 0.25, sampleRate: sr, },);
   },
   wind: (out, rng, sr,) => {
     brown(out, rng,);
-    lowpass(out, 700, sr,);
-    lfo(out, 0.05, 0.6, sr,);
+    lowpass({ out, cutoff: 700, sampleRate: sr, },);
+    lfo({ out, rateHz: 0.05, depth: 0.6, sampleRate: sr, },);
   },
   fire: (out, rng, sr,) => {
     brown(out, rng,);
-    lowpass(out, 420, sr,);
+    lowpass({ out, cutoff: 420, sampleRate: sr, },);
     for (let t = Math.round(0.05 * sr,); t < out.length; t += Math.round((0.06 + rng() * 0.22) * sr,)) {
-      burst(out, t, 700 + rng() * 2_600, 0.05, 0.25 + rng() * 0.4, sr,);
+      burst({ out, start: t, freq: 700 + rng() * 2_600, decaySec: 0.05, amp: 0.25 + rng() * 0.4, sampleRate: sr, },);
     }
   },
   night: (out, rng, sr,) => {
     white(out, rng,);
-    lowpass(out, 500, sr,);
+    lowpass({ out, cutoff: 500, sampleRate: sr, },);
     for (let t = Math.round(0.1 * sr,); t < out.length; t += Math.round((0.12 + rng() * 0.25) * sr,)) {
-      burst(out, t, 4_200 + rng() * 800, 0.012, 0.2 + rng() * 0.3, sr,);
+      burst({ out, start: t, freq: 4_200 + rng() * 800, decaySec: 0.012, amp: 0.2 + rng() * 0.3, sampleRate: sr, },);
     }
   },
   forest: (out, rng, sr,) => {
     white(out, rng,);
-    lowpass(out, 1_800, sr,);
+    lowpass({ out, cutoff: 1_800, sampleRate: sr, },);
     for (let t = Math.round(0.4 * sr,); t < out.length; t += Math.round((0.5 + rng() * 1.4) * sr,)) {
       const chirp = Math.round((0.03 + rng() * 0.05) * sr,);
       const freq = 1_800 + rng() * 2_200;
@@ -201,28 +190,36 @@ const TEXTURES: Record<string, TextureFn> = {
   },
   city: (out, rng, sr,) => {
     brown(out, rng,);
-    lowpass(out, 180, sr,);
+    lowpass({ out, cutoff: 180, sampleRate: sr, },);
     for (let t = Math.round(1.5 * sr,); t < out.length; t += Math.round((2 + rng() * 5) * sr,)) {
-      sweep(out, t, 180 + rng() * 120, 140 + rng() * 140, 0.35 + rng() * 0.5, 0.12 + rng() * 0.18, sr,);
+      sweep({
+        out,
+        start: t,
+        fromHz: 180 + rng() * 120,
+        toHz: 140 + rng() * 140,
+        durSec: 0.35 + rng() * 0.5,
+        amp: 0.12 + rng() * 0.18,
+        sampleRate: sr,
+      },);
     }
   },
   water: (out, rng, sr,) => {
     white(out, rng,);
-    lowpass(out, 1_500, sr,);
-    lfo(out, 0.12, 0.35, sr,);
+    lowpass({ out, cutoff: 1_500, sampleRate: sr, },);
+    lfo({ out, rateHz: 0.12, depth: 0.35, sampleRate: sr, },);
   },
   cave: (out, rng, sr,) => {
     brown(out, rng,);
-    lowpass(out, 300, sr,);
-    lfo(out, 0.03, 0.4, sr,);
+    lowpass({ out, cutoff: 300, sampleRate: sr, },);
+    lfo({ out, rateHz: 0.03, depth: 0.4, sampleRate: sr, },);
     for (let t = Math.round(0.8 * sr,); t < out.length; t += Math.round((0.7 + rng() * 2) * sr,)) {
-      burst(out, t, 800 + rng() * 500, 0.12, 0.15 + rng() * 0.2, sr,);
+      burst({ out, start: t, freq: 800 + rng() * 500, decaySec: 0.12, amp: 0.15 + rng() * 0.2, sampleRate: sr, },);
     }
   },
   bed: (out, rng, sr,) => {
     white(out, rng,);
-    lowpass(out, 450, sr,);
-    lfo(out, 0.04, 0.2, sr,);
+    lowpass({ out, cutoff: 450, sampleRate: sr, },);
+    lfo({ out, rateHz: 0.04, depth: 0.2, sampleRate: sr, },);
   },
 };
 

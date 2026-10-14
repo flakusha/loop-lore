@@ -130,6 +130,7 @@ export function encodeWav(data: WavData,): Buffer {
  * per-layer gain and edge fades (the fades are what the player crossfades on a
  * scene change). Output is clamped to [-1, 1].
  * @param opts
+ * @returns Mixed samples ready for `encodeWav`.
  */
 export function mixLayers(opts: { layers: MixLayer[]; durationSec: number; sampleRate: number },): WavData {
   const total = Math.max(1, Math.round(opts.durationSec * opts.sampleRate,),);
