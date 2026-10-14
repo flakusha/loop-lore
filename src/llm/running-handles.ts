@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // src/llm/running-handles.ts — in-flight handle tracking for the scheduler.
 //
 // Tracks handles from dispatch (not run-start) so that cancellation and
