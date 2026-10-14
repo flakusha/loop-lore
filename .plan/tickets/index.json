@@ -51047,6 +51047,19 @@
     "title": "Voice notes playback",
     "type": "TASK"
   },
+  "TASK-WAIVE-SEVEN-DIFF-SCOPED-COVERAGE-FLOORS-SURFACED-BY-JSDOC-ON": {
+    "hash": "8454f61",
+    "git_issue": "8454f61",
+    "extid": "TASK-WAIVE-SEVEN-DIFF-SCOPED-COVERAGE-FLOORS-SURFACED-BY-JSDOC-ON",
+    "type": "TASK",
+    "title": "Waive seven diff-scoped coverage floors surfaced by JSDoc-only documentation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md",
+    "status": "Not Started"
+  },
   "TASK-WAIVER-COVERAGE-FLOOR-BELOW-80-FOR-PLUGINS-FRONTEND-NATIVE-I": {
     "epic": "epic-testing-qa",
     "extid": "TASK-WAIVER-COVERAGE-FLOOR-BELOW-80-FOR-PLUGINS-FRONTEND-NATIVE-I",
