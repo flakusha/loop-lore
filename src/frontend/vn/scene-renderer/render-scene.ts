@@ -24,6 +24,16 @@ export interface SceneNavigator {
 // ── DOM construction helpers ────────────────────────────────
 
 /**
+ * Sanitize a URL for use inside CSS url() context.
+ * Rejects ) and control characters that could break out of the url() token.
+ * @param url
+ */
+function sanitizeCssUrl(url: string,): string {
+  if (/[\x00-\x1f\x7f)]/.test(url,)) { return ""; }
+  return url;
+}
+
+/**
  * @param scene
  * @param scene.backgroundUrl
  * @param settings
@@ -32,7 +42,7 @@ export interface SceneNavigator {
 function createBackground(scene: { backgroundUrl?: string }, settings: { imageScaling: string },): HTMLElement {
   const bg = document.createElement("div",);
   bg.className = "vn-background";
-  bg.style.backgroundImage = `url(${scene.backgroundUrl})`;
+  bg.style.backgroundImage = `url(${sanitizeCssUrl(scene.backgroundUrl ?? "",)})`;
   bg.style.backgroundSize = settings.imageScaling === "auto" ? "cover" : settings.imageScaling;
   return bg;
 }

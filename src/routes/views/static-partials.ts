@@ -3,6 +3,7 @@
 
 import { existsSync, readFileSync, } from "node:fs";
 import { join, } from "node:path";
+import { escapeHtml, } from "../../frontend/html-escape";
 import { ALLOWED_PARTIALS, COMPONENTS_DIR, PARTIALS_DIR, } from "./constants";
 
 /**
@@ -17,7 +18,8 @@ function serveStaticPartial(name: string, searchParams?: URLSearchParams,): stri
   if (existsSync(partialPath,)) {
     let content = readFileSync(partialPath, "utf8",);
     if (searchParams?.has("worldId",)) {
-      content = content.replace("{{worldId}}", () => searchParams.get("worldId",)!,);
+      const rawWorldId = searchParams.get("worldId",)!;
+      content = content.replace("{{worldId}}", () => escapeHtml(rawWorldId,),);
     }
 
     return content;
