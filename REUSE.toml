@@ -17,6 +17,8 @@ path = [
   ".gitignore",
   ".prettierignore",
   ".prettierrc",
+  "configs/assets/README.md",
+  "DECISION-NOTE.md",
   "AGENTS.md",
   "README.md",
   "CHANGELOG.md",

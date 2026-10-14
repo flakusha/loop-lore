@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Regression tests for `changedFiles()` in `scripts/check/parallel/context.mjs` —
  * the file set `--diff-base` scopes the unit + coverage gates to.
