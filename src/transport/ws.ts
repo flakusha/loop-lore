@@ -113,7 +113,7 @@ export class WsHandler extends TransportBase<WsOptions> {
   /**
    * @param data
    * @returns resolves once the payload is handed to the socket or buffered for a later flush
-   * @throws {Error} when the transport is not connected, or a buffered flush cannot be delivered
+   * @throws {TransportError} when the transport is closed or not yet connected
    */
   send(data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
