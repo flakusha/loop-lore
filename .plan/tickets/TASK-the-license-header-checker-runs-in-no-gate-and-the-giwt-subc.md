@@ -4,7 +4,7 @@
 # TASK: The license-header checker runs in no gate and the giwt subcommand reads the wrong REUSE dialect
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Low
 **Effort:** Medium
 
 **Summary:**

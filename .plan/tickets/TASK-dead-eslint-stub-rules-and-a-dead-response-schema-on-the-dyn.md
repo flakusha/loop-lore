@@ -4,7 +4,7 @@
 # TASK: Dead ESLint stub rules and a dead response schema on the dynamic routes
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Low
 **Effort:** Medium
 
 **Summary:**

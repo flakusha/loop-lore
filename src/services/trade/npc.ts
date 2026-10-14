@@ -4,12 +4,12 @@
 /**
  * NPC trading operations — buy from / sell to NPC actors.
  *
- * Delegates to core `tradeCore` + `recordTrade` for atomicity.
+ * Delegates to core `tradeCore`, which writes the single ledger row inside its
+ * own transaction.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { recordTrade, tradeCore, } from "./core";
-import { DEFAULT_CURRENCY, } from "./types";
+import { tradeCore, } from "./core";
 import type { TradeLine, TradeResult, } from "./types";
 
 /**
@@ -39,29 +39,17 @@ export async function buyFromNpc(
     return { success: false, reason: "cannot trade with yourself", };
   }
 
-  const result = await tradeCore(db, {
+  // tradeCore writes the single ledger row inside its own transaction; a second
+  // recordTrade here would double-count every NPC trade (BUG-npc-buy-and-sell).
+  return await tradeCore(db, {
     worldId,
     buyerActorId,
     sellerActorId: npcActorId,
     buyerItems: [],
     sellerItems,
     price,
+    tradeType: "player_npc",
   },);
-
-  if (result.success) {
-    await recordTrade(db, {
-      worldId,
-      buyerActorId,
-      sellerActorId: npcActorId,
-      price,
-      currency: DEFAULT_CURRENCY,
-      itemsOffered: [],
-      itemsRequested: result.itemsRequested ?? [],
-      tradeType: "player_npc",
-    },);
-  }
-
-  return result;
 }
 
 /**
@@ -91,27 +79,13 @@ export async function sellToNpc(
     return { success: false, reason: "cannot trade with yourself", };
   }
 
-  const result = await tradeCore(db, {
+  return await tradeCore(db, {
     worldId,
     buyerActorId: npcActorId,
     sellerActorId,
     buyerItems: [],
     sellerItems: buyerItems,
     price,
+    tradeType: "npc_player",
   },);
-
-  if (result.success) {
-    await recordTrade(db, {
-      worldId,
-      buyerActorId: npcActorId,
-      sellerActorId,
-      price,
-      currency: DEFAULT_CURRENCY,
-      itemsOffered: result.itemsOffered ?? [],
-      itemsRequested: [],
-      tradeType: "npc_player",
-    },);
-  }
-
-  return result;
 }

@@ -4,7 +4,7 @@
 # BUG: Nine getAssetFilePath call sites do not handle the containment throw
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Critical
 **Effort:** Medium
 
 **Summary:**

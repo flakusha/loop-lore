@@ -4,7 +4,7 @@
 # TASK: Plugin and tool-runtime residual defects
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** High
 **Effort:** Medium
 
 **Summary:**

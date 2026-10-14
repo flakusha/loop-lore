@@ -4,7 +4,7 @@
 # BUG: admin-audit pagination uses || 1, so an empty result set reports one page
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Low
 **Effort:** Medium
 
 **Summary:**

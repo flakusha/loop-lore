@@ -4,7 +4,7 @@
 # TASK: Frontend and http-utils type-safety batch
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Low
 **Effort:** Medium
 
 **Summary:**

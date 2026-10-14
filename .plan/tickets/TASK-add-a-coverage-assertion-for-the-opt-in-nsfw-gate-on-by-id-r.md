@@ -4,7 +4,7 @@
 # TASK: Add a coverage assertion for the opt-in NSFW gate on by-ID routes
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** High
 **Effort:** Medium
 
 **Summary:**

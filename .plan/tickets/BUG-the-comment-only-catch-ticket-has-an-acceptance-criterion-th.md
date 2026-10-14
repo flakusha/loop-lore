@@ -4,7 +4,7 @@
 # BUG: The comment-only catch ticket has an acceptance criterion that cannot be satisfied
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Low
 **Effort:** Medium
 
 **Summary:**

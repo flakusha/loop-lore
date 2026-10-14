@@ -4,7 +4,7 @@
 # BUG: Service-layer multi-query mutations run without transactions or conditional writes
 
 **Status:** Not Started
-**Priority:** Medium
+**Priority:** Critical
 **Effort:** Medium
 
 **Summary:**

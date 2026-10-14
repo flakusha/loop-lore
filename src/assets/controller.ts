@@ -544,11 +544,21 @@ export async function handleUpload({
   if (chatId && config?.encryption?.serverEncryptionKey) {
     const smk = getSmk();
     if (smk) {
+      // Fail CLOSED. This branch is only reached when the caller asked for an
+      // encrypted chat, and `deriveChatKeyForChat` resolves to a ChatKey or
+      // throws — it never returns null for "not encrypted". Swallowing the
+      // throw stored the upload in the clear with no error and no log.
       try {
         chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-      } catch {
-        // Not in an encrypted chat — fall through to public storage
-        chatKey = null;
+      } catch (error) {
+        getLogger()
+          .child({ module: "assets.controller", },)
+          .error(
+            "Chat key derivation failed; refusing to store the upload unencrypted",
+            error instanceof Error ? error : new Error(String(error,),),
+          );
+
+        return internalErrorResponse("Could not encrypt the upload for this chat",);
       }
     }
   }
