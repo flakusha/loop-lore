@@ -93,6 +93,7 @@ export class ConcurrencyLimiter {
   /**
    * Acquire a slot. Resolves when one is free. `release()` MUST be called by
    * the caller once (use `run` to make this automatic).
+   * @returns an idempotent releaser — calling it twice frees only one permit
    */
   async acquire(): Promise<() => void> {
     await Effect.runPromise(this.semaphore.take(1,),);
@@ -109,6 +110,7 @@ export class ConcurrencyLimiter {
   /**
    * Run `fn` while holding a slot; releases on completion or throw.
    * @param fn
+   * @returns whatever `fn` resolves to
    * @throws whatever `fn` throws.
    */
   async run<T,>(fn: () => Promise<T>,): Promise<T> {
