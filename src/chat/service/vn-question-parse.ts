@@ -49,7 +49,11 @@ interface VnQuestionRow {
   created_at: string;
 }
 
-/** Coerce one persisted option, tolerating absent/partial fields. */
+/**
+ * Coerce one persisted option, tolerating absent/partial fields.
+ * @param raw - the unvalidated option as it came out of the row's JSON column
+ * @returns the option, or null when the value is not an object or carries no id
+ */
 function parseOption(raw: unknown,): VnQuestionOption | null {
   if (typeof raw !== "object" || raw === null) { return null; }
   const o = raw as Record<string, unknown>;

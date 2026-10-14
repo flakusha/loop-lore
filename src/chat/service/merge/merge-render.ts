@@ -20,6 +20,7 @@ import type { MergeMetadata, } from "./merge-store";
  * @param database
  * @param chatId
  * @param messageId
+ * @returns the `role: content` line, or null when the message is missing from this chat
  */
 export async function renderMessageLines(
   database: Kysely<DB>,
@@ -43,6 +44,7 @@ export async function renderMessageLines(
  * @param database
  * @param chatId
  * @param tail
+ * @returns the tail's lines in order, or null as soon as any message in the tail is missing
  */
 export async function renderTailLines(
   database: Kysely<DB>,
@@ -63,6 +65,7 @@ export async function renderTailLines(
  * Load source tips for a merge (preview re-walk).
  * @param database
  * @param mergeId
+ * @returns each source's branch and tip message, in the recorded order
  */
 export async function loadSourceTips(
   database: Kysely<DB>,
@@ -86,6 +89,7 @@ export async function loadSourceTips(
  * @param database
  * @param chatId
  * @param baseMessageId
+ * @returns the path root-first, dropping the base message itself as the shared ancestor
  */
 export async function loadAncestorPath(
   database: Kysely<DB>,
@@ -99,6 +103,7 @@ export async function loadAncestorPath(
 /**
  * Parse metadata JSON, returning an empty object on failure.
  * @param raw
+ * @returns the metadata, or an empty object when `raw` is null or unparseable
  */
 export function parseMetadata(raw: string | null,): MergeMetadata {
   if (!raw) { return {}; }
@@ -110,6 +115,7 @@ export function parseMetadata(raw: string | null,): MergeMetadata {
  * Load source rows for a merge (initiate replay path).
  * @param database
  * @param mergeId
+ * @returns each source with its tail length, 0 where the tail could not be walked
  */
 export async function loadMergeSources(
   database: Kysely<DB>,
@@ -145,6 +151,7 @@ export async function loadMergeSources(
  * @param graph.sources
  * @param base
  * @param overlay
+ * @returns the three-way hunks, or null when any side of the overlay is missing from the chat
  */
 export async function computeOverlayHunks(
   database: Kysely<DB>,

@@ -56,6 +56,7 @@ import type {
  * @param params.actorId
  * @param params.reason
  * @param params.internal
+ * @returns The action record, with internal defaulting to true
  */
 export function createModerationAction(params: {
   type: ModerationActionType;
