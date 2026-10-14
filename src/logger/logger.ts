@@ -192,6 +192,7 @@ export class LoggerImpl implements Logger {
 
   /**
    * @param bindings
+   * @returns a logger carrying these bindings merged over the parent's
    */
   child(bindings: LoggerBindings,): Logger {
     const child = new LoggerImpl(

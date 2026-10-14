@@ -28,6 +28,7 @@ export class ConsoleTransport implements Transport {
 
   /**
    * @param entry
+   * @returns once the line has been handed to the stream; write failures are swallowed
    */
   write(entry: LogEntry,): Promise<void> {
     try {
