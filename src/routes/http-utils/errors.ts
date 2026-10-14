@@ -34,6 +34,7 @@ export function jsonError(options: JsonErrorOptions,): Response;
  * @param messageOrOptions
  * @param status
  * @param code
+ * @returns a JSON error envelope carrying `message`, `status`, `code` and the shared `meta`
  */
 export function jsonError(
   messageOrOptions: string | JsonErrorOptions,
@@ -57,6 +58,7 @@ export function jsonError(
  * 404 Not Found with NOT_FOUND code.
  * @param message
  * @param t
+ * @returns a 404 JSON error carrying the NOT_FOUND code
  */
 export function notFoundResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.notFound",) ?? "Not found";
@@ -71,6 +73,7 @@ export function notFoundResponse(message?: string, t?: TranslatorFn,): Response 
  * for job existence. Only the response shape is shared: each call site keeps
  * its own ownership decision (see `job.userId` vs `job.actorId`).
  * @param t
+ * @returns the same 404 body for an unknown and a not-owned job, so job existence cannot be probed
  */
 export function emotionJobNotFoundResponse(t?: TranslatorFn,): Response {
   return jsonError({
@@ -83,6 +86,7 @@ export function emotionJobNotFoundResponse(t?: TranslatorFn,): Response {
  * 404 "Not found or not owner" — ownership check failure.
  * @param entity
  * @param t
+ * @returns a 404 naming `entity` as "not found or not owner", hiding which check failed
  */
 export function notOwnerResponse(entity = "Resource", t?: TranslatorFn,): Response {
   return notFoundResponse(`${entity} ${t?.("errors.notFound",) ?? "not found or not owner"}`, t,);
@@ -92,6 +96,7 @@ export function notOwnerResponse(entity = "Resource", t?: TranslatorFn,): Respon
  * 401 Unauthorized.
  * @param message
  * @param t
+ * @returns a 401 JSON error body
  */
 export function unauthorizedResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.unauthorized",) ?? "Unauthorized";
@@ -102,6 +107,7 @@ export function unauthorizedResponse(message?: string, t?: TranslatorFn,): Respo
  * 403 Forbidden.
  * @param message
  * @param t
+ * @returns a 403 JSON error body
  */
 export function forbiddenResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.forbidden",) ?? "Forbidden";
@@ -111,6 +117,7 @@ export function forbiddenResponse(message?: string, t?: TranslatorFn,): Response
 /**
  * 400 Bad Request with message.
  * @param message
+ * @returns a 400 JSON error body carrying `message`
  */
 export function badRequestResponse(message: string,): Response {
   return jsonError({ message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest, },);
@@ -146,6 +153,7 @@ export function internalErrorResponse(message: string, data?: Record<string, unk
 /**
  * Extract userId from Elysia context, or a localized 401 Response.
  * @param ctx
+ * @returns the caller's userId, or a 401 Response when the context carries none
  */
 export function requireUserId(ctx: unknown,): string | Response {
   const userId = (ctx as any).userId as string | null;

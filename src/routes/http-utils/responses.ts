@@ -26,6 +26,7 @@ export {
  * JSON success response.
  * @param data
  * @param status
+ * @returns the payload as JSON, with `meta` merged into object bodies only
  */
 export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.OK,): Response {
   // Merge meta into object responses (backward-compatible for property access).
@@ -41,6 +42,7 @@ export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.
  * JSON validation error (422) with field-level detail.
  * @param errors
  * @param message
+ * @returns a 422 body listing every field-level failure under `details`
  */
 export function jsonValidationError(errors: ValidationError[], message = "Validation failed",): Response {
   return Response.json(
@@ -85,6 +87,7 @@ export function jsonPaginated(
 /**
  * Created response (201). Empty body when no payload.
  * @param data
+ * @returns a 201 body, empty when `data` is omitted and a 500 JSON error when the payload will not serialize
  */
 export function jsonCreated(data?: unknown,): Response {
   if (data === undefined) { return new Response(null, { status: HttpStatus.Created, },); }
@@ -103,7 +106,10 @@ export function jsonCreated(data?: unknown,): Response {
   },);
 }
 
-/** Empty no-content response (204). No body. */
+/**
+ * Empty no-content response (204). No body.
+ * @returns a bodiless 204
+ */
 export function jsonNoContent(): Response {
   return new Response(null, { status: HttpStatus.NoContent, },);
 }
