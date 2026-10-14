@@ -3,7 +3,7 @@
 
 # TASK: Npc Planning Tests
 
-**Status:** Done — Superseded by epic-research-agency-decision.md — BDI planning tests ship with bdi-nightly.test.ts, bdi-reflection.test.ts, bdi-plan-recompute.test.ts.
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
