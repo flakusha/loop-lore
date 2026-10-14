@@ -69,6 +69,7 @@ function paramsToArgs(params: Record<string, unknown>,): string[] {
  * Check whether a chat's `gm_config` selects the GM assistant role.
  * Exported domain predicate shared by tests and callers.
  * @param gmConfigJson - Raw `chats.gm_config` JSON string (nullable)
+ * @returns true when the chat routes its assistant to the GM role
  */
 export function isGmModeChat(gmConfigJson: string | null,): boolean {
   const gmConfig = jsonParseOr<{ assistantRole?: string }>(gmConfigJson ?? "", {},);

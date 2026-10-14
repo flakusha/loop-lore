@@ -65,6 +65,7 @@ function dequote(raw: string,): string {
  * Handle `/battle use <item> [target]` — consume a battle-usable item.
  * @param args - Args after the `use` subcommand
  * @param ctx - Command context
+ * @returns the command result, carrying a system message on failure rather than throwing
  */
 export async function handleBattleUse(args: string[], ctx: CommandContext,): Promise<CommandResult> {
   const db = ctx.db;
@@ -138,6 +139,7 @@ export async function handleBattleUse(args: string[], ctx: CommandContext,): Pro
  * Handle `/battle social <intimidate|taunt|negotiate|surrender> <target>`.
  * @param args - Args after the `social` subcommand
  * @param ctx - Command context
+ * @returns the command result for the social action taken against the target
  */
 export async function handleBattleSocial(
   args: string[],
