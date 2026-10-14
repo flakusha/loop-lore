@@ -147,3 +147,97 @@ describe("getAssetFilePath", () => {
     }
   });
 });
+
+describe("path traversal containment (DB-controlled storage_path)", () => {
+  test("rejects a relative `..` traversal", () => {
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-fs-trav-",),);
+    try {
+      expect(() => getAssetFilePath(uploadDir, "../../../../etc/passwd",)).toThrow(
+        "Refusing to serve outside upload dir",
+      );
+    } finally {
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("rejects an absolute path", () => {
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-fs-abs-",),);
+    try {
+      expect(() => getAssetFilePath(uploadDir, "/etc/passwd",)).toThrow(
+        "Refusing to serve outside upload dir",
+      );
+    } finally {
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("rejects a sibling-directory prefix trap", () => {
+    // Root `<tmp>/up`, target `<tmp>/uploads-evil/x`. A naive `startsWith(root)`
+    // would accept this because `<tmp>/uploads-evil` starts with `<tmp>/up`.
+    const base = mkdtempSync(join(tmpdir(), "ll-fs-sibling-",),);
+    const root = join(base, "up",);
+    const sibling = join(base, "uploads-evil",);
+    mkdirSync(root, { recursive: true, },);
+    mkdirSync(sibling, { recursive: true, },);
+    try {
+      expect(() => getAssetFilePath(root, "../uploads-evil/x",)).toThrow(
+        "Refusing to serve outside upload dir",
+      );
+    } finally {
+      rmSync(base, { recursive: true, force: true, },);
+    }
+  });
+
+  test("still resolves a legitimate in-root path", () => {
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-fs-legit-",),);
+    try {
+      const full = getAssetFilePath(uploadDir, `raw/${ASSET_ID.slice(0, 2,)}/${ASSET_ID.slice(2, 4,)}/x.png`,);
+      expect(full,).toBe(join(uploadDir, "raw", "aa", "bb", "x.png",),);
+    } finally {
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("deleteFile refuses a traversal path and leaves the canary on disk", () => {
+    // The canary lives OUTSIDE the upload root. Asserting it still exists is
+    // what proves the delete hole is closed — asserting "throws" alone would
+    // also pass if the file were unlinked before the guard ran.
+    const base = mkdtempSync(join(tmpdir(), "ll-fs-canary-",),);
+    const uploadDir = join(base, "up",);
+    mkdirSync(uploadDir, { recursive: true, },);
+    const canary = join(base, "canary.txt",);
+    writeFileSync(canary, "do not delete me",);
+    try {
+      expect(() => deleteFile(uploadDir, "../canary.txt",)).toThrow("Refusing to delete outside upload dir",);
+      expect(existsSync(canary,),).toBe(true,);
+    } finally {
+      rmSync(base, { recursive: true, force: true, },);
+    }
+  });
+
+  test("deleteFile refuses an absolute path and leaves the canary on disk", () => {
+    const base = mkdtempSync(join(tmpdir(), "ll-fs-delabs-",),);
+    const uploadDir = join(base, "up",);
+    mkdirSync(uploadDir, { recursive: true, },);
+    const canary = join(base, "canary.txt",);
+    writeFileSync(canary, "do not delete me",);
+    try {
+      expect(() => deleteFile(uploadDir, canary,)).toThrow("Refusing to delete outside upload dir",);
+      expect(existsSync(canary,),).toBe(true,);
+    } finally {
+      rmSync(base, { recursive: true, force: true, },);
+    }
+  });
+
+  test("deleteFile still removes a legitimate in-root file", () => {
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-fs-delok-",),);
+    try {
+      const storagePath = storeFile(uploadDir, ASSET_ID, "note.txt", Buffer.from("x",),);
+      expect(existsSync(getAssetFilePath(uploadDir, storagePath,),),).toBe(true,);
+      deleteFile(uploadDir, storagePath,);
+      expect(existsSync(getAssetFilePath(uploadDir, storagePath,),),).toBe(false,);
+    } finally {
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+});

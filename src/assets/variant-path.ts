@@ -40,7 +40,17 @@ export function resolveCompressedVariantPath({
 
   candidates.push(`compressed/${subDir}/${assetId}_${variant}.webp`,);
   for (const relative of candidates) {
-    const absolute = getAssetFilePath(uploadDir, relative,);
+    let absolute: string;
+    try {
+      absolute = getAssetFilePath(uploadDir, relative,);
+    } catch {
+      // The persisted `thumbnail_path` is DB-controlled; a tampered value that
+      // escapes the upload root is not a server error. Skip the bad candidate
+      // and fall through to the next one (the deterministic layout), so a
+      // corrupt row degrades to raw bytes instead of throwing on the request.
+      continue;
+    }
+
     if (existsSync(absolute,)) { return absolute; }
   }
 
