@@ -7,8 +7,8 @@ import type { Found, } from "./generate-schema-fuzz";
 import { aliasFor, casesFor, titleFor, } from "./generate-schema-fuzz";
 
 /** Stands in for real disk state: the `Found` rows `discoverSchemas` emits. */
-const STRING_SCHEMA: TSchema = { type: "string", } as TSchema;
-const DATE_SCHEMA: TSchema = { type: "string", format: "date-time", } as TSchema;
+const STRING_SCHEMA: TSchema = { type: "string", } as unknown as TSchema;
+const DATE_SCHEMA: TSchema = { type: "string", format: "date-time", } as unknown as TSchema;
 
 const RESPONSES: Found = {
   name: "ItemSchema",
