@@ -3,7 +3,7 @@
 
 # BUG: PUT /api/users/:id/settings mass-assigns the request body and reports success for a missing user
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -32,3 +32,5 @@ Source: .tmp/cat-jam/review-routes-config.md P1 finding 2.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-14 registry-driven close: git issue 4ff3da8 (registry tip: 265443e3c Konstantin Fedotov Auto-closed: appended .md marker marks BUG-PUT-API-USERS-ID-SETTINGS-MA)

@@ -3,7 +3,7 @@
 
 # BUG: Git commands in commit-check and version-bump are built by string interpolation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -33,3 +33,5 @@ Source: .tmp/cat-jam/review-tui-scripts.md P1-1.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-14 registry-driven close: git issue 80cbcc0 (registry tip: c237ccca1 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-GIT-COMMANDS-IN-COMMIT-CHECK)

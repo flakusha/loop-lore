@@ -3,7 +3,7 @@
 
 # BUG: Asset upload chat-key derivation failure silently downgrades to public storage
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -28,3 +28,5 @@ Source: .tmp/longcat/review-consolidated.md nit 4; .tmp/longcat/review-assets-db
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-14 registry-driven close: git issue cd6a739 (registry tip: f8c93ce89 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-ASSET-UPLOAD-CHAT-KEY-DERIVA)

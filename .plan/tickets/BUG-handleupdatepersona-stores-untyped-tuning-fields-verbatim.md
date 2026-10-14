@@ -3,7 +3,7 @@
 
 # BUG: handleUpdatePersona stores untyped tuning fields verbatim
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -29,3 +29,5 @@ Source: .tmp/longcat/review-misc-services.md M9 and p1; .tmp/longcat/review-roun
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-14 registry-driven close: git issue 698e0ff (registry tip: dd62fdee0 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-HANDLEUPDATEPERSONA-STORES-U)
