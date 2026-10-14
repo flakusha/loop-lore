@@ -68,6 +68,7 @@ export function driftCapFor(rarity: ItemRarity, category: ItemCategory,): number
 /**
  * Budget lookup that never returns undefined for an out-of-enum category.
  * @param category
+ * @returns the power budget for the category, falling back to Other
  */
 export function powerBudgetFor(category: ItemCategory,): ItemPowerBudget {
   return ITEM_POWER_BUDGETS[category] ?? ITEM_POWER_BUDGETS[ItemCategory.Other];
@@ -92,6 +93,7 @@ export class ItemPowerBudgetError extends Error {
 /**
  * Parse a persisted `properties.drift` value into a well-formed drift record.
  * @param value
+ * @returns a well-formed drift record, with sane defaults for malformed input
  */
 export function parseItemDrift(value: unknown,): ItemDrift {
   if (typeof value !== "object" || value === null || Array.isArray(value,)) {
@@ -117,6 +119,7 @@ export function parseItemDrift(value: unknown,): ItemDrift {
 /**
  * Sum of `stat_delta` magnitudes across an item's effects.
  * @param effects
+ * @returns the total absolute stat delta across all effects
  */
 export function statDeltaTotal(effects: ItemEffect[],): number {
   let total = 0;
@@ -130,6 +133,7 @@ export function statDeltaTotal(effects: ItemEffect[],): number {
 /**
  * Sum of absolute drift multipliers carried by an instance.
  * @param drift
+ * @returns the sum of all drift multiplier magnitudes
  */
 export function driftTotal(drift: ItemDrift,): number {
   let total = 0;
@@ -203,9 +207,9 @@ export interface ItemPowerScore {
  * Rank instances by `maxStatDelta + sum(drift) + maxDurability`, strongest
  * first. Ties break on `worldItemId` so the ordering is stable across calls.
  * Instances whose `itemId` is absent from the map are skipped.
- * @param {ReadonlyMap<string, ItemDefinition>} definitionById - keyed by item id
- * @param {ItemInstance[]} instances
- * @returns {ItemPowerScore[]}
+ * @param definitionById - keyed by item id
+ * @param instances
+ * @returns power scores sorted descending, strongest first
  */
 export function rankItemPower(
   definitionById: ReadonlyMap<string, ItemDefinition>,

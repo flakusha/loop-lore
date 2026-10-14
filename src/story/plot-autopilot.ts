@@ -57,6 +57,7 @@ export interface PlotAutopilotService {
  * @param opts
  * @param count Maximum number of beats to propose.
  * @throws {Error} When a database query fails.
+ * @returns proposed story beats, quest-linked then timeline-seeded, newest first
  */
 export async function draftBeats(opts: PlotAutopilotOptions, count = 3,): Promise<PlotBeat[]> {
   const limit = Math.max(1, Math.floor(count,),);
@@ -133,6 +134,7 @@ export class PlotAutopilot implements PlotAutopilotService {
    * Propose the next story beats.
    * @param count Maximum beats to return. Defaults to 3.
    * @throws {Error} When a database query fails.
+   * @returns proposed story beats, quest-linked then timeline-seeded, newest first
    */
   async proposeBeats(count = 3,): Promise<PlotBeat[]> {
     return draftBeats(this.opts, count,);
@@ -160,6 +162,7 @@ export class PlotAutopilot implements PlotAutopilotService {
 
 /**
  * @param opts
+ * @returns a new autopilot service instance
  */
 export function createPlotAutopilot(opts: PlotAutopilotOptions,): PlotAutopilotService {
   return new PlotAutopilot(opts,);
