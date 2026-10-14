@@ -90,7 +90,7 @@ Total tickets: **3569** — untagged: **2371** — unbound to epic: **1404**
 | anomalies | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | anonymous | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | anthropic | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| api | 23 | 4 | 4 | 3 | 1 | 0 | 11 |
+| api | 23 | 5 | 4 | 3 | 1 | 0 | 10 |
 | api-contracts | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | api-keys | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | api-surface | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -286,7 +286,7 @@ Total tickets: **3569** — untagged: **2371** — unbound to epic: **1404**
 | cli | 4 | 2 | 1 | 0 | 0 | 0 | 1 |
 | click-to-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | client | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| client-contract | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
+| client-contract | 4 | 2 | 0 | 0 | 0 | 0 | 2 |
 | client-id | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | climate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | clocks | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1437,7 +1437,7 @@ Total tickets: **3569** — untagged: **2371** — unbound to epic: **1404**
 | territory | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | test | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | test-infra | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| testing | 30 | 5 | 2 | 15 | 0 | 0 | 8 |
+| testing | 30 | 6 | 2 | 15 | 0 | 0 | 7 |
 | testing-qa | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | tests | 7 | 4 | 0 | 2 | 0 | 0 | 1 |
 | text-effects | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
@@ -1502,7 +1502,7 @@ Total tickets: **3569** — untagged: **2371** — unbound to epic: **1404**
 | tsconfig | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | tts | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | tty-free | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| tui | 6 | 1 | 1 | 0 | 0 | 0 | 4 |
+| tui | 6 | 2 | 1 | 0 | 0 | 0 | 3 |
 | turn | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | turn-based | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | turn-orchestration | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -1637,7 +1637,7 @@ Total tickets: **3569** — untagged: **2371** — unbound to epic: **1404**
 | `epic-assistant-generation-extensions` (Phase 1) | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | `epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`) | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | `epic-character-spec.md` | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| `epic-experimental-egui-frontend` | 5 | 2 | 0 | 0 | 0 | 0 | 3 |
+| `epic-experimental-egui-frontend` | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
 | `epic-frontend-keynav-mobile` | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
 | `epic-harness-integration` | 4 | 0 | 0 | 0 | 0 | 0 | 4 |
 | `epic-locations` | 1 | 1 | 0 | 0 | 0 | 0 | 0 |

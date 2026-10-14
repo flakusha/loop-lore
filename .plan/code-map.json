@@ -21213,6 +21213,12 @@
       "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md"
     }
   ],
+  "src/frontend/alpine/travel-interface.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    }
+  ],
   "src/frontend/alpine/travel-panel.ts": [
     {
       "kind": "epic",
@@ -21279,6 +21285,12 @@
       "source": ".plan/tickets/TASK-world-editor-structured-ui.md"
     }
   ],
+  "src/frontend/alpine/world-fetch.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    }
+  ],
   "src/frontend/alpine/world-invites.ts": [
     {
       "kind": "epic",
@@ -21307,6 +21319,12 @@
       "source": ".plan/tickets/TASK-world-item-frontend.md"
     }
   ],
+  "src/frontend/alpine/world-locations.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    }
+  ],
   "src/frontend/alpine/world-lore-entries.ts": [
     {
       "kind": "ticket",
@@ -21317,6 +21335,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-lore-entries-frontend.md"
+    }
+  ],
+  "src/frontend/alpine/world-page-state.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     }
   ],
   "src/frontend/alpine/world.ts": [
@@ -22515,6 +22539,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-ok-toast-branches-unreachable-fefetch-throws-on-non.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     }
   ],
   "src/frontend/pages/characters.ts": [
@@ -23287,6 +23315,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
+    }
+  ],
+  "src/frontend/vn/scene-renderer/render-scene.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     }
   ],
   "src/frontend/vn/scene-renderer/render-scene.ts": [
@@ -35363,6 +35397,12 @@
       "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md"
     }
   ],
+  "src/routes/harness/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    }
+  ],
   "src/routes/health.ts": [
     {
       "kind": "epic",
@@ -36153,6 +36193,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md"
+    }
+  ],
+  "src/routes/messages/create-response.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     }
   ],
   "src/routes/messages/create.coverage.test.ts": [
@@ -38347,6 +38393,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/client-contract.md"
+    }
+  ],
+  "src/routes/v1/v1-enforcement.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     }
   ],
   "src/routes/views.test.ts": [
@@ -45717,6 +45769,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
+    }
+  ],
+  "src/tui/api-contract.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     }
   ],
   "src/tui/app.test.ts": [

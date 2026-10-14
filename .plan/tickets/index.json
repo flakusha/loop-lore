@@ -50142,7 +50142,7 @@
       "client-contract"
     ],
     "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TUI-ASSET-VIEW-REMOVE-SILENT-CATCH-AND-VOID-ASYNC-IIFE": {
     "epic": "epic-terminal-ui",
