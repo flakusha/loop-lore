@@ -72,6 +72,7 @@ export class TemplateRegistry {
   /**
    * Get a template by ID
    * @param id
+   * @returns the registered template, or undefined when the id is unknown
    */
   get(id: string,): WorkflowTemplate | undefined {
     return this.templates.get(id,);
@@ -88,6 +89,7 @@ export class TemplateRegistry {
   /**
    * Filter templates by category
    * @param category
+   * @returns the templates in that category
    */
   listByCategory(category: ImageEditCategory,): WorkflowTemplate[] {
     const out: WorkflowTemplate[] = [];
@@ -98,6 +100,7 @@ export class TemplateRegistry {
   /**
    * Filter templates available for a specific backend
    * @param backend
+   * @returns the templates that declare support for the backend
    */
   listForBackend(backend: ImageEditBackend,): WorkflowTemplate[] {
     const out: WorkflowTemplate[] = [];
@@ -109,6 +112,7 @@ export class TemplateRegistry {
    * Filter templates that can run on the given backend AND have all required nodes installed
    * @param backend
    * @param installedNodes
+   * @returns the templates runnable on that backend with every required node installed
    */
   listAvailable(
     backend: ImageEditBackend,
@@ -130,6 +134,7 @@ export class TemplateRegistry {
   /**
    * Unregister a template by ID
    * @param id
+   * @returns true when a template was removed, false when the id was unknown
    */
   unregister(id: string,): boolean {
     return this.templates.delete(id,);

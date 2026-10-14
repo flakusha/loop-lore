@@ -120,7 +120,8 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * @param request
    * @param template
    * @param opts
-   * @throws {Error}
+   * @returns the rendered images for this request
+   * @throws {Error} when the workflow build or the ComfyUI prompt submission fails
    */
   async execute(
     request: ImageEditRequest,

@@ -137,7 +137,8 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
    * @param request
    * @param template
    * @param opts
-   * @throws {Error}
+   * @returns the rendered images for this request
+   * @throws {Error} when sd-server is unconfigured, the category is unknown, or the dispatch fails
    */
   async execute(
     request: ImageEditRequest,
