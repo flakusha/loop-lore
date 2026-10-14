@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { ChatArchiveState, } from "./archive-state";
 import type { ChatBattleState, } from "./battle-state";
 import type { ChatBranchesState, } from "./branches-state";

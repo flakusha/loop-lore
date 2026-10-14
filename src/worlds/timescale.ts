@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // size-allow: 260
 // Cohesive single-purpose module: the exported types and the one service
 // factory that returns them cannot be separated without splitting the public

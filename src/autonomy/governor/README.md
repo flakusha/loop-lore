@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Autonomy Rate Governor
 
 `src/autonomy/governor/` — pure module that gates every autonomous action

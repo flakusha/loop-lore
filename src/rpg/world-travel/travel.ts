@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // size-allow: 245
 //
 // Cohesive on purpose: the collision rule below has to live next to the walk

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // size-allow: 280
 // ── Chat page (chat.html) — reactive state object builder ────
 import { chatActions, } from "../chat-actions";
