@@ -24,6 +24,7 @@ function parseFeaturesJson(raw: string | null,): string[] {
  * @param database
  * @param userId
  * @param userRole
+ * @returns the worlds list HTML fragment for this viewer
  */
 async function serveWorldsListDb(
   database: Kysely<DB>,
@@ -58,6 +59,7 @@ async function serveWorldsListDb(
  * @param database
  * @param userId
  * @param userRole
+ * @returns the world detail HTML fragment, empty-state when access is denied
  */
 async function serveWorldDetailContent(
   worldId: string,

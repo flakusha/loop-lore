@@ -23,6 +23,7 @@ const jobs = new Map<string, ExportJob>();
 
 /**
  * @param obj
+ * @returns the payload wrapped as one SSE `data:` frame
  */
 function sseData(obj: unknown,): string {
   const r = safeJsonStringify(obj,);
@@ -34,6 +35,7 @@ function sseData(obj: unknown,): string {
  * @param request
  * @param database
  * @param userId
+ * @returns resolves once the job has finished and left the in-memory store
  */
 async function processExport(
   jobId: string,

@@ -24,6 +24,7 @@ import { jsonResponse, notFoundResponse, requireUserId, } from "./http-utils";
  * @param opts
  * @param opts.database
  * @param prefix
+ * @returns the mounted actor-plan Elysia plugin
  */
 export function actorPlanRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "actor-plan", },)

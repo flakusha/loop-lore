@@ -23,6 +23,7 @@ export type AutoReplyOutcome = { replied: boolean; response?: Response };
  * @param reply
  * @param id
  * @param context
+ * @returns the 201 created envelope, or the auto-reply's own non-2xx response verbatim
  */
 export async function createResponse(
   reply: AutoReplyOutcome,

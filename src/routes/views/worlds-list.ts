@@ -63,6 +63,7 @@ function countDistinctNpcs(
  * themselves — rows are passed in).
  * @param database
  * @param worlds
+ * @returns one card per world, with location/NPC counts and the freshest conditions
  */
 export async function loadWorldListCards(
   database: Kysely<DB>,
@@ -117,6 +118,7 @@ export async function loadWorldListCards(
  * ("just now" / "5m ago" / "3h ago" / "2d ago" / the date itself).
  * @param iso
  * @param nowMs
+ * @returns the human-relative age label
  */
 export function formatRelativeAge(iso: string | null, nowMs: number,): string {
   if (!iso) { return "never"; }
@@ -138,6 +140,7 @@ export function formatRelativeAge(iso: string | null, nowMs: number,): string {
  * Render one world card for the worlds list (conditions badges + previews).
  * @param card
  * @param nowMs
+ * @returns the HTML markup for one world card
  */
 export function renderWorldCard(card: WorldListCard, nowMs: number,): string {
   const conditions: string[] = [];

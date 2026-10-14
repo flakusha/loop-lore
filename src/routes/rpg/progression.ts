@@ -51,7 +51,11 @@ const writeRoute = (
   detail: { summary, description, tags: ["RPG", "XP",], },
 });
 
-/** The six ability scores projected off a character_stats read. */
+/**
+ * The six ability scores projected off a character_stats read.
+ * @param stats - the raw `character_stats` row values
+ * @returns the ability-score subset carried in API payloads
+ */
 function abilityScores(stats: {
   str: number;
   dex: number;
@@ -71,6 +75,7 @@ type RouteCtx = any;
  * @param root0
  * @param root0.database
  * @param prefix
+ * @returns the mounted RPG progression plugin
  */
 export function progressionRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const deps = { database: database, };

@@ -16,7 +16,10 @@ import { safeJsonParse, } from "../../utils";
 import { ErrorCode, HttpStatus, jsonError, } from "../http-utils";
 import { resolveMessageContentForRender, } from "./render-message-content";
 
-/** Logger bound to the messages module namespace. */
+/**
+ * Logger bound to the messages module namespace.
+ * @returns the messages-namespaced child logger
+ */
 export function log(): Logger {
   return getLogger().child({ module: "messages", },);
 }
@@ -24,6 +27,7 @@ export function log(): Logger {
 /**
  * Convert a ServiceError into an HTTP Response.
  * @param error
+ * @returns the JSON error response carrying the mapped status
  */
 export function serviceErrorToResponse(error: ServiceError,): Response {
   switch (error.code) {
@@ -57,6 +61,7 @@ export function serviceErrorToResponse(error: ServiceError,): Response {
 /**
  * Type guard: check if a value is a ServiceError (not a message record).
  * @param value
+ * @returns true when the value is a ServiceError rather than a message record
  */
 export function isServiceError(
   value: Record<string, unknown> | ServiceError,

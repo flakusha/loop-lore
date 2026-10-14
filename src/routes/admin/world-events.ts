@@ -30,6 +30,7 @@ import type { AdminRouteOpts, } from "./types";
  * and the response envelope.
  * @param opts
  * @param prefix
+ * @returns the mounted world-event log admin plugin
  */
 export function worldEventsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const { database, } = opts;

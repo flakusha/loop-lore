@@ -30,6 +30,7 @@ import {
  * @param role
  * @param ip
  * @param t
+ * @returns the post-login response that sets the token cookie and redirects
  */
 async function createSessionAndCookie(
   request: Request,
@@ -102,6 +103,7 @@ async function createSessionAndCookie(
  * @param database
  * @param derivedUserId
  * @param derivedSessionId
+ * @returns an empty 200 that expires the token cookie
  */
 async function handleLogout(
   request: Request,
@@ -134,6 +136,7 @@ async function handleLogout(
  * @param request
  * @param database
  * @param derivedUserId
+ * @returns the caller's own profile, or 401 when no verified user is bound
  */
 async function handleMe(
   request: Request,
