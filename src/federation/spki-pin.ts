@@ -66,6 +66,7 @@ function sniName(host: string,): string | undefined {
  * base64 pin matches its `sha256:`-prefixed form and vice versa.
  * @param pin
  * @param pins
+ * @returns true when some pin normalizes to the same value as `pin`
  */
 export function pinsMatch(pin: string, pins: readonly string[],): boolean {
   const candidate = normalizePin(pin,);
@@ -90,6 +91,7 @@ export type SpkiProbe = (opts: {
  * @param opts.port
  * @param opts.servername
  * @param opts.timeoutMs
+ * @returns the leaf's pin in HPKP form — `sha256:<base64 SubjectPublicKeyInfo>`
  * @throws {Error} when the connection fails, times out, or no leaf
  *   certificate is presented.
  */
@@ -212,6 +214,8 @@ export type PeerPinVerifier = (
  * @param opts.ttlMs
  * @param opts.now
  * @param opts.probe
+ * @returns `origin, pins → Promise<boolean>`, re-probing at most once per TTL
+ *   per origin + pin set
  */
 export function createPeerPinVerifier(opts: {
   /** Verdict TTL in ms; defaults to `PIN_VERDICT_TTL_MS`. */

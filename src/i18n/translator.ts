@@ -20,6 +20,7 @@ import type { FlatTranslationMap, Locale, TranslationMap, TranslationNode, Trans
  * Plural-variant objects are LEAVES: the walk stops there and stores the whole
  * variant object under its own key.
  * @param map
+ * @returns dot-notation key → string leaf or plural-variant object
  */
 export function flattenTranslations(map: TranslationMap,): FlatTranslationMap {
   const flat = new Map<string, TranslationNode>();
@@ -59,6 +60,7 @@ export interface ResolveKeyOptions {
 /**
  * Resolve a dot-notation key from a flat translation map.
  * @param options
+ * @returns the resolved string, or `undefined` when the key is not in the map
  */
 export function resolveKey(options: ResolveKeyOptions,): string | undefined {
   const { translations, key, count, rule, } = options;
@@ -107,6 +109,8 @@ export interface TranslatorOptions {
  * Lookup order: primary, fallback, raw key.
  * A numeric `params.count` picks the plural category via `Intl.PluralRules`.
  * @param options
+ * @returns `key(params)` — the best variant found in primary then fallback, with
+ *   params interpolated, falling back to the raw key
  */
 export function createTranslator(options: TranslatorOptions,): TranslatorFn {
   const { primary, fallback, locale, pluralRule, } = options;

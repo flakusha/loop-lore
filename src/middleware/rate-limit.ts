@@ -39,6 +39,7 @@ export interface RateLimitResult {
  * Build the headers for a 429 (or informational) response.
  * @param result
  * @param retryAfterSec
+ * @returns the `X-RateLimit-*` trio, plus `Retry-After` when the request was blocked
  */
 export function rateLimitHeaders(
   result: RateLimitResult,
@@ -75,6 +76,8 @@ export interface RateLimitConfig {
  * the process lifetime; call {@link destroy} on the returned instance to
  * stop it (tests, per-request instantiation, shutdown hooks).
  * @param config
+ * @returns the limiter surface — `consume`/`peek`/`record`/`refund`,
+ *   `check`, `reset`, `clear` and `destroy`
  */
 export function createRateLimiter(config: RateLimitConfig,) {
   // Per-key queue of timestamps (ms). The queue length is bounded by

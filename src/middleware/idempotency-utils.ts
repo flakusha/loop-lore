@@ -11,6 +11,8 @@
  *
  * Not exported from `idempotency.ts`; this is implementation detail.
  * @param headers
+ * @returns a copy without hop-by-hop, connection and content-length headers,
+ *   which a replayed response must not repeat
  */
 export function filterReplayHeaders(headers: Record<string, string>,): Record<string, string> {
   const out: Record<string, string> = {};

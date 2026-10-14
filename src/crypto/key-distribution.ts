@@ -52,6 +52,7 @@ export function resetRotationEventCount(): void {
 
 /**
  * @param chatId
+ * @returns nothing once the in-flight rotation for `chatId` settles
  * @throws When the in-flight rotation rejects — callers must fail closed.
  */
 export async function awaitChatKeyLock(chatId: string,): Promise<void> {
@@ -67,6 +68,8 @@ function log(): Logger {
 /**
  * @param database
  * @param chatId
+ * @returns the chat's AES-GCM key as imported `key`, `rawKey` and `keyId`; reused
+ *   from the chat's stored row, generated on first use
  * @throws {Error} When encryption is not configured.
  */
 export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
@@ -79,6 +82,8 @@ export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise
  * @param database
  * @param chatId
  * @param newParticipantId
+ * @returns the chat key the joiner derives from their own actor key — the chat key is
+ *   not re-encrypted, only the participant's access to it is added
  * @throws {Error} When encryption is not configured.
  */
 export async function distributeKeysOnJoin(
@@ -103,6 +108,8 @@ export async function distributeKeysOnJoin(
  * @param database
  * @param chatId
  * @param departedParticipantId
+ * @returns the freshly re-encrypted chat key; concurrent callers for the same chat
+ *   share the one in-flight rotation
  * @throws When no participants remain or any re-encrypt step fails.
  */
 export async function rotateKeyOnLeave(

@@ -128,6 +128,7 @@ export function createStage2Parser(opts: Stage2ParserOptions,): Stage2LLMFn {
  * the scene member sets. Returns `null` on ANY violation.
  * @param raw
  * @param ctx
+ * @returns the validated action, or `null` when the completion breaks any rule
  */
 export function validateStage2Output(raw: string, ctx: ParseContext,): Action | null {
   if (raw.length > MAX_STAGE2_RAW_CHARS) { return null; }

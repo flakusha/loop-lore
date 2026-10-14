@@ -77,7 +77,9 @@ export class DagGraph {
   /** Every node mentioned by any edge, roots included. */
   readonly #known = new Set<string>();
 
-  /** Every node in the graph, sorted for a stable pass order. */
+  /** Every node in the graph, sorted for a stable pass order.
+   * @returns every known node id, roots included
+   */
   nodes(): string[] {
     return [...this.#known,].toSorted((a, b,) => a.localeCompare(b,));
   }
@@ -99,6 +101,7 @@ export class DagGraph {
   /**
    * Nodes `taskId` waits on. Empty for a root.
    * @param taskId
+   * @returns the prerequisite ids, sorted; empty for a root or an unknown node
    */
   dependsOn(taskId: string,): string[] {
     const deps = this.#deps.get(taskId,) ?? new Set<string>();
@@ -109,6 +112,7 @@ export class DagGraph {
    * Would `taskId` running on `dependsOnTaskId` close a cycle?
    * @param taskId
    * @param dependsOnTaskId
+   * @returns true when `dependsOnTaskId` already waits on `taskId`, directly or transitively
    */
   wouldCycle(taskId: string, dependsOnTaskId: string,): boolean {
     return reaches(this.#deps, dependsOnTaskId, taskId,);
@@ -166,6 +170,7 @@ export class DagGraph {
    *  prerequisites and is trivially satisfied.
    * @param taskId
    * @param isDone dependency → currently `done`
+   * @returns true when every prerequisite is `done`
    */
   isUnblocked(taskId: string, isDone: (dep: string,) => boolean,): boolean {
     for (const dep of this.#deps.get(taskId,) ?? []) {
