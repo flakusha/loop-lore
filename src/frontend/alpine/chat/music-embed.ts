@@ -34,6 +34,7 @@ const SAFE_URL = /^(?:https?:\/\/|mailto:)/i;
 /**
  * Escape `& < >` for safe insertion as HTML child text.
  * @param s
+ * @returns the escaped string safe to insert as element text content.
  */
 export const escText = (s: string | null | undefined,): string =>
   (s ?? "").replaceAll("&", "&amp;",).replaceAll("<", "&lt;",).replaceAll(">", "&gt;",);
@@ -41,12 +42,14 @@ export const escText = (s: string | null | undefined,): string =>
 /**
  * Escape for safe insertion inside a double-quoted attribute value (& < > ").
  * @param s
+ * @returns the escaped string safe to use inside a double-quoted attribute.
  */
 export const escAttr = (s: string | null | undefined,): string => escText(s,).replaceAll('"', "&quot;",);
 
 /**
  * Allowlist http(s)/mailto schemes; rewrite everything else to a benign `#blocked`.
  * @param s
+ * @returns the escaped URL, or `#blocked` for non-allowlisted schemes.
  */
 export const safeUrl = (s: string | null | undefined,): string => {
   const u = s ?? "";

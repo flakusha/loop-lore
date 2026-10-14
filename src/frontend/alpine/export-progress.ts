@@ -283,7 +283,9 @@ export const exportProgress: ExportProgressState = {
   },
 };
 
-/** Build the Alpine scope for the export-progress panel. */
+/** Build the Alpine scope for the export-progress panel.
+ * @returns the export-progress panel state.
+ */
 export function exportProgressFactory(): ExportProgressState {
   const state = Object.create(exportProgress,) as ExportProgressState;
   Object.assign(state, initialState(),);

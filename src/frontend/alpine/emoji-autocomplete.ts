@@ -31,6 +31,7 @@ export interface EmojiCandidate {
 /**
  * Find the `:` emoji token ending at the caret, if any.
  * @param text
+ * @returns the RegExp match array, or null when no emoji token is at the caret.
  */
 export function findEmojiCaretToken(text: string,): RegExpExecArray | null {
   const anchored = new RegExp(emojiTokenRe.source, "gi",);
