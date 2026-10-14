@@ -47,7 +47,10 @@ export function gatePluginToolsByRole(agentRole: string | null,): ToolDefinition
   return out;
 }
 
-/** Log a denial from an agent role id no plugin registers (best-effort, like `auditDenial` in src/plugins/route-access.ts). */
+/**
+ * Log a denial from an agent role id no plugin registers (best-effort, like `auditDenial` in src/plugins/route-access.ts).
+ * @param agentRole - The assigned role id that failed to resolve
+ */
 function auditUnresolvedRole(agentRole: string,): void {
   try {
     getLogger().warn("plugin tool gate denied: unresolvable agent role", {
