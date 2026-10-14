@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Audit: batch-A — message-seen, generation, admin, auth, async, idempotency
 
 # Working dir: /home/flak/git-ai/loop-lore  |  branch: dev
