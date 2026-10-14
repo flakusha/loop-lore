@@ -30037,6 +30037,24 @@
     "status": "Not Started",
     "git_issue": "3225d3f"
   },
+  "TASK-COMMENT-ONLY-CATCH-BLOCKS-IN-SRC-FRONTEND-ARE-INVISIBLE-TO-E": {
+    "hash": "71aa87f",
+    "git_issue": "71aa87f",
+    "extid": "TASK-COMMENT-ONLY-CATCH-BLOCKS-IN-SRC-FRONTEND-ARE-INVISIBLE-TO-E",
+    "type": "TASK",
+    "title": "Comment-only catch blocks in src/frontend are invisible to ESLint no-empty",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "frontend",
+      "eslint",
+      "error-handling",
+      "cleanup"
+    ],
+    "source": ".plan/tickets/TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e.md",
+    "status": "Not Started"
+  },
   "TASK-COMPANION-BONDING-QUESTS": {
     "epic": "epic-companion-pet-mount",
     "extid": "TASK-COMPANION-BONDING-QUESTS",
@@ -34984,6 +35002,24 @@
     "tags": [],
     "title": "Frontend — Actor Location & World Traits CRUD",
     "type": "TASK"
+  },
+  "TASK-FRONTEND-BANNED-PATTERN-OWNERSHIP-COMMENT-CLAIMS-ESLINT-ENFO": {
+    "hash": "05516b2",
+    "git_issue": "05516b2",
+    "extid": "TASK-FRONTEND-BANNED-PATTERN-OWNERSHIP-COMMENT-CLAIMS-ESLINT-ENFO",
+    "type": "TASK",
+    "title": "Frontend banned-pattern ownership comment claims ESLint enforces what it does not",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "frontend",
+      "eslint",
+      "gates",
+      "documentation"
+    ],
+    "source": ".plan/tickets/TASK-frontend-banned-pattern-ownership-comment-claims-eslint-enfo.md",
+    "status": "Not Started"
   },
   "TASK-FRONTEND-BUNDLE-ANALYSIS": {
     "epic": "epic-frontend-bundle-optimization",
