@@ -14,6 +14,7 @@ import { feFetch, } from "../fe-fetch";
 /**
  * Detect a split consequence: { action: "split", branches: [...] }
  * @param consequences
+ * @returns the split branches array when valid, or null when not a split consequence.
  */
 export function extractSplitBranches(
   consequences: Record<string, unknown>,
@@ -43,6 +44,7 @@ export function extractSplitBranches(
 /**
  * Detect a reunion consequence: { action: "reunite", secondaryChatId }
  * @param consequences
+ * @returns the secondary chat id when valid, or null when not a reunion consequence.
  */
 export function extractReunionSource(consequences: Record<string, unknown>,): string | null {
   if (consequences.action !== "reunite") { return null; }
@@ -55,6 +57,7 @@ export function extractReunionSource(consequences: Record<string, unknown>,): st
  * choice itself persisted and merely reports the consequence as not triggered.
  * @param chatId
  * @param branches
+ * @returns true when the server accepted the split, false on network failure.
  */
 export async function triggerSplit(
   chatId: string,
@@ -78,6 +81,7 @@ export async function triggerSplit(
  * {@link triggerSplit}.
  * @param chatId
  * @param secondaryChatId
+ * @returns true when the server accepted the reunion, false on network failure.
  */
 export async function triggerReunite(chatId: string, secondaryChatId: string,): Promise<boolean> {
   try {

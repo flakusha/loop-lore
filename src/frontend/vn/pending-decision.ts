@@ -25,7 +25,9 @@
 /** Independently-tracked pending state, one slot per card module. */
 const pending = { choice: false, question: false, };
 
-/** Read by `chat-send.ts` before the optimistic push. */
+/** Read by `chat-send.ts` before the optimistic push.
+ * @returns true when any choice or question is still pending.
+ */
 export function isVnDecisionPending(): boolean {
   return pending.choice || pending.question;
 }

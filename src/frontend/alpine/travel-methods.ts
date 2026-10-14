@@ -45,6 +45,7 @@ export interface TravelPoint {
  * coordinates (the UI then estimates from hop count instead).
  * @param origin
  * @param destination
+ * @returns the distance in location-units, or null when coordinates are missing.
  */
 export function coordDistance(origin: TravelPoint, destination: TravelPoint,): number | null {
   if (origin.coordX === null || origin.coordY === null || destination.coordX === null || destination.coordY === null) {
@@ -63,6 +64,7 @@ export function coordDistance(origin: TravelPoint, destination: TravelPoint,): n
  * @param destination
  * @param method
  * @param hops direct-connection hop count fallback (e.g. 1 for adjacent)
+ * @returns the estimated travel minutes, 0 for teleport, or null when unestimable.
  */
 export function estimateTravelMinutes(
   origin: TravelPoint,

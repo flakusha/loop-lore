@@ -117,8 +117,10 @@ const emptyForm = (kind: EntityKind,): Record<string, string> => {
 };
 
 /** Build a state with defaults for a given kind, no auto-load. Exported so
+ * tests can avoid the factory's auto `load()` side effect.
  * @param kind
- * tests can avoid the factory's auto `load()` side effect. */
+ * @returns a fresh state object for the given entity kind.
+ */
 export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
   _entActorId: null,
   _entKind: kind,
@@ -286,6 +288,7 @@ export const stateFromKind = (kind: EntityKind,): ActorEntitiesState => ({
  * Build a notes/items/lore panel bound to a specific actor.
  * @param actorId
  * @param kind
+ * @returns the entities panel state bound to the actor.
  */
 export function actorEntitiesFactory(actorId: string, kind: EntityKind,): ActorEntitiesState {
   const state = stateFromKind(kind,);

@@ -200,6 +200,7 @@ const panelState: AutonomyPanelState = {
  * @param opts.layer
  * @param opts.scopeId
  * @param opts.actorId
+ * @returns the autonomy panel state bound to the given scope.
  */
 export function autonomyPanelFactory(
   opts: { worldId: string; chatId?: string; layer?: AutonomyLayer; scopeId?: string; actorId?: string },

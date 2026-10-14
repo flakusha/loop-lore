@@ -24,6 +24,7 @@ export class BrowserConsoleTransport implements Transport {
 
   /**
    * @param entry
+   * @returns a resolved promise (write is fire-and-forget).
    */
   write(entry: LogEntry,): Promise<void> {
     try {

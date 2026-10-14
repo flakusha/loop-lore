@@ -21,6 +21,7 @@ import { type FakeEl, makeEl, query, } from "./battle-fake-dom";
 /**
  * Standard two-combatant battle view, overridable per test.
  * @param overrides
+ * @returns a battle view object with two default combatants.
  */
 export function view(overrides: Partial<BattleView> = {},): BattleView {
   return {
@@ -46,6 +47,7 @@ export interface Mounted {
 /**
  * Mount the panel on a fresh container and optionally render a battle.
  * @param active
+ * @returns a mounted panel with container and sent command list.
  */
 export function mountBattle(active: BattleView | null,): Mounted {
   const container = makeEl("div",);
@@ -65,6 +67,8 @@ export function mountBattle(active: BattleView | null,): Mounted {
  * Find a combatant tile by its data-battle-id.
  * @param container
  * @param id
+ * @throws {Error} when no tile matches the id.
+ * @returns the matching tile element.
  */
 export function tile(container: FakeEl, id: string,): FakeEl {
   const el = query(container, `[data-battle-id="${id}"]`,);
@@ -76,6 +80,8 @@ export function tile(container: FakeEl, id: string,): FakeEl {
  * Find an action button by its data-battle-action kind.
  * @param container
  * @param kind
+ * @throws {Error} when no button matches the kind.
+ * @returns the matching button element.
  */
 export function actionButton(container: FakeEl, kind: string,): FakeEl {
   const el = query(container, `[data-battle-action="${kind}"]`,);
@@ -86,6 +92,7 @@ export function actionButton(container: FakeEl, kind: string,): FakeEl {
 /**
  * Dead extra combatant for roster-state fixtures.
  * @param id
+ * @returns a BattleCombatantView with 0 hp.
  */
 export function deadCombatant(id = "ghost",): BattleCombatantView {
   return { id, name: "Ghost", hp: 0, maxHp: 10, initiative: 1, };

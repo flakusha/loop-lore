@@ -43,7 +43,9 @@ export interface FakeEl {
 
 const FOCUS_LOG: FakeEl[] = [];
 
-/** Element that received the most recent focus() call, if any. */
+/** Element that received the most recent focus() call, if any.
+ * @returns the most recently focused fake element, or null.
+ */
 export function lastFocus(): FakeEl | null {
   return FOCUS_LOG[FOCUS_LOG.length - 1] ?? null;
 }
@@ -145,6 +147,7 @@ export function fire(el: FakeEl, type: string, event: Record<string, unknown> = 
  * Send a keydown to `el`; returns whether the handler preventDefault()ed.
  * @param el
  * @param key
+ * @returns true if any handler called preventDefault().
  */
 export function pressKey(el: FakeEl, key: string,): boolean {
   let prevented = false;
@@ -162,6 +165,7 @@ export function pressKey(el: FakeEl, key: string,): boolean {
  * Depth-first `[data-name='value']` selector match over a fake subtree.
  * @param root
  * @param selector
+ * @returns the first matching element, or null.
  */
 export function query(root: FakeEl, selector: string,): FakeEl | null {
   const m = /^\[data-([a-z-]+)=["']([^"']+)["']\]$/.exec(selector.trim(),);
@@ -186,7 +190,9 @@ function find(els: FakeEl[], key: string, value: string,): FakeEl | null {
 const docHost = globalThis as { document?: unknown };
 const cssHost = globalThis as { CSS?: unknown };
 
-/** Swap in a fake document + identity CSS.escape; returns the restore fn. */
+/** Swap in a fake document + identity CSS.escape; returns the restore fn.
+ * @returns a function that restores the original globals.
+ */
 export function installBattleDom(): () => void {
   const savedDocument = docHost.document;
   const savedCss = cssHost.CSS;

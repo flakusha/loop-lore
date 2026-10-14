@@ -331,6 +331,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
 /**
  * Build the Alpine scope for the emotion avatars panel.
  * @param actorId
+ * @returns the emotion avatars panel state.
  */
 export function actorEmotionAvatarsFactory(actorId: string,): ActorEmotionAvatarsState {
   const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState;

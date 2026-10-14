@@ -18,6 +18,7 @@ import { type FakeEl, makeEl, } from "./vn-fake-element";
  * @param assetId
  * @param caption
  * @param overrides
+ * @returns a full MessageAttachment fixture object.
  */
 export function makeAttachment(
   assetId: string,
@@ -43,7 +44,9 @@ export { type FakeEl, makeEl, } from "./vn-fake-element";
 
 type Globals = Record<string, unknown>;
 
-/** Minimal Web Storage stub (same shape as settings.test.ts). */
+/** Minimal Web Storage stub (same shape as settings.test.ts).
+ * @returns a Map-backed fake Storage object.
+ */
 export function createStorageStub(): Storage {
   const store = new Map<string, string>();
   return {
@@ -124,7 +127,9 @@ export function installVnFakeDom(): FakeDom {
   };
 }
 
-/** Flush pending macrotasks once (stubbed frames, timer-boundary flushes). */
+/** Flush pending macrotasks once (stubbed frames, timer-boundary flushes).
+ * @returns a promise that resolves on the next macrotask.
+ */
 export function tick(): Promise<void> {
   const { promise, resolve, } = Promise.withResolvers<void>();
   setTimeout(resolve, 0,);

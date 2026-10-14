@@ -35,6 +35,7 @@ const UNGROUPED = "Other";
  * Bucket sections by their catalog `group`, preserving catalog order. A section
  * with no group lands in "Other" rather than being dropped.
  * @param sections
+ * @returns sections bucketed by group, preserving catalog order within each group.
  */
 export function groupSections(sections: ConfigMenuSection[],): ConfigMenuGroup[] {
   const groups: ConfigMenuGroup[] = [];
@@ -53,6 +54,7 @@ export function groupSections(sections: ConfigMenuSection[],): ConfigMenuGroup[]
  * server's `coerceValue` but keeps native JSON types instead of stringifying.
  * @param field
  * @param raw
+ * @returns the coerced value, typed for the PATCH body.
  */
 export function coerceFieldValue(field: ConfigMenuField, raw: unknown,): unknown {
   switch (field.type) {
@@ -87,6 +89,7 @@ export function coerceFieldValue(field: ConfigMenuField, raw: unknown,): unknown
  * enum, broken JSON) is rejected.
  * @param field
  * @param raw
+ * @returns an error message string, or null when the value passes validation.
  */
 export function validateFieldValue(field: ConfigMenuField, raw: unknown,): string | null {
   const isEmpty = raw === "" || raw === null || raw === undefined;
@@ -117,7 +120,11 @@ export function validateFieldValue(field: ConfigMenuField, raw: unknown,): strin
   }
 }
 
-/** The Alpine component state factory. */
+/** The Alpine component state factory.
+ * @param opts - injectable fetch seam for tests; uses the real API by default.
+ * @param opts.fetch
+ * @returns the Alpine component state object.
+ */
 export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
   const request: ApiFetchFn = opts.fetch ?? apiFetch;
   return {
@@ -161,7 +168,9 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
       }
     },
 
-    /** Switch the visible panel and deep-link it via the URL hash. */
+    /** Switch the visible panel and deep-link it via the URL hash.
+     * @param key - section key to activate.
+     */
     selectSection(key: string,) {
       if (!key) { return; }
       this.activeSection = key;
@@ -180,7 +189,10 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
       return this.sections.find((s,) => s.key === this.activeSection);
     },
 
-    /** Record a new value, tracking dirtiness and re-validating the field. */
+    /** Record a new value, tracking dirtiness and re-validating the field.
+     * @param field - the config field being updated.
+     * @param raw - the new raw value from the input.
+     */
     setValue(field: ConfigMenuField, raw: unknown,) {
       this.values[field.key] = raw;
       if (!this.canEdit(field,)) { return; }
@@ -202,7 +214,9 @@ export function createConfigMenuState(opts: { fetch?: ApiFetchFn } = {},) {
       return this.isDirty(field.key,) ? validateFieldValue(field, this.values[field.key],) : null;
     },
 
-    /** Whether this role may write the field (catalog already filters by role; this is the defense-in-depth gate). */
+    /** Whether this role may write the field (catalog already filters by role; this is the defense-in-depth gate).
+     * @param field - the config field to check.
+     */
     canEdit(field: ConfigMenuField,): boolean {
       return field.editable && (field.scope !== "admin" || this.role === "admin");
     },

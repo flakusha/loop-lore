@@ -14,7 +14,9 @@
 /** Locates the live chatState scope. Exported for the query-selector assertion in tests. */
 export const CHAT_STATE_SELECTOR = "[x-data='chatState()']";
 
-/** Reads the Alpine `$data` object for the chatState scope, or null when absent. */
+/** Reads the Alpine `$data` object for the chatState scope, or null when absent.
+ * @returns the reactive chat state object, or null when Alpine is not yet booted.
+ */
 export function chatStateData(): Record<string, unknown> | null {
   const el = document.querySelector<HTMLElement>(CHAT_STATE_SELECTOR,);
   if (!el || typeof Alpine === "undefined") { return null; }
