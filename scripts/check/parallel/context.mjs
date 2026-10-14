@@ -43,8 +43,11 @@ export const DIFF_BASE = parseDiffBase();
 // in this repo passes `--diff-base=<ref>` (it would silently disable scoping
 // and run everything), so it is left alone rather than grown on speculation.
 // Names match verbatim after trimming whitespace; unknown names exit
-// non-zero with a hint listing available names. The flag is the source of
-// truth (trust semantics): no implicit inclusion of diff-scoped gates.
+// non-zero with a hint listing available names. A flag given with NO value at
+// all - bare trailing `--gates`, or `--gates=` - is likewise a usage error
+// (exit 2): the alternative is silently running the WHOLE suite, the exact
+// opposite of what the caller asked for. The flag is the source of truth
+// (trust semantics): no implicit inclusion of diff-scoped gates.
 // Combined with `--diff-base`, the coverage/e2e entries still scope to the
 // diff; `--gates` only narrows the executed subset.
 function parseGateFlag(flag,) {
@@ -53,7 +56,15 @@ function parseGateFlag(flag,) {
   // Equals form carries its own value; space form takes the next argv token.
   const eq = arg.indexOf("=",);
   const raw = eq === -1 ? process.argv[process.argv.indexOf(arg,) + 1] : arg.slice(eq + 1,);
-  if (raw === undefined || raw.trim() === "") { return null; }
+  // No value at all (bare trailing flag) or an empty equals value is a usage
+  // error, never a silent no-filter that runs every gate. Exit like the
+  // unknown-name path. A blank SPACE-form token still means "no filter" - the
+  // documented defensive behaviour pinned by check-parallel.gates.test.mjs.
+  if (raw === undefined || (eq !== -1 && raw === "")) {
+    console.error(`error: ${flag} requires a comma-separated list of gate names`,);
+    process.exit(2,);
+  }
+  if (raw.trim() === "") { return null; }
   return raw.split(",",).map((s,) => s.trim()).filter((s,) => s.length > 0);
 }
 export const GATES_FILTER = parseGateFlag("--gates",);

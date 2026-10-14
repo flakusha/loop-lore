@@ -59,11 +59,15 @@ const JOBS = Math.min(parseJobs(), Object.keys(checks,).length,);
 // giwt reconciles .plan/ against the git issue CLI by shelling out to
 // `git issue ls --all --format oneline` with a hard 10s budget (~3.2k issues;
 // the call measures 5.4s idle and 15.5s on a loaded box, and is not always
-// resolvable from the gate's environment at all). When it fails, giwt degrades
-// to "git issue CLI unavailable", then lists every issue it could not see as an
-// actionable finding (~112 phantom findings) and exits 1. A gate that could not
-// be evaluated is not a gate that failed: report it as skipped with the reason
-// printed, never as a red gate carrying invented findings to "fix".
+// resolvable from the gate's environment at all). When the CLI is genuinely
+// MISSING, the gate cannot be evaluated at all, and giwt says so with the
+// marker below. A gate that could not be evaluated is not a gate that failed:
+// report it as skipped with the reason printed, never as a red gate carrying
+// invented findings to "fix".
+//
+// The marker alone is NOT the discriminator (see `COULD_NOT_START_EXIT_CODES`):
+// a gate that RAN and exited non-zero stays FAIL even when the phrase appears
+// in its output as part of a larger diagnostic.
 //
 // ponytail: ceiling — on a host where the issue CLI is *permanently*
 // unreachable the plan gates never gate .plan/ drift. The skip is printed on
@@ -71,6 +75,11 @@ const JOBS = Math.min(parseJobs(), Object.keys(checks,).length,);
 // Fail closed once upstream giwt returns a distinct exit code for "cannot
 // evaluate" (BUG-giwt-plan-gates-report-112-phantom-actionable-issues-when-th).
 export const GIWT_ISSUE_CLI_UNAVAILABLE = "git issue CLI unavailable";
+
+// bash's exit codes for "the shell could not EXEC the command": 127 command
+// not found, 126 found but not executable. This is the only structural signal
+// that a gate never STARTED, as opposed to ran and rendered a verdict.
+const COULD_NOT_START_EXIT_CODES = new Set([126, 127,],);
 
 // Per-gate budget overrides, keyed by gate name. Every gate NOT listed here
 // gets the default (DEFAULT_GATE_TIMEOUT_MS, itself overridable by
@@ -148,8 +157,18 @@ export async function runCheck(name, command,) {
     // failedCount as `total - passed - skipped`; a result that counted as both
     // would report a negative failed count. The giwt path keeps its existing
     // shape (already `!gate.ok`, so the two are disjoint there).
+    // A gate that could not START — the shell never exec'd its tool — has no
+    // verdict of its own, so it is SKIPPED. The exit code is the structural
+    // evidence: bash answers 126/127 exactly when it could not exec. A gate
+    // that RAN and exited non-zero (1, 3, ...) DID render a verdict, so it
+    // stays FAIL even when the giwt marker appears in its output.
+    //
+    // The marker still scopes the reclassification to the known giwt condition:
+    // without it, any gate whose binary was renamed (127) would silently skip
+    // instead of failing — a new false-green in place of the old one.
     const skipped = !gate.timedOut && (command === NOOP_OK ||
-      (!gate.ok && gateOutput.includes(GIWT_ISSUE_CLI_UNAVAILABLE,)));
+      (!gate.ok && COULD_NOT_START_EXIT_CODES.has(gate.exitCode,) &&
+        gateOutput.includes(GIWT_ISSUE_CLI_UNAVAILABLE,)));
     // oxlint-disable-next-line sort-keys
     return {
       name,
