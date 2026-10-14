@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Confirmation round — dead/duplicated code triage (2026-09-03)
 
 Companion to `README.md` in this directory. Run against merged-state preview

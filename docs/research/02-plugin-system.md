@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # 02 — Loop-Lore Plugin System: Inventory, Lifecycle, and Gap Analysis
 
 **Date:** 2026-10-07

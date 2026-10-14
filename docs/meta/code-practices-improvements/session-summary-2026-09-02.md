@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Session 2026-09-02 — bugfix burst H2-H7
 
 **Goal:** analyze tree/ units for finalization candidates; pick up .plan/ tickets and resolve bugs in new worktrees.

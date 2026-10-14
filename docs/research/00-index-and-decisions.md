@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # 00 — Index and decisions
 
 **Date:** 2026-10-07 · **Role:** synthesis. No new code was written for this document; one slice of implementation landed while the research was in flight and is recorded here.

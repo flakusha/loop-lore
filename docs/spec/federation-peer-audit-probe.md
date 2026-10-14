@@ -1,5 +1,6 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 <!-- Companion to: .plan/tickets/TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md -->
 <!-- Research basis: .tmp/fed-research/topic-4-zero-trust.md -->
 

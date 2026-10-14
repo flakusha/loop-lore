@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Handoff: feat-stop-and-respond-interrupt (#30)
 
 **Ticket**: `.plan/tickets/TASK-stop-and-respond-interrupt-semantics.md` (Status: ⬜ Not Started → [OK] Done when complete)

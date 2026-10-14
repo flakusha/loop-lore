@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Bugfix Batch — 2026-09-01 — DONE — All 5 merged to dev
 
 ## Final state
