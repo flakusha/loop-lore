@@ -239,7 +239,8 @@
     "noStoredModels": "No models stored in this browser yet.",
     "storageUsage": "Storage used",
     "stored": "stored",
-    "localInference": "Browser-side inference (opt-in)"
+    "localInference": "Browser-side inference (opt-in)",
+    "templates": "Templates"
   },
   "admin": {
     "title": "Administration",
@@ -457,7 +458,9 @@
     "unsupportedFormat": "Format non supporté",
     "apiError": "Erreur API",
     "connectionFailed": "Connexion échouée",
-    "timeout": "Délai d'attente dépassé"
+    "timeout": "Délai d'attente dépassé",
+    "createFailed": "Failed to create",
+    "loadFailed": "Failed to load"
   },
   "characters": {
     "title": "Characters",
@@ -515,7 +518,12 @@
     "uploadCharacterCard": "Upload a character card",
     "supportedFormats": "Supported Formats",
     "characterCards": "Character Cards",
-    "fileFormats": "File Formats"
+    "fileFormats": "File Formats",
+    "appearance": "Appearance",
+    "defaultOutfit": "Default Outfit",
+    "searchCharacters": "Search characters...",
+    "switchToGrid": "Switch to grid view",
+    "switchToList": "Switch to list view"
   },
   "worlds": {
     "title": "Worlds",
@@ -574,7 +582,14 @@
     "revokeInviteConfirm": "Révoquer l'invitation {code} ?",
     "deleteItemConfirm": "Supprimer cet objet ? Ses instances placées seront également supprimées.",
     "destroyInstanceConfirm": "Détruire cette instance d'objet ?",
-    "deleteLocationConfirm": "Supprimer ce lieu ?"
+    "deleteLocationConfirm": "Supprimer ce lieu ?",
+    "createTimeline": "Create Timeline",
+    "searchWorlds": "Search worlds...",
+    "timeline": "Timeline",
+    "timelineDesc": "Description",
+    "timelineDescPlaceholder": "Enter description",
+    "timelineName": "Timeline Name",
+    "timelineNamePlaceholder": "Enter timeline name"
   },
   "gallery": {
     "title": "Galerie",
@@ -600,7 +615,11 @@
     "labelOptional": "Label (optional)",
     "orClickToBrowse": "or click to browse",
     "assetFallback": "Ressource",
-    "previewFailed": "Échec du chargement de l'aperçu de la ressource"
+    "previewFailed": "Échec du chargement de l'aperçu de la ressource",
+    "characterInfo": "Character Info",
+    "chatSettings": "Chat Settings",
+    "toggleGallery": "Toggle Gallery",
+    "userPreferences": "User Preferences"
   },
   "blog": {
     "title": "Blog",
@@ -994,7 +1013,19 @@
     "tabAudit": "Audit",
     "auditAll": "All",
     "auditEmpty": "No audit entries yet",
-    "auditLoadMore": "Load more"
+    "auditLoadMore": "Load more",
+    "assetPickerEmpty": "No assets available",
+    "assetPickerLoading": "Loading...",
+    "assetPickerTitle": "Attach Asset",
+    "attachAsset": "Attach",
+    "chatVariant": "Variant",
+    "improveMessage": "Improve",
+    "ownerMessage": "Owner",
+    "searchInChat": "Search in this chat...",
+    "seenBy": "Seen by",
+    "variantRpg": "RPG",
+    "variantRpgGroup": "RPG Group",
+    "variantStandard": "Standard"
   },
   "personas": {
     "title": "Personas",
@@ -1344,7 +1375,17 @@
     "unknownCommandSuggest": "Unknown command /{name} — did you mean /{suggestion}?",
     "hiddenCommandsNote": "{count} more command(s) need a higher role.",
     "keyphrasesSaved": "Keyphrases saved ({count})",
-    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved"
+    "keyphrasesSaveFailed": "Keyphrases: {failed} failed, {saved} saved",
+    "captioningStarted": "Captioning started",
+    "dangerActionDone": "Danger action completed",
+    "failedChangeLocation": "Failed to change location",
+    "failedTransferChat": "Failed to transfer chat",
+    "failedUnarchiveChat": "Failed to unarchive chat",
+    "failedUpdatePinState": "Failed to update pin state",
+    "gmGuidanceApplied": "GM guidance applied",
+    "messageNoContentForImage": "Message has no content for image",
+    "networkErrorCreatingQuest": "Network error creating quest",
+    "networkErrorDuringRetry": "Network error during retry"
   },
   "status": {
     "characterResponding": "Le personnage répond...",
@@ -1366,7 +1407,34 @@
     "wardrobeSaveFailed": "Failed to save outfit.",
     "wardrobeCreated": "Outfit created.",
     "wardrobeUpdated": "Outfit updated.",
-    "wardrobeDeleteFailed": "Failed to delete outfit."
+    "wardrobeDeleteFailed": "Failed to delete outfit.",
+    "emotionAvatarsBaseRequired": "Base avatar is required",
+    "emotionAvatarsCancelFailed": "Failed to cancel emotion avatar generation",
+    "emotionAvatarsLoadFailed": "Failed to load emotion avatars",
+    "emotionAvatarsStartFailed": "Failed to start emotion avatar generation",
+    "emotionAvatarsStarted": "Emotion avatar generation started",
+    "entitiesCreateFailed": "Failed to create entity",
+    "entitiesLoadFailed": "Failed to load entities",
+    "entitiesSaveFailed": "Failed to save entities",
+    "exportStartFailed": "Failed to start export",
+    "traitsCreateFailed": "Failed to create traits",
+    "traitsLoadFailed": "Failed to load traits",
+    "traitsSaveFailed": "Failed to save traits",
+    "traitsUpdated": "Traits updated",
+    "licensingDeleteFailed": "Failed to delete license",
+    "licensingLoadFailed": "Failed to load license",
+    "licensingSaveFailed": "Failed to save license",
+    "systemsExportComplete": "Export complete",
+    "systemsExportFailed": "Export failed",
+    "systemsImportComplete": "Import complete",
+    "systemsImportFailed": "Import failed",
+    "systemsImportInvalidJson": "Invalid JSON in import",
+    "systemsImportNoPayload": "No import payload",
+    "systemsImportNoUrl": "No import URL",
+    "traitsCreated": "Traits created",
+    "traitsDeleted": "Traits deleted",
+    "traitsDeleteFailed": "Failed to delete traits",
+    "traitsNameRequired": "Name is required"
   },
   "commands": {
     "help": "Afficher les commandes disponibles",
@@ -1646,5 +1714,34 @@
     "showing": "Showing {shown} of {total}",
     "loadMore": "Load More",
     "loadMoreFailed": "Failed to load more journal entries."
+  },
+  "keys": {
+    "generate": "Generate New Key",
+    "generateTitle": "Generate New Key",
+    "nameLabel": "Key Name",
+    "namePlaceholder": "e.g., backup-key",
+    "noKeys": "No encryption keys found.",
+    "revoke": "Revoke Key",
+    "revokeConfirm": "Key to revoke:",
+    "revokeConfirmButton": "Revoke Key",
+    "revokeTitle": "Revoke Key",
+    "revokeWarning": "Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.",
+    "rotate": "Rotate Primary Key",
+    "title": "Encryption Keys"
+  },
+  "templates": {
+    "allModalities": "All Modalities",
+    "copy": "Copy",
+    "delete": "Delete",
+    "description": "Description",
+    "edit": "Edit",
+    "empty": "No templates yet",
+    "export": "Export",
+    "import": "Import",
+    "modality": "Modality",
+    "name": "Name",
+    "new": "New Template",
+    "payload": "Payload (JSON)",
+    "preset": "Preset"
   }
 }
