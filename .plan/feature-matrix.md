@@ -1616,7 +1616,7 @@ Total tickets: **3628** — untagged: **2430** — unbound to epic: **1463**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2430 | 922 | 45 | 914 | 32 | 0 | 517 |
+| (untagged) | 2430 | 923 | 45 | 913 | 32 | 0 | 517 |
 
 ## By epic × status
 
@@ -1708,7 +1708,7 @@ Total tickets: **3628** — untagged: **2430** — unbound to epic: **1463**
 | epic-assistant-gm-flows | 32 | 9 | 4 | 16 | 0 | 0 | 3 |
 | epic-assistant-gm-flows, epic-conversation-branching | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-assistant-step-planning | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
-| epic-audio-video-sound | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
+| epic-audio-video-sound | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | epic-audio-video-sound (Phase 5) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-audio-video-sound (Phase 6) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-auth | 1 | 0 | 0 | 1 | 0 | 0 | 0 |

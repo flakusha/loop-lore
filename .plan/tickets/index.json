@@ -24289,7 +24289,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-ambient-sound-system.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Ambient Sound System",
     "type": "TASK"
