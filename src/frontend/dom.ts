@@ -14,6 +14,7 @@
  *   const items = $all<HTMLLIElement>(".list-item");
  * @param selector
  * @param root
+ * @returns the first match, or `null` when nothing matches
  */
 export function $<T extends HTMLElement,>(
   selector: string,
@@ -44,6 +45,7 @@ export function $all<T extends HTMLElement,>(
  *     console.log(input.value);
  *   }
  * @param e
+ * @returns the element the event fired on, cast to `T`
  */
 export function eventTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.target as T | null;
@@ -52,6 +54,7 @@ export function eventTarget<T extends HTMLElement,>(e: Event,): T | null {
 /**
  * Typed `currentTarget` — extracts the element the listener is bound to.
  * @param e
+ * @returns the bound element, or `null` once the event has finished dispatching
  */
 export function eventCurrentTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.currentTarget as T | null;
