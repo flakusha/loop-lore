@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # knip + jscpd research — src/ (2026-09-03, dev @ 7aa33f8b)
 
 Scratch research record (`.tmp/`, git-ignored). Numbers are run-time snapshots —

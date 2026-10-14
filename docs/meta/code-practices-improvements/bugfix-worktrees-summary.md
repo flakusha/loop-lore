@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Bugfix Worktrees — 5 New Branches Ready — 2026-08-28
 
 > Generated from 5 subagent planning passes. Each worktree is a planning-pass only:

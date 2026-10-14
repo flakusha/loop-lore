@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Harness Integrations Audit — What the Agent Harness Already Provides
 
 **Date:** 2026-10-07
