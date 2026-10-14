@@ -268,7 +268,7 @@ describe("error paths", () => {
     const controller = new AbortController();
     fetchImpl = async (_url: string, opts?: FetchOpts,) => {
       // Simulate fetch honoring the signal
-      if (opts?.signal?.aborted) {
+      if ((opts?.signal as { aborted?: boolean })?.aborted) {
         const e = new Error("The operation was aborted",);
         e.name = "AbortError";
         throw e;
