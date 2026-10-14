@@ -4,6 +4,7 @@
 import { escapeHtml, } from "../../html-escape";
 import type { ChatState, } from "../types";
 import { renderShortcodes, } from "./emoji";
+import { SANITIZE_CONFIG, } from "./sanitize";
 
 /** */
 export type ChatUtilsRender = Partial<ChatState> & ThisType<ChatState>;
@@ -33,45 +34,7 @@ export const chatUtilsRender: ChatUtilsRender = {
     }
 
     const html = marked.parse(withEmoji,) as string;
-    return DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: [
-        "b",
-        "i",
-        "em",
-        "strong",
-        "a",
-        "p",
-        "br",
-        "ul",
-        "ol",
-        "li",
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "code",
-        "pre",
-        "blockquote",
-        "table",
-        "thead",
-        "td",
-        "th",
-        "tr",
-        "hr",
-        "img",
-        "del",
-        "ins",
-        "sup",
-        "sub",
-        "details",
-        "summary",
-        "div",
-        "span",
-      ],
-      ALLOWED_ATTR: ["href", "src", "alt", "title", "class", "target", "rel",],
-    },);
+    return DOMPurify.sanitize(html, SANITIZE_CONFIG,);
   },
 
   // Escapes `& < > " '` — safe in text nodes and quoted attributes.

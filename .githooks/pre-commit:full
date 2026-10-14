@@ -146,7 +146,7 @@ fi
 # ── Step 4: Non-blocking checks ──────────────────────────────
 echo ""
 echo "--- Step 4: Non-blocking checks ---"
-for check in "size-check" "spdx-check"; do
+for check in "size:check" "spdx:check"; do
   if bun run "$check" 2>/dev/null; then
     green "  ✓ $check: passed"
   else

@@ -19,6 +19,7 @@
  * call one builder per slot.
  */
 
+import { escapeHtml, } from "../html-escape";
 import { applyFx, type FxName, } from "./text-fx";
 
 /**
@@ -182,18 +183,6 @@ export function timeBadgeHtml(label: string | null | undefined, dateTime?: strin
   if (!label) { return ""; }
   const dt = dateTime ? ` datetime="${escapeHtml(dateTime,)}"` : "";
   return `<time class="fx-time-badge"${dt}>${escapeHtml(label,)}</time>`;
-}
-
-/**
- * @param value
- * @returns {string}
- */
-function escapeHtml(value: string,): string {
-  return value
-    .replaceAll("&", "&amp;",)
-    .replaceAll("<", "&lt;",)
-    .replaceAll(">", "&gt;",)
-    .replaceAll('"', "&quot;",);
 }
 
 /**

@@ -118,7 +118,14 @@ export async function safeFetch<T = unknown,>(
   // body stays open for the stream duration. Only arm the timeout for bounded
   // requests; a caller-supplied external signal still cancels a stream.
   const controller = stream ? undefined : new AbortController();
-  const timeoutId = stream ? undefined : setTimeout(() => controller!.abort(), timeout,);
+  // N20: distinguish an external abort from our own timeout so callers can
+  // tell "user cancelled" apart from "request timed out".
+  let timedOut = false;
+  const timeoutId = stream ? undefined : setTimeout(() => {
+    timedOut = true;
+    controller!.abort();
+  }, timeout,);
+
   const combinedSignal = stream
     ? externalSignal
     : combineSignals(externalSignal, controller!.signal,);
@@ -211,7 +218,13 @@ export async function safeFetch<T = unknown,>(
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error,),);
     if (err.name === "AbortError") {
-      return { ok: false, error: new Error(`Request timed out after ${timeout}ms`,), };
+      // N20: only report a timeout when OUR timer fired; an external
+      // abort (caller-supplied signal) is a cancellation, not a timeout.
+      if (timedOut) {
+        return { ok: false, error: new Error(`Request timed out after ${timeout}ms`,), };
+      }
+
+      return { ok: false, error: new Error("Request aborted",), };
     }
 
     return { ok: false, error: err, };

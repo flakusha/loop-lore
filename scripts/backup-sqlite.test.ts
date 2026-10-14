@@ -55,12 +55,12 @@ function restoreFrom(backupPath: string, name: string,): Database {
 }
 
 function countRows(db: Database, from: string,): number {
-  const row = db.query<{ total: number }>(`SELECT count(*) AS total FROM ${from}`,).get();
+  const row = db.query<{ total: number }, []>(`SELECT count(*) AS total FROM ${from}`,).get();
   return row?.total ?? 0;
 }
 
 function integrityCheck(db: Database,): string | null {
-  return db.query<{ integrity_check: string }>("PRAGMA integrity_check;",).get()?.integrity_check ?? null;
+  return db.query<{ integrity_check: string }, []>("PRAGMA integrity_check;",).get()?.integrity_check ?? null;
 }
 
 describe("createSnapshot", () => {

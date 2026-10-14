@@ -51,7 +51,12 @@ export function findCompressedVariant(
   if (!isCompressible(filePath,)) { return null; }
 
   const encodings = new Set<string>();
-  for (const encoding of acceptEncoding.split(",",)) { encodings.add(encoding.trim().toLowerCase(),); }
+  // RFC 9110 §12.5.3: each coding may carry `;q=` (or any `;token=`)
+  // parameters — strip them so "gzip;q=0.5" still matches "gzip".
+  for (const encoding of acceptEncoding.split(",",)) {
+    const token = encoding.split(";",)[0] ?? "";
+    encodings.add(token.trim().toLowerCase(),);
+  }
 
   if (encodings.has("br",) && existsSync(`${filePath}.br`,)) {
     return { path: `${filePath}.br`, encoding: "br", };

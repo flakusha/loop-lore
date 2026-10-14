@@ -25,7 +25,7 @@
     "lint": "bun run lint:eslint",
     "lint:oxlint": "bunx oxlint --ignore-pattern '**/*.test.ts' --ignore-pattern tests -D correctness .",
     "lint:eslint": "bunx eslint --concurrency=4 --cache --cache-location .tmp/eslint.cache .",
-    "lint:biome": "biome lint docs/",
+    "lint:biome": "biome lint .",
     "lint:biome:fix": "biome lint --write docs/",
     "lint:css": "stylelint \"src/public/**/*.css\"",
     "lint:html": "markuplint --allow-warnings \"src/views/**/*.html\" \"src/components/**/*.html\"",

@@ -7,6 +7,18 @@
 import { safeFetch, } from "./fetch";
 import type { FetchResult, SafeFetchOptions, } from "./types";
 
+/** Methods safe to re-issue after a 5xx / network failure (N21). */
+const IDEMPOTENT_METHODS = new Set(["GET", "HEAD", "PUT", "DELETE", "OPTIONS", "TRACE",],);
+
+/**
+ * @param options
+ * @returns {boolean}
+ */
+function isIdempotent(options: SafeFetchOptions,): boolean {
+  const method = (options.method ?? "GET").toUpperCase();
+  return IDEMPOTENT_METHODS.has(method,);
+}
+
 /**
  * Fetch with retry logic and exponential backoff.
  * @param url - URL to fetch
@@ -23,6 +35,10 @@ export async function safeFetchWithRetry<T = unknown,>(
 ): Promise<FetchResult<T>> {
   let lastError: Error | undefined;
 
+  // N21: never re-issue a non-idempotent request (POST/PATCH) on a 5xx or
+  // network error — the first attempt may already have mutated server state.
+  const retryable = isIdempotent(options,);
+
   for (let attempt = 0; attempt <= retries; attempt++) {
     const result = await safeFetch<T>(url, options,);
     if (result.ok) { return result; }
@@ -35,6 +51,11 @@ export async function safeFetchWithRetry<T = unknown,>(
     }
 
     if (result.error.name === "AbortError" || result.error.message.includes("timed out",)) {
+      return result;
+    }
+
+    // N21: non-idempotent method — stop after the first failure.
+    if (!retryable) {
       return result;
     }
 

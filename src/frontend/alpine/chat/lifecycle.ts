@@ -6,6 +6,7 @@ import { destroyVnRenderer, } from "../../vn";
 import { DEFAULT_QUICK_EMOJIS, } from "../chat-utils/emoji";
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
+import { log, } from "../logger";
 import type { ChatState, } from "../types";
 import { parseOr, } from "../validation";
 
@@ -85,29 +86,51 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     // chatLifecycle is spread last, so it shadows commandPalette.init() — call
     // the loader explicitly or the assistant palette and slash autocomplete
     // render from an empty _commandList.
-    await this._loadCommandList();
-    await this.loadChats();
-    this.loadWorldChannels();
-    this.loadJoinableChats();
-    this.loadUserInfo();
+    // Panel handlers must be installed even when a load below throws
+    // (N15) — wrap the awaited section in try/finally so a failed init
+    // never leaves the chat view without its toggle handlers.
+    try {
+      await this._loadCommandList();
+      await this.loadChats();
+      this._startFireAndForgetLoaders();
+      await this._loadChatFromUrl();
+    } finally {
+      this.registerPanelHandlers();
+    }
+  },
 
+  /**
+   * Kick off the three fire-and-forget loaders, each with its own .catch so a
+   * rejection surfaces on the console instead of an unhandled rejection (N17).
+   * @returns {void}
+   */
+  _startFireAndForgetLoaders(): void {
+    this.loadWorldChannels().catch((e: Error,) => log.error("loadWorldChannels failed", e,));
+    this.loadJoinableChats().catch((e: Error,) => log.error("loadJoinableChats failed", e,));
+    this.loadUserInfo().catch((e: Error,) => log.error("loadUserInfo failed", e,));
+  },
+
+  /**
+   * Select the chat named in ?chatid= (redirecting away when it no longer
+   * exists) and optionally open its settings panel.
+   * @returns {Promise<void>}
+   */
+  async _loadChatFromUrl(): Promise<void> {
     const params = new URLSearchParams(location.search,);
     const chatId = params.get("chatid",);
-    if (chatId) {
-      const chatExists = this.chats.some((c: { id: string },) => c.id === chatId);
-      if (!chatExists) {
-        // Chat was deleted or doesn't exist — redirect to chat view without chatid
-        globalThis.location.assign("/views/chat",);
-        return;
-      }
+    if (!chatId) { return; }
 
-      await this.selectChat(chatId,);
-      if (params.get("openSettings",)) {
-        await this.openChatSettings();
-      }
+    const chatExists = this.chats.some((c: { id: string },) => c.id === chatId);
+    if (!chatExists) {
+      // Chat was deleted or doesn't exist — redirect to chat view without chatid
+      globalThis.location.assign("/views/chat",);
+      return;
     }
 
-    this.registerPanelHandlers();
+    await this.selectChat(chatId,);
+    if (params.get("openSettings",)) {
+      await this.openChatSettings();
+    }
   },
 
   /**
