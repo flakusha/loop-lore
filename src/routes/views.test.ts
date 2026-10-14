@@ -74,6 +74,23 @@ describe("partials redirect without HX-Request", () => {
   });
 });
 
+describe("serveStaticPartial worldId escaping", () => {
+  test("escapes worldId containing HTML-breaking characters", async () => {
+    const app = viewRoutes({ database: mockDb, },);
+    const malicious = '"><script>alert(1)</script>';
+    const res = await app.handle(
+      new Request(`http://localhost/partials/worlds/edit-modal?worldId=${encodeURIComponent(malicious,)}`, {
+        headers: { "HX-Request": "true", },
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.text();
+    expect(body,).not.toContain(malicious,);
+    expect(body,).toContain("&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;",);
+  });
+});
+
 describe("dynamic partials redirect without HX-Request", () => {
   test("/dynamic/characters/grid without HX-Request redirects to /views/", async () => {
     const app = viewRoutes({ database: mockDb, },);

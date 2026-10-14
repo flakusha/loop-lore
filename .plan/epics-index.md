@@ -114,7 +114,7 @@
 | Not Started | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | medium | Large (event table + projection rebuild + tests) | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
 | Not Started | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | medium | Large (multiple sub-tickets, see Sub-systems) | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
 | Done | Epic: Achievements | Medium | Medium | 0 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
-| In Progress | Epic: Ambient, Music & Sound Effects | Medium | High | 0 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
+| Not Started | Epic: Ambient, Music & Sound Effects | Medium | High | 0 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Not Started | Epic: Analytics & Observability | High | Medium | 0 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | Not Started | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | Not Started | Epic: API OpenAPI Specification | High | Medium | 0 | [epic-api-openapi.md](/.plan/epics/epic-api-openapi.md) |
@@ -1300,7 +1300,7 @@ Multi-system epic combining:
 
 ### Epic: Ambient, Music & Sound Effects
 
-- **Status:** In Progress
+- **Status:** Not Started
 - **Priority:** Medium
 - **Effort:** High
 - **Type:** Feature Epic
