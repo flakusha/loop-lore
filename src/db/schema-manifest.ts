@@ -53,14 +53,20 @@ export class SchemaManifest {
     return [...this.tables.keys(),].sort();
   }
 
-  /** Column names for a table, in registration order. */
+  /**
+   * Column names for a table, in registration order.
+   * @throws {Error} the table was never registered on this manifest
+   */
   columnsOf(name: string,): string[] {
     const t = this.tables.get(name,);
     if (!t) { throw new Error(`Unknown table: ${name}`,); }
     return Object.keys(t.columns,);
   }
 
-  /** Column metadata for a table. */
+  /**
+   * Column metadata for a table.
+   * @throws {Error} the table was never registered on this manifest
+   */
   tableOf(name: string,): TableMeta {
     const t = this.tables.get(name,);
     if (!t) { throw new Error(`Unknown table: ${name}`,); }
