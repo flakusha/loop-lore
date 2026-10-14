@@ -74,6 +74,7 @@ export class ActorItemsService {
   /**
    * Sum of weight × quantity carried.
    * @param actorId
+   * @returns the total weight carried across all stacks.
    */
   async getCarriedWeight(actorId: string,): Promise<number> {
     const rows = await this.db
@@ -93,6 +94,7 @@ export class ActorItemsService {
   /**
    * Current load vs capacity + encumbrance level.
    * @param actorId
+   * @returns carried and capacity weight, the encumbrance level, and a canCarry check
    * @throws {Error} rethrows the weight or capacity lookup failure rather than reporting an encumbrance it cannot compute
    */
   async getCarryStatus(actorId: string,): Promise<CarryStatus> {
@@ -126,6 +128,7 @@ export class ActorItemsService {
   /**
    * @param actorId
    * @param itemId
+   * @returns the item row, or undefined when the actor does not hold it.
    */
   private async getItem(actorId: string, itemId: string,) {
     return this.db
@@ -147,6 +150,7 @@ export class ActorItemsService {
    * @throws {ItemNotEquipableError} the item's category maps to no equipment slot
    * @throws {AffordanceDeniedError} the actor lacks the capability, or the context disallows equipping
    * @throws {SlotConflictError} another equipped item already occupies that slot
+   * @returns the equipped item's ID
    */
   async equip(
     actorId: string,
@@ -197,6 +201,7 @@ export class ActorItemsService {
    * Unequip an item.
    * @param actorId
    * @param itemId
+   * @returns the unequipped item's ID
    * @throws {ItemNotFoundError} the actor does not hold that item
    */
   async unequip(actorId: string, itemId: string,): Promise<EquipResult> {
@@ -214,6 +219,7 @@ export class ActorItemsService {
   /**
    * List all equipped items.
    * @param actorId
+   * @returns every row for that actor with `equipped` set.
    */
   async getEquipped(actorId: string,) {
     return this.db
@@ -235,6 +241,7 @@ export class ActorItemsService {
    * @param itemId
    * @param quantity
    * @param trx
+   * @returns how many units moved, and the resulting stacks on both actors
    */
   transfer(
     fromActorId: string,

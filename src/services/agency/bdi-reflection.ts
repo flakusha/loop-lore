@@ -71,6 +71,7 @@ export const DEFAULT_REFLECTION_STEP_INTERVAL = 0;
  * the once-per-night visit.
  * @param stepCount Steps accumulated since the last checkpoint.
  * @param interval Configured cadence (0 = disabled).
+ * @returns whether a checkpoint is due at this step count.
  */
 export function shouldReflectAt(stepCount: number, interval: number,): boolean {
   return interval > 0 && stepCount >= interval;

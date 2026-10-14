@@ -24,6 +24,7 @@ const RUN_LIMIT = 25;
 /**
  * @param screen
  * @param sessionToken - admin session token for the harness API
+ * @returns the harness panel, bound to that screen and token.
  */
 export function createHarnessView(
   screen: blessed.Widgets.Screen,

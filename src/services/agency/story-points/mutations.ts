@@ -37,6 +37,7 @@ import {
  *
  * @param db
  * @param params
+ * @returns the ledger row for the credited points.
  * @throws CapExceededError when a cap is set and the earn would exceed it.
  * @throws InvalidAmountError when `amount` is not a positive integer.
  */
@@ -131,6 +132,7 @@ export async function earnStoryPoints(
  * conditional UPDATE below, which reports the insufficiency properly.
  * @param db
  * @param params
+ * @returns the ledger row for the debited points.
  * @throws InsufficientStoryPointsError when the balance cannot cover the amount.
  * @throws InvalidAmountError when `amount` is not a positive integer.
  */
