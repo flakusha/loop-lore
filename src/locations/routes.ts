@@ -64,6 +64,8 @@ export class TravelRouteService {
   }
 
   /**
+   * @param input - the route, the location to stop at, and its order/dwell
+   * @returns the new stop row's id
    * @throws {Error} If the route or location is missing or cross-world.
    */
   async addStop(input: AddStopInput,): Promise<string> {
@@ -114,6 +116,8 @@ export class TravelRouteService {
   }
 
   /**
+   * @param locationId - the transport to put on the route
+   * @param routeId - the route it should follow
    * @throws {Error} If the route/location is missing, cross-world, or the location is not a moving transport.
    */
   async attachTransport(locationId: string, routeId: string,): Promise<void> {
