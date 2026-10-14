@@ -3,8 +3,9 @@
 
 # BUG: Character import SSRF guard matches hostname strings instead of resolved addresses
 
-**Status:** Not Started
-**Priority:** Medium
+**Status:** Done
+**Status Note:** fixed — severity raised Medium → Critical (SSRF into the internal network, guard was bypassable); resolution in commit `fix-critical-review-findings`.
+**Priority:** Critical
 **Effort:** Medium
 
 **Summary:**

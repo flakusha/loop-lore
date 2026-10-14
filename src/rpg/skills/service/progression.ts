@@ -17,6 +17,12 @@ import { ProficiencyLevel, } from "./types";
  * @returns {Promise<XpGainResult>}
  */
 export async function addXp(db: Kysely<DB>, skillId: string, xpAmount: number,): Promise<XpGainResult> {
+  // A negative or non-finite amount drives xp/level negative or NaN, which
+  // then poisons every downstream progression read from the stored row.
+  if (!Number.isFinite(xpAmount,) || xpAmount < 0) {
+    throw new Error(`XP amount must be a finite non-negative number, got ${xpAmount}`,);
+  }
+
   const skill = await getSkill(db, skillId,);
   if (!skill) { throw new Error("Skill not found",); }
 

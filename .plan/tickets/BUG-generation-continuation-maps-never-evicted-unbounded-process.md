@@ -3,8 +3,9 @@
 
 # BUG: generation continuation Maps never evicted, unbounded process growth
 
-**Status:** Not Started
-**Priority:** Medium
+**Status:** Done
+**Status Note:** fixed — both module-level Maps now go through `setBounded` (1000-entry insertion-order cap, oldest evicted first); resolution in commit `fix-critical-review-findings`.
+**Priority:** High
 **Effort:** Medium
 
 **Summary:**

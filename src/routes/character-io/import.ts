@@ -5,6 +5,8 @@ import { Elysia, } from "elysia";
 import type { CharacterSystemsExport, } from "../../characters/exporters/character-systems";
 import { importCharacterSystems, } from "../../characters/importers/character-systems";
 import { safeFetch, } from "../../utils";
+
+import { validateFetchUrl, } from "../../utils/url-validation";
 import {
   ActorIdParams,
   CharacterSystemsImportUrlBody,
@@ -28,7 +30,7 @@ import type { HandlerOpts, } from "./types";
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { actors: { ":actorId": { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
 export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, resolveHost, } = opts;
 
   return (
     new Elysia({ name: "character-io-import", },)
@@ -96,32 +98,13 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonError({ message: "url is required", status: HttpStatus.BadRequest, },);
         }
 
-        // SSRF protection: validate URL scheme and block private IPs
-        let parsedUrl: URL;
-        try {
-          parsedUrl = new URL(url,);
-        } catch {
-          return jsonError({ message: "Invalid URL", status: HttpStatus.BadRequest, },);
-        }
-
-        if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-          return jsonError({ message: "Only http and https URLs are allowed", status: HttpStatus.BadRequest, },);
-        }
-
-        // Block private/loopback IPs and cloud metadata endpoints
-        const hostname = parsedUrl.hostname;
-        if (
-          hostname === "localhost" ||
-          hostname === "127.0.0.1" ||
-          hostname === "::1" ||
-          hostname === "169.254.169.254" ||
-          hostname.startsWith("10.",) ||
-          hostname.startsWith("172.",) ||
-          hostname.startsWith("192.168.",) ||
-          hostname.startsWith("169.254.",)
-        ) {
+        // SSRF protection: only http(s), and every address the hostname
+        // resolves to must be public. Testing the hostname string alone is not
+        // enough — a public name can point at 10.x/127.x/169.254.x.
+        const urlCheck = await validateFetchUrl(url, { resolve: resolveHost, },);
+        if (!urlCheck.ok) {
           return jsonError({
-            message: "URL resolves to a private or restricted address",
+            message: urlCheck.error ?? "URL resolves to a private or restricted address",
             status: HttpStatus.BadRequest,
           },);
         }

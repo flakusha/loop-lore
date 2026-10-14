@@ -583,3 +583,27 @@ describe("cancelGeneration captures partial content", () => {
     expect(result.content,).toBe("Hello, this is a test response. Continuing with more content.",);
   });
 });
+
+describe("continuation caches are bounded", () => {
+  test("oldest partial content is evicted once the cap is exceeded", async () => {
+    clearPartialContent();
+
+    for (let i = 0; i < 1200; i++) { storePartialContent(`attempt-${i}`, `body-${i}`,); }
+    for (let i = 0; i < 1200; i++) { mapMessageToAttempt(`msg-${i}`, `attempt-${i}`,); }
+
+    const { db, sqlite, } = await createTestDb();
+    try {
+      expect((await getPartialContent("attempt-0", db,)).content,).toBeNull();
+      expect((await getPartialContent("attempt-199", db,)).content,).toBeNull();
+      expect((await getPartialContent("attempt-200", db,)).content,).toBe("body-200",);
+      expect((await getPartialContent("attempt-1199", db,)).content,).toBe("body-1199",);
+    } finally {
+      sqlite.close();
+    }
+
+    expect(getAttemptForMessage("msg-0",),).toBeUndefined();
+    expect(getAttemptForMessage("msg-1199",),).toBe("attempt-1199",);
+
+    clearPartialContent();
+  });
+});

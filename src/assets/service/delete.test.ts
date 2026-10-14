@@ -239,4 +239,33 @@ describe("deleteAsset", () => {
       rmSync(uploadDir, { recursive: true, force: true, },);
     }
   });
+
+  test("keeps the file when the metadata transaction fails", async () => {
+    // The unlink used to run BEFORE the FK-cleanup transaction, so a failed
+    // commit left a live row pointing at bytes that were already gone —
+    // unrecoverable data loss with no trace.
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-asset-del-",),);
+    try {
+      await seedWithFile(db, uploadDir,);
+
+      // A BEFORE DELETE trigger makes the assets delete abort, simulating a
+      // commit failure partway through the FK cleanup.
+      sqlite.exec(
+        "CREATE TRIGGER block_asset_delete BEFORE DELETE ON assets " +
+          "WHEN OLD.id = '" + ASSET_ID + "' BEGIN SELECT RAISE(ABORT, 'simulated commit failure'); END;",
+      );
+
+      await expect(
+        deleteAsset({ database: db, assetId: ASSET_ID, uploadDir, },),
+      ).rejects.toThrow();
+
+      expect(existsSync(join(uploadDir, STORAGE_PATH,),),).toBe(true,);
+      const record = await db.selectFrom("assets",).selectAll().where("id", "=", ASSET_ID,).executeTakeFirst();
+      expect(record,).toBeDefined();
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
 });
