@@ -97,6 +97,7 @@ export class QualityEvaluator {
    * Evaluate a generated response against the story context.
    * Returns detailed scores and a pass/regenerate/escalate decision.
    * @param params
+   * @returns scores, decision, and per-dimension breakdown
    */
   evaluate(params: EvaluateParams,): QualityEvaluation {
     const scores = this.computeScores(params,);
@@ -134,6 +135,7 @@ export class QualityEvaluator {
   /**
    * Get the raw dimension scores without full evaluation metadata
    * @param params
+   * @returns raw per-dimension quality scores
    */
   computeScore(params: EvaluateParams,): QualityScores {
     return this.computeScores(params,);
