@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 270
+// size-allow: 340
 
 /**
  * ComfyUI Provider — HTTP/WebSocket client for ComfyUI API. Submits
@@ -36,9 +36,37 @@ export interface ComfyUIExecutionStatus {
   prompt_id: string;
   status: "pending" | "running" | "completed" | "failed" | "cancelled";
   progress?: { value: number; max: number };
-  outputs?: Record<string, { images?: { filename: string; subfolder?: string; type?: string }[] }>;
+  outputs?: Record<string, ComfyUINodeOutput>;
   error?: string;
 }
+
+/** One output file entry emitted by a ComfyUI save node. */
+export interface ComfyUIOutputFile {
+  filename: string;
+  subfolder?: string;
+  type?: string;
+}
+
+/** Media kind of an output bucket (SaveImage / SaveAudio / SaveVideo). */
+export type ComfyUIOutputKind = "image" | "audio" | "video";
+
+/** Per-node execution outputs — audio workflows emit `audio`/`videos` instead of `images`. */
+export type ComfyUINodeOutput = Partial<
+  Record<"images" | "audio" | "videos" | "gifs", ComfyUIOutputFile[]>
+>;
+
+/** A downloaded output file with the kind of media it holds. */
+export interface ComfyUIDownloadedFile {
+  kind: ComfyUIOutputKind;
+  buffer: Buffer;
+}
+
+/** Output buckets that are not `images`, in history key → media kind form. */
+const NON_IMAGE_BUCKETS = [
+  ["audio", "audio",],
+  ["videos", "video",],
+  ["gifs", "video",],
+] as const;
 
 /** */
 export interface ComfyUINodeInfo {
@@ -116,7 +144,8 @@ export class ComfyUIClient {
    */
   async pollResult(promptId: string,): Promise<{
     done: boolean;
-    images?: { filename: string; subfolder?: string; type?: string }[];
+    images?: ComfyUIOutputFile[];
+    files?: { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[];
     error?: string;
   }> {
     const url = `${this.baseUrl}/history/${promptId}`;
@@ -137,16 +166,24 @@ export class ComfyUIClient {
     }
 
     if (entry.status === "completed") {
-      const images: { filename: string; subfolder?: string; type?: string }[] = [];
+      const images: ComfyUIOutputFile[] = [];
+      const files: { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[] = [];
       if (entry.outputs) {
         for (const nodeOutput of Object.values(entry.outputs,)) {
-          if (nodeOutput.images) {
-            images.push(...nodeOutput.images,);
+          for (const file of nodeOutput.images ?? []) {
+            images.push(file,);
+            files.push({ kind: "image", file, },);
+          }
+
+          for (const [bucket, kind,] of NON_IMAGE_BUCKETS) {
+            for (const file of nodeOutput[bucket] ?? []) {
+              files.push({ kind, file, },);
+            }
           }
         }
       }
 
-      return { done: true, images, };
+      return { done: true, images, files, };
     }
 
     if (entry.status === "failed" || entry.status === "cancelled") {
@@ -163,7 +200,10 @@ export class ComfyUIClient {
    * @returns list of generated image filenames
    * @throws {Error} When execution reports failure or the deadline elapses first.
    */
-  async waitForCompletion(promptId: string, timeoutMs?: number,): Promise<string[]> {
+  async waitForFiles(
+    promptId: string,
+    timeoutMs?: number,
+  ): Promise<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[]> {
     const deadline = Date.now() + (timeoutMs ?? this.timeout);
 
     while (Date.now() < deadline) {
@@ -174,13 +214,26 @@ export class ComfyUIClient {
           throw new Error(`ComfyUI execution failed: ${result.error}`,);
         }
 
-        return Array.from(result.images ?? [], (img,) => img.filename,);
+        return result.files ?? [];
       }
 
       await new Promise((r,) => setTimeout(r, this.pollIntervalMs,));
     }
 
     throw new Error("ComfyUI execution timed out",);
+  }
+
+  /**
+   * Wait for workflow completion, returning image filenames (back-compat view
+   * of `waitForFiles`).
+   * @param promptId - the prompt_id from submitWorkflow
+   * @param timeoutMs - max wait time in ms (overrides client timeout)
+   * @returns list of generated image filenames
+   * @throws {Error} When execution reports failure or the deadline elapses first.
+   */
+  async waitForCompletion(promptId: string, timeoutMs?: number,): Promise<string[]> {
+    const files = await this.waitForFiles(promptId, timeoutMs,);
+    return files.filter((f,) => f.kind === "image").map((f,) => f.file.filename);
   }
 
   /**
@@ -227,8 +280,19 @@ export class ComfyUIClient {
     subfolder?: string,
     type: "output" | "temp" = "output",
   ): Promise<Buffer> {
-    const params = new URLSearchParams({ filename, type, },);
-    if (subfolder) { params.set("subfolder", subfolder,); }
+    return this.downloadFile({ filename, subfolder, type, },);
+  }
+
+  /**
+   * Download any ComfyUI output file (image, audio, video) by reference.
+   * @param file - output file reference from pollResult / waitForFiles
+   * @returns the file bytes
+   * @throws {Error} When the view fetch returns a non-OK status.
+   * @throws {SafeBufferError} When the bytes exceed the safe buffer limit.
+   */
+  async downloadFile(file: ComfyUIOutputFile,): Promise<Buffer> {
+    const params = new URLSearchParams({ filename: file.filename, type: file.type ?? "output", },);
+    if (file.subfolder) { params.set("subfolder", file.subfolder,); }
 
     const url = `${this.baseUrl}/view?${params.toString()}`;
     const resp = await fetch(url, {
@@ -236,7 +300,7 @@ export class ComfyUIClient {
     },);
 
     if (!resp.ok) {
-      throw new Error(`ComfyUI image download failed [${resp.status}]: ${filename}`,);
+      throw new Error(`ComfyUI view download failed [${resp.status}]: ${file.filename}`,);
     }
 
     const result = safeFromUint8Array(new Uint8Array(await resp.arrayBuffer(),),);
@@ -259,6 +323,23 @@ export class ComfyUIClient {
     }
 
     return buffers;
+  }
+
+  /**
+   * Run a workflow end-to-end: submit → wait → download every output file.
+   * @param workflow
+   * @returns downloaded files tagged with their media kind
+   */
+  async runWorkflowFiles(workflow: ComfyUIWorkflow,): Promise<ComfyUIDownloadedFile[]> {
+    const { prompt_id, } = await this.submitWorkflow(workflow,);
+    const refs = await this.waitForFiles(prompt_id,);
+
+    const files: ComfyUIDownloadedFile[] = [];
+    for (const { kind, file, } of refs) {
+      files.push({ kind, buffer: await this.downloadFile(file,), },);
+    }
+
+    return files;
   }
 
   /**

@@ -11,18 +11,20 @@
  *   GET    /api/templates/video|audio/:id       — retrieve (owner + modality)
  *   PATCH  /api/templates/video|audio/:id       — update (owner + modality)
  *   DELETE /api/templates/video|audio/:id       — delete (owner + modality)
- *   POST   /api/templates/video|audio/:id/apply — 501 until a provider lands
+ *   POST   /api/templates/video|audio/:id/apply — audio generates, video 501
  *
  * Render previews stay on the unified `POST /api/templates/:id/apply`
- * (prompt-only, provider-independent); the per-modality apply is the future
- * generation entrypoint and answers 501 while no video/audio provider
- * exists, per the ticket contract.
+ * (prompt-only, provider-independent). The per-modality apply is the
+ * generation entrypoint: audio templates dispatch to the ambient audio
+ * pipeline (TASK-ambient-sound-system); video still answers 501 while no
+ * video provider exists, per the ticket contract.
  */
 import { Type, } from "@sinclair/typebox";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { TemplateModality, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { handleAmbientGeneration, } from "../../generation/audio-gen-route";
 import {
   createTemplate,
   type CreateTemplateInput,
@@ -42,6 +44,9 @@ import {
   TemplateSummaryResponse,
 } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+
+/** Scene tags accepted per audio apply — matches the ambient route cap. */
+const MAX_AUDIO_TAGS = 8;
 
 /**
  * Create/update bodies: unified fields with an OPTIONAL `modality`. The
@@ -91,6 +96,20 @@ export function modalityTemplateRoutes(
     if (!row || row.modality !== modality) { return null; }
     return row;
   };
+
+  /**
+   * Audio apply: render the template body with the request context and split
+   * it into scene tags for the ambient pipeline.
+   * @param body - Template body to render
+   * @param vars - {{variable}} substitutions from the apply context
+   */
+  const renderAudioTags = (body: string, vars: Record<string, string>,): string[] =>
+    body
+      .replace(/\{\{(\w+)\}\}/g, (_match, name: string,) => vars[name] ?? "",)
+      .split(",",)
+      .map((tag,) => tag.trim())
+      .filter((tag,) => tag.length > 0)
+      .slice(0, MAX_AUDIO_TAGS,);
 
   return new Elysia({ name: `template-modality-${modality}`, },)
     .get(base, async (ctx,) => {
@@ -191,18 +210,47 @@ export function modalityTemplateRoutes(
       if (typeof userId !== "string") { return userId; }
       const row = await ownedMatchingRow(ctx.params.id, userId,);
       if (!row) { return notFound("Template not found",); }
-      // Generation entrypoint: no video/audio provider exists yet (ticket
-      // contract). Prompt-only rendering stays on the unified apply route.
+
+      if (modality === "audio") {
+        const body = ctx.body as { context?: Record<string, string>; chatId?: string };
+        const payload = parseTemplatePayload(row.payload, "audio",) as { body?: string };
+        const tags = renderAudioTags(payload.body ?? "", body.context ?? {},);
+        if (tags.length === 0) {
+          return jsonError({
+            message: "audio template body rendered no scene tags (render previews via POST /api/templates/:id/apply)",
+            status: HttpStatus.BadRequest,
+          },);
+        }
+
+        // Auth, IDOR scoping, generation and asset persistence live in the
+        // ambient route handler; this seam only renders + routes.
+        const userRole = (ctx as { userRole?: string | null }).userRole ?? undefined;
+        return handleAmbientGeneration({ tags, chatId: body.chatId, }, database, userId, userRole,);
+      }
+
+      // Generation entrypoint: no video provider exists yet (ticket contract).
+      // Prompt-only rendering stays on the unified apply route.
       return jsonError({
         message:
-          `${modality} generation providers are not implemented yet — render previews via POST /api/templates/:id/apply`,
+          "video generation providers are not implemented yet — render previews via POST /api/templates/:id/apply",
         status: HttpStatus.NotImplemented,
         code: ErrorCode.NotImplemented,
       },);
     }, {
       params: IdParams,
       body: TemplateApplyBody,
-      response: { 401: ErrorResponse, 404: ErrorResponse, 501: ErrorResponse, },
-      detail: { summary: `Apply a ${modality} template (not yet implemented)`, tags: ["Templates",], },
+      response: {
+        200: SuccessResponse,
+        400: ErrorResponse,
+        401: ErrorResponse,
+        404: ErrorResponse,
+        501: ErrorResponse,
+      },
+      detail: {
+        summary: modality === "audio"
+          ? `Apply an audio template (generate)`
+          : `Apply a video template (not yet implemented)`,
+        tags: ["Templates",],
+      },
     },);
 }
