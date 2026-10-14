@@ -30,6 +30,8 @@ export function validateEntityTypeConfig(raw: Record<string, unknown>,): void {
 }
 
 /**
+ * @param kind - the entity kind the entry is filed under, used in the error text
+ * @param value - the entry's own object, straight from the parsed YAML
  * @throws {Error|TypeError} If the entity-type preset entry shape is invalid.
  */
 function validateEntityTypePresetEntry(kind: string, value: unknown,): void {

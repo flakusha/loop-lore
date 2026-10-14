@@ -21,6 +21,7 @@ const LEGAL_MERGE_STRATEGIES: readonly MergeStrategy[] = [
  * Runtime-validate a raw template config before merging — malformed files fail
  * fast at load time instead of casting into a half-shaped config.
  * @param raw
+ * @returns the LLM section to merge, or null when the file carries no LLM keys at all
  * @throws {Error|TypeError} When `merge` is illegal or `systemPrompts`/`chatFormats` are malformed
  */
 export function validateLlmConfig(

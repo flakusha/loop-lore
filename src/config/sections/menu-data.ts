@@ -163,6 +163,7 @@ export function humanize(key: string,): string {
 /**
  * String-only enum options (the JSON schema may carry a null sentinel).
  * @param values
+ * @returns The string options, or undefined when the field carries only null/empty choices.
  */
 export function enumOptions(values: unknown[] | undefined,): string[] | undefined {
   if (!values || values.length === 0) { return undefined; }
