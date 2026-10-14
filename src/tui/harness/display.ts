@@ -10,6 +10,7 @@ const LAST_SUB_MINUTE_MS = 59_950;
 /**
  * Format duration in milliseconds to a human-readable string.
  * @param ms
+ * @returns the duration as `NNms`, `NN.Ns` or `NmSSs`.
  */
 export function formatDuration(ms: number,): string {
   if (ms < 1000) { return `${ms}ms`; }
@@ -23,6 +24,7 @@ export function formatDuration(ms: number,): string {
  * Truncate a task string to at most MAX_TASK_LEN characters, appending "…"
  * when truncation occurs.
  * @param task
+ * @returns the task, shortened with a trailing ellipsis when too long.
  */
 export function truncateTask(task: string,): string {
   if (task.length <= MAX_TASK_LEN) { return task; }
@@ -33,6 +35,7 @@ export function truncateTask(task: string,): string {
  * Result marker character: ✔ for success, ✘ for failure.
  * @param summary
  * @param summary.result
+ * @returns the green or red blessed marker for that result.
  */
 export function resultMarker(summary: { result: HarnessResult },): string {
   return summary.result !== "ok" ? "{red-fg}✘{/red-fg}" : "{green-fg}✔{/green-fg}";
@@ -42,6 +45,7 @@ export function resultMarker(summary: { result: HarnessResult },): string {
  * Format a run summary as a one-line blessed markup string for list display.
  * Shape: `✔/✘  1m23s  task-name  [model]  result  +Ntok  $0.00`
  * @param summary
+ * @returns the blessed markup line for the runs list.
  */
 export function formatRunLine(summary: HarnessRunSummary,): string {
   const marker = resultMarker(summary,);
@@ -60,6 +64,7 @@ export function formatRunLine(summary: HarnessRunSummary,): string {
 /**
  * Format a run detail as a multi-line blessed markup block for the info panel.
  * @param detail
+ * @returns the newline-joined blessed markup block for the info panel.
  */
 export function formatRunDetail(detail: HarnessRunDetail,): string {
   const marker = resultMarker(detail,);
@@ -106,6 +111,7 @@ export function formatRunDetail(detail: HarnessRunDetail,): string {
 
 /**
  * Return an empty-state line when the runs list is empty.
+ * @returns the empty-state markup line.
  */
 export function formatEmptyRuns(): string {
   return "{cyan-fg}No harness runs recorded yet.{/cyan-fg}";

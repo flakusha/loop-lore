@@ -42,6 +42,7 @@ export class SimulationStore {
    * world with no row. A world with no row is immediately due:
    * autonomy must not require an opt-in seed row per world.
    * @param worldId
+   * @returns the persisted cursor, or a synthesized never-ticked one.
    */
   async load(worldId: string,): Promise<SimulationState> {
     const row = await this.#db
@@ -68,6 +69,7 @@ export class SimulationStore {
    * The id tie-break makes the order total, so the dispatch sequence
    * is byte-identical after a restart (see ./README.md).
    * @param nowMs
+   * @returns the unpaused worlds due at `nowMs`, in dispatch order.
    */
   async dueWorlds(nowMs: number,): Promise<WorldScheduleEntry[]> {
     const iso = toDate(nowMs,).toISOString();
@@ -136,6 +138,7 @@ export class SimulationStore {
    * the schedule.
    * @param worldId
    * @param paused 1 = paused, 0 = running.
+   * @returns the row as persisted, after the flag flip.
    */
   async setPaused(worldId: string, paused: number,): Promise<SimulationState> {
     const state = await this.load(worldId,);
@@ -155,6 +158,7 @@ export class SimulationStore {
    * none. Oldest-first, id-tiebroken, so repeated calls in one
    * process always resolve the same chat.
    * @param worldId
+   * @returns the config chat's ID, or `NO_CHAT` when the world has none.
    */
   async chatIdFor(worldId: string,): Promise<string> {
     const row = await this.#db

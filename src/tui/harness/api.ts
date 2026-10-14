@@ -49,6 +49,7 @@ async function doFetch<T,>(url: string, sessionToken: string | undefined,): Prom
  * Load recent harness runs.
  * @param limit - max number of runs to return
  * @param sessionToken - admin session token
+ * @returns the fetch result carrying up to `limit` run summaries
  */
 export async function loadRuns(
   limit: number,
@@ -62,6 +63,7 @@ export async function loadRuns(
  * Load full detail for a single run.
  * @param runId
  * @param sessionToken - admin session token
+ * @returns the fetch result carrying that run's full detail
  */
 export async function loadRunDetail(
   runId: string,
@@ -74,6 +76,7 @@ export async function loadRunDetail(
 /**
  * Load harness stats summary.
  * @param sessionToken - admin session token
+ * @returns the fetch result carrying the aggregate stats summary
  */
 export async function loadStats(
   sessionToken: string | undefined,
