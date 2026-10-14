@@ -80,18 +80,18 @@ function rustSrcAvailable(): boolean {
  * Build the native cdylib (.so/.dylib/.dll) for server-side Bun FFI.
  * Degrades gracefully — pure-TS fallback in src/native/fallback/.
  */
-function buildNativeCdylib(): void {
+function buildNativeCdylib(): boolean {
   if (!SUPPORTED_PLATFORMS.has(process.platform,)) {
     console.log("[build:native:cdylib] platform unsupported - TS fallback",);
-    return;
+    return true;
   }
   if (!existsSync(join(CRATE_DIR, "Cargo.toml",),)) {
     console.log("[build:native:cdylib] crate missing - TS fallback",);
-    return;
+    return true;
   }
   if (!cargoAvailable()) {
     console.log("[build:native:cdylib] cargo not found - TS fallback",);
-    return;
+    return true;
   }
 
   console.log("[build:native:cdylib] compiling Rust cdylib (release)...",);
@@ -100,10 +100,11 @@ function buildNativeCdylib(): void {
     stdio: "inherit",
   },);
   if (result.status !== 0) {
-    console.error(`[build:native:cdylib] cargo build failed (status ${result.status}) - TS fallback`,);
-    return;
+    console.error(`[build:native:cdylib] cargo build failed (status ${result.status})`,);
+    return false;
   }
   console.log("[build:native:cdylib] native module ready (gitignored target/)",);
+  return true;
 }
 
 /**
@@ -114,10 +115,10 @@ function buildNativeCdylib(): void {
  *   - zstd.wasm (zstd only)
  *   - loop_lore_native.wasm (both)
  */
-function buildWasm(): void {
+function buildWasm(): boolean {
   if (!cargoAvailable()) {
     console.log("[build:native:wasm] cargo not found - skipping WASM",);
-    return;
+    return true;
   }
 
   // ── Detect best compilation path ──────────────────────────────
@@ -132,7 +133,7 @@ function buildWasm(): void {
     console.log("[build:native:wasm] no rustup, rust-src found - build-std path",);
   } else {
     console.log("[build:native:wasm] no rust toolchain - skipping WASM",);
-    return;
+    return true;
   }
 
   // ── Ensure wasm target is available ───────────────────────────
@@ -141,7 +142,7 @@ function buildWasm(): void {
     if (targetAdd.status !== 0) {
       const stderr = targetAdd.stderr?.toString() ?? "";
       console.error(`[build:native:wasm] rustup target add failed: ${stderr.trim()}`,);
-      return;
+      return false;
     }
   }
 
@@ -177,13 +178,13 @@ function buildWasm(): void {
     },);
     if (result.status !== 0) {
       console.error(`[build:native:wasm] ${outputName} failed (status ${result.status})`,);
-      continue;
+      return false;
     }
 
     const src = join(CRATE_DIR, "target", WASM_TARGET, "release", "loop_lore_native.wasm",);
     if (!existsSync(src,)) {
       console.error(`[build:native:wasm] expected ${src} not found`,);
-      continue;
+      return false;
     }
 
     mkdirSync(WASM_DIST, { recursive: true, },);
@@ -194,14 +195,18 @@ function buildWasm(): void {
   }
 
   console.log(`[build:native:wasm] all modules ready at ${WASM_DIST}`,);
+  return true;
 }
 
 // ── Main ─────────────────────────────────────────────────────────
 
 function main(): void {
   console.log("=== build:native ===",);
-  buildNativeCdylib();
-  buildWasm();
+  const cdylibOk = buildNativeCdylib();
+  const wasmOk = buildWasm();
+  if (!cdylibOk || !wasmOk) {
+    process.exit(1,);
+  }
 }
 
 main();

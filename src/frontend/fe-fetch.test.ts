@@ -263,6 +263,28 @@ describe("error paths", () => {
     const err = await feFetch("/x",).catch((e,) => e);
     expect((err as Error).message,).toContain("Response too large",);
   });
+
+  test("caller AbortSignal causes fetch to reject", async () => {
+    const controller = new AbortController();
+    fetchImpl = async (_url: string, opts?: FetchOpts,) => {
+      // Simulate fetch honoring the signal
+      if (opts?.signal?.aborted) {
+        const e = new Error("The operation was aborted",);
+        e.name = "AbortError";
+        throw e;
+      }
+
+      return new Response("ok", { status: 200, },);
+    };
+
+    const { feFetch, } = await importFeFetch();
+    controller.abort();
+    const err = await feFetch("/x", { signal: controller.signal, },).catch((e,) => e);
+    // safeFetch converts AbortError to a timeout error; the key assertion
+    // is that the fetch rejects (the signal reached the network request).
+    expect(err,).toBeInstanceOf(Error,);
+    expect((err as Error).message,).toMatch(/timed out|aborted/i,);
+  });
 });
 
 // ── option passthrough ─────────────────────────────────────
