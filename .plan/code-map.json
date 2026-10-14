@@ -18424,6 +18424,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waivers-for-3-modules-below-80-floor.md"
     },
     {
