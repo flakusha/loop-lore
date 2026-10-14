@@ -17,6 +17,17 @@ import { seedBaseTransform, } from "./transforms";
 import type { AssetRecord, CreateAssetOpts, CreateAssetResult, } from "./types";
 
 /**
+ * SHA-256 hex digest of a buffer — the asset content-addressing key.
+ * @param buffer - raw asset bytes
+ * @returns 64-char lowercase hex digest
+ */
+export function hashBuffer(buffer: Buffer,): string {
+  const hasher = new Bun.CryptoHasher("sha256",);
+  hasher.update(buffer,);
+  return hasher.digest("hex",);
+}
+
+/**
  * @param root0
  * @param root0.database
  * @param root0.input
@@ -24,10 +35,10 @@ import type { AssetRecord, CreateAssetOpts, CreateAssetResult, } from "./types";
  * @returns Promise<unknown>
  */
 export async function createAsset({ database, input, uploadDir, }: CreateAssetOpts,): Promise<CreateAssetResult> {
-  // Compute content hash for idempotent upload detection
-  const hasher = new Bun.CryptoHasher("sha256",);
-  hasher.update(input.buffer,);
-  const contentHash = hasher.digest("hex",);
+  // Content hash for idempotent upload detection. Callers that already hashed
+  // the bytes (persist-generated keys the on-disk filename on it) pass it in
+  // rather than pay a second full-buffer pass.
+  const contentHash = input.contentHash ?? hashBuffer(input.buffer,);
 
   // `dedupe: false` opts out of idempotency entirely. Persisting the hash would
   // put the row inside the uq_assets_owner_content_* partial indexes and make a

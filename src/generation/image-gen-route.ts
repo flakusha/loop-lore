@@ -3,14 +3,13 @@
 
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
-import { createAsset, linkAsset, } from "../assets/service";
+import { persistGeneratedImages, } from "../assets/service";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
 import { pickSdProvider, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { forbiddenResponse, } from "../routes/http-utils";
-import { uid, } from "../utils";
 import { generateImages, } from "./image-engine";
 import type { LoRAConfig, } from "./lora/types";
 import {
@@ -157,52 +156,34 @@ export async function handleImageGeneration(
 
   const { images, mimeType, } = outcome;
 
-  const assets: { id: string; url: string; filename: string; mimeType: string }[] = [];
+  const links = [
+    ...(req.messageId
+      ? [{ entityType: "message" as const, entityId: req.messageId, label: "generated", },]
+      : []),
+    ...(req.chatId
+      ? [{ entityType: "chat" as const, entityId: req.chatId, label: "generated", },]
+      : []),
+  ];
 
-  for (const buffer of images) {
-    const assetId = uid();
-    const filename = `generated-${assetId.slice(0, 8,)}.${outputFormat}`;
-    const meta = extractImageMetadata(buffer,);
-    const { asset, } = await createAsset({
-      database: db,
-      input: {
-        ownerId: userId,
-        filename,
-        mimeType,
-        assetType: "image",
-        sizeBytes: buffer.length,
-        buffer,
-        altText: `Generated: ${meta.width}x${meta.height} ${meta.format}`,
-        // Each generation run is a distinct item, even when the provider happens
-        // to return bytes that already exist on the server.
-        dedupe: false,
-      },
-      uploadDir: config.assets.uploadDir,
-    },);
+  const persisted = await persistGeneratedImages({
+    database: db,
+    uploadDir: config.assets.uploadDir,
+    images,
+    mimeType,
+    ownerId: userId,
+    altText: (_index, buffer,) => {
+      const meta = extractImageMetadata(buffer,);
+      return `Generated: ${meta.width}x${meta.height} ${meta.format}`;
+    },
+    links,
+  },);
 
-    if (req.messageId) {
-      await linkAsset({
-        database: db,
-        assetId: asset.id,
-        link: { entityType: "message", entityId: req.messageId, label: "generated", },
-      },);
-    }
-
-    if (req.chatId) {
-      await linkAsset({
-        database: db,
-        assetId: asset.id,
-        link: { entityType: "chat", entityId: req.chatId, label: "generated", },
-      },);
-    }
-
-    assets.push({
-      id: asset.id,
-      url: `/api/assets/${asset.id}/raw`,
-      filename: asset.filename,
-      mimeType: asset.mime_type,
-    },);
-  }
+  const assets = persisted.map(({ asset, },) => ({
+    id: asset.id,
+    url: `/api/assets/${asset.id}/raw`,
+    filename: asset.filename,
+    mimeType: asset.mime_type,
+  }));
 
   return Response.json({ data: assets, },);
 }

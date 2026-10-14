@@ -104,11 +104,13 @@ export async function generateEmotionAvatar(
     mimeType,
     ownerId: assetOwnerId,
     altText: `Emotion avatar: ${opts.emotion}`,
-    link: {
+    links: [{
       entityType: "actor",
       entityId: opts.actorId,
       label: `emotion:${opts.emotion}`,
-    },
+    },],
+    // Label-keyed, not content-keyed: dedupe must stay off so a
+    // regeneration is a distinct row rather than inheriting the old avatar.
     makeFilename: () => `emotion-${opts.emotion}-${randomUUID().slice(0, 8,)}.png`,
   },);
 
