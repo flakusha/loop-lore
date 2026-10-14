@@ -150,6 +150,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
  * @param current
  * @param filePath
  * @returns WorkflowTemplateConfig
+ * @throws {Error} wrapping any parse, validate or merge failure with the offending file path
  */
 function loadWorkflowFile(
   current: TemplatesConfig["workflows"],

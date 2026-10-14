@@ -5,6 +5,7 @@
 import type { Config, } from "../schema";
 
 /**
+ * @param config - Fully merged config to check, after defaults are applied.
  * @throws {Error} If any config value fails schema validation.
  */
 export const validate = (config: Config,): void => {

@@ -29,7 +29,10 @@ import { TUI_DEFAULTS, } from "./tui";
 
 type EnvMap = Record<string, string>;
 
-/** Build flat ENV_VAR → dot.path mapping from all section fields */
+/**
+ * Build flat ENV_VAR → dot.path mapping from all section fields
+ * @returns Every config key as an ENV_VAR name paired with its dot path in `Config`.
+ */
 export const envMap = (): EnvMap => {
   const map: EnvMap = {};
   const s = {
