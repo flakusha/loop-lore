@@ -1,0 +1,31 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+
+# BUG: useBattleItem consumes inventory and persists battle outside one transaction
+
+**Status:** Not Started
+**Priority:** Medium
+**Effort:** Medium
+
+**Summary:**
+
+useBattleItem performs two independent writes: consumeInventoryUnit (which itself uses a correct conditional WHERE quantity = :current delete/update and throws on concurrent modification) and then persistBattle with the restored HP. There is no shared transaction, so a crash or throw between them leaves the item consumed with no HP restored, or HP restored with the item still in inventory.
+
+Evidence read on dev:
+
+- src/rpg/service/battles/items.ts:192 — const remaining = await consumeInventoryUnit(deps, item.id, item.quantity);
+- src/rpg/service/battles/items.ts:202-210 — await persistBattle(deps, battle.id, battle.round, battle.turnIndex, updated, [...battle.log, action], BattleStatus.Active);
+
+Neither write is passed a trx, and the surrounding function opens none.
+
+Source: .tmp/longcat/review-consolidated.md nit 16; .tmp/cat-jam/review-generation-rpg-db.md P1-2.
+
+**Context:**
+
+(fill in before starting: why this change, constraints, alternatives considered.)
+
+**Acceptance Criteria:**
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated

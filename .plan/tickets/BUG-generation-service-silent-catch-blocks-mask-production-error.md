@@ -1,0 +1,61 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 giwt Contributors -->
+
+# BUG: generation service silent catch blocks mask production errors
+
+**Status:** Not Started
+**Priority:** Medium
+**Effort:** Medium
+
+**Summary:**
+
+Three generation-service functions swallow errors silently with bare catch blocks
+and no logging, making production failures invisible.
+
+## Evidence
+
+1. `src/generation/auto-gen/resolve-known-names.ts:65-66`:
+
+   ```ts
+   } catch {
+     return [];
+   }
+   ```
+
+   Swallows all errors from the name-resolution pipeline. A persistent DB outage
+   silently degrades hallucination detection with zero observability.
+
+2. `src/generation/auto-gen/handle-generation-error.ts:38`:
+
+   ```ts
+   } catch { /* Best-effort */ }
+   ```
+
+   Swallows errors from `failGeneration()`. If the DB is down, neither the
+   original error nor the secondary failure is logged.
+
+3. `src/generation/auto-gen/handle-generation-error.ts:59`:
+
+   ```ts
+   } catch { /* best-effort */ }
+   ```
+
+   Swallows errors from `buf.signalError()`. If the stream buffer cannot be
+   signaled, the UI hangs silently.
+
+## Source
+
+- review-chat.md findings 2, 3, 4
+- review-consolidated.md nits 2, 3, 4
+- File:line: `src/generation/auto-gen/resolve-known-names.ts:65`,
+  `src/generation/auto-gen/handle-generation-error.ts:38`, `src/generation/auto-gen/handle-generation-error.ts:59`
+
+**Context:**
+
+(fill in before starting: why this change, constraints, alternatives considered.)
+
+**Acceptance Criteria:**
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
