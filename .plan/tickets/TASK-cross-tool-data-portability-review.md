@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 **Status:** Done
 **Status Note:** Analysis (investigation complete, not scheduled)
 Priority: Medium

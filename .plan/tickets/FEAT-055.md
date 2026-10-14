@@ -9,6 +9,8 @@ shipped: 2026-08-21
 worktree: lorebook-activation
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 **Priority:** medium
 **Effort:** Medium

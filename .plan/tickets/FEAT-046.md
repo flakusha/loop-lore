@@ -7,6 +7,8 @@ epic: epic-conversation-branching
 related: [FEAT-045, FEAT-047]
 ---
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 **Status:** Done
 **Priority:** medium

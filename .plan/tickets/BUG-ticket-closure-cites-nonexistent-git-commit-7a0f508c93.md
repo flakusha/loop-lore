@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Ticket closure cites nonexistent git commit (7a0f508c93)
 
 <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
