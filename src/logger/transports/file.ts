@@ -50,6 +50,7 @@ export class FileTransport implements Transport {
 
   /**
    * @param entry
+   * @returns once this entry has been appended, behind every write already queued
    */
   async write(entry: LogEntry,): Promise<void> {
     // Chain writes through a mutex: a size-check-then-append is not atomic,
