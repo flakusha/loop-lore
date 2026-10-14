@@ -37,7 +37,10 @@ describe("Search & filtering E2E", () => {
           mime_type: "image/png",
           asset_type: "image",
           size_bytes: 10,
-          storage_path: `/tmp/test-${id}.png`,
+          // Relative to the upload root, exactly as storeFile writes it. An
+          // absolute path (or one escaping the root) is rejected by the
+          // containment guard in getAssetFilePath and would 500, not 404.
+          storage_path: `raw/${id.slice(0, 2,)}/${id.slice(2, 4,)}/${id}.png`,
           storage_backend: "local",
         },)
         .onConflict((oc,) => oc.column("id",).doNothing())
