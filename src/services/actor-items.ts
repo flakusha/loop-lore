@@ -93,6 +93,7 @@ export class ActorItemsService {
   /**
    * Current load vs capacity + encumbrance level.
    * @param actorId
+   * @throws {Error} rethrows the weight or capacity lookup failure rather than reporting an encumbrance it cannot compute
    */
   async getCarryStatus(actorId: string,): Promise<CarryStatus> {
     const [carriedResult, capacityResult,] = await Promise.allSettled([
@@ -142,6 +143,10 @@ export class ActorItemsService {
    * @param opts - Optional affordance context (TASK-affordance-lookup-table).
    * @param opts.actorCaps
    * @param opts.context
+   * @throws {ItemNotFoundError} the actor does not hold that item
+   * @throws {ItemNotEquipableError} the item's category maps to no equipment slot
+   * @throws {AffordanceDeniedError} the actor lacks the capability, or the context disallows equipping
+   * @throws {SlotConflictError} another equipped item already occupies that slot
    */
   async equip(
     actorId: string,
@@ -192,6 +197,7 @@ export class ActorItemsService {
    * Unequip an item.
    * @param actorId
    * @param itemId
+   * @throws {ItemNotFoundError} the actor does not hold that item
    */
   async unequip(actorId: string, itemId: string,): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
