@@ -131,6 +131,7 @@ export class PromptAssembler {
    * Load actor + chat projections for assembly.
    * @param params - prompt params carrying actorId/chatId
    * @returns the assembled actor and chat rows
+   * @throws {Error} rethrows the actor or chat lookup failure instead of assembling from half a projection
    */
   private async loadProjections(params: PromptParams,): Promise<{ actor: AssembleActor; chat: AssembleChat }> {
     const projectionResults = await Promise.allSettled([

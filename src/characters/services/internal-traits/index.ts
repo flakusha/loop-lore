@@ -124,6 +124,7 @@ export class CharacterInternalTraitsService {
    * @param actorId
    * @param input
    * @returns The persisted internal-traits row.
+   * @throws {Error} the write succeeded but the read-back found no row, so the caller's state is unknown
    */
   async upsert(actorId: string, input: CharacterInternalTraitsInput,): Promise<CharacterInternalTraits> {
     const existing = await this.get(actorId,);
