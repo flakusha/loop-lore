@@ -26,6 +26,7 @@ export type StorageKind = "local" | "session";
 
 /**
  * The storage area for `kind`, or `null` when the browser refuses access.
+ * @param kind - "local" or "session".
  */
 function storageOf(kind: StorageKind,): Storage | null {
   try {

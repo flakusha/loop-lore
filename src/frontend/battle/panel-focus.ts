@@ -66,7 +66,9 @@ export function handlePanelKey(e: KeyboardEvent, deps: PanelFocusDeps,): void {
   }
 }
 
-/** Activate the focused cycle target (Enter/Space): select, dispatch, or toggle. */
+/** Activate the focused cycle target (Enter/Space): select, dispatch, or toggle.
+ * @param deps - panel state + actions.
+ */
 function activateFocused(deps: PanelFocusDeps,): void {
   const active = deps.focusTargets[deps.focusedIndex];
   if (active?.type === "combatant") {
@@ -92,7 +94,9 @@ function activateFocused(deps: PanelFocusDeps,): void {
   }
 }
 
-/** Order the focus cycle: combatants first (in roster order), then actions. */
+/** Order the focus cycle: combatants first (in roster order), then actions.
+ * @param deps - panel state + actions.
+ */
 export function buildFocusTargets(deps: PanelFocusDeps,): void {
   deps.focusTargets = [];
   if (!deps.battle) { return; }
@@ -132,7 +136,9 @@ function sameTarget(a: BattleFocusTarget, b: BattleFocusTarget,): boolean {
   return false;
 }
 
-/** Rebuild focus targets, preserving the current focus if still valid. */
+/** Rebuild focus targets, preserving the current focus if still valid.
+ * @param deps - panel state + actions.
+ */
 export function rebuildFocus(deps: PanelFocusDeps,): void {
   const prev = deps.focusTargets[deps.focusedIndex];
   buildFocusTargets(deps,);

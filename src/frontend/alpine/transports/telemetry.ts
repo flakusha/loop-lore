@@ -53,6 +53,7 @@ export class TelemetryTransport implements Transport {
 
   /**
    * @param entry
+   * @returns a resolved promise (write is fire-and-forget).
    */
   write(entry: LogEntry,): Promise<void> {
     const eventType = typeof entry.message === "string" ? entry.message : "log";

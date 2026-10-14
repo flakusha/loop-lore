@@ -21,6 +21,7 @@ export class ServerTransport implements Transport {
 
   /**
    * @param entry
+   * @returns a resolved promise (entry is buffered; flush ships it).
    */
   write(entry: LogEntry,): Promise<void> {
     this.buffer.push(entry,);
