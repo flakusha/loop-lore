@@ -41,6 +41,7 @@ export abstract class TaggedError<Tag extends string = string,> extends Error {
 /**
  * Type guard preserving narrowing: is this thrown value a tagged error (any family)?
  * @param value
+ * @returns true when `value` is a `TaggedError`, narrowing it for the caller
  */
 export function isTaggedError(value: unknown,): value is TaggedError<string> {
   return value instanceof TaggedError;

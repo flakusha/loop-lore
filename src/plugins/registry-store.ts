@@ -154,6 +154,7 @@ getAllMigrations(): MigrationDefinition[] {
   }
 
   /**
+ * @param pluginName key under which every registry was stored
  * @returns {void}
  */
 removePlugin(pluginName: string): void {

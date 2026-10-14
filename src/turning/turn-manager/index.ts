@@ -110,6 +110,7 @@ export class TurnManager {
    * Request regeneration of a failed turn
    * @param turnId
    * @param reason
+   * @returns true when the request was recorded and persisted, false once `maxRegenerations` is spent
    */
   async requestRegeneration(turnId: string, reason: string,): Promise<boolean> {
     return requestRegenerationDispatch(this, turnId, reason,);
@@ -150,6 +151,7 @@ export class TurnManager {
   /**
    * Update turn order (e.g., participant added/removed)
    * @param mode
+   * @returns nothing; the actor order is rebuilt into `state.turnOrder` narrator → ai → npc
    */
   async refreshOrder(mode: "story" | "group" = "story",): Promise<void> {
     return refreshOrderPublic(this, mode,);

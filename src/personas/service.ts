@@ -40,6 +40,7 @@ export class PersonasService {
   /**
    * All personas owned by `userId`, default-first then newest.
    * @param userId
+   * @returns the persona rows in that order
    */
   async listByUser(userId: string,) {
     return this.db
@@ -55,6 +56,7 @@ export class PersonasService {
    * The persona row, or `undefined` if not found / not owned.
    * @param id
    * @param userId
+   * @returns the row, or undefined when it is missing or owned by someone else
    */
   async getById(id: string, userId: string,) {
     return this.db
