@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # 03 — LLM Routing and Safeguards: What Exists, What Is Missing
 
 Research doc for the harness worktree. **No source changes were made.** Every claim

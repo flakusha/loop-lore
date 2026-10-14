@@ -1,5 +1,6 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 <!-- Companion to: .plan/tickets/TASK-federation-interconnect-peer-config.md -->
 <!-- Companion to: .plan/tickets/TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl.md -->
 

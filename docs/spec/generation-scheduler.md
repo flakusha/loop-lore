@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: Apache-2.0 OR MIT OR CC-BY-4.0 -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # Spec: Generation Scheduler

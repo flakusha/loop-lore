@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Database Reinit & Backup Retention
 
 > **Status:** Implemented (resolves `BUG-db-reinit-archive-directory-has-no-rotation`).

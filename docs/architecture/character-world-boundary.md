@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Character ↔ World Data Boundary
 
 TASK-031. Every writable field in the API belongs to exactly one side of a

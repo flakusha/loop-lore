@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # 04 — giwt extension candidates
 
 Research date: 2026-10-07. Research only; nothing was modified.

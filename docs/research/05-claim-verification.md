@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # 05 — Adversarial claim verification of docs 01–04
 
 **Date:** 2026-10-07 · **Role:** reviewer (no fixes, no proposals)

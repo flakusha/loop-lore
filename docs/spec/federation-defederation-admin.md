@@ -1,5 +1,6 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 <!-- Companion to: .plan/tickets/TASK-federation-defederation-admin-operations-peer-state-block-al.md -->
 <!-- Research basis: .tmp/fed-research/topic-2-defederation.md -->
 

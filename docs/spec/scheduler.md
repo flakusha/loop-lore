@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Scheduler (Internal Cron Jobs)
 
 Time-based maintenance runs on the in-process `Bun.cron` registry in

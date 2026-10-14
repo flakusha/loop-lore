@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Tree finalization — RESOLVED 2026-09-02
 
 Initial review of dev state and tree/ worktrees. Cleanup executed; state resolved.

@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Handoff: feat-bug-triage-batch-2
 
 **Worktree**: `tree/feat-bug-triage-batch-2` (branch `feat-bug-triage-batch-2`)
