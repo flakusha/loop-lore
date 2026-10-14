@@ -51,6 +51,7 @@ export interface InitDhRatchetResult {
 }
 /**
  * @param opts
+ * @returns the initial ratchet state plus the initial ephemeral public JWK
  * @throws {Error} When `rootKey` is not exactly `KEY_BYTES` long.
  */
 export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRatchetResult> {
@@ -135,6 +136,8 @@ export interface DhRatchetDecryptResult {
 
 /**
  * @param opts
+ * @returns the plaintext, the advanced state, and the skipped-key ids consumed
+ *   plus the new ones retained for later out-of-order arrivals
  * @throws {Error} When the payload is undecryptable, the message counter is out of
  *   range, or more than `maxSkip` skipped keys would have to be retained.
  */
