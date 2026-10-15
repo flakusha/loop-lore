@@ -7,6 +7,8 @@ import { join, } from "node:path";
 const VIEWS_DIR = join(import.meta.dir, "..", "..", "views",);
 const PARTIALS_DIR = join(import.meta.dir, "..", "..", "partials",);
 const COMPONENTS_DIR = join(import.meta.dir, "..", "..", "components",);
+/** Build output the hash lookup in routes/views/layout.ts resolves against. */
+const DIST_PUBLIC_DIR = join(import.meta.dir, "..", "..", "..", "dist", "public",);
 const ICONS_DIR = join(import.meta.dir, "..", "..", "..", "dist", "public", "icons", "tabler",);
 
 /** Match {{{ t("key") }}} or {{{t("key")}}} with optional whitespace. */
@@ -70,6 +72,7 @@ export {
   ALLOWED_PARTIALS,
   ALLOWED_VIEWS,
   COMPONENTS_DIR,
+  DIST_PUBLIC_DIR,
   I18N_TEMPLATE_RE,
   ICONS_DIR,
   PARTIALS_DIR,
