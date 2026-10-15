@@ -31,6 +31,13 @@ let hashLookupCache: { mtimeMs: number; lookup: Map<string, string> } | null = n
  * every runtime-rendered view 404s its bundle and Alpine never initializes.
  * `window.Alpine` stays undefined, so every `x-data` root and `app()` /
  * `notificationsBell()` call in the layout body itself throws.
+ *
+ * Hot-path note (runs per rendered view): HASH_INJECTION_SCRIPT/LINK are
+ * precompiled regex literals in regex/html-sanitize.ts — never build them per
+ * request. This lookup is memoized behind one statSync(dist/public) per render
+ * (~1µs syscall); exact invalidation beats a TTL cache because no TTL window
+ * can serve a stale bundle URL after a rebuild. Revisit only if the stat or the
+ * (mtime-gated, off-request-path) rebuild walk ever shows up in profiles.
  * @returns Map from root-relative logical path to hashed relative path
  */
 function getHashLookup(): Map<string, string> {
