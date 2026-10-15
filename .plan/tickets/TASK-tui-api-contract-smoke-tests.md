@@ -210,3 +210,5 @@ which belongs to branch finalization, not to this commit.
 `bun run check` (the full parallel gate suite) was **not** run — no time budget
 for it. The individual gates it wraps that matter here (typecheck, eslint, md
 lint, unit suite, plan validation) were run directly and are reported above.
+
+git issue: 74b3261

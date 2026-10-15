@@ -141,3 +141,5 @@ an HTML page.
   remaining handlers as they are extracted.
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+git issue: f88efac

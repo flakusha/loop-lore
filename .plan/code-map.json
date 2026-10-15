@@ -1660,6 +1660,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vector-gen-animated-raster.md"
     },
     {
@@ -1765,6 +1769,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-b1-rendition-pipeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-preview-dispatch-for-non-image-asset-types.md"
     },
     {
       "kind": "ticket",
@@ -15168,6 +15176,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-db-migration-039.md"
     },
     {
@@ -15241,6 +15253,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
     },
     {
       "kind": "ticket",
@@ -15819,6 +15835,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-lore-structured-generation-via-assistant.md"
+    }
+  ],
+  "src/db/migrations/030_assets_content_hash_unique.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
     }
   ],
   "src/db/migrations/030_assets_content_hash_unique.ts": [
@@ -16806,6 +16828,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
     },
     {
@@ -17161,6 +17187,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-sub-video.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
     },
     {
       "kind": "spec",
@@ -28211,6 +28241,16 @@
       "source": ".plan/tickets/TASK-matrix-integration.md"
     }
   ],
+  "src/integrations/mcp/client.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-external-creative-tool-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mcp-client-over-stdio-and-streamable-http.md"
+    }
+  ],
   "src/integrations/monitor.ts": [
     {
       "kind": "ticket",
@@ -31459,6 +31499,10 @@
   ],
   "src/plugins/mcp/client.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-external-creative-tool-bridge.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-mcp-client-skeleton.md"
     }
@@ -31625,6 +31669,10 @@
   ],
   "src/plugins/tool-executor.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-external-creative-tool-bridge.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-047.md"
     },
@@ -31646,7 +31694,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-and-tool-runtime-residual-defects.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md"
     },
     {
       "kind": "ticket",
@@ -31664,6 +31720,10 @@
     }
   ],
   "src/plugins/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-external-creative-tool-bridge.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-mini-games.md"
@@ -31710,11 +31770,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-host-contract-for-third-party-integration-plugins.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-management-api.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md"
     },
     {
       "kind": "spec",
@@ -45062,6 +45130,14 @@
     }
   ],
   "src/services/server-external-manager/probes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-probes-ts-liveness-accepts-any-http-response-including-404-a.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-probes-ts-stale-llama-swap-health-route-claim.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llama-swap-rotation-exclusion-policy.md"

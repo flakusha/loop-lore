@@ -200,3 +200,5 @@ live outside the htmx swap lifecycle.
 or the Elysia app.
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+git issue: 8955d7b

@@ -85,3 +85,6 @@ ratchets coverage over ~700 baseline paths in `scripts/check/api-doc-drift-basel
 weaker 4-path subset was pure duplication. The surviving gate now also asserts
 that the spec is valid OpenAPI 3.1 with a non-empty `paths` object
 (invariant 3), which was the only genuinely non-redundant part of the deleted gate.
+
+
+git issue: b7bd6b7

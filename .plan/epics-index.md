@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 321 epics
+**Total:** 322 epics
 
 ## Summary
 
@@ -114,7 +114,7 @@
 | Not Started | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | medium | Large (event table + projection rebuild + tests) | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
 | Not Started | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | medium | Large (multiple sub-tickets, see Sub-systems) | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
 | Done | Epic: Achievements | Medium | Medium | 0 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
-| Not Started | Epic: Ambient, Music & Sound Effects | Medium | High | 0 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
+| In Progress | Epic: Ambient, Music & Sound Effects | Medium | High | 0 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Not Started | Epic: Analytics & Observability | High | Medium | 0 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | Not Started | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | Not Started | Epic: API OpenAPI Specification | High | Medium | 0 | [epic-api-openapi.md](/.plan/epics/epic-api-openapi.md) |
@@ -185,6 +185,7 @@
 | Not Started | Error Envelope | Medium | Medium | 0 | [epic-error-envelope.md](/.plan/epics/epic-error-envelope.md) |
 | Not Started | Experimental egui Frontend (adoption decision + client-agnostic view-model layer) | Low | Medium | 0/5 | [epic-experimental-egui-frontend.md](/.plan/epics/epic-experimental-egui-frontend.md) |
 | In Progress | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
+| Not Started | External Creative Tool Bridge (MCP) | High | Very High | 0 | [epic-external-creative-tool-bridge.md](/.plan/epics/epic-external-creative-tool-bridge.md) |
 | Not Started | External Search Providers & Context Enrichment | Medium | Low | 0 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
 | In Progress | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
 | In Progress | FE-BE Harmonization — Epic | High | Small (one check script + gate) | 0 | [epic-fe-be-harmonization.md](/.plan/epics/epic-fe-be-harmonization.md) |
@@ -1300,7 +1301,7 @@ Multi-system epic combining:
 
 ### Epic: Ambient, Music & Sound Effects
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** High
 - **Type:** Feature Epic
@@ -2010,6 +2011,15 @@ Scene animation from narration via open video models (Phase 4 of the parent
 - **File:** `.plan/epics/epic-exploration-discovery.md`
 
 Exploration and discovery mechanics — map exploration, fog of war, discovery rewards, navigation, cartography, and hidden content. Supports both guided and freeform exploration.
+
+### External Creative Tool Bridge (MCP)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Very High
+- **Type:** Feature Epic
+- **Tags:** mcp, external-tools, creative-studio, plugins, async-jobs, security
+- **File:** `.plan/epics/epic-external-creative-tool-bridge.md`
 
 ### External Search Providers & Context Enrichment
 
