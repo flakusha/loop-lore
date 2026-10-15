@@ -17,6 +17,7 @@ import {
   writeSync,
 } from "node:fs";
 import { join, } from "node:path";
+import { HASH_ALPHABET, } from "../../../src/content/hash-injection";
 
 /**
  * Prefix for the immutable, hash-named trees the browser suite serves from.
@@ -127,9 +128,19 @@ export function ensureFrontendBuild(): string {
   const expectedHash = hashFrontendSources(root,);
   const buildDir = join(dist, `${E2E_BUILD_PREFIX}${expectedHash.slice(0, 16,)}`,);
   const hashPath = join(buildDir, ".build-hash",);
-  const isReady = () =>
-    existsSync(join(buildDir, "alpine-init.js",),) && existsSync(hashPath,) &&
-    readFileSync(hashPath, "utf8",) === expectedHash;
+  const alpineInitPattern = new RegExp(`^alpine-init-(${HASH_ALPHABET}{8})\.js$`,);
+  const isReady = (): boolean => {
+    const hashOk = existsSync(hashPath,) && readFileSync(hashPath, "utf8",) === expectedHash;
+    const entries = hashOk ? readdirSync(buildDir, { withFileTypes: true, },) : [];
+    return (
+      hashOk &&
+      entries.some(
+        (entry,) =>
+          entry.isFile() &&
+          alpineInitPattern.test(entry.name,),
+      )
+    );
+  };
 
   mkdirSync(dist, { recursive: true, },);
   const lockFd = acquireBuildLock(lockPath, isReady,);

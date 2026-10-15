@@ -17,8 +17,9 @@ import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { extname, } from "node:path";
 import { HASH_INJECTION_LINK, HASH_INJECTION_SCRIPT, } from "../regex/html-sanitize";
 
-/** Bun's content-hash alphabet (base32, no i/l/o/u) — 8 chars per build. */
-const HASH_ALPHABET = "[0-9a-hj-km-np-tv-z]";
+/** Bun's content-hash alphabet (base32, no i/l/o/u) — 8 chars per build.
+ * Also consumed by tests/e2e/helpers/browser-frontend-build.ts for the e2e readiness check. */
+export const HASH_ALPHABET = "[0-9a-hj-km-np-tv-z]";
 
 /** Matches a content-hashed asset basename: `<name>-<8-char bun hash>.<js|css>`. */
 const HASH_PATTERN = new RegExp(`^(.+)-(${HASH_ALPHABET}{8})\\.(js|css)$`,);
@@ -57,7 +58,7 @@ function collectFiles(dir: string, prefix: string, out: string[],): void {
  * @param dir
  * @returns Map from root-relative logical path to hashed basename
  */
-function buildHashLookup(dir: string,): Map<string, string> {
+export function buildHashLookup(dir: string,): Map<string, string> {
   const map = new Map<string, string>();
   const files: string[] = [];
   collectFiles(dir, "", files,);
