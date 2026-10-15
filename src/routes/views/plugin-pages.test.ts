@@ -6,6 +6,9 @@
  * `requirePermission("admin.system")` beforeHandle wrapping this route
  * denies non-admin and unauthenticated traffic. Regression for
  * WIRE-nsfw-audit-page-missing-inline-authz.
+ *
+ * Also covers GET /egui (standalone host page): registered outside
+ * ALLOWED_VIEWS, no DB access, never 404s.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { Elysia, } from "elysia";
@@ -64,5 +67,16 @@ describe("pagesRoutes /views/nsfw-moderation authz", () => {
     // when no admin role is present; adminViewGuard falls back to 302.
     // Either is acceptable as long as the handler is never reached.
     expect([302, 403,],).toContain(res.status,);
+  });
+
+  it("serves the standalone egui host page at /egui", async () => {
+    const res = await app.handle(
+      new Request("http://test/egui",),
+    );
+
+    expect(res.status,).toBe(200,);
+    const html = await res.text();
+    expect(html,).toContain('<canvas id="egui-canvas"></canvas>',);
+    expect(html,).toContain('data-testid="egui-back-to-htmx"',);
   });
 });
