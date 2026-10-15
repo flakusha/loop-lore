@@ -639,6 +639,10 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 `PUT /api/v1/admin/nsfw` — body: NSFW config fields (admin only)
 
+## Beyond this page
+
+This page documents core resources. The full served surface is ~600 paths / ~800 operations — RPG (`/api/rpg/*`: dice, stats, combat, crafting, skills, loot), trade (`/api/v1/trade/*`: offers, counter, NPC, history), generation, assets, characters/actors, worlds, chat extras, admin, and plugins. For the exact contract see the generated `reference/openapi.json` (gitignored; regenerate with `bun run openapi`) and [`spec/api-routes.md`](../spec/api-routes.md).
+
 ## Error Responses
 
 All errors follow `{ error: { message, code, details? } }`. Common codes:
