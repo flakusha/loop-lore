@@ -253,3 +253,5 @@ plausible later option (a). This epic does not build it; it makes it possible.
   policy that makes option (a) expensive
 - **epic-realtime-transports.md** — owns real-time endpoints; `src/transport/`
   is a library, not the live server transport
+
+git issue: a515b55
