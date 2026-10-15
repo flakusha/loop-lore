@@ -1,12 +1,13 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { compressAssets, compressFile, copyDirectory, walkDirectory, } from "./compress";
 
 let tmpDir: string;
 
 beforeAll(() => {
-  tmpDir = mkdtempSync(join("/tmp", "loop-lore-compress-test-",),);
+  tmpDir = mkdtempSync(join(tmpdir(), "loop-lore-compress-test-",),);
 },);
 
 afterAll(() => {
