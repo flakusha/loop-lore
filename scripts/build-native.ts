@@ -16,12 +16,12 @@
  *     (src/native/fallback/) becomes the default. Never fails the build.
  *
  *   WASM modules (frontend, feature-split):
- *   - rustup available → `rustup target add wasm32-unknown-unknown` + standard
- *     `cargo build --target wasm32-unknown-unknown --release`.
- *   - system cargo (no rustup) with rust-src → `RUSTC_BOOTSTRAP=1 cargo build
- *     -Z build-std=std,panic_abort --target wasm32-unknown-unknown --release`.
- *   - neither available → skip wasm; JS fallbacks (zstd stubs, TS crypto)
- *     become the frontend default.
+ *   - wasm32 std via scripts/native/toolchain.ts — a std the host already
+ *     ships, `rustup target add`, or the version-matched official component
+ *     provisioned into .tmp/native-toolchain/ and reached through a RUSTC
+ *     --sysroot wrapper (no sudo, no cross-install copies).
+ *   - none available (no rustc / offline) → skip with a notice; JS fallbacks
+ *     (zstd stubs, TS crypto) become the frontend default.
  *
  * Three wasm binaries from the same crate (feature-gated):
  *   `blake3.wasm`  — blake3 hashing only (small, ~200K)
@@ -38,6 +38,7 @@
 import { spawnSync, } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, statSync, } from "node:fs";
 import { join, } from "node:path";
+import { ensureWasmToolchain, } from "./native/toolchain";
 
 /** Crate dir relative to this script (scripts/ → native/loop-lore-native/). */
 const CRATE_DIR = join(import.meta.dir, "..", "native", "loop-lore-native",);
@@ -63,17 +64,6 @@ function rustupAvailable(): boolean {
   return probe.status === 0;
 }
 
-/** Check if rust-src component is available (needed for build-std cross-compilation). */
-function rustSrcAvailable(): boolean {
-  const sysroot = spawnSync("rustc", ["--print", "sysroot",], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "ignore",],
-  },);
-  if (sysroot.status !== 0) { return false; }
-  const rustlibSrc = join(sysroot.stdout.trim(), "lib", "rustlib", "src",);
-  return existsSync(join(rustlibSrc, "rust", "library", "core",),);
-}
-
 // ── Build stages ─────────────────────────────────────────────────
 
 /**
@@ -85,10 +75,12 @@ function buildNativeCdylib(): boolean {
     console.log("[build:native:cdylib] platform unsupported - TS fallback",);
     return true;
   }
+
   if (!existsSync(join(CRATE_DIR, "Cargo.toml",),)) {
     console.log("[build:native:cdylib] crate missing - TS fallback",);
     return true;
   }
+
   if (!cargoAvailable()) {
     console.log("[build:native:cdylib] cargo not found - TS fallback",);
     return true;
@@ -99,10 +91,12 @@ function buildNativeCdylib(): boolean {
     cwd: CRATE_DIR,
     stdio: "inherit",
   },);
+
   if (result.status !== 0) {
     console.error(`[build:native:cdylib] cargo build failed (status ${result.status})`,);
     return false;
   }
+
   console.log("[build:native:cdylib] native module ready (gitignored target/)",);
   return true;
 }
@@ -121,30 +115,17 @@ function buildWasm(): boolean {
     return true;
   }
 
-  // ── Detect best compilation path ──────────────────────────────
-  let useRustup = false;
-  let useBuildStd = false;
+  // ── Resolve a wasm-capable toolchain ─────────────────────────
+  const toolchain = ensureWasmToolchain(
+    { log: (line,) => console.log(`[build:native:wasm] ${line}`,), optional: true, },
+  );
 
-  if (rustupAvailable()) {
-    useRustup = true;
-    console.log("[build:native:wasm] rustup detected - standard wasm target add",);
-  } else if (rustSrcAvailable()) {
-    useBuildStd = true;
-    console.log("[build:native:wasm] no rustup, rust-src found - build-std path",);
-  } else {
-    console.log("[build:native:wasm] no rust toolchain - skipping WASM",);
+  if (!toolchain) {
+    console.log("[build:native:wasm] no wasm toolchain - skipping WASM (JS fallbacks stay)",);
     return true;
   }
 
-  // ── Ensure wasm target is available ───────────────────────────
-  if (useRustup) {
-    const targetAdd = spawnSync("rustup", ["target", "add", WASM_TARGET,], { stdio: "pipe", },);
-    if (targetAdd.status !== 0) {
-      const stderr = targetAdd.stderr?.toString() ?? "";
-      console.error(`[build:native:wasm] rustup target add failed: ${stderr.trim()}`,);
-      return false;
-    }
-  }
+  console.log(`[build:native:wasm] wasm32 std via ${toolchain.strategy} (${toolchain.rustc})`,);
 
   // ── Build configurations (feature-split for smaller downloads) ──
   const builds: { features: string; outputName: string }[] = [
@@ -153,7 +134,7 @@ function buildWasm(): boolean {
     { features: "blake3,zstd", outputName: "loop_lore_native.wasm", },
   ];
 
-  const env: Record<string, string | undefined> = { ...process.env, };
+  const env: NodeJS.ProcessEnv = { ...process.env, ...toolchain.env, };
   const baseArgs = [
     "build",
     "--release",
@@ -163,19 +144,16 @@ function buildWasm(): boolean {
     "--target-dir",
     "target",
   ];
-  if (useBuildStd) {
-    baseArgs.push("-Z", "build-std=std,panic_abort",);
-    env.RUSTC_BOOTSTRAP = "1";
-  }
 
   for (const { features, outputName, } of builds) {
     const args = [...baseArgs, "--features", features,];
     console.log(`[build:native:wasm] compiling ${outputName} (features: ${features})...`,);
     const result = spawnSync("cargo", args, {
       cwd: CRATE_DIR,
-      env: env as { [key: string]: string },
+      env,
       stdio: "inherit",
     },);
+
     if (result.status !== 0) {
       console.error(`[build:native:wasm] ${outputName} failed (status ${result.status})`,);
       return false;
