@@ -12,6 +12,8 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import type { Config, } from "../config/schema";
 import { initSmk, } from "../crypto/smk";
 import type { DB, } from "../db/schema";
@@ -61,7 +63,7 @@ async function upload(chatId: string | undefined,) {
 beforeAll(async () => {
   createLogger({ level: "error", },);
   ({ db, } = await createTestDb());
-  uploadDir = `${process.env.TMPDIR ?? "/tmp"}/loop-lore-upload-failclosed-${uid()}`;
+  uploadDir = join(tmpdir(), `loop-lore-upload-failclosed-${uid()}`,);
   userId = uid();
   await db
     .insertInto("users",)
