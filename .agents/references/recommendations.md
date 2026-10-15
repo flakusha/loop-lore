@@ -244,6 +244,48 @@ settings: (() => { const r = safeJsonStringify(data); return r.ok ? r.value : "{
 - Test edge states: every composite state pair, every transition
 - `bun test` with Jest-compatible assertions
 
+## Acceptance Criteria (every ticket)
+
+AC are the contract the implementer is measured against and the reviewer checks.
+`giwt ticket` emits a three-line skeleton (`Implementation complete` / `Tests passing` /
+`Documentation updated`) — that is a **placeholder**, never a finished AC. Every ticket
+replaces it before it is picked up.
+
+### Required categories
+
+Omit a category only when it genuinely cannot apply, and say why in the ticket.
+
+| Prefix                      | Covers                                                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `**Behaviour:**`            | Observable outcomes, not wiring. User/API-visible effects.                                                                     |
+| `**Tests:**`                | The specific named tests. For a bug, the failing-before case.                                                                  |
+| `**Edge cases:**`           | Empty, malformed, oversized, unicode, zero-length, truncated, magic-bytes-vs-extension, idempotent re-invocation.              |
+| `**Concurrency / TOCTOU:**` | Every check-then-act window, and the race between a guarded event and its own trigger.                                         |
+| `**Security:**`             | Ownership/authz, injection, path traversal, SSRF, resource exhaustion, secret leakage, trust boundaries, fail-closed defaults. |
+| `**Regressions:**`          | Adjacent paths that must not change — named test files.                                                                        |
+| `**Repo gates:**`           | `bun run check` plus the suite names that must stay green.                                                                     |
+
+### Rules
+
+1. **Behaviour, not wiring.** "Added a column" is not AC. "A generated image links to its
+   provenance row and the row is retrievable by `asset_id`" is.
+2. **A bug fix names the failing-before case.** e.g. "liveness requires an actual 2xx; 404/500
+   reported dead" — plus a regression test kept after the fix.
+3. **Every read-modify-write or probe-then-act path names its TOCTOU.** State what makes the two
+   steps atomic (unique index, compare-and-set, reservation key) and what bounds the TTL.
+4. **Every trust boundary names its check** — ownership, consent, clearance, allowlist — asserted
+   _before_ the side effect, not only before the final write.
+5. **Every claim is either verified or marked.** A source fact cites `file:line`. An unverified
+   external claim carries `**[INFERENCE]**` or a stated verification command. Never paste a claim
+   from another doc without re-checking it.
+6. **Delete over pin.** An AC already satisfied by shipped code is dropped, not re-pinned. New AC
+   only for what this change changes.
+7. **No tautologies.** `bun run check` green is required; "code exists", "is non-empty",
+   "does not throw", "tests exist" are not AC.
+8. **State Current State as a table.** When a ticket audits an existing module, mark rows
+   `[OK]` / `[FAIL]` / `absent` with `file:line`. It makes the gap self-evident and stops the
+   audit being re-run from scratch next session.
+
 ## Documentation
 
 - Avoid embedding quantitative metrics (token counts, percentages, benchmark numbers) in `.agents/` docs

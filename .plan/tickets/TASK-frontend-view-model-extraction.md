@@ -121,3 +121,5 @@ extracting there would mostly rename existing boundaries, and it adds
   proven by the measured diff above rather than by a checked-in golden file.
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
+
+git issue: c5a9bf3
