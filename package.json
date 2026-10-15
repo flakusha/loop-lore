@@ -13,14 +13,16 @@
     "tui": "bun run src/tui/app.ts",
     "lolo": "bun run bin/lolo.ts",
 
-    "build": "bun run build:frontend && bun run build:server && bun run build:native",
+    "build": "bun run build:frontend && bun run build:egui && bun run build:server && bun run build:native",
     "build:frontend": "bun run scripts/build-frontend.mjs",
+    "build:egui": "bun run scripts/build-egui-wasm.ts",
     "build:server": "bun build src/server/index.ts --outdir ./dist --target bun",
     "build:native": "bun run scripts/build-native.ts",
     "build:verify": "bun run scripts/build-verify.ts",
 
     "lint:native": "cargo clippy --manifest-path native/loop-lore-native/Cargo.toml --all-targets -- -D warnings",
     "test:native": "cargo test --manifest-path native/loop-lore-native/Cargo.toml",
+    "native:toolchain": "bun run scripts/native/toolchain.ts",
     "format:native": "cargo fmt --manifest-path native/loop-lore-native/Cargo.toml",
     "format:native:check": "cargo fmt --manifest-path native/loop-lore-native/Cargo.toml -- --check",
     "update:native": "cargo update --manifest-path native/loop-lore-native/Cargo.toml && cargo test --manifest-path native/loop-lore-native/Cargo.toml",
