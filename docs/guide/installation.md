@@ -39,7 +39,7 @@ bun run dev
 | `bun run build`        | Build static assets for production |
 | `bun run db:migrate`   | Run pending migrations             |
 | `bun run lint`         | Run ESLint                         |
-| `bun run format`       | Format code with Prettier          |
+| `bun run format`       | Check formatting with dprint (`format:fix` to write) |
 | `bun run docs:dev`     | Start documentation dev server     |
 | `bun run docs:build`   | Build documentation for production |
 | `bun run docs:preview` | Preview built documentation        |
@@ -62,7 +62,11 @@ ASSET_STORAGE_BACKEND=local
 
 ## Docker
 
-No `Dockerfile` exists yet. Instructions aspirational.
+Container image at repo-root `Dockerfile` (multi-stage); full stack (Caddy TLS + app + Postgres) in `deploy/docker-compose.yml`. See [`spec/build-deploy.md`](../spec/build-deploy.md).
+
+```bash
+docker build -t loop-lore:latest .
+```
 
 ## Verification
 
