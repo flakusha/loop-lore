@@ -5,6 +5,18 @@
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">{{{t("tooltips.viewChats")}}}</span>
   <div class="actions">
+    <!--
+      htmx ↔ egui handoff: window.loopLoreEgui (egui-bridge.ts) reads the
+      chatid from the URL, stores the transfer context and navigates.
+    -->
+    <button
+      class="btn-icon"
+      title="Open in the experimental egui frontend"
+      aria-label="Open in the experimental egui frontend"
+      data-testid="open-in-egui"
+    >
+      &#128187;
+    </button>
     <button
       class="btn-icon"
       x-bind:title="t('tooltips.viewChats')"

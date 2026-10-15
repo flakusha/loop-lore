@@ -17,6 +17,7 @@ const MIME_TYPES: Record<string, string> = {
   gz: "application/gzip",
   br: "application/brotli",
   zst: "application/zstd",
+  wasm: "application/wasm",
 };
 
 /**
@@ -28,11 +29,11 @@ export function getContentType(filePath: string,): string {
   return MIME_TYPES[extension] ?? "text/plain";
 }
 
-const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
+const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg", ".wasm",],);
 
 /**
  * @param filePath - file path
- * @returns `true` when the file's extension is in the compressible set (css/js/html/json/svg).
+ * @returns `true` when the file's extension is in the compressible set (css/js/html/json/svg/wasm).
  */
 function isCompressible(filePath: string,): boolean {
   const extension = filePath.split(".",).pop()?.toLowerCase();
