@@ -29,31 +29,17 @@ bun run check && bun test src/
 # - Generated artifacts (`.tmp/coverage/`) are scratchpad; never commit
 #
 # Check runner modes (`scripts/check-parallel.mjs`):
-# - Heavy test gates (unit, e2e, coverage) always run serialized after the
-#   light gates — two concurrent bun-test processes OOM on this host.
-# - Gate concurrency defaults to 4: light gates are chunked four at a
-#   time. The default used to be 1 (serial) because co-scheduled gates OOM'd
-#   this host. Raising it is safe for the LIGHT pool: the gates that actually
-#   OOM the box are excluded from it. eslint, unit, e2e and coverage sit in
-#   HEAVY_NAMES (scripts/check/parallel/runner.mjs) and run strictly one at a
-#   time after the light chunk, so a wider light chunk can never co-schedule
-#   them with anything.
-#   eslint itself is measured on this host (bunx eslint src/, no cache):
-#   `--concurrency=off` 3.6 GB / `--concurrency=1` 3.6 GB /
-#   `--concurrency=2` 6.9 GB / `--concurrency=4` 12.4 GB peak RSS, and
-#   `--concurrency=4 --cache` warm re-run 1.5 GB. The `--cache` (zram) cache
-#   is what makes the WARM run cheap (12.4 GB → 1.5 GB, -88%); a COLD cache
-#   still peaks ~12 GB, which is why eslint stays in the serial tail rather
-#   than joining the light pool. `--concurrency=4` is the value
-#   `lint:eslint` in package.json already passes and is kept as-is (in the
-#   2-4 range); it is 2x faster than `off` for ~3.4x the RSS.
-#   The host is still memory-constrained: pass `--jobs N` (or
-#   `CHECK_JOBS=N`) when you want a faster run and own the memory risk; the
-#   runner notes when you ask for more than the default. Co-scheduled
-#   worktrees each pay their own light chunk, so N worktrees is N×4.
-#   Heavy gates (unit, e2e, coverage, eslint) still run strictly serial after
-#   the light chunk regardless of this cap — two of those at once is what
-#   actually OOMs the box.
+# - Heavy test gates (e2e, coverage, plan-sync, eslint) always run serialized
+#   after the light gates, in an `await` loop that never reads the concurrency
+#   cap — so no `--jobs` value can start two bun-test processes.
+# - Gate concurrency defaults to 4, and it bounds the light pool only. The
+#   default was raised from 1 after measuring a real finalize at JOBS=1: peak
+#   11.93 GB total / 2.79 GB single process on 52.3 GiB available, while the
+#   light pool's four heaviest gates at jobs=4 sum to ~9.4 GiB — less than
+#   JOBS=1 already reached. It buys headroom symmetry, not wall time: the run
+#   is dominated by the serialized heavy tail. Pass `--jobs N` (or
+#   `CHECK_JOBS=N`) to change it, and drop to 1 when a finalize would run
+#   beside two other finalizations.
 # - `bun run check --diff-base <ref>` scopes the COVERAGE gate to the diff
 #   between `<ref>` and HEAD, plus uncommitted working-tree changes: each
 #   diff-touched `src/` file is floored individually against a test run covering

@@ -92,12 +92,11 @@ diff ref — which would show up as extra NOOPs. What this corpus measures is th
 *unscoped* cost, which is what a dev-side or `--force` run pays and what the
 post-merge dev validation pays. Scoped-run numbers are marked separately.
 
-Gate concurrency defaults to 4 (`DEFAULT_JOBS` in
-`scripts/check/parallel/runner.mjs`; it was 1, serial, when this corpus was
-taken), so a UNscoped run costs roughly the SUM of its heavy-gate durations
-plus the slowest chunk of its light gates. The corpus below is entirely
-serial-era, so its gates sum the way they did then: mean 264.8s across the
-22 reports.
+Gate concurrency defaulted to 1 when this corpus was collected
+(`DEFAULT_JOBS` in `scripts/check/parallel/runner.mjs`), so those runs cost
+roughly the SUM of their gate durations: mean 264.8s across the 22 reports. The
+default is now 4. That does not change the per-gate costs below — this table is
+still the per-gate truth — it only increases how many light gates overlap.
 
 | gate | n | median | p90 | max | fail | % of serial |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -147,13 +146,13 @@ lint - eslint  bunx eslint --concurrency=8 <5 changed paths>                    
 
 Two findings that contradict the current docs:
 
-1. **`HEAVY_NAMES`'s own comment is right and understated.** `runner.mjs:196-200`
-   says eslint joins the serial tail "on footprint, not on measured causation"
-   at "~1.5 GB peak". Measured on this host it is **19.4 GB**, 13x the figure in
-   the comment. 19.4 GB is a real OOM contributor on a 61 GB box with two or
-   three agents finalizing concurrently — this is the first *measured* support
-   for the AGENTS.md "co-scheduled gates OOM this host" rule rather than an
-   inference from footprint.
+1. **`HEAVY_NAMES`'s own comment was right and understated.** It used to
+   say eslint joined the serial tail "on footprint, not on measured causation"
+   at "~1.5 GB peak". Measured on this host it is **19.4 GB**, 13x the figure
+   the comment carried, and the comment has since been corrected to it. 19.4 GB
+   is a real OOM contributor on a 61 GB box with two or three agents finalizing
+   concurrently — this is the first *measured* support for the "co-scheduled
+   gates OOM this host" rule rather than an inference from footprint.
 2. **`lint - eslint` could not fail on the measured tree.** It exits 0 with 2352
    warnings and 0 errors (`--max-warnings` is not set in `package.json`
    `lint:eslint`, `package.json:41`). The gate costs 18.4s and 19.4 GB to report
