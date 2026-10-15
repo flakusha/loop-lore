@@ -49,6 +49,11 @@ async function buildBundles() {
   // Locale init (separate — loads before Alpine for SSR translations)
   await $`bun build --target browser --minify --outdir ${DIST} --entry-naming "[name]-[hash].[ext]" --banner "(()=>{" --footer "})()" ${frontend}/locale-init.ts`;
 
+  // htmx ↔ egui handoff bridge (window.loopLoreEgui + the chat header entry
+  // button). IIFE wrapper — same classic-script global-var hazard as the other
+  // non-worker entries; the module only touches globalThis via `window`.
+  await $`bun build --target browser --minify --outdir ${DIST} --entry-naming "[name]-[hash].[ext]" --banner "(()=>{" --footer "})()" ${frontend}/egui-bridge.ts`;
+
   // WASM module loader (pre-compiled hot binary — fetches + exposes C ABI)
   await $`bun build --target browser --minify --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/wasm-loader.ts`;
 

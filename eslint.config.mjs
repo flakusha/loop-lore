@@ -456,6 +456,26 @@ export default [
       "no-restricted-imports": "off",
     },
   },
+  // Build scripts (TypeScript): same minimal surface as the e2e block - parser +
+  // bun/node globals, oxlint keeps handling the rest. No typed rules (these files
+  // live in tsconfig.scripts.json, not the src project), and CLI glue is exempt
+  // from the options-object convention and the process-exit ban.
+  {
+    files: ["scripts/**/*.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+      globals: {
+        ...globals.bun,
+        ...globals.node,
+      },
+    },
+    plugins: tsPlugins,
+    rules: {
+      ...tsRules,
+      "unicorn/no-process-exit": "off",
+      "local/options-object-params": "off",
+    },
+  },
   // Scripts (JS modules): provide stub rule definitions so eslint-disable comments
   // referencing non-existent rules (unicorn/name-replacements, etc.) don't cause
   // "Definition for rule not found" errors. Stub rules are no-ops.
