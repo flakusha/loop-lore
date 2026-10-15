@@ -826,6 +826,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-api-rate-limiter-persists-the-sliding-window-before-the-burs.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rate-limiting-telemetry.md"
     }
   ],
@@ -6034,6 +6038,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-runtime-asset-compression-is-structurally-dead-needscompress.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-insert-log-fatal-and-log-trace-calls-at-key-sites.md"
     },
     {
@@ -9093,6 +9101,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    }
+  ],
+  "src/chat/service/merge/merge-result-rows.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq.md"
     }
   ],
   "src/chat/service/message-history.ts": [
@@ -12762,6 +12776,10 @@
   "src/content/compress.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-runtime-asset-compression-is-structurally-dead-needscompress.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-content-decompression-stage-in-generation-pipeline.md"
     },
     {
@@ -12814,6 +12832,10 @@
     }
   ],
   "src/content/hash-injection.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-runtime-asset-compression-is-structurally-dead-needscompress.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-static-asset-serving-never-applies-immutable-caching-and-cra.md"
@@ -13000,6 +13022,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-key-material-revoke-then-insert-sequences-are-non-transactio.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick.md"
     },
     {
@@ -13033,6 +13059,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-key-material-revoke-then-insert-sequences-are-non-transactio.md"
     },
     {
       "kind": "ticket",
@@ -13190,6 +13220,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
     },
     {
@@ -13322,6 +13356,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-key-material-revoke-then-insert-sequences-are-non-transactio.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
     },
     {
@@ -13396,6 +13434,10 @@
   "src/crypto/e2e/dh-ratchet-helpers.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-skipoldchain-zeroes-the-caller-s-receivingchainkey-despite-i.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
     }
   ],
@@ -13427,6 +13469,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-skipoldchain-zeroes-the-caller-s-receivingchainkey-despite-i.md"
     },
     {
       "kind": "ticket",
@@ -13578,6 +13624,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-key-material-revoke-then-insert-sequences-are-non-transactio.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     },
     {
@@ -13649,6 +13699,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rotatekeyonleave-partial-failure-leaves-mixed-key-state-non-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans.md"
     },
     {
       "kind": "ticket",
@@ -13793,6 +13847,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans.md"
     },
     {
       "kind": "ticket",
@@ -15423,6 +15481,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-.md"
     },
     {
       "kind": "ticket",
@@ -23975,6 +24037,10 @@
   ],
   "src/game-state/service.ts": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-game-state-block-regex-truncates-payloads-containing-an-inne.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/game-canvas.md"
     }
@@ -24031,6 +24097,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-ambient-music-sfx.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-ambient-audio-route-links-generated-assets-to-arbitrary-mess.md"
     },
     {
       "kind": "ticket",
@@ -24147,6 +24217,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
+  "src/generation/audio/providers/local.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stranded-post-finalize-fix-the-audio-low-pass-coefficient-re.md"
     }
   ],
   "src/generation/audio/sfx.ts": [
@@ -28020,6 +28096,10 @@
   "src/integrations/email/adapter.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-email-adapter-ingests-mail-addressed-to-anyone-and-falls-bac.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt.md"
     },
     {
@@ -28088,7 +28168,15 @@
   "src/integrations/email/spam-gate.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-email-token-bucket-discards-fractional-refill-credit-permane.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-spam-gate-sender-identity-ignores-plus-tag-subaddressing-blo.md"
     },
     {
       "kind": "ticket",
@@ -28138,6 +28226,10 @@
     }
   ],
   "src/integrations/health.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-email-token-bucket-discards-fractional-refill-credit-permane.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md"
@@ -31430,6 +31522,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-failed-plugin-load-leaks-a-registered-plugin.md"
     },
     {
@@ -31446,7 +31542,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-.md"
     },
     {
       "kind": "ticket",
@@ -31579,6 +31683,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-.md"
     },
     {
       "kind": "ticket",
@@ -32836,6 +32944,10 @@
   "src/regex/game-state.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-game-state-block-regex-truncates-payloads-containing-an-inne.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md"
     },
     {
@@ -32888,6 +33000,10 @@
     }
   ],
   "src/regex/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-item-transfers-double-report-one-sentence-and-item-take-item.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre.md"
@@ -33023,6 +33139,12 @@
       "source": ".plan/tickets/IDEA-idea-regex-precision-telemetry-opt-in-per-pattern-match-coun.md"
     }
   ],
+  "src/regex/slugs.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin.md"
+    }
+  ],
   "src/regex/stage2-llm.test.ts": [
     {
       "kind": "epic",
@@ -33047,6 +33169,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-extraction-tests.md"
+    }
+  ],
+  "src/regex/story-events.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-item-transfers-double-report-one-sentence-and-item-take-item.md"
     }
   ],
   "src/regex/transforms.ts": [
@@ -36172,6 +36300,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-gm-shadow-note-revealed-to-reveal-is-a-read-modify-write-wit.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
     {
@@ -37462,6 +37594,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-user-message-swipe-insert-retries-all-errors-and-mislabels-t.md"
     },
     {
@@ -38003,6 +38139,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-management-api.md"
+    }
+  ],
+  "src/routes/plugins/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat.md"
     }
   ],
   "src/routes/polls.ts": [
@@ -44409,6 +44551,12 @@
       "source": "docs/spec/build-deploy.md"
     }
   ],
+  "src/server/init-asset-compression.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-runtime-asset-compression-is-structurally-dead-needscompress.md"
+    }
+  ],
   "src/server/init-background-services.ts": [
     {
       "kind": "epic",
@@ -44670,6 +44818,10 @@
     }
   ],
   "src/server/static-mime.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-static-asset-serving-never-applies-immutable-caching-and-cra.md"
@@ -45463,6 +45615,12 @@
       "source": ".plan/epics/epic-embeddable-engine-game-frontend.md"
     }
   ],
+  "src/story/events/application/apply.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-acceptresponse-applies-world-events-before-the-turn-write-so.md"
+    }
+  ],
   "src/story/events/application/handlers.ts": [
     {
       "kind": "epic",
@@ -45474,6 +45632,10 @@
     }
   ],
   "src/story/events/extraction.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-item-transfers-double-report-one-sentence-and-item-take-item.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
@@ -45544,6 +45706,14 @@
     }
   ],
   "src/story/game-master/accept.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-acceptresponse-applies-world-events-before-the-turn-write-so.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-humanoverride-silently-drops-the-gm-decision-when-serializat.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-simulation-discovery-and-trade-events.md"
@@ -45638,6 +45808,10 @@
     }
   ],
   "src/story/gm/decisions/llm.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-llmdecision-assembles-the-prompt-outside-the-try-block-so-an.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-classifier-backed-actor-and-beat-selection-for-turn-decision.md"
@@ -46008,6 +46182,10 @@
   "src/story/quest-engine/progress.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-quest-engine-double-advances-from-stale-in-memory-progress-a.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-055.md"
     }
   ],
@@ -46071,6 +46249,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-timeline-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-timeline-event-steering-manifest-status-update-and-timeline-.md"
     },
     {
       "kind": "ticket",
@@ -47897,6 +48079,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-conversation-branching.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq.md"
     },
     {
       "kind": "ticket",
