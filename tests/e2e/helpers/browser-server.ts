@@ -103,7 +103,7 @@ export async function createBrowserTest(
     try {
       await unloadAllPlugins();
     } finally {
-      const testDir = join("/tmp", testRunId,);
+      const testDir = join(tmpdir(), testRunId,);
       if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
     }
 
