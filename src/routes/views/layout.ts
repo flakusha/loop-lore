@@ -255,8 +255,11 @@ function respond(
   const nonce = request ? getNonce(request,) : null;
   const locale = request ? detectLocale(request,) : undefined;
   const contentWithMounts = resolvePluginMounts(content,);
+  // Both paths resolve asset references: the htmx fragment carries the view's
+  // own <script src="/chat-list.js"> — the layout's referrers are not the
+  // whole story, and an un-hashed one 404s after a hash-only build.
   const body = isHtmx
-    ? applyI18n(contentWithMounts, t,)
+    ? resolveHashedAssets(applyI18n(contentWithMounts, t,),)
     : wrapWithLayout(contentWithMounts, title, userId, sessionId, nonce, t, locale,);
 
   return new Response(body, {
