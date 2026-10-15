@@ -442,7 +442,7 @@ export async function createTestServer(
         setTestDatabase(null,);
         resetSoloUserCache();
         resetLoginRateLimiter();
-        const testDir = resolve("/tmp", testRunId,);
+        const testDir = resolve(tmpdir(), testRunId,);
         if (existsSync(testDir,)) {
           rmSync(testDir, { recursive: true, force: true, },);
         }
@@ -454,7 +454,7 @@ export async function createTestServer(
     // non-isolated runners (BUG-settestdatabase-global-leak-on-test-throw).
     void bunServer?.stop();
     setTestDatabase(null,);
-    const testDir = resolve("/tmp", testRunId,);
+    const testDir = resolve(tmpdir(), testRunId,);
     if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
     throw err;
   }
