@@ -28,8 +28,8 @@ LLM RPG chat platform (SillyTavern-inspired, architecturally distinct) with enha
 - Database support (`bun:sqlite` → Kysely, PG via dialect swap)
 - Asset system (images/audio/video, polymorphic linking)
 - Character system with JSON card import/export
-- RPG mechanics: **🟡 Partially implemented** (dice, stats, combat, XP, loot, skills, professions — see [RPG Status](#rpg-mechanics-status))
-- Item systems: **🟡 Partially implemented** (definitions, instances, loot tables — unification in progress)
+- RPG mechanics: **🟡 Mostly implemented** (dice, stats, combat, XP, loot with persistence, skills service, trade routes, crafting service + routes — see [RPG Status](#rpg-mechanics-status))
+- Item systems: **🟡 In Progress** (definitions, instances, loot persistence wired; item frontend/UX tickets remain)
 - Enhanced assistant chat (user assistance focused)
 - User management & multi-session support
 - Message persistence & reliability
@@ -42,24 +42,24 @@ LLM RPG chat platform (SillyTavern-inspired, architecturally distinct) with enha
 | Character stats    | ✅ Implemented                      | `src/rpg/stats.ts`, `db: character_stats` | `epic-rpg-mechanics`             |
 | Combat             | ✅ Implemented                      | `src/rpg/combat.ts`                       | `epic-rpg-mechanics`             |
 | XP & leveling      | ✅ Implemented                      | `src/rpg/xp.ts`                           | `epic-rpg-mechanics`             |
-| Loot tables        | 🟡 Service only (not persisted)     | `src/rpg/loot/`                           | `epic-item-systems-unification`  |
-| Skills             | 🟡 Service only (no routes)         | `src/rpg/skills/`, `db: character_skills` | `epic-skills-professions-config` |
+| Loot tables        | ✅ Implemented (persisted)          | `src/rpg/loot/` (`persist.ts` → `world_items`) | `epic-item-systems-unification` |
+| Skills             | ✅ Implemented (service + tests)    | `src/rpg/skills/`, `db: character_skills` | `epic-skills-professions-config` |
 | Professions        | 🟡 Tables only (no service/routes)  | `db: professions`                         | `epic-skills-professions-config` |
 | Item definitions   | ✅ Implemented                      | `src/story/items/`, `db: items`           | `epic-item-systems-unification`  |
 | Item instances     | ✅ Implemented                      | `src/story/items/`, `db: world_items`     | `epic-item-systems-unification`  |
-| Item unification   | 🔲 Planned                          | —                                         | `epic-item-systems-unification`  |
-| Trade/Economy      | 🔲 Planned                          | —                                         | `epic-item-systems-unification`  |
-| Crafting execution | 🔲 Planned (recipes service exists) | `src/rpg/crafting/`                       | `epic-crafting-professions`      |
+| Item unification   | 🟡 In Progress (backend wiring merged; item frontend/UX tickets remain) | `src/story/items/`, `src/rpg/loot/` | `epic-item-systems-unification` |
+| Trade/Economy      | ✅ Implemented (offers, counter, NPC trade routes) | `src/services/trade/`, `src/routes/trade/` | `epic-item-systems-unification` |
+| Crafting execution | 🟡 Service + routes (discovery, orders, stations); UX pending | `src/rpg/crafting/`, `src/routes/crafting/` | `epic-crafting-professions` |
 
 ## Document Structure
 
 ```
 docs/
-├── spec/                    Core technical specs (60+ files)
+├── spec/                    Core technical specs (115 files)
 │   └── integrations/        External tool integration specs
 ├── .plan/                   Planning system (source of truth for tasks)
-│   ├── epics/               Epic definitions (172 epics)
-│   ├── tickets/             Task tickets (600+ tasks)
+│   ├── epics/               Epic definitions (324 epics)
+│   ├── tickets/             Task tickets (3300+ tasks)
 │   ├── epics-index.md       Auto-generated epic status index
 │   ├── features/            Feature specs (28 files)
 │   ├── roadmaps/            Implementation roadmaps (3 files)
@@ -90,16 +90,12 @@ Technical specs for systems. Cross-referenced with `.plan/` epics for implementa
 
 | Spec                           | Implements                    | Related Epic                                                  | Spec Status                      |
 | ------------------------------ | ----------------------------- | ------------------------------------------------------------- | -------------------------------- |
-| `spec/rpg-mechanics.md`        | Dice, stats, combat, XP, loot | `epic-rpg-mechanics`                                          | 🟡 Partial (see RPG Status)      |
+| `spec/rpg-mechanics.md`        | Dice, stats, combat, XP, loot | `epic-rpg-mechanics`                                          | 🟡 Mostly current (see RPG Status)   |
 | `spec/actors.md`               | Actor data model, inventory   | `epic-item-systems-unification`                               | 🟡 Inventory gaps                |
 | `spec/character-spec.md`       | Character import/export       | `epic-character-core-system`                                  | ✅ Largely current               |
-| `spec/crafting-professions.md` | Crafting disciplines          | `epic-crafting-professions`, `epic-skills-professions-config` | 🟡 DB layer done, routes pending |
-| `spec/economy-trading.md`      | Trade, market dynamics        | `epic-item-systems-unification`                               | 🔲 Not started                   |
-| `spec/items.md`                | Item types, properties        | `epic-item-systems-unification`                               | 🔲 Not started                   |
-| `spec/inventory.md`            | Inventory management          | `epic-item-systems-unification`                               | 🔲 Not started                   |
-| `spec/architecture.md`         | System layers, request flow   | —                                                             | ✅ Current                       |
-| `spec/schema.md`               | Full DB schema                | —                                                             | 🟡 Regenerate after migrations   |
-| `spec/api-routes.md`           | REST API contract             | —                                                             | 🟡 Regenerate after routes added |
+| `spec/crafting-professions.md` | Crafting disciplines          | `epic-crafting-professions`, `epic-skills-professions-config` | 🟡 Service + routes landed, UX pending |
+| `spec/items.md`                | Item types, properties        | `epic-item-systems-unification`                               | 🟡 Backend wired, UX pending      |
+| `spec/inventory.md`            | Inventory management          | `epic-item-systems-unification`                               | 🟡 Backend wired, UX pending      |
 
 ### Architecture & Core
 
@@ -162,22 +158,22 @@ Technical specs for systems. Cross-referenced with `.plan/` epics for implementa
 
 ## Planning System (`.plan/`)
 
-**Source of truth** for task tracking and feature specs. Auto-generated index at `.plan/epics-index.md` (172 epics).
+**Source of truth** for task tracking and feature specs. Auto-generated index at `.plan/epics-index.md` (324 epics).
 
 ### Epic System
 
-| Directory              | Purpose                                                   | Count      |
-| ---------------------- | --------------------------------------------------------- | ---------- |
-| `.plan/epics/`         | Epic definitions (feature breakdown, acceptance criteria) | 172 epics  |
-| `.plan/tickets/`       | Task tickets (implementation work items)                  | 600+ tasks |
-| `.plan/epics-index.md` | Auto-generated consolidated epic status                   | —          |
+| Directory              | Purpose                                                   | Count       |
+| ---------------------- | --------------------------------------------------------- | ----------- |
+| `.plan/epics/`         | Epic definitions (feature breakdown, acceptance criteria) | 324 epics   |
+| `.plan/tickets/`       | Task tickets (implementation work items)                  | 3300+ tasks |
+| `.plan/epics-index.md` | Auto-generated consolidated epic status                   | —           |
 
-### Active Epics (Recently Created)
+### Active Epics
 
-| Epic                                                                                  | Priority | Status         | Tasks | Scope                                                                                   |
-| ------------------------------------------------------------------------------------- | -------- | -------------- | ----- | --------------------------------------------------------------------------------------- |
-| [`epic-item-systems-unification.md`](/.plan/epics/epic-item-systems-unification.md)   | High     | ⬜ Not Started | 15    | Unify item types, link NPC inventory, wire crafting, implement trade, item seeding      |
-| [`epic-skills-professions-config.md`](/.plan/epics/epic-skills-professions-config.md) | High     | ⬜ Not Started | 6     | Skills routes, professions service, character config skills/prof, item config templates |
+| Epic                                                                                  | Status      | Scope                                                                                   |
+| ------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------- |
+| [`epic-item-systems-unification.md`](/.plan/epics/epic-item-systems-unification.md)   | 🟡 In Progress (backend wiring merged; item frontend/UX tickets remain) | Unify item types, link NPC inventory, wire crafting, implement trade, item seeding |
+| [`epic-skills-professions-config.md`](/.plan/epics/epic-skills-professions-config.md) | ⬜ Not Started | Skills routes, professions service, character config skills/prof, item config templates |
 
 ### Epic Status Legend
 
@@ -241,6 +237,10 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 | [`frontend/chat/export.md`](./frontend/chat/export.md)                       | Export formats, public sharing                  |
 | [`frontend/chat/group-chat.md`](./frontend/chat/group-chat.md)               | Multi-participant chat                          |
 | [`frontend/chat/prompt-creation.md`](./frontend/chat/prompt-creation.md)     | Prompt templates, variable injection            |
+| [`frontend/chat/search-and-filter.md`](./frontend/chat/search-and-filter.md) | Chat search and filtering                       |
+| [`frontend/chat/templates.md`](./frontend/chat/templates.md)                 | Chat templates                                  |
+| [`frontend/chat/text-effects-overlays.md`](./frontend/chat/text-effects-overlays.md) | Text effects and overlays                 |
+| [`frontend/chat/visual-novel-mode.md`](./frontend/chat/visual-novel-mode.md) | Visual novel mode                               |
 
 ---
 
@@ -251,7 +251,11 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 | [`guide/getting-started.md`](./guide/getting-started.md) | Quick start                              |
 | [`guide/installation.md`](./guide/installation.md)       | Prerequisites, setup                     |
 | [`guide/characters.md`](./guide/characters.md)           | Creating, importing, managing characters |
-| [`guide/local-models.md`](./guide/local-models.md)         | Browser models, download policy, GGUF splits   |
+| [`guide/personas.md`](./guide/personas.md)               | Personas and impersonation               |
+| [`guide/worlds.md`](./guide/worlds.md)                   | Worlds and locations                     |
+| [`guide/gallery.md`](./guide/gallery.md)                 | Gallery assets and linking               |
+| [`guide/settings.md`](./guide/settings.md)               | Settings tabs                            |
+| [`guide/local-models.md`](./guide/local-models.md)       | Browser models, download policy, GGUF splits |
 
 ---
 
@@ -272,7 +276,8 @@ Operator runbooks for on-prem / dedicated-server deployment. Pair with `spec/bui
 
 | Document                                 | Topics             |
 | ---------------------------------------- | ------------------ |
-| [`reference/api.md`](./reference/api.md) | REST API reference |
+| [`reference/api.md`](./reference/api.md) | REST API reference (hand-written overview) |
+| `reference/openapi.json` (gitignored, regenerate via `bun run openapi`) | Generated OpenAPI contract (600 paths / 807 operations) |
 
 ---
 
