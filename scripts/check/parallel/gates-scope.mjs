@@ -91,10 +91,16 @@ const onDisk = (f,) => existsSync(path.resolve(PROJECT_ROOT, f,),);
 export function applyDiffScopedStaticGates(checks,) {
   if (DIFF_BASE) {
     const scopedLint = pickScopedFiles(CHANGED_FILES, /\.(ts|tsx|js|jsx|mjs|cjs|md)$/, onDisk,);
-    // `--concurrency=4` mirrors package.json's `lint:eslint`; the file list is
-    // appended to the same invocation, so the config is identical either way.
+    // `--concurrency=4 --cache --cache-location .tmp/eslint.cache` mirror
+    // package.json's `lint:eslint`; the file list is appended to the same
+    // invocation, so the entry results are identical either way. The cache
+    // matters on top of narrowing: without it every diff-scoped run re-parses
+    // the corpus cold, so the 19 GB peak the narrowing exists to avoid comes
+    // straight back on the scoped path.
     if (scopedLint) {
-      checks["lint - eslint"] = `bunx eslint --concurrency=4 ${scopedLint.join(" ",)}`;
+      checks["lint - eslint"] = `bunx eslint --concurrency=4 --cache --cache-location .tmp/eslint.cache ${
+        scopedLint.join(" ",)
+      }`;
     }
     const scopedMd = pickScopedFiles(CHANGED_FILES, /\.md$/, onDisk,);
     if (scopedMd) {
