@@ -17,27 +17,24 @@ import { ADVISORY_GATES, checks, } from "./gates.mjs";
 
 // ── Concurrency cap ────────────────────────────────────────────
 // Resolve the per-run concurrency cap with priority: --jobs flag > CHECK_JOBS
-// env > default (DEFAULT_JOBS below). We refuse values < 1 (would deadlock)
-// and cap at the check count to avoid the Promise.all-of-empty-array footgun.
-// The cap exists so several worktrees (or several repos on the box) can run
-// `bun run check` at once without the host hitting OOM — peak RSS scales
-// ~linearly with concurrent checks.
+// env > default 4. We refuse values < 1 (would deadlock) and cap at the check
+// count to avoid the Promise.all-of-empty-array footgun. The cap bounds only
+// the LIGHT pool — every heavy gate is `await`ed one-at-a-time in
+// runAllChecks and never reads JOBS, so no value here can start two bun tests.
 //
-// ponytail: 4 is the measured-safe default, not a measured optimum. The
-// original 1 was chosen when co-scheduled gates OOM-killed this host; that
-// trigger is gone for the LIGHT pool because the gates that actually OOM the
-// box are excluded from it — eslint, unit, e2e and coverage sit in
-// HEAVY_NAMES below and run strictly one at a time after this chunk, so a
-// 4-wide light chunk cannot co-schedule them with anything.
-// Measured on this host, eslint (bunx eslint src/, no cache):
-// --concurrency=off 3.6 GB, =1 3.6 GB, =2 6.9 GB, =4 12.4 GB peak RSS;
-// =4 --cache warm re-run 1.5 GB. So `--cache` makes the WARM run cheap, but
-// a COLD cache still peaks ~12 GB — hence eslint staying in the serial tail.
-// The host is still memory-constrained: raise it with --jobs N (or
-// CHECK_JOBS=N) only when you know the box has the headroom to spare, and
-// expect parseJobs() to note that you are above the default. Remember N
-// worktrees each pay their own chunk, so two finalizing worktrees are 8
-// light gates, not 4.
+// Measured during a real `giwt finalize` at JOBS=1, on 61 GiB (52.3 available):
+// peak 11.93 GB total, peak single process 2.79 GB (tsgo). At JOBS=4 the light
+// pool's four heaviest gates sum to ~9.4 GiB (backend 3.1 + coverage 2.8 +
+// scripts 2.4 + knip 1.1) — no more than JOBS=1 already reaches, because one
+// tsgo gate alone spawns enough children to get there. Wall time gains little
+// (light gates finish in <15s; the run is dominated by the serialized heavy
+// tail), so 4 buys headroom symmetry, not speed.
+//
+// ponytail: 4 is measured-safe, not measured-optimal. Two concurrent worktrees
+// each at JOBS=4 (~19 GiB) plus one worktree's cold eslint (~19 GB) and its
+// serialized coverage/e2e gates fit the 52.3 GiB available; three concurrent
+// finalizations on heavy gates is the shape that has NOT been re-measured.
+// Pass --jobs N to take that on explicitly.
 const DEFAULT_JOBS = 4;
 function parseJobs() {
   const flagIdx = process.argv.indexOf("--jobs",);
@@ -224,12 +221,11 @@ export async function runCheck(name, command,) {
 // and reports a false "index out of sync" / truncated ticket-set (observed
 // deterministically across three consecutive runs).
 //
-// `lint - eslint` joins them on footprint, not on measured causation: it
-// measured ~1.5 GB peak at `--concurrency=8`, well above the `--concurrency=4`
-// package.json now runs with `--cache`, and it is the largest light-pool gate
-// by a wide margin, so chunking it beside other multi-GB work is the shape
-// that co-scheduled OOMs took. Moving it here removes that exposure; it is
-// not evidence that eslint caused any specific kill.
+// `lint - eslint` joins them on footprint, not on measured causation: a cold
+// full-corpus run peaks at 19.4 GB and stays 12.4 GB with `--cache`
+// (`--concurrency=4`, package.json) — by far the largest gate on either side
+// of the heavy line. Moving it here removes that exposure; it is not evidence
+// that eslint caused any specific kill.
 const HEAVY_NAMES = new Set([
   "coverage - per-module line %",
   "e2e - browser (baseline)",
