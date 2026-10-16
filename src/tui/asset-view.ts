@@ -6,11 +6,11 @@
  *
  * Blessed widget for browsing assets linked to the current chat.
  * Left/Right arrow navigation, Enter/Delete interaction.
- * Fetches from GET /api/v1/assets?entity_type=chat&entity_id=..., authenticated with the `[tui].sessionToken` when set.
+ * Fetches from GET /api/assets?entity_type=chat&entity_id=...
  */
 
 import blessed from "blessed";
-import { safeFetch as _realFetch, } from "../utils";
+import { safeFetch, } from "../utils";
 import { API_BASE, } from "./chat";
 
 /** */
@@ -23,37 +23,30 @@ export interface LinkedAsset {
   alt_text: string | null;
   created_at: string;
 }
-
-/** */
-export interface AssetViewOptions {
-  /** Bearer token for `GET /api/v1/assets`; omit to run anonymous against solo deployments. */
-  sessionToken?: string;
-  /** Optional parent box; defaults to the screen. */
-  parent?: blessed.Widgets.BoxElement;
-}
 /** */
 export class AssetView {
+
   private screen: blessed.Widgets.Screen;
+
   private box: blessed.Widgets.BoxElement;
+
   private infoLabel: blessed.Widgets.BlessedElement;
+
   private assets: LinkedAsset[] = [];
+
   private currentIndex = 0;
+
   private chatId: string | null = null;
-  private assetCountLabel: blessed.Widgets.BlessedElement;
-  sessionToken: string | undefined;
 
   /**
    * @param screen
-   * @param options - session token and optional parent box
+   * @param parent
    */
-  constructor(screen: blessed.Widgets.Screen, options: AssetViewOptions = {},) {
+  constructor(screen: blessed.Widgets.Screen, parent?: blessed.Widgets.BoxElement,) {
     this.screen = screen;
-    // Normalize empty string to undefined, mirroring ChatWidget (chat/index.ts):
-    // an accidental `""` must not ship as `Bearer ` and trip 401s.
-    this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
 
     this.box = blessed.box({
-      parent: options.parent ?? screen,
+      parent: parent ?? screen,
       right: 0,
       top: 0,
       width: "30%",
@@ -93,7 +86,6 @@ export class AssetView {
       this.renderCurrent();
       screen.render();
     },);
-  }
 
   // ── Rendering ───────────────────────────────────────────────
 
@@ -119,13 +111,12 @@ export class AssetView {
         `{bold}Type:{/bold} ${asset.asset_type}\n` +
         `{bold}MIME:{/bold} ${asset.mime_type}\n` +
         `{bold}Size:{/bold} ${sizeStr}\n` +
-        `{bold}Added:{/bold} ${asset.created_at.slice(0, 10,)}\n` +
-        (asset.alt_text ? `{bold}Alt:{/bold} ${asset.alt_text}\n` : "") +
-        `\n{cyan-fg}← → navigate   Del: unlink{/cyan-fg}`,
+        `{bold}Added:{/bold} ${asset.created_at.slice(0, 10,)}\n${
+          asset.alt_text ? `{bold}Alt:{/bold} ${asset.alt_text}\n` : ""
+        }\n{cyan-fg}← → navigate{/cyan-fg}`,
     );
 
     this.screen.render();
-  }
 
   /**
    * @param msg
@@ -134,7 +125,6 @@ export class AssetView {
     this.assetCountLabel.setContent("",);
     this.infoLabel.setContent(msg,);
     this.screen.render();
-  }
 
   /**
    * @param bytes - raw byte count
@@ -144,7 +134,6 @@ export class AssetView {
     if (bytes < 1024) { return `${bytes} B`; }
     if (bytes < 1024 * 1024) { return `${(bytes / 1024).toFixed(1,)} KB`; }
     return `${(bytes / (1024 * 1024)).toFixed(1,)} MB`;
-  }
 
   // ── Public API ──────────────────────────────────────────────
 
@@ -154,7 +143,6 @@ export class AssetView {
   show(): void {
     this.box.show();
     this.screen.render();
-  }
 
   /**
    * Hide the asset-view box and re-render the screen.
@@ -162,7 +150,6 @@ export class AssetView {
   hide(): void {
     this.box.hide();
     this.screen.render();
-  }
 
   /**
    * @returns `true` when the box is currently visible.
@@ -173,14 +160,12 @@ export class AssetView {
     } else {
       this.show();
     }
-  }
 
   /**
    * @returns `true` when the asset-view box is currently visible.
    */
   isVisible(): boolean {
     return this.box.visible;
-  }
 
   /**
    * @param chatId - chat whose assets should be displayed
@@ -190,14 +175,12 @@ export class AssetView {
     this.currentIndex = 0;
     // loadAssets surfaces failures via renderInfo and never rejects.
     void this.loadAssets();
-  }
 
   /**
    * @returns currently-scoped chat id, or `null` when none.
    */
   getChatId(): string | null {
     return this.chatId;
-  }
 
   // ── Data loading ────────────────────────────────────────────
 
@@ -214,8 +197,7 @@ export class AssetView {
 
     try {
       const url = `${API_BASE}/api/v1/assets?entity_type=chat&entity_id=${this.chatId}&pageSize=100`;
-      const result = await _fetch<{ data?: LinkedAsset[] }>(url, {
-        auth: this.sessionToken ? { sessionToken: this.sessionToken, } : undefined,
+      const result = await safeFetch<{ data?: LinkedAsset[] }>(url, {
         handle401: false,
       },);
       if (!result.ok) {
@@ -233,7 +215,6 @@ export class AssetView {
       this.assets = [];
       this.renderInfo(`Error: ${(error as Error).message}`,);
     }
-  }
 
   /** Reload assets for the current chat (e.g., after upload). */
   /**
@@ -241,14 +222,4 @@ export class AssetView {
    */
   async refresh(): Promise<void> {
     await this.loadAssets();
-  }
-}
-
-let _fetch = _realFetch;
-
-/** Swap the HTTP client (tests only) — mirrors the seam in `harness/api.ts`.
- * @param fn - replacement for the real `safeFetch`
- */
-export function setFetch(fn: typeof _realFetch,): void {
-  _fetch = fn;
 }
