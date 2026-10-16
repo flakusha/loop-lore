@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** encryption, crypto, secrets, assets
 **Overview:** (see sections below)
 
 
@@ -90,11 +90,21 @@ The encryption workflow now supports future additions of new algorithms through:
 - [ ] Browser pre-encrypt integration (feature detection + fallbacks)
 - [ ] Anonymous chat mode
 
+## Security Considerations
+
+- **Auto-rotation re-encrypt is a silent no-op that orphans message history** → db.transaction (`BUG-KEY-ROTATION-NOOP-ORPHANS-HISTORY`)
+- **chats.encryption_level tier is not enforced, so public and private read identically at rest** → re-check capability at use time (`BUG-ENCRYPTION-TIER-NOT-ENFORCED`)
+- **Key rotate/revoke routes lack a re-auth gate, so a stolen session can rotate keys** → re-check consent/authorization after reservation (src/routes/key-management.ts)
+
 ## Related Epics
 
 - `epic-crypto.md` — parent encryption epic
 - `epic-frontend-encryption.md` — frontend encryption UI
 - `epic-chat-lifecycle-moderation.md` — privacy/moderation coexistence
+
+- `epic-db-asset-snapshot-recovery.md` — related
+- `epic-non-standard-browser-crypto.md` — related
+
 
 ## Related Tickets
 

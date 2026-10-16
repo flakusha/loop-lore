@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** ci, testing, automation, deployment
 **Overview:** (see sections below)
 
 
@@ -61,6 +61,12 @@ push / PR  ──▶  quality-gates  ──▶  test-pyramid  ──▶  benchma
 - [ ] Signed container image + SBOM published to GHCR on tag
 - [ ] `epic-benchmark-ci-regression.md` thresholds wired in; > 5% regression fails the build
 - [ ] All gates non-skippable for PR merges into `dev` or `main`
+
+## Security Considerations
+
+- **Secrets-scan quality gate is skippable, so a leaked credential reaches dev/main unchecked** → re-check capability at use time (Scope — quality gates)
+- **Release workflow re-runs on the same tag and republishes the version with different contents** → idempotency key (Acceptance Criteria — signed image + SBOM)
+- **Published image and SBOM are not signature-verified before downstream release consumes them** → re-check capability at use time (Acceptance Criteria — non-skippable gates)
 
 ## Related Epics
 

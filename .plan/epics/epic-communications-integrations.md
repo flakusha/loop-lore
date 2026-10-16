@@ -3,7 +3,7 @@
 
 # EPIC: Communications Integrations
 
-**Tags:** (none)
+**Tags:** chat, federation, privacy, auth
 **Overview:** (see sections below)
 
 
@@ -79,6 +79,10 @@ Shared cross-protocol security posture (per-protocol details live in each sub-ep
 | WhatsApp | Signal Protocol   | Server-managed                  | End-to-end                 |
 | Telegram | MTProto           | Server-managed                  | Cloud or local secret chat |
 | Signal   | Signal Protocol   | Server-managed                  | End-to-end                 |
+
+- **A platform token revoked mid-sync keeps being used until the adapter notices** → re-check capability at use time (`TASK-INTEGRATION-INFRASTRUCTURE`)
+- **Credential envelope holds every protocol secret in one file; a partial write destroys all of them** → atomic rename (temp + rename) (`TASK-adapter-secret-storage-encrypted-credential-envelope`)
+
 
 ## Success Criteria
 

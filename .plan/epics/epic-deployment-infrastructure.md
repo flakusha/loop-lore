@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** deployment, docker, ci, observability
 **Overview:** (see sections below)
 
 
@@ -74,11 +74,20 @@ Containerize the loop-lore application and establish deployment strategies for b
 - GPU instances may have variable pricing; need to research current rates
 - Some providers may lack SSH access for bare metal management
 
+## Security Considerations
+
+- **Rolling deploy restarts the app container while the old replica still holds the migration lock** → single-writer / leader election (## Deliverables; `TASK-004`)
+- **Deploy automation holds long-lived host/provider credentials with no rotation or scope limits** → re-check capability at use time (Goals — CI/CD automatic deployments)
+
 ## Related Epics
 
 - epic-deployment-topologies.md
 - epic-database-asset-snapshot-recovery.md
 - epic-frontend-admin
+
+- `epic-cicd-pipeline.md` — related
+- `epic-multi-instance-reconciliation.md` — related
+
 
 ## Assumptions
 

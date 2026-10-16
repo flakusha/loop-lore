@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** frontend, auth, security, rate-limiting
 **Overview:** (see sections below)
 
 
@@ -21,9 +21,19 @@ Frontend implementation for Login & Authentication UI. See `docs/frontend/login.
 
 _TBD — expand with frontend implementation tasks._
 
+## Security Considerations
+
+- **Concurrent register POSTs collide on the same username** → unique constraint + retry (src/routes/auth/register.ts:141-163)
+- **Per-process in-memory login/register buckets let N instances multiply attempts** → conditional UPDATE … WHERE on a shared counter row (src/routes/auth/shared.ts:31-44)
+- **Session JWT stays valid after logout or role change** → re-check capability at use time (src/routes/auth/session.ts:35)
+
 ## Related Epics
 
 - `docs/frontend/login.md`
+
+- `epic-auth-access.md` — related
+- `epic-frontend-age-gate.md` — related
+- `epic-frontend-encryption.md` — related
 
 ## Tickets
 

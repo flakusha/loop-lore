@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** party, world, npc, chat, scheduler
 **Overview:** (see sections below)
 
 
@@ -146,6 +146,13 @@ interface BoundNpcRetinue {
 }
 ```
 
+## Security Considerations
+
+- **Currency split reads sharedCurrency then writes per-member shares (check-then-act money path)** → db.transaction around the split (§Party)
+- **Planned join/leave/kick writes mutate party + party_member rows without a transaction** → db.transaction (§Design)
+- **World tick and chat transfer both advance the same party, so concurrent ticks double travel** → optimistic concurrency (version column) on party_state (§Party)
+- **Loot/combat consumption uses a stale item quantity read before the write** → conditional UPDATE … WHERE quantity >= n (`BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory`)
+
 ## Open Questions
 
 - Party leader death handling: disband, promote, or merge-into-nearest-party?
@@ -165,3 +172,8 @@ interface BoundNpcRetinue {
 - TASK-party-bound-npc-retinue-and-group-behavior
 - TASK-party-ui-roster-route-schedule-stats
 
+## Related Epics
+
+- `epic-chat-transfer-location.md` — related
+- `epic-world-npcs.md` — related
+- `epic-world-travel-time.md` — related

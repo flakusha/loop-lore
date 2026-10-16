@@ -6,7 +6,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** deployment, docker, database, observability
 **Overview:** (see sections below)
 
 
@@ -119,11 +119,21 @@
 - Epic 27 (Data Integrity & ACID) — backend guards, ACID matrix
 - `.plan/implementation-plan.md` — epic registry
 
+## Security Considerations
+
+- **Topologies D/E boot N app replicas that all run migrations; no leader guard exists yet** → single-writer / leader election (## Deployment Topologies)
+- **SQLite topology is combined with N instances because no backend guard is enforced at boot** → re-check capability at use time (Phase 3 — readiness gate)
+- **Init migration Job races the app rollout, so pods start against a half-migrated schema** → single-writer / leader election (Phase 2 — migrate-job.yaml)
+
 ## Related Epics
 
 - **Epic 26 (Multi-Instance Reconciliation)** — provides migration leadership / schema-drift guards this epic consumes for topologies D/E.
 - **Epic 27 (Data Integrity & ACID)** — supplies backend-selection + `data_version` guards that gate SQLite-vs-Postgres topology decisions.
 - **Epic 14 (Import/Export)** — deploy artifacts may ship baked data; out of scope here.
+
+- `epic-data-integrity-acid.md` — related
+- `epic-import-export-io.md` — related
+- `epic-multi-instance-reconciliation.md` — related
 
 ## Linked Tasks
 

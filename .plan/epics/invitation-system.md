@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** auth, validation, privacy
 **Overview:** (see sections below)
 
 
@@ -33,3 +33,7 @@ Implement and test invitation mechanics for user onboarding and group chat joini
 - Pass e2e tests for invite flow
 - Secure code handling
 - Seamless join experience
+
+## Security Considerations
+
+- **Invite code is a bearer credential validated in one statement and consumed in another** → conditional UPDATE … WHERE (status = 'pending') (§Scope)

@@ -3,7 +3,6 @@
 
 # EPIC: 2D Sprite World
 
-**Tags:** (none)
 **Overview:** (see sections below)
 
 **Status:** Not Started
@@ -11,6 +10,7 @@
 **Priority:** High
 **Effort:** Very High total (split across sub-epics below)
 **Type:** Feature Epic
+**Tags:** canvas, spatial-layer, pixel-art, npc-simulation, procedural-generation, parallax-layers, proximity-interaction, multiplayer-presence
 
 ## Summary
 
@@ -159,9 +159,21 @@ Verified against dev (`001_init.ts`, `src/locations/`, routes):
 
 Tickets: TASK-2d-world-review-zone-rect-editor-for-map-zones-authoring, TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro, TASK-2d-world-review-world-scoped-snapshot-and-event-sse-feed, TASK-2d-world-review-proximity-query-for-nearby-actors-into-group, TASK-2d-world-review-canvas-click-to-vn-choice-card-payload-contr, TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-, TASK-2d-world-review-zone-adjacency-validation-missing, BUG-locations-tree-header-names-nonexistent-triggers.
 
+## Security Considerations
+
+- **Regenerated sprite/style-pack variants persist with `dedupe:false`, so identical bytes insert a new row each run** → idempotency key (src/assets/service/create.ts:43-49)
+- **Client-predicted positions and the sim tick both write actor_snapshots** → optimistic concurrency (version column) (epic §Spatial Data Model, §Canvas Perf Model)
+- **Sprite-pack asset paths sent to the canvas can escape the asset root** → canonicalized path + containment check post-resolve (`BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`.md)
+
 ## Open Questions
 
 - Sprite variant matrix: emotion tags (existing avatar chain: emotion/mood/action/location/time/outfit) + battle StatusEffect overlays compose; no combinatorial art. Ceiling question: which overlays ship first?
 - Canvas chat: settled — dock existing panel first; canvas-native bubbles deferred to later slice.
 - Native ECS boundary: which sim functions move to Rust first when TS tick saturates?
 - World style system: who authors pixel-art style packs, and how are they versioned?
+
+## Related Epics
+
+- `epic-battle-integration-gaps.md` — related
+- `epic-emotion-avatar-message-binding.md` — related
+- `epic-fractal-locations.md` — related

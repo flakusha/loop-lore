@@ -3,7 +3,7 @@
 
 # EPIC: Tooling Support & Improvement (Permanently Ongoing)
 
-**Tags:** (none)
+**Tags:** tooling, ci, workflow, agent, docs
 **Overview:** (see sections below)
 
 
@@ -45,10 +45,19 @@ Tooling support and improvement — repo worktree management, agent support, IO,
 
 > **Caution — formatter/linter drift:** Per AGENTS.md the project tooling is ESLint-centric (`eslint.config.mjs`, `bun run check`). The linked `TASK-dev-tooling-updates` already pins Biome 2.5.4. Adopting Biome as more than a secondary checker risks formatter/config drift unless it **replaces** ESLint as the single source of truth for lint+format. Keep one canonical toolchain until that migration is deliberately completed.
 
+## Security Considerations
+
+- **Concurrent worktree finalize runs merge the same branch and interleave** → single-writer / leader election (`BUG-FINALIZE-CONCURRENT-MERGE-RACE`)
+- **Finalize advances worktree state without re-checking that the merge landed** → re-check capability at use time (`BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M`)
+
 ## Related Epics
 
 - **Epic Code Quality & Best Practices** — lint/format ownership overlaps; Biome adoption must be reconciled with the ESLint-centric `bun run check` pipeline (see caution above).
 - **Epic Testing & QA** — tooling improvements feed CI gates that QA relies on.
+
+- `epic-benchmark-ci-regression.md` — related
+- `epic-cicd-pipeline.md` — related
+- `epic-file-splitting.md` — related
 
 ## Docs-Gap Audit Remainders (2026-09-19)
 

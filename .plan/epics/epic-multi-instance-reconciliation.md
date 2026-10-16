@@ -6,7 +6,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** concurrency, deployment, migration, reliability
 **Overview:** (see sections below)
 
 
@@ -216,12 +216,23 @@ process.on("SIGTERM", async () => {
 - Epic 27 (Data Integrity & ACID) — backend selection guards
 - `.plan/implementation-plan.md` — epic registry
 
+## Security Considerations
+
+- **Every replica runs the Kysely Migrator on boot, so N instances race the same DDL** → single-writer / leader election (src/db/migrate.ts)
+- **Stale instance serves against a drifted schema because SchemaManifest.verify() is test-only** → re-check capability at use time (src/db/schema-manifest.ts)
+- **New replica accepts traffic before waitForSchemaReady() returns** → re-check capability at use time (Phase 1 — waitForSchemaReady)
+- **Leader releases the advisory lock before migrate commits, letting a second replica migrate** → db.transaction (src/db/migrate.ts)
+
 ## Related Epics
 
 - **Epic 25 (Deployment Topologies)** — this epic's migration-leadership / drift guards gate the multi-instance topologies D/E.
 - **Epic 27 (Data Integrity & ACID)** — backend-selection guards complement this epic; sequenced together after Epic 26 (order 26 → 27 → 25).
 - **Epic Testing & QA** — migration-leader + drift integration tests live under its QA umbrella.
 - **Epic Headless & Alternative Frontends** — health check endpoints consumed by load balancers.
+
+- `epic-data-integrity-acid.md` — related
+- `epic-deployment-topologies.md` — related
+
 
 ## Scope Boundary
 

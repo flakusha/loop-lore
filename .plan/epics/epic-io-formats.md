@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** import-export, validation, integrity, schema
 **Overview:** (see sections below)
 
 
@@ -62,12 +62,22 @@ interface FormatHeader {
 - [ ] Reader-side rejects formats with `format_version > reader_max` with stable `error_code: "io.unsupported_format_version"`.
 - [ ] Migration guide added to `docs/spec/io-formats.md` covering v1→v2→v3 character-card evolution.
 
+## Security Considerations
+
+- **Imported .llworld / chat-archive member paths can escape the extraction root** → canonicalized path + containment check after resolve (world-bundle codec, src/io/codecs/, Scope: Formats)
+- **Import writes codec files non-atomically after validating the payload, leaving partial state** → atomic rename (temp + rename) (src/io/codecs/, Scope: Codec)
+- **Re-importing the same content-hash-addressed manifest re-inserts rows for unchanged payloads** → INSERT OR IGNORE (asset-manifest codec, content_hash)
+- **Import writes external payload into actor/world rows: ownership must come from the session, not the file** → re-check capability at use time (Scope: Formats, epic-actors.md import path)
+
 ## Related Epics
 
 - `docs/spec/io-formats.md`
 - `epic-import-export-io.md` — partial implementation; this epic generalizes
 - `epic-actors.md` — character card import lands in actor tables
 - `epic-content-hashing-distributed-integrity.md` — content_hash is blake3
+
+- `epic-licensing.md` — related
+- `epic-shared-schemas.md` — related
 
 ## Tickets
 

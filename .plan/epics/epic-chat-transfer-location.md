@@ -3,7 +3,7 @@
 
 # EPIC: Chat/Group Chat Transfer & Location Change Mechanics
 
-**Tags:** (none)
+**Tags:** chat, routing, database
 **Overview:** (see sections below)
 
 
@@ -298,3 +298,8 @@ Selecting a card triggers the corresponding location change.
 | `chat.party_left`       | emits     | Character left chat                |
 | `chat.party_split`      | emits     | Party branched                     |
 | `chat.party_reunited`   | emits     | Split parties merged               |
+
+## Security Considerations
+
+- **Concurrent join/leave/transfer on one chat interleave into inconsistent party rows** → db.transaction (`TASK-PARTY-JOIN-LEAVE`)
+- **`chat.location_changed` fans out before the location write commits, so consumers read the old location** → re-check capability at use time (§Integration Points)

@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** frontend, notifications, ui, streaming
 **Overview:** (see sections below)
 
 
@@ -21,9 +21,19 @@ Frontend implementation for Notification System UI. See `docs/frontend/notificat
 
 _TBD — expand with frontend implementation tasks._
 
+## Security Considerations
+
+- **Read/list surfaces keyed on notification id alone would return another user's row (IDOR)** → conditional UPDATE … WHERE (src/notifications/service/crud.ts:106-111)
+- **Activity/notification stream trusted without a session identity** → re-check capability at use time (src/routes/activity-stream.ts:113-117, 401 at activity-stream.test.ts:50)
+- **Retried fan-out to the same recipient duplicates notification rows** → INSERT OR IGNORE (src/notifications/service/crud.ts:38-60)
+
 ## Related Epics
 
 - `docs/frontend/notifications.md`
+
+- `epic-auth-channel-provisioning.md` — related
+- `epic-frontend-components.md` — related
+- `epic-headless-alternative-frontends.md` — related
 
 ## Tickets
 

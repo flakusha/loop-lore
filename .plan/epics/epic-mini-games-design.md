@@ -6,7 +6,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** game-mechanics, npc, story, social
 **Overview:** (see sections below)
 
 
@@ -1028,3 +1028,9 @@ The NSFW cards plugin (`plugins/community/nsfw-cards/`) provides card-based sedu
 6. **Tournament system**: Multi-round bracket tournaments?
 7. **Card collecting**: Can players collect custom decks?
 8. **Cross-game progression**: Does playing games unlock story content?
+
+## Related Epics
+
+- `epic-mini-games-expanded.md` — related
+- `epic-mini-games.md` — related
+- `epic-nsfw-game-mechanics.md` — related

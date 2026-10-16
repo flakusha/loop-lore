@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** backend, assistant, notifications, integrity, assets
 **Overview:** (see sections below)
 
 
@@ -21,9 +21,21 @@ Implementation epic for Implementation Guide. See `docs/spec/implementation.md` 
 
 _TBD — expand with implementation tasks derived from the spec._
 
+## Security Considerations
+
+- **Archive path authorizes only chat.created_by; the purge job takes no caller identity** → re-check capability at use time (§4)
+- **Archive purge deletes messages then chats per row with no transaction** → db.transaction (§4)
+- **Unowned asset (chat_id null) mints a signed URL unchecked, and the token is not re-checked on reuse** → re-check capability at use time (src/assets/signed-url.ts, §6)
+- **Command permission returns allow when world rules are absent; GM override skips the check after the read** → re-check capability at use time (§9)
+- **Integrity check opens integrity.json paths with no containment while the file set can change** → canonicalized path + containment check after resolve (§8)
+
 ## Related Epics
 
 - `docs/spec/implementation.md`
+
+- `epic-archival-workflow.md` — related
+- `epic-content-hashing-distributed-integrity.md` — related
+- `epic-frontend-notifications.md` — related
 
 ## Tickets
 

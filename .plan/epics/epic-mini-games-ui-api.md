@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** api, backend, components, transport, rate-limiting
 **Overview:** (see sections below)
 
 
@@ -1845,3 +1845,17 @@ enum GameErrorCode {
 4. **Error Handling** — Client-side error handling patterns
 5. **Testing** — API test cases
 6. **Implementation** — Start with Phase 1 games
+
+## Security Considerations
+
+- **Route handlers return state for any client-supplied game/player id (no row-level authorization)** → re-check capability at use time (## API Contracts: Get Game)
+- **POST move trusts client playerId; turn ownership only surfaces as NOT_YOUR_TURN** → re-check capability at use time (## API Contracts: Make Move)
+- **POST achievement claim pays the reward on every call** → INSERT OR IGNORE (## Achievements: Claim Achievement)
+- **POST social gift debits sender and credits recipient without a transaction** → db.transaction (## Social: Send Gift)
+- **WebSocket auth frame validated only at connect; a banned or logged-out player keeps the socket** → re-check capability at use time (## WebSocket Events: Connection)
+
+## Related Epics
+
+- `epic-api-rate-limiting.md` — related
+- `epic-mini-games-db.md` — related
+- `epic-mini-games.md` — related
