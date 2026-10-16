@@ -24,11 +24,14 @@ import {
   clearRole,
   loadProviderModels,
   loadProviders,
+  loadPublicProviders,
   loadRoles,
   rescanProviders,
   setFetch,
+  testProviderConnection,
 } from "./models-api";
 import type { RolesEnvelope, } from "./models-api";
+import { formatConnectionTest, formatProviderHealth, HEALTH_UNAVAILABLE, } from "./models-display";
 import { ModelsOverlay, } from "./models-overlay";
 
 interface RecordedCall {
@@ -146,6 +149,97 @@ describe("models api", () => {
     await loadProviders(undefined,);
     expect(calls[0]?.url,).toBe("http://localhost:3000/api/v1/admin/providers",);
   });
+
+  // The PUBLIC list is the one route in this module with no auth middleware,
+  // so it must not carry a bearer token even when one is available.
+  it("loads the public provider list without auth", async () => {
+    stubClient({ providers: [], },);
+    await loadPublicProviders();
+    expect(calls[0]?.url,).toBe("http://localhost:3000/api/v1/providers",);
+    expect(calls[0]?.options.auth,).toBeUndefined();
+  });
+
+  it("POSTs the connection ping with the provider name in the body", async () => {
+    stubClient({ ok: true, status: "ok", latencyMs: 12, },);
+    const result = await testProviderConnection({ provider: "ollama", sessionToken: "tok", },);
+
+    expect(result,).toEqual({ ok: true, data: { ok: true, status: "ok", latencyMs: 12, }, },);
+    expect(calls[0]?.options.method,).toBe("POST",);
+    expect(calls[0]?.options.body,).toEqual({ provider: "ollama", },);
+    expect(calls[0]?.options.auth,).toEqual({ sessionToken: "tok", },);
+  });
+
+  // A DOWN provider answers HTTP 200 with ok:false. Treating the envelope's
+  // ok as the verdict would report an outage as a success.
+  it("keeps a failed health check distinguishable from a failed request", async () => {
+    stubClient({ ok: false, status: "down", error: "connection refused", },);
+    const result = await testProviderConnection({ provider: "ollama", sessionToken: undefined, },);
+    expect(result,).toEqual({
+      ok: true,
+      data: { ok: false, status: "down", error: "connection refused", },
+    },);
+  });
+
+  // The ping needs requireUserId, not admin.system, so an anonymous caller
+  // gets a 401 the caller must render rather than a crash.
+  it("reports a 401 from the ping instead of throwing", async () => {
+    stubForbidden();
+    expect(await testProviderConnection({ provider: "ollama", sessionToken: undefined, },),).toEqual({
+      ok: false,
+      error: ADMIN_ONLY,
+      status: 403,
+    },);
+  });
+});
+
+describe("status bar health segment", () => {
+  it("shows a bare count when every provider is reachable", () => {
+    const segment = formatProviderHealth([
+      { name: "openai", label: "OpenAI", status: "healthy", },
+      { name: "ollama", label: "Ollama", status: "healthy", },
+    ],);
+
+    expect(segment,).toBe("Providers: {green-fg}2{/green-fg}/2 ok",);
+  });
+
+  it("names the unreachable providers so an outage is actionable", () => {
+    const segment = formatProviderHealth([
+      { name: "openai", label: "OpenAI", status: "healthy", },
+      { name: "ollama", label: "Ollama", status: "unreachable", },
+    ],);
+
+    expect(segment,).toContain("/2 ok",);
+    expect(segment,).toContain("ollama",);
+    expect(segment,).not.toContain("openai",);
+  });
+
+  it("caps the names it lists rather than overflowing the bar", () => {
+    const segment = formatProviderHealth([
+      { name: "a", label: "A", status: "down", },
+      { name: "b", label: "B", status: "down", },
+      { name: "c", label: "C", status: "down", },
+      { name: "d", label: "D", status: "down", },
+    ],);
+
+    expect(segment,).toContain("+1",);
+    expect(segment,).not.toContain("d,",);
+  });
+
+  it("degrades to the unknown marker when the route returns nothing", () => {
+    expect(formatProviderHealth([],),).toBe(HEALTH_UNAVAILABLE,);
+  });
+
+  it("renders a healthy ping with its latency", () => {
+    expect(formatConnectionTest({ ok: true, status: "ok", latencyMs: 42, },),).toBe(
+      "{green-fg}ok{/green-fg} 42ms",
+    );
+  });
+
+  it("prefers the provider's own error over the bare status word", () => {
+    expect(formatConnectionTest({ ok: false, status: "down", error: "refused", },),).toBe(
+      "{red-fg}refused{/red-fg}",
+    );
+  });
 });
 
 // ── Widget stubs ────────────────────────────────────────────────────────
@@ -194,6 +288,7 @@ interface OverlayUnderTest {
   onSelect(index: number,): Promise<void>;
   onClear(): Promise<void>;
   onRescan(): Promise<void>;
+  onPing(): Promise<void>;
 }
 
 /** Build an overlay without running its blessed constructor. */
@@ -389,6 +484,57 @@ describe("ModelsOverlay", () => {
     await overlay.onClear();
     expect(calls[0]?.options.method,).toBe("DELETE",);
     expect(overlay.level,).toBe("roles",);
+  });
+
+  it("pings the focused provider and shows the verdict", async () => {
+    stubClient({ ok: true, status: "ok", latencyMs: 9, },);
+    const overlay = buildOverlay("tok",);
+    overlay.level = "providers";
+    overlay.providers = [{ name: "ollama", label: "Ollama", status: "unreachable", modelCount: 0, },];
+
+    await overlay.onPing();
+
+    expect(calls[0]?.options.body,).toEqual({ provider: "ollama", },);
+    expect(overlay.statusLabel.content,).toBe("{green-fg}ok{/green-fg} 9ms",);
+  });
+
+  // The envelope's ok is true even when the health check failed, so the verdict
+  // has to be read off the body or an outage reads as a success.
+  it("reports a down provider as a failure despite HTTP 200", async () => {
+    stubClient({ ok: false, status: "down", error: "connection refused", },);
+    const overlay = buildOverlay("tok",);
+    overlay.level = "providers";
+    overlay.providers = [{ name: "ollama", label: "Ollama", status: "unreachable", modelCount: 0, },];
+
+    await overlay.onPing();
+
+    expect(overlay.statusLabel.content,).toBe("{red-fg}connection refused{/red-fg}",);
+  });
+
+  // `p` is bound on the box at every level, so pressing it on a level with no
+  // provider row must say something rather than silently do nothing.
+  it("says where to press p instead of no-oping on other levels", async () => {
+    stubClient(ROLES,);
+    const overlay = buildOverlay("tok",);
+    overlay.level = "roles";
+    overlay.roles = ROLES.roles;
+
+    await overlay.onPing();
+
+    expect(calls.length,).toBe(0,);
+    expect(overlay.statusLabel.content,).toBe("press p on a provider row",);
+  });
+
+  it("reports an empty provider level rather than pinging nothing", async () => {
+    stubClient(ROLES,);
+    const overlay = buildOverlay("tok",);
+    overlay.level = "providers";
+    overlay.providers = [];
+
+    await overlay.onPing();
+
+    expect(calls.length,).toBe(0,);
+    expect(overlay.statusLabel.content,).toBe("no provider selected",);
   });
 
   it("rescans providers on request", async () => {

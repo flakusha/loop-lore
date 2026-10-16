@@ -17,6 +17,8 @@ import { AssetView, } from "./asset-view";
 import { API_BASE, ChatWidget, } from "./chat";
 import { ChatPicker, } from "./chat-picker";
 import { createHarnessView, type HarnessView, } from "./harness";
+import { loadPublicProviders, } from "./models-api";
+import { formatProviderHealth, HEALTH_UNAVAILABLE, } from "./models-display";
 import { ModelsOverlay, } from "./models-overlay";
 
 /** Status line painted when `[tui].enabled` is false; the shell exits right after. */
@@ -34,6 +36,11 @@ export class TUIApp {
   harness!: HarnessView;
   chatPicker!: ChatPicker;
   models!: ModelsOverlay;
+  /** Last message written by `updateStatus`, replayed so a health refresh
+   * repaints the health segment without erasing the chat id or key hints. */
+  private statusMessage = "";
+  /** Rendered health segment; empty until the first fetch resolves. */
+  private healthSegment = "";
 
   /** */
   constructor() {
@@ -169,6 +176,9 @@ export class TUIApp {
 
     // F5 — refresh current chat messages
     this.screen.key(["f5",], () => {
+      // Health is a second, independent thing F5 refreshes; a chat with no id
+      // still gets fresh provider state.
+      this.refreshProviderHealth();
       void (async () => {
         const chatId = this.chat.getChatId();
         if (chatId) {
@@ -199,17 +209,54 @@ export class TUIApp {
       "ready — F1: chats | Tab: focus | F2: assets | F3: harness | F5: refresh | F6: models | Esc/q: quit",
     );
 
+    // One fetch after the bar is painted, so the segment fills in without
+    // delaying the shell. No timer: a chat client has no business holding a
+    // background interval open to redraw a status line.
+    this.refreshProviderHealth();
+
     this.screen.render();
   }
 
   // ── Status bar ─────────────────────────────────────────────
 
   /**
-   * @param msg
+   * Write the status bar, splicing in the provider-health segment when one has
+   * loaded. The message is remembered so a later health refresh can repaint the
+   * bar without clobbering the chat id or the key hints.
+   * @param msg - the transient message (chat id, toggle state, hint)
    */
   private updateStatus(msg: string,): void {
-    this.statusBar.setContent(` {bold}Loop Lore{/bold}  |  ${msg}  |  API: ${API_BASE}  `,);
+    this.statusMessage = msg;
+    // Leading separator only once the segment exists, so the bar has no double
+    // gap before the first fetch resolves.
+    const health = this.healthSegment ? `  |  ${this.healthSegment}` : "";
+    this.statusBar.setContent(
+      ` {bold}Loop Lore{/bold}  |  ${msg}${health}  |  API: ${API_BASE}  `,
+    );
+
     this.screen.render();
+  }
+
+  /**
+   * Refresh the provider-health segment from the PUBLIC provider list.
+   *
+   * Deliberately separate from `updateStatus`: a failed fetch degrades the
+   * segment to a short marker and leaves the message untouched, so an outage
+   * of the health route can neither spam the bar nor hide the chat id.
+   */
+  private refreshProviderHealth(): void {
+    void (async () => {
+      const result = await loadPublicProviders();
+      const next = result.ok
+        ? formatProviderHealth(result.data.providers ?? [],)
+        : HEALTH_UNAVAILABLE;
+
+      // Repaint only on a real change: F5 fires this on every chat refresh and
+      // an unchanged bar should not redraw.
+      if (next === this.healthSegment) { return; }
+      this.healthSegment = next;
+      this.updateStatus(this.statusMessage,);
+    })();
   }
 
   // ── Shutdown ───────────────────────────────────────────────

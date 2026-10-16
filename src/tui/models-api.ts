@@ -75,6 +75,41 @@ export interface ProvidersEnvelope {
   providers: ProviderSummary[];
 }
 
+/**
+ * One row from the PUBLIC GET /api/v1/providers.
+ *
+ * Deliberately narrower than {@link ProviderSummary}: that route needs
+ * `admin.system`, this one needs no auth at all and returns no `modelCount`.
+ * `status` is the health-cache vocabulary (`healthy` | `unreachable` |
+ * `error`), not the raw `healthCheck()` vocabulary.
+ */
+export interface PublicProvider {
+  name: string;
+  label: string;
+  status: string;
+}
+
+/** Envelope from the PUBLIC GET /api/v1/providers. */
+export interface PublicProvidersEnvelope {
+  providers: PublicProvider[];
+}
+
+/**
+ * Verdict from POST /api/v1/generation/test-connection.
+ *
+ * Note the two shapes a caller must distinguish: a *failed health check* still
+ * answers HTTP 200 with `ok: false`, so `ok` here says nothing about whether
+ * the request reached the provider. `status` carries the raw `healthCheck()`
+ * vocabulary (`ok` | `degraded` | `down` | `error`), NOT the health-cache one.
+ */
+export interface ConnectionTest {
+  ok: boolean;
+  status: string;
+  model?: string;
+  latencyMs?: number;
+  error?: string;
+}
+
 /** One model id from GET /api/v1/admin/providers/:name/models. */
 export interface ProviderModel {
   id: string;
@@ -236,4 +271,40 @@ export function rescanProviders(
   sessionToken: string | undefined,
 ): Promise<ModelsFetchResult<ProvidersEnvelope>> {
   return call<ProvidersEnvelope>("/admin/providers/rescan", sessionToken, { method: "POST", },);
+}
+
+/**
+ * Load the PUBLIC provider health list for the status bar.
+ *
+ * `GET /api/v1/providers` is registered with no auth middleware at all
+ * (`src/routes/admin/providers.ts:28-49`), so this needs no token. It is the
+ * only provider listing the TUI can read as a non-admin, which is why the
+ * status bar uses it rather than the `admin.system` route the overlay uses.
+ * @returns the provider statuses, or a message to degrade to on the status bar
+ */
+export function loadPublicProviders(): Promise<ModelsFetchResult<PublicProvidersEnvelope>> {
+  return call<PublicProvidersEnvelope>("/providers", undefined,);
+}
+
+/**
+ * Ping one provider and report its verdict.
+ *
+ * `POST /api/v1/generation/test-connection` needs only `requireUserId`, NOT
+ * `admin.system` — so unlike every other call here this works for a non-admin
+ * who somehow reached the provider list. It resolves the caller's BYO key, so
+ * a missing token answers 401 and is reported as an error string rather than
+ * throwing.
+ * @param options - provider to ping and bearer token
+ * @param options.provider - provider name to ping
+ * @param options.sessionToken - bearer token; omit to run anonymous
+ * @returns the verdict, or a message when the request itself could not complete
+ */
+export function testProviderConnection(options: {
+  provider: string;
+  sessionToken: string | undefined;
+},): Promise<ModelsFetchResult<ConnectionTest>> {
+  return call<ConnectionTest>("/generation/test-connection", options.sessionToken, {
+    method: "POST",
+    body: { provider: options.provider, },
+  },);
 }
