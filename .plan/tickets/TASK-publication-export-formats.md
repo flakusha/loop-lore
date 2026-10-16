@@ -7,7 +7,7 @@
 **Priority:** low
 **Effort:** Large
 **Epic:** epic-narrative-publishing-workflows
-**Related:** `TASK-publication-viewer-read-mode.md`, `TASK-comic-caption-bubble-layout.md`, `TASK-publication-artifact-schema.md`, `epic-import-export-io.md`, `epic-creative-studio.md`
+**Related:** `TASK-publication-viewer-read-mode.md`, `TASK-comic-caption-bubble-layout.md`, `TASK-publication-artifact-schema.md`, `TASK-markdown-canonical-intermediate-contract.md`, `TASK-markdown-derive-other-formats.md`, `TASK-markdown-heading-parse-and-import.md`, `TASK-collapse-duplicate-markdown-exporter.md`, `epic-import-export-io.md`, `epic-creative-studio.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
@@ -18,6 +18,20 @@ The export phase of the epic, explicitly scoped as later work: EPUB and PDF for
 books, Markdown for both, and a zipped image sequence for comics. Export renders
 from the same stored layout and placement data as the viewer, so what is
 exported is what was read.
+
+**Markdown is the intermediate, not a peer output format.** The epic's
+Canonical Representation: Markdown section binds markdown as the canonical
+representation for both products: the unit body is markdown, and every format
+here is a derivation from that markdown. EPUB and PDF do not render the
+structured unit rows directly - they render the stored markdown, rendered
+through `marked`. Markdown remains the format users download to hand-edit and
+re-import (`TASK-markdown-heading-parse-and-import.md`), but it is upstream of
+the other formats rather than alongside them.
+
+The derivation writers themselves are owned by
+`TASK-markdown-derive-other-formats.md`. This ticket owns format selection, the
+accepted-unit filter, authorization, and the delivery/progress surface over
+those writers.
 
 ## Context
 
@@ -40,13 +54,17 @@ progress-stream pattern (`src/frontend/alpine/export-progress.ts`).
 
 Per format:
 
-- **Markdown** — trivial and the reference implementation: one file per book,
-  `#` per chapter; for comics, one file per page with the caption/bubble text
-  under an image reference.
-- **EPUB** — book only. A zip container with an OPF package document, a spine in
-  chapter order, and XHTML chapters. Real reflowable EPUB, not a PDF renamed.
-- **PDF** — both products. Books flow text; comics lay pages out using the stored
-  panel rectangles.
+- **Markdown** — the canonical serialization and the reference implementation:
+  one file per book, `#` per chapter; for comics, one file per page with the
+  caption/bubble text under an image reference. This is the byte sequence every
+  other format is derived from, and the one users edit by hand.
+- **EPUB** — book only, derived FROM the stored markdown: a zip container with an
+  OPF package document, a spine in chapter order, and XHTML chapters whose
+  bodies are the `marked` rendering of each unit's markdown. Real reflowable
+  EPUB, not a PDF renamed.
+- **PDF** — both products, derived FROM the stored markdown. Books flow the
+  `marked` rendering of each unit's markdown; comics lay pages out using the
+  stored panel rectangles.
 - **Image-sequence zip** — comic only: `page-001.png`, `page-002.png`, … one file
   per page, rendered at a declared page pixel size.
 
@@ -71,12 +89,20 @@ writer here is the plain-prose path that task would otherwise have provided.
       per-domain writer shape (`story.ts` etc.) and the route family is reused
 - [ ] Markdown export writes one file per book (`#` per chapter) and one file per
       comic page with caption/bubble text under the image reference
+- [ ] **Markdown export is byte-stable**: two consecutive exports of an unchanged
+      artifact produce byte-identical output, asserted by a test that exports
+      twice and compares buffers
 - [ ] EPUB export produces a valid zip container with an OPF package document, a
       spine in accepted-chapter order, and XHTML chapter bodies; validated by a
       test that unzips the output and asserts the spine matches unit order
+- [ ] EPUB chapter bodies are rendered FROM the stored unit markdown rather than
+      from a second prose representation; a test that edits one unit's markdown
+      asserts only that unit's XHTML body changes
 - [ ] PDF export produces a valid PDF for both products — flowed text for books,
       stored-geometry pages for comics — asserted by a test that checks the
       output header and page count
+- [ ] PDF book text is rendered FROM the stored unit markdown; a test that edits
+      one unit's markdown and re-exports asserts the change appears in the output
 - [ ] Image-sequence zip writes `page-001.png`, `page-002.png`, … at a declared
       page pixel size, one file per accepted page in `position` order
 - [ ] Comic page rendering uses the shared layout resolver and the shared
