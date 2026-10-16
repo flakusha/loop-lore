@@ -164,7 +164,10 @@ cross-platform replacement, and its installer. Those are fixes to Python files
 that ship from the separate ComfyUI plugin repository; loop-lore neither patches
 them nor inherits them. This epic records the defects — see
 `TASK-sidecar-de-hardcoding-cross-platform-installer.md` — and that work is
-escalated, not implemented.
+escalated as the filed tickets
+`TASK-sidecar-hardcoded-literals-configurable-defaults.md`,
+`TASK-sidecar-reveal-cross-platform.md`, and
+`TASK-sidecar-installer-node-registration.md`, not implemented.
 
 The *Python Handoff* observations below are deliberately not deleted: they are the
 record of what the approach does and does not prove, and they are also the
@@ -379,6 +382,22 @@ this epic:
 - Any future loop-lore feature that needs H3 stills states the deployment
   prerequisite (the six external node types, the pinned model/LoRA files) instead
   of shipping a workaround.
+
+The escalations that decision generates are filed (each **Blocked** until the
+plugin repository exists):
+
+- `TASK-sidecar-hardcoded-literals-configurable-defaults.md` — the sidecar's
+  module-level literals become configurable values with defaults
+- `TASK-sidecar-reveal-cross-platform.md` — the reveal action stops shelling
+  out to `explorer.exe`
+- `TASK-sidecar-installer-node-registration.md` — a real installer plus
+  `WEB_DIRECTORY` / `NODE_DISPLAY_NAME_MAPPINGS` registration so
+  ComfyUI-Manager sees the package
+
+The defect record stays in
+`TASK-sidecar-de-hardcoding-cross-platform-installer.md`; loop-lore's
+consumption contract stays in
+`TASK-external-comfyui-plugin-repo-integration-contract.md`.
 
 ## Tasks
 
