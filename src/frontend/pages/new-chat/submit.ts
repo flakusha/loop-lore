@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { VariantPicker, } from "../../alpine/chat-creation/variants";
 import { jsonBody, } from "../../alpine/json";
 import { $, } from "../../dom";
 import { feFetch, } from "../../fe-fetch";
@@ -100,8 +101,14 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   // the explicit type/mode from the form (gmGuided overrides mode to "story").
   let fineTunePayloadWithVariant = { ...fineTunePayload, };
   if (variant === "rpg" || variant === "rpg_group") {
-    fineTunePayloadWithVariant.variant = variant;
-    fineTunePayloadWithVariant.purpose = "rpg";
+    // Resolve through the mounted variantPicker slice (read via globalThis —
+    // the pages bundle must not import Alpine modules at runtime). triple()
+    // returns the canonical VARIANT_DEFAULTS entry; the fallback keeps the
+    // form value when the Alpine bundle has not registered the slice.
+    const picker = (globalThis as { variantPicker?: VariantPicker }).variantPicker;
+    const triple = picker?.triple() ?? null;
+    fineTunePayloadWithVariant.variant = triple?.variant ?? variant;
+    fineTunePayloadWithVariant.purpose = triple?.chat_purpose ?? "rpg";
   }
 
   return {

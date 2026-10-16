@@ -25,6 +25,7 @@ import { interactionContextSection, } from "./sections/interaction-context";
 import { internalTraitsSection, } from "./sections/internal-traits";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
+import { nsfwContextSection, } from "./sections/nsfw-context";
 import { nsfwPolicySection, } from "./sections/nsfw-policy";
 import { outfitContextSection, } from "./sections/outfit-context";
 import { styleSection, } from "./sections/output-style";
@@ -44,6 +45,10 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   styleSection,
   taskClarificationSection,
   nsfwPolicySection,
+  // NSFW context block (intimacy/arousal/desire). Sits with the policy block;
+  // enabled() gates it off entirely for non-NSFW chats, so toggle-off stays
+  // byte-identical.
+  nsfwContextSection,
   authorNoteSection,
   customInstructionsSection,
   actorHeaderSection,

@@ -256,6 +256,8 @@ export const PRIORITY = {
   postHistory: 4,
   examples: 5,
   nsfwPolicy: 0,
+  /** NSFW context block — disabled (never built) for non-NSFW chats. */
+  nsfwContext: 0,
   "output-style": 2,
   customInstructions: 0,
 } as const;
