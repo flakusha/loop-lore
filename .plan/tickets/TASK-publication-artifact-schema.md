@@ -80,19 +80,28 @@ and it is already applied to `worlds` and `locations`
 covers `unpinned | pinned | archived`. Both are reused verbatim: the columns carry
 the existing TypeScript types and the same SQL column defaults the repo already
 applies to those columns — `notNull().defaultTo("draft")` for `publication_status`
-and `notNull().defaultTo("unpinned")` for `pin`. There is **no** CHECK constraint to
-copy: `src/db/migrations/001_init.ts` contains no `check(...)` / `CHECK` clause
-anywhere, and the only two existing `publication_status` columns are plain
-`addColumn` calls — `locations` at `:519` and `worlds` at `:659`. Enum validity on
-those columns is enforced in application code (`publicationStatusMachine`), not by
-the schema. A publications-specific `state` enum would fork a vocabulary three other
-tables already use.
+and `notNull().defaultTo("unpinned")` for `pin`.
+
+**On CHECK constraints: there is none on this column, so there is none to copy.** The
+repo does use `addCheckConstraint` widely — `ck_users_role` (`src/db/migrations/001_init.ts:236`),
+`ck_items_category` / `ck_items_rarity` (`:2365`, `:2369`), `ck_prompt_templates_modality` (`:3324`),
+`ck_chats_type` (`:1791`) among them — but **no `publication_status` column carries one**.
+Both existing columns are plain
+`addColumn("publication_status", "text", (col) => col.notNull().defaultTo("draft"))`:
+`locations` at `:519` and `worlds` at `:659`. Enum validity on those columns is
+enforced in application code (`publicationStatusMachine`), not by the schema.
+
+So this ticket copies the column *shape* only. Adding a CHECK on `publication_status`
+would be new behavior for this column rather than a copy of existing practice; it is
+not required here, and `PublicationStatus` already carries its own guarded transition
+table. A publications-specific `state` enum would fork a vocabulary three other tables
+already use.
 
 ## Acceptance Criteria
 
 - [ ] Columns reuse `PublicationStatus` and `PinnedState` verbatim; no
       publications-specific status enum or ad-hoc `state` column is added
-- [ ] `publication_status` is `text NOT NULL DEFAULT 'draft'` and `pin` is `text NOT NULL DEFAULT 'unpinned'`, matching the shape already applied to `worlds.publication_status` (`src/db/migrations/001_init.ts:659`) and `locations.publication_status` (`:519`). No CHECK constraint is added — the repo has none — and enum validity is enforced through `publicationStatusMachine` in application code
+- [ ] `publication_status` is `text NOT NULL DEFAULT 'draft'` and `pin` is `text NOT NULL DEFAULT 'unpinned'`, matching the shape already applied to `worlds.publication_status` (`src/db/migrations/001_init.ts:659`) and `locations.publication_status` (`:519`). No CHECK constraint is added on `publication_status` — neither existing column has one (unlike e.g. `ck_users_role` at `:236`), and enum validity is enforced through `publicationStatusMachine` in application code
 - [ ] `src/db/migrations/057_publication_artifacts.ts` exists, exports `up(db)`
       and `down(db)`, and creates `publications`, `publication_units`, and
       `publication_panels` with the columns above
