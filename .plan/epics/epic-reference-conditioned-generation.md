@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 **Status:** Not Started
-**Status Note:** Not Started (2026-10-16: no `reference-conditioned` module in `src/generation/`; no reference-edit workflow JSON in `configs/workflows/` beyond `txt2img.json` / `img2img.json`; `ComfyUIClient` still sends no `client_id`; the Python sidecar at `.tmp/H3_Stills_5080_Handoff_20260930/` is scratch and unvetted).
+**Status Note:** Not Started (2026-10-16: no `reference-conditioned` module in `src/generation/`; no reference-edit workflow JSON in `configs/workflows/` beyond `txt2img.json` / `img2img.json`; `ComfyUIClient` still sends no `client_id`. The Python sidecar handoff was vendored only under `.tmp/` — scratch, never committed — and **has been pruned**; it is unrecoverable from this repository, and its observations are unverified claims. See *Source Artifact*.)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -120,15 +120,34 @@ another worker's.
 
 See *Python Handoff* below.
 
-## Python Handoff (source artifact — scratch, will be pruned)
+## Python Handoff
 
-`.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/` — a Python
-ComfyUI custom-node integration authored outside loop-lore. **`.tmp/` is scratch
-and will be pruned**; this epic cites it as a *reference artifact*, not a
-dependency. Nothing may import from `.tmp/`. Anything worth keeping is
-re-implemented natively and lands under `src/generation/`.
+### Source Artifact
 
-Read 2026-10-16. Corrections to the working assumptions, with citations:
+The handoff was **external**: a Python ComfyUI HTTP-route extension (plus a served
+SPA) handed over **2026-09-30** by an acquaintance of the repo owner. It was
+vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/` — scratch, gitignored,
+**never committed** — and **was pruned before any of it was implemented.** It is not
+on disk and is not recoverable from this repository's git history. Do not go looking
+for it, and do not attempt to reconstruct it from these notes.
+
+Consequence, and it governs every line below: the observations in this section are
+**unverified claims from a single read on 2026-10-16**, not a readable source. Route
+counts, node counts, line numbers, constants, and behaviors must each be
+**re-derived** — against a live ComfyUI, and against the upstream author if the
+artifact is ever re-obtained. **Re-acquiring the handoff from the original author is
+a prerequisite for the sidecar-absorption tickets** (Scope item 5): the Graph-builder
+port, the LoRA audit, the de-hardcoding pass, the stills lifecycle client, and the H3
+stills template. Each of those tickets carries a *Provenance recorded* acceptance
+criterion requiring the implementer to state per claim where the confirming evidence
+came from; a claim with no provenance is not to be treated as confirmed.
+
+Nothing may import from `.tmp/` or from any re-acquired copy of the handoff. Anything
+worth keeping is re-implemented natively and lands under `src/generation/`.
+
+### Observations (2026-10-16 read — unverified)
+
+Corrections to the working assumptions, with citations:
 
 - **11 routes, not 12.** All on `PromptServer.instance.routes`
   (`__init__.py:21`), each behind a loopback-only guard (`__init__.py:24-28`).
