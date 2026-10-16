@@ -23,16 +23,15 @@
 
 ## Scope
 
-- `src/tui/app.ts` layout and key bindings, `src/tui/chat/`, `src/tui/asset-view.ts`, `src/tui/harness/`, `src/tui/nsfw-filter.ts`.
+- `src/tui/app.ts` layout and key bindings, `src/tui/chat/`, `src/tui/asset-view.ts`, `src/tui/harness/`, `src/tui/chat-picker.ts`, `src/tui/models-overlay.ts`.
 - `src/config/sections/tui.ts` — TUI config section (`sessionToken`, `enabled`).
-- The chat picker screen, once `TASK-tui-chat-picker` lands.
 - The harness work-topic surface, on the existing harness overlay rather than a new screen.
-- Web parity where it suits a terminal, per the user's 2026-10-16 direction. Named in-scope surfaces: admin model/provider configuration (role assignment, tuning defaults, capability overrides) and user-scoped settings (profile, chat behaviour, notification preferences). The API is admin-gated and already reachable from `safeFetch`; the TUI needs no new backend. See §Out of Scope for what is carved out and the evidence behind each carve-out.
+- Web parity where it suits a terminal, per the user's 2026-10-16 direction. Named in-scope surfaces: admin model/provider configuration (role assignment, tuning defaults, capability overrides). See §Out of Scope for what is carved out and the evidence behind each carve-out.
 
 
 ## Out of Scope
 
-- Web parity is in scope, at the user's direction (2026-10-16), wherever it makes sense in a terminal. The earlier blanket exclusion of the web feature surface is withdrawn. **In scope:** admin model/provider configuration and user-scoped settings. **Out of scope, with evidence:**
+- Web parity is in scope, at the user's direction (2026-10-16), wherever it makes sense in a terminal. The earlier blanket exclusion of the web feature surface is withdrawn. **In scope:** admin model/provider configuration. **Out of scope, with evidence:**
   - Destructive danger-zone actions. Every one of them is gated on typing an exact confirmation string into a text field — `DELETE` to erase the account and all data (`src/frontend/alpine/settings/general.ts`, `deleteAllData` → `DELETE /api/v1/users/me`), and `PURGE` / `RESET` / `DELETE ALL` for audit-purge, settings-reset and factory-reset (`src/frontend/alpine/admin-system.ts`, `runDangerAction`). A TUI has no affordance that makes typing a self-destruct phrase safer than a button does, so these stay web-only.
   - Visual/graph surfaces with no terminal equivalent. There is no drag-and-drop node editor in this codebase — the graph-shaped features are deliberately form-based (`src/frontend/alpine/location-graph.ts` records "form-based 'connect two nodes'; no canvas drag — noted deviation"; `src/frontend/alpine/comfyui-builder/types.ts` records "there is no canvas"). What remains uncatchable is the read-only 2D entity canvas (`src/frontend/alpine/game-canvas/`) and the JSON-textarea graph editors (`src/frontend/alpine/admin-workflows/form.ts` `graph` field; `src/frontend/alpine/character-extension-editor.ts`).
   - Form-heavy metadata editors. The world edit page is a multi-tab editor carrying ~10 fields per item and ~5 per location, plus per-edge adjacency rows (`src/components/views/world-edit.html`). Reviewing that much structured state is a page, not a screen.
@@ -60,7 +59,7 @@ The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.sc
 | `src/tui/harness/api.ts` | 83 | `loadRuns`, `loadRunDetail`, `loadStats`, `setFetch` seam | none | **Yes** — pure HTTP client, `setFetch` enables full stubbing |
 | `src/tui/harness/display.ts` | 112 | `formatDuration`, `truncateTask`, `resultMarker`, `formatRunLine`, `formatRunDetail`, `formatEmptyRuns` | none | **Yes** — pure formatters |
 | `src/tui/harness/types.ts` | 22 | re-exports from `harness/read-models` + `harness/types`; single source of truth against `durationMs`/`runMs` drift | none | **Yes** — types only |
-| `src/tui/nsfw-filter.ts` | 144 | `NsfwFilter`, `NsfwFilterMode`, `NsfwFilterConfig` | none | **Yes** — pure logic; **no live consumer** |
+| `src/tui/chat-picker.ts` | 225 | `ChatPicker`, `loadChats`, `setFetch` seam | `blessed.box()` at `:94` in ctor | **Yes** — `setFetch` enables full stubbing |
 | `src/config/sections/tui.ts` | 39 | `TUI_DEFAULTS`, `TuiSection`, `tuiMeta`; `enabled` defaults `true`, `sessionToken` optional | none | **Yes** |
 | `src/config/schema/tui.ts` | 9 | `TuiConfig` alias | none | **Yes** |
 
@@ -80,11 +79,11 @@ Resolved. Construction is no longer reachable at import time: `createTUIApp()` b
 
 ## Feature research — coverage gap vs the web UI
 
-The TUI currently covers exactly three things: chat send/load, asset sidebar, and harness runs overlay. Every other web surface is absent.
+The TUI currently covers: chat send/load, asset sidebar, harness runs overlay (F3), chat picker (F1), slash-command completion, models overlay (F6), and provider-health status segment. Every other web surface is absent.
 
 | Web surface | Route / view | TUI status | Proposed TUI screen | Value |
 |---|---|---|---|---|
-| Chat list | `src/routes/views/chats.ts`, `src/views/chat-list.html` | **Missing** — `ChatWidget` requires a pre-selected `chatId`; TUI cannot start a chat | Chat picker list (F1 or entry) | **Highest** — without this the TUI is not self-sufficient |
+| Chat list | `src/routes/views/chats.ts`, `src/views/chat-list.html` | **Present** — `ChatPicker` (F1) fetches `GET /api/v1/chats`; Enter selects and routes through `ChatWidget.setChatId()` | — | Shipped |
 | Character management | `src/routes/characters/` | Not present | — | Deferred |
 | World browser | `src/routes/worlds/` | Not present | — | Deferred |
 | Location explorer | `src/routes/worlds/fractal-locations-routes.ts` | Not present | — | Deferred |
@@ -92,7 +91,7 @@ The TUI currently covers exactly three things: chat send/load, asset sidebar, an
 | Admin panel | `src/routes/admin/`, `src/views/admin.html` | Not present | — | Deferred |
 | Settings | `—`; `src/views/settings.html` | Not present | — | Deferred |
 | Notifications | `src/routes/notifications/`, `src/views/notifications.html` | Not present | — | Deferred |
-| NSFW moderation panel | `src/routes/nsfw-moderation/`, `src/views/nsfw-moderation.html` | `NsfwFilter` exists but has no live consumer (`nsfw-filter.ts:144` end) | — | Deferred |
+| NSFW moderation panel | `src/routes/nsfw-moderation/`, `src/views/nsfw-moderation.html` | Not present — `nsfw-filter.ts` was deleted from the TUI on this branch (`42abe9123`); the filter class had no live consumer | — | Deferred |
 | Blog | `src/routes/blog/`, `src/views/blog.html` | Not present | — | Deferred |
 | Global asset gallery | `src/routes/asset-tags/`, `src/views/gallery.html` | `AssetView` only shows the current chat's linked assets | — | Deferred |
 | Wardrobe, trade, crafting, battle | `—` (wardrobe absent); `src/routes/trade/`, `src/routes/crafting/`, `src/routes/rpg/`, `src/routes/battle/` | Not present | — | Separate epic |
