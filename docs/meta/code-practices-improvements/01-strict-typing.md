@@ -63,11 +63,34 @@ Raise gradually (97 → 99 → 100) per PR to avoid a flag-day.
 typescript@7.0.2 and @typescript/native-preview@7.0.0-dev confirmed broken
 at module load.** `type-coverage-core/dist/checker.js:662` references
 `ts.SyntaxKind.Unknown` — TS7 removed the legacy alias (was renamed
-`UnknownKeyword`, still present in TS7). No upstream fix exists as of
-type-coverage-core@2.30.1 (latest published). Additionally,
+`UnknownKeyword`, still present in TS7). Additionally,
 `typescript-eslint@^8.70` declares `typescript: >=4.8.4 <6.1.0`, blocking
 the toolchain end. Resuming TS7 requires both upstream issues to clear;
 keep the floor at 95% until they do.
+
+**Re-verified 2026-10-16 against the published packages** (`experimental-ts7-bun`
+worktree, see `docs/meta/tooling/ts7-bun-check-review.md`):
+
+- The `type-coverage-core` bug is **still open at 2.30.4**, which is the latest
+  published version and newer than the 2.30.1 first recorded here. The call site
+  moved to `dist/checker.js:669`. No upstream fix exists.
+- The blocker is now deeper than a removed alias: `typescript@7.0.2` is the Go
+  port and its `exports["."]` is `lib/version.cjs`, which exports only
+  `{ version, versionMajorMinor }`. There is no `createProgram`, no `SyntaxKind`,
+  no AST API at all — so `type-coverage-core` cannot load against TS7 even with
+  the alias fixed.
+- `typescript@^5.9.3` therefore stays for every JS-API consumer:
+  `type-coverage-core`, `scripts/check-file-size.ts:46`, and
+  `scripts/lib/src-refs.ts:12`.
+- Bun 1.4.3 ships `bun check` (a port of the same `typescript-go`, 51,210/51,210
+  conformance), which would retire `@typescript/native-preview` — but the name
+  `bun check` is unusable here: this repo declares a script named `check`, and
+  `bun check` resolves to it with **exit 0 and no type checking**. The
+  documented escape hatch `bun --check` works, but it cannot select a project and
+  silently skips `scripts/**` (a planted error passes it at exit 0 while
+  `tsgo -p tsconfig.scripts.json` catches it), so it cannot replace the
+  per-project `tsgo` gates either. Both findings are in
+  `docs/meta/tooling/ts7-bun-check-review.md`.
 
 ## Recommendations
 
