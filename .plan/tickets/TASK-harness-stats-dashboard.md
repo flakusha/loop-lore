@@ -4,6 +4,7 @@
 # TASK: Harness stats dashboard (events + rollups + tab)
 
 **Status:** Not Started
+**Status Note:** `harness.call_completed` is computed directly in `exec-recorder.ts:76`, NOT via `telemetry/record()`; the stats rollup reads the JSONL window and works without the event. Remaining: `record()`-path event types, per-model analytics rollup, `ResourceManager.inFlight` export.
 **Priority:** high
 **Effort:** Medium
 **Epic:** `.plan/epics/epic-harness-integration.md`

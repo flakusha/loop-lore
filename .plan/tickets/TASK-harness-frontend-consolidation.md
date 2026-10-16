@@ -3,7 +3,8 @@
 
 # TASK: Harness frontend consolidation (admin Runs tab)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Web + TUI surfaces already shipped: `/api/v1/harness/{runs,runs/:runId,stats}` (`src/routes/harness/index.ts`), admin tab (`src/views/admin.html:72`) + panel + Alpine state, `src/tui/harness/` 7 files wired to F3 (`src/tui/app.ts:75,89-93`), all reading the JSONL via `harness/query.ts`. Remaining: analytics per-model sub-block (needs `TASK-harness-stats-dashboard` telemetry events) and TUI command-registry verbs.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** `.plan/epics/epic-harness-integration.md`
