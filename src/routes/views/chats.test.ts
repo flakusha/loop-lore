@@ -7,7 +7,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
-import { serveChatsListDb, serveChatsSearch, } from "./chats";
+import { loadChatsListViewModel, loadChatsSearchViewModel, serveChatsListDb, serveChatsSearch, } from "./chats";
 
 describe("views/chats", () => {
   let db: Kysely<DB>;
@@ -67,5 +67,19 @@ describe("views/chats", () => {
     const res = await serveChatsSearch(db, new URLSearchParams({ q: "zzz", },),);
     const html = await res.text();
     expect(html,).toContain("No chats match your search",);
+  });
+
+  test("loadChatsListViewModel returns paginated view-model", async () => {
+    const vm = await loadChatsListViewModel(db, new URLSearchParams({ pageSize: "2", },),);
+    expect(vm.chats.length,).toBeGreaterThan(0,);
+    expect(vm.page,).toBe(1,);
+    expect(vm.pageSize,).toBe(2,);
+    expect(vm.hasMore,).toBe(true,);
+  });
+
+  test("loadChatsSearchViewModel filters by query", async () => {
+    const vm = await loadChatsSearchViewModel(db, new URLSearchParams({ q: "alpha", },),);
+    expect(vm.chats.length,).toBe(1,);
+    expect(vm.chats[0].name,).toContain("Alpha",);
   });
 });
