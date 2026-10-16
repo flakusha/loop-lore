@@ -190,6 +190,12 @@ let realFetch: typeof safeFetch;
 let screensAtImport: number;
 let exitSpy: ReturnType<typeof spyOn> | null = null;
 
+/** Rows the PUBLIC provider list stub answers with; overridden per test. */
+let publicProviders: Array<{ name: string; label: string; status: string }> = [
+  { name: "openai", label: "OpenAI", status: "healthy", },
+  { name: "ollama", label: "Ollama", status: "healthy", },
+];
+
 beforeAll(async () => {
   // Dynamic import required: `mock.module` replaces the resolution table only
   // for modules imported after the stub registers.
@@ -217,6 +223,11 @@ beforeEach(() => {
   configToken = "test-token";
   configEnabled = true;
   textWidgets.length = 0;
+  publicProviders = [
+    { name: "openai", label: "OpenAI", status: "healthy", },
+    { name: "ollama", label: "Ollama", status: "healthy", },
+  ];
+
   // HarnessView.toggle() fires `void this.refresh()`, which fetches the runs
   // list and — when that list is empty — the stats rollup. Without this stub
   // an F3 press opens a real socket to localhost. The two endpoints answer
@@ -232,13 +243,16 @@ beforeEach(() => {
 
   setFetch(emptyHarness as unknown as typeof safeFetch,);
 
-  // F6 fires ModelsOverlay.show(), which refreshes the role list — same reason
-  // as the harness stub above. One empty roles envelope answers every call the
-  // overlay makes, so no test here opens a socket to localhost.
-  setModelsFetch(<T,>(): Promise<FetchResult<T>> =>
+  // F6 fires ModelsOverlay.show(), which refreshes the role list, and the boot
+  // health fetch hits the PUBLIC provider list — same reason as the harness stub
+  // above. The two envelopes differ, so the stub routes on URL; without it the
+  // boot health call would read `providers` off a roles envelope.
+  setModelsFetch(<T,>(url: string,): Promise<FetchResult<T>> =>
     Promise.resolve({
       ok: true,
-      data: { roles: [], overrides: {}, validRoles: [], } as T,
+      data: (url.endsWith("/providers",)
+        ? { providers: publicProviders, }
+        : { roles: [], overrides: {}, validRoles: [], }) as T,
       status: 200,
       headers: new Headers(),
     },)
@@ -465,6 +479,65 @@ describeOrSkip("TUIApp", () => {
     pressKey(app, "f1",);
     pressKey(app, "f1",);
     expect(app.chatPicker.isVisible(),).toBe(false,);
+  });
+
+  // ── Provider health on the status bar ──────────────────────
+  // The segment must never cost the chat id or the key hints: an operator who
+  // cannot see which chat they are in has lost more than the health reading is
+  // worth, and these tests assert the message survives a health repaint.
+
+  it("fills in the health segment after boot", async () => {
+    createTUIApp();
+    await flushMicrotasks();
+    expect(statusBar().content,).toContain("Providers: {green-fg}2{/green-fg}/2 ok",);
+  });
+
+  it("keeps the segment spliced in without eating the message or the hints", async () => {
+    createTUIApp();
+    await flushMicrotasks();
+    const content = statusBar().content;
+    expect(content,).toContain("F6: models",);
+    expect(content,).toContain("Providers:",);
+  });
+
+  it("names an unreachable provider without clobbering the chat line", async () => {
+    publicProviders = [
+      { name: "openai", label: "OpenAI", status: "healthy", },
+      { name: "ollama", label: "Ollama", status: "unreachable", },
+    ];
+
+    const app = createTUIApp();
+    await flushMicrotasks();
+
+    const chat = app.chat as unknown as { setChatId?: (id: string,) => void };
+    chat.setChatId?.("0123456789abcdef",);
+    await flushMicrotasks();
+
+    expect(statusBar().content,).toContain("chat: 01234567...",);
+    expect(statusBar().content,).toContain("ollama",);
+  });
+
+  // A dead health route must degrade the SEGMENT, not the whole bar — losing
+  // the chat id to a provider-list outage would be a bad trade.
+  it("degrades to the unknown marker when the health fetch fails", async () => {
+    setModelsFetch(<T,>(): Promise<FetchResult<T>> => Promise.reject(new Error("ECONNREFUSED",),));
+
+    createTUIApp();
+    await flushMicrotasks();
+
+    expect(statusBar().content,).toContain("Providers: ?",);
+    expect(statusBar().content,).toContain("F6: models",);
+  });
+
+  it("refreshes the segment on F5", async () => {
+    const app = createTUIApp();
+    await flushMicrotasks();
+    publicProviders = [{ name: "openai", label: "OpenAI", status: "unreachable", },];
+
+    pressKey(app, "f5",);
+    await flushMicrotasks();
+
+    expect(statusBar().content,).toContain("/1 ok",);
   });
 
   it("toggles the models overlay with F6 and back off the next press", () => {
