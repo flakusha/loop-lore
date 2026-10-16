@@ -37894,7 +37894,7 @@
     "git_issue": "1bf6c77"
   },
   "TASK-HARNESS-CANONICAL-USAGE": {
-    "hash": "pending",
+    "hash": "638ec20",
     "extid": "TASK-HARNESS-CANONICAL-USAGE",
     "type": "TASK",
     "title": "CanonicalUsage record (cache + reasoning counters)",
@@ -37903,7 +37903,8 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-canonical-usage.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "638ec20"
   },
   "TASK-HARNESS-CANVAS-VIZ": {
     "hash": "daa7934",
@@ -38027,7 +38028,7 @@
     "git_issue": "cd6c8b5"
   },
   "TASK-HARNESS-HOOK-CONTRACT": {
-    "hash": "pending",
+    "hash": "cf78912",
     "extid": "TASK-HARNESS-HOOK-CONTRACT",
     "type": "TASK",
     "title": "Harness hook contract (event→matcher→handler)",
@@ -38036,7 +38037,8 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-hook-contract.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "cf78912"
   },
   "TASK-HARNESS-IRC-TTSR": {
     "hash": "1bdc949",
@@ -38065,7 +38067,7 @@
     "git_issue": "9ab6eea"
   },
   "TASK-HARNESS-MCP-CALL-AUDIT": {
-    "hash": "pending",
+    "hash": "1710a00",
     "extid": "TASK-HARNESS-MCP-CALL-AUDIT",
     "type": "TASK",
     "title": "MCP tool-call audit + invocation records",
@@ -38074,10 +38076,11 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-mcp-call-audit.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "1710a00"
   },
   "TASK-HARNESS-MCP-CLIENT-WRAPPER": {
-    "hash": "pending",
+    "hash": "ba2e03f",
     "extid": "TASK-HARNESS-MCP-CLIENT-WRAPPER",
     "type": "TASK",
     "title": "MCP client wrapper (ToolDefinition bridge)",
@@ -38086,10 +38089,11 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-mcp-client-wrapper.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "ba2e03f"
   },
   "TASK-HARNESS-MCP-CONFIG-SECTION": {
-    "hash": "pending",
+    "hash": "ac90abc",
     "extid": "TASK-HARNESS-MCP-CONFIG-SECTION",
     "type": "TASK",
     "title": "MCP config section ([mcp.servers.*])",
@@ -38098,10 +38102,11 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-mcp-config-section.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "ac90abc"
   },
   "TASK-HARNESS-MCP-SERVER-SURFACE": {
-    "hash": "pending",
+    "hash": "5e63952",
     "extid": "TASK-HARNESS-MCP-SERVER-SURFACE",
     "type": "TASK",
     "title": "MCP server surface (stdio, operator-flagged)",
@@ -38110,7 +38115,8 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-mcp-server-surface.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "5e63952"
   },
   "TASK-HARNESS-MERGE-COORDINATION": {
     "hash": "0a63dda",
@@ -38178,7 +38184,7 @@
     "git_issue": "a893dc4"
   },
   "TASK-HARNESS-SCOPED-FALLBACK-CHAIN": {
-    "hash": "pending",
+    "hash": "bfad1d6",
     "extid": "TASK-HARNESS-SCOPED-FALLBACK-CHAIN",
     "type": "TASK",
     "title": "Scoped fallback provider chain",
@@ -38187,7 +38193,8 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-scoped-fallback-chain.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "bfad1d6"
   },
   "TASK-HARNESS-SKILL-DOCS-PROJECT-SPACES-ROW-SCOPING-NOTE": {
     "hash": "c173261",
