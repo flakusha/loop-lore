@@ -56,8 +56,8 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // system actors, and participant stubs.
         const parsedTags: string[] = [];
         if (tags) {
-          for (const t of tags.split(",",)) {
-            const trimmed = t.trim();
+          for (const tagItem of tags.split(",",)) {
+            const trimmed = tagItem.trim();
             if (trimmed) { parsedTags.push(trimmed,); }
           }
         }

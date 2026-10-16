@@ -53,10 +53,10 @@ globalThis.createWorld = async function(event: Event,) {
 
     pageLog.debug("createWorld response", { status: res.status, },);
     if (res.ok) {
-      const data = await res.json();
+      const responseData = await res.json();
       document.querySelector("#create-world-modal",)?.classList.remove("open",);
       showToast("success", "World created",);
-      location.assign(`/worlds/${data.id}/edit`,);
+      location.assign(`/worlds/${responseData.id}/edit`,);
     } else {
       const err = await res.json();
       showToast("error", err.error || "Failed to create world",);

@@ -10,14 +10,14 @@ export const chatUtilsGroupedData: Partial<ChatState> & ThisType<ChatState> = {
 };
 
 /**
- * @param {ChatState} this
+ * @param {ChatState} state
  * @returns {GroupedMessage[]}
  */
-export function computeGroupedMessages(this: ChatState,): GroupedMessage[] {
-  const msgs = this.messages;
+export function computeGroupedMessages(state: ChatState,): GroupedMessage[] {
+  const msgs = state.messages;
   if (!msgs || msgs.length === 0) { return []; }
   const key = `${msgs.length}:${msgs[msgs.length - 1]?.id ?? ""}:${msgs[0]?.id ?? ""}`;
-  if (this._groupedKey === key && this._groupedCache) { return this._groupedCache; }
+  if (state._groupedKey === key && state._groupedCache) { return state._groupedCache; }
   const groups: GroupedMessage[] = [];
   for (let i = 0; i < msgs.length; i++) {
     const msg = { ...msgs[i], } as GroupedMessage;
@@ -39,7 +39,7 @@ export function computeGroupedMessages(this: ChatState,): GroupedMessage[] {
     groups.push(msg,);
   }
 
-  this._groupedKey = key;
-  this._groupedCache = groups;
+  state._groupedKey = key;
+  state._groupedCache = groups;
   return groups;
 }

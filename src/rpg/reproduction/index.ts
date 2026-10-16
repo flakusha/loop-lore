@@ -137,8 +137,8 @@ export class ReproductionService {
     // Fertility boost from heat effects (human baseline: 1).
     let fertility = 1;
     try {
-      const bodies = new BodySystemService(this.db,);
-      fertility = (await bodies.getHeatEffects(carrierId,)).fertilityBoost;
+      const bodySvc = new BodySystemService(this.db,);
+      fertility = (await bodySvc.getHeatEffects(carrierId,)).fertilityBoost;
     } catch {
       fertility = 1;
     }

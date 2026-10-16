@@ -170,7 +170,7 @@ export async function fanOutContent(
         await authorizeChatExport(database, { chatId: content.chatId, peerOrigin: target, },);
       } catch (error) {
         const reason = error instanceof ChatClearanceError ? error.reason : "gate-error";
-        throw new Error(`content clearance denied: ${reason}`,);
+        throw new Error(`content clearance denied: ${reason}`, { cause: error, },);
       }
     }
 

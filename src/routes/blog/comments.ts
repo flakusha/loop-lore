@@ -32,7 +32,7 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(ctx,);
-      const t = ctx.t as TranslatorFn | undefined;
+      const translator = ctx.t as TranslatorFn | undefined;
 
       const post = await svc.getPost(ctx.params.id,);
       // Same row-level read policy as GET /api/blog/posts/:id
@@ -43,7 +43,7 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
         post === undefined ||
         !isReadablePost(post, userId, can(userRole, "admin.settings",),)
       ) {
-        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, translator, },);
       }
 
       const comment = await svc.createComment({

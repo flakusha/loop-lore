@@ -51,7 +51,7 @@ function assertValidSchedule(name: string, schedule: string,): void {
     parsed = Bun.cron.parse(schedule,);
   } catch (error: unknown) {
     const reason = error instanceof Error ? error.message : String(error,);
-    throw new Error(`Invalid cron schedule for job "${name}": ${schedule} (${reason})`,);
+    throw new Error(`Invalid cron schedule for job "${name}": ${schedule} (${reason})`, { cause: error, },);
   }
 
   if (parsed === null) {

@@ -312,7 +312,7 @@ function readBaseline(baselinePath,) {
   try {
     raw = JSON.parse(readFileSync(baselinePath, "utf8",),);
   } catch (error) {
-    throw new Error(`cannot read baseline ${baselinePath} (run with --write-baseline): ${error.message}`,);
+    throw new Error(`cannot read baseline ${baselinePath} (run with --write-baseline): ${error.message}`, { cause: error, },);
   }
   if (!Array.isArray(raw.gaps,) || raw.gaps.some((g,) => typeof g !== "string")) {
     throw new Error(`baseline has no usable gaps[] array: ${baselinePath}`,);

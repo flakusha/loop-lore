@@ -75,8 +75,8 @@ import { worldLocations, } from "./world-locations";
       this.saving = true;
       const tags: string[] = [];
       if (this.tagsStr) {
-        for (const t of this.tagsStr.split(",",)) {
-          const trimmed = t.trim();
+        for (const tagPart of this.tagsStr.split(",",)) {
+          const trimmed = tagPart.trim();
           if (trimmed) { tags.push(trimmed,); }
         }
       }
