@@ -25,8 +25,15 @@ function validateApp() {
     .use(loraValidateRoutes(),);
 }
 
-/** Management app behind an auth-injecting derive. */
+/** Management app behind an auth-injecting derive (admin: /clear is admin-gated). */
 function managementApp() {
+  return new Elysia()
+    .derive(() => ({ userId: "sm-cov-admin", userRole: "admin", }))
+    .use(loraManagementRoutes(),);
+}
+
+/** Management app whose authenticated caller is a plain (non-admin) user. */
+function nonAdminManagementApp() {
   return new Elysia()
     .derive(() => ({ userId: "sm-cov-user", userRole: "user", }))
     .use(loraManagementRoutes(),);
@@ -85,6 +92,23 @@ describe("LoRA routes — unauthenticated callers get 401", () => {
     const app = loraManagementRoutes();
     const res = await app.handle(post("/api/lora/clear", {},),);
     expect(res.status,).toBe(401,);
+  });
+});
+
+describe("LoRA routes — admin-gated paths reject a plain user", () => {
+  test("POST /api/lora/clear returns 403 without admin.system", async () => {
+    const app = nonAdminManagementApp();
+    const res = await app.handle(post("/api/lora/clear", { backend: "comfyui", },),);
+    expect(res.status,).toBe(403,);
+    const body = await res.json() as { code: string };
+    expect(body.code,).toBe("FORBIDDEN",);
+  });
+
+  test("GET /api/lora/list stays open to a plain user", async () => {
+    // Only the mutating /clear path is gated; read-only cache reads are not.
+    const app = nonAdminManagementApp();
+    const res = await app.handle(get("/api/lora/list",),);
+    expect(res.status,).toBe(200,);
   });
 });
 
