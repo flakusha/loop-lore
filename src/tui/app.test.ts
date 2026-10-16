@@ -42,6 +42,8 @@ interface WidgetStub {
   destroyed: boolean;
   renderCount: number;
   keyHandlers: Array<{ keys: string[]; fn: Handler }>;
+  /** Mirrors `screen.grabKeys` for the chat textbox: true while it reads. */
+  reading: boolean;
   on(event: string, fn: Handler,): void;
   emit(event: string, ...args: unknown[]): void;
   key(keys: string[], fn: Handler,): void;
@@ -52,6 +54,8 @@ interface WidgetStub {
   focus(): void;
   destroy(): void;
   clearValue(): void;
+  readInput(): void;
+  releaseInput(): void;
   getValue(): string;
   setValue(_value: string,): void;
   submit(): void;
@@ -94,6 +98,7 @@ function makeWidget(opts: WidgetOpts = {},): WidgetStub {
     destroyed: false,
     renderCount: 0,
     keyHandlers: [],
+    reading: false,
     on(event, fn,) {
       handlers.set(event, [...handlers.get(event,) ?? [], fn,],);
     },
@@ -124,6 +129,16 @@ function makeWidget(opts: WidgetOpts = {},): WidgetStub {
     clearValue() {},
     getValue() {
       return "";
+    },
+    // The chat box arms its own reading: `readInput()` installs the keypress
+    // listener and raises `screen.grabKeys`, `releaseInput()` drops both.
+    // The stub only records the handover - it never routes a real key, which
+    // is exactly why it could not catch the defects this mirrors.
+    readInput() {
+      widget.reading = true;
+    },
+    releaseInput() {
+      widget.reading = false;
     },
     setValue(_value,) {},
     submit() {},
@@ -726,6 +741,7 @@ const widget = () => ({
   keyHandlers: [], focused: null,
   on() {}, emit() {}, key() {}, render() {}, setContent() {}, show() {}, hide() {},
   focus() {}, destroy() {}, clearValue() {}, getValue() { return ""; }, setValue() {},
+  readInput() {}, releaseInput() {},
   submit() {}, clearItems() {}, add() {}, addItem() {}, setItems() {}, select() {}, append() {},
 });
 

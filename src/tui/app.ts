@@ -13,6 +13,7 @@ import blessed from "blessed";
 import { loadConfig, } from "../config/load";
 import { TUI_DEFAULTS, } from "../config/sections/tui";
 import { createLogger, getLogger, } from "../logger";
+import { bindGlobalKeys, } from "./app-keys";
 import { AssetView, } from "./asset-view";
 import { API_BASE, ChatWidget, } from "./chat";
 import { ChatPicker, } from "./chat-picker";
@@ -141,109 +142,7 @@ export class TUIApp {
     },);
 
     // ── Global keyboard shortcuts ──────────────────────────
-    this.screen.key(["escape", "q", "C-c",], () => {
-      // An open overlay swallows the key: Esc closes it rather than killing the
-      // process. With nothing open, the key quits as before. Every overlay has a
-      // `dismiss()` so this chain cannot drift out of sync with the toggles.
-      // Each dismiss hands the keyboard back to the chat box, so Esc closes
-      // an overlay and leaves a usable prompt rather than a dead screen.
-      if (this.chatPicker.dismiss()) {
-        this.chat.focusInput();
-
-        return;
-      }
-
-      if (this.models.dismiss()) {
-        this.chat.focusInput();
-
-        return;
-      }
-
-      if (this.harness.dismiss()) {
-        this.chat.focusInput();
-
-        return;
-      }
-
-      this.shutdown();
-    },);
-
-    // F1 — toggle the chat picker. F2/F3 are the asset/harness toggles, F4 is
-    // reserved by TASK-harness-topic-tui-surface, F5 is refresh.
-    this.screen.key(["f1",], () => {
-      if (this.chatPicker.isVisible()) {
-        this.chatPicker.hide();
-        this.chat.focusInput();
-      } else {
-        // Release the chat box first: an overlay cannot take focus while a
-        // widget still holds `screen.grabKeys`.
-        this.chat.releaseInput();
-        this.chatPicker.show();
-      }
-    },);
-
-    // F2 — toggle asset sidebar
-    this.screen.key(["f2",], () => {
-      this.assets.toggle();
-      this.updateStatus(this.assets.isVisible() ? "Assets: visible" : "Assets: hidden",);
-    },);
-
-    // F3 — toggle harness view
-    this.screen.key(["f3",], () => {
-      if (this.harness.isVisible()) {
-        this.harness.hide();
-        this.chat.focusInput();
-      } else {
-        this.chat.releaseInput();
-        this.harness.show();
-        void this.harness.refresh();
-      }
-
-      this.updateStatus(this.harness.isVisible() ? "Harness: visible" : "Harness: hidden",);
-    },);
-
-    // F6 — toggle the models overlay. F4 stays reserved by
-    // TASK-harness-topic-tui-surface; F6 is the next free key in this block.
-    this.screen.key(["f6",], () => {
-      if (this.models.isVisible()) {
-        this.models.hide();
-        this.chat.focusInput();
-      } else {
-        this.chat.releaseInput();
-        this.models.show();
-      }
-    },);
-
-    // F5 — refresh current chat messages
-    this.screen.key(["f5",], () => {
-      // Health is a second, independent thing F5 refreshes; a chat with no id
-      // still gets fresh provider state.
-      this.refreshProviderHealth();
-      void (async () => {
-        const chatId = this.chat.getChatId();
-        if (chatId) {
-          this.updateStatus("refreshing messages...",);
-          try {
-            await this.chat.loadMessages();
-            this.updateStatus(`chat: ${chatId.slice(0, 8,)}...`,);
-          } catch (error: unknown) {
-            getLogger()
-              .child({ module: "tui", },)
-              .error("loadMessages failed", error instanceof Error ? error : new Error(String(error,),),);
-
-            this.updateStatus("load failed",);
-          }
-        } else {
-          this.updateStatus("no active chat",);
-        }
-      })();
-    },);
-
-    // Ctrl+L — clear messages display
-    this.screen.key(["C-l",], () => {
-      this.chat.clearMessages();
-      this.updateStatus("display cleared",);
-    },);
+    bindGlobalKeys(this,);
 
     this.updateStatus(
       "ready — F1: chats | Tab: focus | F2: assets | F3: harness | F5: refresh | F6: models | Esc/q: quit",
@@ -265,7 +164,7 @@ export class TUIApp {
    * bar without clobbering the chat id or the key hints.
    * @param msg - the transient message (chat id, toggle state, hint)
    */
-  private updateStatus(msg: string,): void {
+  updateStatus(msg: string,): void {
     this.statusMessage = msg;
     // Leading separator only once the segment exists, so the bar has no double
     // gap before the first fetch resolves.
@@ -284,7 +183,7 @@ export class TUIApp {
    * segment to a short marker and leaves the message untouched, so an outage
    * of the health route can neither spam the bar nor hide the chat id.
    */
-  private refreshProviderHealth(): void {
+  refreshProviderHealth(): void {
     void (async () => {
       const result = await loadPublicProviders();
       const next = result.ok
