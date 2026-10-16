@@ -146,7 +146,7 @@ describeOrSkip("saveCharacterEdit", () => {
     expect(body["defaultOutfit"],).toBe("travel-gear",);
     expect(body["displayName"],).toBe("Aria",);
     // CHAR-1: the loaded version must ride along with every save.
-    expect(body["dataVersion"],).toBe(7,);
+    expect(body["contentVersion"],).toBe(7,);
     expect(body["avatarFocusX"],).toBe(25,);
     expect(body["avatarFocusY"],).toBe(80,);
     expect(toastCalls,).toEqual([{ type: "success", message: "Character saved", },],);

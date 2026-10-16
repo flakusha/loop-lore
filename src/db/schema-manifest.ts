@@ -309,7 +309,7 @@ export const SCHEMA = new SchemaManifest()
     tags: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("crafting_station_defs", {
@@ -691,7 +691,7 @@ export const SCHEMA = new SchemaManifest()
   },)
   .table("message_search_tokens", {
     message_id: col("text", { notNull: true, },),
-    token: col("text", { notNull: true, },),
+    term: col("text", { notNull: true, },),
     scope: col("text", { notNull: true, },),
   },)
   .table("message_seen", {
@@ -895,7 +895,7 @@ export const SCHEMA = new SchemaManifest()
     completed_at: col("text",),
     offloaded_at: col("text",),
     offload_path: col("text",),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("rotation_history", {
@@ -954,7 +954,7 @@ export const SCHEMA = new SchemaManifest()
     visibility: col("text", { notNull: true, hasDefault: true, },),
     expires_at: col("text",),
     author_type: col("text", { notNull: true, hasDefault: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     trigger_condition: col("text",),
     revealed_to: col("text",),
@@ -1113,7 +1113,7 @@ export const SCHEMA = new SchemaManifest()
     scope: col("text", { notNull: true, hasDefault: true, },),
     expires_at: col("text",),
     created_at: col("text", { notNull: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     message_id: col("text",),
   },)
@@ -1256,7 +1256,7 @@ export const SCHEMA = new SchemaManifest()
     key_groups: col("text",),
     scan_depth: col("integer",),
     activation_chance: col("real",),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("actor_memories", {
@@ -1374,7 +1374,7 @@ export const SCHEMA = new SchemaManifest()
     actor_id: col("text", { notNull: true, },),
     selection_rule: col("text", { notNull: true, hasDefault: true, },),
     weights: col("text", { hasDefault: true, },),
-    fallback_chain: col("text", { hasDefault: true, },),
+    fallback_order: col("text", { hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -1615,7 +1615,8 @@ export const SCHEMA = new SchemaManifest()
     death_save_failures: col("integer", { notNull: true, hasDefault: true, },),
     xp: col("integer", { notNull: true, hasDefault: true, },),
     xp_to_next: col("integer", { notNull: true, hasDefault: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     behavior_profile: col("text", { hasDefault: true, },),
@@ -1665,7 +1666,7 @@ export const SCHEMA = new SchemaManifest()
     system_prompt: col("text",),
     agent_type: col("text", { notNull: true, hasDefault: true, },),
     settings: col("text", { notNull: true, hasDefault: true, },),
-    format_version: col("integer", { notNull: true, hasDefault: true, },),
+    row_version: col("integer", { notNull: true, hasDefault: true, },),
     visibility: col("text", { notNull: true, hasDefault: true, },),
     welcome_message: col("text",),
     personality: col("text",),
@@ -1707,7 +1708,7 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     agent_role: col("text",),
     federation_consent: col("integer", { notNull: true, hasDefault: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Admin & Config ──────────────────────────────────────────────
@@ -1787,7 +1788,7 @@ export const SCHEMA = new SchemaManifest()
     encrypted_key_id: col("text",),
     alpha_status: col("text", { notNull: true, hasDefault: true, },),
     content_hash: col("text",),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     thumbnail_path: col("text",),
   },)
@@ -1824,7 +1825,7 @@ export const SCHEMA = new SchemaManifest()
     metadata: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("blog_rag_sources", {
@@ -2002,7 +2003,7 @@ export const SCHEMA = new SchemaManifest()
     quick_replies: col("text",),
     prompt_override: col("text",),
     output_style_preset: col("text",),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     custom_instructions: col("text",),
     prompt_template_id: col("text",),
@@ -2043,7 +2044,7 @@ export const SCHEMA = new SchemaManifest()
     edited_at: col("text",),
     attachments: col("text",),
     archived_at: col("text",),
-    format_version: col("integer", { notNull: true, hasDefault: true, },),
+    row_version: col("integer", { notNull: true, hasDefault: true, },),
     section_id: col("text",),
     tool_calls: col("text",),
     thinking: col("text",),
@@ -2053,7 +2054,7 @@ export const SCHEMA = new SchemaManifest()
     e2e_sender_eph_pub_jwk: col("text",),
     e2e_chain_index: col("integer",),
     content_plaintext: col("text",),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     merge_id: col("text",),
   },)
@@ -2153,7 +2154,7 @@ export const SCHEMA = new SchemaManifest()
     weight: col("real", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("location_discovery", {
@@ -2223,7 +2224,7 @@ export const SCHEMA = new SchemaManifest()
     coord_z: col("real",),
     current_route_id: col("text",),
     travel_progress: col("real", { notNull: true, hasDefault: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("quest_progress", {
@@ -2266,7 +2267,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     completed_at: col("text",),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("world_avatar_config", {
@@ -2361,7 +2362,7 @@ export const SCHEMA = new SchemaManifest()
     source_count: col("integer", { notNull: true, hasDefault: true, },),
     distortion_level: col("real", { notNull: true, hasDefault: true, },),
     disputed: col("integer", { notNull: true, hasDefault: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("world_members", {
@@ -2447,7 +2448,7 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     nsfw_override: col("text",),
     rpg_enabled: col("integer", { notNull: true, hasDefault: true, },),
-    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     rpg_dice: col("integer", { notNull: true, hasDefault: true, },),
     rpg_checks: col("integer", { notNull: true, hasDefault: true, },),
@@ -2531,7 +2532,7 @@ export const SCHEMA = new SchemaManifest()
     is_default: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
-    format_version: col("integer", { notNull: true, hasDefault: true, },),
+    row_version: col("integer", { notNull: true, hasDefault: true, },),
     temperature: col("real",),
     max_tokens: col("integer",),
     model: col("text",),
@@ -2539,7 +2540,7 @@ export const SCHEMA = new SchemaManifest()
   .table("sessions", {
     id: col("text", { primaryKey: true, },),
     user_id: col("text", { notNull: true, },),
-    token_hash: col("text", { notNull: true, },),
+    secret_hash: col("text", { notNull: true, },),
     ip: col("text",),
     user_agent: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
@@ -2558,13 +2559,13 @@ export const SCHEMA = new SchemaManifest()
     id: col("text", { primaryKey: true, },),
     username: col("text", { notNull: true, },),
     display_name: col("text", { notNull: true, },),
-    password_hash: col("text",),
+    secret_hash: col("text",),
     role: col("text", { notNull: true, hasDefault: true, },),
     status: col("text", { notNull: true, hasDefault: true, },),
     settings: col("text", { notNull: true, hasDefault: true, },),
     birth_date: col("text",),
     age_gate_accepted_at: col("text",),
-    format_version: col("integer", { notNull: true, hasDefault: true, },),
+    row_version: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     last_seen_at: col("text",),
     encryption_secret: col("text",),

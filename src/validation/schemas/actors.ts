@@ -63,7 +63,7 @@ export const ActorUpdateBody = t.Object({
   avatarFocusX: t.Optional(t.Number(),),
   avatarFocusY: t.Optional(t.Number(),),
   /** Optimistic-concurrency version from the prior GET response. CHAR-1. */
-  dataVersion: t.Optional(t.Integer({ minimum: 0, },),),
+  contentVersion: t.Optional(t.Integer({ minimum: 0, },),),
 }, {
   // TASK-031: pass unknown keys through instead of silently stripping them
   // so the character/world boundary guard can reject misdirected

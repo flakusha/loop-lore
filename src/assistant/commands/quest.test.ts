@@ -21,7 +21,7 @@ beforeAll(async () => {
   createLogger({ level: "error", },);
   const testDb = await createTestDb();
   db = testDb.db;
-  await insertUsers(db, "quest-tester", "Quest Tester", { id: "user-1", password_hash: "hash", } as never,);
+  await insertUsers(db, "quest-tester", "Quest Tester", { id: "user-1", secret_hash: "hash", } as never,);
   await insertActors(db, "Quest Creator", { id: "creator-1", owner_id: "user-1", } as never,);
 },);
 

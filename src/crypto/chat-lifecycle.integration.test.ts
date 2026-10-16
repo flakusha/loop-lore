@@ -107,7 +107,7 @@ async function insertActor(id: string, type: "user" | "character",) {
     data_raw: null,
     user_id: type === "user" ? id : null,
     owner_id: type === "user" ? id : null,
-    format_version: 0,
+    row_version: 0,
     visibility: "private",
   },).execute();
 }
@@ -431,7 +431,7 @@ test("AC6 in-flight send observes post-rotation key", async () => {
     data_raw: null,
     user_id: AC6_LEAVER,
     owner_id: AC6_LEAVER,
-    format_version: 0,
+    row_version: 0,
     visibility: "private",
   },).execute();
 
@@ -446,7 +446,7 @@ test("AC6 in-flight send observes post-rotation key", async () => {
     data_raw: null,
     user_id: AC6_SENDER,
     owner_id: AC6_SENDER,
-    format_version: 0,
+    row_version: 0,
     visibility: "private",
   },).execute();
 

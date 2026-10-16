@@ -117,7 +117,7 @@ async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, 
       display_name: "Bot",
       agent_type: "ai",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       import_spec: "{}",
       ...overrides,
     },)

@@ -87,12 +87,12 @@ beforeAll(async () => {
 async function seedUsers(): Promise<void> {
   await insertUsers(db, USERNAME, "Alice", {
     id: USER_ID,
-    password_hash: passwordHash,
+    secret_hash: passwordHash,
   } as never,);
 
   await insertUsers(db, "disabled-user", "Disabled", {
     id: "user-disabled",
-    password_hash: passwordHash,
+    secret_hash: passwordHash,
     status: "disabled",
   } as never,);
 
@@ -203,13 +203,16 @@ describe("handleLogin — success", () => {
     expect(cookie,).toContain("HttpOnly",);
     expect(cookie,).toContain("SameSite=Lax",);
 
-    const session = await db.selectFrom("sessions",).select(["user_id", "ip", "token_hash", "id",],).executeTakeFirst();
+    const session = await db.selectFrom("sessions",).select(["user_id", "ip", "secret_hash", "id",],)
+      .executeTakeFirst();
+
     expect(session?.user_id,).toBe(USER_ID,);
-    // AUTH-4: JWT sessions must store a non-empty, provenance-tagged token_hash
+
+    // AUTH-4: JWT sessions must store a non-empty, provenance-tagged secret_hash
     // so the legacy opaque-token lookup path (sha256(token) match) cannot
     // collide with an empty hash from a JWT session.
-    expect(session?.token_hash,).toStartWith("jwt:",);
-    expect(session?.token_hash,).toBe(session ? `jwt:${session.id}` : undefined,);
+    expect(session?.secret_hash,).toStartWith("jwt:",);
+    expect(session?.secret_hash,).toBe(session ? `jwt:${session.id}` : undefined,);
   });
 });
 

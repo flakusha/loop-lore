@@ -92,7 +92,7 @@ describe("handleGetContext max-tokens resolution", () => {
         description: "A test character",
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         content_rating: "general",
         import_spec: "{}",

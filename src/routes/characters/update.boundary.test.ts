@@ -39,12 +39,12 @@ function appWithAuth(db: Kysely<DB>, userId: string | null,): Elysia {
 async function currentVersion(db: Kysely<DB>, id: string,): Promise<number> {
   const row = await db
     .selectFrom("actors",)
-    .select("format_version",)
+    .select("row_version",)
     .where("id", "=", id,)
     .executeTakeFirst();
 
   if (!row) { throw new Error(`actor ${id} missing`,); }
-  return row.format_version;
+  return row.row_version;
 }
 
 describe("PUT /api/actors/:actorId — character/world boundary", () => {
@@ -65,7 +65,7 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
       owner_id: ownerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     } as never,);
   },);
 
@@ -81,7 +81,7 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
         body: JSON.stringify({
           displayName: "Renamed",
           lore: "world lore",
-          dataVersion: await currentVersion(db, actorId,),
+          contentVersion: await currentVersion(db, actorId,),
         },),
       },),
     );
@@ -109,7 +109,7 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
         body: JSON.stringify({
           displayName: "Renamed",
           personality: "witty",
-          dataVersion: await currentVersion(db, actorId,),
+          contentVersion: await currentVersion(db, actorId,),
         },),
       },),
     );
@@ -130,7 +130,7 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
       new Request(`${BASE}/api/actors/${actorId}`, {
         method: "PUT",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ description: "card text", dataVersion: await currentVersion(db, actorId,), },),
+        body: JSON.stringify({ description: "card text", contentVersion: await currentVersion(db, actorId,), },),
       },),
     );
 
@@ -149,7 +149,7 @@ describe("PUT /api/actors/:actorId — character/world boundary", () => {
       new Request(`${BASE}/api/actors/${actorId}`, {
         method: "PUT",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ lore: "world lore", dataVersion: 0, },),
+        body: JSON.stringify({ lore: "world lore", contentVersion: 0, },),
       },),
     );
 

@@ -79,7 +79,7 @@ describe("enforceMuteGate", () => {
         owner_id: ownerId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

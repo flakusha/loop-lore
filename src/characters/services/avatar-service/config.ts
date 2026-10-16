@@ -12,7 +12,7 @@ import type { AvatarConfig, } from "./types";
 export interface UpsertAvatarConfigOpts {
   selectionRule?: AvatarSelectionRule;
   weights?: Partial<Record<AvatarTagType, number>>;
-  fallbackChain?: AvatarTagType[];
+  fallbackOrder?: AvatarTagType[];
 }
 
 /**
@@ -35,7 +35,7 @@ export async function getAvatarConfig(db: Kysely<DB>, actorId: string,): Promise
     actorId: row.actor_id,
     selectionRule: row.selection_rule as AvatarSelectionRule,
     weights: jsonParseOr<Record<AvatarTagType, number>>(row.weights ?? "{}", {} as Record<AvatarTagType, number>,),
-    fallbackChain: jsonParseOr<AvatarTagType[]>(row.fallback_chain ?? "[]", [] as AvatarTagType[],),
+    fallbackOrder: jsonParseOr<AvatarTagType[]>(row.fallback_order ?? "[]", [] as AvatarTagType[],),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -72,16 +72,16 @@ export async function upsertAvatarConfig(
       ? { ...existingWeights, ...config.weights, }
       : existingWeights;
 
-    const fallbackChain = config.fallbackChain
-      ? jsonStringifyOr(config.fallbackChain,)
-      : existingRow.fallback_chain;
+    const fallbackOrder = config.fallbackOrder
+      ? jsonStringifyOr(config.fallbackOrder,)
+      : existingRow.fallback_order;
 
     await db
       .updateTable("character_avatar_config",)
       .set({
         selection_rule: config.selectionRule ?? existingRow.selection_rule,
         weights: jsonStringifyOr(mergedWeights,),
-        fallback_chain: fallbackChain,
+        fallback_order: fallbackOrder,
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)
@@ -107,7 +107,7 @@ export async function upsertAvatarConfig(
       actor_id: actorId,
       selection_rule: config.selectionRule ?? "emotion_first",
       weights: jsonStringifyOr(config.weights ?? defaultWeights,),
-      fallback_chain: jsonStringifyOr(config.fallbackChain ?? [],),
+      fallback_order: jsonStringifyOr(config.fallbackOrder ?? [],),
       created_at: now,
       updated_at: now,
     },)

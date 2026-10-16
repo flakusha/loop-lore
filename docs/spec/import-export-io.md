@@ -47,7 +47,7 @@ Shipped:
 - `src/routes/export-shared/` + `src/routes/export-sse/` — export pipeline (shared payloads +
   streaming jobs).
 - `src/routes/world-import/` — world bundle import.
-- Schema foundation: `.plan/epics/epic-schema.md` — `format_version` per row; migrations stay
+- Schema foundation: `.plan/epics/epic-schema.md` — `row_version` per row; migrations stay
   additive.
 
 ## Related Epics

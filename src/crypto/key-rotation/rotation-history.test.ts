@@ -49,7 +49,7 @@ async function insertUser(id: string,): Promise<void> {
       role: "user",
       status: "active",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     },)
     .execute();
 }
@@ -88,7 +88,7 @@ async function insertActor(id: string,): Promise<void> {
       data_raw: null,
       user_id: null,
       owner_id: OWNER_ID,
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
     },)
     .execute();

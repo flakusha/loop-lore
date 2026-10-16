@@ -33,7 +33,7 @@ beforeAll(async () => {
       id: userId,
       username: "missinguser",
       display_name: "Missing User",
-      password_hash: "hash",
+      secret_hash: "hash",
       role: "solo",
       status: "active",
       settings: "{}",
@@ -106,7 +106,7 @@ describe("PersonasService — convertToCharacter()", () => {
     expect(settings.persona?.temperature,).toBeNull();
     expect(settings.persona?.max_tokens,).toBeNull();
     expect(settings.persona?.model,).toBeNull();
-    expect(actor!.format_version,).toBe(0,);
+    expect(actor!.row_version,).toBe(0,);
     expect(actor!.import_spec,).toBe("raw",);
     expect(actor!.data_source_format,).toBe("json",);
     expect(actor!.data_raw,).toBeNull();
@@ -235,7 +235,7 @@ describe("PersonasService — delete() cascade", () => {
         agent_type: "none",
         owner_id: userId,
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         import_spec: "raw",
         data_source_format: "json",
         data_raw: null,

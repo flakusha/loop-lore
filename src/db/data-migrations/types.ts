@@ -31,8 +31,8 @@ export interface DataMigration {
   /**
    * Transform rows from `fromVersion` to `toVersion`.
    *
-   * Query only rows where format_version = fromVersion.
-   * After transforming, SET format_version = toVersion.
+   * Query only rows where row_version = fromVersion.
+   * After transforming, SET row_version = toVersion.
    * Must be idempotent: running twice on same data is safe.
    */
   up(db: Kysely<DB>,): Promise<void>;

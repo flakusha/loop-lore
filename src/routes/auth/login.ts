@@ -70,7 +70,7 @@ async function handleLogin(
 
   const user = await database
     .selectFrom("users",)
-    .select(["id", "username", "password_hash", "role", "status", "display_name",],)
+    .select(["id", "username", "secret_hash", "role", "status", "display_name",],)
     .where("username", "=", username,)
     .executeTakeFirst();
 
@@ -88,7 +88,7 @@ async function handleLogin(
     return errorResponse(request, HttpStatus.Forbidden, "auth.accountLocked", t, "Account is disabled.",);
   }
 
-  if (!user.password_hash) {
+  if (!user.secret_hash) {
     return errorResponse(
       request,
       HttpStatus.Unauthorized,
@@ -98,7 +98,7 @@ async function handleLogin(
     );
   }
 
-  const passwordValid = await Bun.password.verify(password, user.password_hash,);
+  const passwordValid = await Bun.password.verify(password, user.secret_hash,);
   if (!passwordValid) {
     return errorResponse(
       request,

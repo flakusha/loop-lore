@@ -44,7 +44,7 @@ export interface AvatarConfig {
   actorId: string;
   selectionRule: AvatarSelectionRule;
   weights: Record<AvatarTagType, number>;
-  fallbackChain: AvatarTagType[];
+  fallbackOrder: AvatarTagType[];
   createdAt: string;
   updatedAt: string;
 }

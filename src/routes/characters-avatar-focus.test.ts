@@ -43,18 +43,18 @@ async function createActor(app: Elysia, name: string,): Promise<string> {
   return id;
 }
 
-/** PUT focus fields (plus a fresh dataVersion) and return the response. */
+/** PUT focus fields (plus a fresh contentVersion) and return the response. */
 async function putFocus(
   app: Elysia,
   actorId: string,
   focus: Record<string, unknown>,
-  dataVersion: number,
+  contentVersion: number,
 ): Promise<Response> {
   return app.handle(
     new Request(`http://localhost/api/actors/${actorId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ ...focus, dataVersion, },),
+      body: JSON.stringify({ ...focus, contentVersion, },),
     },),
   );
 }

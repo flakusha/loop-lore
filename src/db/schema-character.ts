@@ -80,7 +80,7 @@ export interface CharacterAvatarConfig {
   actor_id: string;
   selection_rule: Generated<string>;
   weights: string | null;
-  fallback_chain: string | null;
+  fallback_order: string | null;
   created_at: string;
   updated_at: string;
 }

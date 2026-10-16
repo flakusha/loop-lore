@@ -13,7 +13,7 @@ Status: In Progress (see `.plan/epics/epic-api-versioning.md`). Phase 0 done (`m
 - Version resolution from URL path (`/api/v1/...`), `ctx.apiVersion` populated for plugins via global derive.
 - Rules: additive changes stay in current version; breaking changes create a new version; deprecated versions carry `Sunset`/`Deprecation`/`Link` headers; removal after N-1.
 - Envelope: `{ data, meta: { api_version, deprecated? } }`; paginated adds `pagination`.
-- DB is version-agnostic — `data_version` columns (migration 018) track content format, not API version.
+- DB is version-agnostic — `content_version` columns (migration 018) track content format, not API version.
 
 ## Not implemented / aspirational
 

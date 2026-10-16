@@ -71,13 +71,13 @@ describe("seedConfiguredUsers", () => {
 
     const mod = await db
       .selectFrom("users",)
-      .select(["id", "username", "role", "password_hash",],)
+      .select(["id", "username", "role", "secret_hash",],)
       .where("username", "=", "moderator1",)
       .executeTakeFirst();
 
     expect(mod?.role,).toBe("moderator",);
-    expect(mod?.password_hash,).toBeDefined();
-    expect(mod?.password_hash,).not.toBe("mod-pw",);
+    expect(mod?.secret_hash,).toBeDefined();
+    expect(mod?.secret_hash,).not.toBe("mod-pw",);
 
     const modActor = await db
       .selectFrom("actors",)

@@ -201,7 +201,7 @@ describe("AvatarService", () => {
     });
   });
 
-  describe("selectAvatar fallback_chain (BUG-avatar-select-fallback-chain-unwired)", () => {
+  describe("selectAvatar fallback_order (BUG-avatar-select-fallback-chain-unwired)", () => {
     let chainActorId: string;
 
     beforeAll(async () => {
@@ -233,11 +233,11 @@ describe("AvatarService", () => {
       // Reversing the chain would flip the result.
       await avatarService.upsertAvatarConfig(chainActorId, {
         selectionRule: "weighted",
-        fallbackChain: ["action", "emotion",],
+        fallbackOrder: ["action", "emotion",],
       },);
     },);
 
-    it("consults fallback_chain in configured order when primary yields no match", async () => {
+    it("consults fallback_order in configured order when primary yields no match", async () => {
       const avatar = await avatarService.selectAvatar(chainActorId, {
         mood: "brooding",
         location: "forest",

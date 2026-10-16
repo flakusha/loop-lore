@@ -152,7 +152,7 @@ async function handleRegister(
           id: userId,
           username,
           display_name: username,
-          password_hash: passwordHash,
+          secret_hash: passwordHash,
           role: UserRole.User,
           status: UserStatus.Active,
           settings: "{}",
@@ -177,7 +177,7 @@ async function handleRegister(
           import_spec: "raw",
           data_source_format: "json",
           data_raw: null,
-          format_version: 0,
+          row_version: 0,
         },)
         .execute();
 

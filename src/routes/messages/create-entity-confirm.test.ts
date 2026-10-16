@@ -60,7 +60,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -89,7 +89,7 @@ describe("POST /api/chats/:id/create-entity", () => {
         owner_id: otherUserId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

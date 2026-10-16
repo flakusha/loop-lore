@@ -49,7 +49,7 @@ async function seedParents(): Promise<void> {
     display_name: "AI",
     agent_type: "ai",
     settings: "{}",
-    format_version: 0,
+    row_version: 0,
     import_spec: "{}",
   },).execute();
 

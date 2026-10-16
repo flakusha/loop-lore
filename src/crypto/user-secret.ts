@@ -10,7 +10,7 @@
  * has nothing to derive with, so the encrypted-search path is dead code.
  *
  * Same shape as the actor key at src/crypto/actor-keys.ts:108 — 32 bytes
- * from the CSPRNG, hex-encoded for the TEXT column. `password_hash` is
+ * from the CSPRNG, hex-encoded for the TEXT column. `secret_hash` is
  * deliberately NOT the source: a password rotation must not invalidate every
  * stored token, and the two domains must stay independent
  * (BUG-jwtsecret-reused-across-three-security-domains).

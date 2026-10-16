@@ -24,18 +24,18 @@ The backend is selected via `type` in `src/config/sections/database.ts`. The con
 | Migration leadership | N/A (single instance)                     | 🔜 planned via `pg_advisory_lock` (Epic 26)      |
 | Recommended for      | A, B                                      | C, D, E                                          |
 
-**Consequence:** Topologies D/E are Postgres-only. SQLite is correct only for A/B. `format_version` gives row-level optimistic concurrency on either backend once Phase 2 enforces it.
+**Consequence:** Topologies D/E are Postgres-only. SQLite is correct only for A/B. `row_version` gives row-level optimistic concurrency on either backend once Phase 2 enforces it.
 
 ## Write-Path Notes
 
-### `format_version` Optimistic Concurrency
+### `row_version` Optimistic Concurrency
 
-`format_version` columns exist on core tables (`users`, `actors`, `messages`, `personas`, `world_states`, `chat_participants`, `actor_memories`) as an optimistic-concurrency anchor.
+`row_version` columns exist on core tables (`users`, `actors`, `messages`, `personas`, `world_states`, `chat_participants`, `actor_memories`) as an optimistic-concurrency anchor.
 
-**Status: Planned (Phase 2).** The write path does not yet enforce `format_version`. When enforced, the pattern will be:
+**Status: Planned (Phase 2).** The write path does not yet enforce `row_version`. When enforced, the pattern will be:
 
 ```sql
-UPDATE … WHERE id = ? AND format_version = ?
+UPDATE … WHERE id = ? AND row_version = ?
 ```
 
 A zero-row result indicates a stale write — the row was modified by another transaction since the reader fetched it. The route handler will return `409 Conflict` (error envelope) on version mismatch.
@@ -77,6 +77,6 @@ SQLite file-locking is unsafe over network filesystems (NFS, EFS, shared contain
 
 ## Epics
 
-- `.plan/epics/epic-data-integrity-acid.md` — backend guards, `format_version` enforcement, ACID matrix
+- `.plan/epics/epic-data-integrity-acid.md` — backend guards, `row_version` enforcement, ACID matrix
 - `.plan/epics/epic-deployment-topologies.md` — topology definitions, Docker/K8s packaging
 - `.plan/epics/epic-multi-instance-reconciliation.md` — advisory locks, schema drift

@@ -256,7 +256,7 @@ describeIsolated("main() CLI entry", () => {
         id: "u-cli",
         username: "cli",
         display_name: "CLI User",
-        password_hash: "x",
+        secret_hash: "x",
         role: "user",
         settings: "{}",
       },)

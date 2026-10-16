@@ -90,7 +90,7 @@ async function createAiActor(
       owner_id: null,
       agent_type: "ai",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
       content_rating,

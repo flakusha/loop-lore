@@ -75,7 +75,7 @@ describe("Access control E2E", () => {
         id: OUTSIDER_ID,
         username: OUTSIDER_USERNAME,
         display_name: "E2E Outsider",
-        password_hash: OUTSIDER_HASH,
+        secret_hash: OUTSIDER_HASH,
         role: "user",
         status: "active",
         settings: "{}",

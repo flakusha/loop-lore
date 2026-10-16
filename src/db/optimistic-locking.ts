@@ -5,7 +5,7 @@
  * Optimistic Concurrency Control Utilities
  *
  * Provides helper functions for implementing optimistic locking using
- * format_version columns. Prevents lost updates in concurrent scenarios.
+ * row_version columns. Prevents lost updates in concurrent scenarios.
  */
 import { type Kysely, sql, } from "kysely";
 import type { DB, } from "./schema";
@@ -25,13 +25,13 @@ export interface OptimisticUpdateResult {
 /**
  * Update a row with optimistic concurrency check.
  *
- * Uses `WHERE format_version = ?` to detect concurrent modifications.
+ * Uses `WHERE row_version = ?` to detect concurrent modifications.
  * If the version doesn't match, returns an error instead of overwriting.
  * @param db - Kysely database instance
  * @param table - Table name to update
  * @param id - Row ID to update
- * @param currentVersion - Expected current format_version from client
- * @param updates - Fields to update (format_version will be incremented automatically)
+ * @param currentVersion - Expected current row_version from client
+ * @param updates - Fields to update (row_version will be incremented automatically)
  * @returns Result indicating success or version conflict
  */
 export async function updateWithVersionCheck(
@@ -88,7 +88,7 @@ async function applyOptimisticUpdate(
 ): Promise<number> {
   const entries = Object.entries({
     ...updates,
-    format_version: currentVersion + 1,
+    row_version: currentVersion + 1,
     ...(opts.bumpUpdatedAt && { updated_at: opts.now!, }),
   },);
 
@@ -100,7 +100,7 @@ async function applyOptimisticUpdate(
   const result = await sql`
     update ${sql.table(table,)}
     set ${sql.join(assignments, sql`, `,)}
-    where ${sql.ref("id",)} = ${id} and ${sql.ref("format_version",)} = ${currentVersion}
+    where ${sql.ref("id",)} = ${id} and ${sql.ref("row_version",)} = ${currentVersion}
   `.execute(db,);
 
   return Number(result.numAffectedRows,);
@@ -114,8 +114,8 @@ async function applyOptimisticUpdate(
  * @param db - Kysely database instance
  * @param table - Table name to update
  * @param id - Row ID to update
- * @param currentVersion - Expected current format_version from client
- * @param updates - Fields to update (format_version will be incremented automatically)
+ * @param currentVersion - Expected current row_version from client
+ * @param updates - Fields to update (row_version will be incremented automatically)
  * @returns Result indicating success or version conflict
  */
 export async function updateWithVersionCheckRaw(
@@ -142,11 +142,11 @@ export async function updateWithVersionCheckRaw(
 }
 
 /**
- * Fetch current format_version for a row.
+ * Fetch current row_version for a row.
  * @param db - Kysely database instance
  * @param table - Table name
  * @param id - Row ID
- * @returns Current format_version, or null if row not found
+ * @returns Current row_version, or null if row not found
  */
 export async function getCurrentVersion(
   db: Kysely<DB>,
@@ -155,9 +155,9 @@ export async function getCurrentVersion(
 ): Promise<number | null> {
   const row = await db
     .selectFrom(table as never,)
-    .select(["format_version" as never,],)
+    .select(["row_version" as never,],)
     .where("id" as never, "=", id as never,)
     .executeTakeFirst();
 
-  return row ? Number((row as Record<string, unknown>).format_version,) : null;
+  return row ? Number((row as Record<string, unknown>).row_version,) : null;
 }

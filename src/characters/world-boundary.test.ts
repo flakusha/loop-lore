@@ -34,10 +34,10 @@ describe("assertNoCrossBoundaryWrite", () => {
     expect(result.ok,).toBe(true,);
   });
 
-  test("passes protocol-only bodies (empty list, dataVersion)", () => {
+  test("passes protocol-only bodies (empty list, contentVersion)", () => {
     expect(assertNoCrossBoundaryWrite("character", [],).ok,).toBe(true,);
-    expect(assertNoCrossBoundaryWrite("character", ["dataVersion",],).ok,).toBe(true,);
-    expect(assertNoCrossBoundaryWrite("world", ["dataVersion",],).ok,).toBe(true,);
+    expect(assertNoCrossBoundaryWrite("character", ["contentVersion",],).ok,).toBe(true,);
+    expect(assertNoCrossBoundaryWrite("world", ["contentVersion",],).ok,).toBe(true,);
   });
 
   test("character update carrying world fields names them and points at the world API", () => {

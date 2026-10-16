@@ -527,11 +527,11 @@ describe("executeReversal", () => {
       id: "moderator-A",
       username: "moderator-A",
       display_name: "Moderator A",
-      password_hash: null,
+      secret_hash: null,
       role: "admin",
       status: "active",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       created_at: "2026-01-01T00:00:00.000Z",
     },).execute();
 

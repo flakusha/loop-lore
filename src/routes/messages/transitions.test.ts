@@ -286,7 +286,7 @@ describe("autoRenameChat — input edge cases", () => {
         import_spec: "{}",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
       },)
       .execute();

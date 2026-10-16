@@ -20,7 +20,7 @@ const BASE: EditFormValues = {
   avatarRemoveBtn: '<button id="remove-avatar">Remove</button>',
   characterId: "actor-aria",
   contentRating: "nsfw_moderate",
-  dataVersion: 4,
+  contentVersion: 4,
   avatarFocusX: 50,
   avatarFocusY: 50,
   growthMode: "dynamic",
@@ -175,7 +175,7 @@ describe("views/character-edit-form", () => {
     expect(html,).toContain("initialMode: 'static'",);
     expect(html,).toContain('<option value="crisis" selected>',);
     expect(html,).toContain("The fall",);
-    expect(html,).toContain("dataVersion: 4",);
+    expect(html,).toContain("contentVersion: 4",);
   });
 
   test("escapes arc description in growth section", () => {

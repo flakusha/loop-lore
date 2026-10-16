@@ -87,7 +87,7 @@ describeReal("maybeAutoReply — swipe_index race", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -230,7 +230,7 @@ describeReal("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-dis
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -436,7 +436,7 @@ describeReal("maybeAutoReply — non-swipe insert failures rethrow", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -544,7 +544,7 @@ describeReal("maybeAutoReply — userMessage edge cases", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -639,7 +639,7 @@ describeReal("maybeAutoReply — story pause gate", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

@@ -65,7 +65,7 @@ beforeAll(async () => {
   const testDb = await createTestDb();
   db = testDb.db;
   const userId = uid();
-  await insertUsers(db, "quest-tester", "Quest Tester", { id: userId, password_hash: "hash", } as never,);
+  await insertUsers(db, "quest-tester", "Quest Tester", { id: userId, secret_hash: "hash", } as never,);
   actorId = uid();
   await insertActors(db, "Quest Creator", { id: actorId, owner_id: userId, } as never,);
   worldId = uid();

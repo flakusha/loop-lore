@@ -23,8 +23,8 @@ beforeAll(async () => {
   const tdb = await createTestDb();
   db = tdb.db;
   setTestDatabase(db,);
-  await insertUsers(db, OWNER, "Owner", { id: OWNER, password_hash: "h", } as never,);
-  await insertUsers(db, NON_OWNER, "Member", { id: NON_OWNER, password_hash: "h", } as never,);
+  await insertUsers(db, OWNER, "Owner", { id: OWNER, secret_hash: "h", } as never,);
+  await insertUsers(db, NON_OWNER, "Member", { id: NON_OWNER, secret_hash: "h", } as never,);
 },);
 
 afterAll(async () => {

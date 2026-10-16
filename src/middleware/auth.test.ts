@@ -97,7 +97,7 @@ describe("resolveUserIdFromRequest", () => {
     // tests never consult the env — they pass config fixtures explicitly,
     // because other test files mock `config/load` process-globally and the
     // no-DI loadConfig() path is untestable in a full-suite run. Real
-    // deployments leave this off; login.ts now writes `token_hash =
+    // deployments leave this off; login.ts now writes `secret_hash =
     // "jwt:" + sessionId` so JWT-issued sessions never collide with the
     // legacy path regardless of the flag.
     prevLegacyFallback = process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
@@ -136,7 +136,7 @@ describe("resolveUserIdFromRequest", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -148,7 +148,7 @@ describe("resolveUserIdFromRequest", () => {
       .insertInto("sessions",)
       .values({
         user_id: userId,
-        token_hash: tokenHash,
+        secret_hash: tokenHash,
         ip: "127.0.0.1",
         user_agent: "test",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -182,7 +182,7 @@ describe("resolveUserIdFromRequest", () => {
       .insertInto("sessions",)
       .values({
         user_id: userId,
-        token_hash: tokenHash,
+        secret_hash: tokenHash,
         ip: "127.0.0.1",
         user_agent: "test",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -239,7 +239,7 @@ describe("resolveUserIdFromRequest", () => {
       .insertInto("sessions",)
       .values({
         user_id: userId,
-        token_hash: tokenHash,
+        secret_hash: tokenHash,
         ip: "127.0.0.1",
         user_agent: "legacy",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -279,7 +279,7 @@ describe("resolveUserIdFromRequest", () => {
       .insertInto("sessions",)
       .values({
         user_id: userId,
-        token_hash: tokenHash,
+        secret_hash: tokenHash,
         ip: "127.0.0.1",
         user_agent: "secretless",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -316,7 +316,7 @@ describe("resolveUserIdFromRequest", () => {
       .insertInto("sessions",)
       .values({
         user_id: userId,
-        token_hash: tokenHash,
+        secret_hash: tokenHash,
         ip: "127.0.0.1",
         user_agent: "test",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -355,7 +355,7 @@ describe("resolveUserIdFromRequest", () => {
       .insertInto("sessions",)
       .values({
         user_id: userId,
-        token_hash: tokenHash,
+        secret_hash: tokenHash,
         ip: "127.0.0.1",
         user_agent: "test",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -393,7 +393,7 @@ describe("resolveUserIdFromRequest", () => {
       .insertInto("sessions",)
       .values({
         user_id: userId,
-        token_hash: tokenHash,
+        secret_hash: tokenHash,
         ip: "127.0.0.1",
         user_agent: "test",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -439,7 +439,7 @@ describe("resolveUserIdFromRequest", () => {
       .insertInto("sessions",)
       .values({
         user_id: userId,
-        token_hash: tokenHash,
+        secret_hash: tokenHash,
         ip: "127.0.0.1",
         user_agent: "test",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),

@@ -66,7 +66,7 @@ async function seedActor(
     display_name: "Hero",
     agent_type: "ai",
     settings: "{}",
-    format_version: 0,
+    row_version: 0,
     import_spec: "{}",
     content_rating: ContentRating.Sfw,
     ...overrides,

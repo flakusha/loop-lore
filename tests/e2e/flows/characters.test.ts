@@ -24,7 +24,7 @@ describe("Characters E2E", () => {
         id: "00000000-0000-4000-b000-000000000099",
         username: "e2eother",
         display_name: "E2E Other User",
-        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        secret_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
         role: "user",
         status: "active",
         settings: "{}",
@@ -84,7 +84,7 @@ describe("Characters E2E", () => {
   test("PUT /api/v1/actors/:id updates actor", async () => {
     const res = await api.put(`/api/v1/actors/${SEED.character.id}`, {
       displayName: "Updated Character Name",
-      dataVersion: 0,
+      contentVersion: 0,
     },);
 
     expect(res.ok,).toBe(true,);

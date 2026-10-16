@@ -52,7 +52,7 @@ describe("characters exportRoutes coverage", () => {
       id: owner,
       username: `exp-owner-${stamp}`,
       display_name: "Export Owner",
-      password_hash: "h",
+      secret_hash: "h",
       role: "user",
       status: "active",
       settings: "{}",
@@ -62,7 +62,7 @@ describe("characters exportRoutes coverage", () => {
       id: stranger,
       username: `exp-stranger-${stamp}`,
       display_name: "Export Stranger",
-      password_hash: "h",
+      secret_hash: "h",
       role: "user",
       status: "active",
       settings: "{}",
@@ -81,7 +81,7 @@ describe("characters exportRoutes coverage", () => {
       system_prompt: "You are Aldric",
       alternate_greetings: JSON.stringify(["Hi there", "Welcome back",],),
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       import_spec: "{}",
     };
 

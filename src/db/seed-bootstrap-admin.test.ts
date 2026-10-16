@@ -45,9 +45,9 @@ describe("seedBootstrapAdmin (multi-user mode)", () => {
     expect(admin?.username,).toBe("admin",);
     expect(admin?.status,).toBe("active",);
     // password must be hashed, not plaintext
-    expect(admin?.password_hash,).toBeDefined();
-    expect(admin?.password_hash,).not.toBe("sup3rsecret",);
-    expect(await Bun.password.verify("sup3rsecret", admin!.password_hash!,),).toBe(true,);
+    expect(admin?.secret_hash,).toBeDefined();
+    expect(admin?.secret_hash,).not.toBe("sup3rsecret",);
+    expect(await Bun.password.verify("sup3rsecret", admin!.secret_hash!,),).toBe(true,);
 
     // actor row exists so admin can own chats/entities
     const actor = await db.selectFrom("actors",).select("id",).where("id", "=", admin!.id,).executeTakeFirst();
