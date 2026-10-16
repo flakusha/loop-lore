@@ -32,6 +32,30 @@ const VALIDATION_DIR = DB_OUTPUT_DIR
 
 // ── Schema Building uses ./lib/migration-parser (parseMigration, listMigrationFiles) ──
 
+/**
+ * Apply `pairs` (`[oldName, newName]`) to `table`: carry each renamed
+ * column's definition across under the new name, keeping its original
+ * position. Re-keying in place rather than delete-then-add matters — appending
+ * would silently reorder every renamed column to the end of its table, which
+ * shows up as churn across every generated artifact.
+ */
+function applyRenames(
+  table: Record<string, ColumnDef>,
+  pairs: ReadonlyArray<readonly [string, string,]>,
+): void {
+  for (const [from, to,] of pairs) {
+    const def = table[from];
+    if (!def || table[to]) { continue; }
+    const next: Record<string, ColumnDef> = {};
+    for (const [name, col,] of Object.entries(table,)) {
+      if (name === from) { next[to] = def; }
+      else { next[name] = col; }
+    }
+    for (const key of Object.keys(table,)) { delete table[key]; }
+    Object.assign(table, next,);
+  }
+}
+
 // ── Schema Building ──────────────────────────────────────
 
 function buildSchema(): Map<string, Record<string, ColumnDef>> {
@@ -41,9 +65,15 @@ function buildSchema(): Map<string, Record<string, ColumnDef>> {
   const allAlters = new Map<string, Record<string, ColumnDef>>();
   const allDrops = new Map<string, Set<string>>();
   const droppedTables = new Set<string>();
+  const allRenames = new Map<string, Array<[string, string,]>>();
 
   for (const filePath of allFiles) {
-    const { creates, alters, drops, droppedTables: dt, } = parseMigration(filePath,);
+    const { creates, alters, drops, droppedTables: dt, renames, } = parseMigration(filePath,);
+
+    for (const [name, pairs,] of renames) {
+      if (!allRenames.has(name,)) { allRenames.set(name, [],); }
+      allRenames.get(name,)!.push(...pairs,);
+    }
 
     for (const [name, def,] of creates) {
       if (dt.has(name,)) { continue; }
@@ -63,10 +93,19 @@ function buildSchema(): Map<string, Record<string, ColumnDef>> {
     for (const d of dt) { droppedTables.add(d,); }
   }
 
-  // Apply alters then drops
+  // Apply alters then renames then drops
   for (const [name, cols,] of allAlters) {
     const table = allTables.get(name,);
     if (table) { Object.assign(table, cols,); }
+  }
+
+  // A rename keeps the column's type/NOT NULL/DEFAULT; SQLite preserves them
+  // across RENAME COLUMN, so copy the definition across. The old name is
+  // already in allDrops and is removed below.
+  for (const [name, pairs,] of allRenames) {
+    const table = allTables.get(name,);
+    if (!table) { continue; }
+    applyRenames(table, pairs,);
   }
 
   for (const [name, colSet,] of allDrops) {

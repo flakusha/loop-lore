@@ -172,7 +172,7 @@ describe("seedCharacterTemplates identity", () => {
         import_spec: "template",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
       },)
       .execute();
 
@@ -206,7 +206,7 @@ describe("seedCharacterTemplates identity", () => {
       id: ownerId,
       username: ownerId,
       display_name: "Namesake Character",
-      password_hash: "hash",
+      secret_hash: "hash",
       role: "user",
       status: "active",
       settings: "{}",
@@ -227,7 +227,7 @@ describe("seedCharacterTemplates identity", () => {
         import_spec: "template",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
       },)
       .execute();
 
@@ -326,7 +326,7 @@ describe("seedCharacterTemplates identity", () => {
           import_spec: "template",
           data_source_format: "json",
           data_raw: null,
-          format_version: 0,
+          row_version: 0,
         },)
         .execute();
 

@@ -32,6 +32,16 @@ export interface ParsedMigration {
   alters: Map<string, Record<string, ColumnDef>>;
   drops: Map<string, Set<string>>;
   droppedTables: Set<string>;
+  /**
+   * Column renames as `[oldName, newName]`, keyed by table. A bare
+   * `alterTable(t).renameColumn(a, b)` states no type, so the generators
+   * cannot infer the new column's definition from the call alone — they
+   * copy the old column's ColumnDef across instead. Without this channel a
+   * rename is invisible to codegen: the old name is dropped and the new one
+   * never appears, so a forward rename migration silently erases the column
+   * from every generated artifact.
+   */
+  renames: Map<string, Array<[string, string,]>>;
 }
 
 export interface ParseOptions {
@@ -58,6 +68,7 @@ export function parseMigration(filePath: string, opts?: ParseOptions,): ParsedMi
   const alters = new Map<string, Record<string, ColumnDef>>();
   const drops = new Map<string, Set<string>>();
   const droppedTables = new Set<string>();
+  const renames = new Map<string, Array<[string, string,]>>();
 
   // ── Create table blocks ──
   // Pattern: .createTable("name",) followed by .addColumn(...) lines
@@ -108,6 +119,11 @@ export function parseMigration(filePath: string, opts?: ParseOptions,): ParsedMi
         // If new name was previously marked for drop, remove it — it's being recreated
         drops.get(tableName,)?.delete(newName,);
 
+        // Record the rename so codegen can carry the old column's definition
+        // across even when no addColumn precedes it to supply a type.
+        if (!renames.has(tableName,)) { renames.set(tableName, [],); }
+        renames.get(tableName,)!.push([oldName, newName,],);
+
         // Register the new column name — try to find its type from the preceding addColumn
         const addBlock = source.substring(Math.max(0, match.index - 500,), match.index,);
         const typeMatch = addBlock.match(new RegExp(`\\.addColumn\\(\\s*"${oldName}"\\s*,\\s*"(\\w+)"`,),);
@@ -143,7 +159,7 @@ export function parseMigration(filePath: string, opts?: ParseOptions,): ParsedMi
     }
   }
 
-  return { creates, alters, drops, droppedTables, };
+  return { creates, alters, drops, droppedTables, renames, };
 }
 
 /**

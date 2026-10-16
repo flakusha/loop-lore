@@ -1616,7 +1616,6 @@ export const SCHEMA = new SchemaManifest()
     xp: col("integer", { notNull: true, hasDefault: true, },),
     xp_to_next: col("integer", { notNull: true, hasDefault: true, },),
     content_version: col("integer", { notNull: true, hasDefault: true, },),
-    record_hash: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     behavior_profile: col("text", { hasDefault: true, },),
@@ -1628,6 +1627,7 @@ export const SCHEMA = new SchemaManifest()
     active_effects: col("text", { notNull: true, hasDefault: true, },),
     combat_alignment: col("text", { notNull: true, hasDefault: true, },),
     pending_asi: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("character_world_setup", {
     id: col("text", { primaryKey: true, },),

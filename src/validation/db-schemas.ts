@@ -1522,7 +1522,6 @@ export const CharacterStatsSchema = t.Object({
   xp: t.Optional(t.Number(),),
   xp_to_next: t.Optional(t.Number(),),
   content_version: t.Optional(t.Number(),),
-  record_hash: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   behavior_profile: t.Optional(t.String(),),
@@ -1534,6 +1533,7 @@ export const CharacterStatsSchema = t.Object({
   active_effects: t.Optional(t.String(),),
   combat_alignment: t.Optional(t.String(),),
   pending_asi: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── character_world_setup ────────────────────────────────────────────
