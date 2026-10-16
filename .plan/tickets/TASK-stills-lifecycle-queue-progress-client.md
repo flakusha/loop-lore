@@ -22,20 +22,27 @@ derivation, without the `/h3-stills/*` HTTP contract.
 
 Source artifact: a Python ComfyUI HTTP-route extension (its `studio_stills.py` and
 `web/*.mjs`), handed over **2026-09-30** by an external acquaintance of the repo owner
-and vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/`. That directory
-was scratch, was never committed, and **has been pruned — the source is not on disk
-and is not recoverable from git history.** Do not go looking for it.
+and vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`.
+That directory is scratch, gitignored, and was **never committed**. It was pruned before
+implementation — which is why this ticket was first written as an unverified claim — and
+it **has since been re-acquired and was functionally reviewed on 2026-10-16 by reading
+the on-disk source.** It is a **review-only reference artifact**: never committed,
+`.tmp/` only, never an import target, and nothing in `src/` may reference it. Per the
+separate-plugin-repo decision the custom-node half goes to its own plugin repository;
+loop-lore consumes the documented ComfyUI REST contract only.
 
-Every route count, module boundary, line number, and cap below is a **prior
-observation from one read on 2026-10-16, not a re-readable source.** Treat it as an
-unverified claim to be re-derived against a live ComfyUI and the upstream author if
-the artifact is ever re-acquired. The three reusable `.mjs` modules below are named
-by behavior, not just by path — re-derive each from its description and record where
-the confirmation came from (see the last AC).
+Every route count, module boundary, line number, and cap below is verified against that
+read. What is **not** verified is anything that needs a live ComfyUI — real `/queue`,
+`/history`, and `/prompt` payloads, and whether a run actually completes. The three
+reusable `.mjs` modules below are named by behavior, not just by path; where a claim needs
+a live run to confirm, the last AC records it.
 
-The sidecar splits its lifecycle across seven custom routes and five native ComfyUI
-endpoints. Only the custom ones are sidecar-specific; the native ones loop-lore
-already speaks.
+The sidecar splits its lifecycle across **nine** `/h3-stills/api/*` routes and five
+native ComfyUI endpoints. Only the custom ones are sidecar-specific; the native ones
+loop-lore already speaks. (The package registers 11 routes in total — `__init__.py:21`
+— those nine API routes plus the `/h3-stills` entry redirect, `:56`, and the
+`/h3-stills/{filename}` page server, `:62`. The SPA uses all nine API routes and no
+others: `stills.mjs:169,174,177,188,233,260,273,293,306,337,342,385`.)
 
 | Sidecar call | Native equivalent | loop-lore status |
 | --- | --- | --- |
@@ -43,7 +50,7 @@ already speaks.
 | `POST /prompt` with `extra_data.extra_pnginfo.workflow` (`web/stills.mjs:174-175`) | same | **not implemented** — `submitWorkflow` sends `{prompt}` only |
 | `POST /h3-stills/api/stills/register` (`studio_stills.py:324-332`) | `GET /history/{prompt_id}` | `pollResult` exists; there is no register step because there is no record store |
 | `GET /history/{prompt_id}` (`web/stills.mjs:260`) | same | exists |
-| `GET /queue` + `GET /h3-stills/api/queue-progress` (`web/stills.mjs:273`) | `GET /queue` only | `ComfyUIClient` has no queue read; the progress half wraps `comfy_execution.progress` in-process and is **not reachable over HTTP** |
+| `GET /queue` + `GET /h3-stills/api/queue-progress` (`web/stills.mjs:273`) | `GET /queue` + progress over `/ws` | `ComfyUIClient` has no queue read. The sidecar bridges `comfy_execution.progress` (imported in-process at `__init__.py:177`) to HTTP at its own route (`__init__.py:174-188`) — that route is sidecar-specific, but the per-node progress it exposes is ComfyUI's own in-process state, which loop-lore can read the same way or over `/ws` |
 | `GET /view?filename=&subfolder=&type=` (`web/stills.mjs:53`) | same | `downloadImage` / `downloadFile` exist |
 | `POST /upload/image` with `subfolder=h3_studio/still_uploads` (`web/stills.mjs:292-293`) | same | `uploadImage` exists |
 
@@ -61,16 +68,20 @@ Two consequences worth being explicit about:
    second queue concept.
 
 Three small client modules are genuinely reusable and carry **zero** H3 references:
-`web/queue_progress.mjs:1-20` (class_type regex → human stage, with `prompt_id`
-guard and `value`/`max` clamp), `web/job_timing.mjs:1-39` (duration from
-`execution_start` vs `execution_success`/`error`/`interrupted`), and
+`web/queue_progress.mjs:1-20` (`queueStage` class_type regex → human stage, with a
+`prompt_id` mismatch guard at `:13` and `value`/`max` clamp at `:16,18-19`),
+`web/job_timing.mjs:1-39` (`timingFromMessages` takes duration from `execution_start`
+(`:15`) vs the latest of `execution_success`/`execution_error`/`execution_interrupted`
+(`:16-17`) and returns `durationMs: null` when a run never started, `:18`), and
 `web/stills_gallery_status.mjs:1-13` (`stillQueueState` →
-`{phase, stage, value, max, position}`). Port those; skip `stills.html` and the
-model-specific half of `stills.mjs`.
+`{phase, stage, value, max, position}`, importing only `queue_progress.mjs`). Port
+those; skip `stills.html` and the model-specific half of `stills.mjs`.
 
-`web/stills_import.mjs:6-36` — a PNG `tEXt`/`iTXt` chunk reader that never decodes
-pixels, rejects compressed iTXt, and caps at 128 MiB — is also worth porting, for
-the import-validation policy's PNG-`prompt` comparison.
+`web/stills_import.mjs:6-36` — `pngFields`, a PNG `tEXt`/`iTXt` chunk reader that
+never decodes pixels, rejects compressed iTXt (`:23-24`), and caps each chunk read
+at 4 MiB (`:16`) — plus the 128 MiB whole-file cap in `readWorkflowFile` (`:44`),
+is also worth porting, for the import-validation policy's PNG-`prompt` comparison.
+It reads only the `workflow` and `prompt` keys (`:20`).
 
 ## Acceptance Criteria
 
@@ -92,12 +103,23 @@ the import-validation policy's PNG-`prompt` comparison.
 - [ ] Test against a fake ComfyUI: submit → history → view returns one result with
       a duration and a correct queue phase; a second concurrent `prompt_id` does not
       receive the first's progress
-- [ ] **Provenance recorded.** The source artifact is gone, so every sidecar-derived
-      claim this ticket relied on — the route split, the `extra_pnginfo.workflow` key,
-      the queue-progress stage mapping, the job-timing boundaries, and the PNG chunk
-      reader's 128 MiB cap — is either re-derived against a live ComfyUI, or
-      explicitly marked unverified. The ticket records, per claim, **where the
-      evidence came from** (executed test, an observed `/history` or `/queue` payload,
-      or a written answer from the upstream author); a claim with no provenance is not
-      used as if confirmed
+- [ ] **Provenance recorded.** Every sidecar-derived claim this ticket relies on is
+      now **verified by source read** (2026-10-16,
+      `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`): the route split
+      — nine `/h3-stills/api/*` routes plus the entry and page routes, 11 total
+      (`__init__.py:56,62,70,92,107,118,140,153,163,174,191`) against five native
+      endpoints used by the SPA (`stills.mjs:53,174,260,273,293`); the
+      `extra_pnginfo.workflow` single key with `client_id` on `POST /prompt`
+      (`stills.mjs:174-175`); the queue-progress stage mapping
+      (`queue_progress.mjs:1-20`, `prompt_id` guard `:13`, clamp `:16`); the
+      job-timing boundaries (`job_timing.mjs:11-19`); `stillQueueState`'s shape
+      (`stills_gallery_status.mjs:3-12`); and the PNG chunk reader's 128 MiB
+      whole-file cap with the 4 MiB per-chunk cap
+      (`stills_import.mjs:44` and `:16-24`). Still **not** verified, and to be
+      recorded as such rather than as confirmed: (a) the real `/queue`, `/history`,
+      and `/prompt` payload shapes against a live ComfyUI, (b) a run that actually
+      completes end-to-end here. For each, the ticket records the evidence — an
+      executed test, an observed `/history` or `/queue` payload **with its date**,
+      or a written answer from the upstream author — and a claim with no provenance
+      is not used as if confirmed
 - [ ] `bun run check` green
