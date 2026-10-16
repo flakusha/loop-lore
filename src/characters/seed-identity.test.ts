@@ -12,7 +12,7 @@ import { createLogger, } from "../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { seedCharacterTemplates, } from "./seed";
-import { stableTemplateId, } from "./seed/identity";
+import { adoptExistingActor, findExistingActor, slugifyName, stableTemplateId, } from "./seed/identity";
 
 describe("seedCharacterTemplates identity", () => {
   let fixture: TestDb;
@@ -214,5 +214,71 @@ describe("seedCharacterTemplates identity", () => {
     expect(seeded,).toEqual({ created: 2, skipped: 0, errors: [], },);
     expect(await countByName("Dr. Thorne",),).toBe(1,);
     expect(await countByName("Dr.Thorne",),).toBe(1,);
+  });
+
+  // ── Direct identity-function tests (import-edge coverage) ──
+
+  describe("slugifyName", () => {
+    test("collapses non-alphanumeric runs to hyphens", () => {
+      expect(slugifyName("Dr. Thorne",),).toBe("dr-thorne",);
+    });
+
+    test("lowerCases input", () => {
+      expect(slugifyName("Test User",),).toBe("test-user",);
+    });
+
+    test("trims leading/trailing hyphens from collapsed runs", () => {
+      expect(slugifyName("  Spaces  ",),).toBe("spaces",);
+    });
+  });
+
+  describe("findExistingActor", () => {
+    test("returns null when no row matches the legacy identity", async () => {
+      const { db, } = fixture;
+      const result = await findExistingActor(db, "no-such-id", {
+        seededAs: "Ghost Character",
+        ownerId: null,
+      },);
+
+      expect(result,).toBeNull();
+    });
+  });
+
+  describe("adoptExistingActor", () => {
+    test("stamps seedKey into settings of a legacy row", async () => {
+      const { db, } = fixture;
+      const legacyId = uid();
+      await db
+        .insertInto("actors",)
+        .values({
+          id: legacyId,
+          actor_type: "character",
+          display_name: "Adopted Direct",
+          user_id: null,
+          owner_id: null,
+          agent_type: "ai",
+          description: "",
+          visibility: "public",
+          settings: JSON.stringify({ is_template: false, is_default: false, },),
+          import_spec: "template",
+          data_source_format: "json",
+          data_raw: null,
+          format_version: 0,
+        },)
+        .execute();
+
+      await adoptExistingActor(db, legacyId, "direct-test-key",);
+
+      const row = await db
+        .selectFrom("actors",)
+        .select("settings",)
+        .where("id", "=", legacyId,)
+        .executeTakeFirst();
+
+      expect(row,).not.toBeUndefined();
+
+      const settings = JSON.parse(row!.settings as string,);
+      expect(settings.seedKey,).toBe("direct-test-key",);
+    });
   });
 });
