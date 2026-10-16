@@ -50227,12 +50227,20 @@
   ],
   "src/tui/chat-picker.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-models-overlay.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/terminal-ui.md"
     }
   ],
   "src/tui/chat.ts": [
@@ -50485,6 +50493,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-shell-testability.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/terminal-ui.md"
     }
   ],
   "src/tui/harness/types.ts": [
@@ -50519,8 +50531,16 @@
   ],
   "src/tui/models-overlay.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-models-overlay.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/terminal-ui.md"
     }
   ],
   "src/tui/nsfw-filter.test.ts": [
@@ -50531,16 +50551,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
-    }
-  ],
-  "src/tui/nsfw-filter.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-terminal-ui.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/terminal-ui.md"
     }
   ],
   "src/turning": [
