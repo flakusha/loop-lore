@@ -7,14 +7,14 @@ Spec-driven planning system. Specs live in `.plan/`, active tracking via `git is
 
 ## Directory Structure
 
-| Folder                | Purpose                                                                                       | Count |
-| --------------------- | --------------------------------------------------------------------------------------------- | ----- |
-| `tickets/`            | Task specs (authoring, review, iteration)                                                     | ~761  |
-| `epics/`              | Epic definitions (major initiatives, includes merged design/roadmaps/ideas/research/features) | ~174  |
-| `backlog/`            | **Status queue (index + 8 tier files, split 2026-08-15)**                                     | 10    |
-| `backlog/priority.md` | Priority index — file map + status header + milestone gates                                   | 1     |
-| `backlog/open.md`     | Open index — file map + status header + next actions                                          | 1     |
-| `epics-index.md`      | Epic registry index (generated; `giwt plan gen-docs`); replaces the retired `.plan/epics.md` snapshot | 1     |
+| Folder                | Purpose |
+| --------------------- | ------- |
+| `tickets/`            | Task specs (authoring, review, iteration) |
+| `epics/`              | Epic definitions (major initiatives, includes merged design/roadmaps/ideas/research/features) |
+| `backlog/`            | **Status queue (index + tier files, split 2026-08-15)** |
+| `backlog/priority.md` | Priority index — file map + status header + milestone gates |
+| `backlog/open.md`     | Open index — file map + status header + next actions |
+| `epics-index.md`      | Epic registry index (generated; `giwt plan gen-docs`); replaces the retired `.plan/epics.md` snapshot |
 
 ## Backlog Categories (`backlog/`)
 
@@ -96,16 +96,16 @@ Git issues track active work. Each issue references its spec:
 
 ```bash
 # List open issues
-./scripts/worktree.sh issues
+bun node_modules/giwt/src/cli.ts issues
 
 # Show issue details
-./scripts/worktree.sh show TASK-023
+bun node_modules/giwt/src/cli.ts show TASK-023
 
 # Add comment (e.g., plan reference)
-./scripts/worktree.sh comment TASK-023 -m "Plan spec: .plan/tickets/TASK-3d-view-modes.md"
+bun node_modules/giwt/src/cli.ts comment TASK-023 -m "Plan spec: .plan/tickets/TASK-3d-view-modes.md"
 
-# Change state
-./scripts/worktree.sh state TASK-023 done
+# Change state (open/closed)
+bun node_modules/giwt/src/cli.ts state TASK-023 closed
 ```
 
 ## Ticket Naming
@@ -172,3 +172,23 @@ direction without grepping prose:
 - **Source-comment guard**: `md:links` now also scans TypeScript comment text
   for `.plan/…` and `docs/…` citations and flags ones whose target no longer
   resolves (catches rot when specs/epics are renamed or merged).
+
+### Interconnection reporting
+
+Producer, consumer, and sibling relationships are derived, not hand-authored:
+
+1. Explicit `**Epic:**` and `Related` links win.
+2. TypeScript source comments naming `.plan/…` / `docs/…` files are producer evidence.
+3. `src/…` references in plan/spec prose and `.plan/code-map.json` establish ownership.
+4. Shared tags and matrix membership establish siblings only when direction is
+   not already decided.
+
+The generated `.plan/feature-matrix.md`, `.plan/code-map.json`, and existing
+link checks are the inputs. When the pinned `giwt` dependency includes
+`FEAT-plan-links-derive-and-validate-producers-consumers-siblings`, regenerate
+the derived graph with:
+
+```bash
+bun node_modules/giwt/src/cli.ts plan links
+bun node_modules/giwt/src/cli.ts plan links --check
+```
