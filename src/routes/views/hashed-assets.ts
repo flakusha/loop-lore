@@ -33,18 +33,28 @@ let hashLookupCache: { dir: string; mtimeMs: number; lookup: Map<string, string>
  * @returns HTML with resolved asset references
  */
 export function resolveHashedAssets(html: string, publicDir: string = DIST_PUBLIC_DIR,): string {
-  const stat = statSync(publicDir, { throwIfNoEntry: false, },);
+  let mtimeMs: number | undefined;
+  try {
+    mtimeMs = statSync(publicDir, { throwIfNoEntry: false, },)?.mtimeMs;
+  } catch {
+    // An unreadable tree (EACCES, ELOOP) degrades to the previous behaviour —
+    // serve the un-hashed names — instead of failing the render.
+    return html;
+  }
+
+  if (mtimeMs === undefined) {
+    // No build output yet — nothing to resolve against.
+    return html;
+  }
+
   let lookup: Map<string, string>;
   // Keyed on the dir as well as its mtime: two trees can share an mtime, and
   // aliasing them would serve one build's names for the other's requests.
-  if (stat && hashLookupCache?.dir === publicDir && hashLookupCache.mtimeMs === stat.mtimeMs) {
+  if (hashLookupCache?.dir === publicDir && hashLookupCache.mtimeMs === mtimeMs) {
     lookup = hashLookupCache.lookup;
-  } else if (stat) {
-    lookup = buildHashLookup(publicDir,);
-    hashLookupCache = { dir: publicDir, mtimeMs: stat.mtimeMs, lookup, };
   } else {
-    // No build output yet — nothing to resolve against.
-    return html;
+    lookup = buildHashLookup(publicDir,);
+    hashLookupCache = { dir: publicDir, mtimeMs, lookup, };
   }
 
   if (lookup.size === 0) { return html; }
