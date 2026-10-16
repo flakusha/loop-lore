@@ -1819,6 +1819,10 @@
   ],
   "src/assets/service/sanitize-svg.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-chart-export-png-svg-csv.md"
     },
@@ -1896,6 +1900,10 @@
     }
   ],
   "src/assets/service/validate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-vector-graphics-generation.md"
@@ -4237,6 +4245,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-art-quality-gates.md"
     }
   ],
   "src/assistant/quality/entity-creation.ts": [
@@ -4417,6 +4429,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    }
+  ],
+  "src/assistant/workflow-routing.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
     }
   ],
   "src/assistant/workflow-routing.ts": [
@@ -10435,6 +10457,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-seed-parameter-lock-and-rerun.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cross-model-comparison-run-data-side.md"
     }
   ],
   "src/comparisons/lifecycle.test.ts": [
@@ -15875,6 +15901,10 @@
       "source": ".plan/epics/epic-logging.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md"
     },
@@ -18031,6 +18061,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-research-agency-quality.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
       "kind": "ticket",
@@ -23844,7 +23878,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-canvas-viz.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     }
   ],
   "src/frontend/pages/worlds": [
@@ -28231,6 +28273,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-krea-2-reference-edit-diagnosis.md"
     }
   ],
   "src/gguf.rs": [
@@ -28491,6 +28537,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-canonical-usage.md"
+    }
+  ],
+  "src/harness/types-wire.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
     }
   ],
   "src/harness/types.ts": [
@@ -34282,6 +34334,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
     },
     {
@@ -36937,6 +36993,10 @@
   ],
   "src/routes/comparisons-export.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-.md"
     }
@@ -37458,6 +37518,10 @@
     }
   ],
   "src/routes/generation/compare.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-060.md"
@@ -38421,6 +38485,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
     }
   ],
   "src/routes/messages/create-response.ts": [
@@ -39052,6 +39120,10 @@
     }
   ],
   "src/routes/model-comparisons-analytics.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md"
@@ -41183,6 +41255,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md"
     },
     {
       "kind": "ticket",
@@ -47621,6 +47697,16 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/story/quality/registry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    }
+  ],
   "src/story/quality/scene-coverage.ts": [
     {
       "kind": "ticket",
@@ -47881,12 +47967,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/character-spec.md"
-    }
-  ],
-  "src/story/world-timeline-bar.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     }
   ],
   "src/telemetry": [
@@ -50615,6 +50695,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
     },
     {
       "kind": "ticket",

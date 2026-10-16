@@ -28,9 +28,10 @@ Follow the gallery's real htmx + Alpine idiom exactly:
 - Shared components live in `src/components/` (`filter-bar.html`, `filter-chips.html`,
   `loading-state.html`, `empty-state.html`, `asset-preview-modal.html`); page-local partials live in
   `src/partials/<feature>/` (`src/partials/gallery/preview-modal.html`).
-- Views and partials are **auto-discovered** — `discoverViews` / `discoverPartials` in
-  `src/routes/views/constants.ts:22` walk `src/views/` and `src/partials/`+`src/components/`, so
-  `src/views/comparisons.html` and `src/partials/comparisons/*.html` need no allow-list edit.
+- Views and partials are **auto-discovered** — `discoverViews` (`src/routes/views/constants.ts:22`) and
+  `discoverPartials` (`:41`) walk `src/views/` and `src/partials/`+`src/components/`, the latter merged
+  across both roots at `:66-69`, so `src/views/comparisons.html` and `src/partials/comparisons/*.html`
+  need no allow-list edit.
 - Grid fragment handler: `serveGalleryGrid` at `src/routes/views/gallery.ts:144`, registered at
   `/dynamic/gallery/grid` in `src/routes/views/plugin-dynamic.ts:42`. Register the comparison grid at
   `/dynamic/comparisons/grid` in the same plugin, and reject non-htmx requests with the same
@@ -59,4 +60,4 @@ two-cell (the diff view consumes it).
 - [ ] `comparisonGrid` Alpine component is registered in `src/frontend/alpine/index.ts` and drives filter, sort, and two-cell selection via `globalThis.htmx.ajax` (the `filterBar` idiom)
 - [ ] Sorting by model, seed, steps, cfg, and latency each work; filtering by backend and status works
 - [ ] A failed or in-flight cell renders a distinct status glyph and is not clickable as a diff participant
-- [ ] `src/routes/views/comparisons.test.ts` covers grid registration, the non-htmx 302, and the matrix shape (column/row counts from a seeded set)
+- [ ] `src/routes/views/comparisons.test.ts` — **this ticket owns and creates the file** — covers grid registration, the non-htmx 302, and the matrix shape (column/row counts from a seeded set). Sibling tickets on the same view (notably `TASK-comparison-cell-detail-metadata.md`) add their own cases to it rather than creating a second view test file

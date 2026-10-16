@@ -40,6 +40,14 @@ Layout coordinates are **stored, not computed**. A comic page must render
 identically in the editor, the viewer, and the exported image sequence; deriving
 geometry at render time from a template would let those three drift.
 
+**This ticket owns the `PanelLayout` shape and every write to
+`publication_panels.layout_json`** — the type, the serializer, the route-boundary
+validation, and the persistence path. `TASK-comic-caption-bubble-layout.md` also stores
+a rectangle on the panel row (the chosen bubble/caption placement), and that ticket
+writes through this one: it consumes `PanelLayout` and this repository path rather than
+defining a parallel schema or a second writer. One shape, one write path, two owners of
+*different decisions*.
+
 The authoring surface follows the same htmx + Alpine split as the book editor
 (`/dynamic/*` fragments from `src/routes/views/plugin-dynamic.ts`, Alpine store
 under `src/frontend/alpine/`, shell in `src/views/`).
@@ -48,7 +56,10 @@ under `src/frontend/alpine/`, shell in `src/views/`).
 
 - [ ] A `PanelLayout` type is defined with row / column / rowSpan / colSpan and
       optional fractional x/y/w/h offsets, plus a z-index, and is serialized to
-      `publication_panels.layout_json` without loss
+      `publication_panels.layout_json` without loss. **This ticket is the sole owner of
+      that shape and its write path**; `TASK-comic-caption-bubble-layout.md` stores its
+      bubble/caption placement in the same shape through this path and introduces no
+      second schema or second writer
 - [ ] A pure layout resolver (`src/publications/layout/`) computes panel
       rectangles for a given page width/aspect from stored layout data, with unit
       tests over a 3-row grid, a spanning panel, and a fractional-offset panel

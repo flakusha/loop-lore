@@ -30,8 +30,8 @@ looks authoritative. The rules (from the epic's ## Scope):
 
 This must be **one shared predicate**, not four checks re-implemented in the grid, the diff view, and
 the chart — otherwise the three surfaces drift, which is the exact class of bug
-`src/assets/service/read.ts:111` calls out when it factors the gallery visibility filter so the grid
-and the search "cannot drift apart".
+`visibleGalleryAssetFilter` in `src/assets/service/read.ts:120` prevents when it factors the gallery
+visibility filter so the grid and the search "cannot drift apart" (reasoning at `:111-115`).
 
 Returns a verdict, not a boolean: `{ comparable, reasons: string[] }`, where `reasons` names the
 violated rules so the UI can badge them. Consumers:

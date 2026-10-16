@@ -77,17 +77,22 @@ table — `publicationStatusMachine` at `:68`, values `draft | review | publishe
 rejected | archived`, `archived` terminal, `rejected → draft` the only way back —
 and it is already applied to `worlds` and `locations`
 (`src/db/schema-story.ts:58,138`). `PinnedState` (`src/db/enums-core/flags.ts:8`)
-covers `unpinned | pinned | archived`. Both are reused verbatim: the columns
-carry the existing types and defaults, and the CHECK constraint the repo
-already applies to those columns is applied here too. A publications-specific
-`state` enum would fork a vocabulary three other tables already use.
+covers `unpinned | pinned | archived`. Both are reused verbatim: the columns carry
+the existing TypeScript types and the same SQL column defaults the repo already
+applies to those columns — `notNull().defaultTo("draft")` for `publication_status`
+and `notNull().defaultTo("unpinned")` for `pin`. There is **no** CHECK constraint to
+copy: `src/db/migrations/001_init.ts` contains no `check(...)` / `CHECK` clause
+anywhere, and the only two existing `publication_status` columns are plain
+`addColumn` calls — `locations` at `:519` and `worlds` at `:659`. Enum validity on
+those columns is enforced in application code (`publicationStatusMachine`), not by
+the schema. A publications-specific `state` enum would fork a vocabulary three other
+tables already use.
 
 ## Acceptance Criteria
 
 - [ ] Columns reuse `PublicationStatus` and `PinnedState` verbatim; no
       publications-specific status enum or ad-hoc `state` column is added
-- [ ] The `publication_status` CHECK constraint matches the one already applied
-      to `worlds.publication_status` in `src/db/migrations/001_init.ts:519`
+- [ ] `publication_status` is `text NOT NULL DEFAULT 'draft'` and `pin` is `text NOT NULL DEFAULT 'unpinned'`, matching the shape already applied to `worlds.publication_status` (`src/db/migrations/001_init.ts:659`) and `locations.publication_status` (`:519`). No CHECK constraint is added — the repo has none — and enum validity is enforced through `publicationStatusMachine` in application code
 - [ ] `src/db/migrations/057_publication_artifacts.ts` exists, exports `up(db)`
       and `down(db)`, and creates `publications`, `publication_units`, and
       `publication_panels` with the columns above

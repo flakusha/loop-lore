@@ -29,13 +29,14 @@ Every format reads accepted units and panels in `position` order and reuses:
 - asset bytes through the existing asset serve path
   (`src/assets/serve-file.ts`, `src/assets/signed-url.ts`).
 
-Format formats in this repo already have a home and a house shape:
-`src/routes/export-shared/` holds `format.ts`, `types.ts`, `helpers.ts`, and
-per-domain writers (`story.ts`, `chats.ts`, `characters.ts`, `worlds.ts`,
-`locations.ts`, `assets.ts`, `finalize.ts`); `src/routes/chat-export/` holds the
-chat-facing `format.ts` and `export-route.ts`. Publication export joins that
-family rather than inventing a delivery mechanism, and long exports follow the
-existing progress-stream pattern (`src/frontend/alpine/export-progress.ts`).
+Export formats in this repo already have a home and a house shape.
+`src/routes/export-shared/` holds `types.ts`, `helpers.ts`, `index.ts`, `finalize.ts`
+and per-domain writers (`story.ts`, `chats.ts`, `characters.ts`, `worlds.ts`,
+`locations.ts`, `assets.ts`) — note there is **no `format.ts`** in that directory.
+The format-selection module lives one level over in `src/routes/chat-export/`,
+which holds `format.ts` and `export-route.ts`. Publication export joins that family
+rather than inventing a delivery mechanism, and long exports follow the existing
+progress-stream pattern (`src/frontend/alpine/export-progress.ts`).
 
 Per format:
 

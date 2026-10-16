@@ -653,8 +653,6 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Benchmark CI & Performance Regression Detection
 
 - **Status:** In Progress
@@ -2642,7 +2640,6 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Tags:** narration, actors, role-contract, message-kind, scene-exposition, rendering, regex
 - **File:** `.plan/epics/epic-narration-actor-separation.md`
 
-
 ### Narrative Publishing Workflows (Books & Comics)
 
 - **Status:** Not Started
@@ -2709,8 +2706,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -2981,7 +2976,6 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Tags:** watchdog, supervisor, agent, agentic-development, on-the-fly, hot-reload, self-heal, sandbox, ci, cicd, observability, automation, programmatic-api, dev-loop
 - **File:** `.plan/epics/epic-recursive-self-improvement.md`
 
-
 ### Reference-Conditioned Generation — Model Matrix, Templates, and Sidecar Absorption
 
 - **Status:** Not Started
@@ -3161,8 +3155,6 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3240,7 +3232,6 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Type:** Feature Epic
 - **Tags:** nsfw, moderation, safety, audit, flagging
 - **File:** `.plan/epics/epic-nsfw-moderation-priority.md`
-
 
 ### Technical Comparison Charts (multi-image model/generation comparison)
 
@@ -3472,3 +3463,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+

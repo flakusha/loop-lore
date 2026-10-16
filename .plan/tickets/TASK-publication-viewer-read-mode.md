@@ -46,9 +46,9 @@ state in an Alpine store under `src/frontend/alpine/` registered in
 Reader mechanics, chosen for what this repo already has:
 
 - **Book read mode** is a continuous scroll with chapter headings and a chapter
-  jump index — `src/story/world-timeline-bar.ts`'s timeline navigation is the
-  closest existing pattern for unit navigation and is worth reading before
-  writing a new one.
+  jump index — `src/frontend/pages/world-timeline-bar.ts`'s timeline navigation is
+  the closest existing pattern for unit navigation and is worth reading before
+  writing a new one. (It is a page-level Alpine store, not a file under `src/story/`.)
 - **Comic reader** is one page per view with next/previous, keyboard arrows, and
   a thumbnail strip. Spreading multiple pages side by side (a real spread) is
   explicitly out of scope for v1 — the page aspect ratio and the panel layout

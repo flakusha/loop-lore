@@ -35,8 +35,10 @@ Dimension/format readout reuses `extractImageMetadata(buffer)` at `src/assets/me
 
 Modal idiom: page-local partials at `src/partials/<feature>/` — copy the structure of
 `src/partials/gallery/preview-modal.html` (`modal-overlay` / `modal` / `modal-header` /
-`modal-body` / `modal-footer`, `window.openModal` / `window.closeModal` / `window.closeModalOnBackdrop`,
-`data-testid`). `src/components/asset-preview-modal.html` and
+`modal-body` / `modal-footer`, `data-testid`). The `window.openModal` / `window.closeModal` /
+`window.closeModalOnBackdrop` helpers are **not** in that partial; they are globals invoked from the
+page shell, e.g. `window.openModal('upload-modal')` in `hx-on::after-request` at
+`src/views/gallery.html:14`. `src/components/asset-preview-modal.html` and
 `src/frontend/components/asset-preview-modal.ts` are the shared-asset variant of the same pattern.
 
 **Escaping:** every rendered value here is server- or backend-derived and can contain arbitrary
@@ -58,5 +60,5 @@ type — see `TASK-comparison-gallery-comparison-set-integration.md`.
 - [ ] A variant dispatched to sd.cpp (no `extra_pnginfo`) renders an explicit "not supplied by this backend" state, not a blank panel
 - [ ] The detail modal shows every variant field plus width/height/format from `extractImageMetadata`
 - [ ] The modal shows the set id, run id, asset id, and a working link to `/api/assets/:id/raw`
-- [ ] A prompt containing `<script>` and a ComfyUI node payload containing `</script>` both render as inert text (escape test in `src/routes/views/comparisons.test.ts`)
+- [ ] A prompt containing `<script>` and a ComfyUI node payload containing `</script>` both render as inert text (escape test in `src/routes/views/comparisons.test.ts`, which is **owned and created by** `TASK-comparison-grid-frontend.md`; this ticket adds cases to it and does not create a second view test file)
 - [ ] Modal partial is at `src/partials/comparisons/cell-detail-modal.html` and is auto-discovered by `discoverPartials`

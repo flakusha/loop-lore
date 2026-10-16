@@ -24,9 +24,23 @@ each panel and writes the resulting assets onto the panel rows.
 Two phases, one template. The storyboard phase is LLM text and fits the existing
 harness exactly: `configs/templates/workflows/comic-storyboard.yaml` declares
 `intent: { type: generate, target: comic }`, steps for script → page/panel list →
-per-panel prompt refinement, and a `dispatch` block. Intent routing then reaches
-it through `matchWorkflowIntent` (`src/assistant/workflow-routing.ts:94`) without
-new plumbing.
+per-panel prompt refinement, and a `dispatch` block. Intent routing, however, is
+**not** free — it needs work this ticket owns:
+
+- `INTENT_PATTERNS` (`src/regex/intent.ts:19`) declares eight `generate` targets
+  today — `character`, `item`, `location`, `world`, `npc`, `species`, `image`,
+  `quest`. There is **no `comic` entry**.
+- `matchWorkflowIntent` (`src/assistant/workflow-routing.ts:94`) can only return a
+  registered target: it resolves the best-matching group, then does
+  `routed.find((w) => w.intent?.target === best.target)` (`:114`). With no `comic`
+  group the template is unreachable by intent no matter what the YAML declares.
+
+So the ticket adds a `comic` entry to `INTENT_PATTERNS` (e.g. `/draw.*comic/i`,
+`/make.*comic/i`, `/comic.*page/i`) and covers the pair in the routing test. Until
+that lands only the literal `triggers` list routes here, via `matchWorkflowTrigger`.
+No new `AssistantIntent` value — the intent stays `generate`; only the target is new.
+Note `image` is already a registered target, so a comic request phrased as an image
+request may bind to the image group instead; check that interaction in the test.
 
 The **art dispatch phase does not fit the current runner** and that is the honest
 shape of this ticket. `WorkflowDispatchConfig`
@@ -75,8 +89,7 @@ without it and record the gap — do not block the storyboard path on it.
       page/panel list → per-panel prompt refinement
 - [ ] The loader accepts the file with no validation error; every `step`
       validates against `WorkflowStepConfig`
-- [ ] `matchWorkflowIntent` reaches `comic-storyboard` for an imperative comic
-      generation message (test added to the routing test file)
+- [ ] A `comic` entry is added to `INTENT_PATTERNS` (`src/regex/intent.ts`) and `matchWorkflowIntent` reaches `comic-storyboard` for an imperative comic generation message, covered by a test in `src/assistant/workflow-routing.test.ts`. Until this AC is met, `matchWorkflowIntent` provably cannot return the template (see Context)
 - [ ] A confirmed storyboard parses into ordered `publication_units` (pages) and
       `publication_panels` rows, each panel carrying its art prompt, caption, and
       layout slot; a malformed storyboard payload is rejected at the boundary and

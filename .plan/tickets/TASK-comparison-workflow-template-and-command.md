@@ -35,9 +35,9 @@ Shape the YAML against the real types in `src/config/sections/templates-workflow
   `steps`, `dispatch`, `approval`.
 - `WorkflowStepConfig` (`:22`) — `type` is the closed union `"text" | "choice" | "multi"`; each step
   carries `formatTemplate`, `required`, `recommendations`, `options`.
-- `WorkflowDispatchConfig` (`:45`) — `backend`, `target` (the dispatch target — here
-  `POST /api/comparisons`), `payloadTemplate` (where `{prompt}` is substituted by
-  `confirmAndDispatch`, `src/assistant/workflow-runner.ts:140`), `nsfwPolicy`.
+- `WorkflowDispatchConfig` (`:45`) — `backend`, `target` (the dispatch target, declared at `:48` — here
+  `POST /api/comparison-sets`), `payloadTemplate` (where `{prompt}` is substituted by
+  `confirmAndDispatch`, `src/assistant/workflow-runner.ts:143`), `nsfwPolicy`.
 - `WorkflowApprovalConfig` (`:55`) — `type: "confirm" | "auto"`, `preview`.
 
 Steps for the comparison template: prompt (text), optional reference asset (text/choice), comparison
@@ -69,8 +69,8 @@ to accept the type.
 - [ ] `configs/templates/workflows/comparison-models.yaml` exists and is discovered by `findWorkflowFiles` without loader changes
 - [ ] The template validates against `validateWorkflowConfig` (a case in `src/config/workflow-templates.test.ts`)
 - [ ] Every step in the template uses a `type` from the existing `"text" | "choice" | "multi"` union; `WorkflowStepConfig` is unmodified
-- [ ] `dispatch.target` is `POST /api/comparisons` and `confirmAndDispatch` returns it verbatim (`src/assistant/workflow-runner.ts:147`)
+- [ ] `dispatch.target` is `POST /api/comparison-sets` and `confirmAndDispatch` returns it verbatim (`src/assistant/workflow-runner.ts:149`)
 - [ ] A chat message matching the template's `triggers` routes to it via `matchWorkflowTrigger` (`src/assistant/workflow-routing.ts:51`)
 - [ ] `/compare` as a slash command reaches the template through `src/routes/messages/command.ts`
-- [ ] Comparison outputs are linked with `entityType: "message"`, `"chat"`, and `"comparison_variant"`, and are visible in the gallery's asset-link filter
+- [ ] Comparison outputs are linked with `entityType: "message"`, `"chat"`, and `"comparison_set"`, and are visible in the gallery's asset-link filter
 - [ ] The template declares no `modelFamily` (the presets file does not exist yet)

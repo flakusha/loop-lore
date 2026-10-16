@@ -61,7 +61,7 @@ reviewable, and (for comics) illustrated.
 | Workflow command surface | ✅ Shipped | `src/assistant/commands/workflow.ts`, mounted at `src/routes/messages/command.ts` |
 | Workflow templates on disk | ✅ 3 files | `configs/templates/workflows/{entities,entity-types,defaults}.yaml` |
 | Quality gates | ⚠️ Partial | `ENTITY_QUALITY_GATES = ["schema","consistency","duplicate"]` (`src/config/sections/templates-workflow.ts:82`), validated by `validateEntityTypeConfig` (`src/config/templates-loader/validation-entity-types.ts`). Gates are declared on `EntityTypePreset.qualityGates`, **not** on `WorkflowApprovalConfig` |
-| Comic / manga / webtoon / speech-bubble concept | ❌ Absent | No occurrence of `comic`, `manga`, `webtoon`, or `speech bubble` anywhere in `.plan/` or `src/` outside this epic's own files. (`storyboard` appears twice in `epic-vector-graphics-generation.md:114,145` in an unrelated img2vid sense; `panel` appears only in generic UI senses, e.g. "GM Panel Layout" in `epic-story-mode-ui.md:83`.) |
+| Comic / manga / webtoon / speech-bubble concept | ❌ Absent (before this epic) | No **pre-existing** ticket or epic proposes comics / manga / webtoon / speech bubbles as a product, and nothing in `src/` implements one. Every occurrence of those terms in `.plan/` today is downstream of this epic: this file and its own tickets, the cross-reference from `epic-reference-conditioned-generation.md:252-253`, and the regenerated `.plan/feature-matrix.md` / `.plan/code-map.json`, whose `comic` row resolves solely to `EPIC-NARRATIVE-PUBLISHING-WORKFLOWS` (this epic's own `Tags`). (`storyboard` appears twice in `epic-vector-graphics-generation.md:114,145` in an unrelated img2vid sense; `panel` appears only in generic UI senses, e.g. "GM Panel Layout" in `epic-story-mode-ui.md:83`.) |
 | Publication artifact model | ❌ Absent | No `publications*` table in `src/db/schema-*.ts` |
 | Publication lifecycle vocabulary | ✅ Exists — **reuse it** | `PublicationStatus` (`src/db/enums-story/items.ts:45`) + `publicationStatusMachine` (`:68`) already model `draft → review → published/rejected → archived` with a guarded transition table, applied to `worlds` and `locations` (`src/db/schema-story.ts:58,138`). `PinnedState` (`src/db/enums-core/flags.ts:8`) covers `unpinned/pinned/archived` |
 | Book compiler | ❌ Absent | `src/story/book-compiler.ts` does not exist (`epic-creative-studio.md` Tier 3) |
@@ -230,6 +230,8 @@ is `deleted_at` on the artifact, consistent with the moderation tables.
 
 ## Current State
 
-Greenfield. No publication artifact, no comic concept, and no book compiler
-exists in `src/` or in `.plan/`. The dependencies listed above are the only
-prior art; this epic creates the artifact model the others have no home for.
+Greenfield. No publication artifact and no book compiler exists in `src/`, and no
+pre-existing ticket or epic proposes a comic concept (see the ground-state table
+above for the exact scope of the `.plan/` occurrences, all of which are downstream
+of this epic). The dependencies listed above are the only prior art; this epic
+creates the artifact model the others have no home for.
