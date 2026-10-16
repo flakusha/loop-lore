@@ -32,7 +32,7 @@ What hook/extension schema should the harness expose — event→matcher→handl
 | opencode | none (code branches) | `tool.execute.before` (throw = veto) | `tool.execute.after` | — | `experimental.session.compacting` (inject/replace prompt); `session.compacted` (notify) |
 | omp | in-handler | `tool_call` → `{block, reason, input}` | `tool_result` → `{content, details, isError, additionalContext}` | — | `session_before_compact` (cancel) / `session.compacting` (inject) / `session_compact` |
 
-Claude Code is the canonical chain: event fires → `matcher` narrows the tool → optional `if` narrows the subcommand → handler runs; omission/`"*"` matches all; PreToolUse precedence is `deny > defer > ask > allow`; `PostToolBatch` fires exactly once with the full `tool_calls` array (<https://docs.claude.com/en/docs/claude-code/hooks>). opencode vetoes by throwing and mutates `output.args` after (<https://dev.opencode.ai/docs/plugins>). omp's `tool_call` is fail-closed on handler throw, `input` rewrite last-wins (<https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md>). Hermes' `fallback_providers:` is an ordered `{provider, model}` list with per-task `fallback_chain` overrides and explicit `[]` to disable inheritance (<https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/fallback-providers.md>) — the same axis loop-lore has, missing only the *ordered, scoped* part.
+Claude Code is the canonical chain: event fires → `matcher` narrows the tool → optional `if` narrows the subcommand → handler runs; omission/`"*"` matches all; PreToolUse precedence is `deny > defer > ask > allow`; `PostToolBatch` fires exactly once with the full `tool_calls` array (<https://docs.claude.com/en/docs/claude-code/hooks>). opencode vetoes by throwing and mutates `output.args` after (<https://dev.opencode.ai/docs/plugins>). omp's `tool_call` is fail-closed on handler throw, `input` rewrite last-wins (<https://github.com/can1357/oh-my-pi/blob/main/docs/hooks.md>). Hermes' `fallback_providers:` is an ordered `{provider, model}` list with per-task `fallback_order` overrides and explicit `[]` to disable inheritance (<https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/fallback-providers.md>) — the same axis loop-lore has, missing only the *ordered, scoped* part.
 
 ## Recommendation (design sketch, reuse-first)
 
@@ -99,7 +99,7 @@ interface FallbackScope { scope: string; entries: string[] }  // scope = taskTyp
 fallbacks?: FallbackScope[];   // [] disables inheritance for that scope
 ```
 
-Ordered, scoped, explicit `[]` disables — the hermes `scoped_fallback_chain` shape. The router already emits an ordered `RouteResult { primary, fallbacks }` (`src/generation/routing/router.ts:38-42`). **[INFERENCE]** feeding that scoped list through `buildFailoverList` is a config-shape change, not a new resolver — unverified until the ticket lands.
+Ordered, scoped, explicit `[]` disables — the hermes `scoped_fallback_order` shape. The router already emits an ordered `RouteResult { primary, fallbacks }` (`src/generation/routing/router.ts:38-42`). **[INFERENCE]** feeding that scoped list through `buildFailoverList` is a config-shape change, not a new resolver — unverified until the ticket lands.
 
 ### 3.5 The absorption pattern (capability catalogue → native seam → deprecate wrapper)
 

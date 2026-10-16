@@ -53,7 +53,7 @@ export interface Assets {
   encrypted_key_id: string | null;
   alpha_status: Generated<AssetAlphaStatus>;
   content_hash: string | null;
-  data_version: Generated<number>;
+  content_version: Generated<number>;
   record_hash: Generated<string>;
   thumbnail_path: string | null;
 }

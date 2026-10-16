@@ -31,7 +31,7 @@ interface HandleOpts {
 }
 
 /**
- * Safe session response — strips token_hash, shows current flag
+ * Safe session response — strips secret_hash, shows current flag
  * @param session
  * @param session.id
  * @param session.user_id

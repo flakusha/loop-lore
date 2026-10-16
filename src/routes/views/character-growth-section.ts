@@ -21,7 +21,7 @@ export interface GrowthSectionValues {
   llmAssistEnabled: boolean;
   arcStage: string;
   arcDescription: string;
-  dataVersion: number;
+  contentVersion: number;
   /** Recent applied growth entries, newest first (server-rendered, player-safe) */
   recentEntries: Array<{ axis: string; reason: string; recordedAt: string }>;
 }
@@ -81,7 +81,7 @@ export function growthSection(
     escapeAttr(v.arcStage,)
   }', initialArcDescription: ${
     escapeAttr(jsonStringifyOr(v.arcDescription, '""',),)
-  }, initialEntries: [], dataVersion: ${v.dataVersion} })" data-testid="character-growth-editor">
+  }, initialEntries: [], contentVersion: ${v.contentVersion} })" data-testid="character-growth-editor">
             <fieldset class="growth-mode-fieldset">
               <legend>Growth Mode</legend>
               <label><input type="radio" name="growth_mode" value="dynamic" x-model="growthMode" data-testid="growth-mode-dynamic" /> Dynamic — character may evolve through the story</label>

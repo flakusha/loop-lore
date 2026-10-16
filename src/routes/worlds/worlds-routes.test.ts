@@ -51,7 +51,7 @@ describe("worldRoutes — lore persistence (BUG-world-lore-silently-stripped)", 
       owner_id: ownerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     } as never,);
   },);
 
@@ -139,7 +139,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
       owner_id: ownerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     } as never,);
   },);
 
@@ -286,7 +286,7 @@ describe("worldRoutes — list visibility + delete", () => {
       owner_id: ownerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     } as never,);
   },);
 
@@ -361,7 +361,7 @@ describe("worldRoutes — list q filter", () => {
       owner_id: ownerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     } as never,);
 
     const app = appWithAuth(db, ownerId, "user",);

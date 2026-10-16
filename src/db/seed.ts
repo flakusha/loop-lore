@@ -53,7 +53,7 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
         import_spec: "raw",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
       },)
       .execute();
 
@@ -137,7 +137,7 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
         id: adminId,
         username,
         display_name: username,
-        password_hash: await Bun.password.hash(password,),
+        secret_hash: await Bun.password.hash(password,),
         role: UserRole.Admin,
         status: UserStatus.Active,
         settings: "{}",
@@ -160,7 +160,7 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
         import_spec: "raw",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
       },)
       .execute();
 

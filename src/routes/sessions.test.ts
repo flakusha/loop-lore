@@ -96,7 +96,7 @@ describe("sessionsRoutes", () => {
         {
           id: sessionId1,
           user_id: userId,
-          token_hash: tokenHash("token-1",),
+          secret_hash: tokenHash("token-1",),
           ip: "127.0.0.1",
           user_agent: "TestAgent/1.0",
           expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -104,7 +104,7 @@ describe("sessionsRoutes", () => {
         {
           id: sessionId2,
           user_id: userId,
-          token_hash: tokenHash("token-2",),
+          secret_hash: tokenHash("token-2",),
           ip: "127.0.0.2",
           user_agent: "TestAgent/2.0",
           expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -126,9 +126,9 @@ describe("sessionsRoutes", () => {
     const other = body.data.find((s,) => s.id === sessionId2);
     expect(other!.isCurrent,).toBe(false,);
 
-    // token_hash must NOT be exposed
+    // secret_hash must NOT be exposed
     for (const s of body.data) {
-      expect(s.token_hash,).toBeUndefined();
+      expect(s.secret_hash,).toBeUndefined();
       expect(s.tokenHash,).toBeUndefined();
     }
   });
@@ -140,7 +140,7 @@ describe("sessionsRoutes", () => {
       .values({
         id: otherSessionId,
         user_id: otherUserId,
-        token_hash: tokenHash("other-token",),
+        secret_hash: tokenHash("other-token",),
         ip: "127.0.0.3",
         user_agent: "OtherAgent",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -187,7 +187,7 @@ describe("sessionsRoutes", () => {
       .values({
         id: sessionId,
         user_id: userId,
-        token_hash: tokenHash("detail-token",),
+        secret_hash: tokenHash("detail-token",),
         ip: "127.0.0.1",
         user_agent: "DetailAgent",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -202,14 +202,14 @@ describe("sessionsRoutes", () => {
       userId: string;
       ip: string;
       isCurrent: boolean;
-      token_hash?: string;
+      secret_hash?: string;
     };
 
     expect(body.id,).toBe(sessionId,);
     expect(body.userId,).toBe(userId,);
     expect(body.ip,).toBe("127.0.0.1",);
     expect(body.isCurrent,).toBe(true,);
-    expect(body.token_hash,).toBeUndefined();
+    expect(body.secret_hash,).toBeUndefined();
   });
 
   test("GET /api/sessions/:id returns 404 for other user's session", async () => {
@@ -219,7 +219,7 @@ describe("sessionsRoutes", () => {
       .values({
         id: otherSessionId,
         user_id: otherUserId,
-        token_hash: tokenHash("other-detail-token",),
+        secret_hash: tokenHash("other-detail-token",),
         ip: "127.0.0.3",
         user_agent: "OtherDetail",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -253,7 +253,7 @@ describe("sessionsRoutes", () => {
         {
           id: adminSessionId,
           user_id: adminId,
-          token_hash: tokenHash("admin-token",),
+          secret_hash: tokenHash("admin-token",),
           ip: "127.0.0.1",
           user_agent: "AdminAgent",
           expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -261,7 +261,7 @@ describe("sessionsRoutes", () => {
         {
           id: targetSessionId,
           user_id: otherUserId,
-          token_hash: tokenHash("target-token",),
+          secret_hash: tokenHash("target-token",),
           ip: "127.0.0.3",
           user_agent: "TargetAgent",
           expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -292,7 +292,7 @@ describe("sessionsRoutes", () => {
       .values({
         id: targetSessionId,
         user_id: userId,
-        token_hash: tokenHash("delete-token",),
+        secret_hash: tokenHash("delete-token",),
         ip: "127.0.0.1",
         user_agent: "DeleteAgent",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -322,7 +322,7 @@ describe("sessionsRoutes", () => {
       .values({
         id: currentSessionId,
         user_id: userId,
-        token_hash: tokenHash("current-token",),
+        secret_hash: tokenHash("current-token",),
         ip: "127.0.0.1",
         user_agent: "CurrentAgent",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -346,7 +346,7 @@ describe("sessionsRoutes", () => {
       .values({
         id: otherSessionId,
         user_id: otherUserId,
-        token_hash: tokenHash("protect-token",),
+        secret_hash: tokenHash("protect-token",),
         ip: "127.0.0.3",
         user_agent: "ProtectAgent",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -383,7 +383,7 @@ describe("sessionsRoutes", () => {
         {
           id: adminSessionId,
           user_id: adminId,
-          token_hash: tokenHash("admin-del-token",),
+          secret_hash: tokenHash("admin-del-token",),
           ip: "127.0.0.1",
           user_agent: "AdminDelAgent",
           expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -391,7 +391,7 @@ describe("sessionsRoutes", () => {
         {
           id: targetSessionId,
           user_id: otherUserId,
-          token_hash: tokenHash("target-del-token",),
+          secret_hash: tokenHash("target-del-token",),
           ip: "127.0.0.3",
           user_agent: "TargetDelAgent",
           expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -443,7 +443,7 @@ describe("sessionsRoutes", () => {
         {
           id: currentId,
           user_id: userId,
-          token_hash: tokenHash("current-token",),
+          secret_hash: tokenHash("current-token",),
           ip: "127.0.0.1",
           user_agent: "TestAgent",
           last_activity: staleActivity,
@@ -452,7 +452,7 @@ describe("sessionsRoutes", () => {
         {
           id: targetId,
           user_id: userId,
-          token_hash: tokenHash("target-token",),
+          secret_hash: tokenHash("target-token",),
           ip: "127.0.0.1",
           user_agent: "TestAgent",
           last_activity: staleActivity,
@@ -486,7 +486,7 @@ describe("sessionsRoutes", () => {
       .values([{
         id: foreignId,
         user_id: otherUserId,
-        token_hash: tokenHash("foreign-token",),
+        secret_hash: tokenHash("foreign-token",),
         ip: "127.0.0.1",
         user_agent: "TestAgent",
         expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
@@ -508,7 +508,7 @@ describe("sessionsRoutes", () => {
       .values([{
         id: staleId,
         user_id: userId,
-        token_hash: tokenHash("stale-token",),
+        secret_hash: tokenHash("stale-token",),
         ip: "127.0.0.1",
         user_agent: "TestAgent",
         expires_at: new Date(Date.now() - 60_000,).toISOString(),

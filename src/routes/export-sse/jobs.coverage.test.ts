@@ -125,7 +125,7 @@ describe("export-sse jobs helpers", () => {
       id: "cov-user",
       username: `cov-export-${stamp}`,
       display_name: "Cov Export",
-      password_hash: "h",
+      secret_hash: "h",
       role: "user",
       status: "active",
       settings: "{}",
@@ -139,7 +139,7 @@ describe("export-sse jobs helpers", () => {
       owner_id: "cov-user",
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },).execute();

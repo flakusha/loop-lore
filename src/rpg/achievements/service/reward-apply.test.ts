@@ -68,7 +68,7 @@ async function makeUser(playerId: string,): Promise<void> {
       id: playerId,
       username: `user-${playerId}`,
       display_name: `Test ${playerId}`,
-      password_hash: null,
+      secret_hash: null,
     },)
     .execute();
 }

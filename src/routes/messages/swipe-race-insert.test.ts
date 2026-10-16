@@ -84,7 +84,7 @@ describe("swipe-race-insert — concurrent insert + retry", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -259,7 +259,7 @@ describe("swipe-race-insert — idempotency", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -369,7 +369,7 @@ describe("swipe-race-insert — DB-enforced dedup (BUG-message-idempotency-key-d
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

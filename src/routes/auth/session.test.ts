@@ -115,7 +115,7 @@ describe("handleLogout — forged-cookie session deletion (regression)", () => {
       .values({
         id: sessionId,
         user_id: "user-alice",
-        token_hash: "irrelevant",
+        secret_hash: "irrelevant",
         ip: "127.0.0.1",
         user_agent: "session.test",
         expires_at: futureExpires,
@@ -147,7 +147,7 @@ describe("handleLogout — forged-cookie session deletion (regression)", () => {
       .values({
         id: mallorySessionId,
         user_id: "user-mallory",
-        token_hash: "y",
+        secret_hash: "y",
         ip: "127.0.0.1",
         user_agent: "session.test",
         expires_at: futureExpires,
@@ -179,7 +179,7 @@ describe("handleLogout — forged-cookie session deletion (regression)", () => {
       .values({
         id: sessionId,
         user_id: "user-alice",
-        token_hash: "x",
+        secret_hash: "x",
         ip: "127.0.0.1",
         user_agent: "session.test",
         expires_at: futureExpires,

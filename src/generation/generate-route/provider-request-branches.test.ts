@@ -71,7 +71,7 @@ async function seedActor(agentRole: string | null,): Promise<string> {
     agent_type: "ai",
     agent_role: agentRole,
     settings: "{}",
-    format_version: 0,
+    row_version: 0,
     import_spec: "{}",
   },).execute();
 

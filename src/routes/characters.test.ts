@@ -231,13 +231,13 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
 
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ displayName: "New Name", dataVersion: created?.format_version, },),
+        body: JSON.stringify({ displayName: "New Name", contentVersion: created?.row_version, },),
       },),
     );
 
@@ -260,13 +260,13 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
     const outfits = JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],);
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ outfits, defaultOutfit: "travel-gear", dataVersion: created?.format_version, },),
+        body: JSON.stringify({ outfits, defaultOutfit: "travel-gear", contentVersion: created?.row_version, },),
       },),
     );
 
@@ -294,12 +294,12 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ defaultOutfit: "court-robes", dataVersion: created?.format_version, },),
+        body: JSON.stringify({ defaultOutfit: "court-robes", contentVersion: created?.row_version, },),
       },),
     );
 
@@ -323,12 +323,12 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ defaultOutfit: "nope", dataVersion: created?.format_version, },),
+        body: JSON.stringify({ defaultOutfit: "nope", contentVersion: created?.row_version, },),
       },),
     );
 
@@ -346,7 +346,7 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
@@ -354,7 +354,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({
           outfits: JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],),
           defaultOutfit: "nope",
-          dataVersion: created?.format_version,
+          contentVersion: created?.row_version,
         },),
       },),
     );
@@ -373,7 +373,7 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
@@ -381,7 +381,7 @@ describe("charactersRoutes", () => {
         body: JSON.stringify({
           outfits: "not-json",
           defaultOutfit: "travel-gear",
-          dataVersion: created?.format_version,
+          contentVersion: created?.row_version,
         },),
       },),
     );
@@ -400,7 +400,7 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
     const outfits = JSON.stringify([
       { id: "gear", name: "Gear", descriptor: "Sturdy clothes", },
       { id: "gear", name: "Gear 2", descriptor: "Other clothes", },
@@ -410,7 +410,7 @@ describe("charactersRoutes", () => {
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ outfits, defaultOutfit: "gear", dataVersion: created?.format_version, },),
+        body: JSON.stringify({ outfits, defaultOutfit: "gear", contentVersion: created?.row_version, },),
       },),
     );
 
@@ -428,13 +428,13 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
 
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ contentRating: "nsfw_extreme", dataVersion: created?.format_version, },),
+        body: JSON.stringify({ contentRating: "nsfw_extreme", contentVersion: created?.row_version, },),
       },),
     );
 
@@ -461,9 +461,9 @@ describe("charactersRoutes", () => {
     expect(res.status,).toBe(404,);
   });
 
-  // CHAR-1: dataVersion is REQUIRED for concurrent-edit safety. Without
+  // CHAR-1: contentVersion is REQUIRED for concurrent-edit safety. Without
   // it, concurrent edits silently overwrite each other (last-write-wins).
-  test("PUT /api/actors/:id returns 400 when dataVersion is missing", async () => {
+  test("PUT /api/actors/:id returns 400 when contentVersion is missing", async () => {
     const app = createApp(db, userId,);
     const actorCreate = await app.handle(
       new Request("http://localhost/api/actors", {
@@ -486,7 +486,7 @@ describe("charactersRoutes", () => {
     expect(res.status,).toBe(400,);
   });
 
-  test("PUT /api/actors/:id returns 409 when dataVersion is stale", async () => {
+  test("PUT /api/actors/:id returns 409 when contentVersion is stale", async () => {
     const app = createApp(db, userId,);
     const actorCreate = await app.handle(
       new Request("http://localhost/api/actors", {
@@ -498,22 +498,22 @@ describe("charactersRoutes", () => {
 
     const { id, } = (await actorCreate.json()) as { id: string };
 
-    // Send a deliberately-stale dataVersion (one less than current).
+    // Send a deliberately-stale contentVersion (one less than current).
     const current = await db
       .selectFrom("actors",)
-      .select("format_version",)
+      .select("row_version",)
       .where("id", "=", id,)
       .executeTakeFirst();
 
-    // Send a deliberately-stale dataVersion that is still >= 0 so it passes
+    // Send a deliberately-stale contentVersion that is still >= 0 so it passes
     // schema validation (Elysia rejects negative integers with 422).
-    const staleVersion = (current?.format_version ?? 0) + 1;
+    const staleVersion = (current?.row_version ?? 0) + 1;
 
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ displayName: "Concurrent Edit", dataVersion: staleVersion, },),
+        body: JSON.stringify({ displayName: "Concurrent Edit", contentVersion: staleVersion, },),
       },),
     );
 
@@ -582,7 +582,7 @@ describe("charactersRoutes", () => {
     );
 
     const { id, } = (await actorCreate.json()) as { id: string };
-    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const created = await db.selectFrom("actors",).select("row_version",).where("id", "=", id,).executeTakeFirst();
 
     // solo holds "*" in DEFAULT_PERMISSIONS → granted admin.character bypass.
     const soloApp = createApp(db, "solo-user-id", "solo",);
@@ -590,7 +590,7 @@ describe("charactersRoutes", () => {
       new Request(`http://localhost/api/actors/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ displayName: "Solo Edit", dataVersion: created?.format_version, },),
+        body: JSON.stringify({ displayName: "Solo Edit", contentVersion: created?.row_version, },),
       },),
     );
 

@@ -21,7 +21,7 @@ const BASE: GrowthSectionValues = {
   arcDescription: "",
   arcStage: "introduction",
   characterId: "actor-aria",
-  dataVersion: 4,
+  contentVersion: 4,
   growthMode: "dynamic",
   llmAssistEnabled: false,
   recentEntries: [],
@@ -39,7 +39,7 @@ describe("growthSection", () => {
     expect(html,).toContain("initialMode: 'static'",);
     expect(html,).toContain('<option value="crisis" selected>',);
     expect(html,).toContain("The fall",);
-    expect(html,).toContain("dataVersion: 4",);
+    expect(html,).toContain("contentVersion: 4",);
   });
 
   test("renders recent entries", () => {

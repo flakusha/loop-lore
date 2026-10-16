@@ -9,7 +9,7 @@
 
 - Two-mode auth: remote multi-user (`config.auth.required = true`, JWT) and solo/demo mode (implicit solo user, lazily created/cached).
 - Auth runs as an inline Elysia `.derive()` in `src/elysia-app.ts` **before** all routes/plugins — child plugins don't share derived values, so it cannot be a `.use()` plugin (`src/middleware/elysia-auth.ts` shim was deleted). Context gets `{ userId, userRole, sessionId, ...i18n }`.
-- `authenticate()` (`src/middleware/auth/authenticate.ts`): token from `Authorization: Bearer` → `ll_token` cookie; `verifyJwt()` (`src/auth/jwt.ts`) checks `sub`/`sid` against the `sessions` table. Legacy opaque-token fallback (`src/middleware/auth/token.ts`): `sha256(token)` → `sessions.token_hash` for old sessions.
+- `authenticate()` (`src/middleware/auth/authenticate.ts`): token from `Authorization: Bearer` → `ll_token` cookie; `verifyJwt()` (`src/auth/jwt.ts`) checks `sub`/`sid` against the `sessions` table. Legacy opaque-token fallback (`src/middleware/auth/token.ts`): `sha256(token)` → `sessions.secret_hash` for old sessions.
 - i18n always injected: `detectLocale` (cookie → Accept-Language) + `createI18nContext`.
 - Permissions: `requirePermission()` matrix guard (`src/middleware/permissions.ts` + `src/users/permissions.ts`), localized 403 + denial logging; `adminViewGuard` (`src/middleware/admin-gate.ts`) 302s for `/views/admin/*`; `requireUserId(ctx)` is the canonical 401 helper (`src/routes/http-utils.ts`). Ownership checks migrated to the matrix (2026-08-18); `"*"` roles bypass.
 - Rate limiting: in-memory sliding window (`src/middleware/rate-limit.ts`), wired only to auth routes; full subsystem planned (see epic-api-governance).

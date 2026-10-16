@@ -60,8 +60,8 @@ beforeAll(async () => {
   const testDb = await createTestDb();
   db = testDb.db;
   setTestDatabase(db,);
-  await insertUsers(db, "caption-tester", "Caption Tester", { id: USER, password_hash: "hash", } as never,);
-  await insertUsers(db, "other-user", "Other User", { id: "some-other-user", password_hash: "hash", } as never,);
+  await insertUsers(db, "caption-tester", "Caption Tester", { id: USER, secret_hash: "hash", } as never,);
+  await insertUsers(db, "other-user", "Other User", { id: "some-other-user", secret_hash: "hash", } as never,);
   await insertActors(db, "Caption Speaker", { id: "caption-actor", owner_id: USER, } as never,);
   // Role override so the route resolves the mock provider deterministically.
   await insertModelRoleOverrides(db, "mock", "mock-caption-model", { role: ModelRole.Captioning, } as never,);

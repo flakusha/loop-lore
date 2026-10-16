@@ -897,7 +897,6 @@ export interface Users {
   id: Generated<string>;
   username: string;
   display_name: string;
-  password_hash: string | null;
   role: Generated<UserRole>;
   status: Generated<UserStatus>;
   settings: Generated<string>;
@@ -906,6 +905,8 @@ export interface Users {
   created_at: Generated<string>;
   last_seen_at: string | null;
   encryption_secret: string | null;
+  secret_hash: string | null;
+  row_version: Generated<number>;
 }
 
 export interface AssetTransforms {
@@ -932,7 +933,7 @@ export interface Personas {
   is_default: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
-  format_version: Generated<number>;
+  row_version: Generated<number>;
   temperature: number | null;
   max_tokens: number | null;
   model: string | null;
@@ -1163,7 +1164,7 @@ export interface Actors {
   system_prompt: string | null;
   agent_type: Generated<AgentType>;
   settings: Generated<string>;
-  format_version: Generated<number>;
+  row_version: Generated<number>;
   visibility: Generated<string>;
   welcome_message: string | null;
   personality: string | null;
@@ -1322,6 +1323,25 @@ export interface PluginState {
   config_json: string | null;
 }
 
+export interface RequestResults {
+  id: Generated<string>;
+  method: string;
+  route_pattern: string;
+  user_id: string | null;
+  status: string;
+  progress: string | null;
+  response_status: number | null;
+  response_headers: string | null;
+  response_body: string | null;
+  error: string | null;
+  started_at: string;
+  completed_at: string | null;
+  offloaded_at: string | null;
+  offload_path: string | null;
+  content_version: Generated<number>;
+  record_hash: Generated<string>;
+}
+
 export interface Notifications {
   id: Generated<string>;
   user_id: string;
@@ -1365,7 +1385,7 @@ export interface Messages {
   edited_at: string | null;
   attachments: string | null;
   archived_at: string | null;
-  format_version: Generated<number>;
+  row_version: Generated<number>;
   section_id: string | null;
   tool_calls: string | null;
   thinking: string | null;
@@ -1375,7 +1395,7 @@ export interface Messages {
   e2e_sender_eph_pub_jwk: string | null;
   e2e_chain_index: number | null;
   content_plaintext: string | null;
-  data_version: Generated<number>;
+  content_version: Generated<number>;
   record_hash: Generated<string>;
   merge_id: string | null;
 }
@@ -1504,7 +1524,7 @@ export interface DiceRollHistory {
 }
 
 // ── character_stats ────────────────────────────────────────────
-export interface CharacterStats {
+export interface CharacterStats extends AuditColumns {
   id: Generated<string>;
   actor_id: string;
   level: Generated<number>;
@@ -1526,9 +1546,6 @@ export interface CharacterStats {
   death_save_failures: Generated<number>;
   xp: Generated<number>;
   xp_to_next: Generated<number>;
-  data_version: Generated<number>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
   behavior_profile: string | null;
   evasiveness: number | null;
   cooperativeness: number | null;
@@ -1809,6 +1826,19 @@ export interface CharacterInternalTraits {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── sessions ────────────────────────────────────────────
+export interface Sessions {
+  id: Generated<string>;
+  user_id: string;
+  secret_hash: string;
+  ip: string | null;
+  user_agent: string | null;
+  created_at: Generated<string>;
+  last_activity: Generated<string>;
+  expires_at: string;
+}
+
 // ── rotation_history ────────────────────────────────────────────
 export interface RotationHistory {
   id: Generated<string>;
@@ -2058,7 +2088,7 @@ export interface E2eSkippedMessageKeys {
 // ── message_search_tokens ────────────────────────────────────────────
 export interface MessageSearchTokens {
   message_id: string;
-  token: string;
+  term: string;
   scope: string;
 }
 

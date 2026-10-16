@@ -111,7 +111,7 @@ export async function upsertByUnique<
  * SQLite (insert writes 1 row, update touches 1 row), so we disambiguate
  * by inspecting the inserted id. We sidestep this by running a guarded
  * SELECT for the row's primary key after the upsert: if the row's
- * `format_version` matches the inserted value, we treat it as fresh;
+ * `row_version` matches the inserted value, we treat it as fresh;
  * otherwise as updated. In practice the caller already knows the PK,
  * so the SELECT is cheap.
  *

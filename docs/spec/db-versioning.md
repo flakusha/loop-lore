@@ -5,17 +5,17 @@
 
 # DB Content Versioning & Migrations Reconciliation
 
-Status: Partially implemented (see `.plan/epics/epic-db-content-versioning.md`). Migration 018 added `data_version` columns and the `data_migrations` table; `src/db/content-version.ts` exists for asset content versioning.
+Status: Partially implemented (see `.plan/epics/epic-db-content-versioning.md`). Migration 018 added `content_version` columns and the `data_migrations` table; `src/db/content-version.ts` exists for asset content versioning.
 
 ## Implemented
 
 - Flat sequential migrations `001_init.ts` … `035_memory_source_chain.ts` under `src/db/migrations/`, auto-discovered by `getMigrationFiles()`; no `parts/` orchestrator; Kysely's internal table is the sole applied-migrations ledger (a `schema_version` table was deliberately dropped).
-- `data_version` columns (migration 018): `actors` (default 0, card format), `users` (1, settings JSON), `personas` (1), `messages` (1); plus `data_migrations` table (id, name, applied_at).
+- `content_version` columns (migration 018): `actors` (default 0, card format), `users` (1, settings JSON), `personas` (1), `messages` (1); plus `data_migrations` table (id, name, applied_at).
 - Migration tests exist as top-level `src/db/migrations.test.ts` + `src/db/migration-roundtrip.test.ts` (in-memory SQLite; run by the coverage gate by default — see `scripts/check/parallel/test-skip.mjs`).
 
 ## Gaps / aspirational
 
-- `data_migrations` table exists but no runner executes content transforms; `data_version` columns are not yet read/written by a content-version registry (the `ContentVersionDef` batch-migrator sketch in this spec's history remains a design).
+- `data_migrations` table exists but no runner executes content transforms; `content_version` columns are not yet read/written by a content-version registry (the `ContentVersionDef` batch-migrator sketch in this spec's history remains a design).
 - No rollback wiring (`migrateDown()` unused); no per-migration documentation index.
 - Migration numbering gaps (002-007) — resolution: document, do NOT renumber (existing deployments keep history).
 

@@ -84,7 +84,7 @@ beforeAll(async () => {
       id: OWNER_ID,
       username: OWNER_ID,
       display_name: OWNER_ID,
-      password_hash: "hash",
+      secret_hash: "hash",
       role: "solo",
       status: "active",
       settings: "{}",

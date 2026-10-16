@@ -73,7 +73,7 @@ beforeAll(async () => {
     data_raw: null,
     user_id: ACTOR_ID,
     owner_id: ACTOR_ID,
-    format_version: 0,
+    row_version: 0,
     visibility: "private",
   },).execute();
 
@@ -154,7 +154,7 @@ describe("encryptMessageContent / decryptMessageContent", () => {
       data_raw: null,
       user_id: newActor,
       owner_id: newActor,
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
     },).execute();
 

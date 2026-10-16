@@ -167,7 +167,7 @@ describe("Message edge-cases E2E", () => {
         id: "00000000-0000-4000-b000-000000000099",
         username: "edgeOther",
         display_name: "Edge Other",
-        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        secret_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
         role: "user",
         status: "active",
         settings: "{}",
