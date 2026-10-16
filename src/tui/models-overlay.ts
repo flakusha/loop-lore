@@ -48,11 +48,13 @@ export interface ModelsOverlayOptions {
   sessionToken?: string;
 }
 
-/** Footer hint per level, so the keys on offer are never a guess. */
+/** Footer hint per level, so the keys on offer are never a guess.
+ *  Verified against real blessed: every key named here is bound on the focused
+ *  box, and `Esc` reaches the app's global dismiss chain. */
 const HINTS: Record<OverlayLevel, string> = {
-  roles: "Enter: pick provider | c: clear override | Esc: close",
-  providers: "Enter: pick model | p: ping | r: rescan | Esc: back",
-  models: "Enter: assign | Esc: back",
+  roles: "Up/Down: move | Enter: pick provider | c: clear override | Esc: close",
+  providers: "Up/Down: move | Enter: pick model | p: ping | r: rescan | Esc: back",
+  models: "Up/Down: move | Enter: assign | Esc: back",
 };
 
 /**
@@ -204,7 +206,11 @@ export class ModelsOverlay {
     this.targetRole = undefined;
     this.targetProvider = undefined;
     this.box.show();
-    this.list.focus();
+    // Focus the BOX, not the list: every key below is bound on the box, and
+    // blessed only dispatches element keys to the focused element
+    // (widgets/screen.js:601). The list is created with `keys: false`, so it is
+    // not keyable at all — focusing it made the whole drill-down unreachable.
+    this.box.focus();
     this.screen.render();
     void this.refreshRoles();
   }
