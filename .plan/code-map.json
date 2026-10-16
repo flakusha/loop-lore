@@ -42333,12 +42333,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/chats.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     },
     {
       "kind": "ticket",
@@ -42469,6 +42477,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-image-backends-x-gallery-provenance-filter-backend-attributi.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/layout-assets.ts": [
@@ -42549,6 +42561,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    },
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/client-contract.md"
     }
   ],
   "src/routes/views/nsfw-audit.ts": [
@@ -42679,6 +42695,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-filter-generated-derived-content.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/static-partials.ts": [
@@ -42697,6 +42717,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    }
+  ],
+  "src/routes/views/view-models/gallery-grid.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/view-serving.ts": [
