@@ -27,12 +27,37 @@ const MANIFEST_PATH = DB_OUTPUT_DIR
 
 // ── Parser + file enumeration live in ./lib/migration-parser ──
 
+/**
+ * Apply `pairs` (`[oldName, newName]`) to `table`: carry each renamed
+ * column's definition across under the new name, keeping its original
+ * position. Re-keying in place rather than delete-then-add matters — appending
+ * would silently reorder every renamed column to the end of its table, which
+ * shows up as churn across every generated artifact.
+ */
+function applyRenames(
+  table: Record<string, ColumnDef>,
+  pairs: ReadonlyArray<readonly [string, string,]>,
+): void {
+  for (const [from, to,] of pairs) {
+    const def = table[from];
+    if (!def || table[to]) { continue; }
+    const next: Record<string, ColumnDef> = {};
+    for (const [name, col,] of Object.entries(table,)) {
+      if (name === from) { next[to] = def; }
+      else { next[name] = col; }
+    }
+    for (const key of Object.keys(table,)) { delete table[key]; }
+    Object.assign(table, next,);
+  }
+}
+
 // ── Manifest Generation ────────────────────────────────────
 
 function generateManifest(
   tables: Map<string, TableDef>,
   alterColumns: Map<string, Record<string, ColumnDef>>,
   dropColumns: Map<string, Set<string>>,
+  renameColumns: Map<string, Array<[string, string,]>>,
 ): string {
   // Build final schema by applying alters on top of creates
   const finalTables = new Map<string, Record<string, ColumnDef>>();
@@ -49,6 +74,14 @@ function generateManifest(
       continue;
     }
     Object.assign(finalTables.get(name,)!, cols,);
+  }
+
+  // Then apply renames: a rename keeps the column's type/NOT NULL/DEFAULT,
+  // so carry the definition across under the new name.
+  for (const [name, pairs,] of renameColumns) {
+    const table = finalTables.get(name,);
+    if (!table) { continue; }
+    applyRenames(table, pairs,);
   }
 
   // Then apply drops (remove columns that were renamed away or dropped)
@@ -309,10 +342,19 @@ function main() {
   const allTables = new Map<string, TableDef>();
   const allAlters = new Map<string, Record<string, ColumnDef>>();
   const allDrops = new Map<string, Set<string>>();
+  const allRenames = new Map<string, Array<[string, string,]>>();
 
   // Process all migrations in order
   for (const filePath of allFiles) {
-    const { creates, alters, drops, droppedTables, } = parseMigration(filePath, { logRenames: true, },);
+    const { creates, alters, drops, droppedTables, renames, } = parseMigration(
+      filePath,
+      { logRenames: true, },
+    );
+
+    for (const [name, pairs,] of renames) {
+      if (!allRenames.has(name,)) { allRenames.set(name, [],); }
+      allRenames.get(name,)!.push(...pairs,);
+    }
 
     for (const [name, def,] of creates) {
       if (droppedTables.has(name,)) {
@@ -342,7 +384,7 @@ function main() {
   console.log(`Tables with alters: ${allAlters.size}`,);
 
   // Generate manifest
-  const manifest = generateManifest(allTables, allAlters, allDrops,);
+  const manifest = generateManifest(allTables, allAlters, allDrops, allRenames,);
   writeFileSync(MANIFEST_PATH, manifest, "utf-8",);
   console.log(`\nWrote ${MANIFEST_PATH}`,);
 
