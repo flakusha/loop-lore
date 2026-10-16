@@ -10,7 +10,7 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { createLogger, } from "../../logger";
 import type { AvatarTemplateConfig, } from "../sections/templates";
-import { runTemplateExpansion, } from "./run";
+import { findExpansionFile, runTemplateExpansion, validateExpansionConfigErrors, } from "./run";
 
 // runTemplateExpansion logs via getLogger(); ensure a root logger exists.
 beforeAll(() => {
@@ -318,5 +318,44 @@ describe("runTemplateExpansion", () => {
     const result = runTemplateExpansion(cwd, BASE_CONFIG,);
     expect(result.config.intentPatterns.length,).toBe(2,);
     expect(result.result.patternsAdded,).toBe(2,);
+  });
+});
+
+// ── Direct run.ts export tests (import-edge coverage) ──
+
+describe("findExpansionFile", () => {
+  test("returns the path when an expansion file exists at the location", () => {
+    const cwd = tmpDir();
+    writeExpansion(
+      cwd,
+      "configs/templates",
+      "expansion.yaml",
+      "merge: extend\nemotions:\n  joy:\n    asset: joy.png\n    intent: joy\n",
+    );
+
+    const result = findExpansionFile(cwd,);
+    expect(result,).toBe(join(cwd, "configs/templates", "expansion.yaml",),);
+  });
+
+  test("returns null when no expansion file exists at the location", () => {
+    const cwd = tmpDir();
+    const result = findExpansionFile(cwd,);
+    expect(result,).toBeNull();
+  });
+});
+
+describe("validateExpansionConfigErrors", () => {
+  test("does not throw for a valid config", () => {
+    expect(() => validateExpansionConfigErrors(BASE_CONFIG, null,)).not.toThrow();
+  });
+
+  test("throws for a config with an intent pattern referencing a missing emotion", () => {
+    const invalid: AvatarTemplateConfig = {
+      merge: "extend",
+      emotions: { happy: { asset: "happy.png", intent: "happy", }, },
+      intentPatterns: [{ pattern: "smile", emotion: "nonexistent", },],
+    };
+
+    expect(() => validateExpansionConfigErrors(invalid, "test.yaml",)).toThrow();
   });
 });
