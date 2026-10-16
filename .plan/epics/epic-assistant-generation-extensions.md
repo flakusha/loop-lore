@@ -205,6 +205,23 @@ interface ScenarioSource {
   2026-10-09), so the prompt-format rules the templates rely on are still
   design-only.
 
+## Future Integration
+
+> Added 2026-10-16. **Cross-references only — the phase checklists below remain
+> the authoritative state record for this epic** and are not edited from here.
+
+- **Reference-conditioned multi-image generation** — one or more reference assets
+  with an explicit ordering + role contract, validated against a per-family
+  capability matrix _before_ submission — is the future capability behind the
+  Phase 2/3 `/image edit` / `/image style` command surfaces. Owner:
+  `epic-reference-conditioned-generation.md`; storage half
+  `TASK-reference-set-entity.md`, request half
+  `TASK-multi-reference-conditioning-request-model.md`.
+- **ComfyUI addons are separate repositories**, never vendored into loop-lore;
+  `TASK-external-comfyui-plugin-repo-integration-contract.md` is how loop-lore
+  consumes them (documented ComfyUI REST endpoints only, plus a declared
+  required-node prerequisite per template).
+
 ## Tasks
 
 ### Phase 1: Core Image Generation (MVP)
