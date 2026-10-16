@@ -10460,7 +10460,14 @@
     "source": ".plan/tickets/epic-2d-sprite-world.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "canvas",
+      "spatial-layer",
+      "pixel-art",
+      "npc-simulation",
+      "procedural-generation",
+      "parallax-layers",
+      "proximity-interaction",
+      "multiplayer-presence"
     ],
     "title": "2D Sprite World",
     "type": "EPIC"
@@ -10660,7 +10667,14 @@
     "source": ".plan/tickets/epic-anonymity-decentralization.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "tor",
+      "i2p",
+      "mesh-networking",
+      "byok",
+      "resource-sharing",
+      "reputation-ledger",
+      "radicle",
+      "gossip-protocol"
     ],
     "title": "# Anonymity & Decentralization — Epic",
     "type": "EPIC"
@@ -11189,7 +11203,14 @@
     "source": ".plan/tickets/epic-aux-enrichment-pipeline.md",
     "status": "in_progress",
     "tags": [
-      "(none)"
+      "aux-llm",
+      "enrichment-pipeline",
+      "classification",
+      "memory-extraction",
+      "telemetry",
+      "model-role-resolution",
+      "api-key-resolution",
+      "emotion-avatar"
     ],
     "title": "AUX LLM Enrichment Pipeline",
     "type": "EPIC"
@@ -11726,7 +11747,9 @@
     "source": ".plan/tickets/epic-chat-transfer-location.md",
     "status": "in_progress",
     "tags": [
-      "(none)"
+      "chat",
+      "routing",
+      "database"
     ],
     "title": "Chat/Group Chat Transfer & Location Change Mechanics",
     "type": "EPIC"
@@ -11763,7 +11786,10 @@
     "source": ".plan/tickets/epic-cicd-pipeline.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "ci",
+      "testing",
+      "automation",
+      "deployment"
     ],
     "title": "CI/CD Pipeline",
     "type": "EPIC"
@@ -11855,7 +11881,10 @@
     "source": ".plan/tickets/epic-communications-integrations.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "chat",
+      "federation",
+      "privacy",
+      "auth"
     ],
     "title": "Communications Integrations",
     "type": "EPIC"
@@ -11870,7 +11899,10 @@
     "source": ".plan/tickets/epic-communications-integrations-quickref.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "chat",
+      "privacy",
+      "auth",
+      "docs"
     ],
     "title": "# Communications Integrations — Quick Reference",
     "type": "EPIC"
@@ -12273,7 +12305,10 @@
     "source": ".plan/tickets/epic-database-backup-recovery.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "backup",
+      "recovery",
+      "sqlite",
+      "encryption"
     ],
     "title": "Database Backup & Recovery Infrastructure",
     "type": "EPIC"
@@ -12388,7 +12423,10 @@
     "source": ".plan/tickets/epic-deno-support.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "research",
+      "tooling",
+      "frontend",
+      "docs"
     ],
     "title": "Deno Support (Possible Node)",
     "type": "EPIC"
@@ -12403,7 +12441,10 @@
     "source": ".plan/tickets/epic-deployment-infrastructure.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "deployment",
+      "docker",
+      "ci",
+      "observability"
     ],
     "title": "Deployment Infrastructure (Docker & Bare Metal)",
     "type": "EPIC"
@@ -12418,7 +12459,10 @@
     "source": ".plan/tickets/epic-deployment-topologies.md",
     "status": "draft",
     "tags": [
-      "(none)"
+      "deployment",
+      "docker",
+      "database",
+      "observability"
     ],
     "title": "# Epic 25: Deployment Topologies & Packaging — Implementation Plan",
     "type": "EPIC"
@@ -12679,7 +12723,10 @@
     "source": ".plan/tickets/epic-emergent-narrative-design.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "rpg",
+      "game-mechanics",
+      "story",
+      "social"
     ],
     "title": "Emergent Narrative Design Principles",
     "type": "EPIC"
@@ -12713,7 +12760,10 @@
     "source": ".plan/tickets/epic-encryption-workflow.md",
     "status": "🟡 Core Built, Integration Pending",
     "tags": [
-      "(none)"
+      "encryption",
+      "crypto",
+      "secrets",
+      "assets"
     ],
     "title": "Encryption Workflow",
     "type": "EPIC"
@@ -12772,7 +12822,11 @@
     "source": ".plan/tickets/epic-error-envelope.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "api",
+      "validation",
+      "backend",
+      "frontend",
+      "federation"
     ],
     "title": "Error Envelope",
     "type": "EPIC"
@@ -12786,7 +12840,10 @@
     "priority": "Low",
     "epic": "",
     "tags": [
-      "(none)"
+      "api",
+      "frontend",
+      "research",
+      "testing"
     ],
     "source": ".plan/tickets/epic-experimental-egui-frontend.md",
     "status": "Not Started",
@@ -12993,7 +13050,9 @@
     "source": ".plan/tickets/epic-frontend-age-gate.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "security",
+      "privacy"
     ],
     "title": "Age Gate & Content Warnings",
     "type": "EPIC"
@@ -13069,7 +13128,10 @@
     "source": ".plan/tickets/epic-frontend-component-architecture.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "components",
+      "alpine",
+      "htmx"
     ],
     "title": "Frontend Component Architecture",
     "type": "EPIC"
@@ -13084,7 +13146,11 @@
     "source": ".plan/tickets/epic-frontend-components.md",
     "status": "in_progress",
     "tags": [
-      "(none)"
+      "frontend",
+      "components",
+      "ui",
+      "alpine",
+      "htmx"
     ],
     "title": "UI Components Library",
     "type": "EPIC"
@@ -13119,7 +13185,10 @@
     "source": ".plan/tickets/epic-frontend-encryption.md",
     "status": "in_progress",
     "tags": [
-      "(none)"
+      "frontend",
+      "encryption",
+      "crypto",
+      "security"
     ],
     "title": "Encryption UI",
     "type": "EPIC"
@@ -13153,7 +13222,9 @@
     "source": ".plan/tickets/epic-frontend-headers-management.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "ui",
+      "routing"
     ],
     "title": "Headers & Navigation Management",
     "type": "EPIC"
@@ -13190,7 +13261,10 @@
     "source": ".plan/tickets/epic-frontend-internationalization.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "i18n",
+      "ui",
+      "htmx"
     ],
     "title": "Internationalization (i18n)",
     "type": "EPIC"
@@ -13205,7 +13279,10 @@
     "source": ".plan/tickets/epic-frontend-login.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "auth",
+      "security",
+      "rate-limiting"
     ],
     "title": "Login & Authentication UI",
     "type": "EPIC"
@@ -13220,7 +13297,10 @@
     "source": ".plan/tickets/epic-frontend-notifications.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "notifications",
+      "ui",
+      "streaming"
     ],
     "title": "Notification System UI",
     "type": "EPIC"
@@ -13235,7 +13315,9 @@
     "source": ".plan/tickets/epic-frontend-overview.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "backend",
+      "docs"
     ],
     "title": "Frontend Overview",
     "type": "EPIC"
@@ -13250,7 +13332,10 @@
     "source": ".plan/tickets/epic-frontend-routing.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "routing",
+      "ui",
+      "htmx"
     ],
     "title": "Client-Side Routing",
     "type": "EPIC"
@@ -13356,7 +13441,11 @@
     "source": ".plan/tickets/epic-generation-flow-control.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "llm",
+      "concurrency",
+      "rate-limiting",
+      "config",
+      "admin"
     ],
     "title": "Generation Flow Control — Pause, Throttling & Concurrency",
     "type": "EPIC"
@@ -13459,7 +13548,10 @@
     "source": ".plan/tickets/epic-headless-alternative-frontends.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "frontend",
+      "api",
+      "transport",
+      "auth"
     ],
     "title": "Headless Mode & Alternative Frontends",
     "type": "EPIC"
@@ -13660,7 +13752,11 @@
     "source": ".plan/tickets/epic-implementation.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "backend",
+      "assistant",
+      "notifications",
+      "integrity",
+      "assets"
     ],
     "title": "Implementation Guide",
     "type": "EPIC"
@@ -13790,7 +13886,10 @@
     "source": ".plan/tickets/epic-io-formats.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "import-export",
+      "validation",
+      "integrity",
+      "schema"
     ],
     "title": "I/O Formats",
     "type": "EPIC"
@@ -13887,7 +13986,11 @@
     "source": ".plan/tickets/epic-licensing.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "audit",
+      "assets",
+      "admin",
+      "import-export",
+      "security"
     ],
     "title": "Licensing",
     "type": "EPIC"
@@ -13922,7 +14025,11 @@
     "source": ".plan/tickets/epic-llm-queue.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "llm",
+      "queue",
+      "scheduler",
+      "rate-limiting",
+      "concurrency"
     ],
     "title": "LLM Request Throughput & Message Scheduling",
     "type": "EPIC"
@@ -14413,7 +14520,11 @@
     "source": ".plan/tickets/epic-mini-games.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "game-mechanics",
+      "dice",
+      "api",
+      "chat",
+      "rpg"
     ],
     "title": "Mini-Games & Interactive Mechanics",
     "type": "EPIC"
@@ -14428,7 +14539,11 @@
     "source": ".plan/tickets/epic-mini-games-db.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "database",
+      "schema",
+      "migration",
+      "integrity",
+      "concurrency"
     ],
     "title": "# Mini-Games: Database Schema Design",
     "type": "EPIC"
@@ -14443,7 +14558,10 @@
     "source": ".plan/tickets/epic-mini-games-design.md",
     "status": "draft",
     "tags": [
-      "(none)"
+      "game-mechanics",
+      "npc",
+      "story",
+      "social"
     ],
     "title": "# Mini-Games: Design Document",
     "type": "EPIC"
@@ -14458,7 +14576,11 @@
     "source": ".plan/tickets/epic-mini-games-expanded.md",
     "status": "draft",
     "tags": [
-      "(none)"
+      "ui",
+      "ux",
+      "components",
+      "accessibility",
+      "concurrency"
     ],
     "title": "# Mini-Games: Expanded Design — UI/UX, Flow, & Deep Mechanics",
     "type": "EPIC"
@@ -14488,7 +14610,11 @@
     "source": ".plan/tickets/epic-mini-games-ui-api.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "api",
+      "backend",
+      "components",
+      "transport",
+      "rate-limiting"
     ],
     "title": "# Mini-Games: UI Components & API Contracts",
     "type": "EPIC"
@@ -14585,7 +14711,10 @@
     "source": ".plan/tickets/epic-multi-instance-reconciliation.md",
     "status": "draft",
     "tags": [
-      "(none)"
+      "concurrency",
+      "deployment",
+      "migration",
+      "reliability"
     ],
     "title": "# Epic 26: Multi-Instance Reconciliation — Implementation Plan",
     "type": "EPIC"
@@ -14600,7 +14729,9 @@
     "source": ".plan/tickets/epic-multi-session.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "auth",
+      "security",
+      "backend"
     ],
     "title": "Multi-Session Support",
     "type": "EPIC"
@@ -14871,7 +15002,9 @@
     "source": ".plan/tickets/epic-observability-telemetry.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "telemetry",
+      "ci",
+      "testing"
     ],
     "title": "# Epic 16: Observability",
     "type": "EPIC"
@@ -14907,7 +15040,10 @@
     "source": ".plan/tickets/epic-output-control-transforms.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "llm",
+      "streaming",
+      "i18n",
+      "frontend"
     ],
     "title": "Prompt & Output Control",
     "type": "EPIC"
@@ -14922,7 +15058,11 @@
     "source": ".plan/tickets/epic-party-migration.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "party",
+      "world",
+      "npc",
+      "chat",
+      "scheduler"
     ],
     "title": "Party Migration & Travel",
     "type": "EPIC"
@@ -14998,7 +15138,11 @@
     "source": ".plan/tickets/epic-platform-research.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
-      "(none)"
+      "research",
+      "planning",
+      "llm",
+      "agent",
+      "assistant"
     ],
     "title": "Platform Research & Feature Adoption (Permanently Ongoing)",
     "type": "EPIC"
@@ -15638,7 +15782,10 @@
     "source": ".plan/tickets/epic-review-check-parallel-ram-2026-09-03.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "tooling",
+      "performance",
+      "concurrency",
+      "ci"
     ],
     "title": "Review — `bun run check` RAM Footprint (2026-09-03)",
     "type": "EPIC"
@@ -15653,7 +15800,10 @@
     "source": ".plan/tickets/epic-review-dev-2026-08-26-late-merges.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "testing",
+      "moderation",
+      "audit",
+      "ci"
     ],
     "title": "Review — dev 2026-08-26 Late Merges (NSFW Audit Regression + Formatting)",
     "type": "EPIC"
@@ -15668,7 +15818,10 @@
     "source": ".plan/tickets/epic-review-dev-2026-08-26-security-data-integrity-merges.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "security",
+      "auth",
+      "integrity",
+      "audit"
     ],
     "title": "Strict Review — dev 2026-08-26 Merges (Security & Data-Integrity)",
     "type": "EPIC"
@@ -15743,7 +15896,10 @@
     "source": ".plan/tickets/epic-rpg-patterns.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "game-mechanics",
+      "planning",
+      "research",
+      "rpg"
     ],
     "title": "Flexible RPG Patterns",
     "type": "EPIC"
@@ -15870,7 +16026,10 @@
     "source": ".plan/tickets/epic-security-sandboxing.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "security",
+      "sandbox",
+      "llm",
+      "testing"
     ],
     "title": "# Security & Sandboxing — Epic",
     "type": "EPIC"
@@ -16006,7 +16165,9 @@
     "source": ".plan/tickets/epic-social-hub.md",
     "status": "Not Started",
     "tags": [
-      "(none)"
+      "social",
+      "chat",
+      "routing"
     ],
     "title": "# Social Hub — Epic",
     "type": "EPIC"
@@ -16216,7 +16377,11 @@
     "source": ".plan/tickets/epic-tooling-improvement.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
-      "(none)"
+      "tooling",
+      "ci",
+      "workflow",
+      "agent",
+      "docs"
     ],
     "title": "Tooling Support & Improvement (Permanently Ongoing)",
     "type": "EPIC"
@@ -16231,7 +16396,9 @@
     "source": ".plan/tickets/epic-transport-expansion.md",
     "status": "in_progress",
     "tags": [
-      "(none)"
+      "transport",
+      "streaming",
+      "reliability"
     ],
     "title": "Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport)",
     "type": "EPIC"
@@ -16246,7 +16413,9 @@
     "source": ".plan/tickets/epic-transport-layer-expansion.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "transport",
+      "docs",
+      "automation"
     ],
     "title": "Transport Layer Expansion",
     "type": "EPIC"
@@ -16280,7 +16449,10 @@
     "source": ".plan/tickets/epic-two-factor-auth.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "auth",
+      "2fa",
+      "security",
+      "crypto"
     ],
     "title": "Two-Factor / Multi-Factor Authentication",
     "type": "EPIC"
@@ -16341,7 +16513,9 @@
     "source": ".plan/tickets/epic-use-case-agentic-workspace.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "agent",
+      "tooling",
+      "docs"
     ],
     "title": "Use Case: Agentic Workspace",
     "type": "EPIC"
@@ -16356,7 +16530,11 @@
     "source": ".plan/tickets/epic-user-stories.md",
     "status": "🟡 Permanently Ongoing",
     "tags": [
-      "(none)"
+      "ux",
+      "accessibility",
+      "workflow",
+      "performance",
+      "frontend"
     ],
     "title": "User Story & Use Case Improvements (Permanently Ongoing)",
     "type": "EPIC"
@@ -16603,7 +16781,9 @@
     "source": ".plan/tickets/epic-world-shaping-divine.md",
     "status": "⬜ Not Started",
     "tags": [
-      "(none)"
+      "world",
+      "gm",
+      "rpg"
     ],
     "title": "World Shaping & Divine Intervention",
     "type": "EPIC"
