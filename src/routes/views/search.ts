@@ -6,22 +6,25 @@ import { visibleTagNames, } from "../../assets/service/tag-facets";
 import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
-import { applyGalleryAssetFilters, formatSize, inheritedHiddenAssetIds, } from "./gallery";
+import { applyGalleryAssetFilters, inheritedHiddenAssetIds, } from "./gallery";
+import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";
 import { escapeHtml, htmlResponse, } from "./layout";
+import { buildGallerySearchViewModel, type GallerySearchViewModel, } from "./view-models/gallery-grid";
 
 /**
- * @param database
- * @param params
- * @param actorId
- * @param actorRole
- * @returns the matching gallery asset cards as HTML
+ * Fetch and project the gallery search result set — the single data path
+ * behind the htmx search fragment and the JSON view-model branch.
+ * @param options
+ * @returns the search view-model both representations share
  */
-async function serveGallerySearch(
-  database: Kysely<DB>,
-  params: URLSearchParams,
-  actorId?: string | null,
-  actorRole?: string | null,
-): Promise<Response> {
+export async function loadGallerySearchViewModel(
+  { database, params, actorId, actorRole, }: {
+    database: Kysely<DB>;
+    params: URLSearchParams;
+    actorId?: string | null;
+    actorRole?: string | null;
+  },
+): Promise<GallerySearchViewModel> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const type = params.get("type",) ?? "all";
   const sort = params.get("sort",) ?? "name";
@@ -63,54 +66,29 @@ async function serveGallerySearch(
     }
   }
 
-  if (visible.length === 0) {
-    return htmlResponse(`<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
-      <div class="icon">📁</div>
-      <div class="title">No assets match your search</div>
-      <div class="description">Try different search terms.</div>
-    </div>`,);
-  }
-
   const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
+  return buildGallerySearchViewModel({ rows: visible, tagMap, },);
+}
 
-  /**
-   * @param a
-   */
-  function thumbForAsset(a: (typeof assets)[number],): string {
-    switch (a.asset_type) {
-      case "image": {
-        return `<img src="/api/v1/assets/${a.id}/thumb" alt="${escapeHtml(a.filename,)}" loading="lazy" />`;
-      }
-
-      case "audio": {
-        return `<div class="file-icon">🎵</div>`;
-      }
-
-      case "video": {
-        return `<div class="file-icon">🎬</div>`;
-      }
-
-      case "other":
-      case "memory": {
-        return `<div class="file-icon">📄</div>`;
-      }
-    }
+/**
+ * @param database
+ * @param params
+ * @param actorId
+ * @param actorRole
+ * @returns the matching gallery asset cards as HTML
+ */
+async function serveGallerySearch(
+  database: Kysely<DB>,
+  params: URLSearchParams,
+  actorId?: string | null,
+  actorRole?: string | null,
+): Promise<Response> {
+  const viewModel = await loadGallerySearchViewModel({ database, params, actorId, actorRole, },);
+  if (viewModel.assets.length === 0) {
+    return htmlResponse(renderGalleryEmptyState("search",),);
   }
 
-  const cards = Array.from(visible, (a,) => {
-    const filename = escapeHtml(a.filename,);
-    const size = formatSize(a.size_bytes,);
-    const tags = escapeHtml((tagMap.get(a.id,) ?? []).join(",",),);
-    return `<div class="asset-card" data-tags="${tags}" tabindex="0" role="button" x-on:click="window.openAssetPreviewById('${a.id}')" x-on:keydown.enter.prevent="window.openAssetPreviewById('${a.id}')" x-on:keydown.space.prevent="window.openAssetPreviewById('${a.id}')" data-testid="asset-card-${a.id}">
-      <div class="thumb">${thumbForAsset(a,)}</div>
-      <div class="details">
-        <span class="name">${filename}</span>
-        <span class="type">${size}</span>
-      </div>
-    </div>`;
-  },).join("",);
-
-  return htmlResponse(cards,);
+  return htmlResponse(renderGalleryCards(viewModel,),);
 }
 
 /**

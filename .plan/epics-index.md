@@ -2722,6 +2722,8 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### NSFW Interaction UI
 
 - **Status:** Not Started
@@ -3179,6 +3181,7 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
+
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3487,4 +3490,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

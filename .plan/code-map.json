@@ -42261,6 +42261,12 @@
       "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     }
   ],
+  "src/routes/views/gallery-cards.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    }
+  ],
   "src/routes/views/gallery.test.ts": [
     {
       "kind": "ticket",
@@ -42553,6 +42559,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    }
+  ],
+  "src/routes/views/view-models/chat-list.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    }
+  ],
+  "src/routes/views/view-models/gallery-grid.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/view-serving.ts": [

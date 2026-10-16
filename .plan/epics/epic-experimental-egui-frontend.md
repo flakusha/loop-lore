@@ -8,7 +8,7 @@
 
 
 **Status:** In Progress
-**Status Note:** In Progress — experimental egui wasm frontend shipped on branch egui-wasm-frontend (unmerged); htmx/Alpine parity roadmap drafted 2026-10-16, targets ticketed, none implemented yet.
+**Status Note:** In Progress — experimental egui wasm frontend shipped on branch egui-wasm-frontend (unmerged); roadmap target 1 (JSON view-models on the gallery and chats dynamic endpoints) landed on branch egui-json-view-models (unmerged); htmx/Alpine parity roadmap drafted 2026-10-16, remaining targets ticketed, none implemented yet.
 **Priority:** Low
 **Effort:** Medium
 **Type:** Research / Feature Epic
@@ -206,7 +206,7 @@ implementation should be modelled on.
 
 | # | Target | htmx/Alpine parity source | Ticket | Upstream reference |
 | - | ------ | ------------------------- | ------ | ------------------ |
-| 1 | JSON view-models on the dynamic endpoints | `src/routes/views/negotiate.ts` (`wantsJsonViewModel`) is wired at `/dynamic/characters/grid` only; gallery grid/search and chats list/search still emit HTML | `TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl` | the option-(c) seam this epic established |
+| 1 | JSON view-models on the dynamic endpoints | `src/routes/views/negotiate.ts` (`wantsJsonViewModel`) wired at `/dynamic/characters/grid`, `/dynamic/gallery/grid`, `/dynamic/gallery/search`, `/dynamic/chats/list`, `/dynamic/chats/search` (branch `egui-json-view-models`, unmerged) | `TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl` | the option-(c) seam this epic established |
 | 2 | SSE response streaming | `GET /api/v1/generation/stream/:chatId` + the Alpine consumer in `src/frontend/alpine/chat-generations.ts` (replay via `src/routes/stream-buffer/`) | `TASK-egui-sse-response-streaming-through-the-browser-bridge` | reqwest has no EventSource ([seanmonstar/reqwest#2677](https://github.com/seanmonstar/reqwest/issues/2677)) → bridge-owned `EventSource` |
 | 3 | `:shortcode:` emoji support | registry + `renderShortcodes` in `src/frontend/alpine/chat-utils/emoji.ts`, autocomplete in `src/frontend/alpine/emoji-autocomplete.ts`, bubble render in `src/frontend/alpine/chat-utils/render.ts` | `TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu` | the same registry served as JSON — no second Rust copy |
 | 4 | Command surface | toolbar `src/frontend/alpine/command-buttons.ts` (12 all-user + 6 GM), slash parsing `src/frontend/alpine/chat-slash.ts`, palette `src/frontend/alpine/chat-actions/command-palette.ts` | `TASK-egui-command-surface-parity-palette-role-gated-commands-slas` | [egui demo library](https://docs.rs/egui_demo_lib/latest/egui_demo_lib/) widget + modal patterns |
