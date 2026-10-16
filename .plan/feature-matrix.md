@@ -58,7 +58,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | aes-256-gcm | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | affordance | 2 | 0 | 0 | 0 | 2 | 0 | 0 |
 | age-gate | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| agency | 6 | 2 | 0 | 0 | 2 | 0 | 2 |
+| agency | 6 | 3 | 0 | 0 | 2 | 0 | 1 |
 | agent | 14 | 1 | 0 | 0 | 0 | 0 | 13 |
 | agent-diagnostics | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | agentic | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
@@ -1251,7 +1251,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | romance | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | room-layout | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | rotation | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| routes | 21 | 9 | 3 | 4 | 0 | 0 | 5 |
+| routes | 21 | 10 | 3 | 4 | 0 | 0 | 4 |
 | routing | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
 | rpg | 77 | 28 | 3 | 18 | 5 | 0 | 23 |
 | rpg-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1630,7 +1630,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2483 | 923 | 45 | 913 | 32 | 0 | 570 |
+| (untagged) | 2483 | 926 | 45 | 910 | 32 | 0 | 570 |
 
 ## By epic × status
 
@@ -1697,7 +1697,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | epic-actor-autonomy-story-drive | 10 | 10 | 0 | 0 | 0 | 0 | 0 |
 | epic-actor-turn-skip | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-actors | 6 | 4 | 0 | 0 | 0 | 0 | 2 |
-| epic-agency-story-points | 8 | 2 | 0 | 4 | 0 | 0 | 2 |
+| epic-agency-story-points | 8 | 6 | 0 | 1 | 0 | 0 | 1 |
 | epic-ambient-music-sfx | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
 | epic-analytics-observability | 17 | 9 | 0 | 2 | 0 | 0 | 6 |
 | epic-anonymity-decentralization | 1 | 0 | 0 | 1 | 0 | 0 | 0 |

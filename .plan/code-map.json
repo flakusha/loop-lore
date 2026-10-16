@@ -34103,6 +34103,12 @@
       "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
+  "src/routes/agency/earn.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agency-story-points.md"
+    }
+  ],
   "src/routes/agency/spend.test.ts": [
     {
       "kind": "ticket",

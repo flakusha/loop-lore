@@ -38836,7 +38836,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-http-expose-agency-earn-and-status-alongside-spend.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agency",
       "routes"
@@ -43220,7 +43220,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-npc-planning-prompt.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Npc Planning Prompt",
     "type": "TASK"
@@ -43233,7 +43233,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-npc-planning-tests.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Npc Planning Tests",
     "type": "TASK"
@@ -48749,7 +48749,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-rpg-player-agency-story-points.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Player Agency — Story Points",
     "type": "TASK"
