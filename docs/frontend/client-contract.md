@@ -73,6 +73,24 @@ The server operates in **dual-mode**:
 htmx/Alpine frontend. Clients MUST use `Accept: application/json`. See
 `TASK-frontend-view-model-json-negotiation.md` for the JSON read-path.
 
+### View-model JSON endpoints
+
+The `/dynamic/*` partial endpoints honour `Accept: application/json` and return
+the same view-model object the htmx fragment binds to — one query path, two
+representations (`src/routes/views/negotiate.ts`). A request without a strictly
+higher JSON q-value, and without `HX-Request: true`, keeps the existing 302 to
+`/views/`.
+
+| Endpoint | JSON shape | View-model module |
+|----------|-----------|-------------------|
+| `GET /dynamic/characters/grid` | `{ characters }` | `view-models/characters-grid.ts` |
+| `GET /dynamic/gallery/grid`, `/dynamic/gallery/search` | `{ assets }` | `view-models/gallery-grid.ts` |
+| `GET /dynamic/chats/list`, `/dynamic/chats/search` | `{ chats, page, pageSize, total, hasMore }` | `view-models/chat-list.ts` |
+
+Values are raw and unescaped (escaping is the renderer's job), so a JSON client
+receives the real text, not HTML entities. `thumbUrl` is set for image assets
+only; `null` otherwise.
+
 ## Response shapes
 
 The server does not use a single response envelope — shapes differ by route group.
