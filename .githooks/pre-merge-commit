@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Pre-merge-commit hook — validate merge conflict resolution
 #
 # Runs after `git merge` resolves conflicts but before commit.
@@ -8,10 +8,20 @@
 #   3. Test failures on resolved code
 #
 # Install: git config core.hooksPath .githooks && chmod +x .githooks/pre-merge-commit
+#
+# bash shebang: `[[ ]]` and `&>` are bash-only, and `$GIT_DIR` is deliberately
+# resolved instead of `.git` — in a linked worktree `.git` is a FILE, so the
+# hardcoded path never matched, MERGE_HEAD was reported absent and the entire
+# conflict-marker gate silently skipped on every worktree merge.
 
 set -u
 
 failures=0
+# OS-agnostic temp root (TMPDIR, then TEMP/TMP on Windows, else /tmp), one
+# directory per run, removed on exit — log capture below needs a home.
+TMP_DIR="${TMPDIR:-${TEMP:-${TMP:-/tmp}}}/loop-lore-premerge-$$"
+mkdir -p "$TMP_DIR"
+trap 'rm -rf "$TMP_DIR"' EXIT
 
 red() { printf "\033[31m%s\033[0m\n" "$*"; }
 green() { printf "\033[32m%s\033[0m\n" "$*"; }
@@ -25,8 +35,10 @@ echo ""
 # ── Step 1: Check for conflict markers ───────────────────────
 echo "--- Step 1: Conflict markers ---"
 
-# Get files that were involved in this merge (MERGE_HEAD exists during merge)
-if [[ -f .git/MERGE_HEAD ]]; then
+# Get files that were involved in this merge (MERGE_HEAD exists during merge).
+# $GIT_DIR, not .git: in a linked worktree .git is a gitlink file.
+GIT_DIR_PATH="$(git rev-parse --git-dir)"
+if [[ -f "$GIT_DIR_PATH/MERGE_HEAD" ]]; then
   MERGE_BASE=$(git merge-base HEAD MERGE_HEAD 2>/dev/null)
   CONFLICT_FILES=$(git diff --name-only --diff-filter=U 2>/dev/null || true)
 
@@ -44,11 +56,12 @@ if [[ -f .git/MERGE_HEAD ]]; then
   STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null || true)
   if [[ -n "$STAGED_FILES" ]]; then
     MARKER_FILES=""
-    for file in $STAGED_FILES; do
+    while read -r file; do
+      [[ -n "$file" ]] || continue
       if [[ -f "$file" ]] && grep -qE '^[<>=]{7}' "$file" 2>/dev/null; then
         MARKER_FILES="$MARKER_FILES $file"
       fi
-    done
+    done <<< "$STAGED_FILES"
 
     if [[ -n "$MARKER_FILES" ]]; then
       red "Conflict markers found in resolved files:"
@@ -69,10 +82,13 @@ fi
 echo ""
 echo "--- Step 2: Typecheck ---"
 if command -v bun &>/dev/null; then
-  if bun run typecheck 2>/dev/null; then
+  TYPECHECK_LOG="$TMP_DIR/typecheck.log"
+  mkdir -p "$TMP_DIR"
+  if bun run typecheck >"$TYPECHECK_LOG" 2>&1; then
     green "  ✓ TypeScript compiles clean"
   else
-    red "  ✗ TypeScript errors after merge"
+    red "  ✗ TypeScript errors after merge — report:"
+    cat "$TYPECHECK_LOG"
     failures=$((failures + 1))
   fi
 else
@@ -83,10 +99,13 @@ fi
 echo ""
 echo "--- Step 3: Unit tests ---"
 if command -v bun &>/dev/null; then
-  if bun test src/ 2>/dev/null; then
+  TEST_LOG="$TMP_DIR/tests.log"
+  mkdir -p "$TMP_DIR"
+  if bun test src/ >"$TEST_LOG" 2>&1; then
     green "  ✓ Unit tests pass"
   else
-    red "  ✗ Unit tests fail after merge"
+    red "  ✗ Unit tests fail after merge — report:"
+    cat "$TEST_LOG"
     failures=$((failures + 1))
   fi
 else
@@ -96,7 +115,7 @@ fi
 # ── Step 4: Check merge commit message format ────────────────
 echo ""
 echo "--- Step 4: Merge commit message ---"
-MERGE_MSG_FILE=".git/MERGE_MSG"
+MERGE_MSG_FILE="$GIT_DIR_PATH/MERGE_MSG"
 if [[ -f "$MERGE_MSG_FILE" ]]; then
   FIRST_LINE=$(head -1 "$MERGE_MSG_FILE")
   if echo "$FIRST_LINE" | grep -qE "^(Merge|merge|Merge branch|Merge pull request)"; then

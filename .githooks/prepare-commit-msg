@@ -38,7 +38,7 @@ if command -v bun &> /dev/null; then
     echo "Types: feat, fix, refactor, chore, test, docs, style, perf, build, ci, revert" >&2
     echo "Example: feat(core): add SSE streaming endpoint" >&2
     echo "" >&2
-    echo "Fix your commit message or use --no-verify to skip." >&2
+    echo "Fix your commit message and commit again." >&2
     exit 1
   fi
 fi

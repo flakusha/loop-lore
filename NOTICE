@@ -1,10 +1,11 @@
 Loop Lore — Copyright (c) 2026 Loop Lore Contributors
 
-This project incorporates third-party assets and components under 
+This project incorporates third-party assets and components under
 different licenses. See LICENSES/ for the full license texts.
 
 Licensing Summary
 -----------------
+
 Core application code:  LGPL-3.0-or-later   (see LICENSES/LGPL-3.0-or-later.txt)
 Documentation:          MIT                 (see LICENSES/MIT.txt)
 Agent skills:           Apache-2.0 OR MIT   (see LICENSES/Apache-2.0.txt, LICENSES/MIT.txt)
@@ -12,8 +13,10 @@ Plugins/extensions:     Apache-2.0 OR MIT   (see LICENSES/Apache-2.0.txt, LICENS
 
 Third-Party Assets
 ------------------
+
 Tabler Icons (docs/public/img/tabler-*.svg)
-  - Source: https://tabler.io/icons
-  - License: MIT
-  - Copyright: (c) 2024 Paweł Kuna
-  - Attribution: "Icons by Tabler Icons (https://tabler.io/icons)"
+
+- Source: https://tabler.io/icons
+- License: MIT
+- Copyright: (c) 2024 Paweł Kuna
+- Attribution: "Icons by Tabler Icons (https://tabler.io/icons)"

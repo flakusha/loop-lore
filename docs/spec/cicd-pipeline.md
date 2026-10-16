@@ -137,14 +137,23 @@ bun run version:bump --bump=patch  # or minor, major
 Installed via `git config core.hooksPath .githooks`:
 
 ```bash
-# Runs on every commit
-1. bun run format:fix          # Auto-format
-2. bun run check               # Full quality checks
-3. bun run test:unit           # Unit tests
-4. E2E_SAFEGUARD=1 bun run test:e2e  # E2E tests (safeguarded)
+# Staged files only (fast path). Any blocking step fails the commit.
+# 0. Co-Authored-By trailer attribution
+# 1. dprint fmt (TS/CSS/MD/HTML/JSON) + shfmt (.sh), re-staged after formatting
+# 2. eslint (TS) · stylelint (CSS) · markdownlint-cli2 (MD) ·
+#    markuplint --allow-warnings (HTML) · shellcheck (SH)
+# 3. SPDX headers on staged source (advisory unless SPDX_CHECK=1)
+# 4. Check-report freshness vs HEAD (non-blocking)
 ```
 
-Skip with: `git commit --no-verify`
+`.githooks/pre-commit:full` is the unbucketed variant: `bun run format:fix`, the
+full quality-check set (typecheck, lint, format, md-lint, schemas), then unit
+and e2e tests.
+
+The sibling hooks are `.githooks/prepare-commit-msg` (trailer audit +
+conventional-commit format), `.githooks/pre-push` (agent-push and tag-version
+blocks) and `.githooks/pre-merge-commit` (conflict markers, typecheck, unit
+tests after a merge).
 
 ## Dev Release Workflow
 
