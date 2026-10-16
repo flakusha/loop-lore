@@ -143,7 +143,9 @@ publications
 publication_units          -- ordered; a chapter for a book, a page for a comic
   id, publication_id, position, title?, body?   -- prose (book) / page notes (comic)
   publication_status PublicationStatus,         -- per-unit draft/review/published/rejected
-  pin PinnedState                               -- REUSE src/db/enums-core/flags.ts:8
+  pin PinnedState,                              -- REUSE src/db/enums-core/flags.ts:8
+  presentation ("composed" | "sequence") DEFAULT 'composed'   -- comic only;
+    -- see "Page composition strategy (review 2026-10-16)" above
 
 publication_panels         -- comic only; ordered within a unit
   id, publication_id, unit_id, position,
@@ -272,6 +274,118 @@ filters, authorization, and the progress stream; the tickets under this section
 own the canonical contract, the parse/import direction, and the derivation
 pipeline.
 
+### Page composition strategy (review 2026-10-16)
+
+The open review point from the comics approach: connected panel images may be
+authored (a) separately and then composed into one page, (b) separately and
+only sequenced, never composited, or (c) in one go by a model with enough
+context to hold a whole page. This section reviews the three and records the
+decision. It is the reasoning `TASK-comic-page-composition-strategy.md`
+implements.
+
+Three modes, on the same terms:
+
+| Mode | What it is | What it costs | How it fails |
+| ---- | ---------- | ------------- | ------------ |
+| **(A) per-panel images composed into one page** | N separately generated but connected (shared seed / reference-conditioned) panel images, placed on a page grid and rendered as one page | one image job per panel, plus a layout composer | the composer must handle arbitrary panel aspect ratios and overlap, and a layout bug is a layout bug, not an art bug |
+| **(B) per-panel images sequenced, not composited** | the same per-panel generation; the presentation is a sequence (vertical scroll, or a page-flip gallery) with no layout composer | one image job per panel, **no composer** | reading order is `position` and nothing else; no fixed page aspect; a panel that wants a wide format cannot get one |
+| **(C) one-shot page generation** | a single generation call produces the whole page, or a whole page run, at once | one call, one model, one prompt | the page is the smallest regenerable unit, so one bad panel costs the whole page; a defect is unattributable to a panel |
+
+Mode A is what the schema sketch and `layout_json` already imply. Mode B is the
+same generation path with the composer deleted. Mode C shares no code with
+either: [INFERENCE] it needs a backend this deployment does not have — nothing
+in `src/` measures any model's context window, and no image backend here is
+recorded as whole-page capable. The evidence is absence, not measurement, so it
+is stated as an inference rather than a fact.
+
+#### What decides it
+
+**Regeneration granularity — the decisive property.** This epic's model is
+per-unit regenerate with pin / accept / reject, and
+`TASK-publication-artifact-versioning.md` backs it with the keep-or-discard
+revision row: a human edit to one unit survives that unit's regeneration.
+Modes A and B keep that granularity at the panel — one bad panel is one
+regenerated panel. Mode C makes the *page* the smallest regenerable unit, so a
+single bad panel costs the whole page and cannot be regenerated alone.
+Per-panel granularity is the only mode consistent with
+`TASK-publication-artifact-versioning.md` and with the pin/accept semantics
+the review section already commits to.
+
+**Cross-panel connectivity is not the discriminator.** In every mode the panels
+of one page or run must keep the same characters, and that comes from the
+documented reference set — seed plus prior-panel conditioning — not from the
+number of calls. Mode C gets intra-page consistency for free inside one call
+but loses it across pages, which is exactly the axis the reference set already
+solves.
+
+**Backend reachability and privacy.** Modes A and B run over the ComfyUI /
+sd.cpp path this epic already depends on, including local generation. Mode C
+depends on a hosted high-context model being reachable from a given
+deployment, which is capability-gated and is a privacy/deployment decision,
+not a rendering decision.
+
+**Cost of a defect.** Per-panel: one failed image is one regenerated panel -
+cheap, and the storyboard ticket already leaves a failed row fillable by a
+re-run. One-shot: one failed page is the whole page regenerated, and the
+failure is unattributable to a panel.
+
+**Editing and layout.** Mode A needs the layout composer, which reuses
+`src/frontend/vn/sprite-stage.ts` (see "Reuse, not reinvention" above). Mode B
+needs none, which makes it strictly cheaper to ship. Mode C needs a composer
+*and* a re-compose path when the model returns a full-page raster, and gives
+the user no per-panel handle on the result.
+
+#### Decision
+
+Generation is **per-panel** (modes A/B). The presentation mode is a
+**per-publication, later per-page** choice — `composed` or `sequence` —
+because the two share the generation path and differ only in the presentation
+layer. `composed` is the default: it is what the schema sketch, the layout
+ticket, and the viewer ticket already assume.
+
+Mode C is **deferred and capability-gated, not rejected.** It is recorded here
+so a later model-capability change can enable it without reopening the
+artifact model. Three things must be verified before it can ship: the target
+model is reachable in this deployment, its legibility at the required panel
+count is demonstrated, and the page-as-smallest-regenerable-unit consequence
+is accepted by the human.
+
+The user's mention of a high-context model ("nano banana") is an **unverified
+external observation** — nothing in this repo measures any model's context
+window, and no ticket or epic records one. It is not a property of anything
+here and is not asserted as fact.
+
+Because the two presentation modes differ only in the presentation layer, the
+consequence is plain: the reader surface needs both a composed-page view and a
+sequence view. That is a boundary `TASK-publication-viewer-read-mode.md` does
+not cover today — it specifies one page per view only, with page spreads
+explicitly out of scope for v1.
+
+#### Consequence for the schema sketch
+
+`publication_units` carries a `presentation` column (`composed` | `sequence`,
+defaulting to `composed`), added to the illustrative DDL in "Artifact shape"
+above. It lives on the unit rather than on `publications` because the choice
+is a property of the page: a comic publication may set a default and then flip
+one page to `sequence`, and a column on `publications` cannot express that.
+`layout_json` on `publication_panels` carries meaning **only** when the unit is
+`composed`; a `sequence` unit never reaches the layout composer. No second
+layout mode and no new panel column are introduced — the enum is two values,
+and `layout_json` stays a nullable column that is simply never read for a
+`sequence` unit.
+
+#### Consequence for the existing tickets
+
+- `TASK-comic-storyboard-panel-generation-workflow.md` keeps per-panel dispatch
+  (one image job per panel). That is the committed strategy, not an oversight:
+  this section is why it is not one.
+- `TASK-comic-page-panel-layout-model.md` keeps ownership of `layout_json`, the
+  `PanelLayout` shape, and its single write path. This section adds one guard,
+  not a second owner.
+- `TASK-publication-viewer-read-mode.md` now has a boundary it does not
+  currently cover: the sequence reader. Its acceptance criteria are unchanged;
+  the new mode is recorded in its Context.
+
 ## Tasks
 
 - [ ] `TASK-publication-artifact-schema.md` — publication / unit / panel tables + migration
@@ -279,6 +393,7 @@ pipeline.
 - [ ] `TASK-book-unit-editor-review-surface.md` — book unit editor, regenerate/pin/accept
 - [ ] `TASK-comic-page-panel-layout-model.md` — page/panel layout model + authoring surface
 - [ ] `TASK-comic-storyboard-panel-generation-workflow.md` — LLM storyboard → art dispatch
+- [ ] `TASK-comic-page-composition-strategy.md` — page composition strategy: per-panel compose vs sequence vs one-shot
 - [ ] `TASK-illustrated-book-reference-pass.md` — illustrated-book pass with reference conditioning
 - [ ] `TASK-publication-art-quality-gates.md` — panel/book art gates + character consistency
 - [ ] `TASK-comic-caption-bubble-layout.md` — captions and speech-bubble layout + rendering
