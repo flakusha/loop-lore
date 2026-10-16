@@ -417,9 +417,10 @@ side) plus the C-side reroute hooks (tooling side).
 
 ### 5.2 Lessons loop-lore has that the harness tooling does not yet absorb
 
-**Slow finalize — the gates are the cost, not the merge.** The runner already
-defaults to serial (`scripts/check-parallel.mjs:14-22`) because co-scheduled
-gates OOM this host, and the header says so. Every finalize pays that. The
+**Slow finalize — the gates are the cost, not the merge.** The runner chunks
+its light gates four at a time and serialises the heavy ones (`HEAVY_NAMES`),
+because co-scheduled heavy gates OOM this host; `scripts/check-parallel.mjs`
+says so in its header. Every finalize pays that. The
 harness-side change is that `giwt finalize` should record, per run, which gate
 dominated wall time — the data already exists as `checks[].durationMs`
 (`scripts/check/parallel/report.mjs:201`) and is aggregated into
@@ -451,11 +452,13 @@ capacity is `checkSlotCapacity(availableMemMb)`
 (`gates.ts:53-74`; pool in `giwt/src/utils/check-slots`). Cross-worktree
 serialization is therefore already memory-derived — on contention it *warns and
 proceeds* rather than blocking. The gap is one level down: loop-lore's
-`DEFAULT_JOBS = 1` in `scripts/check/parallel/runner.mjs:29` (documented at
-`scripts/check-parallel.mjs:14`) is a flat `CHECK_JOBS` default that never
-consults the slot the run was admitted under, so a finalize that wins a slot still
-defaults to the most conservative fanout available. The smallest change is to
-let the runner accept the memory figure its caller already computed.
+`DEFAULT_JOBS` in `scripts/check/parallel/runner.mjs` (documented at
+`scripts/check-parallel.mjs`) is a flat constant — `CHECK_JOBS` default — that
+never consults the slot the run was admitted under, so a finalize that wins a
+slot still fans out by whatever that constant says, not by the memory the
+caller measured. The default is currently `4`, but the coupling is what is
+missing, not the number. The smallest change is to let the runner accept the
+memory figure its caller already computed.
 
 ### 5.3 Smallest set of changes that make the harness useful
 
