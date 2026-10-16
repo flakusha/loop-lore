@@ -6,6 +6,7 @@ import type { DB, } from "../../db/schema";
 import { toDate, } from "../../utils/date";
 import { renderShortcodes, } from "../shortcode-emoji";
 import { escapeHtml, } from "./layout";
+import type { ChatListItem, } from "./view-models/chat-list";
 
 /**
  * @param database
@@ -76,43 +77,31 @@ async function enrichChats(
  * @param rows
  * @returns the HTML markup for the chat list rows
  */
-function renderChatListItems(rows: {
-  id: string;
-  name: string;
-  type: string;
-  is_pinned: string;
-  updated_at: string;
-  created_at: string;
-  world_name: string | null;
-  location_name: string | null;
-  encryption_level: string;
-  participant_count: number;
-  last_message: string | null;
-}[],): string {
+function renderChatListItems(rows: readonly ChatListItem[],): string {
   const now = Date.now();
   return Array.from(rows, (r,) => {
     const name = escapeHtml(r.name,);
     const typeLabel = r.type === "group" ? "👥" : "💬";
-    const pinned = r.is_pinned === "pinned" ? " ★" : "";
-    const encryptionBadge = r.encryption_level !== "none"
+    const pinned = r.isPinned ? " ★" : "";
+    const encryptionBadge = r.encryptionLevel !== "none"
       ? `<span title="Encrypted (${
-        escapeHtml(r.encryption_level,)
+        escapeHtml(r.encryptionLevel,)
       })" style="font-size:11px;color:var(--accent-cyan)">🔒</span>`
       : "";
 
-    const worldTag = r.world_name
+    const worldTag = r.worldName
       ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">🌍 ${
-        escapeHtml(r.world_name,)
+        escapeHtml(r.worldName,)
       }</span>`
       : "";
 
-    const locationTag = r.location_name
+    const locationTag = r.locationName
       ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">📍 ${
-        escapeHtml(r.location_name,)
+        escapeHtml(r.locationName,)
       }</span>`
       : "";
 
-    const ts = toDate(r.updated_at,).getTime();
+    const ts = toDate(r.updatedAt,).getTime();
     const age = now - ts;
     let ageStr: string;
     if (age < 60_000) { ageStr = "just now"; }
@@ -120,10 +109,10 @@ function renderChatListItems(rows: {
     else if (age < 86_400_000) { ageStr = `${Math.floor(age / 3_600_000,)}h ago`; }
     else { ageStr = `${Math.floor(age / 86_400_000,)}d ago`; }
 
-    const preview = r.last_message
+    const preview = r.lastMessage
       ? `<div style="font-size:12px;color:var(--text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:500px">${
-        escapeHtml(renderShortcodes(r.last_message.slice(0, 80,),),)
-      }${r.last_message.length > 80 ? "…" : ""}</div>`
+        escapeHtml(renderShortcodes(r.lastMessage.slice(0, 80,),),)
+      }${r.lastMessage.length > 80 ? "…" : ""}</div>`
       : "";
 
     return `<div class="chat-list-card" x-on:click="window.location.assign('/views/chat?chatid=${
@@ -140,8 +129,8 @@ function renderChatListItems(rows: {
           <div style="display:flex;gap:var(--space-2);margin-top:2px;flex-wrap:wrap;align-items:center">
             ${worldTag}${locationTag}
             ${
-      r.participant_count > 0
-        ? `<span style="font-size:11px;color:var(--text-secondary)">👥 ${r.participant_count}</span>`
+      r.participantCount > 0
+        ? `<span style="font-size:11px;color:var(--text-secondary)">👥 ${r.participantCount}</span>`
         : ""
     }
           </div>
