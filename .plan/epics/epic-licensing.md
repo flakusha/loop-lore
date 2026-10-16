@@ -37,6 +37,7 @@ End-to-end licensing model for loop-lore: project source license (Apache-2.0), p
 - **Runtime:** middleware in `src/middleware/license-gate.ts` rejects requests that touch a feature whose license is not enabled in `src/config/license.ts`.
 - **Export:** `FormatHeader` from `epic-io-formats.md` includes a `licenses: string[]` field listing every license present in the payload; readers warn on incompatible combinations.
 - **Per-asset:** `assets.license` column (string) + `assets.license_url`; gallery UI surfaces the license badge.
+- **Publish:** `EnforcementPoint` gains `"publish"` (`src/schemas/nsfw-rating.ts:46` — today the union stops at `"storage"`), and the publish path re-checks per-asset license + NSFW rating at visibility time instead of trusting the route-entry evaluation. This is the boundary `epic-narrative-publishing-workflows.md`'s no-public-publishing non-goal (`:177-178`) depends on — the ban stands until the gate exists.
 
 ### Audit
 
@@ -76,4 +77,9 @@ End-to-end licensing model for loop-lore: project source license (Apache-2.0), p
 - `epic-import-export-io.md` — related
 
 ## Tickets
+
+- `TASK-licensing-publish-enforcement-point.md` — `EnforcementPoint` "publish" addition + the missing `src/middleware/license-gate.ts` / `src/config/license.ts` (unchecked AC at `:53`)
+- `TASK-licensing-asset-license-columns-migration.md` — per-asset `license` / `license_url` + model/attribution columns + append-only migration (unchecked AC at `:54`; closes the read-modify-write race at `:62-64` with a version column)
+- `TASK-licensing-publish-authorization-predicate.md` — per-caller identity + per-resource ownership predicate — the access-control dimension `authorizeChatExport` (`src/federation/clearance.ts:74-80`) does not carry
+- `TASK-fanout-chatid-default-deny.md` — plan-hygiene defect: the optional-field gate bypass at `src/federation/fan-out.ts:49,168` that the publish gate must not copy
 

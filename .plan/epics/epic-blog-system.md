@@ -39,7 +39,7 @@
 | LLM authoring modes (automated/deep-research/news) | Not Started | enum only — `src/rpg/blog/service/types.ts:23` |
 | Scheduled-publish activation | Not Started | `scheduled_at` column exists; no activation queue |
 | Human authoring UI (editor, drafts, version history) | Not Started | plain-markdown create form only |
-| Creative generation + promotion workflow | Not Started | — |
+| Creative generation + promotion workflow | Not Started | `TASK-blog-publish-unit-to-post-bridge.md` (publication→post bridge), `TASK-blog-rss-atom-sitemap.md`, `TASK-blog-unit-scheduled-serialization.md` |
 | Profile visibility / follower tiers | Not Started | — |
 
 ## Unticketed Gaps
@@ -484,3 +484,6 @@ Planned (do not exist yet):
 ## Linked Tasks
 
 - `TASK-blog-system.md` (Done)
+- `TASK-blog-publish-unit-to-post-bridge.md` — publication unit/book → blog post bridge with provenance (fills the "Creative generation + promotion workflow" row above)
+- `TASK-blog-rss-atom-sitemap.md` — RSS/Atom feeds + sitemap for public posts (verified gap: no feed machinery in `src/`)
+- `TASK-blog-unit-scheduled-serialization.md` — per-unit scheduled serialization + the missing scheduled-publish activation queue ("Unticketed Gaps" above)
