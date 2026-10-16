@@ -14981,10 +14981,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/db-versioning.md"
     }
   ],
   "src/db/data-migrations": [
@@ -15007,6 +15003,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/db-versioning.md"
     }
   ],
   "src/db/data-migrations/users/v1_to_v2.ts": [
@@ -47609,6 +47609,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/db-versioning.md"
     },
     {
       "kind": "spec",
