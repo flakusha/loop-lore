@@ -37,9 +37,11 @@ before authoring a workflow against an assumed node graph. A template written fr
 a release announcement is a fabrication.
 
 The Krea 2 diagnosis (`TASK-krea-2-reference-edit-diagnosis.md`) is the cheapest
-possible preview of what will go wrong here: the same substitutor type-coercion
-defect and the same LoRA node-id arithmetic bug will apply to a Krea 3 graph too.
-Read its write-up before authoring this template; do not re-diagnose.
+possible preview of what will go wrong here. Note that both pipeline defects it
+cites are already **fixed** — substitutor type coercion and LoRA node-id
+allocation are ruled out there, so do not carry either forward as a Krea 3
+hypothesis. Read its write-up for the *method* (diagnose before authoring); do
+not re-diagnose and do not copy its now-stale defect list.
 
 Scope note: Krea 3 vs Krea 2 is a **model swap inside one template family**, not a
 new transport surface. If the two share a graph shape, prefer one parameterized
