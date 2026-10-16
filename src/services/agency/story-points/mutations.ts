@@ -51,6 +51,9 @@ export async function earnStoryPoints(
   // Generated in JS so the id is known to the caller; a RawBuilder here would
   // interpolate as SQL text and .toString() would return the SQL, not an id.
   const ledgerId = randomBytes(16,).toString("hex",);
+  // The row's id is fixed at first insert; on any DO-NOTHING path the stored
+  // id — not this call's freshly generated one — must be reported.
+  let storedId = ledgerId;
 
   await db.transaction().execute(async (trx,) => {
     // 020 splits the uniqueness into two partial indexes: one for a NULL
@@ -78,7 +81,7 @@ export async function earnStoryPoints(
     if (Number(insert.numAffectedRows ?? 0n,) === 0) {
       const existing = await trx
         .selectFrom("actor_story_points",)
-        .select(["balance", "cap",],)
+        .select(["id", "balance", "cap",],)
         .where("actor_id", "=", params.actorId,)
         .where("world_id", "is", worldKey,)
         .executeTakeFirst();
@@ -87,6 +90,10 @@ export async function earnStoryPoints(
         // The row was deleted between the INSERT and here. Nothing to credit.
         return;
       }
+
+      // A concurrent earn inserted first: the stored row's id — not the id
+      // this call generated — is the ledger id to report.
+      storedId = existing.id;
 
       if (existing.cap !== null && existing.balance + params.amount > existing.cap) {
         // Cap check inside the transaction so a concurrent cap change or
@@ -117,7 +124,7 @@ export async function earnStoryPoints(
   void refreshActorStoryPointsCache(db, params.actorId, worldKey,); // never rejects; logs its own failures
   return {
     ...after,
-    ledger_id: ledgerId.toString(),
+    ledger_id: storedId,
     amount: params.amount,
     reason: params.reason ?? null,
     kind: "earn",
@@ -148,6 +155,9 @@ export async function spendStoryPoints(
   // Generated in JS so the id is known to the caller; a RawBuilder here would
   // interpolate as SQL text and .toString() would return the SQL, not an id.
   const ledgerId = randomBytes(16,).toString("hex",);
+  // The row's id is fixed at first insert; on any DO-NOTHING path the stored
+  // id — not this call's freshly generated one — must be reported.
+  let storedId = ledgerId;
 
   await db.transaction().execute(async (trx,) => {
     const conflictTarget = worldKey === null
@@ -202,13 +212,25 @@ export async function spendStoryPoints(
         current?.balance ?? 0,
       );
     }
+
+    // The debit touched exactly one row: read back its id so the response
+    // reports the stored ledger id even when the spend's own INSERT was a
+    // DO NOTHING (row created by an earlier earn).
+    const row = await trx
+      .selectFrom("actor_story_points",)
+      .select("id",)
+      .where("actor_id", "=", params.actorId,)
+      .where("world_id", "is", worldKey,)
+      .executeTakeFirst();
+
+    if (row) { storedId = row.id; }
   },);
 
   const after = await getStoryPointBalance(db, params.actorId, worldKey,);
   void refreshActorStoryPointsCache(db, params.actorId, worldKey,); // never rejects; logs its own failures
   return {
     ...after,
-    ledger_id: ledgerId.toString(),
+    ledger_id: storedId,
     amount: params.amount,
     reason: params.reason ?? null,
     kind: "spend",
