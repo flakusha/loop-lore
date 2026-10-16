@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { extractAuth, jsonResponse, } from "../../../routes/http-utils";
+import { extractAuth, forbiddenResponse, jsonResponse, } from "../../../routes/http-utils";
+import { can, } from "../../../users/permissions";
 import { ErrorResponse, SuccessResponse, } from "../../../validation/schemas";
 import { clearDiscoveryCache, getCachedLoras, getCacheStatus, } from "../discovery";
 
@@ -102,11 +103,11 @@ export function loraManagementRoutes(prefix = "/api",) {
         return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
       }
 
-      // TODO: Add admin role check when RBAC is implemented
-      // const { userRole, } = extractAuth(ctx,);
-      // if (userRole !== "admin") {
-      //   return jsonResponse({ error: "Forbidden", code: "FORBIDDEN", }, 403,);
-      // }
+      // Admin-only: clearing the cache disrupts discovery for all users.
+      const { userRole, } = extractAuth(ctx,);
+      if (!can(userRole, "admin.system",)) {
+        return forbiddenResponse();
+      }
 
       const input = ctx.body;
       clearDiscoveryCache(input.backend,);
