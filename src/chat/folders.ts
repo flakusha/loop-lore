@@ -26,11 +26,6 @@ interface Folder {
   createdAt: string;
 }
 
-interface ChatTagEntry {
-  chatId: string;
-  tag: string;
-}
-
 /** userId → folderId → Folder */
 const folderStore = new Map<string, Map<string, Folder>>();
 
@@ -141,12 +136,3 @@ export function listChatTags(chatId: string,): string[] {
   const tags = tagStore.get(chatId,);
   return tags ? Array.from(tags,) : [];
 }
-
-/** @internal exported for tests that want to seed state directly. */
-export const __test = {
-  tagStore: (chatId: string,): ChatTagEntry[] | null => {
-    const tags = tagStore.get(chatId,);
-    if (!tags) { return null; }
-    return Array.from(tags, (t,) => ({ chatId, tag: t, }),);
-  },
-};
