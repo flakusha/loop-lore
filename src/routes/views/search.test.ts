@@ -16,7 +16,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
-import { serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
+import { loadGallerySearchViewModel, serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 
 describe("views/search — gallery", () => {
   let db: Kysely<DB>;
@@ -134,6 +134,17 @@ describe("views/search — gallery", () => {
     const html = await res.text();
     expect(html,).not.toContain("<script>alert(1)</script>",);
     expect(html,).toContain("&lt;script&gt;",);
+  });
+
+  test("loadGallerySearchViewModel returns view-model", async () => {
+    const vm = await loadGallerySearchViewModel(db, new URLSearchParams({ q: "sword", },), "owner", "user",);
+    expect(vm.assets.length,).toBe(1,);
+    expect(vm.assets[0].filename,).toContain("sword",);
+  });
+
+  test("loadGallerySearchViewModel returns empty for no match", async () => {
+    const vm = await loadGallerySearchViewModel(db, new URLSearchParams({ q: "zzz", },), "owner", "user",);
+    expect(vm.assets.length,).toBe(0,);
   });
 });
 
