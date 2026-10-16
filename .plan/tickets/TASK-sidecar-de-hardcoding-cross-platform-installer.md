@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: Sidecar portability — de-hardcode, cross-platform, installable
+# TASK: Sidecar literals — inherited-literal guard (de-hardcoding, cross-platform, and installer are plugin-repo scope)
 
 **Status:** Not Started
 **Priority:** low
@@ -14,9 +14,15 @@
 
 ## Summary
 
-Remove the machine-specific assumptions from the absorbed sidecar so the H3 stills
-workflow runs on a non-Windows host, on a GPU that is not a 5080, and from a
-documented install step instead of a copied folder.
+**Scope-exclusion ticket.** loop-lore's half is narrow: **do not inherit** the
+sidecar's hardcoded literals into any loop-lore config, template, or code path.
+The de-hardcoding itself, the `explorer.exe` cross-platform replacement, and the
+installer are **plugin-repo work, out of scope** — recorded here and escalated,
+not implemented. **loop-lore should not hold this kind of responsibility**: the
+Python files that need those fixes ship from the separate ComfyUI plugin
+repository, which is the user's own initiative and will be integrated with
+loop-lore later. No acceptance criterion here asks loop-lore to write Python, an
+installer, or to ship files.
 
 ## Context
 
@@ -121,35 +127,48 @@ about the shipped product. If loop-lore absorbs a launch-profile recommendation,
 must reach the operator as an actionable message (and keep save-without-queue
 available), not sit in a capabilities payload.
 
-Scope: loop-lore's absorbed surface is the **TypeScript** client and templates
+Scope: the defects below are recorded as **reference notes the plugin repo
+inherits**. loop-lore's absorbed surface is the **TypeScript** halves
 (`TASK-comfyui-graph-builder-ts-port.md`,
-`TASK-stills-lifecycle-queue-progress-client.md`). This ticket makes **that**
-surface portable. It does not fix the Python source in `.tmp/` — that directory is
-scratch, stays uncommitted, and per the separate-plugin-repo decision the Python
-half ships from its own plugin repository rather than from loop-lore.
+`TASK-stills-lifecycle-queue-progress-client.md`), and this ticket's only
+implementation half is the guard that stops loop-lore copying the literals in.
+It does not fix the Python source in `.tmp/` — that directory is scratch, stays
+uncommitted, and per the separate-plugin-repo decision the Python half ships from
+its own plugin repository rather than from loop-lore. **The de-hardcoding, the
+`explorer.exe` replacement, and the installer are escalated to that repository,
+not implemented here.**
 
 ## Acceptance Criteria
 
-- [ ] No shell-out to `explorer.exe` or any platform-specific file-manager binary;
-      the reveal-a-result action works on Linux and macOS, or is replaced by a
-      served asset URL
-- [ ] No canvas cap is expressed as a model constant. If a practical ceiling is
-      needed it is derived from the capability matrix's `vramFloorGb` and named as
-      what it is
-- [ ] Checkpoint, CLIP/VAE names, sampler, steps, sigma shifts, reference
-      megapixels, output prefix, and input subfolder are all configuration with
-      defaults, not literals in the code path
-- [ ] Output and input paths derive from loop-lore's existing config-path resolution
-      (`epic-configs-path-resolution.md`), not from a relative literal that assumes
-      a ComfyUI cwd
-- [ ] The `profile_verified` recommendation, if surfaced at all, reaches the
-      operator as an actionable message rather than a field in a capabilities
-      payload
-- [ ] Installation of the absorbed workflow is documented and runnable from a
-      clean checkout — a prerequisites step (the six external H3 node types) and a
-      verification step, so "it does not work" cannot be the first symptom
-- [ ] Test: the same stills run completes on a non-Windows host path with no
-      platform branch; a path-relative assumption fails a test rather than a user
+- [ ] **No sidecar literal is inherited** into `src/` or `configs/` — checked by
+      grep, not by review: steps `8`, sampler `euler`, sigma shifts `8.0`/`3.0`,
+      the `MiniMaxH3/minimax_h3_hybrid_fl2va_ref2va_b30-49-int8.safetensors`
+      basename and its three CLIP / video-VAE / audio-VAE literals
+      (`studio_stills.py:17-20`, pinned `:128-135`), the `1.0` reference
+      megapixels, the single-LoRA SHA-256 pin (`studio_loras.py:11-12`, enforced
+      `studio_stills.py:170-171`), and the `Image/H3_Studio/<project>/WIP` output
+      tree / `h3_studio/still_uploads` input subfolder
+- [ ] The **4.2-megapixel canvas cap is recorded as one operator's VRAM
+      preference and never as a MiniMax H3 family property.** It is not written
+      into `epic-model-family-presets.md`, into any `minimax-h3` preset, or into
+      the capability matrix as a model ceiling. Where loop-lore needs a practical
+      ceiling it is derived from the capability matrix's `vramFloorGb` and named
+      as what it is
+- [ ] Where loop-lore declares values that play the same role (sampler, step
+      count, reference megapixels, resolution ceiling) they are **configuration
+      with defaults, resolvable per family** — the sidecar's `normalize()` machine
+      profile is not re-created as loop-lore validation. Output and input paths
+      resolve through loop-lore's existing config-path resolution
+      (`epic-configs-path-resolution.md`), never a relative literal that assumes a
+      ComfyUI cwd
+- [ ] **De-hardcoding, the `explorer.exe` cross-platform replacement, and the
+      installer are out of scope — plugin-repo work.** They are escalated to the
+      separate ComfyUI plugin repository and implemented nowhere in loop-lore. No
+      acceptance criterion in this ticket asks loop-lore to write Python, to ship
+      an installer, or to install files under `custom_nodes/`
+- [ ] Test: a grep-based guard fails if any of the pinned literals above reappears
+      in `src/` or `configs/`; no live ComfyUI run is required, because none of the
+      accepted work is a run
 - [ ] **Provenance recorded.** Every sidecar-derived claim this ticket relies on is
       now **verified by source read** (2026-10-16,
       `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`): the
@@ -164,11 +183,12 @@ half ships from its own plugin repository rather than from loop-lore.
       artifact is `START_HERE.md` + four `.py` files + the `FILES` set
       `__init__.py:17-18`); and **what `profile_verified` actually does** —
       server-side advisory (`__init__.py:42-48`, surfaced `:75,86`, never blocking a
-      Python route) but client-side enforced (`web/stills.mjs:160,167,388`). Still
-      **not** verified, and to be recorded as such rather than as confirmed: (a)
-      what `reviewed_profile()` returns under a real ComfyUI launch, (b) a
-      completed run of the absorbed workflow. For each, the ticket records the
-      evidence — an executed test, an observed capabilities payload, or a written
-      answer from the upstream author — and a claim with no provenance is not used
-      as if confirmed
+      Python route) but client-side enforced (`web/stills.mjs:160,167,388`).
+      Every claim above is about what the Python source says; **none of it is about
+      a loop-lore run**, and none is used as one. Still **not** verified, and to be
+      recorded as such rather than as confirmed: what `reviewed_profile()` returns
+      under a real ComfyUI launch, and whether a live ComfyUI resolves the six
+      external node types at all. Those are the plugin repo's runtime questions,
+      not this ticket's; the ticket records the evidence rather than assuming it,
+      and a claim with no provenance is not used as if confirmed
 - [ ] `bun run check` green

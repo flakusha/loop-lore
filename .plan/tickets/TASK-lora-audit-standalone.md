@@ -14,8 +14,16 @@
 
 ## Summary
 
-A LoRA audit that runs with ComfyUI stopped: header validation, checksum, tensor
-shape compatibility against a base checkpoint, and a machine-readable verdict.
+A **generic standalone LoRA audit** — no ComfyUI process, no HTTP, no
+`folder_paths`: safetensors header parse, SHA-256, and tensor-shape / compatibility
+audit against a base checkpoint, returning a machine-readable verdict.
+
+Its purpose is **loop-lore's own LoRA discovery** (`src/generation/lora/` —
+`discovery.ts`, `discovery-comfyui.ts`, `discovery-http.ts`,
+`discovery-sdserver.ts`), not the Python sidecar: `studio_loras.py` is the
+reference implementation for the parsing rules, nothing more. The sidecar's
+custom-node and portability work is a separate concern (see
+`TASK-sidecar-de-hardcoding-cross-platform-installer.md`).
 
 ## Context
 
@@ -79,6 +87,17 @@ Two conflicts to resolve rather than duplicate:
 2. `TASK-comfyui-first-class-lora-stacks.md` owns applying a LoRA stack to a
    workflow. Applying a bad LoRA is what this ticket exists to prevent — read it
    so the verdict shape is consumable there.
+3. **There is no consumer yet, and this ticket does not invent one.**
+   `src/generation/lora/validation.ts` today validates LoRA *config records*
+   (`validateLoRAConfig`, `validateLoRAModel`) and *filenames*
+   (`isLoRAFilename`, `extractLoRAName`) — no safetensors header, no checksum, no
+   tensor comparison. Nothing in loop-lore reads a LoRA file's bytes. The audit
+   module is therefore the prerequisite, and wiring its verdict into
+   `src/generation/lora/` and the two injection paths is scoped work **after** the
+   module exists — stated as a prerequisite, not assumed as done. If nothing in
+   loop-lore can consume the verdict, that is recorded here and the ticket is
+   narrowed to the module plus its tests rather than a fake consumer being
+   invented to justify it.
 
 Both `buildLoraNodes` (`src/image-edit/templates/builtin/lora.ts:37-54`) and
 `injectComfyUILora` (`src/generation/lora/discovery-comfyui.ts:171-212`) inject
@@ -109,6 +128,11 @@ is the remaining gap, not id allocation.
       (`src/generation/image-engine/comfyui.ts:70-75`); the chosen behaviour for an
       incompatible-but-present LoRA is decided and recorded — fail loudly is the
       default
+- [ ] **No consumer is invented.** The verdict's declared consumers are
+      `src/generation/lora/` (discovery) and the two injection paths
+      (`buildLoraNodes`, `injectComfyUILora`); wiring to them is a follow-up
+      scoped after the module exists, not assumed. If the audit lands unwired, the
+      ticket says so explicitly rather than shipping a stub consumer
 - [ ] Test: a LoRA with an extra unmatched tensor reports that tensor by name; a
       clean LoRA audits clean; a corrupt header is rejected without throwing
 - [ ] **Provenance recorded.** Every sidecar-derived claim this ticket relies on is

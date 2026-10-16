@@ -290,7 +290,7 @@
 | Not Started | RAG Retrieval & Context Injection | High | Medium | 0 | [epic-rag-retrieval.md](/.plan/epics/epic-rag-retrieval.md) |
 | Not Started | Realtime Transports | Medium | Medium | 0 | [epic-realtime-transports.md](/.plan/epics/epic-realtime-transports.md) |
 | Not Started | Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development | High | Very High | 0 | [epic-recursive-self-improvement.md](/.plan/epics/epic-recursive-self-improvement.md) |
-| Not Started | Reference-Conditioned Generation — Model Matrix, Templates, and Sidecar Absorption | High | High | 0 | [epic-reference-conditioned-generation.md](/.plan/epics/epic-reference-conditioned-generation.md) |
+| Not Started | Reference-Conditioned Generation — Model Matrix, Templates, and Generic Graph Pattern | High | High | 0 | [epic-reference-conditioned-generation.md](/.plan/epics/epic-reference-conditioned-generation.md) |
 | In Progress | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
 | Not Started | Resolution System & Ruleset Family | High | Medium | 0 | [epic-resolution-system.md](/.plan/epics/epic-resolution-system.md) |
 | Not Started | Resource Provision | High | Large | 0 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
@@ -3000,7 +3000,7 @@ The repo already has an i18n system, and it is the wrong tool for this job — o
 - **Tags:** watchdog, supervisor, agent, agentic-development, on-the-fly, hot-reload, self-heal, sandbox, ci, cicd, observability, automation, programmatic-api, dev-loop
 - **File:** `.plan/epics/epic-recursive-self-improvement.md`
 
-### Reference-Conditioned Generation — Model Matrix, Templates, and Sidecar Absorption
+### Reference-Conditioned Generation — Model Matrix, Templates, and Generic Graph Pattern
 
 - **Status:** Not Started
 - **Priority:** High

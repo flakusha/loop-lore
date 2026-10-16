@@ -27700,6 +27700,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-lora-audit-standalone.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-lora-discovery-application.md"
     }
   ],
@@ -34969,6 +34973,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reference-conditioned-generation.md"
     },
     {
       "kind": "epic",

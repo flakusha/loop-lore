@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: Stills lifecycle + queue-progress client (native, no Python sidecar)
+# TASK: ComfyUI lifecycle client — queue, history, and `extra_pnginfo` embedding (native, no sidecar)
 
 **Status:** Not Started
 **Priority:** medium
@@ -14,9 +14,12 @@
 
 ## Summary
 
-Build the stills job lifecycle — prepare → queue → register → results — natively in
-`src/generation/image-engine/comfyui.ts`, plus the queue-progress and job-timing
-derivation, without the `/h3-stills/*` HTTP contract.
+Build the **generic ComfyUI job lifecycle** — submit → queue → history → result —
+natively in `src/generation/image-engine/comfyui.ts`, plus the queue-progress and
+job-timing derivation. Its subject is the lifecycle every workflow family needs,
+not MiniMax H3 stills: `/queue` and `/history/{id}` reads, `extra_pnginfo`
+embedding, and per-node progress. The Python sidecar is **reference evidence
+only** — nothing here depends on its `/h3-stills/*` HTTP contract.
 
 ## Context
 
@@ -37,9 +40,12 @@ read. What is **not** verified is anything that needs a live ComfyUI — real `/
 reusable `.mjs` modules below are named by behavior, not just by path; where a claim needs
 a live run to confirm, the last AC records it.
 
-The sidecar splits its lifecycle across **nine** `/h3-stills/api/*` routes and five
-native ComfyUI endpoints. Only the custom ones are sidecar-specific; the native ones
-loop-lore already speaks. (The package registers 11 routes in total — `__init__.py:21`
+**Reference evidence.** The sidecar splits its lifecycle across **nine**
+`/h3-stills/api/*` routes and five native ComfyUI endpoints. Only the custom routes
+are sidecar-specific and out of scope; the native endpoints are the ones loop-lore
+already speaks — and they are this ticket's whole subject. The sidecar is read here
+for what a working lifecycle looks like, not as something to call or to absorb
+further. (The package registers 11 routes in total — `__init__.py:21`
 — those nine API routes plus the `/h3-stills` entry redirect, `:56`, and the
 `/h3-stills/{filename}` page server, `:62`. The SPA uses all nine API routes and no
 others: `stills.mjs:169,174,177,188,233,260,273,293,306,337,342,385`.)
