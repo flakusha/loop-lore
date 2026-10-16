@@ -259,6 +259,35 @@ preview, so `@typescript/native-preview` is strictly the older build.
 `typescript-eslint` lifts its peer ceiling — at that point `typescript@^7`
 replaces both packages and no alias is needed.**
 
+### 3.4 Adopted anyway: `bun --check` as a *complementary* gate
+
+Not a replacement — the analysis above rules that out. What `bun --check` *does*
+have is coverage no other gate has. Root `tsconfig.json` includes
+`src/**` ∪ `tests/**`, and `tests/**` is type-checked by nothing:
+`tsconfig.backend.json` is `src/**` minus `src/frontend/**`,
+`tsconfig.frontend.json` is `src/frontend/**`, `tsconfig.scripts.json` is
+`scripts/**`, and both `type-coverage` gates run against the backend/frontend
+projects.
+
+Measured by planting one TS2322 in `tests/__ts7probe.ts` and running every
+typecheck gate:
+
+| Gate | Result | Covers `tests/**` |
+| --- | --- | --- |
+| `typecheck - backend` (tsgo) | pass | no |
+| `typecheck - frontend` (tsgo) | pass | no |
+| `typecheck - coverage` (tsc) | pass | no |
+| `typecheck - coverage - frontend` (tsc) | pass | no |
+| `typecheck - scripts` (tsgo) | pass | no |
+| `typecheck - bun` (`bun --check`) | **fail** | yes |
+
+So `typecheck - bun` (`package.json` → `typecheck:bun` → `bun --check`) landed
+as a blocking gate. It costs ~1.1s and rides along in `check:fast`; the tsgo
+gates are unchanged and `typecheck - scripts` still needs its own project.
+
+All dependency positions are unchanged — this adopts the `bun` binary that was
+already the runtime, and drops nothing.
+
 ## 4. Which Bun 1.4.3 entry points are shadowed, and which are not
 
 Measured on a fixture declaring `check`, `test`, `build` and `typecheck`
@@ -291,8 +320,9 @@ the bundler reads from the given entry points, so it is not a substitute for a
   `scripts/check/parallel/*`, or CI workflows. It resolves to the gate runner
   and the resulting gate passes vacuously. Write `bun --check` if you want the
   built-in type checker.
-- **`bun --check` is not a drop-in for the tsgo gates either** — it cannot select
+- **`bun --check` is not a drop-in for the tsgo gates** — it cannot select
   a project, and it silently skips `scripts/**`. Do not repoint
-  `typecheck - scripts` at it.
+  `typecheck - scripts` at it. It *is* wired as the complementary
+  `typecheck - bun` gate for the `tests/**` coverage nothing else has (§3.4).
 - **`tsgo` and `tsc` remain the unambiguous spellings** for a project-scoped
   check in this repo.
