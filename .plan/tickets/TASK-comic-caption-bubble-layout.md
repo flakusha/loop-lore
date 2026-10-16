@@ -34,8 +34,18 @@ Reuse, not reinvention:
 - Text reveal/pacing reuse `typewriter.ts` from `src/frontend/vn/` where the
   reader wants it; the export path does not animate at all.
 - Placement is stored, not computed at render time, for the same reason panel
-  geometry is (`TASK-comic-page-panel-layout-model.md`): three renderers that
-  each recompute placement will drift.
+  geometry is: three renderers that each recompute placement will drift.
+
+**Ownership of the layout shape and its write path belongs to
+`TASK-comic-page-panel-layout-model.md`, not to this ticket.** That ticket defines the
+`PanelLayout` type and owns every write to `publication_panels.layout_json` (serialize,
+validate at the route boundary, persist through the repository layer). This ticket owns
+the *placement decision* — which candidate position wins for a given bubble/caption — and
+writes its result **through** the layout-model's type and repository path. It does not
+define a second layout schema, does not add a second serializer, and does not write
+`layout_json` by any other route. If the two tickets are implemented in either order,
+the later one reads the earlier one's type; a divergent shape is a defect, not a
+negotiation.
 
 Placement algorithm — keep it simple and deterministic. Candidate positions
 (top-left, top-right, bottom-left, bottom-right, and a bottom-caption band) are
@@ -64,8 +74,7 @@ its balloon is the single most common failure mode here.
       tests over a set of panel rectangles
 - [ ] When no subject box is supplied, placement falls back to the bottom caption
       band — never to a guessed free region of the image
-- [ ] Placement is stored on the panel row (in `layout_json`) and read by every
-      renderer; no renderer recomputes it
+- [ ] Placement is stored on the panel row inside the existing `PanelLayout` shape owned by `TASK-comic-page-panel-layout-model.md`, written through that ticket's repository path (not a second serializer), and read by every renderer; no renderer recomputes it. This ticket owns the placement *value*, not the layout shape or the write path
 - [ ] A manual placement override from the authoring surface wins over the
       automatic score and survives a re-render
 - [ ] Type scales with panel width: at 400px and at 2000px panel width the text

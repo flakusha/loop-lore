@@ -37,10 +37,24 @@ units is the missing half: a handler beside `src/assistant/commands/workflow.ts`
 that takes a confirmed `book-outline` dispatch and writes the artifact. Route
 surface follows the existing command mount at `src/routes/messages/command.ts`.
 
-Intent routing is free: declaring `intent: { type: generate, target: book }`
-makes `matchWorkflowIntent` (`src/assistant/workflow-routing.ts:94`) reach the
-template through the `INTENT_PATTERNS` taxonomy in `src/regex/intent.ts`, which
-catches phrasings the literal `triggers` list misses.
+Intent routing is **not** free, and this ticket owns making it work. Declaring
+`intent: { type: generate, target: book }` is not sufficient:
+
+- `INTENT_PATTERNS` in `src/regex/intent.ts:19` declares exactly eight `generate`
+targets today — `character`, `item`, `location`, `world`, `npc`, `species`,
+  `image`, `quest`. There is **no `book` entry**, so no phrasing currently produces
+  the target `book`.
+- `matchWorkflowIntent` (`src/assistant/workflow-routing.ts:94`) can only return a
+  registered target: it picks the best-matching `INTENT_PATTERNS` group, then
+  returns `routed.find((w) => w.intent?.target === best.target)` (`:114`). With no
+  `book` group, `best.target` can never be `book` and the template is unreachable
+  by intent.
+
+So this ticket adds a `book` entry to `INTENT_PATTERNS` (patterns such as
+`/write.*book/i`, `/draft.*novel/i`, `/book.*chapter/i`) alongside the `book-outline`
+template, and covers the pair in the routing test. Until that lands, only the literal
+`triggers` list routes to the template via `matchWorkflowTrigger`. Do not add a new
+`AssistantIntent` value — the taxonomy is `generate`, and only the target is new.
 
 Two corrections the implementer must respect:
 
@@ -78,9 +92,7 @@ wait on it.
 - [ ] A matching preset is added to `configs/templates/workflows/entity-types.yaml`
       (or the preset is explicitly omitted with the gates run unconditionally at
       confirm) — `entityType` is not repurposed to a non-entity kind
-- [ ] `matchWorkflowIntent` reaches `book-outline` for an imperative generation
-      message that matches the `book` intent group, covered by a test in the
-      routing test file
+- [ ] A `book` entry is added to `INTENT_PATTERNS` (`src/regex/intent.ts`) and `matchWorkflowIntent` reaches `book-outline` for an imperative generation message matching that group, covered by a test in `src/assistant/workflow-routing.test.ts`. Until this AC is met, `matchWorkflowIntent` provably cannot return the template (see ## Context)
 - [ ] `src/assistant/publication-book.ts` converts a confirmed `book-outline`
       dispatch into one `publications` row (`kind: "book"`) plus ordered
       `publication_units` rows, using the repository layer from
@@ -90,8 +102,8 @@ wait on it.
 - [ ] The command route is mounted alongside the existing workflow command
       handler at `src/routes/messages/command.ts`
 - [ ] Nothing is persisted until the run is confirmed — the same
-      preview-then-confirm contract `entity-creation-confirm.ts` already
-      enforces for `/create`
+      preview-then-confirm contract `src/routes/messages/create-entity-confirm.ts`
+      already enforces for `/create`
 - [ ] Unit tests cover: full run → N ordered units; partial run → only the
       confirmed chapters; a chapter that regenerates replaces its unit body
       without disturbing sibling positions

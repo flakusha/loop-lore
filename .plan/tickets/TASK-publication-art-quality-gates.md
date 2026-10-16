@@ -46,7 +46,7 @@ What "consistency" means for art is concrete and cheap to check, and it should
 not be a vision-model call on every panel. Available signals already in the
 asset layer:
 
-- `assets.width` / `assets.height` (`src/db/schema-content.ts:47-48`) — a
+- `assets.width` / `assets.height` (`src/db/schema-content.ts:46-47`) — a
   dimension drift against the publication's declared aspect ratio is a real,
   zero-cost failure.
 - `assets.alt_text` — the VLM captioning path is live
@@ -70,8 +70,9 @@ ticket checks *generated images*.
       publication-scoped implementation or by extending the allow-listed set and
       the validator in lockstep
 - [ ] Entity-creation gates keep their current behavior and their tests — the
-      change is additive, and `src/assistant/quality/entity-creation-gates.ts`
-      tests are untouched
+      change is additive, and `src/assistant/quality/entity-creation.test.ts` (the
+      suite covering `entity-creation-gates.ts`; there is no
+      `entity-creation-gates.test.ts`) is untouched
 - [ ] A consistency check runs against the publication's accepted reference set
       and returns a verdict carrying the reason (dimension drift, missing caption,
       caption names a different subject), not a bare boolean
@@ -80,7 +81,7 @@ ticket checks *generated images*.
       actually exists
 - [ ] A duplicate gate detects a panel whose asset content hash already appears on
       another panel of the same publication, reusing the existing
-      `assets.content_hash` dedup column (`src/db/schema-content.ts:56`) rather
+      `assets.content_hash` dedup column (`src/db/schema-content.ts:55`) rather
       than hashing bytes again
 - [ ] The gate runs on the dispatch path before an image is offered for
       acceptance, and a failing gate leaves the panel unaccepted with the reason
