@@ -29,7 +29,15 @@ function makeWidget(): WidgetStub {
   const handlers: Record<string, Array<(...args: unknown[]) => void>> = {};
   const items: string[] = [];
   const keyHandlers: Array<{ keys: unknown; fn: (...args: unknown[]) => void }> = [];
-  const state = { selectedIndex: -1, focusCount: 0, renderCount: 0, value: "", content: "", };
+  const state = {
+    selectedIndex: -1,
+    focusCount: 0,
+    renderCount: 0,
+    value: "",
+    content: "",
+    reading: false,
+  };
+
   return {
     on(event: string, fn: (...args: unknown[]) => void,): () => void {
       let list = handlers[event];
@@ -49,6 +57,16 @@ function makeWidget(): WidgetStub {
     },
     clearValue: () => {
       state.value = "";
+    },
+    // The chat box arms its own reading: `readInput()` installs the keypress
+    // listener and raises `screen.grabKeys`, `releaseInput()` drops both. The
+    // stub only records the handover - it never routes a real key, which is
+    // exactly why it could not catch the defects this mirrors.
+    readInput: () => {
+      state.reading = true;
+    },
+    releaseInput: () => {
+      state.reading = false;
     },
     setValue: (v: string,) => {
       state.value = v;
@@ -241,7 +259,12 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
       expect(inputOpts.parent,).toBeDefined();
       expect(inputOpts.bottom,).toBe(0,);
       expect(inputOpts.height,).toBe(3,);
-      expect(inputOpts.inputOnFocus,).toBe(true,);
+      // Must NOT be `inputOnFocus`: that makes Textarea call `readInput()`,
+      // which sets `screen.grabKeys = true`, and `Screen._listenKeys` gates
+      // every screen-level key on `!grabKeys` - so every global binding in the
+      // TUI went dead while the chat box held focus. Reading is armed by
+      // `focusInput()` instead, and released by `releaseInput()`.
+      expect(inputOpts.inputOnFocus ?? false,).toBe(false,);
       expect(inputOpts.border,).toEqual({ type: "line", fg: 6, },);
     } finally {
       blessedStub.box = realBox;
@@ -554,6 +577,8 @@ interface WidgetState {
   value: string;
   /** Last content passed to setContent (the completion strip reads this). */
   content: string;
+  /** Mirrors `screen.grabKeys` for the chat textbox: true while it reads. */
+  reading: boolean;
 }
 
 /** Precise shape of the blessed widget stub returned by `makeWidget()`. */
@@ -562,6 +587,8 @@ interface WidgetStub {
   emit(event: string, ...args: unknown[]): void;
   focus(): void;
   clearValue(): void;
+  readInput(): void;
+  releaseInput(): void;
   setValue(v: string,): void;
   getValue(): string;
   submit(): void;
