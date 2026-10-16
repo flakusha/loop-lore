@@ -8189,6 +8189,12 @@
       "source": "docs/spec/chat-lifecycle-moderation.md"
     }
   ],
+  "src/chat/export/formats.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-collapse-duplicate-markdown-exporter.md"
+    }
+  ],
   "src/chat/export/formats.ts": [
     {
       "kind": "epic",
@@ -37503,6 +37509,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-export-formats.md"
     }
   ],
   "src/routes/export-shared/worlds.ts": [
@@ -41249,6 +41259,12 @@
       "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     }
   ],
+  "src/routes/views/gallery-cards.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    }
+  ],
   "src/routes/views/gallery.test.ts": [
     {
       "kind": "ticket",
@@ -41529,6 +41545,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
+    }
+  ],
+  "src/routes/views/view-models/chat-list.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    }
+  ],
+  "src/routes/views/view-models/gallery-grid.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/view-serving.ts": [
