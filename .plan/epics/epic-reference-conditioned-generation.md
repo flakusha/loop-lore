@@ -1,12 +1,12 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# EPIC: Reference-Conditioned Generation — Model Matrix, Templates, and Sidecar Absorption
+# EPIC: Reference-Conditioned Generation — Model Matrix, Templates, and Generic Graph Pattern
 
 **Overview:** (see sections below)
 
 **Status:** Not Started
-**Status Note:** Not Started (2026-10-16: no `reference-conditioned` module in `src/generation/`; no reference-edit workflow JSON in `configs/workflows/` beyond `txt2img.json` / `img2img.json`; `ComfyUIClient` still sends no `client_id`. The Python sidecar handoff was vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/` — scratch, gitignored, never committed — and was pruned before implementation. It has since been **re-acquired and functionally reviewed on 2026-10-16** by reading the on-disk source, so every source-read observation in *Python Handoff* is now verified per claim; the runtime claims (live-ComfyUI `/object_info`, VRAM, latency) remain unmeasured because loop-lore has never executed a graph. Per the separate-plugin-repo decision it stays a review-only reference artifact, never an import target. See *Source Artifact*.)
+**Status Note:** Not Started (2026-10-16: no `reference-conditioned` module in `src/generation/`; no reference-edit workflow JSON in `configs/workflows/` beyond `txt2img.json` / `img2img.json`; `ComfyUIClient` still sends no `client_id`. The Python sidecar handoff was vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/` — scratch, gitignored, never committed — and was pruned before implementation. It has since been **re-acquired and functionally reviewed on 2026-10-16** by reading the on-disk source, so every source-read observation in *Python Handoff* is now verified per claim; the runtime claims (live-ComfyUI `/object_info`, VRAM, latency) remain unmeasured because loop-lore has never executed a graph. Per the separate-plugin-repo decision it stays a review-only reference artifact, never an import target — and loop-lore holds **no Python-sidecar responsibility**: the ComfyUI custom-node package, including its de-hardcoding, cross-platform and installer work, ships from a separate plugin repository the user is standing up, which will be integrated with loop-lore later. **H3 is exploratory**, not a deliverable: MiniMax H3's family row and its stills reference template are conditional on that plugin repo existing and on its six external node types being deployed, and no Phase-1 item depends on either. See *Source Artifact*.)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -15,18 +15,32 @@
 ## Overview
 
 Reference-based generation and editing — "change this, keep that" driven by one or
-more reference images — is a **first-class requirement** across four model families:
-**Krea 2**, **Krea 3**, **Qwen Image Edit 2.1**, and **MiniMax H3**. Today each of
-those is a one-line bullet in someone else's phase list, and none of them is
-implemented.
+more reference images — is a **first-class requirement**. Three of the four model
+families this epic records — **Krea 2**, **Krea 3**, and **Qwen Image Edit 2.1** —
+are the **required path**; today each is a one-line bullet in someone else's phase
+list and none of them is implemented. The fourth, **MiniMax H3**, is
+**exploratory**: it depends on a ComfyUI custom-node package that loop-lore has
+decided not to host, so its template lands only if and when the separate plugin
+repository exists and its six external node types are deployed.
 
 This epic is the **model-matrix home**: for each family it records what the model
 actually supports (multi-reference, inpainting/mask, strength/denoise, LoRA,
 resolution, VRAM floor, expected latency), how a reference request is expressed,
 which workflow template satisfies it, and how a failure is diagnosed. It also owns
 the **cross-model comparison harness** (one prompt → N models → a comparable
-result set) and the **absorption of the Python sidecar handoff** into native
-TypeScript.
+result set) and the **generic ComfyUI graph + lifecycle pattern** absorbed from a
+reviewed Python sidecar handoff into native TypeScript.
+
+**The deliverable is the pattern, not the sidecar.** What loop-lore keeps and
+reuses is the capability matrix, the multi-reference request model, and the
+generic `Graph`-builder / `inspect_import` validation pattern — all of which
+benefit any reference-conditioned family. The Python package that supplied them
+is a ComfyUI custom node destined for its own plugin repository; loop-lore holds
+no Python-sidecar responsibility (see *Non-goals*). MiniMax H3 stills is the
+family that package serves, so its reference template is **conditional on the
+plugin repo existing** and is not a required deliverable here. The reusable
+approach is destined for the assistant and creative workflows — see
+*Cross-References*.
 
 ### Why a new epic rather than extending `epic-comfyui-plugin`
 
@@ -42,11 +56,11 @@ What does not fit there: the capability matrix is **per-model data**, not
 machinery. It needs a data model, a runtime probe that records real VRAM/latency
 numbers, and a schema that a new family can join without anyone editing a phase
 checklist in a transport epic. It also spans **two backends** (ComfyUI and sd.cpp)
-and a **third** concern the transport epic has no vocabulary for at all (Python
-sidecar absorption, the Graph-builder port, cross-platform de-hardcoding, the
-standalone LoRA audit). Folding a matrix + probe + sidecar port into
-`epic-comfyui-plugin` would grow an already 5-phase epic by 3 more phases whose
-content is orthogonal to every existing one.
+and a **third** concern the transport epic has no vocabulary for at all (the
+generic Graph-builder / import-validation port, the generic ComfyUI lifecycle
+capability, the standalone LoRA audit). Folding a matrix + probe + graph-builder
+port into `epic-comfyui-plugin` would grow an already 5-phase epic by 3 more phases
+whose content is orthogonal to every existing one.
 
 The split is therefore: **this epic references `epic-comfyui-plugin` for the
 transport and template machinery; it never duplicates it.** Where the transport
@@ -109,6 +123,14 @@ Krea 2, Krea 3, Qwen Image Edit 2.1, MiniMax H3. One ticket each. Krea 2 ships
 **diagnosis before template** — its "not working" state is unexplained and the
 template cannot be authored until it is.
 
+**Krea 2, Krea 3, and Qwen Image Edit 2.1 are the required path.** The MiniMax H3
+stills reference template is **exploratory and conditional**: it is authored only
+if the separate plugin repo exists and the six external node types it needs
+(`MiniMaxH3ReferenceToVideo`, `FizgigH3StillLatent`, `FizgigH3StillDecode`,
+`MiniMaxH3SigmaShift`, `ImageBlur`, `ModelAttentionBackend`) are deployed.
+Until that prerequisite is met, the family carries a capability row and a stated
+deployment prerequisite — not a shipped template.
+
 ### 4. Comparison harness
 
 One prompt → N models → a result set comparable enough to put side by side. This
@@ -116,11 +138,37 @@ epic owns the **data and asset side** (run record, per-model result rows, shared
 prompt/recipe identity, latency capture). The chart/gallery **rendering** is
 another worker's.
 
-### 5. Python sidecar absorption
+### 5. Generic ComfyUI graph + lifecycle pattern
 
-See *Python Handoff* below. Only the **generic** halves are absorbed natively; the
-H3 stills custom-node/plugin half is destined for its own plugin repository and
-is never vendored or re-shipped by loop-lore.
+See *Python Handoff* below for what the approach does and does not prove. The only
+in-scope work is the **generic TypeScript halves** that benefit loop-lore whether
+or not H3 ever ships:
+
+- the **`Graph` builder** — schema-driven `add` / `wire` / `finish`, UI graph and
+  API prompt from one pass. It emits whatever `extra` key the caller names and
+  hardcodes nothing about H3 (`TASK-comfyui-graph-builder-ts-port.md`).
+- the **`inspect_import`-class validation policy** — node-count ceiling, required
+  sink classes, PNG-`prompt` vs embedded-prompt disagreement refusal, and
+  downgrade-not-fail on a prompt that no longer recompiles.
+- the **generic ComfyUI lifecycle capability** — `/queue` and `/history/{id}`
+  reads, job timing, and `extra_pnginfo.workflow` embedding
+  (`TASK-stills-lifecycle-queue-progress-client.md`). Every workflow family needs
+  these, not only this one.
+- the **standalone LoRA audit** (header parse + SHA-256 + shape audit with no
+  ComfyUI process), which serves loop-lore's own LoRA discovery
+  (`TASK-lora-audit-standalone.md`).
+
+**Out of scope, and it belongs to the plugin repo:** the sidecar's de-hardcoding
+(its pinned steps / sampler / sigma-shift / LoRA literals), its `explorer.exe`
+cross-platform replacement, and its installer. Those are fixes to Python files
+that ship from the separate ComfyUI plugin repository; loop-lore neither patches
+them nor inherits them. This epic records the defects — see
+`TASK-sidecar-de-hardcoding-cross-platform-installer.md` — and that work is
+escalated, not implemented.
+
+The *Python Handoff* observations below are deliberately not deleted: they are the
+record of what the approach does and does not prove, and they are also the
+reference notes the plugin repo inherits.
 
 ## Python Handoff
 
@@ -308,16 +356,23 @@ a graph builder that is ~56 lines of `add()`/`wire()`.
 self-contained ComfyUI custom node with its own SPA and its own
 `/h3-stills/*` contract; it was reviewed functionally on 2026-10-16 and will be
 carried forward as its **own ComfyUI plugin repository**, separate from
-loop-lore. Consequences, and they are binding on this epic:
+loop-lore. **loop-lore should not hold this kind of responsibility** — hosting,
+patching, installing, or re-shipping ComfyUI custom nodes is not what this
+codebase is for. The plugin repo is the user's own initiative and will be
+integrated with loop-lore later, through the documented ComfyUI REST contract.
+**Nothing in this epic may create a loop-lore dependency on `/h3-stills/*`, on
+`custom_nodes/`, or on the Python package.** Consequences, and they are binding on
+this epic:
 
 - loop-lore consumes the **documented ComfyUI REST contract only** — `POST /prompt`,
   `GET /history/{prompt_id}`, `GET /queue`, `/view`, `/upload/image`,
   `/object_info` — and never calls `/h3-stills/*`.
 - loop-lore **never vendors, installs, or re-ships** the Python sidecar: no copy
   under any tracked path, no `custom_nodes/` install step, no re-implementation of
-  its routes. The absorption work stays limited to the **generic** halves (the
-  `Graph` builder, the `inspect_import` validation policy, the stills lifecycle
-  client, the PNG chunk reader, the de-hardcoded defaults).
+  its routes. The work stays limited to the **generic** TypeScript halves (the
+  `Graph` builder, the `inspect_import` validation policy, the ComfyUI lifecycle
+  client, the PNG chunk reader, the standalone LoRA audit) — never the Python
+  source, its de-hardcoding, its `explorer.exe` replacement, or its installer.
 - The plugin repo inherits the artifact as reviewed, including its review-only
   status while it is still solely under `.tmp/`; the review notes in this epic are
   the reference for what it does and does not prove.
@@ -338,27 +393,70 @@ loop-lore. Consequences, and they are binding on this epic:
 - [ ] Krea 2 — **diagnose "not working" first**, then template
 - [ ] Krea 3 reference-edit template
 - [ ] Qwen Image Edit 2.1 reference-edit template
-- [ ] MiniMax H3 stills reference template
+- [ ] MiniMax H3 stills reference template — **exploratory / conditional** on the
+      separate plugin repo existing and the six external node types being
+      deployed; not a required Phase-1 item
 
-### Phase 2: Sidecar absorption
+### Phase 2: Generic ComfyUI graph + lifecycle pattern
 
 - [ ] TS `Graph` builder port + `inspect_import`-class validation policy
-- [ ] Stills lifecycle / queue-progress client + `extra_pnginfo` metadata embedding
-- [ ] De-hardcoding + cross-platform (`explorer.exe`) + installer
+- [ ] ComfyUI lifecycle client — `/queue` + `/history/{id}` reads, job timing, and
+      `extra_pnginfo` metadata embedding
 - [ ] Standalone LoRA audit (runs with no ComfyUI process)
+- The sidecar's de-hardcoding, its `explorer.exe` cross-platform replacement, and
+  its installer are **out of scope — plugin-repo work.**
+  `TASK-sidecar-de-hardcoding-cross-platform-installer.md` records the defects and
+  the escalation; it does not implement the Python fix in loop-lore.
 
 ### Phase 3: Comparison harness (data side)
 
 - [ ] Same-prompt multi-model comparison run + result rows
 - [ ] Node-driven template auto-filtering wired (`listAvailable` has no caller)
 
+## Non-goals
+
+- **No ComfyUI custom-node hosting, vendoring, installing, or re-shipping in
+  loop-lore.** No copy under a tracked path, no `custom_nodes/` install step, no
+  installer, no vendored `web/` SPA assets. The Python package ships from the
+  separate plugin repository and is integrated with loop-lore later.
+- **No dependency on a sidecar's private HTTP contract.** No `/h3-stills/*` call
+  anywhere in `src/`; loop-lore speaks the documented ComfyUI REST contract only.
+- **No H3 integration is required.** MiniMax H3 is exploratory. No Phase-1 item
+  depends on it, and its template is gated on the plugin repo plus the six
+  external node types being deployed.
+- **No training, fine-tuning, or benchmark harness.** The capability probe records
+  measured floor numbers and which machine produced them; it does not train,
+  fine-tune, or score a model.
+- **No duplication of `epic-comfyui-plugin`'s transport, template interface,
+  registry, or `client_id` + `/ws` items.** Those are the transport epic's
+  checklist and stay authoritative there.
+- **No new workflow-template DSL.** Templates stay `{{placeholder}}`-substituted
+  JSON in `configs/workflows/`, consumed by the existing loader, substitutor, and
+  registry.
+- **No new intent taxonomy.** Assistant intent stays `AssistantIntent`
+  (`src/regex/intent.ts:13`); this epic adds no intent, command, or slash-command
+  surface of its own.
+
 ## Cross-References
 
 - `epic-comfyui-plugin.md` — **owns** the transport, the template interface, the
   registry, and the `client_id` + `/ws` checklist items this epic depends on. Its
   phase checklists are the authoritative state record and are NOT edited here.
-- `epic-assistant-generation-extensions.md` — the `/image edit` command surface
-  that consumes these templates.
+- `epic-assistant-generation-extensions.md` (*Assistant Generation Extensions —
+  SD, Intent, Scenario Source*) — **future consumer.** The reference-conditioned
+  approach is adopted there later: its `/image` family is the assistant command
+  surface that consumes the multi-reference request model, the capability matrix,
+  and the per-family templates built here. It is also the `/image edit` command
+  surface those templates exist for. **This epic owns the capability, the request
+  model, and the generic pattern; that epic owns its own checklist** and its own
+  phases.
+- `epic-assistant-creative-studio-workflows.md` (*Assistant Creative Studio —
+  Workflow Templates*) — **future consumer.** Its named, intent-routed workflow
+  templates are the other surface that adopts the reference-conditioned approach
+  later (a reference-conditioned workflow is a named template in its registry, not
+  a new transport call). **That epic owns its own checklist and its sub-epic
+  split**; this entry is a pointer, not a hand-off. Neither consumer is a
+  prerequisite of this epic's Phase 0–2 work.
 - `epic-model-family-presets.md` — where the per-family prompt-format /
   parameter presets live. **Both files are currently design-only** (no
   `model-families.yaml` on disk); the matrix here is the measurement half of the
@@ -366,8 +464,9 @@ loop-lore. Consequences, and they are binding on this epic:
 - `epic-comfyui-first-class-citizen.md` — workflow library + admin surface.
 - `epic-external-creative-tool-bridge.md` — **different scope.** That epic is an
   MCP bridge to *desktop* creative applications (Krita, Blender, GIMP). This
-  epic absorbs a *Python ComfyUI sidecar* into loop-lore's own generation path.
-  No shared code, no shared routes.
+  epic's Python-sidecar contact is limited to the **generic ComfyUI graph +
+  lifecycle pattern** it re-implements in TypeScript; the custom-node half goes
+  to the separate plugin repository. No shared code, no shared routes.
 - `TASK-sd-cpp-provider.md` — owns the **assistant-side sd.cpp adapter**. This
   epic's sd.cpp work is reference-edit **capability** only, and must not
   duplicate that ticket's routing/fallback criteria.

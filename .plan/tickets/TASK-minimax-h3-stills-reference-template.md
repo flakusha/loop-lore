@@ -1,10 +1,10 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: MiniMax H3 stills reference workflow template
+# TASK: MiniMax H3 stills reference workflow template (exploratory — conditional on the plugin repo)
 
 **Status:** Not Started
-**Priority:** medium
+**Priority:** low
 **Effort:** Medium
 **Epic:** `epic-reference-conditioned-generation`
 **Related:** `TASK-comfyui-graph-builder-ts-port.md`, `TASK-stills-lifecycle-queue-progress-client.md`, `TASK-lora-audit-standalone.md`, `epic-model-family-presets.md`
@@ -17,6 +17,14 @@
 The H3 stills workflow as a native loop-lore template, replacing the Python
 sidecar's hardcoded 18-node chain (one non-pose reference) with a config-driven one —
 without importing the sidecar's hardcoded literals.
+
+**Exploratory, not a deliverable.** Priority dropped from `medium` to `low`
+because MiniMax H3 is the one family of this epic that is **conditional on the
+separate ComfyUI plugin repository existing** and on its six external node types
+being deployed. loop-lore does not host, vendor, install, or re-ship the plugin,
+and no Phase-1 item of the epic depends on this template. Every acceptance
+criterion below is therefore gated on that deployment prerequisite; until it is
+met the correct state is *specified and not authored*, not *authored around*.
 
 ## Context
 
@@ -95,8 +103,16 @@ template; record the split explicitly.
 
 ## Acceptance Criteria
 
+- [ ] **GATE — this whole ticket is conditional.** Authoring begins only when the
+      separate ComfyUI plugin repository exists **and** its six external node types
+      (`MiniMaxH3ReferenceToVideo`, `FizgigH3StillLatent`, `FizgigH3StillDecode`,
+      `MiniMaxH3SigmaShift`, `ImageBlur`, `ModelAttentionBackend`) are deployed and
+      resolve in the target ComfyUI's `/object_info`. Until then this ticket stays
+      specified and `Not Started`; a partial or substituted template that drops a
+      node type is a workaround, not a delivery
 - [ ] `configs/workflows/minimax-h3-still.json` reproduces the chain shape with
-      sampler / steps / shifts / resolution as **parameters**, not literals
+      sampler / steps / shifts / resolution as **parameters**, not literals —
+      gated by the AC above
 - [ ] `required_nodes` names all six external node types; verified against
       `/object_info` in a test
 - [ ] The 4.2MP cap is **not** inherited as an H3 limit — resolution comes from the
