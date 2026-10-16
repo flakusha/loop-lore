@@ -34,6 +34,7 @@
     "format:fix": "dprint fmt",
 
     "typecheck": "tsgo --noEmit --project tsconfig.backend.json",
+    "typecheck:bun": "bun --check",
     "typecheck:frontend": "tsgo --noEmit --project tsconfig.frontend.json",
     "typecheck:coverage": "type-coverage --strict --at-least 95 --project tsconfig.backend.json",
     "typecheck:coverage:frontend": "type-coverage --strict --at-least 95 --project tsconfig.frontend.json",
@@ -52,11 +53,11 @@
     "check": "bun run check:parallel",
     "check:parallel": "bun run scripts/check-parallel.mjs",
     "check:serial": "bun run check:typecheck && bun run lint && bun run format && bun run md:lint",
-    "check:typecheck": "bun run typecheck && bun run typecheck:frontend && bun run typecheck:coverage && bun run typecheck:coverage:frontend",
+    "check:typecheck": "bun run typecheck && bun run typecheck:bun && bun run typecheck:frontend && bun run typecheck:coverage && bun run typecheck:coverage:frontend",
     "check:ci": "bun run check:parallel --ci",
     "check:fix": "bun run check:parallel --fix",
     "check:report-ls": "bun run check:parallel --report-ls",
-    "check:fast": "bun run check:parallel --gates 'typecheck - backend,typecheck - frontend,typecheck - scripts,lint - eslint,wiring - check,changelog - gate,db - schema gate,migrations - ordering,size - check,size - strict,no - shell - refs,frontend - template preflight,frontend - innerHTML xss'",
+    "check:fast": "bun run check:parallel --gates 'typecheck - backend,typecheck - bun,typecheck - frontend,typecheck - scripts,lint - eslint,wiring - check,changelog - gate,db - schema gate,migrations - ordering,size - check,size - strict,no - shell - refs,frontend - template preflight,frontend - innerHTML xss'",
     "check:default": "bun run check:parallel --skip-gates 'coverage - per-module line %,plan - validate,format - dprint,md - lint,dead - code (knip)'",
     "check:full": "bun run build:frontend && bun run check",
 
