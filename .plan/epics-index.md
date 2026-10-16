@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 324 epics
+**Total:** 327 epics
 
 ## Summary
 
@@ -252,6 +252,7 @@
 | Not Started | Model Metadata Read (Headers, Hashing, Classification) | High | Large | 0/7 | [epic-model-metadata-read.md](/.plan/epics/epic-model-metadata-read.md) |
 | Not Started | Multi-Session Support | Medium | Med | 0 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
 | Not Started | Narration / Actor Separation | High | Medium–Large | 0 | [epic-narration-actor-separation.md](/.plan/epics/epic-narration-actor-separation.md) |
+| Not Started | Narrative Publishing Workflows (Books & Comics) | medium | Large | 0 | [epic-narrative-publishing-workflows.md](/.plan/epics/epic-narrative-publishing-workflows.md) |
 | In Progress | Native/WASM Module Performance Benchmarks | High | High | 0 | [epic-native-module-benchmarks.md](/.plan/epics/epic-native-module-benchmarks.md) |
 | Not Started | Non-Standard Browser Encryption | Medium | High | 0 | [epic-non-standard-browser-crypto.md](/.plan/epics/epic-non-standard-browser-crypto.md) |
 | Not Started | Notification System UI | Medium | Medium | 0 | [epic-frontend-notifications.md](/.plan/epics/epic-frontend-notifications.md) |
@@ -287,6 +288,7 @@
 | Not Started | RAG Retrieval & Context Injection | High | Medium | 0 | [epic-rag-retrieval.md](/.plan/epics/epic-rag-retrieval.md) |
 | Not Started | Realtime Transports | Medium | Medium | 0 | [epic-realtime-transports.md](/.plan/epics/epic-realtime-transports.md) |
 | Not Started | Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development | High | Very High | 0 | [epic-recursive-self-improvement.md](/.plan/epics/epic-recursive-self-improvement.md) |
+| Not Started | Reference-Conditioned Generation — Model Matrix, Templates, and Sidecar Absorption | High | High | 0 | [epic-reference-conditioned-generation.md](/.plan/epics/epic-reference-conditioned-generation.md) |
 | In Progress | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
 | Not Started | Resolution System & Ruleset Family | High | Medium | 0 | [epic-resolution-system.md](/.plan/epics/epic-resolution-system.md) |
 | Not Started | Resource Provision | High | Large | 0 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
@@ -313,6 +315,7 @@
 | Done | Task Management Integration | Medium | Medium | 0 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | Done | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 0 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
+| Not Started | Technical Comparison Charts (multi-image model/generation comparison) | Medium | Large | 0 | [epic-technical-comparison-charts.md](/.plan/epics/epic-technical-comparison-charts.md) |
 | In Progress | Terminal UI (TUI) | Low | Medium | 4/7 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
 | In Progress | Testing & Quality Assurance (Permanently Ongoing) | High | Continuous | 0 | [epic-testing-qa.md](/.plan/epics/epic-testing-qa.md) |
 | In Progress | Testing, Benchmarking & Performance | High | Very High (split into 7 sub-epics) | 0 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
@@ -647,6 +650,8 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** battle, items, social, npc, weather, resolution, integration
 - **File:** `.plan/epics/epic-battle-integration-gaps.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 
@@ -2637,6 +2642,18 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Tags:** narration, actors, role-contract, message-kind, scene-exposition, rendering, regex
 - **File:** `.plan/epics/epic-narration-actor-separation.md`
 
+
+### Narrative Publishing Workflows (Books & Comics)
+
+- **Status:** Not Started
+- **Priority:** medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** publishing, book, comic, workflow-templates, assistant, assets, export
+- **File:** `.plan/epics/epic-narrative-publishing-workflows.md`
+
+Today the repo can generate *turns* of prose in chat (`epic-story-mode-ui`,
+
 ### Native/WASM Module Performance Benchmarks
 
 - **Status:** In Progress
@@ -2692,6 +2709,8 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 
@@ -2962,6 +2981,18 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Tags:** watchdog, supervisor, agent, agentic-development, on-the-fly, hot-reload, self-heal, sandbox, ci, cicd, observability, automation, programmatic-api, dev-loop
 - **File:** `.plan/epics/epic-recursive-self-improvement.md`
 
+
+### Reference-Conditioned Generation — Model Matrix, Templates, and Sidecar Absorption
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** comfyui, image-generation, reference-image, model-matrix, capability-probe, sidecar, graph-builder, lora-audit
+- **File:** `.plan/epics/epic-reference-conditioned-generation.md`
+
+Reference-based generation and editing — "change this, keep that" driven by one or
+
 ### Release 0.1.0
 
 - **Status:** In Progress
@@ -3130,6 +3161,8 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3207,6 +3240,18 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Type:** Feature Epic
 - **Tags:** nsfw, moderation, safety, audit, flagging
 - **File:** `.plan/epics/epic-nsfw-moderation-priority.md`
+
+
+### Technical Comparison Charts (multi-image model/generation comparison)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** image-generation, comparison, comfyui, sd-cpp, gallery, charts, metadata, reproducibility, frontend
+- **File:** `.plan/epics/epic-technical-comparison-charts.md`
+
+Three capabilities, layered:
 
 ### Terminal UI (TUI)
 

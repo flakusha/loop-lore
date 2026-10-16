@@ -1315,6 +1315,10 @@
   ],
   "src/assets/metadata.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md"
     },
@@ -1333,6 +1337,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
     },
     {
       "kind": "ticket",
@@ -1373,6 +1381,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-export-formats.md"
     },
     {
       "kind": "ticket",
@@ -1527,6 +1539,10 @@
       "source": ".plan/epics/epic-encryption-workflow.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-.md"
     },
@@ -1564,6 +1580,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
     },
     {
@@ -1573,6 +1597,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "spec",
@@ -1661,19 +1689,57 @@
   ],
   "src/assets/service/links.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/graph-cluster-documents-assets-creative.md"
     }
   ],
+  "src/assets/service/persist-generated.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
   "src/assets/service/persist-generated.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-vector-graphics-generation.md"
@@ -1685,6 +1751,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
     },
     {
       "kind": "ticket",
@@ -1740,10 +1810,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-comparability-validation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
     }
   ],
   "src/assets/service/sanitize-svg.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-chart-export-png-svg-csv.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vector-gen-svg-serve-safety.md"
@@ -1824,6 +1902,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-chart-export-png-svg-csv.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vector-gen-animated-raster.md"
     },
     {
@@ -1859,6 +1941,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-export-formats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     },
     {
       "kind": "ticket",
@@ -2833,8 +2923,24 @@
       "source": ".plan/epics/epic-entity-generation-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-confirm-session-treats-optional-steps-as-required.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
     },
     {
       "kind": "ticket",
@@ -4071,6 +4177,12 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/assistant/publication-book.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    }
+  ],
   "src/assistant/quality/adaptation.test.ts": [
     {
       "kind": "ticket",
@@ -4095,6 +4207,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-entity-generation-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-art-quality-gates.md"
     }
   ],
   "src/assistant/quality/entity-creation-lore.ts": [
@@ -4318,7 +4434,15 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-project-spaces-pm-integration.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
       "kind": "epic",
@@ -4327,6 +4451,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-intent-regexes-hijack-normal-chat-messages.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
     },
     {
       "kind": "ticket",
@@ -4406,6 +4542,14 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-workflow-engine.md"
     },
     {
@@ -4466,11 +4610,31 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-reuse-workflowrunner-for-guided-entity-creation.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-illustrated-book-reference-pass.md"
     },
     {
       "kind": "ticket",
@@ -8462,6 +8626,10 @@
   "src/chat/service": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-video-gen-route.md"
     }
   ],
@@ -10217,6 +10385,84 @@
       "source": ".plan/tickets/BUG-giwt-ticket-extid-double-prefix-on-duplicate-type-slug.md"
     }
   ],
+  "src/comparisons/comparability.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-comparability-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
+  "src/comparisons/export.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-chart-export-png-svg-csv.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
+  "src/comparisons/fan-out.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
+  "src/comparisons/fan-out.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-seed-parameter-lock-and-rerun.md"
+    }
+  ],
+  "src/comparisons/lifecycle.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
+  "src/comparisons/metrics.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
+  "src/comparisons/rerun.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-seed-parameter-lock-and-rerun.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
   "src/components": [
     {
       "kind": "ticket",
@@ -10277,6 +10523,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-001.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
     },
     {
       "kind": "ticket",
@@ -12146,7 +12396,19 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-reference-conditioned-generation.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-sam3-segmentation-integration.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
     },
     {
       "kind": "ticket",
@@ -12561,6 +12823,34 @@
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-art-quality-gates.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/creative-studio.md"
     }
@@ -12729,6 +13019,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
     }
   ],
   "src/config/templates-loader/entity-position.ts": [
@@ -12771,8 +13069,20 @@
       "source": ".plan/epics/epic-entity-generation-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-art-quality-gates.md"
     }
   ],
   "src/config/templates-loader/validation.ts": [
@@ -12794,6 +13104,10 @@
     }
   ],
   "src/config/workflow-templates.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-video-provider-minimax-h3.md"
@@ -14526,6 +14840,14 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-tts-foundation.md"
     },
     {
@@ -14550,7 +14872,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "ticket",
@@ -14678,6 +15016,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
     },
     {
@@ -14702,11 +15044,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "ticket",
@@ -14842,6 +15192,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-video-template-schema.md"
     }
   ],
@@ -14883,6 +15237,10 @@
       "source": ".plan/epics/epic-items.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-049.md"
     },
@@ -14908,7 +15266,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-map-battle-equipment.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-export-formats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     },
     {
       "kind": "ticket",
@@ -15200,6 +15574,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic-db-migration-compaction-stale-premise-reconcile.md"
     },
     {
@@ -15292,6 +15670,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
     },
     {
@@ -15301,6 +15683,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "spec",
@@ -15372,6 +15758,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
     },
     {
@@ -15385,6 +15779,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "ticket",
@@ -15587,6 +15985,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "ticket",
@@ -15805,6 +16207,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-db-migration-039.md"
+    }
+  ],
+  "src/db/migrations/015_model_comparison_runs.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
     }
   ],
   "src/db/migrations/016_asset_encryption.ts": [
@@ -16071,10 +16483,22 @@
       "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md"
     }
   ],
+  "src/db/migrations/056_xp_ledger_dedupe_unique.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    }
+  ],
   "src/db/migrations/057_encryption_level_at_rest_rename.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crypto.md"
+    }
+  ],
+  "src/db/migrations/057_publication_artifacts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     }
   ],
   "src/db/migrations/058_actor_memory.ts": [
@@ -16187,10 +16611,22 @@
       "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
     }
   ],
+  "src/db/migrations/NNN_": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    }
+  ],
   "src/db/migrations/NNN_check_drift_history.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-evaluator-reliability-drift-detec.md"
+    }
+  ],
+  "src/db/migrations/NNN_comparison_sets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
     }
   ],
   "src/db/migrations/NNN_name.ts": [
@@ -16235,6 +16671,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-fractal-locations.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
       "kind": "ticket",
@@ -16286,6 +16726,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-migration-helpers-ts-booltoenum.md"
     },
     {
@@ -16307,6 +16751,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-versioning.md"
     },
     {
       "kind": "spec",
@@ -16565,6 +17017,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-guard-sql-ref-identifier-construction-in-optimistic-locking.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-versioning.md"
     }
   ],
   "src/db/reinit-archive.test.ts": [
@@ -16672,6 +17128,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-runtime-integrity-fail-safes.md"
     },
     {
@@ -16701,6 +17161,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "ticket",
@@ -16927,6 +17391,10 @@
       "source": ".plan/epics/epic-derived-map-generation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
@@ -16957,6 +17425,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-backward-compatibility.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-art-quality-gates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "spec",
@@ -17305,6 +17781,10 @@
       "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/schema.md"
     }
@@ -17469,6 +17949,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-state-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "ticket",
@@ -17704,6 +18188,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-project-spaces-pm-integration.md"
     },
     {
@@ -17737,6 +18225,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-continuity-lint.md"
     },
     {
       "kind": "ticket",
@@ -17888,6 +18384,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
     },
     {
@@ -17917,6 +18417,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-nsfw-traits-section.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
       "kind": "ticket",
@@ -19163,6 +19667,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
     },
     {
       "kind": "ticket",
@@ -20669,6 +21177,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-export-frontend-progress.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-export-formats.md"
     }
   ],
   "src/frontend/alpine/feature-gate.ts": [
@@ -20870,6 +21382,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-codemod-fetch-json-safe-utils.md"
     },
     {
@@ -20946,6 +21462,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-two-cell-diff-modes.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
     },
     {
@@ -20963,6 +21491,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     },
     {
       "kind": "ticket",
@@ -21413,6 +21945,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-smart-context-pruning.md"
+    }
+  ],
+  "src/frontend/alpine/publication-book-editor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    }
+  ],
+  "src/frontend/alpine/publication-reader.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     }
   ],
   "src/frontend/alpine/qa-mode.ts": [
@@ -21867,6 +22411,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    }
+  ],
+  "src/frontend/alpine/world-timeline-bar.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
     }
   ],
   "src/frontend/alpine/world.ts": [
@@ -22412,6 +22962,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
     }
   ],
@@ -22555,6 +23113,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
     },
     {
       "kind": "ticket",
@@ -22773,6 +23335,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
+  "src/frontend/html-escape.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
     }
   ],
   "src/frontend/htmx-encrypt.ts": [
@@ -23252,6 +23820,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-frontend-consolidation.md"
     },
     {
@@ -23655,6 +24227,12 @@
       "source": ".plan/tickets/BUG-i18n-test-restore-guard-leaks-stubbed-locale-strings-across-.md"
     }
   ],
+  "src/frontend/tests/test-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-two-cell-diff-modes.md"
+    }
+  ],
   "src/frontend/tests/vn-fake-dom.ts": [
     {
       "kind": "ticket",
@@ -23911,8 +24489,20 @@
   ],
   "src/frontend/vn/sprite-stage.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-caption-bubble-layout.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-panel-layout-model.md"
     },
     {
       "kind": "ticket",
@@ -24021,6 +24611,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-panel-layout-model.md"
     },
     {
       "kind": "ticket",
@@ -25164,6 +25758,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-art-quality-gates.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     }
   ],
@@ -25242,7 +25840,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-illustrated-book-reference-pass.md"
     },
     {
       "kind": "ticket",
@@ -26003,6 +26609,10 @@
       "source": ".plan/epics/epic-comfyui-plugin.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reference-conditioned-generation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
     },
@@ -26013,6 +26623,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lora-audit-standalone.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-stills-lifecycle-queue-progress-client.md"
     }
   ],
   "src/generation/image-engine/helpers.ts": [
@@ -26024,11 +26646,23 @@
   "src/generation/image-engine/index.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-vector-graphics-generation.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
     },
     {
       "kind": "ticket",
@@ -26051,8 +26685,20 @@
   ],
   "src/generation/image-engine/sdcpp.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reference-conditioned-generation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-sd-cpp-provider.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sd-cpp-reference-edit-parity.md"
     },
     {
       "kind": "ticket",
@@ -26077,6 +26723,12 @@
       "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     }
   ],
+  "src/generation/image-gen-route.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
   "src/generation/image-gen-route.ts": [
     {
       "kind": "epic",
@@ -26093,6 +26745,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
       "kind": "epic",
@@ -26129,6 +26785,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
     },
     {
       "kind": "ticket",
@@ -26226,11 +26894,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-graph-builder-ts-port.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-node-id-allocation.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-krea-2-reference-edit-diagnosis.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lora-audit-standalone.md"
     },
     {
       "kind": "ticket",
@@ -26480,7 +27160,19 @@
   "src/generation/node-id.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-graph-builder-ts-port.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-node-id-allocation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-krea-2-reference-edit-diagnosis.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lora-audit-standalone.md"
     }
   ],
   "src/generation/policy-detector.ts": [
@@ -26768,11 +27460,23 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-external-creative-tool-bridge.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reference-conditioned-generation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
       "kind": "epic",
@@ -26804,7 +27508,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-ws-client-id-progress-reference-generation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
     },
     {
       "kind": "ticket",
@@ -26813,6 +27533,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-multimodal-asset-reuse.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-capability-probe-runtime.md"
     },
     {
       "kind": "spec",
@@ -27445,6 +28169,12 @@
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
+  "src/generation/workflow-library/validate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md"
+    }
+  ],
   "src/generation/workflow-loader/loader.ts": [
     {
       "kind": "epic",
@@ -27756,7 +28486,17 @@
   "src/harness/stats.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-canonical-usage.md"
+    }
+  ],
+  "src/harness/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
     }
   ],
   "src/hash/record-hash.test.ts": [
@@ -27899,6 +28639,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-new-test-files-for-cross-file-process-collisions-befor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-run-authz-error-shape-regression.md"
     }
   ],
   "src/image-edit/providers/comfyui-provider.ts": [
@@ -27924,7 +28668,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-krea-2-reference-edit-template.md"
     }
   ],
   "src/image-edit/providers/sd-server-provider": [
@@ -27966,6 +28718,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-run-authz-error-shape-regression.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-image-edit-workflows-dedicated.md"
     }
   ],
@@ -27977,6 +28733,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reference-conditioned-generation.md"
     },
     {
       "kind": "ticket",
@@ -28008,6 +28768,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-sam3-concept-mask-template.md"
     },
     {
@@ -28028,7 +28792,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-illustrated-book-reference-pass.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-image-edit-depth-conditioned-editing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-run-authz-error-shape-regression.md"
     }
   ],
   "src/image-edit/run-authz.ts": [
@@ -28043,6 +28819,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-image-edit-depth-conditioned-editing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-run-authz-error-shape-regression.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-multi-reference-conditioning-request-model.md"
     }
   ],
   "src/image-edit/template-registry.test.ts": [
@@ -28059,6 +28843,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reference-conditioned-generation.md"
     },
     {
       "kind": "epic",
@@ -28079,6 +28867,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-workflow-library.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-krea-2-reference-edit-template.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-capability-matrix-data-model.md"
     }
   ],
   "src/image-edit/templates/builtin/_helpers.ts": [
@@ -28114,7 +28914,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-graph-builder-ts-port.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-node-id-allocation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-krea-2-reference-edit-diagnosis.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lora-audit-standalone.md"
     }
   ],
   "src/image-edit/templates/builtin/templates.coverage.test.ts": [
@@ -28165,6 +28977,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-multi-concept-segmentation-masks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-multi-reference-conditioning-request-model.md"
     }
   ],
   "src/import/__tests__/roundtrip.test.ts": [
@@ -31475,10 +32291,40 @@
       "source": ".plan/tickets/TASK-2026-openwebui-tool-valves-panel.md"
     }
   ],
+  "src/partials/comparisons/cell-detail-modal.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    }
+  ],
+  "src/partials/comparisons/diff.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-two-cell-diff-modes.md"
+    }
+  ],
+  "src/partials/comparisons/grid.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
+    }
+  ],
   "src/partials/gallery/preview-modal.html": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-gallery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
     },
     {
       "kind": "ticket",
@@ -33376,6 +34222,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-research-agency-affordance.md"
     },
     {
@@ -33425,6 +34275,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
     },
     {
       "kind": "ticket",
@@ -34319,6 +35177,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-model-per-provider-cost-attribution-for-llm-execution-st.md"
+    }
+  ],
+  "src/routes/analytics/overview.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
     }
   ],
   "src/routes/api-keys.ts": [
@@ -36051,6 +36915,26 @@
       "source": ".plan/epics/epic-companion-pet-mount.md"
     }
   ],
+  "src/routes/comparison-sets.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-parameter-sweep-axis.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
+  "src/routes/comparison-sets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
+    }
+  ],
   "src/routes/comparisons-export.ts": [
     {
       "kind": "ticket",
@@ -36790,6 +37674,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
     },
     {
@@ -37459,6 +38347,10 @@
       "source": ".plan/epics/epic-entity-generation-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-and-group-chat-correctness-defects.md"
     },
@@ -37481,6 +38373,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-action-applicability-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
     },
     {
       "kind": "ticket",
@@ -38189,12 +39089,24 @@
       "source": ".plan/epics/epic-continuous-improvement.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-model-comparisons-analytics-leaks-all-users-rows-missing-use.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-analytics-observability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
     },
     {
       "kind": "ticket",
@@ -39638,6 +40550,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-spec-analytics-observability.md"
     },
     {
@@ -39975,10 +40891,52 @@
       "source": ".plan/tickets/TASK-tui-chat-picker.md"
     }
   ],
+  "src/routes/views/comparisons.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    }
+  ],
   "src/routes/views/constants.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css.md"
+    }
+  ],
+  "src/routes/views/escape-html.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-caption-bubble-layout.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
+    }
+  ],
+  "src/routes/views/gallery.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md"
     }
   ],
   "src/routes/views/gallery.ts": [
@@ -39989,6 +40947,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-gallery.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
       "kind": "ticket",
@@ -40005,6 +40967,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
     },
     {
       "kind": "ticket",
@@ -40118,6 +41088,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
     }
   ],
@@ -40129,6 +41103,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-search-401s-anonymous-users-while-grid-serves-them.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-panel-layout-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
     },
     {
       "kind": "ticket",
@@ -40149,6 +41139,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     }
   ],
   "src/routes/views/plugin-pages.ts": [
@@ -46057,6 +47051,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-creative-studio.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-export-formats.md"
     }
   ],
   "src/story/director-mode.ts": [
@@ -46599,6 +47605,18 @@
   ],
   "src/story/quality-evaluator.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-outline-generation-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-continuity-lint.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/testing.md"
     }
@@ -46863,6 +47881,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/character-spec.md"
+    }
+  ],
+  "src/story/world-timeline-bar.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     }
   ],
   "src/telemetry": [
@@ -48208,6 +49232,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
     }
   ],
@@ -48741,6 +49769,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
     },
     {
       "kind": "ticket",
@@ -49561,10 +50593,20 @@
       "source": ".plan/epics/epic-comfyui-plugin.md"
     }
   ],
+  "src/views/comparisons.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
+    }
+  ],
   "src/views/gallery.html": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
       "kind": "epic",
@@ -49573,6 +50615,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
     },
     {
       "kind": "ticket",
@@ -49847,6 +50893,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
+    }
+  ],
+  "src/views/publication-book.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    }
+  ],
+  "src/views/publication-comic.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-panel-layout-model.md"
+    }
+  ],
+  "src/views/publication.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
     }
   ],
   "src/views/quests.html": [
