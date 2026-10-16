@@ -88,6 +88,18 @@ A post-sweep audit found documentation still pointing at deleted modules. None w
 - `src/autonomy/governor/README.md` and `src/autonomy/scheduler/README.md` imported from `"../autonomy"`, the deleted `src/autonomy/index.ts` barrel. Both classes are still live (`AutonomyGovernor` from `governor/index.ts:55`, `AutonomyScheduler` from `scheduler/index.ts:47`), so the examples were repointed at `"./index"` rather than deleted. That matches how live code already imports them (`src/autonomy/dispatch/bdi-dispatch.ts:32`, `src/cron/jobs.ts:183`).
 - `src/regex/image-edit.ts` carried a comment crediting extraction from `image-edit-commands.ts`. The whole `src/generation/image-edit-commands/` tree is gone, so naming it kept a dead path alive; the comment now states what the module is instead of where it came from.
 
+### Doc import paths — one more, and a proposal (not built)
+
+`src/rpg/npc-navigation/tick-driver/README.md:26` also imported from a nonexistent path (`"../rpg/npc-navigation"`). `runNpcMovementTick` is real and live (`npc-navigation/tick-driver.ts:104`, imported by `autonomy/scheduler/targets.ts:17`), so the example now reads `"./tick-driver"`, matching the live importer.
+
+Proposal, offered rather than enforced — the HTTP API surface is already generated (`@elysia/openapi` -> spec -> `docs/reference/api.md`) and reconciled by the blocking `api - doc drift` gate. **Module READMEs have no equivalent.** Measured after this sweep's fixes: 8 markdown files carry relative `from "..."` examples; 1 of those (the tick-driver README, now fixed) pointed at a path that does not resolve. `scripts/check-md-links.ts` explicitly strips fenced code blocks (line 91), so it cannot catch this class by design.
+
+Option A — extend `check-md-links.ts` to resolve relative `from "..."` specifiers inside fenced ts blocks in `src/**/*.md` only, and skip `docs/spec/**` (those are illustrative pseudo-paths — 11 of the 12 unresolved examples live there and are written as design sketches, not copy-pasteable code). That keeps the check honest instead of red on day one. Roughly 30 lines, rides the existing gate.
+
+Option B — generate the import line. Not recommended: the examples are usage sketches whose value is the call shape, and a generator would emit imports nobody wrote.
+
+Prerequisite for A: none — it needs no doc comments, only path resolution, so it will not yield hollow output. The larger prerequisite applies to generated *API* docs, which this repo already has and does not need.
+
 ## Follow-ups found while verifying the wirings
 
 Both wired scripts were executed, not just added:
