@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 322 epics
+**Total:** 324 epics
 
 ## Summary
 
@@ -85,6 +85,7 @@
 | Not Started | DB & Asset Snapshot Recovery | High | High | 0 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
 | Not Started | DB Migration Compaction — final-form single migration (Path B) | Medium (maintainability; no runtime behavior change on a fresh DB) | High | 0 | [epic-db-migration-compaction.md](/.plan/epics/epic-db-migration-compaction.md) |
 | Not Started | Deno Support (Possible Node) | Low | Medium | 0 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
+| Not Started | Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance | Low | High | 0 | [epic-derived-map-generation.md](/.plan/epics/epic-derived-map-generation.md) |
 | Not Started | Design: Memory Knowledge Isolation and World Timeline | Low | Large | 0 | [epic-memory-isolation-design.md](/.plan/epics/epic-memory-isolation-design.md) |
 | Not Started | Disease & Poison Systems | Medium | High | 0 | [epic-disease-poison.md](/.plan/epics/epic-disease-poison.md) |
 | Done | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 0 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
@@ -297,6 +298,7 @@
 | Not Started | RPG Skills, Professions & Config Templates | High | High | 0 | [epic-skills-professions-config.md](/.plan/epics/epic-skills-professions-config.md) |
 | In Progress | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
 | Done | Runtime Integrity, Crash Recovery & Fail-Safes | medium | Medium | 0 | [epic-runtime-integrity-fail-safes.md](/.plan/epics/epic-runtime-integrity-fail-safes.md) |
+| Not Started | SAM3 / SAM3.1 Integration — Concept Segmentation for Generation | high | High | 0 | [epic-sam3-segmentation-integration.md](/.plan/epics/epic-sam3-segmentation-integration.md) |
 | Done | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Not Started | Security & Sandboxing — Epic | medium | Medium | 0 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
@@ -1029,6 +1031,17 @@ Unit, integration, E2E, performance-load, and security test framework architectu
 - **Type:** Research Epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-deno-support.md`
+
+### Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance
+
+- **Status:** Not Started
+- **Priority:** Low
+- **Effort:** High
+- **Type:** Generation Epic
+- **Tags:** depth, texture, pbr, segmentation, assets, gallery, comfyui
+- **File:** `.plan/epics/epic-derived-map-generation.md`
+
+Second-order generation derivatives on top of an image: **depth maps**, **PBR
 
 ### Design: Memory Knowledge Isolation and World Timeline
 
@@ -3047,6 +3060,17 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-runtime-integrity-fail-safes.md`
+
+### SAM3 / SAM3.1 Integration — Concept Segmentation for Generation
+
+- **Status:** Not Started
+- **Priority:** high
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** segmentation, sam3, comfyui, matting, image-edit, sprite-pipeline, model-api
+- **File:** `.plan/epics/epic-sam3-segmentation-integration.md`
+
+SAM 3 / SAM 3.1 (Meta, Nov 2025) is a unified detection + segmentation +
 
 ### Script Migration to Modular Architecture
 

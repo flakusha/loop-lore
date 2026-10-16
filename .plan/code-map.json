@@ -1196,6 +1196,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-concept-inpaint-template.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep.md"
     }
   ],
@@ -1279,8 +1283,16 @@
       "source": ".plan/epics/epic-avatar-alpha-vn-layering.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-derived-map-generation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-derived-map-origin-links.md"
     }
   ],
   "src/assets/metadata.test.ts": [
@@ -10256,6 +10268,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-derived-map-origin-links.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-filter-generated-derived-content.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
     }
   ],
@@ -12111,6 +12131,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-sam3-segmentation-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sam3-direct-provider-via-meta-model-api.md"
     },
     {
       "kind": "ticket",
@@ -16882,6 +16910,10 @@
     }
   ],
   "src/db/schema-content.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-derived-map-generation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
@@ -25013,6 +25045,10 @@
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-derived-map-generation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-caption-route-has-no-ownership-check-and-overwrites-foreign-.md"
     },
@@ -26223,7 +26259,25 @@
       "source": ".plan/tickets/TASK-lora-discovery-application.md"
     }
   ],
+  "src/generation/matting/auto-matte.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-sam3-segmentation-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sam3-concept-cutout-wiring-sprites-avatar-matting-vn-alpha.md"
+    }
+  ],
   "src/generation/matting/factory.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-sam3-segmentation-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sam3-direct-provider-via-meta-model-api.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste.md"
@@ -26235,7 +26289,21 @@
       "source": ".plan/tickets/TASK-local-image-generation-queue.md"
     }
   ],
+  "src/generation/matting/providers.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-sam3-segmentation-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sam3-direct-provider-via-meta-model-api.md"
+    }
+  ],
   "src/generation/matting/service.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-derived-map-generation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
@@ -26254,11 +26322,41 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-pbr-texture-set-generation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-derived-map-origin-links.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-multi-concept-segmentation-masks.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     },
     {
       "kind": "spec",
       "source": "docs/spec/graph-cluster-documents-assets-creative.md"
+    }
+  ],
+  "src/generation/matting/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-derived-map-generation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-sam3-segmentation-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-matting-concept-prompt-contract.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-multi-concept-segmentation-masks.md"
     }
   ],
   "src/generation/modality-templates/shared.ts": [
@@ -26730,6 +26828,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-sam3-segmentation-integration.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-vector-graphics-generation.md"
     },
     {
@@ -26779,6 +26881,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resource-provision-routing-facade.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sam3-direct-provider-via-meta-model-api.md"
     },
     {
       "kind": "ticket",
@@ -27729,6 +27835,10 @@
   ],
   "src/image-edit/providers/sd-server-provider/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-derived-map-generation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-provider-and-template-capabilities-disagree.md"
     }
@@ -27784,7 +27894,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-depth-map-generation-template.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-sam3-concept-mask-template.md"
     },
     {
       "kind": "ticket",
@@ -27801,6 +27919,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-depth-conditioned-editing.md"
+    }
+  ],
+  "src/image-edit/run-authz.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-sam3-segmentation-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-concept-inpaint-template.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-depth-conditioned-editing.md"
     }
   ],
   "src/image-edit/template-registry.test.ts": [
@@ -27843,6 +27979,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
+    }
+  ],
+  "src/image-edit/templates/builtin/controlnet.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-derived-map-generation.md"
     }
   ],
   "src/image-edit/templates/builtin/inpaint.ts": [
@@ -27900,11 +28042,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comfyui-sam3-concept-mask-template.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-ws-progress-streaming.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-image-edit-concept-inpaint-template.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-multi-concept-segmentation-masks.md"
     }
   ],
   "src/import/__tests__/roundtrip.test.ts": [
@@ -39636,6 +39790,10 @@
   "src/routes/views/gallery.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-derived-map-generation.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-gallery.md"
     },
     {
@@ -39656,11 +39814,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-derived-map-origin-links.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-fb9-gallery-private-asset-auth-gating-logxgal.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-filter-generated-derived-content.md"
     },
     {
       "kind": "ticket",
@@ -39805,6 +39971,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-filter-generated-derived-content.md"
     }
   ],
   "src/routes/views/static-partials.ts": [
@@ -40333,6 +40503,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+    }
+  ],
+  "src/routes/x.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-edit-journal.md"
     }
   ],
   "src/routing/index.ts": [
