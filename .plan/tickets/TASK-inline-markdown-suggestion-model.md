@@ -56,8 +56,8 @@ Three decisions carried by those columns:
   prose.
 - **Preview is a stored draft, not an apply.** The shape to copy is
   `branch_merges`: a `draft` row with its preview payload, confirmed only by an
-  explicit action (`confirmMerge` in
-  `src/chat/service/merge/merge-store.ts:217-220` transitions
+  explicit action (`guardDraftToConfirmed` in
+  `src/chat/service/merge/merge-store.ts:212-225` transitions
   `draft → confirmed`), with the result row carrying a back-reference badge
   (`messages.merge_id`, `src/db/schema-core.ts:793`). Suggestions follow the
   same preview→confirm discipline; nothing about a proposal touches the unit
@@ -68,9 +68,11 @@ Three decisions carried by those columns:
   change. No suggestion-specific write path exists.
 
 Sanitization stays at the existing boundary: the unit body renders through the
-chat render pipeline (`src/frontend/chat-utils/render.ts:36-37`, marked +
-`SANITIZE_CONFIG`); `proposed_text` is stored raw and rendered through the same
-pipeline, never pre-sanitized into something else.
+chat render pipeline (`src/frontend/alpine/chat-utils/render.ts:36-37` —
+`marked.parse` then `DOMPurify.sanitize(html, SANITIZE_CONFIG)`, with
+`SANITIZE_CONFIG` at `src/frontend/alpine/chat-utils/sanitize.ts:9`);
+`proposed_text` is stored raw and rendered through the same pipeline, never
+pre-sanitized into something else.
 
 Migration: `062_review_suggestions.ts` — after
 `TASK-review-thread-target-vocabulary.md`'s `061_review_threads.ts` claim (and

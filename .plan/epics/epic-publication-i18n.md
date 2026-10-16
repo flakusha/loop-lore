@@ -41,8 +41,8 @@ control.
 | --------- | ------ | -------- |
 | UI string loader / locale catalog | ✅ Shipped, UI-scoped | `src/i18n/`, `src/routes/i18n.ts` — 818 keys × 10 locales; **not** a content translator |
 | Message-level translation | ✅ Shipped | `src/assistant/commands/translate.ts`, `src/chat/auto-translate.ts`, `message_translations` (`src/db/schema-core.ts:738`) |
-| Glossary / term base | ❌ Absent | `grep -E '(?i)(glossary\|term.?base\|translation memory\|tmx)' src/` → 0 matches |
-| Name preservation ("do not translate") | ❌ Absent | `grep -E '(?i)(do.not.translate\|keep.*names\|preserve.*name)' src/` → 0 matches |
+| Glossary / term base | ❌ Absent | `grep -rniE '\b(glossary&#124;term[ ._-]?base&#124;translation memory&#124;tmx)\b' src/` → 0 matches |
+| Name preservation ("do not translate") | ❌ Absent | `grep -rniE 'do[ ._-]?not[ ._-]?translate' src/` → 0 matches |
 | Per-unit translation store | ❌ Absent | No `publication_translations` table; no per-unit `locale` column in `src/db/schema-*.ts` |
 | Batch translation pass | ❌ Absent | No job in `src/cron/jobs.ts` translates anything |
 | Reader locale selection | ❌ Absent | `TASK-publication-viewer-read-mode.md` is Not Started and locale-blind |

@@ -39,7 +39,7 @@ exist yet. The gate built here is the substitute's replacement.
   `src/schemas/nsfw-rating.test.ts:119`).
 - `src/middleware/license-gate.ts` **does not exist** — zero `license*.ts`
   files anywhere under `src/`. This is the unchecked AC at
-  `epic-licensing.md:53`.
+  `epic-licensing.md:54`.
 - `src/config/license.ts` — the feature-flag source the epic's enforcement
   design names at `epic-licensing.md:37` — **does not exist either**. Both
   files land in this ticket.
@@ -85,7 +85,7 @@ exist yet. The gate built here is the substitute's replacement.
   dimension is `TASK-licensing-publish-authorization-predicate.md`.
 
 The publish gate is also where the documented race
-(`epic-licensing.md:62-64` — a flag or license read at route entry can go stale
+(`epic-licensing.md:63-64` — a flag or license read at route entry can go stale
 before use) must be answered by re-checking at publish time, not by trusting
 the route-entry evaluation.
 
@@ -102,7 +102,7 @@ the route-entry evaluation.
       parameter (`dek-rewrap.ts:77` shape)
 - [ ] Publishing an `nsfw-gated` artifact re-checks the rating at publish time
       via `isRatingAllowed` — the route-entry flag evaluation is not trusted
-      (`epic-licensing.md:62`)
+      (`epic-licensing.md:63`)
 - [ ] No optional input can skip the gate (contrast `fan-out.ts:168`); a test
       proves the unskippable shape
 - [ ] One test per license gate + one per denial reason; brand
