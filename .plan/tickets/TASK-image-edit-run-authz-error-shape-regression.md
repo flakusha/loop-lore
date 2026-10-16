@@ -75,8 +75,13 @@ owns it. Do not duplicate that fix here.
 
 - [ ] Every claim in the Context above is re-verified against the code at HEAD and
       any drift found is either fixed here or filed as its own ticket with a link
-- [ ] The authz invariants stay pinned: 401 unauthenticated, 403 foreign `chatId`,
-      403 foreign `messageId`, 403 unknown `messageId`, 403 unknown `chatId`
+- [ ] The authz invariants stay pinned. Four are already asserted at
+      `src/image-edit/routes.coverage.test.ts:304-351` — 401 unauthenticated
+      (`:305`), 403 foreign `chatId` (`:313`), 403 foreign `messageId` (`:326`),
+      403 unknown `messageId` (`:339`) — and this ticket keeps them passing.
+      A fifth, **403 unknown `chatId`**, is a NEW test this ticket must write: the
+      `no chat oracle` case is covered for `messageId` but not for `chatId`, and an
+      unrecognized chat id must not fall through to a 500 or a run
 - [ ] The error-shape matrix for `POST /api/v1/image-edit/run` is complete and
       asserted — every status the handler can return, in the shared `jsonError` /
       `jsonResponse` envelope, including the 401 and 403 paths

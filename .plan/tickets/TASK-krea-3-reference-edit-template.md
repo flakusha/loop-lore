@@ -19,11 +19,16 @@ family loop-lore has never run.
 
 ## Context
 
-Krea 3 appears **nowhere** in `.plan/` today. `epic-model-family-presets.md`
-specifies a `krea-2` preset and no Krea 3 one; the 17-family reference table in
-that epic has no row for it. The only Krea-family knowledge in the repo is the
-hedged Krea 2 row ("Not working | ~12GB | needs retest") in
-`epic-comfyui-plugin.md` and `epic-assistant-generation-extensions.md`.
+Krea 3 appears in `.plan/` **only as an unimplemented bullet** — in
+`epic-comfyui-plugin`, `epic-assistant-generation-extensions`,
+`epic-reference-conditioned-generation` (an unchecked task line, plus a capability-
+matrix scope note), and `epic-technical-comparison-charts` (a variant axis).
+`epic-model-family-presets.md` specifies a `krea-2` preset and no Krea 3 one; the
+17-family reference table in that epic has no row for it. The only Krea-family
+*knowledge* in the repo is the hedged Krea 2 row ("Not working | ~12GB | needs
+retest") in `epic-comfyui-plugin.md` and `epic-assistant-generation-extensions.md`.
+No epic claims a Krea 3 measurement; every mention is a name in a plan, not a
+result.
 
 That is the honest starting position and it must stay visible: **there is no
 recorded observation of Krea 3 at all.** The first task is to establish whether
