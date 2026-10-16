@@ -330,6 +330,7 @@ Project planning, reviews, analysis, and research.
 | [`meta/tooling/log-problem-inventory.md`](./meta/tooling/log-problem-inventory.md) | Failure signatures seen in check artifacts, plus proposed controls        |
 | [`meta/tooling/finalize-speedup.md`](./meta/tooling/finalize-speedup.md)           | Where `bun run check` spends its time and memory; scoping options         |
 | [`meta/tooling/tooling-unification.md`](./meta/tooling/tooling-unification.md)     | Audit of loop-lore / giwt / omp-plugins tooling overlap and gaps          |
+| [`meta/tooling/ts7-bun-check-review.md`](./meta/tooling/ts7-bun-check-review.md) | Whether the TS7 migration dependencies are still needed; none droppable yet |
 
 ### Code Practices (`meta/code-practices-improvements/`)
 
