@@ -518,6 +518,42 @@ templates:
     );
   });
 
+  // Regression: the validator used to hardcode a legacy sfw|questionable|
+  // explicit set that disagreed with CharacterTemplateConfig.content_rating,
+  // the characters section JSON Schema, and VALID_CONTENT_RATINGS. Every
+  // legal non-sfw rating threw at load time while the two retired values
+  // passed validation.
+  test.each(["nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw_extreme",],)(
+    "accepts the canonical content rating %s",
+    (rating,) => {
+      writeTemplateFile(
+        "character.yaml",
+        `merge: extend
+templates:
+  - name: "Rated"
+    description: "d"
+    content_rating: "${rating}"
+`,
+      );
+
+      expect(loadTemplateConfig(TEST_DIR,).character.templates[0]?.content_rating,).toBe(rating,);
+    },
+  );
+
+  test.each(["questionable", "explicit",],)("rejects the retired content rating %s", (rating,) => {
+    writeTemplateFile(
+      "character.yaml",
+      `merge: extend
+templates:
+  - name: "Rated"
+    description: "d"
+    content_rating: "${rating}"
+`,
+    );
+
+    expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(/content_rating must be one of/,);
+  },);
+
   test("rejects a character template entry that is not an object", () => {
     writeTemplateFile("character.yaml", "merge: extend\ntemplates:\n  - flat\n",);
     expect(() => loadTemplateConfig(TEST_DIR,)).toThrow(/templates\[0\] must be an object/,);
