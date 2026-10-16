@@ -184,6 +184,7 @@ if (ISOLATED) {
 let createTUIApp: () => TUIApp;
 let setFetch: (fn: typeof safeFetch,) => void;
 let setPickerFetch: (fn: typeof safeFetch,) => void;
+let setModelsFetch: (fn: typeof safeFetch,) => void;
 let realFetch: typeof safeFetch;
 /** blessed.screen() calls consumed by the module import itself. */
 let screensAtImport: number;
@@ -195,6 +196,7 @@ beforeAll(async () => {
   createTUIApp = (await import("./app")).createTUIApp;
   setFetch = (await import("./harness/api")).setFetch;
   setPickerFetch = (await import("./chat-picker")).setFetch;
+  setModelsFetch = (await import("./models-api")).setFetch;
   realFetch = (await import("../utils")).safeFetch;
   screensAtImport = screenCreations;
 },);
@@ -229,6 +231,18 @@ beforeEach(() => {
   };
 
   setFetch(emptyHarness as unknown as typeof safeFetch,);
+
+  // F6 fires ModelsOverlay.show(), which refreshes the role list — same reason
+  // as the harness stub above. One empty roles envelope answers every call the
+  // overlay makes, so no test here opens a socket to localhost.
+  setModelsFetch(<T,>(): Promise<FetchResult<T>> =>
+    Promise.resolve({
+      ok: true,
+      data: { roles: [], overrides: {}, validRoles: [], } as T,
+      status: 200,
+      headers: new Headers(),
+    },)
+  );
 },);
 
 afterEach(() => {
@@ -451,6 +465,40 @@ describeOrSkip("TUIApp", () => {
     pressKey(app, "f1",);
     pressKey(app, "f1",);
     expect(app.chatPicker.isVisible(),).toBe(false,);
+  });
+
+  it("toggles the models overlay with F6 and back off the next press", () => {
+    const app = createTUIApp();
+    expect(app.models.isVisible(),).toBe(false,);
+
+    pressKey(app, "f6",);
+    expect(app.models.isVisible(),).toBe(true,);
+
+    pressKey(app, "f6",);
+    expect(app.models.isVisible(),).toBe(false,);
+  });
+
+  it("closes the models overlay on Esc without quitting", () => {
+    const app = createTUIApp();
+    pressKey(app, "f6",);
+    expect(app.models.isVisible(),).toBe(true,);
+
+    exitSpy = spyOn(process, "exit",).mockImplementation((() => {}) as never,);
+    pressKey(app, "escape",);
+
+    expect(exitSpy,).not.toHaveBeenCalled();
+    expect(app.models.isVisible(),).toBe(false,);
+  });
+
+  it("closes the chat picker on Esc even when the models overlay is also open", () => {
+    const app = createTUIApp();
+    pressKey(app, "f6",);
+    pressKey(app, "f1",);
+
+    pressKey(app, "escape",);
+
+    expect(app.chatPicker.isVisible(),).toBe(false,);
+    expect(app.models.isVisible(),).toBe(true,);
   });
 
   it("closes the chat picker on Esc without quitting", () => {

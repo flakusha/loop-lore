@@ -17,6 +17,7 @@ import { AssetView, } from "./asset-view";
 import { API_BASE, ChatWidget, } from "./chat";
 import { ChatPicker, } from "./chat-picker";
 import { createHarnessView, type HarnessView, } from "./harness";
+import { ModelsOverlay, } from "./models-overlay";
 
 /** Status line painted when `[tui].enabled` is false; the shell exits right after. */
 export const TUI_DISABLED_STATUS = "TUI disabled by config — set [tui].enabled = true to start";
@@ -32,6 +33,7 @@ export class TUIApp {
   assets!: AssetView;
   harness!: HarnessView;
   chatPicker!: ChatPicker;
+  models!: ModelsOverlay;
 
   /** */
   constructor() {
@@ -112,6 +114,13 @@ export class TUIApp {
       },
     },);
 
+    // ── Models overlay (full-screen, toggleable) ────────────
+    // Admin model/provider configuration. Reads and writes through the same
+    // `config.tui.sessionToken` as every other view, so a 403 here means the
+    // token's user lacks admin.system and the overlay says so rather than
+    // failing silently.
+    this.models = new ModelsOverlay(this.screen, { sessionToken, },);
+
     // ── Resize handler ─────────────────────────────────────
     this.screen.on("resize", () => {
       this.screen.render();
@@ -122,6 +131,7 @@ export class TUIApp {
       // An open overlay swallows the key: Esc closes the picker rather than
       // killing the process. With nothing open, the key quits as before.
       if (this.chatPicker.dismiss()) { return; }
+      if (this.models.dismiss()) { return; }
       this.shutdown();
     },);
 
@@ -145,6 +155,16 @@ export class TUIApp {
     this.screen.key(["f3",], () => {
       this.harness.toggle();
       this.updateStatus(this.harness.isVisible() ? "Harness: visible" : "Harness: hidden",);
+    },);
+
+    // F6 — toggle the models overlay. F4 stays reserved by
+    // TASK-harness-topic-tui-surface; F6 is the next free key in this block.
+    this.screen.key(["f6",], () => {
+      if (this.models.isVisible()) {
+        this.models.hide();
+      } else {
+        this.models.show();
+      }
     },);
 
     // F5 — refresh current chat messages
@@ -175,7 +195,9 @@ export class TUIApp {
       this.updateStatus("display cleared",);
     },);
 
-    this.updateStatus("ready — F1: chats | Tab: focus | F2: assets | F3: harness | F5: refresh | Esc/q: quit",);
+    this.updateStatus(
+      "ready — F1: chats | Tab: focus | F2: assets | F3: harness | F5: refresh | F6: models | Esc/q: quit",
+    );
 
     this.screen.render();
   }

@@ -153,6 +153,7 @@ Bound to this epic via the `**Epic:** epic-terminal-ui` header on each ticket.
 - [x] `BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md` — `config.tui.sessionToken` threaded into `ChatWidget`; empty-string normalized to undefined
 - [x] `TASK-tui-slash-command-completion.md` — completion strip above the input box, fed by the live `GET /api/v1/commands` registry; Tab cycles, Enter commits
 - [x] `TASK-tui-enabled-config-flag-never-read.md` — `tui.enabled` now read at startup: status message + exit 0 when false
+- [x] `TASK-tui-models-overlay.md` — F6 admin overlay: resolved role + `source`, provider health, drill-down role → provider → model to commit an override
 
 ### Open
 

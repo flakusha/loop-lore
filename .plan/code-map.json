@@ -251,6 +251,10 @@
       "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/chat-lifecycle-moderation.md"
     }
@@ -36135,6 +36139,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
     }
   ],
   "src/routes/admin/providers.test.ts": [
@@ -36151,6 +36159,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
     }
   ],
   "src/routes/admin/sd-status.ts": [
@@ -50150,6 +50162,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-shell-testability.md"
     },
     {
@@ -50210,6 +50226,10 @@
     }
   ],
   "src/tui/chat-picker.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
@@ -50429,6 +50449,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
     }
   ],
   "src/tui/harness/index.test.ts": [
@@ -50456,6 +50480,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-shell-testability.md"
     }
   ],
@@ -50475,6 +50503,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    }
+  ],
+  "src/tui/models-api.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
+    }
+  ],
+  "src/tui/models-display.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
+    }
+  ],
+  "src/tui/models-overlay.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
     }
   ],
   "src/tui/nsfw-filter.test.ts": [
@@ -51867,6 +51913,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
     },
     {
       "kind": "spec",
