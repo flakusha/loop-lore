@@ -3,7 +3,7 @@
 
 # EPIC: Experimental egui Frontend (adoption decision + client-agnostic view-model layer)
 
-**Tags:** (none)
+**Tags:** api, frontend, research, testing
 **Overview:** (see sections below)
 
 

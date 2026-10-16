@@ -4,7 +4,7 @@
 # Communications Integrations — Quick Reference
 
 **Type:** epic
-**Tags:** (none)
+**Tags:** chat, privacy, auth, docs
 **Overview:** (see sections below)
 
 
@@ -96,6 +96,8 @@ src/integrations/
 | WhatsApp | Signal Protocol   | Server-managed | End-to-end        |
 | Telegram | MTProto           | Server-managed | Cloud/local       |
 | Signal   | Signal Protocol   | Server-managed | End-to-end        |
+
+- **The quickref duplicates the protocol key-management posture; a stale copy is copied into per-protocol config** → re-check capability at use time (§Security Matrix)
 
 ## Related Epics
 

@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** database, schema, migration, integrity, concurrency
 **Overview:** (see sections below)
 
 
@@ -1415,3 +1415,17 @@ WHERE created_at < NOW() - INTERVAL '2 years';
 4. **Optimize** — Analyze query performance
 5. **Document** — API documentation
 6. **Implement** — Start Phase 1 games
+
+## Security Considerations
+
+- **Bet/payout balance update (gold/tokens) has no transaction around the wallet and transaction rows** → db.transaction (## Economy Tables: game_wallets, game_transactions)
+- **game_wallets/game_transactions take player_id from the caller; no row-level ownership check for debit/payout is defined** → re-check capability at use time (## Economy Tables)
+- **Same-turn concurrent moves race move_number assignment; UNIQUE(game_id, move_number) must be the arbiter** → unique constraint + retry (### Core Tables: game_moves)
+- **Daily bet quota read from game_daily_limits before the bet is written permits over-limit play** → conditional UPDATE … WHERE (## Rate Limiting: game_daily_limits)
+- **game_gifts claim / game_invites accept flip status with no double-claim guard** → conditional UPDATE … WHERE status='pending' (## Social Tables)
+
+## Related Epics
+
+- `epic-economy-trading.md` — related
+- `epic-mini-games-ui-api.md` — related
+- `epic-mini-games.md` — related

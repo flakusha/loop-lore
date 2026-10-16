@@ -3,7 +3,7 @@
 
 # EPIC: Headless Mode & Alternative Frontends
 
-**Tags:** (none)
+**Tags:** frontend, api, transport, auth
 **Overview:** (see sections below)
 
 
@@ -81,6 +81,12 @@ All SDKs consume the same OpenAPI-generated types and use the shared
 ## Linked Tasks
 
 - TASK-headless-alternative-frontends.md
+
+## Security Considerations
+
+- **API key/JWT issued to headless clients stays valid after revocation** → re-check capability at use time (`TASK-API-KEY-AUTH-MIDDLEWARE`)
+- **Permissive CORS lets an arbitrary origin drive cookie-authenticated API routes** → re-check capability at use time (`TASK-CORS-MIDDLEWARE`)
+- **External non-htmx clients skip the htmx harmonization gate** → re-check capability at use time (`TASK-EXTEND-FE-BE-HARMONIZATION-GATE-TO-COVER-EXTERNAL-NON-HTMX-A`)
 
 ## Related Epics
 

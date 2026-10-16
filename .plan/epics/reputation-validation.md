@@ -5,7 +5,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** validation, reliability, tooling
 **Overview:** (see sections below)
 
 ## Reputation Data Flow Validation

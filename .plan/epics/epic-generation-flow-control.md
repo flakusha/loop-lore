@@ -6,14 +6,13 @@
 **Status:** Not Started
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** llm, concurrency, rate-limiting, config, admin
 **Overview:** (see sections below)
 
 
 ## Status: Proposed
 
 **Priority:** High
-**Tags:** generation, pause, rate-limit, concurrency, admin
 
 ## Summary
 
@@ -75,3 +74,14 @@ Autonomous actor dispatch (epic-actor-autonomy-story-drive.md) is a governed con
 - Cross-instance/swarm-coordinated limits (defer to `epic-federation-swarm-sync.md`).
 - Provider billing/quota accounting beyond what circuit breaker already does.
 - Changing SSE transport away from client-disconnect semantics.
+
+## Security Considerations
+
+- **Global hold reads the system_config pause key, then starts generation; a toggle mid-window slips through** → conditional UPDATE … WHERE is_paused=0 at slot claim (epic §Design Direction)
+- **Per-chat pause is enforced only in the client composer send gate, not at the generate route** → re-check capability at use time server-side (src/frontend/alpine/composer-pre-send/send-gate.ts:82)
+- **Caller picks actorId while only chatId is authorized (cross-chat impersonation, full plugin tool list)** → re-check capability at use time at route (src/generation/generate-route/validate.ts:71)
+- **Semaphore and limiter state are process-local, so a second instance bypasses the global hold and cap** → single-writer / leader election (src/llm/concurrency-limiter.ts:10-11)
+
+## Related Epics
+
+- `epic-llm-queue.md` — related

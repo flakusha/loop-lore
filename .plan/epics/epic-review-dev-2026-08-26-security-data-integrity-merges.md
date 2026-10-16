@@ -6,14 +6,13 @@
 **Status:** Not Started
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** security, auth, integrity, audit
 **Overview:** (see sections below)
 
 
 ## Status: Proposed
 
 **Priority:** High
-**Tags:** review, security, data-integrity, auth, nsfw
 
 ## Summary
 
@@ -78,3 +77,9 @@ Five changes verified correct; one data-loss defect and four follow-up tasks tra
   known limitation in `message-search.test.ts`, not a regression.
 - Fixing the db reinit defect here — tracked as a BUG; this epic is review-only, code
   unchanged.
+
+## Related Epics
+
+- `epic-data-integrity-acid.md` — related
+- `epic-review-dev-2026-08-26-late-merges.md` — related
+- `epic-runtime-integrity-fail-safes.md` — related
