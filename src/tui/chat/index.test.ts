@@ -19,8 +19,9 @@
  * imported after the stub registers, so the typed static imports above are
  * intentional blanks and the real symbol arrives through the dynamic seam.
  */
-import { afterAll, beforeAll, expect, it, mock, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, mock, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import type { CommandListResult, } from "./api";
 import type { ChatWidget, } from "./index";
 import type { ChatMessage, ChatWidgetOptions, } from "./types";
 
@@ -28,7 +29,7 @@ function makeWidget(): WidgetStub {
   const handlers: Record<string, Array<(...args: unknown[]) => void>> = {};
   const items: string[] = [];
   const keyHandlers: Array<{ keys: unknown; fn: (...args: unknown[]) => void }> = [];
-  const state = { selectedIndex: -1, focusCount: 0, renderCount: 0, };
+  const state = { selectedIndex: -1, focusCount: 0, renderCount: 0, value: "", content: "", };
   return {
     on(event: string, fn: (...args: unknown[]) => void,): () => void {
       let list = handlers[event];
@@ -46,15 +47,21 @@ function makeWidget(): WidgetStub {
     focus: (): void => {
       state.focusCount++;
     },
-    clearValue: () => {},
-    setValue: (_v: string,) => {},
-    getValue: () => "",
+    clearValue: () => {
+      state.value = "";
+    },
+    setValue: (v: string,) => {
+      state.value = v;
+    },
+    getValue: () => state.value,
     submit: () => {},
     render: (): void => {
       state.renderCount++;
     },
-    setContent: (_c: string,) => {},
-    getContent: () => "",
+    setContent: (c: string,) => {
+      state.content = c;
+    },
+    getContent: () => state.content,
     add: () => {},
     pushItem: (_line: string,) => {},
     addItem: (line: string,) => {
@@ -125,7 +132,9 @@ const loadMessagesMock = mock(() => Promise.resolve());
 
 // The completer reaches the registry through the same module; it only fires
 // on a `/` keystroke, so the stub keeps the widget off the network.
-const loadCommandsMock = mock(() => Promise.resolve({ ok: true as const, data: [], },));
+const loadCommandsMock = mock(
+  (): Promise<CommandListResult> => Promise.resolve({ ok: true, data: [], },),
+);
 
 if (ISOLATED) {
   mock.module("./api", () => ({
@@ -178,6 +187,14 @@ function captureFactory<T extends (...args: unknown[]) => unknown,>(
 // The `mock.module` stubs above only register under ISOLATED; without them
 // the real blessed module loads and the widget is not constructible.
 describeOrSkip("ChatWidget — sessionToken threading", () => {
+  // The module doubles are shared across the file, so a test that submits a
+  // message would otherwise leak call counts into the next one's assertions.
+  beforeEach(() => {
+    handleSendMock.mockClear();
+    loadMessagesMock.mockClear();
+    loadCommandsMock.mockClear();
+  },);
+
   it("forwards an explicit sessionToken onto the instance", () => {
     const chat = buildWidget({ sessionToken: "abc123", },);
     expect(chat.sessionToken,).toBe("abc123",);
@@ -243,6 +260,103 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
     const keyHandlers = widgetOf(chat, "screen",).keyHandlers as Array<{ keys: unknown }>;
     expect(keyHandlers,).toHaveLength(1,);
     expect(keyHandlers[0]!.keys,).toEqual(["tab",],);
+  });
+
+  describe("slash-command completion wiring", () => {
+    /** The widget's own Tab key handler, whatever it returns. */
+    const tabHandler = (chat: ReturnType<typeof buildWidget>,): () => void => {
+      const screen = widgetOf(chat, "screen",);
+      return (screen.keyHandlers as Array<{ keys: unknown; fn: () => void }>)
+        .find((h,) => JSON.stringify(h.keys,) === JSON.stringify(["tab",],))!.fn;
+    };
+
+    beforeEach(() => {
+      loadCommandsMock.mockResolvedValue({
+        ok: true,
+        data: [{ name: "reset", descriptionKey: "commands.reset", }, {
+          name: "revert",
+          descriptionKey: "commands.revert",
+        },],
+      },);
+    },);
+
+    /** Drain the completer's lazy fetch + re-filter microtask chain. */
+    const settle = async (): Promise<void> => {
+      await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
+    };
+
+    /** Type `text` into the input box the way a keystroke does. */
+    const type = async (chat: ReturnType<typeof buildWidget>, text: string,): Promise<void> => {
+      const input = widgetOf(chat, "inputBox",);
+      input.state.value = text;
+      input.emit("keypress", text.slice(-1,), { name: text.slice(-1,), },);
+      await settle();
+    };
+
+    /** The completion strip's rendered content. */
+    const strip = (chat: ReturnType<typeof buildWidget>,): string =>
+      (chat as unknown as Record<string, WidgetStub>).completionStrip!.getContent();
+
+    it("renders a hint from the live registry once a slash is typed", async () => {
+      const chat = buildWidget();
+      expect(strip(chat,),).toBe("",);
+      await type(chat, "/re",);
+      expect(loadCommandsMock,).toHaveBeenCalledTimes(1,);
+      expect(strip(chat,),).toContain("reset",);
+      expect(strip(chat,),).toContain("revert",);
+    });
+
+    it("Tab advances the selection without moving focus away from the input", async () => {
+      const chat = buildWidget();
+      await type(chat, "/re",);
+      expect(strip(chat,),).not.toContain("{bold}",);
+      tabHandler(chat,)();
+      expect(strip(chat,),).toContain("{bold}",);
+      // Focus stayed put: only the startup focus call happened.
+      expect(widgetOf(chat, "inputBox",).state.focusCount,).toBe(1,);
+    });
+
+    it("Tab falls through to the focus switch when nothing matches", async () => {
+      const chat = buildWidget();
+      await type(chat, "/zzz",);
+      // A no-match query still reports itself, but offers nothing to select.
+      expect(strip(chat,),).toContain("no command matches",);
+      // The stub does not track focus on its own; real blessed sets it here.
+      widgetOf(chat, "screen",).focused = widgetOf(chat, "inputBox",);
+      tabHandler(chat,)();
+      // The list took focus, so the switch ran instead of the completion.
+      expect(widgetOf(chat, "messageList",).state.focusCount,).toBe(1,);
+    });
+
+    it("Enter on a highlighted completion commits the text instead of sending", async () => {
+      const chat = buildWidget();
+      const input = widgetOf(chat, "inputBox",);
+      await type(chat, "/re",);
+      tabHandler(chat,)();
+      input.emit("submit", "/re",);
+      expect(input.getValue(),).toBe("/reset ",);
+      expect(handleSendMock,).not.toHaveBeenCalled();
+    });
+
+    it("a bare slash with no selection still sends as ordinary text", async () => {
+      const chat = buildWidget();
+      const input = widgetOf(chat, "inputBox",);
+      await type(chat, "/",);
+      input.emit("submit", "/",);
+      expect(handleSendMock,).toHaveBeenCalledWith(chat, "/",);
+      expect(input.getValue(),).toBe("",);
+    });
+
+    it("a failed registry fetch still sends the slash as ordinary text", async () => {
+      loadCommandsMock.mockResolvedValue({ ok: false, error: "HTTP 500", },);
+      const chat = buildWidget();
+      const input = widgetOf(chat, "inputBox",);
+      await type(chat, "/help",);
+      // Strip must not be stranded on the loading hint after the failure.
+      expect(strip(chat,),).not.toContain("loading",);
+      input.emit("submit", "/help",);
+      expect(handleSendMock,).toHaveBeenCalledWith(chat, "/help",);
+    });
   });
 
   it("ignores empty and whitespace-only submissions but still clears and refocuses", () => {
@@ -436,6 +550,10 @@ interface WidgetState {
   selectedIndex: number;
   focusCount: number;
   renderCount: number;
+  /** Textbox content; the completion tests type into it directly. */
+  value: string;
+  /** Last content passed to setContent (the completion strip reads this). */
+  content: string;
 }
 
 /** Precise shape of the blessed widget stub returned by `makeWidget()`. */
