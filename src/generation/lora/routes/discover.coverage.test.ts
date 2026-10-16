@@ -116,7 +116,7 @@ function configWithSd(sd: unknown[],): Config {
 /** Discover app behind an auth-injecting derive (mirrors server middleware). */
 function authedApp(config: Config,) {
   return new Elysia()
-    .derive(() => ({ userId: "sm-cov-user", userRole: "user", }))
+    .derive(() => ({ userId: "sm-cov-user", userRole: "admin", }))
     .use(discoverRoutes(config,),);
 }
 
@@ -153,7 +153,7 @@ async function invokeDiscoverHandler(config: Config, body: unknown,): Promise<Re
   const routes = discoverRoutes(config,).routes as unknown as RouteRecord[];
   const route = routes.find((r,) => r.method === "POST" && r.path === "/api/lora/discover");
   if (!route) { throw new Error("discover route is not mounted",); }
-  return await route.handler({ body, userId: "sm-cov-user", userRole: "user", },);
+  return await route.handler({ body, userId: "sm-cov-user", userRole: "admin", },);
 }
 
 beforeEach(() => {
@@ -176,13 +176,26 @@ describe("POST /api/lora/discover — auth gate", () => {
     // The gate is `if (!userId)`, so a falsy-but-present identity is denied
     // too; a future `userId === null` refactor would silently allow it.
     const app = new Elysia()
-      .derive(() => ({ userId: "", userRole: "user", }))
+      .derive(() => ({ userId: "", userRole: "admin", }))
       .use(discoverRoutes({} as Config,),);
 
     const res = await app.handle(post("/api/lora/discover", {},),);
     expect(res.status,).toBe(401,);
     const body = await res.json() as DiscoverBody;
     expect(body.code,).toBe("UNAUTHORIZED",);
+  });
+
+  test("returns 403 for an authenticated non-admin (default-deny on admin.system)", async () => {
+    // Discovery triggers backend scans shared by every user, so the route is
+    // admin-only; a plain authenticated caller must be denied, not served.
+    const app = new Elysia()
+      .derive(() => ({ userId: "sm-cov-user", userRole: "user", }))
+      .use(discoverRoutes({} as Config,),);
+
+    const res = await app.handle(post("/api/lora/discover", {},),);
+    expect(res.status,).toBe(403,);
+    const body = await res.json() as DiscoverBody;
+    expect(body.code,).toBe("FORBIDDEN",);
   });
 });
 
