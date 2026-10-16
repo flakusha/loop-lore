@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Wontfix
 **Priority:** low
 **Effort:** trivial
 **Epic:** epic-terminal-ui

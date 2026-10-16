@@ -13256,6 +13256,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
     }
   ],
@@ -50054,6 +50058,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-assetview-loads-assets-without-auth.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
     },
     {
@@ -50091,6 +50099,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/terminal-ui.md"
+    }
+  ],
+  "src/tui/asset-view.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assetview-loads-assets-without-auth.md"
     }
   ],
   "src/tui/asset-view.ts": [
@@ -50167,6 +50181,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-.md"
     },
     {
       "kind": "ticket",
@@ -50275,6 +50293,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    }
+  ],
+  "src/tui/chat/send-timeout.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-.md"
     }
   ],
   "src/tui/chat/types.ts": [
