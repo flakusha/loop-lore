@@ -20245,6 +20245,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-personas-impersonation-plan-docs-bookkeeping-sweep.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md"
     }
   ],
   "src/frontend/alpine-init.ts": [
@@ -33411,6 +33415,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-odysseus-manage-tool-parity-evaluation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md"
     }
   ],
   "src/plugins/api.ts": [

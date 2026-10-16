@@ -40,9 +40,26 @@ Also relevant: `Bun.ModuleGraph` is explicitly labelled experimental and states 
 
 ## Notes
 
+### Status rationale — why `Done` with AC#9 unticked
+
+This ticket is `Done` because **every deliverable it specifies is complete**: the
+policy tag, the typed refusal, the tests, the edge cases, the executed coverage
+proof, the TOCTOU handling, and the docs/claim correction are all landed and
+verified. AC#9 is left unticked because it is a statement about repo-wide gate
+health, not about this ticket's work — and it is red solely on
+`changelog - gate`, which is proven independent of this branch (`CHANGELOG.md`
+is byte-identical to dev, the gate reproduces standalone, and it reads only
+`CHANGELOG.md` plus repo-global tags).
+
+The unticked box is therefore **deliberate and is not an oversight**. Marking
+this `In Progress` would misrepresent the work: nothing about the policy tag
+remains to be done, and it would leave a false claim that this ticket still has
+code outstanding. The red gate belongs to the release/tagging workflow
+(tag 1.2.3 predates its CHANGELOG section), not to this change.
+
 ### Gate status — `bun run check` is NOT green
 
-Full run (run id `226199-mvarknwl`, exit 1): **Total 41 | Passed 35 | Skipped 1 |
+Full run (run id `646573-mvas6jjb`, exit 1): **Total 41 | Passed 35 | Skipped 1 |
 Advisory 4 | Failed 1.** Verbatim summary:
 
 ```
@@ -74,10 +91,11 @@ same failure standalone. The branch adds 43 commits' worth of lineage over tag
 
 **Advisory (non-blocking) gates, 4 — 2 were caused by this branch and are now fixed:**
 
-- `code-map - freshness` — **was mine** (new `tool-policy.ts` +
-  `strict-probe.fixture.ts` absent from the map). Fixed: `giwt plan code-map`
-  regenerated it (+30 lines); now reports "OK - code map is up to date".
-- `plan - validate` — **was mine**, failing only via the same stale code-map.
+- `code-map - freshness` — **was mine**, and it recurred once: the map keys off
+  ticket content, so editing this ticket re-staled it after the first regen.
+  Ordering that actually holds: make the ticket edit first, regenerate last.
+  Now regenerated and reporting "OK - code map is up to date".
+- `plan - validate` — **was mine**, failing only via that same stale code-map.
   Now `code-map OK`; its one remaining failure is the pre-existing
   "ticket index out of sync".
 - `dead - code (src files)` — pre-existing: 69 unused files, verified that
