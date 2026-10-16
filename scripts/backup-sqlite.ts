@@ -4,9 +4,10 @@
 import { spawnSync, } from "bun";
 import { Database, } from "bun:sqlite";
 import { copyFileSync, existsSync, readdirSync, statSync, unlinkSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import { basename, join, } from "node:path";
 
-const BACKUP_DIR = process.env.BACKUP_DIR ?? "/tmp";
+const BACKUP_DIR = process.env.BACKUP_DIR ?? tmpdir();
 const DB_PATH = process.env.DB_PATH ?? "/data/loop-lore.db";
 const NETWORK_MOUNT = process.env.NETWORK_MOUNT ?? "/mnt/backups/db";
 const RETENTION_DAYS = parseInt(process.env.RETENTION_DAYS ?? "7", 10,);
