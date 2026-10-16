@@ -17,8 +17,11 @@
 **Scope-exclusion ticket.** loop-lore's half is narrow: **do not inherit** the
 sidecar's hardcoded literals into any loop-lore config, template, or code path.
 The de-hardcoding itself, the `explorer.exe` cross-platform replacement, and the
-installer are **plugin-repo work, out of scope** — recorded here and escalated,
-not implemented. **loop-lore should not hold this kind of responsibility**: the
+installer are **plugin-repo work, out of scope** — escalated as the filed
+tickets `TASK-sidecar-hardcoded-literals-configurable-defaults.md`
+(de-hardcoding), `TASK-sidecar-reveal-cross-platform.md` (the `explorer.exe`
+replacement), and `TASK-sidecar-installer-node-registration.md` (installer +
+node registration), not implemented. **loop-lore should not hold this kind of responsibility**: the
 Python files that need those fixes ship from the separate ComfyUI plugin
 repository, which is the user's own initiative and will be integrated with
 loop-lore later. No acceptance criterion here asks loop-lore to write Python, an
@@ -141,8 +144,10 @@ implementation half is the guard that stops loop-lore copying the literals in.
 It does not fix the Python source in `.tmp/` — that directory is scratch, stays
 uncommitted, and per the separate-plugin-repo decision the Python half ships from
 its own plugin repository rather than from loop-lore. **The de-hardcoding, the
-`explorer.exe` replacement, and the installer are escalated to that repository,
-not implemented here.**
+`explorer.exe` replacement, and the installer are escalated to that repository
+as the filed tickets `TASK-sidecar-hardcoded-literals-configurable-defaults.md`,
+`TASK-sidecar-reveal-cross-platform.md`, and
+`TASK-sidecar-installer-node-registration.md` — not implemented here.**
 
 ## Acceptance Criteria
 
@@ -169,7 +174,11 @@ not implemented here.**
       ComfyUI cwd
 - [ ] **De-hardcoding, the `explorer.exe` cross-platform replacement, and the
       installer are out of scope — plugin-repo work.** They are escalated to the
-      separate ComfyUI plugin repository and implemented nowhere in loop-lore. No
+      separate ComfyUI plugin repository as the filed tickets
+      `TASK-sidecar-hardcoded-literals-configurable-defaults.md`,
+      `TASK-sidecar-reveal-cross-platform.md`, and
+      `TASK-sidecar-installer-node-registration.md` — all Blocked until that
+      repository exists — and implemented nowhere in loop-lore. No
       acceptance criterion in this ticket asks loop-lore to write Python, to ship
       an installer, or to install files under `custom_nodes/`
 - [ ] Test: a grep-based guard fails if any of the pinned literals above reappears
