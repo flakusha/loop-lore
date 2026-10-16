@@ -65,6 +65,13 @@ export class TUIApp {
     this.screen = blessed.screen({
       smartCSR: true,
       title: "Loop Lore TUI",
+      // The chat input reads keystrokes while it is focused, and blessed drops
+      // EVERY screen-level keypress while a widget holds `screen.grabKeys`
+      // (widgets/screen.js:591). `ignoreLocked` is blessed's own escape hatch
+      // for exactly this: these keys reach their handler even mid-read. `q` is
+      // deliberately absent — it is ordinary text inside a message, and the box
+      // must keep it. Nothing types Esc/C-l/F-keys, so all of them are safe.
+      ignoreLocked: ["escape", "C-c", "f1", "f2", "f3", "f5", "f6", "C-l", "tab",],
     },);
 
     // ── Status bar (bottom) ─────────────────────────────────
@@ -135,10 +142,29 @@ export class TUIApp {
 
     // ── Global keyboard shortcuts ──────────────────────────
     this.screen.key(["escape", "q", "C-c",], () => {
-      // An open overlay swallows the key: Esc closes the picker rather than
-      // killing the process. With nothing open, the key quits as before.
-      if (this.chatPicker.dismiss()) { return; }
-      if (this.models.dismiss()) { return; }
+      // An open overlay swallows the key: Esc closes it rather than killing the
+      // process. With nothing open, the key quits as before. Every overlay has a
+      // `dismiss()` so this chain cannot drift out of sync with the toggles.
+      // Each dismiss hands the keyboard back to the chat box, so Esc closes
+      // an overlay and leaves a usable prompt rather than a dead screen.
+      if (this.chatPicker.dismiss()) {
+        this.chat.focusInput();
+
+        return;
+      }
+
+      if (this.models.dismiss()) {
+        this.chat.focusInput();
+
+        return;
+      }
+
+      if (this.harness.dismiss()) {
+        this.chat.focusInput();
+
+        return;
+      }
+
       this.shutdown();
     },);
 
@@ -147,7 +173,11 @@ export class TUIApp {
     this.screen.key(["f1",], () => {
       if (this.chatPicker.isVisible()) {
         this.chatPicker.hide();
+        this.chat.focusInput();
       } else {
+        // Release the chat box first: an overlay cannot take focus while a
+        // widget still holds `screen.grabKeys`.
+        this.chat.releaseInput();
         this.chatPicker.show();
       }
     },);
@@ -160,7 +190,15 @@ export class TUIApp {
 
     // F3 — toggle harness view
     this.screen.key(["f3",], () => {
-      this.harness.toggle();
+      if (this.harness.isVisible()) {
+        this.harness.hide();
+        this.chat.focusInput();
+      } else {
+        this.chat.releaseInput();
+        this.harness.show();
+        void this.harness.refresh();
+      }
+
       this.updateStatus(this.harness.isVisible() ? "Harness: visible" : "Harness: hidden",);
     },);
 
@@ -169,7 +207,9 @@ export class TUIApp {
     this.screen.key(["f6",], () => {
       if (this.models.isVisible()) {
         this.models.hide();
+        this.chat.focusInput();
       } else {
+        this.chat.releaseInput();
         this.models.show();
       }
     },);
