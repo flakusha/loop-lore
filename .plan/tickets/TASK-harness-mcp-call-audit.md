@@ -29,3 +29,6 @@ External-runtime tool calls are the one class of invocation with no audit trail 
 ## Technical Notes
 
 - The offered-vs-invoked distinction is the whole reason this ticket exists separately from the exec log; the doc's caveat at :235-239 is the ground truth.
+
+
+git issue: 1710a00
