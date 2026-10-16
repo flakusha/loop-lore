@@ -456,12 +456,14 @@ export default [
       "no-restricted-imports": "off",
     },
   },
-  // Build scripts (TypeScript): same minimal surface as the e2e block - parser +
-  // bun/node globals, oxlint keeps handling the rest. No typed rules (these files
-  // live in tsconfig.scripts.json, not the src project), and CLI glue is exempt
-  // from the options-object convention and the process-exit ban.
+  // Build scripts (TypeScript): minimal surface - parser + bun/node globals so
+  // the files parse and eslint-disable comments resolve. No rule set: these are
+  // CLI glue that was never linted, and oxlint keeps handling the rest. They
+  // also live in tsconfig.scripts.json, not the src project, so no typed rules.
   {
     files: ["scripts/**/*.ts"],
+    // Test files stay out: CLI-glue block, and *.test.ts was never linted.
+    ignores: ["scripts/**/*.test.ts"],
     languageOptions: {
       parser: tseslint.parser,
       globals: {
@@ -469,9 +471,7 @@ export default [
         ...globals.node,
       },
     },
-    plugins: tsPlugins,
     rules: {
-      ...tsRules,
       "unicorn/no-process-exit": "off",
       "local/options-object-params": "off",
     },
