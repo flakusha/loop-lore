@@ -1512,6 +1512,10 @@
   "src/assets/service/create.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-2d-sprite-world.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
     },
     {
@@ -1827,6 +1831,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-guest-access.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-implementation.md"
     },
     {
       "kind": "epic",
@@ -20457,6 +20465,12 @@
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     }
   ],
+  "src/frontend/alpine/composer-pre-send/send-gate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-generation-flow-control.md"
+    }
+  ],
   "src/frontend/alpine/composer-pre-send/validate.ts": [
     {
       "kind": "ticket",
@@ -25535,6 +25549,10 @@
   ],
   "src/generation/generate-route/validate.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-generation-flow-control.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
     },
@@ -28779,6 +28797,14 @@
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-generation-flow-control.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-llm-queue.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-effect-v4-s7-structured-fan-out-spike.md"
     },
@@ -29408,6 +29434,10 @@
     }
   ],
   "src/memory/extraction-store.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-extraction-store-writes-memories-without-a-transactio.md"
@@ -30835,6 +30865,10 @@
   ],
   "src/notifications/service/crud.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-notifications.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr.md"
     },
@@ -31706,6 +31740,10 @@
   "src/plugins/loader.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-platform-research.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-plugin-system.md"
     },
     {
@@ -31872,6 +31910,10 @@
     }
   ],
   "src/plugins/registry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-output-control-transforms.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-plugin-extension-points.md"
@@ -33434,6 +33476,10 @@
   "src/routes/activity-stream.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-frontend-notifications.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
     },
     {
@@ -34337,6 +34383,10 @@
   ],
   "src/routes/auth/register.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-login.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
     },
@@ -34379,6 +34429,10 @@
   ],
   "src/routes/auth/session.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-login.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.md"
     },
@@ -34400,6 +34454,10 @@
     }
   ],
   "src/routes/auth/shared.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-login.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-guest-access.md"

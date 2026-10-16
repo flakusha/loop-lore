@@ -6,7 +6,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** ui, ux, components, accessibility, concurrency
 **Overview:** (see sections below)
 
 
@@ -1968,3 +1968,15 @@ interface DisconnectionPolicy {
 8. **Tournament scheduling**: How to handle time zones for tournaments?
 9. **Card back designs**: Can players customize card backs?
 10. **Table themes**: Can players choose table backgrounds?
+
+## Security Considerations
+
+- **Simultaneous moves resolved last-write-wins by timestamp, so both clients' bets can apply** → optimistic concurrency (version column) (## Multiplayer Considerations: Conflict Resolution)
+- **checkDailyLimit reads daily stats then approves the bet (read-then-write quota)** → conditional UPDATE … WHERE on daily counters (## Economy Formulas: Anti-Exploit Formulas)
+- **Per-process action queue: two server instances can replay the same queued action** → single-writer / leader election (## Error Handling & Edge Cases: concurrent game actions)
+- **DB-save failure retries then restarts from last checkpoint, so a settled pot can pay twice** → idempotency key (## Error Handling & Edge Cases: database save fails)
+
+## Related Epics
+
+- `epic-accessibility-input.md` — related
+- `epic-mini-games.md` — related

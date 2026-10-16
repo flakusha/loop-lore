@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** frontend, backend, docs
 **Overview:** (see sections below)
 
 

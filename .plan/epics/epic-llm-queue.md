@@ -3,7 +3,7 @@
 
 # EPIC: LLM Request Throughput & Message Scheduling
 
-**Tags:** (none)
+**Tags:** llm, queue, scheduler, rate-limiting, concurrency
 **Overview:** (see sections below)
 
 
@@ -204,3 +204,15 @@ interface LLMResourceManager {
 ## Linked Tasks
 
 - TASK-llm-queue.md
+
+## Security Considerations
+
+- **Per-provider cap is an in-process semaphore Map with no cross-process coordination** → single-writer / leader election for slot accounting (src/llm/concurrency-limiter.ts:10-11)
+- **Duplicate-request detection is an in-process liveIds Set, so a restart or second instance re-enqueues same message** → idempotency key persisted at admission (src/llm/resource-manager.ts:52-53)
+- **Queue and running-handle state is memory-only (no persistence); a restart drops queued work while the row reads queued** → idempotency key on redispatch (src/llm/resource-manager.ts:17-19)
+
+## Related Epics
+
+- `epic-actor-autonomy-story-drive.md` — related
+- `epic-analytics-observability.md` — related
+- `epic-generation-flow-control.md` — related

@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** frontend, i18n, ui, htmx
 **Overview:** (see sections below)
 
 
@@ -24,6 +24,10 @@ _TBD — expand with frontend implementation tasks._
 ## Related Epics
 
 - `docs/frontend/internationalization.md`
+
+- `epic-frontend-components.md` — related
+- `epic-frontend-settings.md` — related
+- `epic-i18n.md` — related
 
 ## Tickets
 

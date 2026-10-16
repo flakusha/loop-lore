@@ -3,7 +3,7 @@
 
 # EPIC: Multi-Session Support
 
-**Tags:** (none)
+**Tags:** auth, security, backend
 **Overview:** (see sections below)
 
 

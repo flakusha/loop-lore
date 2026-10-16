@@ -3,7 +3,7 @@
 
 # EPIC: Deno Support (Possible Node)
 
-**Tags:** (none)
+**Tags:** research, tooling, frontend, docs
 **Overview:** (see sections below)
 
 
@@ -90,3 +90,7 @@ as an alternative frontend for the headless API. Integration points:
 ## Related Epics
 
 - **epic-api-library-distribution.md** — Runtime abstraction enables Deno support; Deno adapter is part of library distribution
+
+- `epic-cross-platform-portability.md` — related
+- `epic-fresh-alternative-frontend.md` — related
+- `epic-headless-alternative-frontends.md` — related

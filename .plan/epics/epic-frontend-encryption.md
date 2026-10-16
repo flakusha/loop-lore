@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** frontend, encryption, crypto, security
 **Overview:** (see sections below)
 
 
@@ -21,9 +21,20 @@ Frontend implementation for Encryption UI. See `docs/frontend/encryption.md` for
 
 _TBD — expand with frontend implementation tasks._
 
+## Security Considerations
+
+- **Session-bound key material reused after the session ends** → re-check capability at use time (src/frontend/browser-crypto.ts:47-113)
+- **Two tabs unlock/enroll the same user key concurrently** → unique constraint + retry (src/components/key-management.html)
+- **Unlock surface trusts a cached key without re-authorizing the session** → re-check consent/authorization after reservation (src/components/key-management.html)
+- **Gallery decrypt path trusts the asset id supplied by the client (IDOR)** → re-check capability at use time (epic Integration Points: Frontend Gallery decrypt path)
+
 ## Related Epics
 
 - `docs/frontend/encryption.md`
+
+- `epic-encryption-workflow.md` — related
+- `epic-frontend-gallery.md` — related
+- `epic-frontend-login.md` — related
 
 ## Tickets
 

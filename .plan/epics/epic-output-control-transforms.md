@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** llm, streaming, i18n, frontend
 **Overview:** (see sections below)
 
 
@@ -55,3 +55,14 @@ Request-stage transforms must be idempotent: guard append/prepend/increment with
 ## Linked Tasks
 
 - TASK-output-control-transforms.md
+
+## Security Considerations
+
+- **Marker check then insert is check-then-act; a 3-call turn inserts the marker three times** → idempotency key per (messageId, stage, marker) (src/generation/transforms.ts)
+- **Community transform plugin named like a builtin overwrites the builtin slot** → name-origin validation at load (src/plugins/registry.ts:33-37)
+
+## Related Epics
+
+- `epic-frontend-chat-commands.md` — related
+- `epic-i18n.md` — related
+- `epic-plugin-system.md` — related

@@ -7,13 +7,12 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** telemetry, ci, testing
 **Overview:** (see sections below)
 
 
 **Status:** In Progress
 **Priority**: high
-**Tags**: epic, observability, telemetry
 
 ## Description
 

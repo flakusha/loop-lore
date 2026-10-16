@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** tor, i2p, mesh-networking, byok, resource-sharing, reputation-ledger, radicle, gossip-protocol
 **Overview:** (see sections below)
 
 
@@ -336,6 +336,10 @@ interface RadicleClient {
 - `epic-security-sandboxing.md` — Security hardening
 - `epic-social-hub.md` — Cross-platform communication
 - `epic-api-governance.md` — API security and validation
+
+- `epic-distributed-compute-sharing.md` — related
+- `epic-mesh-federation-content-sharing.md` — related
+
 
 ## Notes
 

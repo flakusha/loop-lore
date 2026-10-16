@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** frontend, components, ui, alpine, htmx
 **Overview:** (see sections below)
 
 
@@ -35,10 +35,19 @@ Composer integration points (verified 2026-09):
 | --- | --- |
 | `TASK-prompt-improve-composer-ui.md` | ✨ Improve button + level menu in `input-area.html`; Alpine `chat-actions/prompt-improve.ts` (draft replace + undo + toast) |
 
+## Security Considerations
+
+- **htmx partial endpoints trusted because their trigger is only rendered for permitted users** → re-check capability at use time (src/components/chat/input-area.html:151-187)
+- **Group controls (toggleGroupPause) driven by client Alpine state alone** → re-check capability at use time (src/frontend/alpine/chat-group.ts:42)
+
 ## Related Epics
 
 - `docs/frontend/components.md`
 - `epic-prompt-improvement.md` — unified prompt-improvement feature hosted in the composer.
+
+- `epic-frontend-chat-commands.md` — related
+- `epic-frontend-emoji-reactions.md` — related
+- `epic-frontend-html-dedup-htmx-reuse.md` — related
 
 ## Integration Points
 

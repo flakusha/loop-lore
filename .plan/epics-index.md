@@ -347,7 +347,7 @@
 - **Priority:** High
 - **Effort:** Very High total (split across sub-epics below)
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** canvas, spatial-layer, pixel-art, npc-simulation, procedural-generation, parallax-layers, proximity-interaction, multiplayer-presence
 - **File:** `.plan/epics/epic-2d-sprite-world.md`
 
 ### 3D Asset Generation (Future)
@@ -412,7 +412,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, security, privacy
 - **File:** `.plan/epics/epic-frontend-age-gate.md`
 
 ### Anonymity & Decentralization — Epic
@@ -421,7 +421,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** tor, i2p, mesh-networking, byok, resource-sharing, reputation-ledger, radicle, gossip-protocol
 - **File:** `.plan/epics/epic-anonymity-decentralization.md`
 
 Anonymous access via Tor/I2P, distributed infrastructure, and BYOK mesh networking for resource sharing between servers.
@@ -609,7 +609,7 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Priority:** P2-B
 - **Effort:** Medium
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** aux-llm, enrichment-pipeline, classification, memory-extraction, telemetry, model-role-resolution, api-key-resolution, emotion-avatar
 - **File:** `.plan/epics/epic-aux-enrichment-pipeline.md`
 
 ### Avatar Alpha Channel + VN Layering
@@ -819,7 +819,7 @@ Loop Lore has accumulated a constellation of chat-shaped product surfaces (assis
 - **Priority:** P2-B
 - **Effort:** High
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** chat, routing, database
 - **File:** `.plan/epics/epic-chat-transfer-location.md`
 
 ### CI/CD Pipeline
@@ -828,7 +828,7 @@ Loop Lore has accumulated a constellation of chat-shaped product surfaces (assis
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** ci, testing, automation, deployment
 - **File:** `.plan/epics/epic-cicd-pipeline.md`
 
 ### Client-Side Routing
@@ -837,7 +837,7 @@ Loop Lore has accumulated a constellation of chat-shaped product surfaces (assis
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, routing, ui, htmx
 - **File:** `.plan/epics/epic-frontend-routing.md`
 
 ### Code Quality & Best Practices (Permanently Ongoing)
@@ -877,7 +877,7 @@ ComfyUI is the primary integration target for image generation and editing.
 - **Priority:** Medium
 - **Effort:** High (split into 5 sub-epics)
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** chat, federation, privacy, auth
 - **File:** `.plan/epics/epic-communications-integrations.md`
 
 ### Communications Integrations — Quick Reference
@@ -886,7 +886,7 @@ ComfyUI is the primary integration target for image generation and editing.
 - **Priority:** Medium
 - **Effort:** High
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** chat, privacy, auth, docs
 - **File:** `.plan/epics/epic-communications-integrations-quickref.md`
 
 ### Companion, Pet & Mount Systems
@@ -1029,7 +1029,7 @@ Unit, integration, E2E, performance-load, and security test framework architectu
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** Research Epic
-- **Tags:** (none)
+- **Tags:** research, tooling, frontend, docs
 - **File:** `.plan/epics/epic-deno-support.md`
 
 ### Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance
@@ -1127,7 +1127,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Priority:** Medium
 - **Effort:** Low
 - **Type:** Design Principle Epic
-- **Tags:** (none)
+- **Tags:** rpg, game-mechanics, story, social
 - **File:** `.plan/epics/epic-emergent-narrative-design.md`
 
 ### Emotion Avatar Regeneration Control
@@ -1163,7 +1163,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, encryption, crypto, security
 - **File:** `.plan/epics/epic-frontend-encryption.md`
 
 ### Encryption Workflow
@@ -1172,7 +1172,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** encryption, crypto, secrets, assets
 - **File:** `.plan/epics/epic-encryption-workflow.md`
 
 ### Enemies & Monsters Systems
@@ -1199,7 +1199,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** telemetry, ci, testing
 - **File:** `.plan/epics/epic-observability-telemetry.md`
 
 ### Epic 25: Deployment Topologies & Packaging — Implementation Plan
@@ -1208,7 +1208,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** deployment, docker, database, observability
 - **File:** `.plan/epics/epic-deployment-topologies.md`
 
 ### Epic 26: Multi-Instance Reconciliation — Implementation Plan
@@ -1217,7 +1217,7 @@ Long-horizon vision from the "Far Fetched" ideas bucket: position loop-lore as a
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** concurrency, deployment, migration, reliability
 - **File:** `.plan/epics/epic-multi-instance-reconciliation.md`
 
 ### Epic 27: Data Integrity & ACID Guarantees — Implementation Plan
@@ -1494,7 +1494,7 @@ Split the monolithic `config.toml` / `config.yaml` into domain-specific config f
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** backup, recovery, sqlite, encryption
 - **File:** `.plan/epics/epic-database-backup-recovery.md`
 
 Drafted framework for automated, encrypted backup and recovery of loop-lore's SQLite database. All core components implemented with TODO markers for finalization.
@@ -1525,7 +1525,7 @@ Track DB schema version, content format versions, fix migration gaps. Ensures th
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** deployment, docker, ci, observability
 - **File:** `.plan/epics/epic-deployment-infrastructure.md`
 
 Containerize the loop-lore application and establish deployment strategies for both containerized environments (Docker) and bare-metal servers. Evaluate cost-effective hosting options that support storage and GPU compute for LLM inference workloads.
@@ -1617,7 +1617,7 @@ Containerize the loop-lore application and establish deployment strategies for b
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** llm, concurrency, rate-limiting, config, admin
 - **File:** `.plan/epics/epic-generation-flow-control.md`
 
 ### Epic: Harness Integration (Agent Runtime Consolidation)
@@ -1732,7 +1732,7 @@ Defines rules for memory sharing/propagation across timelines and chats. Impleme
 - **Priority:** Medium
 - **Effort:** High
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** game-mechanics, dice, api, chat, rpg
 - **File:** `.plan/epics/epic-mini-games.md`
 
 ### Epic: Mobile App
@@ -1858,7 +1858,7 @@ Replayability systems — new game plus, alternate story paths, multiple endings
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** tooling, performance, concurrency, ci
 - **File:** `.plan/epics/epic-review-check-parallel-ram-2026-09-03.md`
 
 The check runner (`scripts/check-parallel.mjs`) currently fires ~24 checks in
@@ -1869,7 +1869,7 @@ The check runner (`scripts/check-parallel.mjs`) currently fires ~24 checks in
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** testing, moderation, audit, ci
 - **File:** `.plan/epics/epic-review-dev-2026-08-26-late-merges.md`
 
 Two late dev merges analyzed; both clean. Two follow-up tasks filed (verification + CI hygiene).
@@ -1902,7 +1902,7 @@ User-facing social graph for loop-lore: friends, favorites (people and character
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** security, auth, integrity, audit
 - **File:** `.plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md`
 
 Five changes verified correct; one data-loss defect and four follow-up tasks tracked as linked tickets.
@@ -2002,7 +2002,7 @@ Scene animation from narration via open video models (Phase 4 of the parent
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** api, validation, backend, frontend, federation
 - **File:** `.plan/epics/epic-error-envelope.md`
 
 ### Experimental egui Frontend (adoption decision + client-agnostic view-model layer)
@@ -2011,7 +2011,7 @@ Scene animation from narration via open video models (Phase 4 of the parent
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** Research / Feature Epic
-- **Tags:** (none)
+- **Tags:** api, frontend, research, testing
 - **File:** `.plan/epics/epic-experimental-egui-frontend.md`
 
 ### Exploration & Discovery Systems
@@ -2080,7 +2080,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** game-mechanics, planning, research, rpg
 - **File:** `.plan/epics/epic-rpg-patterns.md`
 
 ### Fractal Locations — Recursive Containment + Mobile Transports
@@ -2134,7 +2134,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, components, alpine, htmx
 - **File:** `.plan/epics/epic-frontend-component-architecture.md`
 
 ### Frontend Emoji (`:...:`) and Message Reactions
@@ -2170,7 +2170,7 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, backend, docs
 - **File:** `.plan/epics/epic-frontend-overview.md`
 
 ### Frontend Slash Commands (`/...`) for Chat, Group Chat, Assistant
@@ -2228,7 +2228,7 @@ Group chat lets multiple characters participate in one conversation. The runtime
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, ui, routing
 - **File:** `.plan/epics/epic-frontend-headers-management.md`
 
 ### Headless Mode & Alternative Frontends
@@ -2237,7 +2237,7 @@ Group chat lets multiple characters participate in one conversation. The runtime
 - **Priority:** Medium
 - **Effort:** High (split into 5 sub-epics)
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** frontend, api, transport, auth
 - **File:** `.plan/epics/epic-headless-alternative-frontends.md`
 
 ### Hidden Carriage — Chat-Includeable Structured Memory Context
@@ -2275,7 +2275,7 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** import-export, validation, integrity, schema
 - **File:** `.plan/epics/epic-io-formats.md`
 
 ### Immersion & Presentation
@@ -2311,7 +2311,7 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** backend, assistant, notifications, integrity, assets
 - **File:** `.plan/epics/epic-implementation.md`
 
 ### Instant Messaging Integrations
@@ -2338,7 +2338,7 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, i18n, ui, htmx
 - **File:** `.plan/epics/epic-frontend-internationalization.md`
 
 ### Inventory & Trading UI
@@ -2385,7 +2385,7 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** audit, assets, admin, import-export, security
 - **File:** `.plan/epics/epic-licensing.md`
 
 ### llama-swap Hub (lifecycle, config, rotation/exclusion, bench)
@@ -2412,7 +2412,7 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Priority:** Medium
 - **Effort:** Large
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** llm, queue, scheduler, rate-limiting, concurrency
 - **File:** `.plan/epics/epic-llm-queue.md`
 
 ### Local Model File Discovery
@@ -2466,7 +2466,7 @@ Extended item system mechanics — durability degradation, stat effects, stats d
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, auth, security, rate-limiting
 - **File:** `.plan/epics/epic-frontend-login.md`
 
 ### LoRA Discovery & Application
@@ -2562,7 +2562,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** database, schema, migration, integrity, concurrency
 - **File:** `.plan/epics/epic-mini-games-db.md`
 
 ### Mini-Games: Deep Mechanics & Game-Specific Designs
@@ -2580,7 +2580,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** game-mechanics, npc, story, social
 - **File:** `.plan/epics/epic-mini-games-design.md`
 
 ### Mini-Games: Expanded Design — UI/UX, Flow, & Deep Mechanics
@@ -2589,7 +2589,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** ui, ux, components, accessibility, concurrency
 - **File:** `.plan/epics/epic-mini-games-expanded.md`
 
 ### Mini-Games: UI Components & API Contracts
@@ -2598,7 +2598,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** api, backend, components, transport, rate-limiting
 - **File:** `.plan/epics/epic-mini-games-ui-api.md`
 
 ### Model Info Frontend (Cards, Tags, Filters)
@@ -2625,7 +2625,7 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Priority:** Medium
 - **Effort:** Med
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** auth, security, backend
 - **File:** `.plan/epics/epic-multi-session.md`
 
 ### Narration / Actor Separation
@@ -2663,7 +2663,7 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, notifications, ui, streaming
 - **File:** `.plan/epics/epic-frontend-notifications.md`
 
 ### NPC & Social UI
@@ -2721,7 +2721,7 @@ Auto-generate the API Reference from an OpenAPI spec derived from TypeScript
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** party, world, npc, chat, scheduler
 - **File:** `.plan/epics/epic-party-migration.md`
 
 ### Per-World Character Setup & Overlay
@@ -2770,7 +2770,7 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Priority:** Medium
 - **Effort:** Continuous
 - **Type:** Ongoing Epic
-- **Tags:** (none)
+- **Tags:** research, planning, llm, agent, assistant
 - **File:** `.plan/epics/epic-platform-research.md`
 
 ### Player Agency — Story Points
@@ -2833,7 +2833,7 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** llm, streaming, i18n, frontend
 - **File:** `.plan/epics/epic-output-control-transforms.md`
 
 ### Prompt Improvement — Unified Text Enhancement
@@ -3087,7 +3087,7 @@ SAM 3 / SAM 3.1 (Meta, Nov 2025) is a unified detection + segmentation +
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** security, sandbox, llm, testing
 - **File:** `.plan/epics/epic-security-sandboxing.md`
 
 LLM sandboxing, edge case automated testing, static asset escape prevention, and comprehensive security hardening.
@@ -3136,7 +3136,7 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** social, chat, routing
 - **File:** `.plan/epics/epic-social-hub.md`
 
 Centralized hub for messengers, social networks, and email integration. Unified message handling, cross-platform bridging, and modern alternatives to legacy email.
@@ -3241,7 +3241,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Priority:** Medium
 - **Effort:** Continuous
 - **Type:** Ongoing Epic
-- **Tags:** (none)
+- **Tags:** tooling, ci, workflow, agent, docs
 - **File:** `.plan/epics/epic-tooling-improvement.md`
 
 ### Transport Layer Expansion
@@ -3250,7 +3250,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** transport, docs, automation
 - **File:** `.plan/epics/epic-transport-layer-expansion.md`
 
 ### Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport)
@@ -3259,7 +3259,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Priority:** Medium
 - **Effort:** Medium (remaining gaps only)
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** transport, streaming, reliability
 - **File:** `.plan/epics/epic-transport-expansion.md`
 
 ### Two-Factor / Multi-Factor Authentication
@@ -3268,7 +3268,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
-- **Tags:** (none)
+- **Tags:** auth, 2fa, security, crypto
 - **File:** `.plan/epics/epic-two-factor-auth.md`
 
 ### Two-Pass Message Delivery (Draft → Finalization)
@@ -3295,7 +3295,7 @@ Stealth and crime mechanics — sneaking, pickpocketing, lockpicking, crime dete
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** frontend, components, ui, alpine, htmx
 - **File:** `.plan/epics/epic-frontend-components.md`
 
 ### Unified Spec Framework for `.plan/`
@@ -3315,7 +3315,7 @@ Loop-lore has 281 epics and ~2100 tickets under `.plan/`. Each is hand-shaped pr
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** agent, tooling, docs
 - **File:** `.plan/epics/epic-use-case-agentic-workspace.md`
 
 ### User Story & Use Case Improvements (Permanently Ongoing)
@@ -3324,7 +3324,7 @@ Loop-lore has 281 epics and ~2100 tickets under `.plan/`. Each is hand-shaped pr
 - **Priority:** Medium
 - **Effort:** Continuous
 - **Type:** Ongoing Epic
-- **Tags:** (none)
+- **Tags:** ux, accessibility, workflow, performance, frontend
 - **File:** `.plan/epics/epic-user-stories.md`
 
 ### Vector Graphics & Animated Image Generation
@@ -3400,7 +3400,7 @@ Non-RPG (chat-only) worlds organize chats Discord/Slack-style: locations act as
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** epic
-- **Tags:** (none)
+- **Tags:** world, gm, rpg
 - **File:** `.plan/epics/epic-world-shaping-divine.md`
 
 ### Worlds Extension (Shareability, Epochs, Maps, Mode Switches)
@@ -3427,4 +3427,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** backup, recovery, sqlite, encryption
 **Overview:** (see sections below)
 
 
@@ -15,7 +15,6 @@
 
 **Last Updated**: 2026-08-14
 **Priority**: High
-**Tags**: backup, sqlite, postgresql, infrastructure
 
 ## Overview
 
@@ -63,3 +62,16 @@ Drafted framework for automated, encrypted backup and recovery of loop-lore's SQ
 - Implement health check endpoint
 - Integrate validation results with monitoring system
 - Create runbook for disaster recovery
+
+## Security Considerations
+
+- **WAL-aware copy runs while writers commit, producing a torn snapshot** → atomic rename (temp + rename) (`TASK-BKP-001-SQLITE-AUTOMATED-BACKUP`)
+- **Retention prune deletes the newest archive while the backup job is writing it** → single-writer / leader election (`TASK-DB-REINIT-BACKUP-RETENTION-POLICY`)
+- **GPG recipient comes from the environment, so a missing key ships plaintext dumps** → re-check capability at use time (`TASK-BKP-002-RECOVERY-VALIDATION`)
+- **DB reinit archives the previous database while the validation script reads it** → db.transaction (`TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING`)
+
+## Related Epics
+
+- `epic-db-asset-snapshot-recovery.md` — related
+- `epic-db-cold-storage-high-perf.md` — related
+- `epic-encryption-workflow.md` — related

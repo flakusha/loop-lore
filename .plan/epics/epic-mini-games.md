@@ -3,7 +3,7 @@
 
 # Epic: Mini-Games & Interactive Mechanics
 
-**Tags:** (none)
+**Tags:** game-mechanics, dice, api, chat, rpg
 **Overview:** (see sections below)
 
 
@@ -526,6 +526,14 @@ interface BattleGamble {
 - `src/assistant/commands/games.ts` — chat commands
 - `docs/spec/mini-games.md` — game rules reference
 
+## Security Considerations
+
+- **Chips/state read-modify-write on POST /games/sessions/:id/action has no transaction** → db.transaction (### Database Schema; `BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-`)
+- **Session routes (/action, /join, /leave, /results) are keyed only by session id; no caller-identity or membership check is specified** → re-check capability at use time (### API Routes)
+- **Reward payouts (gold/XP/items) can double-pay when an action is replayed** → idempotency key (### API Routes, ## Open Questions Q3)
+- **Session status checked then written, so a late /join or action lands after game completion** → conditional UPDATE … WHERE status='active' (## Chat Integration)
+- **Two concurrent /play commands can create duplicate sessions for one chat** → unique constraint + retry (## Chat Integration; Open Questions Q7)
+
 ## Open Questions
 
 1. **Real-time vs turn-based**: Should multiplayer games be real-time (WebSocket) or turn-based (polling)?
@@ -550,3 +558,9 @@ interface BattleGamble {
 
 - TASK-mini-games.md
 - TASK-plugin-marketplace.md (community game plugins)
+
+## Related Epics
+
+- `epic-chat-lifecycle-moderation.md` — related
+- `epic-plugin-system.md` — related
+- `epic-rpg-mechanics.md` — related

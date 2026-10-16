@@ -3,7 +3,7 @@
 
 # EPIC: Platform Research & Feature Adoption (Permanently Ongoing)
 
-**Tags:** (none)
+**Tags:** research, planning, llm, agent, assistant
 **Overview:** (see sections below)
 
 
@@ -411,12 +411,21 @@ Outcome: 19 of 20 new capability candidates already covered by existing epics/ti
 |---|---|---|---|
 | E17 Post-episode character chat (microdrama → live chat handoff) | Character.AI (c.ai) Series (Jul 2026) | IDEA-microdrama-post-episode-chat-handoff.md | new (product-direction call required) |
 
+## Security Considerations
+
+- **Candidate #10 marketplace loads third-party plugin code beside builtins** → name-origin validation at load (## Candidate Features #10; `src/plugins/loader.ts`)
+- **External-agent API / MCP presets hand operator credentials to agent tool calls** → re-check consent/authorization after reservation (## Odysseus sweep — 15 MCP presets)
+
 ## Related Epics
 
 - **Epic World & Locations** — world style / style-specific asset & NPC generation are adoption candidates tracked here.
 - **Epic RPG Mechanics** — RPG systems (dice, combat, loot, quests) are direct adoption targets.
 - **Epic Battle & Action Systems** — combat, trading, skill-checks adoption tracked here.
 - **Image-Generation / TTS / RAG** — candidates #1/#2/#3 in this epic; **no dedicated epics exist yet** — keep adoption tracked here until split out.
+
+- `epic-conversation-branching.md` — related
+- `epic-memory-knowledge-systems.md` — related
+
 
 ## Docs-Gap Audit Remainders (2026-09-19)
 

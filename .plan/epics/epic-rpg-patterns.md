@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** game-mechanics, planning, research, rpg
 **Overview:** (see sections below)
 
 

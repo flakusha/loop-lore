@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** frontend, components, alpine, htmx
 **Overview:** (see sections below)
 
 
@@ -24,6 +24,10 @@ _TBD — expand with frontend implementation tasks._
 ## Related Epics
 
 - `docs/frontend/component-architecture.md`
+
+- `epic-frontend-bundle-optimization.md` — related
+- `epic-frontend-components.md` — related
+- `epic-frontend-html-dedup-htmx-reuse.md` — related
 
 ## Tickets
 

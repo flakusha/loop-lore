@@ -6,14 +6,13 @@
 **Status:** Not Started
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** testing, moderation, audit, ci
 **Overview:** (see sections below)
 
 
 ## Status: Proposed
 
 **Priority:** Medium
-**Tags:** review, nsfw, testing, tooling
 
 ## Summary
 
@@ -58,3 +57,7 @@ Two late dev merges analyzed; both clean. Two follow-up tasks filed (verificatio
 - Implementing the NSFW audit fix or the dprint CI enforcement — both are owned
   elsewhere (this review only analyzes and tracks).
 - Re-reviewing the earlier security/data-integrity batch (separate epic).
+
+## Related Epics
+
+- `epic-tooling-improvement.md` — related
