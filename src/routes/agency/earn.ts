@@ -24,7 +24,14 @@ import {
   requireUserId,
 } from "../http-utils";
 
-/** POST /api/agency/earn — credit story points to the authenticated actor. */
+/**
+ * POST /api/agency/earn — credit story points to the authenticated actor.
+ * @param opts
+ * @param prefix
+ * @returns Elysia
+ * @throws CapExceededError
+ * @throws InvalidAmountError
+ */
 export function agencyEarnRoute(
   opts: { database: Kysely<DB> },
   prefix = "/api",
