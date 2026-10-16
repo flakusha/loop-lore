@@ -1833,6 +1833,19 @@
     "title": "cascade abort signal is not threaded through — in-flight LLM call runs to completion after pause toggle",
     "type": "BUG"
   },
+  "BUG-CHARACTER-AND-CHAT-SETUP-EXAMPLE-CONFIGS-DOCUMENT-FIELDS-THE": {
+    "hash": "d6d83f7",
+    "git_issue": "d6d83f7",
+    "extid": "BUG-CHARACTER-AND-CHAT-SETUP-EXAMPLE-CONFIGS-DOCUMENT-FIELDS-THE",
+    "type": "BUG",
+    "title": "Character and chat-setup example configs document fields the code drops",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-and-chat-setup-example-configs-document-fields-the.md",
+    "status": "Not Started"
+  },
   "BUG-CHARACTER-AVATAR-PUT-DELETE-IDOR-BY-BARE-AVATARID": {
     "epic": "",
     "extid": "BUG-CHARACTER-AVATAR-PUT-DELETE-IDOR-BY-BARE-AVATARID",
@@ -2001,6 +2014,19 @@
     "tags": [],
     "title": "character-licensing upsert records license_history for any actor_type including non-character actors",
     "type": "BUG"
+  },
+  "BUG-CHARACTER-SEED-DEDUPES-ON-DISPLAY-NAME": {
+    "hash": "b49e30e",
+    "git_issue": "b49e30e",
+    "extid": "BUG-CHARACTER-SEED-DEDUPES-ON-DISPLAY-NAME",
+    "type": "BUG",
+    "title": "character seed dedupes on display_name",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md",
+    "status": "Not Started"
   },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "epic": "",
@@ -18816,6 +18842,19 @@
     "title": "Director's Mode (Camera/Scene-cut/Music Metadata)",
     "type": "FEAT"
   },
+  "FEAT-DISABLE-OR-HIDE-CHARACTERS-FROM-THE-DB": {
+    "hash": "3ad9837",
+    "git_issue": "3ad9837",
+    "extid": "FEAT-DISABLE-OR-HIDE-CHARACTERS-FROM-THE-DB",
+    "type": "FEAT",
+    "title": "disable or hide characters from the DB",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "actors",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md",
+    "status": "Not Started"
+  },
   "FEAT-E2E-PERFORMANCE-BENCHMARKS": {
     "epic": "epic-testing-benchmarking",
     "extid": "FEAT-E2E-PERFORMANCE-BENCHMARKS",
@@ -18912,6 +18951,19 @@
     ],
     "title": "Error Monitoring & Alerting",
     "type": "FEAT"
+  },
+  "FEAT-EXPAND-CHARACTER-TEMPLATES-TO-CANONICAL-FIELDS": {
+    "hash": "c2b850e",
+    "git_issue": "c2b850e",
+    "extid": "FEAT-EXPAND-CHARACTER-TEMPLATES-TO-CANONICAL-FIELDS",
+    "type": "FEAT",
+    "title": "expand character templates to canonical fields",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "character-spec",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md",
+    "status": "Not Started"
   },
   "FEAT-EXPOSE-FULL-VN-SETTINGS-FROM-SPEC": {
     "epic": "",
@@ -20496,6 +20548,19 @@
     "tags": [],
     "title": "resolveResponseLength wired but generation maxTokens not bound",
     "type": "FEAT"
+  },
+  "FEAT-SEED-CHARACTER-LOADOUTS-INTO-THE-WARDROBE-BRIDGE": {
+    "hash": "eef6a66",
+    "git_issue": "eef6a66",
+    "extid": "FEAT-SEED-CHARACTER-LOADOUTS-INTO-THE-WARDROBE-BRIDGE",
+    "type": "FEAT",
+    "title": "Seed character loadouts into the wardrobe bridge",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-seed-character-loadouts-into-the-wardrobe-bridge.md",
+    "status": "Not Started"
   },
   "FEAT-SEED-DEFAULT-CHARACTERS-AVATAR": {
     "epic": "epic-character-spec",
@@ -53563,6 +53628,19 @@
     "tags": [],
     "title": "Validate and fix FE/BE/DB gaps for chat/VN settings",
     "type": "TASK"
+  },
+  "TASK-VALIDATE-EXPANSION-CONFIG-AT-LOAD-TIME": {
+    "hash": "926978b",
+    "git_issue": "926978b",
+    "extid": "TASK-VALIDATE-EXPANSION-CONFIG-AT-LOAD-TIME",
+    "type": "TASK",
+    "title": "Validate expansion config at load time",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-validate-expansion-config-at-load-time.md",
+    "status": "Not Started"
   },
   "TASK-VALIDATE-UNRECOGNIZED-EXAMPLES-SECTION-ROLE-LABELS-INSTEAD-O": {
     "hash": "c773846",
