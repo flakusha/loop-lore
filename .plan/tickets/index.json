@@ -51695,6 +51695,19 @@
     "title": "Split `src/server.ts` (640L)",
     "type": "TASK"
   },
+  "TASK-SPLIT-THE-VISIBILITY-COLUMN-ACROSS-ITS-FIVE-VOCABULARIES": {
+    "hash": "c5e585b",
+    "git_issue": "c5e585b",
+    "extid": "TASK-SPLIT-THE-VISIBILITY-COLUMN-ACROSS-ITS-FIVE-VOCABULARIES",
+    "type": "TASK",
+    "title": "Split the visibility column across its five vocabularies",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-split-the-visibility-column-across-its-five-vocabularies.md",
+    "status": "Not Started"
+  },
   "TASK-SPLIT-UTILS-GOD-MODULE": {
     "epic": "epic-code-quality",
     "extid": "TASK-SPLIT-UTILS-GOD-MODULE",
