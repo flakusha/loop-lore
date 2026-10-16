@@ -3,7 +3,7 @@
 
 # TASK: Harness stats endpoint was implemented but never called
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-terminal-ui

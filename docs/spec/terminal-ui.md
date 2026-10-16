@@ -9,10 +9,14 @@ TUI built with `blessed` + `blessed-contrib`. Terminal chat interface with integ
 
 ## Implemented
 
-- Entry `src/tui/app.ts` — blessed screen (smartCSR), quit via Escape/q/Ctrl+C, layout, cleanup.
-- Chat: `src/tui/chat/` (`index.ts`, `api.ts`, `display.ts`, `types.ts`) — scrollable history, `setChatId()`, asset loading per chat, plus NSFW filtering (`src/tui/nsfw-filter.ts`). (Old flat `src/tui/chat.ts` no longer exists.)
-- Asset view `src/tui/asset-view.ts` — Left/Right navigate, Enter link feedback, Delete removes; shows type/URL/caption.
-- Integration: `/api/assets` (asset service), `/api/assistant` (assistant service); base URL from env or relative.
+- Entry `src/tui/app.ts` — `createTUIApp()` factory behind an `import.meta.main` guard; blessed screen (smartCSR); Escape/q/Ctrl+C quits (Esc closes open overlays first); status bar with resize handler.
+- Chat: `src/tui/chat/` (`index.ts`, `api.ts`, `display.ts`, `commands.ts`, `types.ts`) — scrollable history, `setChatId()`, asset loading per chat. Slash-command completion strip above the input box fetches from `GET /api/v1/commands` and renders a hint line; Tab cycles matches, Enter commits the highlighted one. (Old flat `src/tui/chat.ts` no longer exists.)
+- Asset view `src/tui/asset-view.ts` — right sidebar (30 % width); Left/Right arrow keys cycle through linked assets; shows name, type, MIME, size, creation date, and alt text.
+- Chat picker `src/tui/chat-picker.ts` — full-screen overlay (F1) listing the user's chats from `GET /api/v1/chats`; Enter selects and hides it, routing through `ChatWidget.setChatId()`.
+- Harness overlay `src/tui/harness/index.ts` — full-screen overlay (F3); Up/Down navigates runs, Enter loads detail; refreshes on every toggle.
+- Models overlay `src/tui/models-overlay.ts` — full-screen admin overlay (F6); three-level drill-down: roles → providers → models; shows `source` diagnostic per row; also surfaces provider health and a per-provider connection-test button.
+- Provider-health status segment — live health segment in the status bar (rightmost); `GET /api/v1/providers` requires no auth; refreshed on startup and on every F5.
+- Integration: `GET /api/v1/assets?entity_type=chat&entity_id=…` (asset service), `POST/GET /api/v1/chats/:id/messages` (assistant service), `GET /api/v1/commands` (slash-command registry), `GET /api/v1/providers` (public health); base URL from `LOOP_LORE_API_BASE_URL` env or `http://localhost:3000`.
 
 ## Platform notes
 

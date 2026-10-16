@@ -3,7 +3,7 @@
 
 # BUG: Asset view advertises a Del: unlink keybinding that no handler implements
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-terminal-ui
