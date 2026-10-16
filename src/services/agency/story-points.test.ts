@@ -87,6 +87,21 @@ describe("earnStoryPoints — happy path", () => {
     expect(bal.earned_total,).toBe(5,);
   });
 
+  test("ledger_id is the inserted row's id, not SQL text", async () => {
+    const result = await earnStoryPoints(db, { actorId: ACTOR, amount: 4, },);
+    expect(typeof result.ledger_id,).toBe("string",);
+    expect(result.ledger_id,).toMatch(/^[0-9a-f]{32}$/,);
+
+    const row = await db
+      .selectFrom("actor_story_points",)
+      .select("id",)
+      .where("actor_id", "=", ACTOR,)
+      .executeTakeFirst();
+
+    expect(row,).toBeDefined();
+    expect(result.ledger_id,).toBe(row!.id,);
+  });
+
   test("refuses non-positive amounts", async () => {
     await expect(earnStoryPoints(db, { actorId: ACTOR, amount: 0, },),).rejects.toBeInstanceOf(
       InvalidAmountError,
@@ -116,6 +131,16 @@ describe("spendStoryPoints — happy path", () => {
     const bal = await getStoryPointBalance(db, ACTOR, null,);
     expect(bal.balance,).toBe(4,);
     expect(bal.spent_total,).toBe(6,);
+  });
+
+  test("ledger_id is a real generated hex id, never SQL text", async () => {
+    await earnStoryPoints(db, { actorId: ACTOR, amount: 10, },);
+    const result = await spendStoryPoints(db, { actorId: ACTOR, amount: 3, },);
+    // The row already exists (the earn created it), so the spend falls
+    // through to the UPDATE via ON CONFLICT DO NOTHING and its fresh id is
+    // not inserted — but it must still be a real hex id, not raw SQL.
+    expect(typeof result.ledger_id,).toBe("string",);
+    expect(result.ledger_id,).toMatch(/^[0-9a-f]{32}$/,);
   });
 });
 

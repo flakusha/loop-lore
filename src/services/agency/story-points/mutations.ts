@@ -8,6 +8,7 @@
  * @module services/agency/story-points/mutations
  */
 import { type Kysely, sql, } from "kysely";
+import { randomBytes, } from "node:crypto";
 import type { DB, } from "../../../db";
 import { refreshActorStoryPointsCache, } from "../actor-story-points-cache";
 import { getStoryPointBalance, } from "./queries";
@@ -47,7 +48,9 @@ export async function earnStoryPoints(
 ): Promise<StoryPointLedger> {
   assertValidAmount(params.amount,);
   const worldKey = params.worldId ?? null;
-  const ledgerId = sql<string>`lower(hex(randomblob(16)))`;
+  // Generated in JS so the id is known to the caller; a RawBuilder here would
+  // interpolate as SQL text and .toString() would return the SQL, not an id.
+  const ledgerId = randomBytes(16,).toString("hex",);
 
   await db.transaction().execute(async (trx,) => {
     // 020 splits the uniqueness into two partial indexes: one for a NULL
@@ -142,7 +145,9 @@ export async function spendStoryPoints(
 ): Promise<StoryPointLedger> {
   assertValidAmount(params.amount,);
   const worldKey = params.worldId ?? null;
-  const ledgerId = sql<string>`lower(hex(randomblob(16)))`;
+  // Generated in JS so the id is known to the caller; a RawBuilder here would
+  // interpolate as SQL text and .toString() would return the SQL, not an id.
+  const ledgerId = randomBytes(16,).toString("hex",);
 
   await db.transaction().execute(async (trx,) => {
     const conflictTarget = worldKey === null
