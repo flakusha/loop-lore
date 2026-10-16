@@ -9,9 +9,6 @@ use crate::context::FrontendContext;
 /// The canvas element the htmx page hosts.
 pub const CANVAS_ID: &str = "egui-canvas";
 
-/// The non-HttpOnly CSRF cookie name (see `src/middleware/csrf.ts`).
-const CSRF_COOKIE_NAME: &str = "csrf_token";
-
 /// Load the stored transfer context, or the default when absent/invalid.
 #[cfg(target_arch = "wasm32")]
 pub fn load_context() -> FrontendContext {
@@ -31,13 +28,14 @@ pub fn save_context(context: &FrontendContext) {
 }
 
 /// Read the CSRF double-submit cookie value, if present.
+///
+/// Parsed by the shared api twin so one parser covers both.
 #[cfg(target_arch = "wasm32")]
 pub fn csrf_cookie() -> Option<String> {
-  let cookie = imp::cookie_string()?;
-  cookie.split(';').find_map(|segment| {
-    let (name, value) = segment.trim().split_once('=')?;
-    (name == CSRF_COOKIE_NAME).then(|| value.trim().to_string())
-  })
+  imp::cookie_string()
+    .as_deref()
+    .and_then(crate::api::csrf_token_from_cookie_header)
+    .map(String::from)
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -66,10 +64,8 @@ pub fn assign_location(_url: &str) {}
 
 #[cfg(target_arch = "wasm32")]
 mod imp {
-  use web_sys::window;
-
   pub(super) fn window() -> Option<web_sys::Window> {
-    window()
+    web_sys::window()
   }
 
   pub(super) fn local_storage() -> Option<web_sys::Storage> {
@@ -77,7 +73,10 @@ mod imp {
   }
 
   pub(super) fn cookie_string() -> Option<String> {
-    window()?.document().cookie()
+    use wasm_bindgen::JsCast as _;
+    // `document.cookie` lives on HtmlDocument, not Document (web-sys 0.3).
+    let document = window()?.document()?;
+    document.dyn_into::<web_sys::HtmlDocument>().ok()?.cookie().ok()
   }
 }
 

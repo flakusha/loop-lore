@@ -27,6 +27,7 @@ import { createLogger, setGlobalLogger, } from "@/logger";
 import { resetSoloUserCache, } from "@/middleware/index";
 import { loadAllPlugins, unloadAllPlugins, } from "@/plugins";
 import { handleApiRequest, } from "@/server";
+import { resolvePublicFilePath, } from "@/server/static-files";
 import { MockLLMProvider, } from "@/test-utils/mock-provider";
 import { type Browser, type BrowserContext, chromium, type Page, } from "@playwright/test";
 import type { Kysely, } from "kysely";
@@ -157,10 +158,14 @@ export async function createBrowserTest(
       handleApiRequest,
       handleNonApiRequest: async (request: Request,): Promise<Response> => {
         const url = new URL(request.url,);
-        const publicPath = join(publicDir, url.pathname === "/" ? "index.html" : url.pathname,);
-        if (publicPath.startsWith(`${publicDir}/`,) && existsSync(publicPath,)) {
-          const content = readFileSync(publicPath,);
-          const ext = publicPath.split(".",).pop()?.toLowerCase() ?? "";
+        // Same resolution the production static handler uses (exact file, then
+        // .html, then the content-hashed bundle sibling) — views render from
+        // src/views with bare bundle names, and the build emits only hashed
+        // ones, so without the fallback every view 404s its JS/CSS.
+        const fullPath = resolvePublicFilePath(publicDir, url.pathname === "/" ? "index.html" : url.pathname,);
+        if (fullPath) {
+          const content = readFileSync(fullPath,);
+          const ext = fullPath.split(".",).pop()?.toLowerCase() ?? "";
           const mime: Record<string, string> = {
             html: "text/html",
             css: "text/css",

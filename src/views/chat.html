@@ -83,5 +83,7 @@
   </div>
 </div>
 
-<!-- htmx ↔ egui handoff (window.loopLoreEgui) — bare path, hash-injected -->
+<!--
+  htmx ↔ egui handoff (window.loopLoreEgui) — stable name, no content hash: the /egui host page references the same bundle and never goes through hash injection
+-->
 <script src="/egui-bridge.js" defer></script>

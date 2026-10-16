@@ -52,7 +52,16 @@ async function buildBundles() {
   // htmx ↔ egui handoff bridge (window.loopLoreEgui + the chat header entry
   // button). IIFE wrapper — same classic-script global-var hazard as the other
   // non-worker entries; the module only touches globalThis via `window`.
-  await $`bun build --target browser --minify --outdir ${DIST} --entry-naming "[name]-[hash].[ext]" --banner "(()=>{" --footer "})()" ${frontend}/egui-bridge.ts`;
+  // Deliberately UNHASHED: the second consumer is the /egui host page, which
+  // is rendered per-request by its route and therefore never passes through
+  // hash injection (only files under dist/public do). One stable URL for both
+  // consumers; the non-hashed Cache-Control (60s) is the cost.
+  // `--format=iife` (no banner/footer): the entry has real `export`s for the
+  // unit test, and bun appends `export{…}` AFTER any banner/footer — as an
+  // ESM statement it is a syntax error when the file loads as a classic
+  // script. iife keeps the whole module (and its dropped exports) inside
+  // bun's own wrapper. Consumers use `window.loopLoreEgui`, not the exports.
+  await $`bun build --target browser --minify --format=iife --outdir ${DIST} ${frontend}/egui-bridge.ts`;
 
   // WASM module loader (pre-compiled hot binary — fetches + exposes C ABI)
   await $`bun build --target browser --minify --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/wasm-loader.ts`;

@@ -5,6 +5,10 @@
  * Tests for the /egui host page — a standalone document (no layout.html, no
  * htmx/Alpine bundles) carrying the canvas / status / back-button contract
  * and the CSP-nonce-stamped module script that boots the wasm bundle.
+ *
+ * The browser-side transfer context is NOT re-implemented here: the page
+ * loads the shared bridge bundle and delegates (src/frontend/egui-bridge.ts
+ * is the canonical TS implementation).
  */
 import { describe, expect, test, } from "bun:test";
 import { generateNonce, } from "../../middleware/csp-nonce";
@@ -39,11 +43,16 @@ describe("serveEguiFrontendPage", () => {
     expect(html,).toContain('status.textContent = "egui failed to start: " + error',);
   });
 
-  test("reads and re-writes the browser-side transfer context", async () => {
+  test("delegates the transfer context to the shared bridge bundle", async () => {
     const html = await renderPage();
-    expect(html,).toContain("loop-lore.egui-context.v1",);
-    expect(html,).toContain("localStorage.setItem(CONTEXT_KEY, JSON.stringify(context))",);
-    expect(html,).toContain("location.assign(context.returnTo)",);
+    // The /egui page is rendered per-request, so it cannot go through hash
+    // injection: the bridge is emitted under a stable name (build-frontend.mjs).
+    expect(html,).toContain('<script src="/egui-bridge.js" defer></script>',);
+    expect(html,).toContain("window.loopLoreEgui.returnToHtmx()",);
+    expect(html,).toContain('location.assign("/views/chat")',);
+    // The page must NOT re-implement the contract: the storage key and the
+    // parse/validate rules live in src/frontend/egui-bridge.ts only.
+    expect(html,).not.toContain("loop-lore.egui-context.v1",);
   });
 
   test("stamps the CSP nonce on the inline module script", async () => {

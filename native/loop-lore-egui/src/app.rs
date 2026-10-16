@@ -8,10 +8,10 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use egui::{Align, CentralPanel, Layout, ScrollArea, SidePanel, TextEdit};
 use eframe::{App, CreationContext};
+use egui::{Align, CentralPanel, Layout, Panel, ScrollArea, TextEdit};
 
-use crate::api::{self, ChatMessage, ChatSummary, SentMessage, };
+use crate::api::{self, ChatMessage, ChatSummary, SentMessage};
 use crate::client;
 use crate::context::FrontendContext;
 use crate::storage;
@@ -40,7 +40,7 @@ pub struct EguiApp {
   status: String,
   /// Fetch results, appended from spawned futures.
   events: Rc<RefCell<Vec<FetchEvent>>>,
-  /// Whether the first `update` already kicked off the initial loads.
+  /// Whether the first `logic` pass already kicked off the initial loads.
   started: bool,
 }
 
@@ -144,7 +144,7 @@ impl EguiApp {
 }
 
 impl App for EguiApp {
-  fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+  fn logic(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
     self.drain_events();
     if !self.started {
       self.started = true;
@@ -153,8 +153,12 @@ impl App for EguiApp {
         self.open_chat(&id, ctx);
       }
     }
+  }
 
-    egui::TopBottomPanel::top("bar").show(ctx, |ui| {
+  fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+    let ctx = ui.ctx().clone();
+
+    Panel::top("bar").show(ui, |ui| {
       ui.horizontal(|ui| {
         if ui.button("Back to htmx").clicked() {
           storage::save_context(&self.context);
@@ -165,26 +169,23 @@ impl App for EguiApp {
       });
     });
 
-    SidePanel::left("chats")
-      .resizable(true)
-      .default_width(200.0)
-      .show(ctx, |ui| {
-        ui.heading("Chats");
-        let mut clicked = None;
-        ScrollArea::vertical().show(ui, |ui| {
-          for chat in &self.chats {
-            let selected = self.context.active_chat_id.as_deref() == Some(chat.id.as_str());
-            if ui.selectable_label(selected, chat.label()).clicked() {
-              clicked = Some(chat.id.clone());
-            }
+    Panel::left("chats").resizable(true).default_size(200.0).show(ui, |ui| {
+      ui.heading("Chats");
+      let mut clicked = None;
+      ScrollArea::vertical().show(ui, |ui| {
+        for chat in &self.chats {
+          let selected = self.context.active_chat_id.as_deref() == Some(chat.id.as_str());
+          if ui.selectable_label(selected, chat.label()).clicked() {
+            clicked = Some(chat.id.clone());
           }
-        });
-        if let Some(id) = clicked {
-          self.open_chat(&id, ctx);
         }
       });
+      if let Some(id) = clicked {
+        self.open_chat(&id, &ctx);
+      }
+    });
 
-    CentralPanel::default().show(ctx, |ui| {
+    CentralPanel::default().show(ui, |ui| {
       ScrollArea::vertical().stick_to_bottom(true).show(ui, |ui| {
         for message in &self.messages {
           ui.horizontal_wrapped(|ui| {
@@ -194,12 +195,15 @@ impl App for EguiApp {
         }
       });
       ui.with_layout(Layout::bottom_up(Align::Center), |ui| {
-        let response = ui
-          .add(TextEdit::singleline(&mut self.composer).hint_text("Message").desired_width(f32::INFINITY));
-        let send = ui.button("Send").clicked()
-          || (response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)));
+        let response = ui.add(
+          TextEdit::singleline(&mut self.composer)
+            .hint_text("Message")
+            .desired_width(f32::INFINITY),
+        );
+        let send =
+          ui.button("Send").clicked() || (response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)));
         if send {
-          self.send(ctx);
+          self.send(&ctx);
         }
       });
     });

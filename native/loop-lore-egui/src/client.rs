@@ -19,27 +19,32 @@ pub async fn post_json(url: &str, body: &str) -> Result<String, String> {
 async fn request_json(method: &str, url: &str, body: Option<&str>) -> Result<String, String> {
   use wasm_bindgen::JsCast as _;
   use wasm_bindgen_futures::JsFuture;
-  use web_sys::{Headers, Request, RequestInit, Response, };
+  use web_sys::{Headers, Request, RequestInit, Response};
 
-  let mut init = RequestInit::new();
-  init.method(method);
+  let init = RequestInit::new();
+  init.set_method(method);
   if let Some(body) = body {
-    init.body(Some(wasm_bindgen::JsValue::from_str(body)));
+    let body = wasm_bindgen::JsValue::from_str(body);
+    init.set_body(&body);
   }
 
   let headers = Headers::new().map_err(|e| format!("{e:?}"))?;
-  headers.set("Accept", "application/json").map_err(|e| format!("{e:?}"))?;
+  headers
+    .set("Accept", "application/json")
+    .map_err(|e| format!("{e:?}"))?;
   if body.is_some() {
-    headers.set("Content-Type", "application/json").map_err(|e| format!("{e:?}"))?;
+    headers
+      .set("Content-Type", "application/json")
+      .map_err(|e| format!("{e:?}"))?;
   }
   if let Some(token) = crate::storage::csrf_cookie() {
     headers.set("X-CSRF-Token", &token).map_err(|e| format!("{e:?}"))?;
   }
-  init.headers(&headers);
+  init.set_headers(&headers);
 
   let request = Request::new_with_str_and_init(url, &init).map_err(|e| format!("{e:?}"))?;
   let window = web_sys::window().ok_or("no window")?;
-  let response_value = JsFuture::from(window.fetch_with_request(&request,))
+  let response_value = JsFuture::from(window.fetch_with_request(&request))
     .await
     .map_err(|e| format!("{e:?}"))?;
   let response: Response = response_value
@@ -58,8 +63,10 @@ async fn request_json(method: &str, url: &str, body: Option<&str>) -> Result<Str
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-async fn request_json(method: &str, url: &str, _body: Option<&str>) -> Result<String, String> {
-  Err(format!("{method} {url} needs a browser target"))
+fn request_json(method: &str, url: &str, _body: Option<&str>) -> std::future::Ready<Result<String, String>> {
+  // Resolved, not `async`: the host twin has nothing to await and clippy's
+  // `unused_async` is denied. Callers `.await` it unchanged.
+  std::future::ready(Err(format!("{method} {url} needs a browser target")))
 }
 
 // Browser-only; host builds get the stub above.
@@ -68,7 +75,7 @@ async fn request_json(method: &str, url: &str, _body: Option<&str>) -> Result<St
 ///
 /// Host builds never poll it, so `cargo test` stays dependency-free.
 pub fn spawn(future: impl std::future::Future<Output = ()> + 'static) {
-  imp::spawn(future)
+  imp::spawn(future);
 }
 
 #[cfg(target_arch = "wasm32")]

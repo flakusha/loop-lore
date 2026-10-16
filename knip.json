@@ -133,7 +133,8 @@
     "fossa", // license compliance gate (scripts/check-licenses.ts)
     "tail", // changelog gate (scripts/check-changelog.ts git-tag query)
     "rustup", // Rust toolchain (scripts/build-native.ts) -- external, not npm
-    "rustc" // native cdylib compile (scripts/build-native.ts) -- external, not npm
+    "rustc", // native cdylib compile (scripts/build-native.ts) -- external, not npm
+    "wasm-bindgen" // egui wasm glue (scripts/build-egui-wasm.ts) -- cargo-installed CLI, not npm
   ],
   "ignore": [
     // Build-time CLIs spawned as shell strings by scripts/build-frontend.mjs
@@ -310,5 +311,9 @@
     // above: run-browser-tests.ts discovers by directory glob, knip cannot
     // trace a shell glob as an import edge.
     "tests/e2e/flows/browser/notifications-bell.browser.ts",
+    // htmx -> egui -> htmx transfer round-trip (TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto).
+    // Same class as the entries above: run-browser-tests.ts discovers by directory glob, knip
+    // cannot trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/egui-transfer.browser.ts",
   ]
 }
