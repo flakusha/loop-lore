@@ -23,9 +23,10 @@ uses the same words for the same things.
 ## Context
 
 Nothing in the repo holds a translation vocabulary today. Verified:
-`grep -E '(?i)(glossary|term.?base|translation memory|tmx)' src/` returns zero
-matches, and so does a search for do-not-translate / preserve-name conventions.
-The closest vocabulary-shaped thing that ships is `message_translations`
+`grep -rniE '\b(glossary|term[ ._-]?base|translation memory|tmx)\b' src/` returns zero
+matches — the word-boundary anchors matter, a bare `tmx` alternative would match every
+`htmx` call site — and so does `grep -rniE 'do[ ._-]?not[ ._-]?translate' src/`. The
+closest vocabulary-shaped thing that ships is `message_translations`
 (`src/db/schema-core.ts:738`), which stores translated prose and has no concept
 of a term at all.
 

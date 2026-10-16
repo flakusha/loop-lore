@@ -26,7 +26,7 @@ The precedent to copy is `blog_comments` (`src/db/schema-blog.ts:11-19`):
 `parent_comment_id` self-referencing `blog_comments.id` (`ON DELETE CASCADE`,
 indexed — `blog_comments_parent_idx`, `src/db/migrations/001_init.ts:3040`), a
 threaded tree built in memory by `listCommentsThreaded`
-(`src/rpg/blog/service/comments.ts:98-115`), and routes under
+(`src/rpg/blog/service/comments.ts:93-131`), and routes under
 `src/routes/blog/comments.ts`. That model is right; its target (`blog_posts`,
 public comments, moderation `status`) is what differs here.
 
@@ -56,8 +56,8 @@ per-paragraph threads, drop the unique constraint then — not before.
 Comments are **not** chat and **not** GM notes: no `chat_id` column, nothing
 wired to `story_turns`, no `revealed_to`/`trigger_condition` reveal mechanics.
 The shadow-note state machines (`ShadowNoteStatus`, `ShadowNoteVisibility`,
-`src/db/enums.ts`) stay out of this table — a review comment has one visibility
-rule: whoever can read the target can read the thread.
+`src/db/enums-gm.ts:50,74`) stay out of this table — a review comment has one
+visibility rule: whoever can read the target can read the thread.
 
 ```
 review_suggestions

@@ -24,7 +24,7 @@ version column the epic's security section already calls for.
 **Verified ground state:**
 
 - `assets.license` / `assets.license_url` columns **do not exist** — no
-  migration adds them. Unchecked AC at `epic-licensing.md:54`; the epic's
+  migration adds them. Unchecked AC at `epic-licensing.md:55`; the epic's
   per-asset attribution intent is at `:39`.
 - Licenses today are **character-scoped**:
   - `LicenseType` — `cc0 | cc_by | cc_by_sa | cc_by_nc | cc_by_nc_sa |
@@ -44,7 +44,7 @@ gate exists to keep licensing character-only; the asset columns are a separate
 surface on a separate entity and must not be routed through the characters
 licensing routes.
 
-**The documented race:** `epic-licensing.md:62-64` — re-licensing rewrites
+**The documented race:** `epic-licensing.md:65` — re-licensing rewrites
 `assets.license` while codecs and exports read it (read-modify-write), with
 optimistic concurrency (version column) named as the mitigation. The column set
 must carry the version bump from day one; retrofitting it later means a second
@@ -53,7 +53,7 @@ migration and a window where readers have no conflict detection.
 **Also not here:** `src/assets/service/validate.ts` is only
 `validateFileSize` + `validateMimeType` (audio allowed at `:19-26`) — input
 validation. The "reject missing license on user uploads" behavior
-(`epic-licensing.md:58`) belongs at the upload/service boundary, not bolted
+(`epic-licensing.md:59`) belongs at the upload/service boundary, not bolted
 onto `validateMimeType`.
 
 **Migration policy:** append-only per `src/db/migrations/README.md` — never
@@ -72,9 +72,9 @@ db:sync-manifest` then `bun run schemas:check`.
 - [ ] `license` reuses the `LicenseType` vocabulary
       (`src/db/enums-character/content.ts:16-26`); `license_url` nullable;
       a missing license is representable (NULL) and rejected at the upload
-      boundary per `epic-licensing.md:58`
+      boundary per `epic-licensing.md:59`
 - [ ] Optimistic-concurrency version column on `assets` is present from this
-      migration (`epic-licensing.md:62-64`)
+      migration (`epic-licensing.md:65`)
 - [ ] Re-licensing writes an immutable history row following the
       `character_license_history` pattern (`src/routes/character-licensing.ts:86`)
 - [ ] The characters licensing routes are untouched; the asset surface does
