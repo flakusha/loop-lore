@@ -19693,6 +19693,12 @@
       "source": ".plan/epics/epic-embeddable-engine-game-frontend.md"
     }
   ],
+  "src/emoji.rs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
+    }
+  ],
   "src/endpoints/themes.js": [
     {
       "kind": "ticket",
@@ -38465,6 +38471,12 @@
       "source": ".plan/epics/epic-economy-trading.md"
     }
   ],
+  "src/routes/emoji.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
+    }
+  ],
   "src/routes/emotions.ts": [
     {
       "kind": "epic",
@@ -41933,6 +41945,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-platform-service-util-modules-dead-barre.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
     }
   ],
   "src/routes/v1/chats-surface.ts": [
