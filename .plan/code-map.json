@@ -6621,6 +6621,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     }
   ],
   "src/characters/exporters/shared.ts": [
@@ -6837,6 +6841,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     }
   ],
   "src/characters/normalizers/ccv3.ts": [
@@ -7068,11 +7076,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     },
     {
       "kind": "ticket",
@@ -7145,6 +7161,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-spec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
     }
   ],
   "src/characters/service/memory-lifecycle.ts": [
@@ -7698,6 +7718,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-alignment-speech-social-context.md"
     },
     {
@@ -7741,6 +7765,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
     },
     {
       "kind": "ticket",
@@ -7955,6 +7983,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-spec.md"
+    }
+  ],
+  "src/characters/views/view-models/characters-grid.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
     }
   ],
   "src/characters/world-overlay.ts": [
@@ -9737,6 +9771,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-and-chat-setup-example-configs-document-fields-the.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md"
     },
     {
       "kind": "ticket",
@@ -12692,6 +12730,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
     },
     {
@@ -12713,6 +12755,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     },
     {
       "kind": "ticket",
@@ -13029,6 +13075,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     },
     {
       "kind": "ticket",
@@ -16240,6 +16290,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md"
     },
     {
@@ -16737,6 +16791,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-spec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
     }
   ],
   "src/db/migrations/043_scheduled_messages_reminders.ts": [
@@ -16767,6 +16825,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+  "src/db/migrations/051_bdi_reflection_cadence_and_plan_visibility.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
     }
   ],
   "src/db/migrations/054_chat_keys.ts": [
@@ -17999,6 +18063,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     },
     {
       "kind": "ticket",
@@ -35413,6 +35481,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     }
   ],
   "src/routes/actor-lore.ts": [
@@ -35470,6 +35542,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-agency-bdi-reflection-cycle.md"
     }
   ],
@@ -35505,6 +35581,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actors-api-routes.md"
+    }
+  ],
+  "src/routes/admin-character-overrides.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
     }
   ],
   "src/routes/admin-nsfw.test.ts": [
@@ -36919,6 +37001,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-spec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
     }
   ],
   "src/routes/characters/card.ts": [
@@ -36971,6 +37057,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     }
   ],
   "src/routes/characters/index.ts": [
@@ -37003,6 +37093,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
     },
     {
       "kind": "ticket",
@@ -41806,6 +41900,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     },
     {
@@ -41913,6 +42011,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
     },
     {
       "kind": "ticket",
@@ -46816,6 +46918,10 @@
   "src/seeding/characters.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-user-seeding-role-expansion.md"
     }
   ],
@@ -47047,6 +47153,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md"
     },
     {
       "kind": "ticket",
