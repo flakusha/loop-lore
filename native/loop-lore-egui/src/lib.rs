@@ -23,6 +23,7 @@ mod api;
 mod client;
 mod context;
 mod storage;
+mod stream;
 
 #[cfg(target_arch = "wasm32")]
 mod app;
