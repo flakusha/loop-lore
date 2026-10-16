@@ -36,13 +36,13 @@ Expand the provider system to cover all major local and remote inference platfor
 
 | FEAT     | Provider                | API                                                                                    | Status      |
 | -------- | ----------------------- | -------------------------------------------------------------------------------------- | ----------- |
-| FEAT-076 | Anthropic Native        | `POST https://api.anthropic.com/v1/messages`                                           | Schema only |
+| FEAT-076 | Anthropic Native        | `POST https://api.anthropic.com/v1/messages`                                           | Production  |
 | FEAT-077 | Google Gemini Native    | `POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent` | Schema only |
 | FEAT-078 | Groq                    | OpenAI-compat `https://api.groq.com/openai/v1`                                         | Not started |
 | FEAT-079 | Together AI & Fireworks | OpenAI-compat                                                                          | Not started |
 | FEAT-080 | DeepSeek                | OpenAI-compat `https://api.deepseek.com/v1`                                            | Not started |
 | FEAT-081 | Mistral Native          | OpenAI-compat `https://api.mistral.ai/v1`                                              | Not started |
-| FEAT-082 | Ollama Native           | `http://localhost:11434/api/`                                                          | Schema only |
+| FEAT-082 | Ollama Native           | `http://localhost:11434/api/`                                                          | Production  |
 | FEAT-083 | HuggingFace Inference   | `https://api-inference.huggingface.co/`                                                | Not started |
 
 ### Group 2: Image Generation (FEAT-084 to FEAT-086)

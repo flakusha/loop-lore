@@ -7,4 +7,5 @@ defaultModels = {} # { openaiCompatible = "gpt-4" }
 
 [generation.providers]
 openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
+# anthropic = { name = "anthropic", label = "Anthropic", apiKey = "sk-ant-...", model = "claude-3-5-sonnet-latest", timeout = 30000, retries = 3, allowUserApiKey = true }
 # sd = [] # stable diffusion providers
