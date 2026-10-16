@@ -20,12 +20,14 @@ such.
 
 ## Context
 
-The per-ticket unit tests already cover the pieces (`src/routes/comparison-sets.test.ts`,
-`src/comparisons/fan-out.test.ts`, `src/comparisons/comparability.test.ts`,
-`src/comparisons/rerun.test.ts`, `src/comparisons/metrics.test.ts`,
-`src/comparisons/export.test.ts`, `src/routes/views/comparisons.test.ts`). This ticket is the
-cross-cutting suite that exercises them together — it exists because the three properties are
-*emergent* across layers and each unit test can pass while the property is broken.
+None of the per-ticket unit tests exist yet — all seven are to be written, by their owning tickets,
+against code that is also Not Started: `src/routes/comparison-sets.test.ts` (routes),
+`src/comparisons/fan-out.test.ts` (fan-out), `src/comparisons/comparability.test.ts` (comparability),
+`src/comparisons/rerun.test.ts` (rerun), `src/comparisons/metrics.test.ts` (metrics),
+`src/comparisons/export.test.ts` (export), `src/routes/views/comparisons.test.ts` (grid view, owned by
+`TASK-comparison-grid-frontend.md`). This ticket is the cross-cutting suite that exercises them together
+— it exists because the three properties are *emergent* across layers and each unit test can pass while
+the property is broken. It depends on those seven suites landing first.
 
 Follow the repo's real test idiom, not an invented one:
 
