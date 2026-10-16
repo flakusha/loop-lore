@@ -34508,6 +34508,58 @@
     "title": "Effect v4 scoped concurrency and interruption spike",
     "type": "TASK"
   },
+  "TASK-EGUI-COMMAND-SURFACE-PARITY-PALETTE-ROLE-GATED-COMMANDS-SLAS": {
+    "hash": "a4c0a1a",
+    "git_issue": "a4c0a1a",
+    "extid": "TASK-EGUI-COMMAND-SURFACE-PARITY-PALETTE-ROLE-GATED-COMMANDS-SLAS",
+    "type": "TASK",
+    "title": "egui command surface parity: palette, role-gated commands, slash dispatch",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-experimental-egui-frontend",
+    "tags": [],
+    "source": ".plan/tickets/TASK-egui-command-surface-parity-palette-role-gated-commands-slas.md",
+    "status": "Not Started"
+  },
+  "TASK-EGUI-EMOJI-SHORTCODE-SUPPORT-REGISTRY-PARITY-AUTOCOMPLETE-BU": {
+    "hash": "4fdda91",
+    "git_issue": "4fdda91",
+    "extid": "TASK-EGUI-EMOJI-SHORTCODE-SUPPORT-REGISTRY-PARITY-AUTOCOMPLETE-BU",
+    "type": "TASK",
+    "title": "egui emoji shortcode support: registry parity, autocomplete, bubble render",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-experimental-egui-frontend",
+    "tags": [],
+    "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md",
+    "status": "Not Started"
+  },
+  "TASK-EGUI-GALLERY-SURFACE-GRID-FILTERS-THUMBNAILS-UPLOAD": {
+    "hash": "4ccc14c",
+    "git_issue": "4ccc14c",
+    "extid": "TASK-EGUI-GALLERY-SURFACE-GRID-FILTERS-THUMBNAILS-UPLOAD",
+    "type": "TASK",
+    "title": "egui gallery surface: grid, filters, thumbnails, upload",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-experimental-egui-frontend",
+    "tags": [],
+    "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md",
+    "status": "Not Started"
+  },
+  "TASK-EGUI-SSE-RESPONSE-STREAMING-THROUGH-THE-BROWSER-BRIDGE": {
+    "hash": "746adba",
+    "git_issue": "746adba",
+    "extid": "TASK-EGUI-SSE-RESPONSE-STREAMING-THROUGH-THE-BROWSER-BRIDGE",
+    "type": "TASK",
+    "title": "egui SSE response streaming through the browser bridge",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-experimental-egui-frontend",
+    "tags": [],
+    "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md",
+    "status": "Not Started"
+  },
   "TASK-EGUI-WASM-EMBED-SPIKE": {
     "hash": "pending",
     "extid": "TASK-EGUI-WASM-EMBED-SPIKE",
@@ -40223,6 +40275,19 @@
     "tags": [],
     "title": "JSDoc coverage cleanup — public exports",
     "type": "TASK"
+  },
+  "TASK-JSON-VIEW-MODELS-FOR-GALLERY-AND-CHAT-LIST-ENDPOINTS-EGUI-CL": {
+    "hash": "0852403",
+    "git_issue": "0852403",
+    "extid": "TASK-JSON-VIEW-MODELS-FOR-GALLERY-AND-CHAT-LIST-ENDPOINTS-EGUI-CL",
+    "type": "TASK",
+    "title": "JSON view-models for gallery and chat list endpoints (egui client parity)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-experimental-egui-frontend",
+    "tags": [],
+    "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md",
+    "status": "Not Started"
   },
   "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT": {
     "epic": "",
