@@ -36,9 +36,67 @@ Also relevant: `Bun.ModuleGraph` is explicitly labelled experimental and states 
 - [x] **Security:** `=strict`'s coverage is verified by an executed check, not assumed — string-to-code escape (`eval`, `new Function`, `node:vm`, `data:` import) is blocked under the flag.
 - [x] **Concurrency / TOCTOU:** a plugin loaded *before* the policy is installed must not inherit an implicit pass — the policy is re-evaluated at invocation time, or the load is refused outright. A plugin that gains a tag after a cached decision must not keep the cached decision.
 - [x] **Regressions:** community-plugin-disabled-by-default tests unchanged (`loader.test.ts:305,719`, `config-store.test.ts:38-40`).
-- [x] **Repo gates:** `bun run check` green.
+- [ ] **Repo gates:** `bun run check` green. **NOT MET** — see "Gate status" in Notes: the one failing gate (`changelog - gate`) is pre-existing on dev and provably independent of this branch.
 
 ## Notes
+
+### Gate status — `bun run check` is NOT green
+
+Full run (run id `226199-mvarknwl`, exit 1): **Total 41 | Passed 35 | Skipped 1 |
+Advisory 4 | Failed 1.** Verbatim summary:
+
+```
+=== Summary ===
+Total: 41
+Passed: 35
+Skipped: 1
+Advisory: 4
+Failed: 1
+
+!!! ADVISORY FAILURES: 4 — NOT a clean run.
+=== 1 check(s) failed ===
+error: script "check:parallel" exited with code 1
+```
+
+**The one FAILING gate is `changelog - gate`:
+
+```
+FAIL: changelog - gate
+  - latest tag 1.2.3 has no CHANGELOG section - update CHANGELOG.md before tagging
+```
+
+Proven **pre-existing on dev and not caused by this branch**: the gate reads
+exactly two inputs — `CHANGELOG.md` on disk and the repo-global `git tag` list —
+neither of which this branch touches. `git diff dev -- CHANGELOG.md` is empty
+(byte-identical to dev), and `bun run scripts/check-changelog.ts` reproduces the
+same failure standalone. The branch adds 43 commits' worth of lineage over tag
+1.2.3, of which only 3 are this ticket's.
+
+**Advisory (non-blocking) gates, 4 — 2 were caused by this branch and are now fixed:**
+
+- `code-map - freshness` — **was mine** (new `tool-policy.ts` +
+  `strict-probe.fixture.ts` absent from the map). Fixed: `giwt plan code-map`
+  regenerated it (+30 lines); now reports "OK - code map is up to date".
+- `plan - validate` — **was mine**, failing only via the same stale code-map.
+  Now `code-map OK`; its one remaining failure is the pre-existing
+  "ticket index out of sync".
+- `dead - code (src files)` — pre-existing: 69 unused files, verified that
+  neither new file of mine is among them.
+- `plan - ticket index (sync)` — 3 actionable (263 advisory). 2 of the 3 status
+  mismatches pre-date this branch (`BUG-schema-version-table-...`,
+  `TASK-egui-sse-response-streaming-...`); `giwt sync --fix` propagated those
+  two registry-driven closes into their `.md` files. The third is this ticket's
+  own entry, which has no git issue to reconcile against.
+
+**Pre-existing test-suite state:** 28 order-dependent failures in
+`src/frontend/alpine` reproduce at baseline with the `src/plugins` changes
+stashed, and pass in isolation — a suite-ordering leak, not a regression from
+this ticket.
+
+**Gates that DO cover this ticket and pass:** typecheck (backend, bun, frontend,
+coverage, scripts), lint - eslint, lint - native, format - dprint, size - check,
+size - strict, tests - coverage gaps, coverage - per-module line %,
+wiring - check, db - schema gate, migrations - ordering, e2e - browser (baseline).
 
 **Flag name corrected.** `=strict` in the ticket body is shorthand for
 `--disallow-code-generation-from-strings=strict`, which is what Bun's
@@ -82,7 +140,26 @@ rather than by downgrading Bun.
 and after an explicit enable its tagged tool is still refused — the disabled
 default is not what makes the tag hold.
 
+**End-to-end through the generation loop.** `tool-execution.test.ts` registers a
+tagged tool, drives it through `executeToolCalls`, and asserts the refusal
+arrives as a tool result naming the flag with the handler never invoked — so the
+gate is proven on the real tool path, not only at the executor.
+
+**The tests were checked for teeth by sabotage, not trusted because they pass.**
+Deleting the `assertToolPolicySatisfied(tool)` call makes the end-to-end test
+fail (`invoked` flips to `true`), and memoising the decision inside
+`assertToolPolicySatisfied` — exactly the TOCTOU bug this ticket calls out —
+makes the `mutate` scenario fail. Both were run and both failed as required,
+then reverted. A passing test here is not self-evidently evidence.
+
+**Worker inheritance verified by execution.** The module JSDoc claims `=strict`
+cannot be lowered in a Worker. Verified rather than assumed: a file-based Worker
+inherits the refusal (`ALLOWED` unflagged vs `REFUSED:EvalError` flagged), and
+`new Worker(code, { eval: true })` throws outright under the flag.
+
 **Future isolation primitive (not built).** `Bun.ModuleGraph` is explicitly
 experimental and states plainly that it is not a security sandbox. It offers
 memory isolation without request routing. Recorded in the epic as the future
 direction, gated on leaving `experimental`.
+
+**Resolved:** 2026-10-16 registry-driven close: git issue 94a4e81 (registry tip: befaf43d6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-REPURPOSE-DEAD-SANDBOXED-FI)

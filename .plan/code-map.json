@@ -33535,6 +33535,10 @@
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-security-sandboxing.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-a-community-plugin-named-core-disables-all-five-built-in-too.md"
     },
@@ -33801,6 +33805,12 @@
       "source": ".plan/epics/epic-plugin-system.md"
     }
   ],
+  "src/plugins/strict-probe.fixture.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md"
+    }
+  ],
   "src/plugins/tool-executor.ts": [
     {
       "kind": "epic",
@@ -33841,6 +33851,26 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
+    }
+  ],
+  "src/plugins/tool-policy.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md"
+    }
+  ],
+  "src/plugins/tool-policy.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-security-sandboxing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/plugin-system.md"
     }
   ],
   "src/plugins/tools.ts": [
