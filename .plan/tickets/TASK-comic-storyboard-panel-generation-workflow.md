@@ -81,6 +81,13 @@ carried by `TASK-publication-art-quality-gates.md` and
 landed by the time this ships, wire the reference set through; if not, ship
 without it and record the gap — do not block the storyboard path on it.
 
+Per-panel dispatch is the **committed** generation strategy, not a placeholder:
+the epic's `### Page composition strategy (review 2026-10-16)` section in
+`epic-narrative-publishing-workflows.md` decides per-panel generation (composed
+or sequenced presentation, a later per-page choice) and defers one-shot
+whole-page generation as capability-gated. That is why this ticket dispatches
+one image job per panel and never a whole page in one call.
+
 ## Acceptance Criteria
 
 - [ ] `configs/templates/workflows/comic-storyboard.yaml` exists with `merge: extend`
