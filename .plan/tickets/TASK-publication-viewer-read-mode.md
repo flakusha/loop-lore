@@ -63,11 +63,24 @@ The transition engine and typewriter from `src/frontend/vn/` may be reused for
 optional panel-by-panel reveal, but the comic reader must work with animation
 off — panel switching is an instant swap in that mode.
 
+**New boundary (2026-10-16).** The epic's `### Page composition strategy
+(review 2026-10-16)` section in `epic-narrative-publishing-workflows.md`
+records presentation as a per-page choice — `composed` (the one-page-per-view
+reader this ticket describes) or `sequence` (a vertical-scroll / gallery
+reader with no layout composer). `publications.kind` selects the product —
+book or comic — and is not the selector between the two comic readers; the
+unit's `presentation` is. The paged comic reader below is the `composed` half;
+the `sequence` reader is a separate mode this ticket does not yet cover, and
+the two share only the published-unit payload.
+
 ## Acceptance Criteria
 
 - [ ] A viewer shell exists at `src/views/publication.html`, served from
-      `src/routes/views/`, rendering a book as scrolling chapters or a comic as
-      one page per view based on `publications.kind`
+      `src/routes/views/`. `publications.kind` selects the product — a book
+      renders as scrolling chapters, a comic enters the comic reader — and for
+      a comic the unit's `presentation` selects the comic reader shape:
+      `composed` renders one page per view as described below, `sequence` is
+      the separate mode this ticket does not cover
 - [ ] Only units with `publication_status = PublicationStatus.Published` render; `draft`, `review`, and `rejected` units are absent from the read payload, verified by a route test asserting their text is not present in the response
 - [ ] Units render in dense `position` order with no gaps after a deleted unit
 - [ ] A comic reader supports next/previous page, keyboard arrow navigation, and

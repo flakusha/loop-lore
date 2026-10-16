@@ -15462,6 +15462,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
     },
     {
@@ -15713,6 +15717,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
     },
     {
       "kind": "ticket",
@@ -16124,6 +16132,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
     },
     {
@@ -16221,6 +16233,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-tests-and-coverage.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
     },
     {
       "kind": "ticket",
@@ -16463,6 +16479,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
     },
     {
       "kind": "ticket",
@@ -17291,6 +17311,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-db-migration-039.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
     },
     {
       "kind": "ticket",
@@ -18620,6 +18644,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
     },
     {
@@ -19069,6 +19097,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-backgrounds-location-sync.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
     },
     {
       "kind": "ticket",
