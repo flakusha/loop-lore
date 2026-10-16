@@ -7,37 +7,37 @@ Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` f
 
 ## Code Quality (Linting & Testing)
 
-| Command                        | Description                                                                                                                                          |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bun run lint`                 | ESLint (strict + unicorn + sonarjs)                                                                                                                  |
-| `bun run lint:oxlint:advisory` | oxlint advisory pass (tsc + eslint cover real correctness)                                                                                           |
-| `bun run lint:biome`           | Biome lint on docs/                                                                                                                                  |
-| `bun run md:lint`              | Markdownlint on docs/ + .plan/                                                                                                                       |
-| `bun run typecheck`            | TypeScript `tsc --noEmit`                                                                                                                            |
-| `bun run typecheck:frontend`   | Frontend TypeScript check                                                                                                                            |
-| `bun run typecheck:coverage`   | Type coverage (strict gate)                                                                                                                          |
-| `bun run format`               | dprint check                                                                                                                                         |
-| `bun run format:fix`           | dprint fmt                                                                                                                                           |
-| `bun run check`                | Parallel gate runner (`check-parallel.mjs`): typecheck ×4, lint (ts/eslint/biome), dprint, md lint, db schema gate, size, context-weight, unit + e2e |
-| `bun run check:report-ls`      | Aggregate per-worktree check reports (`.tmp/check-report.json`); flags stale (head mismatch)                                                         |
-| `bun run db:sync-types`        | Regenerate DB types from migrations                                                                                                                  |
-| `bun run db:sync-manifest`     | Regenerate schema manifest                                                                                                                           |
-| `bun run schemas:check`        | Verify generated schemas are current (`db:schemas:check` does not exist)                                                                             |
-| `bun run jscpd`                | Copy-paste detection (coarse)                                                                                                                        |
-| `bun run jscpd:full`           | Copy-paste detection (fine)                                                                                                                          |
-| `bun run size:check`           | File-size gate                                                                                                                                       |
-| `bun run context:weight`       | Agent context weight check                                                                                                                           |
-| `bun run plan:sync`            | Ticket index ↔ git issue sync check                                                                                                                  |
-| `bun run plan:sync:fix`        | Apply ticket index fixes (`giwt sync --fix`)                                                                                                         |
-| `bun run plan:validate`        | Comprehensive `.plan/` validation (10 gates: format, linkage, backlog, tickets, code-map, links, spdx, naming, epics-doc, all)                       |
-| `bun run plan:validate:fix`    | Apply auto-fixable plan-validate findings (`giwt plan validate --fix`)                                                                               |
-| `bun run plan:status`          | Plan health summary (giwt plan status)                                                                                                               |
-| `bun run plan:backlog:sync`    | Backlog tier-file reconciliation                                                                                                                     |
-| `bun run plan:map`             | Build reverse code→plan index (`.plan/code-map.json`)                                                                                                |
-| `bun run plan:map:check`       | Verify `.plan/code-map.json` is fresh (CI gate)                                                                                                      |
-| `bun run plan:find`            | Query owners of a `src/` path                                                                                                                        |
-| `bun test`                     | Bun test runner (Jest-compatible)                                                                                                                    |
-| `bun test --coverage`          | Test coverage report                                                                                                                                 |
+| Command                        | Description                                                                                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run lint`                 | ESLint (strict + unicorn + sonarjs)                                                                                                                           |
+| `bun run lint:oxlint:advisory` | oxlint advisory pass (tsc + eslint cover real correctness)                                                                                                    |
+| `bun run lint:biome`           | Biome lint on docs/                                                                                                                                           |
+| `bun run md:lint`              | Markdownlint on docs/ + .plan/                                                                                                                                |
+| `bun run typecheck`            | TypeScript `tsc --noEmit`                                                                                                                                     |
+| `bun run typecheck:frontend`   | Frontend TypeScript check                                                                                                                                     |
+| `bun run typecheck:coverage`   | Type coverage (strict gate)                                                                                                                                   |
+| `bun run format`               | dprint check                                                                                                                                                  |
+| `bun run format:fix`           | dprint fmt                                                                                                                                                    |
+| `bun run check`                | Parallel gate runner (`check-parallel.mjs`): typecheck ×4, lint (ts/eslint/biome), dprint, md lint, db schema gate, size, context-weight, unit + e2e          |
+| `bun run check:report-ls`      | Aggregate per-worktree check reports (`.tmp/check-report.json`); flags stale (head mismatch)                                                                  |
+| `bun run db:sync-types`        | Regenerate DB types from migrations                                                                                                                           |
+| `bun run db:sync-manifest`     | Regenerate schema manifest                                                                                                                                    |
+| `bun run schemas:check`        | Verify generated schemas are current (`db:schemas:check` does not exist)                                                                                      |
+| `bun run jscpd`                | Copy-paste detection (coarse)                                                                                                                                 |
+| `bun run jscpd:full`           | Copy-paste detection (fine)                                                                                                                                   |
+| `bun run size:check`           | File-size gate                                                                                                                                                |
+| `bun run context:weight`       | Agent context weight check                                                                                                                                    |
+| `bun run plan:sync`            | Ticket index ↔ git issue sync check                                                                                                                           |
+| `bun run plan:sync:fix`        | Apply ticket index fixes (`giwt sync --fix`)                                                                                                                  |
+| `bun run plan:validate`        | Comprehensive `.plan/` validation (12 gates: format, linkage, backlog, tickets, code-map, links, spdx, naming, epics-doc, status-vocab, matrix, interconnect) |
+| `bun run plan:validate:fix`    | Apply auto-fixable plan-validate findings (`giwt plan validate --fix`)                                                                                        |
+| `bun run plan:status`          | Plan health summary (giwt plan status)                                                                                                                        |
+| `bun run plan:backlog:sync`    | Backlog tier-file reconciliation                                                                                                                              |
+| `bun run plan:map`             | Build reverse code→plan index (`.plan/code-map.json`)                                                                                                         |
+| `bun run plan:map:check`       | Verify `.plan/code-map.json` is fresh (CI gate)                                                                                                               |
+| `bun run plan:find`            | Query owners of a `src/` path                                                                                                                                 |
+| `bun test`                     | Bun test runner (Jest-compatible)                                                                                                                             |
+| `bun test --coverage`          | Test coverage report                                                                                                                                          |
 
 ## Configuration Files
 
