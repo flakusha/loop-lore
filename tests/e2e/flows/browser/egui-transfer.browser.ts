@@ -14,7 +14,9 @@
  *
  * The wasm bundle is not compiled in the test env, so /egui/app.js and
  * /egui/app.wasm 404 by design: the transfer contract (URL, DOM, context),
- * not canvas paint, is what gets asserted. See .tmp/egui-contract.md.
+ * not canvas paint, is what gets asserted. The contract itself lives in
+ * src/frontend/egui-bridge.ts (TS side) and native/loop-lore-egui/src/
+ * context.rs (Rust side); see the two egui tickets under .plan/tickets/.
  */
 
 import type { Page, } from "@playwright/test";
@@ -31,10 +33,10 @@ import { SEED, seedAll, } from "../../helpers/seed";
 /** Browser-side transfer context key shared by the htmx bridge and /egui. */
 const CONTEXT_KEY = "loop-lore.egui-context.v1";
 
-/** The egui wasm bundle is absent in the test env — 404s for it are expected. */
-const MISSING_ASSET_NOISE: readonly RegExp[] = [/\/egui\/app\.(js|wasm)/,];
+/** The egui wasm bundle is absent in some test envs — 404s for it are expected. */
+const MISSING_ASSET_NOISE: readonly RegExp[] = [/\/egui\/app\.(js|_bg\.wasm)/,];
 
-/** Shape of the stored transfer context (see .tmp/egui-contract.md). */
+/** Shape of the stored transfer context (src/frontend/egui-bridge.ts). */
 type EguiContext = {
   version: number;
   activeChatId: string | null;
@@ -46,7 +48,7 @@ type EguiContext = {
  * @returns the stored transfer context, or null when the key is absent
  */
 async function readContext(page: Page,): Promise<EguiContext | null> {
-  const raw = await page.evaluate(() => localStorage.getItem(CONTEXT_KEY,));
+  const raw = await page.evaluate((key,) => localStorage.getItem(key,), CONTEXT_KEY,);
   return raw === null ? null : (JSON.parse(raw,) as EguiContext);
 }
 

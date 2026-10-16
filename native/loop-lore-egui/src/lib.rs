@@ -13,6 +13,12 @@
 //! Deliberately outside every htmx swap target (spike finding I3): the canvas
 //! is mounted on `/egui`, a page that never swaps its own container.
 
+// Host builds (`cargo test`, `bun run lint:egui`) never mount the app, so the
+// wasm-only modules' host twins are unreachable by design and expected dead
+// code there. The wasm build (`bun run build:egui`) carries the real
+// reachability set.
+#![cfg_attr(not(target_arch = "wasm32"), allow(dead_code))]
+
 mod api;
 mod client;
 mod context;

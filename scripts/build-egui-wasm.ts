@@ -24,6 +24,7 @@ import { spawnSync, } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { brotliCompressSync, constants, } from "node:zlib";
+import { jsonParseOr, } from "../src/utils/safe-json";
 import { ensureWasmToolchain, type WasmToolchain, } from "./native/toolchain";
 
 /** Crate dir relative to this script (scripts/ → native/loop-lore-egui/). */
@@ -80,7 +81,7 @@ function pinnedWasmBindgenVersion(): string | null {
 
 /**
  * `[lib] name` in Cargo.toml (dashes → underscores) is the cargo artifact
- * stem; the file lands under `<crate>/target/<triple>/release/`.
+ * stem.
  * @returns the compiled .wasm file name
  */
 function wasmArtifactName(): string {
@@ -92,6 +93,27 @@ function wasmArtifactName(): string {
 
   const name = /"([\w-]+)"/.exec(nameLine,)?.[1] ?? "loop_lore_egui";
   return `${name.replaceAll("-", "_",)}.wasm`;
+}
+
+/**
+ * Cargo's target directory for this crate, honoring `CARGO_TARGET_DIR` /
+ * build config instead of assuming `<crate>/target` (the host sets a shared
+ * `/tmp/cargo`).
+ * @returns absolute path to the `${triple}/release` output dir
+ */
+function cargoReleaseDir(env: NodeJS.ProcessEnv,): string {
+  const result = spawnSync(
+    "cargo",
+    ["metadata", "--format-version", "1", "--no-deps", "--manifest-path", join(CRATE_DIR, "Cargo.toml",),],
+    { encoding: "utf8", env: { ...process.env, ...env, }, },
+  );
+
+  const target = result.status === 0
+    ? jsonParseOr<{ target_directory?: string }>(result.stdout, {},).target_directory
+    : undefined;
+
+  const base = target ?? join(CRATE_DIR, "target",);
+  return join(base, WASM_TARGET, "release",);
 }
 
 // ── Build stages ─────────────────────────────────────────────────
@@ -143,7 +165,7 @@ function buildWasm(): string {
     fail(`cargo build failed (status ${result.status})`,);
   }
 
-  const artifact = join(CRATE_DIR, "target", WASM_TARGET, "release", wasmArtifactName(),);
+  const artifact = join(cargoReleaseDir(toolchain.env,), wasmArtifactName(),);
   if (!existsSync(artifact,)) {
     fail(`expected ${artifact} not found`,);
   }
@@ -176,7 +198,8 @@ function runWasmBindgen(artifact: string,): void {
  * variant negotiation (br > zstd > gzip) can serve the bundle.
  */
 function writeBrotliVariant(): void {
-  const wasmPath = join(OUT_DIR, `${OUT_NAME}.wasm`,);
+  // wasm-bindgen `--target web` emits `<out-name>_bg.wasm` next to the glue.
+  const wasmPath = join(OUT_DIR, `${OUT_NAME}_bg.wasm`,);
   if (!existsSync(wasmPath,)) {
     fail(`expected ${wasmPath} not found after wasm-bindgen`,);
   }
@@ -187,7 +210,7 @@ function writeBrotliVariant(): void {
 
   const brPath = `${wasmPath}.br`;
   writeFileSync(brPath, compressed,);
-  console.log(`[build:egui] OK ${OUT_NAME}.wasm.br (${(statSync(brPath,).size / 1024).toFixed(1,)} KB)`,);
+  console.log(`[build:egui] OK ${OUT_NAME}_bg.wasm.br (${(statSync(brPath,).size / 1024).toFixed(1,)} KB)`,);
 }
 
 // ── Main ─────────────────────────────────────────────────────────

@@ -25,11 +25,9 @@ wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-web-sys = { version = "0.3", features = [
-  "HtmlCanvasElement",
-  "Storage",
-  "Window",
-] }
+# Headers/Request/RequestInit/Response gate the fetch-with-Request path in
+# client.rs; HtmlDocument carries document.cookie; Storage covers localStorage.
+web-sys = { version = "0.3", features = ["Headers", "HtmlCanvasElement", "HtmlDocument", "Request", "RequestInit", "Response", "Storage", "Window"] }
 
 [features]
 default = []
