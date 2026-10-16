@@ -7,6 +7,7 @@
  * Adds intimacy levels, arousal state, and content rating context
  * when NSFW content is enabled and the chat involves NSFW characters.
  */
+import { getRuntimeNsfwConfig, } from "../../../nsfw/runtime-config";
 import { jsonParseOr, } from "../../../utils";
 import type { SectionBuilder, } from "../types";
 
@@ -14,8 +15,12 @@ import type { SectionBuilder, } from "../types";
 export const nsfwContextSection: SectionBuilder = {
   name: "nsfwContext",
   enabled: (ctx,) => {
-    // Only enable if NSFW config is enabled
-    return ctx.params.includeStoryContext ?? false;
+    // NSFW opt-in gate (mirrors nsfwPolicySection): the chat config must
+    // allow NSFW, the runtime admin toggle must be on, and the caller must
+    // want story context. Non-NSFW chats emit nothing.
+    return (ctx.config?.nsfw.allowNsfw ?? true) &&
+      getRuntimeNsfwConfig().allowNsfw &&
+      (ctx.params.includeStoryContext ?? false);
   },
   build: async (ctx,) => {
     const sections: string[] = [];
