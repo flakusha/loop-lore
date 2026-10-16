@@ -126,11 +126,11 @@ export function formatStats(stats: HarnessStats,): string {
   ];
 
   if (byModel.length > 0) {
-    lines.push(`{bold}By model:{/bold} ${byModel.map((m,) => `${m.model}=${m.count}`).join(", ",)}`,);
+    lines.push(`{bold}By model:{/bold} ${byModel.map((m,) => `${m.model}=${m.runs}`).join(", ",)}`,);
   }
 
   if (byTaskType.length > 0) {
-    lines.push(`{bold}By type:{/bold} ${byTaskType.map((t,) => `${t.taskType}=${t.count}`).join(", ",)}`,);
+    lines.push(`{bold}By type:{/bold} ${byTaskType.map((t,) => `${t.taskType}=${t.runs}`).join(", ",)}`,);
   }
 
   return lines.join("\n",);

@@ -216,12 +216,19 @@ beforeEach(() => {
   configEnabled = true;
   textWidgets.length = 0;
   // HarnessView.toggle() fires `void this.refresh()`, which fetches the runs
-  // list. Without this stub an F3 press opens a real socket to localhost.
-  const emptyRuns = async <T,>(): Promise<
-    FetchResult<T>
-  > => ({ ok: true, data: { items: [], }, status: 200, headers: new Headers(), } as FetchResult<T>);
+  // list and — when that list is empty — the stats rollup. Without this stub
+  // an F3 press opens a real socket to localhost. The two endpoints answer
+  // different shapes, so the double routes on the URL rather than handing
+  // both the runs envelope.
+  const emptyHarness = async <T,>(url: string,): Promise<FetchResult<T>> => {
+    const data = url.endsWith("/stats",)
+      ? { totals: { runs: 0, failures: 0, costUsd: 0, }, byModel: [], byTaskType: [], byPattern: [], toolingGaps: [], }
+      : { items: [], };
 
-  setFetch(emptyRuns as unknown as typeof safeFetch,);
+    return { ok: true, data: data as T, status: 200, headers: new Headers(), };
+  };
+
+  setFetch(emptyHarness as unknown as typeof safeFetch,);
 },);
 
 afterEach(() => {
