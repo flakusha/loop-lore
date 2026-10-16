@@ -13,6 +13,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { LoggerImpl, } from "../../logger/logger";
 import { registry, } from "../../plugins/registry";
+import { STRICT_CODEGEN_FLAG, } from "../../plugins/tool-policy";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, } from "../../test-utils/insert-helpers";
 import { jsonParseOr, } from "../../utils";
@@ -170,6 +171,34 @@ describeReal("executeToolCalls context forwarding", () => {
     const parsed = JSON.parse(results[0]?.content ?? "{}",);
     expect(parsed.error,).toContain("tool arguments must be a JSON object",);
     expect(parsed.error,).toContain("null",);
+  });
+
+  // End-to-end for the tool-execution policy gate: the refusal has to reach
+  // the model as a tool ERROR through this loop, not merely exist in the
+  // executor. `bun test` runs without the flag, which is the refusing case.
+  test("a policy-tagged tool is refused here, marked as a tool error, and never invoked", async () => {
+    let invoked = false;
+    registry.addTools("test-plugin", [
+      {
+        name: "strict_tagged",
+        description: "requires strict codegen",
+        parameters: {},
+        policy: "requires-strict-codegen",
+        handler: async () => {
+          invoked = true;
+          return { content: "ok", };
+        },
+      },
+    ],);
+
+    const results = await executeToolCalls([
+      { id: "call-strict", function: { name: "strict_tagged", arguments: "{}", }, },
+    ], ctx,);
+
+    expect(invoked,).toBe(false,);
+    expect(results[0]?.role,).toBe("tool",);
+    expect(results[0]?.tool_call_id,).toBe("call-strict",);
+    expect(results[0]?.content,).toContain(STRICT_CODEGEN_FLAG,);
   });
 },);
 
