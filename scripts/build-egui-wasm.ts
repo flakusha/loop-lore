@@ -8,10 +8,14 @@
  * where the `/egui` host page (src/routes/views/egui.ts) and the static file
  * server pick them up.
  *
- * Unlike build-native.ts (which degrades to pure-TS fallbacks), this stage
- * NEVER degrades silently: missing cargo or wasm-bindgen CLI fails the build
- * with an install hint. A /egui page with no assets is a state the host page
- * survives at runtime by design — not a state the build should paper over.
+ * A MISSING optional toolchain (no cargo / no wasm-bindgen CLI) skips this
+ * stage with a notice, the same rule build-native.ts follows - the absence
+ * of the experimental egui artifact must never block the application build.
+ * The /egui host page survives missing assets at runtime by design (the
+ * status line carries the failure, the back button keeps working), so the
+ * absence is surfaced there rather than papered over. A toolchain that is
+ * present but FAILS (compile error, bindgen error) still fails this stage:
+ * that is a genuine breakage, not an absent optional build.
  *
  * The wasm-bindgen CLI version MUST match the wasm-bindgen crate version in
  * native/loop-lore-egui/Cargo.lock; a mismatch yields glue that rejects the
@@ -128,18 +132,27 @@ function fail(message: string,): never {
 }
 
 /**
- * Preflight the toolchain before spending build minutes: the wasm-bindgen
- * CLI version must match the wasm-bindgen crate version in Cargo.lock, so
- * the hint names the pin instead of a generic "install it".
+ * Optional-toolchain preflight: a missing wasm-bindgen CLI (or cargo) means
+ * this stage is SKIPPED with a notice, mirroring build-native.ts - the app
+ * build must never be blocked by the experimental egui artifact. The /egui
+ * host page survives missing assets at runtime by design: the wasm boot
+ * fails into the `#egui-status` text and the back button keeps working.
+ *
+ * A toolchain that IS present but fails (compile error, bindgen error,
+ * missing artifact) still fails the stage with exit 1 - that is a genuine
+ * breakage, not an absent optional native build.
  */
 function requireWasmBindgenCli(): void {
   if (wasmBindgenAvailable()) { return; }
 
   const pinned = pinnedWasmBindgenVersion();
   const version = pinned ?? "<version from native/loop-lore-egui/Cargo.lock>";
-  fail(
-    `wasm-bindgen CLI not found - install the version matching Cargo.lock: cargo install wasm-bindgen-cli --version ${version}`,
+  console.log(
+    `[build:egui] wasm-bindgen CLI not found - skipping the egui WASM bundle. ` +
+      `The /egui page degrades to its status line. Install to build it: cargo install wasm-bindgen-cli --version ${version}`,
   );
+
+  process.exit(0,);
 }
 
 /**
@@ -222,7 +235,13 @@ function main(): void {
   }
 
   if (!cargoAvailable()) {
-    fail("cargo not found - install a Rust toolchain (cargo 1.99.0 or newer)",);
+    // Optional native stage (parity with build-native.ts): never block the
+    // application build. The /egui page degrades at runtime instead.
+    console.log(
+      "[build:egui] cargo not found - skipping the egui WASM bundle (the /egui page degrades to its status line)",
+    );
+
+    return;
   }
 
   requireWasmBindgenCli();
