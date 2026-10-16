@@ -133,14 +133,20 @@ describe("spendStoryPoints — happy path", () => {
     expect(bal.spent_total,).toBe(6,);
   });
 
-  test("ledger_id is a real generated hex id, never SQL text", async () => {
+  test("ledger_id equals the stored row's id, never SQL text", async () => {
     await earnStoryPoints(db, { actorId: ACTOR, amount: 10, },);
     const result = await spendStoryPoints(db, { actorId: ACTOR, amount: 3, },);
-    // The row already exists (the earn created it), so the spend falls
-    // through to the UPDATE via ON CONFLICT DO NOTHING and its fresh id is
-    // not inserted — but it must still be a real hex id, not raw SQL.
-    expect(typeof result.ledger_id,).toBe("string",);
+    // The row was created by the earn, so the spend's own INSERT is a DO
+    // NOTHING — the response must still report the stored row's id.
     expect(result.ledger_id,).toMatch(/^[0-9a-f]{32}$/,);
+    const row = await db
+      .selectFrom("actor_story_points",)
+      .select("id",)
+      .where("actor_id", "=", ACTOR,)
+      .executeTakeFirst();
+
+    expect(row,).toBeDefined();
+    expect(result.ledger_id,).toBe(row!.id,);
   });
 });
 
@@ -269,6 +275,26 @@ describe("earnStoryPoints — concurrency", () => {
     const bal = await getStoryPointBalance(db, ACTOR, null,);
     expect(bal.balance,).toBe(36,); // 1+2+...+8
     expect(bal.earned_total,).toBe(36,);
+  });
+
+  test("every concurrent earn reports the stored row's ledger_id", async () => {
+    // The loser of the INSERT race takes the DO-NOTHING path; its response
+    // must still report the stored row's id, not its own freshly generated
+    // (never-inserted) id.
+    const results = await Promise.all(
+      Array.from({ length: 4, }, (_, i,) => earnStoryPoints(db, { actorId: ACTOR_2, amount: i + 1, },),),
+    );
+
+    const row = await db
+      .selectFrom("actor_story_points",)
+      .select("id",)
+      .where("actor_id", "=", ACTOR_2,)
+      .executeTakeFirst();
+
+    expect(row,).toBeDefined();
+    for (const result of results) {
+      expect(result.ledger_id,).toBe(row!.id,);
+    }
   });
 
   test("parallel earns preserve the balance = earned - spent invariant", async () => {
