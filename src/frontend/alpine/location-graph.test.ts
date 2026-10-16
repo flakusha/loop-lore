@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import {
   buildLocationGraphState,
   type EditEdgeDraft,
@@ -9,6 +10,16 @@ import {
 } from "./location-graph";
 
 // ── Mock ./htmx and ./world-fetch (must precede importing ./location-graph) ──
+// Both doubles are pinned to fixed fakes, and Bun's `mock.module` rewrites the
+// module registry process-wide with no way to unregister. Under a shared run
+// (`bun test src/`) this file was the single poller behind the whole alpine
+// cluster: its `./world-fetch` double answered `/edges` and `/locations/tree`
+// for every later file, so world-fetch / travel-interface / world-locations /
+// world-page-state asserted against this file's fixture, and its `./htmx`
+// double swallowed the apiFetch the characters and render-scene suites were
+// counting. Gate both on ISOLATED, as every sibling double in this directory
+// already does, and skip the suite out loud on a shared run rather than
+// poisoning the files after it.
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let apiCalls: { url: string; opts: RequestInit }[] = [];
 let apiHandler: ApiFetchMock = async () => Response.json({},);
@@ -16,19 +27,21 @@ let apiHandler: ApiFetchMock = async () => Response.json({},);
 let worldGets: string[] = [];
 let worldHandler: (path: string,) => unknown = () => ({ data: [], });
 
-mock.module("./htmx", () => ({
-  apiFetch: ((url: string, opts?: RequestInit,) => {
-    apiCalls.push({ url, opts: opts ?? {}, },);
-    return apiHandler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: ((url: string, opts?: RequestInit,) => {
+      apiCalls.push({ url, opts: opts ?? {}, },);
+      return apiHandler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
 
-mock.module("./world-fetch", () => ({
-  fetchWorldJson: async <T,>(_worldId: string, path: string,): Promise<T | null> => {
-    worldGets.push(path,);
-    return worldHandler(path,) as T;
-  },
-}),);
+  mock.module("./world-fetch", () => ({
+    fetchWorldJson: async <T,>(_worldId: string, path: string,): Promise<T | null> => {
+      worldGets.push(path,);
+      return worldHandler(path,) as T;
+    },
+  }),);
+}
 
 const EDGE = {
   id: "edge-1",
@@ -69,7 +82,7 @@ afterEach(() => {
   worldGets = [];
 },);
 
-describe("locationGraphState.load", () => {
+describeOrSkip("locationGraphState.load", () => {
   test("flattens tree nodes and decodes the graph", async () => {
     const state = freshState();
     await state.load();
@@ -93,9 +106,9 @@ describe("locationGraphState.load", () => {
     expect(state.error,).toBe(true,);
     expect(state.loaded,).toBe(false,);
   });
-});
+},);
 
-describe("locationGraphState.createEdge", () => {
+describeOrSkip("locationGraphState.createEdge", () => {
   test("posts to the origin edge route and reloads", async () => {
     const state = freshState();
     state.newEdge = {
@@ -141,9 +154,9 @@ describe("locationGraphState.createEdge", () => {
     await state.createEdge();
     expect(apiCalls.length,).toBe(before,);
   });
-});
+},);
 
-describe("locationGraphState.editing", () => {
+describeOrSkip("locationGraphState.editing", () => {
   test("startEdit seeds a draft from the edge row", () => {
     const state = freshState();
     state.edges = [{ ...EDGE, requires_discovery: true, cost: { gold: 2, }, },];
@@ -188,9 +201,9 @@ describe("locationGraphState.editing", () => {
     expect(del?.url,).toBe("/api/v1/worlds/world-1/edges/edge-1",);
     expect(state.editDrafts["edge-1"],).toBeUndefined();
   });
-});
+},);
 
-describe("locationGraphState.costLabel", () => {
+describeOrSkip("locationGraphState.costLabel", () => {
   test("renders gold, cooldown, item and faction parts", () => {
     const state = freshState();
     expect(state.costLabel({},),).toBe("",);
@@ -198,4 +211,4 @@ describe("locationGraphState.costLabel", () => {
       "5g, 2h cd, i1, needs ally",
     );
   });
-});
+},);

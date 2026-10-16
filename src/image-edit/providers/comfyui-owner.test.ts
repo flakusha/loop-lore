@@ -50,20 +50,39 @@ const REAL_CONFIG_LOAD: Record<string, unknown> = { ...realConfigLoad, };
 /** Every run downloads this one filename, so both users collide on bytes. */
 const FILENAME = "shared_output.png";
 
-/** Stands in for the ComfyUI HTTP client: no sockets, deterministic bytes. */
-class StubComfyUIClient {
-  async submitWorkflow(): Promise<{ prompt_id: string }> {
-    return { prompt_id: "stub-prompt", };
-  }
-  async waitForCompletion(): Promise<string[]> {
-    return [FILENAME,];
-  }
-  async downloadImage(): Promise<Buffer> {
-    return Buffer.from(IMAGE,);
-  }
-  async getNodeInfo(): Promise<Record<string, unknown>> {
-    return {};
-  }
+/**
+ * Stands in for the ComfyUI server: no sockets, deterministic bytes.
+ *
+ * This replaces the previous `mock.module("../../generation/providers/comfyui")`
+ * double. `mock.module` rewrites the module registry process-wide and Bun has no
+ * way to unregister it, so the swapped-out `ComfyUIClient` reached every later
+ * file in the run — the audio provider then got a client whose
+ * `runWorkflowFiles` was undefined, because the hand-written stub only spelled
+ * out the four methods its own test exercised. Stubbing `globalThis.fetch`
+ * instead keeps the real client in place for every other file and confines the
+ * double to the network boundary this test actually cares about.
+ */
+function stubComfyFetch(): () => void {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: RequestInfo | URL,) => {
+    const url = String(input,);
+    if (url.endsWith("/prompt",)) { return Response.json({ prompt_id: "stub-prompt", },); }
+    if (url.includes("/history/",)) {
+      return Response.json({
+        "stub-prompt": {
+          status: "completed",
+          outputs: { "9": { images: [{ filename: FILENAME, type: "output", },], }, },
+        },
+      },);
+    }
+
+    if (url.includes("/view?",)) { return new Response(new Uint8Array(IMAGE,), { status: 200, },); }
+    return new Response("{}", { status: 200, },);
+  }) as typeof globalThis.fetch;
+
+  return () => {
+    globalThis.fetch = realFetch;
+  };
 }
 
 const template: WorkflowTemplate = {
@@ -84,8 +103,10 @@ const bob = uid();
 
 const request: ImageEditRequest = { template_id: "owner-probe", backend: "comfyui", params: {}, };
 
+let restoreFetch: () => void = () => {};
+
 beforeAll(async () => {
-  mock.module("../../generation/providers/comfyui", () => ({ ComfyUIClient: StubComfyUIClient, }),);
+  restoreFetch = stubComfyFetch();
   uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-edit-owner-",),);
   mock.module("../../config/load", () => ({
     ...REAL_CONFIG_LOAD,
@@ -105,6 +126,7 @@ beforeAll(async () => {
 },);
 
 afterAll(async () => {
+  restoreFetch();
   mock.module("../../config/load", () => ({ ...REAL_CONFIG_LOAD, }),);
   setTestDatabase(null,);
   await db.destroy();

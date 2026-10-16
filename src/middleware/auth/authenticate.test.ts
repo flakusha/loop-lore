@@ -17,7 +17,7 @@ import { signJwt, } from "../../auth/jwt";
 import type { AuthConfig, } from "../../config/schema/auth";
 import { UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { createLogger, } from "../../logger";
+import { createLogger, getLogger, type Logger, setGlobalLogger, } from "../../logger";
 import { ErrorCode, } from "../../routes/http-utils";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertSessions, insertUsers, } from "../../test-utils/insert-helpers";
@@ -52,14 +52,28 @@ function futureExpiry(): string {
 describe("authenticate — presented-token handling", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
+  // createLogger only fills the global root when it is still null, so a
+  // sibling file that installed an error-level logger first would leave this
+  // file's `warn` root uninstalled and the stderr assertion below would never
+  // see the line. setGlobalLogger replaces unconditionally; capture the prior
+  // root (guarded — an uninitialized logger is a valid prior state) and hand it
+  // back so siblings keep the level they set.
+  let priorRoot: Logger | null = null;
 
   beforeEach(async () => {
-    createLogger({ level: "warn", },);
+    try {
+      priorRoot = getLogger();
+    } catch {
+      priorRoot = null;
+    }
+
+    setGlobalLogger(createLogger({ level: "warn", },),);
     ({ db, sqlite, } = await createTestDb());
   },);
 
   afterEach(async () => {
     resetSoloUserCache();
+    setGlobalLogger(priorRoot ?? createLogger({ level: "error", },),);
     await db.destroy();
   },);
 
