@@ -70,6 +70,7 @@
 
     "wiring:check": "bun run scripts/check-wiring.ts",
     "changelog:check": "bun run scripts/check-changelog.ts",
+    "size": "bun run size:check",
     "size:check": "bun run scripts/check-file-size.ts --strict",
     "context:weight": "bun run scripts/check-context-weight.ts",
     "context:weight:json": "bun run scripts/check-context-weight.ts --json",
