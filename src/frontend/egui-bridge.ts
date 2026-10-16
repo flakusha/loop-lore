@@ -16,6 +16,9 @@
  */
 
 import { jsonParseOr, jsonStringifyOr, } from "../utils";
+// The SSE stream surface is part of the same bridge bundle: one script on the
+// /egui host page, one place the wasm app reaches the browser through.
+import { initEguiStream, } from "./egui-stream";
 
 /** localStorage key carrying the transfer context (contract v1). */
 export const EGUI_CONTEXT_KEY = "loop-lore.egui-context.v1";
@@ -144,6 +147,7 @@ declare global {
 export function initEguiBridge(): void {
   if (typeof document === "undefined" || typeof window === "undefined") { return; }
   window.loopLoreEgui = bridge;
+  initEguiStream();
   document.addEventListener("click", (event: Event,) => {
     const target = event.target as { closest?: (selector: string,) => unknown } | null;
     if (typeof target?.closest === "function" && target.closest(OPEN_IN_EGUI_SELECTOR,)) { handoffToEgui(); }

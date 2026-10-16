@@ -24241,6 +24241,12 @@
       "source": ".plan/tickets/TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto.md"
     }
   ],
+  "src/frontend/egui-stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
+    }
+  ],
   "src/frontend/fe-fetch.ts": [
     {
       "kind": "epic",
@@ -42437,6 +42443,12 @@
       "source": ".plan/tickets/TASK-image-backends-x-gallery-provenance-filter-backend-attributi.md"
     }
   ],
+  "src/routes/views/layout-assets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
+    }
+  ],
   "src/routes/views/layout.ts": [
     {
       "kind": "epic",
@@ -42465,6 +42477,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-ui-endpoint-linkage.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     },
     {
       "kind": "ticket",
@@ -49445,6 +49461,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/character-spec.md"
+    }
+  ],
+  "src/stream.rs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     }
   ],
   "src/telemetry": [

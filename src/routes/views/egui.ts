@@ -89,13 +89,23 @@ export function serveEguiFrontendPage(request: Request,): Response {
         });
       }
 
-      // Dynamic import + catch (browser module, not TS): a missing wasm asset
-      // must only set the status text, never throw an uncaught module error.
+      // Dynamic import + catch (browser module, not TS): a missing wasm
+      // asset must only set the status text, never throw an uncaught module
+      // error.
       try {
         const glue = await import("/egui/app.js");
         // Default export loads app_bg.wasm relative to the glue; the wasm
         // start section then runs the Rust wasm-bindgen(start) mount.
         await glue.default();
+        // SSE sink: the named exports of the same glue are the only Rust
+        // entry point the bridge relays stream events into. Installed right
+        // after the mount so no event can arrive before the sink exists.
+        window.loopLoreEguiStream = {
+          onUpdate: glue.egui_stream_update,
+          onToolCall: glue.egui_stream_tool_call,
+          onDone: glue.egui_stream_done,
+          onError: glue.egui_stream_error,
+        };
         if (status) { status.textContent = "egui ready"; }
       } catch (error) {
         if (status) { status.textContent = "egui failed to start: " + error; }
