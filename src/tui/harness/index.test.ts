@@ -21,7 +21,7 @@ import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { safeFetch, } from "../../utils";
 import type { FetchResult, SafeFetchOptions, } from "../../utils/safe-fetch/types";
 import type { HarnessView, } from "./index";
-import type { HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types";
+import type { HarnessRunDetail, HarnessRunSummary, } from "./types";
 
 /** `setFetch` takes the real fetcher's signature; see api.ts. */
 type SetFetchFn = (fn: typeof safeFetch,) => void;
