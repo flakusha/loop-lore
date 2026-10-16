@@ -122,11 +122,17 @@ const blessedDefaultExport: Record<string, unknown> = {
 // delegation is observable without network access.
 const handleSendMock = mock(() => Promise.resolve());
 const loadMessagesMock = mock(() => Promise.resolve());
+
+// The completer reaches the registry through the same module; it only fires
+// on a `/` keystroke, so the stub keeps the widget off the network.
+const loadCommandsMock = mock(() => Promise.resolve({ ok: true as const, data: [], },));
+
 if (ISOLATED) {
   mock.module("./api", () => ({
     API_BASE: "http://test.local",
     handleSend: handleSendMock,
     loadMessages: loadMessagesMock,
+    loadCommands: loadCommandsMock,
   }),);
 }
 
