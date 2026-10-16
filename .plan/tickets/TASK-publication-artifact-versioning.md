@@ -7,7 +7,7 @@
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-narrative-publishing-workflows
-**Related:** `TASK-publication-artifact-schema.md`, `TASK-book-unit-editor-review-surface.md`, `TASK-comic-storyboard-panel-generation-workflow.md`, `TASK-publication-continuity-lint.md`, `epic-assistant-creative-studio-workflows.md`
+**Related:** `TASK-publication-artifact-schema.md`, `TASK-book-unit-editor-review-surface.md`, `TASK-comic-storyboard-panel-generation-workflow.md`, `TASK-publication-continuity-lint.md`, `TASK-markdown-canonical-intermediate-contract.md`, `epic-assistant-creative-studio-workflows.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -30978,6 +30978,18 @@
     "title": "Cold message archival to archive DB file",
     "type": "TASK"
   },
+  "TASK-COLLAPSE-DUPLICATE-MARKDOWN-EXPORTER": {
+    "hash": "pending",
+    "extid": "TASK-COLLAPSE-DUPLICATE-MARKDOWN-EXPORTER",
+    "type": "TASK",
+    "title": "Collapse the Duplicate Markdown Exporter",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-narrative-publishing-workflows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-collapse-duplicate-markdown-exporter.md",
+    "status": "Not Started"
+  },
   "TASK-COMBINED-FILTER-SUPPORT": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "TASK-COMBINED-FILTER-SUPPORT",
@@ -41018,6 +41030,18 @@
     "source": ".plan/tickets/TASK-llm-generation-bench-via-local-llama-swap-opt-in.md",
     "status": "Not Started"
   },
+  "TASK-LLM-MARKDOWN-DOCUMENT-PROMPTS": {
+    "hash": "pending",
+    "extid": "TASK-LLM-MARKDOWN-DOCUMENT-PROMPTS",
+    "type": "TASK",
+    "title": "LLM Authors Markdown Documents, Not Fenced JSON",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-narrative-publishing-workflows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md",
+    "status": "Not Started"
+  },
   "TASK-LLM-MOCK-INTEGRATION-SUITE": {
     "epic": "epic-testing-qa.md (see also epic-prompt-improvement.md)",
     "extid": "TASK-LLM-MOCK-INTEGRATION-SUITE",
@@ -41808,6 +41832,42 @@
     ],
     "title": "Map Battle Equipment to World Item Definitions",
     "type": "TASK"
+  },
+  "TASK-MARKDOWN-CANONICAL-INTERMEDIATE-CONTRACT": {
+    "hash": "pending",
+    "extid": "TASK-MARKDOWN-CANONICAL-INTERMEDIATE-CONTRACT",
+    "type": "TASK",
+    "title": "Markdown Canonical Intermediate Contract + `content_format` Column",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-narrative-publishing-workflows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md",
+    "status": "Not Started"
+  },
+  "TASK-MARKDOWN-DERIVE-OTHER-FORMATS": {
+    "hash": "pending",
+    "extid": "TASK-MARKDOWN-DERIVE-OTHER-FORMATS",
+    "type": "TASK",
+    "title": "Derive EPUB / PDF / HTML / Plain Text From Canonical Markdown",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-narrative-publishing-workflows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-markdown-derive-other-formats.md",
+    "status": "Not Started"
+  },
+  "TASK-MARKDOWN-HEADING-PARSE-AND-IMPORT": {
+    "hash": "pending",
+    "extid": "TASK-MARKDOWN-HEADING-PARSE-AND-IMPORT",
+    "type": "TASK",
+    "title": "Markdown Heading Parse + Markdown Importer (the round-trip half)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-narrative-publishing-workflows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md",
+    "status": "Not Started"
   },
   "TASK-MARKDOWN-PREVIEW-BEFORE-SEND": {
     "epic": "epic-chat-composer-flows",
@@ -53807,6 +53867,18 @@
     "tags": [],
     "title": "Weather & Environmental Effects",
     "type": "TASK"
+  },
+  "TASK-WIDEN-IMPORT-EXPORT-IO-FOR-PUBLICATIONS": {
+    "hash": "pending",
+    "extid": "TASK-WIDEN-IMPORT-EXPORT-IO-FOR-PUBLICATIONS",
+    "type": "TASK",
+    "title": "Widen Import/Export Epic Scope to Publications + Markdown Import",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-narrative-publishing-workflows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-widen-import-export-io-for-publications.md",
+    "status": "Not Started"
   },
   "TASK-WIDEN-TYPECHECK-COVERAGE-TO-PLUGINS-AND-TESTS": {
     "hash": "77b2d14",
