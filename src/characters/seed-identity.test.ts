@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 // src/characters/seed-identity.test.ts — Regression tests for seeded-character
 // identity: boot seeding must key on the stable template id, never on the
 // mutable `actors.display_name` that the character edit route lets users change
 // (BUG-character-seed-dedupes-on-display-name).
-
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { CharactersConfig, } from "../config/schema";
+import { adoptExistingActor, findExistingActor, slugifyName, stableTemplateId, } from "./seed/identity";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
-import { uid, } from "../utils";
+import { findExistingActor, stableTemplateId, } from "./seed/identity";
 import { seedCharacterTemplates, } from "./seed";
-import { adoptExistingActor, findExistingActor, slugifyName, stableTemplateId, } from "./seed/identity";
+import { uid, } from "../utils";
 
 describe("seedCharacterTemplates identity", () => {
   let fixture: TestDb;
@@ -196,6 +195,71 @@ describe("seedCharacterTemplates identity", () => {
     const third = await seedCharacterTemplates(db, config,);
     expect(third,).toEqual({ created: 1, skipped: 0, errors: [], },);
     expect(await countById(stableTemplateId({ name: "Legacy Seeded Character", },),),).toBe(1,);
+  });
+
+  test("a user-type actor row is never adopted, even on matching display_name+owner_id", async () => {
+    const { db, } = fixture;
+    const ownerId = uid();
+    // The user's own actor row from registration (src/routes/auth/register.ts):
+    // same display_name and owner_id a character seeded by the legacy code
+    // would carry, but actor_type is "user".
+    await db.insertInto("users",).values({
+      id: ownerId,
+      username: ownerId,
+      display_name: "Namesake Character",
+      password_hash: "hash",
+      role: "user",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    await db
+      .insertInto("actors",)
+      .values({
+        id: uid(),
+        actor_type: "user",
+        display_name: "Namesake Character",
+        user_id: ownerId,
+        owner_id: ownerId,
+        agent_type: "none",
+        description: null,
+        visibility: "private",
+        settings: "{}",
+        import_spec: "template",
+        data_source_format: "json",
+        data_raw: null,
+        format_version: 0,
+      },)
+      .execute();
+
+    // The legacy (owner, display_name) lookup must not mistake the user row
+    // for the character: no character-typed row exists yet, so adoption
+    // finds nothing and the seed path creates a fresh character instead.
+    const legacy = { ownerId, seededAs: "Namesake Character", };
+    expect(await findExistingActor(db, stableTemplateId({ name: "Namesake Character", },), legacy,),).toBeNull();
+
+    const seeded = await seedCharacterTemplates(db, {
+      enabled: true,
+      templates: [{ name: "Namesake Character", description: "Pre-upgrade row", },],
+    },);
+
+    expect(seeded,).toEqual({ created: 1, skipped: 0, errors: [], },);
+
+    // Once the character-typed row exists, it is found and adopted as usual.
+    const characterRow = await db
+      .selectFrom("actors",)
+      .select("id",)
+      .where("actor_type", "=", "character",)
+      .where("display_name", "=", "Namesake Character",)
+      .executeTakeFirst();
+
+    expect(characterRow,).toBeDefined();
+    // Once the character-typed row exists, it is found by its stable id
+    // (fresh rows carry the deterministic id, so no adoption is needed).
+    expect(await findExistingActor(db, stableTemplateId({ name: "Namesake Character", },), legacy,),).toEqual({
+      id: characterRow!.id,
+      needsAdoption: false,
+    },);
   });
 
   test("distinct names sharing a slug still seed distinct rows", async () => {
