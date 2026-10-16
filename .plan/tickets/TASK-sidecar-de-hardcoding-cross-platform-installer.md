@@ -20,8 +20,19 @@ documented install step instead of a copied folder.
 
 ## Context
 
-Source artifact: `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`
-— **scratch, will be pruned.** Read 2026-10-16. Enumerated portability defects:
+Source artifact: a Python ComfyUI HTTP-route extension, handed over **2026-09-30** by
+an external acquaintance of the repo owner and vendored **only** under
+`.tmp/H3_Stills_5080_Handoff_20260930/`. That directory was scratch, was never
+committed, and **has been pruned — the source is not on disk and is not recoverable
+from git history.** Do not go looking for it.
+
+The defects enumerated below are **prior observations from one read on 2026-10-16,
+not a re-readable source.** Each is an unverified claim to be re-derived against a
+live ComfyUI (and the upstream author, if the artifact is ever re-acquired). The
+`profile_verified` section in particular records a *behavior* claim that a single
+reading can get backwards — confirm what it actually does before writing a check
+against it. Where a claim is load-bearing, record where the confirmation came from
+(see the last AC).
 
 ### Windows-only
 
@@ -101,4 +112,12 @@ scratch and gets pruned.
       verification step, so "it does not work" cannot be the first symptom
 - [ ] Test: the same stills run completes on a non-Windows host path with no
       platform branch; a path-relative assumption fails a test rather than a user
+- [ ] **Provenance recorded.** The source artifact is gone, so every sidecar-derived
+      claim this ticket relied on — the `explorer.exe` shell-out, the 4.2MP canvas cap,
+      the checkpoint/CLIP/VAE literals, the output and input path literals, the schema
+      ids, the missing installer, and **what `profile_verified` actually does** — is
+      either re-derived against a live ComfyUI, or explicitly marked unverified. The
+      ticket records, per claim, **where the evidence came from** (executed test, an
+      observed capabilities payload, or a written answer from the upstream author); a
+      claim with no provenance is not used as if confirmed
 - [ ] `bun run check` green
