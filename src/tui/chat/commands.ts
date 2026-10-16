@@ -188,8 +188,9 @@ export class CommandCompleter {
     this.loading = false;
     // Settled either way: a failed registry must not retry on every keystroke.
     this.settled = true;
-    if (!result.ok) { return; }
-    this.registry = result.data;
+    if (result.ok) { this.registry = result.data; }
+    // Repaint either way — skipping it on failure would strand the strip on
+    // "…loading commands" for the rest of the session.
     this.refilter();
   }
 }
