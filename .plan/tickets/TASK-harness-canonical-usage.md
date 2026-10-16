@@ -28,3 +28,6 @@ Anthropic already parses `cache_creation_input_tokens`/`cache_read_input_tokens`
 ## Technical Notes
 
 - `reasoning` stays a reserved 0 slot until a provider parser reports a separate count — no fake data.
+
+
+git issue: 638ec20

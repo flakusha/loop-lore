@@ -28,3 +28,6 @@
 ## Technical Notes
 
 - Feeding the scoped list through `buildFailoverList` is a config-shape change, not a new resolver — but it stays unverified until the ticket lands.
+
+
+git issue: bfad1d6

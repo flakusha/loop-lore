@@ -29,3 +29,6 @@ Today the contract is name-only, notify-only, no matcher, no result (`src/plugin
 
 - Extend, never fork: no second extension registry (epic reuse-first rule §2). Veto aggregation lives in the harness dispatcher, not in `emitPluginEvent`.
 - Input rewrite (`updatedInput`) is in the type but NOT v1 scope — open question in the doc; it changes what gets persisted and re-validated.
+
+
+git issue: cf78912

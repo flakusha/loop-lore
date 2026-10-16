@@ -29,3 +29,6 @@ The config schema generator + class layers already exist for every other section
 ## Technical Notes
 
 - OAuth 2.1 discovery/PKCE stays out (headers-only) until a real remote server needs it — doc §Deliberately skipped.
+
+
+git issue: ac90abc

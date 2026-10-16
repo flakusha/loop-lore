@@ -29,3 +29,6 @@ An operator-flagged stdio MCP server exposing only export-flagged loop-lore tool
 ## Technical Notes
 
 - MCP spec position "tools = arbitrary code execution" applies doubly to exposing ours: the role gate is the security boundary, not network location.
+
+
+git issue: 5e63952
