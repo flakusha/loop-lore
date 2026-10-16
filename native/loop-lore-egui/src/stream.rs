@@ -173,15 +173,17 @@ mod tests {
   #[test]
   fn update_replaces_the_streamed_text() {
     let mut state = StreamState::default();
-    state.apply(&StreamEvent::Update(String::from("<p>Hel",),),);
-    state.apply(&StreamEvent::Update(String::from("<p>Hello",),),);
+    state.apply(&StreamEvent::Update(String::from("<p>Hel")));
+    state.apply(&StreamEvent::Update(String::from("<p>Hello")));
     assert_eq!(state.text, "Hello");
   }
 
   #[test]
   fn tags_are_stripped_and_entities_decoded() {
     let mut state = StreamState::default();
-    state.apply(&StreamEvent::Update(String::from("<p>a &amp; b &lt;c&gt; &quot;d&quot; &#39;e&#39;</p>",),),);
+    state.apply(&StreamEvent::Update(String::from(
+      "<p>a &amp; b &lt;c&gt; &quot;d&quot; &#39;e&#39;</p>",
+    )));
     assert_eq!(state.text, "a & b <c> \"d\" 'e'");
   }
 
@@ -193,16 +195,16 @@ mod tests {
   #[test]
   fn tool_calls_accumulate_in_arrival_order() {
     let mut state = StreamState::default();
-    state.apply(&StreamEvent::ToolCall(String::from("first",),),);
-    state.apply(&StreamEvent::ToolCall(String::from("second",),),);
+    state.apply(&StreamEvent::ToolCall(String::from("first")));
+    state.apply(&StreamEvent::ToolCall(String::from("second")));
     assert_eq!(state.tool_calls, vec![String::from("first"), String::from("second")]);
   }
 
   #[test]
   fn done_is_terminal_and_keeps_the_text() {
     let mut state = StreamState::default();
-    state.apply(&StreamEvent::Update(String::from("done text",),),);
-    state.apply(&StreamEvent::Done,);
+    state.apply(&StreamEvent::Update(String::from("done text")));
+    state.apply(&StreamEvent::Done);
     assert!(state.is_terminal());
     assert!(state.done);
     assert_eq!(state.text, "done text");
@@ -211,7 +213,9 @@ mod tests {
   #[test]
   fn error_extracts_the_server_message() {
     let mut state = StreamState::default();
-    state.apply(&StreamEvent::Error(String::from("{\"error\":\"No active generation\"}",),),);
+    state.apply(&StreamEvent::Error(String::from(
+      "{\"error\":\"No active generation\"}",
+    )));
     assert!(state.is_terminal());
     assert_eq!(state.error.as_deref(), Some("No active generation"));
   }
@@ -219,14 +223,14 @@ mod tests {
   #[test]
   fn error_falls_back_to_the_raw_payload() {
     let mut state = StreamState::default();
-    state.apply(&StreamEvent::Error(String::from("plain text failure",),),);
+    state.apply(&StreamEvent::Error(String::from("plain text failure")));
     assert_eq!(state.error.as_deref(), Some("plain text failure"));
   }
 
   #[test]
   fn events_drain_in_arrival_order() {
-    push_stream_event(String::from("c1",), StreamEvent::Done,);
-    push_stream_event(String::from("c2",), StreamEvent::ToolCall(String::from("t",),),);
+    push_stream_event(String::from("c1"), StreamEvent::Done);
+    push_stream_event(String::from("c2"), StreamEvent::ToolCall(String::from("t")));
     let drained = drain_stream_events();
     assert_eq!(
       drained,

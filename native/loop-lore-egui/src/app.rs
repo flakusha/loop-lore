@@ -9,13 +9,25 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use eframe::{App, CreationContext};
-use egui::{Align, CentralPanel, Layout, Panel, ScrollArea, TextEdit};
+use egui::text::{CCursor, CCursorRange};
+use egui::{Align, CentralPanel, Key, Layout, Modifiers, Panel, ScrollArea, TextEdit};
 
 use crate::api::{self, ChatMessage, ChatSummary, SentMessage};
 use crate::client;
 use crate::context::FrontendContext;
+use crate::emoji;
 use crate::storage;
 use crate::stream::{self, StreamEvent, StreamState};
+
+/// Convert a byte offset into a char offset (egui's caret unit).
+fn char_index(text: &str, byte: usize) -> usize {
+  text[..byte.min(text.len())].chars().count()
+}
+
+/// Convert a char offset into a byte offset.
+fn byte_index(text: &str, chars: usize) -> usize {
+  text.char_indices().nth(chars).map_or(text.len(), |(b, _)| b)
+}
 
 /// A result handed back from a spawned fetch.
 enum FetchEvent {
@@ -25,6 +37,8 @@ enum FetchEvent {
   Messages(Result<Vec<ChatMessage>, String>),
   /// Send resolved.
   Sent(Result<SentMessage, String>),
+  /// Emoji registry resolved.
+  EmojiRegistry(Result<Vec<(String, String)>, String>),
 }
 
 /// One live generation stream: the chat it belongs to plus its state.
@@ -54,6 +68,18 @@ pub struct EguiApp {
   started: bool,
   /// The live generation stream, if one is open for the active chat.
   stream: Option<StreamSession>,
+  /// Server-owned `:shortcode:` registry, fetched once as JSON.
+  emoji_registry: Vec<(String, String)>,
+  /// Composer emoji autocomplete: the open query, or `None` when closed.
+  emoji_query: Option<String>,
+  /// Filtered `(name, emoji)` candidates for the open query.
+  emoji_candidates: Vec<(String, String)>,
+  /// Highlighted candidate index.
+  emoji_active: usize,
+  /// Composer caret in chars, as of the last frame (egui's caret unit).
+  composer_caret: usize,
+  /// A caret char index to apply after the next `TextEdit` show (accept).
+  pending_caret: Option<usize>,
 }
 
 impl EguiApp {
@@ -68,7 +94,26 @@ impl EguiApp {
       events: Rc::new(RefCell::new(Vec::new())),
       started: false,
       stream: None,
+      emoji_registry: Vec::new(),
+      emoji_query: None,
+      emoji_candidates: Vec::new(),
+      emoji_active: 0,
+      composer_caret: 0,
+      pending_caret: None,
     }
+  }
+
+  /// Spawn a one-shot fetch of the server-owned emoji registry.
+  fn reload_emoji_registry(&self, ctx: &egui::Context) {
+    let events = Rc::clone(&self.events);
+    let ctx = ctx.clone();
+    client::spawn(async move {
+      let result = client::get_json(api::emoji_registry_url())
+        .await
+        .and_then(|raw| api::parse_emoji_registry(&raw));
+      events.borrow_mut().push(FetchEvent::EmojiRegistry(result));
+      ctx.request_repaint();
+    });
   }
 
   /// Spawn a chat-list fetch.
@@ -92,7 +137,7 @@ impl EguiApp {
     storage::save_context(&self.context);
     self.status = String::from("loading messages");
     self.messages.clear();
-    self.fetch_messages(chat_id, ctx,);
+    self.fetch_messages(chat_id, ctx);
   }
 
   /// Spawn a message-page fetch for `chat_id`.
@@ -150,6 +195,62 @@ impl EguiApp {
     }
   }
 
+  /// Recompute the composer emoji popover from the caret position.
+  ///
+  /// Mirrors `handleEmojiInput`: a `:query` token ending at the caret opens
+  /// the popover with the filtered registry; anything else closes it.
+  fn sync_emoji_popover(&mut self) {
+    let caret_byte = byte_index(&self.composer, self.composer_caret);
+    match emoji::extract_query(&self.composer[..caret_byte]) {
+      Some(query) => {
+        let names = emoji::filter_candidates(&query, &self.emoji_registry);
+        self.emoji_candidates = names
+          .into_iter()
+          .map(|name| {
+            let glyph = self
+              .emoji_registry
+              .iter()
+              .find(|(n, _)| *n == name)
+              .map_or_else(String::new, |(_, e)| e.clone());
+            (name, glyph)
+          })
+          .collect();
+        // Only a CHANGED query resets the highlight: this runs every frame,
+        // and resetting unconditionally would undo the arrow keys.
+        if self.emoji_query.as_deref() != Some(query.as_str()) {
+          self.emoji_active = 0;
+        }
+        self.emoji_query = Some(query);
+      }
+      None => self.close_emoji_popover(),
+    }
+  }
+
+  /// Close the popover and forget its state.
+  fn close_emoji_popover(&mut self) {
+    self.emoji_query = None;
+    self.emoji_candidates.clear();
+    self.emoji_active = 0;
+  }
+
+  /// Insert the highlighted candidate, mirroring `selectEmojiCandidate`.
+  fn accept_emoji(&mut self) {
+    let Some((name, _)) = self.emoji_candidates.get(self.emoji_active).cloned() else {
+      return;
+    };
+    let caret_byte = byte_index(&self.composer, self.composer_caret);
+    let Some((new_text, new_caret_byte)) = emoji::insert_candidate(&self.composer, caret_byte, &name) else {
+      return;
+    };
+    // The popover is recomputed from the caret at the end of the frame, so
+    // the caret must move with the text — otherwise the just-closed popover
+    // re-opens once against the old position.
+    self.composer_caret = char_index(&new_text, new_caret_byte);
+    self.pending_caret = Some(self.composer_caret);
+    self.composer = new_text;
+    self.close_emoji_popover();
+  }
+
   /// Apply every fetch result queued since the last frame.
   fn drain_events(&mut self) {
     let drained: Vec<FetchEvent> = self.events.borrow_mut().drain(..).collect();
@@ -173,6 +274,10 @@ impl EguiApp {
           self.status = String::from("ready");
         }
         FetchEvent::Sent(Err(e)) => self.status = format!("send failed: {e}"),
+        // The registry is a best-effort asset: without it bubbles show raw
+        // `:shortcode:` text and the popup stays empty — never a hard error.
+        FetchEvent::EmojiRegistry(Ok(registry)) => self.emoji_registry = registry,
+        FetchEvent::EmojiRegistry(Err(_)) => {}
       }
     }
   }
@@ -183,7 +288,9 @@ impl EguiApp {
       // Stale guard: an event for a chat that is no longer active is dropped,
       // mirroring the htmx consumer's `isStale()`.
       let Some(session) = self.stream.as_mut() else { continue };
-      if session.chat_id != chat_id { continue }
+      if session.chat_id != chat_id {
+        continue;
+      }
       session.state.apply(&event);
       let error_message = session.state.error.clone();
       let terminal = session.state.is_terminal();
@@ -196,7 +303,7 @@ impl EguiApp {
           // htmx reloads the message list on stream-done: the stored
           // messages are authoritative again.
           if let Some(chat_id) = self.context.active_chat_id.clone() {
-            self.fetch_messages(&chat_id, ctx,);
+            self.fetch_messages(&chat_id, ctx);
           }
         }
         StreamEvent::Error(_) => {
@@ -217,10 +324,11 @@ impl EguiApp {
 impl App for EguiApp {
   fn logic(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
     self.drain_events();
-    self.drain_stream_events(ctx,);
+    self.drain_stream_events(ctx);
     if !self.started {
       self.started = true;
       self.reload_chats(ctx);
+      self.reload_emoji_registry(ctx);
       if let Some(id) = self.context.active_chat_id.clone() {
         self.open_chat(&id, ctx);
       }
@@ -265,7 +373,9 @@ impl App for EguiApp {
         for message in &self.messages {
           ui.horizontal_wrapped(|ui| {
             ui.label(egui::RichText::new(&message.role).strong());
-            ui.label(&message.content);
+            // Bubble text renders `:shortcode:` tokens against the server
+            // registry, mirroring `renderShortcodes` in the htmx client.
+            ui.label(emoji::render_shortcodes(&message.content, &self.emoji_registry));
           });
         }
         if let Some(session) = &self.stream {
@@ -282,13 +392,76 @@ impl App for EguiApp {
         }
       });
       ui.with_layout(Layout::bottom_up(Align::Center), |ui| {
-        let response = ui.add(
-          TextEdit::singleline(&mut self.composer)
-            .hint_text("Message")
-            .desired_width(f32::INFINITY),
-        );
+        // Keyboard first: the popover must swallow Tab/Enter/Escape/arrows
+        // before the TextEdit can act on them (Enter would send the message).
+        let mut clicked: Option<usize> = None;
+        if self.emoji_query.is_some() && !self.emoji_candidates.is_empty() {
+          let (down, up, tab, enter, escape) = ui.input_mut(|i| {
+            (
+              i.consume_key(Modifiers::NONE, Key::ArrowDown),
+              i.consume_key(Modifiers::NONE, Key::ArrowUp),
+              i.consume_key(Modifiers::NONE, Key::Tab),
+              i.consume_key(Modifiers::NONE, Key::Enter),
+              i.consume_key(Modifiers::NONE, Key::Escape),
+            )
+          });
+          let count = self.emoji_candidates.len();
+          if down {
+            self.emoji_active = (self.emoji_active + 1) % count;
+          } else if up {
+            self.emoji_active = (self.emoji_active + count - 1) % count;
+          } else if tab || enter {
+            self.accept_emoji();
+          } else if escape {
+            self.close_emoji_popover();
+          }
+        }
+
+        let mut output = TextEdit::singleline(&mut self.composer)
+          .id_salt("composer")
+          .hint_text("Message")
+          .desired_width(f32::INFINITY)
+          .show(ui);
+
+        // Track the caret every frame; an accept overrides it (egui's stored
+        // caret is stale for one frame after the text is replaced, and the
+        // popover must not re-open against the old position).
+        if let Some(range) = output.cursor_range {
+          self.composer_caret = usize::from(range.primary.index);
+        }
+        if let Some(caret) = self.pending_caret.take() {
+          self.composer_caret = caret;
+          output
+            .state
+            .cursor
+            .set_char_range(Some(CCursorRange::one(CCursor::new(caret))));
+          output.state.store(ui.ctx(), output.response.id);
+          ui.ctx().memory_mut(|m| m.request_focus(output.response.id));
+        }
+
+        // Recompute the popover from the caret BEFORE drawing it: the state
+        // must reflect this frame's text, and egui does not repaint without
+        // input, so a one-frame lag would never be drawn.
+        self.sync_emoji_popover();
+
+        if self.emoji_query.is_some() && !self.emoji_candidates.is_empty() {
+          let candidates = self.emoji_candidates.clone();
+          // ponytail: labels directly, no wrapper — bottom_up + scope/vertical
+          // don't allocate space. Add when we need a real popup overlay.
+          for (index, (name, glyph)) in candidates.iter().enumerate() {
+            let label = format!("{glyph}  :{name}:");
+            if ui.selectable_label(index == self.emoji_active, label).clicked() {
+              clicked = Some(index);
+            }
+          }
+        }
+        if let Some(index) = clicked {
+          self.emoji_active = index;
+          self.accept_emoji();
+        }
+
         let send =
-          ui.button("Send").clicked() || (response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)));
+          ui.button("Send").clicked() || (output.response.lost_focus() && ui.input(|i| i.key_pressed(Key::Enter)));
         if send {
           self.send(&ctx);
         }
