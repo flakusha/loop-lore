@@ -10,16 +10,31 @@
  *   bun run scripts/check-parallel.mjs [--fix] [--ci] [--report-ls] [--jobs N]
  *   bun run scripts/check-parallel.mjs [--diff-base <ref>] [--gates <csv>] [--skip-gates <csv>]
  *
- * Concurrency cap (added to keep peak RSS sane across multiple worktrees):
- *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 1).
+ * Concurrency cap (keeps peak RSS sane across multiple worktrees):
+ *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env,
+ *               or DEFAULT_JOBS in check/parallel/runner.mjs).
  *   CHECK_JOBS  Env override for the same value. The cap controls how many
  *               checks run in parallel; the script still launches all checks,
- *               but processes them in chunks of `jobs` at a time. The default
- *               of 1 is serial: agents finalize worktrees concurrently, and
- *               co-scheduled gates OOM-killed this host (observed kills when a
- *               second worktree ran its own heavy gates at the same time).
- *               Raise it with --jobs N / CHECK_JOBS=N when you want a faster
- *               run and know the box has the headroom to spare.
+ *               but processes them in chunks of `jobs` at a time.
+ *   Default    4. The original default of 1 was chosen because co-scheduled
+ *               gates OOM-killed this host. It is safe to raise for the LIGHT
+ *               pool because the gates that actually OOM the box are excluded
+ *               from it: eslint, unit, e2e and coverage sit in HEAVY_NAMES
+ *               (check/parallel/runner.mjs) and run strictly one at a time
+ *               after the light chunk, so a wider light chunk cannot
+ *               co-schedule them with anything.
+ *               Measured on this host, eslint (bunx eslint src/, no cache):
+ *               --concurrency=off 3.6 GB, =1 3.6 GB, =2 6.9 GB, =4 12.4 GB
+ *               peak RSS; =4 --cache warm re-run 1.5 GB. `--cache` makes the
+ *               WARM run cheap, but a COLD cache still peaks ~12 GB — hence
+ *               eslint staying in the serial tail, not the light pool.
+ *               Heavy gates (unit/e2e/coverage/eslint) run strictly serial
+ *               regardless of this cap; two of those at once is what OOMs the
+ *               box. Raise the cap above the default with --jobs N /
+ *               CHECK_JOBS=N when you want a faster run and know the box has
+ *               the headroom to spare — and remember that N worktrees each
+ *               pay their own chunk, so two finalizing worktrees are 8 light
+ *               gates, not 4.
  *
  * Per-gate timeout (every gate is bounded; the child is killed on expiry):
  *   Default   15 min -- DEFAULT_GATE_TIMEOUT_MS in scripts/check/gate-timeout.mjs.
