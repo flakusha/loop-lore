@@ -76,6 +76,7 @@ function main(): void {
   }
   // The TUI self-starts inside createTUIApp — this function's role is purely
   // to guard the entry point and route CLI arguments.
+
   createTUIApp();
 }
 
