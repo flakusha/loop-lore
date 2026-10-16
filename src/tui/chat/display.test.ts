@@ -4,7 +4,7 @@
 /**
  * Tests for tui/chat/display.ts — formatMessageLine renders blessed markup
  * with the actor name when present, falling back to the role, and clips
- * content over 200 chars with an ellipsis.
+ * content over 200 columns with an ellipsis.
  */
 import { describe, expect, it, } from "bun:test";
 import { formatMessageLine, } from "./display";
@@ -31,8 +31,8 @@ describe("formatMessageLine", () => {
   });
 
   it("falls back to role when actorName is empty string (falsy)", () => {
-    const out = formatMessageLine(msg({ actorName: "", role: "user", content: "yo", },),);
-    expect(out,).toBe("{bold}user{/bold}: yo",);
+    const out = formatMessageLine(msg({ actorName: "", role: "user", content: "", },),);
+    expect(out,).toBe("{bold}user{/bold}: ",);
   });
 
   it("prefers actorName over role when both set", () => {
@@ -60,5 +60,57 @@ describe("formatMessageLine", () => {
   it("handles empty content", () => {
     const out = formatMessageLine(msg({ content: "", },),);
     expect(out,).toBe("{bold}user{/bold}: ",);
+  });
+
+  // --- Boundary tests: surrogate pairs & wide glyphs ---
+
+  it("does not split a surrogate pair at the 200-column boundary", () => {
+    // U+1F389 (PARTY POPPER) is a surrogate pair in JS: length 2, display width 2.
+    // A code-unit slice at position 200 can cut between the two surrogates,
+    // leaving a lone low surrogate — invalid UTF-16 that corrupts the render row.
+    const emoji = "\u{1F389}";
+    const content = "a".repeat(199,) + emoji; // 199a (199 cols) + emoji (2 cols) = 201
+    const out = formatMessageLine(msg({ content, },),);
+    const prefix = "{bold}user{/bold}: ";
+    const tail = out.slice(prefix.length,);
+    // Total display width must never exceed 200 + 3 for "..."
+    expect(Bun.stringWidth(tail,),).toBeLessThanOrEqual(203,);
+    // Last code unit must not be a lone low surrogate (U+DC00-U+DFFF).
+    const lastCode = tail.charCodeAt(tail.length - 1,);
+    expect(lastCode < 0xDC00 || lastCode > 0xDFFF,).toBe(true,);
+  });
+
+  it("does not split a wide CJK glyph at the 200-column boundary", () => {
+    // Each CJK character occupies 2 terminal columns.
+    // The algorithm must stop before the first one if it would overflow.
+    const cjk = "\u{65E5}\u{672C}"; // 日 (2 cols) 本 (2 cols)
+    const content = "a".repeat(199,) + cjk; // 199a (199 cols) + first 日 (2 cols) = 201
+    const out = formatMessageLine(msg({ content, },),);
+    const prefix = "{bold}user{/bold}: ";
+    const tail = out.slice(prefix.length,);
+    expect(Bun.stringWidth(tail,),).toBeLessThanOrEqual(203,);
+    // Output must not contain any CJK characters — the cut must happen before them.
+    expect(/[\u4e00-\u9fff]/.test(tail,),).toBe(false,);
+  });
+
+  it("ellipsis is appended when wide glyphs fill the column budget exactly", () => {
+    // 100 emoji x 2 cols = 200 cols — no ellipsis.
+    const emoji = "\u{1F389}";
+    const content100 = emoji.repeat(100,);
+    const out100 = formatMessageLine(msg({ content: content100, },),);
+    expect(out100.endsWith("...",),).toBe(false,);
+    expect(
+      Bun.stringWidth(out100.replace("{bold}user{/bold}: ", "",),),
+    ).toBe(200,);
+
+    // 101 emoji x 2 = 202 cols — ellipsis appended.
+    const out101 = formatMessageLine(msg({ content: emoji.repeat(101,), },),);
+    expect(out101.endsWith("...",),).toBe(true,);
+    // Width of the non-prefix, non-ellipsis portion must be exactly 200.
+    const withoutPrefixAndEllipsis = out101
+      .replace("{bold}user{/bold}: ", "",)
+      .replace("...", "",);
+
+    expect(Bun.stringWidth(withoutPrefixAndEllipsis,),).toBe(200,);
   });
 });
