@@ -11731,6 +11731,12 @@
       "source": ".plan/tickets/TASK-chat-flow-section-navigation.md"
     }
   ],
+  "src/components/views/world-edit.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    }
+  ],
   "src/components/world/item-history-timeline.html": [
     {
       "kind": "ticket",
@@ -20639,6 +20645,10 @@
   ],
   "src/frontend/alpine/admin-system.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     },
@@ -20699,6 +20709,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
+    }
+  ],
+  "src/frontend/alpine/admin-workflows/form.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     }
   ],
   "src/frontend/alpine/admin-worlds.ts": [
@@ -20825,6 +20841,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre.md"
+    }
+  ],
+  "src/frontend/alpine/character-extension-editor.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     }
   ],
   "src/frontend/alpine/character-growth-editor.ts": [
@@ -21825,6 +21847,12 @@
       "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
     }
   ],
+  "src/frontend/alpine/comfyui-builder/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    }
+  ],
   "src/frontend/alpine/command-buttons.ts": [
     {
       "kind": "epic",
@@ -22457,6 +22485,12 @@
       "source": ".plan/tickets/TASK-location-explorer.md"
     }
   ],
+  "src/frontend/alpine/location-graph.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    }
+  ],
   "src/frontend/alpine/logger.ts": [
     {
       "kind": "ticket",
@@ -22931,6 +22965,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-response-length-control.md"
+    }
+  ],
+  "src/frontend/alpine/settings/general.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     }
   ],
   "src/frontend/alpine/shortcuts-listener.test.ts": [
@@ -50134,6 +50174,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
     },
     {
@@ -50355,6 +50399,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-stats-endpoint-was-implemented-but-never-called.md"
     },
     {
       "kind": "ticket",

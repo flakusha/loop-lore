@@ -27,11 +27,16 @@
 - `src/config/sections/tui.ts` — TUI config section (`sessionToken`, `enabled`).
 - The chat picker screen, once `TASK-tui-chat-picker` lands.
 - The harness work-topic surface, on the existing harness overlay rather than a new screen.
+- Web parity where it suits a terminal, per the user's 2026-10-16 direction. Named in-scope surfaces: admin model/provider configuration (role assignment, tuning defaults, capability overrides) and user-scoped settings (profile, chat behaviour, notification preferences). The API is admin-gated and already reachable from `safeFetch`; the TUI needs no new backend. See §Out of Scope for what is carved out and the evidence behind each carve-out.
 
 
 ## Out of Scope
 
-- Mirroring the web feature surface. Characters, worlds, quests, admin, settings, notifications and the asset gallery are not TUI targets; RPG/battle surfaces belong to their own epics.
+- Web parity is in scope, at the user's direction (2026-10-16), wherever it makes sense in a terminal. The earlier blanket exclusion of the web feature surface is withdrawn. **In scope:** admin model/provider configuration and user-scoped settings. **Out of scope, with evidence:**
+  - Destructive danger-zone actions. Every one of them is gated on typing an exact confirmation string into a text field — `DELETE` to erase the account and all data (`src/frontend/alpine/settings/general.ts`, `deleteAllData` → `DELETE /api/v1/users/me`), and `PURGE` / `RESET` / `DELETE ALL` for audit-purge, settings-reset and factory-reset (`src/frontend/alpine/admin-system.ts`, `runDangerAction`). A TUI has no affordance that makes typing a self-destruct phrase safer than a button does, so these stay web-only.
+  - Visual/graph surfaces with no terminal equivalent. There is no drag-and-drop node editor in this codebase — the graph-shaped features are deliberately form-based (`src/frontend/alpine/location-graph.ts` records "form-based 'connect two nodes'; no canvas drag — noted deviation"; `src/frontend/alpine/comfyui-builder/types.ts` records "there is no canvas"). What remains uncatchable is the read-only 2D entity canvas (`src/frontend/alpine/game-canvas/`) and the JSON-textarea graph editors (`src/frontend/alpine/admin-workflows/form.ts` `graph` field; `src/frontend/alpine/character-extension-editor.ts`).
+  - Form-heavy metadata editors. The world edit page is a multi-tab editor carrying ~10 fields per item and ~5 per location, plus per-edge adjacency rows (`src/components/views/world-edit.html`). Reviewing that much structured state is a page, not a screen.
+  - RPG/battle surfaces, which belong to their own epics.
 - Any `src/` change made by this reconciliation — code fixes are filed as tickets here, not applied.
 - The harness work-topic data model itself, owned by `epic-harness-integration.md`.
 
@@ -156,6 +161,9 @@ Bound to this epic via the `**Epic:** epic-terminal-ui` header on each ticket.
 - [ ] `TASK-update-terminal-ui-spec-to-actual-file-layout.md` — spec drift on file layout; superseded in practice by `TASK-tui-spec-sync` (work that one instead)
 
 ### Deferred / Open
+
+- [ ] `BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle.md` — sidebar advertised `Del: unlink` with no handler behind it; fixed in `050eb320d` by removing the claim rather than shipping a one-keypress irreversible delete
+- [ ] `TASK-harness-stats-endpoint-was-implemented-but-never-called.md` — `loadStats` had zero production callers, so `GET /api/v1/harness/stats` was never fetched; fixed in `42abe9123` by wiring it into the empty-runs branch of the F3 refresh with quiet 403 degradation
 
 - `TASK-tui-dedupe-api-base.md` — **premise no longer holds**: `API_BASE` is declared once at `src/tui/chat/api.ts:7`, re-exported by `harness/api.ts:8` and imported by `app.ts:16`, which is exactly what the ticket asks for. Re-scope or close rather than re-implement (blocked on P1 only because the edit is in untestable `app.ts`)
 - `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (blocked on P1)
