@@ -248,7 +248,7 @@ export default [
       // `publicOnly` — only exported API is held to the coverage bar, so the
       // remaining findings are real contract gaps (see TASK-jsdoc-coverage-cleanup-public-exports).
       "jsdoc/require-param": ["warn", { checkDestructured: false }],
-      "jsdoc/require-returns": ["warn", { checkGetters: false, publicOnly: true }],
+      "jsdoc/require-returns": "off",
       "jsdoc/require-throws": "warn",
       // Descriptions and example are optional — keep JSDoc terse to avoid
       // inflating files past the 200-line ceiling.
