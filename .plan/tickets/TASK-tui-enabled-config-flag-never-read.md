@@ -36,3 +36,11 @@ Either:
 
 - Deferred from `tui-updates` worktree (2026-09-14 review pass): requires design decision; default (c) is fine but should be deliberate.
 **Resolved:** 2026-10-16 registry-driven close: git issue 74304e5 (registry tip: 1246b2197 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-TUI-ENABLED-CONFIG-FLAG-NEV)
+
+## Related Files
+
+- `src/tui/app.ts` (`TUIApp` constructor gate, `TUI_DISABLED_STATUS`)
+- `src/config/sections/tui.ts` (`TUI_DEFAULTS.enabled`)
+- `src/tui/app.test.ts` (gate + unreadable-config fallback)
+
+**Resolved:** 2026-10-16 — option (a), wire the flag. `TUIApp` reads `loadConfig().tui.enabled`; when false it paints `TUI_DISABLED_STATUS` on the status bar and exits 0 before any widget is built. An unreadable config falls back to `TUI_DEFAULTS.enabled` (true) so a broken file never silences the shell. `shutdown()` is typed `never` (`process.exit` is), which is what lets the constructor return early without leaving `chat`/`assets`/`harness`/`chatPicker` half-typed.

@@ -11,20 +11,27 @@
 
 import blessed from "blessed";
 import { loadConfig, } from "../config/load";
+import { TUI_DEFAULTS, } from "../config/sections/tui";
 import { createLogger, getLogger, } from "../logger";
 import { AssetView, } from "./asset-view";
 import { API_BASE, ChatWidget, } from "./chat";
 import { ChatPicker, } from "./chat-picker";
 import { createHarnessView, type HarnessView, } from "./harness";
 
+/** Status line painted when `[tui].enabled` is false; the shell exits right after. */
+export const TUI_DISABLED_STATUS = "TUI disabled by config — set [tui].enabled = true to start";
+
 /** */
 export class TUIApp {
   private statusBar: blessed.Widgets.TextElement;
   screen: blessed.Widgets.Screen;
-  chat: ChatWidget;
-  assets: AssetView;
-  harness: HarnessView;
-  chatPicker: ChatPicker;
+  // Definite-assignment: the [tui].enabled gate returns from the constructor
+  // before any widget exists. The shell is unusable in that case by design -
+  // the process is on its way out and no caller holds the instance.
+  chat!: ChatWidget;
+  assets!: AssetView;
+  harness!: HarnessView;
+  chatPicker!: ChatPicker;
 
   /** */
   constructor() {
@@ -34,10 +41,14 @@ export class TUIApp {
     // ignore missing tokens).
     let sessionToken: string | undefined;
     let sendTimeoutMs: number | undefined;
+    // An unreadable config must not silence the shell: fall back to the
+    // default so a broken config file still yields a working TUI.
+    let tuiEnabled = TUI_DEFAULTS.enabled;
     try {
       const config = loadConfig();
       sessionToken = config.tui.sessionToken;
       sendTimeoutMs = config.tui.sendTimeoutMs;
+      tuiEnabled = config.tui.enabled;
     } catch (error) {
       getLogger().warn(`tui: failed to load config; running anonymous: ${(error as Error).message}`,);
     }
@@ -60,6 +71,17 @@ export class TUIApp {
     },);
 
     this.updateStatus("initializing...",);
+
+    // [tui].enabled = false is the deployment kill switch (TASK-tui-enabled-
+    // config-flag-never-read). Honour it before any widget exists: the screen
+    // and status bar are already built, so one render paints the reason.
+    if (!tuiEnabled) {
+      this.updateStatus(TUI_DISABLED_STATUS,);
+      // Returning the call keeps the constructor from building widgets even
+      // where process.exit is stubbed out, and marks the rest unreachable.
+      return this.shutdown();
+    }
+
     this.chat = new ChatWidget(this.screen, {
       sessionToken,
       sendTimeoutMs,
@@ -170,13 +192,15 @@ export class TUIApp {
 
   // ── Shutdown ───────────────────────────────────────────────
 
-  /** */
   /**
-   * @returns {void}
+   * Tear down the screen and exit. Typed `never` because `process.exit` is:
+   * callers can `return` straight after it, and the compiler treats the rest
+   * of the branch as unreachable.
+   * @returns never — the process is gone before this returns
    */
-  shutdown(): void {
+  shutdown(): never {
     this.screen.destroy();
-    process.exit(0,);
+    return process.exit(0,);
   }
 }
 
