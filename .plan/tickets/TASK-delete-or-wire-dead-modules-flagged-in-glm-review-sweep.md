@@ -88,6 +88,20 @@ A post-sweep audit found documentation still pointing at deleted modules. None w
 - `src/autonomy/governor/README.md` and `src/autonomy/scheduler/README.md` imported from `"../autonomy"`, the deleted `src/autonomy/index.ts` barrel. Both classes are still live (`AutonomyGovernor` from `governor/index.ts:55`, `AutonomyScheduler` from `scheduler/index.ts:47`), so the examples were repointed at `"./index"` rather than deleted. That matches how live code already imports them (`src/autonomy/dispatch/bdi-dispatch.ts:32`, `src/cron/jobs.ts:183`).
 - `src/regex/image-edit.ts` carried a comment crediting extraction from `image-edit-commands.ts`. The whole `src/generation/image-edit-commands/` tree is gone, so naming it kept a dead path alive; the comment now states what the module is instead of where it came from.
 
+### Deletion count — reconciled against an audit reporting 56
+
+An independent audit counted 56 deleted files; the ticket says 57. **57 is correct**, and stable across every command variant tried:
+
+| Command | Result |
+|---|---|
+| `git diff --name-status dev...HEAD -- src \| grep -c '^D'` | 57 |
+| `git diff --name-status dev...HEAD \| grep -c '^D'` (all paths, not just src) | 57 |
+| `git diff --name-only --diff-filter=D dev...HEAD -- src \| wc -l` | 57 |
+| `git diff --name-status "$(git merge-base HEAD dev)" HEAD -- src \| grep -c '^D'` | 57 |
+| `git diff --name-status dev..HEAD -- src \| grep -c '^D'` (two-dot) | 59 |
+
+57 = 54 deleted in `9f695c00b` + 3 in the earlier sweep commits (`71dd11b74`, `71e9782c8`, `a96cc0e17`). Ruled out as causes of an off-by-one: no file in the 57 is also deleted by dev (that would double-count), and the count reads 57 at every commit from `9f695c00b` onward, so it is not a stale-snapshot artifact. Note the two-dot form gives **59**, not 56 — it additionally counts two `hashed-assets` files that dev added and this branch predates. A 56 appears to have dropped one entry from the list rather than used a different filter; the full 57-path enumeration is `git diff --name-status dev...HEAD -- src | grep '^D' | cut -f2`.
+
 ### Doc import paths — one more, and a proposal (not built)
 
 `src/rpg/npc-navigation/tick-driver/README.md:26` also imported from a nonexistent path (`"../rpg/npc-navigation"`). `runNpcMovementTick` is real and live (`npc-navigation/tick-driver.ts:104`, imported by `autonomy/scheduler/targets.ts:17`), so the example now reads `"./tick-driver"`, matching the live importer.
