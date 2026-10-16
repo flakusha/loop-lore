@@ -186,6 +186,25 @@ interface ScenarioSource {
 }
 ```
 
+## Related Epics
+
+> Added 2026-10-16. **Cross-references only — the phase checklists below remain the
+> authoritative state record for this epic** and are not edited from here.
+
+- `epic-reference-conditioned-generation.md` — owns the **reference-conditioned
+  generation** half: the per-family capability matrix (Krea 2, Krea 3, Qwen Image
+  Edit 2.1, MiniMax H3), the shared multi-reference request model, the per-family
+  reference-edit templates, the cross-model comparison run, and the Python ComfyUI
+  sidecar absorption. The Phase 2/3 items below (`/image edit`, `/image style`,
+  LoRA in workflows) are the **command surface** that consumes those templates; the
+  templates themselves live in the new epic.
+- `epic-comfyui-plugin.md` — owns the ComfyUI transport, template interface, and
+  registry behind every template listed here.
+- `epic-model-family-presets.md` — per-family prompt-format presets. **Note:**
+  `configs/templates/workflows/model-families.yaml` does not exist yet (verified
+  2026-10-09), so the prompt-format rules the templates rely on are still
+  design-only.
+
 ## Tasks
 
 ### Phase 1: Core Image Generation (MVP)
