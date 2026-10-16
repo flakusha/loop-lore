@@ -31,9 +31,11 @@ export class TUIApp {
     // the TUI — log and fall back to anonymous mode (solo deployments
     // ignore missing tokens).
     let sessionToken: string | undefined;
+    let sendTimeoutMs: number | undefined;
     try {
       const config = loadConfig();
       sessionToken = config.tui.sessionToken;
+      sendTimeoutMs = config.tui.sendTimeoutMs;
     } catch (error) {
       getLogger().warn(`tui: failed to load config; running anonymous: ${(error as Error).message}`,);
     }
@@ -58,6 +60,7 @@ export class TUIApp {
     this.updateStatus("initializing...",);
     this.chat = new ChatWidget(this.screen, {
       sessionToken,
+      sendTimeoutMs,
       onChatChange: (chatId,) => {
         this.assets.setChatId(chatId,);
         this.updateStatus(`chat: ${chatId.slice(0, 8,)}... | F2: assets`,);
@@ -66,7 +69,7 @@ export class TUIApp {
     },);
 
     // ── Asset view (right sidebar, toggleable) ─────────────
-    this.assets = new AssetView(this.screen,);
+    this.assets = new AssetView(this.screen, { sessionToken, },);
 
     // ── Harness view (full-screen overlay, toggleable) ──────
     this.harness = createHarnessView(this.screen, sessionToken,);

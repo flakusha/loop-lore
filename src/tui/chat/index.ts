@@ -14,6 +14,7 @@
  * TUI app and holds the blessed element references.
  */
 import blessed from "blessed";
+import { TUI_DEFAULTS, } from "../../config/sections/tui";
 import { handleSend as handleSendDispatch, loadMessages as loadMessagesDispatch, } from "./api";
 import { formatMessageLine, } from "./display";
 import type { ChatHost, ChatMessage, ChatWidgetOptions, } from "./types";
@@ -32,6 +33,7 @@ export class ChatWidget implements ChatHost {
   itemCount = 0;
   isSending = false;
   sessionToken: string | undefined;
+  sendTimeoutMs: number;
   private onChatChange?: (chatId: string,) => void;
   cursor: string | null = null; // pagination cursor
 
@@ -45,6 +47,7 @@ export class ChatWidget implements ChatHost {
     // pattern in src/frontend/fe-fetch.ts:41): an accidental `""` must not
     // ship as `Bearer ` and trip 401s.
     this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
+    this.sendTimeoutMs = options.sendTimeoutMs ?? TUI_DEFAULTS.sendTimeoutMs;
     this.onChatChange = options.onChatChange;
     // Main container box
     this.box = blessed.box({

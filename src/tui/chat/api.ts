@@ -1,10 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { safeFetch, safeJsonStringify, } from "../../utils";
+import { safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
 import type { ChatHost, ChatMessage, } from "./types";
 
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
+
+let _fetch = _realFetch;
+
+/** Swap the HTTP client (tests only) — mirrors the seam in `harness/api.ts`.
+ * @param fn - replacement for the real `safeFetch`
+ */
+export function setFetch(fn: typeof _realFetch,): void {
+  _fetch = fn;
+}
 
 /**
  * Send message via POST /api/chats/:id/messages.
@@ -26,7 +35,7 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
 
   try {
     const bodyResult = safeJsonStringify({ content: text, role: "user", },);
-    const result = await safeFetch<{
+    const result = await _fetch<{
       id: string;
       assistantMessage?: { id: string; content: string };
     }>(`${API_BASE}/api/v1/chats/${host.chatId}/messages`, {
@@ -34,6 +43,9 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
       auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       body: bodyResult.ok ? bodyResult.value : "{}",
       handle401: false,
+      // This POST blocks on a whole assistant generation server-side, so the
+      // shared 30s safeFetch default would abort turns the server completes.
+      timeout: host.sendTimeoutMs,
     },);
 
     host.hideTyping();
@@ -77,7 +89,7 @@ export async function loadMessages(host: ChatHost,): Promise<void> {
       ? `${API_BASE}/api/v1/chats/${host.chatId}/messages?pageSize=200&cursor=${host.cursor}`
       : `${API_BASE}/api/v1/chats/${host.chatId}/messages?pageSize=200`;
 
-    const result = await safeFetch<{ data: ChatMessage[]; cursor: string | null }>(url, {
+    const result = await _fetch<{ data: ChatMessage[]; cursor: string | null }>(url, {
       auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       handle401: false,
     },);
