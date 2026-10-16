@@ -184,11 +184,11 @@ export default [
   },
   // Server TypeScript -- most rules disabled (oxlint handles them)
   {
-    files: ["src/**/*.ts", "src/**/*.js"],
+    files: ["src/**/*.ts", "src/**/*.js", "bin/**/*.ts"],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: "tsconfig.json",
+        project: "tsconfig.backend.json",
         tsconfigRootDir: projectRoot,
       },
       globals: {
@@ -444,7 +444,7 @@ export default [
   },
   // TUI app: process.exit allowed
   {
-    files: ["src/tui/app.ts"],
+    files: ["src/tui/app.ts", "bin/lolo.ts"],
     rules: {
       "unicorn/no-process-exit": "off",
     },
