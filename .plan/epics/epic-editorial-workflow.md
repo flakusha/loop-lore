@@ -64,11 +64,11 @@ false in a repo with a comment table:
 | Component | Status | Location |
 | --------- | ------ | -------- |
 | Per-unit pin / accept / reject | Planned | `TASK-book-unit-editor-review-surface.md`, `TASK-publication-artifact-versioning.md` (publishing epic) |
-| Threaded comment precedent | ✅ Shipped (blog only) | `blog_comments.parent_comment_id` (`src/db/schema-blog.ts:11-19`); threaded tree builder `listCommentsThreaded` (`src/rpg/blog/service/comments.ts:98-115`); routes `src/routes/blog/comments.ts` |
-| Comment state machines | ✅ Shipped (adjacent) | `ShadowNoteStatus` / `ShadowNoteVisibility` (`src/db/enums.ts`), `insertShadowRevealNarration` — scoped to chat reveal mechanics, not editorial |
+| Threaded comment precedent | ✅ Shipped (blog only) | `blog_comments.parent_comment_id` (`src/db/schema-blog.ts:11-19`); threaded tree builder `listCommentsThreaded` (`src/rpg/blog/service/comments.ts:93-131`); routes `src/routes/blog/comments.ts` |
+| Comment state machines | ✅ Shipped (adjacent) | `ShadowNoteStatus` / `ShadowNoteVisibility` (`src/db/enums-gm.ts:50,74`), `injectShadowRevealNarration` (`src/routes/gm-notes/narration.ts:31`) — scoped to chat reveal mechanics, not editorial |
 | Review entity vocabulary | ❌ Absent | `AssetLinkEntity` (`src/db/enums-content.ts:73-84`): 10 members, no `blog_post`, no `publication_unit` |
 | Suggestion / proposed-edit model | ❌ Absent | No table, no anchor concept anywhere in `src/db/schema-*.ts` |
-| Preview→confirm state machine | ✅ Shipped (chat merges) | `branch_merges.status` `draft → confirmed` (`src/chat/service/merge/merge-store.ts:217-220`), result rows badged with `messages.merge_id` (`src/db/schema-core.ts:793`) |
+| Preview→confirm state machine | ✅ Shipped (chat merges) | `guardDraftToConfirmed` transitions `branch_merges.status` `draft → confirmed` (`src/chat/service/merge/merge-store.ts:212-225`), result rows badged with `messages.merge_id` (`src/db/schema-core.ts:793`) |
 | Admin before→after diff | Planned, excludes publications | `TASK-admin-revisions-diff-revert.md:19` (entity list omits publications) |
 
 ### What this epic adds
