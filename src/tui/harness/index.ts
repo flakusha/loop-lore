@@ -10,22 +10,17 @@
  */
 
 import blessed from "blessed";
-import { loadRunDetail, loadRuns, } from "./api";
-import { formatEmptyRuns, formatRunDetail, formatRunLine, } from "./display";
+import { loadRunDetail, loadRuns, loadStats, } from "./api";
+import { formatEmptyRuns, formatRunDetail, formatRunLine, formatStats, } from "./display";
 import type { HarnessRunSummary, } from "./types";
 
-export { loadRunDetail, loadRuns, } from "./api";
-export { formatDuration, formatEmptyRuns, formatRunDetail, formatRunLine, truncateTask, } from "./display";
+export { loadRunDetail, loadRuns, loadStats, } from "./api";
+export { formatDuration, formatEmptyRuns, formatRunDetail, formatRunLine, formatStats, } from "./display";
 export type { HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types";
 
 const DETAIL_TOP = 3;
 const RUN_LIMIT = 25;
 
-/**
- * @param screen
- * @param sessionToken - admin session token for the harness API
- * @returns the harness panel, bound to that screen and token.
- */
 export function createHarnessView(
   screen: blessed.Widgets.Screen,
   sessionToken: string | undefined,
@@ -43,10 +38,6 @@ export class HarnessView {
   private currentIndex = 0;
   private _visible = false;
 
-  /**
-   * @param screen
-   * @param sessionToken
-   */
   constructor(screen: blessed.Widgets.Screen, sessionToken: string | undefined,) {
     this.screen = screen;
     this.sessionToken = sessionToken;
@@ -92,9 +83,6 @@ export class HarnessView {
       style: { fg: "white", },
     },);
 
-    // blessed emits the selected INDEX as the second arg (lib/widgets/list.js:586).
-    // The row content is the FORMATTED line, which carries no runId, so the old
-    // `el.content` lookup always missed and currentIndex never moved.
     this.list.on("select", (_el: blessed.Widgets.BlessedElement, index: number,) => {
       if (index >= 0 && index < this.runs.length) { this.currentIndex = index; }
       void this.showDetail(this.currentIndex,);
@@ -118,21 +106,18 @@ export class HarnessView {
     },);
   }
 
-  /** Show the harness panel. */
   show(): void {
     this._visible = true;
     this.box.show();
     this.screen.render();
   }
 
-  /** Hide the harness panel. */
   hide(): void {
     this._visible = false;
     this.box.hide();
     this.screen.render();
   }
 
-  /** Toggle visibility. */
   toggle(): void {
     if (this._visible) {
       this.hide();
@@ -142,12 +127,10 @@ export class HarnessView {
     }
   }
 
-  /** @returns whether the panel is currently visible. */
   isVisible(): boolean {
     return this._visible;
   }
 
-  /** Reload runs from the API and render the list. */
   async refresh(): Promise<void> {
     const result = await loadRuns(RUN_LIMIT, this.sessionToken,);
     if (!result.ok) {
@@ -163,12 +146,18 @@ export class HarnessView {
     this.runs = result.data.items;
     this.currentIndex = 0;
     this.renderList();
+
     if (this.runs.length > 0) {
       void this.showDetail(0,);
+    } else {
+      const stats = await loadStats(this.sessionToken,);
+      if (stats.ok && stats.data) {
+        this.detailLabel.setContent(formatStats(stats.data,),);
+        this.screen.render();
+      }
     }
   }
 
-  /** @returns current runs array for testing. */
   getRuns(): HarnessRunSummary[] {
     return this.runs;
   }
@@ -177,7 +166,6 @@ export class HarnessView {
     this.list.clearItems();
     if (this.runs.length === 0) {
       this.list.setContent(formatEmptyRuns(),);
-      this.detailLabel.setContent("",);
       this.screen.render();
       return;
     }

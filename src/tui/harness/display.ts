@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { HarnessResult, HarnessRunDetail, HarnessRunSummary, } from "./types";
+import type { HarnessResult, HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types";
 
 const MAX_TASK_LEN = 48;
 /** Highest ms that still renders as `NN.Ns`; 59_950 rounds up to a full minute. */
@@ -115,4 +115,23 @@ export function formatRunDetail(detail: HarnessRunDetail,): string {
  */
 export function formatEmptyRuns(): string {
   return "{cyan-fg}No harness runs recorded yet.{/cyan-fg}";
+}
+
+export function formatStats(stats: HarnessStats,): string {
+  const { totals, byModel, byTaskType, } = stats;
+  const lines: string[] = [
+    `{bold}Stats{/bold}  {bold}Runs:{/bold} ${totals.runs}  {bold}Failures:{/bold} ${totals.failures}  {bold}Cost:{/bold} $${
+      totals.costUsd.toFixed(4,)
+    }`,
+  ];
+
+  if (byModel.length > 0) {
+    lines.push(`{bold}By model:{/bold} ${byModel.map((m,) => `${m.model}=${m.count}`).join(", ",)}`,);
+  }
+
+  if (byTaskType.length > 0) {
+    lines.push(`{bold}By type:{/bold} ${byTaskType.map((t,) => `${t.taskType}=${t.count}`).join(", ",)}`,);
+  }
+
+  return lines.join("\n",);
 }
