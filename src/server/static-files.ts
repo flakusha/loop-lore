@@ -182,13 +182,7 @@ export function createNonApiHandler(
     const docsResult = handleDocsRequest(url, request, docs,);
     if (docsResult) { return docsResult; }
 
-    const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname,),);
-    const publicDirWithSlash = `${PUBLIC_DIR}/`;
-    if (publicPath !== PUBLIC_DIR && !publicPath.startsWith(publicDirWithSlash,)) {
-      return new Response("Not found", { status: 404, },);
-    }
-
-    const fullPath = resolveFilePath(publicPath,);
+    const fullPath = resolvePublicFilePath(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname,);
     if (!fullPath) { return new Response("Not found", { status: 404, },); }
 
     const ext = fullPath.split(".",).pop()?.toLowerCase();
@@ -207,14 +201,59 @@ export function createNonApiHandler(
 }
 
 /**
- * Resolve file path, appending .html if needed.
- * @param publicPath - candidate file path under the public dir
- * @returns the existing file path (possibly with `.html` appended), or `null` if neither exists.
+ * Resolve a bare build-output name (`/alpine-init.js`) to its content-hashed
+ * sibling (`/alpine-init-abc12345.js`). `build:frontend` rewrites only static
+ * HTML; view templates render from `src/views` and keep the bare names, so
+ * this fallback is what keeps rendered pages from 404ing their bundles.
+ * @param publicPath - absolute candidate path under the public dir
+ * @returns the hashed sibling's absolute path, or `null` when none matches.
  */
-function resolveFilePath(publicPath: string,): string | null {
+function resolveHashedVariant(publicPath: string,): string | null {
+  const slash = publicPath.lastIndexOf("/",);
+  const dir = slash === -1 ? "." : publicPath.slice(0, slash,);
+  const name = publicPath.slice(slash + 1,);
+  const dot = name.lastIndexOf(".",);
+  if (dot <= 0) { return null; }
+
+  let entries: string[];
+  try {
+    entries = readdirSync(dir,);
+  } catch {
+    return null;
+  }
+
+  const ext = name.slice(dot,);
+  const stem = name.slice(0, dot,);
+  for (const entry of entries) {
+    if (
+      entry !== name &&
+      entry.startsWith(`${stem}-`,) &&
+      entry.endsWith(ext,) &&
+      HASHED_ASSET_PATTERN.test(entry,)
+    ) {
+      return `${dir}/${entry}`;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Resolve a request pathname against a public directory: exact file, then
+ * `.html` suffix, then the content-hashed sibling (see `resolveHashedVariant`).
+ * @param publicDir - root directory to resolve within
+ * @param pathname - request pathname; paths escaping `publicDir` resolve to `null`
+ * @returns absolute file path, or `null` when nothing resolves.
+ */
+export function resolvePublicFilePath(publicDir: string, pathname: string,): string | null {
+  const publicPath = normalize(join(publicDir, pathname,),);
+  const dirWithSlash = `${publicDir}/`;
+  if (publicPath !== publicDir && !publicPath.startsWith(dirWithSlash,)) { return null; }
   if (existsSync(publicPath,) && !statSync(publicPath,).isDirectory()) { return publicPath; }
   const htmlPath = `${publicPath}.html`;
-  return (existsSync(htmlPath,) && !statSync(htmlPath,).isDirectory()) ? htmlPath : null;
+  if (existsSync(htmlPath,) && !statSync(htmlPath,).isDirectory()) { return htmlPath; }
+
+  return resolveHashedVariant(publicPath,);
 }
 
 /**

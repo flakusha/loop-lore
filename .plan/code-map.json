@@ -47806,6 +47806,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-perf-server-no-cache-html-entry-points-stream-static-files-w.md"
     }
   ],
@@ -52299,6 +52303,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-canvas-viz.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto.md"
     },
     {
       "kind": "ticket",

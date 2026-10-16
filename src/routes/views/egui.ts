@@ -10,30 +10,27 @@
  * WebGL context mid-transfer.
  *
  * Browser-side transfer context (`loop-lore.egui-context.v1`) is written by
- * BOTH sides of the htmx ↔ egui handoff; this page reads it on load and the
- * back button re-writes it before returning to the htmx frontend. See
- * .tmp/egui-contract.md for the authoritative shape.
+ * BOTH sides of the htmx ↔ egui handoff. This page does NOT re-implement the
+ * contract: the back button delegates to `window.loopLoreEgui`
+ * (src/frontend/egui-bridge.ts, the canonical TS implementation shared with
+ * the htmx side). The Rust crate carries the only other copy, pure and
+ * host-tested. Tickets: `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto`,
+ * `TASK-egui-to-wasm-experimental-frontend-crate-json-client`.
  *
  * The module script is the only inline script on the page and carries the
  * per-request CSP nonce (`getNonce`). A missing `/egui/app.js` or
- * `/egui/app.wasm` must never 500 the page: the failure lands in
+ * `/egui/app_bg.wasm` must never 500 the page: the failure lands in
  * `#egui-status` as visible text and the back button keeps working.
  */
 
 import { getNonce, } from "../../middleware/csp-nonce";
 import { escapeHtml, } from "./escape-html";
 
-/**
- * localStorage key for the htmx ↔ egui transfer context — interpolated into
- * the page script so the key lives in exactly one place server-side.
- */
-const CONTEXT_KEY = "loop-lore.egui-context.v1";
-
-/** Origin-absolute fallback when no context is stored (or it is malformed). */
-const DEFAULT_RETURN_TO = "/views/chat";
-
 /** Text shown until wasm resolves (or replaces itself with the failure). */
 const LOADING_STATUS = "Loading egui frontend\u2026";
+
+/** Degenerate navigation target when the bridge bundle itself failed to load. */
+const BRIDGE_FALLBACK_RETURN_TO = "/views/chat";
 
 /**
  * Serve the egui host page.
@@ -56,43 +53,39 @@ export function serveEguiFrontendPage(request: Request,): Response {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>egui frontend \u2014 Loop Lore</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      #egui-canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
   </head>
   <body>
+    <script src="/egui-bridge.js" defer></script>
     <canvas id="egui-canvas"></canvas>
     <p id="egui-status">${LOADING_STATUS}</p>
     <button data-testid="egui-back-to-htmx" type="button">Back to htmx</button>
     <script nonce="${nonce}" type="module">
-      const CONTEXT_KEY = "${CONTEXT_KEY}";
-      const DEFAULT_RETURN_TO = "${DEFAULT_RETURN_TO}";
       const status = document.getElementById("egui-status");
       const back = document.querySelector("[data-testid='egui-back-to-htmx']");
 
-      // Transfer context written by the htmx side on handoff. Malformed JSON,
-      // a wrong version or non-string fields fall back to the default so a
-      // corrupt entry can never strand the user on this page.
-      let context = { version: 1, activeChatId: null, returnTo: DEFAULT_RETURN_TO };
-      try {
-        const parsed = JSON.parse(localStorage.getItem(CONTEXT_KEY) || "null");
-        if (parsed && parsed.version === 1 && typeof parsed.returnTo === "string" && parsed.returnTo.startsWith("/")) {
-          context = {
-            version: 1,
-            activeChatId: typeof parsed.activeChatId === "string" ? parsed.activeChatId : null,
-            returnTo: parsed.returnTo,
-          };
-        }
-      } catch {
-        // keep the default context
-      }
-
-      // Listener (not an inline handler): CSP script-src has no 'unsafe-inline'.
+      // The transfer contract (storage key, version, validation, navigation)
+      // lives in egui-bridge.ts only — delegate instead of re-implementing it
+      // here. The fallback covers a failed bundle load so the button still
+      // leaves this page.
       if (back) {
         back.addEventListener("click", () => {
-          try {
-            localStorage.setItem(CONTEXT_KEY, JSON.stringify(context));
-          } catch {
-            // storage unavailable — navigation still works
+          if (window.loopLoreEgui) {
+            window.loopLoreEgui.returnToHtmx();
+          } else {
+            location.assign("${BRIDGE_FALLBACK_RETURN_TO}");
           }
-          location.assign(context.returnTo);
         });
       }
 
@@ -100,7 +93,9 @@ export function serveEguiFrontendPage(request: Request,): Response {
       // must only set the status text, never throw an uncaught module error.
       try {
         const glue = await import("/egui/app.js");
-        await glue.wasm_bindgen("/egui/app.wasm");
+        // Default export loads app_bg.wasm relative to the glue; the wasm
+        // start section then runs the Rust wasm-bindgen(start) mount.
+        await glue.default();
         if (status) { status.textContent = "egui ready"; }
       } catch (error) {
         if (status) { status.textContent = "egui failed to start: " + error; }

@@ -53,7 +53,9 @@ if (ISOLATED) {
   },);
 }
 
-const { createNonApiHandler, handleDocsRequest, walkDirectorySync, } = await import("./static-files");
+const { createNonApiHandler, handleDocsRequest, resolvePublicFilePath, walkDirectorySync, } = await import(
+  "./static-files"
+);
 
 function resetFixtures(): void {
   const fx = getFixtures();
@@ -307,6 +309,24 @@ describeOrSkip("createNonApiHandler", () => {
     expect(await res.text(),).toContain("Page",);
   });
 
+  test("serves the content-hashed sibling when only it exists", async () => {
+    // Views render from src/views and keep bare bundle names; the build emits
+    // only hashed ones, so the bare request must resolve to the hashed file.
+    const fx = getFixtures();
+    writeFixture(fx.public, "alpine-init-tx4kdwfm.js", "hashed-bundle",);
+    const res = await createNonApiHandler({},)(new Request("http://localhost/alpine-init.js",),);
+    expect(res.status,).toBe(200,);
+    expect(await res.text(),).toBe("hashed-bundle",);
+    expect(res.headers.get("cache-control",),).toBe("public, max-age=31536000, immutable",);
+  });
+
+  test("404s when the only candidate hash is too short", async () => {
+    const fx = getFixtures();
+    writeFixture(fx.public, "pages-abc123.js", "short-hash",);
+    const res = await createNonApiHandler({},)(new Request("http://localhost/pages.js",),);
+    expect(res.status,).toBe(404,);
+  });
+
   test("404s when an .html file does not contain valid HTML", async () => {
     const fx = getFixtures();
     writeFixture(fx.public, "bad.html", "this is not html",);
@@ -391,5 +411,35 @@ describeOrSkip("createNonApiHandler", () => {
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-encoding",),).toBe("br",);
     expect(await res.text(),).toBe("br-bytes",);
+  });
+},);
+
+describeOrSkip("resolvePublicFilePath", () => {
+  test("returns the exact file when it exists", () => {
+    const fx = getFixtures();
+    writeFixture(fx.public, "exact.txt", "x",);
+    expect(resolvePublicFilePath(fx.public, "/exact.txt",),).toBe(join(fx.public, "exact.txt",),);
+  });
+
+  test("appends .html when the bare path does not exist", () => {
+    const fx = getFixtures();
+    writeFixture(fx.public, "page.html", "p",);
+    expect(resolvePublicFilePath(fx.public, "/page",),).toBe(join(fx.public, "page.html",),);
+  });
+
+  test("falls back to the content-hashed sibling for a bare build-output name", () => {
+    const fx = getFixtures();
+    writeFixture(fx.public, "alpine-init-3c4f5a2b.js", "hashed",);
+    expect(resolvePublicFilePath(fx.public, "/alpine-init.js",),).toBe(join(fx.public, "alpine-init-3c4f5a2b.js",),);
+  });
+
+  test("returns null when nothing resolves", () => {
+    const fx = getFixtures();
+    expect(resolvePublicFilePath(fx.public, "/missing.js",),).toBeNull();
+  });
+
+  test("returns null for paths escaping the public root", () => {
+    const fx = getFixtures();
+    expect(resolvePublicFilePath(fx.public, "/../../etc/passwd",),).toBeNull();
   });
 },);

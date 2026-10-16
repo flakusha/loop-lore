@@ -56,9 +56,8 @@ impl FrontendContext {
   /// Serialization of this struct cannot fail; the fallback exists so the
   /// function is total and callers never see an `Err`.
   pub fn to_json(&self) -> String {
-    serde_json::to_string(self).unwrap_or_else(|_| {
-      serde_json::to_string(&Self::default()).unwrap_or_else(|_| String::from("{}"))
-    })
+    serde_json::to_string(self)
+      .unwrap_or_else(|_| serde_json::to_string(&Self::default()).unwrap_or_else(|_| String::from("{}")))
   }
 
   /// Parse a stored payload.
@@ -66,9 +65,17 @@ impl FrontendContext {
   /// Malformed JSON, missing fields, a differing [`CONTEXT_VERSION`], or
   /// non-string values all fall back to [`FrontendContext::default`] — a
   /// corrupt context must never block the transfer.
+  ///
+  /// `return_to` MUST be an origin-absolute same-origin path: a scheme-relative
+  /// `//host` value would navigate the user off-origin. Mirrors the guard in
+  /// `src/frontend/egui-bridge.ts`; both sides must agree.
   pub fn from_stored_json(raw: &str) -> Self {
     match serde_json::from_str::<Self>(raw) {
-      Ok(ctx) if ctx.version == CONTEXT_VERSION => ctx,
+      Ok(ctx)
+        if ctx.version == CONTEXT_VERSION && ctx.return_to.starts_with('/') && !ctx.return_to.starts_with("//") =>
+      {
+        ctx
+      }
       _ => Self::default(),
     }
   }
@@ -102,7 +109,10 @@ mod tests {
 
   #[test]
   fn malformed_json_falls_back_to_defaults() {
-    assert_eq!(FrontendContext::from_stored_json("not json"), FrontendContext::default());
+    assert_eq!(
+      FrontendContext::from_stored_json("not json"),
+      FrontendContext::default()
+    );
     assert_eq!(FrontendContext::from_stored_json(""), FrontendContext::default());
   }
 
@@ -110,6 +120,29 @@ mod tests {
   fn wrong_version_is_discarded() {
     let raw = r#"{"version":99,"activeChatId":"c","returnTo":"/views/chat"}"#;
     assert_eq!(FrontendContext::from_stored_json(raw), FrontendContext::default());
+  }
+
+  #[test]
+  fn off_origin_return_to_is_discarded() {
+    // Scheme-relative `//host` and any non-path value would navigate the user
+    // off-origin — the TS bridge rejects the same shapes.
+    for raw in [
+      r#"{"version":1,"activeChatId":null,"returnTo":"//evil.example"}"#,
+      r#"{"version":1,"activeChatId":null,"returnTo":"https://evil.example"}"#,
+      r#"{"version":1,"activeChatId":null,"returnTo":"views/chat"}"#,
+    ] {
+      assert_eq!(
+        FrontendContext::from_stored_json(raw),
+        FrontendContext::default(),
+        "{raw}"
+      );
+    }
+
+    // Same-origin absolute paths (with query) survive.
+    let raw = r#"{"version":1,"activeChatId":"c","returnTo":"/views/chat?chatid=c"}"#;
+    let ctx = FrontendContext::from_stored_json(raw);
+    assert_eq!(ctx.return_to, "/views/chat?chatid=c");
+    assert_eq!(ctx.active_chat_id.as_deref(), Some("c"));
   }
 
   #[test]
