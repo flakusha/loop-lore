@@ -114,6 +114,7 @@ export const envMap = (): EnvMap => {
   map.ENABLE_ASSISTANT = "assistant.enabled";
   map.LOG_LEVEL = "logging.level";
   map.ENABLE_TUI = "tui.enabled";
+  map.TUI_SEND_TIMEOUT_MS = "tui.sendTimeoutMs";
   map.ENABLE_DOCS = "docs.enabled";
   map.AGE_GATE_ENABLED = "ageGate.enabled";
   map.AGE_GATE_MINIMUM_AGE = "ageGate.minimumAge";
