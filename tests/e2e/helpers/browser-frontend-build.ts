@@ -130,19 +130,17 @@ export function ensureFrontendBuild(): string {
   const hashPath = join(buildDir, ".build-hash",);
   const alpineInitPattern = new RegExp(`^alpine-init-(${HASH_ALPHABET}{8})$\.js$`,);
   const isReady = (): boolean => {
-    const hashOk =
-      existsSync(hashPath,) && readFileSync(hashPath, "utf8",) === expectedHash;
+    const hashOk = existsSync(hashPath,) && readFileSync(hashPath, "utf8",) === expectedHash;
     if (!hashOk) { return false; }
     const entries = readdirSync(buildDir, { withFileTypes: true, },);
     const hasAlpineInit = entries.some(
-      (entry,) =>
-        entry.isFile() && alpineInitPattern.test(entry.name,),
+      (entry,) => entry.isFile() && alpineInitPattern.test(entry.name,),
     );
+
     // The egui wasm stage adds wasm-loader.js to the same build tree; a build
     // missing it is stale for the egui e2e flows even when htmx is complete.
-    return (
-      hasAlpineInit && existsSync(join(buildDir, "wasm-loader.js",),)
-    );
+    const hasWasmLoader = existsSync(join(buildDir, "wasm-loader.js",),);
+    return hasAlpineInit && hasWasmLoader;
   };
 
   mkdirSync(dist, { recursive: true, },);
