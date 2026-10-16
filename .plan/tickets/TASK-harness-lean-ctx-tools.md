@@ -17,11 +17,15 @@
 - [ ] Anchored ops (line+hash from read) are the single file/patch seam; direct-write paths frozen for non-MCP callers; no per-route rewrites.
 - [ ] Real filters activated in `.rtk/filters.toml` + purpose-keyed compress step in `PromptAssembler`; savings measured via `harness.call_completed.savedTokens`.
 - [ ] Unit tests for wrapper mapping + anchored-op validation. Serena analogue (anchored read + patch + memory recall) documented, no new service.
+- [ ] Capability catalog fronts the registered set: the agent enumerates tools by domain (structure / search / read / AST / LSP / patch / execute) and pulls per-domain usage detail on demand, instead of receiving every tool schema in the startup prompt.
+- [ ] Command→tool resolution is 1:1 through the wrapper seam: a harness command resolves to a registered `ToolDefinition` (or MCP tool) before execution; unmapped/unknown commands fail fast at the boundary and never reach a shell or a raw file write.
+- [ ] Role-gating (`gatePluginToolsByRole`), the `executePluginTool()` timeout/race, and sanitize + encrypted persist apply identically to catalog reads and tool calls.
 
 ## Related Files
 
 - `src/plugins/types.ts`, `registry.ts`, `loader.ts`, `tool-executor.ts`, `src/generation/generate-route/tool-execution.ts`, `providers/types.ts`
 - `src/assistant/prompt-assembler.ts`, `.rtk/filters.toml`, `.agents/references/agent-rules.md` (routing note)
+- `TASK-harness-context-priority-tiers` (tier-0 manifest this catalog emits), `TASK-harness-skills-runtime` (trigger-matched detail channel)
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
 

@@ -12079,6 +12079,12 @@
       "source": ".plan/tickets/TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt.md"
     }
   ],
+  "src/config/schema/mcp.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-mcp-config-section.md"
+    }
+  ],
   "src/config/schema/messages.ts": [
     {
       "kind": "spec",
@@ -26423,6 +26429,12 @@
       "source": ".plan/tickets/TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p.md"
     }
   ],
+  "src/generation/providers/anthropic/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-canonical-usage.md"
+    }
+  ],
   "src/generation/providers/bedrock.ts": [
     {
       "kind": "epic",
@@ -26852,6 +26864,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-canonical-usage.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-llm-generation-bench-via-local-llama-swap-opt-in.md"
     },
     {
@@ -26927,6 +26943,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-model-routing.md"
+    }
+  ],
+  "src/generation/routing/routing-config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-scoped-fallback-chain.md"
     }
   ],
   "src/generation/routing/task-signal.ts": [
@@ -27507,10 +27529,22 @@
       "source": "docs/spec/integrations-architecture.md"
     }
   ],
+  "src/harness/exec-recorder.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-canonical-usage.md"
+    }
+  ],
   "src/harness/read-models.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md"
+    }
+  ],
+  "src/harness/stats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-canonical-usage.md"
     }
   ],
   "src/hash/record-hash.test.ts": [
@@ -28337,6 +28371,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-external-creative-tool-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-mcp-client-wrapper.md"
     },
     {
       "kind": "ticket",
@@ -31456,6 +31494,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-hook-contract.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-and-tool-runtime-residual-defects.md"
     },
     {
@@ -31609,6 +31651,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-mcp-client-skeleton.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-mcp-server-surface.md"
     }
   ],
   "src/plugins/mount-points.ts": [
@@ -31867,6 +31913,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-hook-contract.md"
     },
     {
       "kind": "ticket",
@@ -36322,6 +36372,10 @@
     }
   ],
   "src/routes/harness/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-frontend-consolidation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
@@ -41509,6 +41563,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-src-rpg-module-root-barrel-and-organization-nits.md"
+    }
+  ],
+  "src/rpg/integration-registry/mermaid.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-canvas-viz.md"
     }
   ],
   "src/rpg/integration-registry/player-state-layers.ts": [
@@ -47095,6 +47155,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-platform-service-util-modules-dead-barre.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-harness-frontend-consolidation.md"
     },
     {
       "kind": "ticket",

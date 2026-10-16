@@ -3,7 +3,8 @@
 
 # TASK: Harness task-signal model routing
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** `task-signal.ts` + `router.ts` shipped and production-wired at `src/generation/providers/registry.ts:223-244`; `router.test.ts` covers four ACs. Remaining: dedicated `task-signal.test.ts` and a coverage-floor readout before calling the ticket done.
 **Priority:** high
 **Effort:** Large
 **Epic:** `.plan/epics/epic-harness-integration.md`
