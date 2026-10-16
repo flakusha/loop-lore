@@ -33,3 +33,5 @@ Let one concept prompt yield N instance masks — "both characters" returns both
 - `TemplateParamType` has no list/array (`src/image-edit/types.ts:30-36`); `max_matches` is a bounded int param, not a list — no param-type change needed.
 - Mask cache key gains the match index (`TASK-sam3-mask-cache-and-reuse`) so instances stay addressable.
 - Sprite compositor and VN consumers keep working unchanged against the newest mask while the list read ships.
+
+git issue: ece68d9

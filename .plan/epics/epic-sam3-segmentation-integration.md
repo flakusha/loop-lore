@@ -160,3 +160,6 @@ implementation ticket starts.
 - [`epic-e2e-integration-testing.md`](./epic-e2e-integration-testing.md) — fake ComfyUI coverage
 - [`epic-byok-local-models.md`](./epic-byok-local-models.md) — local-weights runtime boundary
 - [`epic-derived-map-generation.md`](./epic-derived-map-generation.md) — consumer: depth maps, texture sets, multi-mask cutouts, and provenance links build on the concept-mask contract
+
+
+git issue: b6fd26b

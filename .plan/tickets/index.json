@@ -12424,7 +12424,7 @@
     "type": "EPIC"
   },
   "EPIC-DERIVED-MAP-GENERATION": {
-    "hash": "pending",
+    "hash": "48d5913",
     "extid": "EPIC-DERIVED-MAP-GENERATION",
     "type": "EPIC",
     "title": "Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance",
@@ -12440,8 +12440,9 @@
       "gallery",
       "comfyui"
     ],
-    "source": ".plan/tickets/epic-derived-map-generation.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-derived-map-generation.md",
+    "status": "Not Started",
+    "git_issue": "48d5913"
   },
   "EPIC-DESKTOP-APP": {
     "epic": "",
@@ -15805,7 +15806,7 @@
     "type": "EPIC"
   },
   "EPIC-SAM3-SEGMENTATION-INTEGRATION": {
-    "hash": "pending",
+    "hash": "b6fd26b",
     "extid": "EPIC-SAM3-SEGMENTATION-INTEGRATION",
     "type": "EPIC",
     "title": "SAM3 / SAM3.1 Integration — Concept Segmentation for Generation",
@@ -15821,8 +15822,9 @@
       "sprite-pipeline",
       "model-api"
     ],
-    "source": ".plan/tickets/epic-sam3-segmentation-integration.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-sam3-segmentation-integration.md",
+    "status": "Not Started",
+    "git_issue": "b6fd26b"
   },
   "EPIC-SCHEMA": {
     "epic": "",
@@ -30831,7 +30833,7 @@
     "status": "Not Started"
   },
   "TASK-COMFYUI-DEPTH-MAP-GENERATION-TEMPLATE": {
-    "hash": "pending",
+    "hash": "619131d",
     "extid": "TASK-COMFYUI-DEPTH-MAP-GENERATION-TEMPLATE",
     "type": "TASK",
     "title": "ComfyUI depth map generation template",
@@ -30844,7 +30846,8 @@
       "workflow-templates"
     ],
     "source": ".plan/tickets/TASK-comfyui-depth-map-generation-template.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "619131d"
   },
   "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS": {
     "hash": "4baa39c",
@@ -31084,7 +31087,7 @@
     "git_issue": "9d82194"
   },
   "TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION": {
-    "hash": "pending",
+    "hash": "80566a1",
     "extid": "TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION",
     "type": "TASK",
     "title": "ComfyUI PBR texture set generation",
@@ -31098,7 +31101,8 @@
       "workflow-templates"
     ],
     "source": ".plan/tickets/TASK-comfyui-pbr-texture-set-generation.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "80566a1"
   },
   "TASK-COMFYUI-SAM3-CONCEPT-MASK-TEMPLATE": {
     "hash": "2f8f2c8",
@@ -33472,7 +33476,7 @@
     "type": "TASK"
   },
   "TASK-DERIVED-MAP-ORIGIN-LINKS": {
-    "hash": "pending",
+    "hash": "74cea0f",
     "extid": "TASK-DERIVED-MAP-ORIGIN-LINKS",
     "type": "TASK",
     "title": "Derived map origin links",
@@ -33485,7 +33489,8 @@
       "links"
     ],
     "source": ".plan/tickets/TASK-derived-map-origin-links.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "74cea0f"
   },
   "TASK-DEV-TOOLING-UPDATES": {
     "epic": "",
@@ -36971,7 +36976,7 @@
     "type": "TASK"
   },
   "TASK-GALLERY-FILTER-GENERATED-DERIVED-CONTENT": {
-    "hash": "pending",
+    "hash": "0da0985",
     "extid": "TASK-GALLERY-FILTER-GENERATED-DERIVED-CONTENT",
     "type": "TASK",
     "title": "Gallery filter for generated and derived content",
@@ -36984,7 +36989,8 @@
       "filters"
     ],
     "source": ".plan/tickets/TASK-gallery-filter-generated-derived-content.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "0da0985"
   },
   "TASK-GALLERY-FUZZY-SEARCH-PAGINATION": {
     "epic": "epic-frontend-gallery.md (Phase 3 Polish)",
@@ -38097,7 +38103,7 @@
     "git_issue": "55d6d79"
   },
   "TASK-HARNESS-EDIT-JOURNAL": {
-    "hash": "pending",
+    "hash": "e04a242",
     "extid": "TASK-HARNESS-EDIT-JOURNAL",
     "type": "TASK",
     "title": "Harness edit journal (per-op patch records)",
@@ -38106,10 +38112,11 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-edit-journal.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "e04a242"
   },
   "TASK-HARNESS-EDIT-ROLLBACK": {
-    "hash": "pending",
+    "hash": "6f09e86",
     "extid": "TASK-HARNESS-EDIT-ROLLBACK",
     "type": "TASK",
     "title": "Harness edit rollback (rollback -N / <op_id>)",
@@ -38118,7 +38125,8 @@
     "epic": "`epic-harness-integration`",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-edit-rollback.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "6f09e86"
   },
   "TASK-HARNESS-EVAL-HARNESS": {
     "hash": "9e6932e",
@@ -39043,7 +39051,7 @@
     "status": "Not Started"
   },
   "TASK-IMAGE-EDIT-DEPTH-CONDITIONED-EDITING": {
-    "hash": "pending",
+    "hash": "159060e",
     "extid": "TASK-IMAGE-EDIT-DEPTH-CONDITIONED-EDITING",
     "type": "TASK",
     "title": "Image-edit depth conditioned editing",
@@ -39057,7 +39065,8 @@
       "depth"
     ],
     "source": ".plan/tickets/TASK-image-edit-depth-conditioned-editing.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "159060e"
   },
   "TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED": {
     "hash": "439ff25",
@@ -42636,7 +42645,7 @@
     "type": "TASK"
   },
   "TASK-MULTI-CONCEPT-SEGMENTATION-MASKS": {
-    "hash": "pending",
+    "hash": "ece68d9",
     "extid": "TASK-MULTI-CONCEPT-SEGMENTATION-MASKS",
     "type": "TASK",
     "title": "Multi concept segmentation masks",
@@ -42649,7 +42658,8 @@
       "assets"
     ],
     "source": ".plan/tickets/TASK-multi-concept-segmentation-masks.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "ece68d9"
   },
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "epic-multi-instance-reconciliation",

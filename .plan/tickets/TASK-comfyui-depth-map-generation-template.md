@@ -33,3 +33,5 @@ No image→depth path exists in `src/` today. The `controlnet` template takes a 
 - ComfyUI-only; sd-server throws for controlnet categories and gain nothing here.
 - Model choice (ZoeDepth vs MiDaS custom node) is decided by a probe leg first — record the decision in this ticket before implementing.
 - Ingest-check precedent: `src/image-edit/routes.ts` handler area; keep the check in the shared loader path, not per template.
+
+git issue: 619131d

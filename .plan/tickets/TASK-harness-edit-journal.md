@@ -35,3 +35,6 @@ Append one JSONL record per file-mutating harness op (`.harness/edits.jsonl`, be
 - Growth is unbounded by design for v1 (same as `executions.jsonl`); add rotation only when measured.
 - `git_sha` per record makes the journal joinable with commits post-hoc; it is not a git replacement and never runs git.
 - Resource contract (parallel-safe tests, per project rule): each test owns one unique tmp dir + unique file names via the runner tmp facility, released in `afterEach`/`finally`; the fixed `<repo-root>/.harness/` path is production-only, never a fixture.
+
+
+git issue: e04a242

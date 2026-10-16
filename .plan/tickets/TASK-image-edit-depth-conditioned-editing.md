@@ -33,3 +33,5 @@ Extend the `controlnet` template so generation can start from an input image (in
 
 - Reuse `_helpers.ts` node factories; do not duplicate VAEEncode wiring from `img2img.ts` by hand — import/share the helper.
 - `required_nodes` gains `VAEEncode` for the input-latent variant; ingest validation stays the shared `/object_info` check.
+
+git issue: 159060e

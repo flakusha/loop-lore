@@ -32,3 +32,5 @@ Add `kind` (uploaded / generated / derived) filtering to the gallery grid and se
 
 - "generated" classification (provenance ledger or a lineage flag) may need the asset-platform batch; if `generated` cannot be determined exactly, ship `derived` + `uploaded` and record the gap — do not guess.
 - Filter values are a fixed set — validate like other closed-set query params, not free text.
+
+git issue: 0da0985
