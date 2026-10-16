@@ -3,7 +3,8 @@
 
 import { Elysia, t, } from "elysia";
 import type { Config, } from "../../../config/schema";
-import { extractAuth, jsonResponse, } from "../../../routes/http-utils";
+import { extractAuth, forbiddenResponse, jsonResponse, } from "../../../routes/http-utils";
+import { can, } from "../../../users/permissions";
 import { ErrorResponse, SuccessResponse, } from "../../../validation/schemas";
 import { discoverAllLoras, discoverLoras, } from "../discovery";
 import { resolveBackendUrls, } from "./urls";
@@ -30,11 +31,11 @@ export function discoverRoutes(config: Config, prefix = "/api",) {
         return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
       }
 
-      // TODO: Add admin role check when RBAC is implemented
-      // const { userRole, } = extractAuth(ctx,);
-      // if (userRole !== "admin") {
-      //   return jsonResponse({ error: "Forbidden", code: "FORBIDDEN", }, 403,);
-      // }
+      // Admin-only: discovery can trigger backend scans across all users.
+      const { userRole, } = extractAuth(ctx,);
+      if (!can(userRole, "admin.system",)) {
+        return forbiddenResponse();
+      }
 
       const input = ctx.body;
 
