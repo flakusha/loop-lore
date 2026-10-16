@@ -35,15 +35,18 @@ it **has since been re-acquired and was functionally reviewed on 2026-10-16 by r
 the on-disk source.** It is a **review-only reference artifact**: never committed,
 `.tmp/` only, never an import target, and nothing in `src/` may reference it. Per the
 separate-plugin-repo decision the Python side itself ships from its own plugin
-repository, so the fixes below are made to loop-lore's absorbed TypeScript surface,
-not to the Python source.
+repository, **and this ticket does not fix it.** Nothing below is a loop-lore
+implementation task: the sections that follow are a **defect record the plugin repo
+inherits**, and the only work this ticket accepts is loop-lore's guard against
+copying the literals in.
 
 The defects enumerated below are **verified against that read**, each with its literal
-quoted. A behavior claim can still be backwards-facing about how it *gates a run* — the
-`profile_verified` note below records exactly which part gates and which part does not,
-from the code. Where a claim needs a live ComfyUI to confirm (what `reviewed_profile()`
-returns under a real launch, and whether the absorbed workflow runs at all), the last AC
-collects it.
+quoted — they are records of what the Python source says, not work items for loop-lore.
+The `profile_verified` note below records exactly which part gates a run and which part
+does not, from the code. Anything that needs a live ComfyUI to confirm (what
+`reviewed_profile()` returns under a real launch, whether the six external node types
+resolve) is the **plugin repo's runtime question**; this ticket records the claim and
+its open status rather than assuming an answer.
 
 ### Windows-only
 
@@ -53,11 +56,12 @@ collects it.
 "selection cannot be confirmed" (`:200-201`). It first resolves the path and requires
 it to sit under the ComfyUI input or output root and to be an existing file
 (`:196-198`). On Linux or macOS this is a guaranteed exception path — the call names a
-Windows binary with no fallback. Cross-platform replacement: open the containing
-directory with the platform's file manager, or — better — do not shell out at all and
-return a `file://` path the UI links to. loop-lore already stores assets and serves them
-through `/api/assets/{id}/raw` (`comfyui-provider.ts:203`), so the browser can render it
-directly.
+Windows binary with no fallback. **The cross-platform replacement is plugin-repo work**:
+open the containing directory with the platform's file manager, or do not shell out at
+all and return a `file://` path the UI links to. loop-lore is unaffected either way — it
+never called this route, and an action loop-lore does not ship needs no loop-lore
+fallback. If loop-lore ever builds its own reveal-a-result action, it must not shell out
+to a platform-specific binary; nothing in this epic asks for one.
 
 ### GPU-specific, presented as model-specific
 
@@ -72,7 +76,7 @@ validation" (`:18`) — and `attention='comfy kitchen attention'` (`studio_still
 `START_HERE.md` agrees: the 5080 profile is "an unvalidated 5080 starting profile, not a
 benchmark result".
 
-### Other hardcoded values that should become configuration
+### Other hardcoded values (plugin-repo defect record)
 
 - checkpoint basename `MiniMaxH3/minimax_h3_hybrid_fl2va_ref2va_b30-49-int8.safetensors`
   and three CLIP/VAE filenames (`studio_stills.py:17-20` — `DEFAULT_MODEL`, `DEFAULT_CLIP`,
@@ -123,9 +127,10 @@ profile; Save is still available" (`:161`), and `prepare(true)` throws *"The app
 local H3 launch profile is not active. Save the workflow, but do not queue this
 server."* (`:167`) — so a still can be saved without the profile but cannot be queued
 without it. Saving still works, which is the right shape; but "advisory only" is wrong
-about the shipped product. If loop-lore absorbs a launch-profile recommendation, it
-must reach the operator as an actionable message (and keep save-without-queue
-available), not sit in a capabilities payload.
+about the shipped product. **loop-lore absorbs nothing here** — it has no launch-profile
+surface, and this epic asks for none. The observation is recorded for the plugin repo:
+a launch-profile gate belongs next to the action it gates, expressed as an actionable
+operator message, not as a bare field in a capabilities payload.
 
 Scope: the defects below are recorded as **reference notes the plugin repo
 inherits**. loop-lore's absorbed surface is the **TypeScript** halves
