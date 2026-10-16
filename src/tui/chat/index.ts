@@ -90,7 +90,13 @@ export class ChatWidget implements ChatHost {
       left: 0,
       width: "100%",
       height: 3,
-      inputOnFocus: true,
+      // inputOnFocus is deliberately OFF. It makes blessed call readInput() on
+      // focus, which sets `screen.grabKeys = true` and gates EVERY screen-level
+      // keypress (widgets/screen.js:591) for as long as the box holds focus —
+      // and `_done` re-arms via `screen.rewindFocus()`, so no overlay could take
+      // focus away from it either. Reading is armed explicitly by `focusInput()`
+      // instead; `releaseInput()` is the other half of that pair.
+      inputOnFocus: false,
       style: {
         bg: "black",
         fg: "white",
@@ -126,8 +132,9 @@ export class ChatWidget implements ChatHost {
       },
     },);
 
-    // Focus input on startup
-    this.inputBox.focus();
+    // Focus the input on startup and start reading keystrokes into it. Both
+    // halves are explicit — see `focusInput` for why `inputOnFocus` is unusable.
+    this.focusInput();
 
     // Re-filter as the user types. Textarea attaches its own keypress listener
     // in a nextTick after focus, so ours - registered here - runs first and
@@ -144,7 +151,7 @@ export class ChatWidget implements ChatHost {
       const committed = this.completer.accept();
       if (committed !== null) {
         this.inputBox.setValue(committed,);
-        this.inputBox.focus();
+        this.focusInput();
         screen.render();
         return;
       }
@@ -155,7 +162,7 @@ export class ChatWidget implements ChatHost {
 
       // Clear after handleSend completes (avoid race)
       this.inputBox.clearValue();
-      this.inputBox.focus();
+      this.focusInput();
       screen.render();
     },);
 
@@ -168,12 +175,57 @@ export class ChatWidget implements ChatHost {
       }
 
       if (screen.focused === this.inputBox) {
+        // Release first: a box still reading holds `screen.grabKeys`, which
+        // gates screen-level keys and would leave the list unreachable.
+        this.releaseInput();
         this.messageList.focus();
       } else {
-        this.inputBox.focus();
+        this.focusInput();
       }
 
       screen.render();
+    },);
+  }
+
+  /**
+   * Point the keyboard at the input box and start reading keystrokes into it.
+   *
+   * Both halves matter. `focus()` alone leaves the box visible but deaf —
+   * `readInput()` is what installs the keypress listener and sets
+   * `screen.grabKeys`. `readInput()` returns early when already reading, so
+   * this is safe to call on every path that wants the box live.
+   */
+  focusInput(): void {
+    // Guard the focus call. `focus()` on an already-focused element still emits
+    // `blur`, which runs blessed's `_done` and tears down the read — including
+    // the one `readInput()` scheduled but has not attached yet, orphaning it and
+    // making the NEXT `readInput()` stack a second listener (every keystroke
+    // then applied twice). `readInput()` already no-ops while reading.
+    if (this.screen.focused !== this.inputBox) {
+      this.inputBox.focus();
+    }
+
+    this.inputBox.readInput();
+  }
+
+  /**
+   * Hand the keyboard back so another widget can own it.
+   *
+   * `emit("blur")` is the event blessed's own Textarea listens for to tear
+   * down a read (widgets/textarea.js:206), so it clears the listener and drops
+   * `screen.grabKeys` without the `rewindFocus()` bounce that made overlays
+   * impossible to focus. Paired with {@link focusInput}.
+   */
+  releaseInput(): void {
+    // Deferred on purpose. blessed installs the read listener in a nextTick
+    // AFTER `readInput()` returns (widgets/textarea.js:200), and `_done` only
+    // removes the listener it can see. Emitting blur synchronously inside that
+    // window leaves the pending attach orphaned, so the next `focusInput()`
+    // stacks a second listener and every keystroke is applied twice. Yielding a
+    // tick puts the attach first and the teardown second, which is the order
+    // `_done` expects.
+    setImmediate(() => {
+      this.inputBox.emit("blur",);
     },);
   }
 

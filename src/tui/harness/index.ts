@@ -127,6 +127,18 @@ export class HarnessView {
     }
   }
 
+  /**
+   * Close the panel if it is open. The app calls this from its global Esc/q/Ctrl-C
+   * handler so an open harness swallows the key instead of quitting the process
+   * — the same shape `ChatPicker` and `ModelsOverlay` already expose.
+   * @returns true when the panel was visible and has now been hidden
+   */
+  dismiss(): boolean {
+    if (!this._visible) { return false; }
+    this.hide();
+    return true;
+  }
+
   isVisible(): boolean {
     return this._visible;
   }
