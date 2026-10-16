@@ -71,7 +71,7 @@ Resolved. Construction is no longer reachable at import time: `createTUIApp()` b
 | API routes (assets) | `:15` claims integration with `/api/assets` | Code calls `/api/v1/assets` (`asset-view.ts:206`) | `TASK-tui-spec-sync` |
 | API routes (chat) | `:15` claims integration with `/api/assistant` | `/api/assistant` is called nowhere in `src/tui/`; chat calls `/api/v1/chats/:id/messages` (`chat/api.ts:32,77`) | `TASK-tui-spec-sync` |
 | Feature list | Feature list predates `src/tui/harness/` and `/api/v1/harness/runs` | Harness overlay and API exist in code but not in spec | `TASK-tui-spec-sync` |
-| `ENABLE_TUI` env var | Maps to `tui.enabled` (`env-map.ts:113`); defaults `true` (`config/sections/tui.ts:7`) | No runtime code reads `tui.enabled`; the shell starts under the `import.meta.main` guard regardless of the flag | `TASK-tui-enabled-config-flag-never-read.md` |
+| `ENABLE_TUI` env var | Maps to `tui.enabled` (`env-map.ts:113`); defaults `true` (`config/sections/tui.ts:7`) | Read at startup: `TUIApp` exits 0 with a status message when false | resolved |
 
 ## Feature research — coverage gap vs the web UI
 
@@ -146,6 +146,8 @@ Bound to this epic via the `**Epic:** epic-terminal-ui` header on each ticket.
 - [x] `TASK-tui-shell-testability.md` — `createTUIApp()` factory behind an `import.meta.main` guard, mirroring `createHarnessView`; importing any `src/tui/` module now constructs zero blessed objects, which unblocked the two bug-fix tickets stuck in untestable files
 - [x] `BUG-tui-app-getlogger-throws-when-running-standalone.md` — `createLogger({level:"warn"})` inside `createTUIApp()` before `new TUIApp()`
 - [x] `BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md` — `config.tui.sessionToken` threaded into `ChatWidget`; empty-string normalized to undefined
+- [x] `TASK-tui-slash-command-completion.md` — completion strip above the input box, fed by the live `GET /api/v1/commands` registry; Tab cycles, Enter commits
+- [x] `TASK-tui-enabled-config-flag-never-read.md` — `tui.enabled` now read at startup: status message + exit 0 when false
 
 ### Open
 
@@ -157,7 +159,6 @@ Bound to this epic via the `**Epic:** epic-terminal-ui` header on each ticket.
 
 - `TASK-tui-dedupe-api-base.md` — **premise no longer holds**: `API_BASE` is declared once at `src/tui/chat/api.ts:7`, re-exported by `harness/api.ts:8` and imported by `app.ts:16`, which is exactly what the ticket asks for. Re-scope or close rather than re-implement (blocked on P1 only because the edit is in untestable `app.ts`)
 - `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (blocked on P1)
-- `TASK-tui-enabled-config-flag-never-read.md` — decide wire / remove / document-and-remove-from-env-map
 - `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
 - `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)
 

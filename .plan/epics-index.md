@@ -318,7 +318,7 @@
 | Done | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 0 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
 | Not Started | Technical Comparison Charts (multi-image model/generation comparison) | Medium | Large | 0 | [epic-technical-comparison-charts.md](/.plan/epics/epic-technical-comparison-charts.md) |
-| In Progress | Terminal UI (TUI) | Low | Medium | 4/7 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
+| In Progress | Terminal UI (TUI) | Low | Medium | 6/9 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
 | In Progress | Testing & Quality Assurance (Permanently Ongoing) | High | Continuous | 0 | [epic-testing-qa.md](/.plan/epics/epic-testing-qa.md) |
 | In Progress | Testing, Benchmarking & Performance | High | Very High (split into 7 sub-epics) | 0 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | In Progress | Tooling Support & Improvement (Permanently Ongoing) | Medium | Continuous | 0 | [epic-tooling-improvement.md](/.plan/epics/epic-tooling-improvement.md) |

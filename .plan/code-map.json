@@ -38118,6 +38118,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
     }
   ],
@@ -39803,6 +39807,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-profanity-filter-hot-reload-per-chat-sensitivity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
     },
     {
       "kind": "ticket",
@@ -50044,6 +50052,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-shell-testability.md"
     }
   ],
@@ -50087,6 +50099,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
     },
     {
       "kind": "ticket",
@@ -50149,6 +50165,12 @@
       "source": "docs/spec/terminal-ui.md"
     }
   ],
+  "src/tui/chat-picker.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
+    }
+  ],
   "src/tui/chat.ts": [
     {
       "kind": "ticket",
@@ -50204,6 +50226,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-spec-sync.md"
     },
     {
@@ -50217,6 +50243,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/client-contract.md"
+    }
+  ],
+  "src/tui/chat/commands.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
     }
   ],
   "src/tui/chat/display.test.ts": [
@@ -50289,6 +50321,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-shell-testability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-slash-command-completion.md"
     },
     {
       "kind": "ticket",
