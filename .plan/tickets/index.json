@@ -31062,6 +31062,23 @@
     "title": "Classifier model survey: message/intent, memory ranking, emotion, toxicity",
     "type": "TASK"
   },
+  "TASK-CLEAN-PLAN-EPIC-TAG-METADATA-AND-WIRE-INTERCONNECTION-REPORT": {
+    "hash": "5a110cf",
+    "git_issue": "5a110cf",
+    "extid": "TASK-CLEAN-PLAN-EPIC-TAG-METADATA-AND-WIRE-INTERCONNECTION-REPORT",
+    "type": "TASK",
+    "title": "clean plan epic tag metadata and wire interconnection reporting",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "plan",
+      "cleanup",
+      "documentation"
+    ],
+    "source": ".plan/tickets/TASK-clean-plan-epic-tag-metadata-and-wire-interconnection-report.md",
+    "status": "in_progress"
+  },
   "TASK-CLEAN-TRANSFER-ORPHANS": {
     "epic": "epic-item-systems-unification",
     "extid": "TASK-CLEAN-TRANSFER-ORPHANS",
