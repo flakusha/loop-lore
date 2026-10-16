@@ -3,7 +3,8 @@
 
 # TASK: JSON view-models for gallery and chat list endpoints (egui client parity)
 
-**Status:** Done
+**Status:** In Progress
+**Scope:** plan: reopen TASK-json-view-models ticket falsely auto-closed as Done; work is unlanded on egui-json-view-models
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-experimental-egui-frontend
