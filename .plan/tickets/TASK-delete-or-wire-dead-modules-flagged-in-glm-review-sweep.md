@@ -62,9 +62,14 @@ Additionally `src/chat/folders.ts` keeps its live `formatFolderTree` export but 
 | `src/frontend/alpine/keynav-help.ts`, `src/frontend/alpine/mobile-composer.ts` | `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-mobile-sticky-bottom-composer`. Both already have live HTML partials binding `x-data="keynavHelp()"` / `x-data="mobileComposer()"`; deleting the `.ts` would break the partial at runtime |
 | `src/transport/index.ts`, `src/transport/test/harness.ts` | Contested — `epic-transport-expansion.md` lists both as Built deliverables |
 
-### Deleted tests
+### Test impact
 
-Tests covering only deleted code were removed with it: `src/routes/rpg/handler.test.ts` (tested the unmounted handler) and the `src/chat/folders.test.ts` `writeFolderSource` block (the `formatFolderTree` coverage stays).
+**No test file was deleted by this sweep** — verified: `git diff --name-status dev -- '*.test.ts'` shows no `D` rows on this branch. The modules removed here never had tests in the first place.
+
+- `src/routes/rpg/handler.test.ts` was never tracked on any branch (`git log --all --diff-filter=A` returns nothing); the unmounted handler shipped untested.
+- `src/chat/folders.ts` keeps its full live surface (`resetOrganizationStores`, `createFolder`, `listFolders`, `tagChat`, `untagChat`, `listChatTags`) and `src/chat/folders.test.ts` is unmodified — its two describe blocks (`createFolder`, `tagChat / untagChat`) cover exports that still exist.
+
+The dead `writeFolderSource` export had no test to remove. `src/characters/services/personality-service/utility-scorer.ts` survives its siblings' deletion: it is imported by the live `src/services/agency/quality-metrics.ts`, and `utility-scorer.test.ts` still covers it.
 
 ## Acceptance Criteria
 
@@ -75,6 +80,13 @@ Tests covering only deleted code were removed with it: `src/routes/rpg/handler.t
 - [x] No test coverage left pointing at deleted code
 - [x] Sibling branches (`wire-deadcode`, `options-object-params-return-type-exemption`) not collided with
 - [x] Documentation updated
+
+## Follow-ups found while verifying the wirings
+
+Both wired scripts were executed, not just added:
+
+- **`config:generate-domain-schemas` dirties the tree.** It exits 0 but rewrites 14 files in `schemas/` (+252/-164): the committed output is stale relative to the source schema modules (`$schema` http→https, plus `jwtSecret` / `csrfSecret` and other fields that exist in config but not in the committed JSON). The sibling `config:generate-schema` is fresh, so this is a one-off, not a repo convention. Nothing in `scripts/check/` asserts freshness for these. **Decision needed: regenerate and commit the schemas, or leave the generator unwired.** Wiring a script whose output does not match what is committed hands the next runner a permanent diff. Not fixed here — regenerating 14 committed schema files is a product-schema change, not a dead-code change.
+- **`smoke:app` exits 1 without a configured environment** (`NSFW_FLAG_REPORTER_HASH_SECRET ... is required in production`, from `src/config/load/pii-safety.ts:59`). Expected for a one-shot smoke run against a real config; `configs/*.example.toml` provide the template. Not a defect, recorded so the exit status is not mistaken for a broken wire.
 
 ## Verification
 
