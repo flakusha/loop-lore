@@ -143,6 +143,10 @@ export async function findExistingActor(
   const legacyRow = await database
     .selectFrom("actors",)
     .select("id",)
+    // A character named after its owner must never match the user's own
+    // `user`-type actor row created at registration — that row belongs to
+    // the user, not the character.
+    .where("actor_type", "=", "character",)
     .where("display_name", "=", legacy.seededAs,)
     .where((eb,) =>
       legacy.ownerId === null
