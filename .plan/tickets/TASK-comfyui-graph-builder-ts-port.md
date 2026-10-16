@@ -54,12 +54,19 @@ executes. Those are collected in the last AC; nothing here was run.
   **`codex.h3.still.v1`** (`studio_stills.py:213-215`), which is the form that
   persists in PNGs and sibling `.workflow.json` files
   (`studio_stills.py:294`). Both literals are real and the two are **not** the
-  same key — this port emits the builder-side `extra.h3_studio` form and must not
-  hardcode the H3 key: model-specific embedding is the template ticket's job
-  (`TASK-minimax-h3-stills-reference-template.md`).
+  same key. **Neither is this port's business.** `graph.py:54-55` hardcodes
+  `extra.h3_studio` / `codex.h3.studio.v2` inside `finish()`, and
+  `studio_stills.py:213-215` then relocates it to `extra.h3_studio_still` /
+  `codex.h3.still.v1`. The TypeScript port takes the embedding key and schema id
+  **from its caller** and emits whatever key the caller names; it contains no
+  `h3` literal of its own. Model-specific embedding is the template ticket's job
+  (`TASK-minimax-h3-stills-reference-template.md`), and that ticket is itself
+  conditional on the separate plugin repo existing.
 
-**It names no model.** No H3, no Dareties, no checkpoint. That is why it is worth
-porting and `studio_stills.py` is not.
+**It names no model.** No H3, no Dareties, no checkpoint — and the one place it
+comes close is the `extra.h3_studio` embedding key, which is exactly what the port
+must parameterise. That is why the builder is worth porting and `studio_stills.py`
+is not.
 
 Why port rather than call the sidecar: the sidecar registers **no node types**
 (`NODE_CLASS_MAPPINGS = {}` at `__init__.py:206`) and exposes 11 HTTP routes under
@@ -111,6 +118,10 @@ literal start index, even though the two call sites it came from are fixed.
 - [ ] `finish` emits the UI workflow and the API prompt from one pass, and the API
       prompt is embeddable as `extra_pnginfo.workflow` (the only key the sidecar
       uses — `web/stills.mjs:174-175`)
+- [ ] `finish` takes the embedding key and schema id **from its caller** — it
+      contains no `h3` literal. A test builds a graph with a caller-named `extra`
+      key (not `h3_studio`, not `h3_studio_still`) and the emitted graph carries
+      that key and only that key
 - [ ] The import-validation policy is ported: node-count ceiling, required sink
       classes, PNG-`prompt` vs embedded-prompt disagreement refusal, and
       **downgrade-not-fail** on a non-recompiling structured prompt
