@@ -263,7 +263,8 @@ Nothing below was executed; the review is a read.
   "selection cannot be confirmed" warning at `:200-201`. `START_HERE.md`
   corroborates: "Use an interactive Windows account if the Explorer button is
   desired."
-- **`profile_verified` is **not** advisory in the shipped product. [read]**
+- **`profile_verified` is not "advisory only" — it is advisory in the API and
+  enforced in the SPA. [read]**
   Server-side it is advisory: `reviewed_profile()` (`__init__.py:42-48`) reads
   `sys.argv` for `--fast`, `fp16_accumulation`, `--use-ck-attention`,
   `--reserve-vram`, the *absence* of `--lowvram`/`--novram`/`--cpu`/`--highvram`/
