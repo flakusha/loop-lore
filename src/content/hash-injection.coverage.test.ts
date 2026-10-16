@@ -2,19 +2,21 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Coverage tests for `injectContentHashes`
+ * Coverage tests for the content-hash injection module
  * (src/content/hash-injection.ts).
  *
- * Contract: hashed variants (name-<8hex>.js/css) replace bare /name.ext
+ * Contract: hashed variants (name-<8hash>.js/css) replace bare /name.ext
  * references in sibling HTML files; CDN URLs and unmatched references are
  * skipped; no hashed assets → no-op; files without replacements are not
- * rewritten.
+ * rewritten. Also pins the two exports the injection path is built on —
+ * HASH_ALPHABET (bun's hash alphabet) and buildHashLookup (logical →
+ * hashed map) — so a change to either cannot drift silently.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { injectContentHashes, } from "./hash-injection";
+import { buildHashLookup, HASH_ALPHABET, injectContentHashes, } from "./hash-injection";
 
 describe("injectContentHashes", () => {
   let dir: string;
@@ -129,6 +131,51 @@ describe("injectContentHashes", () => {
       // `colorful` contains o/l/u — not a valid bun base32 hash.
       expect(result,).toEqual({ replaced: 0, skipped: 0, },);
       expect(readFileSync(htmlPath, "utf8",),).toContain('href="/theme.css"',);
+    } finally {
+      rmSync(sub, { recursive: true, force: true, },);
+    }
+  });
+});
+
+describe("HASH_ALPHABET", () => {
+  test("accepts bun's 8-char base32 hash and rejects the ambiguous i/l/o/u", () => {
+    // Same shape tests/e2e/helpers/browser-frontend-build.ts builds to spot
+    // a ready hashed bundle.
+    const pattern = new RegExp(`^alpine-init-(${HASH_ALPHABET}{8})\\.js$`,);
+    expect(pattern.test("alpine-init-tx4kdwfm.js",),).toBe(true,);
+    for (const ch of ["i", "l", "o", "u",]) {
+      expect(pattern.test(`alpine-init-aaaaaaa${ch}.js`,),).toBe(false,);
+    }
+  });
+});
+
+describe("buildHashLookup", () => {
+  test("maps logical paths to hashed basenames and ignores everything else", () => {
+    const sub = mkdtempSync(join(tmpdir(), "loop-lore-hash-lookup-",),);
+    try {
+      mkdirSync(join(sub, "css",), { recursive: true, },);
+      writeFileSync(join(sub, "app-tx4kdwfm.js",), "// stub",);
+      writeFileSync(join(sub, "css", "style-de1b62f0.css",), "/* stub */",);
+      writeFileSync(join(sub, "plain.js",), "// unhashed",);
+      writeFileSync(join(sub, "page.html",), "<!doctype html>",);
+
+      const lookup = buildHashLookup(sub,);
+
+      // Values keep their root-relative path (the injection prefix already
+      // carries the leading slash), so a nested asset maps to a nested name.
+      expect(lookup.get("app.js",),).toBe("app-tx4kdwfm.js",);
+      expect(lookup.get("css/style.css",),).toBe("css/style-de1b62f0.css",);
+      // Unhashed siblings and HTML never enter the map — only 8-char hashes.
+      expect(lookup.size,).toBe(2,);
+    } finally {
+      rmSync(sub, { recursive: true, force: true, },);
+    }
+  });
+
+  test("missing directory yields an empty lookup", () => {
+    const sub = mkdtempSync(join(tmpdir(), "loop-lore-hash-missing-",),);
+    try {
+      expect(buildHashLookup(join(sub, "does-not-exist",),),).toEqual(new Map(),);
     } finally {
       rmSync(sub, { recursive: true, force: true, },);
     }
