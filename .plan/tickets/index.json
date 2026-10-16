@@ -51226,6 +51226,42 @@
     "status": "Not Started",
     "git_issue": "9bde045"
   },
+  "TASK-SIDECAR-HARDCODED-LITERALS-CONFIGURABLE-DEFAULTS": {
+    "hash": "pending",
+    "extid": "TASK-SIDECAR-HARDCODED-LITERALS-CONFIGURABLE-DEFAULTS",
+    "type": "TASK",
+    "title": "Sidecar hardcoded literals become configurable defaults",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-reference-conditioned-generation`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sidecar-hardcoded-literals-configurable-defaults.md",
+    "status": "Blocked"
+  },
+  "TASK-SIDECAR-INSTALLER-NODE-REGISTRATION": {
+    "hash": "pending",
+    "extid": "TASK-SIDECAR-INSTALLER-NODE-REGISTRATION",
+    "type": "TASK",
+    "title": "Sidecar gains a real installer and node registration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-reference-conditioned-generation`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sidecar-installer-node-registration.md",
+    "status": "Blocked"
+  },
+  "TASK-SIDECAR-REVEAL-CROSS-PLATFORM": {
+    "hash": "pending",
+    "extid": "TASK-SIDECAR-REVEAL-CROSS-PLATFORM",
+    "type": "TASK",
+    "title": "Sidecar reveal action stops shelling out to explorer.exe",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-reference-conditioned-generation`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sidecar-reveal-cross-platform.md",
+    "status": "Blocked"
+  },
   "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS": {
     "epic": "epic-asset-support-expansion",
     "extid": "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS",
