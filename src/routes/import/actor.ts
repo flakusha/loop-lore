@@ -69,7 +69,7 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
       data_raw: opts.rawSource ?? null,
       alternate_greetings: alternateGreetings,
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     },)
     .execute();
 

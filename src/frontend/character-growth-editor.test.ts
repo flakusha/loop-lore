@@ -97,7 +97,7 @@ describe("characterGrowthEditor saveMode", () => {
   test("PUTs growthMode + llmAssistEnabled and reports saved", async () => {
     calls = [];
     const c = editor();
-    c.dataVersion = 7;
+    c.contentVersion = 7;
     await c.saveMode();
     expect(calls[0]!.url,).toBe("/api/v1/actors/a1",);
     expect(calls[0]!.opts.method,).toBe("PUT",);
@@ -105,7 +105,7 @@ describe("characterGrowthEditor saveMode", () => {
     expect(JSON.parse(String(calls[0]!.opts.body,),),).toEqual({
       growthMode: "dynamic",
       llmAssistEnabled: false,
-      dataVersion: 7,
+      contentVersion: 7,
     },);
 
     expect(c.message,).toBe("Saved.",);

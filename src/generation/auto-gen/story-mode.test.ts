@@ -166,7 +166,7 @@ async function seedStoryChat(db: Kysely<DB>,): Promise<void> {
       user_id: "user-1",
       owner_id: "user-1",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },)

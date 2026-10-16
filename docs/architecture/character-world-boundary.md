@@ -59,7 +59,7 @@ actually send — derived from the real write paths:
   the same camelCase name maps to a character column (`actors.description`,
   `actor_items.name`) and a world column (`worlds.description`,
   `worlds.name`). They are accepted by both APIs and never flagged.
-- **Protocol metadata** — `dataVersion` (optimistic concurrency) — is not a
+- **Protocol metadata** — `contentVersion` (optimistic concurrency) — is not a
   domain field and is exempt on both sides.
 
 ## The 422 guard

@@ -739,7 +739,7 @@ export const RequestResultsSchema = t.Object({
   completed_at: t.Optional(t.String(),),
   offloaded_at: t.Optional(t.String(),),
   offload_path: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -756,7 +756,7 @@ export const SeedAuditSchema = t.Object({
 // ── sessions ────────────────────────────────────────────
 export const SessionsSchema = t.Object({
   user_id: t.String(),
-  token_hash: t.String(),
+  secret_hash: t.String(),
   expires_at: t.String(),
   ip: t.Optional(t.String(),),
   user_agent: t.Optional(t.String(),),
@@ -797,13 +797,13 @@ export const UserApiKeysSchema = t.Object({
 export const UsersSchema = t.Object({
   username: t.String(),
   display_name: t.String(),
-  password_hash: t.Optional(t.String(),),
+  secret_hash: t.Optional(t.String(),),
   role: t.Optional(UserRoleSchema,),
   status: t.Optional(UserStatusSchema,),
   settings: t.Optional(t.String(),),
   birth_date: t.Optional(t.String(),),
   age_gate_accepted_at: t.Optional(t.String(),),
-  format_version: t.Optional(t.Number(),),
+  row_version: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   last_seen_at: t.Optional(t.String(),),
   encryption_secret: t.Optional(t.String(),),
@@ -847,7 +847,7 @@ export const AssetsSchema = t.Object({
   encrypted_key_id: t.Optional(t.String(),),
   alpha_status: t.Optional(AssetAlphaStatusSchema,),
   content_hash: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   thumbnail_path: t.Optional(t.String(),),
 },);
@@ -900,7 +900,7 @@ export const LocationsSchema = t.Object({
   coord_z: t.Optional(t.Number(),),
   current_route_id: t.Optional(t.String(),),
   travel_progress: t.Optional(t.Number(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -975,7 +975,7 @@ export const WorldLoreEntriesSchema = t.Object({
   source_count: t.Optional(t.Number(),),
   distortion_level: t.Optional(t.Number(),),
   disputed: t.Optional(t.Number(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -1049,7 +1049,7 @@ export const WorldsSchema = t.Object({
   updated_at: t.Optional(t.String(),),
   nsfw_override: t.Optional(t.String(),),
   rpg_enabled: t.Optional(t.Number(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   rpg_dice: t.Optional(t.Number(),),
   rpg_checks: t.Optional(t.Number(),),
@@ -1150,7 +1150,7 @@ export const ActorLoreEntriesSchema = t.Object({
   key_groups: t.Optional(t.String(),),
   scan_depth: t.Optional(t.Number(),),
   activation_chance: t.Optional(t.Number(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -1177,7 +1177,7 @@ export const ActorsSchema = t.Object({
   system_prompt: t.Optional(t.String(),),
   agent_type: t.Optional(AgentTypeSchema,),
   settings: t.Optional(t.String(),),
-  format_version: t.Optional(t.Number(),),
+  row_version: t.Optional(t.Number(),),
   visibility: t.Optional(t.String(),),
   welcome_message: t.Optional(t.String(),),
   personality: t.Optional(t.String(),),
@@ -1278,7 +1278,7 @@ export const CharacterAvatarConfigSchema = t.Object({
   updated_at: t.String(),
   selection_rule: t.Optional(t.String(),),
   weights: t.Optional(t.String(),),
-  fallback_chain: t.Optional(t.String(),),
+  fallback_order: t.Optional(t.String(),),
 },);
 
 // ── character_avatars ────────────────────────────────────────────
@@ -1521,7 +1521,8 @@ export const CharacterStatsSchema = t.Object({
   death_save_failures: t.Optional(t.Number(),),
   xp: t.Optional(t.Number(),),
   xp_to_next: t.Optional(t.Number(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   behavior_profile: t.Optional(t.String(),),
@@ -1575,7 +1576,7 @@ export const CharactersSchema = t.Object({
   updated_at: t.Optional(t.String(),),
   agent_role: t.Optional(t.String(),),
   federation_consent: t.Optional(t.Number(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -1740,7 +1741,7 @@ export const ChatsSchema = t.Object({
   quick_replies: t.Optional(t.String(),),
   prompt_override: t.Optional(t.String(),),
   output_style_preset: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   custom_instructions: t.Optional(t.String(),),
   prompt_template_id: t.Optional(t.String(),),
@@ -1833,7 +1834,7 @@ export const MessagesSchema = t.Object({
   edited_at: t.Optional(t.String(),),
   attachments: t.Optional(t.String(),),
   archived_at: t.Optional(t.String(),),
-  format_version: t.Optional(t.Number(),),
+  row_version: t.Optional(t.Number(),),
   section_id: t.Optional(t.String(),),
   tool_calls: t.Optional(t.String(),),
   thinking: t.Optional(t.String(),),
@@ -1843,7 +1844,7 @@ export const MessagesSchema = t.Object({
   e2e_sender_eph_pub_jwk: t.Optional(t.String(),),
   e2e_chain_index: t.Optional(t.Number(),),
   content_plaintext: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   merge_id: t.Optional(t.String(),),
 },);
@@ -1932,7 +1933,7 @@ export const PersonasSchema = t.Object({
   is_default: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-  format_version: t.Optional(t.Number(),),
+  row_version: t.Optional(t.Number(),),
   temperature: t.Optional(t.Number(),),
   max_tokens: t.Optional(t.Number(),),
   model: t.Optional(t.String(),),
@@ -1952,7 +1953,7 @@ export const ItemsSchema = t.Object({
   weight: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -2005,7 +2006,7 @@ export const QuestsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   completed_at: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -2019,7 +2020,7 @@ export const ShadowNotesSchema = t.Object({
   visibility: t.Optional(ShadowNoteVisibilitySchema,),
   expires_at: t.Optional(t.String(),),
   author_type: t.Optional(ShadowNoteAuthorTypeSchema,),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   trigger_condition: t.Optional(t.String(),),
   revealed_to: t.Optional(t.String(),),
@@ -2034,7 +2035,7 @@ export const WhitenotesSchema = t.Object({
   priority: t.Optional(t.Number(),),
   scope: t.Optional(WhiteneoteScopeSchema,),
   expires_at: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   message_id: t.Optional(t.String(),),
 },);
@@ -2107,7 +2108,7 @@ export const CraftingRecipesSchema = t.Object({
   station_type_required: t.Optional(CraftingStationTypeSchema,),
   discovered_by_default: t.Optional(t.Number(),),
   tags: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -2381,7 +2382,7 @@ export const BlogPostsSchema = t.Object({
   metadata: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-  data_version: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
 },);
 
@@ -2676,7 +2677,7 @@ export const E2eSkippedMessageKeysSchema = t.Object({
 // ── message_search_tokens ────────────────────────────────────────────
 export const MessageSearchTokensSchema = t.Object({
   message_id: t.String(),
-  token: t.String(),
+  term: t.String(),
   scope: t.String(),
 },);
 

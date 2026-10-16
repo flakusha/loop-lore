@@ -83,11 +83,11 @@ export async function ensureSystemUser(database: Kysely<DB>,): Promise<string> {
       id: SYSTEM_USER_ID,
       username: "system",
       display_name: "System",
-      password_hash: null,
+      secret_hash: null,
       role: UserRole.Admin,
       status: UserStatus.Active,
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     },)
     .execute();
 

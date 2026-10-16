@@ -28,7 +28,7 @@ import type { HandlerOpts, } from "./types";
 import { ShadowNoteStatus, ShadowNoteVisibility, } from "../../db/enums-gm";
 import { assertValidWrite, } from "../../db/validators/enforce";
 
-// Base `data_version` 0 projection for `shadow_notes` (columns added by
+// Base `content_version` 0 projection for `shadow_notes` (columns added by
 // migration 034). GM-authored content, so integrity tracking matters.
 registerContentVersion("shadow_notes", 0, [
   "chat_id",

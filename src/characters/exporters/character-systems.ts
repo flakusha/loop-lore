@@ -122,7 +122,7 @@ export async function exportCharacterSystems(
         ? {
           selectionRule: avatarConfig.selectionRule,
           weights: avatarConfig.weights,
-          fallbackChain: avatarConfig.fallbackChain,
+          fallbackOrder: avatarConfig.fallbackOrder,
         }
         : undefined,
     };

@@ -146,7 +146,7 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
       owner_id: userId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },)
@@ -171,7 +171,7 @@ async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
       owner_id: null,
       agent_type: "ai",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },)

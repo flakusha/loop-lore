@@ -36,7 +36,7 @@ The `actors` table itself lives in `schema-core.ts`.
 
 ## Data Versioning
 
-Every actor record carries a `data_version` integer that tracks which iteration
+Every actor record carries a `content_version` integer that tracks which iteration
 of the internal schema was used to create it. This enables **forward-compatible
 evolution**: old records continue working when new columns are added, and new
 records are stamped with the latest version.
@@ -65,12 +65,12 @@ breaks existing ones. The current version is always the latest.
 
 ### How It Works (post-stabilisation)
 
-During active development, every actor is `data_version = 0`. Once stabilised, version progression follows this timeline:
+During active development, every actor is `content_version = 0`. Once stabilised, version progression follows this timeline:
 
 1. **Record created** — Timestamp `record.created_at` marks the starting point
-2. **`data_version = 0`** (pre-versioning) — Only basic fields present: `description`, `system_prompt`. New columns are `NULL` — application handles gracefully (no welcome message, no personality snippet)
-3. **`data_version = 1`** (card fields) — `welcome_message`, `personality`, `scenario`, `import_spec="v2"` columns populated. No memories/lore/items yet
-4. **`data_version = 4`** (everything) — All fields present: `welcome_message`, `personality`, `scenario`, `import_spec="v2"`, `items=[...]`, `lore=[...]`, `memories=[...]`
+2. **`content_version = 0`** (pre-versioning) — Only basic fields present: `description`, `system_prompt`. New columns are `NULL` — application handles gracefully (no welcome message, no personality snippet)
+3. **`content_version = 1`** (card fields) — `welcome_message`, `personality`, `scenario`, `import_spec="v2"` columns populated. No memories/lore/items yet
+4. **`content_version = 4`** (everything) — All fields present: `welcome_message`, `personality`, `scenario`, `import_spec="v2"`, `items=[...]`, `lore=[...]`, `memories=[...]`
 
 **Backward compatibility:** Old records with missing columns render `NULL` defaults gracefully. New records under full schema contain everything.
 
@@ -84,7 +84,7 @@ During active development, every actor is `data_version = 0`. Once stabilised, v
    column on an old record, it applies a sensible default (empty string, empty
    array, base prompt, etc.) rather than crashing.
 4. **Migrate on write, not just on read.** When an old record is updated by the
-   user, bump its `data_version` to current. This spreads the migration cost
+   user, bump its `content_version` to current. This spreads the migration cost
    across edits rather than requiring a one-time backfill.
 
 ### Versioning vs Versions ("Swipes")
@@ -93,7 +93,7 @@ These are three distinct concepts that should not be confused:
 
 | Concept                       | What it tracks                                | Example                                                                | Stored where                                                        |
 | ----------------------------- | --------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Data version**              | Internal schema iteration of the record       | `data_version = 3`                                                     | `actors.data_version`                                               |
+| **Data version**              | Internal schema iteration of the record       | `content_version = 3`                                                     | `actors.content_version`                                               |
 | **Card spec version**         | External import/export format                 | `import_spec = 'chara_card_v2'` + `settings.importSpecVersion = '2.0'` | `actors.import_spec` + `settings` JSON                              |
 | **Content versions (swipes)** | Multiple alternate messages for the same slot | `alternate_greetings[0]`, `alternate_greetings[1]`                     | `actors.alternate_greetings` (JSON array) or `message_swipes` table |
 
@@ -109,7 +109,7 @@ Example to make it concrete:
 
 ```
 Actor "Lyra" was imported from a SillyTavern V2 card:
-  data_version = 1     (card fields available, no memories/lore/items yet)
+  content_version = 1     (card fields available, no memories/lore/items yet)
   import_spec  = 'chara_card_v2'
   settings.importSpecVersion = '2.0'
   character_version = '1.3'             ← creator's own versioning
@@ -121,12 +121,12 @@ Actor "Lyra" was imported from a SillyTavern V2 card:
 ```
 
 After a conversation, the system extracts memories and the user adds lore:
-`data_version → 3` (bumped on write — lorebook entries exist)
+`content_version → 3` (bumped on write — lorebook entries exist)
 
 After the user adds an item to her inventory:
-`data_version → 4` (bumped on write — items table populated)
+`content_version → 4` (bumped on write — items table populated)
 
-The three swipes in `alternate_greetings` are all at `data_version = 4` —
+The three swipes in `alternate_greetings` are all at `content_version = 4` —
 versioning didn't change, only the content did.
 
 ### Backfill Strategy

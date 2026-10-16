@@ -65,7 +65,7 @@ beforeAll(async () => {
     id: USER_ID,
     username: USER_ID,
     display_name: USER_ID,
-    password_hash: "dummy",
+    secret_hash: "dummy",
   },).execute();
 },);
 

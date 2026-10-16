@@ -62,7 +62,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
         owner_id: ownerId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -249,7 +249,7 @@ describe("locationRoutes — list q filter", () => {
         owner_id: ownerId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

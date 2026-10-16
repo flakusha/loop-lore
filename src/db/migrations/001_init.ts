@@ -161,7 +161,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("completed_at", "text",)
     .addColumn("offloaded_at", "text",)
     .addColumn("offload_path", "text",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("content_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 
@@ -180,7 +180,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .createTable("sessions",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
     .addColumn("user_id", "text", (col,) => col.notNull().references("users.id",),)
-    .addColumn("token_hash", "text", (col,) => col.notNull(),)
+    .addColumn("secret_hash", "text", (col,) => col.notNull(),)
     .addColumn("ip", "text",)
     .addColumn("user_agent", "text",)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
@@ -224,13 +224,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("id", "text", (col,) => col.primaryKey(),)
     .addColumn("username", "text", (col,) => col.notNull().unique(),)
     .addColumn("display_name", "text", (col,) => col.notNull(),)
-    .addColumn("password_hash", "text",)
+    .addColumn("secret_hash", "text",)
     .addColumn("role", "text", (col,) => col.notNull().defaultTo("user",),)
     .addColumn("status", "text", (col,) => col.notNull().defaultTo("active",),)
     .addColumn("settings", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("birth_date", "text",)
     .addColumn("age_gate_accepted_at", "text",)
-    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("row_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("last_seen_at", "text",)
     .addCheckConstraint(
@@ -312,9 +312,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 
   await database.schema
-    .createIndex("idx_sessions_token_hash",)
+    .createIndex("idx_sessions_secret_hash",)
     .on("sessions",)
-    .column("token_hash",)
+    .column("secret_hash",)
     .execute();
 
   await database.schema
@@ -424,7 +424,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("encrypted_key_id", "text",)
     .addColumn("alpha_status", "text", (col,) => col.notNull().defaultTo("unknown",),)
     .addColumn("content_hash", "text",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("content_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 
@@ -668,7 +668,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("nsfw_override", "text",)
     .addColumn("rpg_enabled", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("content_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 
@@ -932,7 +932,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("system_prompt", "text",)
     .addColumn("agent_type", "text", (col,) => col.notNull().defaultTo("none",),)
     .addColumn("settings", "text", (col,) => col.notNull().defaultTo("{}",),)
-    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("row_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("visibility", "text", (col,) => col.notNull().defaultTo("private",),)
     .addColumn("welcome_message", "text",)
     .addColumn("personality", "text",)
@@ -1155,7 +1155,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",).onDelete("cascade",),)
     .addColumn("selection_rule", "text", (col,) => col.notNull().defaultTo("emotion_first",),)
     .addColumn("weights", "text", (col,) => col.defaultTo("{}",),)
-    .addColumn("fallback_chain", "text", (col,) => col.defaultTo("[]",),)
+    .addColumn("fallback_order", "text", (col,) => col.defaultTo("[]",),)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .addColumn("updated_at", "text", (col,) => col.notNull(),)
     .addUniqueConstraint("uq_avatar_config_actor", ["actor_id",],)
@@ -1427,7 +1427,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("death_save_failures", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("xp", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("xp_to_next", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("content_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("behavior_profile", "text", (col,) => col.defaultTo("companion",),)
@@ -1485,7 +1486,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("agent_role", "text",)
     .addColumn("federation_consent", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("content_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 
@@ -1785,7 +1786,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("quick_replies", "text",)
     .addColumn("prompt_override", "text",)
     .addColumn("output_style_preset", "text",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("content_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .addColumn("custom_instructions", "text",)
     .addCheckConstraint("ck_chats_type", sql`type IN ('direct', 'group')`,)
@@ -1878,7 +1879,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("edited_at", "text",)
     .addColumn("attachments", "text",)
     .addColumn("archived_at", "text",)
-    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("row_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("section_id", "text", (col,) => col.references("chat_sections.id",).onDelete("set null",),)
     .addColumn("tool_calls", "text",)
     .addColumn("thinking", "text",)
@@ -1888,7 +1889,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("e2e_sender_eph_pub_jwk", "text",)
     .addColumn("e2e_chain_index", "integer",)
     .addColumn("content_plaintext", "text",)
-    .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("content_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
     .execute();
 
@@ -2316,7 +2317,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("is_default", "text", (col,) => col.notNull().defaultTo("not_default",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
-    .addColumn("format_version", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("row_version", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("temperature", "real",)
     .addColumn("max_tokens", "integer",)
     .addColumn("model", "text",)
@@ -3691,15 +3692,15 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createTable("message_search_tokens",)
     .addColumn("message_id", "text", (col,) => col.notNull().references("messages.id",).onDelete("cascade",),)
-    .addColumn("token", "text", (col,) => col.notNull(),)
+    .addColumn("term", "text", (col,) => col.notNull(),)
     .addColumn("scope", "text", (col,) => col.notNull(),)
-    .addPrimaryKeyConstraint("pk_message_search_tokens", ["message_id", "token",],)
+    .addPrimaryKeyConstraint("pk_message_search_tokens", ["message_id", "term",],)
     .execute();
 
   await database.schema
     .createIndex("idx_message_search_tokens_lookup",)
     .on("message_search_tokens",)
-    .columns(["scope", "token",],)
+    .columns(["scope", "term",],)
     .execute();
 
   // --- parts/019_trade_requested_materials.ts ---

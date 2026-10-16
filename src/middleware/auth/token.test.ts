@@ -92,7 +92,7 @@ async function insertSession(
   await db.insertInto("sessions",).values({
     id,
     user_id: userId,
-    token_hash: tokenHash,
+    secret_hash: tokenHash,
     ip: "127.0.0.1",
     user_agent: "test",
     expires_at: expiresAt,

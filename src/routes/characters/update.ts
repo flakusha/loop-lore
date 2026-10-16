@@ -32,7 +32,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
     .put(
       `${prefix}/actors/:actorId`,
       async (ctx: any,) => {
-        const { settings, dataVersion, } = ctx.body as { settings?: unknown; dataVersion?: number };
+        const { settings, contentVersion, } = ctx.body as { settings?: unknown; contentVersion?: number };
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -55,16 +55,16 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         // CHAR-1: optimistic concurrency version is REQUIRED. Without it,
         // concurrent edits silently overwrite each other (last-write-wins).
-        // Clients send `dataVersion` from the prior GET response.
-        if (dataVersion === undefined) {
+        // Clients send `contentVersion` from the prior GET response.
+        if (contentVersion === undefined) {
           return jsonError({
-            message: ctx.t?.("characters.dataVersionRequired",) ??
-              "dataVersion is required for concurrent-edit safety. Re-fetch the actor and retry.",
+            message: ctx.t?.("characters.contentVersionRequired",) ??
+              "contentVersion is required for concurrent-edit safety. Re-fetch the actor and retry.",
             status: HttpStatus.BadRequest,
           },);
         }
 
-        if (dataVersion !== actor.format_version) {
+        if (contentVersion !== actor.row_version) {
           return jsonError({
             message: "Version conflict: record was modified by another process",
             status: HttpStatus.Conflict,
@@ -115,7 +115,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           database,
           "actors",
           ctx.params.actorId,
-          actor.format_version,
+          actor.row_version,
           updates,
         );
 
@@ -123,7 +123,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonError({ message: result.error ?? "Update failed", status: HttpStatus.Conflict, },);
         }
 
-        return jsonResponse({ ok: true, dataVersion: actor.format_version + 1, },);
+        return jsonResponse({ ok: true, contentVersion: actor.row_version + 1, },);
       },
       {
         params: ActorIdParams,

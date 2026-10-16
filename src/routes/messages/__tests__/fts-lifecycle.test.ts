@@ -45,7 +45,7 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -264,7 +264,7 @@ describe("insertMessages helper (used by tests + migrateChat carry) writes conte
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

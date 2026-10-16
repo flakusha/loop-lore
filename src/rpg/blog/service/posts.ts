@@ -16,7 +16,7 @@ import {
   type UpdateBlogPostInput,
 } from "./types";
 
-// Base `data_version` 0 projection for `blog_posts` (columns added by
+// Base `content_version` 0 projection for `blog_posts` (columns added by
 // migration 034). Declared beside the module that creates and edits posts.
 registerContentVersion("blog_posts", 0, [
   "author_id",

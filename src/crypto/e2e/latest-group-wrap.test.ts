@@ -34,7 +34,7 @@ async function seedActor(db: Kysely<DB>, actorId: string,): Promise<void> {
     id: userId,
     username: userId,
     display_name: userId,
-    password_hash: "dummy",
+    secret_hash: "dummy",
   },).execute();
 
   await db.insertInto("actors",).values({
@@ -48,7 +48,7 @@ async function seedActor(db: Kysely<DB>, actorId: string,): Promise<void> {
     import_spec: "raw",
     data_source_format: "json",
     data_raw: null,
-    format_version: 0,
+    row_version: 0,
     visibility: "private",
   },).execute();
 }

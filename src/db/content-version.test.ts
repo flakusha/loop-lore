@@ -48,7 +48,7 @@ describe("registerContentVersion", () => {
     expect(() => registerContentVersion("messages", 1, [],)).toThrow(/empty/,);
   });
 
-  test("data_version 0 is a valid base (pre-ship); negative/fractional invalid", () => {
+  test("content_version 0 is a valid base (pre-ship); negative/fractional invalid", () => {
     registerContentVersion("messages", 0, ["a",],);
     expect(__peekContentVersionRegistry().get("messages",)?.get(0,),).toEqual(["a",],);
     expect(() => registerContentVersion("messages", -1, ["a",],)).toThrow(/invalid/,);
@@ -61,7 +61,7 @@ describe("getContentEnvelope", () => {
     registerContentVersion("messages", 1, ["chat_id", "body",],);
     const env = getContentEnvelope(asTableName("messages",), {
       id: "m1",
-      data_version: 1,
+      content_version: 1,
       chat_id: "c1",
       body: "hi",
       metadata: "extra", // ignored (not in projection)
@@ -71,19 +71,19 @@ describe("getContentEnvelope", () => {
   });
 
   test("returns null for unknown table", () => {
-    expect(getContentEnvelope(asTableName("messages",), { id: "x", data_version: 1, },),).toBeNull();
+    expect(getContentEnvelope(asTableName("messages",), { id: "x", content_version: 1, },),).toBeNull();
   });
 
-  test("returns null for unknown data_version", () => {
+  test("returns null for unknown content_version", () => {
     registerContentVersion("messages", 1, ["chat_id",],);
-    expect(getContentEnvelope(asTableName("messages",), { id: "x", data_version: 99, chat_id: "c", },),).toBeNull();
+    expect(getContentEnvelope(asTableName("messages",), { id: "x", content_version: 99, chat_id: "c", },),).toBeNull();
   });
 
   test("skips undefined values", () => {
     registerContentVersion("messages", 1, ["chat_id", "body",],);
     const env = getContentEnvelope(asTableName("messages",), {
       id: "x",
-      data_version: 1,
+      content_version: 1,
       chat_id: "c",
       // body is undefined
       body: undefined,
@@ -96,7 +96,7 @@ describe("getContentEnvelope", () => {
 describe("computeRowHash", () => {
   test("produces same hash for same input", () => {
     registerContentVersion("messages", 1, ["chat_id", "body",],);
-    const row = { id: "m1", data_version: 1, chat_id: "c1", body: "hi", };
+    const row = { id: "m1", content_version: 1, chat_id: "c1", body: "hi", };
     expect(computeRowHash(asTableName("messages",), row,),).toBe(
       computeRowHash(asTableName("messages",), row,),
     );
@@ -104,21 +104,21 @@ describe("computeRowHash", () => {
 
   test("different row content → different hash", () => {
     registerContentVersion("messages", 1, ["chat_id", "body",],);
-    const a = computeRowHash(asTableName("messages",), { id: "m1", data_version: 1, chat_id: "c1", body: "hi", },);
-    const b = computeRowHash(asTableName("messages",), { id: "m1", data_version: 1, chat_id: "c1", body: "ho", },);
+    const a = computeRowHash(asTableName("messages",), { id: "m1", content_version: 1, chat_id: "c1", body: "hi", },);
+    const b = computeRowHash(asTableName("messages",), { id: "m1", content_version: 1, chat_id: "c1", body: "ho", },);
     expect(a,).not.toBe(b,);
   });
 
   test("returns null when projection missing", () => {
-    const h = computeRowHash(asTableName("messages",), { id: "x", data_version: 1, },);
+    const h = computeRowHash(asTableName("messages",), { id: "x", content_version: 1, },);
     expect(h,).toBeNull();
   });
 
-  test("bumping data_version changes the hash projection path", () => {
+  test("bumping content_version changes the hash projection path", () => {
     registerContentVersion("messages", 1, ["chat_id",],);
     registerContentVersion("messages", 2, ["chat_id", "body",],);
-    const v1 = computeRowHash(asTableName("messages",), { id: "m1", data_version: 1, chat_id: "c1", },);
-    const v2 = computeRowHash(asTableName("messages",), { id: "m1", data_version: 2, chat_id: "c1", body: "x", },);
+    const v1 = computeRowHash(asTableName("messages",), { id: "m1", content_version: 1, chat_id: "c1", },);
+    const v2 = computeRowHash(asTableName("messages",), { id: "m1", content_version: 2, chat_id: "c1", body: "x", },);
     expect(v1,).not.toBe(v2,);
   });
 });
@@ -133,7 +133,7 @@ describe("runBatchRefresh", () => {
     sqlite = new Database(":memory:",);
     db = new Kysely({ dialect: createSqliteDialect(sqlite,), },);
     sqlite.run(
-      `CREATE TABLE ${TABLE} (id TEXT PRIMARY KEY, data_version INTEGER NOT NULL, body TEXT NOT NULL, record_hash TEXT NOT NULL DEFAULT '')`,
+      `CREATE TABLE ${TABLE} (id TEXT PRIMARY KEY, content_version INTEGER NOT NULL, body TEXT NOT NULL, record_hash TEXT NOT NULL DEFAULT '')`,
     );
   },);
 
@@ -147,10 +147,10 @@ describe("runBatchRefresh", () => {
     sqlite.run(`DELETE FROM ${TABLE}`,);
   },);
 
-  function insertRow(id: string, dataVersion: number, body: string, recordHash: string,): void {
+  function insertRow(id: string, contentVersion: number, body: string, recordHash: string,): void {
     sqlite.run(
-      `INSERT INTO ${TABLE} (id, data_version, body, record_hash) VALUES (?, ?, ?, ?)`,
-      [id, dataVersion, body, recordHash,],
+      `INSERT INTO ${TABLE} (id, content_version, body, record_hash) VALUES (?, ?, ?, ?)`,
+      [id, contentVersion, body, recordHash,],
     );
   }
 
@@ -162,7 +162,7 @@ describe("runBatchRefresh", () => {
     registerContentVersion(TABLE, 0, ["body",],);
     insertRow("r1", 0, "alpha", "stale",);
     insertRow("r2", 0, "beta", "stale",);
-    // data_version 1 has no registered projection → must be skipped, not hashed.
+    // content_version 1 has no registered projection → must be skipped, not hashed.
     insertRow("r3", 1, "gamma", "",);
 
     const first = await runBatchRefresh(db, TABLE,);
@@ -177,12 +177,12 @@ describe("runBatchRefresh", () => {
     expect(r3.record_hash,).toBe("",);
   });
 
-  test("dataVersion filter only refreshes rows at that version", async () => {
+  test("contentVersion filter only refreshes rows at that version", async () => {
     registerContentVersion(TABLE, 0, ["body",],);
     insertRow("f1", 0, "delta", "stale",);
     insertRow("f2", 3, "omega", "stale",);
 
-    const result = await runBatchRefresh(db, TABLE, { dataVersion: 0, },);
+    const result = await runBatchRefresh(db, TABLE, { contentVersion: 0, },);
     expect(result,).toEqual({ scanned: 1, updated: 1, skipped: 0, },);
     const f2 = sqlite.query(`SELECT record_hash FROM ${TABLE} WHERE id = 'f2'`,).get() as { record_hash: string };
     expect(f2.record_hash,).toBe("stale",);

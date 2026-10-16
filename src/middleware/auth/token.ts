@@ -15,13 +15,13 @@ import { parseExpiryMs, } from "../../utils/date";
 import { getOrCreateSoloUserForAuth, } from "./solo-user";
 
 /**
- * Hash a token to the hex sha256 fingerprint stored in `sessions.token_hash`.
+ * Hash a token to the hex sha256 fingerprint stored in `sessions.secret_hash`.
  *
  * Uses `Bun.CryptoHasher` (BoringSSL-backed, faster than `node:crypto.createHash`
  * for synchronous one-shot digests) but emits byte-identical output — verified
  * against the legacy `crypto.createHash("sha256").update(t).digest("hex")` form
  * with test vectors like `"hello-token-1"` (both produce
- * `7961a7f6...`). Existing `token_hash` rows remain readable.
+ * `7961a7f6...`). Existing `secret_hash` rows remain readable.
  * @param token
  */
 function sha256Hex(token: string,): string {
@@ -44,7 +44,7 @@ export function extractBearerToken(request: Request,): string | null {
 /**
  * Resolve the acting user id from a request, falling back to the solo user.
  *
- * Looks up the `ll_token` cookie, hashes it to a session `token_hash`, and
+ * Looks up the `ll_token` cookie, hashes it to a session `secret_hash`, and
  * returns the session's `user_id`. If no token is present or no session
  * matches, returns the solo/demo user's id.
  *
@@ -146,7 +146,7 @@ async function resolveUserIdFromSession(
     const session = await database
       .selectFrom("sessions",)
       .select(["user_id", "expires_at",],)
-      .where("token_hash", "=", tokenHash,)
+      .where("secret_hash", "=", tokenHash,)
       .executeTakeFirst();
 
     if (session && (session.expires_at === null || (parseExpiryMs(session.expires_at,) ?? -Infinity) > nowMs)) {

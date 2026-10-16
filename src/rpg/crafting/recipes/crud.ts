@@ -12,7 +12,7 @@ import type {
   RecipeWithMaterials,
 } from "./types";
 
-// Base `data_version` 0 projection for `crafting_recipes` (columns added by
+// Base `content_version` 0 projection for `crafting_recipes` (columns added by
 // migration 034). Declared beside the module that creates recipes.
 registerContentVersion("crafting_recipes", 0, [
   "world_id",

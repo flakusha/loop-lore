@@ -49,7 +49,7 @@ export async function importAvatars(
       await avatarService.upsertAvatarConfig(actorId, {
         selectionRule: data.config.selectionRule as any,
         weights: data.config.weights as any,
-        fallbackChain: data.config.fallbackChain as any,
+        fallbackOrder: data.config.fallbackOrder as any,
       },);
     } catch (error: unknown) {
       result.errors.push(`Failed to import avatar config: ${errMsg(error,)}`,);

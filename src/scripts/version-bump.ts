@@ -64,7 +64,7 @@ function parseVersion(version: string,): Version {
  * @param v - parsed `Version` object
  * @returns canonical bare version string (`x.y.z` or `x.y.z-prerelease`).
  */
-function formatVersion(v: Version,): string {
+function rowVersion(v: Version,): string {
   return v.prerelease
     ? `${v.major}.${v.minor}.${v.patch}-${v.prerelease}`
     : `${v.major}.${v.minor}.${v.patch}`;
@@ -217,7 +217,7 @@ function predictVersion(): string {
   if (!isMaster && !releaseMajor) {
     const date = new Date().toISOString().slice(0, 10,).replaceAll("-", "",);
     const commitSha = runGit(["rev-parse", "--short=7", "HEAD",],);
-    return formatVersion({
+    return rowVersion({
       ...baseVersion,
       prerelease: `${baseVersion.major}.${baseVersion.minor}.${baseVersion.patch}-dev.${date}.${commitSha}`,
     },);
@@ -225,7 +225,7 @@ function predictVersion(): string {
 
   // No commits since tag -> current tag version
   if (!bump) {
-    return formatVersion({ ...baseVersion, major: targetMajor, },);
+    return rowVersion({ ...baseVersion, major: targetMajor, },);
   }
 
   // Find latest tag in target major series
@@ -233,14 +233,14 @@ function predictVersion(): string {
   const base = latestInSeries ? parseVersion(latestInSeries,) : { major: targetMajor, minor: 0, patch: 0, };
 
   if (bump === "major") {
-    return formatVersion({ major: base.major + 1, minor: 0, patch: 0, },);
+    return rowVersion({ major: base.major + 1, minor: 0, patch: 0, },);
   }
 
   if (bump === "minor") {
-    return formatVersion({ ...base, minor: base.minor + 1, patch: 0, },);
+    return rowVersion({ ...base, minor: base.minor + 1, patch: 0, },);
   }
 
-  return formatVersion({ ...base, patch: base.patch + 1, },);
+  return rowVersion({ ...base, patch: base.patch + 1, },);
 }
 
 // Bump version: update package.json; create tag ONLY with explicit --tag flag
@@ -268,7 +268,7 @@ function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,)
     nextVersion = { ...baseVersion, patch: baseVersion.patch + 1, };
   }
 
-  const next = formatVersion(nextVersion,);
+  const next = rowVersion(nextVersion,);
 
   // Release narration for the operator running the command: these lines
   // report what just changed on disk / in the remote, not a diagnostic.

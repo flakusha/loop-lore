@@ -23,7 +23,7 @@ import {
 import { NoteIdParams, WhiteneoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
 
-// Base `data_version` 0 projection for `whitenotes` (columns added by
+// Base `content_version` 0 projection for `whitenotes` (columns added by
 // migration 034). GM-authored content, so integrity tracking matters.
 registerContentVersion("whitenotes", 0, [
   "chat_id",
