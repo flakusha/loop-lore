@@ -30,7 +30,7 @@ const VECTORS: Vectors = JSON.parse(
 
 describe("command conformance vectors", () => {
   test("live registry matches the frozen command list (names + role gates)", () => {
-    const live = listCommands().map((name,) => {
+    const live: Vectors["commands"] = listCommands().map((name,) => {
       const requiredRole = getCommandRequirement(name,);
       return requiredRole ? { name, requiredRole, } : { name, };
     },);
