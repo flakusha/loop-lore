@@ -1160,7 +1160,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | rarity | 2 | 1 | 0 | 0 | 1 | 0 | 0 |
 | ratchet | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | rate-limit | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
-| rate-limiting | 4 | 1 | 0 | 0 | 0 | 0 | 3 |
+| rate-limiting | 4 | 2 | 0 | 0 | 0 | 0 | 2 |
 | rating | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
 | rationing | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | rbac | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
@@ -1183,7 +1183,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | recursion | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | recursive-cte | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | redaction | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| redis | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| redis | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | refactor | 13 | 6 | 0 | 5 | 0 | 0 | 2 |
 | refactoring | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | reference-conditioning | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1344,7 +1344,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | slack | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | slash-command | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | slash-commands | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
-| sliding-window | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| sliding-window | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | slo | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | slot-release | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | smil | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1377,7 +1377,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | spike | 7 | 5 | 0 | 0 | 0 | 0 | 2 |
 | spine | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | sprite-pipeline | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
-| sqlite | 5 | 1 | 0 | 2 | 1 | 0 | 1 |
+| sqlite | 5 | 2 | 0 | 2 | 1 | 0 | 0 |
 | sqlite-vec | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | squashing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | sse | 5 | 0 | 0 | 2 | 0 | 0 | 3 |
@@ -1478,7 +1478,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | tls | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
 | todo | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | token | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| token-bucket | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| token-bucket | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | token-budget | 3 | 0 | 0 | 0 | 1 | 0 | 2 |
 | tokens | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | toml | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -2044,7 +2044,7 @@ Total tickets: **3697** — untagged: **2483** — unbound to epic: **1493**
 | routing-versioning-consolidation | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | sam3-segmentation-integration | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | server-hardening | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
-| (unbound) | 1493 | 586 | 53 | 262 | 47 | 0 | 545 |
+| (unbound) | 1493 | 587 | 53 | 262 | 47 | 0 | 544 |
 
 ## Ticket detail
 
