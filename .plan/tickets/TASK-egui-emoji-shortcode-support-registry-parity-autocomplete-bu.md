@@ -3,7 +3,7 @@
 
 # TASK: egui emoji shortcode support: registry parity, autocomplete, bubble render
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-experimental-egui-frontend
@@ -56,3 +56,5 @@ registry.
 - [ ] Conformance vectors live in ONE shared place and both clients run them
 - [ ] Tests passing (Rust unit test over the vectors + the existing htmx suites
       stay green)
+
+**Resolved:** 2026-10-16 registry-driven close: git issue 4fdda91 (registry tip: feafc8045 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-EGUI-EMOJI-SHORTCODE-SUPPOR)

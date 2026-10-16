@@ -3,7 +3,7 @@
 
 # TASK: egui command surface parity: palette, role-gated commands, slash dispatch
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-experimental-egui-frontend
@@ -49,3 +49,5 @@ exactly that.
 - [ ] Contract test pins the command list (names + role gate) against the
       view-model so a server-side rename fails the egui client
 - [ ] Tests passing; parity notes added to the epic roadmap row
+
+**Resolved:** 2026-10-16 registry-driven close: git issue a4c0a1a (registry tip: 63c05be39 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-EGUI-COMMAND-SURFACE-PARITY)

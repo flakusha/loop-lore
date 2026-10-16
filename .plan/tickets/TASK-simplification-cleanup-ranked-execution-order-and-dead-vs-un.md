@@ -203,3 +203,5 @@ Also filed by the same audit and landing in the same territory: `BUG-kysely-any-
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-16 registry-driven close: git issue 6357cb3 (registry tip: 6476342d0 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SIMPLIFICATION-CLEANUP-RANK)
