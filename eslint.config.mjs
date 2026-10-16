@@ -231,25 +231,25 @@ export default [
       "no-console": "error",
     },
   },
-  // JSDoc — kept at `warn` (best-effort). Lifted to `error` only when coverage is high
-  // enough that the gate stays green (TASK-jsdoc-coverage-cleanup-public-exports tracks
-  // progress; per-function violations surface as warnings until the project is ready).
+  // JSDoc: require-param / require-returns are off (contradict AGENTS.md policy).
+  // require-throws is error (AGENTS.md § JSDoc: REQUIRED on throw/Result.err/Promise-reject
+  // paths; zero violations at warn level confirms gap is closed).
+  // See TASK-jsdoc-coverage-cleanup-public-exports.
   {
     files: ["src/**/*.ts"],
     plugins: {
       jsdoc,
     },
     rules: {
-      // Both rules are disabled because they contradict the documented AGENTS.md
-      // policy: `@param`/`@returns` must be omitted when the type already suffices.
-      // eslint-plugin-jsdoc has no config option to restrict checks to only untyped
-      // parameters/returns, so the rules cannot be narrowed to enforce the policy.
-      // `require-throws` is kept at warn: functions that throw/return Result.err/
-      // reject a Promise genuinely need `@throws` (no type-level signal in JS).
+      // require-param / require-returns are disabled: they contradict AGENTS.md
+      // ("omit when type suffices") and cannot be narrowed to untyped-only checks.
+      // require-throws is error: @throws is the only LSP-visible signal for error
+      // paths in JS (no type-level throw signature), and the current src/ has zero
+      // violations at warn level, confirming the gap is closed.
       // See TASK-jsdoc-coverage-cleanup-public-exports.
       "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
-      "jsdoc/require-throws": "warn",
+      "jsdoc/require-throws": "error",
       // Descriptions and example are optional — keep JSDoc terse to avoid
       // inflating files past the 200-line ceiling.
       "jsdoc/require-param-description": "off",
