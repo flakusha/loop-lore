@@ -423,8 +423,8 @@ giwt task "<directive>" -w                # render an agent task prompt
 > The in-repo `scripts/worktree/` CLI has been **deleted**; `giwt` is the only
 > entry point, with no thin shim left behind. Two consequences worth knowing:
 > `scripts/check/parallel/gpg.mjs` reaches giwt's gpg helpers by deep path
-> (`node_modules/giwt/src/gpg-unlock`) because the cold-cache warm helper is
-> not exported yet, and `tests/worktree-flow.test.ts` — which drove the deleted
+> (`node_modules/giwt/src/utils/gpg-cache`) — `warmAgentCache` is now public
+> upstream and the inline duplicates were dropped.
 > CLI directly — is gone, so `giwt finalize` has no coverage in this repo's
 > `bun test` (which excludes `node_modules`).
 >

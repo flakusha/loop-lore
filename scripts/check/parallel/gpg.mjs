@@ -8,41 +8,17 @@
  * state is exported for the report's provenance field.
  */
 
-import { spawnSync, } from "node:child_process";
 // oxlint-disable-next-line import/no-nodejs-modules
 import { existsSync, readFileSync, } from "node:fs";
 // oxlint-disable-next-line import/no-nodejs-modules
-import path, { join, } from "node:path";
+import path from "node:path";
 import {
   effectiveCacheTtl,
   probeCachedPassphrase,
-  warmCacheViaPassphrase,
-} from "../../../node_modules/giwt/src/gpg-unlock";
-import { MODE, PROJECT_ROOT, } from "./config.mjs";
+  warmAgentCache,
+} from "../../../node_modules/giwt/src/utils/gpg-cache";
+import { PROJECT_ROOT, } from "./config.mjs";
 
-// giwt's warmCacheViaPinentry and passphraseSource are not exported upstream
-// (FEAT-export-a-reusable-cold-cache-gpg-warm-helper-…). Inline equivalents
-// here until then. Both run only on the COLD path, so a typo in either is a
-// crash exactly when the operator most needs the hint.
-function warmCacheViaPinentry(keyId,) {
-  const r = spawnSync(
-    ["gpg", "--batch", "--yes", "--local-user", keyId, "--output", "/dev/null", "--detach-sign", "/dev/null",],
-    { stdout: "pipe", stderr: "pipe", },
-  );
-  return { ok: r.exitCode === 0, sigCreated: r.exitCode === 0, stderrOut: r.stderr?.toString() ?? "", };
-}
-
-function passphraseSource() {
-  if (process.env.GIT_GPG_PASSPHRASE) { return process.env.GIT_GPG_PASSPHRASE; }
-  const homeRoot = process.env.HOME ?? process.env.USERPROFILE;
-  if (!homeRoot) { return null; }
-  try {
-    const pw = readFileSync(join(homeRoot, ".gpg-passphrase",), "utf8",).trim();
-    return pw || null;
-  } catch {
-    return null;
-  }
-}
 
 // ── GPG pre-flight ──────────────────────────────────────────────
 // Tracks the cache state for provenance in the report. Shape:
@@ -96,24 +72,23 @@ export async function ensureGpgWarm() {
     return;
   }
 
-  // Step 2: cold cache. Try the headless passphrase source first, then the
-  // terminal pinentry (TTY, non-ci only). Anything else refuses to start —
-  // a check subprocess that signs against a cold cache would hang.
-  const passphrase = passphraseSource();
-  if (passphrase) {
-    console.error("gpg-precheck: cold; warming via loopback passphrase source...",);
-    warmCacheViaPassphrase(keyId, passphrase,);
-    if (probeCachedPassphrase(keyId,).warm) {
-      gpgPrecheck.state = { state: "warm", via: "passphrase", };
-      return;
-    }
-  } else if (MODE !== "ci" && process.stdin.isTTY) {
-    console.error("gpg-precheck: cold; warming via pinentry (enter passphrase)...",);
-    warmCacheViaPinentry(keyId,);
-    if (probeCachedPassphrase(keyId,).warm) {
-      gpgPrecheck.state = { state: "warm", via: "pinentry", };
-      return;
-    }
+  // Step 2: cold cache. warmAgentCache runs giwt's decision tree:
+  // headless passphrase source first, then pinentry (TTY-guarded).
+  // Anything else refuses to start — a check subprocess that signs
+  // against a cold cache would hang.
+  const result = warmAgentCache(keyId, {
+    announce: (via,) => {
+      if (via === "passphrase-source") {
+        console.error("gpg-precheck: cold; warming via loopback passphrase source...",);
+      } else {
+        console.error("gpg-precheck: cold; warming via pinentry (enter passphrase)...",);
+      }
+    },
+  });
+  if (result.warm) {
+    const via = result.via === "passphrase-source" ? "passphrase" : "pinentry";
+    gpgPrecheck.state = { state: "warm", via, };
+    return;
   }
 
   console.error("hint: gpg-cold-cache",);
