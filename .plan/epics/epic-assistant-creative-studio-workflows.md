@@ -402,6 +402,23 @@ Spans Workflow Engine (intent routing, runner, approval) + Model Family Presets
 - `.plan/tickets/TASK-assistant-creative-studio-workflow-gallery-batch.md` — gallery batch selection + batch download
 - `.plan/tickets/TASK-assistant-creative-studio-workflow-gallery-edit.md` — gallery edit workflows (wraps src/image-edit)
 
+## Future Integration
+
+> Added 2026-10-16. **Cross-references only — the phase checklists above remain
+> the authoritative state record for this epic** and are not edited from here.
+
+- **Reference passes.** The illustrated-book / comic-panel case — one character
+  keeping the same identity across panels — is the first workflow consumer that
+  needs reference conditioning (a prior accepted image fed into the next
+  generation). Owner: `epic-reference-conditioned-generation.md`; first consumer
+  `TASK-illustrated-book-reference-pass.md` (empty reference set on the first
+  illustration). MiniMax H3 itself is **exploratory, not a required
+  integration** for this epic.
+- **ComfyUI addons are separate repositories**, never vendored into loop-lore;
+  `TASK-external-comfyui-plugin-repo-integration-contract.md` is how loop-lore
+  consumes them (documented ComfyUI REST endpoints only, plus a declared
+  required-node prerequisite per template).
+
 ---
 
 ## Implementation Status (entity workflow batch)

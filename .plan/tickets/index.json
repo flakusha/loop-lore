@@ -35930,6 +35930,18 @@
     "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md",
     "status": "Not Started"
   },
+  "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT": {
+    "hash": "pending",
+    "extid": "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT",
+    "type": "TASK",
+    "title": "External ComfyUI plugin repository — loop-lore consumption contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-comfyui-plugin`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-external-comfyui-plugin-repo-integration-contract.md",
+    "status": "Not Started"
+  },
   "TASK-EXTERNAL-PROCESS-SURVIVABILITY-PAUSE-AND-RESTART-ON-CRASH": {
     "hash": "8613846",
     "git_issue": "8613846",
