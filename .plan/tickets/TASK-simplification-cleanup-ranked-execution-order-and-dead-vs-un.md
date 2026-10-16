@@ -3,7 +3,9 @@
 
 # TASK: Simplification cleanup ranked execution order and dead-vs-unwired decisions
 
-**Status:** Not Started
+**Status:** Done
+
+> The dead-vs-unwired call has been made per module in `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` (DELETE / WIRE / FP / owned-elsewhere table). Items whose modules were deleted here are closed; items still on the list have a named owning ticket or epic.
 **Priority:** medium
 **Effort:** Large
 **Tags:** dead-code

@@ -100,8 +100,12 @@ export const checks = {
   // that bulk cleanup lands. The unused-file list is the reviewable slice -- a
   // whole unreferenced file can be deleted outright.
   //
-  // CURRENTLY FAILING -- see the ADVISORY_GATES entry below; do not report this
-  // gate as passing.
+  // BLOCKING as of the dead-code deletion sweep: `bun run dead:code:src` exits 0.
+  // The last unreferenced src files were either deleted or, where the module is
+  // unwired-but-owned (open WIRE tickets, an in-flight FEAT, epic-frontend-keynav-
+  // mobile, epic-transport-expansion, the wire-deadcode worktree), recorded in
+  // knip.json `ignore` with the owning ticket named. Reintroducing one without a
+  // knip.json entry now reddens the gate, which is the point.
   "dead - code (src files)": "bun run dead:code:src",
 
   // Circular-import check remains manual; current debt is non-blocking.
@@ -227,20 +231,4 @@ export const ADVISORY_GATES = new Set([
   // jscpd ratchet: clone count vs committed baseline — drifts when dev
   // merges add or remove clones concurrently.
   "jscpd ratchet",
-  // src dead-file scan: the src tree currently carries confirmed-unreachable
-  // modules, enumerated by path in the cleanup tickets.
-  //
-  // THIS GATE IS CURRENTLY FAILING. `bun run dead:code:src` exits non-zero
-  // because it lists the dead src/ files. Because it sits in ADVISORY_GATES the
-  // runner prints `Failed: 0` and `=== All checks passed ===` — that is runner
-  // accounting, NOT a pass. Never cite this gate as green: run the command and
-  // report its exit status. (The file count is deliberately not quoted here — it
-  // moves as cleanup lands.) The gate still RUNS, so a reopened blindspot (knip
-  // silently skipping src/ again) shows up in the report instead of vanishing.
-  //
-  // FLIP CONDITION: drop it out of ADVISORY_GATES (and delete this comment)
-  // when `bun run dead:code:src` exits 0, i.e. once the enumerated dead src/
-  // files have actually been deleted. Advisory until then — the debt is real,
-  // large, and not reviewable in a single sweep.
-  "dead - code (src files)",
 ],);

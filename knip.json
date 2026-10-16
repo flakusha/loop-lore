@@ -134,6 +134,31 @@
     "rustc" // native cdylib compile (scripts/build-native.ts) -- external, not npm
   ],
   "ignore": [
+    // Build-time CLIs spawned as shell strings by scripts/build-frontend.mjs
+    // (`await $`bun run src/build/copy-icons.ts`` / `... src/build/compress.ts`),
+    // never statically imported — knip cannot follow a Bun shell template.
+    "src/build/copy-icons.ts",
+    "src/build/compress.ts",
+    // UNWIRED, owned elsewhere — NOT dead (TASK-delete-or-wire-dead-modules-
+    // flagged-in-glm-review-sweep triaged these; each needs a product call, not
+    // a deletion):
+    //   nsfw-context.ts, chat-creation/variants.ts -> owned by wire-deadcode
+    //   activitypub-keys.ts -> prerequisite for FEAT-activitypub-federation
+    //     (BUG-activitypub-actor-keys-table... says keep until that FEAT lands)
+    //   touch.ts, keynav-help.ts, mobile-composer.ts -> open WIRE tickets under
+    //     epic-frontend-keynav-mobile; keynav-help/mobile-composer already have
+    //     live HTML partials binding x-data="keynavHelp()"/"mobileComposer()"
+    //   transport/index.ts + transport/test/harness.ts -> CONTESTED:
+    //     epic-transport-expansion.md lists both as Built deliverables
+    "src/assistant/prompt/sections/nsfw-context.ts",
+    "src/crypto/activitypub-keys.ts",
+    "src/frontend/alpine/chat-creation/variants.ts",
+    "src/frontend/alpine/keynav-help.ts",
+    "src/frontend/alpine/mobile-composer.ts",
+    "src/frontend/touch.ts",
+    "src/transport/index.ts",
+    "src/transport/test/harness.ts",
+
     // Sample-plugin public API types
     // Dead scaffolding deliberately kept for the plugin extension
     // surface (no consumer yet). Tracked: TASK-knip-dead-code.
