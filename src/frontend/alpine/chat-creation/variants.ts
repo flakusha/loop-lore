@@ -6,12 +6,16 @@
  *
  * Twelve-option picker that emits the canonical
  * `(chat_type, chat_mode, chat_purpose)` triple plus auxiliary defaults
- * for the variant the user selected. The picker does NOT submit to the
- * API; modal integration is a follow-up ticket. This file is the
- * self-contained variant-broadcasting component.
+ * for the variant the user selected.
  *
- * Bound via `data-state="chatVariantPicker"` and consumed by callers that
- * read `picker.selectedVariant` and `picker.triple()`.
+ * Mounted on the new-chat form's `#variant-group` via
+ * `x-data="variantPicker"` (TASK-wire-variant-picker-into-new-chat-form):
+ * the form's variant select feeds `syncFromSelect`, and the submit path
+ * reads `triple()` (through globalThis — the pages bundle must not import
+ * Alpine modules) to persist the selected variant on `POST /api/v1/chats`.
+ *
+ * Registered on globalThis so `x-data="variantPicker"` resolves, mirroring
+ * src/frontend/alpine/chat/index.ts.
  */
 
 import {
@@ -32,6 +36,12 @@ export interface VariantPicker {
   openPicker(): void;
   closePicker(): void;
   selectVariant(variant: ChatVariant,): void;
+  /**
+   * Sync the slice from the new-chat form's variant select. `"standard"`
+   * is not a `ChatVariant` — it clears the selection; the two RPG values
+   * select their variant. Wired via `x-on:change` in new-chat.html.
+   */
+  syncFromSelect(value: string,): void;
   /**
    * Resolve the canonical triple + auxiliary defaults for the picked
    * variant. Returns `null` until the user picks one. The returned object
@@ -92,6 +102,13 @@ export const variantPicker: VariantPicker = {
     this.selectedVariant = variant;
   },
   /**
+   * @param {string} value
+   * @returns {void}
+   */
+  syncFromSelect(value,) {
+    this.selectedVariant = value === "standard" ? null : value as ChatVariant;
+  },
+  /**
    * @returns {{ variant: ChatVariant; chat_type: ChatType; chat_mode: ChatMode; chat_purpose: ChatPurpose; max_turns: number | null; auto_advance: 0 | 1; gm_config: GmConfig; talkativity: number | null; prompt_override_default: string | null; } | null}
    */
   triple() {
@@ -117,3 +134,7 @@ export const variantPicker: VariantPicker = {
     return LABELS[variant];
   },
 };
+
+// Register the singleton so `x-data="variantPicker"` resolves (the Alpine
+// bundle imports this module; the pages bundle reads it back via globalThis).
+(globalThis as unknown as Record<string, unknown>).variantPicker = variantPicker;
