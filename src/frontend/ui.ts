@@ -181,10 +181,10 @@ export function closeModalOnBackdrop(event: Event,): void {
 
 export function applyTheme(themeId: string,): void {
   const themes: { id: string; file: string }[] = globalThis.__THEMES ?? [];
-  if (!themeId || themes.every((t,) => t.id !== themeId)) { return; }
-  for (const t of themes) {
-    const link = document.querySelector<HTMLLinkElement>(`#theme-${t.id}`,);
-    if (link) { link.disabled = t.id !== themeId; }
+  if (!themeId || themes.every((theme,) => theme.id !== themeId)) { return; }
+  for (const theme of themes) {
+    const link = document.querySelector<HTMLLinkElement>(`#theme-${theme.id}`,);
+    if (link) { link.disabled = theme.id !== themeId; }
   }
 
   document.body.classList.toggle("theme-no-icons", themeId === "no-icons",);

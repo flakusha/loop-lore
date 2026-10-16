@@ -47,8 +47,8 @@ export async function transferItems(
   if (fromActorId === toActorId) { throw new SelfTransferError(); }
   if (!Number.isInteger(quantity,) || quantity <= 0) { throw new InvalidQuantityError(); }
 
-  const run = async (db: Kysely<DB>,): Promise<TransferResult> => {
-    const source = await db
+  const run = async (txDb: Kysely<DB>,): Promise<TransferResult> => {
+    const source = await txDb
       .selectFrom("actor_items",)
       .select([
         "id",
@@ -71,9 +71,9 @@ export async function transferItems(
 
     const remaining = source.quantity - quantity;
     if (remaining === 0) {
-      await db.deleteFrom("actor_items",).where("id", "=", itemId,).execute();
+      await txDb.deleteFrom("actor_items",).where("id", "=", itemId,).execute();
     } else {
-      await db
+      await txDb
         .updateTable("actor_items",)
         .set({ quantity: remaining, },)
         .where("id", "=", itemId,)
@@ -81,7 +81,7 @@ export async function transferItems(
     }
 
     // Stack onto an existing identical target item, else insert.
-    const existing = await db
+    const existing = await txDb
       .selectFrom("actor_items",)
       .select("id",)
       .where("actor_id", "=", toActorId,)
@@ -90,13 +90,13 @@ export async function transferItems(
       .executeTakeFirst();
 
     if (existing) {
-      await db
+      await txDb
         .updateTable("actor_items",)
         .set((eb,) => ({ quantity: eb("quantity", "+", quantity,), }))
         .where("id", "=", existing.id,)
         .execute();
     } else {
-      await db
+      await txDb
         .insertInto("actor_items",)
         .values({
           id: crypto.randomUUID(),

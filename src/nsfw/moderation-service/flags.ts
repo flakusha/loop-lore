@@ -82,7 +82,7 @@ export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise
     },).execute();
   } catch (err) {
     if (isUniqueViolation(err,)) {
-      throw new Error("Content already flagged for review.",);
+      throw new Error("Content already flagged for review.", { cause: err, },);
     }
 
     throw err;

@@ -165,7 +165,7 @@ for (const file of walk(TARGET,)) {
     if (storageAt >= 0 && !guarded(storageAt,)) { add("storage-no-try", `${rel}:${ln}`, t,); }
     if (re.eval.test(line,)) { add("eval-usage", `${rel}:${ln}`, t,); }
     if (re.addEv.test(line,)) {
-      const target = re.addTarget.exec(line,)?.[1]?.replace(/\s+/g, "",);
+      const receiver = re.addTarget.exec(line,)?.[1]?.replace(/\s+/g, "",);
       // Page-lifetime exemption: a page receiver registered at MODULE TOP
       // LEVEL (depth 0 — nothing encloses it, so nothing can ever unregister
       // it) cannot leak by construction. Narrow on purpose: the receiver test
@@ -177,10 +177,10 @@ for (const file of walk(TARGET,)) {
       //
       // `target === undefined` (optional chain, computed access) can never
       // prove a matching remove exists, so it stays a finding either way.
-      const paired = target !== undefined && removed.has(target,);
+      const paired = receiver !== undefined && removed.has(receiver,);
       if (paired) {
         // Nothing to report and nothing to suppress.
-      } else if (target !== undefined && depth === 0 && re.pageReceiver.test(target,)) {
+      } else if (receiver !== undefined && depth === 0 && re.pageReceiver.test(receiver,)) {
         suppressed++;
       } else {
         add("listener-leak", `${rel}:${ln}`, t,);
