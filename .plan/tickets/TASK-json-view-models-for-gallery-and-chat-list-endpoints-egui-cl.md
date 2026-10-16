@@ -5,7 +5,7 @@
 
 **Status:** In Progress
 **Scope:** plan: reopen TASK-json-view-models ticket falsely auto-closed as Done; work is unlanded on egui-json-view-models
-**Status Note:** implemented on branch `egui-json-view-models` (357d8d2dd, 473ce213a) but UNLANDED — not on `dev`. A post-merge reconciliation commit (07ea4d69d) auto-closed git issue 0852403 and appended a false `Resolved:` marker; reopened 2026-10-16 and the marker was removed. Landing that branch is a separate decision.
+**Status Note:** implemented on branch `egui-json-view-models` (357d8d2dd, 473ce213a) but UNLANDED — not on `dev`. A post-merge reconciliation commit (07ea4d69d) auto-closed git issue 0852403 and appended a false close marker to this file; reopened 2026-10-16 and that marker was removed. Landing that branch is a separate decision.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-experimental-egui-frontend
