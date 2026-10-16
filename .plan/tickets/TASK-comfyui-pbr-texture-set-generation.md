@@ -33,3 +33,5 @@ No texture-map generation exists today; `epic-3d-generation.md` has no material 
 - v1 surface: albedo + normal + roughness. Metallic/AO/height only if the 3D epic asks.
 - Normal map from a sobel of the depth preview keeps the node count minimal (epic open question default).
 - No new asset kind: maps are ordinary image assets distinguished by origin link.
+
+git issue: 80566a1

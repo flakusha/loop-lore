@@ -107,3 +107,6 @@ separate epic if ever.
 - [`epic-2d-sprite-world.md`](./epic-2d-sprite-world.md) — UI parallax ≠ image depth today
 - [`epic-3d-generation.md`](./epic-3d-generation.md) — material consumer
 - [`epic-frontend-gallery.md`](./epic-frontend-gallery.md) — filter rendering surface
+
+
+git issue: 48d5913
