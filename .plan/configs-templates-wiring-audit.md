@@ -152,3 +152,17 @@ carries four example domains (`llm`, `sd`, `avatar`, `image-edit`) plus
 `expansion` that are fully loaded and validated, and one whole `expansion`
 sub-tree that is validated, merged and then never read. Whether the answer is
 "wire it up" or "trim the block" is a product call, not an audit call.
+
+## 7. Filed tickets
+
+| Ticket | What it closes | Filed from |
+|---|---|---|
+| `TASK-validate-expansion-config-at-load-time` | one `validateExpansionConfig` call at load — kills the silent merge | F2 |
+| `FEAT-seed-character-loadouts-into-the-wardrobe-bridge` | seed `loadouts[]` so the existing flag means something | F1 |
+| `BUG-character-and-chat-setup-example-configs-document-fields-the` | example docs promise `loadouts`/`merge`/`worldId`/`gmConfig` behaviour that does not exist | §3 |
+| `BUG-character-seed-dedupes-on-display-name` | seeding keys on the mutable `display_name`, so an in-app rename breaks re-seed; ticket carries the full seed contract | §4 |
+| `FEAT-disable-or-hide-characters-from-the-db` | no listing filters `review_state`/`visibility_override`, so nothing can be hidden | §4 |
+| `FEAT-expand-character-templates-to-canonical-fields` | template surface → canonical surface; Group A needs no migration | F4 |
+
+Group A / Group B line-level evidence lives in the expansion ticket rather than
+repeated here; F4 above stays the summary.
