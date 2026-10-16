@@ -1641,6 +1641,16 @@
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     }
   ],
+  "src/assets/service/detect.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
+    }
+  ],
   "src/assets/service/file-system.test.ts": [
     {
       "kind": "epic",
@@ -1902,6 +1912,10 @@
   "src/assets/service/validate.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
@@ -1911,6 +1925,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-chart-export-png-svg-csv.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
     },
     {
       "kind": "ticket",
@@ -2427,6 +2445,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-generation-review-parity-extract-category-rarity-stats-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
     },
     {
       "kind": "ticket",
@@ -4737,6 +4759,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
     },
     {
       "kind": "ticket",
@@ -8165,8 +8191,20 @@
   ],
   "src/chat/export/formats.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-collapse-duplicate-markdown-exporter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-widen-import-export-io-for-publications.md"
     },
     {
       "kind": "spec",
@@ -11381,12 +11419,24 @@
       "source": ".plan/epics/epic-frontend-settings.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-widen-import-export-io-for-publications.md"
     }
   ],
   "src/components/model/ModelDetailsTab.svelte": [
@@ -15074,6 +15124,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     },
     {
@@ -15105,6 +15159,10 @@
   ],
   "src/db/enums-core/messages.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
@@ -15123,6 +15181,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gate-shadow-notes-status-x-visibility-composite.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
     },
     {
       "kind": "ticket",
@@ -15297,6 +15359,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-map-battle-equipment.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
     },
     {
       "kind": "ticket",
@@ -16776,6 +16842,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     },
     {
@@ -17544,6 +17614,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-rarity-extensions.md"
     },
     {
@@ -17653,6 +17727,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
     },
     {
       "kind": "ticket",
@@ -17843,6 +17921,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-whitenotes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
     },
     {
       "kind": "ticket",
@@ -20303,6 +20385,10 @@
       "source": ".plan/epics/epic-experimental-egui-frontend.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md"
     },
@@ -20839,6 +20925,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
+    }
+  ],
+  "src/frontend/alpine/chat-utils/sanitize.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
     }
   ],
   "src/frontend/alpine/chat-utils/time.ts": [
@@ -22939,6 +23043,28 @@
       "source": ".plan/tickets/TASK-growth-epic-reconciliation.md"
     }
   ],
+  "src/frontend/chat-utils/render.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
+    }
+  ],
   "src/frontend/chat-vendor": [
     {
       "kind": "ticket",
@@ -22951,12 +23077,28 @@
       "source": ".plan/epics/epic-frontend-bundle-optimization.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-lazy-vendor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
     }
   ],
   "src/frontend/chat/ask-menu.test.ts": [
@@ -22975,6 +23117,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-frontend-wizard-ui.md"
+    }
+  ],
+  "src/frontend/chat/music-embed.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
     }
   ],
   "src/frontend/components/asset-3d-viewer.html": [
@@ -23469,6 +23617,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-trading-interface.md"
+    }
+  ],
+  "src/frontend/loaders.d.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
     }
   ],
   "src/frontend/locale-init.ts": [
@@ -25345,8 +25499,20 @@
   ],
   "src/generation/auto-gen/deps.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
     },
     {
       "kind": "ticket",
@@ -30456,6 +30622,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep.md"
     },
     {
@@ -33297,6 +33467,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
     },
     {
       "kind": "ticket",
@@ -36292,19 +36466,47 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-collapse-duplicate-markdown-exporter.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-widen-import-export-io-for-publications.md"
     }
   ],
   "src/routes/chat-export/export-route.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
     }
   ],
   "src/routes/chat-export/format.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-collapse-duplicate-markdown-exporter.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-widen-import-export-io-for-publications.md"
     }
   ],
   "src/routes/chat-join.test.ts": [
@@ -37297,6 +37499,12 @@
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     }
   ],
+  "src/routes/export-shared/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
+    }
+  ],
   "src/routes/export-shared/worlds.ts": [
     {
       "kind": "epic",
@@ -37321,6 +37529,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-collapse-duplicate-markdown-exporter.md"
     },
     {
       "kind": "ticket",
@@ -37921,12 +38133,24 @@
   ],
   "src/routes/import/handle.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-2026-001.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-widen-import-export-io-for-publications.md"
     },
     {
       "kind": "spec",
@@ -37953,6 +38177,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-lorebook-template-seeding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
+    }
+  ],
+  "src/routes/import/markdown.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
     }
   ],
   "src/routes/invite.test.ts": [
@@ -41398,6 +41632,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
     },
     {
@@ -41471,6 +41709,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-import-quest-time-location-id-not-remapped-connections.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
     }
   ],
   "src/routes/world-lore-entries.ts": [
@@ -45527,6 +45769,16 @@
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     }
   ],
+  "src/scripts/check-frontend-innerhtml-xss.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
+    }
+  ],
   "src/scripts/commit-check.ts": [
     {
       "kind": "epic",
@@ -47375,6 +47627,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-error-handling-gaps-detector-abort-void-promises.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
     }
   ],
   "src/story/index.ts": [
@@ -49619,6 +49875,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-input-hardening-batch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
     }
   ],
   "src/utils/scratch.ts": [

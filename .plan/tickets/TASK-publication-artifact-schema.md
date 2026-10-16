@@ -7,7 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-narrative-publishing-workflows
-**Related:** `TASK-book-outline-generation-workflow.md`, `TASK-comic-page-panel-layout-model.md`, `epic-assistant-creative-studio-workflows.md`, `epic-asset-platform-capabilities.md`
+**Related:** `TASK-book-outline-generation-workflow.md`, `TASK-comic-page-panel-layout-model.md`, `TASK-markdown-canonical-intermediate-contract.md`, `epic-assistant-creative-studio-workflows.md`, `epic-asset-platform-capabilities.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

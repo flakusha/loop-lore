@@ -183,6 +183,94 @@ is `deleted_at` on the artifact, consistent with the moderation tables.
   `AssistantIntent` in `src/regex/intent.ts`
 - No change to `story_turns` or to the live story-mode generation loop
 
+## Canonical Representation: Markdown
+
+Markdown is the **canonical intermediate** for both products. It is not one
+export format among many. The shape of the binding:
+
+- The LLM **writes** markdown. A unit's prose is authored as a markdown document,
+  not as a JSON string field a human has to hand-splice.
+- A human **hand-edits** markdown directly. What they edit is the unit body field
+  (`publication_units.body`) — a plain markdown string, editable in any text
+  editor without touching structured internals. What must survive a
+  regeneration of that unit is the human's edit: the pin/accept semantics that
+  make it safe are owned by `TASK-markdown-canonical-intermediate-contract.md`,
+  and the keep-or-discard revision row that backs it by
+  `TASK-publication-artifact-versioning.md`.
+- Every **output format derives** from the markdown: EPUB, PDF, HTML, plain text,
+  and the comic page image sequence are projections of the same markdown, not
+  independent renderers over structured rows.
+
+That is the "easy to edit and manage" property made concrete: one
+human-editable field, one canonical serialization, N derived outputs.
+
+### Grounding in verified state (2026-10-16)
+
+The machinery is already installed; this binding wires it into publishing rather
+than introducing a dependency.
+
+| Piece | Status | Location |
+| ----- | ------ | -------- |
+| Markdown parser | ✅ Shipped | `marked` ^18.1.1 (`package.json:174-198`) — the **only** markdown parser; no remark / markdown-it / showdown / mdast / hast / shiki anywhere |
+| HTML sanitizer | ✅ Shipped | `dompurify` ^3.4.17 |
+| Parser config | ✅ Shipped | `marked.use({ breaks: true, gfm: true })` — `src/frontend/chat-vendor.ts:12-15`, declared `src/frontend/loaders.d.ts:118-119` |
+| Sanitize allowlist | ✅ Shipped | `SANITIZE_CONFIG` — `src/frontend/alpine/chat-utils/sanitize.ts:9-47`; applied at `src/frontend/chat-utils/render.ts:37` and `src/frontend/alpine/chat-generations.ts:213` |
+| Render paths | ✅ Shipped | client DOM `src/frontend/chat-utils/render.ts:36-37`; server SSE `markedParse` `src/generation/auto-gen/deps.ts:81` (injected into `GenDeps` at `:53`, wired `call-llm.ts:208,257`, `post-store.ts:187`) |
+| Format-column precedent | ✅ Exists | `MessageContentFormat` `src/db/enums-core/messages.ts:33-35`; `messages.content_format` defaults to `"markdown"` (`src/db/schema-core.ts:750-761`) |
+| Markdown export | ✅ Already ships | default format of `GET /api/chats/:id/export` — `src/routes/chat-export/export-route.ts:96-133`, served by `formatMarkdown` `src/routes/chat-export/format.ts:30` |
+| Zip engine | ✅ Installed | `jszip` ^3.10.2 — the only writer engine present |
+
+`MessageContentFormat` is the model to follow for a publication format column.
+Note what it is: a **storage classification** meaning "render this client-side
+through the marked pipeline". It is not a document interchange contract, and a
+publication format enum is a different thing with a different job.
+
+### The four gaps this binding creates
+
+1. **No markdown→AST path.** `marked` is render-only here — there is no tokenizer
+   exposed and no AST object to walk. Heading/section walking (chapter
+   boundaries, page boundaries, panel captions inside a comic script) needs a
+   custom `marked` extension/tokenizer, owned by
+   `TASK-markdown-heading-parse-and-import.md`.
+2. **No importer accepts markdown.** `src/routes/import/handle.ts:139-143`
+   dispatches CHARX (zip magic) then `importFromStandard` → PNG/JSON/YAML/TOML;
+   the file picker at `src/components/modals/settings.html:172` offers
+   `accept="application/json"` only. SillyTavern `.jsonl`/`.txt` import does not
+   exist. The round-trip half — author in any markdown editor, import back — has
+   no route.
+3. **No EPUB/PDF/DOCX writer exists at all.** Every `application/pdf` hit in
+   `src/` is an upload-validation MIME allowlist
+   (`src/assets/service/detect.ts:39`, `src/assets/service/validate.ts:23`) and
+   the gallery rejects PDF. No `text/epub`, no `application/epub+zip`, no
+   pdfkit/jsPDF, no pandoc invocation, no DOCX library. This is greenfield.
+4. **The markdown exporter is duplicated.** `src/routes/chat-export/format.ts:30`
+   `formatMarkdown()` is wired to the live route; `src/chat/export/formats.ts:66`
+   `renderMarkdown()` is dead code with no production caller, self-documenting
+   the duplication at `:61-63`. Its only importers are its own test and
+   `docs/spec/import-export-io.md`. It is collapsed first —
+   `TASK-collapse-duplicate-markdown-exporter.md`.
+
+### Hazard: the SSE path emits unsanitized HTML
+
+`markedParse` (`src/generation/auto-gen/deps.ts:81`) ships `marked.parse()`
+output to the client **unsanitized** and relies on the client to sanitize on
+render. That is safe today because the bytes never leave as a file. Any
+server-side HTML export that reuses `markedParse` would emit a downloadable HTML
+file bypassing DOMPurify entirely. Server-side HTML derivation must sanitize
+through `SANITIZE_CONFIG` (`src/frontend/alpine/chat-utils/sanitize.ts:9-47`)
+before the bytes are written, and the frontend gate
+`src/scripts/check-frontend-innerhtml-xss.ts` — which reasons about client-side
+rendering — must not be assumed to cover a server-side writer.
+
+### Relationship to `TASK-publication-export-formats.md`
+
+That ticket treats markdown as one **output** format alongside EPUB and PDF. This
+binding promotes it to the **intermediate** all three derive from. It is not
+duplicated: the export ticket keeps ownership of format selection, accepted-unit
+filters, authorization, and the progress stream; the tickets under this section
+own the canonical contract, the parse/import direction, and the derivation
+pipeline.
+
 ## Tasks
 
 - [ ] `TASK-publication-artifact-schema.md` — publication / unit / panel tables + migration
@@ -197,6 +285,12 @@ is `deleted_at` on the artifact, consistent with the moderation tables.
 - [ ] `TASK-publication-export-formats.md` — epub / pdf / markdown / image-sequence zip
 - [ ] `TASK-publication-continuity-lint.md` — cross-unit continuity lint
 - [ ] `TASK-publication-artifact-versioning.md` — versioning / keep-or-discard regeneration
+- [ ] `TASK-collapse-duplicate-markdown-exporter.md` — delete the dead `renderMarkdown` copy, fold into the live `formatMarkdown`
+- [ ] `TASK-markdown-canonical-intermediate-contract.md` — unit body IS markdown; `content_format` column; hand-edit vs regenerate safety
+- [ ] `TASK-markdown-heading-parse-and-import.md` — markdown→AST tokenizer + markdown importer (round-trip)
+- [ ] `TASK-markdown-derive-other-formats.md` — markdown → EPUB / PDF / HTML / plain text
+- [ ] `TASK-llm-markdown-document-prompts.md` — the LLM authors markdown documents, not fenced JSON
+- [ ] `TASK-widen-import-export-io-for-publications.md` — widen the Done import/export epic to publications + markdown import
 
 ## Dependencies
 
@@ -215,7 +309,11 @@ is `deleted_at` on the artifact, consistent with the moderation tables.
   is the plain-prose export path.
 - `epic-import-export-io.md` — existing import/export + format-normalizer family
   under `src/routes/export-shared/` and `src/routes/chat-export/` that export
-  extends rather than duplicates.
+  extends rather than duplicates. That epic is **Status: Done** and its shipped
+  checklist names markdown only as a chat *export* format (`:74`, `:110`) with no
+  mention of markdown import or of publications at all. Its scope therefore has
+  to be widened before the round-trip half of this binding can land — that is
+  `TASK-widen-import-export-io-for-publications.md`.
 
 ## Related Epics
 
@@ -227,6 +325,28 @@ is `deleted_at` on the artifact, consistent with the moderation tables.
 - `epic-creative-studio.md`
 - `epic-import-export-io.md`
 - `epic-story-mode-ui.md`
+
+## Acceptance Criteria
+
+- [ ] A publication unit's body is stored as markdown and typed with a
+      `content_format` column modelled on `MessageContentFormat`
+      (`src/db/enums-core/messages.ts:33-35`); no prose-plaintext and
+      prose-markdown split path exists
+- [ ] A human can hand-edit a unit's markdown body and that edit survives the
+      next regeneration of that unit unless the user explicitly accepts the new
+      candidate
+- [ ] Every output format (EPUB, PDF, HTML, plain text, comic page image
+      sequence) is derived from the stored markdown; none re-renders prose from a
+      different source of truth
+- [ ] A markdown document authored outside the app can be imported back into
+      publication units/pages
+- [ ] Server-side HTML derivation sanitizes through `SANITIZE_CONFIG`; the
+      unsanitized SSE `markedParse` path (`src/generation/auto-gen/deps.ts:81`) is
+      never used to produce a downloadable file
+- [ ] Only one markdown exporter remains in `src/` after
+      `TASK-collapse-duplicate-markdown-exporter.md`
+- [ ] The generated narrative prose flows through the existing `marked` +
+      `dompurify` pipeline rather than a second parser
 
 ## Current State
 
