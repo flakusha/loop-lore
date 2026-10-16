@@ -69,7 +69,17 @@ function coverageCommand() {
     // and would discover the heavy tests otherwise. `tests/e2e/` and
     // `src/**/*.test.ts` are both flattened here.
     const srcTests = walkTestFiles(PROJECT_ROOT, "src",);
-    const allPaths = ["tests/e2e/", ...filterPaths(srcTests,),];
+    // scripts/** carries colocated *.test.ts (coverage.mjs, the parallel
+    // runner's config/context, src-refs, migration-parser, among others).
+    // They previously ran only under bare `bun test`, never under any gate —
+    // a change to scripts/check/parallel/ could land untested.
+    // Including them here also puts a `scripts` module into lcov, so
+    // coverage.mjs floors it like every other module.
+    // The scoped branch below keeps excluding non-src trees on purpose: a
+    // scoped lcov holds only what the scoped tests loaded, so it can never
+    // floor a whole `scripts` module and would be a structural false red.
+    const scriptTests = walkTestFiles(PROJECT_ROOT, "scripts",);
+    const allPaths = ["tests/e2e/", ...filterPaths([...srcTests, ...scriptTests,],),];
     if (allPaths.length === 1) { return NOOP_OK; } // only `tests/e2e/` left
     return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${
       allPaths.join(" ",)
