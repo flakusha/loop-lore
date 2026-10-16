@@ -27,6 +27,6 @@ Hardening after review (2026-10-16): `FrontendContext::from_stored_json` now rej
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — native/loop-lore-egui (eframe + glow, wasm32-unknown-unknown) with one chat screen, no cargo workspace entry, on branch `egui-wasm-frontend`
+- [x] Tests passing — `cargo test` host suites green; `bun run lint:egui` (clippy -D warnings) and `cargo fmt --check` green; the real bundle builds (`bun run build:egui`) and boots in headless Chromium (`egui ready`, wasm JSON calls 200)
+- [x] Documentation updated — the crate/build/verification notes are recorded in this ticket and the companion transfer ticket; the epic index reflects the experimental opt-in
