@@ -1,0 +1,317 @@
+{
+  "commands": [
+    {
+      "name": "agency"
+    },
+    {
+      "name": "analyze"
+    },
+    {
+      "name": "asset-list",
+      "requiredRole": "member"
+    },
+    {
+      "name": "asset-preview",
+      "requiredRole": "member"
+    },
+    {
+      "name": "asset-search",
+      "requiredRole": "member"
+    },
+    {
+      "name": "attack",
+      "requiredRole": "owner"
+    },
+    {
+      "name": "battle",
+      "requiredRole": "owner"
+    },
+    {
+      "name": "translate"
+    },
+    {
+      "name": "tl"
+    },
+    {
+      "name": "caption"
+    },
+    {
+      "name": "context"
+    },
+    {
+      "name": "create",
+      "requiredRole": "owner"
+    },
+    {
+      "name": "debug",
+      "requiredRole": "owner"
+    },
+    {
+      "name": "detail"
+    },
+    {
+      "name": "roll"
+    },
+    {
+      "name": "dice"
+    },
+    {
+      "name": "guide"
+    },
+    {
+      "name": "constraint"
+    },
+    {
+      "name": "scene"
+    },
+    {
+      "name": "target"
+    },
+    {
+      "name": "priority"
+    },
+    {
+      "name": "skip"
+    },
+    {
+      "name": "workflow",
+      "requiredRole": "member"
+    },
+    {
+      "name": "orchestrate",
+      "requiredRole": "member"
+    },
+    {
+      "name": "workflowz",
+      "requiredRole": "member"
+    },
+    {
+      "name": "omp",
+      "requiredRole": "member"
+    },
+    {
+      "name": "heal",
+      "requiredRole": "owner"
+    },
+    {
+      "name": "help"
+    },
+    {
+      "name": "impersonate"
+    },
+    {
+      "name": "char"
+    },
+    {
+      "name": "improve"
+    },
+    {
+      "name": "forage"
+    },
+    {
+      "name": "evaluate"
+    },
+    {
+      "name": "persuade"
+    },
+    {
+      "name": "hide"
+    },
+    {
+      "name": "study"
+    },
+    {
+      "name": "link",
+      "requiredRole": "member"
+    },
+    {
+      "name": "narrate"
+    },
+    {
+      "name": "ooc"
+    },
+    {
+      "name": "quest"
+    },
+    {
+      "name": "rag-search",
+      "requiredRole": "member"
+    },
+    {
+      "name": "rag-ask",
+      "requiredRole": "member"
+    },
+    {
+      "name": "rewrite"
+    },
+    {
+      "name": "regen"
+    },
+    {
+      "name": "review"
+    },
+    {
+      "name": "stats"
+    },
+    {
+      "name": "summarize"
+    },
+    {
+      "name": "sum"
+    }
+  ],
+  "roleGate": [
+    {
+      "viewer": "member",
+      "required": null,
+      "visible": true
+    },
+    {
+      "viewer": "member",
+      "required": "member",
+      "visible": true
+    },
+    {
+      "viewer": "member",
+      "required": "owner",
+      "visible": false
+    },
+    {
+      "viewer": "owner",
+      "required": "owner",
+      "visible": true
+    },
+    {
+      "viewer": "observer",
+      "required": "member",
+      "visible": false
+    },
+    {
+      "viewer": "guest",
+      "required": "observer",
+      "visible": false
+    },
+    {
+      "viewer": null,
+      "required": "member",
+      "visible": true
+    },
+    {
+      "viewer": null,
+      "required": "owner",
+      "visible": false
+    },
+    {
+      "viewer": "member",
+      "required": "unknown-tier",
+      "visible": true
+    }
+  ],
+  "filter": [
+    {
+      "query": "",
+      "expected": [
+        "agency",
+        "analyze",
+        "asset-list",
+        "asset-preview",
+        "asset-search",
+        "attack",
+        "battle",
+        "translate",
+        "tl",
+        "caption",
+        "context",
+        "create",
+        "debug",
+        "detail",
+        "roll",
+        "dice",
+        "guide",
+        "constraint",
+        "scene",
+        "target",
+        "priority",
+        "skip",
+        "workflow",
+        "orchestrate",
+        "workflowz",
+        "omp",
+        "heal",
+        "help",
+        "impersonate",
+        "char",
+        "improve",
+        "forage",
+        "evaluate",
+        "persuade",
+        "hide",
+        "study",
+        "link",
+        "narrate",
+        "ooc",
+        "quest",
+        "rag-search",
+        "rag-ask",
+        "rewrite",
+        "regen",
+        "review",
+        "stats",
+        "summarize",
+        "sum"
+      ]
+    },
+    {
+      "query": "roll",
+      "expected": [
+        "roll"
+      ]
+    },
+    {
+      "query": "a",
+      "expected": [
+        "agency",
+        "analyze",
+        "asset-list",
+        "asset-preview",
+        "asset-search",
+        "attack",
+        "battle",
+        "translate",
+        "caption",
+        "create",
+        "detail",
+        "constraint",
+        "target",
+        "orchestrate",
+        "heal",
+        "impersonate",
+        "char",
+        "forage",
+        "evaluate",
+        "persuade",
+        "narrate",
+        "rag-search",
+        "rag-ask",
+        "stats",
+        "summarize"
+      ]
+    },
+    {
+      "query": "rol",
+      "expected": [
+        "roll"
+      ]
+    },
+    {
+      "query": "hep",
+      "expected": [
+        "help"
+      ]
+    },
+    {
+      "query": "zzzzzzz",
+      "expected": []
+    }
+  ]
+}

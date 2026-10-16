@@ -102,6 +102,56 @@ pub fn parse_emoji_registry(raw: &str) -> Result<Vec<(String, String)>, String> 
   Ok(registry)
 }
 
+/// URL for the assistant command registry.
+///
+/// When `chat_id` is given, the server additionally returns `roleInChat`
+/// for role-gated display.
+pub fn command_list_url(chat_id: Option<&str>) -> String {
+  match chat_id {
+    Some(id) => format!("/api/v1/commands?chatId={id}"),
+    None => String::from("/api/v1/commands"),
+  }
+}
+
+/// One command entry from the registry.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CommandEntry {
+  pub name: String,
+  pub required_role: Option<String>,
+}
+
+/// Parse `GET /api/v1/commands` into command entries + optional role.
+///
+/// The server returns `{data: [{name, descriptionKey, requiredRole?}],
+/// roleInChat?}`. `descriptionKey` is ignored (the egui client renders the
+/// name only); `requiredRole` drives role-gated display.
+pub fn parse_command_list(raw: &str) -> Result<(Vec<CommandEntry>, Option<String>), String> {
+  let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
+  let data = value
+    .get("data")
+    .and_then(serde_json::Value::as_array)
+    .ok_or("missing data array")?;
+  let mut entries = Vec::with_capacity(data.len());
+  for row in data {
+    let Some(name) = row.get("name").and_then(serde_json::Value::as_str) else {
+      continue;
+    };
+    let required_role = row
+      .get("requiredRole")
+      .and_then(serde_json::Value::as_str)
+      .map(String::from);
+    entries.push(CommandEntry {
+      name: name.to_string(),
+      required_role,
+    });
+  }
+  let role = value
+    .get("roleInChat")
+    .and_then(serde_json::Value::as_str)
+    .map(String::from);
+  Ok((entries, role))
+}
+
 /// Body for a user message; `serde_json` performs the escaping.
 ///
 /// # Panics
@@ -329,5 +379,36 @@ mod tests {
   fn emoji_registry_rejects_garbage() {
     assert!(parse_emoji_registry("nope").is_err());
     assert!(parse_emoji_registry("{\"data\":\"x\"}").is_err());
+  }
+
+  #[test]
+  fn command_list_url_with_chat_appends_query() {
+    assert_eq!(command_list_url(Some("c1")), "/api/v1/commands?chatId=c1");
+    assert_eq!(command_list_url(None), "/api/v1/commands");
+  }
+
+  #[test]
+  fn command_list_parses_entries_and_role() {
+    let raw = r#"{"data":[{"name":"roll","descriptionKey":"commands.roll"},{"name":"guide","requiredRole":"owner"},{"name":"stats","requiredRole":"member"}],"roleInChat":"member"}"#;
+    let (entries, role) = parse_command_list(raw).unwrap();
+    assert_eq!(entries.len(), 3);
+    assert_eq!(entries[0].name, "roll");
+    assert_eq!(entries[0].required_role, None);
+    assert_eq!(entries[1].required_role.as_deref(), Some("owner"));
+    assert_eq!(role.as_deref(), Some("member"));
+  }
+
+  #[test]
+  fn command_list_without_role_returns_none() {
+    let raw = r#"{"data":[{"name":"roll"}]}"#;
+    let (entries, role) = parse_command_list(raw).unwrap();
+    assert_eq!(entries.len(), 1);
+    assert_eq!(role, None);
+  }
+
+  #[test]
+  fn command_list_rejects_garbage() {
+    assert!(parse_command_list("nope").is_err());
+    assert!(parse_command_list("{\"data\":\"x\"}").is_err());
   }
 }

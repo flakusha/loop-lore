@@ -21,6 +21,7 @@
 
 mod api;
 mod client;
+mod command;
 mod context;
 mod emoji;
 mod storage;
@@ -34,4 +35,5 @@ mod web;
 pub use api::{ChatMessage, ChatSummary};
 #[cfg(target_arch = "wasm32")]
 pub use app::EguiApp;
+pub use command::{filter_commands, insert_command, satisfies_role};
 pub use context::FrontendContext;
