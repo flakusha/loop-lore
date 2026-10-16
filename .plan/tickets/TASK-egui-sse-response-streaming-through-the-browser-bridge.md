@@ -3,7 +3,7 @@
 
 # TASK: egui SSE response streaming through the browser bridge
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-experimental-egui-frontend
@@ -65,3 +65,5 @@ loses the incremental render that defines the htmx experience.
       implementation of the event contract
 - [ ] Tests passing (bridge unit tests for open/close/relay; Rust-side handle
       tests for chunk ordering and terminal states)
+
+**Resolved:** 2026-10-16 registry-driven close: git issue 746adba (registry tip: 7cc38a0f1 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-EGUI-SSE-RESPONSE-STREAMING)

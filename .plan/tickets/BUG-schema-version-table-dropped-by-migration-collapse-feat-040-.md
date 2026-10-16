@@ -3,7 +3,7 @@
 
 # BUG: schema_version table dropped by migration collapse; FEAT-040 still Done
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -24,3 +24,5 @@ The migration-collapse refactor d0d19448f deleted parts/018_schema_version.ts an
 - [ ] Migration roundtrip test covers up→down→up for the new migration; bun run check green.
 
 **Related:** .plan/tickets/FEAT-040.md, src/db/migrations/README.md
+
+**Resolved:** 2026-10-16 registry-driven close: git issue acc9318 (registry tip: 3c4d5be17 Konstantin Fedotov Close issue)
