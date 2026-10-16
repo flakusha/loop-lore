@@ -12,7 +12,7 @@
 // duplicate. Unknown owners are skipped with a warning — reference users are
 // expected to be seeded via seeding.users (or exist already).
 import type { Kysely, } from "kysely";
-import { findExistingActor, stableSeedCharacterId, } from "../characters/seed/identity";
+import { adoptExistingActor, findExistingActor, stableSeedCharacterId, } from "../characters/seed/identity";
 import type { SeedCharacter, } from "../config/schema";
 import { ActorType, AgentType, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -45,9 +45,28 @@ export async function seedCharacters(
     // key — never display_name, which the character edit route lets users change
     // freely (BUG-character-seed-dedupes-on-display-name).
     const characterId = stableSeedCharacterId(character.owner, character.name,);
-    const existing = await findExistingActor(database, characterId,);
+    const existing = await findExistingActor(
+      database,
+      characterId,
+      { ownerId, seededAs: character.name, },
+    );
 
     if (existing) {
+      if (existing.needsAdoption) {
+        // Pre-upgrade row holding a crypto-random id (this path used to
+        // allocate `uid()` unconditionally): converge it onto the stable
+        // identity rather than leaving it resolvable only by display name.
+        // A failure here logs but still `continue`s, so the row can never
+        // be duplicated.
+        try {
+          await adoptExistingActor(database, existing.id, characterId,);
+        } catch (error) {
+          log.warn(
+            `Could not adopt character "${character.name}" onto stable id ${characterId}: ${(error as Error).message}`,
+          );
+        }
+      }
+
       log.debug(`Character "${character.name}" already exists — skipping`,);
       continue;
     }

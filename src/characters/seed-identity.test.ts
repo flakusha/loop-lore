@@ -10,7 +10,9 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { CharactersConfig, } from "../config/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
+import { uid, } from "../utils";
 import { seedCharacterTemplates, } from "./seed";
+import { stableTemplateId, } from "./seed/identity";
 
 describe("seedCharacterTemplates identity", () => {
   let fixture: TestDb;
@@ -96,7 +98,7 @@ describe("seedCharacterTemplates identity", () => {
     expect(reseeded.errors,).toEqual([],);
     expect(reseeded.created,).toBe(0,);
     expect(reseeded.skipped,).toBe(1,);
-    expect(seededId,).toBe("tpl-rename-idless",);
+    expect(seededId,).toBe(stableTemplateId({ name: "Rename Idless", },),);
     expect(await countByName("Rename Idless",),).toBe(0,);
     expect(await countByName("Renamed Idless Character",),).toBe(1,);
   });
@@ -144,7 +146,73 @@ describe("seedCharacterTemplates identity", () => {
 
     const reseeded = await seedCharacterTemplates(db, config,);
     expect(reseeded,).toEqual({ created: 1, skipped: 0, errors: [], },);
-    expect(seededId,).toBe("tpl-delete-idless",);
+    expect(seededId,).toBe(stableTemplateId({ name: "Delete Idless", },),);
     expect(await countById(seededId,),).toBe(1,);
+  });
+
+  test("an existing deployment's rows are adopted, never duplicated", async () => {
+    const { db, } = fixture;
+    const config: CharactersConfig = {
+      enabled: true,
+      templates: [{ name: "Legacy Seeded Character", description: "Pre-upgrade row", },],
+    };
+
+    // A row allocated the way the pre-change code did: `template.id ?? uid()`.
+    const legacyId = uid();
+    await db
+      .insertInto("actors",)
+      .values({
+        id: legacyId,
+        actor_type: "character",
+        display_name: "Legacy Seeded Character",
+        user_id: null,
+        owner_id: null,
+        agent_type: "ai",
+        description: "Pre-upgrade row",
+        visibility: "public",
+        settings: JSON.stringify({ is_template: false, is_default: false, },),
+        import_spec: "template",
+        data_source_format: "json",
+        data_raw: null,
+        format_version: 0,
+      },)
+      .execute();
+
+    // First boot after upgrade: the deterministic id resolves nothing yet, so
+    // the pre-existing row must be adopted rather than re-seeded alongside.
+    const first = await seedCharacterTemplates(db, config,);
+    expect(first,).toEqual({ created: 0, skipped: 1, errors: [], },);
+    expect(await countById(legacyId,),).toBe(1,);
+
+    // Adoption converges the row onto the stable identity, so a later rename
+    // is still a no-op and the original row keeps its id.
+    await rename(legacyId, "Renamed Legacy Character",);
+    const second = await seedCharacterTemplates(db, config,);
+    expect(second,).toEqual({ created: 0, skipped: 1, errors: [], },);
+    expect(await countById(legacyId,),).toBe(1,);
+
+    // Deleting it still lets the next seed recreate it, now with the stable id.
+    await db.deleteFrom("actors",).where("id", "=", legacyId,).execute();
+    const third = await seedCharacterTemplates(db, config,);
+    expect(third,).toEqual({ created: 1, skipped: 0, errors: [], },);
+    expect(await countById(stableTemplateId({ name: "Legacy Seeded Character", },),),).toBe(1,);
+  });
+
+  test("distinct names sharing a slug still seed distinct rows", async () => {
+    const { db, } = fixture;
+    const config: CharactersConfig = {
+      enabled: true,
+      templates: [
+        { name: "Dr. Thorne", description: "built-in spelling", },
+        { name: "Dr.Thorne", description: "same slug, different string", },
+      ],
+    };
+
+    // A slug alone would collide both onto `tpl-dr-thorne` and silently seed
+    // one row; the digest keeps them apart.
+    const seeded = await seedCharacterTemplates(db, config,);
+    expect(seeded,).toEqual({ created: 2, skipped: 0, errors: [], },);
+    expect(await countByName("Dr. Thorne",),).toBe(1,);
+    expect(await countByName("Dr.Thorne",),).toBe(1,);
   });
 });
