@@ -8,7 +8,7 @@
 **Effort:** Medium
 **Epic:** epic-terminal-ui
 
-**Summary:** `AssetView.setChatId()` loaded linked assets via `/api/v1/assets` without forwarding the session token, causing 401 responses for authenticated asset endpoints.
+**Summary:** `AssetView.loadAssets()` fetched linked assets via `/api/v1/assets` without forwarding the session token, causing 401 responses for authenticated asset endpoints. `setChatId()` only records the chat id; the unauthenticated fetch was in `loadAssets()`.
 
 **Context:** `AssetView` was constructed without the `sessionToken` needed to authenticate asset requests. The asset API requires a valid session token.
 
