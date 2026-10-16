@@ -11,23 +11,17 @@
 
 import { AssetAlphaStatus, AssetLinkEntity, } from "../../db/enums";
 import { MATTING_SOURCE_LABEL, } from "../../generation/matting/service";
-import { getLogger, } from "../../logger";
+import { getChildLogger, } from "../../logger";
 import { deleteFile, } from "./file-system";
 import { deleteAssetTags, } from "./tags";
 import type { DeleteAssetOpts, } from "./types";
 
-let _log: ReturnType<typeof getLogger> | null = null;
 /**
  * Lazily resolve the module logger (null before logger init).
  * @returns the cached child logger, or null outside test/logger contexts
  */
 function getLog() {
-  try {
-    _log ??= getLogger().child({ module: "assets/service/delete", },);
-    return _log;
-  } catch {
-    return null;
-  }
+  return getChildLogger("assets/service/delete",);
 }
 
 /**
