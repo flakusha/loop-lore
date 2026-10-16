@@ -182,6 +182,7 @@ if (ISOLATED) {
 
 let createTUIApp: () => TUIApp;
 let setFetch: (fn: typeof safeFetch,) => void;
+let setPickerFetch: (fn: typeof safeFetch,) => void;
 let realFetch: typeof safeFetch;
 /** blessed.screen() calls consumed by the module import itself. */
 let screensAtImport: number;
@@ -192,6 +193,7 @@ beforeAll(async () => {
   // for modules imported after the stub registers.
   createTUIApp = (await import("./app")).createTUIApp;
   setFetch = (await import("./harness/api")).setFetch;
+  setPickerFetch = (await import("./chat-picker")).setFetch;
   realFetch = (await import("../utils")).safeFetch;
   screensAtImport = screenCreations;
 },);
@@ -226,7 +228,27 @@ afterEach(() => {
   // Per-test rather than once in `afterAll`: a failing test must not leave
   // its fetch stub installed for everything that runs after it.
   setFetch(realFetch,);
+  setPickerFetch(realFetch,);
 },);
+
+/**
+ * A two-row chat list in the exact envelope `GET /api/v1/chats` answers
+ * (src/routes/chats/list.ts -> jsonPaginated): `{ data, pagination, meta }`.
+ */
+const CHAT_LIST_DOUBLE = {
+  data: [
+    { id: "chat-aaaaaaaa", name: "Sunken Keep", is_pinned: "unpinned", },
+    { id: "chat-bbbbbbbb", name: "Night Market", is_pinned: "unpinned", },
+  ],
+  pagination: { total: 2, page: 1, pageSize: 50, totalPages: 1, },
+};
+
+/** Install the chat-picker fetch stub. Separate from the harness `setFetch`. */
+function setPickerChats(payload: unknown,): void {
+  setPickerFetch(<T,>(): Promise<FetchResult<T>> =>
+    Promise.resolve({ ok: true, data: payload as T, status: 200, headers: new Headers(), } as FetchResult<T>,)
+  );
+}
 
 /** Fire every screen-level `key` handler bound to `name` — how blessed fans out. */
 function pressKey(app: TUIApp, name: string,): void {
@@ -382,6 +404,84 @@ describeOrSkip("TUIApp", () => {
     pressKey(app, "f2",);
     pressKey(app, "f3",);
     expect([app.assets.isVisible(), app.harness.isVisible(),],).toEqual([true, true,],);
+  });
+
+  it("toggles the chat picker with F1 and back off the next press", () => {
+    const app = createTUIApp();
+    expect(app.chatPicker.isVisible(),).toBe(false,);
+
+    pressKey(app, "f1",);
+    expect(app.chatPicker.isVisible(),).toBe(true,);
+
+    pressKey(app, "f1",);
+    expect(app.chatPicker.isVisible(),).toBe(false,);
+  });
+
+  it("leaves the chat picker hidden after a double F1 press", () => {
+    const app = createTUIApp();
+    pressKey(app, "f1",);
+    pressKey(app, "f1",);
+    expect(app.chatPicker.isVisible(),).toBe(false,);
+  });
+
+  it("closes the chat picker on Esc without quitting", () => {
+    const app = createTUIApp();
+    pressKey(app, "f1",);
+    expect(app.chatPicker.isVisible(),).toBe(true,);
+
+    exitSpy = spyOn(process, "exit",).mockImplementation((() => {}) as never,);
+    pressKey(app, "escape",);
+
+    expect(exitSpy,).not.toHaveBeenCalled();
+    expect(app.chatPicker.isVisible(),).toBe(false,);
+  });
+
+  it("still quits on Esc when no overlay is open", () => {
+    const app = createTUIApp();
+
+    exitSpy = spyOn(process, "exit",).mockImplementation((() => {}) as never,);
+    pressKey(app, "escape",);
+
+    expect(exitSpy,).toHaveBeenCalled();
+  });
+
+  // The defect this pins: `ChatWidget.chatId` starts null, so before the picker
+  // every send returned "No active chat". The assertion is deliberately on BOTH
+  // views — binding only the chat widget would leave the asset sidebar pointing
+  // at the previous chat while the transcript shows the new one.
+  it("binds both the chat widget and the asset view when a picker row is selected", async () => {
+    const app = createTUIApp();
+    setPickerChats(CHAT_LIST_DOUBLE,);
+    spyOn(app.assets, "loadAssets",).mockResolvedValue(undefined,);
+    spyOn(app.chat, "loadMessages",).mockResolvedValue(undefined,);
+
+    pressKey(app, "f1",);
+    await flushMicrotasks();
+
+    const list = (app.chatPicker as unknown as { list: WidgetStub }).list;
+    list.emit("select", list, 1,);
+    await flushMicrotasks();
+
+    expect(app.chat.getChatId(),).toBe("chat-bbbbbbbb",);
+    expect(app.assets.getChatId(),).toBe("chat-bbbbbbbb",);
+    expect(app.chatPicker.isVisible(),).toBe(false,);
+  });
+
+  it("reloads the message list after a picker selection", async () => {
+    const app = createTUIApp();
+    setPickerChats(CHAT_LIST_DOUBLE,);
+    spyOn(app.assets, "loadAssets",).mockResolvedValue(undefined,);
+    const loadSpy = spyOn(app.chat, "loadMessages",).mockResolvedValue(undefined,);
+
+    pressKey(app, "f1",);
+    await flushMicrotasks();
+
+    const list = (app.chatPicker as unknown as { list: WidgetStub }).list;
+    list.emit("select", list, 0,);
+    await flushMicrotasks();
+
+    expect(loadSpy,).toHaveBeenCalled();
+    expect(statusBar().content,).toContain("chat: chat-aaa",);
   });
 
   it("clears the message list on Ctrl+L", () => {

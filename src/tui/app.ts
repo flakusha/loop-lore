@@ -14,6 +14,7 @@ import { loadConfig, } from "../config/load";
 import { createLogger, getLogger, } from "../logger";
 import { AssetView, } from "./asset-view";
 import { API_BASE, ChatWidget, } from "./chat";
+import { ChatPicker, } from "./chat-picker";
 import { createHarnessView, type HarnessView, } from "./harness";
 
 /** */
@@ -23,6 +24,7 @@ export class TUIApp {
   chat: ChatWidget;
   assets: AssetView;
   harness: HarnessView;
+  chatPicker: ChatPicker;
 
   /** */
   constructor() {
@@ -74,6 +76,20 @@ export class TUIApp {
     // ── Harness view (full-screen overlay, toggleable) ──────
     this.harness = createHarnessView(this.screen, sessionToken,);
 
+    // ── Chat picker (full-screen overlay, toggleable) ───────
+    // Selection routes through `chat.setChatId`, the SAME path the web client
+    // uses, so the chat's onChatChange callback stays the single place that
+    // re-points the asset view and reloads messages. Binding the two views
+    // here as well would be the second binding path and they would drift.
+    this.chatPicker = new ChatPicker(this.screen, {
+      sessionToken,
+      onSelect: (chatId,) => {
+        this.chatPicker.hide();
+        this.chat.setChatId(chatId,);
+        this.updateStatus(`chat: ${chatId.slice(0, 8,)}... | F2: assets`,);
+      },
+    },);
+
     // ── Resize handler ─────────────────────────────────────
     this.screen.on("resize", () => {
       this.screen.render();
@@ -81,7 +97,20 @@ export class TUIApp {
 
     // ── Global keyboard shortcuts ──────────────────────────
     this.screen.key(["escape", "q", "C-c",], () => {
+      // An open overlay swallows the key: Esc closes the picker rather than
+      // killing the process. With nothing open, the key quits as before.
+      if (this.chatPicker.dismiss()) { return; }
       this.shutdown();
+    },);
+
+    // F1 — toggle the chat picker. F2/F3 are the asset/harness toggles, F4 is
+    // reserved by TASK-harness-topic-tui-surface, F5 is refresh.
+    this.screen.key(["f1",], () => {
+      if (this.chatPicker.isVisible()) {
+        this.chatPicker.hide();
+      } else {
+        this.chatPicker.show();
+      }
     },);
 
     // F2 — toggle asset sidebar
@@ -124,7 +153,7 @@ export class TUIApp {
       this.updateStatus("display cleared",);
     },);
 
-    this.updateStatus("ready — Tab: focus | F2: assets | F3: harness | F5: refresh | Esc/q: quit",);
+    this.updateStatus("ready — F1: chats | Tab: focus | F2: assets | F3: harness | F5: refresh | Esc/q: quit",);
 
     this.screen.render();
   }
