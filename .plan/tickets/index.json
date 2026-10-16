@@ -12423,6 +12423,26 @@
     "title": "# Epic 25: Deployment Topologies & Packaging — Implementation Plan",
     "type": "EPIC"
   },
+  "EPIC-DERIVED-MAP-GENERATION": {
+    "hash": "pending",
+    "extid": "EPIC-DERIVED-MAP-GENERATION",
+    "type": "EPIC",
+    "title": "Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance",
+    "label": "epic",
+    "priority": "Low",
+    "epic": "",
+    "tags": [
+      "depth",
+      "texture",
+      "pbr",
+      "segmentation",
+      "assets",
+      "gallery",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/epic-derived-map-generation.md",
+    "status": "Not Started"
+  },
   "EPIC-DESKTOP-APP": {
     "epic": "",
     "extid": "EPIC-DESKTOP-APP",
@@ -15783,6 +15803,26 @@
     ],
     "title": "Runtime Integrity, Crash Recovery & Fail-Safes",
     "type": "EPIC"
+  },
+  "EPIC-SAM3-SEGMENTATION-INTEGRATION": {
+    "hash": "pending",
+    "extid": "EPIC-SAM3-SEGMENTATION-INTEGRATION",
+    "type": "EPIC",
+    "title": "SAM3 / SAM3.1 Integration — Concept Segmentation for Generation",
+    "label": "epic",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "segmentation",
+      "sam3",
+      "comfyui",
+      "matting",
+      "image-edit",
+      "sprite-pipeline",
+      "model-api"
+    ],
+    "source": ".plan/tickets/epic-sam3-segmentation-integration.md",
+    "status": "Not Started"
   },
   "EPIC-SCHEMA": {
     "epic": "",
@@ -30790,6 +30830,22 @@
     "source": ".plan/tickets/TASK-comfyui-builder-upload-validation-endpoint-operator-referenc.md",
     "status": "Not Started"
   },
+  "TASK-COMFYUI-DEPTH-MAP-GENERATION-TEMPLATE": {
+    "hash": "pending",
+    "extid": "TASK-COMFYUI-DEPTH-MAP-GENERATION-TEMPLATE",
+    "type": "TASK",
+    "title": "ComfyUI depth map generation template",
+    "label": "task",
+    "priority": "medium",
+    "epic": "derived-map-generation",
+    "tags": [
+      "comfyui",
+      "depth",
+      "workflow-templates"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-depth-map-generation-template.md",
+    "status": "Not Started"
+  },
   "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS": {
     "hash": "4baa39c",
     "extid": "TASK-COMFYUI-FIRST-CLASS-ADMIN-WORKFLOWS",
@@ -31026,6 +31082,39 @@
     "source": ".plan/tickets/TASK-comfyui-parameter-form-renderer.md",
     "status": "Not Started",
     "git_issue": "9d82194"
+  },
+  "TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION": {
+    "hash": "pending",
+    "extid": "TASK-COMFYUI-PBR-TEXTURE-SET-GENERATION",
+    "type": "TASK",
+    "title": "ComfyUI PBR texture set generation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "derived-map-generation",
+    "tags": [
+      "comfyui",
+      "textures",
+      "pbr",
+      "workflow-templates"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-pbr-texture-set-generation.md",
+    "status": "Not Started"
+  },
+  "TASK-COMFYUI-SAM3-CONCEPT-MASK-TEMPLATE": {
+    "hash": "2f8f2c8",
+    "git_issue": "2f8f2c8",
+    "extid": "TASK-COMFYUI-SAM3-CONCEPT-MASK-TEMPLATE",
+    "type": "TASK",
+    "title": "ComfyUI SAM3 concept mask template",
+    "label": "task",
+    "priority": "medium",
+    "epic": "sam3-segmentation-integration",
+    "tags": [
+      "comfyui",
+      "workflow-templates"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-sam3-concept-mask-template.md",
+    "status": "Not Started"
   },
   "TASK-COMFYUI-SAMPLER-SCHEDULER-DISCOVERY": {
     "hash": "5880e44",
@@ -33381,6 +33470,22 @@
     "tags": [],
     "title": "Derive bake endpoint server-side crop",
     "type": "TASK"
+  },
+  "TASK-DERIVED-MAP-ORIGIN-LINKS": {
+    "hash": "pending",
+    "extid": "TASK-DERIVED-MAP-ORIGIN-LINKS",
+    "type": "TASK",
+    "title": "Derived map origin links",
+    "label": "task",
+    "priority": "medium",
+    "epic": "derived-map-generation",
+    "tags": [
+      "assets",
+      "provenance",
+      "links"
+    ],
+    "source": ".plan/tickets/TASK-derived-map-origin-links.md",
+    "status": "Not Started"
   },
   "TASK-DEV-TOOLING-UPDATES": {
     "epic": "",
@@ -36865,6 +36970,22 @@
     "title": "# TASK-gallery-editor-structured-ui",
     "type": "TASK"
   },
+  "TASK-GALLERY-FILTER-GENERATED-DERIVED-CONTENT": {
+    "hash": "pending",
+    "extid": "TASK-GALLERY-FILTER-GENERATED-DERIVED-CONTENT",
+    "type": "TASK",
+    "title": "Gallery filter for generated and derived content",
+    "label": "task",
+    "priority": "medium",
+    "epic": "derived-map-generation",
+    "tags": [
+      "gallery",
+      "frontend",
+      "filters"
+    ],
+    "source": ".plan/tickets/TASK-gallery-filter-generated-derived-content.md",
+    "status": "Not Started"
+  },
   "TASK-GALLERY-FUZZY-SEARCH-PAGINATION": {
     "epic": "epic-frontend-gallery.md (Phase 3 Polish)",
     "extid": "TASK-GALLERY-FUZZY-SEARCH-PAGINATION",
@@ -37975,6 +38096,30 @@
     "status": "Not Started",
     "git_issue": "55d6d79"
   },
+  "TASK-HARNESS-EDIT-JOURNAL": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-EDIT-JOURNAL",
+    "type": "TASK",
+    "title": "Harness edit journal (per-op patch records)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-edit-journal.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-EDIT-ROLLBACK": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-EDIT-ROLLBACK",
+    "type": "TASK",
+    "title": "Harness edit rollback (rollback -N / <op_id>)",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-edit-rollback.md",
+    "status": "Not Started"
+  },
   "TASK-HARNESS-EVAL-HARNESS": {
     "hash": "9e6932e",
     "extid": "TASK-HARNESS-EVAL-HARNESS",
@@ -38880,6 +39025,39 @@
     ],
     "title": "Image backends x gallery: provenance filter + backend attribution validation",
     "type": "TASK"
+  },
+  "TASK-IMAGE-EDIT-CONCEPT-INPAINT-TEMPLATE": {
+    "hash": "b056993",
+    "git_issue": "b056993",
+    "extid": "TASK-IMAGE-EDIT-CONCEPT-INPAINT-TEMPLATE",
+    "type": "TASK",
+    "title": "Image-edit concept inpaint template",
+    "label": "task",
+    "priority": "medium",
+    "epic": "sam3-segmentation-integration",
+    "tags": [
+      "image-edit",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/TASK-image-edit-concept-inpaint-template.md",
+    "status": "Not Started"
+  },
+  "TASK-IMAGE-EDIT-DEPTH-CONDITIONED-EDITING": {
+    "hash": "pending",
+    "extid": "TASK-IMAGE-EDIT-DEPTH-CONDITIONED-EDITING",
+    "type": "TASK",
+    "title": "Image-edit depth conditioned editing",
+    "label": "task",
+    "priority": "medium",
+    "epic": "derived-map-generation",
+    "tags": [
+      "image-edit",
+      "comfyui",
+      "controlnet",
+      "depth"
+    ],
+    "source": ".plan/tickets/TASK-image-edit-depth-conditioned-editing.md",
+    "status": "Not Started"
   },
   "TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED": {
     "hash": "439ff25",
@@ -41424,6 +41602,22 @@
     "title": "MATRIX-story-coherence-perspective-aware-draft: set perspective-aware mood-intent dosage for drafts",
     "type": "TASK"
   },
+  "TASK-MATTING-CONCEPT-PROMPT-CONTRACT": {
+    "hash": "b40a4d7",
+    "git_issue": "b40a4d7",
+    "extid": "TASK-MATTING-CONCEPT-PROMPT-CONTRACT",
+    "type": "TASK",
+    "title": "Matting concept prompt contract",
+    "label": "task",
+    "priority": "high",
+    "epic": "sam3-segmentation-integration",
+    "tags": [
+      "matting",
+      "segmentation"
+    ],
+    "source": ".plan/tickets/TASK-matting-concept-prompt-contract.md",
+    "status": "Not Started"
+  },
   "TASK-MATTING-FALLBACK-AUX-PIPELINE-JOB": {
     "epic": "epic-avatar-alpha-vn-layering",
     "extid": "TASK-MATTING-FALLBACK-AUX-PIPELINE-JOB",
@@ -42440,6 +42634,22 @@
     "tags": [],
     "title": "Message forwarding across chats",
     "type": "TASK"
+  },
+  "TASK-MULTI-CONCEPT-SEGMENTATION-MASKS": {
+    "hash": "pending",
+    "extid": "TASK-MULTI-CONCEPT-SEGMENTATION-MASKS",
+    "type": "TASK",
+    "title": "Multi concept segmentation masks",
+    "label": "task",
+    "priority": "medium",
+    "epic": "derived-map-generation",
+    "tags": [
+      "segmentation",
+      "matting",
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-multi-concept-segmentation-masks.md",
+    "status": "Not Started"
   },
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "epic-multi-instance-reconciliation",
@@ -48823,6 +49033,72 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-safe-buffer-add-base64url-throwing-variants-audit-call-sites.md",
+    "status": "Not Started"
+  },
+  "TASK-SAM3-CONCEPT-CUTOUT-WIRING-SPRITES-AVATAR-MATTING-VN-ALPHA": {
+    "hash": "a8bed9c",
+    "git_issue": "a8bed9c",
+    "extid": "TASK-SAM3-CONCEPT-CUTOUT-WIRING-SPRITES-AVATAR-MATTING-VN-ALPHA",
+    "type": "TASK",
+    "title": "SAM3 concept cutout wiring — sprites, avatar matting, VN alpha",
+    "label": "task",
+    "priority": "medium",
+    "epic": "sam3-segmentation-integration",
+    "tags": [
+      "sprite-pipeline",
+      "avatar",
+      "vn"
+    ],
+    "source": ".plan/tickets/TASK-sam3-concept-cutout-wiring-sprites-avatar-matting-vn-alpha.md",
+    "status": "Not Started"
+  },
+  "TASK-SAM3-DIRECT-PROVIDER-VIA-META-MODEL-API": {
+    "hash": "3cfeeba",
+    "git_issue": "3cfeeba",
+    "extid": "TASK-SAM3-DIRECT-PROVIDER-VIA-META-MODEL-API",
+    "type": "TASK",
+    "title": "SAM3 direct provider via Meta Model API",
+    "label": "task",
+    "priority": "high",
+    "epic": "sam3-segmentation-integration",
+    "tags": [
+      "segmentation",
+      "provider-registry"
+    ],
+    "source": ".plan/tickets/TASK-sam3-direct-provider-via-meta-model-api.md",
+    "status": "Not Started"
+  },
+  "TASK-SAM3-FEASIBILITY-PROBE-META-MODEL-API-VS-COMFYUI-CUSTOM-NODE": {
+    "hash": "9f6ed80",
+    "git_issue": "9f6ed80",
+    "extid": "TASK-SAM3-FEASIBILITY-PROBE-META-MODEL-API-VS-COMFYUI-CUSTOM-NODE",
+    "type": "TASK",
+    "title": "SAM3 feasibility probe — Meta Model API vs ComfyUI custom node",
+    "label": "task",
+    "priority": "high",
+    "epic": "sam3-segmentation-integration",
+    "tags": [
+      "segmentation",
+      "comfyui",
+      "spike"
+    ],
+    "source": ".plan/tickets/TASK-sam3-feasibility-probe-meta-model-api-vs-comfyui-custom-node.md",
+    "status": "Not Started"
+  },
+  "TASK-SAM3-MASK-CACHE-AND-REUSE": {
+    "hash": "61e4600",
+    "git_issue": "61e4600",
+    "extid": "TASK-SAM3-MASK-CACHE-AND-REUSE",
+    "type": "TASK",
+    "title": "SAM3 mask cache and reuse",
+    "label": "task",
+    "priority": "low",
+    "epic": "sam3-segmentation-integration",
+    "tags": [
+      "assets",
+      "cache"
+    ],
+    "source": ".plan/tickets/TASK-sam3-mask-cache-and-reuse.md",
     "status": "Not Started"
   },
   "TASK-SANITIZER-INTEGRATION-ASAN-MSAN-UBSAN-TSAN": {
