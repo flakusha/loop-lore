@@ -18,6 +18,20 @@ Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/
 
 - Tools (AI-executable functions), agent roles, API routes, UI components, event handlers, DB migrations.
 
+## Tool policy tags
+
+`ToolDefinition.policy` (`src/plugins/tool-policy.ts`) is a **process requirement**, not isolation.
+The only tag is `requires-strict-codegen`: the tool refuses to run unless the
+process was started with Bun's `--disallow-code-generation-from-strings=strict`,
+which closes the string-to-code escape (`eval`, `new Function`, `node:vm`,
+run-time `data:` imports) for the whole process. `executePluginTool` re-evaluates
+the tag on every invocation, so a tool cannot be grandfathered in by having run
+before it was tagged.
+
+Plugin tools still run in-process with full filesystem and network access. The
+tag is neither a sandbox nor a boundary; stronger isolation is future work
+(gated on `Bun.ModuleGraph` leaving `experimental`).
+
 ## Not implemented / aspirational
 
 - Registry API: `GET /api/plugins`, `POST /api/plugins/install`, `DELETE /api/plugins/:name`, enable/disable, manifest/config get/put.
