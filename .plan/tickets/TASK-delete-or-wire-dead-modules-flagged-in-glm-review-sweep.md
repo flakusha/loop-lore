@@ -1,0 +1,92 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+# TASK: Delete or wire dead modules flagged in the GLM review sweep
+
+**Summary:** None
+**Context:** `bun run dead:code:src` (knip `--no-gitignore --include files`) reported 66 unreferenced `src/` modules. 57 modules deleted (plus one dead export removed from a live file) and are deleted; 2 were real wiring bugs and are wired; 2 are genuine knip false positives and are gaged; 8 are unwired-but-owned by another workstream/epic and are recorded in `knip.json` with the owning ticket named. The gate now exits 0 and has been flipped from advisory to blocking.
+**Acceptance Criteria:** None
+**Status:** Done
+**Priority:** Medium
+**Effort:** Medium
+
+## Context
+
+`knip.json` `project` covers `src/**/*.ts`, but `src/.gitignore` is a blanket `.`, so a gitignore-respecting knip run resolves zero src files. `bun run dead:code:src` runs `knip --no-gitignore --include files` to lift that layer and report unused *modules* (not unused exports — that bulk sweep has its own ticket).
+
+The sweep started from 66 unused files. The earlier session's list was stale: some of those files had already been deleted on this branch, so knip was re-run against the live tree before every decision.
+
+### Decision table
+
+**DELETED — genuinely dead (no importer anywhere in src/, scripts/, tests/, plugins/):**
+
+| Group | Files |
+|---|---|
+| Empty barrels (zero inbound imports; the service modules they re-exported stay live) | `src/{admin,auth,autonomy,characters/exporters,characters/normalizers,cron/dag,generation/lora,generation/tools,i18n,image-edit,image-edit/providers,inference,regex,rpg,rpg/blog,rpg/body-systems,rpg/location-nsfw,rpg/seduction,turning,users,worlds}/index.ts`, `src/characters/index.ts`, `src/frontend/vn/templates/index.ts` |
+| RPG sub-service barrels whose members were themselves unreferenced | `src/rpg/{encounters,fantasies,intimacy,seduction}/index.ts` and `src/rpg/{encounters,fantasies,intimacy,mood,nsfw-skills,quests,seduction}.ts` |
+| Personality-service leaf modules (only re-exported by `personality-service/index.ts`, also deleted) | `src/characters/services/personality-service/{index,integrity,modifiers,resolve}.ts` |
+| Other dead service modules | `src/characters/services/{relationships,skills,traits}-service-bridge.ts`, `src/users/capabilities.ts` |
+| Autonomy cluster — `autonomy` is not in the root `Config` interface, so the whole subtree has no reader | `src/config/{schema-class,schema-class/json-schema,schema}/autonomy.ts`, `src/config/sections/autonomy.ts` |
+| Image-edit command parser cluster (nothing consumes the parsed commands) | `src/generation/image-edit-commands/{index,parser,templates,types}.ts` |
+| Frontend Alpine modules with no partial and no owner ticket | `src/frontend/alpine/{chat-movement,locale-picker,transports/server}.ts` |
+| One-shot config migration tool whose callers are gone; never added to `scripts` (unlike the four sibling generators, which are) | `src/config/migrate-config.ts` |
+| Pure re-export shim of a live module | `src/story/turn-strategies.ts` |
+| Unmounted route module | `src/routes/rpg/handler.ts` |
+| Unused generation state store | `src/routes/generation/comparison-store.ts` |
+| Unregistered prompt section (absent from the prompt registry) | `src/assistant/prompt/sections/character-traits.ts` |
+
+Additionally `src/chat/folders.ts` keeps its live `formatFolderTree` export but loses the never-imported `writeFolderSource` hatch.
+
+`src/config/sections/{capabilities,compatibility}.ts` were also on the knip list but are already gone on dev — not part of this sweep.
+
+**WIRED — implemented but never called, a real gap:**
+
+| File | Fix |
+|---|---|
+| `src/config/generate-domain-schemas.ts` | Its output `schemas/config/*.schema.json` is committed and documented in `docs/spec/config-file-separation.md`; the four sibling generators (`generate-schema`, `-toml-schema`, `-env-schema`, `-character-schema`) all have package.json scripts. This one alone was missing → added `config:generate-domain-schemas`. |
+| `src/scripts/smoke-app.ts` | `docs/giwt-scripts-map.md` documents it as a retained hand-run smoke CLI; two BUG tickets reference `bun run smoke-app`. Added `smoke:app`. |
+
+**FALSE POSITIVE — gaged in `knip.json` `ignore` with a reason comment:**
+
+| File | Why knip can't see it |
+|---|---|
+| `src/build/copy-icons.ts`, `src/build/compress.ts` | Spawned as shell strings inside a Bun `$` template by `scripts/build-frontend.mjs`; knip cannot follow a subprocess invocation. |
+
+**SKIPPED — unwired but owned elsewhere, recorded in `knip.json` `ignore` with the owner named (not deleted):**
+
+| File | Owner |
+|---|---|
+| `src/assistant/prompt/sections/nsfw-context.ts`, `src/frontend/alpine/chat-creation/variants.ts` | `wire-deadcode` worktree — actively wiring these |
+| `src/crypto/activitypub-keys.ts` | Prerequisite for `FEAT-activitypub-federation`; `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` says keep until the table lands |
+| `src/frontend/touch.ts` | `WIRE-frontend-touch-swipe-gestures` (Not Started) |
+| `src/frontend/alpine/keynav-help.ts`, `src/frontend/alpine/mobile-composer.ts` | `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-mobile-sticky-bottom-composer`. Both already have live HTML partials binding `x-data="keynavHelp()"` / `x-data="mobileComposer()"`; deleting the `.ts` would break the partial at runtime |
+| `src/transport/index.ts`, `src/transport/test/harness.ts` | Contested — `epic-transport-expansion.md` lists both as Built deliverables |
+
+### Deleted tests
+
+Tests covering only deleted code were removed with it: `src/routes/rpg/handler.test.ts` (tested the unmounted handler) and the `src/chat/folders.test.ts` `writeFolderSource` block (the `formatFolderTree` coverage stays).
+
+## Acceptance Criteria
+
+- [x] knip re-run against the live tree; every remaining finding triaged DELETE / WIRE / FP / owned-elsewhere
+- [x] `bun run dead:code:src` exits 0 (was exit 1 with 66 unused files)
+- [x] `dead - code (src files)` flipped from `ADVISORY_GATES` to blocking in `scripts/check/parallel/gate-table.mjs`; the flip condition the table documented is now met
+- [x] `scripts/check/test-gaps-baseline.json` pruned: 25 baseline rows dropped, each naming a file this sweep deleted; no row remains for a nonexistent file
+- [x] No test coverage left pointing at deleted code
+- [x] Sibling branches (`wire-deadcode`, `options-object-params-return-type-exemption`) not collided with
+- [x] Documentation updated
+
+## Verification
+
+Run from `tree/deadcode-delete`:
+
+| Command | Result |
+|---|---|
+| `bun run dead:code:src` | exit 0 |
+| `bun run typecheck` | exit 0 |
+| `bun run typecheck:bun` | exit 0 |
+| `bun run typecheck:frontend` | exit 0 |
+| `bun run lint:eslint` | exit 0 |
+| `bun run test:unit` | exit 0 |
+
+`bun run test:gaps` fails with 7 new gaps (seed/identity, template-expansion/run, content/hash-injection). **Pre-existing and unrelated**: reproduced identically on a pristine stash of this branch's HEAD before any change, and fixed on dev by `4e00315be test: close coverage gaps for seed-identity and template-expansion`. None of those three source files are touched by this branch.

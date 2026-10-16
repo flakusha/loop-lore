@@ -3,7 +3,9 @@
 
 # TASK: Triage knip src findings
 
-**Status:** Not Started
+**Status:** Done
+
+> Superseded in full by `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, which re-ran knip on the live tree and triaged every finding: 57 deletions, 2 wirings, 2 gaged false positives, 8 recorded as owned-elsewhere. Sweep evidence: `bun run dead:code:src` exits 0 and this gate was flipped from `ADVISORY_GATES` to blocking in `scripts/check/parallel/gate-table.mjs`.
 **Priority:** medium
 **Effort:** Medium
 
