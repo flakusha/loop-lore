@@ -19,8 +19,18 @@ shape compatibility against a base checkpoint, and a machine-readable verdict.
 
 ## Context
 
-Source artifact: `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/studio_loras.py`
-— **scratch, will be pruned.** Read 2026-10-16.
+Source artifact: a Python ComfyUI HTTP-route extension (its `studio_loras.py`),
+handed over **2026-09-30** by an external acquaintance of the repo owner and vendored
+**only** under `.tmp/H3_Stills_5080_Handoff_20260930/`. That directory was scratch,
+was never committed, and **has been pruned — the source is not on disk and is not
+recoverable from git history.** Do not go looking for it.
+
+Every line number and import claim below is a **prior observation from one read on
+2026-10-16, not a re-readable source.** Treat it as an unverified claim to be
+re-derived against a live ComfyUI and a real LoRA file. The specific claim about which
+ComfyUI modules the module imports is exactly the kind of detail a single read gets
+wrong — confirm it before repeating it in an AC, and record where the confirmation
+came from (see the last AC).
 
 The audit logic is real and the *transport* around it is wrong:
 
@@ -85,4 +95,12 @@ is the remaining gap, not id allocation.
       default
 - [ ] Test: a LoRA with an extra unmatched tensor reports that tensor by name; a
       clean LoRA audits clean; a corrupt header is rejected without throwing
+- [ ] **Provenance recorded.** The source artifact is gone, so each sidecar-derived
+      claim this ticket relied on — the header-parse caps, the block size, the
+      `compatibility` basename rule, and especially **which ComfyUI modules the
+      module actually imports** — is either re-derived against a live ComfyUI and a
+      real LoRA, or explicitly marked unverified. The ticket records, per claim,
+      **where the evidence came from** (executed test, observed run, or a written
+      answer from the upstream author); a claim with no provenance is not used as if
+      confirmed
 - [ ] `bun run check` green

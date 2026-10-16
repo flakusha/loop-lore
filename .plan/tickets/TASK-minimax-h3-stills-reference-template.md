@@ -20,9 +20,19 @@ sidecar's hardcoded literals.
 
 ## Context
 
-Source artifact: `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`
-(**scratch — will be pruned; a reference artifact, never an import target**).
-Read 2026-10-16.
+Source artifact: a Python ComfyUI HTTP-route extension (its `studio_stills.py`), handed
+over **2026-09-30** by an external acquaintance of the repo owner and vendored
+**only** under `.tmp/H3_Stills_5080_Handoff_20260930/` — a reference artifact, never an
+import target. That directory was scratch, was never committed, and **has been pruned
+— the source is not on disk and is not recoverable from git history.** Do not go
+looking for it.
+
+Every chain length, node type, line number, and literal below is a **prior observation
+from one read on 2026-10-16, not a re-readable source.** Treat it as an unverified
+claim to be re-derived — against a live ComfyUI with the six external node types
+installed, and against the upstream author if the artifact is ever re-acquired. Where
+a claim is load-bearing, confirm it and record where the confirmation came from (see
+the last AC).
 
 The reference chain is `studio_stills.py:183-216`, 11 nodes:
 `UNETLoader` → chain-wired `LoraLoaderModelOnly` → `MiniMaxH3SigmaShift` →
@@ -74,4 +84,12 @@ template; record the split explicitly.
 - [ ] If the six external nodes are unavailable in a plain ComfyUI, that is stated
       as a deployment prerequisite rather than worked around
 - [ ] Test: template builds; substituted output passes `isValidWorkflow`
+- [ ] **Provenance recorded.** The source artifact is gone, so every sidecar-derived
+      claim this ticket relied on — the reference chain shape and its node count, the
+      role-dependent reference preprocessing, the six external node-type names, and
+      the `normalize()` literals being refused — is either re-derived against a live
+      ComfyUI with those nodes installed, or explicitly marked unverified. The ticket
+      records, per claim, **where the evidence came from** (executed test, an
+      `/object_info` observation with its date, or a written answer from the upstream
+      author); a claim with no provenance is not used as if confirmed
 - [ ] `bun run check` green
