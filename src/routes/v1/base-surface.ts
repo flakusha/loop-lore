@@ -1,31 +1,31 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * v1 baseSurface barrel (split out: one Elysia chain per file keeps TS2589 away).
  */
-import { Elysia, } from "elysia";
-import { ageGateRoutes, } from "../../age-gate/controller";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
-import { localInferenceRoutes, } from "../../inference/routes";
+import { Elysia, } from "elysia";
 import { actorPlanRoutes, } from "../actor-plan";
+import { ageGateRoutes, } from "../../age-gate/controller";
 import { apiKeysRoutes, } from "../api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "../auth";
+import { deprecationAfterHandle, } from "../middleware/deprecation-headers";
+import { emojiRoutes, } from "../emoji";
 import { frontendLogsRoutes, } from "../frontend-logs";
 import { healthRoutes, } from "../health";
 import { i18nRoutes, } from "../i18n";
 import { keyManagementRoutes, } from "../key-management";
+import { localInferenceRoutes, } from "../../inference/routes";
 import { messageEncryptionRoutes, } from "../message-encryption";
-import { deprecationAfterHandle, } from "../middleware/deprecation-headers";
-import { versionResolver, } from "../middleware/version-resolver";
-import { planningRoutes, } from "../planning";
 import { planningBoardRoutes, } from "../planning-board";
+import { planningRoutes, } from "../planning";
 import { requestStatusRoutes, } from "../requests";
 import { sessionsRoutes, } from "../sessions";
-import { switchSessionRoutes, } from "../sessions-switch";
 import { settingsRoutes, } from "../settings";
+import { switchSessionRoutes, } from "../sessions-switch";
 import { telemetryRoutes, } from "../telemetry";
 import { usersRoutes, } from "../users";
+import { versionResolver, } from "../middleware/version-resolver";
 
 /**
  * @param {RegisterPluginsOpts} opts
@@ -53,6 +53,7 @@ export function baseSurface(opts: RegisterPluginsOpts,) {
     // ── Public surfaces ──────────────────────────────────────
     .use(healthRoutes(handleOpts, prefix,),)
     .use(authPublicRoutes(handleOpts, prefix,),)
+    .use(emojiRoutes({ prefix, },),)
     .use(i18nRoutes(handleOpts, prefix,),)
     .use(telemetryRoutes(handleOpts, prefix,),)
     .use(frontendLogsRoutes(prefix,),)
