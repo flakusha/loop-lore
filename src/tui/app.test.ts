@@ -171,11 +171,12 @@ if (ISOLATED) {
 // "take the token when the config loads, run anonymous when it throws".
 let configError: Error | null = null;
 let configToken: string | undefined = "test-token";
+let configEnabled = true;
 if (ISOLATED) {
   mock.module("../config/load", () => ({
     loadConfig: (): unknown => {
       if (configError) { throw configError; }
-      return { tui: { sessionToken: configToken, }, };
+      return { tui: { sessionToken: configToken, enabled: configEnabled, }, };
     },
   }),);
 }
@@ -212,6 +213,7 @@ beforeEach(() => {
   setGlobalLogger(null as never,);
   configError = null;
   configToken = "test-token";
+  configEnabled = true;
   textWidgets.length = 0;
   // HarnessView.toggle() fires `void this.refresh()`, which fetches the runs
   // list. Without this stub an F3 press opens a real socket to localhost.
@@ -292,6 +294,26 @@ describeOrSkip("TUIApp", () => {
   it("runs anonymous when the config fails to load", () => {
     configError = new Error("no config.toml",);
     expect(createTUIApp().chat.sessionToken,).toBeUndefined();
+  });
+
+  // TASK-tui-enabled-config-flag-never-read: [tui].enabled was env-mapped and
+  // documented but nothing read it, so ENABLE_TUI=false booted the shell anyway.
+  it("refuses to start and exits when [tui].enabled is false", () => {
+    exitSpy = spyOn(process, "exit",).mockImplementation((() => {}) as never,);
+    configEnabled = false;
+
+    const app = createTUIApp();
+
+    expect(exitSpy,).toHaveBeenCalledWith(0,);
+    expect((app.screen as unknown as WidgetStub).destroyed,).toBe(true,);
+    expect(statusBar().content,).toContain("disabled",);
+  });
+
+  it("starts normally when the config cannot be read at all", () => {
+    // A broken config file must not silence the shell: the default stands.
+    configError = new Error("no config.toml",);
+    createTUIApp();
+    expect(statusBar().content,).toContain("F2: assets",);
   });
 
   it("paints the ready hint on the status bar", () => {

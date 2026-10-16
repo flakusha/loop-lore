@@ -15,7 +15,8 @@
  */
 import blessed from "blessed";
 import { TUI_DEFAULTS, } from "../../config/sections/tui";
-import { handleSend as handleSendDispatch, loadMessages as loadMessagesDispatch, } from "./api";
+import { handleSend as handleSendDispatch, loadCommands, loadMessages as loadMessagesDispatch, } from "./api";
+import { CommandCompleter, } from "./commands";
 import { formatMessageLine, } from "./display";
 import type { ChatHost, ChatMessage, ChatWidgetOptions, } from "./types";
 
@@ -28,6 +29,8 @@ export class ChatWidget implements ChatHost {
   private box: blessed.Widgets.BoxElement;
   messageList: blessed.Widgets.ListElement;
   private inputBox: blessed.Widgets.TextboxElement;
+  private completionStrip: blessed.Widgets.TextElement;
+  private completer: CommandCompleter;
   chatId: string | null = null;
   messages: ChatMessage[] = [];
   itemCount = 0;
@@ -99,11 +102,53 @@ export class ChatWidget implements ChatHost {
       },
     },);
 
+    // Slash-command completion. The chat box already owns the layout, so the
+    // hint is one line above the input rather than a second screen - the
+    // epic bans a palette overlay.
+    this.completionStrip = blessed.text({
+      parent: this.box,
+      bottom: 3,
+      left: 0,
+      width: "100%",
+      height: 1,
+      tags: true,
+      content: "",
+      style: {
+        fg: "cyan",
+      },
+    },);
+
+    this.completer = new CommandCompleter({
+      loadRegistry: () => loadCommands(this.sessionToken, this.chatId,),
+      onChange: () => {
+        this.completionStrip.setContent(this.completer.hint() ?? "",);
+        this.screen.render();
+      },
+    },);
+
     // Focus input on startup
     this.inputBox.focus();
 
-    // Send message on Enter
+    // Re-filter as the user types. Textarea attaches its own keypress listener
+    // in a nextTick after focus, so ours - registered here - runs first and
+    // would still see the previous value; a microtask runs once the emit has
+    // settled and the textbox has applied the keystroke.
+    this.inputBox.on("keypress", () => {
+      queueMicrotask(() => {
+        this.completer.update(this.inputBox.getValue(),);
+      },);
+    },);
+
+    // Send message on Enter, or commit the highlighted completion.
     this.inputBox.on("submit", (value: string,) => {
+      const committed = this.completer.accept();
+      if (committed !== null) {
+        this.inputBox.setValue(committed,);
+        this.inputBox.focus();
+        screen.render();
+        return;
+      }
+
       if (value.trim() && !this.isSending) {
         void this.handleSend(value.trim(),);
       }
@@ -114,8 +159,14 @@ export class ChatWidget implements ChatHost {
       screen.render();
     },);
 
-    // Focus management
+    // Focus management. A live completion owns Tab while one is on offer;
+    // with nothing to complete Tab keeps its input <-> list switch.
     screen.key(["tab",], () => {
+      if (this.completer.cycle()) {
+        screen.render();
+        return;
+      }
+
       if (screen.focused === this.inputBox) {
         this.messageList.focus();
       } else {
