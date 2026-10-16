@@ -59,6 +59,19 @@
     "source": ".plan/tickets/BUG-a-community-plugin-named-core-disables-all-five-built-in-too.md",
     "status": "Not Started"
   },
+  "BUG-ACCEPTRESPONSE-APPLIES-WORLD-EVENTS-BEFORE-THE-TURN-WRITE-SO": {
+    "hash": "8af2b9a",
+    "git_issue": "8af2b9a",
+    "extid": "BUG-ACCEPTRESPONSE-APPLIES-WORLD-EVENTS-BEFORE-THE-TURN-WRITE-SO",
+    "type": "BUG",
+    "title": "acceptResponse applies world events before the turn write, so a rejected turn keeps applied world mutations",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-acceptresponse-applies-world-events-before-the-turn-write-so.md",
+    "status": "Not Started"
+  },
   "BUG-ACCESS-LOG-NEVER-RECORDS-USERID-HANDLE-X-USER-ID-HEADER-NEVE": {
     "epic": "epic-logging",
     "extid": "BUG-ACCESS-LOG-NEVER-RECORDS-USERID-HANDLE-X-USER-ID-HEADER-NEVE",
@@ -299,6 +312,19 @@
     "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
     "status": "done"
   },
+  "BUG-ADMIN-PLUGIN-ENABLE-ROUTE-LEAVES-HALF-REGISTERED-ONLOAD-STAT": {
+    "hash": "c4dd53c",
+    "git_issue": "c4dd53c",
+    "extid": "BUG-ADMIN-PLUGIN-ENABLE-ROUTE-LEAVES-HALF-REGISTERED-ONLOAD-STAT",
+    "type": "BUG",
+    "title": "Admin plugin enable route leaves half-registered onLoad state that the loader's own rollback removes",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat.md",
+    "status": "Not Started"
+  },
   "BUG-ADMIN-PROVIDERS-LIST-ENDPOINT-IS-PUBLIC": {
     "hash": "bf85b93",
     "git_issue": "bf85b93",
@@ -466,6 +492,19 @@
     "title": "Alpine init hydration errors abort chat subtree rendering",
     "type": "BUG"
   },
+  "BUG-AMBIENT-AUDIO-ROUTE-LINKS-GENERATED-ASSETS-TO-ARBITRARY-MESS": {
+    "hash": "0fa3a70",
+    "git_issue": "0fa3a70",
+    "extid": "BUG-AMBIENT-AUDIO-ROUTE-LINKS-GENERATED-ASSETS-TO-ARBITRARY-MESS",
+    "type": "BUG",
+    "title": "Ambient audio route links generated assets to arbitrary messageId with no chat-membership check",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ambient-audio-route-links-generated-assets-to-arbitrary-mess.md",
+    "status": "Not Started"
+  },
   "BUG-ANALYTICS-PER-USER-ROUTES-FILTER-TELEMETRY-EVENTS-BY-RAW-IDS": {
     "epic": "epic-analytics-observability",
     "extid": "BUG-ANALYTICS-PER-USER-ROUTES-FILTER-TELEMETRY-EVENTS-BY-RAW-IDS",
@@ -530,6 +569,19 @@
     "tags": [],
     "title": "any chat participant can hard-delete any message",
     "type": "BUG"
+  },
+  "BUG-API-RATE-LIMITER-PERSISTS-THE-SLIDING-WINDOW-BEFORE-THE-BURS": {
+    "hash": "47b01f8",
+    "git_issue": "47b01f8",
+    "extid": "BUG-API-RATE-LIMITER-PERSISTS-THE-SLIDING-WINDOW-BEFORE-THE-BURS",
+    "type": "BUG",
+    "title": "API rate limiter persists the sliding window before the burst check, so burst-denied requests consume steady-state budget",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-api-rate-limiter-persists-the-sliding-window-before-the-burs.md",
+    "status": "Not Started"
   },
   "BUG-APP-REGISTERPLUGINS-ACCEPTS-ASYNCSTORE-BUT-NEVER-USES-IT": {
     "epic": "",
@@ -865,6 +917,19 @@
     "source": ".plan/tickets/BUG-async-spill-uses-cache-key-as-filename-so-routed-ids-lose.md",
     "status": "done",
     "git_issue": "33718af"
+  },
+  "BUG-AT-REST-TIER-NONE-ENVELOPE-SHORT-CIRCUIT-STORES-PLAINTEXT-VE": {
+    "hash": "f5f13b4",
+    "git_issue": "f5f13b4",
+    "extid": "BUG-AT-REST-TIER-NONE-ENVELOPE-SHORT-CIRCUIT-STORES-PLAINTEXT-VE",
+    "type": "BUG",
+    "title": "At-rest tier-none envelope short-circuit stores plaintext verbatim and fabricates wasEncrypted: true",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve.md",
+    "status": "Not Started"
   },
   "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE": {
     "epic": "",
@@ -3365,6 +3430,32 @@
     "title": "`src/middleware/elysia-auth.ts` is a dead shim with divergent failure-path logic",
     "type": "BUG"
   },
+  "BUG-EMAIL-ADAPTER-INGESTS-MAIL-ADDRESSED-TO-ANYONE-AND-FALLS-BAC": {
+    "hash": "176dc92",
+    "git_issue": "176dc92",
+    "extid": "BUG-EMAIL-ADAPTER-INGESTS-MAIL-ADDRESSED-TO-ANYONE-AND-FALLS-BAC",
+    "type": "BUG",
+    "title": "Email adapter ingests mail addressed to anyone and falls back to an unvalidated first To entry as bridge target",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-email-adapter-ingests-mail-addressed-to-anyone-and-falls-bac.md",
+    "status": "Not Started"
+  },
+  "BUG-EMAIL-TOKEN-BUCKET-DISCARDS-FRACTIONAL-REFILL-CREDIT-PERMANE": {
+    "hash": "237dd5e",
+    "git_issue": "237dd5e",
+    "extid": "BUG-EMAIL-TOKEN-BUCKET-DISCARDS-FRACTIONAL-REFILL-CREDIT-PERMANE",
+    "type": "BUG",
+    "title": "Email token bucket discards fractional refill credit, permanently starving senders below one token per refill",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-email-token-bucket-discards-fractional-refill-credit-permane.md",
+    "status": "Not Started"
+  },
   "BUG-EMOTION-AVATAR-BASEAVATARID-IS-UNCHECKED-CROSS-USER-ASSET-ME": {
     "epic": "",
     "extid": "BUG-EMOTION-AVATAR-BASEAVATARID-IS-UNCHECKED-CROSS-USER-ASSET-ME",
@@ -3801,6 +3892,19 @@
     "tags": [],
     "title": "finalize concurrent-merge race corrupts dev checkout",
     "type": "BUG"
+  },
+  "BUG-FINDCOMPRESSEDVARIANT-SERVES-Q-0-CODINGS-THE-CLIENT-EXPLICIT": {
+    "hash": "cf72ad0",
+    "git_issue": "cf72ad0",
+    "extid": "BUG-FINDCOMPRESSEDVARIANT-SERVES-Q-0-CODINGS-THE-CLIENT-EXPLICIT",
+    "type": "BUG",
+    "title": "findCompressedVariant serves q=0 codings the client explicitly refused - regression introduced by the q-strip fix",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit.md",
+    "status": "Not Started"
   },
   "BUG-FIX-API-APPLY-GOVERNANCE-DEPRECATION-TO-THE-API-V1-LEGACY-FA": {
     "hash": "afe12b9",
@@ -4284,6 +4388,19 @@
     "source": ".plan/tickets/BUG-gallery-search-401s-anonymous-users-while-grid-serves-them.md",
     "status": "Not Started"
   },
+  "BUG-GAME-STATE-BLOCK-REGEX-TRUNCATES-PAYLOADS-CONTAINING-AN-INNE": {
+    "hash": "1071224",
+    "git_issue": "1071224",
+    "extid": "BUG-GAME-STATE-BLOCK-REGEX-TRUNCATES-PAYLOADS-CONTAINING-AN-INNE",
+    "type": "BUG",
+    "title": "GAME_STATE_BLOCK regex truncates payloads containing an inner fenced code block",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-game-state-block-regex-truncates-payloads-containing-an-inne.md",
+    "status": "Not Started"
+  },
   "BUG-GATES-CSV-EQUALS-FORM-IS-SILENTLY-IGNORED-ONLY-THE-SPACE-SEP": {
     "hash": "fcbfd8f",
     "git_issue": "fcbfd8f",
@@ -4663,6 +4780,19 @@
     "title": "# BUG-2026-001: GM Notes GET endpoints return 500 `near \"from\": syntax error`",
     "type": "BUG"
   },
+  "BUG-GM-SHADOW-NOTE-REVEALED-TO-REVEAL-IS-A-READ-MODIFY-WRITE-WIT": {
+    "hash": "2b495f0",
+    "git_issue": "2b495f0",
+    "extid": "BUG-GM-SHADOW-NOTE-REVEALED-TO-REVEAL-IS-A-READ-MODIFY-WRITE-WIT",
+    "type": "BUG",
+    "title": "GM shadow-note revealed_to reveal is a read-modify-write without serialization: concurrent reveals lose an append",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gm-shadow-note-revealed-to-reveal-is-a-read-modify-write-wit.md",
+    "status": "Not Started"
+  },
   "BUG-GMNOTESSECTION-INJECTS-SHADOW-NOTES-INTO-ALL-ACTORS-PROMPTS": {
     "epic": "",
     "extid": "BUG-GMNOTESSECTION-INJECTS-SHADOW-NOTES-INTO-ALL-ACTORS-PROMPTS",
@@ -4714,6 +4844,19 @@
     "tags": [],
     "title": "gpg-unlock warm never populated agent cache; assertGpgUnlocked cache-blind",
     "type": "BUG"
+  },
+  "BUG-GREETING-FILLER-REGEX-HAS-NO-WORD-BOUNDARY-AND-MANGLES-ORDIN": {
+    "hash": "b1d4e75",
+    "git_issue": "b1d4e75",
+    "extid": "BUG-GREETING-FILLER-REGEX-HAS-NO-WORD-BOUNDARY-AND-MANGLES-ORDIN",
+    "type": "BUG",
+    "title": "GREETING_FILLER regex has no word boundary and mangles ordinary words in chat auto-rename",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin.md",
+    "status": "Not Started"
   },
   "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD": {
     "epic": "epic-chat-lifecycle-moderation",
@@ -5014,6 +5157,19 @@
     "title": "Http1Handler.send is a silent no-op",
     "type": "BUG"
   },
+  "BUG-HUMANOVERRIDE-SILENTLY-DROPS-THE-GM-DECISION-WHEN-SERIALIZAT": {
+    "hash": "f9f8f3e",
+    "git_issue": "f9f8f3e",
+    "extid": "BUG-HUMANOVERRIDE-SILENTLY-DROPS-THE-GM-DECISION-WHEN-SERIALIZAT",
+    "type": "BUG",
+    "title": "humanOverride silently drops the GM decision when serialization fails, returning success",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-humanoverride-silently-drops-the-gm-decision-when-serializat.md",
+    "status": "Not Started"
+  },
   "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-": {
     "hash": "bb51e44",
     "git_issue": "bb51e44",
@@ -5294,6 +5450,19 @@
     "title": "isGenerating stuck true bricks chat switching",
     "type": "BUG"
   },
+  "BUG-ISPLUGINACTIVE-FAILS-OPEN-FOR-CORE-PLUGINS-ON-ANY-DB-ERROR": {
+    "hash": "eb8141c",
+    "git_issue": "eb8141c",
+    "extid": "BUG-ISPLUGINACTIVE-FAILS-OPEN-FOR-CORE-PLUGINS-ON-ANY-DB-ERROR",
+    "type": "BUG",
+    "title": "isPluginActive fails open for core plugins on any DB error",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error.md",
+    "status": "Not Started"
+  },
   "BUG-ISPLURALNODE-DUPLICATED-IN-SERVER-AND-FRONTEND-I18N-DIVERGIN": {
     "hash": "5f8bbe7",
     "git_issue": "5f8bbe7",
@@ -5305,6 +5474,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md",
+    "status": "Not Started"
+  },
+  "BUG-ITEM-TRANSFERS-DOUBLE-REPORT-ONE-SENTENCE-AND-ITEM-TAKE-ITEM": {
+    "hash": "5acbda7",
+    "git_issue": "5acbda7",
+    "extid": "BUG-ITEM-TRANSFERS-DOUBLE-REPORT-ONE-SENTENCE-AND-ITEM-TAKE-ITEM",
+    "type": "BUG",
+    "title": "Item transfers double-report one sentence and ITEM_TAKE/ITEM_DROP capture only the first character of the item name",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-item-transfers-double-report-one-sentence-and-item-take-item.md",
     "status": "Not Started"
   },
   "BUG-JOURNAL-KEYPHRASE-PANEL-READS-ONLY-PAGE-1-OF-THE-PAGINATED-M": {
@@ -5399,6 +5581,19 @@
     "tags": [],
     "title": "jwtSecret reused across three security domains; BYOK PBKDF2 fixed global salt",
     "type": "BUG"
+  },
+  "BUG-KEY-MATERIAL-REVOKE-THEN-INSERT-SEQUENCES-ARE-NON-TRANSACTIO": {
+    "hash": "3210ca1",
+    "git_issue": "3210ca1",
+    "extid": "BUG-KEY-MATERIAL-REVOKE-THEN-INSERT-SEQUENCES-ARE-NON-TRANSACTIO",
+    "type": "BUG",
+    "title": "Key-material revoke-then-insert sequences are non-transactional: a failure strands the actor with zero active keys",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-key-material-revoke-then-insert-sequences-are-non-transactio.md",
+    "status": "Not Started"
   },
   "BUG-KEY-ROTATION-NON-TRANSACTIONAL-INCOMPLETE-RE-ENCRYPTION-STRA": {
     "epic": "",
@@ -5516,6 +5711,19 @@
     "tags": [],
     "title": "listAssets treats Shared visibility as world-readable",
     "type": "BUG"
+  },
+  "BUG-LLMDECISION-ASSEMBLES-THE-PROMPT-OUTSIDE-THE-TRY-BLOCK-SO-AN": {
+    "hash": "4411735",
+    "git_issue": "4411735",
+    "extid": "BUG-LLMDECISION-ASSEMBLES-THE-PROMPT-OUTSIDE-THE-TRY-BLOCK-SO-AN",
+    "type": "BUG",
+    "title": "llmDecision assembles the prompt outside the try block, so an assembly failure kills the turn instead of falling back",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-llmdecision-assembles-the-prompt-outside-the-try-block-so-an.md",
+    "status": "Not Started"
   },
   "BUG-LOCALE-JSON-IS-EMBEDDED-IN-A-SCRIPT-TAG-WITHOUT-HTML-ESCAPIN": {
     "hash": "89387d0",
@@ -7109,6 +7317,19 @@
     "title": "plan:sync --fix mass-creates orphan git issues for placeholder hashes",
     "type": "BUG"
   },
+  "BUG-PLUGIN-APPROVAL-IS-KEYED-BY-NAME-ONLY-WITH-NO-ORIGIN-COLUMN-": {
+    "hash": "5d27599",
+    "git_issue": "5d27599",
+    "extid": "BUG-PLUGIN-APPROVAL-IS-KEYED-BY-NAME-ONLY-WITH-NO-ORIGIN-COLUMN-",
+    "type": "BUG",
+    "title": "Plugin approval is keyed by name only with no origin column: a community plugin inherits a core plugin's approval",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-.md",
+    "status": "Not Started"
+  },
   "BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR": {
     "hash": "7c24397",
     "git_issue": "7c24397",
@@ -7239,6 +7460,32 @@
     "source": ".plan/tickets/BUG-proactive-backoff-increment-loses-updates-under-concurrency.md",
     "status": "Not Started"
   },
+  "BUG-PROBES-TS-LIVENESS-ACCEPTS-ANY-HTTP-RESPONSE-INCLUDING-404-A": {
+    "hash": "c23dba2",
+    "git_issue": "c23dba2",
+    "extid": "BUG-PROBES-TS-LIVENESS-ACCEPTS-ANY-HTTP-RESPONSE-INCLUDING-404-A",
+    "type": "BUG",
+    "title": "probes.ts liveness accepts any HTTP response including 404 and 500",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-probes-ts-liveness-accepts-any-http-response-including-404-a.md",
+    "status": "Not Started"
+  },
+  "BUG-PROBES-TS-STALE-LLAMA-SWAP-HEALTH-ROUTE-CLAIM": {
+    "hash": "1848443",
+    "git_issue": "1848443",
+    "extid": "BUG-PROBES-TS-STALE-LLAMA-SWAP-HEALTH-ROUTE-CLAIM",
+    "type": "BUG",
+    "title": "probes.ts stale llama-swap health route claim",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-local-process-swarm",
+    "tags": [],
+    "source": ".plan/tickets/BUG-probes-ts-stale-llama-swap-health-route-claim.md",
+    "status": "Not Started"
+  },
   "BUG-PROMPTOVERRIDE-SCHEMA-HAS-NO-MAXLENGTH-TOKEN-BOMB-STORAGE-VE": {
     "epic": "",
     "extid": "BUG-PROMPTOVERRIDE-SCHEMA-HAS-NO-MAXLENGTH-TOKEN-BOMB-STORAGE-VE",
@@ -7315,6 +7562,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-quest-and-story-state-routes-discard-notification-rejections.md",
+    "status": "Not Started"
+  },
+  "BUG-QUEST-ENGINE-DOUBLE-ADVANCES-FROM-STALE-IN-MEMORY-PROGRESS-A": {
+    "hash": "fad5ab4",
+    "git_issue": "fad5ab4",
+    "extid": "BUG-QUEST-ENGINE-DOUBLE-ADVANCES-FROM-STALE-IN-MEMORY-PROGRESS-A",
+    "type": "BUG",
+    "title": "Quest engine double-advances from stale in-memory progress and completes via a non-transactional multi-write sequence",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-quest-engine-double-advances-from-stale-in-memory-progress-a.md",
     "status": "Not Started"
   },
   "BUG-RATE-LIMIT-IN-MEMORY-STORE-NEVER-EVICTS-IDLE-KEYS": {
@@ -7667,6 +7927,19 @@
     "title": "rotateKeyOnLeave partial failure leaves mixed key state - non-transactional and swallowed",
     "type": "BUG"
   },
+  "BUG-ROTATEKEYONLEAVE-RE-ENCRYPTS-ASSET-FILES-BEFORE-THE-DB-TRANS": {
+    "hash": "5b447f9",
+    "git_issue": "5b447f9",
+    "extid": "BUG-ROTATEKEYONLEAVE-RE-ENCRYPTS-ASSET-FILES-BEFORE-THE-DB-TRANS",
+    "type": "BUG",
+    "title": "rotateKeyOnLeave re-encrypts asset files before the DB transaction, so a rollback permanently destroys encrypted chat assets",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans.md",
+    "status": "Not Started"
+  },
   "BUG-ROTATEKEYONLEAVE-RE-ENCRYPTS-MESSAGES-ONLY-ENCRYPTED-ASSETS-": {
     "epic": "",
     "extid": "BUG-ROTATEKEYONLEAVE-RE-ENCRYPTS-MESSAGES-ONLY-ENCRYPTED-ASSETS-",
@@ -7830,6 +8103,19 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p.md",
+    "status": "Not Started"
+  },
+  "BUG-RUNTIME-ASSET-COMPRESSION-IS-STRUCTURALLY-DEAD-NEEDSCOMPRESS": {
+    "hash": "c3e0217",
+    "git_issue": "c3e0217",
+    "extid": "BUG-RUNTIME-ASSET-COMPRESSION-IS-STRUCTURALLY-DEAD-NEEDSCOMPRESS",
+    "type": "BUG",
+    "title": "Runtime asset compression is structurally dead (needsCompression always false) and generates sidecars before hash injection",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-runtime-asset-compression-is-structurally-dead-needscompress.md",
     "status": "Not Started"
   },
   "BUG-SAFE-BUFFER-BASE64URL-GUARD-ACCEPTS-WHITESPACE-VARIANTS-AND-": {
@@ -8147,6 +8433,19 @@
     "title": "size-strict pre-existing dev drift",
     "type": "BUG"
   },
+  "BUG-SKIPOLDCHAIN-ZEROES-THE-CALLER-S-RECEIVINGCHAINKEY-DESPITE-I": {
+    "hash": "bc9c205",
+    "git_issue": "bc9c205",
+    "extid": "BUG-SKIPOLDCHAIN-ZEROES-THE-CALLER-S-RECEIVINGCHAINKEY-DESPITE-I",
+    "type": "BUG",
+    "title": "skipOldChain zeroes the caller's receivingChainKey despite its does-not-mutate-input contract",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-skipoldchain-zeroes-the-caller-s-receivingchainkey-despite-i.md",
+    "status": "Not Started"
+  },
   "BUG-SLASH-AUTOCOMPLETE-REGEX-NOT-CARET-ANCHORED-SWALLOWS-ENTER": {
     "epic": "",
     "extid": "BUG-SLASH-AUTOCOMPLETE-REGEX-NOT-CARET-ANCHORED-SWALLOWS-ENTER",
@@ -8173,6 +8472,19 @@
     "tags": [],
     "title": "smart-regen validates style then drops it — the style parameter never reaches the LLM call",
     "type": "BUG"
+  },
+  "BUG-SPAM-GATE-SENDER-IDENTITY-IGNORES-PLUS-TAG-SUBADDRESSING-BLO": {
+    "hash": "e059994",
+    "git_issue": "e059994",
+    "extid": "BUG-SPAM-GATE-SENDER-IDENTITY-IGNORES-PLUS-TAG-SUBADDRESSING-BLO",
+    "type": "BUG",
+    "title": "Spam-gate sender identity ignores plus-tag subaddressing: blocklist and per-sender bucket are bypassable",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-spam-gate-sender-identity-ignores-plus-tag-subaddressing-blo.md",
+    "status": "Not Started"
   },
   "BUG-SPKI-PIN-GATE-IS-NOT-ENFORCED-ACROSS-HTTP-REDIRECTS": {
     "hash": "bc4950c",
@@ -8443,6 +8755,19 @@
     "source": ".plan/tickets/BUG-story-points-mutations-double-swallow-cache-refresh-failures.md",
     "status": "done"
   },
+  "BUG-STRANDED-POST-FINALIZE-FIX-THE-AUDIO-LOW-PASS-COEFFICIENT-RE": {
+    "hash": "12911db",
+    "git_issue": "12911db",
+    "extid": "BUG-STRANDED-POST-FINALIZE-FIX-THE-AUDIO-LOW-PASS-COEFFICIENT-RE",
+    "type": "BUG",
+    "title": "Stranded post-finalize fix: the audio low-pass coefficient restore is still unmerged on fix-audio-lowpass-coefficient while dev ships the spectrum regression",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-stranded-post-finalize-fix-the-audio-low-pass-coefficient-re.md",
+    "status": "Not Started"
+  },
   "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS": {
     "epic": "",
     "extid": "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS",
@@ -8468,6 +8793,19 @@
     "tags": [],
     "title": "Stream cancel leaves attempt stuck Processing forever — no cleanup/persist",
     "type": "BUG"
+  },
+  "BUG-SWIPE-RACE-CLASSIFIER-MATCHES-THE-COMPOSITE-IDEMPOTENCY-UNIQ": {
+    "hash": "200894b",
+    "git_issue": "200894b",
+    "extid": "BUG-SWIPE-RACE-CLASSIFIER-MATCHES-THE-COMPOSITE-IDEMPOTENCY-UNIQ",
+    "type": "BUG",
+    "title": "Swipe-race classifier matches the composite idempotency UNIQUE violation, so merge retries 8 times then throws",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq.md",
+    "status": "Not Started"
   },
   "BUG-SYNC-INDEX-TYPE-FILTER-SILENTLY-EXCLUDES-IDEA-TICKETS-FROM-E": {
     "hash": "28d0678",
@@ -8732,6 +9070,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign.md",
     "status": "Blocked"
+  },
+  "BUG-TIMELINE-EVENT-STEERING-MANIFEST-STATUS-UPDATE-AND-TIMELINE-": {
+    "hash": "31fd00f",
+    "git_issue": "31fd00f",
+    "extid": "BUG-TIMELINE-EVENT-STEERING-MANIFEST-STATUS-UPDATE-AND-TIMELINE-",
+    "type": "BUG",
+    "title": "Timeline event steering: manifest status update and timeline append are not atomic",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-timeline-event-steering-manifest-status-update-and-timeline-.md",
+    "status": "Not Started"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
     "epic": "epic-plugin-system",
@@ -12417,7 +12768,8 @@
       "(none)"
     ],
     "source": ".plan/tickets/epic-experimental-egui-frontend.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "a515b55"
   },
   "EPIC-EXPLORATION-DISCOVERY": {
     "epic": "",
@@ -12438,6 +12790,26 @@
     ],
     "title": "Exploration & Discovery Systems",
     "type": "EPIC"
+  },
+  "EPIC-EXTERNAL-CREATIVE-TOOL-BRIDGE": {
+    "hash": "bd11716",
+    "git_issue": "bd11716",
+    "extid": "EPIC-EXTERNAL-CREATIVE-TOOL-BRIDGE",
+    "type": "EPIC",
+    "title": "External Creative Tool Bridge (MCP)",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "mcp",
+      "external-tools",
+      "creative-studio",
+      "plugins",
+      "async-jobs",
+      "security"
+    ],
+    "source": ".plan/tickets/epic-external-creative-tool-bridge.md",
+    "status": "Not Started"
   },
   "EPIC-FACTION-REPUTATION": {
     "epic": "",
@@ -24673,6 +25045,19 @@
     "title": "Asset platform B5 deterministic asset ops",
     "type": "TASK"
   },
+  "TASK-ASSET-PROVENANCE-LEDGER-FOR-GENERATED-ASSETS": {
+    "hash": "3d16181",
+    "git_issue": "3d16181",
+    "extid": "TASK-ASSET-PROVENANCE-LEDGER-FOR-GENERATED-ASSETS",
+    "type": "TASK",
+    "title": "Asset provenance ledger for generated assets",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md",
+    "status": "Not Started"
+  },
   "TASK-ASSET-RAG-CAPTION-FRESHNESS-AND-STRIP-BEFORE-INDEX-PRIVACY": {
     "epic": "",
     "extid": "TASK-ASSET-RAG-CAPTION-FRESHNESS-AND-STRIP-BEFORE-INDEX-PRIVACY",
@@ -31730,6 +32115,19 @@
     "title": "TASK-cron-registry-core",
     "type": "TASK"
   },
+  "TASK-CROSS-FAMILY-VRAM-ADVISORY-LEASE": {
+    "hash": "934dbd0",
+    "git_issue": "934dbd0",
+    "extid": "TASK-CROSS-FAMILY-VRAM-ADVISORY-LEASE",
+    "type": "TASK",
+    "title": "Cross-family VRAM advisory lease",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-local-process-swarm",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cross-family-vram-advisory-lease.md",
+    "status": "Not Started"
+  },
   "TASK-CROSS-PLATFORM-CI-MATRIX": {
     "epic": "epic-cross-platform-portability",
     "extid": "TASK-CROSS-PLATFORM-CI-MATRIX",
@@ -33837,7 +34235,8 @@
       "experimental"
     ],
     "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "8955d7b"
   },
   "TASK-EMAIL-DELIVERABILITY-SPF-DKIM-DMARC-AND-INBOUND-SPAM-GATE": {
     "hash": "89f510b",
@@ -34736,6 +35135,19 @@
     "epic": "epic-api-library-distribution",
     "tags": [],
     "source": ".plan/tickets/TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas.md",
+    "status": "Not Started"
+  },
+  "TASK-EXTERNAL-PROCESS-SURVIVABILITY-PAUSE-AND-RESTART-ON-CRASH": {
+    "hash": "8613846",
+    "git_issue": "8613846",
+    "extid": "TASK-EXTERNAL-PROCESS-SURVIVABILITY-PAUSE-AND-RESTART-ON-CRASH",
+    "type": "TASK",
+    "title": "External process survivability pause and restart-on-crash",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-local-process-swarm",
+    "tags": [],
+    "source": ".plan/tickets/TASK-external-process-survivability-pause-and-restart-on-crash.md",
     "status": "Not Started"
   },
   "TASK-EXTRACT-CHAT-ROUTE-BUSINESS-LOGIC": {
@@ -35985,7 +36397,8 @@
       "client-contract"
     ],
     "source": ".plan/tickets/TASK-frontend-client-contract-doc.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "b7bd6b7"
   },
   "TASK-FRONTEND-COMPRESSION": {
     "epic": "epic-frontend-bundle-optimization",
@@ -36304,7 +36717,8 @@
       "client-contract"
     ],
     "source": ".plan/tickets/TASK-frontend-view-model-extraction.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "c5a9bf3"
   },
   "TASK-FRONTEND-VIEW-MODEL-JSON-NEGOTIATION": {
     "hash": "pending",
@@ -36321,7 +36735,8 @@
       "client-contract"
     ],
     "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f88efac"
   },
   "TASK-FRONTEND-WORLD-LORE-ENTRIES-UI": {
     "epic": "epic-world-locations",
@@ -37478,6 +37893,18 @@
     "status": "Not Started",
     "git_issue": "1bf6c77"
   },
+  "TASK-HARNESS-CANONICAL-USAGE": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-CANONICAL-USAGE",
+    "type": "TASK",
+    "title": "CanonicalUsage record (cache + reasoning counters)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-canonical-usage.md",
+    "status": "Not Started"
+  },
   "TASK-HARNESS-CANVAS-VIZ": {
     "hash": "daa7934",
     "extid": "TASK-HARNESS-CANVAS-VIZ",
@@ -37599,6 +38026,18 @@
     "status": "Not Started",
     "git_issue": "cd6c8b5"
   },
+  "TASK-HARNESS-HOOK-CONTRACT": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-HOOK-CONTRACT",
+    "type": "TASK",
+    "title": "Harness hook contract (event→matcher→handler)",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-hook-contract.md",
+    "status": "Not Started"
+  },
   "TASK-HARNESS-IRC-TTSR": {
     "hash": "1bdc949",
     "extid": "TASK-HARNESS-IRC-TTSR",
@@ -37624,6 +38063,54 @@
     "source": ".plan/tickets/TASK-harness-lean-ctx-tools.md",
     "status": "Not Started",
     "git_issue": "9ab6eea"
+  },
+  "TASK-HARNESS-MCP-CALL-AUDIT": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-MCP-CALL-AUDIT",
+    "type": "TASK",
+    "title": "MCP tool-call audit + invocation records",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-mcp-call-audit.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-MCP-CLIENT-WRAPPER": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-MCP-CLIENT-WRAPPER",
+    "type": "TASK",
+    "title": "MCP client wrapper (ToolDefinition bridge)",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-mcp-client-wrapper.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-MCP-CONFIG-SECTION": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-MCP-CONFIG-SECTION",
+    "type": "TASK",
+    "title": "MCP config section ([mcp.servers.*])",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-mcp-config-section.md",
+    "status": "Not Started"
+  },
+  "TASK-HARNESS-MCP-SERVER-SURFACE": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-MCP-SERVER-SURFACE",
+    "type": "TASK",
+    "title": "MCP server surface (stdio, operator-flagged)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-mcp-server-surface.md",
+    "status": "Not Started"
   },
   "TASK-HARNESS-MERGE-COORDINATION": {
     "hash": "0a63dda",
@@ -37689,6 +38176,18 @@
     "source": ".plan/tickets/TASK-harness-programmatic-api.md",
     "status": "Not Started",
     "git_issue": "a893dc4"
+  },
+  "TASK-HARNESS-SCOPED-FALLBACK-CHAIN": {
+    "hash": "pending",
+    "extid": "TASK-HARNESS-SCOPED-FALLBACK-CHAIN",
+    "type": "TASK",
+    "title": "Scoped fallback provider chain",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-harness-integration`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-scoped-fallback-chain.md",
+    "status": "Not Started"
   },
   "TASK-HARNESS-SKILL-DOCS-PROJECT-SPACES-ROW-SCOPING-NOTE": {
     "hash": "c173261",
@@ -40931,6 +41430,45 @@
     "title": "Matting fallback aux-pipeline job",
     "type": "TASK"
   },
+  "TASK-MCP-CLIENT-OVER-STDIO-AND-STREAMABLE-HTTP": {
+    "hash": "3fd4937",
+    "git_issue": "3fd4937",
+    "extid": "TASK-MCP-CLIENT-OVER-STDIO-AND-STREAMABLE-HTTP",
+    "type": "TASK",
+    "title": "MCP client over stdio and streamable-http",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-creative-tool-bridge",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mcp-client-over-stdio-and-streamable-http.md",
+    "status": "Not Started"
+  },
+  "TASK-MCP-TASKS-EXTENSION-AS-LONG-OPERATION-STATE-MACHINE": {
+    "hash": "84db321",
+    "git_issue": "84db321",
+    "extid": "TASK-MCP-TASKS-EXTENSION-AS-LONG-OPERATION-STATE-MACHINE",
+    "type": "TASK",
+    "title": "MCP Tasks extension as long-operation state machine",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-creative-tool-bridge",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mcp-tasks-extension-as-long-operation-state-machine.md",
+    "status": "Not Started"
+  },
+  "TASK-MCP-TOOL-DESCRIPTOR-TO-PLUGIN-TOOLDEFINITION-BRIDGE": {
+    "hash": "2fef312",
+    "git_issue": "2fef312",
+    "extid": "TASK-MCP-TOOL-DESCRIPTOR-TO-PLUGIN-TOOLDEFINITION-BRIDGE",
+    "type": "TASK",
+    "title": "MCP tool descriptor to plugin ToolDefinition bridge",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-creative-tool-bridge",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge.md",
+    "status": "Not Started"
+  },
   "TASK-MEMORY-CHARACTER-INTEGRATION": {
     "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-057)",
     "extid": "TASK-MEMORY-CHARACTER-INTEGRATION",
@@ -41186,6 +41724,19 @@
     "epic": "epic-mesh-federation-content-sharing",
     "tags": [],
     "source": ".plan/tickets/TASK-mesh-coordinator-vs-swarm-gossip-transport-contract.md",
+    "status": "Not Started"
+  },
+  "TASK-MESH-CROSS-PEER-CONTENT-DEDUP-BEFORE-BYTE-RESERVATION": {
+    "hash": "d033b61",
+    "git_issue": "d033b61",
+    "extid": "TASK-MESH-CROSS-PEER-CONTENT-DEDUP-BEFORE-BYTE-RESERVATION",
+    "type": "TASK",
+    "title": "Mesh cross-peer content dedup before byte reservation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-content-hashing-distributed-integrity",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mesh-cross-peer-content-dedup-before-byte-reservation.md",
     "status": "Not Started"
   },
   "TASK-MESH-ENCRYPTED-CONTENT-SHARING-RESERVATION-DUPLICATION": {
@@ -44591,6 +45142,19 @@
     "title": "Precompiled templates tests",
     "type": "TASK"
   },
+  "TASK-PREVIEW-DISPATCH-FOR-NON-IMAGE-ASSET-TYPES": {
+    "hash": "8406dc3",
+    "git_issue": "8406dc3",
+    "extid": "TASK-PREVIEW-DISPATCH-FOR-NON-IMAGE-ASSET-TYPES",
+    "type": "TASK",
+    "title": "Preview dispatch for non-image asset types",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [],
+    "source": ".plan/tickets/TASK-preview-dispatch-for-non-image-asset-types.md",
+    "status": "Not Started"
+  },
   "TASK-PROACTIVE-MESSAGING": {
     "epic": "",
     "extid": "TASK-PROACTIVE-MESSAGING",
@@ -47092,6 +47656,19 @@
     ],
     "title": "Replayability (Session-Seeded Random Tables)",
     "type": "TASK"
+  },
+  "TASK-REPURPOSE-DEAD-SANDBOXED-FIELD-INTO-A-STRICT-MODE-POLICY-TAG": {
+    "hash": "94a4e81",
+    "git_issue": "94a4e81",
+    "extid": "TASK-REPURPOSE-DEAD-SANDBOXED-FIELD-INTO-A-STRICT-MODE-POLICY-TAG",
+    "type": "TASK",
+    "title": "Repurpose dead sandboxed field into a strict-mode policy tag",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-security-sandboxing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md",
+    "status": "Not Started"
   },
   "TASK-REPUTATION-SCHEMA": {
     "epic": "epic-shared-schemas",
@@ -50987,7 +51564,8 @@
       "client-contract"
     ],
     "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "74b3261"
   },
   "TASK-TUI-ASSET-VIEW-REMOVE-SILENT-CATCH-AND-VOID-ASYNC-IIFE": {
     "epic": "epic-terminal-ui",
