@@ -13,7 +13,7 @@
     "tui": "bun run src/tui/app.ts",
     "lolo": "bun run bin/lolo.ts",
 
-    "build": "bun run build:frontend && bun run build:egui && bun run build:server && bun run build:native",
+    "build": "bun run build:frontend && bun run build:server && bun run build:native && bun run build:egui",
     "build:frontend": "bun run scripts/build-frontend.mjs",
     "build:egui": "bun run scripts/build-egui-wasm.ts",
     "build:server": "bun build src/server/index.ts --outdir ./dist --target bun",

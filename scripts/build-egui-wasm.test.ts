@@ -2,9 +2,13 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for build-egui-wasm.ts loud-failure contract: a missing or failing
- * wasm-bindgen CLI must exit non-zero with the install hint — the egui
- * stage never degrades silently (unlike build-native.ts).
+ * Tests for the build-egui-wasm.ts optional-native contract: a MISSING
+ * toolchain (no cargo / no wasm-bindgen CLI) skips the stage with exit 0 —
+ * the absence of the experimental egui artifact must never block the
+ * application build, mirroring scripts/build-native.ts. A toolchain that IS
+ * present but fails still exits non-zero — not covered here: that case needs
+ * a real cargo + target tree, and the `--version` probe cannot distinguish
+ * "absent" from "broken".
  */
 import { describe, expect, test, } from "bun:test";
 import { spawnSync, } from "node:child_process";
@@ -13,18 +17,28 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
 const SCRIPT = join(import.meta.dir, "build-egui-wasm.ts",);
+const ROOT = join(import.meta.dir, "..",);
 
 /**
- * Shim dir with a cargo that passes `--version` and `build` (so the run
- * reaches the wasm-bindgen stage) and a wasm-bindgen that fails everything.
+ * Shim dir holding a cargo that passes every invocation with no real build
+ * behind it.
  * @returns { dir, cleanup }
  */
-function makeShims(): { dir: string; cleanup: () => void } {
-  const dir = mkdtempSync(join(tmpdir(), "b6-egui-",),);
+function makeCargoShim(): { dir: string; cleanup: () => void } {
+  const dir = mkdtempSync(join(tmpdir(), "b6-egui-cargo-",),);
   writeFileSync(join(dir, "cargo",), "#!/usr/bin/env bash\nexit 0\n",);
-  writeFileSync(join(dir, "wasm-bindgen",), "#!/usr/bin/env bash\nexit 1\n",);
   chmodSync(join(dir, "cargo",), 0o755,);
-  chmodSync(join(dir, "wasm-bindgen",), 0o755,);
+  return { dir, cleanup: () => rmSync(dir, { recursive: true, force: true, },), };
+}
+
+/**
+ * A PATH whose only executable is bun itself: child_process resolves the
+ * script through the env's PATH, so bun must be reachable from the shim dir.
+ * @returns { dir, cleanup }
+ */
+function makeBunOnlyPath(): { dir: string; cleanup: () => void } {
+  const dir = mkdtempSync(join(tmpdir(), "b6-egui-bun-",),);
+  symlinkSync(process.execPath, join(dir, "bun",),);
   return { dir, cleanup: () => rmSync(dir, { recursive: true, force: true, },), };
 }
 
@@ -33,34 +47,40 @@ function makeShims(): { dir: string; cleanup: () => void } {
  * @returns { status, output } of the script run
  */
 function runScript(env: Record<string, string | undefined>,): { status: number | null; output: string } {
-  const result = spawnSync("bun", [SCRIPT,], { env, encoding: "utf8", },);
+  const result = spawnSync("bun", [SCRIPT,], { cwd: ROOT, env, encoding: "utf8", },);
   return { status: result.status, output: (result.stderr ?? "") + (result.stdout ?? ""), };
 }
 
-describe("build-egui-wasm exit code", () => {
-  test("fails loudly with the install hint when the wasm-bindgen CLI fails", () => {
-    const { dir, cleanup, } = makeShims();
+describe("build-egui-wasm optional-toolchain contract", () => {
+  test("skips with exit 0 when cargo is missing", () => {
+    const { dir, cleanup, } = makeBunOnlyPath();
+    try {
+      const { status, output, } = runScript({ ...process.env, PATH: dir, },);
+      expect(status,).toBe(0,);
+      expect(output,).toContain("cargo not found - skipping the egui WASM bundle",);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("skips with exit 0 (and the install hint) when the wasm-bindgen CLI is missing", () => {
+    const { dir, cleanup, } = makeCargoShim();
     try {
       const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${process.env.PATH}`, },);
-      expect(status,).not.toBe(0,);
-      expect(output,).toContain("wasm-bindgen",);
+      expect(status,).toBe(0,);
+      expect(output,).toContain("wasm-bindgen CLI not found - skipping the egui WASM bundle",);
       expect(output,).toContain("cargo install wasm-bindgen-cli",);
     } finally {
       cleanup();
     }
   });
 
-  test("fails loudly when cargo is missing", () => {
-    // A PATH with bun but no cargo: child_process resolves the executable
-    // through the env's PATH, so bun must be reachable from the shim dir.
-    const dir = mkdtempSync(join(tmpdir(), "b6-egui-nocargo-",),);
-    symlinkSync(process.execPath, join(dir, "bun",),);
-    try {
-      const { status, output, } = runScript({ ...process.env, PATH: dir, },);
-      expect(status,).not.toBe(0,);
-      expect(output,).toContain("cargo not found",);
-    } finally {
-      rmSync(dir, { recursive: true, force: true, },);
-    }
+  test("package.json build keeps the server bundle ahead of the egui stage", async () => {
+    const pkg = await Bun.file(join(ROOT, "package.json",),).json();
+    const build: string = pkg.scripts.build;
+    const server = build.indexOf("build:server",);
+    const egui = build.indexOf("build:egui",);
+    expect(server,).toBeGreaterThanOrEqual(0,);
+    expect(egui,).toBeGreaterThan(server,);
   });
 });
