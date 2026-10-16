@@ -37,8 +37,10 @@
 import { describe, expect, test, } from "bun:test";
 import {
   cpSync,
+  existsSync,
   mkdirSync,
   mkdtempSync,
+  readdirSync,
   readFileSync,
   rmSync,
   symlinkSync,
@@ -84,10 +86,17 @@ async function withFixture<T,>(body: (fx: Fixture,) => Promise<T>,): Promise<T> 
     // SCAN_ROOTS / OUT_PATH / dprint.json into the fixture.
     cpSync(SCRIPT_PATH, join(scriptsDir, "generate-schema-fuzz.ts",),);
     cpSync(resolve(REPO_ROOT, "dprint.json",), join(dir, "dprint.json",),);
-    // The script statically imports schema-arbitrary, which reaches
-    // ../utils/date. Symlink both so the real helpers stay the real helpers.
-    symlinkSync(join(REPO_ROOT, "src", "test-utils",), join(dir, "src", "test-utils",),);
-    symlinkSync(join(REPO_ROOT, "src", "utils",), join(dir, "src", "utils",),);
+    // The script statically imports from ../src/<dir> — src/cli/parser for its
+    // argv combinators, plus schema-arbitrary, which itself reaches
+    // ../utils/date. Derive the symlinks from the real src/ tree rather than
+    // hand-listing them: the fixture owns the dirs it writes fixtures into
+    // (already mkdir'd, so skipped here), every other real subtree resolves
+    // to the actual source. A hand-written list is what let src/cli/parser go
+    // missing once the script started importing it, failing the whole suite.
+    for (const entry of readdirSync(join(REPO_ROOT, "src",), { withFileTypes: true, },)) {
+      if (!entry.isDirectory() || existsSync(join(dir, "src", entry.name,),)) { continue; }
+      symlinkSync(join(REPO_ROOT, "src", entry.name,), join(dir, "src", entry.name,),);
+    }
 
     // Two modules that import cleanly — their schemas must survive into the
     // generated file. One per scan root, so both roots are exercised.
