@@ -7,7 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** security, sandbox, llm, testing
 **Overview:** (see sections below)
 
 
@@ -485,12 +485,24 @@ bun run security:headers
 bun run security:tls
 ```
 
+## Security Considerations
+
+- **Sandbox permission checks run once per sandbox, so later executions reuse stale grants** → re-check capability at use time (epic-security-sandboxing §Permission System)
+- **Asset-serve callers do not skip the getAssetFilePath containment throw** → canonicalized path + containment check after resolve (`BUG-NINE-GETASSETFILEPATH-CALL-SITES-DO-NOT-HANDLE-THE-CONTAINME`)
+- **Plugin routes lack ownership enforcement, so any id reads another user's row** → re-check capability at use time (`BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR`)
+- **Community plugin named core overwrites the builtin plugin slot at load time** → re-check capability at use time (`BUG-PLUGIN-TOOL-AUTHORIZATION-FAILS-OPEN`)
+- **Injection detector scores input once; sanitized text is not re-checked before tool dispatch** → re-check capability at use time (epic-security-sandboxing §Injection Detector)
+
 ## Related Epics
 
 - `epic-crypto.md` — E2EE for all data
 - `epic-anonymity-decentralization.md` — Anonymous access
 - `epic-api-governance.md` — API security and validation
 - `epic-social-hub.md` — Platform security
+
+- `epic-fuzzing-infrastructure.md` — related
+- `epic-plugin-system.md` — related
+
 
 ## Notes
 

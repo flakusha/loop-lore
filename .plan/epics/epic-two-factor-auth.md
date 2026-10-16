@@ -3,7 +3,7 @@
 
 # EPIC: Two-Factor / Multi-Factor Authentication
 
-**Tags:** (none)
+**Tags:** auth, 2fa, security, crypto
 **Overview:** (see sections below)
 
 
@@ -73,6 +73,13 @@ The surrounding **provisioning semantics** (which channel may grant login/unlock
 - `src/routes/auth/` — factor enrollment/verification endpoints (expand existing)
 - `src/views/`, `src/frontend/` — 2FA setup + recovery UI
 - `docs/spec/2fa.md` — specification (**rewrite to the real stack**: Elysia TypeBox in `src/validation/`, not Zod)
+
+## Security Considerations
+
+- **Backup code is verified in one statement and marked used in another, so one code logs in twice** → conditional UPDATE … WHERE (`TASK-TWO-FACTOR-MULTI-FACTOR-AUTH`)
+- **Replayed challenge is accepted twice inside its validity window** → unique constraint + retry (§Shared Data Contracts)
+- **E-mail change trusts the old address, letting a hijacked inbox keep MFA** → re-check consent/authorization after reservation (epic-two-factor-auth §E-mail Verification)
+- **Concurrent enroll promotes the same pending FactorState twice** → optimistic concurrency (version column) (§Shared Data Contracts)
 
 ## Related Epics
 

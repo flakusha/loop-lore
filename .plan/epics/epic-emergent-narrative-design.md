@@ -3,7 +3,7 @@
 
 # EPIC: Emergent Narrative Design Principles
 
-**Tags:** (none)
+**Tags:** rpg, game-mechanics, story, social
 **Overview:** (see sections below)
 
 

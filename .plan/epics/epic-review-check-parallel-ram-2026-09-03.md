@@ -6,14 +6,13 @@
 **Status:** Not Started
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** tooling, performance, concurrency, ci
 **Overview:** (see sections below)
 
 
 ## Status: Resolved (informational, no action required)
 
 **Priority:** Low
-**Tags:** review, tooling, performance, ram
 
 ## Summary
 
@@ -101,3 +100,7 @@ checks co-run.
 - `.plan/epics/epic-tooling-improvement.md` — parent epic
 - `.plan/epics/epic-review-dev-2026-08-26-late-merges.md` — prior review
   format reference
+
+## Related Epics
+
+- `epic-memory-profiling-budgets.md` — related

@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** audit, assets, admin, import-export, security
 **Overview:** (see sections below)
 
 
@@ -57,6 +57,12 @@ End-to-end licensing model for loop-lore: project source license (Apache-2.0), p
 - [ ] License re-licensing writes an `audit_events` row.
 - [ ] `bun run license:check` green (already enforced); per-asset lint rejects missing license on user uploads.
 
+## Security Considerations
+
+- **License gate trusts the feature flag evaluated at route entry; unknown or absent flags must deny** → re-check capability at use time (src/middleware/license-gate.ts)
+- **nsfw-gated artifact is served while the NSFW rating/age gate is disabled for the request** → re-check capability at use time (src/config/license.ts, nsfw-gated)
+- **Re-licensing rewrites assets.license while codecs and exports read it (read-modify-write)** → optimistic concurrency (version column) (assets.license + audit_events row)
+
 ## Related Epics
 
 - `docs/spec/licensing.md`
@@ -64,6 +70,10 @@ End-to-end licensing model for loop-lore: project source license (Apache-2.0), p
 - `epic-encryption-workflow.md` — DRM boundary
 - `epic-nsfw-capabilities.md` — `nsfw-gated` license interacts with NSFW rating
 - `epic-frontend-gallery.md` — license badge UI
+
+- `epic-asset-platform-capabilities.md` — related
+- `epic-frontend-admin.md` — related
+- `epic-import-export-io.md` — related
 
 ## Tickets
 

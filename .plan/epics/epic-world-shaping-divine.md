@@ -5,7 +5,7 @@
 
 **Effort:** Medium
 **Type:** epic
-**Tags:** (none)
+**Tags:** world, gm, rpg
 **Overview:** (see sections below)
 
 

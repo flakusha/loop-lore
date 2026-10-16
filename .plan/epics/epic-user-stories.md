@@ -3,7 +3,7 @@
 
 # EPIC: User Story & Use Case Improvements (Permanently Ongoing)
 
-**Tags:** (none)
+**Tags:** ux, accessibility, workflow, performance, frontend
 **Overview:** (see sections below)
 
 
@@ -46,3 +46,7 @@ New UX ideas land here first. When an idea matures into a scoped feature, create
 - `src/views/` — page templates
 - `src/frontend/alpine/` — Alpine.js components
 - `src/components/` — reusable components
+
+## Related Epics
+
+- `epic-chat-lifecycle-moderation.md` — related

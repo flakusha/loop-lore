@@ -3,7 +3,6 @@
 
 # EPIC: AUX LLM Enrichment Pipeline
 
-**Tags:** (none)
 **Overview:** (see sections below)
 
 
@@ -12,6 +11,7 @@
 **Priority:** P2-B
 **Effort:** Medium
 **Type:** Feature Epic
+**Tags:** aux-llm, enrichment-pipeline, classification, memory-extraction, telemetry, model-role-resolution, api-key-resolution, emotion-avatar
 
 ## Summary
 
@@ -395,3 +395,14 @@ Full-repo review of the classification capability (shared `callAux` runner, 10 A
 - Rerank-threshold gating requires score calibration before thresholds are meaningful (MemReranker, arXiv 2605.06132); the existing rank-only rerank stage must be calibrated before `FEAT-relevance-gated-memory-injection-with-classifier-or-reranker.md` can gate on it.
 - Small (1–4B) self-hosted models are viable sub-second routers; encoder classifiers beat generative 0-shot on large label sets but need fine-tuning (Laya limits already recorded in `FEAT-classifier-model-support`).
 - Multimodal quality grading favors regressing a score alongside text over bare classification; apply to keep-vs-regenerate grading.
+
+## Security Considerations
+
+- **Async enrichment writes to character_mood and actor_memories race the request path's own writes** → db.transaction (`BUG-mood-and-relationship-services-mutate-multi-row-state-withou`.md)
+- **Memory dedup is a SELECT-then-INSERT, so concurrent extractions store the same actor_memories row twice** → unique constraint + retry (src/memory/extraction-store.ts:69-102)
+- **A failed resolveProvider call silently falls back to the provider instance's configured key** → re-check capability at use time (src/aux-pipeline/runner.ts:141-143)
+
+## Related Epics
+
+- `epic-byok-api-keys.md` — related
+- `epic-llm-request-scheduler.md` — related
