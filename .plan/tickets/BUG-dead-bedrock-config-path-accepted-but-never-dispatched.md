@@ -1,0 +1,23 @@
+<!-- SPDX-License-Identifier: Apache-2.0-->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors-->
+
+# BUG: Dead Bedrock config path accepted but never dispatched
+
+**Status:** Not Started
+**Priority:** high
+**Effort:** Medium
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
+
+**Summary:**
+
+bedrock?: BedrockProviderConfig exists (providers.ts:119-140), type union lists bedrock, but no BedrockProvider class and initializeProviders never constructs it. Config silently ignored. Fix: implement + wire, or reject bedrock at config load.
+
+**Context:**
+
+(fill in before starting: why this change, constraints, alternatives considered.)
+
+**Acceptance Criteria:**
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
