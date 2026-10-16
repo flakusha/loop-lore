@@ -26,6 +26,18 @@
 - [x] Web parity reference (`src/frontend/alpine/admin-models/`, rendered by `src/views/admin.html:846`) consulted for the endpoint shapes; no server route added.
 - [x] `bun run check` green.
 
+### Provider health (status bar) and connectivity ping
+
+- [x] Provider reachability is a compact segment on the EXISTING status bar (`updateStatus`), not a new line of chrome — `Providers: 2/2 ok`, and the unreachable names are listed only when the count is short, capped at 3 plus an `+N` tail.
+- [x] Fed by `GET /api/v1/providers`, the one provider route registered with no auth at all (`src/routes/admin/providers.ts:28-49`), so it works for a non-admin too.
+- [x] Fetched once after boot and on the existing F5 refresh. No timer: a chat client does not hold a background interval open to redraw a status line.
+- [x] A failed health fetch degrades the SEGMENT to `Providers: ?` and leaves the message untouched — the chat id and key hints survive a provider-list outage. Repaints only when the segment text actually changes.
+- [x] `p` on a provider row pings `POST /api/v1/generation/test-connection` and shows the verdict in the overlay's existing status line. No new keybinding, no new overlay.
+- [x] The ping route needs only `requireUserId`, so the handler is reachable without `admin.system`; a failed request renders its message rather than throwing. Pressing `p` off the providers level says so instead of silently doing nothing.
+- [x] A DOWN provider answers HTTP 200 with `ok: false`, so the verdict is read off the body — the envelope's `ok` would report an outage as a success.
+- [x] Reuses `models-api.ts`'s `call` helper and `setFetch` seam; no second HTTP seam for the same module.
+- [x] Tests cover the segment format, the degradation, the non-clobbering guarantee (verified by mutation), and the ping's non-admin path.
+
 ## Deliberately not built
 
 - **Temperature / maxTokens editors.** `PUT /model-roles/:role` accepts them, but they need free-text numeric entry with validation — that is a text-box surface, not a list surface, and the web client already does it.
