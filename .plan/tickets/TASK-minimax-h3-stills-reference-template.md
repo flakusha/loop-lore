@@ -33,13 +33,13 @@ lines), handed over **2026-09-30** by an external acquaintance of the repo owner
 vendored **only** under
 `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/` — a reference artifact,
 never an import target. That directory is scratch, gitignored, and was **never
-committed**. It was pruned before implementation — which is why this ticket was first
-written as an unverified claim — and it **has since been re-acquired and was
-functionally reviewed on 2026-10-16 by reading the on-disk source.** It stays a
-**review-only reference artifact**: never committed, `.tmp/` only, never an import
-target, and nothing in `src/` may reference it. Per the separate-plugin-repo decision
-the H3 custom-node half ships from its own plugin repository; loop-lore consumes the
-documented ComfyUI REST contract only.
+committed**. It was pruned before implementation — which is why this ticket was
+first written with its sidecar-derived claims unverified — and it **has since been
+re-acquired and was functionally reviewed on 2026-10-16 by reading the on-disk
+source.** It stays a **review-only reference artifact**: never committed, `.tmp/`
+only, never an import target, and nothing in `src/` may reference it. Per the
+separate-plugin-repo decision the H3 custom-node half ships from its own plugin
+repository; loop-lore consumes the documented ComfyUI REST contract only.
 
 Every chain length, node type, line number, and literal below is verified against that
 read — including the node count, which was wrong ("11 nodes" → 16 fixed + 2 per

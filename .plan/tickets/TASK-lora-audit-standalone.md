@@ -31,11 +31,11 @@ Source artifact: a Python ComfyUI HTTP-route extension (its `studio_loras.py`, 7
 lines), handed over **2026-09-30** by an external acquaintance of the repo owner and
 vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`.
 That directory is scratch, gitignored, and was **never committed**. It was pruned
-before implementation — which is why this ticket was first written as an unverified
-claim — and it **has since been re-acquired and was functionally reviewed on
-2026-10-16 by reading the on-disk source.** It is a **review-only reference
-artifact**: never committed, `.tmp/` only, never an import target, and nothing in
-`src/` may reference it.
+before implementation — which is why this ticket was first written with its
+sidecar-derived claims unverified — and it **has since been re-acquired and was
+functionally reviewed on 2026-10-16 by reading the on-disk source.** It is a
+**review-only reference artifact**: never committed, `.tmp/` only, never an import
+target, and nothing in `src/` may reference it.
 
 Every line number and import claim below is verified against that read. The claim
 about which ComfyUI modules the module imports is exactly the kind of detail a
