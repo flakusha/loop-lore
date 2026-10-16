@@ -240,14 +240,14 @@ export default [
       jsdoc,
     },
     rules: {
-      // Options chosen so the rules enforce AGENTS.md rather than contradict it:
-      // `@param`/`@returns` only when the signature does not already say it.
-      // `checkDestructured: false` — a destructured options object is typed in the
-      // destructuring annotation; `@param opts.sessionId` restates the type.
-      // `checkGetters: false` — a getter's name and type state what it returns.
-      // `publicOnly` — only exported API is held to the coverage bar, so the
-      // remaining findings are real contract gaps (see TASK-jsdoc-coverage-cleanup-public-exports).
-      "jsdoc/require-param": ["warn", { checkDestructured: false }],
+      // Both rules are disabled because they contradict the documented AGENTS.md
+      // policy: `@param`/`@returns` must be omitted when the type already suffices.
+      // eslint-plugin-jsdoc has no config option to restrict checks to only untyped
+      // parameters/returns, so the rules cannot be narrowed to enforce the policy.
+      // `require-throws` is kept at warn: functions that throw/return Result.err/
+      // reject a Promise genuinely need `@throws` (no type-level signal in JS).
+      // See TASK-jsdoc-coverage-cleanup-public-exports.
+      "jsdoc/require-param": "off",
       "jsdoc/require-returns": "off",
       "jsdoc/require-throws": "warn",
       // Descriptions and example are optional — keep JSDoc terse to avoid
