@@ -29,6 +29,6 @@ The earlier open gap (`bun run build:egui` stopped at preflight for a missing wa
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — egui-bridge.ts (canonical TS contract) + the Rust context mirror + the /egui host page route, all on branch `egui-wasm-frontend`
+- [x] Tests passing — bridge unit tests, route/mime unit tests, and the Playwright round-trip e2e green both with and without the wasm bundle; full `bun run check` on the branch leaves only the two failures that reproduce identically on pristine `dev` (`size - strict` layout.ts, `tests - coverage gaps` hash-injection exports)
+- [x] Documentation updated — both egui tickets and the epic index reconciled on this branch; the deferred "run the round-trip against the built artifact" item was executed 2026-10-16 with `bun run build:egui` + a headless-Chromium smoke (status `egui ready`, wasm JSON calls returning 200)
