@@ -32,7 +32,6 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 - **CI gate-suite parity job** — `.github/workflows/ci.yml` gains a `gates` job so PR/push CI runs the same local gate suite agents are held to: Playwright chromium install, `bun run build:frontend`, then `bun run check:ci` (the full parallel gate registry in CI mode), under a 45-minute timeout sized for the browser e2e baseline.
 - **Weekly dependency audit workflow** — new `.github/workflows/audit.yml`: cron Mondays 06:00 UTC plus manual `workflow_dispatch`, two read-permission jobs — `bun audit` over the JS dependency tree and `rustsec/audit-check@v2` over `native/loop-lore-native` — so npm and RustSec advisories surface on a schedule instead of only when someone remembers to run them.
 
-
 ### Changed
 
 - **TS7 toolchain review — no dependency dropped, and why** — evaluated dropping the TypeScript-7 migration dependencies now that Bun 1.4.3 ships `bun check` (a port of the same `typescript-go`, 51,210/51,210 TS7 conformance). Conclusion: `typescript@^5.9.3` must stay — `typescript-eslint@8.71.2` peers `>=4.8.4 <6.1.0`, and TS7's default export is a version-only stub (`exports["."]` is `lib/version.cjs`, so the API moved to `./unstable/*` — a rewrite, not a bump, for `type-coverage-core`, `scripts/check-file-size.ts` and `scripts/lib/src-refs.ts`); `type-coverage-core@2.30.4` is still broken on `ts.SyntaxKind.Unknown` (`dist/checker.js:669`). `@typescript/native-preview` could in principle be retired by `bun check`, but the name is unusable here: a script named `check` shadows the built-in, so the command resolves to the gate runner and **exits 0 having type-checked nothing**. The documented escape hatch `bun --check` is also not a drop-in — it cannot select a project, and a planted type error under `scripts/` passes it (exit 0) while `tsgo -p tsconfig.scripts.json` catches it. Full evidence and the unblock conditions in `docs/meta/tooling/ts7-bun-check-review.md`; the stale TS7 note in `docs/meta/code-practices-improvements/01-strict-typing.md` is corrected to match.
@@ -67,6 +66,16 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Fixed
 
+- **Pre-commit hook: bash-only body ran under `#!/bin/sh`** — `.githooks/pre-commit`, `pre-commit:full`, `pre-push` and `pre-merge-commit` all used `[[ ]]`, `$(( ))`, arrays and `&>` while declaring `#!/bin/sh`. This host's `/bin/sh` is a symlink to bash, so the hooks worked here by accident; on a dash host every one of them died at the first `[[`, before any check ran. Shebangs corrected to `#!/bin/bash` (verified with `bash -n` and `shellcheck -x -s bash -S error`).
+- **Pre-commit temp dir defaulted to a POSIX-only `/tmp`** — `TMPDIR="${TMPDIR:-/tmp}/..."` made the hook fail outright where `/tmp` does not exist, even though `$TMPDIR` was already honoured. The default now falls back `TMPDIR` → `TEMP` → `TMP` → `/tmp` in all four hooks.
+- **Pre-commit eslint ran cold and uncached** — Step 2 invoked `bunx eslint --no-error-on-unmatched-pattern` directly, dropping the `--concurrency=4 --cache --cache-location .tmp/eslint.cache` that the tuned `lint:eslint` script carries, so every commit paid the cold full-corpus memory cost. Staged-file scope is kept (the whole-tree `lint:eslint` would slow every commit); the cache flags are added. A corrupt or absent cache file is tolerated by ESLint (re-lints, exit 0) — verified.
+- **Pre-commit hid every failure reason** — every Step 1/Step 2 check redirected the tool's stdout and stderr to `/dev/null`, so a blocked commit printed "✗ TypeScript lint failed" with nothing above it. Each check now writes to a log under the hook's temp dir and the log is printed on failure, the same treatment Step 3's SPDX check already carried.
+- **Pre-push tag validation silently skipped** — git feeds pre-push the pushed refs on stdin, and both checks read that stream with their own `while read`. The first loop consumed all of it, so `validate_tag_push` saw zero refs and never ran. The ref list is captured once at the top and both loops read from it.
+- **Pre-merge-commit skipped its conflict-marker gate in every worktree** — it tested `[[ -f .git/MERGE_HEAD ]]` and read `.git/MERGE_MSG`, but `.git` is a _file_ in a linked worktree, so the check always took the "not a merge" branch and reported green on exactly the merges worktree finalization performs. Both paths now resolve through `git rev-parse --git-dir`; the typecheck and unit-test steps no longer swallow their output either.
+- **`--no-verify` guidance removed from the hooks** — the pre-commit blocking branches and `prepare-commit-msg` printed "use --no-verify to skip" as the remediation for their own failures; they now name the fix instead.
+- **`NOTICE` markdownlint violations** — trailing whitespace (MD009), a missing blank line under both setext headings (MD022) and over-indented list items (MD007). `md:lint` never covered `NOTICE` (no `.md` extension, outside both globs), but the pre-commit hook lints any staged markdown.
+- **`CHANGELOG.md` was not dprint-formatted** — a stray blank line before each of four headings; `dprint check` reported "Found 1 not formatted file", so any commit staging `CHANGELOG.md` failed the hook's format step.
+- **Stale cicd-pipeline pre-commit docs** — `docs/spec/cicd-pipeline.md` described a pre-commit hook that runs `bun run check` and the e2e suite (that is `pre-commit:full`) and closed with "Skip with: `git commit --no-verify`". It now documents the actual staged-only step list and the four sibling hooks.
 - **Asset transform PUT no longer leaks internal error text** — `src/assets/controller.ts` answered every `upsertAssetTransform` throw with `badRequestResponse(err.message)`, so a driver failure (or the "Transform upsert did not persist" invariant) sailed into the response body as a `400`. The transform service now throws the tagged `InvalidTransformError` for the three range-validation cases (400 with their message); `transformErrorResponse` classifies anything else as a logged, sanitized `500` (`Transform could not be saved`). Both paths pinned in `transform.routes.test.ts`.
 - **Fire-and-forget promises carry a `.catch`** — the genuinely unhandled `void` sites could turn a rejected promise into an `unhandledRejection` crash or a swallowed diagnostic: the shutdown runners in `src/server/start.ts` (all five signal/fatal handlers now route through `runShutdown`, which writes the failure to stderr and exits 1 instead of re-entering the rejection handler), the access log in `src/server/handler.ts` (its handle-resolver `await` sat outside the internal try), and the async-store flush in `elysia-app.ts`'s `onStop`. Callees that swallow internally got the contract written down instead: `telemetry/service.ts record()` documents "never rejects", both `src/chat/title-suggest.ts` async helpers say "never rejects", and the notifications stream `tick` closure states its documented beat-skip swallow.
 - **`plan:metadata` index-write guard failed OPEN** — `isLinkedWorktree` returned `false` whenever the git probe could not be run (git off `PATH`, a `safe.directory` refusal, a spawn failure) or exited non-zero, and that `false` satisfied `!linkedWorktree` at the write site. So `plan:metadata` wrote a worktree-local `.plan/tickets/index.json` — the exact merge-conflict generator giwt refuses to create (`sync-index-write.ts:20`) — in the population most likely to hit a probe failure (agents working in `tree/` worktrees), while printing a clean unqualified `tags backfilled: N` and no `NOT WRITTEN` notice. The guard is now split into `probeWorktree` (the only subprocess) and the pure `decideIndexWrite`, which fails CLOSED: a probe that cannot be evaluated resolves to `skip-probe-failed`, never `write`, and names the cause on stderr and in the report. The decision is also carried in `--json` as `indexWrite`, and only a probe that answers with exactly the two paths it was asked for authorizes anything — an empty answer or any other line count resolves to `skip-probe-failed` with the shape named, so a truncated pipe or a `git` wrapper that prints usage cannot read as "main checkout". Separately, a malformed `index.json` (conflict markers left by a ticket-branch merge) used to abort the run only AFTER N `.md` files had already been rewritten on disk — the index is now parsed BEFORE the markdown pass, so a failed run leaves the tree untouched, while a _missing_ index still degrades to the `.md` pass alone. Covered by table-driven and end-to-end tests over a fixture tree; `scripts/plan/README.md` now documents all four CLIs, the shared module layout, and each CLI's real flags.
@@ -83,11 +92,9 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 - **Phantom runtime dependencies declared** — `html-minifier-terser` and `terser` are imported by `src/content/minify.ts` but were absent from `package.json`, resolving only through transitive hoisting; both are now declared, and `@types/terser` is dropped (`terser` ships its own types).
 
-
 ### Removed
 
 - **Dead `src/actors/` layer** — deleted the directory: 11 files with zero importers, surfaced by the widened knip scan, including a third parallel actor-items implementation (`src/actors/actor-items.ts`) alongside `src/services/actor-items.ts` and `src/services/actor-items/`.
-
 
 ## [0.1.0] - 2026-08-15
 
@@ -106,21 +113,17 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 - **Auth & safety** — authentication + sessions, NSFW gate + moderation, profanity filter, age gate, rate limiting, solo-user mode.
 - **Plumbing** — Kysely + `bun:sqlite` (PG dialect-swappable), encrypted DB backup/recovery, plugin system, structured logging, telemetry, auxiliary LLM pipeline, wiring gate (`scripts/check-wiring.ts`), e2e browser suite (19 flows).
 
-
 ### Changed
 
 - Lint debt resolved across `src` (156 files), eslint config + example configs shipped.
 - In-range dependency bumps (kysely, smol-toml, js-yaml, alpine, eslint, unicorn, typescript-eslint, etc.).
-
 
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
 
-
 ### Removed
-
 
 ### Security
 
@@ -133,7 +136,6 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
-
 ### Fixed
 
 - **E2E test safeguard (developer scripts)** — `test:e2e`, `test:e2e:browser`, `test:e2e:smoke`, and `test:all` now export `E2E_SAFEGUARD=1`, disabling the governance rate-limit guard when run directly (matches the behavior already in `ci`, `test:coverage`, and `check-parallel.mjs`).
@@ -141,9 +143,7 @@ First release. Clean-room reimplementation of SillyTavern-style RPG chat.
 
 - **`bun test --isolate` no longer silently skips every guarded suite** — `ISOLATED` in `src/test-utils/isolate-only.ts` proxied for `--parallel` via `BUN_TEST_WORKER_ID`, which Bun never sets for `--isolate`, so `describeOrSkip` suites reported green while executing zero assertions (`bun test --isolate <file>` on `chat-sections.test.ts`: 0 pass / 67 skip). Detection is now direct: the runner's own argv (`/proc/self/cmdline`, NUL-anchored so `--no-isolate` and paths containing `--isolate` do not match) plus the existing worker id, and a non-isolated run emits one latched `process.emitWarning` so the skip is never silent again. Same file after the fix: 67 pass / 0 skip. `describeOrSkipStrict` keeps its `test:unit` gate.
 
-
 ### Fixed
 
 - `versionRedirect` double-prefix loop for `/api/v1/*` paths.
 - Browser e2e stabilization across 18 flows (timeout hardening, template-literal lint drift).
-

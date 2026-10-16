@@ -1,14 +1,22 @@
-#!/bin/sh
+#!/bin/bash
 # Pre-commit hook for loop-lore — staged files only (fast)
 #
 # Checks only staged files for formatting + lint.
 # For full checks: run `bun run check` or use pre-commit:full.
 # Install: git config core.hooksPath .githooks && chmod +x .githooks/pre-commit
+#
+# The bash shebang is deliberate: the body uses [[ ]], $(( )) and other
+# bash-only constructs. /bin/sh happens to be bash on this host, but the hook
+# runs whatever /bin/sh points at on a contributor's machine — on a dash host
+# it died at line 65, before any check had run.
 
 set -u
 
 failures=0
-TMPDIR="${TMPDIR:-/tmp}/loop-lore-precommit-$$"
+# OS-agnostic temp root: TMPDIR (POSIX), then TEMP/TMP (Windows), else /tmp.
+# A hardcoded /tmp default made the hook fail outright where /tmp does not exist.
+TMPDIR_BASE="${TMPDIR:-${TEMP:-${TMP:-/tmp}}}"
+TMPDIR="$TMPDIR_BASE/loop-lore-precommit-$$"
 mkdir -p "$TMPDIR"
 trap 'rm -rf "$TMPDIR"' EXIT
 
@@ -66,7 +74,7 @@ if [[ -z "$STAGED_TS" && -z "$STAGED_CSS" && -z "$STAGED_MD" && -z "$STAGED_HTML
   yellow "No staged files for file gates — skipping"
   if [ "$failures" -gt 0 ]; then
     red "=== $failures check(s) failed — commit blocked ==="
-    red "To commit without checks: git commit --no-verify"
+    red "Fix the failure(s) above, re-stage, and commit again."
     exit 1
   fi
   exit 0
@@ -91,23 +99,27 @@ FORMAT_FILES=""
 [[ -n "$STAGED_JSON" ]] && FORMAT_FILES="$FORMAT_FILES $STAGED_JSON"
 
 if [[ -n "$FORMAT_FILES" ]]; then
-  if echo "$FORMAT_FILES" | xargs dprint fmt --allow-no-files 2>/dev/null; then
+  # Output is captured and replayed on failure: a blocked commit has to say
+  # what to fix, not just that formatting failed somewhere.
+  if echo "$FORMAT_FILES" | xargs dprint fmt --allow-no-files >"$TMPDIR/dprint.log" 2>&1; then
     green "PASS: formatting"
     # Re-stage formatted files
     echo "$FORMAT_FILES" | xargs git add 2>/dev/null
   else
-    red "FAIL: formatting"
+    red "FAIL: formatting — report:"
+    cat "$TMPDIR/dprint.log"
     failures=$((failures + 1))
   fi
 fi
 
 # Shell scripts: shfmt format
 if [[ -n "$STAGED_SH" ]]; then
-  if echo "$STAGED_SH" | xargs shfmt -w -i 2 -ci -bn 2>/dev/null; then
+  if echo "$STAGED_SH" | xargs shfmt -w -i 2 -ci -bn >"$TMPDIR/shfmt.log" 2>&1; then
     green "PASS: shell formatting"
     echo "$STAGED_SH" | xargs git add 2>/dev/null
   else
-    red "FAIL: shell formatting"
+    red "FAIL: shell formatting — report:"
+    cat "$TMPDIR/shfmt.log"
     failures=$((failures + 1))
   fi
 fi
@@ -118,30 +130,39 @@ echo "--- Step 2: Lint staged files ---"
 
 if [[ -n "$STAGED_TS" ]]; then
   cyan "Linting TypeScript..."
-  if echo "$STAGED_TS" | xargs bunx eslint --no-error-on-unmatched-pattern 2>/dev/null; then
+  # Same cache + concurrency as the tuned `lint:eslint` script, so a commit
+  # reuses the cache `bun run check` warms instead of paying cold memory cost
+  # every time — but scoped to the staged files, not the whole tree.
+  # ESLint tolerates a corrupt/absent cache (re-lints, exit 0) — verified.
+  if echo "$STAGED_TS" | xargs bunx eslint --no-error-on-unmatched-pattern \
+      --concurrency=4 --cache --cache-location .tmp/eslint.cache \
+      >"$TMPDIR/eslint.log" 2>&1; then
     green "  ✓ TypeScript lint passed"
   else
-    red "  ✗ TypeScript lint failed"
+    red "  ✗ TypeScript lint failed — report:"
+    cat "$TMPDIR/eslint.log"
     failures=$((failures + 1))
   fi
 fi
 
 if [[ -n "$STAGED_CSS" ]]; then
   cyan "Linting CSS..."
-  if echo "$STAGED_CSS" | xargs bunx stylelint 2>/dev/null; then
+  if echo "$STAGED_CSS" | xargs bunx stylelint >"$TMPDIR/stylelint.log" 2>&1; then
     green "  ✓ CSS lint passed"
   else
-    red "  ✗ CSS lint failed"
+    red "  ✗ CSS lint failed — report:"
+    cat "$TMPDIR/stylelint.log"
     failures=$((failures + 1))
   fi
 fi
 
 if [[ -n "$STAGED_MD" ]]; then
   cyan "Linting Markdown..."
-  if echo "$STAGED_MD" | xargs bunx markdownlint-cli2 2>/dev/null; then
+  if echo "$STAGED_MD" | xargs bunx markdownlint-cli2 >"$TMPDIR/markdownlint.log" 2>&1; then
     green "  ✓ Markdown lint passed"
   else
-    red "  ✗ Markdown lint failed"
+    red "  ✗ Markdown lint failed — report:"
+    cat "$TMPDIR/markdownlint.log"
     failures=$((failures + 1))
   fi
 fi
@@ -149,19 +170,21 @@ fi
 if [[ -n "$STAGED_HTML" ]]; then
   cyan "Checking HTML..."
   # markuplint on staged files only
-  if echo "$STAGED_HTML" | xargs bunx markuplint --allow-warnings 2>/dev/null; then
+  if echo "$STAGED_HTML" | xargs bunx markuplint --allow-warnings >"$TMPDIR/markuplint.log" 2>&1; then
     green "  ✓ HTML lint passed"
   else
-    yellow "  ⚠ HTML lint warnings (non-blocking)"
+    yellow "  ⚠ HTML lint warnings (non-blocking) — report:"
+    cat "$TMPDIR/markuplint.log"
   fi
 fi
 
 if [[ -n "$STAGED_SH" ]]; then
   cyan "Linting shell scripts..."
-  if echo "$STAGED_SH" | xargs shellcheck -x -s bash -S error 2>/dev/null; then
+  if echo "$STAGED_SH" | xargs shellcheck -x -s bash -S error >"$TMPDIR/shellcheck.log" 2>&1; then
     green "  ✓ Shell lint passed"
   else
-    red "  ✗ Shell lint failed"
+    red "  ✗ Shell lint failed — report:"
+    cat "$TMPDIR/shellcheck.log"
     failures=$((failures + 1))
   fi
 fi
@@ -177,9 +200,15 @@ if [[ -n "$STAGED_SOURCE" ]]; then
   # same green line covered a checker that could not run at all. Capture the
   # report, show it, and branch on the exit code AND the advisory marker. A
   # missing script exits non-zero, so it lands in the blocking branch.
-  SPDX_OUT=$(echo "$STAGED_SOURCE" | xargs bun run scripts/check-spdx.ts 2>&1)
-  if [ $? -ne 0 ]; then
-    red "  ✗ SPDX checker failed to run — headers NOT verified:"
+  # `if ! VAR=$(...)` replaces the old `VAR=$(...); if [ $? -ne 0 ]` pair.
+  # They are semantically identical (POSIX gives a bare assignment the exit
+  # status of its last command substitution — verified on this host: 123 for a
+  # failed xargs, 1 for a missing script), but the explicit form cannot be
+  # broken by an `echo` landing between the assignment and the test, and the
+  # message no longer claims "could not run" when SPDX_CHECK=1 made a real
+  # violation exit non-zero.
+  if ! SPDX_OUT=$(echo "$STAGED_SOURCE" | xargs bun run scripts/check-spdx.ts 2>&1); then
+    red "  ✗ SPDX check did not pass — violations below, or the checker could not run. Headers NOT verified:"
     echo "$SPDX_OUT"
     failures=$((failures + 1))
   elif printf '%s' "$SPDX_OUT" | grep -q "Non-blocking - set SPDX_CHECK=1"; then
@@ -216,7 +245,7 @@ fi
 echo ""
 if [ "$failures" -gt 0 ]; then
   red "=== $failures check(s) failed — commit blocked ==="
-  red "To commit without checks: git commit --no-verify"
+  red "Fix the failure(s) above, re-stage, and commit again."
   exit 1
 fi
 

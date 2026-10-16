@@ -1,14 +1,18 @@
-#!/bin/sh
+#!/bin/bash
 # Pre-commit:full — full codebase checks (typecheck + lint + tests)
 #
 # This is the thorough version. For fast staged-only checks, use pre-commit.
 # Usage: git commit -c core.hooksPath=.githooks --full
 #   or:  .githooks/pre-commit:full (manual run)
+#
+# bash shebang: `local`, arrays and `&>` are bash-only — under a dash /bin/sh
+# this script dies before Step 0.
 
 set -u
 
 failures=0
-TMPDIR="${TMPDIR:-/tmp}/loop-lore-precommit-full-$$"
+TMPDIR_BASE="${TMPDIR:-${TEMP:-${TMP:-/tmp}}}"
+TMPDIR="$TMPDIR_BASE/loop-lore-precommit-full-$$"
 mkdir -p "$TMPDIR"
 trap 'rm -rf "$TMPDIR"' EXIT
 
