@@ -13,6 +13,24 @@ import blessed from "blessed";
 import { safeFetch, } from "../utils";
 import { API_BASE, } from "./chat";
 
+let _fetch = safeFetch;
+
+/**
+ * Swap the asset-list fetcher. Tests use this instead of `mock.module`.
+ * @param fn - replacement for the real `safeFetch`
+ */
+export function setFetch(fn: typeof safeFetch,): void {
+  _fetch = fn;
+}
+
+/** Construction options for {@link AssetView}. */
+export interface AssetViewOptions {
+  /** Bearer token for the assets call; omit to run anonymous. */
+  sessionToken?: string;
+  /** Explicit parent box; defaults to the screen. */
+  parent?: blessed.Widgets.BoxElement;
+}
+
 /** */
 export interface LinkedAsset {
   id: string;
@@ -33,16 +51,19 @@ export class AssetView {
   private currentIndex = 0;
   private chatId: string | null = null;
   private assetCountLabel: blessed.Widgets.BlessedElement;
+  private sessionToken: string | undefined;
 
   /**
-   * @param screen
-   * @param parent
+   * @param screen - surface the sidebar is drawn on
+   * @param options - bearer token and optional parent box
    */
-  constructor(screen: blessed.Widgets.Screen, parent?: blessed.Widgets.BoxElement,) {
+  constructor(screen: blessed.Widgets.Screen, options: AssetViewOptions = {},) {
     this.screen = screen;
+    // An empty string would ship as a bare `Bearer ` and trip a 401.
+    this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
 
     this.box = blessed.box({
-      parent: parent ?? screen,
+      parent: options.parent ?? screen,
       right: 0,
       top: 0,
       width: "30%",
@@ -204,7 +225,8 @@ export class AssetView {
 
     try {
       const url = `${API_BASE}/api/v1/assets?entity_type=chat&entity_id=${this.chatId}&pageSize=100`;
-      const result = await safeFetch<{ data?: LinkedAsset[] }>(url, {
+      const result = await _fetch<{ data?: LinkedAsset[] }>(url, {
+        auth: this.sessionToken ? { sessionToken: this.sessionToken, } : undefined,
         handle401: false,
       },);
 
