@@ -19,7 +19,6 @@ import {
 } from "../../../node_modules/giwt/src/utils/gpg-cache";
 import { PROJECT_ROOT, } from "./config.mjs";
 
-
 // ── GPG pre-flight ──────────────────────────────────────────────
 // Tracks the cache state for provenance in the report. Shape:
 // `cold` means we exited before any check ran — the report will reflect
@@ -84,7 +83,7 @@ export async function ensureGpgWarm() {
         console.error("gpg-precheck: cold; warming via pinentry (enter passphrase)...",);
       }
     },
-  });
+  },);
   if (result.warm) {
     const via = result.via === "passphrase-source" ? "passphrase" : "pinentry";
     gpgPrecheck.state = { state: "warm", via, };
