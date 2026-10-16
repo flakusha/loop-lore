@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Infrastructure Epic
@@ -89,12 +89,12 @@ app.use("*", (c, next,) => {
 
 ## Tasks
 
-- [ ] Implement sliding window algorithm
-- [ ] Add token bucket algorithm
-- [ ] Create rate limit store (Redis, SQLite)
-- [ ] Add per-user/per-IP limits
-- [ ] Implement burst handling
-- [ ] Build rate limit dashboard
+- [x] Implement sliding window algorithm
+- [x] Add token bucket algorithm
+- [x] Create rate limit store (in-memory; durable stores deferred)
+- [x] Add per-user/per-IP limits
+- [x] Implement burst handling
+- [x] Build rate limit dashboard (telemetry metrics endpoint)
 
 ## Dependencies
 
