@@ -135,9 +135,9 @@ Agents must not scatter temporary files across the repo (`src/`, `tests/`,
   newest `checkReportKeep`) — research notes, probe scripts and anything else are
   unclassified and preserved. Two consequences for handoff: do not rely on
   `cov-*` or `check-report*.json` under a worktree `.tmp/` surviving the
-  finalize of that worktree, and note that `giwt finalize --dry-run` reports
-  the prune plan without deleting anything (the merge, worktree removal and
-  branch delete still run).
+  finalize of that worktree, and note that `giwt finalize --prune-dry-run`
+  reports the Step-6a scratchpad prune plan only (the merge, worktree removal
+  and branch delete still run).
 - **Handoff**: Include `.tmp/` paths in `ctx_handoff(paths=[...])`; cleanup after merge
 
 ### Default cache for tooling
@@ -511,7 +511,13 @@ bun run plan:sync:fix                 # apply fixes (non-interactive) — runs g
 bun run plan:sync                     # check — runs giwt sync
 
 # Comprehensive .plan/ validation (format, linkage, backlog, tickets, code-map,
-# links, spdx, naming, epics-doc, status-vocab, matrix)
+
+# links, spdx, naming, epics-doc, status-vocab, matrix, interconnect)
+bun run plan:validate                 # check — exits non-zero on findings
+bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
+bun run plan:status                   # health summary (open/closed counts, gate pass/fail)
+
+# links, spdx, naming, epics-doc, status-vocab, matrix, interconnect)
 bun run plan:validate                 # check — exits non-zero on findings
 bun run plan:validate:fix             # apply auto-fixable findings (giwt plan validate --fix)
 bun run plan:status                   # health summary (open/closed counts, gate pass/fail)
