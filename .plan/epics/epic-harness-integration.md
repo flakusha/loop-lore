@@ -161,8 +161,10 @@ Taken terms (do not use bare):
 - `#extid` shorthand in ticket/comment bodies via `resolver.ts resolveExtid` +
   plan-validate links-gate; `@` stays actor-scoped (document once in
   `docs/meta/workflow.md`). Deliberately NOT adopted: `@path` file-import
-  macros, semantic-find cascade, checkpoint/rewind pair, fullscreen git TUI
-  (document `omp git` as the human surface).
+  macros, semantic-find cascade, the *context-level* checkpoint/rewind pair
+  (superseded for **file state** by `TASK-harness-edit-journal` +
+  `TASK-harness-edit-rollback` — a per-op patch journal, not a context snapshot),
+  fullscreen git TUI (document `omp git` as the human surface).
 
 ### 6. RTK / lean-ctx native (one wrapper, one seam)
 
@@ -499,6 +501,8 @@ Concrete gaps with evidence; each has an explicit `IN or OUT?` marker.
 - [ ] TASK-harness-lean-ctx-tools — MCP wrapper + anchored-op seam
 - [ ] TASK-harness-stats-dashboard — telemetry events + admin block + rollups
 - [ ] TASK-harness-exec-log — .harness/executions.jsonl schema + queries
+- [ ] TASK-harness-edit-journal — .harness/edits.jsonl per-op patch records
+- [ ] TASK-harness-edit-rollback — rollback -N / <op_id> inverse anchored op
 - [ ] TASK-harness-db-tables — harness_runs/calls migration + embedding scope
 - [ ] TASK-harness-plugin-runtime — manifest runtime field + adapters
 - [ ] TASK-harness-skills-runtime — SKILL.md loader + triggers + curator
