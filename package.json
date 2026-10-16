@@ -4,16 +4,20 @@
   "version": "0.1.0",
   "entryPoint": "src/server/index.ts",
   "license": "LGPL-3.0-or-later",
+  "bin": {
+    "lolo": "./bin/lolo.ts"
+  },
   "scripts": {
+    "dev": "bun run build:frontend && bun run --watch src/server/index.ts",
+    "start": "bun run src/server/index.ts",
+    "tui": "bun run src/tui/app.ts",
+    "lolo": "bun run bin/lolo.ts",
+
     "build": "bun run build:frontend && bun run build:server && bun run build:native",
     "build:frontend": "bun run scripts/build-frontend.mjs",
     "build:server": "bun build src/server/index.ts --outdir ./dist --target bun",
     "build:native": "bun run scripts/build-native.ts",
     "build:verify": "bun run scripts/build-verify.ts",
-
-    "dev": "bun run build:frontend && bun run --watch src/server/index.ts",
-    "start": "bun run src/server/index.ts",
-    "tui": "bun run src/tui/app.ts",
 
     "lint:native": "cargo clippy --manifest-path native/loop-lore-native/Cargo.toml --all-targets -- -D warnings",
     "test:native": "cargo test --manifest-path native/loop-lore-native/Cargo.toml",
@@ -117,9 +121,6 @@
     "config:generate-character-schema": "bun run src/config/generate-character-schema/index.ts",
     "config:generate-toml-schema": "bun run src/config/generate-toml-schema.ts",
     "config:generate-env-schema": "bun run src/config/generate-env-schema.ts",
-    "config:generate-domain-schemas": "bun run src/config/generate-domain-schemas.ts",
-
-    "smoke:app": "bun run src/scripts/smoke-app.ts",
 
     "plan:docs": "giwt plan gen-docs",
     "plan:docs:check": "giwt plan gen-docs --check",
