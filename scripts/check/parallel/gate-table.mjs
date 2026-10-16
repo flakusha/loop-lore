@@ -26,6 +26,12 @@ export const checks = {
   "typecheck - frontend": "bun run typecheck:frontend",
   "typecheck - coverage": "bun run typecheck:coverage",
   "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend", // 95% floor each (re-enabled after TS5.9 unblock; type-coverage-core uses ts.SyntaxKind.Unknown, TS7-incompatible)
+  // scripts/** sat outside every coverage gate: tsconfig.backend.json is
+  // src/** minus src/frontend/**, so the backend floor never saw it, and it
+  // has no frontend sibling. Same 95% any-count floor via its own project.
+  // Measured at 97.25% on landing, so the gate opens green rather than
+  // opening as a waiver.
+  "typecheck - coverage - scripts": "bun run typecheck:coverage:scripts",
   // BUG-typecheck-scripts-worktree-referenceerror-class-bugs-ship-gr:
   // the in-repo scripts/ CLI ships outside tsconfig.backend.json (src/** only).
   // Scoped tsconfig.scripts.json keeps name resolution so unimported
