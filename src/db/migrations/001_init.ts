@@ -36,7 +36,7 @@ async function hasThumbnailColumn(database: Kysely<unknown>,): Promise<boolean> 
 }
 
 export async function up(database: Kysely<unknown>,): Promise<void> {
-  // --- parts/001_core.ts ---
+  // --- core ---
   await database.schema
     .createTable("data_migrations",)
     .addColumn("table_name", "text", (col,) => col.notNull(),)
@@ -383,7 +383,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("role",)
     .execute();
 
-  // --- parts/002_assets.ts ---
+  // --- assets ---
   await database.schema
     .createTable("asset_links",)
     .addColumn("asset_id", "text", (col,) => col.notNull().references("assets.id",),)
@@ -492,7 +492,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("asset_id",)
     .execute();
 
-  // --- parts/003_worlds.ts ---
+  // --- worlds ---
   await database.schema
     .createTable("location_states",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -792,7 +792,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["world_id", "status",],)
     .execute();
 
-  // --- parts/004_actors.ts ---
+  // --- actors ---
   await database.schema
     .createTable("activitypub_actor_keys",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -1091,7 +1091,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["actor_id", "status",],)
     .execute();
 
-  // --- parts/005_characters.ts ---
+  // --- characters ---
   await database.schema
     .createTable("character_arc",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -1636,7 +1636,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("world_id",)
     .execute();
 
-  // --- parts/006_chat.ts ---
+  // --- chat ---
   await database.schema
     .createTable("chat_background_assignments",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -2305,7 +2305,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["chat_id", "fired_at",],)
     .execute();
 
-  // --- parts/007_personas.ts ---
+  // --- personas ---
   await database.schema
     .createTable("personas",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -2347,7 +2347,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("user_id",)
     .execute();
 
-  // --- parts/008_story.ts ---
+  // --- story ---
   await database.schema
     .createTable("items",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -2539,7 +2539,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("chat_id",)
     .execute();
 
-  // --- parts/009_crafting.ts ---
+  // --- crafting ---
   await database.schema
     .createTable("crafting_attempts",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -2771,7 +2771,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("created_at",)
     .execute();
 
-  // --- parts/010_progression.ts ---
+  // --- progression ---
   await database.schema
     .createTable("achievements",)
     .addColumn("id", "text", (col,) => col.primaryKey().defaultTo(sql`(lower(hex(randomblob(16))))`,),)
@@ -2978,7 +2978,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("world_id",)
     .execute();
 
-  // --- parts/011_blog.ts ---
+  // --- blog ---
   await database.schema
     .createTable("blog_comments",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3068,7 +3068,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("author_id",)
     .execute();
 
-  // --- parts/012_memory.ts ---
+  // --- memory ---
   await database.schema
     .createTable("actor_memories",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3153,7 +3153,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("model",)
     .execute();
 
-  // --- parts/013_generation.ts ---
+  // --- generation ---
   await database.schema
     .createTable("generation_attempts",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3346,7 +3346,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("modality",)
     .execute();
 
-  // --- parts/014_moderation.ts ---
+  // --- moderation ---
   await database.schema
     .createTable("content_flags",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3538,7 +3538,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .unique()
     .execute();
 
-  // --- parts/015_e2e.ts ---
+  // --- e2e ---
   await database.schema
     .createTable("e2e_group_wraps",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3635,7 +3635,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["session_id", "dh_public_jwk", "counter",],)
     .execute();
 
-  // --- parts/016_fts.ts ---
+  // --- fts ---
   await sql`CREATE VIRTUAL TABLE memories_fts USING fts5(
         memory_id UNINDEXED,
         content
@@ -3703,13 +3703,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["scope", "term",],)
     .execute();
 
-  // --- parts/019_trade_requested_materials.ts ---
+  // --- trade_requested_materials ---
   await database.schema
     .alterTable("crafting_orders",)
     .addColumn("requested_materials", "text", (col,) => col.notNull().defaultTo("[]",),)
     .execute();
 
-  // --- parts/020_workflow_sessions.ts ---
+  // --- workflow_sessions ---
   await database.schema
     .createTable("workflow_sessions",)
     .addColumn("chat_id", "text", (col,) => col.primaryKey().references("chats.id",).onDelete("cascade",),)
@@ -3738,7 +3738,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
-  // --- parts/022_mesh_sharing.ts ---
+  // --- mesh_sharing ---
   await database.schema
     .createTable("mesh_reservations",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3760,13 +3760,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("received_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
-  // --- 002_mesh_capacity.ts ---
+  // --- mesh_capacity ---
   await database.schema
     .alterTable("mesh_peers",)
     .addColumn("capacity_bytes", "integer",)
     .execute();
 
-  // --- 003_mesh_inbound_keys.ts ---
+  // --- mesh_inbound_keys ---
   await database.schema
     .createTable("mesh_inbound_keys",)
     .addColumn("peer_origin", "text", (col,) => col.primaryKey(),)
@@ -3776,7 +3776,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
-  // --- 004_world_mechanics.ts ---
+  // --- world_mechanics ---
   await database.schema
     .alterTable("worlds",)
     .addColumn("rpg_dice", "integer", (col,) => col.notNull().defaultTo(0,),)
@@ -3811,7 +3811,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await sql`UPDATE worlds SET rpg_dice = rpg_enabled, rpg_checks = rpg_enabled, rpg_combat = rpg_enabled, rpg_xp = rpg_enabled, rpg_loot = rpg_enabled, rpg_quests = rpg_enabled`
     .execute(database,);
 
-  // --- 005_asset_tags.ts ---
+  // --- asset_tags ---
   await database.schema
     .createTable("asset_tags",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3867,7 +3867,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .unique()
     .execute();
 
-  // --- 006_rotation_history.ts ---
+  // --- rotation_history ---
   await database.schema
     .createTable("rotation_history",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3890,9 +3890,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["chat_id", "created_at",],)
     .execute();
 
-  // --- 007_add_chat_gm_role.ts ---
+  // --- add_chat_gm_role ---
 
-  // --- 008_memory_source_chain.ts ---
+  // --- memory_source_chain ---
   await database.schema
     .alterTable("actor_memories",)
     .addColumn("source_message_ids", "text",)
@@ -3941,7 +3941,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("source_chat_ids",)
     .execute();
 
-  // --- 009_chat_moderation_state.ts ---
+  // --- chat_moderation_state ---
   await database.schema
     .alterTable("chat_participants",)
     .addColumn("muted_until", "text",)
@@ -3964,7 +3964,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .column("banned_until",)
     .execute();
 
-  // --- 010_quest_reward_ledger.ts ---
+  // --- quest_reward_ledger ---
   await database.schema
     .createTable("quest_reward_ledger",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -3981,7 +3981,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .unique()
     .execute();
 
-  // --- 011_character_license_history.ts ---
+  // --- character_license_history ---
   await database.schema
     .createTable("character_license_history",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -4002,7 +4002,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["actor_id", "created_at",],)
     .execute();
 
-  // --- 013_locations_fractal.ts ---
+  // --- locations_fractal ---
   // ── 1. ALTER locations: one column per statement ──
   await database.schema
     .alterTable("locations",)
@@ -4195,7 +4195,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     database,
   );
 
-  // --- 014_asset_thumbnail.ts ---
+  // --- asset_thumbnail ---
   if (!(await hasThumbnailColumn(database,))) {
     await database.schema
       .alterTable("assets",)
@@ -4203,7 +4203,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
       .execute();
   }
 
-  // --- 015_avatar_focus.ts ---
+  // --- avatar_focus ---
   await database.schema
     .alterTable("actors",)
     .addColumn("avatar_focus_x", "real", (col,) => col.notNull().defaultTo(50,),)
@@ -4214,7 +4214,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("avatar_focus_y", "real", (col,) => col.notNull().defaultTo(50,),)
     .execute();
 
-  // --- 016_rpg_questions.ts ---
+  // --- rpg_questions ---
   await database.schema
     .createTable("rpg_questions",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -4237,7 +4237,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["chat_id", "status",],)
     .execute();
 
-  // --- 017_memory_audit_log.ts ---
+  // --- memory_audit_log ---
   await database.schema
     .createTable("memory_audit_log",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -4261,14 +4261,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .columns(["actor_id", "created_at",],)
     .execute();
 
-  // --- 018_content_flags_unique_pending.ts ---
+  // --- content_flags_unique_pending ---
   await sql`
       CREATE UNIQUE INDEX content_flags_open_unique
       ON content_flags (content_type, content_id)
       WHERE status IN ('pending', 'under_review')
     `.execute(database,);
 
-  // --- 023_status_effects.ts ---
+  // --- status_effects ---
   await database.schema
     .createTable("status_effect",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -4292,20 +4292,20 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
-  // --- 023_status_effects.ts down ---
+  // --- status_effects down ---
   await database.schema.dropTable("status_effect",).execute();
-  // --- 018_content_flags_unique_pending.ts down ---
+  // --- content_flags_unique_pending down ---
   await sql`DROP INDEX IF EXISTS content_flags_open_unique`.execute(database,);
 
-  // --- 017_memory_audit_log.ts down ---
+  // --- memory_audit_log down ---
   await database.schema.dropTable("memory_audit_log",).execute();
-  // --- 016_rpg_questions.ts down ---
+  // --- rpg_questions down ---
   await database.schema.dropTable("rpg_questions",).execute();
-  // --- 015_avatar_focus.ts down ---
+  // --- avatar_focus down ---
   await database.schema.alterTable("actors",).dropColumn("avatar_focus_y",).execute();
   await database.schema.alterTable("actors",).dropColumn("avatar_focus_x",).execute();
 
-  // --- 014_asset_thumbnail.ts down ---
+  // --- asset_thumbnail down ---
   // Match the original down(): drop the column only if present. Fresh DBs
   // that ran only this migration drop cleanly; DBs that ran both the old
   // and new migrations see a no-op rather than a duplicate-drop error.
@@ -4316,7 +4316,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
       .execute();
   }
 
-  // --- 013_locations_fractal.ts down ---
+  // --- locations_fractal down ---
   // Triggers (reverse order — must be dropped BEFORE the columns they reference).
   await sql`DROP TRIGGER IF EXISTS trg_locations_set_path_on_update`.execute(database,);
   await sql`DROP TRIGGER IF EXISTS trg_locations_set_path_on_insert`.execute(database,);
@@ -4344,19 +4344,19 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.alterTable("locations",).dropColumn("mobility_mode",).execute();
   await database.schema.alterTable("locations",).dropColumn("kind",).execute();
 
-  // --- 011_character_license_history.ts down ---
+  // --- character_license_history down ---
   await database.schema.dropTable("character_license_history",).execute();
 
-  // --- 010_quest_reward_ledger.ts down ---
+  // --- quest_reward_ledger down ---
   await database.schema.dropTable("quest_reward_ledger",).execute();
 
-  // --- 009_chat_moderation_state.ts down ---
+  // --- chat_moderation_state down ---
   await database.schema.dropIndex("idx_chat_participants_banned_until",).execute();
   await database.schema.dropIndex("idx_chat_participants_muted_until",).execute();
   await database.schema.alterTable("chat_participants",).dropColumn("banned_until",).execute();
   await database.schema.alterTable("chat_participants",).dropColumn("muted_until",).execute();
 
-  // --- 008_memory_source_chain.ts down ---
+  // --- memory_source_chain down ---
   await database.schema
     .dropIndex("idx_actor_memories_source_chat_ids",)
     .execute();
@@ -4390,20 +4390,21 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
     .dropColumn("source_message_ids",)
     .execute();
 
-  // --- 007_add_chat_gm_role.ts down ---
+  // --- add_chat_gm_role down ---
   // The `gm` value is just text — there is no schema object to drop; rows
   // whose `role_in_chat = "gm"` survived a downgrade are a data concern for
-  // a newer migration or manual cleanup. The ledger row, however, comes off
-  // so a rollback keeps `schema_version` truthful.
+  // a newer migration or manual cleanup. There is no separate schema-version
+  // ledger to unwind: Kysely's own `kysely_migration` row for `001_init`
+  // is the only applied-migration record, and it comes off as a unit.
 
-  // --- 006_rotation_history.ts down ---
+  // --- rotation_history down ---
   await database.schema.dropTable("rotation_history",).execute();
 
-  // --- 005_asset_tags.ts down ---
+  // --- asset_tags down ---
   await database.schema.dropTable("asset_tag_dismissals",).execute();
   await database.schema.dropTable("asset_tags",).execute();
 
-  // --- 004_world_mechanics.ts down ---
+  // --- world_mechanics down ---
   await database.schema
     .alterTable("worlds",)
     .dropColumn("rpg_quests",)
@@ -4434,26 +4435,26 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
     .dropColumn("rpg_dice",)
     .execute();
 
-  // --- 003_mesh_inbound_keys.ts down ---
+  // --- mesh_inbound_keys down ---
   await database.schema.dropTable("mesh_inbound_keys",).execute();
 
-  // --- 002_mesh_capacity.ts down ---
+  // --- mesh_capacity down ---
   await database.schema.alterTable("mesh_peers",).dropColumn("capacity_bytes",).execute();
 
-  // --- parts/022_mesh_sharing.ts down ---
+  // --- mesh_sharing down ---
   await database.schema.dropTable("mesh_deliveries",).execute();
   await database.schema.dropTable("mesh_reservations",).execute();
-  // --- parts/020_workflow_sessions.ts down ---
+  // --- workflow_sessions down ---
   await database.schema.dropTable("mesh_negotiations",).execute();
   await database.schema.dropTable("mesh_peers",).execute();
   await database.schema.dropTable("workflow_sessions",).execute();
-  // --- parts/019_trade_requested_materials.ts down ---
+  // --- trade_requested_materials down ---
   await database.schema
     .alterTable("crafting_orders",)
     .dropColumn("requested_materials",)
     .execute();
 
-  // --- parts/016_fts.ts down ---
+  // --- fts down ---
   await database.schema.dropTable("message_search_tokens",).execute();
 
   await database.schema
@@ -4469,12 +4470,12 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP TRIGGER IF EXISTS actor_memories_fts_au`.execute(database,);
   await sql`DROP TABLE IF EXISTS memories_fts`.execute(database,);
   await sql`DROP TABLE IF EXISTS messages_fts`.execute(database,);
-  // --- parts/015_e2e.ts down ---
+  // --- e2e down ---
   await database.schema.dropTable("e2e_skipped_message_keys",).execute();
   await database.schema.dropTable("e2e_skipped_keys",).execute();
   await database.schema.dropTable("e2e_group_wraps",).execute();
   await database.schema.dropTable("e2e_sessions",).execute();
-  // --- parts/014_moderation.ts down ---
+  // --- moderation down ---
   await database.schema.dropTable("nsfw_user_preferences",).execute();
   await database.schema.dropTable("nsfw_encounters",).execute();
   await database.schema.dropTable("nsfw_consent_state",).execute();
@@ -4482,7 +4483,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("location_nsfw_config",).execute();
   await database.schema.dropTable("content_flags",).execute();
   await database.schema.dropTable("moderation_actions",).execute();
-  // --- parts/013_generation.ts down ---
+  // --- generation down ---
   await database.schema
     .alterTable("chats",)
     .dropColumn("prompt_template_id",)
@@ -4492,16 +4493,16 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("synthetic_data",).execute();
   await database.schema.dropTable("generation_jobs",).execute();
   await database.schema.dropTable("generation_attempts",).execute();
-  // --- parts/012_memory.ts down ---
+  // --- memory down ---
   await database.schema.dropTable("memory_embeddings",).execute();
   await database.schema.dropTable("actor_memories",).execute();
-  // --- parts/011_blog.ts down ---
+  // --- blog down ---
   await database.schema.dropTable("blog_tags",).execute();
   await database.schema.dropTable("blog_rag_sources",).execute();
   await database.schema.dropTable("blog_follows",).execute();
   await database.schema.dropTable("blog_comments",).execute();
   await database.schema.dropTable("blog_posts",).execute();
-  // --- parts/010_progression.ts down ---
+  // --- progression down ---
   await database.schema.dropTable("xp_ledger",).execute();
   await database.schema.dropTable("trade_history",).execute();
   await database.schema.dropTable("playthroughs",).execute();
@@ -4511,7 +4512,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("dice_roll_history",).execute();
   await database.schema.dropTable("battles",).execute();
   await database.schema.dropTable("achievements",).execute();
-  // --- parts/009_crafting.ts down ---
+  // --- crafting down ---
   await database.schema.dropTable("recipe_discoveries",).execute();
   await database.schema.dropTable("profession_specializations",).execute();
   await database.schema.dropTable("gathering_node_materials",).execute();
@@ -4524,16 +4525,16 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("crafting_station_instances",).execute();
   await database.schema.dropTable("crafting_recipes",).execute();
   await database.schema.dropTable("crafting_station_defs",).execute();
-  // --- parts/008_story.ts down ---
+  // --- story down ---
   await database.schema.dropTable("whitenotes",).execute();
   await database.schema.dropTable("shadow_notes",).execute();
   await database.schema.dropTable("quest_progress",).execute();
   await database.schema.dropTable("npc_states",).execute();
   await database.schema.dropTable("items",).execute();
   await database.schema.dropTable("quests",).execute();
-  // --- parts/007_personas.ts down ---
+  // --- personas down ---
   await database.schema.dropTable("personas",).execute();
-  // --- parts/006_chat.ts down ---
+  // --- chat down ---
   await database.schema.dropTable("vn_choices",).execute();
   await database.schema.dropTable("story_turns",).execute();
   await database.schema.dropTable("proactive_messaging_config",).execute();
@@ -4555,7 +4556,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("chats",).execute();
   await database.schema.dropTable("chat_backgrounds",).execute();
   await database.schema.dropTable("chat_setup_templates",).execute();
-  // --- parts/005_characters.ts down ---
+  // --- characters down ---
   await database.schema.dropTable("mood_events",).execute();
   await database.schema.dropTable("characters",).execute();
   await database.schema.dropTable("character_world_traits",).execute();
@@ -4582,7 +4583,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("growth_log",).execute();
   await database.schema.dropTable("character_arc",).execute();
   await database.schema.dropTable("emotions",).execute();
-  // --- parts/004_actors.ts down ---
+  // --- actors down ---
   await database.schema.dropTable("admin_character_overrides",).execute();
   await database.schema.dropTable("actor_notes",).execute();
   await database.schema.dropTable("actor_lore_entries",).execute();
@@ -4592,7 +4593,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("actor_currencies",).execute();
   await database.schema.dropTable("activitypub_actor_keys",).execute();
   await database.schema.dropTable("actors",).execute();
-  // --- parts/003_worlds.ts down ---
+  // --- worlds down ---
   await database.schema.dropTable("world_timelines",).execute();
   await database.schema.dropTable("world_event_steerings",).execute();
   await database.schema.dropTable("world_timeline_events",).execute();
@@ -4605,12 +4606,12 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("location_states",).execute();
   await database.schema.dropTable("locations",).execute();
   await database.schema.dropTable("worlds",).execute();
-  // --- parts/002_assets.ts down ---
+  // --- assets down ---
   await database.schema.dropTable("asset_transforms",).execute();
   await database.schema.dropTable("asset_shares",).execute();
   await database.schema.dropTable("asset_links",).execute();
   await database.schema.dropTable("assets",).execute();
-  // --- parts/001_core.ts down ---
+  // --- core down ---
   await database.schema.dropTable("user_api_keys",).execute();
   await database.schema.dropTable("telemetry_events",).execute();
   await database.schema.dropTable("system_config",).execute();
