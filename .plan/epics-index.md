@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 327 epics
+**Total:** 329 epics
 
 ## Summary
 
@@ -92,6 +92,7 @@
 | In Progress | Documentation Reconciliation & UX | Medium | Medium | 0 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
 | Done | E2E & Integration Testing Reliability | High | Medium | 0 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
 | Not Started | Economy & Trading Systems | Medium | Very High | 0 | [epic-economy-trading.md](/.plan/epics/epic-economy-trading.md) |
+| Not Started | Editorial Review Workflow (Threads, Suggestions, Beta Readers) | Medium | Large | 0 | [epic-editorial-workflow.md](/.plan/epics/epic-editorial-workflow.md) |
 | Not Started | Email Integration | Medium | Medium | 0 | [epic-email-integration.md](/.plan/epics/epic-email-integration.md) |
 | Not Started | Embeddable Engine & 2D/3D Game Frontend (Far Fetched) | Low | Very High (split into 5 sub-epics) | 0 | [epic-embeddable-engine-game-frontend.md](/.plan/epics/epic-embeddable-engine-game-frontend.md) |
 | Not Started | Emergent Narrative Design Principles | Medium | Low | 0 | [epic-emergent-narrative-design.md](/.plan/epics/epic-emergent-narrative-design.md) |
@@ -276,6 +277,7 @@
 | Not Started | Prompt & Output Control | Medium | Medium | 0 | [epic-output-control-transforms.md](/.plan/epics/epic-output-control-transforms.md) |
 | In Progress | Prompt Improvement — Unified Text Enhancement | High | Medium | 0 | [epic-prompt-improvement.md](/.plan/epics/epic-prompt-improvement.md) |
 | In Progress | Provider & Plugin Ecosystem | Medium | Large | 0 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
+| Not Started | Publication Content Translation (Books & Comics) | Medium | Large | 0 | [epic-publication-i18n.md](/.plan/epics/epic-publication-i18n.md) |
 | Not Started | RAG & Document Processing | High | Very High (split into 5 sub-epics) | 0 | [epic-rag-document-processing.md](/.plan/epics/epic-rag-document-processing.md) |
 | Not Started | RAG & Document Processing — Quick Reference | High | High | 0 | [epic-rag-document-processing-quickref.md](/.plan/epics/epic-rag-document-processing-quickref.md) |
 | Not Started | RAG & Document UI | P2 — Medium | Medium | 0 | [epic-rag-ui.md](/.plan/epics/epic-rag-ui.md) |
@@ -1103,6 +1105,17 @@ Disease and poison mechanics — afflictions, symptoms, cures, resistance, and h
 - **File:** `.plan/epics/epic-economy-trading.md`
 
 Economy and trading mechanics — currency systems, market dynamics, trading, auction house, banking, and economic simulation. Supports both NPC and player-driven economies.
+
+### Editorial Review Workflow (Threads, Suggestions, Beta Readers)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** editorial, review, comments, suggestions, beta-readers, publications, blog
+- **File:** `.plan/epics/epic-editorial-workflow.md`
+
+Publishing today ends at the author. The publishing epic
 
 ### Email Integration
 
@@ -2867,6 +2880,17 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** Feature Epic
 - **Tags:** providers, anthropic, ollama, bedrock, plugin-management, byok
 - **File:** `.plan/epics/epic-provider-plugin-ecosystem.md`
+
+### Publication Content Translation (Books & Comics)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** i18n, content-translation, publications, glossary, cron, reader, llm
+- **File:** `.plan/epics/epic-publication-i18n.md`
+
+The repo already has an i18n system, and it is the wrong tool for this job — on
 
 ### RAG & Document Processing
 

@@ -1205,6 +1205,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md"
     }
   ],
   "src/assets/controller/files.ts": [
@@ -1603,6 +1607,10 @@
       "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/crypto.md"
     }
@@ -1733,6 +1741,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-artifact-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
     },
     {
       "kind": "spec",
@@ -1909,6 +1921,12 @@
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
     }
   ],
+  "src/assets/service/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md"
+    }
+  ],
   "src/assets/service/validate.ts": [
     {
       "kind": "epic",
@@ -1925,6 +1943,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-chart-export-png-svg-csv.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     },
     {
       "kind": "ticket",
@@ -2915,6 +2941,10 @@
   ],
   "src/assistant/commands/translate.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
     },
@@ -2933,6 +2963,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-unit-translation-service.md"
     }
   ],
   "src/assistant/commands/video.ts": [
@@ -2959,6 +2993,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-confirm-session-treats-optional-steps-as-required.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
     },
     {
       "kind": "ticket",
@@ -8025,12 +8063,20 @@
   ],
   "src/chat/auto-translate.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-route-plugin-calls-through-the-shared-provider-path.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-unit-translation-service.md"
     }
   ],
   "src/chat/composer/local-suggest.ts": [
@@ -9365,6 +9411,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq.md"
+    }
+  ],
+  "src/chat/service/merge/merge-store.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
     }
   ],
   "src/chat/service/message-history.ts": [
@@ -11789,6 +11845,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-licensing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     }
   ],
   "src/config/load.test.ts": [
@@ -13329,6 +13389,18 @@
       "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
     }
   ],
+  "src/cron/boot.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
+    }
+  ],
+  "src/cron/jobs.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
+    }
+  ],
   "src/cron/jobs.ts": [
     {
       "kind": "epic",
@@ -13345,6 +13417,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-locations.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
       "kind": "epic",
@@ -13368,6 +13444,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-scheduler-implementation-internal-cron-jobs.md"
     },
     {
@@ -13387,10 +13467,20 @@
       "source": "docs/spec/scheduler.md"
     }
   ],
+  "src/cron/registry.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
+    }
+  ],
   "src/cron/registry.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
       "kind": "ticket",
@@ -13403,6 +13493,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-OFFLOADING.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
     },
     {
       "kind": "ticket",
@@ -13419,8 +13513,16 @@
       "source": ".plan/epics/epic-cron-scheduler.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cron-registry-core.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
     }
   ],
   "src/crypto": [
@@ -14733,6 +14835,10 @@
       "source": ".plan/epics/epic-architecture.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/schema.md"
     }
@@ -14791,6 +14897,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-030.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
     }
   ],
   "src/db/enums-character/nsfw": [
@@ -14922,6 +15032,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-narrative-publishing-workflows.md"
     },
     {
@@ -14971,6 +15085,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-artifact-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md"
     },
     {
       "kind": "ticket",
@@ -15102,6 +15224,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
     },
     {
@@ -15143,6 +15269,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-artifact-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
     },
     {
       "kind": "ticket",
@@ -15320,6 +15450,10 @@
   "src/db/enums-story/items.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-item-system-extensions.md"
     },
     {
@@ -15357,6 +15491,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-056.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
     },
     {
       "kind": "ticket",
@@ -15466,6 +15604,10 @@
   "src/db/enums.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
     },
     {
@@ -15491,6 +15633,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-editor-structured-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     },
     {
       "kind": "frontend",
@@ -15760,6 +15906,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-db-migration-039.md"
     },
     {
@@ -15776,6 +15926,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
@@ -15785,6 +15939,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-artifact-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
     },
     {
       "kind": "spec",
@@ -15848,6 +16006,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-db-migration-039.md"
     },
     {
@@ -15872,6 +16034,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-locations-fractal-migration.md"
     },
     {
@@ -15885,6 +16051,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-events-table-and-telemet.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
     },
     {
       "kind": "ticket",
@@ -15943,6 +16113,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-db-migration-compaction.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
     },
     {
       "kind": "epic",
@@ -16095,6 +16269,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rag-decomposition-index-pipeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     },
     {
       "kind": "ticket",
@@ -16545,6 +16723,12 @@
       "source": ".plan/epics/epic-character-spec.md"
     }
   ],
+  "src/db/migrations/043_scheduled_messages_reminders.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-unit-scheduled-serialization.md"
+    }
+  ],
   "src/db/migrations/047_conversation_merge.ts": [
     {
       "kind": "ticket",
@@ -16588,7 +16772,19 @@
   "src/db/migrations/056_xp_ledger_dedupe_unique.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
     }
   ],
   "src/db/migrations/057_encryption_level_at_rest_rename.ts": [
@@ -16609,10 +16805,22 @@
       "source": ".plan/tickets/BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-.md"
     }
   ],
+  "src/db/migrations/059_publication_glossary_terms.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-glossary-term-base.md"
+    }
+  ],
   "src/db/migrations/060_character_world_setup.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
+    }
+  ],
+  "src/db/migrations/060_publication_translations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-unit-translation-store.md"
     }
   ],
   "src/db/migrations/065_moderation_supersede.ts": [
@@ -16716,7 +16924,31 @@
   "src/db/migrations/NNN_": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
+    }
+  ],
+  "src/db/migrations/NNN_asset_license_columns.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
+    }
+  ],
+  "src/db/migrations/NNN_blog_post_provenance.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
     }
   ],
   "src/db/migrations/NNN_check_drift_history.ts": [
@@ -16735,6 +16967,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/migrations.md"
+    }
+  ],
+  "src/db/migrations/NNN_reference_sets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
     }
   ],
   "src/db/migrations/NNN_rsi_agent_actions.ts": [
@@ -16824,6 +17062,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-beta-reader-feedback-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-db-migration-039.md"
     },
     {
@@ -16841,6 +17087,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-db-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
     },
     {
       "kind": "ticket",
@@ -16865,6 +17119,26 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-artifact-versioning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-glossary-term-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-unit-translation-store.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md"
     },
     {
       "kind": "spec",
@@ -17234,7 +17508,15 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
       "kind": "epic",
@@ -17355,6 +17637,10 @@
       "source": ".plan/epics/epic-blog-system.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
     },
@@ -17369,6 +17655,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-scenario-source.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-unit-scheduled-serialization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     },
     {
       "kind": "spec",
@@ -17541,6 +17843,18 @@
       "source": ".plan/tickets/TASK-publication-artifact-schema.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-alt-text-consistency.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-entity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/schema.md"
     }
@@ -17592,6 +17906,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
     },
     {
@@ -17621,6 +17939,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
       "kind": "epic",
@@ -17736,11 +18058,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mini-games-framework.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-glossary-term-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-unit-translation-store.md"
     },
     {
       "kind": "ticket",
@@ -17904,6 +18238,10 @@
     }
   ],
   "src/db/schema-gm.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-gm-shadow-notes.md"
@@ -19121,9 +19459,17 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fanout-chatid-default-deny.md"
     }
   ],
   "src/federation/clearance.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-licensing.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
@@ -19135,6 +19481,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fanout-chatid-default-deny.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     },
     {
       "kind": "ticket",
@@ -19195,6 +19553,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     }
   ],
   "src/federation/delivery.ts": [
@@ -19259,6 +19625,10 @@
   ],
   "src/federation/fan-out.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-licensing.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md"
     },
@@ -19281,6 +19651,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fanout-chatid-default-deny.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     },
     {
       "kind": "ticket",
@@ -20147,6 +20529,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
     }
   ],
   "src/frontend/alpine/catalog-download.ts": [
@@ -20940,6 +21326,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
     },
     {
@@ -21606,6 +22000,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
     },
     {
@@ -21635,6 +22033,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-reader-locale-selector.md"
     },
     {
       "kind": "ticket",
@@ -22100,7 +22502,17 @@
   "src/frontend/alpine/publication-reader.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-reader-locale-selector.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
+    }
+  ],
+  "src/frontend/alpine/publication-review.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
     }
   ],
   "src/frontend/alpine/qa-mode.ts": [
@@ -23056,6 +23468,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md"
     },
     {
@@ -23080,6 +23496,10 @@
   "src/frontend/chat-vendor.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-bundle-optimization.md"
     },
     {
@@ -23092,7 +23512,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-lazy-vendor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
     },
     {
       "kind": "ticket",
@@ -23301,6 +23733,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
     },
     {
       "kind": "ticket",
@@ -24035,6 +24471,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-management-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
     },
     {
       "kind": "ticket",
@@ -27623,6 +28063,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-parameter-form-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-multi-image-upload.md"
     }
   ],
   "src/generation/providers/comfyui.test.ts": [
@@ -27753,6 +28197,10 @@
       "source": ".plan/tickets/TASK-reference-capability-probe-runtime.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reference-set-multi-image-upload.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
     }
@@ -27868,6 +28316,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-resource-provision.md"
     },
     {
@@ -27929,6 +28381,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-sam3-direct-provider-via-meta-model-api.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-unit-translation-service.md"
     },
     {
       "kind": "ticket",
@@ -28775,8 +29231,30 @@
   ],
   "src/i18n/locale-loader.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-reconciliation-script.md"
+    }
+  ],
+  "src/i18n/locale-registry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-glossary-term-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-reader-locale-selector.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-unit-translation-service.md"
     }
   ],
   "src/i18n/locales/en.json": [
@@ -28786,6 +29264,10 @@
     }
   ],
   "src/i18n/plurals.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-010-plurals.md"
@@ -28799,6 +29281,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-internationalization.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
       "kind": "ticket",
@@ -31421,6 +31907,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-licensing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     }
   ],
   "src/middleware/lifecycle.ts": [
@@ -31543,6 +32033,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consent-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     },
     {
       "kind": "ticket",
@@ -32099,6 +32593,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c4-inbound-federated-content-verdict-notices.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     },
     {
       "kind": "ticket",
@@ -34446,6 +34948,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-entity-generation-workflows.md"
     },
     {
@@ -34455,6 +34961,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-narrative-publishing-workflows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
       "kind": "epic",
@@ -35871,6 +36381,10 @@
       "source": ".plan/epics/epic-blog-system.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
     },
@@ -35881,6 +36395,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     }
   ],
   "src/routes/blog/follows.ts": [
@@ -35895,6 +36413,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
+    }
+  ],
+  "src/routes/blog/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md"
     }
   ],
   "src/routes/blog/moderation.ts": [
@@ -36177,6 +36701,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-030.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md"
     }
   ],
   "src/routes/character-mood.ts": [
@@ -37639,6 +38167,16 @@
       "source": "docs/spec/io-formats.md"
     }
   ],
+  "src/routes/federation-mesh-retract.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fanout-chatid-default-deny.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md"
+    }
+  ],
   "src/routes/federation-mesh.ts": [
     {
       "kind": "ticket",
@@ -38074,6 +38612,10 @@
     }
   ],
   "src/routes/i18n.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-publication-i18n.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-platform-service-util-modules-dead-barre.md"
@@ -40872,6 +41414,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va.md"
     },
     {
@@ -41244,6 +41794,10 @@
   "src/routes/views/escape-html.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
     },
     {
@@ -41257,12 +41811,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
-    }
-  ],
-  "src/routes/views/gallery-cards.ts": [
+    },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     }
   ],
   "src/routes/views/gallery.test.ts": [
@@ -41438,6 +41990,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
     },
     {
@@ -41471,6 +42027,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-reader-locale-selector.md"
     },
     {
       "kind": "ticket",
@@ -41545,18 +42105,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
-    }
-  ],
-  "src/routes/views/view-models/chat-list.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
-    }
-  ],
-  "src/routes/views/view-models/gallery-grid.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/view-serving.ts": [
@@ -41837,6 +42385,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     }
   ],
   "src/routes/worlds/autonomy-config.ts": [
@@ -42209,12 +42765,20 @@
       "source": ".plan/epics/epic-blog-system.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-moderatecomment-has-no-authorization-any-caller-can-change-a.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     },
     {
       "kind": "ticket",
@@ -42276,6 +42840,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-unit-scheduled-serialization.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-and-blog-service-db-handles-are-typed-as-any-losing-quer.md"
     }
   ],
@@ -42295,6 +42871,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-blog-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
     }
   ],
   "src/rpg/body-chemistry-trauma.test.ts": [
@@ -45656,6 +46236,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-schema.md"
     }
   ],
@@ -45663,6 +46247,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-spec.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-licensing.md"
     },
     {
       "kind": "epic",
@@ -45695,6 +46283,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-037.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md"
     },
     {
       "kind": "ticket",
@@ -50687,6 +51283,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md"
     }
   ],
   "src/views/character-chat-list.html": [
@@ -51293,7 +51893,17 @@
       "source": ".plan/tickets/TASK-comic-page-panel-layout-model.md"
     }
   ],
+  "src/views/publication-review.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md"
+    }
+  ],
   "src/views/publication.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-publication-reader-locale-selector.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-viewer-read-mode.md"
