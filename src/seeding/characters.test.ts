@@ -28,7 +28,7 @@ describe("seedCharacters identity", () => {
     db = fixture.db;
     await db
       .insertInto("users",)
-      .values({ id: OWNER, username: OWNER_USERNAME, display_name: "Seed Owner", password_hash: null, },)
+      .values({ id: OWNER, username: OWNER_USERNAME, display_name: "Seed Owner", secret_hash: null, },)
       .execute();
   },);
 
@@ -120,7 +120,7 @@ describe("seedCharacters identity", () => {
         import_spec: "raw",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
       },)
       .execute();
 

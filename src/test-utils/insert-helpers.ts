@@ -1831,7 +1831,6 @@ export async function insertCharacterStats(
     xp?: number;
     xp_to_next?: number;
     content_version?: number;
-    record_hash?: string;
     created_at?: string;
     updated_at?: string;
     behavior_profile?: string | null;
@@ -1843,6 +1842,7 @@ export async function insertCharacterStats(
     active_effects?: string;
     combat_alignment?: string;
     pending_asi?: number;
+    record_hash?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
