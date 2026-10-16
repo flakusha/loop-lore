@@ -39,7 +39,7 @@ describe("serveEguiFrontendPage", () => {
   test("boots the wasm bundle and degrades to the status line", async () => {
     const html = await renderPage();
     expect(html,).toContain('import("/egui/app.js")',);
-    expect(html,).toContain('wasm_bindgen("/egui/app.wasm")',);
+    expect(html,).toContain("await glue.default()",);
     expect(html,).toContain('status.textContent = "egui failed to start: " + error',);
   });
 
