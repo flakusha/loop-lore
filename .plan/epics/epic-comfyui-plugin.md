@@ -256,6 +256,29 @@ node-targeted edits.
 - Existing: `configs/workflows/*.json` (on-disk templates)
 - New: ComfyUI server running with desired models/nodes
 
+
+## Related Epics
+
+> Added 2026-10-16. **Cross-references only — the phase checklists above remain the
+> authoritative state record for this epic** and are not edited from the epics below.
+
+- `epic-reference-conditioned-generation.md` — per-model-family reference-edit
+  capability matrix, the Krea 2 / Krea 3 / Qwen Image Edit 2.1 / MiniMax H3
+  templates, the cross-model comparison harness, and absorption of the Python
+  ComfyUI sidecar handoff. **Consumes** this epic's transport, `WorkflowTemplate`
+  interface, registry, and LoRA builders; **does not duplicate** them. It depends
+  on this epic's open Phase 0 `client_id` item and Phase 4 `/ws` item, which stay
+  owned here.
+- `epic-assistant-generation-extensions.md` — the `/image edit` / `/image style` /
+  `/image upscale` assistant command surface that consumes the templates authored
+  here.
+- `epic-comfyui-first-class-citizen.md` — workflow library + admin surface;
+  owns the operator-upload path and the confirmed substitution / node-id defects.
+- `epic-external-creative-tool-bridge.md` — **different scope.** That epic is an
+  MCP bridge to desktop creative apps (Krita, Blender, GIMP). Do not conflate it
+  with the ComfyUI / sd.cpp **Python-sidecar absorption** owned by
+  `epic-reference-conditioned-generation.md`.
+
 ## Testing Strategy
 
 | Test        | Coverage                                              | Files                                        |
