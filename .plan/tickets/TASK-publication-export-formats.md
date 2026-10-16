@@ -43,13 +43,22 @@ Every format reads accepted units and panels in `position` order and reuses:
 - asset bytes through the existing asset serve path
   (`src/assets/serve-file.ts`, `src/assets/signed-url.ts`).
 
-Export formats in this repo already have a home and a house shape.
+Export formats in this repo already have a home and a house shape — but two
+different ones, and picking the wrong one is a trap.
 `src/routes/export-shared/` holds `types.ts`, `helpers.ts`, `index.ts`, `finalize.ts`
 and per-domain writers (`story.ts`, `chats.ts`, `characters.ts`, `worlds.ts`,
 `locations.ts`, `assets.ts`) — note there is **no `format.ts`** in that directory.
+That family is **ZIP-bundle shaped**: every writer returns `Promise<void>` and
+writes into the required non-optional `zip: JSZip` on `ExportContext`
+(`types.ts:36`).
 The format-selection module lives one level over in `src/routes/chat-export/`,
-which holds `format.ts` and `export-route.ts`. Publication export joins that family
-rather than inventing a delivery mechanism, and long exports follow the existing
+which holds `format.ts` and `export-route.ts` and returns single bytes with a
+`Content-Type` plus `Content-Disposition`.
+
+Publication export follows the **second** shape for single-file formats and the
+**first** for the comic image-sequence bundle — the reasoning, including why
+`ExportItem.type` (`types.ts:23`) is not widened, is in
+`TASK-markdown-derive-other-formats.md`. Long exports follow the existing
 progress-stream pattern (`src/frontend/alpine/export-progress.ts`).
 
 Per format:
@@ -85,8 +94,14 @@ writer here is the plain-prose path that task would otherwise have provided.
 
 ## Acceptance Criteria
 
-- [ ] Export writers live under `src/routes/export-shared/` following the existing
-      per-domain writer shape (`story.ts` etc.) and the route family is reused
+- [ ] Export writers follow the placement decision in
+      `TASK-markdown-derive-other-formats.md` §Placement decision: the
+      single-file derivation writers live in `src/routes/publication-export/`
+      (`chat-export/`-shaped), while `src/routes/export-shared/` and
+      `finalize.ts` are reused for the comic image-sequence bundle, where a zip
+      is the deliverable. `ExportItem.type`
+      (`src/routes/export-shared/types.ts:23`) is NOT widened to carry a
+      publication type
 - [ ] Markdown export writes one file per book (`#` per chapter) and one file per
       comic page with caption/bubble text under the image reference
 - [ ] **Markdown export is byte-stable**: two consecutive exports of an unchanged
