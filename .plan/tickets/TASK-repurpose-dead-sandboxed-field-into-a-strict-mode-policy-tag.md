@@ -88,10 +88,14 @@ same failure standalone. The branch adds 43 commits' worth of lineage over tag
   two registry-driven closes into their `.md` files. The third is this ticket's
   own entry, which has no git issue to reconcile against.
 
-**Pre-existing test-suite state:** 28 order-dependent failures in
-`src/frontend/alpine` reproduce at baseline with the `src/plugins` changes
-stashed, and pass in isolation — a suite-ordering leak, not a regression from
-this ticket.
+**Test suite is green under the real runner.** `bun test --parallel=4 --isolate src/`
+— the invocation `package.json` actually uses for `test`/`test:unit` — reports
+**18889 pass, 95 skip, 0 fail across 1532 files.** An earlier triage run used a
+plain `bun test src/` without `--isolate` and saw 28 failures in
+`src/frontend/alpine`; those reproduce at baseline with the `src/plugins`
+changes stashed and pass in isolation, so they are a suite-ordering leak in the
+NON-isolated mode rather than a regression from this ticket. The gate does not
+use that mode, and is green there.
 
 **Gates that DO cover this ticket and pass:** typecheck (backend, bun, frontend,
 coverage, scripts), lint - eslint, lint - native, format - dprint, size - check,

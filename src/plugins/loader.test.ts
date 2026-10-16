@@ -809,6 +809,9 @@ describe("origin-scoped approval", () => {
 
     registry.setEnabled("fixture-tagged-community", true,);
     const tagged = registry.getAllTools().find((t,) => t.name === "fixture-tagged-community-tool");
+    // Asserted before use: dereferencing `tagged!` on a registration failure
+    // would surface a cryptic TypeError instead of the readable one.
+    expect(tagged,).toBeDefined();
     expect(tagged?.policy,).toBe("requires-strict-codegen",);
 
     const result = await executePluginTool(tagged!, {},);

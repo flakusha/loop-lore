@@ -11,6 +11,19 @@
  * `new Function`, `node:vm`, run-time `data:` import) rather than asserted
  * from documentation.
  *
+ * Resource contract — safe under `bun test --parallel=N --isolate`:
+ *
+ * - Each test owns ONE short-lived `bun` child process and nothing else. The
+ *   child allocates no port, no temp file, no database and no global; it
+ *   reports over stdout and exits. Nothing is shared between tests, so there
+ *   is no teardown to leak and no ordering to depend on.
+ * - `FIXTURE` is a fixed path but is only ever READ (spawned as an entry
+ *   point); no test writes it, so concurrent spawns cannot collide.
+ * - The in-process tests own only their own argument objects. The one
+ *   stateful case (`mutate`) mutates a tool local to a single probe process,
+ *   never a module-level export, so it cannot bleed into a sibling test.
+ * - No test mutates `process.execArgv`, the module registry, or `Date.now`.
+ *
  * @module plugin-tool-policy-test
  */
 
