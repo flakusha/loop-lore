@@ -236,9 +236,9 @@ giwt checkout moves. Read the sha off `bun.lock`, not off the symlink.
   all, despite the `matrix` validate gate telling you to run it. Added
   `plan:matrix` / `plan:matrix:check`; registered `plan - matrix` in
   `check-parallel.mjs` as a freshness gate.
-- `plan validate` runs 11 gates, not the 10 AGENTS.md claimed — `status-vocab`
-  and `matrix` are new. AGENTS.md now lists them and documents the canonical
-  `**Status:**` vocabulary.
+- `plan validate` runs 12 gates — `status-vocab`, `matrix`, and `interconnect`
+  were added after the original 10-gate list. AGENTS.md now lists all 12 and
+  documents the canonical `**Status:**` vocabulary.
 
 ### Still open (unchanged, owner-gated)
 

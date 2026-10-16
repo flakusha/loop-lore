@@ -52,12 +52,15 @@ bound to `.plan/`:
 | `backlog` | `join(planDir, "backlog")` | `src/commands/backlog.ts:56` |
 | `ticket` | ticket files + git issues under `settings.paths.tickets` | `src/commands/ticket.ts:4` |
 | `sync` | ticket-index sync; regenerates feature matrix + code map on `--fix` | `src/commands/sync.ts:113-124` |
-| `plan validate` | 11 gates, all `.plan/` management | `src/plan/validate/types.ts:25-37`; `src/plan/validate/run.ts:77` |
+| `plan validate` | 12 gates, all `.plan/` management | `src/plan/validate/types.ts:25-37`; `src/plan/validate/run.ts:77` |
 
 The `plan validate` gate names are the concrete loop-lore surface: `format`,
 `linkage`, `backlog`, `tickets`, `code-map`, `links`, `spdx`, `naming`,
-`epics-doc`, `status-vocab`, `matrix`. `spdx` and `status-vocab` are not
-planning concerns — they are generic file checks wearing a `.plan/` gate name.
+`epics-doc`, `status-vocab`, `matrix`, `interconnect`. `spdx`, `status-vocab`,
+and `interconnect` are not planning concerns — they are generic file checks
+wearing a `.plan/` gate name. `interconnect` is enabled by default but advisory
+in loop-lore's check runner; it currently reports dangling `**Related:**` and
+`**Epic:**` references that are tracked separately.
 
 **Layer 3 — configurable-generic observability/hygiene.** Works in any repo;
 every knob is a `giwt.toml` setting (`src/utils/settings.ts`,
@@ -256,7 +259,7 @@ Each proposal generalizes an existing command. None adds a new top-level verb.
 It reuses the same `scanScratch` (`giwt/src/utils/scratch.ts`) that `giwt clean`
 and `doctor scratchpad` use — no second pruner, no new scratch class, no new
 config key — and records bytes freed in the run record. `giwt finalize
---dry-run` reports the plan and deletes nothing.
+--prune-dry-run` reports the Step-6a scratchpad prune plan only.
 
 Safety properties, all verified against the pinned build: the prune runs AFTER
 Step 2 gates (so it cannot destroy the report a gate just wrote) and before
@@ -497,7 +500,7 @@ frozen snapshot of one commit.
 default, per-class plans, and `--json`. A second verb splits the surface and
 makes the docs the only place that knows which one is current.
 
-**Make giwt's `plan validate` gates config-driven per repo.** The 11 gates assume
+**Make giwt's `plan validate` gates config-driven per repo.** The 12 gates assume
 a `.plan/` directory with tickets, epics, a backlog, and a code map. Making them
 conditional means every consumer — `finalize`, the plugin's `/bookkeep`, the
 `plan:*` package scripts — grows a "which gates exist here" branch. The gating
