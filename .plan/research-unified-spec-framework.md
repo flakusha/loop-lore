@@ -343,12 +343,65 @@ Three things to resolve before opening scripts/spec/* in this worktree:
 
 (Nothing blocks spec drafting; sections 5–7 land either way; tooling choices above can finalize before commit.)
 
-## 12. References
+## 12. Interconnection schema extension
+
+The spec schema must distinguish hand-authored ownership from derived graph
+relationships.
+
+### Hand-authored fields
+
+- Ticket:
+  - `**Epic:** <epic-id or epic filename>`
+  - `**Related:** <comma-separated item IDs>`
+  - `**Caveats:** <TOCTOU, security, authorization, parallelism, lock/unlock, partial failure, rollback, stale state, data races, idempotency, observability>`
+- Epic:
+  - `**Tags:** <comma-separated tags>`
+  - `Related` references to other epics/tickets/matrices
+
+### Derived sections
+
+Do not hand-maintain:
+
+- `## Producers`
+- `## Consumers`
+- `## Siblings`
+
+Derivation precedence:
+
+1. Explicit `Epic` / `Related` links.
+2. TypeScript source comments naming `.plan/…` / `docs/…` files.
+3. `src/…` references in plan/spec prose and `.plan/code-map.json`.
+4. Shared tags and matrix membership for sibling-only classification.
+
+`producer` means the item owns or implements a referenced code surface.
+`consumer` means the item uses that surface without owning it. `sibling` is the
+fallback when direction is ambiguous; never promote a sibling to producer or
+consumer from title prose.
+
+### Interconnection validation gates
+
+- Every `Related` target must resolve.
+- Every `Epic` value must resolve or be omitted; `(if applicable)` is invalid.
+- Every derived producer/consumer/sibling edge must have evidence: code path,
+  source-comment ref, or explicit plan link.
+- Generated graph output must be deterministic and freshness-gated.
+- Ticket/epic counts in docs stay qualitative; never commit volatile totals.
+
+### Implementation caveats that every filing must address
+
+Any `plan links` implementation must explicitly validate: TOCTOU between plan
+reads and generated writes, symlink/path escape security, authorization of
+write mode, parallelism against concurrent ticket/issue writers, lock/unlock
+lifecycle, partial-failure cleanup, rollback of generated artifacts, stale plan
+state handling, deterministic deduplication under iteration, idempotent writes,
+and observability of every rejected edge.
+
+## 13. References
 
 - GitHub Spec Kit — <https://github.com/github/spec-kit>
 - Fission-AI OpenSpec — <https://github.com/Fission-AI/OpenSpec>
-- Backlog.md — <https://github.com/MrLesk/Backlog.md>
+- Backlog.md — <https://github.com/mrlesk/Backlog.md>
 - Diátaxis — <https://diataxis.fr/>
-- loop-lore `.plan/` — 281 epics, ~2100 tickets in `tickets/` (prefix tally in JSON companion)
-- loop-lore `scripts/worktree/` — CLI precedent for `scripts/spec/`
-- loop-lore `scripts/worktree/sync.ts` — current `index.json` writer; target reuse seam
+- loop-lore `.plan/` — epic and ticket corpus; counts are intentionally omitted
+- `giwt` — canonical worktree/plan CLI; use the pinned `node_modules/giwt` path
+- `giwt plan metadata`, `giwt plan code-map`, `giwt plan matrix`, `giwt plan validate` — current spec bookkeeping surface
