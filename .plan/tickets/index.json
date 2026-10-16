@@ -12631,6 +12631,26 @@
     "title": "Economy & Trading Systems",
     "type": "EPIC"
   },
+  "EPIC-EDITORIAL-WORKFLOW": {
+    "hash": "pending",
+    "extid": "EPIC-EDITORIAL-WORKFLOW",
+    "type": "EPIC",
+    "title": "Editorial Review Workflow (Threads, Suggestions, Beta Readers)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "editorial",
+      "review",
+      "comments",
+      "suggestions",
+      "beta-readers",
+      "publications",
+      "blog"
+    ],
+    "source": ".plan/tickets/epic-editorial-workflow.md",
+    "status": "Not Started"
+  },
   "EPIC-EFFECT-V4-ADOPTION-EVALUATION": {
     "hash": "5bb3855",
     "extid": "EPIC-EFFECT-V4-ADOPTION-EVALUATION",
@@ -15319,6 +15339,26 @@
     ],
     "title": "Provider & Plugin Ecosystem",
     "type": "EPIC"
+  },
+  "EPIC-PUBLICATION-I18N": {
+    "hash": "pending",
+    "extid": "EPIC-PUBLICATION-I18N",
+    "type": "EPIC",
+    "title": "Publication Content Translation (Books & Comics)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "i18n",
+      "content-translation",
+      "publications",
+      "glossary",
+      "cron",
+      "reader",
+      "llm"
+    ],
+    "source": ".plan/tickets/epic-publication-i18n.md",
+    "status": "Not Started"
   },
   "EPIC-QUESTS-ENCOUNTERS": {
     "epic": "",
@@ -26600,6 +26640,18 @@
     "source": ".plan/tickets/TASK-author-note-distinct-column-decision-add-db-column-vs-reuse-.md",
     "status": "Not Started"
   },
+  "TASK-AUTHOR-SUGGESTION-RESOLUTION-SURFACE": {
+    "hash": "pending",
+    "extid": "TASK-AUTHOR-SUGGESTION-RESOLUTION-SURFACE",
+    "type": "TASK",
+    "title": "Author Suggestion Resolution Surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editorial-workflow",
+    "tags": [],
+    "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md",
+    "status": "Not Started"
+  },
   "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE": {
     "epic": "epic-context-injection-templates",
     "extid": "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE",
@@ -27734,6 +27786,18 @@
     "title": "Bestiary Bestiary UI Compendium And Per Location Population",
     "type": "TASK"
   },
+  "TASK-BETA-READER-FEEDBACK-SURFACE": {
+    "hash": "pending",
+    "extid": "TASK-BETA-READER-FEEDBACK-SURFACE",
+    "type": "TASK",
+    "title": "Beta Reader Feedback Surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editorial-workflow",
+    "tags": [],
+    "source": ".plan/tickets/TASK-beta-reader-feedback-surface.md",
+    "status": "Not Started"
+  },
   "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP": {
     "epic": "epic-database-backup-recovery",
     "extid": "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP",
@@ -27821,6 +27885,30 @@
     "title": "Blog Frontend Authoring",
     "type": "TASK"
   },
+  "TASK-BLOG-PUBLISH-UNIT-TO-POST-BRIDGE": {
+    "hash": "pending",
+    "extid": "TASK-BLOG-PUBLISH-UNIT-TO-POST-BRIDGE",
+    "type": "TASK",
+    "title": "Publish a Publication Unit / Book to a Blog Post (Provenance-Preserving Bridge)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-blog-system.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md",
+    "status": "Not Started"
+  },
+  "TASK-BLOG-RSS-ATOM-SITEMAP": {
+    "hash": "pending",
+    "extid": "TASK-BLOG-RSS-ATOM-SITEMAP",
+    "type": "TASK",
+    "title": "RSS / Atom Feeds + Sitemap for Public Blog Posts",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-blog-system.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md",
+    "status": "Not Started"
+  },
   "TASK-BLOG-SYSTEM": {
     "epic": "epic-blog-system",
     "extid": "TASK-BLOG-SYSTEM",
@@ -27833,6 +27921,18 @@
     "tags": [],
     "title": "Blog System",
     "type": "TASK"
+  },
+  "TASK-BLOG-UNIT-SCHEDULED-SERIALIZATION": {
+    "hash": "pending",
+    "extid": "TASK-BLOG-UNIT-SCHEDULED-SERIALIZATION",
+    "type": "TASK",
+    "title": "Per-Unit Scheduled Serialization (Book → Drip-Published Post Sequence)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-blog-system.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-blog-unit-scheduled-serialization.md",
+    "status": "Not Started"
   },
   "TASK-BOOK-OUTLINE-GENERATION-WORKFLOW": {
     "hash": "pending",
@@ -36101,6 +36201,18 @@
     "title": "Fail-Safe Execution & Work Safety",
     "type": "TASK"
   },
+  "TASK-FANOUT-CHATID-DEFAULT-DENY": {
+    "hash": "pending",
+    "extid": "TASK-FANOUT-CHATID-DEFAULT-DENY",
+    "type": "TASK",
+    "title": "Make `FanOutContent.chatId` Non-Optional or Default-Deny",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-licensing.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fanout-chatid-default-deny.md",
+    "status": "Not Started"
+  },
   "TASK-FAST-ACTION-PROMPT-PIPELINE": {
     "epic": "epic-frontend-chat-commands",
     "extid": "TASK-FAST-ACTION-PROMPT-PIPELINE",
@@ -40066,6 +40178,18 @@
     "title": "Inject runContentHooks into GenDeps for testable story-mode hook contracts",
     "type": "TASK"
   },
+  "TASK-INLINE-MARKDOWN-SUGGESTION-MODEL": {
+    "hash": "pending",
+    "extid": "TASK-INLINE-MARKDOWN-SUGGESTION-MODEL",
+    "type": "TASK",
+    "title": "Inline Markdown Suggestion Model",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editorial-workflow",
+    "tags": [],
+    "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md",
+    "status": "Not Started"
+  },
   "TASK-INNER-MONOLOGUE": {
     "epic": "",
     "extid": "TASK-INNER-MONOLOGUE",
@@ -40850,6 +40974,42 @@
     "tags": [],
     "title": "Licensing",
     "type": "TASK"
+  },
+  "TASK-LICENSING-ASSET-LICENSE-COLUMNS-MIGRATION": {
+    "hash": "pending",
+    "extid": "TASK-LICENSING-ASSET-LICENSE-COLUMNS-MIGRATION",
+    "type": "TASK",
+    "title": "Per-Asset License / Model / Attribution Columns + Migration",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-licensing.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md",
+    "status": "Not Started"
+  },
+  "TASK-LICENSING-PUBLISH-AUTHORIZATION-PREDICATE": {
+    "hash": "pending",
+    "extid": "TASK-LICENSING-PUBLISH-AUTHORIZATION-PREDICATE",
+    "type": "TASK",
+    "title": "Publish Authorization Predicate (Per-Caller Identity + Per-Resource Ownership)",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-licensing.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md",
+    "status": "Not Started"
+  },
+  "TASK-LICENSING-PUBLISH-ENFORCEMENT-POINT": {
+    "hash": "pending",
+    "extid": "TASK-LICENSING-PUBLISH-ENFORCEMENT-POINT",
+    "type": "TASK",
+    "title": "Publish Enforcement Point + License Gate Middleware",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-licensing.md`",
+    "tags": [],
+    "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md",
+    "status": "Not Started"
   },
   "TASK-LINK-MEMORIES-TO-WORLD-TIMELINE-EVENTS": {
     "hash": "d6df60b",
@@ -46649,6 +46809,54 @@
     "source": ".plan/tickets/TASK-publication-export-formats.md",
     "status": "Not Started"
   },
+  "TASK-PUBLICATION-GLOSSARY-TERM-BASE": {
+    "hash": "pending",
+    "extid": "TASK-PUBLICATION-GLOSSARY-TERM-BASE",
+    "type": "TASK",
+    "title": "Publication Glossary / Term Base",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-publication-i18n",
+    "tags": [],
+    "source": ".plan/tickets/TASK-publication-glossary-term-base.md",
+    "status": "Not Started"
+  },
+  "TASK-PUBLICATION-READER-LOCALE-SELECTOR": {
+    "hash": "pending",
+    "extid": "TASK-PUBLICATION-READER-LOCALE-SELECTOR",
+    "type": "TASK",
+    "title": "Publication Reader Locale Selector",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-publication-i18n",
+    "tags": [],
+    "source": ".plan/tickets/TASK-publication-reader-locale-selector.md",
+    "status": "Not Started"
+  },
+  "TASK-PUBLICATION-TRANSLATION-BATCH-CRON": {
+    "hash": "pending",
+    "extid": "TASK-PUBLICATION-TRANSLATION-BATCH-CRON",
+    "type": "TASK",
+    "title": "Publication Translation Batch Pass (Cron)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-publication-i18n",
+    "tags": [],
+    "source": ".plan/tickets/TASK-publication-translation-batch-cron.md",
+    "status": "Not Started"
+  },
+  "TASK-PUBLICATION-UNIT-TRANSLATION-STORE": {
+    "hash": "pending",
+    "extid": "TASK-PUBLICATION-UNIT-TRANSLATION-STORE",
+    "type": "TASK",
+    "title": "Per-Unit Publication Translation Store",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-publication-i18n",
+    "tags": [],
+    "source": ".plan/tickets/TASK-publication-unit-translation-store.md",
+    "status": "Not Started"
+  },
   "TASK-PUBLICATION-VIEWER-READ-MODE": {
     "hash": "pending",
     "extid": "TASK-PUBLICATION-VIEWER-READ-MODE",
@@ -48245,6 +48453,42 @@
     "source": ".plan/tickets/TASK-reference-capability-probe-runtime.md",
     "status": "Not Started"
   },
+  "TASK-REFERENCE-SET-ALT-TEXT-CONSISTENCY": {
+    "hash": "pending",
+    "extid": "TASK-REFERENCE-SET-ALT-TEXT-CONSISTENCY",
+    "type": "TASK",
+    "title": "Reference-Set Consistency Signal (alt_text Comparison)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-reference-conditioned-generation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reference-set-alt-text-consistency.md",
+    "status": "Not Started"
+  },
+  "TASK-REFERENCE-SET-ENTITY": {
+    "hash": "pending",
+    "extid": "TASK-REFERENCE-SET-ENTITY",
+    "type": "TASK",
+    "title": "Persisted Reference-Set Entity (Table + Migration + Polymorphic Link)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reference-conditioned-generation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reference-set-entity.md",
+    "status": "Not Started"
+  },
+  "TASK-REFERENCE-SET-MULTI-IMAGE-UPLOAD": {
+    "hash": "pending",
+    "extid": "TASK-REFERENCE-SET-MULTI-IMAGE-UPLOAD",
+    "type": "TASK",
+    "title": "Multi-Image Upload to ComfyUI `/upload/image`",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reference-conditioned-generation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reference-set-multi-image-upload.md",
+    "status": "Not Started"
+  },
   "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE": {
     "epic": "",
     "extid": "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE",
@@ -49182,6 +49426,30 @@
     ],
     "source": ".plan/tickets/TASK-retire-the-scripts-worktree-fork-of-giwt-migration-not-delet.md",
     "status": "⬜ Not Started"
+  },
+  "TASK-REVIEW-THREAD-COMMENT-MODEL": {
+    "hash": "pending",
+    "extid": "TASK-REVIEW-THREAD-COMMENT-MODEL",
+    "type": "TASK",
+    "title": "Review Thread + Comment Model",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editorial-workflow",
+    "tags": [],
+    "source": ".plan/tickets/TASK-review-thread-comment-model.md",
+    "status": "Not Started"
+  },
+  "TASK-REVIEW-THREAD-TARGET-VOCABULARY": {
+    "hash": "pending",
+    "extid": "TASK-REVIEW-THREAD-TARGET-VOCABULARY",
+    "type": "TASK",
+    "title": "Review Thread Target Vocabulary (Closed-Union Decision)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editorial-workflow",
+    "tags": [],
+    "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md",
+    "status": "Not Started"
   },
   "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE": {
     "epic": "epic-output-control-transforms",
@@ -53112,6 +53380,18 @@
     "tags": [],
     "title": "Add Unit Tests — Untested Modules (Batch 2)",
     "type": "TASK"
+  },
+  "TASK-UNIT-TRANSLATION-SERVICE": {
+    "hash": "pending",
+    "extid": "TASK-UNIT-TRANSLATION-SERVICE",
+    "type": "TASK",
+    "title": "Unit Translation Service + Name-Preservation Guard",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-publication-i18n",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unit-translation-service.md",
+    "status": "Not Started"
   },
   "TASK-UPDATE-TERMINAL-UI-SPEC-TO-ACTUAL-FILE-LAYOUT": {
     "epic": "epic-terminal-ui",
