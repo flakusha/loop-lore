@@ -7,18 +7,18 @@
 // on startup as `actors` rows (actor_type = "character") owned by a prepopulated
 // user, mirroring the unified actor model used by chat participants.
 //
-// Idempotent per (owner, name): an actor with the same display name already
-// owned by that user is skipped. Unknown owners are skipped with a warning —
-// reference users are expected to be seeded via seeding.users (or exist already).
-
+// Idempotent per (owner, stable id): the character's row id is derived from its
+// stable template identity, so an in-app display_name rename never produces a
+// duplicate. Unknown owners are skipped with a warning — reference users are
+// expected to be seeded via seeding.users (or exist already).
 import type { Kysely, } from "kysely";
+import { findExistingActor, stableSeedCharacterId, } from "../characters/seed/identity";
 import type { SeedCharacter, } from "../config/schema";
 import { ActorType, AgentType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import type { Logger, } from "../logger";
-import { jsonStringifyOr, uid, } from "../utils";
+import { jsonStringifyOr, } from "../utils";
 import { recordSeedAudit, } from "./audit";
-
 /**
  * Seed characters from config into the database as `actors` rows.
  * @param database - Kysely instance
@@ -41,20 +41,17 @@ export async function seedCharacters(
       continue;
     }
 
-    const existing = await database
-      .selectFrom("actors",)
-      .select("id",)
-      .where("owner_id", "=", ownerId,)
-      .where("actor_type", "=", ActorType.Character,)
-      .where("display_name", "=", character.name,)
-      .executeTakeFirst();
+    // Stable identity: the row's own id, derived from the owner-qualified config
+    // key — never display_name, which the character edit route lets users change
+    // freely (BUG-character-seed-dedupes-on-display-name).
+    const characterId = stableSeedCharacterId(character.owner, character.name,);
+    const existing = await findExistingActor(database, characterId,);
 
     if (existing) {
       log.debug(`Character "${character.name}" already exists — skipping`,);
       continue;
     }
 
-    const characterId = uid();
     await database
       .insertInto("actors",)
       .values({
