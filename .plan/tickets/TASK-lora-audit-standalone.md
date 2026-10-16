@@ -19,34 +19,50 @@ shape compatibility against a base checkpoint, and a machine-readable verdict.
 
 ## Context
 
-Source artifact: a Python ComfyUI HTTP-route extension (its `studio_loras.py`),
-handed over **2026-09-30** by an external acquaintance of the repo owner and vendored
-**only** under `.tmp/H3_Stills_5080_Handoff_20260930/`. That directory was scratch,
-was never committed, and **has been pruned — the source is not on disk and is not
-recoverable from git history.** Do not go looking for it.
+Source artifact: a Python ComfyUI HTTP-route extension (its `studio_loras.py`, 79
+lines), handed over **2026-09-30** by an external acquaintance of the repo owner and
+vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`.
+That directory is scratch, gitignored, and was **never committed**. It was pruned
+before implementation — which is why this ticket was first written as an unverified
+claim — and it **has since been re-acquired and was functionally reviewed on
+2026-10-16 by reading the on-disk source.** It is a **review-only reference
+artifact**: never committed, `.tmp/` only, never an import target, and nothing in
+`src/` may reference it.
 
-Every line number and import claim below is a **prior observation from one read on
-2026-10-16, not a re-readable source.** Treat it as an unverified claim to be
-re-derived against a live ComfyUI and a real LoRA file. The specific claim about which
-ComfyUI modules the module imports is exactly the kind of detail a single read gets
-wrong — confirm it before repeating it in an AC, and record where the confirmation
-came from (see the last AC).
+Every line number and import claim below is verified against that read. The claim
+about which ComfyUI modules the module imports is exactly the kind of detail a
+single read gets wrong — it was wrong, and is corrected below. What still needs a
+live ComfyUI **and** a real LoRA file is confirming the audit's verdicts against a
+real model/LoRA pair; the last AC records it.
 
 The audit logic is real and the *transport* around it is wrong:
 
-- Safetensors header parse: 8-byte length prefix, sanity caps (>64 MiB or > size-8
-  rejected), `.safetensors` suffix enforced, LRU-cached on
-  `(path, size, mtime_ns)` (`:21-34`)
-- SHA-256 streamed in 8 MiB blocks, same cache key (`:37-47`)
+- Safetensors header parse: 8-byte little-endian length prefix, sanity caps
+  (count > 64 MiB or count > size-8 rejected), `.safetensors` suffix enforced,
+  LRU-cached on `(path, size, mtime_ns)` (`:21-34`)
+- SHA-256 streamed in 8 MiB blocks (`:41`), same cache key and `maxsize=2` LRU
+  (`:37-47`)
 - `compatibility(name, header)` → `('both','accelerator')` for the expected basename,
   else `('incompatible','unknown')` (`:50-53`)
 - `audit_patch(base_header, lora_header)` (`:56-79`) builds
   `diffusion_model.<root>` / `lora_unet_<root>` aliases from base `.weight` shapes
+  and returns `{'matched_patches', 'unmatched_patches', 'unrecognized_tensor_keys'}`
+  (`:79`); it **raises** rather than reporting on shape mismatch, zero matches, or
+  any unmatched/unsupported keys (`:76-78`) — the TS port must turn those raises
+  into the verdict list this ticket asks for
 
-**What is broken:** discovery goes through `folder_paths.get_full_path(kind, name)`
-(`:15-18`) and the module as a whole imports `comfy_execution.progress`,
-`PromptServer`, and `nodes.NODE_CLASS_MAPPINGS`. **A running ComfyUI is mandatory.**
-Auditing a file cannot require the thing that serves the file.
+**What is broken — and narrowed.** Discovery goes through
+`folder_paths.get_full_path(kind, name)` (`:15-18`), raising
+`'Installed model file missing: …'` when the path is absent or not a file (`:17`).
+The module's **entire** non-stdlib import is `import folder_paths` (`:8`) — this file
+itself does **not** import `comfy_execution.progress`, `PromptServer`, or
+`nodes.NODE_CLASS_MAPPINGS`; those live in the package, not in `studio_loras.py`
+(`__init__.py:10` for `PromptServer`, `__init__.py:177` for
+`comfy_execution.progress`, `__init__.py:32` for `nodes.NODE_CLASS_MAPPINGS`, and
+`studio_stills.py:12` which does `from . import studio_loras`). So the fix is
+smaller than assumed: replace **discovery only**, and the audit logic becomes
+runnable with ComfyUI stopped. A live process is needed only to resolve which file a
+name means. Auditing a file cannot require the thing that serves the file.
 
 **What is wrong beyond portability:** `compatibility` is a basename string match
 against one artifact (`:50-53`), and `normalize` then requires the SHA-256 to
@@ -95,12 +111,23 @@ is the remaining gap, not id allocation.
       default
 - [ ] Test: a LoRA with an extra unmatched tensor reports that tensor by name; a
       clean LoRA audits clean; a corrupt header is rejected without throwing
-- [ ] **Provenance recorded.** The source artifact is gone, so each sidecar-derived
-      claim this ticket relied on — the header-parse caps, the block size, the
-      `compatibility` basename rule, and especially **which ComfyUI modules the
-      module actually imports** — is either re-derived against a live ComfyUI and a
-      real LoRA, or explicitly marked unverified. The ticket records, per claim,
-      **where the evidence came from** (executed test, observed run, or a written
-      answer from the upstream author); a claim with no provenance is not used as if
-      confirmed
+- [ ] **Provenance recorded.** Every sidecar-derived claim this ticket relies on is
+      now **verified by source read** (2026-10-16,
+      `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`): the
+      header-parse caps and suffix check (`studio_loras.py:21-34`, count cap `:27`,
+      suffix `:33`), the 8 MiB streaming block and cache key
+      `(path, size, mtime_ns)` (`:37-47`), the `compatibility` basename rule
+      (`:50-53`), the `audit_patch` alias build and raise-not-report behavior
+      (`:56-79`, raises `:76-78`), the Dareties basename + SHA-256 constants
+      (`studio_loras.py:11-12`, enforced at `studio_stills.py:157-158` and
+      `:170-171`), and **which ComfyUI modules the module actually imports** —
+      exactly one, `import folder_paths` (`studio_loras.py:8`), used only by
+      discovery (`:15-18`); the `PromptServer`, `comfy_execution.progress` and
+      `nodes.NODE_CLASS_MAPPINGS` imports are in `__init__.py` (`:10`, `:32`,
+      `:177`), not in `studio_loras.py`. Still **not** verified, and to be recorded
+      as such rather than as confirmed: (a) the audit's verdicts against a real
+      base-checkpoint/LoRA pair on a live ComfyUI, (b) that the pinned
+      `DARETIES_SHA` file on disk really hashes to it. For each, the ticket records
+      the evidence — an executed test, an observed run, or a written answer from the
+      upstream author — and a claim with no provenance is not used as if confirmed
 - [ ] `bun run check` green

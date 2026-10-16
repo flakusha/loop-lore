@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 **Status:** Not Started
-**Status Note:** Not Started (2026-10-16: no `reference-conditioned` module in `src/generation/`; no reference-edit workflow JSON in `configs/workflows/` beyond `txt2img.json` / `img2img.json`; `ComfyUIClient` still sends no `client_id`. The Python sidecar handoff was vendored only under `.tmp/` — scratch, never committed — and **has been pruned**; it is unrecoverable from this repository, and its observations are unverified claims. See *Source Artifact*.)
+**Status Note:** Not Started (2026-10-16: no `reference-conditioned` module in `src/generation/`; no reference-edit workflow JSON in `configs/workflows/` beyond `txt2img.json` / `img2img.json`; `ComfyUIClient` still sends no `client_id`. The Python sidecar handoff was vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/` — scratch, gitignored, never committed — and was pruned before implementation. It has since been **re-acquired and functionally reviewed on 2026-10-16** by reading the on-disk source, so every source-read observation in *Python Handoff* is now verified per claim; the runtime claims (live-ComfyUI `/object_info`, VRAM, latency) remain unmeasured because loop-lore has never executed a graph. Per the separate-plugin-repo decision it stays a review-only reference artifact, never an import target. See *Source Artifact*.)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -118,90 +118,175 @@ another worker's.
 
 ### 5. Python sidecar absorption
 
-See *Python Handoff* below.
+See *Python Handoff* below. Only the **generic** halves are absorbed natively; the
+H3 stills custom-node/plugin half is destined for its own plugin repository and
+is never vendored or re-shipped by loop-lore.
 
 ## Python Handoff
 
 ### Source Artifact
 
-The handoff was **external**: a Python ComfyUI HTTP-route extension (plus a served
-SPA) handed over **2026-09-30** by an acquaintance of the repo owner. It was
-vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/` — scratch, gitignored,
-**never committed** — and **was pruned before any of it was implemented.** It is not
-on disk and is not recoverable from this repository's git history. Do not go looking
-for it, and do not attempt to reconstruct it from these notes.
+The handoff was **external**: a Python ComfyUI custom-node package — an HTTP-route
+extension (`__init__.py`, `graph.py`, `studio_stills.py`, `studio_loras.py`) plus a
+served SPA (`web/`), with `START_HERE.md` as the recipient-facing install brief.
+Handed over **2026-09-30** by an acquaintance of the repo owner. Its stated target is
+an existing Windows ComfyUI install on an RTX 5080 (16 GB VRAM), 64 GB system RAM,
+running stock MiniMax H3 nodes plus the public Fizgig single-frame nodes.
 
-Consequence, and it governs every line below: the observations in this section are
-**unverified claims from a single read on 2026-10-16**, not a readable source. Route
-counts, node counts, line numbers, constants, and behaviors must each be
-**re-derived** — against a live ComfyUI, and against the upstream author if the
-artifact is ever re-obtained. **Re-acquiring the handoff from the original author is
-a prerequisite for the sidecar-absorption tickets** (Scope item 5): the Graph-builder
-port, the LoRA audit, the de-hardcoding pass, the stills lifecycle client, and the H3
-stills template. Each of those tickets carries a *Provenance recorded* acceptance
-criterion requiring the implementer to state per claim where the confirming evidence
-came from; a claim with no provenance is not to be treated as confirmed.
+It is vendored **only** under
+`.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/` — `START_HERE.md`, four
+`.py` files, and `web/` holding exactly eight assets (`stills.html`, `stills.css`,
+`stills.mjs`, `stills_import.mjs`, `stills_file_names.mjs`,
+`stills_gallery_status.mjs`, `queue_progress.mjs`, `job_timing.mjs` — the same set as
+the `FILES` allow-list, `__init__.py:17-18`). That path is scratch, gitignored, and
+**never committed**. It was **pruned before any of it was implemented**, which is why
+the five tickets below were first written as unverified claims.
 
-Nothing may import from `.tmp/` or from any re-acquired copy of the handoff. Anything
-worth keeping is re-implemented natively and lands under `src/generation/`.
+**The artifact has since been re-acquired and was functionally reviewed on
+2026-10-16 by reading the on-disk source.** Every line number, route name, node name,
+constant, and literal quoted in this section is now verified against that read, and
+the verification is stated per claim below. The five sidecar-absorption tickets
+(Scope item 5) are no longer blocked on re-acquiring anything; the *Provenance
+recorded* acceptance criterion each ticket carries now records where the confirming
+evidence came from and which claims only a live ComfyUI can still confirm.
 
-### Observations (2026-10-16 read — unverified)
+It remains a **review-only reference artifact**: never committed, `.tmp/` only, never
+an import target, and no runtime dependency. Nothing may import from `.tmp/` or from
+any re-acquired copy of the handoff. Anything worth keeping is re-implemented natively
+and lands under `src/generation/`.
 
-Corrections to the working assumptions, with citations:
+**Discipline that still applies.** A verified line citation proves only "this code
+says this". The *runtime* claims — live-ComfyUI `/object_info` output for the six
+external node types, VRAM, latency, and whether a compiled graph executes on any
+hardware — are still **unmeasured**, because loop-lore has not executed a graph
+against a live ComfyUI. Nothing in this section should be read as "the code was run".
 
-- **11 routes, not 12.** All on `PromptServer.instance.routes`
-  (`__init__.py:21`), each behind a loopback-only guard (`__init__.py:24-28`).
-  The set is `entry`, `page`, `capabilities`, `prepare`, `register`, `results`,
-  `inspect_import`, `run_workflow`, `use_as_picture`, `queue_progress`,
-  `open_take`.
-- **`NODE_CLASS_MAPPINGS = {}`** (`__init__.py:206`). It contributes **zero**
+### Observations (2026-10-16 — verified by source read; runtime claims open)
+
+Corrections to the working assumptions, with citations against
+`.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`. Each bullet is
+marked **[read]** — confirmed against the on-disk source, with the literal quoted —
+or **[live]** — a behavior only a running ComfyUI can confirm, still unmeasured.
+Nothing below was executed; the review is a read.
+
+- **11 routes, not 12. [read]** All on `PromptServer.instance.routes`
+  (`__init__.py:21`), each behind the loopback-only guard `private_request`
+  (`__init__.py:24-28`: `request.remote` in `('127.0.0.1','::1')`, host allow-list,
+  same-origin `Origin`). The set is `entry`, `page`, `capabilities`, `prepare`,
+  `register`, `results`, `inspect_import`, `run_workflow`, `use_as_picture`,
+  `queue_progress`, `open_take` — one decorator each at `__init__.py:56,62,70,92,
+  107,118,140,153,163,174,191`. **[live]** that all 11 register on a given
+  ComfyUI build.
+- **`NODE_CLASS_MAPPINGS = {}` (`__init__.py:206`). [read]** It contributes **zero**
   node types — it is a route bundle, not a node. It *requires* 6 externally
-  installed node types: `MiniMaxH3ReferenceToVideo`, `FizgigH3StillLatent`,
-  `FizgigH3StillDecode`, `MiniMaxH3SigmaShift`, `ImageBlur`,
-  `ModelAttentionBackend` (`__init__.py:19-20`).
-- **`graph.py` is entirely generic.** `Graph` (`graph.py:5`) is schema-driven and
-  names no model: `add(typ, values) -> node id`, `wire(src, slot, dst, name)`
-  (rejects duplicate input binding, `:41`), `finish(state) -> {workflow, prompt}`
-  (`:51-56`). One pass produces the UI graph and the API prompt; `finish()` embeds
-  the API prompt under `extra.h3_studio_still` with schema `codex.h3.still.v1`.
-  **This is the reusable half.**
-- **11-node chain** (`studio_stills.py:183-216`): `UNETLoader` →
-  chain-wired `LoraLoaderModelOnly` → `MiniMaxH3SigmaShift` →
-  `ModelAttentionBackend` → `CLIPLoader`+2×`VAELoader` →
-  `MiniMaxH3ReferenceToVideo` → per-reference `LoadImage` (+ optional
-  `ImageScaleToTotalPixels`/`ImageBlur`) → `BasicGuider`/`KSamplerSelect`/
-  `BasicScheduler`/`FizgigH3StillLatent`/`RandomNoise`/
-  `SamplerCustomAdvanced`/`FizgigH3StillDecode` → `SaveImage`.
-- **`normalize()` (`:114-181`) is model-locked, not a guard.** Steps pinned to 8,
-  sampler pinned to `euler`, sigma shifts pinned 8.0/3.0, model basename pinned to
-  the b30-49 hybrid, CLIP/VAE/audio-VAE pinned to three literals, reference
-  megapixels pinned to 1.0, **exactly one** LoRA (`:153`) whose SHA-256 must
-  equal a hardcoded constant (`studio_loras.py:11-12`). The 4.2-megapixel canvas
-  cap is explicitly a *"5080 handoff"* limit (`:120`).
-- **`inspect_import()` (`:231-285`)** is the genuinely reusable *policy*: refuse a
-  graph over 256 nodes, require the sink/loader trio, refuse when the PNG
-  `prompt` chunk and the workflow's embedded `executablePrompt` disagree
-  (`:246-247`), and downgrade to `raw` rather than fail when a structured prompt
-  no longer recompiles (`:277-283`).
-- **`extra_pnginfo` carries exactly one key: `workflow`** — the UI graph.
-- **The client already sends `client_id`.** `web/stills.mjs:174-175` posts
-  `POST /prompt` with `{prompt, client_id, extra_data:{extra_pnginfo:{workflow}}}`.
+  installed node types (`__init__.py:19-20`): `MiniMaxH3ReferenceToVideo`,
+  `FizgigH3StillLatent`, `FizgigH3StillDecode`, `MiniMaxH3SigmaShift`,
+  `ImageBlur`, `ModelAttentionBackend`. **[live]** which of the six a target
+  install actually resolves.
+- **`graph.py` is entirely generic. [read]** `Graph` (`graph.py:5`) is schema-driven
+  and names no model: `add(typ, values) -> node id` (body `:11-34`, ending at
+  `self.api[str(nid)] = {'class_type':typ,'inputs':args}`, `:35`),
+  `wire(src, slot, target, name)` (`:38-49`, duplicate input binding rejected at
+  `:41` with `raise ValueError('Duplicate input binding')`),
+  `finish(state) -> {workflow, prompt}` (`:51-56`). One pass produces the UI graph
+  and the API prompt. **Where the API prompt lands — settled.** `finish()` itself
+  embeds it under **`extra.h3_studio.executablePrompt`** with schema
+  **`codex.h3.studio.v2`** (`graph.py:54-55`); the H3-specific layer then *relocates*
+  it: `studio_stills.build_graph` pops `extra.h3_studio` and writes
+  **`extra.h3_studio_still`** with schema **`codex.h3.still.v1`** and the same
+  `executablePrompt` key (`studio_stills.py:213-215`). So `codex.h3.still.v1` /
+  `extra.h3_studio_still` is what persists (PNG `workflow` chunk, sibling
+  `.workflow.json`, `run_workflow` output at `studio_stills.py:294`) and
+  `codex.h3.studio.v2` / `extra.h3_studio` exists only inside the builder's
+  intermediate return value. Both literals are real; the epic previously attributed
+  the final form to `finish()` itself, which was wrong. **This is the reusable
+  half.**
+- **The H3 chain is 18 nodes with one non-pose reference — not 11. [read]**
+  `build_graph` (`studio_stills.py:183-216`) issues **16 fixed `add()` calls** plus
+  **2 per reference** (3 when the reference role is `pose_layout`), so a single
+  `identity` reference yields 18 nodes, not 11. The fixed 16, in emission order:
+  `UNETLoader` (`:185`) → chain-wired `LoraLoaderModelOnly` (`:186-188`, exactly
+  one — `normalize` refuses any other count) → `MiniMaxH3SigmaShift` (`:189`) →
+  `ModelAttentionBackend` (`:190`) → `CLIPLoader` (`:191`) → 2×`VAELoader` (`:192`,
+  video + audio) → `MiniMaxH3ReferenceToVideo` (`:193-194`) → `BasicGuider`
+  (`:205`) → `KSamplerSelect` (`:206`) → `BasicScheduler` (`:207`) →
+  `FizgigH3StillLatent` (`:208`) → `RandomNoise` (`:209`) →
+  `SamplerCustomAdvanced` (`:210`) → `FizgigH3StillDecode` (`:211`) → `SaveImage`
+  (`:212`). Per reference (`:196-204`): `LoadImage`; if `pose_layout`, an extra
+  `ImageScaleToTotalPixels` (`megapixels:0.01, upscale_method:'area'`, `:199`)
+  feeding `ImageBlur` (`blur_radius:3, sigma:3.0`, `:201`); then
+  `ImageScaleToTotalPixels` (`megapixels:` `state['reference_megapixels']`,
+  `upscale_method:'nearest-exact'`, `:203`). Node literals worth noting:
+  `length:5`, `ref_image_size:'max'`, `ref_images:len(references)` (`:193-194`),
+  `attention:'comfy kitchen attention'` (`:190`), `scheduler:'simple'`,
+  `denoise:1.0` (`:207`), `batch_size:1` (`:208`).
+- **`normalize()` (`:114-181`) is model-locked, not a guard. [read]** steps pinned
+  to 8 (`_integer(...,'Steps',8,8)`, `:123`), sampler pinned to `euler`
+  (`:124-125`), sigma shifts pinned 8.0/3.0 (`:126-127`), model basename pinned to
+  the b30-49 hybrid (`:128-132`), CLIP/VAE/audio-VAE pinned to three literals
+  (`:133-135`, constants at `studio_stills.py:17-20`), reference megapixels pinned
+  to 1.0 (`:136-137`), **exactly one** LoRA (`:153`) whose SHA-256 must equal a
+  hardcoded constant (`studio_loras.py:11-12`, checked at
+  `studio_stills.py:170-171`). The 4.2-megapixel canvas cap is explicitly a
+  *"5080 handoff"* limit (`:120`, with the `width*height>2048*2048` test at `:120`
+  and the 64–2048 range clamp at `:118`).
+- **`inspect_import()` (`:231-285`) is the genuinely reusable *policy*. [read]**
+  256-node ceiling (`:233`), sink/loader trio `FizgigH3StillLatent` /
+  `FizgigH3StillDecode` / `SaveImage` (`:236`), PNG `prompt` chunk vs embedded
+  `executablePrompt` disagreement refusal (`:246-247`), missing-input *warnings*
+  not errors (`:268-272`), and downgrade to `raw` rather than fail when a
+  structured prompt no longer recompiles (`:277-283`). **[live]** whether any of
+  these branches is exercised by a real PNG round-trip here.
+- **`extra_pnginfo` carries exactly one key: `workflow`. [read]** The client posts
+  `extra_data:{extra_pnginfo:{workflow:compiled.workflow}}` — no second key
+  (`web/stills.mjs:175`).
+- **The client already sends `client_id`. [read]** `web/stills.mjs:174-175` posts
+  `POST /prompt` with `{prompt, client_id:crypto.randomUUID(), extra_data:{...}}`.
   Independent confirmation from outside loop-lore that `client_id` is the field
   the transport epic's Phase 0 item must add.
-- **`studio_loras.py` cannot run standalone.** Header parse + SHA-256 + shape
-  audit, cached on `(path, size, mtime_ns)` (`:21-47`) — but discovery is
-  `folder_paths.get_full_path` (`:15-18`) and the whole package imports
-  `comfy_execution.progress`, `PromptServer`, `nodes.NODE_CLASS_MAPPINGS`. A
-  ComfyUI process must be alive.
-- **Windows-only:** `subprocess.Popen(['explorer.exe', '/select,', str(path)])`
-  (`__init__.py:199`).
-- **RTX 5080 assumption** is soft: no `torch`/`cuda` calls anywhere; it is the
-  4.2MP cap, the UI copy, and `attention='comfy kitchen attention'` (`:190`).
-- **`profile_verified` is advisory only** (`__init__.py:42-48`): surfaced in
-  `capabilities`, never blocks a run.
-- **No installer.** No `install.sh`, `README`, `requirements.txt`, or
-  `pyproject.toml` anywhere in the tree; no `WEB_DIRECTORY` /
-  `NODE_DISPLAY_NAME_MAPPINGS` registration.
+- **`studio_loras.py` cannot run standalone — and the coupling is narrower than
+  claimed. [read]** Header parse + SHA-256 + shape audit, cached on
+  `(path, size, mtime_ns)` (`:21-47`: `@lru_cache(maxsize=4)` on
+  `_header/entry` at `:21-34`, `@lru_cache(maxsize=2)` on the SHA at `:37-47`).
+  Discovery is `folder_paths.get_full_path(kind, name)` (`:15-18`). **The module
+  itself imports exactly one ComfyUI name — `import folder_paths` (`:8`) — and
+  nothing else non-stdlib** (`hashlib`, `json`, `struct`, `functools`, `pathlib`).
+  The `comfy_execution.progress` / `PromptServer` / `nodes.NODE_CLASS_MAPPINGS`
+  imports belong to the *package*, not this file: `__init__.py:10` (`PromptServer`)
+  and `__init__.py:177` (`comfy_execution.progress`, imported inside the
+  `queue_progress` handler). A ComfyUI process must be alive only to resolve
+  discovery.
+- **Windows-only. [read]**
+  `subprocess.Popen(['explorer.exe', '/select,', str(path)], close_fds=True)`
+  (`__init__.py:199`), `import subprocess` at `:4`, guarded by the input/output
+  root containment check at `:196-198` and returning the
+  "selection cannot be confirmed" warning at `:200-201`. `START_HERE.md`
+  corroborates: "Use an interactive Windows account if the Explorer button is
+  desired."
+- **`profile_verified` is **not** advisory in the shipped product. [read]**
+  Server-side it is advisory: `reviewed_profile()` (`__init__.py:42-48`) reads
+  `sys.argv` for `--fast`, `fp16_accumulation`, `--use-ck-attention`,
+  `--reserve-vram`, the *absence* of `--lowvram`/`--novram`/`--cpu`/`--highvram`/
+  `--gpu-only`/`--disable-dynamic-vram`, and `--listen 127.0.0.1`; the result is
+  surfaced in `capabilities` (`:75,86`) and no Python route blocks a run on it.
+  **But the SPA gates queueing on it**: the Queue button is disabled when
+  `!capabilities.profile_verified` (`web/stills.mjs:160,388`) and `prepare(true)`
+  throws "The approved local H3 launch profile is not active. Save the workflow,
+  but do not queue this server." (`web/stills.mjs:167`). The earlier epic wording
+  ("never blocks a run") was wrong about the product as shipped, though right
+  about the server routes.
+- **RTX 5080 assumption is soft. [read]** No `torch` or `cuda` call anywhere in
+  the package; it is the 4.2MP cap (`studio_stills.py:120`), the UI copy
+  ("5080 sizing is not yet render-validated" / "The 5080 output size still needs
+  local validation", `web/stills.html:16,18`), and
+  `attention='comfy kitchen attention'` (`:190`). `START_HERE.md` states the
+  sizing and speed "remain to be tested on the recipient machine" and calls the
+  launch profile "an unvalidated 5080 starting profile, not a benchmark result".
+- **No installer. [read]** The whole artifact is `START_HERE.md`, four `.py` files,
+  and eight `web/` assets — no `install.sh`, `README`, `requirements.txt`, or
+  `pyproject.toml`, and no `WEB_DIRECTORY` / `NODE_DISPLAY_NAME_MAPPINGS`
+  registration anywhere. `START_HERE.md` documents the install as a manual copy
+  into `ComfyUI/custom_nodes/` with no additional pip package.
 
 ### Absorption decision
 
@@ -209,13 +294,35 @@ Corrections to the working assumptions, with citations:
 | --- | --- |
 | **Generic** — `Graph` builder, workflow lifecycle, `extra_pnginfo` metadata embedding, `/upload/image`, `/history`, `/queue` polling, LoRA chain wiring, `inspect_import` policy, the PNG `workflow`/`prompt` chunk reader (`stills_import.mjs:6-36`), `queue_progress.mjs`, `job_timing.mjs`, `stills_gallery_status.mjs` | **Re-implement natively in TypeScript.** Lands under `src/generation/workflow-loader/` (builder + validation policy) and `src/generation/image-engine/comfyui.ts` (lifecycle, `extra_pnginfo`, queue/history). |
 | **Model-specific** — H3 node types, the Dareties LoRA and its hash, the H3 prompt format, sigma shifts, reference preprocessing defaults, the 8-step/euler pinning | **Stays in config + templates, not in code.** A family preset describing these is data; the sidecar's hardcoded literals are the bug being removed. |
-| **Delegation to the Python sidecar** | **Not adopted as a runtime dependency.** It has no installer, no `NODE_CLASS_MAPPINGS`, six unshipped external node prerequisites, and a single-artifact LoRA pin. It stays a reference artifact. |
+| **H3 stills custom-node / plugin half** — the `__init__.py` route bundle, `studio_stills.py`, `studio_loras.py`, the `web/` SPA, the `/h3-stills/*` HTTP contract, and the Dareties hash pin | **Split out into its own ComfyUI plugin repository (later).** The artifact has been functionally reviewed (2026-10-16) and this half is destined for a separate plugin repo, so loop-lore consumes the **documented ComfyUI REST contract only** (`POST /prompt`, `GET /history/{id}`, `GET /queue`, `/view`, `/upload/image`, `/object_info`) and **never vendors, installs, or re-ships the Python sidecar**. See the note below the table. |
+| **Delegation to the Python sidecar** | **Not adopted as a runtime dependency, and not adopted at all.** It has no installer, no `NODE_CLASS_MAPPINGS`, six unshipped external node prerequisites, a single-artifact LoRA hash pin, and a Windows-only reveal action. It stays a review-only reference artifact under `.tmp/` — never committed, never an import target. |
 
 Why native over sidecar: loop-lore already speaks the ComfyUI REST contract
 directly (`src/generation/providers/comfyui.ts`). Adding a second, undocumented
 HTTP contract (`/h3-stills/*`) between loop-lore and its own backend adds a
 failure surface to re-derive what the existing client already does, in exchange for
-a graph builder that is ~150 lines of `add()`/`wire()`.
+a graph builder that is ~56 lines of `add()`/`wire()`.
+
+**Separate plugin repo (decision, 2026-10-16).** The H3 stills package is a
+self-contained ComfyUI custom node with its own SPA and its own
+`/h3-stills/*` contract; it was reviewed functionally on 2026-10-16 and will be
+carried forward as its **own ComfyUI plugin repository**, separate from
+loop-lore. Consequences, and they are binding on this epic:
+
+- loop-lore consumes the **documented ComfyUI REST contract only** — `POST /prompt`,
+  `GET /history/{prompt_id}`, `GET /queue`, `/view`, `/upload/image`,
+  `/object_info` — and never calls `/h3-stills/*`.
+- loop-lore **never vendors, installs, or re-ships** the Python sidecar: no copy
+  under any tracked path, no `custom_nodes/` install step, no re-implementation of
+  its routes. The absorption work stays limited to the **generic** halves (the
+  `Graph` builder, the `inspect_import` validation policy, the stills lifecycle
+  client, the PNG chunk reader, the de-hardcoded defaults).
+- The plugin repo inherits the artifact as reviewed, including its review-only
+  status while it is still solely under `.tmp/`; the review notes in this epic are
+  the reference for what it does and does not prove.
+- Any future loop-lore feature that needs H3 stills states the deployment
+  prerequisite (the six external node types, the pinned model/LoRA files) instead
+  of shipping a workaround.
 
 ## Tasks
 
