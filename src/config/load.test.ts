@@ -530,6 +530,61 @@ db:
       cleanup();
     }
   });
+
+  // ── template expansion validation (TASK-validate-expansion-config-at-load-time) ──
+
+  test("rejects an expansion config whose intentPatterns reference an unknown emotion", () => {
+    try {
+      setupConfigFiles({
+        "configs/templates/expansion.yaml": [
+          "merge: extend",
+          "emotions:",
+          "  happy:",
+          "    asset: happy.png",
+          '    intent: "The character smiles warmly"',
+          "intentPatterns:",
+          '  - pattern: "determined"',
+          "    emotion: determined",
+          "",
+        ].join("\n",),
+      },);
+
+      // A typo must be rejected at load, naming the file and the offending key.
+      expect(() => loadConfig(tmpDir,)).toThrow(/EXPANSION CONFIG/,);
+      expect(() => loadConfig(tmpDir,)).toThrow(/expansion\.yaml/,);
+      expect(() => loadConfig(tmpDir,)).toThrow(/unknown emotion: determined/,);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("a valid expansion config still loads", () => {
+    try {
+      setupConfigFiles({
+        "configs/templates/expansion.yaml": [
+          "merge: extend",
+          "emotions:",
+          "  proud:",
+          "    asset: proud.png",
+          '    intent: "The character stands tall"',
+          "intentPatterns:",
+          '  - pattern: "swagger"',
+          "    emotion: proud",
+          "",
+        ].join("\n",),
+      },);
+
+      const config = loadConfig(tmpDir,);
+      expect(config.templates.avatar.emotions.proud,).toEqual({
+        asset: "proud.png",
+        intent: "The character stands tall",
+      },);
+
+      expect(config.templates.avatar.intentPatterns,).toContainEqual({ pattern: "swagger", emotion: "proud", },);
+    } finally {
+      cleanup();
+    }
+  });
 },);
 
 describe("validateDatabaseSafety", () => {

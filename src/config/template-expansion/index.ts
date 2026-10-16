@@ -12,5 +12,11 @@
  */
 
 export { expandAvatarConfig, extractActions, extractKeywords, } from "./expand.js";
-export { findMissingAvatars, runTemplateExpansion, validateExpansionConfig, } from "./run.js";
+export {
+  findExpansionFile,
+  findMissingAvatars,
+  runTemplateExpansion,
+  validateExpansionConfig,
+  validateExpansionConfigErrors,
+} from "./run.js";
 export type { ExpansionConfig, ExpansionResult, } from "./types.js";

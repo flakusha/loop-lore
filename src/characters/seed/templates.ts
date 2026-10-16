@@ -10,11 +10,12 @@ import type { CharacterTemplate, } from "../../config/sections/characters/types"
 import { TraitCategory, } from "../../db/enums-character";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { safeJsonStringify, uid, } from "../../utils";
+import { safeJsonStringify, } from "../../utils";
 import { AvatarService, } from "../services/avatar-service";
 import { TraitsService, } from "../services/traits-service";
 import { ContentRating, } from "../spec";
 import { ensureSystemUser, normalizeSpecies, resolveTemplateAvatar, } from "./avatar";
+import { findExistingActor, stableTemplateId, } from "./identity";
 
 interface SeedResult {
   created: number;
@@ -73,23 +74,16 @@ async function seedTemplate(
 ): Promise<void> {
   const logger = getLogger();
   try {
-    const exists = await database
-      .selectFrom("actors",)
-      .select("id",)
-      .where("display_name", "=", template.name,)
-      .where((eb,) =>
-        ownerId
-          ? eb("owner_id", "=", ownerId,)
-          : eb("owner_id", "is", null,)
-      )
-      .executeTakeFirst();
+    // Stable identity: the row's own id, never display_name (a user rename
+    // must not create a second row).
+    const id = stableTemplateId(template,);
+    const existing = await findExistingActor(database, id,);
 
-    if (exists) {
+    if (existing) {
       result.skipped++;
       return;
     }
 
-    const id = template.id ?? uid();
     const tags = template.tags ?? [];
     const settingsResult = safeJsonStringify(
       tags.length > 0
