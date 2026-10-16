@@ -8,10 +8,11 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { stableSeedCharacterId, } from "../characters/seed/identity";
 import type { SeedCharacter, } from "../config/schema";
-import { ActorType, } from "../db/enums";
+import { ActorType, AgentType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createLogger, getLogger, } from "../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
+import { uid, } from "../utils";
 import { seedCharacters, } from "./characters";
 
 const OWNER = "seed-owner-1";
@@ -48,6 +49,11 @@ describe("seedCharacters identity", () => {
       .where("actor_type", "=", ActorType.Character,)
       .execute();
 
+    return rows.length;
+  }
+
+  async function countById(id: string,): Promise<number> {
+    const rows = await db.selectFrom("actors",).select("id",).where("id", "=", id,).execute();
     return rows.length;
   }
 
@@ -89,5 +95,67 @@ describe("seedCharacters identity", () => {
 
     expect(await seedCharacters(db, characters, userById(), log,),).toBe(1,);
     expect(await countByName("Seeded Delete Victim",),).toBe(1,);
+  });
+
+  test("an existing deployment's rows are adopted, never duplicated", async () => {
+    // This path allocated `uid()` unconditionally, so every pre-upgrade row has
+    // a crypto-random id that the deterministic key cannot resolve.
+    const characters: readonly SeedCharacter[] = [
+      { name: "Legacy Config Character", owner: OWNER_USERNAME, description: "Pre-upgrade row", },
+    ];
+
+    const legacyId = uid();
+    await db
+      .insertInto("actors",)
+      .values({
+        id: legacyId,
+        actor_type: ActorType.Character,
+        agent_type: AgentType.None,
+        display_name: "Legacy Config Character",
+        description: "Pre-upgrade row",
+        visibility: "private",
+        user_id: null,
+        owner_id: OWNER,
+        settings: "{}",
+        import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
+        format_version: 0,
+      },)
+      .execute();
+
+    const log = getLogger().child({},);
+
+    // First boot after upgrade: adopt the row instead of seeding alongside it.
+    expect(await seedCharacters(db, characters, userById(), log,),).toBe(0,);
+    expect(await countById(legacyId,),).toBe(1,);
+
+    // Adoption converges the row onto the stable identity, so a later rename
+    // is still a no-op and the original row keeps its id.
+    await db
+      .updateTable("actors",)
+      .set({ display_name: "Renamed Legacy Config Character", },)
+      .where("id", "=", legacyId,)
+      .execute();
+
+    expect(await seedCharacters(db, characters, userById(), log,),).toBe(0,);
+    expect(await countById(legacyId,),).toBe(1,);
+
+    // Deleting it still lets the next seed recreate it, now with the stable id.
+    await db.deleteFrom("actors",).where("id", "=", legacyId,).execute();
+    expect(await seedCharacters(db, characters, userById(), log,),).toBe(1,);
+    expect(await countByName("Legacy Config Character",),).toBe(1,);
+  });
+
+  test("distinct names sharing a slug still seed distinct rows", async () => {
+    const characters: readonly SeedCharacter[] = [
+      { name: "Dr. Thorne", owner: OWNER_USERNAME, description: "built-in spelling", },
+      { name: "Dr.Thorne", owner: OWNER_USERNAME, description: "same slug, different string", },
+    ];
+
+    const log = getLogger().child({},);
+    expect(await seedCharacters(db, characters, userById(), log,),).toBe(2,);
+    expect(await countByName("Dr. Thorne",),).toBe(1,);
+    expect(await countByName("Dr.Thorne",),).toBe(1,);
   });
 });
