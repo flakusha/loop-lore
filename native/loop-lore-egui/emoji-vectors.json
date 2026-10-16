@@ -1,0 +1,457 @@
+{
+  "registry": [
+    {
+      "name": "+1",
+      "emoji": "👍"
+    },
+    {
+      "name": "thumbsup",
+      "emoji": "👍"
+    },
+    {
+      "name": "heart",
+      "emoji": "❤️"
+    },
+    {
+      "name": "joy",
+      "emoji": "😂"
+    },
+    {
+      "name": "laugh",
+      "emoji": "😂"
+    },
+    {
+      "name": "performing_arts",
+      "emoji": "🎭"
+    },
+    {
+      "name": "theater",
+      "emoji": "🎭"
+    },
+    {
+      "name": "mask",
+      "emoji": "🎭"
+    },
+    {
+      "name": "crossed_swords",
+      "emoji": "⚔️"
+    },
+    {
+      "name": "swords",
+      "emoji": "⚔️"
+    },
+    {
+      "name": "dagger",
+      "emoji": "🗡️"
+    },
+    {
+      "name": "castle",
+      "emoji": "🏰"
+    },
+    {
+      "name": "sparkles",
+      "emoji": "✨"
+    },
+    {
+      "name": "skull",
+      "emoji": "💀"
+    },
+    {
+      "name": "dragon",
+      "emoji": "🐉"
+    },
+    {
+      "name": "evergreen_tree",
+      "emoji": "🌲"
+    },
+    {
+      "name": "tree",
+      "emoji": "🌲"
+    },
+    {
+      "name": "zap",
+      "emoji": "⚡"
+    },
+    {
+      "name": "fire",
+      "emoji": "🔥"
+    },
+    {
+      "name": "droplet",
+      "emoji": "💧"
+    },
+    {
+      "name": "crescent_moon",
+      "emoji": "🌙"
+    },
+    {
+      "name": "moon",
+      "emoji": "🌙"
+    }
+  ],
+  "render": [
+    {
+      "input": "hello :fire:",
+      "expected": "hello 🔥"
+    },
+    {
+      "input": "no emoji here",
+      "expected": "no emoji here"
+    },
+    {
+      "input": ":heart: :heart:",
+      "expected": "❤️ ❤️"
+    },
+    {
+      "input": "`:fire:`",
+      "expected": "`:fire:`"
+    },
+    {
+      "input": "code `:fire:` inline",
+      "expected": "code `:fire:` inline"
+    },
+    {
+      "input": ":unknown: stays",
+      "expected": ":unknown: stays"
+    },
+    {
+      "input": ":FIRE: stays",
+      "expected": ":FIRE: stays"
+    },
+    {
+      "input": "mixed :fire: and :unknown:",
+      "expected": "mixed 🔥 and :unknown:"
+    },
+    {
+      "input": ":+1: works",
+      "expected": "👍 works"
+    },
+    {
+      "input": "a :fire: b :heart: c",
+      "expected": "a 🔥 b ❤️ c"
+    },
+    {
+      "input": "",
+      "expected": ""
+    },
+    {
+      "input": ":",
+      "expected": ":"
+    },
+    {
+      "input": "::",
+      "expected": "::"
+    },
+    {
+      "input": "text `code :fire:` more :heart:",
+      "expected": "text `code :fire:` more ❤️"
+    },
+    {
+      "input": ":fire::heart:",
+      "expected": "🔥❤️"
+    },
+    {
+      "input": "  :zap:  ",
+      "expected": "  ⚡  "
+    },
+    {
+      "input": ":fire: :heart: :moon:",
+      "expected": "🔥 ❤️ 🌙"
+    },
+    {
+      "input": "a`b`:fire:`c`",
+      "expected": "a`b`🔥`c`"
+    },
+    {
+      "input": "`unclosed :fire:",
+      "expected": "`unclosed 🔥"
+    },
+    {
+      "input": ":constructor: stays",
+      "expected": ":constructor: stays"
+    }
+  ],
+  "autocomplete": [
+    {
+      "text": "hello :fir",
+      "cursor": 10,
+      "expectedQuery": "fir",
+      "expectedCandidates": [
+        "fire"
+      ]
+    },
+    {
+      "text": "hello :HEA",
+      "cursor": 10,
+      "expectedQuery": "hea",
+      "expectedCandidates": [
+        "heart",
+        "theater"
+      ]
+    },
+    {
+      "text": "hello :fire:",
+      "cursor": 11,
+      "expectedQuery": "fire",
+      "expectedCandidates": [
+        "fire"
+      ]
+    },
+    {
+      "text": "hello",
+      "cursor": 5,
+      "expectedQuery": null,
+      "expectedCandidates": []
+    },
+    {
+      "text": ":",
+      "cursor": 1,
+      "expectedQuery": "",
+      "expectedCandidates": [
+        "+1",
+        "thumbsup",
+        "heart",
+        "joy",
+        "laugh",
+        "performing_arts",
+        "theater",
+        "mask",
+        "crossed_swords",
+        "swords",
+        "dagger",
+        "castle",
+        "sparkles",
+        "skull",
+        "dragon",
+        "evergreen_tree",
+        "tree",
+        "zap",
+        "fire",
+        "droplet",
+        "crescent_moon",
+        "moon"
+      ]
+    },
+    {
+      "text": " :",
+      "cursor": 2,
+      "expectedQuery": "",
+      "expectedCandidates": [
+        "+1",
+        "thumbsup",
+        "heart",
+        "joy",
+        "laugh",
+        "performing_arts",
+        "theater",
+        "mask",
+        "crossed_swords",
+        "swords",
+        "dagger",
+        "castle",
+        "sparkles",
+        "skull",
+        "dragon",
+        "evergreen_tree",
+        "tree",
+        "zap",
+        "fire",
+        "droplet",
+        "crescent_moon",
+        "moon"
+      ]
+    },
+    {
+      "text": "hello :fire done",
+      "cursor": 16,
+      "expectedQuery": null,
+      "expectedCandidates": []
+    },
+    {
+      "text": "hello :fire",
+      "cursor": 11,
+      "expectedQuery": "fire",
+      "expectedCandidates": [
+        "fire"
+      ]
+    },
+    {
+      "text": "hello :tree",
+      "cursor": 11,
+      "expectedQuery": "tree",
+      "expectedCandidates": [
+        "evergreen_tree",
+        "tree"
+      ]
+    },
+    {
+      "text": "hello :moon",
+      "cursor": 11,
+      "expectedQuery": "moon",
+      "expectedCandidates": [
+        "crescent_moon",
+        "moon"
+      ]
+    },
+    {
+      "text": "hello :sw",
+      "cursor": 9,
+      "expectedQuery": "sw",
+      "expectedCandidates": [
+        "crossed_swords",
+        "swords"
+      ]
+    },
+    {
+      "text": "hello :zzz",
+      "cursor": 10,
+      "expectedQuery": "zzz",
+      "expectedCandidates": []
+    },
+    {
+      "text": "hello :fire: :hea",
+      "cursor": 16,
+      "expectedQuery": "he",
+      "expectedCandidates": [
+        "heart",
+        "theater"
+      ]
+    },
+    {
+      "text": ".fire: :hea",
+      "cursor": 11,
+      "expectedQuery": "hea",
+      "expectedCandidates": [
+        "heart",
+        "theater"
+      ]
+    },
+    {
+      "text": ":+1",
+      "cursor": 3,
+      "expectedQuery": "+1",
+      "expectedCandidates": [
+        "+1"
+      ]
+    },
+    {
+      "text": "hello :",
+      "cursor": 7,
+      "expectedQuery": "",
+      "expectedCandidates": [
+        "+1",
+        "thumbsup",
+        "heart",
+        "joy",
+        "laugh",
+        "performing_arts",
+        "theater",
+        "mask",
+        "crossed_swords",
+        "swords",
+        "dagger",
+        "castle",
+        "sparkles",
+        "skull",
+        "dragon",
+        "evergreen_tree",
+        "tree",
+        "zap",
+        "fire",
+        "droplet",
+        "crescent_moon",
+        "moon"
+      ]
+    },
+    {
+      "text": "x :fire:",
+      "cursor": 8,
+      "expectedQuery": null,
+      "expectedCandidates": []
+    },
+    {
+      "text": "",
+      "cursor": 0,
+      "expectedQuery": null,
+      "expectedCandidates": []
+    },
+    {
+      "text": " :FIRE:",
+      "cursor": 7,
+      "expectedQuery": null,
+      "expectedCandidates": []
+    }
+  ],
+  "insert": [
+    {
+      "text": "hello :fir",
+      "cursor": 10,
+      "candidate": "fire",
+      "expectedText": "hello :fire: ",
+      "expectedCaret": 13
+    },
+    {
+      "text": "hello :HEA",
+      "cursor": 10,
+      "candidate": "heart",
+      "expectedText": "hello :heart: ",
+      "expectedCaret": 14
+    },
+    {
+      "text": " :",
+      "cursor": 2,
+      "candidate": "fire",
+      "expectedText": " :fire: ",
+      "expectedCaret": 8
+    },
+    {
+      "text": ":",
+      "cursor": 1,
+      "candidate": "fire",
+      "expectedText": ":fire: ",
+      "expectedCaret": 7
+    },
+    {
+      "text": "hello :fire world",
+      "cursor": 11,
+      "candidate": "fire",
+      "expectedText": "hello :fire:  world",
+      "expectedCaret": 13
+    },
+    {
+      "text": "hello :tree",
+      "cursor": 11,
+      "candidate": "tree",
+      "expectedText": "hello :tree: ",
+      "expectedCaret": 13
+    },
+    {
+      "text": "hello :tree",
+      "cursor": 11,
+      "candidate": "evergreen_tree",
+      "expectedText": "hello :evergreen_tree: ",
+      "expectedCaret": 23
+    },
+    {
+      "text": "hello :fire: :hea",
+      "cursor": 16,
+      "candidate": "heart",
+      "expectedText": "hello :fire: :heart: a",
+      "expectedCaret": 21
+    },
+    {
+      "text": ":+1",
+      "cursor": 3,
+      "candidate": "+1",
+      "expectedText": ":+1: ",
+      "expectedCaret": 5
+    },
+    {
+      "text": "tail :mo",
+      "cursor": 8,
+      "candidate": "moon",
+      "expectedText": "tail :moon: ",
+      "expectedCaret": 12
+    }
+  ]
+}
