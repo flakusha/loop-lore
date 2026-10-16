@@ -6,12 +6,21 @@
  *
  * Blessed widget for browsing assets linked to the current chat.
  * Left/Right arrow navigation, Enter/Delete interaction.
- * Fetches from GET /api/assets?entity_type=chat&entity_id=...
+ * Fetches from GET /api/v1/assets?entity_type=chat&entity_id=..., authenticated with the `[tui].sessionToken` when set.
  */
 
 import blessed from "blessed";
-import { safeFetch, } from "../utils";
+import { safeFetch as _realFetch, } from "../utils";
 import { API_BASE, } from "./chat";
+
+let _fetch = _realFetch;
+
+/** Swap the HTTP client (tests only) — mirrors the seam in `harness/api.ts`.
+ * @param fn - replacement for the real `safeFetch`
+ */
+export function setFetch(fn: typeof _realFetch,): void {
+  _fetch = fn;
+}
 
 /** */
 export interface LinkedAsset {
@@ -25,6 +34,14 @@ export interface LinkedAsset {
 }
 
 /** */
+export interface AssetViewOptions {
+  /** Bearer token for `GET /api/v1/assets`; omit to run anonymous against solo deployments. */
+  sessionToken?: string;
+  /** Optional parent box; defaults to the screen. */
+  parent?: blessed.Widgets.BoxElement;
+}
+
+/** */
 export class AssetView {
   private screen: blessed.Widgets.Screen;
   private box: blessed.Widgets.BoxElement;
@@ -33,16 +50,20 @@ export class AssetView {
   private currentIndex = 0;
   private chatId: string | null = null;
   private assetCountLabel: blessed.Widgets.BlessedElement;
+  sessionToken: string | undefined;
 
   /**
    * @param screen
-   * @param parent
+   * @param options - session token and optional parent box
    */
-  constructor(screen: blessed.Widgets.Screen, parent?: blessed.Widgets.BoxElement,) {
+  constructor(screen: blessed.Widgets.Screen, options: AssetViewOptions = {},) {
     this.screen = screen;
+    // Normalize empty string to undefined, mirroring ChatWidget (chat/index.ts):
+    // an accidental `""` must not ship as `Bearer ` and trip 401s.
+    this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
 
     this.box = blessed.box({
-      parent: parent ?? screen,
+      parent: options.parent ?? screen,
       right: 0,
       top: 0,
       width: "30%",
@@ -204,7 +225,8 @@ export class AssetView {
 
     try {
       const url = `${API_BASE}/api/v1/assets?entity_type=chat&entity_id=${this.chatId}&pageSize=100`;
-      const result = await safeFetch<{ data?: LinkedAsset[] }>(url, {
+      const result = await _fetch<{ data?: LinkedAsset[] }>(url, {
+        auth: this.sessionToken ? { sessionToken: this.sessionToken, } : undefined,
         handle401: false,
       },);
 

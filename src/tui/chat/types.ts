@@ -15,6 +15,8 @@ export interface ChatMessage {
 export interface ChatWidgetOptions {
   sessionToken?: string;
   onChatChange?: (chatId: string,) => void;
+  /** Overrides the send-message timeout; defaults to `TUI_DEFAULTS.sendTimeoutMs`. */
+  sendTimeoutMs?: number;
 }
 
 /**
@@ -30,6 +32,8 @@ export interface ChatHost {
   isSending: boolean;
   sessionToken: string | undefined;
   cursor: string | null; // pagination cursor
+  /** Send-message timeout in ms; covers one full assistant generation. */
+  sendTimeoutMs: number;
   addMessage(message: ChatMessage,): void;
   scrollToBottom(): void;
   showTyping(): void;
