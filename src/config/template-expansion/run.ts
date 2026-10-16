@@ -7,6 +7,7 @@ import { findExpansionFile, parseExpansionFile, } from "./discovery.js";
 import { expandAvatarConfig, } from "./expand.js";
 import type { ExpansionResult, } from "./types.js";
 
+export { findExpansionFile, };
 /**
  * Check which emotions are missing avatar assets.
  * @param config
@@ -147,4 +148,27 @@ export function validateExpansionConfig(config: AvatarTemplateConfig,): string[]
   }
 
   return errors;
+}
+
+/**
+ * Reject a template config whose intent patterns do not resolve.
+ * Owns the load-time entry point for {@link validateExpansionConfig}, naming
+ * the offending file and key like the other config-load safety guards.
+ * @param config - Template config to validate
+ * @param expansionPath - Expansion file that produced `config`, when present
+ * @throws {Error} When the config has validation errors
+ * @returns {void}
+ */
+export function validateExpansionConfigErrors(
+  config: AvatarTemplateConfig,
+  expansionPath: string | null,
+): void {
+  const errors = validateExpansionConfig(config,);
+  if (errors.length === 0) { return; }
+
+  throw new Error(
+    `EXPANSION CONFIG: ${expansionPath ?? "configs/templates/avatar"} has ${errors.length} invalid ` +
+      `entries:\n${errors.map((e,) => `  - ${e}`).join("\n",)}\n` +
+      "Each intentPatterns[].emotion must name an emotion in emotions[] of the same file.",
+  );
 }

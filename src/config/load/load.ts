@@ -8,7 +8,7 @@ import path from "node:path";
 import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { Config, } from "../schema";
 import { createConfigSchema, validate, } from "../schema-class";
-import { runTemplateExpansion, } from "../template-expansion";
+import { findExpansionFile, runTemplateExpansion, validateExpansionConfigErrors, } from "../template-expansion";
 import { loadTemplateConfig, } from "../templates-loader";
 import { DEFAULT_CONFIG_FILES, ENV_MAP, LOCAL_CONFIG_FILES, } from "./constants";
 import { loadDomainConfigs, } from "./domain";
@@ -130,9 +130,12 @@ export function loadConfig(cwd?: string,): Config {
   // 6. Load template configs from configs/templates/ directory
   config.templates = loadTemplateConfig(directory,);
 
-  // 6.5. Run template expansion to extend base configs
+  // 6.5. Run template expansion to extend base configs, then reject an
+  //     expansion (or base) config whose intent patterns reference
+  //     emotions nobody defined. Without this the typo merges silently.
   const expansionResult = runTemplateExpansion(directory, config.templates.avatar,);
   config.templates.avatar = expansionResult.config;
+  validateExpansionConfigErrors(config.templates.avatar, findExpansionFile(directory,),);
 
   // 7. Backward compat: wrap single sd provider object in array
   const sd = config.generation.providers.sd;
