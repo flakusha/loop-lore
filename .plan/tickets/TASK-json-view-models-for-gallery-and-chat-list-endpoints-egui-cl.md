@@ -3,7 +3,7 @@
 
 # TASK: JSON view-models for gallery and chat list endpoints (egui client parity)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-experimental-egui-frontend
@@ -51,3 +51,5 @@ JSON branch is additive and the golden-markup snapshots are the guard.
 - [ ] A parity test asserts html-mode and json-mode describe the same rows for a
       seeded fixture, and a golden-markup test pins the htmx response
 - [ ] openapi/spec surfaces updated if the dynamic endpoints are documented
+
+**Resolved:** 2026-10-16 registry-driven close: git issue 0852403 (registry tip: 25a3fa0ad Konstantin Fedotov Auto-closed: appended .md marker marks TASK-JSON-VIEW-MODELS-FOR-GALLER)
