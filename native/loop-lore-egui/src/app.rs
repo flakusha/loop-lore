@@ -15,6 +15,7 @@ use crate::api::{self, ChatMessage, ChatSummary, SentMessage};
 use crate::client;
 use crate::context::FrontendContext;
 use crate::storage;
+use crate::stream::{self, StreamEvent, StreamState};
 
 /// A result handed back from a spawned fetch.
 enum FetchEvent {
@@ -24,6 +25,15 @@ enum FetchEvent {
   Messages(Result<Vec<ChatMessage>, String>),
   /// Send resolved.
   Sent(Result<SentMessage, String>),
+}
+
+/// One live generation stream: the chat it belongs to plus its state.
+///
+/// The chat id rides along so a late event from a stream the user already
+/// left is discarded — the htmx consumer's `isStale()` guard.
+struct StreamSession {
+  chat_id: String,
+  state: StreamState,
 }
 
 /// The experimental egui frontend.
@@ -42,6 +52,8 @@ pub struct EguiApp {
   events: Rc<RefCell<Vec<FetchEvent>>>,
   /// Whether the first `logic` pass already kicked off the initial loads.
   started: bool,
+  /// The live generation stream, if one is open for the active chat.
+  stream: Option<StreamSession>,
 }
 
 impl EguiApp {
@@ -55,6 +67,7 @@ impl EguiApp {
       status: String::from("loading"),
       events: Rc::new(RefCell::new(Vec::new())),
       started: false,
+      stream: None,
     }
   }
 
@@ -74,10 +87,16 @@ impl EguiApp {
 
   /// Switch the active chat, persisting it for the htmx hand-back.
   fn open_chat(&mut self, chat_id: &str, ctx: &egui::Context) {
+    self.close_stream();
     self.context.active_chat_id = Some(chat_id.to_string());
     storage::save_context(&self.context);
     self.status = String::from("loading messages");
     self.messages.clear();
+    self.fetch_messages(chat_id, ctx,);
+  }
+
+  /// Spawn a message-page fetch for `chat_id`.
+  fn fetch_messages(&self, chat_id: &str, ctx: &egui::Context) {
     let events = Rc::clone(&self.events);
     let ctx = ctx.clone();
     let url = api::messages_url(chat_id, 1);
@@ -113,6 +132,22 @@ impl EguiApp {
       events.borrow_mut().push(FetchEvent::Sent(result));
       ctx.request_repaint();
     });
+    // htmx parity: the stream is connected when a generation is STARTED
+    // (`sendWithPreferredMode` -> `connectGenerationSSE`), not on chat entry
+    // — a chat with no running generation would only ever see the server's
+    // "No active generation" terminal error.
+    stream::open_stream(&chat_id);
+    self.stream = Some(StreamSession {
+      chat_id,
+      state: StreamState::default(),
+    });
+  }
+
+  /// Close the live stream (bridge teardown) and forget its state.
+  fn close_stream(&mut self) {
+    if let Some(session) = self.stream.take() {
+      stream::close_stream(&session.chat_id);
+    }
   }
 
   /// Apply every fetch result queued since the last frame.
@@ -141,11 +176,48 @@ impl EguiApp {
       }
     }
   }
+
+  /// Apply every stream event queued by the bridge since the last frame.
+  fn drain_stream_events(&mut self, ctx: &egui::Context) {
+    for (chat_id, event) in stream::drain_stream_events() {
+      // Stale guard: an event for a chat that is no longer active is dropped,
+      // mirroring the htmx consumer's `isStale()`.
+      let Some(session) = self.stream.as_mut() else { continue };
+      if session.chat_id != chat_id { continue }
+      session.state.apply(&event);
+      let error_message = session.state.error.clone();
+      let terminal = session.state.is_terminal();
+
+      match &event {
+        StreamEvent::Update(_) => self.status = String::from("streaming"),
+        StreamEvent::ToolCall(_) => {}
+        StreamEvent::Done => {
+          self.status = String::from("ready");
+          // htmx reloads the message list on stream-done: the stored
+          // messages are authoritative again.
+          if let Some(chat_id) = self.context.active_chat_id.clone() {
+            self.fetch_messages(&chat_id, ctx,);
+          }
+        }
+        StreamEvent::Error(_) => {
+          if let Some(message) = error_message {
+            self.status = format!("stream error: {message}");
+          }
+        }
+      }
+      if terminal {
+        // The server closed the stream; without this the browser would
+        // reconnect and replay the whole buffer (htmx `_cleanupSSE`).
+        self.close_stream();
+      }
+    }
+  }
 }
 
 impl App for EguiApp {
   fn logic(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
     self.drain_events();
+    self.drain_stream_events(ctx,);
     if !self.started {
       self.started = true;
       self.reload_chats(ctx);
@@ -161,6 +233,9 @@ impl App for EguiApp {
     Panel::top("bar").show(ui, |ui| {
       ui.horizontal(|ui| {
         if ui.button("Back to htmx").clicked() {
+          // Teardown symmetry with htmx `_cleanupSSE`: the stream dies with
+          // the client that owns it.
+          self.close_stream();
           storage::save_context(&self.context);
           storage::assign_location(&self.context.return_to);
         }
@@ -192,6 +267,18 @@ impl App for EguiApp {
             ui.label(egui::RichText::new(&message.role).strong());
             ui.label(&message.content);
           });
+        }
+        if let Some(session) = &self.stream {
+          ui.horizontal_wrapped(|ui| {
+            ui.label(egui::RichText::new("assistant").strong());
+            ui.label(&session.state.text);
+          });
+          for call in &session.state.tool_calls {
+            ui.horizontal_wrapped(|ui| {
+              ui.label(egui::RichText::new("tool").italics());
+              ui.label(call);
+            });
+          }
         }
       });
       ui.with_layout(Layout::bottom_up(Align::Center), |ui| {
