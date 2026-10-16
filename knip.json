@@ -31,7 +31,8 @@
     "scripts/backup-sqlite.ts",
     "scripts/validate-backup-restore.ts",
     "scripts/check-no-shell-refs.ts",
-    "scripts/check-migration-ordering.ts"
+    "scripts/check-migration-ordering.ts",
+    "bin/lolo.ts"
   ],
   "project": [
     // src/ is INVISIBLE to a gitignore-respecting knip run: src/.gitignore is a
