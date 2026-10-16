@@ -30,3 +30,6 @@ No MCP at runtime: no `@modelcontextprotocol` dependency, no client, no `ctx_*` 
 
 - Sandbox isolation is NOT in scope — MCP tools inherit whatever `TASK-harness-tool-sandbox` gives every tool.
 - v1 surface excludes resources, prompts, sampling, elicitation, `outputSchema` (doc §Deliberately skipped).
+
+
+git issue: ba2e03f
