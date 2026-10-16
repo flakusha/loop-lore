@@ -39,13 +39,17 @@ failure. Diagnosis first, template second
 Candidate causes worth testing in order of cheapness — none of these require
 guessing from the outside:
 
-1. **Substitutor type coercion.** `substituteWorkflow` coerces every `{{var}}` to
-   string. This is a known, documented defect in
-   `epic-comfyui-first-class-citizen.md` (*Defect 1*), and ComfyUI's `/prompt`
-   validator type-checks `INT` inputs. `configs/workflows/txt2img.json` and
-   `img2img.json` are affected too. If Krea 2's sampler takes an int seed or
-   resolution, it fails here and fails **at submit**, which an operator reading
-   "samples look good" would not connect to a string coercion.
+1. ~~Substitutor type coercion.~~ **Already fixed — do not spend time here.**
+   The typed passthrough ships: `substituteValue`
+   (`src/generation/workflow-substitutor.ts:132-137`) matches the whole-string case
+   with `WHOLE_PLACEHOLDER_RE` and returns `vars[key]` unchanged, so
+   `"{{width}}"` with `width: 768` yields the **number** `768`. Only mixed
+   content (`"a {{prompt}} b"`), which has no single type to preserve,
+   interpolates through `String(...)` (`:139-142`). ComfyUI's `/prompt` `INT`
+   validator is therefore satisfied for both `configs/workflows/txt2img.json` and
+   `img2img.json`. `epic-comfyui-first-class-citizen.md` still lists this as open
+   *Defect 1*; that checklist entry is stale here — re-verify before relying on it,
+   exactly as for item 2.
 2. ~~LoRA node-id allocation.~~ **Ruled out — do not spend time here.**
    `injectComfyUILora` used to derive its node id with
    `Math.max(...Object.keys(nodes).map(Number)) + 1`, which is `NaN` on
