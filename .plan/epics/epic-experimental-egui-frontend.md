@@ -7,8 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** In Progress — experimental egui wasm frontend shipped on branch egui-wasm-frontend (unmerged); htmx/Alpine parity roadmap drafted 2026-10-16, targets ticketed, none implemented yet.
 **Priority:** Low
 **Effort:** Medium
 **Type:** Research / Feature Epic
@@ -26,11 +26,13 @@ Parent epic: `epic-headless-alternative-frontends.md`, which already scopes
 it — it is the egui-specific verdict plus the client-agnostic extraction that
 the hub's own sequencing (API-First Foundation → Shared Client SDK) depends on.
 
-> **⚠️ Not a parallel-program epic.** The verdict is *do not adopt egui yet*.
-> The only egui deliverable is one timeboxed spike
-> (`TASK-egui-wasm-embed-spike.md`) whose output is measured numbers, not a UI.
-> The shipping work is the view-model layer, which every alternative frontend
-> — including a future egui one — consumes.
+> **⚠️ Superseded framing.** This epic opened as research-only (see the
+> verdict table below). A user directive dated 2026-10-16 reversed that: build
+> egui as a separate experimental wasm frontend, integrated by JSON
+> communication — not htmx fragments — with htmx → egui → htmx transfers and
+> required context storage on the browser side. See
+> *Decision update (2026-10-16)* below; the view-model layer stays the
+> foundation, the parity roadmap is the new deliverable.
 
 ## Verdict (from `docs/meta/research/egui-frontend-adoption.md`, 2026-10-13)
 
@@ -70,6 +72,35 @@ Four findings drove it, all sourced in the research doc:
 4. **No license blocker.** egui is `MIT OR Apache-2.0`, matching this repo's
    dual `Apache-2.0 OR MIT` (`native/loop-lore-native/Cargo.toml:5`).
 
+
+## Decision update (2026-10-16)
+
+The research verdict above was **superseded by a user directive** on
+2026-10-16. What the directive changes, and what it deliberately does not:
+
+**Changed.** egui is now an in-progress *experimental* frontend, not a
+rejected option. The integration is by **JSON communication, not htmx
+fragments**: the Rust client talks the same `/api/v1/*` endpoints and the same
+view-models the templates bind to. Transfers between the two clients are a
+versioned handoff (`{version, activeChatId, returnTo}`) persisted in browser
+storage, so the browser carries the context across htmx → egui → htmx in both
+directions.
+
+**Unchanged.** The client-agnostic view-model layer stays the foundation — an
+egui client must never scrape fragments. That is why option (c)'s ticket set is
+still the base of the roadmap, and why the JSON-branch extension of the dynamic
+endpoints (gallery, chat list) is the highest-priority server-side target.
+
+**Shipped (unmerged, branch `egui-wasm-frontend`).** A wasm32 crate under
+`native/loop-lore-egui`, a JSON API client, the standalone `/egui` host page
+(no htmx/Alpine bundles in the document), the browser-side handoff context, and
+a `build:egui` stage that skips with a notice when the Rust toolchain is absent
+so the application build is never blocked by it.
+
+**Status of the roadmap.** The targets below are drafted as tickets; none are
+implemented beyond the shipped base above. The epic status moves to *In
+Progress* on that basis.
+
 ## Goals
 
 - Make the *server* the client contract, so a second client (TUI, SPA, mobile,
@@ -92,11 +123,15 @@ Four findings drove it, all sourced in the research doc:
   (`TASK-tui-api-contract-smoke-tests.md`).
 - One timeboxed egui→WASM embed spike producing measurements
   (`TASK-egui-wasm-embed-spike.md`).
+- The parity roadmap in *Parity roadmap — next egui targets*: JSON view-models on
+  the dynamic endpoints, SSE response streaming, `:shortcode:` emoji support,
+  the command surface, and the gallery surface.
 
 ## Out of Scope
 
-- Shipping an egui client, in any of the three shapes. The spike's artifact is
-  a measurement, not a screen.
+- Shipping an egui client **as production**: the experimental client stays
+  experimental — behind the `/egui` host page, JSON-integrated, with the htmx
+  frontend as the default surface. No template rewrite, no fragment scraping.
 - `TASK-cors-middleware.md` (already filed, `Not Started`, bound to
   `epic-headless-alternative-frontends.md`). CORS is a prerequisite for an
   out-of-origin client and this epic does not re-file it. Confirmed absent from
@@ -161,6 +196,37 @@ plausible later option (a). This epic does not build it; it makes it possible.
 4. **`TASK-egui-wasm-embed-spike`** — independent, last. Its value is
    *informative even if the verdict stays no*, because it retires open
    question Q3 (wgpu compile-time and `cargo audit` surface).
+
+
+## Parity roadmap — next egui targets
+
+Ordered by risk to the shipped base. Each row names the htmx/Alpine surface it
+must match, the ticket that carries it, and the upstream reference the
+implementation should be modelled on.
+
+| # | Target | htmx/Alpine parity source | Ticket | Upstream reference |
+| - | ------ | ------------------------- | ------ | ------------------ |
+| 1 | JSON view-models on the dynamic endpoints | `src/routes/views/negotiate.ts` (`wantsJsonViewModel`) is wired at `/dynamic/characters/grid` only; gallery grid/search and chats list/search still emit HTML | `TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl` | the option-(c) seam this epic established |
+| 2 | SSE response streaming | `GET /api/v1/generation/stream/:chatId` + the Alpine consumer in `src/frontend/alpine/chat-generations.ts` (replay via `src/routes/stream-buffer/`) | `TASK-egui-sse-response-streaming-through-the-browser-bridge` | reqwest has no EventSource ([seanmonstar/reqwest#2677](https://github.com/seanmonstar/reqwest/issues/2677)) → bridge-owned `EventSource` |
+| 3 | `:shortcode:` emoji support | registry + `renderShortcodes` in `src/frontend/alpine/chat-utils/emoji.ts`, autocomplete in `src/frontend/alpine/emoji-autocomplete.ts`, bubble render in `src/frontend/alpine/chat-utils/render.ts` | `TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu` | the same registry served as JSON — no second Rust copy |
+| 4 | Command surface | toolbar `src/frontend/alpine/command-buttons.ts` (12 all-user + 6 GM), slash parsing `src/frontend/alpine/chat-slash.ts`, palette `src/frontend/alpine/chat-actions/command-palette.ts` | `TASK-egui-command-surface-parity-palette-role-gated-commands-slas` | [egui demo library](https://docs.rs/egui_demo_lib/latest/egui_demo_lib/) widget + modal patterns |
+| 5 | Gallery | `src/views/gallery.html` → `/dynamic/gallery/grid`, `/dynamic/gallery/search`, upload modal; REST `/api/assets`, `/api/assets/:id/thumb` | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | egui's image-loading seam ([`egui::load`](https://docs.rs/egui/latest/egui/load/index.html), [`TextureLoader`](https://docs.rs/egui/latest/egui/load/trait.TextureLoader.html)) |
+| 6 | htmx → egui → htmx handoff | the `/egui` host page + browser-storage context | **shipped on `egui-wasm-frontend`** | — |
+
+Deliberately *not* on the roadmap yet: i18n and theming for the Rust client, VN
+scene rendering, and any admin surface. Each is a parity conversation of its own
+and none is needed to prove the JSON integration.
+
+
+### Reference implementations (upstream)
+
+| Reference | What it is applicable to |
+| --------- | ------------------------ |
+| <https://www.egui.rs/> + [`egui_demo_lib`](https://docs.rs/egui_demo_lib/latest/egui_demo_lib/) | the canonical widget catalogue — modal/overlay patterns for the command palette, scrolling list/grid layouts for chat and gallery, text rendering with an emoji font |
+| <https://github.com/emilk/egui/tree/master/examples> | the examples index; its own README notes many examples apply to any egui integration, not just `eframe` — the closest thing to "reference web page implementations" upstream ships |
+| [`egui::load`](https://docs.rs/egui/latest/egui/load/index.html) / [`TextureLoader`](https://docs.rs/egui/latest/egui/load/trait.TextureLoader.html) / [`egui::widgets::Image`](https://docs.rs/egui/latest/egui/widgets/struct.Image.html) | the image-loading seam the gallery uses on wasm: fetch through the JS bridge, decode, hand the texture to `Image` (which defers loading by design) |
+| [seanmonstar/reqwest#2677](https://github.com/seanmonstar/reqwest/issues/2677) | grounds the SSE decision: no EventSource in reqwest, `reqwest-eventsource` unmaintained — the JS bridge owns every stream |
+| <https://github.com/emilk/egui/blob/main/crates/eframe/README.md> | the wasm/WebGL2 constraint behind keeping the canvas outside every htmx swap target |
 
 ## Files (proposed)
 
@@ -234,6 +300,18 @@ plausible later option (a). This epic does not build it; it makes it possible.
 - [ ] The egui spike has recorded measured build time and bundle bytes for
   both backends, and a written DOM-interop verdict — and has shipped **no**
   egui UI into `src/views/`, `src/frontend/`, or the Elysia app.
+- [ ] The gallery grid/search and chats list/search endpoints return
+  `application/json` view-models under `Accept` negotiation, with the
+  `text/html` + `HX-Request` paths byte-identical.
+- [ ] The egui client streams generation tokens over the bridge-owned SSE
+  channel, resumes from replay on reconnect, and leaks no `EventSource` on
+  chat switch or back-to-htmx.
+- [ ] `:shortcode:` emoji rendering, the command surface, and the gallery
+  surface reach documented htmx/Alpine parity, each pinned by a contract or
+  conformance test rather than a screenshot.
+- [ ] The `build:egui` stage stays non-blocking: `bun run build` and the
+  server start succeed with the Rust toolchain absent, and `/egui` degrades to
+  its status line.
 
 ## Linked Tasks
 
@@ -242,6 +320,25 @@ plausible later option (a). This epic does not build it; it makes it possible.
 - [ ] `TASK-frontend-client-contract-doc.md` — OpenAPI as the contract
 - [ ] `TASK-tui-api-contract-smoke-tests.md` — live drift detection
 - [ ] `TASK-egui-wasm-embed-spike.md` — the measurement
+
+
+### Parity roadmap tickets (2026-10-16)
+
+- [ ] `TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md` —
+  JSON branch on the dynamic endpoints (server-side parity base)
+- [ ] `TASK-egui-sse-response-streaming-through-the-browser-bridge.md` —
+  response streaming through the JS bridge
+- [ ] `TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md` —
+  `:shortcode:` emoji support
+- [ ] `TASK-egui-command-surface-parity-palette-role-gated-commands-slas.md` —
+  command surface parity
+- [ ] `TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md` — gallery
+  surface parity
+
+Shipped on branch `egui-wasm-frontend` (unmerged, referenced by name because the
+files are not on `dev` yet): the wasm32 crate + JSON client ticket, the
+htmx → egui → htmx transfers-with-browser-side-context ticket, and the
+`build:egui` optional-toolchain behaviour.
 
 ## Related Epics
 
