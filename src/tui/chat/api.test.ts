@@ -6,6 +6,7 @@
  * Global fetch is stubbed; no network is touched.
  */
 import { afterEach, describe, expect, it, } from "bun:test";
+import { TUI_DEFAULTS, } from "../../config/sections/tui";
 import { handleSend, loadMessages, } from "./api";
 import type { ChatHost, ChatMessage, } from "./types";
 
@@ -70,6 +71,7 @@ function makeHost(overrides: Partial<ChatHost> = {},): ChatHost & HostExtras {
     isSending: false,
     sessionToken: undefined,
     cursor: null,
+    sendTimeoutMs: TUI_DEFAULTS.sendTimeoutMs,
     addMessage(message: ChatMessage,) {
       addedMessages.push(message,);
     },
