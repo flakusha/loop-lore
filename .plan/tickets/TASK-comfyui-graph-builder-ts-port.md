@@ -21,18 +21,21 @@ representations from one pass.
 
 ## Context
 
-Source artifact: a Python ComfyUI HTTP-route extension (its `graph.py`, ~128 lines
-per a 2026-10-16 read), handed over **2026-09-30** by an external acquaintance of the
-repo owner and vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/`.
-That directory was scratch, was never committed, and **has been pruned — the source
-is not on disk and is not recoverable from git history.** Do not go looking for it.
+Source artifact: a Python ComfyUI HTTP-route extension (its `graph.py`, 56
+lines, plus `__init__.py` for the route bundle it lives in), handed over
+**2026-09-30** by an external acquaintance of the repo owner and vendored **only**
+under `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`. That directory
+is scratch, gitignored, and was **never committed**. It was pruned before
+implementation — which is why this ticket was first written as an unverified claim
+— and it **has since been re-acquired and was functionally reviewed on 2026-10-16
+by reading the on-disk source.** It is a **review-only reference artifact**: never
+committed, `.tmp/` only, never an import target, and nothing in `src/` may reference
+it.
 
-Every line number, count, and behavior below is a **prior observation from one read
-on 2026-10-16, not a re-readable source.** Treat it as an unverified claim to be
-re-derived — against a live ComfyUI, and against the upstream author if the artifact
-is ever re-acquired. Do not implement against a remembered line number; where a claim
-is load-bearing, confirm it and record where the confirmation came from (see the
-last AC).
+Every line number, count, and literal below is verified against that read. What is
+**not** verified is anything that needs a live ComfyUI: the `/object_info` schema
+shape `Graph.__init__` consumes, and whether a graph this builder emits actually
+executes. Those are collected in the last AC; nothing here was run.
 
 `class Graph` (`graph.py:5-56`):
 
@@ -44,7 +47,16 @@ last AC).
   `api[target]['inputs'][name] = [src, slot]` (`:47-49`); raises on duplicate input
   binding (`:41`)
 - `finish(self, state) -> {workflow, prompt}` — returns both representations and
-  embeds the API prompt under `extra.h3_studio.executablePrompt` (`:55`)
+  embeds the API prompt in the UI graph under **`extra.h3_studio.executablePrompt`**
+  with schema **`codex.h3.studio.v2`** (`graph.py:54-55`). The H3-specific layer
+  later *relocates* that blob: `studio_stills.build_graph` pops `extra.h3_studio`
+  and rewrites it as **`extra.h3_studio_still.executablePrompt`** / schema
+  **`codex.h3.still.v1`** (`studio_stills.py:213-215`), which is the form that
+  persists in PNGs and sibling `.workflow.json` files
+  (`studio_stills.py:294`). Both literals are real and the two are **not** the
+  same key — this port emits the builder-side `extra.h3_studio` form and must not
+  hardcode the H3 key: model-specific embedding is the template ticket's job
+  (`TASK-minimax-h3-stills-reference-template.md`).
 
 **It names no model.** No H3, no Dareties, no checkpoint. That is why it is worth
 porting and `studio_stills.py` is not.
@@ -53,7 +65,8 @@ Why port rather than call the sidecar: the sidecar registers **no node types**
 (`NODE_CLASS_MAPPINGS = {}` at `__init__.py:206`) and exposes 11 HTTP routes under
 `/h3-stills/*` (`__init__.py:21`). Calling it means loop-lore depends on a
 second, undocumented, uninstalled HTTP contract with its own loopback guard, for
-~150 lines of `add()`/`wire()`.
+the ~41 lines of `add()`/`wire()`/`finish()` that are worth porting
+(`graph.py:9-56`).
 
 ### The reusable validation policy, and the two node-id bugs it must not inherit
 
@@ -105,12 +118,26 @@ literal start index, even though the two call sites it came from are fixed.
       Dareties class type in it and it succeeds
 - [ ] Test: UI and API representations agree node-for-node; a deliberately
       mismatched PNG prompt is refused; a missing input file is a warning
-- [ ] **Provenance recorded.** The source artifact is gone, so every sidecar-derived
-      claim this ticket relied on (the `Graph` semantics, the `wire` duplicate-binding
-      behavior, the `extra_pnginfo.workflow` key, the import-validation thresholds)
-      is either re-derived from a live ComfyUI or explicitly marked unverified. The
-      ticket records, per claim, **where the evidence came from** — an executed test,
-      an `/object_info` or `/history` observation with its date, or a written answer
-      from the upstream author — and a claim with no provenance is not used as if
-      confirmed
+- [ ] **Provenance recorded.** Every sidecar-derived claim this ticket relies on is
+      now **verified by source read** (2026-10-16,
+      `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`): the `Graph`
+      class (`graph.py:5`), `add` and its dual UI/API write (`graph.py:9-36`, with
+      `self.api[str(nid)] = {'class_type':typ,'inputs':args}` at `:35`), `wire` and
+      its duplicate-binding raise `ValueError('Duplicate input binding')`
+      (`:38-41`, link array `:47-49`), `finish` and the
+      `extra.h3_studio.executablePrompt` / `codex.h3.studio.v2` embedding
+      (`:54-55`), the separate H3-layer relocation to `extra.h3_studio_still` /
+      `codex.h3.still.v1` (`studio_stills.py:213-215`), the
+      `extra_pnginfo.workflow` single key (`web/stills.mjs:175`), and the
+      import-validation thresholds — 256 nodes (`studio_stills.py:233`), the sink
+      trio `FizgigH3StillLatent`/`FizgigH3StillDecode`/`SaveImage` (`:236`),
+      PNG-`prompt`-vs-`executablePrompt` disagreement (`:246-247`),
+      missing-input warnings (`:268-272`), downgrade-not-fail (`:277-283`).
+      Still **not** verified, and to be recorded as such rather than as confirmed:
+      (a) the live `/object_info` schema shape the builder consumes, (b) an
+      executed graph from the ported builder, (c) the six external node types
+      resolving on a real install. For each, the ticket records the evidence — an
+      executed test, an `/object_info` or `/history` observation **with its date**,
+      or a written answer from the upstream author — and a claim with no provenance
+      is not used as if confirmed
 - [ ] `bun run check` green
