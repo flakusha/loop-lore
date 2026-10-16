@@ -109,6 +109,31 @@ src/security/
 - [ ] Add anomaly detection
 - [ ] Build security monitoring dashboard
 
+## Current state: no sandbox exists
+
+Plugin tools run in-process — `src/plugins/loader.ts` `await import()`s plugin
+code straight into the server, and there is no worker, subprocess, VM or WASM
+boundary. The only control shipped so far is a **process requirement**, not
+isolation: `ToolDefinition.policy: "requires-strict-codegen"`
+(`src/plugins/tool-policy.ts`) refuses to run unless the process was started
+with Bun's `--disallow-code-generation-from-strings=strict`, which closes the
+string-to-code escape (`eval`, `new Function`, `node:vm`, run-time `data:`
+imports) for the whole process.
+
+It is deliberately **not** named or documented as a sandbox. `=strict` says
+nothing about filesystem or network access, both of which a plugin tool still
+has in full.
+
+## Future isolation primitive (not built)
+
+`Bun.ModuleGraph` is the candidate for real isolation: it gives memory
+isolation, and it is **explicitly experimental** — its own documentation states
+plainly that *it is not a security sandbox*. It offers memory isolation without
+request routing, so on its own it would not be sufficient either.
+
+Adopting it is gated on leaving `experimental`. Until then, the honest position
+is the one above: a flag requirement, labelled as such.
+
 ## LLM Sandboxing
 
 ### Sandbox Manager
