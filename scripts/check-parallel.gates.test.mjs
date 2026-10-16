@@ -223,7 +223,9 @@ describe("selective gate filter — --gates (whitelist)", () => {
 });
 
 describe("selective gate filter — --skip-gates (inverse)", () => {
-  test("inverse filter runs every other gate", { timeout: 120_000, }, () => {
+  // 120_000 was shorter than the run it drives: measured 130s on the dev host
+  // for the 39-gate set at CHECK_JOBS=1, so every case was killed mid-run.
+  test("inverse filter runs every other gate", { timeout: 300_000, }, () => {
     const r = runRunner(["--skip-gates", "coverage - per-module line %,e2e - browser (baseline)",], {
       defaultSkip: [],
     },);
@@ -233,7 +235,7 @@ describe("selective gate filter — --skip-gates (inverse)", () => {
     );
   },);
 
-  test("multiple comma-separated skips accepted", { timeout: 120_000, }, () => {
+  test("multiple comma-separated skips accepted", { timeout: 300_000, }, () => {
     const r = runRunner(
       ["--skip-gates", "coverage - per-module line %,no - shell - refs,context - weight,e2e - browser (baseline)",],
       { defaultSkip: [], },
@@ -332,7 +334,7 @@ describe("selective gate filter — mutual exclusion", () => {
     expect(r.stderr,).toMatch(/mutually exclusive/,);
   },);
 
-  test("whitespace-only --gates value is treated as no filter", { timeout: 120_000, }, () => {
+  test("whitespace-only --gates value is treated as no filter", { timeout: 300_000, }, () => {
     // Defensive: user passes --gates "   " or "" — both should disable the
     // filter rather than fail with "left no checks to run" or silently
     // activate an empty whitelist.

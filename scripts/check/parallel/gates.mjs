@@ -68,22 +68,32 @@ function coverageCommand() {
     // so the skip patterns actually filter — bun recurses into `src/`
     // and would discover the heavy tests otherwise. `tests/e2e/` and
     // `src/**/*.test.ts` are both flattened here.
-    const srcTests = walkTestFiles(PROJECT_ROOT, "src",);
+    const srcTests = filterPaths(walkTestFiles(PROJECT_ROOT, "src",),);
     // scripts/** carries colocated *.test.ts (coverage.mjs, the parallel
     // runner's config/context, src-refs, migration-parser, among others).
     // They previously ran only under bare `bun test`, never under any gate —
     // a change to scripts/check/parallel/ could land untested.
-    // Including them here also puts a `scripts` module into lcov, so
-    // coverage.mjs floors it like every other module.
-    // The scoped branch below keeps excluding non-src trees on purpose: a
-    // scoped lcov holds only what the scoped tests loaded, so it can never
-    // floor a whole `scripts` module and would be a structural false red.
-    const scriptTests = walkTestFiles(PROJECT_ROOT, "scripts",);
-    const allPaths = ["tests/e2e/", ...filterPaths([...srcTests, ...scriptTests,],),];
-    if (allPaths.length === 1) { return NOOP_OK; } // only `tests/e2e/` left
+    //
+    // They run OUTSIDE the --coverage invocation on purpose. These are CLI
+    // smoke tests that drive their subject in a SUBPROCESS (spawnSync /
+    // Bun.spawn), so the parent run's lcov only ever records module-load
+    // side effects: generate-schema-fuzz.ts measured 18% with a full
+    // colocated test suite. Flooring that partial number is a false red, and
+    // coverage.mjs's own header names `scripts/` as the never-loaded-
+    // in-process case that is meant to be reported unmeasured, not floored.
+    // A failing scripts test still fails this gate — it is a second
+    // `bun test` in the same && chain, not a demotion to advisory.
+    //
+    // The scoped branch below keeps excluding non-src trees for the same
+    // reason: a scoped lcov holds only what the scoped tests loaded.
+    const scriptTests = filterPaths(walkTestFiles(PROJECT_ROOT, "scripts",),);
+    if (srcTests.length === 0 && scriptTests.length === 0) { return NOOP_OK; }
+    const scriptsRun = scriptTests.length > 0
+      ? `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${scriptTests.join(" ",)} --isolate && `
+      : "";
     return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${
-      allPaths.join(" ",)
-    } --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
+      ["tests/e2e/", ...srcTests,].join(" ",)
+    } --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && ${scriptsRun}bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
   if (SCOPED_DIFF_SRC_FILES.length === 0) { return NOOP_OK; }
