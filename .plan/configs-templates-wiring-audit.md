@@ -42,7 +42,7 @@ no runtime consumer exists.
 | `expansion.actions` | `template-expansion/types.ts:17` | `run.ts:67-68` (same) | **Inert.** |
 | `expansion.generateMissingAvatars` | `types.ts:20` | `run.ts:80-87` | Log-only; `avatarsGenerated` hardcoded `0`; `// TODO` on `run.ts:84`. **No-op even when true.** |
 | `EmotionEntry.asset` | `sections/templates.ts` | `run.ts:19` (non-empty check only) | Only used as a "is this emotion missing" probe. Never resolved to a path or served. |
-| `configs/assets/**` | README claim: terminal step of the fallback chain | **no `src/` reference** (`grep configs/assets src/` → 0 hits) | The 33 PNGs are unreferenced bytes; the wardrobe ladder reads DB avatar rows (`characters/services/wardrobe/resolve.ts`). |
+| `configs/assets/**` (39 PNGs) | README claim: terminal step of the fallback chain | **no `src/` reference** (grep `configs/assets` / `avatar-emotion` / any `join(…,"assets")` in `src/` → 0 path hits) | Unreferenced bytes. The wardrobe ladder (`characters/services/wardrobe/resolve.ts:125-164`) reads only DB rows — `chat_wardrobe_overrides`, `world_avatar_config`, `actor_wardrobe`, then `actors.outfits`/`default_outfit`; no filesystem rung. Character templates use `avatar: { type: "default" }` (SVG placeholder, `sections/characters/defaults.ts:26,125`), never a `configs/assets/` path. |
 | `expansion.intentPatterns` | `template-expansion/types.ts:18` | `expand.ts:48-60` (merge) → **no consumer** | `detectAvatarChangeIntent` (`src/assistant/intent.ts:21`) is its only reader and has zero production callers — the user-message scan was removed from generation (`src/generation/auto-gen/prepare-generation.ts:13-17`; mood now comes from `character_mood.current_mood` via the PromptAssembler). The block is inert. |
 | `validateExpansionConfig` | `run.ts:111` | tests only (`template-expansion.test.ts:524`) | Never invoked at load, so a typo'd `emotion:` in `expansion.yaml` merges silently. |
 | `merge` in `character.yaml` | `sections/templates.ts:190` | merged against `TEMPLATES_DEFAULTS.character.templates = []` (`sections/templates.ts:259-262`) | Strategy is a **no-op** for the character domain; the effective merge is `characters/seed/merge.ts:27-29`, which is unconditionally user-wins-by-name. |
@@ -64,9 +64,11 @@ no runtime consumer exists.
    (`src/chat/service/templates.ts:104-122`) reads neither — `worldId` is dropped
    and `gmConfig` is hardcoded from `visualNovel` alone (`:117`).
 4. **`configs/assets/README.md:93`** points at `bun run scripts/gen-wardrobe-samples.ts`
-   — the script does not exist (`ls scripts/ | grep wardrobe` → empty). The
-   fallback chain drawn at `:78` (`configs/assets/characters/<char>/default/happy.png`)
-   has no code behind it.
+   — the script does not exist (`ls scripts/ | grep wardrobe` → empty). The fallback
+   chain drawn at `:78` (`configs/assets/characters/<char>/default/happy.png`) has no
+   code behind it (verify: `wardrobe/resolve.ts:125-164` is entirely DB reads). The
+   same README also claims "33 PNGs" (`:84`) when the tree holds **39** (verified by
+   glob of `configs/assets/**/*.png`) — the count itself has drifted.
 5. **`expansion.example.yaml`** documents `keywords` + `actions` as expanding the
    base config; they are discarded (§2). Its 10 new emotions
    (`determined`, `playful`, `tired`, …) are outside `EmotionType`
