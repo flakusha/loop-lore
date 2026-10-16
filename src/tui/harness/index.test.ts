@@ -21,7 +21,7 @@ import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { safeFetch, } from "../../utils";
 import type { FetchResult, SafeFetchOptions, } from "../../utils/safe-fetch/types";
 import type { HarnessView, } from "./index";
-import type { HarnessRunDetail, HarnessRunSummary, } from "./types";
+import type { HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types";
 
 /** `setFetch` takes the real fetcher's signature; see api.ts. */
 type SetFetchFn = (fn: typeof safeFetch,) => void;
@@ -138,8 +138,16 @@ afterEach(async () => {
 interface RunsResponse {
   items: HarnessRunSummary[];
 }
+interface StatsResponse {
+  totals: { runs: number; failures: number; costUsd: number };
+  byModel: never[];
+  byTaskType: never[];
+  byPattern: never[];
+  toolingGaps: never[];
+}
 let runsResponse: FetchResult<RunsResponse>;
 let detailResponse: FetchResult<HarnessRunDetail>;
+let statsResponse: FetchResult<StatsResponse>;
 let requestedPaths: string[];
 let requestedTokens: Array<string | undefined>;
 
@@ -148,8 +156,9 @@ function installFetchStub(): void {
     const u = new URL(url,);
     requestedPaths.push(u.pathname,);
     requestedTokens.push((opts?.auth as { sessionToken?: string } | undefined)?.sessionToken,);
-    const body = u.pathname === "/api/v1/harness/runs" ? runsResponse : detailResponse;
-    return body as FetchResult<T>;
+    if (u.pathname === "/api/v1/harness/runs") { return runsResponse as FetchResult<T>; }
+    if (u.pathname === "/api/v1/harness/stats") { return statsResponse as FetchResult<T>; }
+    return detailResponse as FetchResult<T>;
   };
 
   setFetchFn(stub as unknown as typeof safeFetch,);
@@ -243,6 +252,19 @@ beforeEach(() => {
   requestedTokens = [];
   runsResponse = okRuns();
   detailResponse = okDetail(makeDetail("run-1",),);
+  statsResponse = {
+    ok: true,
+    data: {
+      totals: { runs: 0, failures: 0, costUsd: 0, },
+      byModel: [],
+      byTaskType: [],
+      byPattern: [],
+      toolingGaps: [],
+    },
+    status: 200,
+    headers: new Headers(),
+  };
+
   installFetchStub();
 },);
 
@@ -324,14 +346,38 @@ describeOrSkip("HarnessView", () => {
     expect(fixture.detailLabel.content,).toBe("",);
   });
 
-  it("refresh() with no runs shows the empty state and clears detail", async () => {
+  it("refresh() with no runs calls stats and shows it in the detail panel", async () => {
     runsResponse = okRuns();
+    statsResponse = {
+      ok: true,
+      data: {
+        totals: { runs: 3, failures: 1, costUsd: 0.25, },
+        byModel: [],
+        byTaskType: [],
+        byPattern: [],
+        toolingGaps: [],
+      },
+      status: 200,
+      headers: new Headers(),
+    };
+
     const fixture = buildView();
     await fixture.view.refresh();
     expect(fixture.view.getRuns(),).toEqual([],);
     expect(fixture.list.items,).toEqual([],);
-    expect(fixture.list.content,).toContain("No harness runs",);
+    expect(fixture.detailLabel.content,).toContain("$0.2500",);
+    expect(fixture.detailLabel.content,).toContain("{bold}Cost:{/bold} $0.2500",);
+    expect(requestedPaths,).toContain("/api/v1/harness/stats",);
+  });
+
+  it("refresh() with no runs and stats 403 degrades quietly (admin only)", async () => {
+    runsResponse = okRuns();
+    statsResponse = { ok: false, error: new Error("Forbidden",), status: 403, headers: new Headers(), };
+    const fixture = buildView();
+    await fixture.view.refresh();
+    expect(fixture.view.getRuns(),).toEqual([],);
     expect(fixture.detailLabel.content,).toBe("",);
+    expect(requestedPaths,).toContain("/api/v1/harness/stats",);
   });
 
   it("select() uses the index blessed emits, not the formatted row text", async () => {
@@ -463,15 +509,15 @@ describeOrSkip("HarnessView", () => {
     expect(fixture.detailLabel.content,).toContain("Failed to load detail: boom",);
   });
 
-  it("requests at most the runs list, leaving detail untouched when empty", async () => {
+  it("refresh() calls stats endpoint when runs list is empty", async () => {
     runsResponse = okRuns();
     const fixture = buildView();
     fixture.view.show();
     await fixture.view.refresh();
     await flushUntil(() => requestedPaths.length > 1);
 
-    expect(requestedPaths,).toEqual(["/api/v1/harness/runs",],);
-    expect(fixture.detailLabel.content,).toBe("",);
+    expect(requestedPaths,).toContain("/api/v1/harness/runs",);
+    expect(requestedPaths,).toContain("/api/v1/harness/stats",);
   });
 
   it("forwards the session token to the api layer", async () => {
