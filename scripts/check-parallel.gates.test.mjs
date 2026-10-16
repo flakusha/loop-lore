@@ -47,6 +47,17 @@ import { resolve, } from "node:path";
 const PROJECT_ROOT = import.meta.dir + "/..";
 const RUNNER = resolve(PROJECT_ROOT, "scripts/check-parallel.mjs",);
 
+/**
+ * Wall budget for the runs that drive (nearly) the whole gate set at
+ * CHECK_JOBS=1. One value, two uses: the outer bun-test timeout of every test
+ * that drives such a run AND the inner spawnSync deadline runRunner passes
+ * down. They MUST be one invariant — an inner ceiling below the outer one
+ * kills the runner mid-run, and the test then grades a
+ * `(timed out, killed)` verdict as a plain failure: that is exactly how the
+ * skip-filter cases failed while their outer budget already read 300_000.
+ */
+const LONG_RUN_MS = 300_000;
+
 // Per-run artifacts created by runners spawned in THIS test process. The
 // runner's own retention keeps 20 per-run reports / scratch dirs, so a test
 // suite that leaves its 8 behind silently evicts the operator's real check
@@ -153,6 +164,12 @@ function assertSkipFilter(run, skipNames,) {
  * a fallback `--skip-gates` for slow gates (coverage) when no
  * filter-skip is needed; pass `defaultSkip: []` to exercise the
  * filter in isolation.
+ *
+ * `timeout` is the inner spawnSync kill deadline and MUST NOT be lower than
+ * the driving test's outer bun-test timeout: a shorter inner ceiling kills the
+ * runner before it prints a verdict, so the test fails on a run that was still
+ * working. CLI-error cases exit in ~100ms and keep the default; long runs
+ * pass LONG_RUN_MS next to the matching outer timeout.
  */
 function runRunner(extraArgs, options = {},) {
   const {
@@ -223,11 +240,12 @@ describe("selective gate filter — --gates (whitelist)", () => {
 });
 
 describe("selective gate filter — --skip-gates (inverse)", () => {
-  // 120_000 was shorter than the run it drives: measured 130s on the dev host
-  // for the 39-gate set at CHECK_JOBS=1, so every case was killed mid-run.
-  test("inverse filter runs every other gate", { timeout: 300_000, }, () => {
+  // These drive ~37 of the 39 gates at CHECK_JOBS=1 — measured 130s on the dev
+  // host — so outer and inner ceilings both come from LONG_RUN_MS.
+  test("inverse filter runs every other gate", { timeout: LONG_RUN_MS, }, () => {
     const r = runRunner(["--skip-gates", "coverage - per-module line %,e2e - browser (baseline)",], {
       defaultSkip: [],
+      timeout: LONG_RUN_MS,
     },);
     assertSkipFilter(
       { stderr: r.stderr, stdout: r.stdout, },
@@ -235,10 +253,10 @@ describe("selective gate filter — --skip-gates (inverse)", () => {
     );
   },);
 
-  test("multiple comma-separated skips accepted", { timeout: 300_000, }, () => {
+  test("multiple comma-separated skips accepted", { timeout: LONG_RUN_MS, }, () => {
     const r = runRunner(
       ["--skip-gates", "coverage - per-module line %,no - shell - refs,context - weight,e2e - browser (baseline)",],
-      { defaultSkip: [], },
+      { defaultSkip: [], timeout: LONG_RUN_MS, },
     );
     assertSkipFilter(
       { stderr: r.stderr, stdout: r.stdout, },
@@ -334,13 +352,20 @@ describe("selective gate filter — mutual exclusion", () => {
     expect(r.stderr,).toMatch(/mutually exclusive/,);
   },);
 
-  test("whitespace-only --gates value is treated as no filter", { timeout: 300_000, }, () => {
+  test("whitespace-only --gates value is treated as no filter", { timeout: LONG_RUN_MS, }, () => {
     // Defensive: user passes --gates "   " or "" — both should disable the
     // filter rather than fail with "left no checks to run" or silently
     // activate an empty whitelist.
+    //
+    // A no-filter run is nearly the whole gate set again (only coverage and
+    // e2e stay skipped), so it carries the same ceiling as the skip-filter
+    // cases — otherwise the child is killed before the verdict exists.
     const r = runRunner(
       ["--gates", "   ",],
-      { defaultSkip: ["coverage - per-module line %", "e2e - browser (baseline)",], },
+      {
+        defaultSkip: ["coverage - per-module line %", "e2e - browser (baseline)",],
+        timeout: LONG_RUN_MS,
+      },
     );
     expect(r.stderr,).not.toMatch(/gates filter: whitelisted 0/,);
     // A no-filter run must also come back green: gates that could not be
