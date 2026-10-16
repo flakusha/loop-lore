@@ -4,7 +4,7 @@
 # TASK: Delete or wire dead modules flagged in the GLM review sweep
 
 **Summary:** None
-**Context:** `bun run dead:code:src` (knip `--no-gitignore --include files`) reported 66 unreferenced `src/` modules. 57 modules deleted (plus one dead export removed from a live file) and are deleted; 2 were real wiring bugs and are wired; 2 are genuine knip false positives and are gaged; 8 are unwired-but-owned by another workstream/epic and are recorded in `knip.json` with the owning ticket named. The gate now exits 0 and has been flipped from advisory to blocking.
+**Context:** `bun run dead:code:src` (knip `--no-gitignore --include files`) reported 66 unreferenced `src/` modules. 57 `src/` modules deleted across the branch (54 in `9f695c00b` plus 3 in the earlier sweep commits `71dd11b74` / `71e9782c8` / `a96cc0e17` — matches `git diff --name-status dev...HEAD -- src | grep -c '^D'` = 57), plus one dead export removed from a live file; 2 were real wiring bugs and are wired; 2 are genuine knip false positives and are gaged; 8 are unwired-but-owned by another workstream/epic and are recorded in `knip.json` with the owning ticket named. The gate now exits 0 and has been flipped from advisory to blocking.
 **Acceptance Criteria:** None
 **Status:** Done
 **Priority:** Medium
@@ -80,6 +80,13 @@ The dead `writeFolderSource` export had no test to remove. `src/characters/servi
 - [x] No test coverage left pointing at deleted code
 - [x] Sibling branches (`wire-deadcode`, `options-object-params-return-type-exemption`) not collided with
 - [x] Documentation updated
+
+### Stale references closed after deletion
+
+A post-sweep audit found documentation still pointing at deleted modules. None were runtime imports, so nothing was broken — the comments and examples just named dead paths:
+
+- `src/autonomy/governor/README.md` and `src/autonomy/scheduler/README.md` imported from `"../autonomy"`, the deleted `src/autonomy/index.ts` barrel. Both classes are still live (`AutonomyGovernor` from `governor/index.ts:55`, `AutonomyScheduler` from `scheduler/index.ts:47`), so the examples were repointed at `"./index"` rather than deleted. That matches how live code already imports them (`src/autonomy/dispatch/bdi-dispatch.ts:32`, `src/cron/jobs.ts:183`).
+- `src/regex/image-edit.ts` carried a comment crediting extraction from `image-edit-commands.ts`. The whole `src/generation/image-edit-commands/` tree is gone, so naming it kept a dead path alive; the comment now states what the module is instead of where it came from.
 
 ## Follow-ups found while verifying the wirings
 

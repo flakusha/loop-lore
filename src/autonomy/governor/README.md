@@ -9,7 +9,7 @@ against configured per-actor / per-user caps.
 ## Use
 
 ```ts
-import { AutonomyGovernor, } from "../autonomy";
+import { AutonomyGovernor, } from "./index";
 
 const governor = new AutonomyGovernor();
 const r = await governor.tryConsume(db, { kind: "actor", id: actorId, }, "per_minute_generation", {
