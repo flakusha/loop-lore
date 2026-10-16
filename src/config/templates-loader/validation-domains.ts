@@ -5,9 +5,17 @@
 // exported validators are re-exported there so existing import paths keep
 // working).
 
+import { VALID_CONTENT_RATINGS, } from "../../characters/validator/constants";
 import { jsonStringifyOr, } from "../../utils";
 
-const LEGAL_CONTENT_RATINGS = ["sfw", "questionable", "explicit",] as const;
+// Single source of truth: src/characters/validator/constants.ts builds this
+// from the ContentRating enum, which is also what
+// src/config/sections/templates.ts (CharacterTemplateConfig.content_rating)
+// and src/config/sections/characters/section.ts declare. This validator used
+// to hardcode a legacy sfw|questionable|explicit set that disagreed with all
+// three, so every legal non-sfw rating threw at load time while the two
+// removed values passed.
+const LEGAL_CONTENT_RATINGS = VALID_CONTENT_RATINGS;
 
 /**
  * Validate one character template entry.
