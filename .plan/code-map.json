@@ -15426,6 +15426,10 @@
   "src/db/enums-gm.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-gm-shadow-notes.md"
     },
     {
@@ -15439,6 +15443,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     }
   ],
   "src/db/enums-story.ts": [
@@ -15604,10 +15612,6 @@
   "src/db/enums.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-editorial-workflow.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
     },
     {
@@ -15633,10 +15637,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-editor-structured-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     },
     {
       "kind": "frontend",
@@ -21317,6 +21317,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
     }
   ],
   "src/frontend/alpine/chat-utils/sanitize.ts": [
@@ -21331,6 +21335,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
     },
     {
       "kind": "ticket",
@@ -23465,10 +23473,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-narrative-publishing-workflows.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
     },
     {
       "kind": "ticket",
@@ -38377,6 +38381,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-whitenotes.md"
+    }
+  ],
+  "src/routes/gm-notes/narration.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-editorial-workflow.md"
     }
   ],
   "src/routes/gm-notes/schemas.ts": [
