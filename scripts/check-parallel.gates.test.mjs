@@ -80,12 +80,13 @@ function readOwnReport(stdout,) {
 
 /**
  * Gate names the runner reported executing, in the order it printed them
- * (`PASS:` / `FAIL:` / `SKIP:` verdict lines). Used to check that --skip-gates
- * removed exactly the requested gates and nothing else, instead of pinning a
- * hardcoded registry size that rots on the next gate addition.
+ * (`PASS:` / `FAIL:` / `SKIP:` / `ADVISORY:` verdict lines). Used to check
+ * that --skip-gates removed exactly the requested gates and nothing else,
+ * instead of pinning a hardcoded registry size that rots on the next gate
+ * addition.
  */
 function executedGateNames(stdout,) {
-  return [...stdout.matchAll(/^(?:PASS|FAIL|SKIP): (.+?)(?: \(timed out, killed\))?$/gm,),]
+  return [...stdout.matchAll(/^(?:PASS|FAIL|SKIP|ADVISORY): (.+?)(?: \(timed out, killed\))?$/gm,),]
     .map((m,) => m[1]);
 }
 
