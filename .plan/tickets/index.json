@@ -31756,6 +31756,18 @@
     "status": "Not Started",
     "git_issue": "2301e67"
   },
+  "TASK-COMIC-PAGE-COMPOSITION-STRATEGY": {
+    "hash": "pending",
+    "extid": "TASK-COMIC-PAGE-COMPOSITION-STRATEGY",
+    "type": "TASK",
+    "title": "Comic Page Composition Strategy — per-panel compose, sequence, or one-shot",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-narrative-publishing-workflows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-comic-page-composition-strategy.md",
+    "status": "Not Started"
+  },
   "TASK-COMIC-PAGE-PANEL-LAYOUT-MODEL": {
     "hash": "30b6225",
     "extid": "TASK-COMIC-PAGE-PANEL-LAYOUT-MODEL",
@@ -40997,7 +41009,7 @@
     "epic": "epic-experimental-egui-frontend",
     "tags": [],
     "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT": {
     "epic": "",
