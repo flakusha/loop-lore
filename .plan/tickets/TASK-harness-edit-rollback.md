@@ -34,3 +34,6 @@ Today a bad edit (wrong file, failed tooling call mid-sequence, clobbered file) 
 - Chain semantics stay flat: one record per artifact, inverse applies to the single recorded op — no multi-op transaction rollback (git remains the answer for cross-file atomicity).
 - Depends on the seam from `TASK-harness-lean-ctx-tools`; sandbox hardening (vm/worker isolation) is `TASK-harness-tool-sandbox` and out of scope here.
 - Resource contract (parallel-safe tests, per project rule): each test owns one unique tmp dir holding its journal + fixture files, released in `afterEach`/`finally`; no ordering assumption between cases — each builds its own journal.
+
+
+git issue: 6f09e86
