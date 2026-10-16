@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 265
+// size-allow: 300
 
 /**
  * TUI Models Overlay
@@ -34,9 +34,10 @@ import {
   loadProviders,
   loadRoles,
   rescanProviders,
+  testProviderConnection,
 } from "./models-api";
 import type { ProviderSummary, ResolvedRole, } from "./models-api";
-import { providerLine, roleLine, } from "./models-display";
+import { formatConnectionTest, providerLine, roleLine, } from "./models-display";
 
 /** Which of the three drill-down levels the list is showing. */
 type OverlayLevel = "roles" | "providers" | "models";
@@ -50,7 +51,7 @@ export interface ModelsOverlayOptions {
 /** Footer hint per level, so the keys on offer are never a guess. */
 const HINTS: Record<OverlayLevel, string> = {
   roles: "Enter: pick provider | c: clear override | Esc: close",
-  providers: "Enter: pick model | r: rescan | Esc: back",
+  providers: "Enter: pick model | p: ping | r: rescan | Esc: back",
   models: "Enter: assign | Esc: back",
 };
 
@@ -164,6 +165,13 @@ export class ModelsOverlay {
     // screen is always the row the keystroke applies to.
     this.box.key(["enter",], () => {
       void this.onSelect(this.cursor,);
+    },);
+
+    // `p` pings the focused provider. Only meaningful on the providers level,
+    // where a row names a provider; on any other level the handler says so
+    // rather than silently doing nothing.
+    this.box.key(["p",], () => {
+      void this.onPing();
     },);
   }
 
@@ -383,6 +391,38 @@ export class ModelsOverlay {
     else { await this.refreshRoles(); }
 
     this.showStatus("providers rescanned",);
+  }
+
+  /**
+   * Ping the focused provider and show the verdict.
+   *
+   * The ping route needs only a user id, not `admin.system` — but reaching a
+   * provider row at all means the admin-gated list already rendered, so in
+   * practice a non-admin sees the "admin only" line and never gets here. The
+   * guard below is the belt to that braces: an explicit message rather than a
+   * silent no-op if the list is ever shown from an ungated source.
+   */
+  private async onPing(): Promise<void> {
+    if (this.level !== "providers") {
+      this.showStatus("press p on a provider row",);
+      return;
+    }
+
+    const provider = this.providers[this.cursor];
+    if (!provider) {
+      this.showStatus("no provider selected",);
+      return;
+    }
+
+    this.showStatus(`pinging ${provider.name}...`,);
+    const result = await testProviderConnection({
+      provider: provider.name,
+      sessionToken: this.sessionToken,
+    },);
+
+    // A failed health check still answers HTTP 200 with ok:false, so reaching
+    // this branch means the request completed — read the verdict, not `ok`.
+    this.showStatus(result.ok ? formatConnectionTest(result.data,) : result.error,);
   }
 
   /**
