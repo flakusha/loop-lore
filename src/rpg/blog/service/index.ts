@@ -53,13 +53,6 @@ export type {
 // ── Service ──────────────────────────────────────
 /** */
 export class BlogService extends BlogFollowsService {
-  /**
-   * @param db
-   */
-  constructor(db: Kysely<any>,) {
-    super(db,);
-  }
-
   // ── Posts ────────────────────────────────────
   /**
    * Create a post.
