@@ -17,7 +17,7 @@ cursor has not arrived is skipped without being rescheduled.
 ## Use
 
 ```ts
-import { AutonomyScheduler, } from "../autonomy";
+import { AutonomyScheduler, } from "./index";
 
 const scheduler = new AutonomyScheduler(db,);
 
