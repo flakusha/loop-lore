@@ -89,7 +89,9 @@ describe("options-object-params rule", () => {
     const code =
       "function f(a: number, b: number, c: number): void;\nfunction f(a: number, b: number, c: number): void {}";
 
-    expect(violations(code,),).toBe(1,);
+    // Both the overload signature and the implementation carry a return-type
+    // annotation and are therefore exempt under the typed-function exemption.
+    expect(violations(code,),).toBe(0,);
   });
 
   test("ignores abstract method signatures", () => {
@@ -384,5 +386,19 @@ describe("options-object-params rule", () => {
     ].join("\n",);
 
     expect(violations(code,),).toBe(1,);
+  });
+
+  // --- FunctionDeclaration with returnType: exempt; without: still fires ---
+
+  // Exempt shape C: a FunctionDeclaration that carries a return-type annotation.
+  // The return type pins the arity just as the arrow-to-typed-const shape does.
+  test("allows a function declaration with a return-type annotation", () => {
+    expect(violations("async function f(a, b, c): Promise<number> { return a + b + c; }",),).toBe(0,);
+  });
+
+  // The return type is the distinguishing factor -- a bare declaration with
+  // 3 params is still refactorable.
+  test("flags a function declaration without a return-type annotation", () => {
+    expect(violations("function f(a, b, c) { return a + b + c; }",),).toBe(1,);
   });
 });

@@ -95,10 +95,34 @@ export const optionsObjectParamsRule = {
       return block?.type === "BlockStatement" && "returnType" in (fn ?? {}) && fn.returnType != null;
     }
     /**
+     * True when a `FunctionDeclaration` or a method (`MethodDefinition`) carries
+     * a return-type annotation. These functions are intentionally typed; rewriting
+     * them to an options object would require updating the type signature too, so
+     * the rule does not fire. This mirrors the `isTypedConstSlot` logic for arrow
+     * functions but covers the declaration form instead of the assignment form.
+     *
+     * `FunctionExpression` is intentionally omitted: it is always a callback
+     * without its own return-type annotation -- any annotation present belongs to
+     * the outer function that receives the callback.
+     *
+     * @param {import("eslint").Rule.Node} node
+     * @returns {boolean}
+     */
+    function isTypedFunctionSlot(node,) {
+      if (node.type === "FunctionDeclaration" && node.returnType != null && node.body != null) { return true; }
+      if (
+        (node.type === "FunctionExpression" || node.type === "ArrowFunctionExpression") &&
+        node.parent?.type === "MethodDefinition" && node.parent.returnType != null
+      ) {
+        return true;
+      }
+      return false;
+    }
+    /**
      * @param {import("eslint").Rule.Node} node
      */
     function checkFunction(node,) {
-      if (isTypedConstSlot(node,) || isTypedObjectLiteralSlot(node,)) { return; }
+      if (isTypedConstSlot(node,) || isTypedObjectLiteralSlot(node,) || isTypedFunctionSlot(node,)) { return; }
       const fn =
         /** @type {{ body: unknown; params: { type: string; name?: string; left?: { type: string } }[] }} */ (node);
       // Skip signatures without a body (overloads, `declare`, abstract
