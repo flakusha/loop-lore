@@ -74,6 +74,34 @@ pub fn send_message_url(chat_id: &str) -> String {
   format!("/api/v1/chats/{chat_id}/messages")
 }
 
+/// URL for the emoji shortcode registry.
+pub fn emoji_registry_url() -> &'static str {
+  "/api/v1/emoji"
+}
+
+/// Parse `GET /api/v1/emoji` into `(name, emoji)` pairs, preserving order.
+///
+/// This is the server-owned allowlist the htmx client renders against; the
+/// egui client consumes it instead of carrying a second Rust copy.
+pub fn parse_emoji_registry(raw: &str) -> Result<Vec<(String, String)>, String> {
+  let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
+  let data = value
+    .get("data")
+    .and_then(serde_json::Value::as_array)
+    .ok_or("missing data array")?;
+  let mut registry = Vec::with_capacity(data.len());
+  for row in data {
+    let (Some(name), Some(emoji)) = (
+      row.get("name").and_then(serde_json::Value::as_str),
+      row.get("emoji").and_then(serde_json::Value::as_str),
+    ) else {
+      continue;
+    };
+    registry.push((name.to_string(), emoji.to_string()));
+  }
+  Ok(registry)
+}
+
 /// Body for a user message; `serde_json` performs the escaping.
 ///
 /// # Panics
@@ -286,5 +314,20 @@ mod tests {
   fn sent_message_rejects_garbage() {
     assert!(parse_sent_message("nope").is_err());
     assert!(parse_sent_message("{\"role\":\"user\"}").is_err());
+  }
+
+  #[test]
+  fn emoji_registry_parses_pairs_in_order() {
+    let raw = r#"{"data":[{"name":"fire","emoji":"F"},{"name":"heart","emoji":"H"},{"emoji":"y"}]}"#;
+    let registry = parse_emoji_registry(raw).unwrap();
+    assert_eq!(registry.len(), 2);
+    assert_eq!(registry[0].0, "fire");
+    assert_eq!(registry[1].0, "heart");
+  }
+
+  #[test]
+  fn emoji_registry_rejects_garbage() {
+    assert!(parse_emoji_registry("nope").is_err());
+    assert!(parse_emoji_registry("{\"data\":\"x\"}").is_err());
   }
 }

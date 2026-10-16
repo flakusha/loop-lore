@@ -22,6 +22,7 @@
 mod api;
 mod client;
 mod context;
+mod emoji;
 mod storage;
 mod stream;
 
