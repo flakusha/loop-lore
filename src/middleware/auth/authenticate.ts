@@ -17,7 +17,7 @@ import type { Kysely, } from "kysely";
 import { verifyJwt, } from "../../auth/jwt";
 import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { getLogger, } from "../../logger/index";
+import { getChildLogger, } from "../../logger/index";
 import { LL_TOKEN, } from "../../regex/cookies";
 import { ErrorCode, HttpStatus, jsonError, } from "../../routes/http-utils";
 import { parseExpiryMs, } from "../../utils/date";
@@ -26,15 +26,9 @@ import { createRequestContext, } from "../types";
 import { getOrCreateSoloUserForAuth, } from "./solo-user";
 import type { AuthenticateOpts, } from "./types";
 
-let _log: ReturnType<typeof getLogger> | null = null;
 /** */
 function getLog() {
-  try {
-    _log ??= getLogger().child({ module: "auth", },);
-    return _log;
-  } catch {
-    return null;
-  }
+  return getChildLogger("auth",);
 }
 
 /**

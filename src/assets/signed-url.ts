@@ -20,7 +20,7 @@
  * Uses the Web Crypto API (same as src/auth/jwt.ts). No external deps.
  */
 
-import { getLogger, } from "../logger/index";
+import { getChildLogger, } from "../logger/index";
 import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 import { base64urlDecode, base64urlEncode, } from "./base64url";
 
@@ -37,18 +37,12 @@ export function isSignedUrlAction(value: string,): value is SignedUrlAction {
   return (SIGNED_URL_ACTIONS as readonly string[]).includes(value,);
 }
 
-let _log: ReturnType<typeof getLogger> | null = null;
 /**
  * Lazily resolve the module logger (null before logger init).
  * @returns the cached child logger, or null outside test/logger contexts
  */
 function getLog() {
-  try {
-    _log ??= getLogger().child({ module: "assets/signed-url", },);
-    return _log;
-  } catch {
-    return null;
-  }
+  return getChildLogger("assets/signed-url",);
 }
 
 /**

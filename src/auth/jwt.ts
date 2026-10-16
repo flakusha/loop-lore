@@ -8,23 +8,17 @@
  * Token format: HS256 (HMAC-SHA256) with standard JOSE headers.
  */
 
-import { getLogger, } from "../logger/index";
+import { getChildLogger, } from "../logger/index";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import { fromBase64, toBase64, } from "../utils/base64";
 import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 
-let _log: ReturnType<typeof getLogger> | null = null;
 /**
  * Lazily resolve the module logger (null when uninitialized, e.g. tests).
  * @returns the cached child logger, or null when unavailable
  */
 function getLog() {
-  try {
-    _log ??= getLogger().child({ module: "auth/jwt", },);
-    return _log;
-  } catch {
-    return null;
-  }
+  return getChildLogger("auth/jwt",);
 }
 
 // ── Types ─────────────────────────────────────────────────────
