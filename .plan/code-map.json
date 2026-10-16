@@ -36991,6 +36991,12 @@
       "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md"
     }
   ],
+  "src/routes/comparison-store.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
+    }
+  ],
   "src/routes/comparisons-export.ts": [
     {
       "kind": "epic",
@@ -40599,6 +40605,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-blog-system.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
       "kind": "ticket",

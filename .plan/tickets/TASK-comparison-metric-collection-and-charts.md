@@ -40,8 +40,10 @@ What each metric can honestly be in v1:
 - **vram_peak_mb** — only when the backend actually reports it. Neither the ComfyUI client nor the
   sd.cpp engine currently surfaces VRAM (`src/generation/providers/comfyui.ts`,
   `src/generation/image-engine/sdcpp.ts`), so this metric is **optional** and stays absent rather than
-  estimated. Add the provider read only if a real field exists; a client-side guess is worse than a
-  missing series.
+  estimated. **No provider read is in scope for this epic**: adding a VRAM probe would mean inventing
+  a field that no backend returns today, and a client-side guess is worse than a missing series. If a
+  backend later exposes a real VRAM field, that probe needs its own ticket; until then the metric key
+  is reserved and simply stays absent.
 - **clip_score / aesthetic_score** — only when an **image** scorer is configured. A scorer registry does
   exist in `src/` — `SCORERS` at `src/story/quality/registry.ts:13` — but every entry is a text/prose
   scorer (`CharacterVoice`, `PlotCoherence`, `LoreConsistency`, `NarrativeQuality`, `QuestRelevance`,

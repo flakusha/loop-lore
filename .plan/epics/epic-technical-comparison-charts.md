@@ -211,8 +211,8 @@ rejects the filter, so the enum addition is a hard prerequisite for the gallery 
 - [ ] Two-cell technical diff: difference / side-by-side / flicker — `TASK-comparison-two-cell-diff-modes.md`
 - [ ] Parameter sweep series (seed / steps / CFG) as a first-class variant axis — `TASK-comparison-parameter-sweep-axis.md`
 - [ ] Comparability rules as one shared predicate consumed by grid, diff, chart, and sweep — `TASK-comparison-comparability-validation.md`
-- [ ] Metric collection (latency, VRAM peak, cost) + metric chart line/series rendering — `TASK-comparison-metric-collection-and-charts.md`
-- [ ] Chart export PNG/SVG/CSV with the SVG sanitization gate honored — `TASK-comparison-chart-export-png-svg-csv.md`
+- [ ] Metric collection (latency and cost measured; `vram_peak_mb` reserved and absent unless a backend reports it — **no VRAM probe is in scope**) + metric chart line/series rendering — `TASK-comparison-metric-collection-and-charts.md`
+- [ ] Chart export PNG/SVG/CSV, SVG as a client-side download only (no persist, no app-URL serve) — `TASK-comparison-chart-export-png-svg-csv.md`
 - [ ] Comparison workflow template (YAML) + `/compare` assistant command + chat asset linking — `TASK-comparison-workflow-template-and-command.md`
 - [ ] Gallery ↔ comparison-set integration (open a set from the gallery, filter the gallery by set) — `TASK-comparison-gallery-comparison-set-integration.md`
 - [ ] Cross-cutting tests: set lifecycle, fan-out partial failure, comparability — `TASK-comparison-tests-set-lifecycle-fan-out-comparability.md`
@@ -234,7 +234,7 @@ rejects the filter, so the enum addition is a hard prerequisite for the gallery 
 | `epic-asset-platform-capabilities.md` | upstream | Asset substrate; `asset_renditions` ladder still in progress and is **not** assumed landed |
 | `epic-frontend-gallery.md` | upstream | Gallery grid patterns reused by the comparison grid |
 | `epic-creative-studio.md` | upstream | Unified search + toolbar + modal patterns reused by the filter bar and cell modal |
-| `epic-vector-graphics-generation.md` | upstream | SVG export pipeline + sanitizer gate |
+| `epic-vector-graphics-generation.md` | upstream, **not used by v1** | Its SVG export pipeline and sanitizer gate are **Not Started** (`src/assets/service/sanitize-svg.ts` does not exist), so v1 SVG export is download-only and never touches that pipeline. Revisit if and when the gate lands. |
 | `epic-testing-qa.md` | sibling | Owns `TASK-model-comparison-reactions.md` (LLM output reactions) — referenced, not merged |
 
 ## Related Epics
@@ -246,7 +246,7 @@ rejects the filter, so the enum addition is a hard prerequisite for the gallery 
 - `epic-asset-platform-capabilities.md` — assets, `content_hash` dedup, rendition ladder
 - `epic-frontend-gallery.md` — gallery grid, search, preview modal
 - `epic-creative-studio.md` — search / unified modal / toolbar patterns
-- `epic-vector-graphics-generation.md` — SVG pipeline and sanitization gate for chart export
+- `epic-vector-graphics-generation.md` — owns the SVG export pipeline and sanitization gate; **v1 chart SVG export is client-side download only and does not use them**, because the sanitizer has not landed and `image/svg+xml` is blocked at persist time
 - `epic-testing-qa.md` — declares `TASK-model-comparison-reactions.md` as one of its Linked Tasks (LLM
   output reactions); this epic deliberately does not duplicate it
 
@@ -262,30 +262,44 @@ Verified 2026-10-16 on branch `dev` (this work landed on `dev`; the working bran
   (`src/db/migrations/001_init.ts:104`, typed at `src/db/schema-moderation.ts:13`) stores a per-message
   `reference_model` / `preference` / `confidence` vote. Neither is an image comparison set, and this
   epic extends neither.
-- Four comparison route modules exist today, none of them image-shaped:
+- Four comparison route modules are mounted today, none of them image-shaped
+  (`src/routes/v1/content-surface.ts:23-27,65-67`):
   - `src/routes/model-comparisons.ts` — `GET /api/comparisons` (list the user's runs) and
-    `POST /api/comparisons/:id/rating`. The LLM-output preference tracker. Cited only as the
-    route-module precedent.
+    `POST /api/comparisons/:id/rating`. Reads/writes `model_comparison_runs`. The LLM-output preference
+    tracker. Cited only as the route-module precedent.
   - `src/routes/generation/compare.ts` — `POST /api/v1/generation/compare` (FEAT-060). Runs the same
     prompt across N LLM models in parallel via `Promise.allSettled`, returning text, latency, tokens and
-    a cost estimate. Ephemeral: it persists nothing.
+    a cost estimate. It **does** persist: the run is written to `model_comparison_runs` at `:111-119`
+    and the response returns its `id` / `createdAt`, which is what makes the run listable and exportable.
   - `src/routes/comparisons-export.ts` — `GET /api/v1/comparisons/:id/export?format=json|markdown`.
-    Renders a stored `model_comparisons` row as a downloadable JSON or markdown report.
-  - `src/routes/model-comparisons-analytics.ts` — legacy preference-analytics routes kept separate from
-    run-comparison storage.
+    Reads `model_comparison_runs` (`:46`) or `model_comparisons` (`:76`) and renders a downloadable JSON
+    or markdown report.
+  - `src/routes/model-comparisons-analytics.ts` — `POST /api/analytics/comparisons`,
+    `GET /api/analytics/comparisons`, `.../leaderboard`. Legacy preference analytics over the separate
+    `model_comparisons` table, kept apart from run-comparison storage.
 
-  What this epic adds that none of them do: **persisted, image-shaped** comparison sets with re-runnable
-  parameterized variants (`comparison_sets` / `comparison_set_variants` / `comparison_set_runs`), fan-out
-  across ComfyUI + sd.cpp, per-cell provenance, comparability rules, and a chart/grid/export surface.
-- Side-by-side concepts *do* exist in `.plan/`, but all of them are text/revision-shaped rather than
-  image-variant-shaped:
+  A fifth module, `src/routes/comparison-store.ts` (an in-process FEAT-060 A/B store), also exists but has
+  **no importers anywhere in `src/`** — it is unwired dead code, not a live surface.
+
+  What this epic adds that none of them do: **image-shaped, re-runnable** comparison sets —
+  `comparison_sets` / `comparison_set_variants` / `comparison_set_runs`, each variant a complete
+  parameterized generation contract (seed, sampler, steps, LoRA stack, reference set), fan-out across
+  ComfyUI + sd.cpp, per-cell provenance, comparability rules, and a chart/grid/export surface. The
+  existing routes compare **text** responses and have no per-variant re-run, no comparability predicate,
+and no image matrix.
+- Side-by-side concepts *do* exist in `.plan/`. Three are **text**-shaped; the fourth is image-adjacent
+  but compares versions of a *single* asset rather than variants across a matrix — so none of them is a
+  comparison-set matrix:
   - `FEAT-060.md` — model comparison A/B for **LLM responses** (the ticket behind
     `src/routes/generation/compare.ts`); its storage note names a `model_comparisons` table with a
     `results` JSON blob, which is the already-shipped `model_comparisons` shape above.
   - `TASK-model-comparison-reactions.md` (`epic-testing-qa`) — reaction tracking, blind-mode A/B over
     LLM outputs; explicitly not images.
-  - `TASK-asset-versioning.md` — version history and diff over a single asset; no prompt/model axis.
   - `TASK-admin-revisions-diff-revert.md` — admin diff-and-revert over row revisions; no image matrix.
+  - `TASK-asset-versioning.md` (`epic-items`) — the closest existing prior art, and the one that touches
+    images: an `asset_versions` table with dimensions and a "compare versions side-by-side" AC. It is
+    still **single-asset versioning** — versions of one asset over time, with no prompt / model / sampler
+    axis, so a matrix cell has no notion of "the other variant" to compare against.
 
   What remains distinct here is the axis: one prompt or reference driven across N image
   models/checkpoints/parameter sweeps, with per-variant reproducibility and a comparability predicate.
