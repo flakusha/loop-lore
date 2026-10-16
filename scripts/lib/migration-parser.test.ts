@@ -110,6 +110,57 @@ describe("parseMigration", () => {
     );
   });
 
+  test("a bare renameColumn with no nearby addColumn still reports the pair", () => {
+    // The case the `renames` channel exists for. A forward rename migration
+    // (057_column_name_disambiguation) states every rename as a literal
+    // `alterTable(t).renameColumn(a, b)` with no addColumn to supply a type,
+    // so the 500-char type lookup finds nothing and `alters` stays empty.
+    // Without `renames`, the generators would see the old name dropped and no
+    // new name at all — silently deleting the column from every artifact.
+    withMigration(
+      `await db.schema.alterTable("users",).renameColumn("format_version", "row_version",).execute();`,
+      (file,) => {
+        const { alters, drops, renames, } = parseMigration(file,);
+        expect(drops.get("users",),).toEqual(new Set(["format_version",],),);
+        expect(alters.get("users",),).toBeUndefined();
+        expect(renames.get("users",),).toEqual([["format_version", "row_version",],],);
+      },
+    );
+  });
+
+  test("renames accumulate per table without cross-table bleed", () => {
+    withMigration(
+      [
+        `await db.schema.alterTable("users",).renameColumn("format_version", "row_version",).execute();`,
+        `await db.schema.alterTable("users",).renameColumn("password_hash", "secret_hash",).execute();`,
+        `await db.schema.alterTable("actors",).renameColumn("format_version", "row_version",).execute();`,
+      ].join("\n",),
+      (file,) => {
+        const { renames, } = parseMigration(file,);
+        expect(renames.get("users",),).toEqual([
+          ["format_version", "row_version",],
+          ["password_hash", "secret_hash",],
+        ],);
+        expect(renames.get("actors",),).toEqual([["format_version", "row_version",],],);
+      },
+    );
+  });
+
+  test("the real 057 migration renames every column it documents", () => {
+    // Ties the parser branch back to the migration that relies on it. If that
+    // file ever stops parsing its own renames, codegen loses columns silently.
+    const file = resolve(import.meta.dir, "../../src/db/migrations/057_column_name_disambiguation.ts",);
+    const { renames, } = parseMigration(file,);
+    const flat = [...renames.values(),].flat();
+    expect(flat.length, "057 should carry 24 renames",).toBe(24,);
+    expect(renames.get("users",),).toEqual([
+      ["format_version", "row_version",],
+      ["password_hash", "secret_hash",],
+    ],);
+    expect(renames.get("message_search_tokens",),).toEqual([["token", "term",],],);
+    expect(renames.get("character_avatar_config",),).toEqual([["fallback_chain", "fallback_order",],],);
+  });
+
   test("renameTo marks the table it renamed away from as dropped", () => {
     withMigration(
       `await db.schema.alterTable("users_tmp",).renameTo("users",).execute();`,
