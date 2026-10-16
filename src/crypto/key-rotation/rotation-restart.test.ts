@@ -61,7 +61,7 @@ async function seedFixtures(database: Kysely<DB>,): Promise<void> {
       role: "user",
       status: "active",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     },)
     .execute();
 
@@ -90,7 +90,7 @@ async function seedFixtures(database: Kysely<DB>,): Promise<void> {
       data_raw: null,
       user_id: null,
       owner_id: OWNER_ID,
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
     },)
     .execute();

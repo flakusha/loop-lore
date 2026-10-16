@@ -155,7 +155,7 @@ describe("importAvatars", () => {
       config: {
         selectionRule: "weighted_random",
         weights: { happy: 0.6, sad: 0.4, },
-        fallbackChain: ["happy", "sad",],
+        fallbackOrder: ["happy", "sad",],
       },
     }, result,);
 
@@ -174,7 +174,7 @@ describe("importAvatars", () => {
     await db.schema.dropTable("character_avatar_config",).execute();
     await importAvatars(db, actorId, {
       avatars: [],
-      config: { selectionRule: "round_robin", weights: {}, fallbackChain: [], },
+      config: { selectionRule: "round_robin", weights: {}, fallbackOrder: [], },
     }, result,);
 
     expect(result.errors.length,).toBe(1,);
@@ -184,7 +184,7 @@ describe("importAvatars", () => {
       .addColumn("actor_id", "text", (c,) => c.notNull(),)
       .addColumn("selection_rule", "text", (c,) => c.notNull(),)
       .addColumn("weights", "text",)
-      .addColumn("fallback_chain", "text",)
+      .addColumn("fallback_order", "text",)
       .addColumn("created_at", "text", (c,) => c.notNull(),)
       .addColumn("updated_at", "text", (c,) => c.notNull(),)
       .execute();

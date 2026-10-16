@@ -25,7 +25,7 @@ export interface ShadowNotes {
   visibility: Generated<ShadowNoteVisibility>;
   expires_at: string | null;
   author_type: Generated<ShadowNoteAuthorType>;
-  data_version: Generated<number>;
+  content_version: Generated<number>;
   record_hash: Generated<string>;
   trigger_condition: string | null;
   revealed_to: string | null;
@@ -41,7 +41,7 @@ export interface Whitenotes {
   scope: Generated<WhiteneoteScope>;
   expires_at: string | null;
   created_at: string;
-  data_version: Generated<number>;
+  content_version: Generated<number>;
   record_hash: Generated<string>;
   message_id: string | null;
 }

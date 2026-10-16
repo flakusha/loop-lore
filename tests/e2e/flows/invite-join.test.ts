@@ -44,7 +44,7 @@ describe("Chat Invite & Join E2E", () => {
         id: "a0000021-0000-4000-a000-000000000000",
         username: "e2ejoiner",
         display_name: "E2E Joiner",
-        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        secret_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
         role: "user",
         status: "active",
         settings: "{}",
@@ -64,7 +64,7 @@ describe("Chat Invite & Join E2E", () => {
         import_spec: "raw",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
       },)
       .execute();
 
@@ -77,7 +77,7 @@ describe("Chat Invite & Join E2E", () => {
         id: "a0000022-0000-4000-a000-000000000000",
         username: "e2eoutsider",
         display_name: "E2E Outsider",
-        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        secret_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
         role: "user",
         status: "active",
         settings: "{}",
@@ -97,7 +97,7 @@ describe("Chat Invite & Join E2E", () => {
         import_spec: "raw",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
       },)
       .execute();
 
@@ -110,7 +110,7 @@ describe("Chat Invite & Join E2E", () => {
         id: "a0000023-0000-4000-a000-000000000000",
         username: "e2ejoiner2",
         display_name: "E2E Joiner 2",
-        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        secret_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
         role: "user",
         status: "active",
         settings: "{}",
@@ -130,7 +130,7 @@ describe("Chat Invite & Join E2E", () => {
         import_spec: "raw",
         data_source_format: "json",
         data_raw: null,
-        format_version: 0,
+        row_version: 0,
       },)
       .execute();
 

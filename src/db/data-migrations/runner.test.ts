@@ -33,7 +33,7 @@ describe("applyDataMigration", () => {
       toVersion: 100,
       description: "test record",
       up: async (tx,) => {
-        await tx.updateTable("actors",).set({ format_version: 100, },).execute();
+        await tx.updateTable("actors",).set({ row_version: 100, },).execute();
       },
     };
 
@@ -58,7 +58,7 @@ describe("applyDataMigration", () => {
       toVersion: 100,
       description: "test duplicate",
       up: async (tx,) => {
-        await tx.updateTable("actors",).set({ format_version: 100, },).execute();
+        await tx.updateTable("actors",).set({ row_version: 100, },).execute();
       },
     };
 
@@ -74,7 +74,7 @@ describe("applyDataMigration", () => {
       description: "test atomicity",
       up: async (tx,) => {
         // Transform first (would persist if not rolled back)…
-        await tx.updateTable("actors",).set({ format_version: 200, },).execute();
+        await tx.updateTable("actors",).set({ row_version: 200, },).execute();
         // …then fail.
         throw new Error("boom",);
       },
@@ -102,7 +102,7 @@ describe("applyDataMigration", () => {
       description: "test retry",
       up: async (tx,) => {
         if (fail) { throw new Error("boom",); }
-        await tx.updateTable("actors",).set({ format_version: 200, },).execute();
+        await tx.updateTable("actors",).set({ row_version: 200, },).execute();
       },
     };
 

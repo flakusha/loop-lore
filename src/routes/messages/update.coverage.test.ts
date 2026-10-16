@@ -48,7 +48,7 @@ async function seedUser(db: Kysely<DB>, id: string, name: string,): Promise<void
       owner_id: id,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },)

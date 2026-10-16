@@ -97,7 +97,7 @@ describeReal("nsfw flag ordering vs chat access (BUG-nsfw-flag-side-effect)", ()
       owner_id: ownerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },).execute();
@@ -112,7 +112,7 @@ describeReal("nsfw flag ordering vs chat access (BUG-nsfw-flag-side-effect)", ()
       owner_id: outsiderId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },).execute();

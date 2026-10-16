@@ -30,7 +30,7 @@ export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Bu
 
   const schemaVersion = {
     schema_version: "1.0",
-    export_format_version: "1.0",
+    export_row_version: "1.0",
   };
 
   const metadataFolder = zip.folder("metadata",);
@@ -52,7 +52,7 @@ export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Bu
     version: "1.0",
     exported_at: now.toISOString(),
     exported_by: userId,
-    format_version: "1.0",
+    row_version: "1.0",
     contents: counts,
     checksums,
   };

@@ -169,7 +169,7 @@ async function serveCharacterEditForm(
     avatarRemoveBtn,
     characterId,
     contentRating,
-    dataVersion: actor.format_version,
+    contentVersion: actor.row_version,
     avatarFocusX,
     avatarFocusY,
     growthMode,

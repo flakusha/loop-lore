@@ -4,7 +4,7 @@
 /**
  * Tests for optimistic concurrency control helpers.
  *
- * Uses the `actors` table: it has `format_version` + `updated_at` and is the
+ * Uses the `actors` table: it has `row_version` + `updated_at` and is the
  * production caller's table (see routes/characters/update.ts).
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
@@ -26,7 +26,7 @@ async function insertActor(db: Kysely<DB>, id: string,): Promise<void> {
       owner_id: null,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
       updated_at: OLD_TIMESTAMP,
@@ -45,18 +45,18 @@ describe("updateWithVersionCheck", () => {
     await db.destroy();
   },);
 
-  it("applies the update, bumps format_version and updated_at", async () => {
+  it("applies the update, bumps row_version and updated_at", async () => {
     await insertActor(db, "a1",);
     const result = await updateWithVersionCheck(db, "actors", "a1", 0, { display_name: "Updated", },);
     expect(result,).toEqual({ ok: true, rowsAffected: 1, },);
-    const row = await db.selectFrom("actors",).select(["display_name", "format_version", "updated_at",],).where(
+    const row = await db.selectFrom("actors",).select(["display_name", "row_version", "updated_at",],).where(
       "id",
       "=",
       "a1",
     ).executeTakeFirst();
 
     expect(row?.display_name,).toBe("Updated",);
-    expect(row?.format_version,).toBe(1,);
+    expect(row?.row_version,).toBe(1,);
     expect(row?.updated_at,).not.toBe(OLD_TIMESTAMP,);
   });
 
@@ -69,11 +69,11 @@ describe("updateWithVersionCheck", () => {
       error: "Version conflict: record was modified by another process",
     },);
 
-    const row = await db.selectFrom("actors",).select(["display_name", "format_version",],).where("id", "=", "a1",)
+    const row = await db.selectFrom("actors",).select(["display_name", "row_version",],).where("id", "=", "a1",)
       .executeTakeFirst();
 
     expect(row?.display_name,).toBe("Original",);
-    expect(row?.format_version,).toBe(0,);
+    expect(row?.row_version,).toBe(0,);
   });
 
   it("reports a conflict for a missing row", async () => {
@@ -87,26 +87,26 @@ describe("updateWithVersionCheck", () => {
     await insertActor(db, "a1",);
     expect((await updateWithVersionCheck(db, "actors", "a1", 0, { display_name: "v1", },)).ok,).toBe(true,);
     expect((await updateWithVersionCheck(db, "actors", "a1", 1, { display_name: "v2", },)).ok,).toBe(true,);
-    const row = await db.selectFrom("actors",).select(["display_name", "format_version",],).where("id", "=", "a1",)
+    const row = await db.selectFrom("actors",).select(["display_name", "row_version",],).where("id", "=", "a1",)
       .executeTakeFirst();
 
     expect(row?.display_name,).toBe("v2",);
-    expect(row?.format_version,).toBe(2,);
+    expect(row?.row_version,).toBe(2,);
   });
 
-  it("overrides caller-supplied format_version and updated_at", async () => {
+  it("overrides caller-supplied row_version and updated_at", async () => {
     await insertActor(db, "a1",);
     const result = await updateWithVersionCheck(db, "actors", "a1", 0, {
       display_name: "X",
-      format_version: 99,
+      row_version: 99,
       updated_at: "1999-01-01T00:00:00.000Z",
     },);
 
     expect(result.ok,).toBe(true,);
-    const row = await db.selectFrom("actors",).select(["format_version", "updated_at",],).where("id", "=", "a1",)
+    const row = await db.selectFrom("actors",).select(["row_version", "updated_at",],).where("id", "=", "a1",)
       .executeTakeFirst();
 
-    expect(row?.format_version,).toBe(1,); // caller's 99 is ignored
+    expect(row?.row_version,).toBe(1,); // caller's 99 is ignored
     expect(row?.updated_at,).not.toBe("1999-01-01T00:00:00.000Z",); // bumped to now
   });
 
@@ -169,14 +169,14 @@ describe("updateWithVersionCheckRaw", () => {
     await insertActor(db, "a1",);
     const result = await updateWithVersionCheckRaw(db, "actors", "a1", 0, { display_name: "Raw", },);
     expect(result,).toEqual({ ok: true, rowsAffected: 1, },);
-    const row = await db.selectFrom("actors",).select(["display_name", "format_version", "updated_at",],).where(
+    const row = await db.selectFrom("actors",).select(["display_name", "row_version", "updated_at",],).where(
       "id",
       "=",
       "a1",
     ).executeTakeFirst();
 
     expect(row?.display_name,).toBe("Raw",);
-    expect(row?.format_version,).toBe(1,);
+    expect(row?.row_version,).toBe(1,);
     expect(row?.updated_at,).toBe(OLD_TIMESTAMP,);
   });
 
@@ -201,11 +201,11 @@ describe("updateWithVersionCheckRaw", () => {
       error: "Version conflict: record was modified by another process",
     },);
 
-    const row = await db.selectFrom("actors",).select(["display_name", "format_version",],).where("id", "=", "a1",)
+    const row = await db.selectFrom("actors",).select(["display_name", "row_version",],).where("id", "=", "a1",)
       .executeTakeFirst();
 
     expect(row?.display_name,).toBe("Original",);
-    expect(row?.format_version,).toBe(0,);
+    expect(row?.row_version,).toBe(0,);
   });
 });
 
@@ -220,7 +220,7 @@ describe("getCurrentVersion", () => {
     await db.destroy();
   },);
 
-  it("returns the current format_version", async () => {
+  it("returns the current row_version", async () => {
     await insertActor(db, "a1",);
     expect(await getCurrentVersion(db, "actors", "a1",),).toBe(0,);
     await updateWithVersionCheck(db, "actors", "a1", 0, { display_name: "v1", },);

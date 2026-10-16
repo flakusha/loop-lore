@@ -23,7 +23,7 @@ Full table definition in `src/db/schema-core.ts` → `Users` interface.
 - `id` — UUID (primary key)
 - `username` — string (unique)
 - `display_name` — string
-- `password_hash` — string (nullable for demo users, hashed with scrypt)
+- `secret_hash` — string (nullable for demo users, hashed with scrypt)
 - `role` — `UserRole` (see `src/db/enums-core/users.ts`; expanded beyond the four MVP roles)
 - `settings` — JSON (preferences, UI config)
 - `birth_date` — string (nullable, ISO date — age gate)
@@ -68,7 +68,7 @@ Full table definition in `src/db/schema-core.ts` → `Sessions` interface.
   `src/auth/jwt.ts`). JWT payload `{ sub: userId, sid: sessionId }` is verified
   per request via `verifyJwt()`. New logins emit JWTs.
 - **Legacy fallback**: opaque UUID v4 token, SHA-256 hashed and stored in
-  `sessions.token_hash` (legacy `resolveUserIdFromRequest()` path in
+  `sessions.secret_hash` (legacy `resolveUserIdFromRequest()` path in
   `src/middleware/auth/token.ts`). Used only for older sessions created before
   the JWT migration.
 - Multiple simultaneous sessions per user allowed (configurable max)

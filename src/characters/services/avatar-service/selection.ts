@@ -106,7 +106,7 @@ async function resolveSelectionOutfit(
  *  1. Empty-list: zero emotion avatars → return base portrait (or null).
  *  2. Primary pass: weighted-score ≥ 1 → return that avatar.
  *  3. Fallback chain: when primary score is below 1 (no tag actually
- *     matched), walk `fallback_chain` and pick the first avatar that has
+ *     matched), walk `fallback_order` and pick the first avatar that has
  *     a value for that chain tag at all (tag-presence, not value-match).
  *  4. Base portrait: when chain yields nothing, return base portrait.
  *
@@ -173,7 +173,7 @@ export async function selectAvatar(
       outfit: 0.05,
     };
 
-  const fallbackChain: AvatarTagType[] = defaultConfig?.fallbackChain ??
+  const fallbackOrder: AvatarTagType[] = defaultConfig?.fallbackOrder ??
     DEFAULT_FALLBACK_CHAIN;
 
   let primaryAvatar: Avatar | undefined;
@@ -198,7 +198,7 @@ export async function selectAvatar(
   // chain tag in order. This is tag-presence based — the chain decides
   // which tag type is most authoritative when the weighted-score pass
   // cannot produce a clear winner.
-  for (const tag of fallbackChain) {
+  for (const tag of fallbackOrder) {
     const match = avatars.find((a,) => typeof a.tags[tag] === "string" && a.tags[tag].length > 0);
     if (match) { return match; }
   }

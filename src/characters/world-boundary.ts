@@ -131,7 +131,7 @@ export const STORY_OVERLAY_FIELDS = [
 /**
  * Every field the character side owns: Core + Equipment merged. A character
  * update body may only carry these (plus protocol metadata like
- * `dataVersion`); anything world-owned is rejected with 422.
+ * `contentVersion`); anything world-owned is rejected with 422.
  */
 export const CHARACTER_OWNED_FIELDS: readonly string[] = [
   ...CORE_CHARACTER_FIELDS,

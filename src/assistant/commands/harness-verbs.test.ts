@@ -33,7 +33,7 @@ beforeAll(async () => {
     testDb.db,
     "harness-tester",
     "Harness Tester",
-    { id: "harness-tester", password_hash: "h", } as never,
+    { id: "harness-tester", secret_hash: "h", } as never,
   );
 },);
 

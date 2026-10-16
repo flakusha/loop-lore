@@ -10,6 +10,6 @@ import type { Generated, } from "kysely";
 export interface AuditColumns {
   created_at: Generated<string>;
   updated_at: Generated<string>;
-  data_version: Generated<number>;
+  content_version: Generated<number>;
   record_hash: Generated<string>;
 }

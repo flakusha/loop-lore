@@ -342,7 +342,7 @@ export async function insertRequestResults(
     completed_at?: string | null;
     offloaded_at?: string | null;
     offload_path?: string | null;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -387,7 +387,7 @@ export async function insertSeedAudit(
 export async function insertSessions(
   db: Db,
   user_id: string,
-  token_hash: string,
+  secret_hash: string,
   expires_at: string,
   opts?: { id?: string; ip?: string | null; user_agent?: string | null; created_at?: string; last_activity?: string },
 ): Promise<string> {
@@ -396,7 +396,7 @@ export async function insertSessions(
   await db.insertInto("sessions",).values({
     id,
     user_id,
-    token_hash,
+    secret_hash,
     expires_at,
     ...restOpts,
   } as any,).execute();
@@ -470,13 +470,13 @@ export async function insertUsers(
   display_name: string,
   opts?: {
     id?: string;
-    password_hash?: string | null;
+    secret_hash?: string | null;
     role?: UserRole;
     status?: UserStatus;
     settings?: string;
     birth_date?: string | null;
     age_gate_accepted_at?: string | null;
-    format_version?: number;
+    row_version?: number;
     created_at?: string;
     last_seen_at?: string | null;
     encryption_secret?: string | null;
@@ -554,7 +554,7 @@ export async function insertAssets(
     encrypted_key_id?: string | null;
     alpha_status?: AssetAlphaStatus;
     content_hash?: string | null;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
     thumbnail_path?: string | null;
   },
@@ -651,7 +651,7 @@ export async function insertLocations(
     coord_z?: number | null;
     current_route_id?: string | null;
     travel_progress?: number;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -784,7 +784,7 @@ export async function insertWorldLoreEntries(
     source_count?: number;
     distortion_level?: number;
     disputed?: number;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -929,7 +929,7 @@ export async function insertWorlds(
     updated_at?: string;
     nsfw_override?: string | null;
     rpg_enabled?: number;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
     rpg_dice?: number;
     rpg_checks?: number;
@@ -1111,7 +1111,7 @@ export async function insertActorLoreEntries(
     key_groups?: string | null;
     scan_depth?: number | null;
     activation_chance?: number | null;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -1167,7 +1167,7 @@ export async function insertActors(
     system_prompt?: string | null;
     agent_type?: AgentType;
     settings?: string;
-    format_version?: number;
+    row_version?: number;
     visibility?: string;
     welcome_message?: string | null;
     personality?: string | null;
@@ -1352,7 +1352,7 @@ export async function insertCharacterAvatarConfig(
   actor_id: string,
   created_at: string,
   updated_at: string,
-  opts?: { id?: string; selection_rule?: string; weights?: string | null; fallback_chain?: string | null },
+  opts?: { id?: string; selection_rule?: string; weights?: string | null; fallback_order?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -1830,7 +1830,8 @@ export async function insertCharacterStats(
     death_save_failures?: number;
     xp?: number;
     xp_to_next?: number;
-    data_version?: number;
+    content_version?: number;
+    record_hash?: string;
     created_at?: string;
     updated_at?: string;
     behavior_profile?: string | null;
@@ -1929,7 +1930,7 @@ export async function insertCharacters(
     updated_at?: string;
     agent_role?: string | null;
     federation_consent?: number;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -2258,7 +2259,7 @@ export async function insertChats(
     quick_replies?: string | null;
     prompt_override?: string | null;
     output_style_preset?: string | null;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
     custom_instructions?: string | null;
     prompt_template_id?: string | null;
@@ -2421,7 +2422,7 @@ export async function insertMessages(
     edited_at?: string | null;
     attachments?: string | null;
     archived_at?: string | null;
-    format_version?: number;
+    row_version?: number;
     section_id?: string | null;
     tool_calls?: string | null;
     thinking?: string | null;
@@ -2431,7 +2432,7 @@ export async function insertMessages(
     e2e_sender_eph_pub_jwk?: string | null;
     e2e_chain_index?: number | null;
     content_plaintext?: string | null;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
     merge_id?: string | null;
   },
@@ -2603,7 +2604,7 @@ export async function insertPersonas(
     is_default?: string;
     created_at?: string;
     updated_at?: string;
-    format_version?: number;
+    row_version?: number;
     temperature?: number | null;
     max_tokens?: number | null;
     model?: string | null;
@@ -2637,7 +2638,7 @@ export async function insertItems(
     weight?: number;
     created_at?: string;
     updated_at?: string;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -2733,7 +2734,7 @@ export async function insertQuests(
     created_at?: string;
     updated_at?: string;
     completed_at?: string | null;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -2764,7 +2765,7 @@ export async function insertShadowNotes(
     visibility?: ShadowNoteVisibility;
     expires_at?: string | null;
     author_type?: ShadowNoteAuthorType;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
     trigger_condition?: string | null;
     revealed_to?: string | null;
@@ -2795,7 +2796,7 @@ export async function insertWhitenotes(
     priority?: number;
     scope?: WhiteneoteScope;
     expires_at?: string | null;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
     message_id?: string | null;
   },
@@ -2933,7 +2934,7 @@ export async function insertCraftingRecipes(
     station_type_required?: CraftingStationType | null;
     discovered_by_default?: number;
     tags?: string;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -3495,7 +3496,7 @@ export async function insertBlogPosts(
     metadata?: string;
     created_at?: string;
     updated_at?: string;
-    data_version?: number;
+    content_version?: number;
     record_hash?: string;
   },
 ): Promise<string> {
@@ -4070,13 +4071,13 @@ export async function insertE2eSkippedMessageKeys(
 export async function insertMessageSearchTokens(
   db: Db,
   message_id: string,
-  token: string,
+  term: string,
   scope: string,
 ): Promise<string> {
   const id = crypto.randomUUID();
   await db.insertInto("message_search_tokens",).values({
     message_id,
-    token,
+    term,
     scope,
   } as any,).execute();
   return id;

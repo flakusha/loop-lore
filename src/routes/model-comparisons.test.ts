@@ -64,7 +64,7 @@ describe("POST /api/analytics/comparisons", () => {
       owner_id: ownerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     } as never,);
 
     await insertChats(db, "Analytics Owner Chat", ownerId, {},);

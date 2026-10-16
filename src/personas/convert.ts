@@ -75,7 +75,7 @@ export async function convertPersonaToCharacter(
             model: persona.model,
           },
         },),
-        format_version: 0,
+        row_version: 0,
         import_spec: "raw",
         data_source_format: "json",
         data_raw: null,

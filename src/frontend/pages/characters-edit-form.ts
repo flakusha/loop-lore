@@ -69,7 +69,7 @@ globalThis.saveCharacterEdit = async function(characterId: string,) {
     avatarFocusX: editNumberField("edit-avatar-focus-x",),
     avatarFocusY: editNumberField("edit-avatar-focus-y",),
     // CHAR-1 optimistic concurrency: version captured when the form loaded.
-    dataVersion: editNumberField("char-data-version",),
+    contentVersion: editNumberField("char-data-version",),
   },);
 
   try {

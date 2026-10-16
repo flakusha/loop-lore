@@ -34,7 +34,7 @@ async function insertUserAndActor(id: string,) {
     role: "user",
     status: "active",
     settings: "{}",
-    format_version: 0,
+    row_version: 0,
   },).execute();
 
   await db.insertInto("actors",).values({
@@ -48,7 +48,7 @@ async function insertUserAndActor(id: string,) {
     data_raw: null,
     user_id: id,
     owner_id: id,
-    format_version: 0,
+    row_version: 0,
     visibility: "private",
   },).execute();
 }

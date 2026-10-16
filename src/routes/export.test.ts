@@ -96,7 +96,7 @@ describe("exportRoutes", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)
@@ -114,7 +114,7 @@ describe("exportRoutes", () => {
     expect(res.headers.get("Content-Type",),).toBe("application/zip",);
   });
 
-  test("manifest.json has version, exported_by, format_version, and checksums", async () => {
+  test("manifest.json has version, exported_by, row_version, and checksums", async () => {
     const app = createApp(db,);
     const res = await postExport(app, { include: [], },);
     const files = await parseZip(res,);
@@ -122,7 +122,7 @@ describe("exportRoutes", () => {
     const manifest = readJson(files, "manifest.json",);
     expect(manifest.version,).toBe("1.0",);
     expect(manifest.exported_by,).toBeDefined();
-    expect(manifest.format_version,).toBe("1.0",);
+    expect(manifest.row_version,).toBe("1.0",);
     expect(typeof manifest.checksums,).toBe("object",);
   });
 
@@ -137,7 +137,7 @@ describe("exportRoutes", () => {
 
     const schemaVersion = readJson(files, "metadata/schema-version.json",);
     expect(schemaVersion.schema_version,).toBe("1.0",);
-    expect(schemaVersion.export_format_version,).toBe("1.0",);
+    expect(schemaVersion.export_row_version,).toBe("1.0",);
   });
 
   test("characters export includes CCv3 card with correct fields", async () => {
@@ -153,7 +153,7 @@ describe("exportRoutes", () => {
         owner_id: userId,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
         visibility: "private",
         import_spec: "{}",
       },)

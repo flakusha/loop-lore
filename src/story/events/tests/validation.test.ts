@@ -19,7 +19,7 @@ beforeEach(async () => {
     id: "user-1",
     username: "testuser",
     display_name: "Test User",
-    password_hash: "hash",
+    secret_hash: "hash",
     role: "user",
     status: "active",
     settings: "{}",

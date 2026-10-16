@@ -101,7 +101,7 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
       owner_id: userA,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },).execute();
@@ -117,7 +117,7 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
       owner_id: userB,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },).execute();
@@ -272,7 +272,7 @@ describe("cross-chat parentId IDOR guard — input edge cases", () => {
       owner_id: userA,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     },).execute();

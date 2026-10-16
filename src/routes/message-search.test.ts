@@ -91,7 +91,7 @@ describe("messageSearchRoutes", () => {
         owner_id: id,
         agent_type: "none",
         settings: "{}",
-        format_version: 0,
+        row_version: 0,
       } as never,);
     }
 

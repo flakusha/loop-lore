@@ -95,7 +95,7 @@ export async function getOrCreateSoloUserForAuth(
           import_spec: "raw",
           data_source_format: "json",
           data_raw: null,
-          format_version: 0,
+          row_version: 0,
         },)
         .execute();
     }

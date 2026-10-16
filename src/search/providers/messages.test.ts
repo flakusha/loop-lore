@@ -165,7 +165,7 @@ describe("search/providers/messages (token)", () => {
       "'; DROP TABLE users; --",
       "' OR '1'='1",
       "'; UPDATE users SET encryption_secret='pwned'; --",
-      "' UNION SELECT password_hash FROM users --",
+      "' UNION SELECT secret_hash FROM users --",
       "admin'--",
     ];
 

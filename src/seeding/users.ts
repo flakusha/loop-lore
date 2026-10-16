@@ -125,7 +125,7 @@ async function seedSingleUser(
           id: userId,
           username: seedUser.username,
           display_name: seedUser.username,
-          password_hash: passwordHash,
+          secret_hash: passwordHash,
           role: seedUser.role,
           status: UserStatus.Active,
           settings: "{}",
@@ -146,7 +146,7 @@ async function seedSingleUser(
           import_spec: "raw",
           data_source_format: "json",
           data_raw: null,
-          format_version: 0,
+          row_version: 0,
         },)
         .execute();
 

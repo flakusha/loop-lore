@@ -84,7 +84,7 @@ async function insertActor(id: string,) {
     data_raw: null,
     user_id: id,
     owner_id: id,
-    format_version: 0,
+    row_version: 0,
     visibility: "private",
   },).execute();
 }

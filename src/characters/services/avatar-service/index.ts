@@ -136,7 +136,7 @@ export class AvatarService {
    * @param config
    * @param config.selectionRule
    * @param config.weights
-   * @param config.fallbackChain
+   * @param config.fallbackOrder
    * @returns the config id
    */
   async upsertAvatarConfig(
@@ -144,7 +144,7 @@ export class AvatarService {
     config: {
       selectionRule?: AvatarSelectionRule;
       weights?: Partial<Record<AvatarTagType, number>>;
-      fallbackChain?: AvatarTagType[];
+      fallbackOrder?: AvatarTagType[];
     },
   ): Promise<string> {
     return upsertAvatarConfigDispatch(this.db, actorId, config,);

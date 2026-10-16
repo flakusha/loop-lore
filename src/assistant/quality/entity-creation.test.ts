@@ -70,11 +70,11 @@ describe("checkDuplicate (DB-backed)", () => {
         id: "u1",
         username: "owner",
         display_name: "Owner",
-        password_hash: null,
+        secret_hash: null,
         role: "user",
         status: "active",
         settings: "{}",
-        format_version: 1,
+        row_version: 1,
       },)
       .execute();
 
@@ -106,11 +106,11 @@ describe("checkDuplicate (DB-backed)", () => {
         id: "u1",
         username: "owner",
         display_name: "Owner",
-        password_hash: null,
+        secret_hash: null,
         role: "user",
         status: "active",
         settings: "{}",
-        format_version: 1,
+        row_version: 1,
       },)
       .execute();
 
@@ -144,11 +144,11 @@ describe("checkDuplicate (DB-backed)", () => {
         id: "u1",
         username: "owner",
         display_name: "Owner",
-        password_hash: null,
+        secret_hash: null,
         role: "user",
         status: "active",
         settings: "{}",
-        format_version: 1,
+        row_version: 1,
       },)
       .execute();
 

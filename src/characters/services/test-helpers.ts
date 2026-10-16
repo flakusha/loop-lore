@@ -29,7 +29,7 @@ export async function createTestActors(
         id: userId,
         username: "testuser",
         display_name: "Test User",
-        password_hash: "hash",
+        secret_hash: "hash",
         role: "user",
         status: "active",
         settings: "{}",
@@ -52,7 +52,7 @@ export async function createTestActors(
       import_spec: "raw",
       data_source_format: "json",
       data_raw: null,
-      format_version: 0,
+      row_version: 0,
     },)
     .execute();
 

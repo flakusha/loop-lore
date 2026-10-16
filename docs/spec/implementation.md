@@ -80,7 +80,7 @@ JWT (primary) + legacy opaque session token model:
 
 - JWT (new logins): signed with `authConfig.jwtSecret`, verified per request
   via `verifyJwt()`; `sub` → userId, `sid` → sessionId.
-- Legacy opaque token (older sessions): SHA-256 hash in `sessions.token_hash`,
+- Legacy opaque token (older sessions): SHA-256 hash in `sessions.secret_hash`,
   resolved via `resolveUserIdFromRequest()` in `src/middleware/auth/token.ts`.
 - Solo mode (`authConfig.required === false`): bypasses token check; returns a
   singleton solo user context; no DB lookup per request.

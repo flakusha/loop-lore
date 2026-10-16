@@ -87,7 +87,7 @@ describe("applyPostStoreEffects — happy path", () => {
       owner_id: userId,
       display_name: "Test Character",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       visibility: "private",
       import_spec: "{}",
     } as never,).execute();

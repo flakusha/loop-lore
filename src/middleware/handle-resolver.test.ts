@@ -22,7 +22,7 @@ describe("createHandleResolver", () => {
    */
   async function insertUser(id: string, username: string,): Promise<void> {
     await db.insertInto("users",)
-      .values({ id, username, display_name: username, password_hash: null, role: "user", status: "active", },)
+      .values({ id, username, display_name: username, secret_hash: null, role: "user", status: "active", },)
       .execute();
   }
 

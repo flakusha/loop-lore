@@ -100,7 +100,7 @@ export interface EditFormValues {
   avatarFocusX: number;
   avatarFocusY: number;
   /** Optimistic-concurrency version captured when the form loaded (CHAR-1). */
-  dataVersion: number;
+  contentVersion: number;
   /** Author growth toggle (epic-character-growth D1); dynamic (default) or static. */
   growthMode: string;
   /** Opt-in LLM-assist pass (D6); off by default. */
@@ -132,7 +132,7 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
   return `<div style="max-width:720px;margin:0 auto;width:100%">
       <form id="char-edit-form" data-testid="character-edit-form">
         <input type="hidden" id="char-avatar-id" value="${escapeAttr(v.avatarId,)}" />
-        <input type="hidden" id="char-data-version" value="${v.dataVersion}" />
+        <input type="hidden" id="char-data-version" value="${v.contentVersion}" />
         <div class="form-group" style="display:flex;align-items:flex-start;gap:var(--space-4)">
           <div style="width:80px;height:80px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;overflow:hidden;border:1px solid var(--border-default)">
             <div id="avatar-preview">${v.avatarHtml}</div>
@@ -194,7 +194,7 @@ ${
         llmAssistEnabled: v.llmAssistEnabled,
         arcStage: v.arcStage,
         arcDescription: v.arcDescription,
-        dataVersion: v.dataVersion,
+        contentVersion: v.contentVersion,
         recentEntries: v.recentEntries,
       },
       escapeAttr,

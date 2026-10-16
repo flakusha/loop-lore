@@ -193,7 +193,7 @@ describe("authenticate — presented-token handling", () => {
     await expect(insertSessions(db, userId, "hash", futureExpiry(),),).resolves.toBeTypeOf("string",);
     expect(() =>
       sqlite
-        .query(`INSERT INTO sessions (id, user_id, token_hash, expires_at) VALUES (?, ?, ?, NULL)`,)
+        .query(`INSERT INTO sessions (id, user_id, secret_hash, expires_at) VALUES (?, ?, ?, NULL)`,)
         .run("null-expiry", userId, "hash",)
     ).toThrow(/NOT NULL/,);
   });

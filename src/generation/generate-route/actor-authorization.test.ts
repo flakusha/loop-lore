@@ -68,7 +68,7 @@ beforeEach(async () => {
       display_name: "A",
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       import_spec: "{}",
     },
     {
@@ -77,7 +77,7 @@ beforeEach(async () => {
       display_name: "B",
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       import_spec: "{}",
     },
     {
@@ -86,7 +86,7 @@ beforeEach(async () => {
       display_name: "Local",
       agent_type: "ai",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       import_spec: "{}",
     },
     // Belongs to chat B only, and carries a narrow plugin agent role.
@@ -97,7 +97,7 @@ beforeEach(async () => {
       agent_type: "ai",
       agent_role: "core-only-role",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       import_spec: "{}",
     },
     // In no chat at all, no agent role.
@@ -107,7 +107,7 @@ beforeEach(async () => {
       display_name: "Orphan",
       agent_type: "ai",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
       import_spec: "{}",
     },
   ],).execute();

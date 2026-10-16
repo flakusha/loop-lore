@@ -51,7 +51,7 @@ async function makeDb(): Promise<Db> {
       system_prompt text,
       agent_type text not null default 'none',
       settings text not null default '{}',
-      format_version integer not null default 0,
+      row_version integer not null default 0,
       visibility text not null default 'private',
       welcome_message text,
       personality text,

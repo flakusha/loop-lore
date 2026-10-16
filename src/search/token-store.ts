@@ -44,7 +44,7 @@ export async function reindexMessageTokens(
   if (tokens.length === 0) { return 0; }
   await db
     .insertInto("message_search_tokens",)
-    .values(tokens.map((token,) => ({ message_id: messageId, token, scope, })),)
+    .values(tokens.map((term,) => ({ message_id: messageId, term, scope, })),)
     .execute();
 
   return tokens.length;
@@ -79,7 +79,7 @@ export async function matchMessageIdsByTokens(
     .selectFrom("message_search_tokens",)
     .select(["message_id", sql<number>`count(*)`.as("hits",),],)
     .where("scope", "=", scope,)
-    .where("token", "in", tokens,)
+    .where("term", "in", tokens,)
     .groupBy("message_id",)
     .orderBy(sql`count(*)`, "desc",)
     .limit(limit,)

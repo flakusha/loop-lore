@@ -58,7 +58,7 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
       owner_id: ownerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     } as never,);
 
     app = appWithAuth(db, ownerId, "user",);
@@ -214,7 +214,7 @@ describe("PUT /api/worlds/:worldId — autonomyConfig", () => {
       owner_id: strangerId,
       agent_type: "none",
       settings: "{}",
-      format_version: 0,
+      row_version: 0,
     } as never,);
 
     const strangerApp = appWithAuth(db, strangerId, "user",);

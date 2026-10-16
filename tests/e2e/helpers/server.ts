@@ -116,7 +116,7 @@ async function resolveImportUserId(
     const session = await database
       .selectFrom("sessions",)
       .select(["user_id",],)
-      .where("token_hash", "=", tokenHash,)
+      .where("secret_hash", "=", tokenHash,)
       .executeTakeFirst();
 
     if (session) { return session.user_id; }

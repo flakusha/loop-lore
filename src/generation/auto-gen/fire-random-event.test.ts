@@ -73,7 +73,7 @@ async function seedBase(): Promise<void> {
     display_name: "Lyra",
     agent_type: "ai",
     settings: "{}",
-    format_version: 0,
+    row_version: 0,
     import_spec: "{}",
   },).execute();
 

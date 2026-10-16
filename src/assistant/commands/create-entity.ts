@@ -24,7 +24,7 @@ import type { EntityKind, } from "../prompt/templates/entity-generation";
 import type { GeneratedEntity, } from "../quality/entity-creation";
 import { insertEntityLore, } from "./create-entity-lore";
 
-// Base `data_version` 0 projections for the two entity tables this module
+// Base `content_version` 0 projections for the two entity tables this module
 // inserts (columns added by migration 034). Content-defining columns only.
 registerContentVersion("items", 0, [
   "world_id",

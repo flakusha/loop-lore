@@ -294,11 +294,11 @@ describe("upsertByUniqueWith", () => {
     // existing row's column gets `excluded.column + 1`. The helper must
     // accept this kind of expression via the updateSet map.
     //
-    // We exercise it on `users` by bumping `format_version` (integer) on
+    // We exercise it on `users` by bumping `row_version` (integer) on
     // conflict — same shape, smaller blast radius than messages.
     const username = `frank-${crypto.randomUUID()}`;
 
-    // Seed row with format_version = 0 (schema default).
+    // Seed row with row_version = 0 (schema default).
     await upsertByUnique(
       db,
       "users",
@@ -310,7 +310,7 @@ describe("upsertByUniqueWith", () => {
       ["username",],
     );
 
-    // Bump format_version by +1 on conflict, leaving display_name alone.
+    // Bump row_version by +1 on conflict, leaving display_name alone.
     await upsertByUniqueWith(
       db,
       "users",
@@ -320,18 +320,18 @@ describe("upsertByUniqueWith", () => {
         display_name: "Frank Two",
       },
       ["username",],
-      { format_version: sql`excluded.format_version + 1`, },
+      { row_version: sql`excluded.row_version + 1`, },
     );
 
     const row = await db
       .selectFrom("users",)
-      .select(["display_name", "format_version",],)
+      .select(["display_name", "row_version",],)
       .where("username", "=", username,)
       .executeTakeFirst();
 
     // display_name should be untouched (we did not list it in updateSet).
     expect(row?.display_name,).toBe("Frank",);
-    // format_version should be the bumped value (0 + 1 = 1).
-    expect(row?.format_version,).toBe(1,);
+    // row_version should be the bumped value (0 + 1 = 1).
+    expect(row?.row_version,).toBe(1,);
   });
 });

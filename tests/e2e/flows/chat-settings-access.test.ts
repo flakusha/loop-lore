@@ -51,7 +51,7 @@ describe("Chat settings access guard (PUT /api/v1/chats/:id)", () => {
         id: memberId,
         username: "e2emember",
         display_name: "E2E Member",
-        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        secret_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
         role: "user",
         status: "active",
         settings: "{}",

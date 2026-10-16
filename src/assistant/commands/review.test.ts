@@ -22,7 +22,7 @@ beforeAll(async () => {
   createLogger({ level: "error", },);
   const testDb = await createTestDb();
   db = testDb.db;
-  await insertUsers(db, "review-tester", "Review Tester", { id: USER, password_hash: "hash", } as never,);
+  await insertUsers(db, "review-tester", "Review Tester", { id: USER, secret_hash: "hash", } as never,);
 },);
 
 /** Resolve the registered /review handler. */
