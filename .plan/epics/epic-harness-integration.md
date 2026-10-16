@@ -35,11 +35,13 @@ prompt assembler, no second TUI, no in-repo reimplementation of `giwt`. Where
 an external tool already does the job (`omp --mode rpc/json`, `engram`
 sidecar, `gh`), wrap it; build only the thin in-repo seam.
 
-Research inputs (read-only, in repo-root `.tmp/` — intentionally uncommitted, not part of this change):
-`harness-research-internal.md`, `harness-research-pi-opencode.md`,
-`harness-research-claw-hermes.md`, `harness-research-dispatch-sync.md`,
-`harness-research-tui-memory.md`, `harness-research-wide-frontier.md`,
-`harness-research-commit-canvas.md`.
+Research inputs: the committed synthesis lives in `docs/meta/research/harness-*.md`
+(hook-schema-absorption, mcp-wiring, subagent-budgets, subagent-intercomms,
+subagent-model-assignment, token-optimization, worktree-scoping). The seven
+`.tmp/harness-research-*.md` files cited by earlier drafts no longer exist -
+treat those citations as resolved to the docs above, and treat the epic's
+research-input claims as verified only where a `docs/meta/research/` file
+restates them.
 
 ## Ownership boundaries (vs sibling epics)
 
@@ -173,6 +175,13 @@ Taken terms (do not use bare):
   today) + purpose-keyed compress in `PromptAssembler`; measured via the
   harness telemetry events (§8). Anchored read + patch + memory recall = the
   Serena loop with project-native pieces, no new service.
+- A capability catalog fronts the registered set: the agent enumerates tools
+  by domain (structure / search / read / AST / LSP / patch / execute) and pulls
+  per-domain usage detail on demand — the startup prompt carries only the
+  per-run domain-tool manifest (tier 0 per `TASK-harness-context-priority-tiers`),
+  never every tool schema. Command→tool resolution is 1:1 through this seam;
+  unmapped commands fail at the boundary and never reach a shell. Detail loading
+  for tool families rides `TASK-harness-skills-runtime` triggers.
 
 ### 7. Stats dashboard (one tab, not new infra)
 
@@ -508,6 +517,13 @@ Concrete gaps with evidence; each has an explicit `IN or OUT?` marker.
 - [ ] TASK-harness-topic-session-attach — session attachment + lineage + exec-log field
 - [ ] TASK-harness-context-priority-tiers — 0/1/2/3 tier budget composed with PRIORITY
 - [ ] TASK-harness-topic-tui-surface — work topics on existing src/tui/harness/ overlay
+- [ ] TASK-harness-mcp-client-wrapper — McpClient (stdio + Streamable HTTP) into ToolDefinition
+- [ ] TASK-harness-mcp-config-section — [mcp.servers.*] config section + validation
+- [ ] TASK-harness-mcp-server-surface — operator-flagged stdio MCP server over export-flagged tools
+- [ ] TASK-harness-mcp-call-audit — invocation audit rows (offered ≠ invoked) on the parent run
+- [ ] TASK-harness-hook-contract — event→matcher→handler type, veto/bracket seams, HookResult
+- [ ] TASK-harness-canonical-usage — cache/reasoning/requestCount counters replacing ExecUsage
+- [ ] TASK-harness-scoped-fallback-chain — ordered scoped fallback lists ([] disables)
 
 ## Dependencies
 

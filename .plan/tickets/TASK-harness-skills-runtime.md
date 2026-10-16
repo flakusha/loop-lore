@@ -21,6 +21,7 @@
 ## Related Files
 
 - `.agents/skills/` (9 SKILL.md), `src/agents/skills/loader.ts` (new), `src/assistant/workflow-routing.ts`
+- `TASK-harness-lean-ctx-tools` (registered-tool catalog; skill triggers are the on-demand detail channel for tool families)
 - `epic-skills.md` (game skills — do NOT conflate), `epic-plugin-system.md`
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*

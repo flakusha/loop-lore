@@ -3,7 +3,8 @@
 
 # TASK: Harness canvas viz (mermaid panels first)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** `renderIntegrationMermaid` (`src/rpg/integration-registry/mermaid.ts`) is the player-state integration graph, NOT the git-branch / location-tree / memory-provenance panels this ticket requires. Actual remaining scope is smaller than drafted: those three panels do not exist yet.
 **Priority:** low
 **Effort:** Medium
 **Epic:** `.plan/epics/epic-harness-integration.md`
