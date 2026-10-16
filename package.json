@@ -117,6 +117,9 @@
     "config:generate-character-schema": "bun run src/config/generate-character-schema/index.ts",
     "config:generate-toml-schema": "bun run src/config/generate-toml-schema.ts",
     "config:generate-env-schema": "bun run src/config/generate-env-schema.ts",
+    "config:generate-domain-schemas": "bun run src/config/generate-domain-schemas.ts",
+
+    "smoke:app": "bun run src/scripts/smoke-app.ts",
 
     "plan:docs": "giwt plan gen-docs",
     "plan:docs:check": "giwt plan gen-docs --check",
