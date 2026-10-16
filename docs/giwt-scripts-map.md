@@ -47,7 +47,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 
 - `check:report-ls` → `giwt report`: REJECTED. Different worktree roots and `giwt report` flags loop-lore's valid reports malformed (missing `gates` section — schema drift). Stays in-repo.
 - `scripts/sync-ticket-index.ts` deletion: BLOCKED. `scripts/worktree/commands/sync.ts` shells out to it; removal waits for the worktree-shim phase.
-- `scripts/gpg-unlock.mjs`: DELETED (try-10). Capability lives in `giwt gpg-unlock`; the only remaining import is in `scripts/check/parallel/gpg.mjs` which points to `node_modules/giwt/src/gpg-unlock`.
+- `scripts/gpg-unlock.mjs`: DELETED (try-10). Capability lives in `giwt gpg-unlock`; the only remaining import is in `scripts/check/parallel/gpg.mjs` which points to `node_modules/giwt/src/utils/gpg-cache`.
 - `plan:backlog:sync*`, `plan:docs`, `plan:map*`, `plan:find`: NO UPSTREAM → done in try-7 (`giwt plan` added in upstream commit `c53ffb5`; subsumes backlog-sync, code-map, gen-docs + adds check-links, validate, status).
 - `version:*`, `commit:*` (`src/scripts/`): OUT OF SCOPE (denylist: `src/`).
 - `bun install` of the git dep needs a GitHub SSH key in every install env (harness shell has none; CI has no SSH setup) — see Try-3.
@@ -174,7 +174,7 @@ no longer ahead — upstream re-verified: detached-root finalize guard at
 rebase default target at `rebase.ts:25`, and `commit`/`commit-wt` spread the
 filtered env with only `GIT_COMMITTER_*` re-set (`commit.ts:99`,
 `commit-wt.ts:118`). Deletion is **blocked**, not by the parity question but by
-all three files and `tests/worktree-flow.test.ts` were deleted in try-10; the only remaining import is `scripts/check/parallel/gpg.mjs` which points to `node_modules/giwt/src/gpg-unlock` and imports nothing from the fork. The
+all three files and `tests/worktree-flow.test.ts` were deleted in try-10; the only remaining import is `scripts/check/parallel/gpg.mjs` which now points to `node_modules/giwt/src/utils/gpg-cache` and uses giwt's public `warmAgentCache`.
 "Upstream divergence, deliberately not mirrored" note below is likewise stale:
 upstream now refuses protected rebase targets, and the fork's copy of that
 refusal is what upstream adopted.
