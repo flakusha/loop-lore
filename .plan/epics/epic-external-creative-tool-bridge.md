@@ -42,6 +42,32 @@ These came from external research and are **not upstream-verified**. Each must b
 | Blender has an MCP server | Unverified. |
 | LibreOffice / GIMP / Inkscape have MCP servers | Unverified. |
 
+### Not this epic: the ComfyUI / sd.cpp Python-sidecar absorption
+
+Added 2026-10-16. Two things are easy to confuse and share no code, no routes, and
+no transport:
+
+| | This epic | `epic-reference-conditioned-generation.md` |
+| --- | --- | --- |
+| Target | **Desktop creative applications** — Krita, Blender, GIMP, Inkscape, LibreOffice | **ComfyUI / sd.cpp generation backend** and its Python custom-node ecosystem |
+| Integration | **MCP** — the app is an external tool server loop-lore drives | **Direct REST + workflow templates** — loop-lore already speaks the ComfyUI contract via `src/generation/providers/comfyui.ts` |
+| Direction | loop-lore **calls out** to an app the user has installed | loop-lore **absorbs** an app-side integration **into its own** generation path |
+| Why not here | These apps are not OpenAI-compatible, so a per-app MCP adapter is genuinely required | ComfyUI *is* reachable over plain HTTP; routing it through MCP would add a protocol hop to re-derive what the existing client already does |
+
+The specific artifact that prompted the distinction: a Python ComfyUI custom-node
+integration at `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`.
+It registers 11 HTTP routes under `/h3-stills/*` and **zero** node types
+(`NODE_CLASS_MAPPINGS = {}`), and needs six external node types installed
+separately. Its generic half (the `Graph` builder, the workflow lifecycle,
+`extra_pnginfo` metadata, `/upload` + `/history` + `/queue` polling) is being
+**re-implemented natively in TypeScript** by `epic-reference-conditioned-generation.md`.
+Its model-specific half stays in config. It is **not** adopted as an MCP tool and
+**not** adopted as a runtime dependency.
+
+If a future creative-tool bridge item turns out to need image *generation* rather
+than deterministic *editing*, it belongs to `epic-reference-conditioned-generation.md`,
+not to B4.
+
 ## Batches (each independently shippable)
 
 ### B1 — Generic MCP client (no app-specific work)

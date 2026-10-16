@@ -13,7 +13,7 @@
 - [x] Superseded by epic-research-agency-decision.md — BDI planning loop shipped
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:

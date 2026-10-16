@@ -13,7 +13,7 @@
 - [x] Superseded by epic-research-agency-decision.md — BDI tests ship
 
 
-**Status**: Not Started
+**Status**: Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
