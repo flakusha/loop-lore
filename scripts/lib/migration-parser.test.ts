@@ -9,7 +9,9 @@
  * check-db-schemas.ts / schema-sync.test.ts on every regeneration.
  */
 import { describe, expect, test, } from "bun:test";
-import { resolve, } from "node:path";
+import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, resolve, } from "node:path";
 import { listMigrationFiles, parseColumns, parseMigration, } from "./migration-parser";
 
 describe("parseColumns", () => {
@@ -50,6 +52,32 @@ describe("listMigrationFiles", () => {
 });
 
 describe("parseMigration", () => {
+  /**
+   * The alter/rename/drop branches. The file header says parseMigration is
+   * "exercised end-to-end by check-db-schemas.ts / schema-schema.test.ts",
+   * but that only ever parses 001_init.ts, which is pure createTable — so
+   * every branch below went unmeasured until these landed.
+   *
+   * Resource contract: each test writes one fixture into its own
+   * mkdtempSync dir and removes it in `finally`, so no path is shared and a
+   * failed assertion still cleans up. No ports, DB, or process-global is
+   * touched (the `logRenames` console.log branch is deliberately left
+   * uncovered rather than stubbing a global other tests share).
+   */
+  function withMigration(body: string, fn: (file: string,) => void,): void {
+    const dir = mkdtempSync(join(tmpdir(), "ll-migpar-",),);
+    const file = join(dir, "999_probe.ts",);
+    writeFileSync(
+      file,
+      `export async function up(db: unknown): Promise<void> {\n${body}\n}\n`,
+    );
+    try {
+      fn(file,);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
+  }
+
   test("parses the collapsed init into creates", () => {
     const file = resolve(import.meta.dir, "../../src/db/migrations/001_init.ts",);
     const { creates, } = parseMigration(file,);
@@ -57,5 +85,55 @@ describe("parseMigration", () => {
     const users = creates.get("users",);
     expect(users?.createdBy,).toBe("001_init.ts",);
     expect(users?.columns.id?.primaryKey,).toBe(true,);
+  });
+
+  test("renameColumn drops the old name and carries the new one's type over", () => {
+    withMigration(
+      [
+        // The type lookup looks back up to 500 chars, so this addColumn is
+        // what supplies "text" for the renamed column below.
+        `await db.schema.alterTable("users_ck",).addColumn("display_name", "text",).execute();`,
+        // The constraint flags are read off the RENAME block, not off the
+        // addColumn above — assert both, or a swap of the two goes unnoticed.
+        `await db.schema.alterTable("users_ck",).renameColumn("display_name", "screen_name",).notNull().defaultTo("",).execute();`,
+      ].join("\n",),
+      (file,) => {
+        const { alters, drops, } = parseMigration(file,);
+        expect(drops.get("users_ck",),).toEqual(new Set(["display_name",],),);
+        expect(alters.get("users_ck",)?.screen_name,).toEqual({
+          type: "text",
+          notNull: true,
+          hasDefault: true,
+          primaryKey: false,
+        },);
+      },
+    );
+  });
+
+  test("renameTo marks the table it renamed away from as dropped", () => {
+    withMigration(
+      `await db.schema.alterTable("users_tmp",).renameTo("users",).execute();`,
+      (file,) => {
+        const { droppedTables, } = parseMigration(file,);
+        expect(droppedTables.has("users_tmp",),).toBe(true,);
+      },
+    );
+  });
+
+  test("a renameTo with no preceding alterTable registers nothing", () => {
+    withMigration(`await db.schema.renameTo("users",).execute();`, (file,) => {
+      const { droppedTables, } = parseMigration(file,);
+      expect(droppedTables.size,).toBe(0,);
+    },);
+  });
+
+  test("dropColumn records the dropped column on its table", () => {
+    withMigration(
+      `await db.schema.alterTable("users",).dropColumn("legacy_flag",).execute();`,
+      (file,) => {
+        const { drops, } = parseMigration(file,);
+        expect(drops.get("users",),).toEqual(new Set(["legacy_flag",],),);
+      },
+    );
   });
 });
