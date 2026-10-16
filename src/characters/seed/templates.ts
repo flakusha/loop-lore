@@ -15,7 +15,7 @@ import { AvatarService, } from "../services/avatar-service";
 import { TraitsService, } from "../services/traits-service";
 import { ContentRating, } from "../spec";
 import { ensureSystemUser, normalizeSpecies, resolveTemplateAvatar, } from "./avatar";
-import { findExistingActor, stableTemplateId, } from "./identity";
+import { adoptExistingActor, findExistingActor, stableTemplateId, } from "./identity";
 
 interface SeedResult {
   created: number;
@@ -77,9 +77,17 @@ async function seedTemplate(
     // Stable identity: the row's own id, never display_name (a user rename
     // must not create a second row).
     const id = stableTemplateId(template,);
-    const existing = await findExistingActor(database, id,);
+    const existing = await findExistingActor(database, id, { ownerId, seededAs: template.name, },);
 
     if (existing) {
+      if (existing.needsAdoption) {
+        // Pre-upgrade row holding a crypto-random id: converge it onto the
+        // stable identity rather than leaving it resolvable only by name.
+        // A failure here logs but never falls through to the insert below,
+        // so the row can never be duplicated.
+        await adoptExistingActor(database, existing.id, id,);
+      }
+
       result.skipped++;
       return;
     }
