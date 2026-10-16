@@ -20,6 +20,7 @@ import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
 import { createSqliteDialect, setTestDatabase, } from "./index";
+import type { DB, } from "./schema";
 
 try {
   createLogger({ level: "error", },);
@@ -92,8 +93,11 @@ function columnsOf(sqlite: Database, table: string,): string[] {
  */
 async function upgradeSeededDb() {
   const sqlite = new Database(":memory:",);
-  const db = new Kysely({ dialect: createSqliteDialect(sqlite,), },);
-  setTestDatabase(db,);
+  // Kysely<any>, not a bare Kysely: the inserts below are written against
+  // the PRE-rename column names, so they cannot typecheck against the current
+  // DB interface — which is exactly the state this test exists to exercise.
+  const db = new Kysely<any>({ dialect: createSqliteDialect(sqlite,), },);
+  setTestDatabase(db as unknown as Kysely<DB>,);
   const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
 
   const up = await migrator.migrateTo(BEFORE_RENAME,);
@@ -319,6 +323,85 @@ describe("column rename upgrade path", () => {
     }
 
     expect(columnsOf(sqlite, "character_stats",),).not.toContain("record_hash",);
+    await db.destroy();
+    sqlite.close();
+  });
+
+  test("an upgraded database matches a fresh install column-for-column", async () => {
+    // The strongest statement of the whole rework: replaying the chain from the
+    // pre-rename state must land on exactly the schema a fresh install gets.
+    // Comparing column name/type/notnull/default/pk (order-independent) catches
+    // any rename that silently dropped a constraint the fresh path would have.
+    const shapeOf = (sqlite: Database,) => {
+      const tables = sqlite
+        .query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'kysely_%'",)
+        .all() as { name: string }[];
+
+      const shape: Record<string, string[]> = {};
+      for (const { name, } of tables) {
+        const cols = sqlite.query(`PRAGMA table_info("${name}")`,).all() as {
+          name: string;
+          type: string;
+          notnull: number;
+          dflt_value: string | null;
+          pk: number;
+        }[];
+
+        shape[name] = cols
+          .map((c,) => `${c.name}:${c.type}:notnull=${c.notnull}:dflt=${c.dflt_value}:pk=${c.pk}`)
+          .toSorted();
+      }
+
+      return shape;
+    };
+
+    // Fresh install: whole chain in one go.
+    const freshSqlite = new Database(":memory:",);
+    const freshDb = new Kysely<any>({ dialect: createSqliteDialect(freshSqlite,), },);
+    setTestDatabase(freshDb as unknown as Kysely<DB>,);
+    const freshUp = await new Migrator({ db: freshDb, provider: buildMigrationProvider(), },).migrateToLatest();
+    expect(freshUp.error,).toBeUndefined();
+    const freshShape = shapeOf(freshSqlite,);
+    await freshDb.destroy();
+    freshSqlite.close();
+
+    const { db, sqlite, } = await upgradeSeededDb();
+    const upgradedShape = shapeOf(sqlite,);
+
+    expect(Object.keys(upgradedShape,).toSorted(), "same set of tables",).toEqual(
+      Object.keys(freshShape,).toSorted(),
+    );
+
+    for (const [table, cols,] of Object.entries(freshShape,)) {
+      expect(upgradedShape[table], `${table} column shape after upgrade`,).toEqual(cols,);
+    }
+
+    await db.destroy();
+    sqlite.close();
+  });
+
+  test("no old column name survives anywhere in the upgraded schema", async () => {
+    // Belt-and-braces over the per-table loop above: a leftover reference in an
+    // index, trigger or view definition would not show up in PRAGMA table_info
+    // but would still break the application against an upgraded database.
+    const { db, sqlite, } = await upgradeSeededDb();
+    const ddl = sqlite.query(
+      "SELECT sql FROM sqlite_master WHERE sql IS NOT NULL",
+    ).all() as { sql: string }[];
+
+    const old = [
+      "format_version",
+      "password_hash",
+      "token_hash",
+      "data_version",
+      "fallback_chain",
+    ];
+
+    for (const name of old) {
+      const hits = ddl.filter((d,) => d.sql.includes(name,));
+      expect(hits.map((h,) => h.sql.slice(0, 80,)), `no DDL still references ${name}`,).toEqual([],);
+    }
+
     await db.destroy();
     sqlite.close();
   });
