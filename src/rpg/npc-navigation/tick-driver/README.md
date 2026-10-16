@@ -23,7 +23,7 @@ Checks are cheapest-first so a paused world never touches DB.
 ## Usage
 
 ```ts
-import { runNpcMovementTick, } from "../rpg/npc-navigation";
+import { runNpcMovementTick, } from "./tick-driver";
 
 // Scheduler tick (pseudocode — actual scheduler is a separate ticket)
 setInterval(async () => {
