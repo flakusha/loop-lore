@@ -7801,15 +7801,6 @@
     "source": ".plan/tickets/BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets.md",
     "status": "Not Started"
   },
-  "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san": {
-    "extid": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
-    "git_issue": "1a15200b",
-    "hash": "1a15200b",
-    "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md",
-    "status": "🔧 Partial (ReDoS done; chunk-boundary open)",
-    "title": "ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap",
-    "epic": "epic-api-validation-guardrails"
-  },
   "BUG-REDOS-IN-HTML-SANITIZE-SCRIPT-TAG-PATTERN-CHUNK-BOUNDARY-SAN": {
     "epic": "epic-api-validation-guardrails",
     "extid": "BUG-REDOS-IN-HTML-SANITIZE-SCRIPT-TAG-PATTERN-CHUNK-BOUNDARY-SAN",
@@ -40323,7 +40314,7 @@
       "duplicate-key"
     ],
     "source": ".plan/tickets/TASK-index-json-duplicate-key-lowercase-bug-redos-shadow-entry-bl.md",
-    "status": "Not Started"
+    "status": "Done"
   },
   "TASK-INDEX-JSON-WRITER-SORTS-KEYS-ON-WRITE-HAND-APPENDED-ENTRY-CA": {
     "hash": "93bc95f",
