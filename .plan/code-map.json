@@ -10559,6 +10559,12 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
+  "src/command.rs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-command-surface-parity-palette-role-gated-commands-slas.md"
+    }
+  ],
   "src/commands/batch.ts": [
     {
       "kind": "ticket",
@@ -21899,6 +21905,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
+    }
+  ],
+  "src/frontend/alpine/command-conformance.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-command-surface-parity-palette-role-gated-commands-slas.md"
     }
   ],
   "src/frontend/alpine/command-palette.ts": [

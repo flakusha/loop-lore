@@ -12,8 +12,9 @@ use eframe::{App, CreationContext};
 use egui::text::{CCursor, CCursorRange};
 use egui::{Align, CentralPanel, Key, Layout, Modifiers, Panel, ScrollArea, TextEdit};
 
-use crate::api::{self, ChatMessage, ChatSummary, SentMessage};
+use crate::api::{self, ChatMessage, ChatSummary, CommandEntry, SentMessage};
 use crate::client;
+use crate::command;
 use crate::context::FrontendContext;
 use crate::emoji;
 use crate::storage;
@@ -39,6 +40,8 @@ enum FetchEvent {
   Sent(Result<SentMessage, String>),
   /// Emoji registry resolved.
   EmojiRegistry(Result<Vec<(String, String)>, String>),
+  /// Command list resolved.
+  CommandList(Result<(Vec<CommandEntry>, Option<String>), String>),
 }
 
 /// One live generation stream: the chat it belongs to plus its state.
@@ -80,6 +83,15 @@ pub struct EguiApp {
   composer_caret: usize,
   /// A caret char index to apply after the next `TextEdit` show (accept).
   pending_caret: Option<usize>,
+  /// Assistant command palette: registry entries + viewer role.
+  commands: Vec<CommandEntry>,
+  role_in_chat: Option<String>,
+  /// Palette open flag — toggled by `/` in the composer.
+  palette_open: bool,
+  /// Current slash query (without leading `/`).
+  palette_query: String,
+  /// Highlighted palette index.
+  palette_active: usize,
 }
 
 impl EguiApp {
@@ -100,6 +112,11 @@ impl EguiApp {
       emoji_active: 0,
       composer_caret: 0,
       pending_caret: None,
+      commands: Vec::new(),
+      role_in_chat: None,
+      palette_open: false,
+      palette_query: String::new(),
+      palette_active: 0,
     }
   }
 
@@ -112,6 +129,20 @@ impl EguiApp {
         .await
         .and_then(|raw| api::parse_emoji_registry(&raw));
       events.borrow_mut().push(FetchEvent::EmojiRegistry(result));
+      ctx.request_repaint();
+    });
+  }
+
+  /// Spawn a one-shot fetch of the command registry.
+  fn reload_commands(&self, ctx: &egui::Context) {
+    let events = Rc::clone(&self.events);
+    let ctx = ctx.clone();
+    let chat_id = self.context.active_chat_id.clone();
+    client::spawn(async move {
+      let result = client::get_json(&api::command_list_url(chat_id.as_deref()))
+        .await
+        .and_then(|raw| api::parse_command_list(&raw));
+      events.borrow_mut().push(FetchEvent::CommandList(result));
       ctx.request_repaint();
     });
   }
@@ -251,6 +282,56 @@ impl EguiApp {
     self.close_emoji_popover();
   }
 
+  /// Commands visible to the current viewer (role-gated, display-only).
+  fn visible_commands(&self) -> Vec<String> {
+    let role = self.role_in_chat.as_deref();
+    self
+      .commands
+      .iter()
+      .filter(|c| command::satisfies_role(role, c.required_role.as_deref()))
+      .map(|c| c.name.clone())
+      .collect()
+  }
+
+  /// Filter visible commands by the current palette query.
+  fn filtered_commands(&self) -> Vec<String> {
+    let visible = self.visible_commands();
+    let refs: Vec<&str> = visible.iter().map(String::as_str).collect();
+    command::filter_commands(&refs, &self.palette_query)
+      .into_iter()
+      .map(String::from)
+      .collect()
+  }
+
+  /// Accept a palette command: insert `/${name} ` into the composer.
+  fn accept_command(&mut self, name: &str) {
+    self.composer = command::insert_command(&self.composer, name);
+    self.composer_caret = self.composer.chars().count();
+    self.pending_caret = Some(self.composer_caret);
+    self.close_palette();
+  }
+
+  /// Close the palette and forget its state.
+  fn close_palette(&mut self) {
+    self.palette_open = false;
+    self.palette_query.clear();
+    self.palette_active = 0;
+  }
+
+  /// Open the palette when the composer starts with `/`.
+  fn sync_palette(&mut self) {
+    if self.composer.starts_with('/') && !self.composer.contains(' ') {
+      let query = self.composer[1..].to_lowercase();
+      if !self.palette_open || self.palette_query != query {
+        self.palette_query = query;
+        self.palette_active = 0;
+      }
+      self.palette_open = true;
+    } else {
+      self.palette_open = false;
+    }
+  }
+
   /// Apply every fetch result queued since the last frame.
   fn drain_events(&mut self) {
     let drained: Vec<FetchEvent> = self.events.borrow_mut().drain(..).collect();
@@ -278,6 +359,11 @@ impl EguiApp {
         // `:shortcode:` text and the popup stays empty — never a hard error.
         FetchEvent::EmojiRegistry(Ok(registry)) => self.emoji_registry = registry,
         FetchEvent::EmojiRegistry(Err(_)) => {}
+        FetchEvent::CommandList(Ok((commands, role))) => {
+          self.commands = commands;
+          self.role_in_chat = role;
+        }
+        FetchEvent::CommandList(Err(_)) => {}
       }
     }
   }
@@ -329,6 +415,7 @@ impl App for EguiApp {
       self.started = true;
       self.reload_chats(ctx);
       self.reload_emoji_registry(ctx);
+      self.reload_commands(ctx);
       if let Some(id) = self.context.active_chat_id.clone() {
         self.open_chat(&id, ctx);
       }
@@ -392,9 +479,39 @@ impl App for EguiApp {
         }
       });
       ui.with_layout(Layout::bottom_up(Align::Center), |ui| {
-        // Keyboard first: the popover must swallow Tab/Enter/Escape/arrows
+        // Keyboard first: palette and popover must swallow Tab/Enter/Escape/arrows
         // before the TextEdit can act on them (Enter would send the message).
         let mut clicked: Option<usize> = None;
+        if self.palette_open {
+          let visible = self.filtered_commands();
+          let count = visible.len();
+          // The query may have changed since `palette_active` was set; keep it
+          // in bounds so the accept index below never panics.
+          if self.palette_active >= count {
+            self.palette_active = 0;
+          }
+          // Mirrors the Alpine `handleComposerEnter`: Enter/Tab accept only
+          // when there is a match; with an empty list Enter falls through and
+          // sends the message. Escape and arrows always act while open.
+          let (down, up, tab, enter, escape) = ui.input_mut(|i| {
+            let down = i.consume_key(Modifiers::NONE, Key::ArrowDown);
+            let up = i.consume_key(Modifiers::NONE, Key::ArrowUp);
+            let tab = count > 0 && i.consume_key(Modifiers::NONE, Key::Tab);
+            let enter = count > 0 && i.consume_key(Modifiers::NONE, Key::Enter);
+            let escape = i.consume_key(Modifiers::NONE, Key::Escape);
+            (down, up, tab, enter, escape)
+          });
+          if down && count > 0 {
+            self.palette_active = (self.palette_active + 1) % count;
+          } else if up && count > 0 {
+            self.palette_active = (self.palette_active + count - 1) % count;
+          } else if tab || enter {
+            let name = visible[self.palette_active].clone();
+            self.accept_command(&name);
+          } else if escape {
+            self.close_palette();
+          }
+        }
         if self.emoji_query.is_some() && !self.emoji_candidates.is_empty() {
           let (down, up, tab, enter, escape) = ui.input_mut(|i| {
             (
@@ -443,6 +560,33 @@ impl App for EguiApp {
         // must reflect this frame's text, and egui does not repaint without
         // input, so a one-frame lag would never be drawn.
         self.sync_emoji_popover();
+        self.sync_palette();
+
+        let mut palette_clicked: Option<usize> = None;
+        if self.palette_open {
+          let filtered = self.filtered_commands();
+          if filtered.is_empty() {
+            ui.label(egui::RichText::new("no matching commands").italics());
+          } else {
+            if self.palette_active >= filtered.len() {
+              self.palette_active = 0;
+            }
+            for (index, name) in filtered.iter().enumerate() {
+              if ui
+                .selectable_label(index == self.palette_active, format!("/{name}"))
+                .clicked()
+              {
+                palette_clicked = Some(index);
+              }
+            }
+          }
+        }
+        if let Some(index) = palette_clicked {
+          self.palette_active = index;
+          if let Some(name) = self.filtered_commands().get(index).cloned() {
+            self.accept_command(&name);
+          }
+        }
 
         if self.emoji_query.is_some() && !self.emoji_candidates.is_empty() {
           let candidates = self.emoji_candidates.clone();
