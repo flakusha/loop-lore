@@ -27,6 +27,8 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { templateRegistry, } from "../image-edit/template-registry";
 import { writeStoredPluginConfig, } from "./config-store";
 import { dispatchPluginRoute, initializePlugin, loadAllPlugins, loadSinglePlugin, registry, unloadAllPlugins, } from "./loader";
+import { executePluginTool, } from "./tool-executor";
+import { STRICT_CODEGEN_FLAG, } from "./tool-policy";
 
 // ── Fixture sources (written to temp dirs, imported by the loader) ──
 
@@ -782,6 +784,37 @@ describe("origin-scoped approval", () => {
     await initializePlugin({ db, manifest: registry.getPlugin("fixture-once")!.manifest, },);
 
     expect(globals().__llOnLoadRan,).toEqual(["once",],);
+  });
+
+  test("a community plugin carrying a policy tag stays disabled, and its tagged tool refuses to run", async () => {
+    // A disabled plugin cannot be invoked through the generation tool loop, so
+    // the tag has to hold on its own too: enabling it and calling the executor
+    // directly is the case an implicit pass would slip through.
+    const dir = makePluginDir({
+      "plugin.ts": `export const plugin = {
+  name: "fixture-tagged-community",
+  version: "1.0.0",
+  description: "community fixture carrying a policy tag",
+  author: "test",
+  tools: [{ name: "fixture-tagged-community-tool", description: "s", parameters: {}, policy: "requires-strict-codegen", handler: async () => ({ content: "ran", }), },],
+};
+`,
+    },);
+
+    await loadSinglePlugin(db, "fixture-tagged-community", dir, "community",);
+
+    expect(await persistedStatus("fixture-tagged-community",),).toBe("disabled",);
+    expect(registry.isEnabled("fixture-tagged-community",),).toBe(false,);
+    expect(registry.getAllTools().map((t,) => t.name,),).not.toContain("fixture-tagged-community-tool",);
+
+    registry.setEnabled("fixture-tagged-community", true,);
+    const tagged = registry.getAllTools().find((t,) => t.name === "fixture-tagged-community-tool");
+    expect(tagged?.policy,).toBe("requires-strict-codegen",);
+
+    const result = await executePluginTool(tagged!, {},);
+
+    expect(result.isError,).toBe(true,);
+    expect(result.content,).toContain(STRICT_CODEGEN_FLAG,);
   });
 
   test("an existing row decides regardless of origin", async () => {

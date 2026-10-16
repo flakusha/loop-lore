@@ -12,6 +12,7 @@
 
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
+import type { ToolPolicyTag } from "./tool-policy";
 
 // ── Core Plugin ──────────────────────────────────────────────
 
@@ -97,7 +98,9 @@ export interface ToolExecutionContext {
 }
 
 /**
- *
+ * A plugin tool handler. Handlers run in-process, so nothing here isolates
+ * them; `policy` is a requirement on the process (`./tool-policy`), not a
+ * boundary around the tool.
  */
 export interface ToolDefinition {
   name: string;
@@ -109,7 +112,8 @@ export interface ToolDefinition {
   ) => Promise<ToolResult> | ToolResult;
   permissions?: string[];
   timeoutMs?: number;
-  sandboxed?: boolean;
+  /** Process requirement; see {@link ToolPolicyTag}. Never a sandbox. */
+  policy?: ToolPolicyTag;
 }
 
 /**
