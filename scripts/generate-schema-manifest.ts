@@ -308,9 +308,9 @@ function generateManifest(
   let tableCount = 0;
   for (const [group, tables,] of groups) {
     lines.push(`  // ── ${group} ──────────────────────────────────────────────`,);
-    for (const [name, cols,] of tables) {
-      lines.push(`  .table("${name}", {`,);
-      for (const [colName, colDef,] of Object.entries(cols,)) {
+    for (const tagItem of tables) {
+      lines.push(`  .table("${tagItem[0]}", {`,);
+      for (const [colName, colDef,] of Object.entries(tagItem[1],)) {
         const opts: string[] = [];
         if (colDef.primaryKey) { opts.push("primaryKey: true",); }
         if (colDef.notNull) { opts.push("notNull: true",); }

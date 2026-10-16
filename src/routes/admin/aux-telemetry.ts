@@ -168,8 +168,8 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           const n = Number(sinceParam,);
           sinceMsParsed = Number.isFinite(n,) ? n : null;
         } else {
-          const t = parseExpiryMs(sinceParam,);
-          sinceMsParsed = t;
+          const parsedT = parseExpiryMs(sinceParam,);
+          sinceMsParsed = parsedT;
         }
 
         if (sinceMsParsed === null) {

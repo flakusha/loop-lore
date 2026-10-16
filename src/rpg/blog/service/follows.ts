@@ -17,15 +17,15 @@ export async function follow(
   followerId: string,
   authorId: string,
 ): Promise<BlogFollowRow> {
-  const follow = {
+  const followRow = {
     id: uid(),
     follower_id: followerId,
     author_id: authorId,
     created_at: new Date().toISOString(),
   };
 
-  await db.insertInto("blog_follows",).values(follow,).execute();
-  return follow;
+  await db.insertInto("blog_follows",).values(followRow,).execute();
+  return followRow;
 }
 
 /**

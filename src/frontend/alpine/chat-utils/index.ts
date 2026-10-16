@@ -17,6 +17,6 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
   ...chatUtilsGallery,
   ...chatUtilsGroupedData,
   get groupedMessages() {
-    return computeGroupedMessages.call(this,);
+    return computeGroupedMessages(this,);
   },
 };

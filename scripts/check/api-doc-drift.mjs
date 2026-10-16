@@ -70,9 +70,9 @@ function documentedOperations(markdown,) {
   const found = new Map();
   const re = /\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(\/api\/v1\/[^\s`"')|]*)/g;
   for (const [, method, raw,] of markdown.matchAll(re,)) {
-    const path = normalize(raw.split("?",)[0].replace(/[.,;`]+$/, "",),);
-    if (path === "/api/v1") { continue; }
-    found.set(`${method} ${path}`, path,);
+    const apiPath = normalize(raw.split("?",)[0].replace(/[.,;`]+$/, "",),);
+    if (apiPath === "/api/v1") { continue; }
+    found.set(`${method} ${apiPath}`, apiPath,);
   }
   return found;
 }
@@ -124,11 +124,11 @@ async function main() {
   const missing = [];
   for (const op of documented.keys()) {
     const sp = op.indexOf(" ",);
-    const path = op.slice(sp + 1,);
-    const entry = specPaths.get(path,);
-    if (!entry) { missing.push(`${op}  — path not served`,); }
-    else if (!entry.includes(op.slice(0, sp,).toLowerCase(),)) {
-      missing.push(`${op}  — path serves [${entry.join(", ",)}]`,);
+    const opPath = op.slice(sp + 1,);
+    const specPath = specPaths.get(opPath,);
+    if (!specPath) { missing.push(`${op}  — path not served`,); }
+    else if (!specPath.includes(op.slice(0, sp,).toLowerCase(),)) {
+      missing.push(`${op}  — path serves [${specPath.join(", ",)}]`,);
     }
   }
 

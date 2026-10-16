@@ -39,13 +39,6 @@ export type {
 /** Facade over split trade modules; offer lifecycle inherited. */
 export class TradeService extends OfferService {
   /**
-   * @param db
-   */
-  constructor(db: Kysely<DB>,) {
-    super(db,);
-  }
-
-  /**
    * Current gold (or other currency) balance for an actor in a world.
    * @param actorId
    * @param worldId

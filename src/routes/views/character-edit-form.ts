@@ -69,12 +69,12 @@ function loadPanelBody(file: string,): string {
 export function extensionEditorSection(
   characterId: string,
   loadBody: (file: string,) => string,
-  escapeAttr: (str: string,) => string,
+  escapeAttrFn: (str: string,) => string,
 ): string {
   return `        <details class="form-section" data-testid="character-extension-editor-section" open style="margin-top:var(--space-6);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:var(--space-4)">
           <summary style="cursor:pointer;font-weight:600;font-size:var(--text-lg)">Rich Extension Fields</summary>
           <p class="form-hint" style="color:var(--text-secondary);margin:var(--space-2) 0 var(--space-4)">Bundle-driven fields: ability scores, inventory, vitals, equipment, motivations, relationships, appearance details, and more. Saved to the character's <code>settings</code> blob via PUT.</p>
-          <div x-data="characterExtensionEditorFactory('${escapeAttr(characterId,)}', undefined,)">
+          <div x-data="characterExtensionEditorFactory('${escapeAttrFn(characterId,)}', undefined,)">
             <section>${loadBody("extension-editor-panel.html",)}</section>
           </div>
         </details>`;

@@ -98,8 +98,8 @@ async function insertTag(
   const existing = await existingQuery.executeTakeFirst();
 
   if (existing) {
-    const { id, tag, scope, source, } = existing;
-    return { id, tag, scope: scope as AssetTagScope, source: source as AssetTagSource, };
+    const { id, tag: tagName, scope: tagScope, source: tagSource, } = existing;
+    return { id, tag: tagName, scope: tagScope as AssetTagScope, source: tagSource as AssetTagSource, };
   }
 
   const id = uid();
