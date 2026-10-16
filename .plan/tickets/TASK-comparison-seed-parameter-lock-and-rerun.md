@@ -20,8 +20,10 @@ comparable report proving the two runs used identical inputs.
 
 ## Context
 
-The `locked` column exists on `comparison_set_variants` (see
-`TASK-comparison-set-variant-data-model.md`). A locked variant has its generation parameters frozen:
+The `locked` column does **not** exist yet. It is a to-be-created column on
+`comparison_set_variants`, owned by `TASK-comparison-set-variant-data-model.md` (Not Started); this
+ticket's lock semantics are defined against that DDL and require the migration to land first. A locked
+variant has its generation parameters frozen:
 `PATCH /api/comparison-sets/:id` may change its title/position but must reject a change to `seed`,
 `steps`, `cfg`, `sampler`, `scheduler`, `width`, `height`, `lora_stack`, `reference_set`,
 `edit_mask_asset_id`, or `backend` while `locked = 1`. Unlocking is an explicit call, not a side
@@ -38,6 +40,15 @@ worse than useless — it would make a non-reproducible run look reproducible in
 
 Re-run must not delete or mutate the prior run's asset links; outputs of run N and run N+1 coexist and
 are distinguished by run id in the cell detail view.
+
+**Ownership boundary with `TASK-cross-model-comparison-run-data-side.md`** (that ticket,
+`epic-reference-conditioned-generation`, is also Not Started). Run identity for a **comparison set** —
+the `comparison_set_runs` row, the per-variant parameter snapshot, the `reproducible` verdict, and
+`POST /api/comparison-sets/:id/rerun` — is owned here. Run identity for a **cross-model reference run**
+— one pinned prompt + ordered reference set + seed shared across the four target model families, with
+a skipped row for any family its capability row excludes — is owned by that ticket. Both tickets
+implement the same-prompt identity in their own tables; neither may create the other's. The join key
+between them is that shared prompt identity plus the per-model result row that ticket produces.
 
 ## Acceptance Criteria
 

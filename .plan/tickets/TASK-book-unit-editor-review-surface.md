@@ -30,10 +30,13 @@ Alpine for local state, and this ticket follows both without exception:
   `src/routes/views/plugin-dynamic.ts`, and **redirect to `/views/` when the
   request lacks `HX-Request`** — every new fragment endpoint must keep that
   guard.
-- Views call Alpine factories from `src/frontend/alpine/*.ts` (e.g.
-  `src/frontend/alpine/world-timeline-bar.ts` uses `htmx.ajax` from
-  `src/frontend/alpine/htmx.ts`); `src/frontend/pages/*.ts` holds page-level
-  stores.
+- Views call Alpine factories from `src/frontend/alpine/*.ts`; page-level stores live in
+  `src/frontend/pages/*.ts`. The timeline store that uses `htmx.ajax` is
+  `src/frontend/pages/world-timeline-bar.ts:90` — a **page** store, not
+  `src/frontend/alpine/world-timeline-bar.ts` (that file does not exist). And `htmx` there is a
+  **global**, not an import: `src/frontend/alpine/htmx.ts` exports only `apiFetch` (`:30`), so
+  `htmx.ajax(...)` in a page store relies on the global the page shell installs. Copy that
+  pattern; do not add an `htmx` import that does not exist.
 
 Actions map onto the two columns the schema ticket writes — do not invent a
 single `state` column. Both vocabularies already exist and carry transition
@@ -76,8 +79,7 @@ assume the creative-studio file is there.
       per-unit `/dynamic/publications/:id/units/:unitId`) by
       `src/routes/views/plugin-dynamic.ts`, each returning a 302 to `/views/`
       when `HX-Request` is absent
-- [ ] Each unit renders its `state` and exposes pin / accept / reject /
-      regenerate controls wired to `hx-post` against the publication routes
+- [ ] Each unit renders its `publication_status` (the enum's value, labelled with the user's word — never a column named `state`, see ## Context) plus its `pin` value, and exposes pin / accept / reject / regenerate controls wired to `hx-post` against the publication routes
 - [ ] An Alpine store (e.g. `src/frontend/alpine/publication-book-editor.ts`)
       holds selection + dirty state and is registered in `src/frontend/alpine/index.ts`
 - [ ] Regenerate posts to a route that re-enters the workflow for **one** unit id

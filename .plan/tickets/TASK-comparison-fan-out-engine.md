@@ -55,6 +55,15 @@ throughput actually demands otherwise.
 `TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene.md` is the first real
 multi-provider fixture source for an integration test of the two-backend path.
 
+**Ownership boundary with `TASK-cross-model-comparison-run-data-side.md`** (that ticket,
+`epic-reference-conditioned-generation`, is also Not Started). Fan-out **for a comparison set** is
+owned here, in `src/comparisons/fan-out.ts`, dispatching `comparison_set_variants` rows. Fan-out
+**for a cross-model reference run** — one prompt across the four target *model families*, skipping
+families with no capability row, attributing per `prompt_id` — is owned by that ticket. The two do not
+share an engine and neither may create a second one: the bounded-concurrency and
+partial-failure-isolation rules above apply to both, but the code paths, the rows, and the skip
+semantics are separate. Coordinate the cap constant if both land.
+
 ## Acceptance Criteria
 
 - [ ] `src/comparisons/fan-out.ts` exports a fan-out entry point taking the set's variants and dispatching them through `generateImages`

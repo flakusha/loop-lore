@@ -45,9 +45,24 @@ Pinned units are excluded from regeneration sweeps
 (`TASK-book-unit-editor-review-surface.md`), and a pinned unit with a live
 revision is a contradiction the API must reject rather than silently resolve.
 
-The repo already has optimistic-locking machinery for concurrent row updates
-(`src/db/optimistic-locking.ts`) — reuse it so two tabs regenerating the same
-unit do not interleave a lost write.
+The repo has optimistic-locking machinery for concurrent row updates
+(`src/db/optimistic-locking.ts`), but it is **not** reusable as-is for
+publication units. `applyOptimisticUpdate` hardcodes the column name
+`format_version` in both its SET clause (`:91`) and its WHERE clause (`:103`), and
+`getCurrentVersion` selects `format_version` (`:157-159`). `publication_units` has
+no version column: the schema ticket's DDL defines `data_version` on
+`publications` and no version column at all on `publication_units` (the epic's
+illustrative shape uses `data_version` too). So there is a real choice, and this
+ticket owns it:
+
+1. **Preferred** — add a `format_version` column to `publication_units` in the
+   migration below and call `updateWithVersionCheck` unchanged. Smallest diff and
+   the helper stays the single optimistic-locking implementation in the repo.
+2. **Otherwise** — widen `applyOptimisticUpdate` / `getCurrentVersion` to take the
+   version column name as a parameter, and update every existing caller.
+
+Either way two tabs regenerating the same unit must not interleave a lost write,
+and the choice is settled by the test in the acceptance criteria.
 
 Full branching (fork an artifact, merge two forks, diff-and-choose per chapter)
 is **explicitly out of scope**. Keep-or-discard for one unit is the v1 contract;
@@ -57,8 +72,15 @@ oblige it. If branching is wanted, it needs its own ticket.
 ## Acceptance Criteria
 
 - [ ] `publication_unit_revisions` is added by a forward migration (append-only
-      per `src/db/migrations/README.md`; extend the schema ticket's migration if
-      it has not shipped, otherwise append `058_*`), with
+      per `src/db/migrations/README.md`). Ownership is unconditional and
+      non-contradictory: **this ticket owns `058_publication_unit_revisions.ts`
+      (and, if needed, a `format_version` column on `publication_units`),
+      unconditionally.** If `057_publication_artifacts.ts` from
+      `TASK-publication-artifact-schema.md` has already shipped, this is a separate
+      `058_*` migration and the schema ticket is not edited; if it has **not**
+      shipped, this ticket's revision table is still its own `058_*` file — the two
+      tickets do not co-own one migration file. Either ordering is acceptable, the
+      shared file is not. Columns:
       `id, unit_id, previous_body, previous_state, created_at, superseded_by`
 - [ ] Regenerating a unit writes a revision and leaves the unit's current body
       and state untouched until the user decides
@@ -68,9 +90,7 @@ oblige it. If branching is wanted, it needs its own ticket.
       pre-regeneration state (route test asserts equality, not just length)
 - [ ] A pinned unit rejects regeneration outright, and a pinned unit with a live
       revision is rejected at the API boundary with a named reason
-- [ ] Concurrent edits to one unit use the existing optimistic-locking mechanism
-      (`src/db/optimistic-locking.ts`) so two tabs cannot interleave a lost
-      write; covered by a test
+- [ ] Concurrent edits to one unit go through the repo's optimistic-locking mechanism in `src/db/optimistic-locking.ts`, so two tabs cannot interleave a lost write; covered by a test. The mechanism requires a `format_version` column on `publication_units` (see ## Context) — if option 2 is taken, the helper is widened once and every pre-existing caller still passes its tests
 - [ ] The review surface shows a compare view of accepted vs candidate body for a
       unit with a live revision, and keep/discard are available from it
 - [ ] Revisions do not change unit `position` under any path (test)

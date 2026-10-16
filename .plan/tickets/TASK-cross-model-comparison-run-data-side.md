@@ -64,6 +64,20 @@ export, and its own fan-out and comparability tickets. Read it before starting; 
 ticket must not create a second comparison-set model. The join between the two is
 the same-prompt identity plus the per-model result row this ticket produces.
 
+The boundary is symmetric, and the other side says so too. Three things are owned on
+both sides, and each has exactly one owner:
+
+| Concern | Owner here (cross-model reference run) | Owner there (comparison set) |
+| --- | --- | --- |
+| Fan-out | this ticket, across the four target model families, skipping families with no capability row, attributed per `prompt_id` | `TASK-comparison-fan-out-engine.md`, over `comparison_set_variants` rows in `src/comparisons/fan-out.ts` |
+| Run identity | this ticket's run record + per-model result rows, keyed on the shared prompt/reference/seed | `TASK-comparison-seed-parameter-lock-and-rerun.md`, the `comparison_set_runs` row, the per-variant snapshot and the `reproducible` verdict |
+| Latency / VRAM | this ticket, captured on the per-model result row with a recorded reason when absent | `TASK-comparison-metric-collection-and-charts.md`, into `comparison_variant_metrics`, absent rather than estimated when the backend does not report it |
+
+Two separate engines, two sets of rows, no shared fan-out module — and the same
+honesty rules on both sides (an unreported metric stays absent with a reason, never
+estimated or zeroed). Whichever lands first, the second reads it rather than
+forking it.
+
 ## Acceptance Criteria
 
 - [ ] A comparison run records: the prompt, the ordered reference set, the seed,

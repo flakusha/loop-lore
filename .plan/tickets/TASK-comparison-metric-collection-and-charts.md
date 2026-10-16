@@ -19,31 +19,38 @@ chart form of a technical comparison.
 
 ## Context
 
-`comparison_variant_metrics(variant_id, metric_key, metric_value)` already exists in the data model
-(`TASK-comparison-set-variant-data-model.md`). This ticket fills it and renders it.
+`comparison_variant_metrics(variant_id, metric_key, metric_value)` does **not** exist yet: it is a
+to-be-created table owned by `TASK-comparison-set-variant-data-model.md` (Not Started). This ticket
+depends on that migration landing, and writes the first rows into it.
 
 What each metric can honestly be in v1:
 
-- **latency_ms** — fully measurable. The fan-out engine (`src/comparisons/fan-out.ts`) already times
-  each dispatch; write `completed_at - started_at` per variant. The ComfyUI client also exposes
+- **latency_ms** — fully measurable, and the **fan-out engine this ticket depends on is the thing
+  that times it**: `src/comparisons/fan-out.ts` does not exist today
+  (`TASK-comparison-fan-out-engine.md`, Not Started). When it lands it must record
+  `completed_at - started_at` per variant, and this ticket reads those columns — it does not introduce
+  a second clock. The ComfyUI client also exposes
   execution progress (`ComfyUIExecutionStatus.progress`, `src/generation/providers/comfyui.ts:38`), which
   is time-to-step, not total — do not conflate the two.
 - **cost_usd** — only where a price is known. Do **not** invent a price: a null cost must stay null and
   be excluded from aggregates, exactly as the harness does it
   (`src/harness/stats.ts:103` — `if (record.costUsd !== null) totals.costUsd += record.costUsd`). The
-  existing `COST_PER_1K_TOKENS` estimate in `src/routes/analytics/overview.ts:127` is a **LLM token**
-  estimate and does not apply to image generation; do not reuse it for image variants.
+  existing `COST_PER_1K_TOKENS` estimate (`src/routes/analytics/overview.ts:12`, consumed at `:127`) is
+  a **LLM token** estimate and does not apply to image generation; do not reuse it for image variants.
 - **vram_peak_mb** — only when the backend actually reports it. Neither the ComfyUI client nor the
   sd.cpp engine currently surfaces VRAM (`src/generation/providers/comfyui.ts`,
   `src/generation/image-engine/sdcpp.ts`), so this metric is **optional** and stays absent rather than
   estimated. Add the provider read only if a real field exists; a client-side guess is worse than a
   missing series.
-- **clip_score / aesthetic_score** — only when a scorer is configured. No scorer exists in `src/`
-  today; the metric key is reserved and the chart shows "no scorer configured" rather than an empty
-  axis. Ship the three measurable ones; leave the keys reserved.
+- **clip_score / aesthetic_score** — only when an **image** scorer is configured. A scorer registry does
+  exist in `src/` — `SCORERS` at `src/story/quality/registry.ts:13` — but every entry is a text/prose
+  scorer (`CharacterVoice`, `PlotCoherence`, `LoreConsistency`, `NarrativeQuality`, `QuestRelevance`,
+  `Creativity`); none scores an image. The metric key is therefore reserved and the chart shows "no
+  scorer configured" rather than an empty axis. Ship the measurable ones; leave the keys reserved.
 
 A null metric is never coerced to 0 — the same reasoning the harness records explicitly at
-`src/harness/types.ts:151` ("null/absent cost stays null — a 0 here would claim the call was free").
+`src/harness/types-wire.ts:151` ("null/absent cost stays null — a 0 here would claim the call was free").
+(`src/harness/types.ts` is only 127 lines and does not contain this comment.)
 
 Chart rendering: the chart is client-side SVG, no charting dependency. Series = swept parameter values
 from `TASK-comparison-parameter-sweep-axis.md`; y = the chosen metric; non-comparable points are drawn
@@ -52,6 +59,14 @@ hollow, not dropped silently. Emit the chart as a DOM `<svg>` element so
 
 Non-comparable cells must be excluded from aggregates unless the user overrides — see
 `TASK-comparison-comparability-validation.md`.
+
+**Ownership boundary with `TASK-cross-model-comparison-run-data-side.md`** (that ticket,
+`epic-reference-conditioned-generation`, is also Not Started). Per-variant `latency_ms` and any
+`vram_peak_mb` for **comparison-set variants** are recorded into `comparison_variant_metrics` by this
+ticket's dependency (`TASK-comparison-fan-out-engine.md`) and charted here. Per-model latency and VRAM
+for a **cross-model reference run** are captured on that ticket's own per-model result row. Same
+honesty rules apply on both sides — an unreported metric stays absent with a recorded reason, never
+either estimated or zeroed — but they are two tables and two write paths, not one.
 
 ## Acceptance Criteria
 

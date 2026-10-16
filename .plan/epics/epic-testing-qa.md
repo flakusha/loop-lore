@@ -45,6 +45,7 @@ Debugging, unit tests, e2e tests, browser tests, and test infrastructure improve
 | TASK-2026-006                        | E2E: test ordering fragile (shared mutable state)           | Medium   | Not Started |
 | TASK-2026-011                        | Unit: route handler isolation missing                       | Medium   | Not Started |
 | TASK-frontend-e2e-improvements-draft | Frontend E2E stabilization (draft)                          | High     | Not Started |
+| TASK-model-comparison-reactions       | Model comparison reactions, comparison API, A/B testing UI  | Medium   | Not Started |
 
 ## Metrics
 
