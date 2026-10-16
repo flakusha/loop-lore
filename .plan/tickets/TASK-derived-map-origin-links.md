@@ -30,3 +30,5 @@ asset→asset links exist and work — `MATTING_SOURCE_LABEL` is written at `src
 
 - Origin is one hop for v1 (image → depth). Chains (image → mask → cutout) stay flat with one link per artifact; don't model a tree.
 - Keep `findMattedDerivative` behavior for existing callers; the new helpers are additive until the multi-mask ticket migrates reads.
+
+git issue: 74cea0f
