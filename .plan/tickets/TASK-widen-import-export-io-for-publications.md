@@ -48,12 +48,13 @@ is the record that the Done epic needed to be reopened to receive it.
 
 **2. The chat-export citations are wrong and the markdown writer is duplicated.**
 `src/routes/chat-export.ts` is a **directory**, not a 323-line flat file — it holds
-`format.ts`, `export-route.ts`, `index.ts`, and the chat export test lives beside
-them. And the export table names one markdown writer where the source had two:
+`format.ts`, `export-route.ts`, `index.ts`, and `export-route.test.ts` beside them.
+And the export table names one markdown writer where the source had two:
 `src/routes/chat-export/format.ts:30` `formatMarkdown` (live) and
-`src/chat/export/formats.ts:66` `renderMarkdown` (dead, no production caller).
-`TASK-collapse-duplicate-markdown-exporter.md` removes the dead one and corrects
-this table.
+`src/chat/export/formats.ts:66` `renderMarkdown` (dead — module-private, reached
+only via the exported `exportChat` at `:210`, whose sole importer is its own
+test). `TASK-collapse-duplicate-markdown-exporter.md` removes the whole dead
+module and corrects this table.
 
 **Scope of this ticket is documentation and epic state only.** No code lands here.
 What changes:
