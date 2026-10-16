@@ -146,7 +146,13 @@ OpenAI-compatible. Same `LLMProvider` + `ProviderInstanceConfig` seams (`src/gen
 
 ## Other LLM Integrations (Future)
 
-Ollama, LM Studio, text-generation-webui, KoboldCpp, LocalAI, Anthropic API, Google AI, Mistral API, Groq, Together AI, Fireworks AI.
+Ollama (OpenAI-compatible mode via /v1) and LM Studio, text-generation-webui, KoboldCpp, LocalAI, Mistral API, Groq, Together AI, Fireworks AI (Tier-1 — supported via openaiCompatible config entries; none are in the example config today). Mistral API, Groq, and others already work as openaiCompatible instances.
+
+Google AI (Gemini) remains a separate native adapter (FEAT-077, TASK-gemini-provider.md, Not Started).
+
+Anthropic native API and Ollama native API are implemented (src/generation/providers/anthropic/, src/generation/providers/ollama-native/).
+
+AWS Bedrock remains a schema-only item awaiting TASK-native-aws-bedrock-adapter.md (SigV4/ConverseStream; OpenAI-compat family is the alternate entry mode).
 
 ## Config
 
