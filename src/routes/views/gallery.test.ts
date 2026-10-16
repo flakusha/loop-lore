@@ -13,7 +13,56 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssets, insertAssetTags, insertUsers, } from "../../test-utils/insert-helpers";
 import { inheritedHiddenAssetIds, serveGalleryGrid, } from "./gallery";
-import { formatSize, } from "./gallery-cards";
+import { formatSize, renderGalleryCards, renderGalleryErrorCard, } from "./gallery-cards";
+import type { GalleryAssetItem, } from "./view-models/gallery-grid";
+
+/**
+ * The card renderer shared by the grid and search fragments and the JSON
+ * branch's htmx counterpart. Exercises every non-image thumbnail branch.
+ */
+describe("views/gallery-cards renderer", () => {
+  /**
+   * @param id
+   * @param filename
+   * @param assetType
+   */
+  function item(id: string, filename: string, assetType: "audio" | "video" | "other" | "memory",): GalleryAssetItem {
+    return {
+      id,
+      filename,
+      assetType,
+      sizeBytes: 2048,
+      createdAt: "2026-01-01 00:00:00",
+      thumbUrl: null,
+      tags: [],
+    };
+  }
+
+  test("renders a per-type icon when no thumbnail exists", () => {
+    const html = renderGalleryCards({
+      assets: [
+        item("a1", "song.mp3", "audio",),
+        item("v1", "clip.mp4", "video",),
+        item("d1", "notes.txt", "other",),
+        item("m1", "mem.bin", "memory",),
+      ],
+    },);
+
+    expect(html,).toContain("🎵",);
+    expect(html,).toContain("🎬",);
+    expect(html.match(/📄/g,)?.length,).toBe(2,);
+    expect(html,).toContain("2.0 KB",);
+    expect(html,).toContain('data-testid="asset-card-m1"',);
+  });
+
+  test("an empty asset list renders the empty state, not cards", () => {
+    expect(renderGalleryCards({ assets: [], },),).toContain("gallery-empty",);
+  });
+
+  test("the error card carries the message escaped", () => {
+    expect(renderGalleryErrorCard("Invalid <type>",),).toContain("Invalid &lt;type&gt;",);
+  });
+});
 
 describe("views/gallery", () => {
   let db: Kysely<DB>;
