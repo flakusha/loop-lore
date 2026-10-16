@@ -1188,6 +1188,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
     },
     {
@@ -19552,7 +19556,15 @@
   "src/frontend/alpine/chat-actions/command-palette.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-chat-commands.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-command-surface-parity-palette-role-gated-commands-slas.md"
     },
     {
       "kind": "ticket",
@@ -19745,6 +19757,10 @@
   ],
   "src/frontend/alpine/chat-generations.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-generation-completed-telemetry-never-reaches-the-se.md"
     },
@@ -19755,6 +19771,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     },
     {
       "kind": "ticket",
@@ -20047,6 +20067,16 @@
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     }
   ],
+  "src/frontend/alpine/chat-slash.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-command-surface-parity-palette-role-gated-commands-slas.md"
+    }
+  ],
   "src/frontend/alpine/chat-state.ts": [
     {
       "kind": "ticket",
@@ -20182,7 +20212,15 @@
   "src/frontend/alpine/chat-utils/emoji.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-emoji-reactions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
     },
     {
       "kind": "ticket",
@@ -20226,6 +20264,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vector-gen-gallery-asset-support.md"
     },
     {
@@ -20242,11 +20284,19 @@
   "src/frontend/alpine/chat-utils/render.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-chat-commands.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
     }
   ],
   "src/frontend/alpine/chat-utils/time.ts": [
@@ -20437,8 +20487,16 @@
   ],
   "src/frontend/alpine/command-buttons.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-commands-extension.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-command-surface-parity-palette-role-gated-commands-slas.md"
     },
     {
       "kind": "ticket",
@@ -20551,6 +20609,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-email-integration.md"
+    }
+  ],
+  "src/frontend/alpine/emoji-autocomplete.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
+    }
+  ],
+  "src/frontend/alpine/emoji-picker.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
     }
   ],
   "src/frontend/alpine/enrichment.ts": [
@@ -22605,6 +22679,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-025.md"
+    }
+  ],
+  "src/frontend/egui-bridge.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     }
   ],
   "src/frontend/fe-fetch.ts": [
@@ -25162,6 +25242,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-llm-scheduler-observability.md"
     }
   ],
@@ -25653,6 +25737,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-tool-stream-interleaving.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     }
   ],
   "src/generation/generation-routes/test-connection.ts": [
@@ -33499,6 +33587,10 @@
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/multi-instance-reconciliation.md"
     }
@@ -34815,6 +34907,10 @@
   ],
   "src/routes/character-emotion-avatars-stream.ts": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
     }
@@ -35283,6 +35379,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
+    }
+  ],
+  "src/routes/chat-export/format.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
     }
   ],
   "src/routes/chat-join.test.ts": [
@@ -36137,6 +36239,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-disease-poison.md"
+    }
+  ],
+  "src/routes/dynamic/chats.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    }
+  ],
+  "src/routes/dynamic/gallery.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/economy.ts": [
@@ -38197,6 +38311,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-dedup-top-jscpd-clone-clusters.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     }
   ],
   "src/routes/npc-movement.ts": [
@@ -38987,6 +39105,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/text-effects-overlays.md"
+    }
+  ],
+  "src/routes/shortcode-emoji.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
     }
   ],
   "src/routes/social.ts": [
@@ -39835,6 +39959,12 @@
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     }
   ],
+  "src/routes/views/chat-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md"
+    }
+  ],
   "src/routes/views/chats.ts": [
     {
       "kind": "epic",
@@ -39879,6 +40009,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-derived-map-origin-links.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
     },
     {
       "kind": "ticket",
@@ -39940,6 +40074,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     },
     {
@@ -39955,8 +40093,16 @@
   ],
   "src/routes/views/negotiate.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/nsfw-audit.ts": [
@@ -39990,11 +40136,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-json-negotiation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/plugin-pages.ts": [
@@ -40035,6 +40189,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
     },
     {
       "kind": "ticket",
@@ -40521,6 +40679,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+    }
+  ],
+  "src/routes/worlds/world-stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     }
   ],
   "src/routes/worlds/worlds-delete.ts": [
@@ -49400,11 +49564,19 @@
   "src/views/gallery.html": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
     },
     {
       "kind": "ticket",

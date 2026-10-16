@@ -119,7 +119,7 @@
 | Not Started | Epic: Analytics & Observability | High | Medium | 0 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | Not Started | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | Not Started | Epic: API OpenAPI Specification | High | Medium | 0 | [epic-api-openapi.md](/.plan/epics/epic-api-openapi.md) |
-| In Progress | Epic: API Rate Limiting | High | Medium | 0 | [epic-api-rate-limiting.md](/.plan/epics/epic-api-rate-limiting.md) |
+| Done | Epic: API Rate Limiting | High | Medium | 0 | [epic-api-rate-limiting.md](/.plan/epics/epic-api-rate-limiting.md) |
 | Not Started | Epic: API Task Offloading | High | Medium | 0 | [epic-api-task-offloading.md](/.plan/epics/epic-api-task-offloading.md) |
 | Not Started | Epic: API Telemetry | High | Medium | 0 | [epic-api-telemetry.md](/.plan/epics/epic-api-telemetry.md) |
 | Not Started | Epic: API Validation & Guardrails | High | High | 0 | [epic-api-validation-guardrails.md](/.plan/epics/epic-api-validation-guardrails.md) |
@@ -184,7 +184,7 @@
 | In Progress | Epic: World NPCs | High | High | 0 | [epic-world-npcs.md](/.plan/epics/epic-world-npcs.md) |
 | In Progress | Epic: World Travel & Time | High | High | 0 | [epic-world-travel-time.md](/.plan/epics/epic-world-travel-time.md) |
 | Not Started | Error Envelope | Medium | Medium | 0 | [epic-error-envelope.md](/.plan/epics/epic-error-envelope.md) |
-| Not Started | Experimental egui Frontend (adoption decision + client-agnostic view-model layer) | Low | Medium | 0/5 | [epic-experimental-egui-frontend.md](/.plan/epics/epic-experimental-egui-frontend.md) |
+| In Progress | Experimental egui Frontend (adoption decision + client-agnostic view-model layer) | Low | Medium | 0/10 | [epic-experimental-egui-frontend.md](/.plan/epics/epic-experimental-egui-frontend.md) |
 | In Progress | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
 | Not Started | External Creative Tool Bridge (MCP) | High | Very High | 0 | [epic-external-creative-tool-bridge.md](/.plan/epics/epic-external-creative-tool-bridge.md) |
 | Not Started | External Search Providers & Context Enrichment | Medium | Low | 0 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
@@ -1356,7 +1356,7 @@ Game mechanics for adult/NSFW content — intimacy systems, seduction, relations
 
 ### Epic: API Rate Limiting
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Infrastructure Epic
@@ -2007,7 +2007,7 @@ Scene animation from narration via open video models (Phase 4 of the parent
 
 ### Experimental egui Frontend (adoption decision + client-agnostic view-model layer)
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Low
 - **Effort:** Medium
 - **Type:** Research / Feature Epic
