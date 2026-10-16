@@ -4,14 +4,13 @@
 // identity: boot seeding must key on the stable template id, never on the
 // mutable `actors.display_name` that the character edit route lets users change
 // (BUG-character-seed-dedupes-on-display-name).
-import type { CharactersConfig, } from "../config/schema";
-import { adoptExistingActor, findExistingActor, slugifyName, stableTemplateId, } from "./seed/identity";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import type { CharactersConfig, } from "../config/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
-import { findExistingActor, stableTemplateId, } from "./seed/identity";
-import { seedCharacterTemplates, } from "./seed";
 import { uid, } from "../utils";
+import { seedCharacterTemplates, } from "./seed";
+import { adoptExistingActor, findExistingActor, slugifyName, stableTemplateId, } from "./seed/identity";
 
 describe("seedCharacterTemplates identity", () => {
   let fixture: TestDb;
