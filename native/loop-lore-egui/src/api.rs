@@ -29,7 +29,11 @@ pub struct ChatSummary {
 impl ChatSummary {
   /// Display label: the chat name, or a stable placeholder.
   pub fn label(&self) -> &str {
-    self.name.as_deref().filter(|n| !n.is_empty()).unwrap_or("(unnamed chat)")
+    self
+      .name
+      .as_deref()
+      .filter(|n| !n.is_empty())
+      .unwrap_or("(unnamed chat)")
   }
 }
 
@@ -81,7 +85,7 @@ pub fn send_message_body(content: &str) -> String {
     content: &'a str,
     role: &'a str,
   }
-  serde_json::to_string(&Body { content, role: "user", })
+  serde_json::to_string(&Body { content, role: "user" })
     .unwrap_or_else(|_| String::from("{\"content\":\"\",\"role\":\"user\"}"))
 }
 
@@ -98,10 +102,15 @@ pub fn csrf_token_from_cookie_header(header: &str) -> Option<&str> {
 /// Parse `GET /api/v1/chats` into chat rows, preserving order.
 pub fn parse_chats_page(raw: &str) -> Result<Vec<ChatSummary>, String> {
   let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
-  let data = value.get("data").and_then(serde_json::Value::as_array).ok_or("missing data array")?;
+  let data = value
+    .get("data")
+    .and_then(serde_json::Value::as_array)
+    .ok_or("missing data array")?;
   let mut chats = Vec::with_capacity(data.len());
   for row in data {
-    let Some(id) = row.get("id").and_then(serde_json::Value::as_str) else { continue };
+    let Some(id) = row.get("id").and_then(serde_json::Value::as_str) else {
+      continue;
+    };
     chats.push(ChatSummary {
       id: id.to_string(),
       name: row.get("name").and_then(serde_json::Value::as_str).map(String::from),
@@ -123,14 +132,26 @@ pub fn parse_chats_page(raw: &str) -> Result<Vec<ChatSummary>, String> {
 /// Parse `GET /api/v1/chats/:id/messages` into message rows, preserving order.
 pub fn parse_messages_page(raw: &str) -> Result<Vec<ChatMessage>, String> {
   let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
-  let data = value.get("data").and_then(serde_json::Value::as_array).ok_or("missing data array")?;
+  let data = value
+    .get("data")
+    .and_then(serde_json::Value::as_array)
+    .ok_or("missing data array")?;
   let mut messages = Vec::with_capacity(data.len());
   for row in data {
-    let (Some(id), Some(role)) = (row.get("id").and_then(serde_json::Value::as_str), row.get("role").and_then(serde_json::Value::as_str)) else { continue };
+    let (Some(id), Some(role)) = (
+      row.get("id").and_then(serde_json::Value::as_str),
+      row.get("role").and_then(serde_json::Value::as_str),
+    ) else {
+      continue;
+    };
     messages.push(ChatMessage {
       id: id.to_string(),
       role: role.to_string(),
-      content: row.get("content").and_then(serde_json::Value::as_str).unwrap_or_default().to_string(),
+      content: row
+        .get("content")
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or_default()
+        .to_string(),
       created_at: row
         .get("created_at")
         .and_then(serde_json::Value::as_str)
@@ -148,16 +169,25 @@ pub fn parse_sent_message(raw: &str) -> Result<SentMessage, String> {
   let assistant = value
     .get("assistantMessage")
     .and_then(|row| parse_message_row(row).ok());
-  Ok(SentMessage { message, assistant, })
+  Ok(SentMessage { message, assistant })
 }
 
 /// Parse one message row from an already-decoded JSON value.
 fn parse_message_row(row: &serde_json::Value) -> Result<ChatMessage, String> {
-  let (Some(id), Some(role)) = (row.get("id").and_then(serde_json::Value::as_str), row.get("role").and_then(serde_json::Value::as_str)) else { return Err("message missing id/role".to_string()) };
+  let (Some(id), Some(role)) = (
+    row.get("id").and_then(serde_json::Value::as_str),
+    row.get("role").and_then(serde_json::Value::as_str),
+  ) else {
+    return Err("message missing id/role".to_string());
+  };
   Ok(ChatMessage {
     id: id.to_string(),
     role: role.to_string(),
-    content: row.get("content").and_then(serde_json::Value::as_str).unwrap_or_default().to_string(),
+    content: row
+      .get("content")
+      .and_then(serde_json::Value::as_str)
+      .unwrap_or_default()
+      .to_string(),
     created_at: row
       .get("created_at")
       .and_then(serde_json::Value::as_str)
@@ -237,7 +267,8 @@ mod tests {
 
   #[test]
   fn sent_message_parses_pair_and_optional_reply() {
-    let raw = r#"{"id":"m1","role":"user","content":"hi","assistantMessage":{"id":"m2","role":"assistant","content":"yo"}}"#;
+    let raw =
+      r#"{"id":"m1","role":"user","content":"hi","assistantMessage":{"id":"m2","role":"assistant","content":"yo"}}"#;
     let sent = parse_sent_message(raw).unwrap();
     assert_eq!(sent.message.id, "m1");
     assert_eq!(sent.assistant.unwrap().content, "yo");
