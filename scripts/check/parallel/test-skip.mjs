@@ -17,8 +17,8 @@
  *   `testDatabaseOverride` (`src/db/index.ts`) that every other DB-backed
  *   suite also clears in `afterEach` — but the stated reason hid that behind
  *   a wrong one, and the gapless-chain assertion escaped a green run twice
- *   while skipped. Serial gates (default `CHECK_JOBS=1`) resolve the
- *   contention, so the migration chain is gated by default.
+ *   while skipped. The chain runs green in seconds under the unit gate's
+ *   parallel workers, so the migration chain is gated by default.
  *
  * Add an entry back only together with a measured reason and the wall-clock
  * cost, and re-verify the gate both with and without it. The env overrides

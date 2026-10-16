@@ -92,9 +92,12 @@ diff ref — which would show up as extra NOOPs. What this corpus measures is th
 *unscoped* cost, which is what a dev-side or `--force` run pays and what the
 post-merge dev validation pays. Scoped-run numbers are marked separately.
 
-Gate concurrency defaults to 1 (`DEFAULT_JOBS` in
-`scripts/check/parallel/runner.mjs:29`), so a run costs roughly the SUM of its
-gate durations: mean 264.8s across the 22 reports.
+Gate concurrency defaults to 4 (`DEFAULT_JOBS` in
+`scripts/check/parallel/runner.mjs`; it was 1, serial, when this corpus was
+taken), so a UNscoped run costs roughly the SUM of its heavy-gate durations
+plus the slowest chunk of its light gates. The corpus below is entirely
+serial-era, so its gates sum the way they did then: mean 264.8s across the
+22 reports.
 
 | gate | n | median | p90 | max | fail | % of serial |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -351,7 +354,7 @@ and the ones still on `dev` after the merge are the ones that CANNOT move.
 | --- | --- | --- | --- | --- |
 | 1 | **IMPLEMENTED** — diff-scope `lint - eslint` and `md - lint` (`scripts/check/parallel/gates-scope.mjs`, `--diff-base` only) | measured on this host, same worktree and same two gates: **28.23s / 21.1 GB full → 3.53s / 1.6 GB scoped** (§2) | low: plain runs untouched (`applyDiffScopedStaticGates` throws if a plain-mode command was altered); full-run fallbacks on config change / deleted path / unsafe path / empty set / >200 files | delete the `applyDiffScopedStaticGates(checks)` call in `gates.mjs` + `gates-scope.mjs` + its test |
 | 2 | `name` persisted per check in the report (`report.mjs`) | 0s — it is what made this table possible; without it every consumer re-infers the gate from its command string | none: additive field, `schemaVersion` unchanged | revert one line |
-| 3 | Drop the scoped `lint - eslint` from `HEAVY_NAMES` (2.1 GB scoped vs 19.4 GB full) | 0s at the default `JOBS=1`; only pays off under `--jobs 2` or higher | **UNMEASURED** under `--jobs 2`; do not touch without that measurement | move the name back into the set |
+| 3 | Drop the scoped `lint - eslint` from `HEAVY_NAMES` (2.1 GB scoped vs 19.4 GB full) | up to the gate's own duration once it overlaps: with the light default now 4 a scoped eslint can share a light chunk instead of waiting for the serial tail | **UNMEASURED**; the cold-cache full-gate peak is ~12 GB, so measure before moving it | move the name back into the set |
 | 4 | eslint to oxlint swap | 18.2s (corpus median 18.7s − oxlint's measured 0.5s) and 18.6 GB (19 395 − 788 MB), if it worked | migration, see §3 | n/a — documentation only this round |
 | 5 | parallel unit tests | up to the 33.3s `typecheck - coverage` analogue in test time; **UNMEASURED** | hazards 1-4 in §5 are open | n/a — documentation only this round |
 
