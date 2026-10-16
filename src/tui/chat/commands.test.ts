@@ -51,6 +51,18 @@ function makeCompleter(
   };
 }
 
+/** A completer whose registry fetch always fails, recording every repaint. */
+function makeFailingCompleter(hints: Array<string | null>,): CommandCompleter {
+  const completer: CommandCompleter = new CommandCompleter({
+    loadRegistry: () => Promise.resolve({ ok: false, error: "HTTP 500", },),
+    onChange: () => {
+      hints.push(completer.hint(),);
+    },
+  },);
+
+  return completer;
+}
+
 /** Flush the microtask queue plus one task turn, so the one-shot load has landed. */
 function settle(): Promise<void> {
   return new Promise((resolve,) => {
@@ -152,6 +164,16 @@ it("falls back to plain text when the registry fetch fails", async () => {
   harness.completer.update("/sea",);
   await settle();
   expect(harness.loads(),).toBe(1,);
+});
+
+it("repaints once a failed fetch settles so the strip drops its loading hint", async () => {
+  const hints: Array<string | null> = [];
+  const c = makeFailingCompleter(hints,);
+  c.update("/help",);
+  await settle();
+  // The owner's last repaint is the settled state: the loading hint painted
+  // while in flight gets replaced rather than stranded on screen.
+  expect(hints,).toEqual(["/ …loading commands", '/ no command matches "help"',],);
 });
 
 it("survives a rejecting loader without an unhandled rejection", async () => {
