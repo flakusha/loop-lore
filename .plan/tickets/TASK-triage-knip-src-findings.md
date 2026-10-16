@@ -22,3 +22,5 @@ The knip dead-code gate now scans src/ (fix-knip-src-blindspot: knip.json projec
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-16 registry-driven close: git issue 9b90505 (registry tip: b19eba765 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-TRIAGE-KNIP-SRC-FINDINGS do)
