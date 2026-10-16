@@ -2028,6 +2028,19 @@
     "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md",
     "status": "Not Started"
   },
+  "BUG-CHARACTER-TEMPLATE-VALIDATOR-REJECTS-EVERY-LEGAL-CONTENT-RAT": {
+    "hash": "0096d4e",
+    "git_issue": "0096d4e",
+    "extid": "BUG-CHARACTER-TEMPLATE-VALIDATOR-REJECTS-EVERY-LEGAL-CONTENT-RAT",
+    "type": "BUG",
+    "title": "Character template validator rejects every legal content_rating",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-template-validator-rejects-every-legal-content-rat.md",
+    "status": "Not Started"
+  },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "epic": "",
     "extid": "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED",
@@ -2461,6 +2474,19 @@
     ],
     "title": "Chat Settings Modal Sends Invalid Mode Values",
     "type": "BUG"
+  },
+  "BUG-CHAT-SETUP-CONFIG-DROPS-USER-GMCONFIG-AND-NEVER-READS-WORLDI": {
+    "hash": "2bd32be",
+    "git_issue": "2bd32be",
+    "extid": "BUG-CHAT-SETUP-CONFIG-DROPS-USER-GMCONFIG-AND-NEVER-READS-WORLDI",
+    "type": "BUG",
+    "title": "Chat-setup config drops user gmConfig and never reads worldId",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi.md",
+    "status": "done"
   },
   "BUG-CHAT-SWIPE-INDEX-RACE": {
     "epic": "",
@@ -8181,7 +8207,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-schema-version-table-dropped-by-migration-collapse-feat-040-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SCOPED-COVERAGE-GATE-OMITS-THE-E2E-SAFEGUARD-PREFIX-ITS-PLAI": {
     "hash": "9efafa4",
@@ -12658,7 +12684,7 @@
     "type": "EPIC"
   },
   "EPIC-EDITORIAL-WORKFLOW": {
-    "hash": "pending",
+    "hash": "f1a9f47",
     "extid": "EPIC-EDITORIAL-WORKFLOW",
     "type": "EPIC",
     "title": "Editorial Review Workflow (Threads, Suggestions, Beta Readers)",
@@ -12675,7 +12701,8 @@
       "blog"
     ],
     "source": ".plan/tickets/epic-editorial-workflow.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f1a9f47"
   },
   "EPIC-EFFECT-V4-ADOPTION-EVALUATION": {
     "hash": "5bb3855",
@@ -14843,7 +14870,7 @@
     "type": "EPIC"
   },
   "EPIC-NARRATIVE-PUBLISHING-WORKFLOWS": {
-    "hash": "pending",
+    "hash": "ad6907e",
     "extid": "EPIC-NARRATIVE-PUBLISHING-WORKFLOWS",
     "type": "EPIC",
     "title": "Narrative Publishing Workflows (Books & Comics)",
@@ -14860,7 +14887,8 @@
       "export"
     ],
     "source": ".plan/tickets/epic-narrative-publishing-workflows.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "ad6907e"
   },
   "EPIC-NATIVE-MODULE-BENCHMARKS": {
     "epic": "",
@@ -15367,7 +15395,7 @@
     "type": "EPIC"
   },
   "EPIC-PUBLICATION-I18N": {
-    "hash": "pending",
+    "hash": "36c4446",
     "extid": "EPIC-PUBLICATION-I18N",
     "type": "EPIC",
     "title": "Publication Content Translation (Books & Comics)",
@@ -15384,7 +15412,8 @@
       "llm"
     ],
     "source": ".plan/tickets/epic-publication-i18n.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "36c4446"
   },
   "EPIC-QUESTS-ENCOUNTERS": {
     "epic": "",
@@ -15698,7 +15727,7 @@
     "type": "EPIC"
   },
   "EPIC-REFERENCE-CONDITIONED-GENERATION": {
-    "hash": "pending",
+    "hash": "4ab9b9c",
     "extid": "EPIC-REFERENCE-CONDITIONED-GENERATION",
     "type": "EPIC",
     "title": "Reference-Conditioned Generation — Model Matrix, Templates, and Sidecar Absorption",
@@ -15716,7 +15745,8 @@
       "lora-audit"
     ],
     "source": ".plan/tickets/epic-reference-conditioned-generation.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "4ab9b9c"
   },
   "EPIC-RELATIONSHIPS": {
     "epic": "",
@@ -16380,7 +16410,7 @@
     "type": "EPIC"
   },
   "EPIC-TECHNICAL-COMPARISON-CHARTS": {
-    "hash": "pending",
+    "hash": "f1d8212",
     "extid": "EPIC-TECHNICAL-COMPARISON-CHARTS",
     "type": "EPIC",
     "title": "Technical Comparison Charts (multi-image model/generation comparison)",
@@ -16399,7 +16429,8 @@
       "frontend"
     ],
     "source": ".plan/tickets/epic-technical-comparison-charts.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f1d8212"
   },
   "EPIC-TERMINAL-UI": {
     "epic": "",
@@ -26706,7 +26737,7 @@
     "status": "Not Started"
   },
   "TASK-AUTHOR-SUGGESTION-RESOLUTION-SURFACE": {
-    "hash": "pending",
+    "hash": "a0c8d9d",
     "extid": "TASK-AUTHOR-SUGGESTION-RESOLUTION-SURFACE",
     "type": "TASK",
     "title": "Author Suggestion Resolution Surface",
@@ -26715,7 +26746,8 @@
     "epic": "epic-editorial-workflow",
     "tags": [],
     "source": ".plan/tickets/TASK-author-suggestion-resolution-surface.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "a0c8d9d"
   },
   "TASK-AUTHOR-TASK-CLARIFICATION-PROMPT-TEMPLATES-PER-TASK-TYPE": {
     "epic": "epic-context-injection-templates",
@@ -27054,6 +27086,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin.md",
+    "status": "Not Started"
+  },
+  "TASK-AVATAR-TEMPLATE-EXAMPLE-DOCUMENTS-OUTFITS-DEFAULT-OUTFIT-THA": {
+    "hash": "8f9f351",
+    "git_issue": "8f9f351",
+    "extid": "TASK-AVATAR-TEMPLATE-EXAMPLE-DOCUMENTS-OUTFITS-DEFAULT-OUTFIT-THA",
+    "type": "TASK",
+    "title": "Avatar template example documents outfits/default_outfit that the loader ignores",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-template-example-documents-outfits-default-outfit-tha.md",
     "status": "Not Started"
   },
   "TASK-AVATARS-DYNAMIC-2D": {
@@ -27852,7 +27897,7 @@
     "type": "TASK"
   },
   "TASK-BETA-READER-FEEDBACK-SURFACE": {
-    "hash": "pending",
+    "hash": "b2af6ed",
     "extid": "TASK-BETA-READER-FEEDBACK-SURFACE",
     "type": "TASK",
     "title": "Beta Reader Feedback Surface",
@@ -27861,7 +27906,8 @@
     "epic": "epic-editorial-workflow",
     "tags": [],
     "source": ".plan/tickets/TASK-beta-reader-feedback-surface.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "b2af6ed"
   },
   "TASK-BKP-001-SQLITE-AUTOMATED-BACKUP": {
     "epic": "epic-database-backup-recovery",
@@ -27951,7 +27997,7 @@
     "type": "TASK"
   },
   "TASK-BLOG-PUBLISH-UNIT-TO-POST-BRIDGE": {
-    "hash": "pending",
+    "hash": "3e4d1eb",
     "extid": "TASK-BLOG-PUBLISH-UNIT-TO-POST-BRIDGE",
     "type": "TASK",
     "title": "Publish a Publication Unit / Book to a Blog Post (Provenance-Preserving Bridge)",
@@ -27960,10 +28006,11 @@
     "epic": "`epic-blog-system.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-blog-publish-unit-to-post-bridge.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "3e4d1eb"
   },
   "TASK-BLOG-RSS-ATOM-SITEMAP": {
-    "hash": "pending",
+    "hash": "2960f80",
     "extid": "TASK-BLOG-RSS-ATOM-SITEMAP",
     "type": "TASK",
     "title": "RSS / Atom Feeds + Sitemap for Public Blog Posts",
@@ -27972,7 +28019,8 @@
     "epic": "`epic-blog-system.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-blog-rss-atom-sitemap.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "2960f80"
   },
   "TASK-BLOG-SYSTEM": {
     "epic": "epic-blog-system",
@@ -27988,7 +28036,7 @@
     "type": "TASK"
   },
   "TASK-BLOG-UNIT-SCHEDULED-SERIALIZATION": {
-    "hash": "pending",
+    "hash": "76cbb60",
     "extid": "TASK-BLOG-UNIT-SCHEDULED-SERIALIZATION",
     "type": "TASK",
     "title": "Per-Unit Scheduled Serialization (Book → Drip-Published Post Sequence)",
@@ -27997,10 +28045,11 @@
     "epic": "`epic-blog-system.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-blog-unit-scheduled-serialization.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "76cbb60"
   },
   "TASK-BOOK-OUTLINE-GENERATION-WORKFLOW": {
-    "hash": "pending",
+    "hash": "e64e613",
     "extid": "TASK-BOOK-OUTLINE-GENERATION-WORKFLOW",
     "type": "TASK",
     "title": "Text-Only Book Generation Workflow (Outline → Chapters)",
@@ -28009,10 +28058,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-book-outline-generation-workflow.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "e64e613"
   },
   "TASK-BOOK-UNIT-EDITOR-REVIEW-SURFACE": {
-    "hash": "pending",
+    "hash": "27d71c5",
     "extid": "TASK-BOOK-UNIT-EDITOR-REVIEW-SURFACE",
     "type": "TASK",
     "title": "Book Unit Editor + Regenerate/Pin/Accept Review Surface",
@@ -28021,7 +28071,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "27d71c5"
   },
   "TASK-BOOKKEEPING-CHAT-BUGFIX-BATCH-1-SCOPE-DISCOVERY": {
     "epic": "",
@@ -31144,7 +31195,7 @@
     "type": "TASK"
   },
   "TASK-COLLAPSE-DUPLICATE-MARKDOWN-EXPORTER": {
-    "hash": "pending",
+    "hash": "2907c3f",
     "extid": "TASK-COLLAPSE-DUPLICATE-MARKDOWN-EXPORTER",
     "type": "TASK",
     "title": "Collapse the Duplicate Markdown Exporter",
@@ -31153,7 +31204,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-collapse-duplicate-markdown-exporter.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "2907c3f"
   },
   "TASK-COMBINED-FILTER-SUPPORT": {
     "epic": "epic-chat-lifecycle-moderation",
@@ -31479,7 +31531,7 @@
     "git_issue": "c79d1ae"
   },
   "TASK-COMFYUI-GRAPH-BUILDER-TS-PORT": {
-    "hash": "pending",
+    "hash": "be1f42a",
     "extid": "TASK-COMFYUI-GRAPH-BUILDER-TS-PORT",
     "type": "TASK",
     "title": "ComfyUI Graph builder — TypeScript port + import-validation policy",
@@ -31488,7 +31540,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-graph-builder-ts-port.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "be1f42a"
   },
   "TASK-COMFYUI-NODE-DISCOVERY": {
     "epic": "epic-comfyui-plugin",
@@ -31504,7 +31557,7 @@
     "type": "TASK"
   },
   "TASK-COMFYUI-NODE-DISCOVERY-TEMPLATE-AUTOFILTER": {
-    "hash": "pending",
+    "hash": "a533944",
     "extid": "TASK-COMFYUI-NODE-DISCOVERY-TEMPLATE-AUTOFILTER",
     "type": "TASK",
     "title": "Node-driven template auto-filtering — wire the unwired path",
@@ -31513,7 +31566,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "a533944"
   },
   "TASK-COMFYUI-NODE-ID-ALLOCATION": {
     "hash": "7fe2a33",
@@ -31641,7 +31695,7 @@
     "git_issue": "cefeb42"
   },
   "TASK-COMFYUI-WS-CLIENT-ID-PROGRESS-REFERENCE-GENERATION": {
-    "hash": "pending",
+    "hash": "f858850",
     "extid": "TASK-COMFYUI-WS-CLIENT-ID-PROGRESS-REFERENCE-GENERATION",
     "type": "TASK",
     "title": "ComfyUI client_id + /ws progress for reference generation",
@@ -31650,7 +31704,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-ws-client-id-progress-reference-generation.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f858850"
   },
   "TASK-COMFYUI-WS-PROGRESS-STREAMING": {
     "hash": "3225d3f",
@@ -31672,7 +31727,7 @@
     "git_issue": "3225d3f"
   },
   "TASK-COMIC-CAPTION-BUBBLE-LAYOUT": {
-    "hash": "pending",
+    "hash": "2301e67",
     "extid": "TASK-COMIC-CAPTION-BUBBLE-LAYOUT",
     "type": "TASK",
     "title": "Comic Captions and Speech-Bubble Layout + Rendering",
@@ -31681,10 +31736,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-comic-caption-bubble-layout.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "2301e67"
   },
   "TASK-COMIC-PAGE-PANEL-LAYOUT-MODEL": {
-    "hash": "pending",
+    "hash": "30b6225",
     "extid": "TASK-COMIC-PAGE-PANEL-LAYOUT-MODEL",
     "type": "TASK",
     "title": "Comic Page/Panel Layout Model + Authoring Surface",
@@ -31693,10 +31749,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-comic-page-panel-layout-model.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "30b6225"
   },
   "TASK-COMIC-STORYBOARD-PANEL-GENERATION-WORKFLOW": {
-    "hash": "pending",
+    "hash": "9b8d2cb",
     "extid": "TASK-COMIC-STORYBOARD-PANEL-GENERATION-WORKFLOW",
     "type": "TASK",
     "title": "Comic Panel Generation Workflow (Storyboard → Art Dispatch)",
@@ -31705,7 +31762,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-comic-storyboard-panel-generation-workflow.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "9b8d2cb"
   },
   "TASK-COMMENT-ONLY-CATCH-BLOCKS-IN-SRC-FRONTEND-ARE-INVISIBLE-TO-E": {
     "hash": "71aa87f",
@@ -31758,7 +31816,7 @@
     "type": "TASK"
   },
   "TASK-COMPARISON-CELL-DETAIL-METADATA": {
-    "hash": "pending",
+    "hash": "8084e3e",
     "extid": "TASK-COMPARISON-CELL-DETAIL-METADATA",
     "type": "TASK",
     "title": "Comparison cell detail — full generation metadata and extra_pnginfo import",
@@ -31767,10 +31825,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "8084e3e"
   },
   "TASK-COMPARISON-CHART-EXPORT-PNG-SVG-CSV": {
-    "hash": "pending",
+    "hash": "67f75f8",
     "extid": "TASK-COMPARISON-CHART-EXPORT-PNG-SVG-CSV",
     "type": "TASK",
     "title": "Comparison chart export — PNG, SVG, CSV",
@@ -31779,10 +31838,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-chart-export-png-svg-csv.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "67f75f8"
   },
   "TASK-COMPARISON-COMPARABILITY-VALIDATION": {
-    "hash": "pending",
+    "hash": "f5ba982",
     "extid": "TASK-COMPARISON-COMPARABILITY-VALIDATION",
     "type": "TASK",
     "title": "Comparison comparability validation",
@@ -31791,10 +31851,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-comparability-validation.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f5ba982"
   },
   "TASK-COMPARISON-FAN-OUT-ENGINE": {
-    "hash": "pending",
+    "hash": "40028a9",
     "extid": "TASK-COMPARISON-FAN-OUT-ENGINE",
     "type": "TASK",
     "title": "Comparison fan-out execution engine (ComfyUI + sd.cpp)",
@@ -31803,10 +31864,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-fan-out-engine.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "40028a9"
   },
   "TASK-COMPARISON-GALLERY-COMPARISON-SET-INTEGRATION": {
-    "hash": "pending",
+    "hash": "b863022",
     "extid": "TASK-COMPARISON-GALLERY-COMPARISON-SET-INTEGRATION",
     "type": "TASK",
     "title": "Gallery ↔ comparison-set integration",
@@ -31815,10 +31877,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-gallery-comparison-set-integration.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "b863022"
   },
   "TASK-COMPARISON-GRID-FRONTEND": {
-    "hash": "pending",
+    "hash": "5e9e419",
     "extid": "TASK-COMPARISON-GRID-FRONTEND",
     "type": "TASK",
     "title": "Comparison grid frontend — matrix view with filter, sort, selection",
@@ -31827,10 +31890,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-grid-frontend.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "5e9e419"
   },
   "TASK-COMPARISON-METRIC-COLLECTION-AND-CHARTS": {
-    "hash": "pending",
+    "hash": "84ea4af",
     "extid": "TASK-COMPARISON-METRIC-COLLECTION-AND-CHARTS",
     "type": "TASK",
     "title": "Comparison metric collection and line-chart rendering",
@@ -31839,10 +31903,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "84ea4af"
   },
   "TASK-COMPARISON-PARAMETER-SWEEP-AXIS": {
-    "hash": "pending",
+    "hash": "4ff38d1",
     "extid": "TASK-COMPARISON-PARAMETER-SWEEP-AXIS",
     "type": "TASK",
     "title": "Comparison parameter sweep axis (seed / steps / CFG)",
@@ -31851,10 +31916,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-parameter-sweep-axis.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "4ff38d1"
   },
   "TASK-COMPARISON-SEED-PARAMETER-LOCK-AND-RERUN": {
-    "hash": "pending",
+    "hash": "33d4bf1",
     "extid": "TASK-COMPARISON-SEED-PARAMETER-LOCK-AND-RERUN",
     "type": "TASK",
     "title": "Comparison reproducibility — seed/parameter lock and exact re-run",
@@ -31863,10 +31929,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-seed-parameter-lock-and-rerun.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "33d4bf1"
   },
   "TASK-COMPARISON-SET-ROUTES-CRUD-OWNERSHIP-VALIDATION": {
-    "hash": "pending",
+    "hash": "2678271",
     "extid": "TASK-COMPARISON-SET-ROUTES-CRUD-OWNERSHIP-VALIDATION",
     "type": "TASK",
     "title": "Comparison set routes — CRUD, ownership, validation",
@@ -31875,10 +31942,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-set-routes-crud-ownership-validation.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "2678271"
   },
   "TASK-COMPARISON-SET-VARIANT-DATA-MODEL": {
-    "hash": "pending",
+    "hash": "4582710",
     "extid": "TASK-COMPARISON-SET-VARIANT-DATA-MODEL",
     "type": "TASK",
     "title": "Comparison set and variant data model",
@@ -31887,10 +31955,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-set-variant-data-model.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "4582710"
   },
   "TASK-COMPARISON-TESTS-SET-LIFECYCLE-FAN-OUT-COMPARABILITY": {
-    "hash": "pending",
+    "hash": "7da6fb3",
     "extid": "TASK-COMPARISON-TESTS-SET-LIFECYCLE-FAN-OUT-COMPARABILITY",
     "type": "TASK",
     "title": "Comparison test suite — set lifecycle, fan-out partial failure, comparability",
@@ -31899,10 +31968,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "7da6fb3"
   },
   "TASK-COMPARISON-TWO-CELL-DIFF-MODES": {
-    "hash": "pending",
+    "hash": "cd7593b",
     "extid": "TASK-COMPARISON-TWO-CELL-DIFF-MODES",
     "type": "TASK",
     "title": "Comparison two-cell technical diff — difference, side-by-side, flicker",
@@ -31911,10 +31981,11 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-two-cell-diff-modes.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "cd7593b"
   },
   "TASK-COMPARISON-WORKFLOW-TEMPLATE-AND-COMMAND": {
-    "hash": "pending",
+    "hash": "91d016e",
     "extid": "TASK-COMPARISON-WORKFLOW-TEMPLATE-AND-COMMAND",
     "type": "TASK",
     "title": "Comparison workflow template and /compare assistant command",
@@ -31923,7 +31994,8 @@
     "epic": "`epic-technical-comparison-charts`",
     "tags": [],
     "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "91d016e"
   },
   "TASK-COMPLETE-CRAFTING-SYSTEM-SERVICES": {
     "epic": "epic-crafting-professions",
@@ -32062,6 +32134,19 @@
     ],
     "title": "# TASK-config-example-template-variables-doc",
     "type": "TASK"
+  },
+  "TASK-CONFIG-EXAMPLES-AND-DOMAIN-FILE-SUPPORT-FOR-UNCOVERED-SECTIO": {
+    "hash": "e77fd10",
+    "git_issue": "e77fd10",
+    "extid": "TASK-CONFIG-EXAMPLES-AND-DOMAIN-FILE-SUPPORT-FOR-UNCOVERED-SECTIO",
+    "type": "TASK",
+    "title": "Config examples and domain-file support for uncovered sections",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-examples-and-domain-file-support-for-uncovered-sectio.md",
+    "status": "Not Started"
   },
   "TASK-CONFIG-EXAMPLES-BACKFILL-13-MISSING-STALE-GENERATION-NSFW": {
     "epic": "epic-config-extensions",
@@ -32906,7 +32991,7 @@
     "status": "Not Started"
   },
   "TASK-CROSS-MODEL-COMPARISON-RUN-DATA-SIDE": {
-    "hash": "pending",
+    "hash": "942b2cd",
     "extid": "TASK-CROSS-MODEL-COMPARISON-RUN-DATA-SIDE",
     "type": "TASK",
     "title": "Cross-model comparison run — data and asset side",
@@ -32915,7 +33000,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-cross-model-comparison-run-data-side.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "942b2cd"
   },
   "TASK-CROSS-PLATFORM-CI-MATRIX": {
     "epic": "epic-cross-platform-portability",
@@ -34002,6 +34088,19 @@
     "source": ".plan/tickets/TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt.md",
     "status": "Not Started"
   },
+  "TASK-DELETE-OR-WIRE-DEAD-MODULES-FLAGGED-IN-GLM-REVIEW-SWEEP": {
+    "hash": "a7dbf02",
+    "git_issue": "a7dbf02",
+    "extid": "TASK-DELETE-OR-WIRE-DEAD-MODULES-FLAGGED-IN-GLM-REVIEW-SWEEP",
+    "type": "TASK",
+    "title": "Delete or wire dead modules flagged in the GLM review sweep",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md",
+    "status": "done"
+  },
   "TASK-DELETE-ORPHANED-LOCALE-KEYS-ACROSS-ALL-10-LOCALE-FILES-LEAVE": {
     "hash": "041ce61",
     "git_issue": "041ce61",
@@ -35035,7 +35134,7 @@
     "epic": "epic-experimental-egui-frontend",
     "tags": [],
     "source": ".plan/tickets/TASK-egui-command-surface-parity-palette-role-gated-commands-slas.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EGUI-EMOJI-SHORTCODE-SUPPORT-REGISTRY-PARITY-AUTOCOMPLETE-BU": {
     "hash": "4fdda91",
@@ -35048,7 +35147,7 @@
     "epic": "epic-experimental-egui-frontend",
     "tags": [],
     "source": ".plan/tickets/TASK-egui-emoji-shortcode-support-registry-parity-autocomplete-bu.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EGUI-GALLERY-SURFACE-GRID-FILTERS-THUMBNAILS-UPLOAD": {
     "hash": "4ccc14c",
@@ -35074,7 +35173,7 @@
     "epic": "epic-experimental-egui-frontend",
     "tags": [],
     "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EGUI-WASM-EMBED-SPIKE": {
     "hash": "pending",
@@ -35996,7 +36095,7 @@
     "status": "Not Started"
   },
   "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT": {
-    "hash": "pending",
+    "hash": "5d8de9f",
     "extid": "TASK-EXTERNAL-COMFYUI-PLUGIN-REPO-INTEGRATION-CONTRACT",
     "type": "TASK",
     "title": "External ComfyUI plugin repository — loop-lore consumption contract",
@@ -36005,7 +36104,8 @@
     "epic": "`epic-comfyui-plugin`",
     "tags": [],
     "source": ".plan/tickets/TASK-external-comfyui-plugin-repo-integration-contract.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "5d8de9f"
   },
   "TASK-EXTERNAL-PROCESS-SURVIVABILITY-PAUSE-AND-RESTART-ON-CRASH": {
     "hash": "8613846",
@@ -36279,7 +36379,7 @@
     "type": "TASK"
   },
   "TASK-FANOUT-CHATID-DEFAULT-DENY": {
-    "hash": "pending",
+    "hash": "b990548",
     "extid": "TASK-FANOUT-CHATID-DEFAULT-DENY",
     "type": "TASK",
     "title": "Make `FanOutContent.chatId` Non-Optional or Default-Deny",
@@ -36288,7 +36388,8 @@
     "epic": "`epic-licensing.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-fanout-chatid-default-deny.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "b990548"
   },
   "TASK-FAST-ACTION-PROMPT-PIPELINE": {
     "epic": "epic-frontend-chat-commands",
@@ -37928,6 +38029,19 @@
     ],
     "title": "Gate shadow_notes status-x-visibility composite",
     "type": "TASK"
+  },
+  "TASK-GATE-VALIDATE-CONFIGS-EXAMPLE-FILES-AGAINST-THEIR-SCHEMAS": {
+    "hash": "8a4632b",
+    "git_issue": "8a4632b",
+    "extid": "TASK-GATE-VALIDATE-CONFIGS-EXAMPLE-FILES-AGAINST-THEIR-SCHEMAS",
+    "type": "TASK",
+    "title": "Gate: validate configs example files against their schemas",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gate-validate-configs-example-files-against-their-schemas.md",
+    "status": "Not Started"
   },
   "TASK-GATE-WORLD-LORE-LIFECYCLE-CONFIDENCE-DISTORTION-DISPUTED-TRI": {
     "epic": "",
@@ -39739,7 +39853,7 @@
     "type": "TASK"
   },
   "TASK-ILLUSTRATED-BOOK-REFERENCE-PASS": {
-    "hash": "pending",
+    "hash": "175160e",
     "extid": "TASK-ILLUSTRATED-BOOK-REFERENCE-PASS",
     "type": "TASK",
     "title": "Illustrated-Book Pass with Reference Conditioning",
@@ -39748,7 +39862,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-illustrated-book-reference-pass.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "175160e"
   },
   "TASK-IM-ABSTRACTION-LAYER": {
     "epic": "epic-communications-integrations",
@@ -39853,7 +39968,7 @@
     "git_issue": "159060e"
   },
   "TASK-IMAGE-EDIT-RUN-AUTHZ-ERROR-SHAPE-REGRESSION": {
-    "hash": "pending",
+    "hash": "6da78ee",
     "extid": "TASK-IMAGE-EDIT-RUN-AUTHZ-ERROR-SHAPE-REGRESSION",
     "type": "TASK",
     "title": "Image-edit run route — authz + error-shape regression cover",
@@ -39862,7 +39977,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-image-edit-run-authz-error-shape-regression.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "6da78ee"
   },
   "TASK-IMAGE-EDIT-WORKFLOWS-DEDICATED": {
     "hash": "439ff25",
@@ -40256,7 +40372,7 @@
     "type": "TASK"
   },
   "TASK-INLINE-MARKDOWN-SUGGESTION-MODEL": {
-    "hash": "pending",
+    "hash": "4f546e7",
     "extid": "TASK-INLINE-MARKDOWN-SUGGESTION-MODEL",
     "type": "TASK",
     "title": "Inline Markdown Suggestion Model",
@@ -40265,7 +40381,8 @@
     "epic": "epic-editorial-workflow",
     "tags": [],
     "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "4f546e7"
   },
   "TASK-INNER-MONOLOGUE": {
     "epic": "",
@@ -40961,7 +41078,7 @@
     "type": "TASK"
   },
   "TASK-KREA-2-REFERENCE-EDIT-DIAGNOSIS": {
-    "hash": "pending",
+    "hash": "1cd9a20",
     "extid": "TASK-KREA-2-REFERENCE-EDIT-DIAGNOSIS",
     "type": "TASK",
     "title": "Diagnose the Krea 2 reference-edit failure",
@@ -40970,10 +41087,11 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-krea-2-reference-edit-diagnosis.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "1cd9a20"
   },
   "TASK-KREA-2-REFERENCE-EDIT-TEMPLATE": {
-    "hash": "pending",
+    "hash": "1b94bba",
     "extid": "TASK-KREA-2-REFERENCE-EDIT-TEMPLATE",
     "type": "TASK",
     "title": "Krea 2 reference-edit workflow template",
@@ -40982,10 +41100,11 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-krea-2-reference-edit-template.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "1b94bba"
   },
   "TASK-KREA-3-REFERENCE-EDIT-TEMPLATE": {
-    "hash": "pending",
+    "hash": "77fbd4c",
     "extid": "TASK-KREA-3-REFERENCE-EDIT-TEMPLATE",
     "type": "TASK",
     "title": "Krea 3 reference-edit workflow template",
@@ -40994,7 +41113,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-krea-3-reference-edit-template.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "77fbd4c"
   },
   "TASK-LANGUAGE-GATED-LORE-VISIBILITY": {
     "epic": "",
@@ -41053,7 +41173,7 @@
     "type": "TASK"
   },
   "TASK-LICENSING-ASSET-LICENSE-COLUMNS-MIGRATION": {
-    "hash": "pending",
+    "hash": "5b13ea3",
     "extid": "TASK-LICENSING-ASSET-LICENSE-COLUMNS-MIGRATION",
     "type": "TASK",
     "title": "Per-Asset License / Model / Attribution Columns + Migration",
@@ -41062,10 +41182,11 @@
     "epic": "`epic-licensing.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-licensing-asset-license-columns-migration.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "5b13ea3"
   },
   "TASK-LICENSING-PUBLISH-AUTHORIZATION-PREDICATE": {
-    "hash": "pending",
+    "hash": "9b1a323",
     "extid": "TASK-LICENSING-PUBLISH-AUTHORIZATION-PREDICATE",
     "type": "TASK",
     "title": "Publish Authorization Predicate (Per-Caller Identity + Per-Resource Ownership)",
@@ -41074,10 +41195,11 @@
     "epic": "`epic-licensing.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "9b1a323"
   },
   "TASK-LICENSING-PUBLISH-ENFORCEMENT-POINT": {
-    "hash": "pending",
+    "hash": "5689bdf",
     "extid": "TASK-LICENSING-PUBLISH-ENFORCEMENT-POINT",
     "type": "TASK",
     "title": "Publish Enforcement Point + License Gate Middleware",
@@ -41086,7 +41208,8 @@
     "epic": "`epic-licensing.md`",
     "tags": [],
     "source": ".plan/tickets/TASK-licensing-publish-enforcement-point.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "5689bdf"
   },
   "TASK-LINK-MEMORIES-TO-WORLD-TIMELINE-EVENTS": {
     "hash": "d6df60b",
@@ -41268,7 +41391,7 @@
     "status": "Not Started"
   },
   "TASK-LLM-MARKDOWN-DOCUMENT-PROMPTS": {
-    "hash": "pending",
+    "hash": "65f33a5",
     "extid": "TASK-LLM-MARKDOWN-DOCUMENT-PROMPTS",
     "type": "TASK",
     "title": "LLM Authors Markdown Documents, Not Fenced JSON",
@@ -41277,7 +41400,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-llm-markdown-document-prompts.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "65f33a5"
   },
   "TASK-LLM-MOCK-INTEGRATION-SUITE": {
     "epic": "epic-testing-qa.md (see also epic-prompt-improvement.md)",
@@ -41779,7 +41903,7 @@
     "type": "TASK"
   },
   "TASK-LORA-AUDIT-STANDALONE": {
-    "hash": "pending",
+    "hash": "5817660",
     "extid": "TASK-LORA-AUDIT-STANDALONE",
     "type": "TASK",
     "title": "Standalone LoRA audit (no ComfyUI process required)",
@@ -41788,7 +41912,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-lora-audit-standalone.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "5817660"
   },
   "TASK-LORA-BASE-MODEL-LINEAGE-VIA-CHECKPOINT-METADATA": {
     "hash": "b646054",
@@ -42071,7 +42196,7 @@
     "type": "TASK"
   },
   "TASK-MARKDOWN-CANONICAL-INTERMEDIATE-CONTRACT": {
-    "hash": "pending",
+    "hash": "880f4f1",
     "extid": "TASK-MARKDOWN-CANONICAL-INTERMEDIATE-CONTRACT",
     "type": "TASK",
     "title": "Markdown Canonical Intermediate Contract + `content_format` Column",
@@ -42080,10 +42205,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "880f4f1"
   },
   "TASK-MARKDOWN-DERIVE-OTHER-FORMATS": {
-    "hash": "pending",
+    "hash": "2c9a0ac",
     "extid": "TASK-MARKDOWN-DERIVE-OTHER-FORMATS",
     "type": "TASK",
     "title": "Derive EPUB / PDF / HTML / Plain Text From Canonical Markdown",
@@ -42092,10 +42218,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-markdown-derive-other-formats.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "2c9a0ac"
   },
   "TASK-MARKDOWN-HEADING-PARSE-AND-IMPORT": {
-    "hash": "pending",
+    "hash": "3bd313a",
     "extid": "TASK-MARKDOWN-HEADING-PARSE-AND-IMPORT",
     "type": "TASK",
     "title": "Markdown Heading Parse + Markdown Importer (the round-trip half)",
@@ -42104,7 +42231,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "3bd313a"
   },
   "TASK-MARKDOWN-PREVIEW-BEFORE-SEND": {
     "epic": "epic-chat-composer-flows",
@@ -43389,7 +43517,7 @@
     "type": "TASK"
   },
   "TASK-MINIMAX-H3-STILLS-REFERENCE-TEMPLATE": {
-    "hash": "pending",
+    "hash": "da948e8",
     "extid": "TASK-MINIMAX-H3-STILLS-REFERENCE-TEMPLATE",
     "type": "TASK",
     "title": "MiniMax H3 stills reference workflow template",
@@ -43398,7 +43526,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-minimax-h3-stills-reference-template.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "da948e8"
   },
   "TASK-MOBILE-TOUCH-GESTURES": {
     "epic": "epic-accessibility-input",
@@ -43640,7 +43769,7 @@
     "type": "TASK"
   },
   "TASK-MULTI-REFERENCE-CONDITIONING-REQUEST-MODEL": {
-    "hash": "pending",
+    "hash": "a49ed89",
     "extid": "TASK-MULTI-REFERENCE-CONDITIONING-REQUEST-MODEL",
     "type": "TASK",
     "title": "Multi-reference conditioning request model",
@@ -43649,7 +43778,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-multi-reference-conditioning-request-model.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "a49ed89"
   },
   "TASK-MULTI-SESSION": {
     "epic": "epic-multi-session",
@@ -46827,7 +46957,7 @@
     "type": "TASK"
   },
   "TASK-PUBLICATION-ART-QUALITY-GATES": {
-    "hash": "pending",
+    "hash": "42e2bf5",
     "extid": "TASK-PUBLICATION-ART-QUALITY-GATES",
     "type": "TASK",
     "title": "Publication Art Quality Gates + Character Consistency Check",
@@ -46836,10 +46966,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-art-quality-gates.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "42e2bf5"
   },
   "TASK-PUBLICATION-ARTIFACT-SCHEMA": {
-    "hash": "pending",
+    "hash": "b0fcee3",
     "extid": "TASK-PUBLICATION-ARTIFACT-SCHEMA",
     "type": "TASK",
     "title": "Publication Artifact Schema + Migration",
@@ -46848,10 +46979,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-artifact-schema.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "b0fcee3"
   },
   "TASK-PUBLICATION-ARTIFACT-VERSIONING": {
-    "hash": "pending",
+    "hash": "c822cc7",
     "extid": "TASK-PUBLICATION-ARTIFACT-VERSIONING",
     "type": "TASK",
     "title": "Publication Artifact Versioning + Keep-or-Discard Regeneration",
@@ -46860,10 +46992,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-artifact-versioning.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "c822cc7"
   },
   "TASK-PUBLICATION-CONTINUITY-LINT": {
-    "hash": "pending",
+    "hash": "a1af2b5",
     "extid": "TASK-PUBLICATION-CONTINUITY-LINT",
     "type": "TASK",
     "title": "Publication Continuity + Cross-Unit Consistency Lint",
@@ -46872,10 +47005,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-continuity-lint.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "a1af2b5"
   },
   "TASK-PUBLICATION-EXPORT-FORMATS": {
-    "hash": "pending",
+    "hash": "61ede89",
     "extid": "TASK-PUBLICATION-EXPORT-FORMATS",
     "type": "TASK",
     "title": "Publication Export — EPUB / PDF / Markdown / Image-Sequence Zip",
@@ -46884,10 +47018,11 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-export-formats.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "61ede89"
   },
   "TASK-PUBLICATION-GLOSSARY-TERM-BASE": {
-    "hash": "pending",
+    "hash": "192a71a",
     "extid": "TASK-PUBLICATION-GLOSSARY-TERM-BASE",
     "type": "TASK",
     "title": "Publication Glossary / Term Base",
@@ -46896,10 +47031,11 @@
     "epic": "epic-publication-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-glossary-term-base.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "192a71a"
   },
   "TASK-PUBLICATION-READER-LOCALE-SELECTOR": {
-    "hash": "pending",
+    "hash": "3c338e1",
     "extid": "TASK-PUBLICATION-READER-LOCALE-SELECTOR",
     "type": "TASK",
     "title": "Publication Reader Locale Selector",
@@ -46908,10 +47044,11 @@
     "epic": "epic-publication-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-reader-locale-selector.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "3c338e1"
   },
   "TASK-PUBLICATION-TRANSLATION-BATCH-CRON": {
-    "hash": "pending",
+    "hash": "ba01e2d",
     "extid": "TASK-PUBLICATION-TRANSLATION-BATCH-CRON",
     "type": "TASK",
     "title": "Publication Translation Batch Pass (Cron)",
@@ -46920,10 +47057,11 @@
     "epic": "epic-publication-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-translation-batch-cron.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "ba01e2d"
   },
   "TASK-PUBLICATION-UNIT-TRANSLATION-STORE": {
-    "hash": "pending",
+    "hash": "42f270a",
     "extid": "TASK-PUBLICATION-UNIT-TRANSLATION-STORE",
     "type": "TASK",
     "title": "Per-Unit Publication Translation Store",
@@ -46932,10 +47070,11 @@
     "epic": "epic-publication-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-unit-translation-store.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "42f270a"
   },
   "TASK-PUBLICATION-VIEWER-READ-MODE": {
-    "hash": "pending",
+    "hash": "f435cc4",
     "extid": "TASK-PUBLICATION-VIEWER-READ-MODE",
     "type": "TASK",
     "title": "Publication Viewer — Book Read Mode + Comic Paged Reader",
@@ -46944,7 +47083,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-publication-viewer-read-mode.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f435cc4"
   },
   "TASK-QUEST-LOG": {
     "epic": "epic-story-mode-ui",
@@ -47093,7 +47233,7 @@
     "type": "TASK"
   },
   "TASK-QWEN-IMAGE-EDIT-21-REFERENCE-TEMPLATE": {
-    "hash": "pending",
+    "hash": "9cba818",
     "extid": "TASK-QWEN-IMAGE-EDIT-21-REFERENCE-TEMPLATE",
     "type": "TASK",
     "title": "Qwen Image Edit 2.1 reference-edit workflow template",
@@ -47102,7 +47242,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-qwen-image-edit-21-reference-template.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "9cba818"
   },
   "TASK-RAG-ALPINE": {
     "epic": "epic-rag-ui",
@@ -48507,7 +48648,7 @@
     "type": "TASK"
   },
   "TASK-REFERENCE-CAPABILITY-MATRIX-DATA-MODEL": {
-    "hash": "pending",
+    "hash": "34cb942",
     "extid": "TASK-REFERENCE-CAPABILITY-MATRIX-DATA-MODEL",
     "type": "TASK",
     "title": "Reference-generation capability matrix — data model",
@@ -48516,10 +48657,11 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-reference-capability-matrix-data-model.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "34cb942"
   },
   "TASK-REFERENCE-CAPABILITY-PROBE-RUNTIME": {
-    "hash": "pending",
+    "hash": "42d5f47",
     "extid": "TASK-REFERENCE-CAPABILITY-PROBE-RUNTIME",
     "type": "TASK",
     "title": "Reference-generation capability probe",
@@ -48528,10 +48670,11 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-reference-capability-probe-runtime.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "42d5f47"
   },
   "TASK-REFERENCE-SET-ALT-TEXT-CONSISTENCY": {
-    "hash": "pending",
+    "hash": "bd4fc87",
     "extid": "TASK-REFERENCE-SET-ALT-TEXT-CONSISTENCY",
     "type": "TASK",
     "title": "Reference-Set Consistency Signal (alt_text Comparison)",
@@ -48540,10 +48683,11 @@
     "epic": "epic-reference-conditioned-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-reference-set-alt-text-consistency.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "bd4fc87"
   },
   "TASK-REFERENCE-SET-ENTITY": {
-    "hash": "pending",
+    "hash": "f77b070",
     "extid": "TASK-REFERENCE-SET-ENTITY",
     "type": "TASK",
     "title": "Persisted Reference-Set Entity (Table + Migration + Polymorphic Link)",
@@ -48552,10 +48696,11 @@
     "epic": "epic-reference-conditioned-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-reference-set-entity.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "f77b070"
   },
   "TASK-REFERENCE-SET-MULTI-IMAGE-UPLOAD": {
-    "hash": "pending",
+    "hash": "da5a6f1",
     "extid": "TASK-REFERENCE-SET-MULTI-IMAGE-UPLOAD",
     "type": "TASK",
     "title": "Multi-Image Upload to ComfyUI `/upload/image`",
@@ -48564,7 +48709,8 @@
     "epic": "epic-reference-conditioned-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-reference-set-multi-image-upload.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "da5a6f1"
   },
   "TASK-REFINE-IMPERSONATION-CONSTRAINT-TO-LOCATION-TIMELINE-SCOPE": {
     "epic": "",
@@ -49064,7 +49210,7 @@
     "epic": "epic-security-sandboxing",
     "tags": [],
     "source": ".plan/tickets/TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-REPUTATION-SCHEMA": {
     "epic": "epic-shared-schemas",
@@ -49505,7 +49651,7 @@
     "status": "⬜ Not Started"
   },
   "TASK-REVIEW-THREAD-COMMENT-MODEL": {
-    "hash": "pending",
+    "hash": "807530b",
     "extid": "TASK-REVIEW-THREAD-COMMENT-MODEL",
     "type": "TASK",
     "title": "Review Thread + Comment Model",
@@ -49514,10 +49660,11 @@
     "epic": "epic-editorial-workflow",
     "tags": [],
     "source": ".plan/tickets/TASK-review-thread-comment-model.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "807530b"
   },
   "TASK-REVIEW-THREAD-TARGET-VOCABULARY": {
-    "hash": "pending",
+    "hash": "2114611",
     "extid": "TASK-REVIEW-THREAD-TARGET-VOCABULARY",
     "type": "TASK",
     "title": "Review Thread Target Vocabulary (Closed-Union Decision)",
@@ -49526,7 +49673,8 @@
     "epic": "epic-editorial-workflow",
     "tags": [],
     "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "2114611"
   },
   "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE": {
     "epic": "epic-output-control-transforms",
@@ -50660,7 +50808,7 @@
     "git_issue": "f1be651"
   },
   "TASK-SD-CPP-REFERENCE-EDIT-PARITY": {
-    "hash": "pending",
+    "hash": "996032f",
     "extid": "TASK-SD-CPP-REFERENCE-EDIT-PARITY",
     "type": "TASK",
     "title": "sd.cpp reference-edit parity — capability flag + fallback",
@@ -50669,7 +50817,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-sd-cpp-reference-edit-parity.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "996032f"
   },
   "TASK-SD-E2E-REAL-SERVER-FIXTURES-VIA-SD-CPP-AND-COMFYUI-WITH-GENE": {
     "epic": "epic-e2e-integration-testing.md (Pillar 3 — real-server tier)",
@@ -51048,7 +51197,7 @@
     "status": "Not Started"
   },
   "TASK-SIDECAR-DE-HARDCODING-CROSS-PLATFORM-INSTALLER": {
-    "hash": "pending",
+    "hash": "9bde045",
     "extid": "TASK-SIDECAR-DE-HARDCODING-CROSS-PLATFORM-INSTALLER",
     "type": "TASK",
     "title": "Sidecar portability — de-hardcode, cross-platform, installable",
@@ -51057,7 +51206,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-sidecar-de-hardcoding-cross-platform-installer.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "9bde045"
   },
   "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS": {
     "epic": "epic-asset-support-expansion",
@@ -51085,7 +51235,7 @@
       "dead-code"
     ],
     "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-SIMPLIFICATION-SWEEP-MICRO-CLEANUPS-AND-SINGLE-IMPLEMENTATIO": {
     "hash": "f22f183",
@@ -51645,7 +51795,7 @@
     "type": "TASK"
   },
   "TASK-STILLS-LIFECYCLE-QUEUE-PROGRESS-CLIENT": {
-    "hash": "pending",
+    "hash": "b832350",
     "extid": "TASK-STILLS-LIFECYCLE-QUEUE-PROGRESS-CLIENT",
     "type": "TASK",
     "title": "Stills lifecycle + queue-progress client (native, no Python sidecar)",
@@ -51654,7 +51804,8 @@
     "epic": "`epic-reference-conditioned-generation`",
     "tags": [],
     "source": ".plan/tickets/TASK-stills-lifecycle-queue-progress-client.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "b832350"
   },
   "TASK-STOP-AND-RESPOND-INTERRUPT-SEMANTICS": {
     "epic": "epic-generation-flow-control",
@@ -53030,7 +53181,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-triage-knip-src-findings.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TTS-EDGE-INTEGRATION": {
     "epic": "epic-audio-video-sound",
@@ -53116,7 +53267,7 @@
       "chat"
     ],
     "source": ".plan/tickets/TASK-tui-chat-picker.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TUI-DEDUPE-API-BASE": {
     "epic": "epic-terminal-ui",
@@ -53139,7 +53290,7 @@
     "label": "task",
     "priority": "low",
     "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "tui.enabled config flag mapped from env but never read at runtime",
     "type": "TASK"
@@ -53459,7 +53610,7 @@
     "type": "TASK"
   },
   "TASK-UNIT-TRANSLATION-SERVICE": {
-    "hash": "pending",
+    "hash": "07b696f",
     "extid": "TASK-UNIT-TRANSLATION-SERVICE",
     "type": "TASK",
     "title": "Unit Translation Service + Name-Preservation Guard",
@@ -53468,7 +53619,8 @@
     "epic": "epic-publication-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-unit-translation-service.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "07b696f"
   },
   "TASK-UPDATE-TERMINAL-UI-SPEC-TO-ACTUAL-FILE-LAYOUT": {
     "epic": "epic-terminal-ui",
@@ -54239,7 +54391,7 @@
     "type": "TASK"
   },
   "TASK-WIDEN-IMPORT-EXPORT-IO-FOR-PUBLICATIONS": {
-    "hash": "pending",
+    "hash": "1ca3d84",
     "extid": "TASK-WIDEN-IMPORT-EXPORT-IO-FOR-PUBLICATIONS",
     "type": "TASK",
     "title": "Widen Import/Export Epic Scope to Publications + Markdown Import",
@@ -54248,7 +54400,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-widen-import-export-io-for-publications.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "1ca3d84"
   },
   "TASK-WIDEN-TYPECHECK-COVERAGE-TO-PLUGINS-AND-TESTS": {
     "hash": "77b2d14",

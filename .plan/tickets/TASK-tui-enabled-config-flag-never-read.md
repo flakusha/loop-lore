@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** small
 **Epic:** epic-terminal-ui
@@ -35,3 +35,4 @@ Either:
 ## Notes
 
 - Deferred from `tui-updates` worktree (2026-09-14 review pass): requires design decision; default (c) is fine but should be deliberate.
+**Resolved:** 2026-10-16 registry-driven close: git issue 74304e5 (registry tip: 1246b2197 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-TUI-ENABLED-CONFIG-FLAG-NEV)

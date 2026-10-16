@@ -2,6 +2,10 @@
   "src/.gitignore": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-triage-knip-src-findings.md"
     }
   ],
@@ -3674,6 +3678,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-generation-story-assistant-and-chat-code.md"
     },
     {
@@ -4062,6 +4070,10 @@
     }
   ],
   "src/assistant/prompt/sections/nsfw-context.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-generation-story-assistant-and-chat-code.md"
@@ -5281,6 +5293,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
   "src/autonomy/dispatch/bdi-due.ts": [
@@ -5305,6 +5321,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
+    }
+  ],
+  "src/autonomy/governor/README.md": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
   "src/autonomy/governor/cache.ts": [
@@ -5369,6 +5391,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-cost-ledger-kill-switch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
   "src/autonomy/rng.ts": [
@@ -5381,6 +5407,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-deterministic-turns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     },
     {
       "kind": "spec",
@@ -6316,6 +6346,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-insert-log-fatal-and-log-trace-calls-at-key-sites.md"
     },
     {
@@ -6331,6 +6365,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-69-dead-src-files-reported-by-knip.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
   "src/build/identity.test.ts": [
@@ -6706,6 +6744,10 @@
     }
   ],
   "src/characters/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md"
@@ -7558,6 +7600,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-reaction-system.md"
     },
     {
@@ -7941,6 +7987,12 @@
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
     }
   ],
+  "src/characters/validator/constants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-template-validator-rejects-every-legal-content-rat.md"
+    }
+  ],
   "src/characters/validator/content-rating.test.ts": [
     {
       "kind": "epic",
@@ -8321,7 +8373,17 @@
       "source": ".plan/tickets/TASK-internal-external-flagging.md"
     }
   ],
+  "src/chat/folders.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    }
+  ],
   "src/chat/folders.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-generation-story-assistant-and-chat-code.md"
@@ -9778,6 +9840,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     },
     {
@@ -9860,6 +9926,10 @@
     }
   ],
   "src/chat/service/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md"
@@ -11818,6 +11888,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
     },
     {
@@ -11961,6 +12035,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-examples-and-domain-file-support-for-uncovered-sectio.md"
     }
   ],
   "src/config/load/domain.ts": [
@@ -11971,6 +12049,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-examples-and-domain-file-support-for-uncovered-sectio.md"
     },
     {
       "kind": "ticket",
@@ -12039,6 +12121,12 @@
       "source": ".plan/tickets/TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep.md"
     }
   ],
+  "src/config/load/pii-safety.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    }
+  ],
   "src/config/load/resolve.test.ts": [
     {
       "kind": "epic",
@@ -12089,6 +12177,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     },
     {
       "kind": "ticket",
@@ -12143,6 +12235,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-federation-to-the-config-domains-list-so-config-federati.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-examples-and-domain-file-support-for-uncovered-sectio.md"
     },
     {
       "kind": "ticket",
@@ -12697,6 +12793,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-research-agency-decision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
   "src/config/sections/byo-key.ts": [
@@ -12872,6 +12972,10 @@
   "src/config/sections/index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-examples-and-domain-file-support-for-uncovered-sectio.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-platform-service-util-modules-dead-barre.md"
     },
     {
@@ -12881,6 +12985,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
+    }
+  ],
+  "src/config/sections/integrations.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-config-examples-and-domain-file-support-for-uncovered-sectio.md"
     }
   ],
   "src/config/sections/integrations.ts": [
@@ -13074,6 +13184,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-template-validator-rejects-every-legal-content-rat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-065.md"
     },
     {
@@ -13087,6 +13201,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-nsfw-api-prefiltering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-template-example-documents-outfits-default-outfit-tha.md"
     },
     {
       "kind": "ticket",
@@ -13167,6 +13285,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gate-validate-configs-example-files-against-their-schemas.md"
     },
     {
       "kind": "ticket",
@@ -13259,12 +13381,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-workflow-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-template-validator-rejects-every-legal-content-rat.md"
     }
   ],
   "src/config/templates-loader/merge.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
+    }
+  ],
+  "src/config/templates-loader/validation-domains.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-template-validator-rejects-every-legal-content-rat.md"
     }
   ],
   "src/config/templates-loader/validation-entity-types.ts": [
@@ -13506,6 +13638,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-beat-scheduling.md"
     },
     {
@@ -13649,6 +13785,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-activitypub-keys-ts-has-zero-test-coverage.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     },
     {
       "kind": "ticket",
@@ -20835,6 +20975,12 @@
       "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md"
     }
   ],
+  "src/frontend/alpine/chat-creation/variants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    }
+  ],
   "src/frontend/alpine/chat-drafts.ts": [
     {
       "kind": "ticket",
@@ -22228,6 +22374,10 @@
   "src/frontend/alpine/keynav-help.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     }
   ],
@@ -22376,6 +22526,10 @@
     }
   ],
   "src/frontend/alpine/mobile-composer.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
@@ -24990,6 +25144,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
     },
     {
@@ -25312,6 +25470,10 @@
     }
   ],
   "src/frontend/vn/templates/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-scene-template-system.md"
@@ -35071,6 +35233,12 @@
       "source": "docs/spec/output-control-transforms.md"
     }
   ],
+  "src/regex/image-edit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    }
+  ],
   "src/regex/index.ts": [
     {
       "kind": "ticket",
@@ -38492,6 +38660,10 @@
   "src/routes/generation/comparison-store.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md"
     }
   ],
@@ -40783,7 +40955,17 @@
       "source": ".plan/epics/epic-crafting-professions.md"
     }
   ],
+  "src/routes/rpg/handler.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    }
+  ],
   "src/routes/rpg/handler.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md"
@@ -44755,6 +44937,12 @@
       "source": "docs/spec/autonomy-determinism.md"
     }
   ],
+  "src/rpg/npc-navigation/tick-driver/README.md": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    }
+  ],
   "src/rpg/nsfw-skills.ts": [
     {
       "kind": "ticket",
@@ -46663,6 +46851,12 @@
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
     }
   ],
+  "src/scripts/smoke-app.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    }
+  ],
   "src/scripts/version-bump.ts": [
     {
       "kind": "epic",
@@ -47775,6 +47969,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-research-agency-decision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
   "src/services/agency/spend-helpers.ts": [
@@ -49002,6 +49200,10 @@
   "src/story/turn-strategies.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-generation-story-assistant-and-chat-code.md"
     },
     {
@@ -49511,6 +49713,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
   "src/transport/interrupt.test.ts": [
@@ -49611,6 +49817,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     },
     {
       "kind": "ticket",
@@ -50327,6 +50537,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-032.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
   "src/users/index.ts": [

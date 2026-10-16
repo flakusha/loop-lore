@@ -3,7 +3,7 @@
 
 # TASK: TUI chat picker screen
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Epic:** `epic-terminal-ui`
@@ -32,3 +32,5 @@
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
 
 git issue: ebcb788
+
+**Resolved:** 2026-10-16 registry-driven close: git issue ebcb788 (registry tip: c066ce32e Konstantin Fedotov Close issue)
