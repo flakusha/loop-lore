@@ -245,9 +245,10 @@ publication format enum is a different thing with a different job.
    pdfkit/jsPDF, no pandoc invocation, no DOCX library. This is greenfield.
 4. **The markdown exporter is duplicated.** `src/routes/chat-export/format.ts:30`
    `formatMarkdown()` is wired to the live route; `src/chat/export/formats.ts:66`
-   `renderMarkdown()` is dead code with no production caller, self-documenting
-   the duplication at `:61-63`. Its only importers are its own test and
-   `docs/spec/import-export-io.md`. It is collapsed first —
+   `renderMarkdown()` is dead code with no production caller. It is module-private,
+   reachable only through the exported `exportChat` (`:210`), whose sole importer
+   is its own test — so the whole four-format module (`json`/`yaml`/`toml`/`md`,
+   `:28`) is dead, not just the markdown formatter. It is collapsed first —
    `TASK-collapse-duplicate-markdown-exporter.md`.
 
 ### Hazard: the SSE path emits unsanitized HTML
