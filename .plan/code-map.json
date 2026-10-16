@@ -7076,6 +7076,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-seed-character-loadouts-into-the-wardrobe-bridge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-template-full-model-coverage.md"
     },
     {
@@ -9732,6 +9736,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-and-chat-setup-example-configs-document-fields-the.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     },
     {
@@ -11973,6 +11981,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-and-http-utils-type-safety-batch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-validate-expansion-config-at-load-time.md"
     }
   ],
   "src/config/load/parse.ts": [
@@ -13095,6 +13107,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-validate-expansion-config-at-load-time.md"
     }
   ],
   "src/config/templates-loader.test.ts": [
@@ -26165,6 +26181,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-validate-expansion-config-at-load-time.md"
     }
   ],
   "src/generation/auto-gen/resolve-actor-from-events.ts": [
