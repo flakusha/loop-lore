@@ -21,9 +21,18 @@ representations from one pass.
 
 ## Context
 
-Source artifact: `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/graph.py`
-— **scratch, will be pruned. Read it; do not import it.** 128 lines, and it is the
-one genuinely generic file in the handoff.
+Source artifact: a Python ComfyUI HTTP-route extension (its `graph.py`, ~128 lines
+per a 2026-10-16 read), handed over **2026-09-30** by an external acquaintance of the
+repo owner and vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/`.
+That directory was scratch, was never committed, and **has been pruned — the source
+is not on disk and is not recoverable from git history.** Do not go looking for it.
+
+Every line number, count, and behavior below is a **prior observation from one read
+on 2026-10-16, not a re-readable source.** Treat it as an unverified claim to be
+re-derived — against a live ComfyUI, and against the upstream author if the artifact
+is ever re-acquired. Do not implement against a remembered line number; where a claim
+is load-bearing, confirm it and record where the confirmation came from (see the
+last AC).
 
 `class Graph` (`graph.py:5-56`):
 
@@ -96,4 +105,12 @@ literal start index, even though the two call sites it came from are fixed.
       Dareties class type in it and it succeeds
 - [ ] Test: UI and API representations agree node-for-node; a deliberately
       mismatched PNG prompt is refused; a missing input file is a warning
+- [ ] **Provenance recorded.** The source artifact is gone, so every sidecar-derived
+      claim this ticket relied on (the `Graph` semantics, the `wire` duplicate-binding
+      behavior, the `extra_pnginfo.workflow` key, the import-validation thresholds)
+      is either re-derived from a live ComfyUI or explicitly marked unverified. The
+      ticket records, per claim, **where the evidence came from** — an executed test,
+      an `/object_info` or `/history` observation with its date, or a written answer
+      from the upstream author — and a claim with no provenance is not used as if
+      confirmed
 - [ ] `bun run check` green

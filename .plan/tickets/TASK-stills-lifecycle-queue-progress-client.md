@@ -20,8 +20,18 @@ derivation, without the `/h3-stills/*` HTTP contract.
 
 ## Context
 
-Source artifact: `.tmp/H3_Stills_5080_Handoff_20260930/ComfyUI-H3-Stills-Only/`
-— **scratch, will be pruned.** Read 2026-10-16.
+Source artifact: a Python ComfyUI HTTP-route extension (its `studio_stills.py` and
+`web/*.mjs`), handed over **2026-09-30** by an external acquaintance of the repo owner
+and vendored **only** under `.tmp/H3_Stills_5080_Handoff_20260930/`. That directory
+was scratch, was never committed, and **has been pruned — the source is not on disk
+and is not recoverable from git history.** Do not go looking for it.
+
+Every route count, module boundary, line number, and cap below is a **prior
+observation from one read on 2026-10-16, not a re-readable source.** Treat it as an
+unverified claim to be re-derived against a live ComfyUI and the upstream author if
+the artifact is ever re-acquired. The three reusable `.mjs` modules below are named
+by behavior, not just by path — re-derive each from its description and record where
+the confirmation came from (see the last AC).
 
 The sidecar splits its lifecycle across seven custom routes and five native ComfyUI
 endpoints. Only the custom ones are sidecar-specific; the native ones loop-lore
@@ -82,4 +92,12 @@ the import-validation policy's PNG-`prompt` comparison.
 - [ ] Test against a fake ComfyUI: submit → history → view returns one result with
       a duration and a correct queue phase; a second concurrent `prompt_id` does not
       receive the first's progress
+- [ ] **Provenance recorded.** The source artifact is gone, so every sidecar-derived
+      claim this ticket relied on — the route split, the `extra_pnginfo.workflow` key,
+      the queue-progress stage mapping, the job-timing boundaries, and the PNG chunk
+      reader's 128 MiB cap — is either re-derived against a live ComfyUI, or
+      explicitly marked unverified. The ticket records, per claim, **where the
+      evidence came from** (executed test, an observed `/history` or `/queue` payload,
+      or a written answer from the upstream author); a claim with no provenance is not
+      used as if confirmed
 - [ ] `bun run check` green
