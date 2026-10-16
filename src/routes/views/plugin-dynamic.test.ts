@@ -317,7 +317,105 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
       expect(await res.text(),).toContain("character-card-",);
     });
   });
+
+  /**
+   * JSON negotiation on the four dynamic endpoints that own a view-model loader.
+   * Reads only the file-seeded rows (chat-a, g1); inserts nothing.
+   */
+  describe("dynamic endpoints — JSON view-model negotiation", () => {
+    const jsonEndpoints = [
+      "/dynamic/chats/list",
+      "/dynamic/chats/search",
+      "/dynamic/gallery/grid",
+      "/dynamic/gallery/search",
+    ];
+
+    test("an explicit JSON Accept returns the view-model and no markup", async () => {
+      for (const path of jsonEndpoints) {
+        const res = await makeApp(db, "owner", "user",).handle(
+          new Request(`http://localhost${path}`, { headers: { "Accept": "application/json", }, },),
+        );
+
+        expect(res.status,).toBe(200,);
+        expect(res.headers.get("content-type",),).toBe("application/json",);
+        expect(await res.text(),).not.toContain("<div",);
+      }
+    });
+
+    test("an explicit JSON Accept outranks the HX-Request fragment hint", async () => {
+      for (const path of jsonEndpoints) {
+        const res = await makeApp(db, "owner", "user",).handle(
+          new Request(`http://localhost${path}`, {
+            headers: { "HX-Request": "true", "Accept": "application/json", },
+          },),
+        );
+
+        expect(res.status,).toBe(200,);
+        expect(res.headers.get("content-type",),).toBe("application/json",);
+      }
+    });
+
+    test("chats list JSON and htmx fragment agree on the seeded rows", async () => {
+      const jsonRes = await makeApp(db, "owner", "user",).handle(
+        new Request("http://localhost/dynamic/chats/list", { headers: { "Accept": "application/json", }, },),
+      );
+
+      const htmlRes = await makeApp(db, "owner", "user",).handle(
+        new Request("http://localhost/dynamic/chats/list", { headers: { "HX-Request": "true", }, },),
+      );
+
+      const parsed = safeJsonParse<ChatsListBody>(await jsonRes.text(),);
+      expect(parsed.ok,).toBe(true,);
+      if (!parsed.ok) {
+        return;
+      }
+
+      const html = await htmlRes.text();
+      const renderedCards = html.match(/data-testid="chat-card-/g,) ?? [];
+      expect(renderedCards.length,).toBe(parsed.value.chats.length,);
+      for (const chat of parsed.value.chats) {
+        expect(html,).toContain(`data-testid="chat-card-${chat.id}"`,);
+      }
+
+      expect(parsed.value.chats.some((chat,) => chat.id === "chat-a"),).toBe(true,);
+    });
+
+    test("gallery grid JSON and htmx fragment agree on the seeded asset", async () => {
+      const jsonRes = await makeApp(db, "owner", "user",).handle(
+        new Request("http://localhost/dynamic/gallery/grid", { headers: { "Accept": "application/json", }, },),
+      );
+
+      const htmlRes = await makeApp(db, "owner", "user",).handle(
+        new Request("http://localhost/dynamic/gallery/grid", { headers: { "HX-Request": "true", }, },),
+      );
+
+      const parsed = safeJsonParse<GalleryBody>(await jsonRes.text(),);
+      expect(parsed.ok,).toBe(true,);
+      if (!parsed.ok) {
+        return;
+      }
+
+      const asset = parsed.value.assets.find((a,) => a.id === "g1");
+      expect(asset,).toBeDefined();
+      expect(asset?.thumbUrl,).toBe("/api/v1/assets/g1/thumb",);
+      expect(await htmlRes.text(),).toContain('data-testid="asset-card-g1"',);
+    });
+  });
 });
+
+/** The JSON shape the chats list serves. */
+interface ChatsListBody {
+  chats: Array<{ id: string; name: string; isPinned: boolean }>;
+  page: number;
+  pageSize: number;
+  total: number;
+  hasMore: boolean;
+}
+
+/** The JSON shape the gallery grid/search serve. */
+interface GalleryBody {
+  assets: Array<{ id: string; filename: string; thumbUrl: string | null }>;
+}
 
 /** The JSON shape the characters grid serves. */
 interface CharactersGridBody {

@@ -5,10 +5,14 @@ import type { Kysely, SelectQueryBuilder, } from "kysely";
 import { visibleGalleryAssetFilter, } from "../../assets/service/read";
 import { visibleTagNames, } from "../../assets/service/tag-facets";
 import { ActorType, ActorVisibility, AssetLinkEntity, AssetTagScope, } from "../../db/enums";
-import type { AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
-import { escapeHtml, htmlResponse, } from "./layout";
+import { renderGalleryCards, renderGalleryErrorCard, } from "./gallery-cards";
+import { htmlResponse, } from "./layout";
+import {
+  buildGalleryGridViewModel,
+  type GalleryGridViewModel,
+} from "./view-models/gallery-grid";
 
 const GRID_PAGE_SIZE = 200;
 
@@ -78,16 +82,6 @@ export function applyGalleryAssetFilters<QB extends SelectQueryBuilder<DB, "asse
 }
 
 /**
- * @param bytes
- * @returns the asset size as a short human-readable string
- */
-function formatSize(bytes: number,): string {
-  if (bytes < 1024) { return `${bytes} B`; }
-  if (bytes < 1_048_576) { return `${(bytes / 1024).toFixed(1,)} KB`; }
-  return `${(bytes / 1_048_576).toFixed(1,)} MB`;
-}
-
-/**
  * Visibility inheritance (G6): filter out assets whose only/any actor link points
  * to a character the viewer does not own, when that character is private.
  *
@@ -135,18 +129,28 @@ async function inheritedHiddenAssetIds(
 }
 
 /**
- * @param database
- * @param params
- * @param actorId
- * @param actorRole
- * @returns the paginated gallery-grid HTML fragment
+ * Outcome of loading the gallery grid: either the view-model both
+ * representations share, or the validation error the htmx view renders as an
+ * error card.
  */
-async function serveGalleryGrid(
-  database: Kysely<DB>,
-  params?: URLSearchParams,
-  actorId?: string | null,
-  actorRole?: string | null,
-): Promise<Response> {
+export type GalleryGridLoad =
+  | { ok: true; viewModel: GalleryGridViewModel }
+  | { ok: false; error: string };
+
+/**
+ * Fetch and project one page of gallery assets — the single data path behind
+ * the htmx grid fragment and the JSON view-model branch.
+ * @param options
+ * @returns the view-model, or `{ ok: false }` for an invalid filter combination
+ */
+export async function loadGalleryGridViewModel(
+  { database, params, actorId, actorRole, }: {
+    database: Kysely<DB>;
+    params?: URLSearchParams;
+    actorId?: string | null;
+    actorRole?: string | null;
+  },
+): Promise<GalleryGridLoad> {
   const isAdmin = can(actorRole ?? null, "admin.character",);
   const entityTypeParam = params?.get("entityType",) ?? null;
   const entityId = params?.get("entityId",) ?? null;
@@ -163,7 +167,7 @@ async function serveGalleryGrid(
     Object.values(AssetLinkEntity,).includes(entityTypeParam as AssetLinkEntity,);
 
   if (entityTypeParam !== null && !entityTypeValid) {
-    return htmlResponse(renderErrorCard("Invalid entity type",),);
+    return { ok: false, error: "Invalid entity type", };
   }
 
   qb = applyGalleryAssetFilters(qb, {
@@ -194,78 +198,31 @@ async function serveGalleryGrid(
   }
 
   const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
-  return htmlResponse(renderCards(visible, tagMap,),);
+  return {
+    ok: true,
+    viewModel: buildGalleryGridViewModel({ rows: visible, tagMap, page, pageSize: GRID_PAGE_SIZE, },),
+  };
 }
 
 /**
- * @param message
+ * @param database
+ * @param params
+ * @param actorId
+ * @param actorRole
+ * @returns the paginated gallery-grid HTML fragment
  */
-function renderErrorCard(message: string,): string {
-  return `<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
-    <div class="title">${escapeHtml(message,)}</div>
-  </div>`;
+async function serveGalleryGrid(
+  database: Kysely<DB>,
+  params?: URLSearchParams,
+  actorId?: string | null,
+  actorRole?: string | null,
+): Promise<Response> {
+  const load = await loadGalleryGridViewModel({ database, params, actorId, actorRole, },);
+  if (!load.ok) {
+    return htmlResponse(renderGalleryErrorCard(load.error,),);
+  }
+
+  return htmlResponse(renderGalleryCards(load.viewModel,),);
 }
 
-/**
- * @param assets
- * @param tagMap
- */
-function renderCards(
-  assets: readonly { id: string; filename: string; asset_type: AssetType; size_bytes: number }[],
-  tagMap: ReadonlyMap<string, string[]> = new Map(),
-): string {
-  if (assets.length === 0) {
-    return `<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
-      <div class="icon">📁</div>
-      <div class="title">No assets found</div>
-      <div class="description">Upload images, audio, or video to get started.</div>
-    </div>`;
-  }
-
-  /**
-   * @param a
-   * @param a.id
-   * @param a.filename
-   * @param a.asset_type
-   */
-  function thumbForAsset(a: { id: string; filename: string; asset_type: AssetType },): string {
-    switch (a.asset_type) {
-      case "image": {
-        return `<img src="/api/v1/assets/${a.id}/thumb" alt="${escapeHtml(a.filename,)}" loading="lazy" />`;
-      }
-
-      case "audio": {
-        return `<div class="file-icon">🎵</div>`;
-      }
-
-      case "video": {
-        return `<div class="file-icon">🎬</div>`;
-      }
-
-      case "other":
-      case "memory": {
-        return `<div class="file-icon">📄</div>`;
-      }
-    }
-  }
-
-  const cards: string[] = [];
-  for (const a of assets) {
-    const filename = escapeHtml(a.filename,);
-    const size = formatSize(a.size_bytes,);
-    const tags = escapeHtml((tagMap.get(a.id,) ?? []).join(",",),);
-    cards.push(
-      `<div class="asset-card" data-tags="${tags}" tabindex="0" role="button" x-on:click="window.openAssetPreviewById('${a.id}')" x-on:keydown.enter.prevent="window.openAssetPreviewById('${a.id}')" x-on:keydown.space.prevent="window.openAssetPreviewById('${a.id}')" data-testid="asset-card-${a.id}">
-      <div class="thumb">${thumbForAsset(a,)}</div>
-      <div class="details">
-        <span class="name">${filename}</span>
-        <span class="type">${size}</span>
-      </div>
-    </div>`,
-    );
-  }
-
-  return cards.join("",);
-}
-
-export { formatSize, inheritedHiddenAssetIds, serveGalleryGrid, };
+export { inheritedHiddenAssetIds, serveGalleryGrid, };

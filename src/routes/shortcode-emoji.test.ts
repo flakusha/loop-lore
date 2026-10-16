@@ -28,14 +28,14 @@ function row(lastMessage: string,) {
     id: "c1",
     name: "Chat",
     type: "solo",
-    is_pinned: "",
-    updated_at: "2026-01-01 00:00:00",
-    created_at: "2026-01-01 00:00:00",
-    world_name: null,
-    location_name: null,
-    encryption_level: "none",
-    participant_count: 0,
-    last_message: lastMessage,
+    isPinned: false,
+    updatedAt: "2026-01-01 00:00:00",
+    createdAt: "2026-01-01 00:00:00",
+    worldName: null,
+    locationName: null,
+    encryptionLevel: "none",
+    participantCount: 0,
+    lastMessage,
   },];
 }
 

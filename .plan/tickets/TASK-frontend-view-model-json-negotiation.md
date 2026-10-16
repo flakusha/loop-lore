@@ -140,6 +140,15 @@ an HTML page.
 - Scope is the one migrated route; the branch is written to be reused by the
   remaining handlers as they are extracted.
 
+### Follow-up (branch `egui-json-view-models`, unmerged)
+
+The same branch now serves JSON from four more endpoints, reusing this helper
+verbatim: `/dynamic/gallery/grid`, `/dynamic/gallery/search`,
+`/dynamic/chats/list` and `/dynamic/chats/search` — tracked by
+`TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md`, which
+carries the extraction of their view-models and the parity tests between the
+two representations.
+
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
 
 git issue: f88efac

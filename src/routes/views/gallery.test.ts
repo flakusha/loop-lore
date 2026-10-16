@@ -12,7 +12,8 @@ import { renameAssetTag, } from "../../assets/service/tags";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssets, insertAssetTags, insertUsers, } from "../../test-utils/insert-helpers";
-import { formatSize, inheritedHiddenAssetIds, serveGalleryGrid, } from "./gallery";
+import { inheritedHiddenAssetIds, serveGalleryGrid, } from "./gallery";
+import { formatSize, } from "./gallery-cards";
 
 describe("views/gallery", () => {
   let db: Kysely<DB>;

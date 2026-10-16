@@ -11,10 +11,10 @@ import {
   serveCharacterEditForm,
   serveCharactersGrid,
 } from "./characters";
-import { serveChatsListDb, serveChatsSearch, } from "./chats";
-import { serveGalleryGrid, } from "./gallery";
+import { loadChatsListViewModel, loadChatsSearchViewModel, serveChatsListDb, serveChatsSearch, } from "./chats";
+import { loadGalleryGridViewModel, serveGalleryGrid, } from "./gallery";
 import { jsonViewModelResponse, wantsJsonViewModel, } from "./negotiate";
-import { serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
+import { loadGallerySearchViewModel, serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 import { serveWorldDetailContent, serveWorldsListDb, } from "./worlds";
 
 /**
@@ -40,12 +40,28 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/gallery/grid", async (ctx: any,) => {
+      const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
       const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
+      if (!isHtmx && !wantsJson) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
       const url = new URL(ctx.request.url,);
+      if (wantsJson) {
+        const load = await loadGalleryGridViewModel({
+          database,
+          params: url.searchParams,
+          actorId: ctx.userId as string | null,
+          actorRole: (ctx.userRole as string | null) ?? null,
+        },);
+
+        if (!load.ok) {
+          return jsonViewModelResponse({ error: load.error, },);
+        }
+
+        return jsonViewModelResponse(load.viewModel,);
+      }
+
       return await serveGalleryGrid(
         database,
         url.searchParams,
@@ -67,12 +83,24 @@ export function dynamicRoutes(database: Kysely<DB>,) {
     },)
     // HTMX search endpoints
     .get("/dynamic/gallery/search", async (ctx: any,) => {
+      const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
       const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
+      if (!isHtmx && !wantsJson) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
       const url = new URL(ctx.request.url,);
+      if (wantsJson) {
+        return jsonViewModelResponse(
+          await loadGallerySearchViewModel({
+            database,
+            params: url.searchParams,
+            actorId: ctx.userId as string | null,
+            actorRole: (ctx.userRole as string | null) ?? null,
+          },),
+        );
+      }
+
       return await serveGallerySearch(
         database,
         url.searchParams,
@@ -110,23 +138,33 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/chats/list", async (ctx,) => {
+      const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
       const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
+      if (!isHtmx && !wantsJson) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
       const url = new URL(ctx.request.url,);
+      if (wantsJson) {
+        return jsonViewModelResponse(await loadChatsListViewModel(database, url.searchParams,),);
+      }
+
       return await serveChatsListDb(database, url.searchParams,);
     }, {
       response: { 200: SuccessResponse, },
     },)
     .get("/dynamic/chats/search", async (ctx,) => {
+      const wantsJson = wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },);
       const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
+      if (!isHtmx && !wantsJson) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
       const url = new URL(ctx.request.url,);
+      if (wantsJson) {
+        return jsonViewModelResponse(await loadChatsSearchViewModel(database, url.searchParams,),);
+      }
+
       return await serveChatsSearch(database, url.searchParams,);
     }, {
       response: { 200: SuccessResponse, },

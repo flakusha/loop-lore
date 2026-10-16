@@ -6,17 +6,20 @@ import type { DB, } from "../../db/schema";
 import { parseIntOr, } from "../../utils/parse-number";
 import { enrichChats, renderChatListItems, } from "./chat-render";
 import { htmlResponse, } from "./layout";
+import { buildChatListViewModel, type ChatListViewModel, } from "./view-models/chat-list";
 
 /**
+ * Fetch and project one page of chats — the single data path behind the htmx
+ * list fragment and the JSON view-model branch.
  * @param database
- * @param params
- * @returns the paginated chat-list HTML fragment
+ * @param params - list params (`page`, `pageSize`)
+ * @returns the view-model both representations share
  */
-async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
-  const page = Math.max(1, parseIntOr(params.get("page",) ?? "1", 1,),);
-  const rawPageSize = Math.max(1, parseIntOr(params.get("pageSize",) ?? "50", 50,),);
-  const pageSize = Math.min(100, rawPageSize,);
-  const offset = (page - 1) * pageSize;
+export async function loadChatsListViewModel(
+  database: Kysely<DB>,
+  params: URLSearchParams,
+): Promise<ChatListViewModel> {
+  const { page, pageSize, offset, } = readPageParams(params,);
 
   const [chatsResult, countRowResult,] = await Promise.allSettled([
     database
@@ -47,8 +50,20 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
   // List + count are best-effort: a failed query yields an empty list / 0 total.
   const chats = chatsResult.status === "fulfilled" ? chatsResult.value : [];
   const countRow = countRowResult.status === "fulfilled" ? countRowResult.value : undefined;
+  const total = Number((countRow as any)?.total ?? 0,);
 
-  if (chats.length === 0) {
+  const enriched = await enrichChats(database, chats,);
+  return buildChatListViewModel({ rows: enriched, page, pageSize, total, },);
+}
+
+/**
+ * @param database
+ * @param params
+ * @returns the paginated chat-list HTML fragment
+ */
+async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+  const viewModel = await loadChatsListViewModel(database, params,);
+  if (viewModel.chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">💬</div>
       <div class="title">No chats yet</div>
@@ -56,35 +71,25 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
     </div>`,);
   }
 
-  const enriched = await enrichChats(database, chats,);
-  const total = Number((countRow as any)?.total ?? 0,);
-  const hasMore = offset + pageSize < total;
-  const items = renderChatListItems(enriched,);
-  const loadMore = hasMore
-    ? `<div style="padding:var(--space-4);text-align:center">
-        <button class="btn btn-secondary" hx-get="/dynamic/chats/list?page=${page + 1}&pageSize=${pageSize}"
-          hx-target="#chat-list-grid" hx-swap="beforeend"
-          hx-trigger="click" style="width:100%">Load more (${total - offset - pageSize} remaining)</button>
-      </div>`
-    : "";
-
-  return htmlResponse(`<div data-page="${page}">${items}</div>${loadMore}`,);
+  return htmlResponse(renderChatListFragment(viewModel, "/dynamic/chats/list",),);
 }
 
 /**
+ * Fetch and project one page of chat-search results — the single data path
+ * behind the htmx search fragment and the JSON view-model branch.
  * @param database
- * @param params
- * @returns the paginated chat-search HTML fragment
+ * @param params - search params (`q`, `world`, `type`, `sort`, `page`, `pageSize`)
+ * @returns the view-model both representations share
  */
-async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+export async function loadChatsSearchViewModel(
+  database: Kysely<DB>,
+  params: URLSearchParams,
+): Promise<ChatListViewModel> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const worldId = params.get("world",)?.trim() ?? "";
   const chatType = params.get("type",)?.trim() ?? "";
   const sort = params.get("sort",) ?? "recent";
-  const page = Math.max(1, parseIntOr(params.get("page",) ?? "1", 1,),);
-  const rawPageSize = Math.max(1, parseIntOr(params.get("pageSize",) ?? "50", 50,),);
-  const pageSize = Math.min(100, rawPageSize,);
-  const offset = (page - 1) * pageSize;
+  const { page, pageSize, offset, } = readPageParams(params,);
 
   let qb = database
     .selectFrom("chats",)
@@ -125,8 +130,20 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
 
   const chats = chatsResult.status === "fulfilled" ? chatsResult.value : [];
   const countRow = countRowResult.status === "fulfilled" ? countRowResult.value : undefined;
+  const total = Number((countRow as any)?.total ?? 0,);
 
-  if (chats.length === 0) {
+  const enriched = await enrichChats(database, chats,);
+  return buildChatListViewModel({ rows: enriched, page, pageSize, total, },);
+}
+
+/**
+ * @param database
+ * @param params
+ * @returns the paginated chat-search HTML fragment
+ */
+async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+  const viewModel = await loadChatsSearchViewModel(database, params,);
+  if (viewModel.chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">🔍</div>
       <div class="title">No chats match your search</div>
@@ -134,21 +151,38 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
     </div>`,);
   }
 
-  const enriched = await enrichChats(database, chats,);
-  const total = Number((countRow as any)?.total ?? 0,);
-  const hasMore = offset + pageSize < total;
-  const items = renderChatListItems(enriched,);
+  return htmlResponse(renderChatListFragment(viewModel, "/dynamic/chats/search",),);
+}
+
+/**
+ * @param params - request params carrying `page` / `pageSize`
+ * @returns the clamped page, page size, and offset both handlers use
+ */
+function readPageParams(params: URLSearchParams,): { page: number; pageSize: number; offset: number } {
+  const page = Math.max(1, parseIntOr(params.get("page",) ?? "1", 1,),);
+  const rawPageSize = Math.max(1, parseIntOr(params.get("pageSize",) ?? "50", 50,),);
+  const pageSize = Math.min(100, rawPageSize,);
+  return { page, pageSize, offset: (page - 1) * pageSize, };
+}
+
+/**
+ * @param viewModel - the chat-list view-model
+ * @param endpoint - the endpoint the load-more button re-posts to
+ * @returns the page wrapper, the cards, and the load-more button
+ */
+function renderChatListFragment(viewModel: ChatListViewModel, endpoint: string,): string {
+  const { chats, page, pageSize, total, hasMore, } = viewModel;
+  const offset = (page - 1) * pageSize;
+  const items = renderChatListItems(chats,);
   const loadMore = hasMore
     ? `<div style="padding:var(--space-4);text-align:center">
-        <button class="btn btn-secondary" hx-get="/dynamic/chats/search?q=${
-      encodeURIComponent(query,)
-    }&world=${worldId}&type=${chatType}&sort=${sort}&page=${page + 1}&pageSize=${pageSize}"
+        <button class="btn btn-secondary" hx-get="${endpoint}?page=${page + 1}&pageSize=${pageSize}"
           hx-target="#chat-list-grid" hx-swap="beforeend"
           hx-trigger="click" style="width:100%">Load more (${total - offset - pageSize} remaining)</button>
       </div>`
     : "";
 
-  return htmlResponse(`<div data-page="${page}">${items}</div>${loadMore}`,);
+  return `<div data-page="${page}">${items}</div>${loadMore}`;
 }
 
 export { serveChatsListDb, serveChatsSearch, };
