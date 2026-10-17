@@ -1743,5 +1743,8 @@
     "new": "New Template",
     "payload": "Payload (JSON)",
     "preset": "Preset"
+  },
+  "planning": {
+    "board": "Planning Board"
   }
 }

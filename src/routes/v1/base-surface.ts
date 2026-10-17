@@ -19,6 +19,7 @@ import { messageEncryptionRoutes, } from "../message-encryption";
 import { deprecationAfterHandle, } from "../middleware/deprecation-headers";
 import { versionResolver, } from "../middleware/version-resolver";
 import { planningRoutes, } from "../planning";
+import { planningBoardRoutes, } from "../planning-board";
 import { requestStatusRoutes, } from "../requests";
 import { sessionsRoutes, } from "../sessions";
 import { switchSessionRoutes, } from "../sessions-switch";
@@ -65,6 +66,7 @@ export function baseSurface(opts: RegisterPluginsOpts,) {
     .use(apiKeysRoutes(handleOpts, prefix,),)
     .use(settingsRoutes(handleOpts, prefix,),)
     .use(planningRoutes({ database, }, prefix,),)
+    .use(planningBoardRoutes({ database, }, prefix,),)
     .use(actorPlanRoutes({ database, }, prefix,),)
     .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
     .use(messageEncryptionRoutes(handleOpts, prefix,),)
