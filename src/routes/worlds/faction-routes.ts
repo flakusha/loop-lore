@@ -11,6 +11,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
 import type { FactionRelationship, } from "../../worlds/factions";
 import { addMember, createFaction, FactionError, listFactions, removeMember, } from "../../worlds/factions";
@@ -77,6 +78,13 @@ async function runDiplomacy(
   const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
+  const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [
+    ctx.body.factionA,
+    ctx.body.factionB,
+  ],);
+
+  if (factionErr) { return factionErr; }
+
   try {
     const relationship = await verb({
       db: database,
@@ -89,6 +97,30 @@ async function runDiplomacy(
   } catch (e) {
     return factionErrorResponse(e,);
   }
+}
+
+/**
+ * The world gate authorizes `:worldId`, but factions are addressed by their own
+ * id in the path and in the pair bodies: without this scope check a caller who
+ * owns ANY world could read or rewrite another world's factions.
+ * @param database Kysely handle
+ * @param worldId world the caller was authorized for
+ * @param factionIds faction ids the request addresses
+ * @returns 404 when any id is missing or belongs to another world, else null
+ */
+async function requireFactionsInWorld(
+  database: Kysely<DB>,
+  worldId: string,
+  factionIds: readonly string[],
+): Promise<Response | null> {
+  const found = await database
+    .selectFrom("factions",)
+    .select("id",)
+    .where("id", "in", [...factionIds,],)
+    .where("world_id", "=", worldId,)
+    .execute();
+
+  return found.length === new Set(factionIds,).size ? null : notFound("Faction not found",);
 }
 
 /**
@@ -150,6 +182,8 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+        const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [ctx.params.factionId,],);
+        if (factionErr) { return factionErr; }
         try {
           const member = await addMember({
             db: database,
@@ -175,6 +209,8 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+        const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [ctx.params.factionId,],);
+        if (factionErr) { return factionErr; }
         try {
           await removeMember(database, ctx.params.factionId, ctx.params.actorId,);
           return jsonResponse({ data: { removed: true, }, },);
@@ -193,6 +229,12 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+        const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [
+          ctx.params.factionId,
+          ctx.params.otherId,
+        ],);
+
+        if (factionErr) { return factionErr; }
         const relationship = await getFactionRelationship(database, ctx.params.factionId, ctx.params.otherId,);
         if (!relationship) {
           return jsonError({ message: "relationship not found", status: HttpStatus.NotFound, },);
@@ -215,6 +257,12 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+        const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [
+          ctx.body.factionA,
+          ctx.body.factionB,
+        ],);
+
+        if (factionErr) { return factionErr; }
         try {
           const relationship = await setRelationship({
             db: database,
