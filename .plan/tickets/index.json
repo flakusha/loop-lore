@@ -338,6 +338,19 @@
     "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md",
     "status": "Not Started"
   },
+  "BUG-ADMIN-SET-SECRETS-STORED-PLAINTEXT-IN-SYSTEM-CONFIG": {
+    "hash": "03d2296",
+    "git_issue": "03d2296",
+    "extid": "BUG-ADMIN-SET-SECRETS-STORED-PLAINTEXT-IN-SYSTEM-CONFIG",
+    "type": "BUG",
+    "title": "Admin-set secrets stored plaintext in system_config",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md",
+    "status": "Not Started"
+  },
   "BUG-ADMIN-SYSTEM-CONFIG-DELETE-PASSES-USER-CONTROLLED-KEY-WITHOU": {
     "hash": "daacc4b",
     "git_issue": "daacc4b",
@@ -446,6 +459,19 @@
     "tags": [],
     "title": "Align seedDefaults null handling with resolveModelRole defensive checks",
     "type": "BUG"
+  },
+  "BUG-ALLOWUSERAPIKEY-DEFINED-BUT-NEVER-ENFORCED": {
+    "hash": "bafb152",
+    "git_issue": "bafb152",
+    "extid": "BUG-ALLOWUSERAPIKEY-DEFINED-BUT-NEVER-ENFORCED",
+    "type": "BUG",
+    "title": "allowUserApiKey defined but never enforced",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md",
+    "status": "Not Started"
   },
   "BUG-ALPINE-HYDRATION-FAILURES-UNDECLARED-TEMPLATE-VARS-UNTESTED": {
     "hash": "b0ab7a1",
@@ -1047,6 +1073,19 @@
     "tags": [],
     "title": "Auto key-rotation is effectively disabled by config drift (KEY_ROTATION_DAYS not wired)",
     "type": "BUG"
+  },
+  "BUG-AUTO-STARTED-LLAMA-CPP-SKIPS-CIRCUIT-BREAKER-REGISTRATION": {
+    "hash": "cb06262",
+    "git_issue": "cb06262",
+    "extid": "BUG-AUTO-STARTED-LLAMA-CPP-SKIPS-CIRCUIT-BREAKER-REGISTRATION",
+    "type": "BUG",
+    "title": "Auto-started llama.cpp skips circuit-breaker registration",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-auto-started-llama-cpp-skips-circuit-breaker-registration.md",
+    "status": "Not Started"
   },
   "BUG-AUX-PIPELINE-PROMPT-REEXPORT-ASYMMETRY": {
     "epic": "epic-aux-enrichment-pipeline",
@@ -1754,6 +1793,32 @@
     "tags": [],
     "title": "bun test src full suite is order-dependent cross-file contamination",
     "type": "BUG"
+  },
+  "BUG-BYO-DECRYPT-FAILURE-SILENTLY-FALLS-BACK-TO-SERVER-KEY": {
+    "hash": "f06f2d2",
+    "git_issue": "f06f2d2",
+    "extid": "BUG-BYO-DECRYPT-FAILURE-SILENTLY-FALLS-BACK-TO-SERVER-KEY",
+    "type": "BUG",
+    "title": "BYO decrypt failure silently falls back to server key",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md",
+    "status": "Not Started"
+  },
+  "BUG-BYOK-STORE-REJECTS-NON-OPENAICOMPATIBLE-PROVIDER-NAMES": {
+    "hash": "2ee554c",
+    "git_issue": "2ee554c",
+    "extid": "BUG-BYOK-STORE-REJECTS-NON-OPENAICOMPATIBLE-PROVIDER-NAMES",
+    "type": "BUG",
+    "title": "BYOK store rejects non-openaiCompatible provider names",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md",
+    "status": "Not Started"
   },
   "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
     "epic": "",
@@ -3050,6 +3115,19 @@
     "title": "db-reinit archive directory has no rotation; PII accumulates indefinitely",
     "type": "BUG"
   },
+  "BUG-DEAD-BEDROCK-CONFIG-PATH-ACCEPTED-BUT-NEVER-DISPATCHED": {
+    "hash": "3edc50d",
+    "git_issue": "3edc50d",
+    "extid": "BUG-DEAD-BEDROCK-CONFIG-PATH-ACCEPTED-BUT-NEVER-DISPATCHED",
+    "type": "BUG",
+    "title": "Dead Bedrock config path accepted but never dispatched",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-dead-bedrock-config-path-accepted-but-never-dispatched.md",
+    "status": "Not Started"
+  },
   "BUG-DEAD-CODE-GUARD-IN-ADVANCEPARTYTRAVEL": {
     "hash": "cbcacc6",
     "git_issue": "cbcacc6",
@@ -3759,6 +3837,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-failed-plugin-load-leaks-a-registered-plugin.md",
     "status": "done"
+  },
+  "BUG-FAILOVER-REPLAYS-PRIMARY-BYO-KEY-TO-FALLBACK-VENDORS": {
+    "hash": "248a28b",
+    "git_issue": "248a28b",
+    "extid": "BUG-FAILOVER-REPLAYS-PRIMARY-BYO-KEY-TO-FALLBACK-VENDORS",
+    "type": "BUG",
+    "title": "Failover replays primary BYO key to fallback vendors",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-failover-replays-primary-byo-key-to-fallback-vendors.md",
+    "status": "Not Started"
   },
   "BUG-FAN-OUT-CONTENT-CLEARANCE-GATE-IS-OPT-IN-ON-A-CALLER-SUPPLIE": {
     "hash": "142027d",
@@ -4557,6 +4648,19 @@
     "source": ".plan/tickets/BUG-generation-service-silent-catch-blocks-mask-production-error.md",
     "status": "Not Started"
   },
+  "BUG-GET-ADMIN-MODEL-ROLES-SCHEMA-ARRAY-VS-SERVICE-RECORD-MISMATC": {
+    "hash": "bc0043f",
+    "git_issue": "bc0043f",
+    "extid": "BUG-GET-ADMIN-MODEL-ROLES-SCHEMA-ARRAY-VS-SERVICE-RECORD-MISMATC",
+    "type": "BUG",
+    "title": "GET admin/model-roles schema Array vs service Record mismatch",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-get-admin-model-roles-schema-array-vs-service-record-mismatc.md",
+    "status": "Not Started"
+  },
   "BUG-GET-MESSAGES-ID-VARIANTS-HAS-TOCTOU-RACE-ON-PARENT-CHAT-AUTH": {
     "epic": "",
     "extid": "BUG-GET-MESSAGES-ID-VARIANTS-HAS-TOCTOU-RACE-ON-PARENT-CHAT-AUTH",
@@ -5292,6 +5396,19 @@
     "title": "idempotency table backend — verify reproducer or close (advisory orphan)",
     "type": "BUG"
   },
+  "BUG-IMAGE-AUDIO-PROVIDERS-HAVE-NO-BYO-KEY-OR-FAILOVER": {
+    "hash": "b104dd8",
+    "git_issue": "b104dd8",
+    "extid": "BUG-IMAGE-AUDIO-PROVIDERS-HAVE-NO-BYO-KEY-OR-FAILOVER",
+    "type": "BUG",
+    "title": "Image/audio providers have no BYO key or failover",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-image-audio-providers-have-no-byo-key-or-failover.md",
+    "status": "Not Started"
+  },
   "BUG-IMAGE-EDIT-DERIVATIVE-LINK-FILES-AN-ASSET-ID-UNDER-ENTITY-TY": {
     "hash": "cfa6d6a",
     "git_issue": "cfa6d6a",
@@ -5789,6 +5906,19 @@
     "tags": [],
     "title": "listAssets treats Shared visibility as world-readable",
     "type": "BUG"
+  },
+  "BUG-LLAMA-SWAP-AUTOSTART-REGISTERS-NO-LLM-PROVIDER": {
+    "hash": "81c0b72",
+    "git_issue": "81c0b72",
+    "extid": "BUG-LLAMA-SWAP-AUTOSTART-REGISTERS-NO-LLM-PROVIDER",
+    "type": "BUG",
+    "title": "llama-swap autostart registers no LLM provider",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-llama-swap-autostart-registers-no-llm-provider.md",
+    "status": "Not Started"
   },
   "BUG-LLMDECISION-ASSEMBLES-THE-PROMPT-OUTSIDE-THE-TRY-BLOCK-SO-AN": {
     "hash": "4411735",
@@ -6620,6 +6750,19 @@
     "source": ".plan/tickets/BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme.md",
     "status": "Not Started"
   },
+  "BUG-NO-IMAGE-PROVIDER-PLUGIN-SEAM-ADDING-FAMILY-TOUCHES-7-SITES": {
+    "hash": "a663603",
+    "git_issue": "a663603",
+    "extid": "BUG-NO-IMAGE-PROVIDER-PLUGIN-SEAM-ADDING-FAMILY-TOUCHES-7-SITES",
+    "type": "BUG",
+    "title": "No image-provider plugin seam; adding family touches 7+ sites",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-no-image-provider-plugin-seam-adding-family-touches-7-sites.md",
+    "status": "Not Started"
+  },
   "BUG-NO-IN-FLIGHT-GENERATION-CHECK-CONCURRENT-GENERATE-REQUESTS-L": {
     "epic": "",
     "extid": "BUG-NO-IN-FLIGHT-GENERATION-CHECK-CONCURRENT-GENERATE-REQUESTS-L",
@@ -7143,6 +7286,19 @@
     "tags": [],
     "title": "Ollama outage hard-fails all generations",
     "type": "BUG"
+  },
+  "BUG-OLLAMANATIVE-SINGLETON-BLOCKS-SECOND-NATIVE-OLLAMA": {
+    "hash": "c232dee",
+    "git_issue": "c232dee",
+    "extid": "BUG-OLLAMANATIVE-SINGLETON-BLOCKS-SECOND-NATIVE-OLLAMA",
+    "type": "BUG",
+    "title": "ollamaNative singleton blocks second native Ollama",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ollamanative-singleton-blocks-second-native-ollama.md",
+    "status": "Not Started"
   },
   "BUG-OPENAI-COMPATIBLE-STREAMING-BODY-HAS-NO-IDLE-READ-TIMEOUT-AF": {
     "epic": "",
@@ -8252,6 +8408,19 @@
     "title": "scripts/worktree ticket writes to CWD instead of worktree path",
     "type": "BUG"
   },
+  "BUG-SD-SERVER-EDIT-RETURNS-SYNTHETIC-ASSET-URLS-THAT-404": {
+    "hash": "2b4cbf8",
+    "git_issue": "2b4cbf8",
+    "extid": "BUG-SD-SERVER-EDIT-RETURNS-SYNTHETIC-ASSET-URLS-THAT-404",
+    "type": "BUG",
+    "title": "sd-server edit returns synthetic asset URLs that 404",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sd-server-edit-returns-synthetic-asset-urls-that-404.md",
+    "status": "Not Started"
+  },
   "BUG-SD-SERVER-IMAGE-PROVIDERS-DISCARD-THE-GENERATED-IMAGE-AND-AB": {
     "hash": "7a23ecf",
     "git_issue": "7a23ecf",
@@ -8263,6 +8432,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-sd-server-image-providers-discard-the-generated-image-and-ab.md",
+    "status": "Not Started"
+  },
+  "BUG-SDCPP-GENERATE-EDIT-DUPLICATED-WITH-DIVERGENT-ENDPOINTS-AND-": {
+    "hash": "92b1011",
+    "git_issue": "92b1011",
+    "extid": "BUG-SDCPP-GENERATE-EDIT-DUPLICATED-WITH-DIVERGENT-ENDPOINTS-AND-",
+    "type": "BUG",
+    "title": "sdcpp generate/edit duplicated with divergent endpoints and timeouts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sdcpp-generate-edit-duplicated-with-divergent-endpoints-and-.md",
     "status": "Not Started"
   },
   "BUG-SECTIONBUILDER-INTERFACE-MISSING-INCLUDED-MEMORY-IDS-FIELD": {
@@ -8488,6 +8670,19 @@
     "tags": [],
     "title": "Single-chat auto-reply ignores story pause",
     "type": "BUG"
+  },
+  "BUG-SINGLE-GLOBAL-BYOK-ENCRYPTION-KEY-NO-ROTATION-STORY": {
+    "hash": "4a052a5",
+    "git_issue": "4a052a5",
+    "extid": "BUG-SINGLE-GLOBAL-BYOK-ENCRYPTION-KEY-NO-ROTATION-STORY",
+    "type": "BUG",
+    "title": "Single global BYOK encryption key, no rotation story",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md",
+    "status": "Not Started"
   },
   "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT": {
     "epic": "epic-code-quality",
@@ -8862,6 +9057,19 @@
     "tags": [],
     "title": "Stream cancel leaves attempt stuck Processing forever — no cleanup/persist",
     "type": "BUG"
+  },
+  "BUG-SUPPORTS-VISION-NEVER-REFRESHED-ON-CAPABILITY-UPDATE": {
+    "hash": "55f7fd3",
+    "git_issue": "55f7fd3",
+    "extid": "BUG-SUPPORTS-VISION-NEVER-REFRESHED-ON-CAPABILITY-UPDATE",
+    "type": "BUG",
+    "title": "supports_vision never refreshed on capability update",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-supports-vision-never-refreshed-on-capability-update.md",
+    "status": "Not Started"
   },
   "BUG-SWIPE-RACE-CLASSIFIER-MATCHES-THE-COMPOSITE-IDEMPOTENCY-UNIQ": {
     "hash": "200894b",
@@ -9476,6 +9684,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-usebattleitem-consumes-inventory-and-persists-battle-outside.md",
+    "status": "Not Started"
+  },
+  "BUG-USER-API-KEYS-NON-UNIQUE-INDEX-READ-THEN-WRITE-UPSERT-ALLOWS": {
+    "hash": "d16b146",
+    "git_issue": "d16b146",
+    "extid": "BUG-USER-API-KEYS-NON-UNIQUE-INDEX-READ-THEN-WRITE-UPSERT-ALLOWS",
+    "type": "BUG",
+    "title": "user_api_keys non-unique index + read-then-write upsert allows dup rows",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md",
     "status": "Not Started"
   },
   "BUG-USER-MESSAGE-SWIPE-INSERT-RETRIES-ALL-ERRORS-AND-MISLABELS-T": {
