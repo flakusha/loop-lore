@@ -61,7 +61,18 @@ registerCommand("item-get", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: "**Items unavailable:** command context missing database.", handled: true, };
   }
 
-  const row = await db.selectFrom("items",).select("world_id",).where("id", "=", itemId,).executeTakeFirst();
+  // Resolve the world before any item detail is selected. The chat's world wins
+  // when it has one: an item belonging to some *other* world is then never even
+  // identified by this query, rather than being identified and then rejected.
+  // Outside a world-scoped chat the row's own `world_id` is the only place it is
+  // recorded, so that is the fallback. Either way the projection is a single
+  // column and ownership is checked before `getDefinition` below.
+  const chatWorldId = ctx.activeChat?.worldId;
+  const byId = db.selectFrom("items",).select("world_id",).where("id", "=", itemId,);
+  const row = chatWorldId
+    ? await byId.where("world_id", "=", chatWorldId,).executeTakeFirst()
+    : await byId.executeTakeFirst();
+
   if (!row) {
     return { systemMessage: `Item ${itemId} ${DENIED}.`, handled: true, };
   }

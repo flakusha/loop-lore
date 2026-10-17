@@ -77,15 +77,19 @@ registerCommand("char-get", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: "**Characters unavailable:** command context has no user.", handled: true, };
   }
 
+  // Ownership is a WHERE clause, not a post-fetch comparison: another user's
+  // character is never fetched into this process at all, so there is no row to
+  // leak even if a later branch were to get the wording wrong. `!card` alone
+  // covers "missing", "not a character", and "not yours" alike.
   const card = await db
     .selectFrom("actors",)
-    .select([...CARD_FIELDS, "owner_id",],)
+    .select(CARD_FIELDS,)
     .where("id", "=", charId,)
     .where("actor_type", "=", ActorType.Character,)
+    .where("owner_id", "=", userId,)
     .executeTakeFirst();
 
-  // A character the caller does not own is reported exactly like a missing one.
-  if (!card || card.owner_id !== userId) {
+  if (!card) {
     return { systemMessage: `Character ${charId} not found or access denied.`, handled: true, };
   }
 
