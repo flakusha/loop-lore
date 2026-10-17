@@ -127,6 +127,9 @@ export class TUIApp {
         this.chat.setChatId(chatId,);
         this.updateStatus(`chat: ${chatId.slice(0, 8,)}... | F2: assets`,);
       },
+      onHide: () => {
+        this.chat.focusInput();
+      },
     },);
 
     // ── Models overlay (full-screen, toggleable) ────────────
