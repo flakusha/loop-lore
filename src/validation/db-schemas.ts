@@ -23,6 +23,8 @@ export const AgencyDimensionSchema = t.UnionEnum([
 ],);
 export const AgencyModeSchema = t.UnionEnum(["free", "forced", "blocked", "skipped",],);
 export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
+export const AnomalyInteractionSchema = t.UnionEnum(["optional", "required",],);
+export const AnomalyTypeSchema = t.UnionEnum(["positive", "negative", "neutral",],);
 export const ArousalLevelSchema = t.UnionEnum([
   "calm",
   "mildly_aroused",
@@ -175,6 +177,18 @@ export const EmotionTypeSchema = t.UnionEnum([
   "grateful",
   "bored",
 ],);
+export const EncounterDrivingModeSchema = t.UnionEnum(["automatic", "assistant",],);
+export const EncounterTemplateStateSchema = t.UnionEnum(["enabled", "disabled",],);
+export const EncounterTravelPhaseSchema = t.UnionEnum(["departure", "journey", "arrival",],);
+export const EncounterTriggerTypeSchema = t.UnionEnum([
+  "random",
+  "location_based",
+  "time_based",
+  "quest_based",
+  "story_based",
+  "travel_based",
+],);
+export const EncounterTypeSchema = t.UnionEnum(["combat", "dialogue", "event", "puzzle", "trade", "quest",],);
 export const EncryptionCompressionSchema = t.UnionEnum(["gzip", "brotli", "zstd",],);
 export const EncryptionLevelSchema = t.UnionEnum(["none", "standard", "at-rest",],);
 export const EquipStateSchema = t.UnionEnum(["unequipped", "equipped",],);
@@ -3261,4 +3275,54 @@ export const LocationEdgesSchema = t.Object({
   cost_json: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+},);
+
+// ── location_anomalies ────────────────────────────────────────────
+export const LocationAnomaliesSchema = t.Object({
+  location_id: t.String(),
+  world_id: t.String(),
+  name: t.String(),
+  type: t.Optional(AnomalyTypeSchema,),
+  stat_modifiers: t.Optional(t.String(),),
+  damage_over_time: t.Optional(t.Number(),),
+  healing_over_time: t.Optional(t.Number(),),
+  experience_multiplier: t.Optional(t.Number(),),
+  loot_multiplier: t.Optional(t.Number(),),
+  special_effects: t.Optional(t.String(),),
+  duration_seconds: t.Optional(t.Number(),),
+  discovery_chance: t.Optional(t.Number(),),
+  discovered_at: t.Optional(t.String(),),
+  interaction_required: t.Optional(AnomalyInteractionSchema,),
+  expires_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── encounter_templates ────────────────────────────────────────────
+export const EncounterTemplatesSchema = t.Object({
+  name: t.String(),
+  world_id: t.Optional(t.String(),),
+  type: t.Optional(EncounterTypeSchema,),
+  trigger_type: t.Optional(EncounterTriggerTypeSchema,),
+  trigger_chance: t.Optional(t.Number(),),
+  cooldown_seconds: t.Optional(t.Number(),),
+  difficulty: t.Optional(t.Number(),),
+  requirements: t.Optional(t.String(),),
+  rewards: t.Optional(t.String(),),
+  consequences: t.Optional(t.String(),),
+  story_notes: t.Optional(t.String(),),
+  assistant_driven: t.Optional(EncounterDrivingModeSchema,),
+  travel_phase: t.Optional(EncounterTravelPhaseSchema,),
+  active: t.Optional(EncounterTemplateStateSchema,),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── encounter_rolls ────────────────────────────────────────────
+export const EncounterRollsSchema = t.Object({
+  world_id: t.String(),
+  template_id: t.String(),
+  location_id: t.Optional(t.String(),),
+  rolled_at: t.Optional(t.String(),),
+  difficulty_rolled: t.Optional(t.Number(),),
+  outcome: t.Optional(t.String(),),
+  cooldown_until: t.Optional(t.String(),),
 },);

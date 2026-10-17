@@ -13,6 +13,8 @@ import type {
   AdminOverrideAction,
   AgencyMode,
   AgentType,
+  AnomalyInteraction,
+  AnomalyType,
   AssetAlphaStatus,
   AssetLinkEntity,
   AssetType,
@@ -33,6 +35,11 @@ import type {
   DifficultyReroll,
   DifficultyState,
   DiscoveryMethod,
+  EncounterDrivingMode,
+  EncounterTemplateState,
+  EncounterTravelPhase,
+  EncounterTriggerType,
+  EncounterType,
   EquipState,
   ExtractionKind,
   FantasyCategory,
@@ -5275,6 +5282,98 @@ export async function insertLocationEdges(
     world_id,
     from_id,
     to_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_anomalies row. */
+export async function insertLocationAnomalies(
+  db: Db,
+  location_id: string,
+  world_id: string,
+  name: string,
+  opts?: {
+    id?: string;
+    type?: AnomalyType;
+    stat_modifiers?: string;
+    damage_over_time?: number;
+    healing_over_time?: number;
+    experience_multiplier?: number;
+    loot_multiplier?: number;
+    special_effects?: string;
+    duration_seconds?: number;
+    discovery_chance?: number;
+    discovered_at?: string | null;
+    interaction_required?: AnomalyInteraction;
+    expires_at?: string | null;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_anomalies",).values({
+    id,
+    location_id,
+    world_id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a encounter_templates row. */
+export async function insertEncounterTemplates(
+  db: Db,
+  name: string,
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    type?: EncounterType;
+    trigger_type?: EncounterTriggerType;
+    trigger_chance?: number;
+    cooldown_seconds?: number;
+    difficulty?: number;
+    requirements?: string;
+    rewards?: string;
+    consequences?: string;
+    story_notes?: string | null;
+    assistant_driven?: EncounterDrivingMode;
+    travel_phase?: EncounterTravelPhase | null;
+    active?: EncounterTemplateState;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("encounter_templates",).values({
+    id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a encounter_rolls row. */
+export async function insertEncounterRolls(
+  db: Db,
+  world_id: string,
+  template_id: string,
+  opts?: {
+    id?: string;
+    location_id?: string | null;
+    rolled_at?: string;
+    difficulty_rolled?: number;
+    outcome?: string;
+    cooldown_until?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("encounter_rolls",).values({
+    id,
+    world_id,
+    template_id,
     ...restOpts,
   } as any,).execute();
   return id;
