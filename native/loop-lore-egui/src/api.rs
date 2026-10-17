@@ -306,12 +306,63 @@ pub struct GalleryAsset {
   pub created_at: String,
 }
 
-/// URL for the gallery grid view-model page. `q` mirrors the htmx search input.
-pub fn gallery_grid_url(page: u32, query: &str) -> String {
-  if query.is_empty() {
+/// Gallery grid filters — the same params the htmx filter bar sends to
+/// `/dynamic/gallery/search` (`src/components/filter-bar.html`): free-text
+/// `q`, asset `type`, visible-`tag` facet, and `sort`. Row visibility itself
+/// is authz, always applied server-side by `applyGalleryAssetFilters`.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct GalleryFilters {
+  /// Free-text filename query (`q`).
+  pub query: String,
+  /// Asset type (`all` | `image` | `audio` | `video`).
+  pub asset_type: String,
+  /// Visible-tag facet (`all` = no facet).
+  pub tag: String,
+  /// Sort order (`name` | `newest` | `oldest`).
+  pub sort: String,
+}
+
+impl GalleryFilters {
+  /// `true` when no filter is set — the grid endpoint serves the page as-is.
+  /// Dropdown defaults (`all`, `name`) count as unset, so untouched controls
+  /// keep hitting the grid endpoint instead of the search one.
+  pub fn is_empty(&self) -> bool {
+    self.query.is_empty()
+      && (self.asset_type.is_empty() || self.asset_type == "all")
+      && (self.tag.is_empty() || self.tag == "all")
+      && (self.sort.is_empty() || self.sort == "name")
+  }
+
+  /// Query string for the dynamic endpoints; defaults (`all`, `name`) omitted.
+  fn params(&self, page: u32) -> String {
+    use std::fmt::Write;
+    let mut out = format!("page={page}");
+    if !self.query.is_empty() {
+      let _ = write!(out, "&q={}", self.query);
+    }
+    if !self.asset_type.is_empty() && self.asset_type != "all" {
+      let _ = write!(out, "&type={}", self.asset_type);
+    }
+    if !self.tag.is_empty() && self.tag != "all" {
+      let _ = write!(out, "&tag={}", self.tag);
+    }
+    if !self.sort.is_empty() && self.sort != "name" {
+      let _ = write!(out, "&sort={}", self.sort);
+    }
+    out
+  }
+}
+
+/// URL for the gallery grid view-model page.
+///
+/// Unfiltered pages come from `/dynamic/gallery/grid`; any filter switches to
+/// `/dynamic/gallery/search`, mirroring the htmx page (grid on load, search
+/// on filter input).
+pub fn gallery_grid_url(page: u32, filters: &GalleryFilters) -> String {
+  if filters.is_empty() {
     format!("/dynamic/gallery/grid?page={page}")
   } else {
-    format!("/dynamic/gallery/grid?page={page}&q={query}")
+    format!("/dynamic/gallery/search?{}", filters.params(page))
   }
 }
 
@@ -518,8 +569,29 @@ mod tests {
 
   #[test]
   fn gallery_urls_carry_page_query_and_ids() {
-    assert_eq!(gallery_grid_url(1, ""), "/dynamic/gallery/grid?page=1");
-    assert_eq!(gallery_grid_url(3, "cat"), "/dynamic/gallery/grid?page=3&q=cat");
+    assert_eq!(
+      gallery_grid_url(1, &GalleryFilters::default()),
+      "/dynamic/gallery/grid?page=1"
+    );
+    let filtered = GalleryFilters {
+      query: "cat".to_string(),
+      asset_type: "image".to_string(),
+      tag: "all".to_string(),
+      sort: "newest".to_string(),
+    };
+    assert_eq!(
+      gallery_grid_url(3, &filtered),
+      "/dynamic/gallery/search?page=3&q=cat&type=image&sort=newest"
+    );
+    // Dropdown defaults count as unset — untouched controls hit the grid.
+    let defaults = GalleryFilters {
+      query: String::new(),
+      asset_type: "all".to_string(),
+      tag: "all".to_string(),
+      sort: "name".to_string(),
+    };
+    assert!(defaults.is_empty());
+    assert_eq!(gallery_grid_url(1, &defaults), "/dynamic/gallery/grid?page=1");
     assert_eq!(gallery_attach_url("a1"), "/api/v1/assets/a1/links");
     let body = gallery_attach_body("c1");
     let value: serde_json::Value = serde_json::from_str(&body).unwrap();
