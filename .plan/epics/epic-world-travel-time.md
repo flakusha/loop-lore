@@ -183,6 +183,8 @@ interface TravelEncounter extends RandomEncounter {
 
 - **Parent hub:** `epic-world-locations.md` — owns the shared World/Location core data model.
 - **Sibling order:** first in sequencing (core infrastructure); `epic-world-npcs.md` depends on this for placement, `epic-world-encounters.md` reuses travel-based encounter triggers.
+- **Extension:** `epic-worlds-extension.md` — `src/worlds/timescale.ts` (createTimescaleService) advances the world clock; `epic-world-management-ui.md` owns the travel UI and time/weather widgets that surface this epic's outputs.
+- **Divine:** `epic-world-shaping-divine.md` — world-shaping actions (raise mountains, summon storms) can mutate world conditions that this epic tracks.
 
 ## Open Questions
 

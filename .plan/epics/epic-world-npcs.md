@@ -213,6 +213,9 @@ interface MemoryDecayConfig {
 
 - **Parent hub:** `epic-world-locations.md` — owns the shared World/Location core data model.
 - **Sibling order:** second in sequencing; depends on `epic-world-travel-time.md` for location infrastructure and NPC placement targets.
+- **Extension:** `epic-worlds-extension.md` — world export/import surfaces NPC data for cross-world persistence snapshots.
+- **UI:** `epic-world-management-ui.md` — NPC management UI (placement, migration status) surfaces this epic's outputs.
+- **Divine:** `epic-world-shaping-divine.md` — world-shaping actions (terrain changes, population shifts) can alter NPC territories and trigger migration re-runs.
 
 ## Open Questions
 
