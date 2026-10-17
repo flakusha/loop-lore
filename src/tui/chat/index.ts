@@ -15,6 +15,7 @@
  */
 import blessed from "blessed";
 import { TUI_DEFAULTS, } from "../../config/sections/tui";
+import { escapeMarkup, } from "../markup";
 import { handleSend as handleSendDispatch, loadCommands, loadMessages as loadMessagesDispatch, } from "./api";
 import { CommandCompleter, } from "./commands";
 import { formatMessageLine, } from "./display";
@@ -327,7 +328,7 @@ export class ChatWidget implements ChatHost {
    * @param message - error text to append in red
    */
   showError(message: string,): void {
-    this.messageList.addItem(`{red-fg}⚠ Error: ${message}{/red-fg}`,);
+    this.messageList.addItem(`{red-fg}⚠ Error: ${escapeMarkup(message,)}{/red-fg}`,);
     // itemCount tracks the list length for scrollToBottom's select().
     // Omitting it here desynced the two, so the error line was the one
     // line that could never be selected.

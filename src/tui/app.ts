@@ -18,6 +18,7 @@ import { AssetView, } from "./asset-view";
 import { API_BASE, ChatWidget, } from "./chat";
 import { ChatPicker, } from "./chat-picker";
 import { createHarnessView, type HarnessView, } from "./harness";
+import { escapeMarkup, } from "./markup";
 import { loadPublicProviders, } from "./models-api";
 import { formatProviderHealth, HEALTH_UNAVAILABLE, } from "./models-display";
 import { ModelsOverlay, } from "./models-overlay";
@@ -173,7 +174,7 @@ export class TUIApp {
     // gap before the first fetch resolves.
     const health = this.healthSegment ? `  |  ${this.healthSegment}` : "";
     this.statusBar.setContent(
-      ` {bold}Loop Lore{/bold}  |  ${msg}${health}  |  API: ${API_BASE}  `,
+      ` {bold}Loop Lore{/bold}  |  ${escapeMarkup(msg,)}${health}  |  ${escapeMarkup(API_BASE,)}  `,
     );
 
     this.screen.render();
