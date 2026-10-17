@@ -231,7 +231,10 @@ interface GlobalEvent {
 ## Dependencies
 
 - **Parent hub:** `epic-world-locations.md` — owns the shared World/Location core data model.
-- **Sibling order:** parallel-safe in sequencing (independent of NPCs); reuses `TravelEncounter` triggers from `epic-world-travel-time.md`.
+- **Sibling order:** parallel-safe in sequencing (independent of NPCs); reuses `TravelEncounter` triggers from `epic-world-travel-time.md`. Related to `epic-world-npcs.md` (encounter NPCs) and `epic-world-diplomacy-karma.md` (encounter consequences on standing).
+- **Extension:** `epic-worlds-extension.md` — world export/import enables snapshotting world state before/after cataclysm events; `gathering_node_defs`/`gathering_node_instances` provide the resource-extraction surface.
+- **UI:** `epic-world-management-ui.md` — encounter UI surfaces this epic's outputs.
+- **Divine:** `epic-world-shaping-divine.md` — world-shaping actions (divine intervention, world-altering events) are a trigger source for `GlobalCataclysm` and `GlobalEvent` in this epic.
 
 ## Open Questions
 

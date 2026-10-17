@@ -377,7 +377,10 @@ interface FormattingRules {
 ## Dependencies
 
 - **Parent hub:** `epic-world-locations.md` — owns the shared World/Location core data model.
-- **Sibling order:** last in sequencing; depends on `epic-world-npcs.md` (faction membership, NPC standing) and `epic-world-travel-time.md` infrastructure.
+- **Sibling order:** last in sequencing; depends on `epic-world-npcs.md` (faction membership, NPC standing) and `epic-world-travel-time.md` infrastructure. Related to `epic-world-encounters.md` (encounter consequences affect faction standing).
+- **Extension:** `epic-worlds-extension.md` — world export/import surfaces `character_relationships` for cross-world alignment persistence.
+- **UI:** `epic-world-management-ui.md` — diplomacy and karma UI surfaces this epic's outputs.
+- **Divine:** `epic-world-shaping-divine.md` — alignment tracking (benevolent/neutral/destructive) in this epic is consumed by the divine intervention system.
 
 ## Open Questions
 

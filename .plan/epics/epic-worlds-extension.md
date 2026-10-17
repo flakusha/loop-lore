@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Per-area at HEAD (verified 2026-10-08) — license: partial (`character_license_history` + `src/routes/character-licensing.ts`; no world license model); epochs: partial (`world_timescale` + `world_timescale_history` tables shipped in migration 047 with Kysely interfaces + validation schemas, but no `src/worlds/` engine module or routes); maps: partial (2D game canvas via `game_states` (021) + `src/game-state/*`, no `map_zones`/`world_maps`); mode-switch: partial (`ChatMode` in `src/chat/types/config.ts:9` = direct|group|story but the DB enum `src/db/enums-core/users.ts:37-44` adds battle — known drift; no `InteractionMode`); resources: partial (crafting `gathering_node_defs`/`gathering_node_instances` with `respawn_time_seconds`/`respawn_at`; no world-scoped unique items); world export/import shipped.
+**Status Note:** Per-area at HEAD (verified 2026-10-08) — license: partial (`character_license_history` + `src/routes/character-licensing.ts`; no world license model); epochs: partial — `world_timescale` + `world_timescale_history` tables (migration 052) plus `src/worlds/timescale.ts` (createTimescaleService, epoch/scale/advance, with unit tests) shipped; maps: partial (2D game canvas via `game_states` (021) + `src/game-state/*`, no `map_zones`/`world_maps`); mode-switch: partial (`ChatMode` in `src/chat/types/config.ts:9` = direct|group|story but the DB enum `src/db/enums-core/users.ts:37-44` adds battle — known drift; no `InteractionMode`); resources: partial (crafting `gathering_node_defs`/`gathering_node_instances` with `respawn_time_seconds`/`respawn_at`; no world-scoped unique items); world export/import shipped.
 **Priority:** Medium
 **Effort:** High
 **Issue:** `6c84baa`
@@ -139,7 +139,8 @@ type InteractionMode = "normal" | "battle" | "question" | "inventory";
 
 ## Planned Files (Status: In Progress — planned paths still absent)
 
-> `src/worlds/` is still absent entirely (`world_license`/`location_resource`
+> `src/worlds/` partially shipped: `timescale.ts` + `lookup.ts` (with tests) exist.
+> `src/worlds/license.ts` and `src/worlds/resources.ts` are still absent (`world_license`/`location_resource`
 > have zero hits in `src/db/schema.ts`). Each path below is a planned task
 > output, not an existing module. Shipped adjacent surfaces (verified
 > 2026-10-08): world export/import (`src/routes/export-shared/worlds.ts` +
@@ -147,20 +148,16 @@ type InteractionMode = "normal" | "battle" | "question" | "inventory";
 > `src/game-state/*`), crafting resource nodes (`gathering_node_defs` +
 > `gathering_node_instances` with `respawn_time_seconds`/`respawn_at`), and
 > character license history (`character_license_history` +
-> `src/routes/character-licensing.ts`). Epoch/time-scale schema landed ahead
-> of the planned module: `world_timescale` + `world_timescale_history` tables
-> exist (migration 047) but `src/worlds/timescale.ts` does not — tables await
-> their engine. Known drift item: `ChatMode` in `src/chat/types/config.ts:9`
-> is `direct | group | story`, but the DB enum in
+> `src/routes/character-licensing.ts`). Known drift item: `ChatMode` in
+> `src/chat/types/config.ts:9` is `direct | group | story`, but the DB enum in
 > `src/db/enums-core/users.ts:37-44` also includes `battle` — the TS type and
 > DB enum are out of sync.
 
 - `src/worlds/license.ts` (planned) — shareability + licensing
-- `src/worlds/timescale.ts` (planned) — epochs + scale
 - `src/worlds/maps.ts` (planned) — 2D / 3D map model
 - `src/worlds/resources.ts` (planned) — location assets + resources
 - `src/chat/mode-switch.ts` (planned) — `InteractionMode` routing (see naming note above)
-- `src/db/schema.ts` (planned tables) — world_license, location_resource tables (`world_timescale`/`world_timescale_history` already shipped, migration 047)
+- `src/db/schema.ts` (planned tables) — world_license, location_resource tables (`world_timescale`/`world_timescale_history` already shipped, migration 052)
 
 ## Linked Tasks
 
