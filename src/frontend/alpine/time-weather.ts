@@ -9,8 +9,10 @@
  * HARD SCOPE: no GM time-progression controls, no world clock engine. There
  * is no forecast source in the data model yet, so `forecastAvailable` is
  * always false and the UI shows an explicit empty state instead of a
- * fabricated forecast. Season is not rendered: no season field exists in
- * location_states or world_states.
+ * fabricated forecast. Likewise no season field exists in location_states or
+ * world_states (checked against the whole schema), so `season` stays null
+ * and the widget renders the same explicit empty state rather than guessing
+ * one from the time of day.
  */
 import { isNight, timeOfDayIcon, weatherIcon, } from "./weather-icons";
 import type { WorldPageState, } from "./world-types";
@@ -19,6 +21,8 @@ import type { WorldPageState, } from "./world-types";
 export const timeWeatherWidget: Partial<WorldPageState> & ThisType<WorldPageState> = {
   timeOfDay: null,
   weather: null,
+  /** No season column exists in the schema — always null, kept as a slot. */
+  season: null,
   conditionsLocationName: null,
   conditionsAt: null,
 
@@ -47,5 +51,21 @@ export const timeWeatherWidget: Partial<WorldPageState> & ThisType<WorldPageStat
   /** @returns {boolean} */
   get forecastAvailable(): boolean {
     return false;
+  },
+
+  /** True only once a season value is author-set on a location state. */
+  /** @returns {boolean} */
+  get hasSeason(): boolean {
+    return this.season !== null;
+  },
+
+  /**
+   * Conditions in this build are author-set labels copied from the
+   * location_states columns — there is no weather or clock engine here, so
+   * the widget must not present them as simulated.
+   * @returns {boolean}
+   */
+  get conditionsAreAuthorSet(): boolean {
+    return true;
   },
 };

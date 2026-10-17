@@ -108,7 +108,7 @@ describeOrSkip("world creation wizard", () => {
     ],);
 
     expect(calls.every((c,) => c.opts.method === "POST"),).toBe(true,);
-    expect(String(calls[0]!.opts.body,),).toContain(`"name":"Test World"`,);
+    expect(String(calls[0].opts.body,),).toContain(`"name":"Test World"`,);
     expect(assignedUrl,).toBe("/worlds/w-new/edit",);
     expect(w.busy,).toBe(false,);
   });
