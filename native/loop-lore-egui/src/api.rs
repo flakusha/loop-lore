@@ -315,12 +315,10 @@ pub fn gallery_grid_url(page: u32, query: &str) -> String {
   }
 }
 
-/// URL for the upload endpoint (multipart POST).
-pub fn gallery_upload_url() -> &'static str {
-  "/api/v1/assets"
-}
-
 /// URL for attaching an asset to a chat.
+///
+/// Rust owns the attach request (see `EguiApp::attach_asset`); only upload and
+/// thumbnail decode cross the bridge, because both need browser-only APIs.
 pub fn gallery_attach_url(asset_id: &str) -> String {
   format!("/api/v1/assets/{asset_id}/links")
 }
@@ -347,28 +345,16 @@ pub fn parse_gallery_grid(raw: &str) -> Result<Vec<GalleryAsset>, String> {
 fn parse_gallery_row(row: &serde_json::Value) -> Result<GalleryAsset, String> {
   let thumb = row.get("thumbUrl").and_then(|v| v.as_str());
   Ok(GalleryAsset {
-    id: row
-      .get("id")
-      .and_then(|v| v.as_str())
-      .ok_or("id missing")?
-      .to_string(),
-    filename: row
-      .get("filename")
-      .and_then(|v| v.as_str())
-      .unwrap_or("")
-      .to_string(),
+    id: row.get("id").and_then(|v| v.as_str()).ok_or("id missing")?.to_string(),
+    filename: row.get("filename").and_then(|v| v.as_str()).unwrap_or("").to_string(),
     asset_type: row
       .get("assetType")
       .and_then(|v| v.as_str())
       .unwrap_or("image")
       .to_string(),
-    size_bytes: row.get("sizeBytes").and_then(|v| v.as_u64()).unwrap_or(0),
-    size_label: row
-      .get("sizeLabel")
-      .and_then(|v| v.as_str())
-      .unwrap_or("")
-      .to_string(),
-    thumb_url: if thumb.map_or(true, |u| u.is_empty()) {
+    size_bytes: row.get("sizeBytes").and_then(serde_json::Value::as_u64).unwrap_or(0),
+    size_label: row.get("sizeLabel").and_then(|v| v.as_str()).unwrap_or("").to_string(),
+    thumb_url: if thumb.is_none_or(str::is_empty) {
       None
     } else {
       thumb.map(String::from)
@@ -376,22 +362,14 @@ fn parse_gallery_row(row: &serde_json::Value) -> Result<GalleryAsset, String> {
     tags: row
       .get("tags")
       .and_then(|v| v.as_array())
-      .map(|arr| {
-        arr.iter()
-          .filter_map(|t| t.as_str().map(String::from))
-          .collect()
-      })
+      .map(|arr| arr.iter().filter_map(|t| t.as_str().map(String::from)).collect())
       .unwrap_or_default(),
     visibility: row
       .get("visibility")
       .and_then(|v| v.as_str())
       .unwrap_or("public")
       .to_string(),
-    created_at: row
-      .get("createdAt")
-      .and_then(|v| v.as_str())
-      .unwrap_or("")
-      .to_string(),
+    created_at: row.get("createdAt").and_then(|v| v.as_str()).unwrap_or("").to_string(),
   })
 }
 
@@ -542,9 +520,11 @@ mod tests {
   fn gallery_urls_carry_page_query_and_ids() {
     assert_eq!(gallery_grid_url(1, ""), "/dynamic/gallery/grid?page=1");
     assert_eq!(gallery_grid_url(3, "cat"), "/dynamic/gallery/grid?page=3&q=cat");
-    assert_eq!(gallery_upload_url(), "/api/v1/assets");
     assert_eq!(gallery_attach_url("a1"), "/api/v1/assets/a1/links");
-    assert_eq!(gallery_attach_body("c1"), "{\"entityId\":\"c1\",\"entityType\":\"chat\"}");
+    let body = gallery_attach_body("c1");
+    let value: serde_json::Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(value["entityType"], "chat");
+    assert_eq!(value["entityId"], "c1");
   }
 
   #[test]
