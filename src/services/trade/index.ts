@@ -10,8 +10,6 @@
  * layered over `ItemsService` for item transfer and an `actor_currencies`
  * balance ledger per world.
  */
-import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
 import {
   credit,
   debit,
