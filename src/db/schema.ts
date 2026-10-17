@@ -217,4 +217,7 @@ export interface DB {
   faction_standing: import("./schema-core").FactionStanding;
   karma_profiles: import("./schema-core").KarmaProfiles;
   karma_events: import("./schema-core").KarmaEvents;
+  location_storage: import("./schema-core").LocationStorage;
+  location_storage_items: import("./schema-core").LocationStorageItems;
+  extraction_rolls: import("./schema-core").ExtractionRolls;
 }

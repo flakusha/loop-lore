@@ -14,6 +14,7 @@ export * from "./items.js";
 export * from "./plans.js";
 export * from "./questions.js";
 export * from "./quests.js";
+export * from "./resources.js";
 export * from "./rpg.js";
 export * from "./synthetic.js";
 export * from "./turns.js";
