@@ -4687,6 +4687,32 @@
     "source": ".plan/tickets/BUG-giwt-auto-close-asserts-a-ticket-is-done-when-no-md-marker-e.md",
     "status": "Not Started"
   },
+  "BUG-GIWT-FINALIZE-AUTO-STASH-COLLIDES-WITH-SHARED-DEV-WIP": {
+    "hash": "5748237",
+    "git_issue": "5748237",
+    "extid": "BUG-GIWT-FINALIZE-AUTO-STASH-COLLIDES-WITH-SHARED-DEV-WIP",
+    "type": "BUG",
+    "title": "giwt finalize auto-stash collides with shared-dev WIP",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-giwt-finalize-auto-stash-collides-with-shared-dev-wip.md",
+    "status": "Not Started"
+  },
+  "BUG-GIWT-FINALIZE-INSTRUCTS-A-FORBIDDEN-DEV-CHECKOUT-ACTION": {
+    "hash": "1563a62",
+    "git_issue": "1563a62",
+    "extid": "BUG-GIWT-FINALIZE-INSTRUCTS-A-FORBIDDEN-DEV-CHECKOUT-ACTION",
+    "type": "BUG",
+    "title": "giwt finalize instructs a forbidden dev-checkout action",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-giwt-finalize-instructs-a-forbidden-dev-checkout-action.md",
+    "status": "Not Started"
+  },
   "BUG-GIWT-NEW-SCOPE-WITHOUT-TICKETS-ATTEMPTS-AN-EMPTY-COMMIT-AND-": {
     "hash": "d593eb8",
     "git_issue": "d593eb8",
