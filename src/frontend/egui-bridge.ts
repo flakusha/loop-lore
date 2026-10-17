@@ -18,6 +18,7 @@
 import { jsonParseOr, jsonStringifyOr, } from "../utils";
 // The SSE stream surface is part of the same bridge bundle: one script on the
 // /egui host page, one place the wasm app reaches the browser through.
+import { initEguiGallery, } from "./egui-gallery";
 import { initEguiStream, } from "./egui-stream";
 
 /** localStorage key carrying the transfer context (contract v1). */
@@ -155,3 +156,4 @@ export function initEguiBridge(): void {
 }
 
 initEguiBridge();
+initEguiGallery();
