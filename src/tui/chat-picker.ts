@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 340
 
 /**
  * TUI Chat Picker
@@ -21,6 +22,7 @@
 import blessed from "blessed";
 import { safeFetch, } from "../utils";
 import { API_BASE, } from "./chat";
+import { createChat, } from "./chat-create-api";
 
 /** One row of GET /api/v1/chats, narrowed to what the picker renders. */
 export interface ChatSummary {
@@ -41,10 +43,17 @@ export type ChatListResult =
   | { ok: true; data: ChatSummary[] }
   | { ok: false; error: string };
 
-/** Row rendered when the account has no chats. */
-export const NO_CHATS_MESSAGE = "No chats yet. Create one in the web client.";
+/** Empty-state row. */
+export const NO_CHATS_MESSAGE = "No chats yet | c: create";
+
+/** Status line while the create prompt is open; `c` is bound on the list. */
+export const CREATE_STATUS = "New chat name | Enter: create | Esc: cancel";
+
+/** Status line for a commit already in flight; the prompt is gone. */
+export const CREATING_STATUS = "Creating…";
 
 let _fetch = safeFetch;
+let _createChat = createChat;
 
 /**
  * Swap the chat-list fetcher. Tests use this instead of `mock.module`.
@@ -52,6 +61,15 @@ let _fetch = safeFetch;
  */
 export function setFetch(fn: typeof safeFetch,): void {
   _fetch = fn;
+}
+
+/**
+ * Swap the chat-create caller. Tests use this instead of `mock.module`,
+ * which leaks across files in a shared bun process.
+ * @param fn
+ */
+export function setCreateChat(fn: typeof createChat,): void {
+  _createChat = fn;
 }
 
 /**
@@ -99,6 +117,8 @@ export class ChatPicker {
   private statusLabel: blessed.Widgets.BlessedElement;
   private chats: ChatSummary[] = [];
   private visible = false;
+  private creating = false;
+  private prompt: blessed.Widgets.TextboxElement | null = null;
   private sessionToken: string | undefined;
   private onSelect: (chatId: string,) => void;
 
@@ -159,6 +179,13 @@ export class ChatPicker {
       const chat = this.chats[index];
       if (chat) { this.onSelect(chat.id,); }
     },);
+
+    // `c` is bound on the LIST, not the box, because blessed hands element-level
+    // keys to `screen.focused` only (widgets/screen.js:601-604) and the picker
+    // focuses the list. Always offered — with no rows `c` is the only way in.
+    this.list.key(["c",], () => {
+      this.startCreate();
+    },);
   }
 
   /** Show the overlay and load the chat list. */
@@ -173,6 +200,7 @@ export class ChatPicker {
   /** Hide the overlay without touching the bound chat. */
   hide(): void {
     this.visible = false;
+    this.cancelCreate();
     this.box.hide();
     this.screen.render();
   }
@@ -187,6 +215,122 @@ export class ChatPicker {
     if (!this.visible) { return false; }
     this.hide();
     return true;
+  }
+
+  /**
+   * Open the new-chat prompt.
+   *
+   * `inputOnFocus` is deliberately OFF — the same reason ChatWidget's input box
+   * sets it: an element that arms `readInput()` on focus raises `screen.grabKeys`
+   * and gates every screen-level keypress (widgets/screen.js:591). Reading is armed
+   * explicitly by `readInput()` after `focus()`, which is what keeps Esc free for
+   * the app's dismiss chain.
+   */
+  startCreate(): void {
+    if (this.creating) { return; }
+
+    if (!this.prompt) {
+      this.prompt = blessed.textbox({
+        parent: this.box,
+        bottom: 1,
+        left: 1,
+        right: 1,
+        height: 3,
+        inputOnFocus: false,
+        border: { type: "line", },
+        style: { bg: "black", fg: "white", border: { fg: "cyan", }, },
+      },);
+
+      // Enter hands the textbox `_done(null, value)` (widgets/textbox.js:39-42),
+      // which is what emits `submit`. Esc takes the textarea branch instead
+      // (widgets/textarea.js:230-231) and emits `cancel` with a null value.
+      this.prompt.on("submit", (value: string,) => {
+        void this.commitCreate(value,);
+      },);
+
+      this.prompt.on("cancel", () => {
+        this.cancelCreate();
+      },);
+    }
+
+    this.prompt.setValue("",);
+    this.prompt.show();
+    this.prompt.focus();
+    this.prompt.readInput();
+    this.statusLabel.setContent(CREATE_STATUS,);
+    this.screen.render();
+  }
+
+  /**
+   * Drop the prompt and hand the keyboard back to the list.
+   *
+   * `creating` is deliberately left alone: a commit already in flight must finish
+   * on its own answer, which is what re-arms the status line and re-enables `c`.
+   */
+  cancelCreate(): void {
+    if (!this.prompt) { return; }
+
+    // `emit("blur")` is blessed's own teardown hook (widgets/textarea.js:206):
+    // it drops the read listener and clears `screen.grabKeys`, which is the
+    // invariant every overlay `hide()` must restore.
+    this.prompt.emit("blur",);
+    this.prompt.hide();
+    this.prompt = null;
+    this.statusLabel.setContent(NO_CHATS_MESSAGE,);
+    this.list.focus();
+    this.screen.render();
+  }
+
+  /**
+   * POST the name and bind the new chat.
+   *
+   * The name is the server's `Name` primitive (src/validation/schemas/chat.ts:32)
+   * — 1-255 chars — so a blank line is rejected locally rather than round-tripped
+   * into a 400 the user cannot act on.
+   * @param name - the typed chat name
+   */
+  async commitCreate(name: string,): Promise<void> {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      this.cancelCreate();
+      return;
+    }
+
+    // One commit at a time: a second Enter while the first is in flight would
+    // otherwise create two chats and bind whichever answer landed last.
+    if (this.creating) { return; }
+
+    this.creating = true;
+    if (this.prompt) {
+      this.prompt.emit("blur",);
+      this.prompt.hide();
+      this.prompt = null;
+    }
+
+    this.statusLabel.setContent(CREATING_STATUS,);
+    this.screen.render();
+
+    const result = await _createChat({ name: trimmed, sessionToken: this.sessionToken, },);
+
+    if (!result.ok) {
+      // The prompt is gone by now, so the error lands on the status line — the
+      // same place a load failure renders — and `c` still works to retry.
+      this.creating = false;
+      this.statusLabel.setContent(result.error,);
+      this.list.focus();
+      this.screen.render();
+      return;
+    }
+
+    this.creating = false;
+    this.onSelect(result.chatId,);
+  }
+
+  /**
+   * @returns whether the new-chat prompt is open
+   */
+  isCreating(): boolean {
+    return this.creating;
   }
 
   /**
