@@ -16,7 +16,7 @@ const BE_FILE_RE = /(route|controller)\.ts$/i;
 function isBeFile(p: string,): boolean {
   if (p.includes("/routes/",)) { return true; }
   const rel = path.relative(ROOT, p,);
-  if (BE_EXTRA_FILES.includes(rel,)) { return true; }
+  if (BE_EXTRA_FILES.has(rel,)) { return true; }
   return BE_FILE_RE.test(path.basename(p,),);
 }
 
