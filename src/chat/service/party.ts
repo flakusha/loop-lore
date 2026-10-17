@@ -15,6 +15,7 @@ import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { DB, } from "../../db/schema";
 import { safeJsonParse, } from "../../utils";
 import { resolveRendering, } from "../types/config";
+import type { ChatMode, } from "../types/config";
 import { injectPartyNarration, } from "./party-narration";
 import type { ServiceError, } from "./types";
 
@@ -52,14 +53,14 @@ export type PartyLeaveResult =
  * @param chat.mode
  * @returns void
  */
-function chatIsVisualNovel(chat: { gm_config: string | null; mode: string },): boolean {
+function chatIsVisualNovel(chat: { gm_config: string | null; mode: ChatMode },): boolean {
   if (!chat.gm_config) { return false; }
   const parsed = safeJsonParse<{ renderingOverride?: ChatRenderingOverride | null }>(chat.gm_config,);
   const override: ChatRenderingOverride | null = parsed.ok
     ? (parsed.value.renderingOverride ?? null)
     : null;
 
-  return resolveRendering(chat.mode as never, override,) === "visual_novel";
+  return resolveRendering(chat.mode, override,) === "visual_novel";
 }
 
 /**

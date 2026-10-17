@@ -33,8 +33,10 @@ import type {
   KarmaCategory,
   KeyStatus,
   KeyType,
+  LicenseKind,
   LocationEdgeMode,
   LoreEntryStatus,
+  MapType,
   MessageContentFormat,
   MessageContentType,
   MessageRole,
@@ -56,6 +58,7 @@ import type {
   UserRole,
   UserStatus,
   VnChoiceStatus,
+  ZoneType,
 } from "./enums";
 import type { AuditColumns, } from "./schema-audit";
 
@@ -1819,4 +1822,46 @@ export interface ExtractionRolls {
   succeeded: Generated<number>;
   difficulty: Generated<number>;
   yield: Generated<string>;
+}
+
+// ── world_licenses ────────────────────────────────────────────
+export interface WorldLicenses {
+  id: Generated<string>;
+  world_id: string;
+  spdx_or_custom: Generated<LicenseKind>;
+  spdx_id: string | null;
+  license_text: string | null;
+  attribution: Generated<string>;
+  allowed_use: Generated<string>;
+  prohibited_use: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_maps ────────────────────────────────────────────
+export interface WorldMaps {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  map_type: Generated<MapType>;
+  width: number;
+  height: number;
+  tile_asset_id: string | null;
+  created_at: Generated<string>;
+}
+
+// ── map_zones ────────────────────────────────────────────
+export interface MapZones {
+  id: Generated<string>;
+  map_id: string;
+  location_id: string | null;
+  name: string;
+  zone_type: Generated<ZoneType>;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  z: Generated<number>;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
 }

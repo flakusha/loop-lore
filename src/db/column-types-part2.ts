@@ -151,4 +151,13 @@ export const PART_2: Record<string, Record<string, string>> = {
   "KarmaEvents": {
     "category": "KarmaCategory",
   },
+  "WorldLicenses": {
+    "spdx_or_custom": "LicenseKind",
+  },
+  "WorldMaps": {
+    "map_type": "MapType",
+  },
+  "MapZones": {
+    "zone_type": "ZoneType",
+  },
 };
