@@ -9,12 +9,19 @@ import type {
   ActorType,
   AgencyMode,
   AgentType,
+  AnomalyInteraction,
+  AnomalyType,
   CharacterState,
   ChatMode,
   ChatParticipantRole,
   ChatType,
   ContentEncoding,
   DefaultState,
+  EncounterDrivingMode,
+  EncounterTemplateState,
+  EncounterTravelPhase,
+  EncounterTriggerType,
+  EncounterType,
   EquipState,
   InteractionCategory,
   InteractionOutcome,
@@ -1653,4 +1660,57 @@ export interface LocationEdges {
   cost_json: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+}
+
+// ── location_anomalies ────────────────────────────────────────────
+export interface LocationAnomalies {
+  id: Generated<string>;
+  location_id: string;
+  world_id: string;
+  name: string;
+  type: Generated<AnomalyType>;
+  stat_modifiers: Generated<string>;
+  damage_over_time: Generated<number>;
+  healing_over_time: Generated<number>;
+  experience_multiplier: Generated<number>;
+  loot_multiplier: Generated<number>;
+  special_effects: Generated<string>;
+  duration_seconds: Generated<number>;
+  discovery_chance: Generated<number>;
+  discovered_at: string | null;
+  interaction_required: Generated<AnomalyInteraction>;
+  expires_at: string | null;
+  created_at: Generated<string>;
+}
+
+// ── encounter_templates ────────────────────────────────────────────
+export interface EncounterTemplates {
+  id: Generated<string>;
+  world_id: string | null;
+  name: string;
+  type: Generated<EncounterType>;
+  trigger_type: Generated<EncounterTriggerType>;
+  trigger_chance: Generated<number>;
+  cooldown_seconds: Generated<number>;
+  difficulty: Generated<number>;
+  requirements: Generated<string>;
+  rewards: Generated<string>;
+  consequences: Generated<string>;
+  story_notes: string | null;
+  assistant_driven: Generated<EncounterDrivingMode>;
+  travel_phase: EncounterTravelPhase | null;
+  active: Generated<EncounterTemplateState>;
+  created_at: Generated<string>;
+}
+
+// ── encounter_rolls ────────────────────────────────────────────
+export interface EncounterRolls {
+  id: Generated<string>;
+  world_id: string;
+  location_id: string | null;
+  template_id: string;
+  rolled_at: Generated<string>;
+  difficulty_rolled: Generated<number>;
+  outcome: Generated<string>;
+  cooldown_until: string | null;
 }

@@ -8,6 +8,7 @@
  * synthetic data, and item types.
  */
 
+export * from "./encounters.js";
 export * from "./items.js";
 export * from "./plans.js";
 export * from "./questions.js";
