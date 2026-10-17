@@ -481,6 +481,17 @@ export const SCHEMA = new SchemaManifest()
     territory_json: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("extraction_rolls", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    location_id: col("text",),
+    node_instance_id: col("text", { notNull: true, },),
+    actor_id: col("text",),
+    attempted_at: col("text", { notNull: true, hasDefault: true, },),
+    succeeded: col("integer", { notNull: true, hasDefault: true, },),
+    difficulty: col("integer", { notNull: true, hasDefault: true, },),
+    yield: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("game_states", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -511,6 +522,9 @@ export const SCHEMA = new SchemaManifest()
     respawn_at: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    quality: col("text", { notNull: true, hasDefault: true, },),
+    extraction_difficulty: col("integer", { notNull: true, hasDefault: true, },),
+    remaining_amount: col("integer",),
   },)
   .table("gathering_node_materials", {
     id: col("text", { primaryKey: true, },),
@@ -2308,6 +2322,23 @@ export const SCHEMA = new SchemaManifest()
     hazards: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("location_storage", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    location_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    capacity: col("integer", { notNull: true, hasDefault: true, },),
+    security: col("integer", { notNull: true, hasDefault: true, },),
+    access_control: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("location_storage_items", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    storage_id: col("text", { notNull: true, },),
+    item_id: col("text", { notNull: true, },),
+    quantity: col("integer", { notNull: true, hasDefault: true, },),
+    stored_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("locations", {
     id: col("text", { primaryKey: true, },),

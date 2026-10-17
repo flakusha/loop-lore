@@ -516,6 +516,7 @@ export const RelationshipTypeSchema = t.UnionEnum([
   "student",
   "neutral",
 ],);
+export const ResourceQualitySchema = t.UnionEnum(["common", "uncommon", "rare", "epic", "legendary",],);
 export const ResponseCompressionSchema = t.UnionEnum(["br", "gzip", "auto",],);
 export const RpgQuestionInputKindSchema = t.UnionEnum(["choice", "free_text", "numeric",],);
 export const RpgQuestionStatusSchema = t.UnionEnum(["open", "answered", "expired",],);
@@ -557,6 +558,7 @@ export const SizeCategorySchema = t.UnionEnum(["petite", "small", "average", "la
 export const SkillLockStateSchema = t.UnionEnum(["locked", "unlocked",],);
 export const StackableStateSchema = t.UnionEnum(["unique", "stackable",],);
 export const StationLocationSchema = t.UnionEnum(["player_home", "world", "guild", "portable",],);
+export const StorageAccessDenialSchema = t.UnionEnum(["not-allowed", "security-too-low", "cross-world",],);
 export const StorageBackendSchema = t.UnionEnum(["local", "s3", "gcs",],);
 export const SyntheticDataStatusSchema = t.UnionEnum(["generated", "validated", "approved", "rejected", "archived",],);
 export const SyntheticDataTypeSchema = t.UnionEnum([
@@ -2208,6 +2210,9 @@ export const GatheringNodeInstancesSchema = t.Object({
   location_id: t.Optional(t.String(),),
   state: t.Optional(NodeInstanceStateSchema,),
   respawn_at: t.Optional(t.String(),),
+  quality: t.Optional(ResourceQualitySchema,),
+  extraction_difficulty: t.Optional(t.Number(),),
+  remaining_amount: t.Optional(t.Number(),),
 },);
 
 // ── gathering_node_materials ────────────────────────────────────────────
@@ -3417,4 +3422,35 @@ export const KarmaEventsSchema = t.Object({
   delta: t.Number(),
   reason: t.Optional(t.String(),),
   occurred_at: t.Optional(t.String(),),
+},);
+
+// ── location_storage ────────────────────────────────────────────
+export const LocationStorageSchema = t.Object({
+  world_id: t.String(),
+  location_id: t.String(),
+  name: t.String(),
+  capacity: t.Optional(t.Number(),),
+  security: t.Optional(t.Number(),),
+  access_control: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── location_storage_items ────────────────────────────────────────────
+export const LocationStorageItemsSchema = t.Object({
+  storage_id: t.String(),
+  item_id: t.String(),
+  quantity: t.Optional(t.Number(),),
+  stored_at: t.Optional(t.String(),),
+},);
+
+// ── extraction_rolls ────────────────────────────────────────────
+export const ExtractionRollsSchema = t.Object({
+  world_id: t.String(),
+  node_instance_id: t.String(),
+  location_id: t.Optional(t.String(),),
+  actor_id: t.Optional(t.String(),),
+  attempted_at: t.Optional(t.String(),),
+  succeeded: t.Optional(t.Number(),),
+  difficulty: t.Optional(t.Number(),),
+  yield: t.Optional(t.String(),),
 },);

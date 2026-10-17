@@ -95,6 +95,7 @@ export const PART_1: Record<string, Record<string, string>> = {
   },
   "GatheringNodeInstances": {
     "state": "NodeInstanceState",
+    "quality": "ResourceQuality",
   },
   "CraftingOrders": {
     "max_quality": "QualityLevel",

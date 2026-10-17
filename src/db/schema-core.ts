@@ -1786,3 +1786,37 @@ export interface KarmaEvents {
   reason: Generated<string>;
   occurred_at: Generated<string>;
 }
+
+// ── location_storage ────────────────────────────────────────────
+export interface LocationStorage {
+  id: Generated<string>;
+  world_id: string;
+  location_id: string;
+  name: string;
+  capacity: Generated<number>;
+  security: Generated<number>;
+  access_control: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── location_storage_items ────────────────────────────────────────────
+export interface LocationStorageItems {
+  id: Generated<string>;
+  storage_id: string;
+  item_id: string;
+  quantity: Generated<number>;
+  stored_at: Generated<string>;
+}
+
+// ── extraction_rolls ────────────────────────────────────────────
+export interface ExtractionRolls {
+  id: Generated<string>;
+  world_id: string;
+  location_id: string | null;
+  node_instance_id: string;
+  actor_id: string | null;
+  attempted_at: Generated<string>;
+  succeeded: Generated<number>;
+  difficulty: Generated<number>;
+  yield: Generated<string>;
+}
