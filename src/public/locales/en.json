@@ -1729,6 +1729,9 @@
     "rotate": "Rotate Primary Key",
     "title": "Encryption Keys"
   },
+  "planning": {
+    "board": "Planning Board"
+  },
   "templates": {
     "allModalities": "All Modalities",
     "copy": "Copy",
