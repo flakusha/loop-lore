@@ -53,6 +53,31 @@
 
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
 
+## Correction (2026-10-16): the Done claim on this ticket was partly false
+
+The original Done did not hold up under verification against real `blessed`, and
+the record should say so rather than quietly stand corrected.
+
+- **The HINTS footer never worked.** Handlers were bound on `this.box`, but
+  `show()` called `this.list.focus()` — and the list is constructed with
+  `keys: false`, so it was never keyable. `Screen._listenKeys` dispatches
+  element keys only to the focused element (`widgets/screen.js:601`), so `c`,
+  `p`, `r`, the arrows and Enter were all unreachable by keyboard. Only the
+  mouse path (`list.on("select")`) worked. `show()` now focuses the box, where
+  the bindings actually live.
+- **A related, independent cause made it worse:** the chat textbox used
+  `inputOnFocus`, which raised `screen.grabKeys`, and that flag gates every
+  screen-level key (`widgets/screen.js:591`). That is the other half of the
+  fix and lives in `src/tui/chat/index.ts`.
+- **"Esc: back" was never implemented and never will be by this ticket.**
+  Esc is not bound inside the overlay at all; it reaches the app's global
+  dismiss chain and closes the whole overlay from every level. The footer
+  promised a level-step-back that did not exist. The claim was deleted rather
+  than implemented, and the footer now says "Esc: close" at all three levels.
+
+The drill-down itself was sound and is unchanged; only its keyboard reachability
+and the footer's honesty were wrong.
+
 ## Known-branch-red: the `tickets` gate
 
 On this branch `bun run plan:validate` is **expected-red** at exactly one gate — `tickets`, with `ticket index out of sync` and 6 orphan `.md` files. This is structural, not a defect: `giwt sync` refuses to write `index.json` from a linked worktree (it reports "index write deferred — linked worktree; regenerated post-merge on the target branch"), so the index cannot converge until this branch merges. Do not re-run `bun run plan:sync:fix` to chase it — that run changed no orphan count and instead rewrote four unrelated tickets' statuses into the worktree, where they were discarded as collateral. Every other gate (`format`, `code-map`, `status-vocab`, `links`, `spdx`, `naming`, `epics-doc`, `matrix`, `backlog`) must stay OK.
