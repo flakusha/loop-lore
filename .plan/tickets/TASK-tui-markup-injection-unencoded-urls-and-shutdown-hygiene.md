@@ -73,7 +73,8 @@ Sites wrapped with `encodeURIComponent`:
 - `src/tui/chat/api.ts` — `handleSend`: `host.chatId`; `loadMessages`: `host.chatId`, `host.cursor`
 - `src/tui/asset-view.ts` — `loadAssets`: `this.chatId` (entity_id query param)
 - `src/tui/harness/api.ts` — `loadRuns`: `limit`; `loadRunDetail`: `runId`
-- `src/tui/models-api.ts` — `loadProviderModels`: `provider` (path segment)
+
+Note: `src/tui/models-api.ts` `loadProviderModels` was already encoded pre-fix (`ac28a47af`), no change needed here.
 
 **Tests added:**
 - `src/tui/chat/display.test.ts` — 4 escaping tests (actorName, role, content, both braces)
