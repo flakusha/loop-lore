@@ -3,10 +3,20 @@
 
 import type { GameMasterType, } from "../../db/enums-config";
 import { ChatRenderingOverride, type ChatRenderingOverrideValue, } from "../../db/enums-core/chat";
+import type { ChatMode as DbChatMode, } from "../../db/enums-core/users";
 import type { OutputStylePreset, } from "../output-style";
 
-/** Chat modes from the DB enum */
-export type ChatMode = "direct" | "group" | "story";
+/**
+ * Chat modes, aliased straight from the DB enum (`chats.mode`).
+ *
+ * The DB enum is the single source of truth: it is what the column CHECK
+ * constraint accepts, what `VARIANT_DEFAULTS` assigns (variants 6/7/12 use
+ * `ChatMode.Battle`), and what the generated schema types expose. Re-declaring
+ * the union here is what let the two drift apart — the previous local copy
+ * omitted `battle`, so any `chat.mode` read off the row was a type error and
+ * every call site had to cast. Alias it instead of restating it.
+ */
+export type ChatMode = DbChatMode;
 
 /** Feature flags per chat mode */
 export interface ModeFeatureFlags {
@@ -55,6 +65,19 @@ export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
     memoryInjection: true,
     turnOrchestration: true,
     defaultRendering: "visual_novel",
+    responseLength: true,
+    autoRename: true,
+    quickRegen: true,
+  },
+  // 'battle' (DB enum; chat-variant-taxonomy variants 6/7/12) is turn-driven
+  // like 'group' and renders as text. It was missing here, which is the drift
+  // that forced callers to cast `chat.mode` before resolving flags.
+  battle: {
+    contextWindow: true,
+    transitions: true,
+    memoryInjection: true,
+    turnOrchestration: true,
+    defaultRendering: "text",
     responseLength: true,
     autoRename: true,
     quickRegen: true,

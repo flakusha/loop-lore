@@ -20,6 +20,7 @@ import type {
   MessageRef,
 } from "./types";
 import { resolveFeatureFlags, } from "./types";
+import type { ChatMode, } from "./types/config";
 // ─── Default Configuration ────────────────────────────────────
 
 const DEFAULT_THRESHOLDS: ContextThresholds = {
@@ -53,7 +54,7 @@ export function computeContextWindow(
   messages: MessageRef[],
   maxTokens: number,
   options: {
-    mode?: "direct" | "group" | "story";
+    mode?: ChatMode;
     activeParticipants?: string[];
     currentTurnActorId?: string | null;
     thresholds?: ContextThresholds;

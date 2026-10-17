@@ -319,6 +319,7 @@ export const KarmaCategorySchema = t.UnionEnum([
 ],);
 export const KeyStatusSchema = t.UnionEnum(["active", "expired", "revoked",],);
 export const KeyTypeSchema = t.UnionEnum(["signing", "encryption", "symmetric", "master", "primary",],);
+export const LicenseKindSchema = t.UnionEnum(["spdx", "custom",],);
 export const LicenseTypeSchema = t.UnionEnum([
   "cc0",
   "cc_by",
@@ -341,6 +342,7 @@ export const LocationKindSchema = t.UnionEnum([
 export const LogLevelSchema = t.UnionEnum(["trace", "debug", "info", "warn", "error", "fatal",],);
 export const LoreEntryStatusSchema = t.UnionEnum(["enabled", "disabled", "archived",],);
 export const LorePositionSchema = t.UnionEnum(["before_char", "after_char", "in_char",],);
+export const MapTypeSchema = t.UnionEnum(["2d", "3d",],);
 export const MaterialSlotTypeSchema = t.UnionEnum(["required", "optional", "catalyst",],);
 export const MemoryReviewStatusSchema = t.UnionEnum(["pending", "committed", "rejected",],);
 export const MemoryTypeSchema = t.UnionEnum(["episodic", "semantic", "procedural",],);
@@ -625,6 +627,15 @@ export const TurnTypeSchema = t.UnionEnum([
   "quest_update",
   "world_event",
 ],);
+export const UseFlagSchema = t.UnionEnum([
+  "view",
+  "private_use",
+  "share",
+  "commercial",
+  "redistribute",
+  "train_model",
+  "remove_attribution",
+],);
 export const UserRoleSchema = t.UnionEnum([
   "admin",
   "moderator",
@@ -666,6 +677,15 @@ export const WorldKindSchema = t.UnionEnum(["rpg", "chat",],);
 export const WorldTraitCategorySchema = t.UnionEnum(["environmental", "cultural", "magical", "social", "equipment",],);
 export const WorldVisibilitySchema = t.UnionEnum(["public", "unlisted", "private",],);
 export const XFrameOptionSchema = t.UnionEnum(["DENY", "SAMEORIGIN",],);
+export const ZoneTypeSchema = t.UnionEnum([
+  "region",
+  "city",
+  "district",
+  "building",
+  "dungeon",
+  "wilderness",
+  "location",
+],);
 
 // ── data_migrations ────────────────────────────────────────────
 export const DataMigrationsSchema = t.Object({
@@ -3453,4 +3473,43 @@ export const ExtractionRollsSchema = t.Object({
   succeeded: t.Optional(t.Number(),),
   difficulty: t.Optional(t.Number(),),
   yield: t.Optional(t.String(),),
+},);
+
+// ── world_licenses ────────────────────────────────────────────
+export const WorldLicensesSchema = t.Object({
+  world_id: t.String(),
+  spdx_or_custom: t.Optional(LicenseKindSchema,),
+  spdx_id: t.Optional(t.String(),),
+  license_text: t.Optional(t.String(),),
+  attribution: t.Optional(t.String(),),
+  allowed_use: t.Optional(t.String(),),
+  prohibited_use: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_maps ────────────────────────────────────────────
+export const WorldMapsSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  width: t.Number(),
+  height: t.Number(),
+  map_type: t.Optional(MapTypeSchema,),
+  tile_asset_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── map_zones ────────────────────────────────────────────
+export const MapZonesSchema = t.Object({
+  map_id: t.String(),
+  name: t.String(),
+  x: t.Number(),
+  y: t.Number(),
+  width: t.Number(),
+  height: t.Number(),
+  location_id: t.Optional(t.String(),),
+  zone_type: t.Optional(ZoneTypeSchema,),
+  z: t.Optional(t.Number(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
 },);
