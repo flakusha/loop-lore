@@ -1,0 +1,131 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * /char-list, /char-get — assistant read access to the caller's own characters.
+ *
+ * Characters have no world scope: the authoritative guard is `actors.owner_id`,
+ * the same check `src/routes/characters.ts` applies before returning a card.
+ * `CommandContext` carries no user role, so the check is strictly
+ * owner-or-nothing — there is no admin bypass to inherit here.
+ */
+
+import { ActorType, } from "../../db/enums";
+import { type CommandResult, registerCommand, } from "./registry";
+
+const CARD_FIELDS = [
+  "id",
+  "display_name",
+  "agent_type",
+  "description",
+  "personality",
+  "appearance",
+  "default_outfit",
+  "scenario",
+  "character_version",
+] as const;
+
+registerCommand("char-list", async (_args, ctx,): Promise<CommandResult> => {
+  const db = ctx.db;
+  if (!db) {
+    return { systemMessage: "**Characters unavailable:** command context missing database.", handled: true, };
+  }
+
+  const userId = ctx.userId;
+  if (!userId) {
+    return { systemMessage: "**Characters unavailable:** command context has no user.", handled: true, };
+  }
+
+  const rows = await db
+    .selectFrom("actors",)
+    .select(["id", "display_name", "agent_type", "description",],)
+    .where("owner_id", "=", userId,)
+    .where("actor_type", "=", ActorType.Character,)
+    .orderBy("display_name", "asc",)
+    .execute();
+
+  if (rows.length === 0) {
+    return { systemMessage: "You own no characters yet.", handled: true, };
+  }
+
+  const list = rows.map((a,) => {
+    const excerpt = a.description ? ` — ${a.description.slice(0, 80,)}` : "";
+    return `- **${a.display_name}** (${a.agent_type})${excerpt} [${a.id}]`;
+  },).join("\n",);
+
+  return {
+    systemMessage: `**Your characters (${rows.length}):**\n\n${list}`,
+    action: "char-list",
+    actionPayload: { characters: rows, },
+    handled: true,
+  };
+}, { requiredRole: "member", },);
+
+registerCommand("char-get", async (args, ctx,): Promise<CommandResult> => {
+  const charId = args[0];
+  if (!charId) {
+    return { systemMessage: "Usage: /char-get <char-id>", handled: true, };
+  }
+
+  const db = ctx.db;
+  if (!db) {
+    return { systemMessage: "**Characters unavailable:** command context missing database.", handled: true, };
+  }
+
+  const userId = ctx.userId;
+  if (!userId) {
+    return { systemMessage: "**Characters unavailable:** command context has no user.", handled: true, };
+  }
+
+  const card = await db
+    .selectFrom("actors",)
+    .select([...CARD_FIELDS, "owner_id",],)
+    .where("id", "=", charId,)
+    .where("actor_type", "=", ActorType.Character,)
+    .executeTakeFirst();
+
+  // A character the caller does not own is reported exactly like a missing one.
+  if (!card || card.owner_id !== userId) {
+    return { systemMessage: `Character ${charId} not found or access denied.`, handled: true, };
+  }
+
+  const stats = await db
+    .selectFrom("character_stats",)
+    .select(["level", "hp", "max_hp", "ac", "speed", "str", "dex", "con", "int", "wis", "cha",],)
+    .where("actor_id", "=", charId,)
+    .executeTakeFirst();
+
+  const lore = await db
+    .selectFrom("actor_lore_entries",)
+    .select(["id", "name",],)
+    .where("actor_id", "=", charId,)
+    .orderBy("name", "asc",)
+    .execute();
+
+  const statStr = stats
+    ? `level ${stats.level} · HP ${stats.hp}/${stats.max_hp} · AC ${stats.ac} · spd ${stats.speed} · ` +
+      `STR ${stats.str} DEX ${stats.dex} CON ${stats.con} INT ${stats.int} WIS ${stats.wis} CHA ${stats.cha}`
+    : "_none_";
+
+  const loreList = lore.length === 0
+    ? "_none_"
+    : lore.map((l,) => `- ${l.name ?? "(untitled)"} [${l.id}]`).join("\n",);
+
+  return {
+    systemMessage: [
+      `**Character:** ${card.display_name} [${charId}]`,
+      `**Agent type:** ${card.agent_type}`,
+      card.character_version ? `**Version:** ${card.character_version}` : "",
+      card.description ? `**Description:** ${card.description}` : "",
+      card.personality ? `**Personality:** ${card.personality}` : "",
+      card.appearance ? `**Appearance:** ${card.appearance}` : "",
+      card.default_outfit ? `**Default outfit:** ${card.default_outfit}` : "",
+      card.scenario ? `**Scenario:** ${card.scenario}` : "",
+      `**Stats:** ${statStr}`,
+      `**Lore entries (${lore.length}):**\n${loreList}`,
+    ].filter(Boolean,).join("\n",),
+    action: "char-get",
+    actionPayload: { character: card, stats, lore, },
+    handled: true,
+  };
+}, { requiredRole: "member", },);
