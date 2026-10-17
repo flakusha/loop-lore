@@ -15,7 +15,7 @@
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-use crate::api::GalleryAsset;
+use crate::api::{GalleryAsset, GalleryFilters};
 
 /// Shorten a filename for a grid cell, appending `...` past `max_chars` chars.
 ///
@@ -86,8 +86,8 @@ pub struct GalleryState {
   pub cells: Vec<GalleryCell>,
   /// Current 1-based page.
   pub page: u32,
-  /// Query filter (mirrors the htmx search input).
-  pub query: String,
+  /// Grid filters (mirror the htmx filter bar: `q`, `type`, `tag`, `sort`).
+  pub filters: GalleryFilters,
   /// `true` while a page fetch is in flight.
   pub loading: bool,
   /// One-line error surfaced to the status bar.
@@ -132,9 +132,9 @@ impl GalleryState {
     self.error = Some(message);
   }
 
-  /// Set the query and reset paging (a new search starts at page 1).
-  pub fn set_query(&mut self, query: String) {
-    self.query = query;
+  /// Set the filters and reset paging (a new search starts at page 1).
+  pub fn set_filters(&mut self, filters: GalleryFilters) {
+    self.filters = filters;
     self.page = 1;
     self.cells.clear();
     self.error = None;
@@ -354,11 +354,16 @@ mod tests {
   }
 
   #[test]
-  fn set_query_resets_grid() {
+  fn set_filters_resets_grid() {
     let mut state = GalleryState::new();
     state.apply_page(vec![asset("a1", "image", None)], 1, true);
-    state.set_query("cat".to_string());
-    assert_eq!(state.query, "cat");
+    state.set_filters(GalleryFilters {
+      query: "cat".to_string(),
+      asset_type: "image".to_string(),
+      ..GalleryFilters::default()
+    });
+    assert_eq!(state.filters.query, "cat");
+    assert_eq!(state.filters.asset_type, "image");
     assert_eq!(state.cells.len(), 0);
     assert_eq!(state.page, 1);
   }
