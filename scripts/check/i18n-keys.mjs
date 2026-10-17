@@ -15,7 +15,7 @@
  *
  * Exit codes: 0 all keys resolve, 1 missing keys found.
  */
-import { readdirSync, readFileSync, statSync, } from "node:fs";
+import { readdirSync, readFileSync, } from "node:fs";
 import { extname, join, relative, } from "node:path";
 
 // TODO(env): bun-only — import.meta.dir is bun-specific. Add node shim when node target lands.
