@@ -12,6 +12,8 @@ import { fractalTravelRoutes, } from "./fractal-travel-routes";
 import { karmaRoutes, } from "./karma-routes";
 import { locationEdgeRoutes, } from "./location-edges";
 import { locationRoutes, } from "./locations-routes";
+import { resourceRoutes, } from "./resource-routes";
+import { storageRoutes, } from "./storage-routes";
 import { timelinesRoutes, } from "./timelines";
 import { travelStatusRoutes, } from "./travel-status";
 import { worldRoutes, } from "./worlds-routes";
@@ -36,5 +38,7 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(anomalyRoutes(opts, prefix,),)
     .use(encounterRoutes(opts, prefix,),)
     .use(factionRoutes(opts, prefix,),)
-    .use(karmaRoutes(opts, prefix,),);
+    .use(karmaRoutes(opts, prefix,),)
+    .use(resourceRoutes(opts, prefix,),)
+    .use(storageRoutes(opts, prefix,),);
 }
