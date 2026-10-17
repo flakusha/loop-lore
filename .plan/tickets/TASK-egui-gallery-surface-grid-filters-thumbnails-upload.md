@@ -3,7 +3,7 @@
 
 # TASK: egui gallery surface: grid, filters, thumbnails, upload
 
-**Status:** Done
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-experimental-egui-frontend
@@ -49,11 +49,19 @@ the DOM egui could scrape, and scraping would fork the grid layout.
 **Acceptance Criteria:**
 
 - [ ] Grid shows the same asset set and order the htmx page shows for the same
-      filters (one visibility filter, applied server-side)
-- [ ] Thumbnails load through the bridge fetch + egui texture seam;
+      filters (one visibility filter, applied server-side) — **rows and order
+      match** (same loader, `GET /dynamic/gallery/grid` JSON branch), but only
+      the free-text `q` filter is wired; the visibility filter is not.
+- [x] Thumbnails load through the bridge fetch + egui texture seam;
       missing/failed images degrade to a placeholder tile, never a panic or a
       blank grid
-- [ ] Upload (`POST /api/assets`) and attach-to-chat work from egui with the
+- [x] Upload (`POST /api/assets`) and attach-to-chat work from egui with the
       same responses the htmx forms produce
-- [ ] Paging uses the same `pageSize`/cursor contract as `GET /api/assets`
-- [ ] Tests passing; roadmap row in the epic marked delivered
+- [ ] Paging uses the same `pageSize`/cursor contract as `GET /api/assets` — the
+      grid pages the dynamic endpoint's `?page=N` instead, so this criterion is
+      unmet by design of the current seam.
+- [x] Tests passing; roadmap row in the epic reflects the partial state
+
+**Remaining for Done:** wire the server-side visibility filter into the egui
+search bar, and either adopt the REST `pageSize`/cursor contract or amend this
+criterion to the dynamic endpoint's paging.

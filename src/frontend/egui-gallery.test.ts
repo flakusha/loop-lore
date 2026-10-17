@@ -2,8 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for egui-gallery.ts: the bridge-owned thumbnail fetch/decode, upload
- * via hidden file input, and attach POST.
+ * Tests for egui-gallery.ts: the bridge-owned thumbnail fetch/decode and the
+ * upload path through a hidden file input.
+ *
+ * Attaching an asset is not tested here — it happens on the Rust side through
+ * the crate's own POST client, not through this bridge.
  *
  * Resource contract (parallel-safe): each test owns its fake sink and the
  * global bridge functions; afterEach restores the globals captured at module
@@ -26,12 +29,11 @@ mock.module("./fe-fetch", () => ({
   getCsrfToken: () => "test-csrf",
 }),);
 
-const { attachAsset, requestThumbnail, uploadAsset, } = await import("./egui-gallery");
+const { requestThumbnail, uploadAsset, } = await import("./egui-gallery");
 
 const realSink = (globalThis as Record<string, unknown>).loopLoreEguiGallery;
 const realRequest = (globalThis as Record<string, unknown>).requestThumbnail;
 const realUpload = (globalThis as Record<string, unknown>).uploadAsset;
-const realAttach = (globalThis as Record<string, unknown>).attachAsset;
 
 let sinkCalls: Array<{ method: string; assetId: string; width?: number; height?: number; rgba?: Uint8ClampedArray }> =
   [];
@@ -41,7 +43,6 @@ const recordingSink: EguiGallerySink = {
     void sinkCalls.push({ method: "eguiThumbReady", assetId, width, height, rgba, },),
   eguiThumbFailed: (assetId,) => void sinkCalls.push({ method: "eguiThumbFailed", assetId, },),
   eguiAssetUploaded: (assetId,) => void sinkCalls.push({ method: "eguiAssetUploaded", assetId, },),
-  eguiAttachResult: (assetId, ok,) => void sinkCalls.push({ method: "eguiAttachResult", assetId, ok, },),
 };
 
 afterEach(() => {
@@ -51,7 +52,6 @@ afterEach(() => {
   (globalThis as Record<string, unknown>).loopLoreEguiGallery = realSink;
   (globalThis as Record<string, unknown>).requestThumbnail = realRequest;
   (globalThis as Record<string, unknown>).uploadAsset = realUpload;
-  (globalThis as Record<string, unknown>).attachAsset = realAttach;
 },);
 
 describe("requestThumbnail", () => {
@@ -107,19 +107,80 @@ describe("requestThumbnail", () => {
 });
 
 describe("uploadAsset", () => {
-  test("is exposed on globalThis for the Rust side", () => {
-    expect(typeof (globalThis as Record<string, unknown>).uploadAsset,).toBe("function",);
-  });
-});
+  test("opens the picker, posts the chosen file as multipart, and reports the new id", async () => {
+    (globalThis as Record<string, unknown>).loopLoreEguiGallery = recordingSink;
+    mockFetchResponse = Response.json({ id: "new-asset", },);
+    const originalDocument = globalThis.document;
+    let changeHandler: (() => void) | null = null;
+    const input: Record<string, unknown> = {
+      type: "",
+      accept: "",
+      style: {},
+      files: [new File(["bytes",], "cat.png", { type: "image/png", },),],
+      addEventListener: (_event: string, handler: () => void,) => {
+        changeHandler = handler;
+      },
+      click: () => {},
+      remove: () => {},
+    };
 
-describe("attachAsset", () => {
-  test("POSTs JSON to the links endpoint", async () => {
-    await attachAsset("a1", "c1",);
+    (globalThis as Record<string, unknown>).document = {
+      createElement: () => input,
+      body: { appendChild: () => {}, },
+    };
+
+    try {
+      uploadAsset();
+      expect(input.accept,).toContain("image/*",);
+      expect(changeHandler,).toBeFunction();
+      changeHandler?.();
+      // The upload is async; let the multipart POST settle.
+      await new Promise((resolve,) => setTimeout(resolve, 0,));
+    } finally {
+      globalThis.document = originalDocument;
+    }
 
     expect(mockFetchCalls.length,).toBe(1,);
-    expect(mockFetchCalls[0].url,).toContain("/api/v1/assets/a1/links",);
+    expect(mockFetchCalls[0].url,).toBe("/api/v1/assets",);
     expect(mockFetchCalls[0].options?.method,).toBe("POST",);
-    expect(mockFetchCalls[0].options?.body as string,).toContain('"entityType":"chat"',);
-    expect(mockFetchCalls[0].options?.body as string,).toContain('"entityId":"c1"',);
+    expect(mockFetchCalls[0].options?.body,).toBeInstanceOf(FormData,);
+    expect((mockFetchCalls[0].options?.body as FormData).get("alt_text",),).toBe("cat.png",);
+    expect(sinkCalls.length,).toBe(1,);
+    expect(sinkCalls[0].method,).toBe("eguiAssetUploaded",);
+    expect(sinkCalls[0].assetId,).toBe("new-asset",);
+  });
+
+  test("reports an empty id when the upload request fails", async () => {
+    (globalThis as Record<string, unknown>).loopLoreEguiGallery = recordingSink;
+    const originalDocument = globalThis.document;
+    let changeHandler: (() => void) | null = null;
+    (globalThis as Record<string, unknown>).document = {
+      createElement: () => ({
+        type: "",
+        accept: "",
+        style: {},
+        files: [new File(["bytes",], "cat.png", { type: "image/png", },),],
+        addEventListener: (_event: string, handler: () => void,) => {
+          changeHandler = handler;
+        },
+        click: () => {},
+        remove: () => {},
+      }),
+      body: { appendChild: () => {}, },
+    };
+
+    mockFetchResponse = new Response("nope", { status: 500, },);
+
+    try {
+      uploadAsset();
+      changeHandler?.();
+      await new Promise((resolve,) => setTimeout(resolve, 0,));
+    } finally {
+      globalThis.document = originalDocument;
+    }
+
+    expect(sinkCalls.length,).toBe(1,);
+    expect(sinkCalls[0].method,).toBe("eguiAssetUploaded",);
+    expect(sinkCalls[0].assetId,).toBe("",);
   });
 });

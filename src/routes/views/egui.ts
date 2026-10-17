@@ -106,12 +106,11 @@ export function serveEguiFrontendPage(request: Request,): Response {
           onDone: glue.egui_stream_done,
           onError: glue.egui_stream_error,
         };
-        // Gallery sink: thumbnail/upload/attach callbacks from the bridge.
+        // Gallery sink: thumbnail/upload callbacks from the bridge.
         window.loopLoreEguiGallery = {
           eguiThumbReady: glue.egui_thumb_ready,
           eguiThumbFailed: glue.egui_thumb_failed,
           eguiAssetUploaded: glue.egui_asset_uploaded,
-          eguiAttachResult: glue.egui_attach_result,
         };
         if (status) { status.textContent = "egui ready"; }
       } catch (error) {
