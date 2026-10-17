@@ -4,11 +4,13 @@
 import { Elysia, } from "elysia";
 import { achievementsRoutes, } from "./achievements";
 import { achievementsPlayerRoutes, } from "./achievements-player";
+import { bestiaryRoutes, } from "./bestiary";
 import { combatRoutes, } from "./combat";
 import { combatStatusRoutes, } from "./combat-status";
 import { craftingExecutionRoutes, } from "./crafting-execution";
 import { craftingStationRoutes, } from "./crafting-stations";
 import { diceRoutes, } from "./dice";
+import { npcMemoryRoutes, } from "./npc-memory";
 import { npcNavigationRoutes, } from "./npc-navigation";
 import { progressionRoutes, } from "./progression";
 import { questionsRoutes, } from "./questions";
@@ -56,6 +58,18 @@ import { xpLootTablesRoutes, } from "./xp-loot-tables";
  *     /api/rpg/npc-navigation/actors/:actorId/... — state, pattern, move
  *     /api/rpg/npc-navigation/worlds/:worldId/tick — movement tick
  *
+ *   NPC Memory:
+ *     /api/rpg/npc-memory/worlds/:worldId/npcs/:npcId/memories — record/recall
+ *     /api/rpg/npc-memory/worlds/:worldId/memories/:memoryId/reinforce
+ *     /api/rpg/npc-memory/worlds/:worldId/relationships — standing/bond shift
+ *     /api/rpg/npc-memory/worlds/:worldId/decay — decay sweep
+ *
+ *   Bestiary:
+ *     /api/rpg/bestiary/worlds/:worldId/monsters — template list/register
+ *     /api/rpg/bestiary/worlds/:worldId/locations/:locationId/monsters
+ *     /api/rpg/bestiary/worlds/:worldId/spawns — place a spawn (+ seeded loot)
+ *     /api/rpg/bestiary/worlds/:worldId/despawn-expired
+ *
  *   Questions (TASK-029):
  *     POST/GET /api/chats/:id/questions — create/list open questions
  *     POST /api/questions/:id/answer — record a choice
@@ -85,6 +99,8 @@ export function rpgRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(skillsRoutes(opts, prefix,),)
       .use(skillsProgressionRoutes(opts, prefix,),)
       .use(npcNavigationRoutes(opts, prefix,),)
+      .use(npcMemoryRoutes(opts, prefix,),)
+      .use(bestiaryRoutes(opts, prefix,),)
       .use(questionsRoutes(opts, prefix,),)
       .use(worldLocationTraitsRoutes(opts, prefix,),)
       .use(combatRoutes(opts, prefix,),)
