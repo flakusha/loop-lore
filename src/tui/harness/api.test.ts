@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { safeFetch, } from "../../utils";
 import type { FetchResult, SafeFetchOptions, } from "../../utils/safe-fetch/types";
 import { loadRunDetail, loadRuns, loadStats, setFetch, } from "./api";
+import type { HarnessRunDetail, } from "./types";
 
 interface CallRecord {
   url: string;
@@ -232,5 +233,38 @@ describe("loadStats", () => {
       expect(result.error,).toBe("admin only",);
       expect(result.status,).toBe(403,);
     }
+  });
+
+  // --- URL encoding tests ---
+
+  it("percent-encodes runId containing / in loadRunDetail", async () => {
+    calls = [];
+    setFetch(
+      makeMockSafeFetch({
+        ok: true,
+        data: {} as HarnessRunDetail,
+        status: 200,
+        headers: new Headers(),
+      },) as Parameters<typeof setFetch>[0],
+    );
+
+    await loadRunDetail("abc/def", undefined,);
+    expect(calls[0]!.url,).toContain("abc%2Fdef",);
+    expect(calls[0]!.url,).not.toContain("abc/def",);
+  });
+
+  it("percent-encodes runId containing ? in loadRunDetail", async () => {
+    calls = [];
+    setFetch(
+      makeMockSafeFetch({
+        ok: true,
+        data: {} as HarnessRunDetail,
+        status: 200,
+        headers: new Headers(),
+      },) as Parameters<typeof setFetch>[0],
+    );
+
+    await loadRunDetail("abc?def", undefined,);
+    expect(calls[0]!.url,).toContain("abc%3Fdef",);
   });
 });

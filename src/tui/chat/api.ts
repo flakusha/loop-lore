@@ -56,7 +56,7 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
     const result = await _fetch<{
       id: string;
       assistantMessage?: { id: string; content: string };
-    }>(`${API_BASE}/api/v1/chats/${host.chatId}/messages`, {
+    }>(`${API_BASE}/api/v1/chats/${encodeURIComponent(host.chatId,)}/messages`, {
       method: "POST",
       auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       body: bodyResult.ok ? bodyResult.value : "{}",
@@ -104,8 +104,10 @@ export async function loadMessages(host: ChatHost,): Promise<void> {
   if (!host.chatId) { return; }
   try {
     const url = host.cursor
-      ? `${API_BASE}/api/v1/chats/${host.chatId}/messages?pageSize=200&cursor=${host.cursor}`
-      : `${API_BASE}/api/v1/chats/${host.chatId}/messages?pageSize=200`;
+      ? `${API_BASE}/api/v1/chats/${encodeURIComponent(host.chatId,)}/messages?pageSize=200&cursor=${
+        encodeURIComponent(host.cursor,)
+      }`
+      : `${API_BASE}/api/v1/chats/${encodeURIComponent(host.chatId,)}/messages?pageSize=200`;
 
     const result = await _fetch<{ data: ChatMessage[]; cursor: string | null }>(url, {
       auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,

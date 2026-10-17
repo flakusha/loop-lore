@@ -55,7 +55,7 @@ export async function loadRuns(
   limit: number,
   sessionToken: string | undefined,
 ): Promise<HarnessFetchResult<{ items: HarnessRunSummary[] }>> {
-  const url = `${API_BASE}/api/v1/harness/runs?limit=${limit}`;
+  const url = `${API_BASE}/api/v1/harness/runs?limit=${encodeURIComponent(String(limit,),)}`;
   return doFetch(url, sessionToken,);
 }
 
@@ -69,7 +69,7 @@ export async function loadRunDetail(
   runId: string,
   sessionToken: string | undefined,
 ): Promise<HarnessFetchResult<HarnessRunDetail>> {
-  const url = `${API_BASE}/api/v1/harness/runs/${runId}`;
+  const url = `${API_BASE}/api/v1/harness/runs/${encodeURIComponent(runId,)}`;
   return doFetch(url, sessionToken,);
 }
 
