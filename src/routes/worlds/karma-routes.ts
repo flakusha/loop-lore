@@ -95,7 +95,7 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         body: t.Object({
-          category: t.Union(
+          category: t.Union([
             t.Literal("honor",),
             t.Literal("mercy",),
             t.Literal("justice",),
@@ -104,7 +104,7 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
             t.Literal("cruelty",),
             t.Literal("treachery",),
             t.Literal("piety",),
-          ),
+          ],),
           delta: t.Number({ minimum: -100, maximum: 100, },),
           reason: t.Optional(t.String({ maxLength: 2000, },),),
         },),
