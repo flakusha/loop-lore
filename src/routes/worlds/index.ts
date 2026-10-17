@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import type { HandleOpts, } from "./types";
 import { Elysia, } from "elysia";
 import { anomalyRoutes, } from "./anomaly-routes";
 import { autonomyRoutes, } from "./autonomy-routes";
@@ -11,13 +12,16 @@ import { fractalTravelRoutes, } from "./fractal-travel-routes";
 import { karmaRoutes, } from "./karma-routes";
 import { locationEdgeRoutes, } from "./location-edges";
 import { locationRoutes, } from "./locations-routes";
+import { mapRoutes, } from "./map-routes";
+import { mapZoneRoutes, } from "./map-zone-routes";
 import { resourceRoutes, } from "./resource-routes";
 import { storageRoutes, } from "./storage-routes";
 import { timelinesRoutes, } from "./timelines";
 import { travelStatusRoutes, } from "./travel-status";
-import type { HandleOpts, } from "./types";
-import { worldStreamRoutes, } from "./world-stream";
+import { worldConditionsRoutes, } from "./world-conditions-routes";
+import { worldLicenseRoutes, } from "./world-license-routes";
 import { worldRoutes, } from "./worlds-routes";
+import { worldStreamRoutes, } from "./world-stream";
 /**
  * @param opts
  * @param prefix
@@ -40,5 +44,9 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(factionRoutes(opts, prefix,),)
     .use(karmaRoutes(opts, prefix,),)
     .use(resourceRoutes(opts, prefix,),)
-    .use(storageRoutes(opts, prefix,),);
+    .use(storageRoutes(opts, prefix,),)
+    .use(worldConditionsRoutes(opts, prefix,),)
+    .use(worldLicenseRoutes(opts, prefix,),)
+    .use(mapRoutes(opts, prefix,),)
+    .use(mapZoneRoutes(opts, prefix,),);
 }

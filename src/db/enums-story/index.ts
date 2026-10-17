@@ -18,4 +18,5 @@ export * from "./resources.js";
 export * from "./rpg.js";
 export * from "./synthetic.js";
 export * from "./turns.js";
+export * from "./world-license.js";
 export * from "./world.js";
