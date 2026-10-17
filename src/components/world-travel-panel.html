@@ -1,0 +1,179 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Travel interface (TASK-travel-interface): origin → destination selection,
+  walk/ride/fly/teleport mode, ETA from estimateTravelMinutes (estimates
+  only), travel progress + parties from /travel/status, and location
+  hazards. Host scope: worldState(worldId).
+-->
+<section class="panel" aria-labelledby="travel-heading" data-testid="travel-interface-panel">
+  <h3 id="travel-heading">{{{ t("worlds.travelTitle") }}}</h3>
+  <div class="travel-form">
+    <label class="form-label" for="travel-origin">{{{ t("worlds.travelFrom") }}}</label>
+    <select
+      id="travel-origin"
+      class="form-select"
+      x-model="originId"
+      aria-label="{{{ t('worlds.travelFrom') }}}"
+      data-testid="travel-origin"
+    >
+      {{> location-options.html }}
+    </select>
+
+    <label class="form-label" for="travel-destination">{{{ t("worlds.travelTo") }}}</label>
+    <select
+      id="travel-destination"
+      class="form-select"
+      x-model="destinationId"
+      aria-label="{{{ t('worlds.travelTo') }}}"
+      data-testid="travel-destination"
+    >
+      <template x-for="loc in destinations" :key="loc.id">
+        <option :value="loc.id" x-text="(travelConnected && loc.id === destinationId ? '🔗 ' : '') + loc.name">
+        </option>
+      </template>
+    </select>
+
+    <fieldset class="methods-row">
+      <legend class="form-label">{{{ t("worlds.travelMethodLabel") }}}</legend>
+      <label class="condition">
+        <input type="radio" name="travel-method" value="walk" x-model="travelMethodId" />
+        🚶 {{{ t("worlds.travelMethodWalk") }}}
+      </label>
+      <label class="condition">
+        <input type="radio" name="travel-method" value="ride" x-model="travelMethodId" />
+        🐎 {{{ t("worlds.travelMethodRide") }}}
+      </label>
+      <label class="condition">
+        <input type="radio" name="travel-method" value="fly" x-model="travelMethodId" />
+        🕊️ {{{ t("worlds.travelMethodFly") }}}
+      </label>
+      <label class="condition">
+        <input type="radio" name="travel-method" value="teleport" x-model="travelMethodId" />
+        ✨ {{{ t("worlds.travelMethodTeleport") }}}
+      </label>
+    </fieldset>
+
+    <div
+      class="muted"
+      data-testid="travel-eta"
+      x-text="t('worlds.travelEtaPrefix', { eta: travelEtaLabel }) +
+        (travelConnected ? t('worlds.travelDirectConnection') : '') +
+        t('worlds.travelEstimateOnly')"
+    >
+    </div>
+    <div class="muted" x-show="edgeInfoLabel" x-text="edgeInfoLabel" data-testid="travel-edge-info"></div>
+    <button
+      class="btn btn-primary btn-sm"
+      data-testid="travel-confirm-open"
+      @click="openTravelConfirm()"
+      aria-label="{{{ t('worlds.travelConfirmOpen') }}}"
+    >
+      {{{ t("worlds.travelConfirmOpen") }}}
+    </button>
+  </div>
+
+  <!-- Confirmation dialog -->
+  <div
+    class="modal-backdrop"
+    x-show="showTravelConfirm"
+    x-cloak
+    @click.self="showTravelConfirm = false"
+    @keydown.escape.window="showTravelConfirm = false"
+  >
+    <div
+      class="modal"
+      @click.stop
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="travel-confirm-heading"
+      data-testid="travel-confirm-dialog"
+    >
+      <h3 id="travel-confirm-heading">{{{ t("worlds.travelConfirmTitle") }}}</h3>
+      <p
+        class="muted"
+        x-text="t('worlds.travelConfirmBody', { name: locationById(destinationId)?.name || '—' })"
+      >
+      </p>
+      <div class="form-group">
+        <label class="form-label" for="travel-chat">{{{ t("worlds.travelChatLabel") }}}</label>
+        <select
+          id="travel-chat"
+          class="form-select"
+          x-model="travelChatId"
+          aria-label="{{{ t('worlds.travelChatLabel') }}}"
+          data-testid="travel-chat"
+        >
+          <option value="">{{{ t("worlds.travelChatPlaceholder") }}}</option>
+          <template x-for="chat in worldChats" :key="chat.id">
+            <option :value="chat.id" x-text="`${chat.name} (${chat.location_name || '—'})`"></option>
+          </template>
+        </select>
+      </div>
+      <div class="muted" role="status" x-show="travelMessage" x-text="travelMessage"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" @click="showTravelConfirm = false">
+          {{{ t("wizard.cancel") }}}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          :disabled="travelBusy || !travelChatId"
+          data-testid="travel-confirm-go"
+          @click="confirmTravel()"
+          aria-label="{{{ t('worlds.travelMoveChat') }}}"
+        >
+          {{{ t("worlds.travelMoveChat") }}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-time progress: transports on routes -->
+  <h5>{{{ t("worlds.travelOnTheMove") }}}</h5>
+  <div x-show="travelLoading" class="muted">{{{ t("worlds.locationLoading") }}}</div>
+  <div x-show="!travelLoading && transportProgresses.length === 0" class="muted">
+    {{{ t("worlds.travelNoTransports") }}}
+  </div>
+  <template x-for="tr in transportProgresses" :key="tr.name">
+    <div class="transport-row">
+      <div>
+        <strong x-text="tr.name"></strong>
+        <span
+          class="muted"
+          x-text="` — ${tr.routeName}${tr.nextStopName ? t('worlds.travelNextStop', { stop: tr.nextStopName }) : ''}`"
+        ></span>
+      </div>
+      <div
+        class="progress-track"
+        role="progressbar"
+        :aria-valuenow="tr.pct"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        :aria-label="t('worlds.travelProgressLabel', { name: tr.name })"
+      >
+        <div class="progress-fill" :style="`width:${tr.pct}%`"></div>
+      </div>
+      <div x-show="tr.hazards.length > 0" :aria-label="t('worlds.hazardsLabel')">
+        <span class="muted">{{{ t("worlds.hazardsLabel") }}}:</span>
+        <template x-for="h in tr.hazards" :key="h"><span class="tag" x-text="h"></span></template>
+      </div>
+    </div>
+  </template>
+
+  <!-- Fast-travel status: parties -->
+  <h5>{{{ t("worlds.travelParties") }}}</h5>
+  <div x-show="!travelLoading && partyStatuses.length === 0" class="muted">
+    {{{ t("worlds.travelNoParties") }}}
+  </div>
+  <template x-for="p in partyStatuses" :key="p.id">
+    <div
+      class="muted"
+      x-text="p.currentLocationName
+        ? t('worlds.travelPartyAt', { name: p.name, status: p.status, location: p.currentLocationName })
+        : t('worlds.travelPartyLabel', { name: p.name, status: p.status })"
+    >
+    </div>
+  </template>
+</section>
