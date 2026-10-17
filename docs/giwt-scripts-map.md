@@ -21,6 +21,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 - `check-parallel.mjs`, `check/*` (`check:*`, `ci`)
 - `check-file-size.ts`, `check-wiring.ts`, `check-context-weight.ts`, `check-md-links.ts`, `check-spdx.ts`, `check-licenses.ts`, `check-changelog.ts` (`size`, `wiring`, `context:weight`, `md:links`, `spdx`, `license`)
 - `i18n-reconcile.ts` (`i18n:*`); `gen-deno-config.ts`, `gen-pkg-from-deno.ts`, `audit-runtime-compat.ts` (`deno:*`)
+- `audit-branches.ts` (`audit:branches*` — advisory gate `branches - audit` in `check:parallel`; classify local branches vs a base ref without using `merge-base --is-ancestor`, which misreports every branch once the base moves)
 - `run-benchmarks.ts` (`bench:*` — code perf, stays until `giwt runs`/`report` covers it)
 - `src/scripts/version-bump.ts`, `src/scripts/commit-check.ts`, `src/scripts/smoke-app.ts` (`version:*`, `commit:*` — stay until giwt gains version/commit parity)
 - `scripts/lib/*` shared helpers; `*.test.ts` beside scripts
