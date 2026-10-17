@@ -139,6 +139,31 @@ describe("item commands", () => {
     expect(result.systemMessage,).toContain("**Value:** 50 · **Weight:** 3",);
     expect(result.systemMessage,).toContain("**Instances (2):**",);
     expect(result.systemMessage,).toContain(`actor ${charId}`,);
+
+    // Owner reads it, non-owner does not — same row, same command.
+    const denied = await itemGet([itemId,], ctx({ userId: otherId, },),);
+    expect(denied.systemMessage,).toBe(`Item ${itemId} not found or access denied.`,);
+    expect(denied.systemMessage,).not.toContain("A blunt blade.",);
+    expect(denied.action,).toBeUndefined();
+  });
+
+  test("ignores an item that lives in another world than the chat", async () => {
+    const foreign = await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {
+      description: "A foreign blade.",
+    },);
+
+    // Chat is on worldId, item lives in otherWorldId: narrowed out by the query
+    // rather than identified and then rejected afterwards.
+    const result = await itemGet([foreign,], ctx(),);
+    expect(result.systemMessage,).toBe(`Item ${foreign} not found or access denied.`,);
+    expect(result.systemMessage,).not.toContain("A foreign blade.",);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("still resolves the item's own world when the chat has none", async () => {
+    const result = await itemGet([itemId,], ctx({ activeChat: undefined, },),);
+    expect(result.action,).toBe("item-get",);
+    expect(result.systemMessage,).toContain("**Item:** Iron Sword",);
   });
 
   test("renders the empty-state for a definition with no placed copies", async () => {
@@ -178,6 +203,12 @@ describe("item commands", () => {
     expect(result.action,).toBe("inventory",);
     expect(result.systemMessage,).toContain("x3 **Iron Sword**",);
     expect(result.actionPayload!.charId,).toBe(charId,);
+
+    // A caller who owns neither the world nor the character gets nothing.
+    const denied = await inventory([], ctx({ userId: otherId, currentCharacter: { id: charId, name: "Iria", }, },),);
+    expect(denied.systemMessage,).toBe(`World ${worldId} not found or access denied.`,);
+    expect(denied.systemMessage,).not.toContain("Iron Sword",);
+    expect(denied.action,).toBeUndefined();
   });
 
   test("an explicit char id overrides the current character", async () => {

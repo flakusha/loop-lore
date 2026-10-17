@@ -134,6 +134,13 @@ describe("character commands", () => {
     expect(result.systemMessage,).toContain("DEX 16",);
     expect(result.systemMessage,).toContain("Tide gate",);
     expect(result.actionPayload!.lore as unknown[],).toHaveLength(1,);
+
+    // Same row, same command, caller who does not own it: refused, and no card
+    // field appears. Keeps this happy path from being tautological about access.
+    const denied = await charGet([charId,], ctx({ userId: otherId, },),);
+    expect(denied.systemMessage,).toBe(`Character ${charId} not found or access denied.`,);
+    expect(denied.systemMessage,).not.toContain("A weathered scout.",);
+    expect(denied.action,).toBeUndefined();
   });
 
   test("renders the empty-state for a character with no stats or lore", async () => {
