@@ -37,14 +37,20 @@ import type {
   LocationEdgeMode,
   LoreEntryStatus,
   MapType,
+  MemoryType,
   MessageContentFormat,
   MessageContentType,
   MessageRole,
   MessageStatus,
   MessageVisibility,
   ModelRole,
+  MonsterAlignment,
+  MonsterCategory,
+  MonsterDifficulty,
+  MonsterSize,
   NoteCategory,
   NotificationStatus,
+  NpcRelationshipType,
   PinnedState,
   PlayerAchievementStatus,
   PlaythroughStatus,
@@ -1864,4 +1870,68 @@ export interface MapZones {
   z: Generated<number>;
   metadata: Generated<string>;
   created_at: Generated<string>;
+}
+
+// ── npc_memories ────────────────────────────────────────────
+export interface NpcMemories {
+  id: Generated<string>;
+  world_id: string;
+  npc_id: string;
+  memory_type: Generated<MemoryType>;
+  content: string;
+  importance: Generated<number>;
+  emotional_impact: Generated<number>;
+  participants: Generated<string>;
+  location_id: string | null;
+  decay_rate: Generated<number>;
+  shared: Generated<number>;
+  created_at: Generated<string>;
+  last_reinforced_at: Generated<string>;
+  expires_at: string | null;
+}
+
+// ── npc_relationships ────────────────────────────────────────────
+export interface NpcRelationships {
+  id: Generated<string>;
+  world_id: string;
+  npc_id: string;
+  target_id: string;
+  standing: Generated<number>;
+  relationship_type: Generated<NpcRelationshipType>;
+  emotional_bond: Generated<number>;
+  history: Generated<string>;
+  last_interaction_at: Generated<string>;
+}
+
+// ── monster_templates ────────────────────────────────────────────
+export interface MonsterTemplates {
+  id: Generated<string>;
+  world_id: string | null;
+  name: string;
+  category: MonsterCategory;
+  subcategory: string | null;
+  size: Generated<MonsterSize>;
+  alignment: Generated<MonsterAlignment>;
+  difficulty: Generated<MonsterDifficulty>;
+  stats: Generated<string>;
+  loot_table: Generated<string>;
+  territorial: Generated<number>;
+  nocturnal: Generated<number>;
+  pack_size: Generated<number>;
+  behavior: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── monster_spawns ────────────────────────────────────────────
+export interface MonsterSpawns {
+  id: Generated<string>;
+  world_id: string;
+  location_id: string;
+  template_id: string;
+  spawned_at: Generated<string>;
+  territory_center_x: Generated<number>;
+  territory_center_y: Generated<number>;
+  territory_radius: Generated<number>;
+  despawn_at: string | null;
 }
