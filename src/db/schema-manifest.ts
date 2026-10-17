@@ -442,6 +442,45 @@ export const SCHEMA = new SchemaManifest()
     active: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("faction_memberships", {
+    id: col("text", { primaryKey: true, },),
+    faction_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    role: col("text", { notNull: true, hasDefault: true, },),
+    joined_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("faction_relationships", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    faction_a_id: col("text", { notNull: true, },),
+    faction_b_id: col("text", { notNull: true, },),
+    standing: col("real", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    history_json: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("faction_standing", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    faction_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    standing: col("real", { notNull: true, hasDefault: true, },),
+    quests_completed: col("integer", { notNull: true, hasDefault: true, },),
+    quests_failed: col("integer", { notNull: true, hasDefault: true, },),
+    items_traded: col("integer", { notNull: true, hasDefault: true, },),
+    enemies_killed: col("integer", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("factions", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    description: col("text", { notNull: true, hasDefault: true, },),
+    alignment: col("text", { notNull: true, hasDefault: true, },),
+    values_json: col("text", { notNull: true, hasDefault: true, },),
+    territory_json: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("game_states", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -588,6 +627,23 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     agency_mode: col("text", { notNull: true, hasDefault: true, },),
     action_type: col("text",),
+  },)
+  .table("karma_events", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    delta: col("real", { notNull: true, },),
+    reason: col("text", { notNull: true, hasDefault: true, },),
+    occurred_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("karma_profiles", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    overall: col("real", { notNull: true, hasDefault: true, },),
+    categories_json: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("log_entries", {
     id: col("text", { primaryKey: true, },),

@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
+import type { HandleOpts, } from "./types";
 import { Elysia, } from "elysia";
 import { anomalyRoutes, } from "./anomaly-routes";
 import { autonomyRoutes, } from "./autonomy-routes";
 import { chatsRoutes, } from "./chats";
 import { encounterRoutes, } from "./encounter-routes";
+import { factionRoutes, } from "./faction-routes";
 import { fractalLocationsRoutes, } from "./fractal-locations-routes";
 import { fractalTravelRoutes, } from "./fractal-travel-routes";
+import { karmaRoutes, } from "./karma-routes";
 import { locationEdgeRoutes, } from "./location-edges";
 import { locationRoutes, } from "./locations-routes";
 import { timelinesRoutes, } from "./timelines";
 import { travelStatusRoutes, } from "./travel-status";
-import type { HandleOpts, } from "./types";
-import { worldStreamRoutes, } from "./world-stream";
 import { worldRoutes, } from "./worlds-routes";
+import { worldStreamRoutes, } from "./world-stream";
 /**
  * @param opts
  * @param prefix
@@ -33,5 +34,7 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(travelStatusRoutes(opts, prefix,),)
     .use(locationEdgeRoutes(opts, prefix,),)
     .use(anomalyRoutes(opts, prefix,),)
-    .use(encounterRoutes(opts, prefix,),);
+    .use(encounterRoutes(opts, prefix,),)
+    .use(factionRoutes(opts, prefix,),)
+    .use(karmaRoutes(opts, prefix,),);
 }
