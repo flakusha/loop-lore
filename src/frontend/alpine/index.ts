@@ -56,6 +56,7 @@ import "./types";
 import "./user-info";
 import "./user-notifications";
 import "./world";
+import "./world-create-wizard";
 import "./world-edit";
 import "./world-lore";
 

@@ -10,19 +10,23 @@
  * with the chat location move, transport routes and the party simulation.
  */
 
-/** A selectable travel method. */
+/**
+ * A selectable travel method. Ids mirror the player-pickable adjacency modes
+ * of the `location_edges` mode enum (db/enums-story/world.ts).
+ */
 export interface TravelMethod {
-  id: "walk" | "ride" | "teleport";
+  id: "walk" | "ride" | "fly" | "teleport";
   label: string;
   icon: string;
   /** Location-units crossed per hour. Teleport is instant. */
   unitsPerHour: number;
 }
 
-/** The three selectable methods, in UI order. */
+/** The selectable methods, in UI order. */
 export const TRAVEL_METHODS: readonly TravelMethod[] = [
   { id: "walk", label: "Walk", icon: "🚶", unitsPerHour: 5, },
   { id: "ride", label: "Ride", icon: "🐎", unitsPerHour: 25, },
+  { id: "fly", label: "Fly", icon: "🕊️", unitsPerHour: 100, },
   { id: "teleport", label: "Teleport", icon: "✨", unitsPerHour: Number.POSITIVE_INFINITY, },
 ];
 
