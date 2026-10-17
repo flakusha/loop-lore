@@ -45,13 +45,13 @@ enum FetchEvent {
   /// Command list resolved.
   CommandList(Result<(Vec<CommandEntry>, Option<String>), String>),
   /// Gallery grid page resolved. Carries the request's own `page`/`replace`/
-  /// `query` so a response superseded by a newer search is dropped instead of
-  /// being applied under the current query's paging.
+  /// `filters` so a response superseded by a newer search is dropped instead
+  /// of being applied under the current filters' paging.
   GalleryPage {
     result: Result<Vec<crate::api::GalleryAsset>, String>,
     page: u32,
     replace: bool,
-    query: String,
+    filters: crate::api::GalleryFilters,
   },
   /// Asset attach resolved.
   Attach(Result<String, String>),
@@ -111,6 +111,10 @@ pub struct EguiApp {
   gallery_textures: HashMap<String, egui::TextureHandle>,
   /// Next gallery search query (set when the user presses Enter).
   gallery_search: String,
+  /// Gallery asset-type filter (mirrors the htmx type dropdown).
+  gallery_type: String,
+  /// Gallery sort order (mirrors the htmx sort dropdown).
+  gallery_sort: String,
   /// Gallery tab open flag (toggled from the top bar).
   gallery_open: bool,
 }
@@ -141,6 +145,8 @@ impl EguiApp {
       gallery: GalleryState::new(),
       gallery_textures: HashMap::new(),
       gallery_search: String::new(),
+      gallery_type: String::from("all"),
+      gallery_sort: String::from("name"),
       gallery_open: false,
     }
   }
@@ -393,10 +399,10 @@ impl EguiApp {
           result,
           page,
           replace,
-          query,
+          filters,
         } => {
           // A newer search already reset the grid: this response is stale.
-          if query != self.gallery.query {
+          if filters != self.gallery.filters {
             continue;
           }
           match result {
@@ -419,15 +425,20 @@ impl EguiApp {
   /// Spawn a gallery grid page fetch. `page` is 1-based.
   fn reload_gallery(&mut self, page: u32, replace: bool, ctx: &egui::Context) {
     if replace {
-      self.gallery.set_query(self.gallery_search.clone());
+      self.gallery.set_filters(api::GalleryFilters {
+        query: self.gallery_search.clone(),
+        asset_type: self.gallery_type.clone(),
+        tag: String::new(),
+        sort: self.gallery_sort.clone(),
+      });
     }
-    let query = self.gallery.query.clone();
+    let filters = self.gallery.filters.clone();
     self.gallery.loading = true;
     self.status = String::from("loading gallery");
     let events = Rc::clone(&self.events);
     let ctx = ctx.clone();
     client::spawn(async move {
-      let url = api::gallery_grid_url(page, &query);
+      let url = api::gallery_grid_url(page, &filters);
       let result = client::get_json(&url)
         .await
         .and_then(|raw| api::parse_gallery_grid(&raw));
@@ -435,7 +446,7 @@ impl EguiApp {
         result,
         page,
         replace,
-        query,
+        filters,
       });
       ctx.request_repaint();
     });
@@ -470,20 +481,48 @@ impl EguiApp {
   fn render_gallery(&mut self, ui: &mut egui::Ui) {
     let ctx = ui.ctx().clone();
 
-    // Search bar + upload button.
+    // Search bar + type/sort dropdowns (mirrors the htmx filter bar) + upload.
+    let mut refetch = false;
     ui.horizontal(|ui| {
       let search = TextEdit::singleline(&mut self.gallery_search)
         .id_salt("gallery-search")
         .hint_text("Search assets")
-        .desired_width(ui.available_width() - 120.0)
+        .desired_width(ui.available_width() - 320.0)
         .show(ui);
       if search.response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
-        self.reload_gallery(1, true, &ctx);
+        refetch = true;
       }
+      egui::ComboBox::from_id_salt("gallery-type")
+        .selected_text(self.gallery_type.as_str())
+        .show_ui(ui, |ui| {
+          for option in ["all", "image", "audio", "video"] {
+            if ui
+              .selectable_value(&mut self.gallery_type, option.to_string(), option)
+              .clicked()
+            {
+              refetch = true;
+            }
+          }
+        });
+      egui::ComboBox::from_id_salt("gallery-sort")
+        .selected_text(self.gallery_sort.as_str())
+        .show_ui(ui, |ui| {
+          for option in ["name", "newest", "oldest"] {
+            if ui
+              .selectable_value(&mut self.gallery_sort, option.to_string(), option)
+              .clicked()
+            {
+              refetch = true;
+            }
+          }
+        });
       if ui.button("Upload").clicked() {
         self.upload_asset();
       }
     });
+    if refetch {
+      self.reload_gallery(1, true, &ctx);
+    }
 
     if let Some(error) = self.gallery.error.clone() {
       ui.colored_label(egui::Color32::RED, &error);
