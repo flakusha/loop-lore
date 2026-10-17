@@ -274,6 +274,132 @@ fn parse_message_row(row: &serde_json::Value) -> Result<ChatMessage, String> {
   })
 }
 
+// ---------------------------------------------------------------------------
+// Gallery
+// ---------------------------------------------------------------------------
+
+/// Server-side page size of the gallery grid (`GRID_PAGE_SIZE` server-side).
+pub(crate) const GALLERY_PAGE_SIZE: u32 = 200;
+
+/// One gallery asset as the grid needs it — the JSON view-model seam
+/// (`GET /dynamic/gallery/grid` with `Accept: application/json`), the same
+/// rows the htmx fragment renders.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GalleryAsset {
+  /// Asset id.
+  pub id: String,
+  /// File name.
+  pub filename: String,
+  /// `image` | `audio` | `video`.
+  pub asset_type: String,
+  /// Size in bytes.
+  pub size_bytes: u64,
+  /// Pre-computed size label.
+  pub size_label: String,
+  /// Thumbnail URL for images; `None` for other types.
+  pub thumb_url: Option<String>,
+  /// Visible tag names in query order.
+  pub tags: Vec<String>,
+  /// `public` | `private`.
+  pub visibility: String,
+  /// Raw `created_at` column.
+  pub created_at: String,
+}
+
+/// URL for the gallery grid view-model page. `q` mirrors the htmx search input.
+pub fn gallery_grid_url(page: u32, query: &str) -> String {
+  if query.is_empty() {
+    format!("/dynamic/gallery/grid?page={page}")
+  } else {
+    format!("/dynamic/gallery/grid?page={page}&q={query}")
+  }
+}
+
+/// URL for the upload endpoint (multipart POST).
+pub fn gallery_upload_url() -> &'static str {
+  "/api/v1/assets"
+}
+
+/// URL for attaching an asset to a chat.
+pub fn gallery_attach_url(asset_id: &str) -> String {
+  format!("/api/v1/assets/{asset_id}/links")
+}
+
+/// Parse the gallery grid view-model into assets, preserving order.
+///
+/// The server returns `{assets: [{id, filename, assetType, sizeBytes,
+/// sizeLabel, thumbUrl, tags, visibility, createdAt}]}`. `thumbUrl` is null
+/// for non-images.
+pub fn parse_gallery_grid(raw: &str) -> Result<Vec<GalleryAsset>, String> {
+  let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
+  let assets = value
+    .get("assets")
+    .and_then(|a| a.as_array())
+    .ok_or_else(|| "gallery view-model has no assets array".to_string())?;
+  let mut out = Vec::with_capacity(assets.len());
+  for (index, row) in assets.iter().enumerate() {
+    let asset = parse_gallery_row(row).map_err(|e| format!("asset {index}: {e}"))?;
+    out.push(asset);
+  }
+  Ok(out)
+}
+
+fn parse_gallery_row(row: &serde_json::Value) -> Result<GalleryAsset, String> {
+  let thumb = row.get("thumbUrl").and_then(|v| v.as_str());
+  Ok(GalleryAsset {
+    id: row
+      .get("id")
+      .and_then(|v| v.as_str())
+      .ok_or("id missing")?
+      .to_string(),
+    filename: row
+      .get("filename")
+      .and_then(|v| v.as_str())
+      .unwrap_or("")
+      .to_string(),
+    asset_type: row
+      .get("assetType")
+      .and_then(|v| v.as_str())
+      .unwrap_or("image")
+      .to_string(),
+    size_bytes: row.get("sizeBytes").and_then(|v| v.as_u64()).unwrap_or(0),
+    size_label: row
+      .get("sizeLabel")
+      .and_then(|v| v.as_str())
+      .unwrap_or("")
+      .to_string(),
+    thumb_url: if thumb.map_or(true, |u| u.is_empty()) {
+      None
+    } else {
+      thumb.map(String::from)
+    },
+    tags: row
+      .get("tags")
+      .and_then(|v| v.as_array())
+      .map(|arr| {
+        arr.iter()
+          .filter_map(|t| t.as_str().map(String::from))
+          .collect()
+      })
+      .unwrap_or_default(),
+    visibility: row
+      .get("visibility")
+      .and_then(|v| v.as_str())
+      .unwrap_or("public")
+      .to_string(),
+    created_at: row
+      .get("createdAt")
+      .and_then(|v| v.as_str())
+      .unwrap_or("")
+      .to_string(),
+  })
+}
+
+/// Body for attaching an asset to a chat; `serde_json` performs the escaping.
+pub fn gallery_attach_body(chat_id: &str) -> String {
+  serde_json::json!({ "entityType": "chat", "entityId": chat_id }).to_string()
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -410,5 +536,45 @@ mod tests {
   fn command_list_rejects_garbage() {
     assert!(parse_command_list("nope").is_err());
     assert!(parse_command_list("{\"data\":\"x\"}").is_err());
+  }
+
+  #[test]
+  fn gallery_urls_carry_page_query_and_ids() {
+    assert_eq!(gallery_grid_url(1, ""), "/dynamic/gallery/grid?page=1");
+    assert_eq!(gallery_grid_url(3, "cat"), "/dynamic/gallery/grid?page=3&q=cat");
+    assert_eq!(gallery_upload_url(), "/api/v1/assets");
+    assert_eq!(gallery_attach_url("a1"), "/api/v1/assets/a1/links");
+    assert_eq!(gallery_attach_body("c1"), "{\"entityId\":\"c1\",\"entityType\":\"chat\"}");
+  }
+
+  #[test]
+  fn gallery_grid_parses_view_model_in_order() {
+    let raw = r#"{"assets":[
+      {"id":"a1","filename":"cat.png","assetType":"image","sizeBytes":2048,"sizeLabel":"2.0 KB","thumbUrl":"/api/v1/assets/a1/thumb","tags":["pet"],"visibility":"public","createdAt":"2026-10-01"},
+      {"id":"a2","filename":"voice.mp3","assetType":"audio","sizeBytes":1048576,"sizeLabel":"1.0 MB","thumbUrl":null,"tags":[],"visibility":"private","createdAt":"2026-10-02"}
+    ]}"#;
+    let assets = parse_gallery_grid(raw).unwrap();
+    assert_eq!(assets.len(), 2);
+    assert_eq!(assets[0].id, "a1");
+    assert_eq!(assets[0].thumb_url.as_deref(), Some("/api/v1/assets/a1/thumb"));
+    assert_eq!(assets[0].tags, vec!["pet"]);
+    assert_eq!(assets[0].size_label, "2.0 KB");
+    assert_eq!(assets[1].id, "a2");
+    assert_eq!(assets[1].thumb_url, None);
+    assert_eq!(assets[1].visibility, "private");
+  }
+
+  #[test]
+  fn gallery_grid_defaults_and_rejects_garbage() {
+    let minimal = r#"{"assets":[{"id":"a1"}]}"#;
+    let assets = parse_gallery_grid(minimal).unwrap();
+    assert_eq!(assets[0].filename, "");
+    assert_eq!(assets[0].asset_type, "image");
+    assert_eq!(assets[0].size_bytes, 0);
+    assert_eq!(assets[0].tags.len(), 0);
+    assert_eq!(assets[0].visibility, "public");
+    assert!(parse_gallery_grid("nope").is_err());
+    assert!(parse_gallery_grid("{\"assets\":\"x\"}").is_err());
+    assert!(parse_gallery_grid("{\"assets\":[{\"noId\":1}]}").is_err());
   }
 }

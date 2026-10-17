@@ -3,7 +3,7 @@
 
 # TASK: egui gallery surface: grid, filters, thumbnails, upload
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-experimental-egui-frontend

@@ -6,6 +6,7 @@
 //! [`crate::context`]) and takes it back through the same context.
 
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use eframe::{App, CreationContext};
@@ -17,6 +18,7 @@ use crate::client;
 use crate::command;
 use crate::context::FrontendContext;
 use crate::emoji;
+use crate::gallery::{self, GalleryState};
 use crate::storage;
 use crate::stream::{self, StreamEvent, StreamState};
 
@@ -42,6 +44,8 @@ enum FetchEvent {
   EmojiRegistry(Result<Vec<(String, String)>, String>),
   /// Command list resolved.
   CommandList(Result<(Vec<CommandEntry>, Option<String>), String>),
+  /// Gallery grid page resolved.
+  GalleryPage(Result<Vec<crate::api::GalleryAsset>, String>),
 }
 
 /// One live generation stream: the chat it belongs to plus its state.
@@ -92,6 +96,16 @@ pub struct EguiApp {
   palette_query: String,
   /// Highlighted palette index.
   palette_active: usize,
+  /// Gallery grid state (rows, paging, thumbnail requests).
+  gallery: GalleryState,
+  /// Loaded gallery thumbnails, keyed by asset id.
+  gallery_textures: HashMap<String, egui::TextureHandle>,
+  /// Upload progress flag (bridge has a file in flight).
+  uploading: bool,
+  /// Next gallery search query (set when the user presses Enter).
+  gallery_search: String,
+  /// Gallery tab open flag (toggled from the top bar).
+  gallery_open: bool,
 }
 
 impl EguiApp {
@@ -117,6 +131,11 @@ impl EguiApp {
       palette_open: false,
       palette_query: String::new(),
       palette_active: 0,
+      gallery: GalleryState::new(),
+      gallery_textures: HashMap::new(),
+      uploading: false,
+      gallery_search: String::new(),
+      gallery_open: false,
     }
   }
 
@@ -364,7 +383,198 @@ impl EguiApp {
           self.role_in_chat = role;
         }
         FetchEvent::CommandList(Err(_)) => {}
+        FetchEvent::GalleryPage(Ok(assets)) => {
+          let page = self.gallery.page;
+          self.gallery.apply_page(assets, page, page == 1);
+          self.status = String::from("gallery loaded");
+        }
+        FetchEvent::GalleryPage(Err(e)) => self.status = format!("gallery failed: {e}"),
       }
+    }
+  }
+
+  /// Spawn a gallery grid page fetch. `page` is 1-based.
+  fn reload_gallery(&mut self, page: u32, replace: bool, ctx: &egui::Context) {
+    if replace {
+      self.gallery.set_query(self.gallery_search.clone());
+    }
+    let query = self.gallery.query.clone();
+    self.gallery.loading = true;
+    self.status = String::from("loading gallery");
+    let events = Rc::clone(&self.events);
+    let ctx = ctx.clone();
+    client::spawn(async move {
+      let url = api::gallery_grid_url(page, &query);
+      let result = client::get_json(&url)
+        .await
+        .and_then(|raw| api::parse_gallery_grid(&raw));
+      events.borrow_mut().push(FetchEvent::GalleryPage(result));
+      ctx.request_repaint();
+    });
+  }
+
+  /// Ask the bridge to open the file picker and upload the chosen file.
+  fn upload_asset(&mut self) {
+    self.uploading = true;
+    self.status = String::from("uploading");
+    gallery::upload_asset();
+  }
+
+  /// Ask the bridge to attach `asset_id` to the active chat.
+  fn attach_asset(&mut self, asset_id: String) {
+    let Some(chat_id) = self.context.active_chat_id.clone() else {
+      self.status = String::from("pick a chat first");
+      return;
+    };
+    self.status = String::from("attaching");
+    gallery::attach_asset(&asset_id, &chat_id);
+  }
+
+  /// Render the gallery panel: search bar, upload button, and asset grid.
+  fn render_gallery(&mut self, ui: &mut egui::Ui) {
+    let ctx = ui.ctx().clone();
+
+    // Search bar + upload button.
+    ui.horizontal(|ui| {
+      let search = TextEdit::singleline(&mut self.gallery_search)
+        .id_salt("gallery-search")
+        .hint_text("Search assets")
+        .desired_width(ui.available_width() - 120.0)
+        .show(ui);
+      if search.response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
+        self.reload_gallery(1, true, &ctx);
+      }
+      if ui.button("Upload").clicked() {
+        self.upload_asset();
+      }
+    });
+
+    if let Some(error) = self.gallery.error.clone() {
+      ui.colored_label(egui::Color32::RED, &error);
+    }
+    if self.gallery.loading && self.gallery.cells.is_empty() {
+      ui.spinner();
+      ui.label("loading...");
+      return;
+    }
+    if self.gallery.cells.is_empty() {
+      ui.label("No assets yet");
+      return;
+    }
+
+    // Asset grid: 4 columns, thumbnails with filename + attach button.
+    let cell_size = 160.0;
+    let cols = 4;
+    let mut attach_clicked: Option<String> = None;
+    egui::Grid::new("gallery-grid")
+      .spacing([8.0, 8.0])
+      .min_col_width(cell_size)
+      .show(ui, |ui| {
+        let mut col = 0;
+        for cell in &self.gallery.cells {
+          ui.vertical(|ui| {
+            ui.set_min_size([cell_size, cell_size + 40.0].into());
+
+            // Thumbnail or placeholder.
+            if let Some(texture) = self.gallery_textures.get(&cell.asset.id) {
+              let img = egui::Image::new(texture)
+                .fit_to_exact_size(egui::vec2(cell_size, cell_size));
+              ui.add(img);
+            } else {
+              let (rect, _) = ui.allocate_exact_size(
+                egui::vec2(cell_size, cell_size),
+                egui::Sense::hover(),
+              );
+              ui.painter().rect_stroke(
+                rect,
+                4.0,
+                egui::Stroke::new(1.0, egui::Color32::GRAY),
+                egui::StrokeKind::Outside,
+              );
+              if cell.thumb_failed {
+                ui.label("[failed]");
+              } else {
+                ui.spinner();
+              }
+            }
+
+            // Filename (truncated).
+            let name = if cell.asset.filename.len() > 20 {
+              format!("{}...", &cell.asset.filename[..20])
+            } else {
+              cell.asset.filename.clone()
+            };
+            ui.label(egui::RichText::new(name).small());
+
+            // Attach button.
+            if ui.button("Attach").clicked() {
+              attach_clicked = Some(cell.asset.id.clone());
+            }
+          });
+
+          col += 1;
+          if col >= cols {
+            col = 0;
+            ui.end_row();
+          }
+        }
+        if col != 0 {
+          ui.end_row();
+        }
+      });
+    if let Some(asset_id) = attach_clicked {
+      self.attach_asset(asset_id);
+    }
+
+    // Load more.
+    if self.gallery.has_more && !self.gallery.loading {
+      ui.horizontal(|ui| {
+        if ui.button("Load more").clicked() {
+          self.reload_gallery(self.gallery.page + 1, false, &ctx);
+        }
+      });
+    }
+  }
+
+  /// Drain thumbnail requests to the bridge and ready/failed uploads back.
+  fn drain_gallery_bridge(&mut self, ctx: &egui::Context) {
+    // Pending thumbnails -> bridge. `drain_pending_thumbs` marks each cell
+    // as requested so the next `enqueue_missing_thumbs` skips it.
+    self.gallery.enqueue_missing_thumbs();
+    for request in self.gallery.drain_pending_thumbs() {
+      gallery::request_thumbnail(&request.asset_id, &request.url);
+    }
+    // Ready thumbnails -> texture cache.
+    for pixels in gallery::drain_thumb_ready() {
+      if let (Some(w), Some(h)) = (u32::try_from(pixels.width).ok(), u32::try_from(pixels.height).ok()) {
+        if w > 0 && h > 0 && pixels.rgba.len() == (w * h * 4) as usize {
+          let image = egui::ColorImage::from_rgba_unmultiplied([w as usize, h as usize], &pixels.rgba);
+          let handle = ctx.load_texture(&format!("gallery:{}", pixels.asset_id), image, egui::TextureOptions::default());
+          self.gallery_textures.insert(pixels.asset_id.clone(), handle);
+        }
+      }
+      self.gallery.apply_thumb(pixels);
+    }
+    for asset_id in gallery::drain_thumb_failed() {
+      self.gallery.apply_thumb_failed(asset_id);
+    }
+    // Upload completion.
+    for asset_id in gallery::drain_uploaded() {
+      self.uploading = false;
+      if asset_id.is_empty() {
+        self.status = String::from("upload failed");
+      } else {
+        self.status = String::from("uploaded");
+        self.reload_gallery(self.gallery.page, true, ctx);
+      }
+    }
+    // Attach results.
+    for (asset_id, ok) in gallery::drain_attach_results() {
+      self.status = if ok {
+        String::from("attached")
+      } else {
+        format!("attach failed: {asset_id}")
+      };
     }
   }
 
@@ -411,6 +621,9 @@ impl App for EguiApp {
   fn logic(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
     self.drain_events();
     self.drain_stream_events(ctx);
+    if self.gallery_open {
+      self.drain_gallery_bridge(ctx);
+    }
     if !self.started {
       self.started = true;
       self.reload_chats(ctx);
@@ -435,6 +648,16 @@ impl App for EguiApp {
           storage::assign_location(&self.context.return_to);
         }
         ui.separator();
+        if ui.selectable_label(!self.gallery_open, "Chat").clicked() {
+          self.gallery_open = false;
+        }
+        if ui.selectable_label(self.gallery_open, "Gallery").clicked() {
+          self.gallery_open = true;
+          if self.gallery.cells.is_empty() && !self.gallery.loading {
+            self.reload_gallery(1, true, &ctx);
+          }
+        }
+        ui.separator();
         ui.label(&self.status);
       });
     });
@@ -456,6 +679,10 @@ impl App for EguiApp {
     });
 
     CentralPanel::default().show(ui, |ui| {
+      if self.gallery_open {
+        self.render_gallery(ui);
+        return;
+      }
       ScrollArea::vertical().stick_to_bottom(true).show(ui, |ui| {
         for message in &self.messages {
           ui.horizontal_wrapped(|ui| {

@@ -24,6 +24,7 @@ mod client;
 mod command;
 mod context;
 mod emoji;
+mod gallery;
 mod storage;
 mod stream;
 
