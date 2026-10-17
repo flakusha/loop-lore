@@ -38462,6 +38462,10 @@
   "src/routes/export-shared/worlds.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-world-shaping-divine.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-worlds-extension.md"
     }
   ],
@@ -45445,6 +45449,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-diplomacy-karma.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-shaping-divine.md"
     },
     {
       "kind": "ticket",
@@ -52724,6 +52732,10 @@
     }
   ],
   "src/worlds/timescale.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-travel-time.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-worlds-extension.md"
