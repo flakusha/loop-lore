@@ -211,4 +211,10 @@ export interface DB {
   location_anomalies: import("./schema-core").LocationAnomalies;
   encounter_templates: import("./schema-core").EncounterTemplates;
   encounter_rolls: import("./schema-core").EncounterRolls;
+  factions: import("./schema-core").Factions;
+  faction_memberships: import("./schema-core").FactionMemberships;
+  faction_relationships: import("./schema-core").FactionRelationships;
+  faction_standing: import("./schema-core").FactionStanding;
+  karma_profiles: import("./schema-core").KarmaProfiles;
+  karma_events: import("./schema-core").KarmaEvents;
 }

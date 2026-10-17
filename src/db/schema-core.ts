@@ -23,10 +23,14 @@ import type {
   EncounterTriggerType,
   EncounterType,
   EquipState,
+  FactionAlignment,
+  FactionDiplomaticStatus,
+  FactionRole,
   InteractionCategory,
   InteractionOutcome,
   InviteStatus,
   ItemCategory,
+  KarmaCategory,
   KeyStatus,
   KeyType,
   LocationEdgeMode,
@@ -1713,4 +1717,72 @@ export interface EncounterRolls {
   difficulty_rolled: Generated<number>;
   outcome: Generated<string>;
   cooldown_until: string | null;
+}
+
+// ── factions ────────────────────────────────────────────
+export interface Factions {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  description: Generated<string>;
+  alignment: Generated<FactionAlignment>;
+  values_json: Generated<string>;
+  territory_json: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── faction_memberships ────────────────────────────────────────────
+export interface FactionMemberships {
+  id: Generated<string>;
+  faction_id: string;
+  actor_id: string;
+  role: Generated<FactionRole>;
+  joined_at: Generated<string>;
+}
+
+// ── faction_relationships ────────────────────────────────────────────
+export interface FactionRelationships {
+  id: Generated<string>;
+  world_id: string;
+  faction_a_id: string;
+  faction_b_id: string;
+  standing: Generated<number>;
+  status: Generated<FactionDiplomaticStatus>;
+  history_json: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── faction_standing ────────────────────────────────────────────
+export interface FactionStanding {
+  id: Generated<string>;
+  world_id: string;
+  faction_id: string;
+  actor_id: string;
+  standing: Generated<number>;
+  quests_completed: Generated<number>;
+  quests_failed: Generated<number>;
+  items_traded: Generated<number>;
+  enemies_killed: Generated<number>;
+  updated_at: Generated<string>;
+}
+
+// ── karma_profiles ────────────────────────────────────────────
+export interface KarmaProfiles {
+  id: Generated<string>;
+  world_id: string;
+  actor_id: string;
+  overall: Generated<number>;
+  categories_json: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── karma_events ────────────────────────────────────────────
+export interface KarmaEvents {
+  id: Generated<string>;
+  world_id: string;
+  actor_id: string;
+  category: KarmaCategory;
+  delta: number;
+  reason: Generated<string>;
+  occurred_at: Generated<string>;
 }

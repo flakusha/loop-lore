@@ -199,6 +199,26 @@ export const ExtractionKindSchema = t.UnionEnum([
   "manual",
   "carry_forward",
 ],);
+export const FactionAlignmentSchema = t.UnionEnum([
+  "lawful_good",
+  "neutral_good",
+  "chaotic_good",
+  "lawful_neutral",
+  "true_neutral",
+  "chaotic_neutral",
+  "lawful_evil",
+  "neutral_evil",
+  "chaotic_evil",
+],);
+export const FactionDiplomaticStatusSchema = t.UnionEnum([
+  "allied",
+  "friendly",
+  "neutral",
+  "unfriendly",
+  "hostile",
+  "at_war",
+],);
+export const FactionRoleSchema = t.UnionEnum(["leader", "officer", "member", "ally",],);
 export const FantasyCategorySchema = t.UnionEnum([
   "power_exchange",
   "exhibitionism",
@@ -287,6 +307,16 @@ export const ItemRaritySchema = t.UnionEnum([
   "artifact",
 ],);
 export const ItemVisibilitySchema = t.UnionEnum(["visible", "hidden",],);
+export const KarmaCategorySchema = t.UnionEnum([
+  "honor",
+  "mercy",
+  "justice",
+  "craft",
+  "greed",
+  "cruelty",
+  "treachery",
+  "piety",
+],);
 export const KeyStatusSchema = t.UnionEnum(["active", "expired", "revoked",],);
 export const KeyTypeSchema = t.UnionEnum(["signing", "encryption", "symmetric", "master", "primary",],);
 export const LicenseTypeSchema = t.UnionEnum([
@@ -3325,4 +3355,66 @@ export const EncounterRollsSchema = t.Object({
   difficulty_rolled: t.Optional(t.Number(),),
   outcome: t.Optional(t.String(),),
   cooldown_until: t.Optional(t.String(),),
+},);
+
+// ── factions ────────────────────────────────────────────
+export const FactionsSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  description: t.Optional(t.String(),),
+  alignment: t.Optional(FactionAlignmentSchema,),
+  values_json: t.Optional(t.String(),),
+  territory_json: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── faction_memberships ────────────────────────────────────────────
+export const FactionMembershipsSchema = t.Object({
+  faction_id: t.String(),
+  actor_id: t.String(),
+  role: t.Optional(FactionRoleSchema,),
+  joined_at: t.Optional(t.String(),),
+},);
+
+// ── faction_relationships ────────────────────────────────────────────
+export const FactionRelationshipsSchema = t.Object({
+  world_id: t.String(),
+  faction_a_id: t.String(),
+  faction_b_id: t.String(),
+  standing: t.Optional(t.Number(),),
+  status: t.Optional(FactionDiplomaticStatusSchema,),
+  history_json: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── faction_standing ────────────────────────────────────────────
+export const FactionStandingSchema = t.Object({
+  world_id: t.String(),
+  faction_id: t.String(),
+  actor_id: t.String(),
+  standing: t.Optional(t.Number(),),
+  quests_completed: t.Optional(t.Number(),),
+  quests_failed: t.Optional(t.Number(),),
+  items_traded: t.Optional(t.Number(),),
+  enemies_killed: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── karma_profiles ────────────────────────────────────────────
+export const KarmaProfilesSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+  overall: t.Optional(t.Number(),),
+  categories_json: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── karma_events ────────────────────────────────────────────
+export const KarmaEventsSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+  category: KarmaCategorySchema,
+  delta: t.Number(),
+  reason: t.Optional(t.String(),),
+  occurred_at: t.Optional(t.String(),),
 },);
