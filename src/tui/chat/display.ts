@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { escapeMarkup, } from "../markup";
 import type { ChatMessage, } from "./types";
 
 /**
@@ -12,8 +13,8 @@ import type { ChatMessage, } from "./types";
  */
 export function formatMessageLine(message: ChatMessage,): string {
   const prefix = message.actorName
-    ? `{bold}${message.actorName}{/bold}: `
-    : `{bold}${message.role}{/bold}: `;
+    ? `{bold}${escapeMarkup(message.actorName,)}{/bold}: `
+    : `{bold}${escapeMarkup(message.role,)}{/bold}: `;
 
   // ponytail: O(n) scan of message content — content is LLM output, not a
   // hot path. Profile first before swapping for a reverse-index approach.
@@ -26,5 +27,5 @@ export function formatMessageLine(message: ChatMessage,): string {
 
   const needs_ellipsis = Bun.stringWidth(message.content,) > MAX_WIDTH;
 
-  return `${prefix}${truncated}${needs_ellipsis ? "..." : ""}`;
+  return `${prefix}${escapeMarkup(truncated,)}${needs_ellipsis ? "..." : ""}`;
 }

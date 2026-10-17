@@ -3,7 +3,7 @@
 
 # TASK: TUI markup injection, unencoded URLs, and shutdown hygiene
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-terminal-ui
@@ -47,8 +47,39 @@ Lives in `src/scripts/log-query.ts` and `src/scripts/migrate-character-legacy.ts
 
 **Acceptance Criteria:**
 
-- [ ] Defect 1 (markup injection): all untrusted strings in blessed markup calls are brace-escaped or rendered with `tags: false`
-- [ ] Defect 2 (unencoded URLs): all dynamic URL segments are wrapped in `encodeURIComponent`
-- [ ] Defects 1–2 implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated (markup escaping policy documented)
+- [x] Defect 1 (markup injection): all untrusted strings in blessed markup calls are brace-escaped
+- [x] Defect 2 (unencoded URLs): all dynamic URL segments are wrapped in `encodeURIComponent`
+- [x] Defects 1–2 implementation complete
+- [x] Tests passing
+- [x] Resolution recorded
+
+## Resolution
+
+**Markup escaping (Defect 1):**
+
+New shared helper `src/tui/markup.ts` exports `escapeMarkup(text)` — a typed wrapper around `blessed.helpers.escape` (untyped in `@types/blessed`). Replaces `{` with `{open}` and `}` with `{close}` so blessed's tag parser renders literal braces.
+
+Sites escaped:
+- `src/tui/chat/display.ts` — `formatMessageLine`: `message.actorName`, `message.role`, truncated `message.content`
+- `src/tui/chat/index.ts` — `showError`: `message` parameter
+- `src/tui/asset-view.ts` — `renderCurrent`: `asset.filename`, `asset.asset_type`, `asset.mime_type`, `asset.alt_text`
+- `src/tui/harness/display.ts` — `formatRunLine`: `task`, `model`, `result`; `formatRunDetail`: `runId`, `task`, `taskType`, `model`, `result`, `error`, `tools.join(", ")`, `pattern`, `patternDetail`, `toolingGap`, `branch`, `gitSha`, `turnId`, `msg`
+- `src/tui/app.ts` — `updateStatus`: `msg`, `API_BASE`
+- `src/tui/models-display.ts` — `formatProviderHealth`: provider `name`
+
+**URL encoding (Defect 2):**
+
+Sites wrapped with `encodeURIComponent`:
+- `src/tui/chat/api.ts` — `handleSend`: `host.chatId`; `loadMessages`: `host.chatId`, `host.cursor`
+- `src/tui/asset-view.ts` — `loadAssets`: `this.chatId` (entity_id query param)
+- `src/tui/harness/api.ts` — `loadRuns`: `limit`; `loadRunDetail`: `runId`
+- `src/tui/models-api.ts` — `loadProviderModels`: `provider` (path segment)
+
+**Tests added:**
+- `src/tui/chat/display.test.ts` — 4 escaping tests (actorName, role, content, both braces)
+- `src/tui/harness/display.test.ts` — 6 escaping tests (task/model/result in formatRunLine; error/task/msg in formatRunDetail)
+- `src/tui/chat/api.test.ts` — 4 URL encoding tests (chatId with `/`, `?`; cursor with `/` and `?`)
+- `src/tui/harness/api.test.ts` — 2 URL encoding tests (runId with `/`, `?`)
+- `src/tui/asset-view.test.ts` — 2 URL encoding tests (chatId with `/`, `?`)
+
+**Verification:** `bun test src/tui/` — 174 pass, 106 skip, 0 fail. Typecheck, ESLint, and dprint all clean.

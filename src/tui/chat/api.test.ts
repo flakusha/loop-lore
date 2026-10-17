@@ -287,4 +287,39 @@ describe("loadMessages", () => {
     await loadMessages(host,);
     expect(host.showErrorMessages,).toEqual(["Network error loading messages: netfail",],);
   });
+
+  // --- URL encoding tests ---
+
+  it("percent-encodes chatId containing / in handleSend", async () => {
+    const host = makeHost({ chatId: "abc/def", },);
+    stubFetchJson(201, { id: "m1", },);
+    await handleSend(host, "hello",);
+    const captured = getCaptured();
+    expect(captured.url,).toContain("abc%2Fdef",);
+    expect(captured.url,).not.toContain("abc/def",);
+  });
+
+  it("percent-encodes chatId containing ? in handleSend", async () => {
+    const host = makeHost({ chatId: "abc?def", },);
+    stubFetchJson(201, { id: "m1", },);
+    await handleSend(host, "hello",);
+    const captured = getCaptured();
+    expect(captured.url,).toContain("abc%3Fdef",);
+  });
+
+  it("percent-encodes chatId containing / in loadMessages", async () => {
+    const host = makeHost({ chatId: "abc/def", },);
+    stubFetchJson(200, { data: [], cursor: null, },);
+    await loadMessages(host,);
+    const captured = getCaptured();
+    expect(captured.url,).toContain("abc%2Fdef",);
+  });
+
+  it("percent-encodes cursor in loadMessages", async () => {
+    const host = makeHost({ chatId: "c1", cursor: "abc/def?ghi", },);
+    stubFetchJson(200, { data: [], cursor: null, },);
+    await loadMessages(host,);
+    const captured = getCaptured();
+    expect(captured.url,).toContain("cursor=abc%2Fdef%3Fghi",);
+  });
 });

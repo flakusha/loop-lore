@@ -12,6 +12,7 @@
 import blessed from "blessed";
 import { safeFetch, } from "../utils";
 import { API_BASE, } from "./chat";
+import { escapeMarkup, } from "./markup";
 
 let _fetch = safeFetch;
 
@@ -126,12 +127,12 @@ export class AssetView {
     );
 
     this.infoLabel.setContent(
-      `{bold}Name:{/bold} ${asset.filename}\n` +
-        `{bold}Type:{/bold} ${asset.asset_type}\n` +
-        `{bold}MIME:{/bold} ${asset.mime_type}\n` +
+      `{bold}Name:{/bold} ${escapeMarkup(asset.filename,)}\n` +
+        `{bold}Type:{/bold} ${escapeMarkup(asset.asset_type,)}\n` +
+        `{bold}MIME:{/bold} ${escapeMarkup(asset.mime_type,)}\n` +
         `{bold}Size:{/bold} ${sizeStr}\n` +
         `{bold}Added:{/bold} ${asset.created_at.slice(0, 10,)}\n${
-          asset.alt_text ? `{bold}Alt:{/bold} ${asset.alt_text}\n` : ""
+          asset.alt_text ? `{bold}Alt:{/bold} ${escapeMarkup(asset.alt_text,)}\n` : ""
         }\n{cyan-fg}← → navigate{/cyan-fg}`,
     );
 
@@ -224,7 +225,10 @@ export class AssetView {
     }
 
     try {
-      const url = `${API_BASE}/api/v1/assets?entity_type=chat&entity_id=${this.chatId}&pageSize=100`;
+      const url = `${API_BASE}/api/v1/assets?entity_type=chat&entity_id=${
+        encodeURIComponent(this.chatId,)
+      }&pageSize=100`;
+
       const result = await _fetch<{ data?: LinkedAsset[] }>(url, {
         auth: this.sessionToken ? { sessionToken: this.sessionToken, } : undefined,
         handle401: false,

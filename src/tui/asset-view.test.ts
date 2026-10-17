@@ -128,4 +128,23 @@ describe("AssetView — loadAssets auth", () => {
 
     expect(calls,).toHaveLength(0,);
   });
+
+  // --- Markup escaping + URL encoding tests ---
+
+  it("percent-encodes chatId containing / in loadAssets URL", async () => {
+    const view = buildView();
+    view.chatId = "abc/def";
+    stubClient();
+    await view.loadAssets();
+    expect(calls[0]!.url,).toContain("entity_id=abc%2Fdef",);
+    expect(calls[0]!.url,).not.toContain("entity_id=abc/def",);
+  });
+
+  it("percent-encodes chatId containing ? in loadAssets URL", async () => {
+    const view = buildView();
+    view.chatId = "abc?def";
+    stubClient();
+    await view.loadAssets();
+    expect(calls[0]!.url,).toContain("entity_id=abc%3Fdef",);
+  });
 });

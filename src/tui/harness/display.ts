@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { escapeMarkup, } from "../markup";
 import type { HarnessResult, HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types";
 
 const MAX_TASK_LEN = 48;
@@ -58,7 +59,9 @@ export function formatRunLine(summary: HarnessRunSummary,): string {
     ? "$<0.001"
     : `$${summary.costUsd.toFixed(summary.costUsd < 0.01 ? 3 : 2,)}`;
 
-  return `${marker}  ${dur}  ${task}  {blue-fg}[${model}]{/blue-fg}  ${result}  +${tokens}t  ${cost}`;
+  return `${marker}  ${dur}  ${escapeMarkup(task,)}  {blue-fg}[${escapeMarkup(model,)}]{/blue-fg}  ${
+    escapeMarkup(result,)
+  }  +${tokens}t  ${cost}`;
 }
 
 /**
@@ -72,38 +75,42 @@ export function formatRunDetail(detail: HarnessRunDetail,): string {
   const dur = formatDuration(detail.durationMs,);
 
   const lines: string[] = [
-    `{bold}Run:{/bold} ${detail.runId}`,
+    `{bold}Run:{/bold} ${escapeMarkup(detail.runId,)}`,
     `{bold}Time:{/bold} ${ts}  {bold}Duration:{/bold} ${dur}`,
-    `{bold}Task:{/bold} ${detail.task}`,
-    `{bold}Type:{/bold} ${detail.taskType}  {bold}Model:{/bold} ${detail.model}`,
-    `{bold}Result:{/bold} ${marker} ${detail.result}`,
+    `{bold}Task:{/bold} ${escapeMarkup(detail.task,)}`,
+    `{bold}Type:{/bold} ${escapeMarkup(detail.taskType,)}  {bold}Model:{/bold} ${escapeMarkup(detail.model,)}`,
+    `{bold}Result:{/bold} ${marker} ${escapeMarkup(detail.result,)}`,
   ];
 
   if (detail.error) {
-    lines.push(`{bold}Error:{/bold} {red-fg}${detail.error}{/red-fg}`,);
+    lines.push(`{bold}Error:{/bold} {red-fg}${escapeMarkup(detail.error,)}{/red-fg}`,);
   }
 
   lines.push(
     `{bold}Tokens:{/bold} +${detail.tokensIn}in / +${detail.tokensOut}out  {bold}Cost:{/bold} $${
       detail.costUsd.toFixed(4,)
     }`,
-    `{bold}Tools:{/bold} ${detail.toolCount} (${detail.tools.join(", ",)})`,
-    `{bold}Pattern:{/bold} ${detail.pattern}${detail.patternDetail ? ` / ${detail.patternDetail}` : ""}`,
+    `{bold}Tools:{/bold} ${detail.toolCount} (${escapeMarkup(detail.tools.join(", ",),)})`,
+    `{bold}Pattern:{/bold} ${escapeMarkup(detail.pattern,)}${
+      detail.patternDetail ? ` / ${escapeMarkup(detail.patternDetail,)}` : ""
+    }`,
   );
 
   if (detail.toolingGap) {
-    lines.push(`{bold}Tooling gap:{/bold} ${detail.toolingGap}`,);
+    lines.push(`{bold}Tooling gap:{/bold} ${escapeMarkup(detail.toolingGap,)}`,);
   }
 
   lines.push(
-    `{bold}Branch:{/bold} ${detail.branch ?? "—"}  {bold}SHA:{/bold} ${
-      detail.gitSha ? detail.gitSha.slice(0, 7,) : "—"
+    `{bold}Branch:{/bold} ${escapeMarkup(detail.branch ?? "—",)}  {bold}SHA:{/bold} ${
+      detail.gitSha ? escapeMarkup(detail.gitSha.slice(0, 7,),) : "—"
     }`,
-    `{bold}PID:{/bold} ${detail.pid != null ? detail.pid : "—"}  {bold}Turn:{/bold} ${detail.turnId ?? "—"}`,
+    `{bold}PID:{/bold} ${detail.pid != null ? detail.pid : "—"}  {bold}Turn:{/bold} ${
+      escapeMarkup(detail.turnId ?? "—",)
+    }`,
   );
 
   if (detail.msg) {
-    lines.push(`{bold}Msg:{/bold} ${detail.msg}`,);
+    lines.push(`{bold}Msg:{/bold} ${escapeMarkup(detail.msg,)}`,);
   }
 
   return lines.join("\n",);
