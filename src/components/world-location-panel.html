@@ -1,0 +1,132 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Location details panel (TASK-location-details). Read-only: connections
+  (locations.connections + location_edges), hazards and NPCs present. The
+  Resources section renders an explicit empty state because the extraction
+  engine is not in this build (see `resourcesAvailable`). Host scope:
+  worldState(worldId).
+-->
+<section
+  class="panel"
+  aria-labelledby="location-details-heading"
+  data-testid="location-details-panel"
+>
+  <h3 id="location-details-heading">{{{ t("worlds.locationDetailsTitle") }}}</h3>
+  <label class="form-label" for="details-select">{{{ t("worlds.locationSelectLabel") }}}</label>
+  <select
+    id="details-select"
+    class="form-select"
+    x-model="selectedLocationId"
+    @change="selectLocation(selectedLocationId)"
+    aria-label="{{{ t('worlds.locationSelectLabel') }}}"
+    data-testid="details-select"
+  >
+    <option value="">{{{ t("worlds.locationSelectPlaceholder") }}}</option>
+    {{> location-options.html }}
+  </select>
+
+  <div x-show="detailLoading" class="muted">{{{ t("worlds.locationLoading") }}}</div>
+  <div x-show="detailError" class="muted" role="alert">
+    {{{ t("worlds.locationLoadFailed") }}}
+  </div>
+  <template x-if="detail">
+    <div class="detail-body">
+      <h4 x-text="detail.name"></h4>
+      <p x-text="detail.description || detail.state?.description_override || t('worlds.locationNoDescription')"></p>
+      <div
+        class="muted"
+        x-show="detail.parent"
+        x-text="detail.parent ? t('worlds.locationPartOf', { name: detail.parent.name }) : ''"
+      >
+      </div>
+      <div class="conditions-row" x-show="detail.state && (detail.state.time_of_day || detail.state.weather)">
+        <span
+          class="condition"
+          :aria-label="t('worlds.conditionTimeOfDay')"
+          x-text="detail.state?.time_of_day || ''"
+        ></span>
+        <span
+          class="condition"
+          :aria-label="t('worlds.conditionWeather')"
+          x-text="detail.state?.weather || ''"
+        ></span>
+        <span
+          class="condition muted"
+          :aria-label="t('worlds.locationAtmosphere')"
+          x-text="detail.state?.atmosphere || ''"
+        ></span>
+      </div>
+
+      <h5>{{{ t("worlds.hazardsLabel") }}}</h5>
+      <div class="items-list" :aria-label="t('worlds.hazardsLabel')">
+        <template x-for="h in detailHazards" :key="h">
+          <span class="tag" x-text="h"></span>
+        </template>
+        <div x-show="detailHazards.length === 0" class="muted">{{{ t("worlds.noHazards") }}}</div>
+      </div>
+
+      <h5>{{{ t("worlds.connectionsLabel") }}}</h5>
+      <ul class="detail-list" :aria-label="t('worlds.connectionsLabel')">
+        <template x-for="c in detail.connections" :key="c.id">
+          <li>
+            <a href="#" @click.prevent="selectLocation(c.id)" x-text="c.name"></a>
+          </li>
+        </template>
+      </ul>
+      <div x-show="detail.connections.length === 0" class="muted">{{{ t("worlds.noConnections") }}}</div>
+
+      <h5>{{{ t("worlds.npcsPresentLabel") }}}</h5>
+      <ul class="detail-list" :aria-label="t('worlds.npcsPresentLabel')">
+        <template x-for="n in detailNpcs" :key="n.actorId">
+          <li x-text="n.displayName"></li>
+        </template>
+      </ul>
+      <div x-show="detailNpcs.length === 0" class="muted">{{{ t("worlds.noNpcsPresent") }}}</div>
+
+      <!--
+        Resources: extraction engine not in this build — say so, do not
+        render an empty list that would read as "nothing here".
+      -->
+      <h5>{{{ t("worlds.resourcesLabel") }}}</h5>
+      <div class="muted" data-testid="resources-empty" x-show="!resourcesAvailable" role="status">
+        {{{ t("worlds.resourcesUnavailable") }}}
+      </div>
+
+      <div class="quick-actions">
+        <button
+          class="btn btn-secondary btn-sm"
+          data-testid="action-trade"
+          @click="showItems = !showItems"
+          :aria-expanded="showItems"
+          :aria-label="showItems ? t('worlds.actionHideTrade') : t('worlds.actionTrade')"
+          x-text="showItems ? t('worlds.actionHideTrade') : t('worlds.actionTrade')"
+        >
+        </button>
+        <button
+          class="btn btn-secondary btn-sm"
+          data-testid="action-explore"
+          @click="navigateExplore()"
+          aria-label="{{{ t('worlds.actionExplore') }}}"
+        >
+          {{{ t("worlds.actionExplore") }}}
+        </button>
+      </div>
+      <div x-show="showItems" class="items-list" :aria-label="t('worlds.itemsLabel')">
+        <template x-for="item in detailItems" :key="item">
+          <span class="tag" x-text="item"></span>
+        </template>
+        <div x-show="detailItems.length === 0" class="muted">{{{ t("worlds.noItemsHere") }}}</div>
+      </div>
+
+      <h5>{{{ t("worlds.chatsHereLabel") }}}</h5>
+      <template x-for="chat in chatsAt(selectedLocationId)" :key="chat.id">
+        <div class="muted" x-text="chat.name"></div>
+      </template>
+      <div x-show="chatsAt(selectedLocationId).length === 0" class="muted">
+        {{{ t("worlds.noChatsHere") }}}
+      </div>
+    </div>
+  </template>
+</section>
