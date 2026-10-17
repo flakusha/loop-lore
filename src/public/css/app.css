@@ -4067,6 +4067,72 @@ html {
   flex-wrap: wrap;
 }
 
+/* --- World creation wizard (TASK-world-dashboard): stepper, stacked steps
+       and the review definition list. Scoped to the wizard modal. --- */
+.wizard-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.wizard-step {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-tertiary, rgb(127 127 127 / 12%));
+}
+
+.wizard-step.current {
+  color: var(--text-primary);
+  font-weight: 600;
+  outline: 1px solid var(--accent-primary, #2a9d8f);
+}
+
+.wizard-step.done {
+  color: var(--text-primary);
+}
+
+.wizard-step-body {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.wizard-review-list {
+  display: grid;
+  grid-template-columns: minmax(8rem, auto) 1fr;
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+.wizard-review-list dd {
+  margin: 0;
+}
+
+.methods-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+@media (width <= 480px) {
+  .wizard-review-list {
+    grid-template-columns: 1fr;
+  }
+
+  .wizard-review-list dd {
+    margin-bottom: var(--space-2);
+  }
+}
+
 .items-list {
   display: flex;
   flex-wrap: wrap;
@@ -4079,12 +4145,6 @@ html {
   flex-direction: column;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
-}
-
-.methods-row {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
 }
 
 .methods-row .condition {
