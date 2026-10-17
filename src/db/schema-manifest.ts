@@ -834,6 +834,35 @@ export const SCHEMA = new SchemaManifest()
     metadata: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("monster_spawns", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    location_id: col("text", { notNull: true, },),
+    template_id: col("text", { notNull: true, },),
+    spawned_at: col("text", { notNull: true, hasDefault: true, },),
+    territory_center_x: col("real", { notNull: true, hasDefault: true, },),
+    territory_center_y: col("real", { notNull: true, hasDefault: true, },),
+    territory_radius: col("real", { notNull: true, hasDefault: true, },),
+    despawn_at: col("text",),
+  },)
+  .table("monster_templates", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text",),
+    name: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    subcategory: col("text",),
+    size: col("text", { notNull: true, hasDefault: true, },),
+    alignment: col("text", { notNull: true, hasDefault: true, },),
+    difficulty: col("text", { notNull: true, hasDefault: true, },),
+    stats: col("text", { notNull: true, hasDefault: true, },),
+    loot_table: col("text", { notNull: true, hasDefault: true, },),
+    territorial: col("integer", { notNull: true, hasDefault: true, },),
+    nocturnal: col("integer", { notNull: true, hasDefault: true, },),
+    pack_size: col("integer", { notNull: true, hasDefault: true, },),
+    behavior: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("mood_events", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -867,6 +896,22 @@ export const SCHEMA = new SchemaManifest()
     nsfw_hidden: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("npc_memories", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    npc_id: col("text", { notNull: true, },),
+    memory_type: col("text", { notNull: true, hasDefault: true, },),
+    content: col("text", { notNull: true, },),
+    importance: col("integer", { notNull: true, hasDefault: true, },),
+    emotional_impact: col("integer", { notNull: true, hasDefault: true, },),
+    participants: col("text", { notNull: true, hasDefault: true, },),
+    location_id: col("text",),
+    decay_rate: col("real", { notNull: true, hasDefault: true, },),
+    shared: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    last_reinforced_at: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text",),
+  },)
   .table("npc_migrations", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     world_id: col("text", { notNull: true, },),
@@ -880,6 +925,17 @@ export const SCHEMA = new SchemaManifest()
     last_depart_tick: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("npc_relationships", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    npc_id: col("text", { notNull: true, },),
+    target_id: col("text", { notNull: true, },),
+    standing: col("integer", { notNull: true, hasDefault: true, },),
+    relationship_type: col("text", { notNull: true, hasDefault: true, },),
+    emotional_bond: col("integer", { notNull: true, hasDefault: true, },),
+    history: col("text", { notNull: true, hasDefault: true, },),
+    last_interaction_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("npc_states", {
     id: col("text", { primaryKey: true, },),

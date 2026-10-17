@@ -139,6 +139,7 @@ export const PART_2: Record<string, Record<string, string>> = {
   "TravelRoutes": {
     "kind": "TransportKind",
   },
+  // 061_npc_memory_bestiary
   "Factions": {
     "alignment": "FactionAlignment",
   },
@@ -159,5 +160,17 @@ export const PART_2: Record<string, Record<string, string>> = {
   },
   "MapZones": {
     "zone_type": "ZoneType",
+  },
+  "NpcMemories": {
+    "memory_type": "MemoryType",
+  },
+  "NpcRelationships": {
+    "relationship_type": "NpcRelationshipType",
+  },
+  "MonsterTemplates": {
+    "category": "MonsterCategory",
+    "size": "MonsterSize",
+    "alignment": "MonsterAlignment",
+    "difficulty": "MonsterDifficulty",
   },
 };
