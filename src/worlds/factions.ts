@@ -19,7 +19,9 @@ import type { Kysely, Selectable, } from "kysely";
 import type { FactionAlignment, FactionDiplomaticStatus, FactionRole, } from "../db/enums-story";
 import type { DB, } from "../db/schema";
 import type { FactionMemberships, Factions, } from "../db/schema-core";
-import { jsonParseOr, jsonStringifyOr, uid, } from "../utils";
+import { jsonStringifyOr, uid, } from "../utils";
+
+export type { FactionDiplomaticStatus, };
 
 /** Why a faction/diplomacy call was rejected. Routes map not-found→404. */
 export type FactionErrorCode = "not-found" | "duplicate" | "invalid-transition" | "invalid-input";
