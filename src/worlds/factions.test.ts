@@ -11,6 +11,7 @@ import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
 import { addMember, createFaction, FactionError, listFactions, removeMember, } from "./factions";
+import type { FactionDiplomaticStatus, } from "./factions";
 import { breakAlliance, declareWar, formAlliance, proposePeace, } from "./factions-diplomacy";
 import { getFactionRelationship, setRelationship, } from "./factions-relationships";
 
@@ -102,7 +103,7 @@ describe("faction relationships", () => {
     const [a, b,] = await makePair();
     // The route body types status as a bare string, so garbage reaches here.
     await expect(
-      setRelationship({ db, factionA: a, factionB: b, status: "bogus", },),
+      setRelationship({ db, factionA: a, factionB: b, status: "bogus" as FactionDiplomaticStatus, },),
     ).rejects.toThrow(/unknown diplomatic status/,);
 
     await expect(
