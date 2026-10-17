@@ -117,24 +117,22 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
         if (worldErr) { return worldErr; }
 
         const body = ctx.body;
-        const row = await database
-          .insertInto("encounter_templates",)
-          .values({
-            world_id: ctx.params.worldId,
-            name: body.name,
-            type: body.type ?? "event",
-            trigger_type: body.triggerType ?? "random",
-            trigger_chance: body.triggerChance ?? 0,
-            cooldown_seconds: body.cooldownSeconds ?? 0,
-            difficulty: body.difficulty ?? 0,
-            requirements: safeJsonStringify(body.requirements ?? {},),
-            rewards: safeJsonStringify(body.rewards ?? {},),
-            consequences: safeJsonStringify(body.consequences ?? {},),
-            story_notes: body.storyNotes ?? null,
-            assistant_driven: body.assistantDriven ?? "automatic",
-            travel_phase: body.travelPhase ?? null,
-            active: body.active ?? "enabled",
-          },)
+        const row = await database.insertInto("encounter_templates",).values({
+          world_id: ctx.params.worldId,
+          name: body.name,
+          type: body.type ?? "event",
+          trigger_type: body.triggerType ?? "random",
+          trigger_chance: body.triggerChance ?? 0,
+          cooldown_seconds: body.cooldownSeconds ?? 0,
+          difficulty: body.difficulty ?? 0,
+          requirements: safeJsonStringify(body.requirements ?? {},),
+          rewards: safeJsonStringify(body.rewards ?? {},),
+          consequences: safeJsonStringify(body.consequences ?? {},),
+          story_notes: body.storyNotes ?? null,
+          assistant_driven: body.assistantDriven ?? "automatic",
+          travel_phase: body.travelPhase ?? null,
+          active: body.active ?? "enabled",
+        } as any,)
           .returningAll()
           .executeTakeFirstOrThrow();
 
