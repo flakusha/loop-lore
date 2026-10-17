@@ -132,12 +132,12 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 - [x] `src/tui/app.ts` creates its logger before constructing the screen, so importing it standalone does not throw (`createLogger` at `:155` precedes `new TUIApp()` at `:157`).
 - [x] `config.tui.sessionToken` reaches `ChatWidget`, with an empty string normalized to undefined.
 - [x] `ChatWidget` message send/load is covered by tests that stub fetch instead of mounting blessed.
-- [ ] `import("src/tui/app.ts")` in a non-TTY process does not construct a screen — move `new TUIApp()` behind an explicit `start()`.
-- [ ] `AssetView` and the harness overlay are constructible in tests (factory seam for `AssetView`, matching `createHarnessView`).
+- [x] `import("src/tui/app.ts")` in a non-TTY process does not construct a screen — `new TUIApp()` is behind `createTUIApp()` factory and `import.meta.main` guard (`app.ts:230-240`).
+- [x] `AssetView` and the harness overlay are constructible in tests (`AssetView` constructed by `app.ts` and test suites; `createHarnessView` factory at `harness/index.ts:24-28`).
 - [ ] Every row in §Spec drift is closed against `docs/spec/terminal-ui.md`: the spec cites `/api/v1/assets` and `/api/v1/chats/:id/messages` instead of `/api/assets` and `/api/assistant`, and lists the harness overlay and `/api/v1/harness/*`.
-- [ ] A chat-picker screen exists, so the TUI can start a chat without an externally supplied `chatId`.
-- [ ] `ENABLE_TUI` either gates startup or is removed from `env-map.ts` — one decision, not a dangling option.
-- [ ] `Bun.color()` / `Bun.stringWidth()` are adopted for TUI colors and truncation (neither is used under `src/tui/` today).
+- [x] A chat-picker screen exists (`src/tui/chat-picker.ts`), so the TUI can start a chat without an externally supplied `chatId`.
+- [x] `ENABLE_TUI` either gates startup or is removed from `env-map.ts` — `tui.enabled` gates startup at `app.ts:95-100`.
+- [x] `Bun.stringWidth()` is adopted for safe truncation (`src/tui/chat/display.ts:23,27`). `Bun.color()` half: **Wontfix** — blessed consumes colour strings; `Bun.color()` returns a number requiring conversion back to a string, so the colour half of this criterion was closed Wontfix per `TASK-adopt-bun-color-for-tui-colors.md`.
 
 
 ## Linked Tasks
@@ -164,11 +164,13 @@ Bound to this epic via the `**Epic:** epic-terminal-ui` header on each ticket.
 
 - [x] `BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle.md` — sidebar advertised `Del: unlink` with no handler behind it; fixed in `050eb320d` by removing the claim rather than shipping a one-keypress irreversible delete
 - [x] `TASK-harness-stats-endpoint-was-implemented-but-never-called.md` — `loadStats` had zero production callers, so `GET /api/v1/harness/stats` was never fetched; fixed in `42abe9123` by wiring it into the empty-runs branch of the F3 refresh with quiet 403 degradation
+- [x] `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — **Done**: IIFE removed, `setChatId` now calls `void this.loadAssets()` directly; `loadAssets` catches internally via `renderInfo` (`asset-view.ts:199-204,219-250`)
+- [x] `TASK-adopt-bun-color-for-tui-colors.md` — **Wontfix**: blessed consumes colour strings (`fg: "cyan"`); `Bun.color()` returns a number requiring round-trip conversion; `Bun.stringWidth()` half shipped separately
 
-- `TASK-tui-dedupe-api-base.md` — **premise no longer holds**: `API_BASE` is declared once at `src/tui/chat/api.ts:7`, re-exported by `harness/api.ts:8` and imported by `app.ts:16`, which is exactly what the ticket asks for. Re-scope or close rather than re-implement (blocked on P1 only because the edit is in untestable `app.ts`)
-- `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (blocked on P1)
-- `TASK-adopt-bun-color-for-tui-colors.md` — adopt `Bun.color()` for theme
-- `TASK-adopt-bun-stringwidth-for-tui.md` — adopt `Bun.stringWidth()` for safe truncation (fixes `formatMessageLine` surrogate-pair split)
+- `TASK-tui-dedupe-api-base.md` — **premise no longer holds**: `API_BASE` is declared once at `src/tui/chat/api.ts:7`, re-exported by `harness/api.ts:8` and imported by `app.ts:16`, which is exactly what the ticket asks for. Re-scope or close rather than re-implement
+- `TASK-tui-fire-and-forget-void-without-catch.md` — **new**: audit `void <asyncCall>()` sites; many are safe by design (callees catch internally); `app.ts:190` IIFE is the compliance gap
+- `TASK-tui-chat-create-api-silent-catch.md` — **new**: `chat-create-api.ts` catch blocks are deliberate Result-returning fallbacks, not silent swallows; recommend close with comment clarification
+- `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md` — markup injection (defects 1–2) are real and actionable; defect 3 (transport) is stale (no WebSocket in TUI); defect 4 (DB filename) is scripts/ not TUI; defect 5 (API_BASE) is low value
 
 ### Retired
 

@@ -3,25 +3,43 @@
 
 # TASK: TUI markup injection, unencoded URLs, and shutdown hygiene
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-terminal-ui
 
 **Summary:**
 
-Five defects in the TUI and transport layer, all verified on dev.
+Five defects in the TUI; two are real and actionable, one is stale, one is out of scope, one is low-value.
 
-1. Blessed markup injection. src/tui/chat/display.ts:11-16, src/tui/chat/index.ts:224, src/tui/asset-view.ts:107-114, src/tui/harness/display.ts:48-58 and :97-103, src/tui/app.ts:135 all render with tags enabled while interpolating message.content, actorName, asset.filename and alt_text, result.error and status strings without escaping braces. A crafted message or asset field can recolour or rearrange the panel. Escape braces in untrusted strings, or render data-driven panels with tags disabled.
+## Defects
 
-2. Unencoded URL segments. src/tui/chat/api.ts:32 and :77 interpolate host.chatId into a path and cursor into a query string; src/tui/asset-view.ts:206 and src/tui/harness/api.ts:57,:70 do the same with runId. Percent-encode each dynamic segment.
+**Defect 1 (blessed markup injection) — REAL.** Lines to fix:
+- `src/tui/chat/display.ts:14-16` — `message.actorName` and `message.role` interpolated into `{bold}...{/bold}` without escaping braces.
+- `src/tui/chat/index.ts:330` (`showError`) — `message` parameter interpolated into `{red-fg}⚠ Error: ${message}{/red-fg}` without escaping braces.
+- `src/tui/asset-view.ts:128-136` — `asset.filename`, `asset.asset_type`, `asset.mime_type`, `asset.alt_text` interpolated into blessed markup without escaping braces.
+- `src/tui/harness/display.ts:61` — `task` (from `summary.task`) interpolated into markup without escaping.
+- `src/tui/harness/display.ts:69-110` (`formatRunDetail`) — `detail.task`, `detail.error`, `detail.gitSha`, `detail.branch`, `detail.msg`, `detail.pattern`, `detail.patternDetail`, `detail.toolingGap`, `detail.tools`, `detail.runId`, `detail.ts`, `detail.model`, `detail.taskType`, `detail.result`, `detail.pid`, `detail.turnId` all interpolated without escaping.
+- `src/tui/app.ts:175-177` — `API_BASE` interpolated into status bar content without escaping.
 
-3. No transport teardown on shutdown. src/tui/app.ts:145-148 exits after destroying the screen without calling transport.close(), so the ping interval at src/transport/ws.ts:69-72 (cleared only inside close at :139-149) and the one-shot open listener at :89 survive until process death. Sequence destroy-screen, await close, then exit.
+A crafted message or asset field can inject blessed tags to recolour or rearrange panels. Escape `{`/`}` in untrusted strings, or render data-driven panels with `tags: false`.
 
-4. Config-supplied DB filename is trusted. src/scripts/log-query.ts:209-218 and src/scripts/migrate-character-legacy.ts:200-207 open sqliteFilename directly; readonly helps in log-query but not everywhere. Resolve against a configured root and reject traversal.
+**Defect 2 (unencoded URL segments) — REAL.** Lines to fix:
+- `src/tui/chat/api.ts:59` — `${API_BASE}/api/v1/chats/${host.chatId}/messages` — `host.chatId` is unencoded.
+- `src/tui/chat/api.ts:107-108` — `host.chatId` in path and `host.cursor` in query string, both unencoded.
+- `src/tui/asset-view.ts:227` — `this.chatId` unencoded in entity_id query param.
+- `src/tui/harness/api.ts:72` — `runId` unencoded in path.
 
-5. API base URL is unvalidated. src/tui/chat/api.ts:7 and src/tui/harness/api.ts:5 use LOOP_LORE_API_BASE_URL verbatim, with no scheme or host validation, so the TUI can be pointed at any endpoint.
+Percent-encode each dynamic segment with `encodeURIComponent`.
 
-Source: .tmp/cat-jam/review-tui-scripts.md P1-2, P1-3, P2-1, P2-2, P2-3.
+**Defect 3 (transport teardown) — STALE / NOT A TUI DEFECT.**
+An exhaustive grep of `src/tui/` for `transport|WebSocket|ws://|wss://` returns **zero production matches**. The TUI opens no WebSocket; there is no `transport.close()` to call and no ping interval to leak. The shutdown path (`app.ts:212-215`) destroys the blessed screen and exits. Strike from actionable scope.
+
+**Defect 4 (config DB filename) — OUT OF SCOPE.**
+Lives in `src/scripts/log-query.ts` and `src/scripts/migrate-character-legacy.ts`, not `src/tui/`. Belongs to a scripts/DB-hardening ticket.
+
+**Defect 5 (API_BASE unvalidated) — LOW VALUE / OPTIONAL.**
+`src/tui/chat/api.ts:7` and `src/tui/harness/api.ts:5` use `LOOP_LORE_API_BASE_URL` verbatim. Misconfigured env vars fail at first fetch (visible in status bar). Optional fix: validate scheme+host on startup.
 
 **Context:**
 
@@ -29,6 +47,8 @@ Source: .tmp/cat-jam/review-tui-scripts.md P1-2, P1-3, P2-1, P2-2, P2-3.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
+- [ ] Defect 1 (markup injection): all untrusted strings in blessed markup calls are brace-escaped or rendered with `tags: false`
+- [ ] Defect 2 (unencoded URLs): all dynamic URL segments are wrapped in `encodeURIComponent`
+- [ ] Defects 1–2 implementation complete
 - [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Documentation updated (markup escaping policy documented)
