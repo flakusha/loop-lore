@@ -35,6 +35,17 @@ export const locationDetails: Partial<WorldPageState> & ThisType<WorldPageState>
   },
 
   /**
+   * Whether the resource/extraction panel can show real data. The extraction
+   * engine lives on a sibling branch and no resource table is reachable from
+   * this build, so the panel always renders its explicit empty state rather
+   * than an empty-looking list that reads as "no resources here".
+   * @returns {boolean}
+   */
+  get resourcesAvailable(): boolean {
+    return false;
+  },
+
+  /**
    * @param id
    * @returns {Promise<void>}
    */

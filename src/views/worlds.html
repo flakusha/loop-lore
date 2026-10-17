@@ -12,9 +12,22 @@
       hx-target="#modal-container"
       hx-swap="innerHTML"
       hx-on::after-request="window.openModal('import-world-modal')"
+      aria-label="{{{ t("worlds.importWorld") }}}"
       data-testid="import-world"
     >
-      Import
+      {{{ t("worlds.importWorld") }}}
+    </button>
+    <!-- Guided create (wizard): name/style → conditions → locations → review. -->
+    <button
+      class="btn btn-secondary"
+      hx-get="/partials/worlds/create-wizard"
+      hx-target="#modal-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="window.openModal('create-world-wizard-modal')"
+      aria-label="{{{ t("worlds.wizardTitle") }}}"
+      data-testid="create-world-wizard"
+    >
+      {{{ t("worlds.wizardTitle") }}}
     </button>
     <button
       class="btn btn-primary"
@@ -22,6 +35,7 @@
       hx-target="#modal-container"
       hx-swap="innerHTML"
       hx-on::after-request="window.openModal('create-world-modal')"
+      aria-label="{{{ t("worlds.create") }}}"
       data-testid="create-world"
     >
       + New

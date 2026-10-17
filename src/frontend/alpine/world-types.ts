@@ -242,6 +242,8 @@ export interface WorldPageState {
   // ── time/weather widget (time-weather.ts) ──
   timeOfDay: string | null;
   weather: string | null;
+  /** Season slot — no schema column backs it yet, so always null today. */
+  season: string | null;
   conditionsLocationName: string | null;
   conditionsAt: string | null;
   readonly hasConditions: boolean;
@@ -249,6 +251,9 @@ export interface WorldPageState {
   readonly weatherIcon: string;
   readonly dayNightLabel: string;
   readonly forecastAvailable: boolean;
+  readonly hasSeason: boolean;
+  /** Conditions are author-set labels, not simulated — shown in the UI. */
+  readonly conditionsAreAuthorSet: boolean;
 
   // ── location details (location-details.ts) ──
   selectedLocationId: string;
@@ -259,6 +264,8 @@ export interface WorldPageState {
   showItems: boolean;
   readonly detailHazards: string[];
   readonly detailItems: string[];
+  /** Resource panel data source — unavailable until the engine lands. */
+  readonly resourcesAvailable: boolean;
   /** Shared <option> view-model consumed by location-options.html. */
   readonly optionItems: WorldLocationLite[];
 
