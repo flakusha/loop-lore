@@ -80,8 +80,15 @@ registerCommand("loc-get", async (args, ctx,): Promise<CommandResult> => {
     .where("id", "=", locId,)
     .executeTakeFirst();
 
-  // Same message for "no such location" and "no access": the caller must not be
-  // able to probe which location ids exist in a world they cannot read.
+  // DO NOT "FIX" THE ORDERING BELOW. Authorization needs `world_id`, and
+  // `world_id` lives on this row — there is no other place it is recorded, so a
+  // location outside a world-scoped chat cannot be authorized without reading
+  // the row first. Confidentiality is therefore carried by the response wording
+  // rather than by check ordering: "missing" and "not yours" produce byte-
+  // identical messages, so the id cannot be used as an existence oracle, and the
+  // projection above never reaches the caller unless the check below passes.
+  // Moving the guard earlier would need a world argument this command does not
+  // take; deleting it would remove the only access control on the row.
   if (!loc) {
     return { systemMessage: `Location ${locId} not found or access denied.`, handled: true, };
   }
