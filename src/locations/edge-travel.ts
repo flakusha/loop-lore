@@ -5,6 +5,12 @@ import { type Kysely, } from "kysely";
 import type { LocationEdgeMode as LocationEdgeModeType, } from "../db/enums-story/world";
 import type { DB, } from "../db/schema";
 import { safeJsonParse, } from "../utils";
+import { getFactionStanding, } from "../worlds/karma";
+import {
+  type FactionStandingRequirement,
+  parseFactionStandingRequirement,
+  standingTierSatisfies,
+} from "../worlds/karma-tiers";
 import { EDGE_MODE_SET, type EdgeCost, LocationEdgeError, parseEdgeCost, sqlStamp, } from "./edge-core";
 import { freeJumpOnCooldown, latchDiscovered, recordHop, } from "./edge-discovery";
 
@@ -220,13 +226,14 @@ export class EdgeTravelService {
         }
       }
 
-      if (cost.itemId !== undefined || cost.requiresFactionStanding !== undefined) {
+      if (cost.requiresFactionStanding !== undefined) {
+        await this.requireFactionStanding(worldId, actorId, cost.requiresFactionStanding,);
+      }
+
+      if (cost.itemId !== undefined) {
         // Honored by the party travel engine (epic-party-migration); the
-        // user-level wallet for items/faction standing does not exist yet.
-        throw new LocationEdgeError(
-          "bad-cost",
-          "itemId/requiresFactionStanding costs require the party economy",
-        );
+        // user-level item wallet does not exist yet.
+        throw new LocationEdgeError("bad-cost", "itemId costs require the party economy",);
       }
 
       if (cost.gold !== undefined) {
@@ -240,6 +247,46 @@ export class EdgeTravelService {
     await recordHop(this.database, worldId, edge.id, actorId, mode, fromId, toId,);
 
     return { edgeId: edge.id, actorId, toId, mode, goldCharged, };
+  }
+
+  /**
+   * Enforce a free-jump's `requiresFactionStanding` price tag (062).
+   * @param worldId world the edge belongs to
+   * @param actorId traveling actor
+   * @param requirement the cost tag, form "<factionId>:<tier>"
+   * @throws {LocationEdgeError} "insufficient" when the actor's standing
+   *   with that faction is below the required tier
+   */
+  private async requireFactionStanding(
+    worldId: string,
+    actorId: string,
+    requirement: string,
+  ): Promise<void> {
+    let gate: FactionStandingRequirement;
+    try {
+      gate = parseFactionStandingRequirement(requirement,);
+    } catch (error) {
+      // The route maps LocationEdgeError only; a malformed price tag is a
+      // bad cost tag, not a server fault.
+      throw new LocationEdgeError(
+        "bad-cost",
+        error instanceof Error ? error.message : String(error,),
+      );
+    }
+
+    const held = await getFactionStanding({
+      db: this.database,
+      worldId,
+      actorId,
+      factionId: gate.factionId,
+    },);
+
+    if (!standingTierSatisfies(held.tier, gate.tier,)) {
+      throw new LocationEdgeError(
+        "insufficient",
+        `free-jump needs ${gate.tier} standing with ${gate.factionId} (have ${held.tier})`,
+      );
+    }
   }
 }
 

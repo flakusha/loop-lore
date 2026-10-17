@@ -139,4 +139,16 @@ export const PART_2: Record<string, Record<string, string>> = {
   "TravelRoutes": {
     "kind": "TransportKind",
   },
+  "Factions": {
+    "alignment": "FactionAlignment",
+  },
+  "FactionMemberships": {
+    "role": "FactionRole",
+  },
+  "FactionRelationships": {
+    "status": "FactionDiplomaticStatus",
+  },
+  "KarmaEvents": {
+    "category": "KarmaCategory",
+  },
 };
