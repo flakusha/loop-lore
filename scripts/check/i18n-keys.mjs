@@ -16,7 +16,7 @@
  * Exit codes: 0 all keys resolve, 1 missing keys found.
  */
 import { readdirSync, readFileSync, } from "node:fs";
-import { extname, join, relative, } from "node:path";
+import { join, relative, } from "node:path";
 
 // TODO(env): bun-only — import.meta.dir is bun-specific. Add node shim when node target lands.
 const PROJECT_ROOT = import.meta.dir.replace(/\/scripts\/check$/, "",);
@@ -67,7 +67,6 @@ function extractKeys(text, file,) {
     const callRe = /\bt\(/g;
     let cm;
     while ((cm = callRe.exec(line,)) !== null) {
-      const callStart = cm.index;
       // Find the matching close paren, tracking string state
       let depth = 1;
       let j = cm.index + 2;
