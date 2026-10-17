@@ -245,4 +245,25 @@ describe("formatRunDetail", () => {
     const detail = formatRunDetail(makeDetail({ msg: null, },),);
     expect(detail,).not.toContain("Msg:",);
   });
+
+  // --- Markup escaping tests ---
+
+  it("escapes braces in error in formatRunDetail", () => {
+    const detail = makeDetail({ error: "{bold}bad{/bold}", },);
+    const out = formatRunDetail(detail,);
+    expect(out,).toContain("{open}bold{close}bad{open}/bold{close}",);
+    expect(out,).not.toContain("{bold}bad{close}",);
+  });
+
+  it("escapes braces in task in formatRunDetail", () => {
+    const detail = makeDetail({ task: "{red-fg}task{/red-fg}", },);
+    const out = formatRunDetail(detail,);
+    expect(out,).toContain("{open}red-fg{close}task{open}/red-fg{close}",);
+  });
+
+  it("escapes braces in msg in formatRunDetail", () => {
+    const detail = makeDetail({ msg: "{bold}msg{/bold}", },);
+    const out = formatRunDetail(detail,);
+    expect(out,).toContain("{open}bold{close}msg{open}/bold{close}",);
+  });
 });

@@ -10,6 +10,7 @@
  * — is testable without a screen.
  */
 
+import { escapeMarkup, } from "./markup";
 import type { ConnectionTest, ProviderSummary, PublicProvider, ResolvedRole, } from "./models-api";
 
 /** Width the role column occupies before the provider/model pair. */
@@ -92,7 +93,7 @@ export function formatProviderHealth(providers: PublicProvider[],): string {
 
   const names = providers
     .filter((p,) => p.status !== "healthy")
-    .map((p,) => p.name);
+    .map((p,) => escapeMarkup(p.name,));
 
   const shown = names.slice(0, MAX_NAMED,).join(", ",);
   const rest = names.length > MAX_NAMED ? ` +${names.length - MAX_NAMED}` : "";

@@ -113,4 +113,28 @@ describe("formatMessageLine", () => {
 
     expect(Bun.stringWidth(withoutPrefixAndEllipsis,),).toBe(200,);
   });
+
+  // --- Markup escaping tests ---
+
+  it("escapes braces in actorName so they render literally", () => {
+    const out = formatMessageLine(msg({ actorName: "{bold}Alice{/bold}", content: "hi", },),);
+    expect(out,).toBe("{bold}{open}bold{close}Alice{open}/bold{close}{/bold}: hi",);
+  });
+
+  it("escapes braces in role so they render literally", () => {
+    const out = formatMessageLine(msg({ role: "{red-fg}user{/red-fg}", content: "hi", },),);
+    expect(out,).toBe("{bold}{open}red-fg{close}user{open}/red-fg{close}{/bold}: hi",);
+  });
+
+  it("escapes braces in content so they render literally", () => {
+    const out = formatMessageLine(msg({ content: "hello {bold}world{/bold}", },),);
+    expect(out,).toContain("{open}bold{close}world{open}/bold{close}",);
+    expect(out,).not.toContain("{bold}world{close}",);
+  });
+
+  it("escapes both open and close braces", () => {
+    const out = formatMessageLine(msg({ content: "}{", },),);
+    expect(out,).toContain("{close}",);
+    expect(out,).toContain("{open}",);
+  });
 });
