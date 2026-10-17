@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Blog service: posts, comments, follows, RAG sources. */
-import type { Kysely, } from "kysely";
 import {
   createComment as createCommentDispatch,
   getComment as getCommentDispatch,
