@@ -17,7 +17,8 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { safeFetch, } from "../utils";
 import type { FetchResult, SafeFetchOptions, } from "../utils/safe-fetch/types";
-import { ChatPicker, loadChats, NO_CHATS_MESSAGE, setFetch, } from "./chat-picker";
+import { createChat, } from "./chat-create-api";
+import { ChatPicker, CREATE_STATUS, loadChats, NO_CHATS_MESSAGE, setCreateChat, setFetch, } from "./chat-picker";
 import type { ChatSummary, } from "./chat-picker";
 
 interface RecordedCall {
@@ -27,6 +28,7 @@ interface RecordedCall {
 
 const calls: RecordedCall[] = [];
 const realFetch = safeFetch;
+const realCreateChat = createChat;
 
 beforeEach(() => {
   calls.length = 0;
@@ -34,6 +36,7 @@ beforeEach(() => {
 
 afterEach(() => {
   setFetch(realFetch,);
+  setCreateChat(realCreateChat,);
 },);
 
 /**
@@ -108,6 +111,12 @@ interface PickerUnderTest {
   refresh(): Promise<void>;
   dismiss(): boolean;
   isVisible(): boolean;
+  creating: boolean;
+  prompt: PromptStub | null;
+  startCreate(): void;
+  commitCreate(name: string,): Promise<void>;
+  cancelCreate(): void;
+  isCreating(): boolean;
 }
 
 /**
@@ -155,12 +164,44 @@ function buildPicker(selected: string[] = [],): PickerUnderTest {
 
   picker.chats = [];
   picker.visible = false;
+  picker.creating = false;
+  picker.prompt = null;
   picker.sessionToken = undefined;
   picker.onSelect = (chatId: string,) => {
     selected.push(chatId,);
   };
 
   return picker;
+}
+
+// ── Prompt stub ─────────────────────────────────────────────────────────
+
+interface PromptStub {
+  emitted: string[];
+  hidden: boolean;
+  emit(event: string,): void;
+  hide(): void;
+  setValue(value: string,): void;
+  show(): void;
+  focus(): void;
+  readInput(): void;
+}
+
+function promptStub(): PromptStub {
+  return {
+    emitted: [],
+    hidden: false,
+    emit(event: string,): void {
+      this.emitted.push(event,);
+    },
+    hide(): void {
+      this.hidden = true;
+    },
+    setValue(_value: string,): void {/* no-op */},
+    show(): void {/* no-op */},
+    focus(): void {/* no-op */},
+    readInput(): void {/* no-op */},
+  };
 }
 
 describe("loadChats", () => {
@@ -256,5 +297,89 @@ describe("ChatPicker", () => {
 
     expect(picker.isVisible(),).toBe(false,);
     expect(picker.dismiss(),).toBe(false,);
+  });
+});
+
+describe("ChatPicker create flow", () => {
+  it("setCreateChat seam swaps the create caller", async () => {
+    const selected: string[] = [];
+    const picker = buildPicker(selected,);
+    const stub = (): Promise<{ ok: true; chatId: string }> => Promise.resolve({ ok: true, chatId: "stubbed-chat", },);
+    setCreateChat(stub as typeof createChat,);
+
+    await picker.commitCreate("Test Chat",);
+
+    expect(selected,).toEqual(["stubbed-chat",],);
+  });
+
+  it("startCreate shows the prompt and sets the status", () => {
+    const picker = buildPicker();
+    picker.prompt = promptStub();
+
+    picker.startCreate();
+
+    expect(picker.prompt,).not.toBeNull();
+    expect(picker.statusLabel.content,).toBe(CREATE_STATUS,);
+  });
+
+  it("commitCreate calls the create API and invokes onSelect on success", async () => {
+    const selected: string[] = [];
+    const picker = buildPicker(selected,);
+    const stub = (): Promise<{ ok: true; chatId: string }> => Promise.resolve({ ok: true, chatId: "new-chat-1", },);
+    setCreateChat(stub as typeof createChat,);
+
+    await picker.commitCreate("My New Chat",);
+
+    expect(selected,).toEqual(["new-chat-1",],);
+    expect(picker.isCreating(),).toBe(false,);
+  });
+
+  it("commitCreate shows error on failure", async () => {
+    const selected: string[] = [];
+    const picker = buildPicker(selected,);
+    const stub = (): Promise<{ ok: false; error: string }> =>
+      Promise.resolve({ ok: false, error: "Name already exists", },);
+
+    setCreateChat(stub as typeof createChat,);
+
+    await picker.commitCreate("My New Chat",);
+
+    expect(picker.statusLabel.content,).toBe("Name already exists",);
+    expect(selected,).toEqual([],);
+    expect(picker.isCreating(),).toBe(false,);
+  });
+
+  it("cancelCreate cleans up the prompt", () => {
+    const picker = buildPicker();
+    const prompt = promptStub();
+    picker.prompt = prompt;
+
+    picker.cancelCreate();
+
+    expect(picker.prompt,).toBeNull();
+    expect(prompt.emitted,).toContain("blur",);
+    expect(prompt.hidden,).toBe(true,);
+    expect(picker.statusLabel.content,).toBe(NO_CHATS_MESSAGE,);
+  });
+
+  it("isCreating transitions through the commit cycle", async () => {
+    const picker = buildPicker();
+    let resolveCreate: (value: { ok: true; chatId: string },) => void = () => {};
+    const createPromise = new Promise<{ ok: true; chatId: string }>((resolve,) => {
+      resolveCreate = resolve;
+    },);
+
+    setCreateChat(() => createPromise);
+
+    expect(picker.isCreating(),).toBe(false,);
+
+    const commitPromise = picker.commitCreate("Test",);
+
+    expect(picker.isCreating(),).toBe(true,);
+
+    resolveCreate({ ok: true, chatId: "deferred-chat", },);
+    await commitPromise;
+
+    expect(picker.isCreating(),).toBe(false,);
   });
 });
