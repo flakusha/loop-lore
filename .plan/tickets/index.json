@@ -43931,7 +43931,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-native-anthropic-messages-adapter.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Native Anthropic Messages Adapter",
     "type": "TASK"
