@@ -16,6 +16,7 @@ import type {
   ProfessionBonusType,
   ProfessionTitle,
   QualityLevel,
+  ResourceQuality,
 } from "./enums";
 import type { AuditColumns, } from "./schema-audit";
 
@@ -147,6 +148,9 @@ export interface GatheringNodeInstances {
   respawn_at: string | null;
   created_at: string;
   updated_at: string;
+  quality: Generated<ResourceQuality>;
+  extraction_difficulty: Generated<number>;
+  remaining_amount: number | null;
 }
 
 // ── gathering_node_materials ────────────────────────────────────────────
