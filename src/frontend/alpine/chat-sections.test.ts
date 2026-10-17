@@ -99,7 +99,7 @@ describeOrSkip("computeGroupedMessages section breaks", () => {
       { ...msg("m3", "s2",), role: "assistant", },
     ];
 
-    const groups = computeGroupedMessages.call({ ...base, messages: msgs, } as any,);
+    const groups = computeGroupedMessages({ ...base, messages: msgs, } as any,);
     expect(groups.map((g,) => g.section_id),).toEqual(["s1", "s2", "s2",],);
     // m2 starts a new section → no group; m3 same section → grouped with m2.
     expect(groups[1]?.group,).toBeUndefined();
@@ -112,12 +112,12 @@ describeOrSkip("computeGroupedMessages section breaks", () => {
       { ...msg("m2", "s1",), role: "assistant", },
     ];
 
-    const groups = computeGroupedMessages.call({ ...base, messages: msgs, } as any,);
+    const groups = computeGroupedMessages({ ...base, messages: msgs, } as any,);
     expect(groups[1]?.group,).toBe(true,);
   });
 
   test("empty messages returns empty", () => {
-    expect(computeGroupedMessages.call({ ...base, messages: [], } as any,),).toEqual([],);
+    expect(computeGroupedMessages({ ...base, messages: [], } as any,),).toEqual([],);
   });
 },);
 

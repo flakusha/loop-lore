@@ -26,9 +26,9 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "blog-moderation", },)
     .patch(`${prefix}/blog/comments/:id/moderate`, async (ctx: any,) => {
       const { userRole, } = extractAuth(ctx,);
-      const translator = ctx.t as TranslatorFn | undefined;
+      const t = ctx.t as TranslatorFn | undefined;
       if (!can(userRole, "admin.settings",)) {
-        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, translator, },);
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
       const { status, } = ctx.body;
@@ -36,7 +36,7 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
         return jsonError({
           message: "errors.invalidInput",
           status: HttpStatus.BadRequest,
-          translator,
+          t,
         },);
       }
 
@@ -46,7 +46,7 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
       },);
 
       if (!ok) {
-        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, translator, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
 
       return jsonResponse({ success: true, },);
@@ -66,13 +66,13 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
     },)
     .patch(`${prefix}/blog/posts/:id/moderate`, async (ctx: any,) => {
       const { userRole, userId, } = extractAuth(ctx,);
-      const translator = ctx.t as TranslatorFn | undefined;
+      const t = ctx.t as TranslatorFn | undefined;
       if (!userId) {
-        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, translator, },);
+        return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },);
       }
 
       if (!can(userRole, "admin.settings",)) {
-        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, translator, },);
+        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
       }
 
       const { status, } = ctx.body;
@@ -82,7 +82,7 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
         return jsonError({
           message: "errors.invalidInput",
           status: HttpStatus.BadRequest,
-          translator,
+          t,
         },);
       }
 
@@ -94,7 +94,7 @@ export function blogModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
       );
 
       if (!updated) {
-        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, translator, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
 
       return jsonResponse({ success: true, post: updated, },);
