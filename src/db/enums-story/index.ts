@@ -11,6 +11,7 @@
 export * from "./encounters.js";
 export * from "./factions.js";
 export * from "./items.js";
+export * from "./npc-world.js";
 export * from "./plans.js";
 export * from "./questions.js";
 export * from "./quests.js";

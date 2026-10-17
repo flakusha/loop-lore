@@ -223,4 +223,8 @@ export interface DB {
   world_licenses: import("./schema-core").WorldLicenses;
   world_maps: import("./schema-core").WorldMaps;
   map_zones: import("./schema-core").MapZones;
+  npc_memories: import("./schema-core").NpcMemories;
+  npc_relationships: import("./schema-core").NpcRelationships;
+  monster_templates: import("./schema-core").MonsterTemplates;
+  monster_spawns: import("./schema-core").MonsterSpawns;
 }
