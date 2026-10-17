@@ -139,7 +139,7 @@ describe("views/search — gallery", () => {
   test("loadGallerySearchViewModel returns view-model", async () => {
     const vm = await loadGallerySearchViewModel(db, new URLSearchParams({ q: "sword", },), "owner", "user",);
     expect(vm.assets.length,).toBe(1,);
-    expect(vm.assets[0].filename,).toContain("sword",);
+    expect(vm.assets[0]?.filename,).toContain("sword",);
   });
 
   test("loadGallerySearchViewModel returns empty for no match", async () => {
