@@ -700,6 +700,20 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("map_zones", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    map_id: col("text", { notNull: true, },),
+    location_id: col("text",),
+    name: col("text", { notNull: true, },),
+    zone_type: col("text", { notNull: true, hasDefault: true, },),
+    x: col("integer", { notNull: true, },),
+    y: col("integer", { notNull: true, },),
+    width: col("integer", { notNull: true, },),
+    height: col("integer", { notNull: true, },),
+    z: col("integer", { notNull: true, hasDefault: true, },),
+    metadata: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("memory_audit_log", {
     id: col("text", { primaryKey: true, },),
     memory_id: col("text", { notNull: true, },),
@@ -2466,6 +2480,18 @@ export const SCHEMA = new SchemaManifest()
     current_durability: col("integer",),
     is_active: col("integer", { notNull: true, hasDefault: true, },),
   },)
+  .table("world_licenses", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    spdx_or_custom: col("text", { notNull: true, hasDefault: true, },),
+    spdx_id: col("text", { hasDefault: true, },),
+    license_text: col("text", { hasDefault: true, },),
+    attribution: col("text", { notNull: true, hasDefault: true, },),
+    allowed_use: col("text", { notNull: true, hasDefault: true, },),
+    prohibited_use: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("world_lore_entries", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),
@@ -2498,6 +2524,16 @@ export const SCHEMA = new SchemaManifest()
     disputed: col("integer", { notNull: true, hasDefault: true, },),
     content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("world_maps", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    map_type: col("text", { notNull: true, hasDefault: true, },),
+    width: col("integer", { notNull: true, },),
+    height: col("integer", { notNull: true, },),
+    tile_asset_id: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("world_members", {
     world_id: col("text", { notNull: true, },),

@@ -220,4 +220,7 @@ export interface DB {
   location_storage: import("./schema-core").LocationStorage;
   location_storage_items: import("./schema-core").LocationStorageItems;
   extraction_rolls: import("./schema-core").ExtractionRolls;
+  world_licenses: import("./schema-core").WorldLicenses;
+  world_maps: import("./schema-core").WorldMaps;
+  map_zones: import("./schema-core").MapZones;
 }
