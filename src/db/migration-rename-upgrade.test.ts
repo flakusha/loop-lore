@@ -212,7 +212,9 @@ describe("column rename upgrade path", () => {
       expect(columnsOf(sqlite, table,), `${table} should have ${oldName} before the rename`,).toContain(oldName,);
     }
 
-    expect(migrationNames().at(-1,),).toBe("057_column_name_disambiguation.ts",);
+    const names = migrationNames();
+    expect(names,).toContain("057_column_name_disambiguation.ts",);
+    expect(names[names.indexOf("057_column_name_disambiguation.ts",) - 1],).toBe(BEFORE_RENAME + ".ts",);
     await db.destroy();
     sqlite.close();
   });
