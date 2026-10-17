@@ -180,6 +180,9 @@
     "deno:audit": "bun run scripts/audit-runtime-compat.ts",
     "deno:audit:shared": "bun run scripts/audit-runtime-compat.ts --shared",
     "deno:audit:json": "bun run scripts/audit-runtime-compat.ts --json",
+    "audit:branches": "bun run scripts/audit-branches.ts",
+    "audit:branches:json": "bun run scripts/audit-branches.ts --json",
+    "audit:branches:strict": "bun run scripts/audit-branches.ts --strict",
     "deno:pkg:from-deno": "bun run scripts/gen-pkg-from-deno.ts",
     "deno:pkg:from-deno:check": "bun run scripts/gen-pkg-from-deno.ts --check"
   },

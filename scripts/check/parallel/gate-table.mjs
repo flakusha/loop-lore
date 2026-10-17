@@ -203,6 +203,13 @@ export const checks = {
   "e2e - browser (baseline)": NOOP_OK, // placeholder; replaced before run
   // Banned-pattern findings are collected in the non-blocking report below.
   // Epic coverage remains manual; current planning debt is non-blocking.
+
+  // Branch hygiene: classify local branches vs a base ref (delete vs review).
+  // ADVISORY. The verdict depends on the branch topology of the moment — a
+  // branch that reads REVIEW today becomes PATCH-EQ once dev lands its work,
+  // and any branch with an active worktree may belong to a concurrent session.
+  // Blocking a finalize on it would fight the dev branch's own movement.
+  "branches - audit": "bun run scripts/audit-branches.ts",
 };
 
 // Advisory gates: these RUN and REPORT like any other gate, but a failure
@@ -231,4 +238,6 @@ export const ADVISORY_GATES = new Set([
   // jscpd ratchet: clone count vs committed baseline — drifts when dev
   // merges add or remove clones concurrently.
   "jscpd ratchet",
+  // Branch audit: verdicts drift as dev lands branch work — see the gate entry.
+  "branches - audit",
 ],);
