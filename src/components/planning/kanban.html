@@ -7,13 +7,21 @@
   plan-item kind). Card moves POST `/api/v1/plans/:id/advance` via the
   `planningKanban()` Alpine component (drag or the per-card move buttons) and
   then re-issue this `hx-get`, so the board always shows persisted state.
+
+
+  The first load is deliberately NOT `hx-trigger="load"`: this partial mounts on
+  the chat view, which unauthenticated visitors can render, and the route is
+  auth-guarded — an unconditional load trigger turned every anonymous render
+  into a 401 console error. `planningKanban().init()` issues that first request
+  itself, gated on `globalThis.__USER_ID`: the session signal `views/layout.html`
+  renders, and the one `frontend/alpine/settings/general.ts` already gates its
+  auth-guarded fetch on.
 -->
 <div
   class="planning-kanban"
   data-testid="planning-kanban"
   x-data="planningKanban()"
   hx-get="/api/v1/planning/kanban"
-  hx-trigger="load"
   hx-swap="innerHTML"
 >
 </div>

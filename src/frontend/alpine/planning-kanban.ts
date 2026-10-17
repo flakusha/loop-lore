@@ -10,6 +10,12 @@
  * re-issues the board's own `hx-get`. Re-rendering from the server after every
  * attempt is what makes a card reflect persisted state — an illegal transition
  * comes back 409, the row never moved, and the card lands back in its column.
+ *
+ * `init()` owns the FIRST load instead of `hx-trigger="load"`: the board mounts
+ * on the chat view, which anonymous visitors can render, and its route is
+ * auth-guarded — a load trigger issued a 401 request on every anonymous render.
+ * Without `globalThis.__USER_ID` (the session signal `views/layout.html`
+ * renders) `init()` issues nothing.
  */
 
 import { refreshHtmx, } from "../dom";
@@ -26,6 +32,8 @@ const BOARD_SELECTOR = '[data-testid="planning-kanban"]';
 export interface PlanningKanbanState {
   /** Id of the card currently being dragged, if any. */
   draggingId: string | null;
+  /** First board load — skipped entirely when there is no session. */
+  init(): void;
   /** Board-move fallback + drag result: advance the card, then re-render. */
   move(id: string, state: string,): Promise<void>;
   /** Remember the dragged card and seed the drag payload for non-Alpine drags. */
@@ -40,6 +48,15 @@ export interface PlanningKanbanState {
 export function planningKanban(): PlanningKanbanState {
   return {
     draggingId: null,
+
+    init(): void {
+      // The board partial mounts on the chat view, which anonymous visitors can
+      // render, and this route is auth-guarded. Without a session there is
+      // nothing to show, and requesting anyway would log a 401 on every render.
+      if (!globalThis.__USER_ID) { return; }
+
+      refreshHtmx(BOARD_SELECTOR,);
+    },
     async move(id: string, state: string,): Promise<void> {
       try {
         await apiFetch(`/api/v1/plans/${encodeURIComponent(id,)}/advance`, {
