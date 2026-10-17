@@ -68,11 +68,11 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(ctx,);
-      const translator = ctx.t as TranslatorFn | undefined;
+      const t = ctx.t as TranslatorFn | undefined;
 
       const post = await svc.getPost(ctx.params.id,);
       if (post === undefined) {
-        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, translator, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
 
       // Row-level read policy (BUG-blog-post-get-bypasses-visibility-policy):
@@ -171,7 +171,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(ctx,);
-      const translator = ctx.t as TranslatorFn | undefined;
+      const t = ctx.t as TranslatorFn | undefined;
       const isAdmin = can(userRole, "admin.settings",);
 
       const updated = await svc.updatePost(
@@ -190,7 +190,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       );
 
       if (!updated) {
-        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, translator, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
 
       return jsonResponse({ success: true, post: updated, },);
@@ -213,12 +213,12 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { userRole, } = extractAuth(ctx,);
-      const translator = ctx.t as TranslatorFn | undefined;
+      const t = ctx.t as TranslatorFn | undefined;
       const isAdmin = can(userRole, "admin.settings",);
 
       const ok = await svc.deletePost(ctx.params.id, userId, isAdmin,);
       if (!ok) {
-        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, translator, },);
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t, },);
       }
 
       return jsonResponse({ success: true, },);

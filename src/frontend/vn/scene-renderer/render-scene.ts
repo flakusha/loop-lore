@@ -29,7 +29,7 @@ export interface SceneNavigator {
  * @param url
  */
 function sanitizeCssUrl(url: string,): string {
-  if (/[\p{Cc})]/.test(url,)) { return ""; }
+  if (/[\p{Cc})]/u.test(url,)) { return ""; }
   return url;
 }
 
