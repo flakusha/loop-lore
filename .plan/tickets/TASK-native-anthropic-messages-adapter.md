@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-platform-integrations
@@ -22,3 +22,5 @@ Native Anthropic Messages API adapter as core plugin (x-api-key, anthropic-versi
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-17 registry-driven close: git issue be2cb7b (registry tip: ba6af31d8 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-NATIVE-ANTHROPIC-MESSAGES-A)
