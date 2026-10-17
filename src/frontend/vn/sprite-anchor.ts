@@ -42,6 +42,7 @@ export function anchorFromTransform(row: SpriteTransformRow | null | undefined,)
  * @returns CSS object-position value.
  */
 export function anchorToObjectPosition(anchor: SpriteAnchor,): string {
+  const clamp = (v: number,): number => Math.min(1, Math.max(0, v,),);
   return `${clamp(anchor.x,) * 100}% ${clamp(anchor.y,) * 100}%`;
 }
 
