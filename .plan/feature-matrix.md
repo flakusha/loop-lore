@@ -1664,7 +1664,7 @@ Total tickets: **3794** — untagged: **2574** — unbound to epic: **1510**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2574 | 936 | 44 | 909 | 32 | 0 | 653 |
+| (untagged) | 2574 | 937 | 44 | 908 | 32 | 0 | 653 |
 
 ## By epic × status
 
@@ -1961,7 +1961,7 @@ Total tickets: **3794** — untagged: **2574** — unbound to epic: **1510**
 | epic-output-control-transforms | 10 | 7 | 0 | 3 | 0 | 0 | 0 |
 | epic-party-migration | 10 | 0 | 0 | 1 | 0 | 0 | 9 |
 | epic-performance-dashboard-slo | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-platform-integrations | 12 | 0 | 0 | 12 | 0 | 0 | 0 |
+| epic-platform-integrations | 12 | 1 | 0 | 11 | 0 | 0 | 0 |
 | epic-platform-research | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
 | epic-player-state-machine | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-plugin-extension-points | 5 | 3 | 0 | 1 | 0 | 0 | 1 |
