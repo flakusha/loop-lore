@@ -50392,6 +50392,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-models-overlay.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-shell-testability.md"
     },
     {
