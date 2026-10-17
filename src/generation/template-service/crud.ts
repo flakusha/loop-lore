@@ -15,7 +15,7 @@ import {
   type TemplateSummary,
 } from "../template-types";
 import { validateWorkflowPayload, } from "../workflow-library/validate";
-const MODALITIES = TEMPLATE_MODALITIES;
+const MODALITIES = new Set(TEMPLATE_MODALITIES,);
 const DETAIL_LEVELS: readonly TemplateDetailLevel[] = ["instant", "balanced", "detailed",];
 
 /** */
@@ -41,7 +41,7 @@ export interface CreateTemplateInput {
 export function serializeTemplateInput(
   input: CreateTemplateInput,
 ): { ok: true; payload: string } | { ok: false; error: string } {
-  if (!MODALITIES.includes(input.modality,)) {
+  if (!MODALITIES.has(input.modality,)) {
     return { ok: false, error: `Invalid modality: ${String(input.modality,)}`, };
   }
 
