@@ -12,17 +12,24 @@ import { planningKanban, } from "./planning-kanban";
 const host = globalThis as unknown as {
   fetch: typeof fetch;
   htmx: { ajax: (verb: string, url: string, opts: { target: string; swap: string },) => void };
+  __USER_ID?: string;
   document: { querySelector: (sel: string,) => unknown };
 };
 
 const realFetch = host.fetch;
 const realDocument = host.document;
 const realHtmx = host.htmx;
+const realUserId = host.__USER_ID;
 
 afterEach(() => {
   host.fetch = realFetch;
   host.document = realDocument;
   host.htmx = realHtmx;
+  if (realUserId === undefined) {
+    delete host.__USER_ID;
+  } else {
+    host.__USER_ID = realUserId;
+  }
 },);
 
 /** Capture advance calls + board refreshes; nothing hits the network. */
@@ -62,6 +69,25 @@ function stubNetwork(advanceStatus: number,) {
 describe("planningKanban", () => {
   test("registers a global so x-data can call planningKanban()", () => {
     expect((globalThis as unknown as Record<string, unknown>).planningKanban,).toBe(planningKanban,);
+  });
+
+  test("init loads the board when there is a session", () => {
+    const { refreshes, } = stubNetwork(200,);
+    host.__USER_ID = "user-1";
+
+    planningKanban().init();
+
+    expect(refreshes,).toEqual(["/api/v1/planning/kanban",],);
+  });
+
+  test("init issues no request without a session, so no 401 is logged", () => {
+    const { calls, refreshes, } = stubNetwork(200,);
+    delete host.__USER_ID;
+
+    planningKanban().init();
+
+    expect(calls,).toEqual([],);
+    expect(refreshes,).toEqual([],);
   });
 
   test("move posts to the advance verb and re-renders the board", async () => {
