@@ -414,6 +414,34 @@ export const SCHEMA = new SchemaManifest()
     icon: col("text", { hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("encounter_rolls", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    location_id: col("text",),
+    template_id: col("text", { notNull: true, },),
+    rolled_at: col("text", { notNull: true, hasDefault: true, },),
+    difficulty_rolled: col("integer", { notNull: true, hasDefault: true, },),
+    outcome: col("text", { notNull: true, hasDefault: true, },),
+    cooldown_until: col("text",),
+  },)
+  .table("encounter_templates", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text",),
+    name: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, hasDefault: true, },),
+    trigger_type: col("text", { notNull: true, hasDefault: true, },),
+    trigger_chance: col("real", { notNull: true, hasDefault: true, },),
+    cooldown_seconds: col("integer", { notNull: true, hasDefault: true, },),
+    difficulty: col("integer", { notNull: true, hasDefault: true, },),
+    requirements: col("text", { notNull: true, hasDefault: true, },),
+    rewards: col("text", { notNull: true, hasDefault: true, },),
+    consequences: col("text", { notNull: true, hasDefault: true, },),
+    story_notes: col("text",),
+    assistant_driven: col("text", { notNull: true, hasDefault: true, },),
+    travel_phase: col("text",),
+    active: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("game_states", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -2156,6 +2184,25 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("location_anomalies", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    location_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, hasDefault: true, },),
+    stat_modifiers: col("text", { notNull: true, hasDefault: true, },),
+    damage_over_time: col("real", { notNull: true, hasDefault: true, },),
+    healing_over_time: col("real", { notNull: true, hasDefault: true, },),
+    experience_multiplier: col("real", { notNull: true, hasDefault: true, },),
+    loot_multiplier: col("real", { notNull: true, hasDefault: true, },),
+    special_effects: col("text", { notNull: true, hasDefault: true, },),
+    duration_seconds: col("integer", { notNull: true, hasDefault: true, },),
+    discovery_chance: col("real", { notNull: true, hasDefault: true, },),
+    discovered_at: col("text",),
+    interaction_required: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("location_discovery", {
     world_id: col("text", { notNull: true, },),

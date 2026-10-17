@@ -122,8 +122,19 @@ export const PART_2: Record<string, Record<string, string>> = {
     "kind": "LocationKind",
     "mobility_mode": "MobilityMode",
   },
+  "LocationAnomalies": {
+    "type": "AnomalyType",
+    "interaction_required": "AnomalyInteraction",
+  },
   "LocationEdges": {
     "mode": "LocationEdgeMode",
+  },
+  "EncounterTemplates": {
+    "type": "EncounterType",
+    "trigger_type": "EncounterTriggerType",
+    "assistant_driven": "EncounterDrivingMode",
+    "travel_phase": "EncounterTravelPhase",
+    "active": "EncounterTemplateState",
   },
   "TravelRoutes": {
     "kind": "TransportKind",
