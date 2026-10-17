@@ -136,6 +136,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
     },
     {
@@ -5493,6 +5497,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-two-pass-delivery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
     },
     {
       "kind": "ticket",
@@ -12668,6 +12676,10 @@
     }
   ],
   "src/config/schema/providers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md"
@@ -25716,6 +25728,10 @@
   "src/generation": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     },
     {
@@ -28293,6 +28309,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-request-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-failover-replays-primary-byo-key-to-fallback-vendors.md"
     },
     {
       "kind": "ticket",
@@ -35502,6 +35522,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     },
     {
@@ -36315,6 +36339,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md"
     },
     {
       "kind": "ticket",
