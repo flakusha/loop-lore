@@ -133,11 +133,11 @@ Implemented (verified 2026-10-08):
 - `src/rpg/world-discovery/` — location discovery
 - `src/routes/worlds/` — world API incl. `fractal-travel-routes.ts`, `fractal-locations-routes.ts`
 - `src/routes/views/worlds.ts` + `src/views/worlds*.html` + `src/frontend/pages/worlds*.ts` — world management UI
+- `src/worlds/` — world service layer: `timescale.ts` (createTimescaleService, epoch/scale/advance), `lookup.ts`
 
 Planned (do not exist yet):
 
-- `src/db/schema-world.ts` — world tables (planned)
-- `src/frontend/world/` — world UI components (planned)
+- (no additional planned files at this time — `src/db/schema-world.ts` and `src/frontend/world/` were previously listed but are not present at HEAD; all currently planned world work is captured in sub-epics)
 
 ## Open Questions
 
@@ -290,6 +290,9 @@ Planned (do not exist yet):
 
 ## Related Epics
 
+- [`epic-worlds-extension.md`](./epic-worlds-extension.md) — shares world export/import, timescale, and interaction-mode layers with this hub
+- [`epic-world-management-ui.md`](./epic-world-management-ui.md) — world management UI surfaces the world/location system for end users
+- [`epic-world-shaping-divine.md`](./epic-world-shaping-divine.md) — player-driven world alteration and divine intervention built on this hub's data model
 - **Epic Platform Research** — world style / style-specific asset & NPC generation are adoption candidates tracked there.
 - **Epic RPG Mechanics** — world-level modifiers, factions, reputation/karma overlap; RPG owns the mechanics, this epic owns location/world data.
 - **Epic Battle & Action Systems** — encounters, monsters, and location-based random encounters overlap; battle owns combat flow.
