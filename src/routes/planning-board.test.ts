@@ -11,6 +11,8 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { readFileSync, } from "node:fs";
+import { join, } from "node:path";
 import { PlanItemState, } from "../db/enums-story/plans";
 import type { DB, } from "../db/schema";
 import { createPlanningService, } from "../planning/service";
@@ -20,6 +22,13 @@ import { planningRoutes, } from "./planning";
 import { planningBoardRoutes, } from "./planning-board";
 
 const PREFIX = "/api/v1";
+const BOARD_TEMPLATE = readFileSync(
+  join(import.meta.dir, "..", "components", "planning", "kanban.html",),
+  "utf8",
+);
+
+/** The single opening tag that mounts the Alpine component. */
+const BOARD_MOUNT_TAG = BOARD_TEMPLATE.match(/<div\b[^>]*data-testid="planning-kanban"[^>]*>/u,)?.[0] ?? "";
 
 /**
  * @param db
@@ -142,5 +151,24 @@ describe("GET /planning/kanban", () => {
     expect(html,).toContain('data-testid="planning-lane-blocked-story"',);
     // blocked → done is illegal, so no move button offers it
     expect(html,).not.toContain(`planning-move-${ownItem}-done`,);
+  });
+});
+
+// Alpine's `x-data` only builds the state object — it does NOT call `init()`.
+// Without `x-init` on the mount tag nothing ever issues the first request and
+// the board renders empty for EVERY session, which no unit test that calls
+// `planningKanban().init()` directly can detect. Assert on the shipped template.
+describe("components/planning/kanban.html", () => {
+  test("the mount tag pairs x-data with x-init so init() actually runs", () => {
+    expect(BOARD_MOUNT_TAG,).toContain('x-data="planningKanban()"',);
+    expect(BOARD_MOUNT_TAG,).toContain('x-init="init()"',);
+  });
+
+  test('the mount tag has no hx-trigger="load" — init() owns the first request', () => {
+    expect(BOARD_MOUNT_TAG,).not.toContain("hx-trigger",);
+  });
+
+  test("the hx-get the component re-issues is the board endpoint", () => {
+    expect(BOARD_MOUNT_TAG,).toContain('hx-get="/api/v1/planning/kanban"',);
   });
 });
