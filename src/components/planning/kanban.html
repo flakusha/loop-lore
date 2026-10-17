@@ -1,0 +1,19 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Planning kanban board — host for the server-rendered fragment at
+  `GET /api/v1/planning/kanban` (columns by plan-item state, swimlanes by
+  plan-item kind). Card moves POST `/api/v1/plans/:id/advance` via the
+  `planningKanban()` Alpine component (drag or the per-card move buttons) and
+  then re-issue this `hx-get`, so the board always shows persisted state.
+-->
+<div
+  class="planning-kanban"
+  data-testid="planning-kanban"
+  x-data="planningKanban()"
+  hx-get="/api/v1/planning/kanban"
+  hx-trigger="load"
+  hx-swap="innerHTML"
+>
+</div>

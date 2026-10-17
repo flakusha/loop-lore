@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * Alpine.js Components — all component registrations.
  * Imported by alpine-init.ts (single bundle entry).
@@ -40,6 +39,7 @@ import "./notification-center";
 import "./notifications";
 import "./npc";
 import "./personas";
+import "./planning-kanban";
 import "./response-length";
 import "./rpg-questions";
 import "./rpg-stats";
