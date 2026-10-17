@@ -2,8 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
+import { anomalyRoutes, } from "./anomaly-routes";
 import { autonomyRoutes, } from "./autonomy-routes";
 import { chatsRoutes, } from "./chats";
+import { encounterRoutes, } from "./encounter-routes";
 import { fractalLocationsRoutes, } from "./fractal-locations-routes";
 import { fractalTravelRoutes, } from "./fractal-travel-routes";
 import { locationEdgeRoutes, } from "./location-edges";
@@ -29,5 +31,7 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(fractalTravelRoutes(opts, prefix,),)
     .use(worldStreamRoutes(opts, prefix,),)
     .use(travelStatusRoutes(opts, prefix,),)
-    .use(locationEdgeRoutes(opts, prefix,),);
+    .use(locationEdgeRoutes(opts, prefix,),)
+    .use(anomalyRoutes(opts, prefix,),)
+    .use(encounterRoutes(opts, prefix,),);
 }

@@ -208,4 +208,7 @@ export interface DB {
   world_timescale: import("./schema-story").WorldTimescale;
   world_timescale_history: import("./schema-story").WorldTimescaleHistory;
   location_edges: import("./schema-core").LocationEdges;
+  location_anomalies: import("./schema-core").LocationAnomalies;
+  encounter_templates: import("./schema-core").EncounterTemplates;
+  encounter_rolls: import("./schema-core").EncounterRolls;
 }
