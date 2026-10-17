@@ -25,7 +25,7 @@ const ALLOWED_MIME_PREFIXES = [
   "application/json",
 ];
 
-const BLOCKED_MIME_TYPES = ["image/svg+xml",];
+const BLOCKED_MIME_TYPES = new Set(["image/svg+xml",],);
 
 /**
  * Validate MIME type is allowed. Active formats (SVG) are rejected outright —
@@ -35,7 +35,7 @@ const BLOCKED_MIME_TYPES = ["image/svg+xml",];
  */
 export function validateMimeType(mime: string,): string | null {
   const lowered = mime.toLowerCase();
-  if (BLOCKED_MIME_TYPES.includes(lowered,)) {
+  if (BLOCKED_MIME_TYPES.has(lowered,)) {
     return `Unsupported file type: ${mime}`;
   }
 

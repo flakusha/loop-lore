@@ -41,7 +41,7 @@ export interface ChatRow {
 }
 
 /** Terminal statuses — an open turn is anything else. */
-const TURN_TERMINAL_STATUSES: readonly string[] = ["accepted", "escalated",];
+const TURN_TERMINAL_STATUSES = new Set(["accepted", "escalated",],);
 
 /** @returns JSON 404 response for an unknown chat id. */
 export function notFound(): Response {
@@ -79,7 +79,7 @@ export async function latestOpenTurn(
     .execute();
 
   const latest = rows[0];
-  if (!latest || TURN_TERMINAL_STATUSES.includes(latest.status,)) { return null; }
+  if (!latest || TURN_TERMINAL_STATUSES.has(latest.status,)) { return null; }
   return latest;
 }
 
