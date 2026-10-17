@@ -12,12 +12,13 @@
  *   Rust sink `egui_thumb_ready` with raw RGBA pixels.
  * - `uploadAsset()` — open a hidden file input, POST the chosen file as
  *   multipart to `/api/v1/assets`, then call `egui_asset_uploaded`.
- * - `attachAsset(assetId, chatId)` — POST JSON to `/api/v1/assets/:id/links`.
+ *
+ * Attaching an asset is NOT here: it needs no browser-only API, so the Rust
+ * side posts it through its own client (same seam as `send_message`).
  *
  * Bundled into `egui-bridge.js`; imported by `egui-bridge.ts`.
  */
 
-import { safeJsonStringify, } from "../utils";
 import { feFetch, } from "./fe-fetch";
 
 /** Global the Rust glue sinks are installed on (by the /egui host page). */
@@ -28,7 +29,6 @@ export interface EguiGallerySink {
   eguiThumbReady(assetId: string, width: number, height: number, rgba: Uint8ClampedArray,): void;
   eguiThumbFailed(assetId: string,): void;
   eguiAssetUploaded(assetId: string,): void;
-  eguiAttachResult(assetId: string, ok: boolean,): void;
 }
 
 /** Read the Rust sink if the wasm glue has installed it yet. */
@@ -102,33 +102,12 @@ async function uploadFile(file: File,): Promise<void> {
 }
 
 /**
- * POST an attach link for `assetId` to `chatId`.
- * @param assetId asset to attach
- * @param chatId chat to attach it to
- */
-export async function attachAsset(assetId: string, chatId: string,): Promise<void> {
-  try {
-    const response = await feFetch(`/api/v1/assets/${encodeURIComponent(assetId,)}/links`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: safeJsonStringify({ entityType: "chat", entityId: chatId, },),
-    },);
-
-    if (!response.ok) { throw new Error(`HTTP ${response.status}`,); }
-    gallerySink()?.eguiAttachResult(assetId, true,);
-  } catch {
-    gallerySink()?.eguiAttachResult(assetId, false,);
-  }
-}
-
-/**
  * Expose the bridge functions for the Rust side: the wasm app calls the
- * globals `requestThumbnail` / `uploadAsset` / `attachAsset`.
+ * globals `requestThumbnail` / `uploadAsset`.
  */
 export function initEguiGallery(): void {
   (globalThis as Record<string, unknown>).requestThumbnail = requestThumbnail;
   (globalThis as Record<string, unknown>).uploadAsset = uploadAsset;
-  (globalThis as Record<string, unknown>).attachAsset = attachAsset;
 }
 
 initEguiGallery();

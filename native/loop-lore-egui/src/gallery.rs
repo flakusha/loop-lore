@@ -17,6 +17,18 @@ use wasm_bindgen::prelude::*;
 
 use crate::api::GalleryAsset;
 
+/// Shorten a filename for a grid cell, appending `...` past `max_chars` chars.
+///
+/// Truncation is by `char`, not byte: filenames are user-controlled and a byte
+/// slice at a fixed offset panics on any multi-byte character.
+pub fn ellipsize(name: &str, max_chars: usize) -> String {
+  if name.chars().count() <= max_chars {
+    return name.to_string();
+  }
+  let head: String = name.chars().take(max_chars).collect();
+  format!("{head}...")
+}
+
 /// One thumbnail request, enqueued until the bridge resolves it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ThumbRequest {
@@ -46,8 +58,9 @@ pub struct GalleryCell {
   pub asset: GalleryAsset,
   /// `true` when the thumbnail has been requested from the bridge.
   pub thumb_requested: bool,
-  /// Resolved thumbnail pixels, when the bridge delivered them.
-  pub thumb: Option<ThumbPixels>,
+  /// `true` once the bridge delivered pixels and the app cached a texture.
+  /// The pixels themselves are not retained — the texture cache owns them.
+  pub has_thumb: bool,
   /// `true` when the thumbnail fetch or decode failed; renders a placeholder.
   pub thumb_failed: bool,
 }
@@ -57,7 +70,7 @@ impl GalleryCell {
     Self {
       asset,
       thumb_requested: false,
-      thumb: None,
+      has_thumb: false,
       thumb_failed: false,
     }
   }
@@ -133,7 +146,7 @@ impl GalleryState {
     if self
       .cells
       .iter()
-      .any(|c| c.asset.id == asset_id && (c.thumb_requested || c.thumb.is_some()))
+      .any(|c| c.asset.id == asset_id && (c.thumb_requested || c.has_thumb))
     {
       return;
     }
@@ -143,7 +156,7 @@ impl GalleryState {
   /// Drain pending thumbnail requests, in FIFO order. Marks each drained
   /// cell as requested so the next `enqueue_missing_thumbs` skips it.
   pub fn drain_pending_thumbs(&mut self) -> Vec<ThumbRequest> {
-    let drained: Vec<ThumbRequest> = self.pending_thumbs.drain(..).collect();
+    let drained = std::mem::take(&mut self.pending_thumbs);
     for request in &drained {
       if let Some(cell) = self.cells.iter_mut().find(|c| c.asset.id == request.asset_id) {
         cell.thumb_requested = true;
@@ -152,20 +165,26 @@ impl GalleryState {
     drained
   }
 
-  /// Deliver a resolved thumbnail to its cell.
-  pub fn apply_thumb(&mut self, pixels: ThumbPixels) {
-    if let Some(cell) = self.cells.iter_mut().find(|c| c.asset.id == pixels.asset_id) {
+  /// Record that a resolved thumbnail reached the texture cache.
+  pub fn apply_thumb(&mut self, asset_id: &str) {
+    if let Some(cell) = self.cells.iter_mut().find(|c| c.asset.id == asset_id) {
       cell.thumb_requested = false;
       cell.thumb_failed = false;
-      cell.thumb = Some(pixels);
+      cell.has_thumb = true;
     }
   }
 
   /// Mark a thumbnail fetch as failed (placeholder tile).
-  pub fn apply_thumb_failed(&mut self, asset_id: String) {
+  ///
+  /// A failure arriving after the cell already resolved is ignored: the bridge
+  /// can deliver a late `eguiThumbFailed` for a superseded request, and flipping
+  /// `thumb_failed` on a cell that has a texture would contradict the render.
+  pub fn apply_thumb_failed(&mut self, asset_id: &str) {
     if let Some(cell) = self.cells.iter_mut().find(|c| c.asset.id == asset_id) {
       cell.thumb_requested = false;
-      cell.thumb_failed = true;
+      if !cell.has_thumb {
+        cell.thumb_failed = true;
+      }
     }
   }
 
@@ -174,13 +193,8 @@ impl GalleryState {
     let requests: Vec<(String, String)> = self
       .cells
       .iter()
-      .filter(|c| !c.thumb_requested && c.thumb.is_none() && !c.thumb_failed)
-      .filter_map(|c| {
-        c.asset
-          .thumb_url
-          .clone()
-          .map(|url| (c.asset.id.clone(), url))
-      })
+      .filter(|c| !c.thumb_requested && !c.has_thumb && !c.thumb_failed)
+      .filter_map(|c| c.asset.thumb_url.clone().map(|url| (c.asset.id.clone(), url)))
       .collect();
     for (asset_id, url) in requests {
       self.request_thumb(asset_id, url);
@@ -193,18 +207,7 @@ impl GalleryState {
 // ---------------------------------------------------------------------------
 
 thread_local! {
-  static PENDING: std::cell::RefCell<Vec<ThumbRequest>> = const { std::cell::RefCell::new(Vec::new()) };
   static READY: std::cell::RefCell<Vec<ThumbPixels>> = const { std::cell::RefCell::new(Vec::new()) };
-}
-
-/// Queue one thumbnail request for the bridge.
-pub fn push_thumb_request(request: ThumbRequest) {
-  PENDING.with(|q| q.borrow_mut().push(request));
-}
-
-/// Drain queued thumbnail requests for the bridge to fulfill.
-pub fn drain_thumb_requests() -> Vec<ThumbRequest> {
-  PENDING.with(|q| q.borrow_mut().drain(..).collect())
 }
 
 /// Queue a resolved thumbnail for the app to pick up.
@@ -246,10 +249,6 @@ extern "C" {
   /// Ask the bridge to open the file picker and POST the chosen file.
   #[wasm_bindgen(js_name = uploadAsset)]
   fn js_upload_asset();
-
-  /// Ask the bridge to POST an attach link for `asset_id` to `chat_id`.
-  #[wasm_bindgen(js_name = attachAsset)]
-  fn js_attach_asset(asset_id: &str, chat_id: &str);
 }
 
 /// Ask the bridge to fetch the thumbnail for `asset_id` at `url`.
@@ -262,12 +261,6 @@ pub fn request_thumbnail(asset_id: &str, url: &str) {
 #[cfg(target_arch = "wasm32")]
 pub fn upload_asset() {
   js_upload_asset();
-}
-
-/// Ask the bridge to attach `asset_id` to `chat_id`.
-#[cfg(target_arch = "wasm32")]
-pub fn attach_asset(asset_id: &str, chat_id: &str) {
-  js_attach_asset(asset_id, chat_id);
 }
 
 /// Sink export: the bridge delivers resolved thumbnail pixels.
@@ -294,24 +287,6 @@ pub fn egui_thumb_failed(asset_id: &str) {
 #[wasm_bindgen]
 pub fn egui_asset_uploaded(asset_id: &str) {
   UPLOADED.with(|q| q.borrow_mut().push(asset_id.to_string()));
-}
-
-/// Sink export: the bridge reports an attach result.
-#[cfg(target_arch = "wasm32")]
-#[wasm_bindgen]
-pub fn egui_attach_result(asset_id: &str, ok: bool) {
-  ATTACH_RESULTS.with(|q| q.borrow_mut().push((asset_id.to_string(), ok,)),);
-}
-
-#[cfg(target_arch = "wasm32")]
-thread_local! {
-  static ATTACH_RESULTS: std::cell::RefCell<Vec<(String, bool,)>> = const { std::cell::RefCell::new(Vec::new()) };
-}
-
-/// Drain attach results for the app.
-#[cfg(target_arch = "wasm32")]
-pub fn drain_attach_results() -> Vec<(String, bool,)> {
-  ATTACH_RESULTS.with(|q| q.borrow_mut().drain(..).collect())
 }
 
 #[cfg(target_arch = "wasm32")]
@@ -345,13 +320,19 @@ mod tests {
   }
 
   #[test]
+  fn ellipsize_truncates_on_char_boundaries() {
+    assert_eq!(ellipsize("short.png", 20), "short.png");
+    assert_eq!(ellipsize("a.png", 5), "a.png");
+    assert_eq!(ellipsize("abcdefghij", 4), "abcd...");
+    // Every multi-byte char is 3+ bytes: a byte-indexed slice at 4 would panic.
+    assert_eq!(ellipsize("日本語のファイル.png", 4), "日本語の...");
+    assert_eq!(ellipsize("🎉🎉🎉🎉🎉", 2), "🎉🎉...");
+  }
+
+  #[test]
   fn apply_page_replaces_on_first_page_and_appends_after() {
     let mut state = GalleryState::new();
-    state.apply_page(
-      vec![asset("a1", "image", Some("/api/v1/assets/a1/thumb"))],
-      1,
-      true,
-    );
+    state.apply_page(vec![asset("a1", "image", Some("/api/v1/assets/a1/thumb"))], 1, true);
     assert_eq!(state.cells.len(), 1);
     assert_eq!(state.page, 1);
     state.apply_page(vec![asset("a2", "image", None)], 2, false);
@@ -385,11 +366,7 @@ mod tests {
   #[test]
   fn thumb_request_dedupes_and_drains_fifo() {
     let mut state = GalleryState::new();
-    state.apply_page(
-      vec![asset("a1", "image", Some("/api/v1/assets/a1/thumb"))],
-      1,
-      true,
-    );
+    state.apply_page(vec![asset("a1", "image", Some("/api/v1/assets/a1/thumb"))], 1, true);
     state.enqueue_missing_thumbs();
     let first = state.drain_pending_thumbs();
     assert_eq!(first.len(), 1);
@@ -400,25 +377,72 @@ mod tests {
   }
 
   #[test]
-  fn thumb_ready_and_failed_mark_cells() {
+  fn resolved_cell_is_never_re_requested_and_ignores_late_failure() {
     let mut state = GalleryState::new();
-    state.apply_page(
-      vec![asset("a1", "image", Some("/api/v1/assets/a1/thumb"))],
-      1,
-      true,
-    );
+    state.apply_page(vec![asset("a1", "image", Some("/api/v1/assets/a1/thumb"))], 1, true);
+    state.enqueue_missing_thumbs();
+    assert_eq!(state.drain_pending_thumbs().len(), 1);
+    state.apply_thumb("a1");
+    assert!(state.cells[0].has_thumb);
+    assert!(!state.cells[0].thumb_requested);
+    // A resolved cell must not be re-requested on the next frame.
+    state.enqueue_missing_thumbs();
+    assert_eq!(state.drain_pending_thumbs().len(), 0);
+    // A late failure for an already-resolved cell is discarded.
+    state.apply_thumb_failed("a1");
+    assert!(!state.cells[0].thumb_failed);
+    assert!(state.cells[0].has_thumb);
+  }
+
+  #[test]
+  fn failed_cell_marks_placeholder_and_stops_retrying() {
+    let mut state = GalleryState::new();
+    state.apply_page(vec![asset("a1", "image", Some("/api/v1/assets/a1/thumb"))], 1, true);
     state.enqueue_missing_thumbs();
     state.drain_pending_thumbs();
-    state.apply_thumb(ThumbPixels {
-      asset_id: "a1".to_string(),
-      width: 4,
-      height: 4,
-      rgba: vec![0; 64],
-    });
-    assert_eq!(state.cells[0].thumb.as_ref().unwrap().width, 4);
-    assert!(!state.cells[0].thumb_failed);
-    state.apply_thumb_failed("a1".to_string());
+    state.apply_thumb_failed("a1");
     assert!(state.cells[0].thumb_failed);
+    assert!(!state.cells[0].thumb_requested);
+    // No retry loop: a failed cell is not re-enqueued every frame.
+    state.enqueue_missing_thumbs();
+    assert_eq!(state.drain_pending_thumbs().len(), 0);
+  }
+
+  #[test]
+  fn apply_error_surfaces_message_and_clears_loading() {
+    let mut state = GalleryState::new();
+    state.loading = true;
+    state.apply_error("HTTP 500".to_string());
+    assert_eq!(state.error.as_deref(), Some("HTTP 500"));
+    assert!(!state.loading);
+    // A successful page clears the previous error.
+    state.apply_page(vec![asset("a1", "image", None)], 1, true);
+    assert!(state.error.is_none());
+  }
+
+  #[test]
+  fn apply_page_replace_clears_pending_thumbnail_requests() {
+    let mut state = GalleryState::new();
+    state.apply_page(vec![asset("a1", "image", Some("/api/v1/assets/a1/thumb"))], 1, true);
+    state.enqueue_missing_thumbs();
+    state.apply_page(vec![asset("b1", "image", Some("/api/v1/assets/b1/thumb"))], 1, true);
+    // The app enqueues once per frame before draining.
+    state.enqueue_missing_thumbs();
+    let drained = state.drain_pending_thumbs();
+    // The superseded request for the previous query is gone; the new cell's is queued fresh.
+    assert_eq!(drained.len(), 1);
+    assert_eq!(drained[0].asset_id, "b1");
+  }
+
+  #[test]
+  fn unknown_asset_id_is_ignored() {
+    let mut state = GalleryState::new();
+    state.apply_page(vec![asset("a1", "image", None)], 1, true);
+    state.apply_thumb("nope");
+    state.apply_thumb_failed("nope");
+    assert_eq!(state.cells.len(), 1);
+    assert!(!state.cells[0].has_thumb);
+    assert!(!state.cells[0].thumb_failed);
   }
 
   #[test]
