@@ -49,12 +49,17 @@ export interface ModelsOverlayOptions {
 }
 
 /** Footer hint per level, so the keys on offer are never a guess.
- *  Verified against real blessed: every key named here is bound on the focused
- *  box, and `Esc` reaches the app's global dismiss chain. */
+ *
+ *  Verified against real blessed: every letter/arrow/Enter key named here is
+ *  bound on the focused box, and `Esc` is not bound here at all - it reaches
+ *  the app's global dismiss chain and closes the whole overlay from any level.
+ *  (An earlier draft promised "Esc: back" at the providers and models levels.
+ *  No such binding existed and none does; the claim was removed rather than
+ *  shipped, per the no-unverified-hints rule.) */
 const HINTS: Record<OverlayLevel, string> = {
   roles: "Up/Down: move | Enter: pick provider | c: clear override | Esc: close",
-  providers: "Up/Down: move | Enter: pick model | p: ping | r: rescan | Esc: back",
-  models: "Up/Down: move | Enter: assign | Esc: back",
+  providers: "Up/Down: move | Enter: pick model | p: ping | r: rescan | Esc: close",
+  models: "Up/Down: move | Enter: assign | Esc: close",
 };
 
 /**
