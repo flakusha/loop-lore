@@ -16,7 +16,7 @@ TUI built with `blessed` + `blessed-contrib`. Terminal chat interface with integ
 - Harness overlay `src/tui/harness/index.ts` — full-screen overlay (F3); Up/Down navigates runs, Enter loads detail; refreshes on every toggle.
 - Models overlay `src/tui/models-overlay.ts` — full-screen admin overlay (F6); three-level drill-down: roles → providers → models; shows `source` diagnostic per row; also surfaces provider health and a per-provider connection-test button.
 - Provider-health status segment — live health segment in the status bar (rightmost); `GET /api/v1/providers` requires no auth; refreshed on startup and on every F5.
-- Integration: `GET /api/v1/assets?entity_type=chat&entity_id=…` (asset service), `POST/GET /api/v1/chats/:id/messages` (assistant service), `GET /api/v1/commands` (slash-command registry), `GET /api/v1/providers` (public health); base URL from `LOOP_LORE_API_BASE_URL` env or `http://localhost:3000`.
+- Integration: `GET /api/v1/assets?entity_type=chat&entity_id=…` (asset service), `POST/GET /api/v1/chats/:id/messages` (assistant service), `GET /api/v1/commands` (slash-command registry), `GET /api/v1/providers` (public health), `GET /api/v1/harness/runs` (harness run list), `GET /api/v1/harness/runs/:runId` (harness run detail), `GET /api/v1/harness/stats` (harness aggregate stats); base URL from `LOOP_LORE_API_BASE_URL` env or `http://localhost:3000`.
 
 ## Platform notes
 
