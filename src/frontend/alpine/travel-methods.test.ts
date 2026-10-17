@@ -15,12 +15,14 @@ const point = (x: number | null, y: number | null,): TravelPoint => ({ coordX: x
 
 const WALK = resolveTravelMethod("walk",);
 const RIDE = resolveTravelMethod("ride",);
+const FLY = resolveTravelMethod("fly",);
 const TELEPORT = resolveTravelMethod("teleport",);
 
 describe("resolveTravelMethod", () => {
-  test("resolves the three UI methods", () => {
+  test("resolves the four UI methods", () => {
     expect(WALK.id,).toBe("walk",);
     expect(RIDE.id,).toBe("ride",);
+    expect(FLY.id,).toBe("fly",);
     expect(TELEPORT.id,).toBe("teleport",);
   });
 
@@ -29,8 +31,8 @@ describe("resolveTravelMethod", () => {
     expect(resolveTravelMethod(null,).id,).toBe("walk",);
   });
 
-  test("keeps walk/ride/teleport as the selectable set", () => {
-    expect(TRAVEL_METHODS.map((m,) => m.id),).toEqual(["walk", "ride", "teleport",],);
+  test("keeps walk/ride/fly/teleport as the selectable set", () => {
+    expect(TRAVEL_METHODS.map((m,) => m.id),).toEqual(["walk", "ride", "fly", "teleport",],);
   });
 });
 
@@ -60,6 +62,14 @@ describe("estimateTravelMinutes", () => {
 
   test("unknown when neither coordinates nor hops exist", () => {
     expect(estimateTravelMinutes(point(null, null,), point(null, null,), WALK, null,),).toBeNull();
+  });
+
+  test("fly outruns riding over the same distance", () => {
+    // 7 units: ride 25u/h = 17m, fly 100u/h = 4.2m → 5m.
+    expect(estimateTravelMinutes(point(0, 0,), point(7, 0,), FLY, null,),).toBe(5,);
+    expect(estimateTravelMinutes(point(0, 0,), point(7, 0,), RIDE, null,),).toBeGreaterThan(
+      estimateTravelMinutes(point(0, 0,), point(7, 0,), FLY, null,) ?? 0,
+    );
   });
 
   test("teleport is instant regardless of distance", () => {
