@@ -80,6 +80,6 @@ describe("views/chats", () => {
   test("loadChatsSearchViewModel filters by query", async () => {
     const vm = await loadChatsSearchViewModel(db, new URLSearchParams({ q: "alpha", },),);
     expect(vm.chats.length,).toBe(1,);
-    expect(vm.chats[0].name,).toContain("Alpha",);
+    expect(vm.chats[0]?.name,).toContain("Alpha",);
   });
 });
