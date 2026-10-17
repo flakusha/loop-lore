@@ -109,6 +109,8 @@ const scenarioMutate = async (): Promise<Record<string, unknown>> => {
 
 /** Which string-to-code escapes this runtime actually refuses. */
 const scenarioCoverage = async (): Promise<Record<string, unknown>> => ({
+  // oxlint-disable-next-line no-eval — this fixture explicitly probes eval() sandboxing
+  // oxlint-disable-next-line no-eval — this fixture explicitly probes eval() sandboxing
   eval: attempt(() => globalThis.eval("1+1")),
   newFunction: attempt(() => new Function("return 1")()),
   vmScript: attempt(() => new vm.Script("1+1")),

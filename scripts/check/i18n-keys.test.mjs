@@ -71,7 +71,7 @@ test("missing key — exit 1 with key listed", () => {
 });
 
 test("concatenated keys are skipped (not static)", () => {
-  const { code, out, } = runFixture({
+  const { code, } = runFixture({
     "src/public/locales/en.json": EN_JSON,
     "src/app.ts": 't("errors." + kind)\n',
   },);
@@ -79,7 +79,7 @@ test("concatenated keys are skipped (not static)", () => {
 });
 
 test("template literal keys are skipped", () => {
-  const { code, out, } = runFixture({
+  const { code, } = runFixture({
     "src/public/locales/en.json": EN_JSON,
     "src/app.ts": "t(`errors.${kind}`)\n",
   },);
