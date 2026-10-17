@@ -156,14 +156,14 @@ Bound to this epic via the `**Epic:** epic-terminal-ui` header on each ticket.
 
 ### Open
 
-- [ ] `TASK-tui-spec-sync` — correct spec drift across all four rows in §Spec drift
-- [ ] `TASK-tui-chat-picker` — list view for existing chats; highest-value missing TUI screen
-- [ ] `TASK-update-terminal-ui-spec-to-actual-file-layout.md` — spec drift on file layout; superseded in practice by `TASK-tui-spec-sync` (work that one instead)
+- [x] `TASK-tui-spec-sync` — correct spec drift across all four rows in §Spec drift
+- [x] `TASK-tui-chat-picker` — list view for existing chats; highest-value missing TUI screen
+- [x] `TASK-update-terminal-ui-spec-to-actual-file-layout.md` — spec drift on file layout; superseded in practice by `TASK-tui-spec-sync` (work that one instead)
 
 ### Deferred / Open
 
-- [ ] `BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle.md` — sidebar advertised `Del: unlink` with no handler behind it; fixed in `050eb320d` by removing the claim rather than shipping a one-keypress irreversible delete
-- [ ] `TASK-harness-stats-endpoint-was-implemented-but-never-called.md` — `loadStats` had zero production callers, so `GET /api/v1/harness/stats` was never fetched; fixed in `42abe9123` by wiring it into the empty-runs branch of the F3 refresh with quiet 403 degradation
+- [x] `BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle.md` — sidebar advertised `Del: unlink` with no handler behind it; fixed in `050eb320d` by removing the claim rather than shipping a one-keypress irreversible delete
+- [x] `TASK-harness-stats-endpoint-was-implemented-but-never-called.md` — `loadStats` had zero production callers, so `GET /api/v1/harness/stats` was never fetched; fixed in `42abe9123` by wiring it into the empty-runs branch of the F3 refresh with quiet 403 degradation
 
 - `TASK-tui-dedupe-api-base.md` — **premise no longer holds**: `API_BASE` is declared once at `src/tui/chat/api.ts:7`, re-exported by `harness/api.ts:8` and imported by `app.ts:16`, which is exactly what the ticket asks for. Re-scope or close rather than re-implement (blocked on P1 only because the edit is in untestable `app.ts`)
 - `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — banned patterns in `AssetView.setChatId` (blocked on P1)

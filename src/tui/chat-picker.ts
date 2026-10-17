@@ -101,6 +101,8 @@ export interface ChatPickerOptions {
   sessionToken?: string;
   /** Invoked with the chosen chat id when the user commits a row. */
   onSelect: (chatId: string,) => void;
+  /** Invoked when the overlay hides (Esc or selection). */
+  onHide?: () => void;
 }
 
 /**
@@ -121,6 +123,7 @@ export class ChatPicker {
   private prompt: blessed.Widgets.TextboxElement | null = null;
   private sessionToken: string | undefined;
   private onSelect: (chatId: string,) => void;
+  private onHide: (() => void) | undefined;
 
   /**
    * @param screen
@@ -130,6 +133,7 @@ export class ChatPicker {
     this.screen = screen;
     this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
     this.onSelect = options.onSelect;
+    this.onHide = options.onHide;
 
     this.box = blessed.box({
       parent: screen,
@@ -184,6 +188,7 @@ export class ChatPicker {
     // keys to `screen.focused` only (widgets/screen.js:601-604) and the picker
     // focuses the list. Always offered — with no rows `c` is the only way in.
     this.list.key(["c",], () => {
+      if (!this.visible) { return; }
       this.startCreate();
     },);
   }
@@ -203,6 +208,7 @@ export class ChatPicker {
     this.cancelCreate();
     this.box.hide();
     this.screen.render();
+    this.onHide?.();
   }
 
   /**
@@ -276,7 +282,12 @@ export class ChatPicker {
     this.prompt.emit("blur",);
     this.prompt.hide();
     this.prompt = null;
-    this.statusLabel.setContent(NO_CHATS_MESSAGE,);
+    this.statusLabel.setContent(
+      this.chats.length > 0
+        ? `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`
+        : NO_CHATS_MESSAGE,
+    );
+
     this.list.focus();
     this.screen.render();
   }
@@ -310,20 +321,22 @@ export class ChatPicker {
     this.statusLabel.setContent(CREATING_STATUS,);
     this.screen.render();
 
-    const result = await _createChat({ name: trimmed, sessionToken: this.sessionToken, },);
+    try {
+      const result = await _createChat({ name: trimmed, sessionToken: this.sessionToken, },);
 
-    if (!result.ok) {
-      // The prompt is gone by now, so the error lands on the status line — the
-      // same place a load failure renders — and `c` still works to retry.
+      if (!result.ok) {
+        // The prompt is gone by now, so the error lands on the status line — the
+        // same place a load failure renders — and `c` still works to retry.
+        this.statusLabel.setContent(result.error,);
+        this.list.focus();
+        this.screen.render();
+        return;
+      }
+
+      this.onSelect(result.chatId,);
+    } finally {
       this.creating = false;
-      this.statusLabel.setContent(result.error,);
-      this.list.focus();
-      this.screen.render();
-      return;
     }
-
-    this.creating = false;
-    this.onSelect(result.chatId,);
   }
 
   /**

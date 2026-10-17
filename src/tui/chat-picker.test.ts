@@ -108,7 +108,9 @@ interface PickerUnderTest {
   visible: boolean;
   sessionToken: string | undefined;
   onSelect: (chatId: string,) => void;
+  onHide: (() => void) | undefined;
   refresh(): Promise<void>;
+  hide(): void;
   dismiss(): boolean;
   isVisible(): boolean;
   creating: boolean;
@@ -170,6 +172,8 @@ function buildPicker(selected: string[] = [],): PickerUnderTest {
   picker.onSelect = (chatId: string,) => {
     selected.push(chatId,);
   };
+
+  picker.onHide = undefined;
 
   return picker;
 }
@@ -381,5 +385,57 @@ describe("ChatPicker create flow", () => {
     await commitPromise;
 
     expect(picker.isCreating(),).toBe(false,);
+  });
+
+  it("creating resets on rejection (try/finally)", async () => {
+    const picker = buildPicker();
+    const stub = (): Promise<{ ok: true; chatId: string }> => Promise.reject(new Error("network down",),);
+    setCreateChat(stub as typeof createChat,);
+
+    try {
+      await picker.commitCreate("Test",);
+    } catch {
+      // expected — the error propagates after finally resets creating
+    }
+
+    expect(picker.isCreating(),).toBe(false,);
+  });
+
+  it("onHide fires on dismiss", () => {
+    const picker = buildPicker();
+    let hideCount = 0;
+    picker.onHide = () => {
+      hideCount++;
+    };
+
+    picker.visible = true;
+
+    picker.dismiss();
+
+    expect(hideCount,).toBe(1,);
+  });
+
+  it("onHide fires on hide", () => {
+    const picker = buildPicker();
+    let hideCount = 0;
+    picker.onHide = () => {
+      hideCount++;
+    };
+
+    picker.visible = true;
+
+    picker.hide();
+
+    expect(hideCount,).toBe(1,);
+  });
+
+  it("cancelCreate restores correct footer when chats exist", () => {
+    const picker = buildPicker();
+    picker.chats = [{ id: "x", name: "A", type: "direct", is_pinned: "unpinned", },];
+    picker.prompt = promptStub();
+
+    picker.cancelCreate();
+
+    expect(picker.statusLabel.content,).toBe("1 chat(s) | Enter: bind chat | Esc: close",);
   });
 });

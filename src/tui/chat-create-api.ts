@@ -51,6 +51,7 @@ export async function createChat(options: CreateChatOptions,): Promise<ChatCreat
         ...(sessionToken ? { Authorization: `Bearer ${sessionToken}`, } : {}),
       },
       body: jsonStringifyOr({ name, },),
+      signal: AbortSignal.timeout(30000,),
     },);
   } catch (error: unknown) {
     return { ok: false, error: error instanceof Error ? error.message : String(error,), };
@@ -60,14 +61,26 @@ export async function createChat(options: CreateChatOptions,): Promise<ChatCreat
     // Read the error body before it's discarded. Errors carry
     // `{ error: message, code, meta }` (src/routes/http-utils/errors.ts:63),
     // which is where the age-gate and NSFW-participant 403 messages live.
-    const text = await response.text();
+    let text: string;
+    try {
+      text = await response.text();
+    } catch {
+      return { ok: false, error: `HTTP ${response.status}`, };
+    }
+
     const message = jsonParseOr<{ error?: string }>(text, {},).error ?? `HTTP ${response.status}`;
 
     return { ok: false, error: message, };
   }
 
   // Success: 201 with { id, meta }
-  const text = await response.text();
+  let text: string;
+  try {
+    text = await response.text();
+  } catch {
+    return { ok: false, error: "Create succeeded but response body unreadable", };
+  }
+
   const id = jsonParseOr<{ id?: string }>(text, {},).id;
   if (id) { return { ok: true, chatId: id, }; }
 
