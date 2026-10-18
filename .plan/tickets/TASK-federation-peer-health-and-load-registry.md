@@ -3,7 +3,8 @@
 
 # TASK: Federation peer health and load registry
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** `src/federation/peer-health.ts` holds per-(origin, class) state: latency EWMA (alpha 0.3, seeded from the first sample so a cold start never divides by zero), in-flight counters with `configurePeerConcurrency` headroom, and a per-(origin, class) circuit over the existing `CircuitBreaker` from `src/generation/providers/circuit-breaker.ts` — no second breaker implementation. `runPeerAttempt` returns the in-flight count to zero on every outcome path including a throwing handler. `src/federation/peer-eligibility.ts` folds that circuit into eligibility: `listEligibleWorkloadPeers` excludes a `suspended` peer and any peer whose circuit is open for that class, not merely from content push. Routing order (headroom, latency, origin) is left to the routing-policy ticket. Tests: `src/federation/peer-health.test.ts`.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas

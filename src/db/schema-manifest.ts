@@ -777,6 +777,13 @@ export const SCHEMA = new SchemaManifest()
     last_seen: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     capacity_bytes: col("integer",),
+    display_name: col("text",),
+    instance_kind: col("text", { notNull: true, hasDefault: true, },),
+    auth_mode: col("text", { notNull: true, hasDefault: true, },),
+    workload_trust: col("integer", { notNull: true, hasDefault: true, },),
+    allowed_workload_classes: col("text", { notNull: true, hasDefault: true, },),
+    sticky_enabled: col("integer", { notNull: true, hasDefault: true, },),
+    shared_token_enc: col("text",),
   },)
   .table("mesh_reservations", {
     id: col("text", { primaryKey: true, },),

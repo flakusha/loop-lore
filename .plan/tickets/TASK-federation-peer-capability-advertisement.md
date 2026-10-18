@@ -3,7 +3,8 @@
 
 # TASK: Federation peer capability advertisement
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** Closed enum in `src/db/enums-federation.ts` (`PeerWorkloadClass`: chat, image, aux, tts, translation, embedding, vision) re-exported from the `src/db/enums.ts` barrel. `src/routes/federation.ts:116` now publishes `declaredWorkloadClasses(config)` from `config.federation.workloadOffload.classes` in place of the hardcoded `capabilities: []`, at the same `version: 1` so an older peer still parses. Observed classes stay distinguishable: `InstanceAdvertisement.capabilities` is read by `parseAdvertisedClasses()` and persisted per peer in `coordinator.ts` `touchPeer`, never folded into the declared list. Wire shape and `Version` type unchanged. Tests: `src/federation/peer-capabilities.test.ts`, `src/routes/federation.test.ts` (advertised workload capabilities describe).
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-federation-offload-quotas
