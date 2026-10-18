@@ -152,12 +152,31 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
   });
 
   test("characters search renders with HX-Request", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/characters/search?q=aria", { headers: { "HX-Request": "true", }, },),
     );
 
     expect(res.status,).toBe(200,);
     expect(await res.text(),).toContain("actor-aria",);
+  });
+
+  test("characters search 401s anonymous callers and hides foreign characters", async () => {
+    const app = makeApp(db,);
+
+    const anon = await app.handle(
+      new Request("http://localhost/dynamic/characters/search", { headers: { "HX-Request": "true", }, },),
+    );
+
+    expect(anon.status,).toBe(401,);
+    expect(await anon.text(),).not.toContain("actor-aria",);
+
+    // A different, non-admin user owns nothing here: same rows, none of them.
+    const stranger = await makeApp(db, "intruder", "user",).handle(
+      new Request("http://localhost/dynamic/characters/search", { headers: { "HX-Request": "true", }, },),
+    );
+
+    expect(stranger.status,).toBe(200,);
+    expect(await stranger.text(),).not.toContain("actor-aria",);
   });
 
   test("chats list renders with HX-Request", async () => {

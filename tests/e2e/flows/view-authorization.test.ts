@@ -193,6 +193,27 @@ describe("Dynamic view authorization E2E", () => {
       expect(res.body,).toContain(SEED.character.id,);
     });
 
+    test("a stranger's character search omits foreign characters", async () => {
+      const res = await rawGet(`/dynamic/characters/search?q=${encodeURIComponent(SEED.character.name,)}`, {
+        token: other.token,
+        htmx: true,
+      },);
+
+      expect(res.status,).toBe(200,);
+      expect(res.body,).not.toContain(SEED.character.id,);
+      expect(res.body,).not.toContain(SEED.character.name,);
+    });
+
+    test("the owner's character search lists them (positive control)", async () => {
+      const res = await rawGet(`/dynamic/characters/search?q=${encodeURIComponent(SEED.character.name,)}`, {
+        token: owner.token,
+        htmx: true,
+      },);
+
+      expect(res.status,).toBe(200,);
+      expect(res.body,).toContain(SEED.character.id,);
+    });
+
     test("a stranger's character chat-list is the empty state, not the owner's chat", async () => {
       // The `:id` path param of this route is a chat-name search substring,
       // not a character id (see serveCharacterChatListDb) — match on the name.
@@ -207,9 +228,10 @@ describe("Dynamic view authorization E2E", () => {
       expect(res.body,).not.toContain(SEED.chat.name,);
     });
 
-    test("anonymous htmx requests to all three surfaces are 401", async () => {
+    test("anonymous htmx requests to all four surfaces are 401", async () => {
       const paths = [
         "/dynamic/characters/grid",
+        "/dynamic/characters/search",
         `/dynamic/characters/${SEED.character.id}/edit-form`,
         `/dynamic/characters/${SEED.character.id}/chat-list`,
       ];

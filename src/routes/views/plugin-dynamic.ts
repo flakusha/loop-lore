@@ -156,8 +156,13 @@ export function dynamicRoutes(database: Kysely<DB>,) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
+      // Same ownership rule as the grid: this fragment lists the same actor
+      // rows, so it must not become a way around the grid's scoping.
+      const viewer = characterViewer(ctx,);
+      if (viewer instanceof Response) { return viewer; }
+
       const url = new URL(ctx.request.url,);
-      return await serveCharactersSearch(database, url.searchParams,);
+      return await serveCharactersSearch(database, url.searchParams, viewer,);
     }, {
       response: { 200: SuccessResponse, },
     },)
