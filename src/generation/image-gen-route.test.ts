@@ -148,6 +148,17 @@ if (ISOLATED) {
 // ── Helpers ─────────────────────────────────────────────────────────────────────
 
 /**
+ * A freshly MIGRATED test database for the cases that pass no explicit handle.
+ * `handleImageGeneration` falls back to `getDatabase()`, which without an
+ * override materialises the on-disk production DB — an unmigrated schema, and
+ * a write path that now reads `instance_storage_budgets`.
+ */
+async function migratedDb(): Promise<Kysely<DB>> {
+  const { db, } = await createTestDb();
+  return db;
+}
+
+/**
  * @param overrides
  */
 function makeBody(overrides?: Record<string, unknown>,) {
@@ -216,7 +227,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
   it("does NOT pass lora to generateImages when lora field is absent", async () => {
     const body = makeBody({ prompt: "no lora prompt", },);
-    await handleImageGeneration(body, undefined, "test-user",);
+    await handleImageGeneration(body, await migratedDb(), "test-user",);
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
@@ -231,7 +242,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       lora: LORA_CONFIG,
     },);
 
-    await handleImageGeneration(body, undefined, "test-user",);
+    await handleImageGeneration(body, await migratedDb(), "test-user",);
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
@@ -282,7 +293,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       lora: COMFYUI_CONFIG,
     },);
 
-    await handleComfyUI(body, undefined, "test-user",);
+    await handleComfyUI(body, await migratedDb(), "test-user",);
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
@@ -293,7 +304,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
   it("returns HTTP 400 when prompt is missing", async () => {
     const body = makeBody({ prompt: undefined, },);
-    const res = await handleImageGeneration(body, undefined, "test-user",);
+    const res = await handleImageGeneration(body, await migratedDb(), "test-user",);
 
     expect(res.status,).toBe(400,);
     const json = await res.json() as { error: string };
@@ -317,7 +328,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     const { handleImageGeneration: handleNoProvider, } = await import("./image-gen-route");
     const body = makeBody({ prompt: "any prompt", },);
-    const res = await handleNoProvider(body, undefined, "test-user",);
+    const res = await handleNoProvider(body, await migratedDb(), "test-user",);
 
     expect(res.status,).toBe(501,);
   });
@@ -367,7 +378,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       lora: LORA_CONFIG,
     },);
 
-    const res = await handleOpenAI(body, undefined, "test-user",);
+    const res = await handleOpenAI(body, await migratedDb(), "test-user",);
 
     expect(res.status,).toBe(400,);
     const json = await res.json() as { error: string };
@@ -416,7 +427,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     const { handleImageGeneration: handleOpenAINoLora, } = await import("./image-gen-route");
     const body = makeBody({ prompt: "normal openai request", },);
-    const res = await handleOpenAINoLora(body, undefined, "test-user",);
+    const res = await handleOpenAINoLora(body, await migratedDb(), "test-user",);
 
     expect(res.status,).toBe(200,);
   });
@@ -520,7 +531,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   it("propagates the provider error status when generation fails", async () => {
     generateError = { ok: false, error: "provider exploded", status: 502, };
     try {
-      const res = await handleImageGeneration(makeBody(), undefined, "test-user",);
+      const res = await handleImageGeneration(makeBody(), await migratedDb(), "test-user",);
 
       expect(res.status,).toBe(502,);
       const json = await res.json() as { error: string };

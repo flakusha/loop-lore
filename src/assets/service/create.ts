@@ -53,6 +53,17 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   // Determine encryption tier (default: public)
   const encryptionTier = input.encryptionTier ?? "public";
 
+  // Hard-quota gate at the write seam. Off by default: with no
+  // `instance_storage_budgets` row this returns after one query and nothing
+  // below changes. Placed BEFORE the store so a refused write leaves no file.
+  const { assertStorageWriteAllowed, } = await import("../../federation/storage-quota");
+  await assertStorageWriteAllowed({
+    database,
+    uploadDir,
+    incomingBytes: input.sizeBytes,
+    assetType: input.assetType,
+  },);
+
   // Encrypt blob if needed
   let storageBuffer = input.buffer;
   let encryptedKeyId: string | null = null;

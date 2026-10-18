@@ -36,6 +36,7 @@ export const HttpStatus = {
   BadGateway: 502,
   ServiceUnavailable: 503,
   GatewayTimeout: 504,
+  InsufficientStorage: 507,
 } as const;
 
 /** */
@@ -52,6 +53,8 @@ export const ErrorCode = {
   Conflict: "CONFLICT",
   NotImplemented: "NOT_IMPLEMENTED",
   ServiceUnavailable: "SERVICE_UNAVAILABLE",
+  QuotaExceeded: "federation.quota_exceeded",
+  StorageUnavailable: "federation.storage_unavailable",
 } as const;
 /** */
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

@@ -35,6 +35,7 @@ describe("cron default jobs", () => {
       "federation.gossip",
       "federation.resync",
       "federation.outbox-drain",
+      "federation.storage-reconcile",
       "providers.health-rescan",
       "autonomy.world-tick",
       "locations.tick",
