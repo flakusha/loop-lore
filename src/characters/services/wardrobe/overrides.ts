@@ -8,6 +8,8 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
+import { TaggedError, } from "../../../errors/tagged";
+import { getChildLogger, } from "../../../logger";
 import { jsonStringifyOr, } from "../../../utils";
 
 /**
@@ -72,20 +74,38 @@ export async function setChatOutfitOverride(
 }
 
 /**
+ * A referenced outfit is not bindable by the actor: owned by another
+ * actor, or a template from a different world.
+ */
+export class WardrobeItemNotVisibleError extends TaggedError<"wardrobe-item-not-visible"> {
+  readonly tag = "wardrobe-item-not-visible" as const;
+
+  /** @param outfitId the rejected wardrobe_items id */
+  constructor(outfitId: string,) {
+    super(`Wardrobe item ${outfitId} not visible in world`,);
+  }
+}
+
+/**
  * Replace the location→outfit rule map for one actor in one world.
+ * A binding may only reference an outfit the actor owns or an actor-less
+ * world template of that world — never another actor's outfit.
  * @param db
  * @param opts
  * @param opts.worldId
  * @param opts.actorId
  * @param opts.bindings
  * @returns void
- * @throws {Error} when a referenced outfit is not visible in the world
+ * @throws {WardrobeItemNotVisibleError} when a referenced outfit is not owned by the actor and not a world template of the world
  */
 export async function setLocationOutfitBindings(
   db: Kysely<DB>,
   opts: { worldId: string; actorId: string; bindings: Record<string, string> },
 ): Promise<void> {
   for (const outfitId of Object.values(opts.bindings,)) {
+    // Cross-actor guard: ck_wardrobe_items_scope lets actor_id and world_id
+    // coexist, so the world branch must demand actor_id IS NULL or another
+    // actor's outfit could steer this actor's avatar config.
     const visible = await db
       .selectFrom("wardrobe_items",)
       .select(["id",],)
@@ -93,12 +113,19 @@ export async function setLocationOutfitBindings(
       .where((eb,) =>
         eb.or([
           eb("actor_id", "=", opts.actorId,),
-          eb("world_id", "=", opts.worldId,),
+          eb.and([eb("actor_id", "is", null,), eb("world_id", "=", opts.worldId,),],),
         ],)
       )
       .executeTakeFirst();
 
-    if (!visible) { throw new Error(`Wardrobe item ${outfitId} not visible in world`,); }
+    if (!visible) {
+      getChildLogger("wardrobe/overrides",)?.warn(
+        "setLocationOutfitBindings: outfit not visible to actor, rejecting map",
+        { outfitId, actorId: opts.actorId, worldId: opts.worldId, },
+      );
+
+      throw new WardrobeItemNotVisibleError(outfitId,);
+    }
   }
 
   const now = new Date().toISOString();

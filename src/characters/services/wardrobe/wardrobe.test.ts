@@ -16,6 +16,7 @@ import { beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
+import { insertWardrobeItems, } from "../../../test-utils/insert-helpers";
 import { AvatarService, } from "../avatar-service";
 import { deleteOutfitEmotionVariants, } from "../emotion-avatar-service/generation";
 import { createTestActors, createTestLocation, createTestWorld, } from "../test-helpers";
@@ -459,6 +460,32 @@ describe("outfit_bindings validation (JSON column, no FK)", () => {
     await setBindings(JSON.stringify({ [locationId]: robesId, },),);
     const resolved = await resolveOutfit(db, { actorId, worldId, locationId, },);
     expect(resolved.outfitId,).toBe(robesId,);
+    expect(resolved.source,).toBe("location_rule",);
+  });
+
+  it("another actor's outfit id degrades to the default outfit", async () => {
+    // No FK on outfit_bindings: a foreign-actor id (here even scoped to
+    // the same world) is storable — resolve must treat it like any
+    // invalid rule and never let it steer this actor's appearance.
+    const { actorId: otherActorId, } = await createTestActors(db, "wardrobe-bindval-other",);
+    const foreign = await insertWardrobeItems(db, "Other actor outfit", {
+      actor_id: otherActorId,
+      world_id: worldId,
+    },);
+
+    await setBindings(JSON.stringify({ [locationId]: foreign, },),);
+    const resolved = await resolveOutfit(db, { actorId, worldId, locationId, },);
+    expect(resolved.outfitId,).toBe(robesId,);
+    expect(resolved.source,).toBe("default",);
+  });
+
+  it("a world template of this world still wins via the location rule", async () => {
+    // World templates (actor-less, world-scoped) are the explicitly
+    // shared outfit concept — bindable and resolvable for every actor.
+    const template = await insertWardrobeItems(db, "Bindval template", { world_id: worldId, },);
+    await setBindings(JSON.stringify({ [locationId]: template, },),);
+    const resolved = await resolveOutfit(db, { actorId, worldId, locationId, },);
+    expect(resolved.outfitId,).toBe(template,);
     expect(resolved.source,).toBe("location_rule",);
   });
 });
