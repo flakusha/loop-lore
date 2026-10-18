@@ -74,7 +74,7 @@ async function enrichChats(
 }
 
 /**
- * @param rows - the chat-list view-model items the JSON branch also serves
+ * @param rows
  * @returns the HTML markup for the chat list rows
  */
 function renderChatListItems(rows: readonly ChatListItem[],): string {
