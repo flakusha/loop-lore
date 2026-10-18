@@ -11696,7 +11696,8 @@
       "api-keys",
       "llm",
       "providers",
-      "privacy"
+      "privacy",
+      "encryption-at-rest"
     ],
     "title": "BYOK API Keys (Bring Your Own Key)",
     "type": "EPIC"
@@ -12179,6 +12180,26 @@
     "source": ".plan/epics/epic-comfyui-first-class-citizen.md",
     "status": "Not Started",
     "git_issue": "6e95cc2"
+  },
+  "EPIC-COMFYUI-LIFECYCLE": {
+    "hash": "pending",
+    "extid": "EPIC-COMFYUI-LIFECYCLE",
+    "type": "EPIC",
+    "title": "ComfyUI Lifecycle (provisioning, launch contract, portability)",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "comfyui",
+      "lifecycle",
+      "provisioning",
+      "uv",
+      "llama-swap",
+      "portability",
+      "contract-tests"
+    ],
+    "source": ".plan/tickets/epic-comfyui-lifecycle.md",
+    "status": "Not Started"
   },
   "EPIC-COMFYUI-PLUGIN": {
     "epic": "",
@@ -13237,6 +13258,26 @@
       "security"
     ],
     "source": ".plan/tickets/epic-external-creative-tool-bridge.md",
+    "status": "Not Started"
+  },
+  "EPIC-EXTERNAL-TOOLING-BUILD": {
+    "hash": "d948bd9",
+    "git_issue": "d948bd9",
+    "extid": "EPIC-EXTERNAL-TOOLING-BUILD",
+    "type": "EPIC",
+    "title": "External tooling build CLI (llama.cpp, stable-diffusion.cpp, llama-swap)",
+    "label": "epic",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "tooling",
+      "build",
+      "llama-swap",
+      "llama.cpp",
+      "stable-diffusion",
+      "provisioning"
+    ],
+    "source": ".plan/tickets/epic-external-tooling-build.md",
     "status": "Not Started"
   },
   "EPIC-FACTION-REPUTATION": {
@@ -31836,6 +31877,24 @@
     "source": ".plan/tickets/TASK-comfyui-graph-builder-ts-port.md",
     "status": "Not Started",
     "git_issue": "be1f42a"
+  },
+  "TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS": {
+    "hash": "pending",
+    "extid": "TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS",
+    "type": "TASK",
+    "title": "ComfyUI launch contract — make the tracked llama-swap recipe honest and document the flag set",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-comfyui-lifecycle.md",
+    "tags": [
+      "comfyui",
+      "llama-swap",
+      "config",
+      "docs",
+      "portability"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-launch-contract-llama-swap-recipe-and-docs.md",
+    "status": "Not Started"
   },
   "TASK-COMFYUI-NODE-DISCOVERY": {
     "epic": "epic-comfyui-plugin",
@@ -53248,6 +53307,110 @@
     "tags": [],
     "title": "Tool-Calling Agent Integration",
     "type": "TASK"
+  },
+  "TASK-TOOLING-BUILD-CLI-SURFACE": {
+    "hash": "7bdfb51",
+    "git_issue": "7bdfb51",
+    "extid": "TASK-TOOLING-BUILD-CLI-SURFACE",
+    "type": "TASK",
+    "title": "the CLI surface — subcommands and flags",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-tooling-build.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-build-cli-surface.md",
+    "status": "Not Started"
+  },
+  "TASK-TOOLING-BUILD-CMAKE-DRIVER": {
+    "hash": "f459b10",
+    "git_issue": "f459b10",
+    "extid": "TASK-TOOLING-BUILD-CMAKE-DRIVER",
+    "type": "TASK",
+    "title": "CMake configure/build/install driver with a bounded `--jobs`",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-tooling-build.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-build-cmake-driver.md",
+    "status": "Not Started"
+  },
+  "TASK-TOOLING-BUILD-LLAMA-SWAP-GO-BUILD": {
+    "hash": "43fb474",
+    "git_issue": "43fb474",
+    "extid": "TASK-TOOLING-BUILD-LLAMA-SWAP-GO-BUILD",
+    "type": "TASK",
+    "title": "build llama-swap from Go, not CMake",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-tooling-build.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-build-llama-swap-go-build.md",
+    "status": "Not Started"
+  },
+  "TASK-TOOLING-BUILD-PATH-LAYOUT": {
+    "hash": "18cea61",
+    "git_issue": "18cea61",
+    "extid": "TASK-TOOLING-BUILD-PATH-LAYOUT",
+    "type": "TASK",
+    "title": "per-variant build directories, install root, and PATH symlinks",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-tooling-build.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-build-path-layout.md",
+    "status": "Not Started"
+  },
+  "TASK-TOOLING-BUILD-REF-PINNING": {
+    "hash": "a90d3ab",
+    "git_issue": "a90d3ab",
+    "extid": "TASK-TOOLING-BUILD-REF-PINNING",
+    "type": "TASK",
+    "title": "pin source refs non-destructively",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-tooling-build.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-build-ref-pinning.md",
+    "status": "Not Started"
+  },
+  "TASK-TOOLING-BUILD-STATUS-VERIFY": {
+    "hash": "3634ff4",
+    "git_issue": "3634ff4",
+    "extid": "TASK-TOOLING-BUILD-STATUS-VERIFY",
+    "type": "TASK",
+    "title": "status and verify subcommands that report, never assert",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-tooling-build.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-build-status-verify.md",
+    "status": "Not Started"
+  },
+  "TASK-TOOLING-BUILD-UNVERIFIED-MATRIX-DOCS": {
+    "hash": "3481f10",
+    "git_issue": "3481f10",
+    "extid": "TASK-TOOLING-BUILD-UNVERIFIED-MATRIX-DOCS",
+    "type": "TASK",
+    "title": "document the variant matrix and its unverified status",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-tooling-build.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-build-unverified-matrix-docs.md",
+    "status": "Not Started"
+  },
+  "TASK-TOOLING-BUILD-VARIANT-MATRIX": {
+    "hash": "05eb2bc",
+    "git_issue": "05eb2bc",
+    "extid": "TASK-TOOLING-BUILD-VARIANT-MATRIX",
+    "type": "TASK",
+    "title": "encode the accelerator × architecture variant matrix as data",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-tooling-build.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tooling-build-variant-matrix.md",
+    "status": "Not Started"
   },
   "TASK-TOOLING-IMPROVEMENT": {
     "epic": "epic-tooling-improvement",
