@@ -16,6 +16,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
+import { type ViewsViewer, } from "./access";
 import { serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 
 describe("views/search — gallery", () => {
@@ -140,6 +141,7 @@ describe("views/search — gallery", () => {
 describe("views/search — characters", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
+  const owner: ViewsViewer = { userId: "owner", userRole: null, };
 
   beforeAll(async () => {
     ({ db, sqlite, } = await createTestDb());
@@ -167,7 +169,7 @@ describe("views/search — characters", () => {
   afterAll(() => sqlite.close());
 
   test("lists non-user actors sorted by name", async () => {
-    const res = await serveCharactersSearch(db, new URLSearchParams(),);
+    const res = await serveCharactersSearch(db, new URLSearchParams(), owner,);
     const html = await res.text();
     expect(html,).toContain('data-testid="character-card-actor-aria"',);
     expect(html,).toContain('data-testid="character-card-actor-zed"',);
@@ -176,20 +178,20 @@ describe("views/search — characters", () => {
   });
 
   test("query filters by display_name", async () => {
-    const res = await serveCharactersSearch(db, new URLSearchParams({ q: "aria", },),);
+    const res = await serveCharactersSearch(db, new URLSearchParams({ q: "aria", },), owner,);
     const html = await res.text();
     expect(html,).toContain("actor-aria",);
     expect(html,).not.toContain("actor-zed",);
   });
 
   test("no matches renders empty state", async () => {
-    const res = await serveCharactersSearch(db, new URLSearchParams({ q: "nobody-here", },),);
+    const res = await serveCharactersSearch(db, new URLSearchParams({ q: "nobody-here", },), owner,);
     const html = await res.text();
     expect(html,).toContain("characters-empty",);
   });
 
   test("renders placeholder avatar when no asset", async () => {
-    const res = await serveCharactersSearch(db, new URLSearchParams(),);
+    const res = await serveCharactersSearch(db, new URLSearchParams(), owner,);
     const html = await res.text();
     expect(html,).toContain("<span>👤</span>",);
   });
@@ -209,10 +211,40 @@ describe("views/search — characters", () => {
       },)
       .execute();
 
-    const res = await serveCharactersSearch(db, new URLSearchParams({ q: "X", },),);
+    const res = await serveCharactersSearch(db, new URLSearchParams({ q: "X", },), owner,);
     const html = await res.text();
     expect(html,).not.toContain("<b>X</b>",);
     expect(html,).not.toContain("<i>guy</i>",);
+  });
+
+  test("a non-owner sees none of another user's characters", async () => {
+    await insertUsers(db, "mallory", "Mallory", { id: "mallory" as never, },);
+
+    const asMallory = await serveCharactersSearch(db, new URLSearchParams(), {
+      userId: "mallory",
+      userRole: null,
+    },);
+
+    const html = await asMallory.text();
+    // Neither the ids nor the names of owner's characters may appear.
+    expect(html,).not.toContain("actor-aria",);
+    expect(html,).not.toContain("actor-zed",);
+    expect(html,).not.toContain("Aria",);
+    expect(html,).not.toContain("Zed",);
+    expect(html,).toContain("characters-empty",);
+  });
+
+  test("admin.character sees every user's characters", async () => {
+    await insertUsers(db, "admin-user", "Admin", { id: "admin-user" as never, },);
+
+    const asAdmin = await serveCharactersSearch(db, new URLSearchParams(), {
+      userId: "admin-user",
+      userRole: "admin",
+    },);
+
+    const html = await asAdmin.text();
+    expect(html,).toContain("actor-aria",);
+    expect(html,).toContain("actor-zed",);
   });
 });
 

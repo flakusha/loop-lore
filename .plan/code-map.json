@@ -15925,12 +15925,6 @@
       "source": ".plan/tickets/FEAT-creative-process-commit-gating.md"
     }
   ],
-  "src/db/enums-story/factions.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-diplomacy-karma.md"
-    }
-  ],
   "src/db/enums-story/items.ts": [
     {
       "kind": "epic",
@@ -16037,12 +16031,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/quests-encounters.md"
-    }
-  ],
-  "src/db/enums-story/resources.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-encounters.md"
     }
   ],
   "src/db/enums-story/rpg.ts": [
@@ -24495,22 +24483,12 @@
   ],
   "src/frontend/egui-bridge.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-experimental-egui-frontend.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto.md"
-    }
-  ],
-  "src/frontend/egui-stream.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-experimental-egui-frontend.md"
     }
   ],
   "src/frontend/fe-fetch.ts": [
@@ -42749,12 +42727,6 @@
       "source": ".plan/tickets/TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css.md"
     }
   ],
-  "src/routes/views/egui.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-experimental-egui-frontend.md"
-    }
-  ],
   "src/routes/views/escape-html.ts": [
     {
       "kind": "ticket",
@@ -43725,12 +43697,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-position-physical-spatial-split.md"
-    }
-  ],
-  "src/rpg/bestiary.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-world-npcs.md"
     }
   ],
   "src/rpg/blog/service.ts": [
@@ -45981,6 +45947,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-faction-reputation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-world-diplomacy-karma.md"
     },
     {
       "kind": "epic",

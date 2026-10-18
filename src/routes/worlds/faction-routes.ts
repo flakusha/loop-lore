@@ -26,6 +26,7 @@ import {
 } from "./faction-routes-shared";
 import type { HandleOpts, } from "./types";
 
+
 /**
  * @param opts shared route options
  * @param prefix route prefix (`/api`)
@@ -199,17 +200,7 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
       },
     );
 
-  for (const route of DIPLOMACY_ROUTES) {
-    app.post(
-      `${prefix}/worlds/:worldId/factions/relationships/${route.path}`,
-      async (ctx: any,) => runDiplomacy(database, ctx, route.verb,),
-      {
-        body: PairBody,
-        response: { ...DataResponse, ...Errors, },
-        detail: { summary: route.summary, description: route.description, tags: ["Worlds",], },
-      },
-    );
-  }
+  factionDiplomacyRoutes(app, database, prefix,);
 
   return app;
 }
