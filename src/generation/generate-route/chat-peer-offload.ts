@@ -3,7 +3,7 @@
 
 /**
  * The ONE live composition point between peer routing and the chat turn
- * (TASK-federation-offload-chat-turn-call-site).
+ * (TASK-federation-offload-adopt-dispatch-in-the-chat-turn-call-site).
  *
  * The epic's structural rule — **a peer is never an `LLMProvider`** — holds
  * only if a real call site resolves a route. Until this module existed,
