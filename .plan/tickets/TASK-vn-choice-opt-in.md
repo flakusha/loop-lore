@@ -11,7 +11,7 @@ choices exist. See `## Summary` for the intent; the five boxes in
 **Acceptance Criteria:** The five boxes in `## Acceptance Criteria`.
 
 
-**Status:** in_progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Tags:** visual-novel, choices, opt-in, send-gate
@@ -45,3 +45,5 @@ VN branching choices exist (POST /api/chats/:id/vn/generate-choices, vn_choices 
       round-trip + default off, `settings.test.ts` no-cross-chat-leak,
       `render-scene.test.ts` flag on/off mounting + fetches, messages guard
       tests); not re-run in this docs-only pass
+
+**Resolved:** 2026-10-18 registry-driven close: git issue ce429a2 (registry tip: da80bd856 Konstantin Fedotov Close issue)
