@@ -66,6 +66,23 @@ export const federation = {
       },
       required: ["mode", "peers",],
     },
+    workloadOffload: {
+      type: "object",
+      default: { classes: [], },
+      description:
+        "Workload classes this instance accepts from federation peers; published as `capabilities` in /api/instance-state.",
+      properties: {
+        classes: {
+          type: "array",
+          default: [],
+          items: {
+            type: "string",
+            enum: ["chat", "image", "aux", "tts", "translation", "embedding", "vision",],
+          },
+        },
+      },
+      required: ["classes",],
+    },
   },
   required: ["enabled", "seeds", "peers", "meshPsk", "duplication",],
 };

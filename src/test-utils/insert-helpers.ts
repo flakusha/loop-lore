@@ -87,6 +87,8 @@ import type {
   NsfwEncounterStatus,
   NsfwEncounterType,
   NsfwLocationType,
+  PeerAuthMode,
+  PeerInstanceKind,
   PinnedState,
   PlayerAchievementStatus,
   PlaythroughStatus,
@@ -4136,6 +4138,13 @@ export async function insertMeshPeers(
     last_seen?: string | null;
     created_at?: string;
     capacity_bytes?: number | null;
+    display_name?: string | null;
+    instance_kind?: PeerInstanceKind;
+    auth_mode?: PeerAuthMode;
+    workload_trust?: number;
+    allowed_workload_classes?: string;
+    sticky_enabled?: number;
+    shared_token_enc?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

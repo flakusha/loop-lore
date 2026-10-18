@@ -22,6 +22,7 @@
  *               PinnedState, DefaultState, EquipState, StackableState, KeyType, KeyStatus,
  *               NoteCategory, ModelRole
  *   enums-content: ContentEncoding
+ *   enums-federation: PeerWorkloadClass, PeerInstanceKind, PeerAuthMode, PeerLinkKind
  *   enums-generation: GenerationStatus, CancelReason, CancelSource, ChunkAction
  *   enums-story: TurnType, TurnStatus, QuestType, QuestStatus, QuestProgressStatus,
  *                SyntheticDataType, SyntheticDataStatus, SyntheticTestMode, WorldEventType,
@@ -39,6 +40,7 @@ export * from "./enums-config";
 export * from "./enums-content";
 export * from "./enums-core";
 export * from "./enums-crafting";
+export * from "./enums-federation";
 export * from "./enums-generation";
 export * from "./enums-gm";
 export * from "./enums-interaction";

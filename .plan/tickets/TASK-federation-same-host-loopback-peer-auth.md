@@ -3,7 +3,8 @@
 
 # TASK: Federation same-host loopback peer auth
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** `auth_mode` is `tls` (default) or `host-local`; `validatePeerWorkloadSave` derives it from the origin — a loopback host with a token becomes `host-local`, a remote origin with no token stays `tls`. The token is stored encrypted with `encryptValue` under the same server secret the BYOK store uses (`shared_token_enc`), read back only by `src/federation/peer-workload-token.ts` to verify or to present as `Authorization: Bearer` on the workload wire. Save-time validation rejects: non-`http(s)` origin, loopback origin with no token, a token on a non-loopback origin, an `allowed_workload_classes` entry outside the enum, and a duplicate origin. No admin response or route returns the token — `WorkloadPeer` exposes `hasSharedToken` only; `peer-registry.test.ts` asserts against the raw serialized response text and `peer-workload-token.test.ts` pins the no-log path. Tests: `src/federation/peer-registry.test.ts`.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas

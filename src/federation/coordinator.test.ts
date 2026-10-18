@@ -52,6 +52,44 @@ describe("coordinator registry", () => {
     const peers = await listPeers(db,);
     expect(peers[0]?.capacity_bytes,).toBe(512,);
   });
+
+  test("touchPeer persists the advertised workload classes", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://adv.example", state: "trusted", },);
+    await touchPeer(db, "https://adv.example", { capabilities: ["chat", "image",], },);
+    const peers = await listPeers(db,);
+    expect(peers[0]?.capabilities,).toBe('["chat","image"]',);
+  });
+
+  test("touchPeer drops unknown class strings instead of persisting them", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://adv.example", state: "trusted", },);
+    await touchPeer(db, "https://adv.example", { capabilities: ["chat", "telepathy", 42,], },);
+    const peers = await listPeers(db,);
+    expect(peers[0]?.capabilities,).toBe('["chat"]',);
+  });
+
+  test("a class the peer stops advertising is removed, not retained", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, {
+      origin: "https://adv.example",
+      state: "trusted",
+      capabilities: ["chat", "image",],
+    },);
+
+    await touchPeer(db, "https://adv.example", { capabilities: ["chat",], },);
+    const peers = await listPeers(db,);
+    expect(peers[0]?.capabilities,).toBe('["chat"]',);
+  });
+
+  test("an older peer that omits capabilities parses and clears the stored set", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://old.example", state: "trusted", capabilities: ["chat",], },);
+    await touchPeer(db, "https://old.example", { peers: ["https://friend.example",], },);
+    const peers = await listPeers(db,);
+    expect(peers[0]?.capabilities,).toBe("[]",);
+    expect(peers[0]?.last_seen,).not.toBeNull();
+  });
 });
 
 describe("negotiation state machine", () => {
@@ -110,7 +148,7 @@ describe("resync pass", () => {
     const summary = await runResyncPass(db, {
       fetchImpl: async (url,) =>
         url.startsWith("https://alive.example",)
-          ? { ok: true, status: 200, body: { peers: ["https://friend.example",], }, }
+          ? { ok: true, status: 200, body: { capabilities: ["chat", "image",], }, }
           : { ok: false, status: 0, body: null, },
     },);
 
@@ -121,7 +159,7 @@ describe("resync pass", () => {
       .where("origin", "=", "https://alive.example",)
       .executeTakeFirstOrThrow();
 
-    expect(alive.capabilities,).toBe('["https://friend.example"]',);
+    expect(alive.capabilities,).toBe('["chat","image"]',);
     expect(alive.last_seen,).not.toBeNull();
   });
 });

@@ -10,4 +10,5 @@ export const FEDERATION_DEFAULTS = {
   peers: [],
   meshPsk: "",
   duplication: { mode: "trusted", peers: [], },
+  workloadOffload: { classes: [], },
 } satisfies FederationConfig;

@@ -20,6 +20,8 @@ export const PEER_FETCH_TIMEOUT_MS = 5_000;
 export interface InstanceAdvertisement {
   /** Mesh origins known to the advertising peer. */
   peers?: unknown;
+  /** Workload classes the peer accepts (`PeerWorkloadClass` strings). */
+  capabilities?: unknown;
   /** Receiver-side inbound capacity in bytes, when the peer reports it. */
   capacityBytes?: unknown;
 }

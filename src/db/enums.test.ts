@@ -89,6 +89,11 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
   ItemVisibility: ["visible", "hidden",],
   // enums-content
   ContentEncoding: ["identity", "gzip", "zstd", "brotli",],
+  // enums-federation
+  PeerWorkloadClass: ["chat", "image", "aux", "tts", "translation", "embedding", "vision",],
+  PeerInstanceKind: ["business", "rpg", "assistant", "dedicated-gpu", "general",],
+  PeerAuthMode: ["tls", "host-local",],
+  PeerLinkKind: ["loopback", "remote",],
   // enums-config
   DbType: ["sqlite", "postgres",],
   LogLevel: ["trace", "debug", "info", "warn", "error", "fatal",],
