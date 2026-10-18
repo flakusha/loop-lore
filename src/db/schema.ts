@@ -211,21 +211,21 @@ export interface DB {
   location_anomalies: import("./schema-core").LocationAnomalies;
   encounter_templates: import("./schema-core").EncounterTemplates;
   encounter_rolls: import("./schema-core").EncounterRolls;
+  location_storage: import("./schema-core").LocationStorage;
+  location_storage_items: import("./schema-core").LocationStorageItems;
+  extraction_rolls: import("./schema-core").ExtractionRolls;
+  npc_memories: import("./schema-core").NpcMemories;
+  npc_relationships: import("./schema-core").NpcRelationships;
+  monster_templates: import("./schema-core").MonsterTemplates;
+  monster_spawns: import("./schema-core").MonsterSpawns;
   factions: import("./schema-core").Factions;
   faction_memberships: import("./schema-core").FactionMemberships;
   faction_relationships: import("./schema-core").FactionRelationships;
   faction_standing: import("./schema-core").FactionStanding;
   karma_profiles: import("./schema-core").KarmaProfiles;
   karma_events: import("./schema-core").KarmaEvents;
-  location_storage: import("./schema-core").LocationStorage;
-  location_storage_items: import("./schema-core").LocationStorageItems;
-  extraction_rolls: import("./schema-core").ExtractionRolls;
   world_licenses: import("./schema-core").WorldLicenses;
   world_maps: import("./schema-core").WorldMaps;
   map_zones: import("./schema-core").MapZones;
-  npc_memories: import("./schema-core").NpcMemories;
-  npc_relationships: import("./schema-core").NpcRelationships;
-  monster_templates: import("./schema-core").MonsterTemplates;
-  monster_spawns: import("./schema-core").MonsterSpawns;
   vn_choice_selections: import("./schema-core").VnChoiceSelections;
 }

@@ -3408,6 +3408,97 @@ export const EncounterRollsSchema = t.Object({
   cooldown_until: t.Optional(t.String(),),
 },);
 
+// ── location_storage ────────────────────────────────────────────
+export const LocationStorageSchema = t.Object({
+  world_id: t.String(),
+  location_id: t.String(),
+  name: t.String(),
+  capacity: t.Optional(t.Number(),),
+  security: t.Optional(t.Number(),),
+  access_control: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── location_storage_items ────────────────────────────────────────────
+export const LocationStorageItemsSchema = t.Object({
+  storage_id: t.String(),
+  item_id: t.String(),
+  quantity: t.Optional(t.Number(),),
+  stored_at: t.Optional(t.String(),),
+},);
+
+// ── extraction_rolls ────────────────────────────────────────────
+export const ExtractionRollsSchema = t.Object({
+  world_id: t.String(),
+  node_instance_id: t.String(),
+  location_id: t.Optional(t.String(),),
+  actor_id: t.Optional(t.String(),),
+  attempted_at: t.Optional(t.String(),),
+  succeeded: t.Optional(t.Number(),),
+  difficulty: t.Optional(t.Number(),),
+  yield: t.Optional(t.String(),),
+},);
+
+// ── npc_memories ────────────────────────────────────────────
+export const NpcMemoriesSchema = t.Object({
+  world_id: t.String(),
+  npc_id: t.String(),
+  content: t.String(),
+  memory_type: t.Optional(MemoryTypeSchema,),
+  importance: t.Optional(t.Number(),),
+  emotional_impact: t.Optional(t.Number(),),
+  participants: t.Optional(t.String(),),
+  location_id: t.Optional(t.String(),),
+  decay_rate: t.Optional(t.Number(),),
+  shared: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  last_reinforced_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+},);
+
+// ── npc_relationships ────────────────────────────────────────────
+export const NpcRelationshipsSchema = t.Object({
+  world_id: t.String(),
+  npc_id: t.String(),
+  target_id: t.String(),
+  standing: t.Optional(t.Number(),),
+  relationship_type: t.Optional(NpcRelationshipTypeSchema,),
+  emotional_bond: t.Optional(t.Number(),),
+  history: t.Optional(t.String(),),
+  last_interaction_at: t.Optional(t.String(),),
+},);
+
+// ── monster_templates ────────────────────────────────────────────
+export const MonsterTemplatesSchema = t.Object({
+  name: t.String(),
+  category: MonsterCategorySchema,
+  world_id: t.Optional(t.String(),),
+  subcategory: t.Optional(t.String(),),
+  size: t.Optional(MonsterSizeSchema,),
+  alignment: t.Optional(MonsterAlignmentSchema,),
+  difficulty: t.Optional(MonsterDifficultySchema,),
+  stats: t.Optional(t.String(),),
+  loot_table: t.Optional(t.String(),),
+  territorial: t.Optional(t.Number(),),
+  nocturnal: t.Optional(t.Number(),),
+  pack_size: t.Optional(t.Number(),),
+  behavior: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── monster_spawns ────────────────────────────────────────────
+export const MonsterSpawnsSchema = t.Object({
+  world_id: t.String(),
+  location_id: t.String(),
+  template_id: t.String(),
+  spawned_at: t.Optional(t.String(),),
+  territory_center_x: t.Optional(t.Number(),),
+  territory_center_y: t.Optional(t.Number(),),
+  territory_radius: t.Optional(t.Number(),),
+  despawn_at: t.Optional(t.String(),),
+},);
+
 // ── factions ────────────────────────────────────────────
 export const FactionsSchema = t.Object({
   world_id: t.String(),
@@ -3470,37 +3561,6 @@ export const KarmaEventsSchema = t.Object({
   occurred_at: t.Optional(t.String(),),
 },);
 
-// ── location_storage ────────────────────────────────────────────
-export const LocationStorageSchema = t.Object({
-  world_id: t.String(),
-  location_id: t.String(),
-  name: t.String(),
-  capacity: t.Optional(t.Number(),),
-  security: t.Optional(t.Number(),),
-  access_control: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── location_storage_items ────────────────────────────────────────────
-export const LocationStorageItemsSchema = t.Object({
-  storage_id: t.String(),
-  item_id: t.String(),
-  quantity: t.Optional(t.Number(),),
-  stored_at: t.Optional(t.String(),),
-},);
-
-// ── extraction_rolls ────────────────────────────────────────────
-export const ExtractionRollsSchema = t.Object({
-  world_id: t.String(),
-  node_instance_id: t.String(),
-  location_id: t.Optional(t.String(),),
-  actor_id: t.Optional(t.String(),),
-  attempted_at: t.Optional(t.String(),),
-  succeeded: t.Optional(t.Number(),),
-  difficulty: t.Optional(t.Number(),),
-  yield: t.Optional(t.String(),),
-},);
-
 // ── world_licenses ────────────────────────────────────────────
 export const WorldLicensesSchema = t.Object({
   world_id: t.String(),
@@ -3538,66 +3598,6 @@ export const MapZonesSchema = t.Object({
   z: t.Optional(t.Number(),),
   metadata: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
-},);
-
-// ── npc_memories ────────────────────────────────────────────
-export const NpcMemoriesSchema = t.Object({
-  world_id: t.String(),
-  npc_id: t.String(),
-  content: t.String(),
-  memory_type: t.Optional(MemoryTypeSchema,),
-  importance: t.Optional(t.Number(),),
-  emotional_impact: t.Optional(t.Number(),),
-  participants: t.Optional(t.String(),),
-  location_id: t.Optional(t.String(),),
-  decay_rate: t.Optional(t.Number(),),
-  shared: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  last_reinforced_at: t.Optional(t.String(),),
-  expires_at: t.Optional(t.String(),),
-},);
-
-// ── npc_relationships ────────────────────────────────────────────
-export const NpcRelationshipsSchema = t.Object({
-  world_id: t.String(),
-  npc_id: t.String(),
-  target_id: t.String(),
-  standing: t.Optional(t.Number(),),
-  relationship_type: t.Optional(NpcRelationshipTypeSchema,),
-  emotional_bond: t.Optional(t.Number(),),
-  history: t.Optional(t.String(),),
-  last_interaction_at: t.Optional(t.String(),),
-},);
-
-// ── monster_templates ────────────────────────────────────────────
-export const MonsterTemplatesSchema = t.Object({
-  name: t.String(),
-  category: MonsterCategorySchema,
-  world_id: t.Optional(t.String(),),
-  subcategory: t.Optional(t.String(),),
-  size: t.Optional(MonsterSizeSchema,),
-  alignment: t.Optional(MonsterAlignmentSchema,),
-  difficulty: t.Optional(MonsterDifficultySchema,),
-  stats: t.Optional(t.String(),),
-  loot_table: t.Optional(t.String(),),
-  territorial: t.Optional(t.Number(),),
-  nocturnal: t.Optional(t.Number(),),
-  pack_size: t.Optional(t.Number(),),
-  behavior: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── monster_spawns ────────────────────────────────────────────
-export const MonsterSpawnsSchema = t.Object({
-  world_id: t.String(),
-  location_id: t.String(),
-  template_id: t.String(),
-  spawned_at: t.Optional(t.String(),),
-  territory_center_x: t.Optional(t.Number(),),
-  territory_center_y: t.Optional(t.Number(),),
-  territory_radius: t.Optional(t.Number(),),
-  despawn_at: t.Optional(t.String(),),
 },);
 
 // ── vn_choice_selections ────────────────────────────────────────────

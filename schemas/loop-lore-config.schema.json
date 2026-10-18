@@ -222,13 +222,19 @@
           "default": true,
           "description": "Enable TUI mode"
         },
+        "sendTimeoutMs": {
+          "type": "integer",
+          "default": 300000,
+          "description": "Send-message timeout in ms; covers one full assistant generation"
+        },
         "sessionToken": {
           "type": "string",
           "description": "Bearer token for authenticated chat routes; omit to run anonymous against solo deployments."
         }
       },
       "required": [
-        "enabled"
+        "enabled",
+        "sendTimeoutMs"
       ]
     },
     "docs": {

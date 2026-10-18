@@ -442,6 +442,17 @@ export const SCHEMA = new SchemaManifest()
     active: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("extraction_rolls", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    world_id: col("text", { notNull: true, },),
+    location_id: col("text",),
+    node_instance_id: col("text", { notNull: true, },),
+    actor_id: col("text",),
+    attempted_at: col("text", { notNull: true, hasDefault: true, },),
+    succeeded: col("integer", { notNull: true, hasDefault: true, },),
+    difficulty: col("integer", { notNull: true, hasDefault: true, },),
+    yield: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("faction_memberships", {
     id: col("text", { primaryKey: true, },),
     faction_id: col("text", { notNull: true, },),
@@ -480,17 +491,6 @@ export const SCHEMA = new SchemaManifest()
     values_json: col("text", { notNull: true, hasDefault: true, },),
     territory_json: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
-  },)
-  .table("extraction_rolls", {
-    id: col("text", { primaryKey: true, hasDefault: true, },),
-    world_id: col("text", { notNull: true, },),
-    location_id: col("text",),
-    node_instance_id: col("text", { notNull: true, },),
-    actor_id: col("text",),
-    attempted_at: col("text", { notNull: true, hasDefault: true, },),
-    succeeded: col("integer", { notNull: true, hasDefault: true, },),
-    difficulty: col("integer", { notNull: true, hasDefault: true, },),
-    yield: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("game_states", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
