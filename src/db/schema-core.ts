@@ -51,6 +51,8 @@ import type {
   NoteCategory,
   NotificationStatus,
   NpcRelationshipType,
+  PeerAuthMode,
+  PeerInstanceKind,
   PinnedState,
   PlayerAchievementStatus,
   PlaythroughStatus,
@@ -1154,6 +1156,13 @@ export interface MeshPeers {
   last_seen: string | null;
   created_at: Generated<string>;
   capacity_bytes: number | null;
+  display_name: string | null;
+  instance_kind: Generated<PeerInstanceKind>;
+  auth_mode: Generated<PeerAuthMode>;
+  workload_trust: Generated<number>;
+  allowed_workload_classes: Generated<string>;
+  sticky_enabled: Generated<number>;
+  shared_token_enc: string | null;
 }
 
 // ── mesh_negotiations ────────────────────────────────────────────

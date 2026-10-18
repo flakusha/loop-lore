@@ -22,6 +22,10 @@ export const PART_2: Record<string, Record<string, string>> = {
   "LocationNsfwConfig": {
     "location_type": "NsfwLocationType",
   },
+  "MeshPeers": {
+    "instance_kind": "PeerInstanceKind",
+    "auth_mode": "PeerAuthMode",
+  },
   "Messages": {
     "content_encoding": "ContentEncoding",
     "content_format": "MessageContentFormat",

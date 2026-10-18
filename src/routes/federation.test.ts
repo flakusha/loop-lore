@@ -13,6 +13,7 @@ import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, FederationConfig, } from "../config/schema";
 import { initSmk, } from "../crypto/smk";
 import type { Db, } from "../db";
+import { PeerWorkloadClass, } from "../db/enums";
 import { pskCipher, } from "../federation/cipher";
 import { upsertPeer, } from "../federation/coordinator";
 import { sealContent, } from "../federation/envelope";
@@ -29,6 +30,7 @@ function configWith(federation: Partial<FederationConfig>,): Config {
     peers: federation.peers ?? [],
     meshPsk: federation.meshPsk ?? "",
     duplication: federation.duplication ?? { mode: "trusted", peers: [], },
+    workloadOffload: federation.workloadOffload,
   };
 
   return {
@@ -160,6 +162,41 @@ describe("federationRoutes — instance-state", () => {
     },
     15000,
   );
+});
+
+describe("federationRoutes — advertised workload capabilities", () => {
+  const OFFLOAD_CONFIG = configWith({
+    enabled: true,
+    workloadOffload: { classes: [PeerWorkloadClass.Chat, PeerWorkloadClass.Image,], },
+  },);
+
+  test("advertises the configured workload classes instead of the old hardcoded []", async () => {
+    const app = await appFor(OFFLOAD_CONFIG,);
+    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { capabilities: string[] };
+    expect(body.capabilities,).toEqual(["chat", "image",],);
+  }, 15000,);
+
+  test("an instance with no workloadOffload config advertises []", async () => {
+    const app = await appFor(FED_ENABLED,);
+    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+    const body = (await res.json()) as { capabilities: string[] };
+    expect(body.capabilities,).toEqual([],);
+  }, 15000,);
+
+  test("the advertisement version is unchanged so an older peer still parses", async () => {
+    const app = await appFor(OFFLOAD_CONFIG,);
+    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+    const body = (await res.json()) as { version: number };
+    expect(body.version,).toBe(1,);
+  }, 15000,);
+
+  test("advertised classes carry no secret material", async () => {
+    const app = await appFor(OFFLOAD_CONFIG,);
+    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+    expect(await res.text(),).not.toMatch(/apiKey|password|secret|token|userId|sessionId/i,);
+  }, 15000,);
 });
 
 describe("federationRoutes — edge cases", () => {

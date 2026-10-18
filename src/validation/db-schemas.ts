@@ -476,6 +476,18 @@ export const NsfwLocationTypeSchema = t.UnionEnum([
   "office",
   "workshop",
 ],);
+export const PeerAuthModeSchema = t.UnionEnum(["tls", "host-local",],);
+export const PeerInstanceKindSchema = t.UnionEnum(["business", "rpg", "assistant", "dedicated-gpu", "general",],);
+export const PeerLinkKindSchema = t.UnionEnum(["loopback", "remote",],);
+export const PeerWorkloadClassSchema = t.UnionEnum([
+  "chat",
+  "image",
+  "aux",
+  "tts",
+  "translation",
+  "embedding",
+  "vision",
+],);
 export const PinnedStateSchema = t.UnionEnum(["unpinned", "pinned", "archived",],);
 export const PlanItemKindSchema = t.UnionEnum(["story", "task", "context", "step", "creative", "draft",],);
 export const PlanItemStateSchema = t.UnionEnum(["todo", "doing", "done", "blocked",],);
@@ -2792,6 +2804,13 @@ export const MeshPeersSchema = t.Object({
   last_seen: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   capacity_bytes: t.Optional(t.Number(),),
+  display_name: t.Optional(t.String(),),
+  instance_kind: t.Optional(PeerInstanceKindSchema,),
+  auth_mode: t.Optional(PeerAuthModeSchema,),
+  workload_trust: t.Optional(t.Number(),),
+  allowed_workload_classes: t.Optional(t.String(),),
+  sticky_enabled: t.Optional(t.Number(),),
+  shared_token_enc: t.Optional(t.String(),),
 },);
 
 // ── mesh_negotiations ────────────────────────────────────────────
