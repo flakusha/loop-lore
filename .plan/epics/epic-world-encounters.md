@@ -7,7 +7,7 @@
 
 
 **Status:** Not Started
-**Status Note:** Partially covered by shipped NSFW encounter engine (`src/rpg/encounters/*`, `nsfw_encounters`) and battle loot; generic random-encounter/anomaly/resource extraction/unique-places/cataclysm surfaces unstarted.
+**Status Note:** Partially covered by shipped NSFW encounter engine (`src/rpg/encounters/*`, `nsfw_encounters`) and battle loot; generic random-encounter/anomaly/resource extraction (migration 060 + `src/db/enums-story/resources.ts` exist) surfaced; unique-places/cataclysm remain unstarted.
 **Priority:** Medium
 **Effort:** High
 **Type:** Feature Epic

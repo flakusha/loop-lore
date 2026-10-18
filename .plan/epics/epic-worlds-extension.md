@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Per-area at HEAD (verified 2026-10-08) — license: partial (`character_license_history` + `src/routes/character-licensing.ts`; no world license model); epochs: partial — `world_timescale` + `world_timescale_history` tables (migration 052) plus `src/worlds/timescale.ts` (createTimescaleService, epoch/scale/advance, with unit tests) shipped; maps: partial (2D game canvas via `game_states` (021) + `src/game-state/*`, no `map_zones`/`world_maps`); mode-switch: partial (`ChatMode` in `src/chat/types/config.ts:9` = direct|group|story but the DB enum `src/db/enums-core/users.ts:37-44` adds battle — known drift; no `InteractionMode`); resources: partial (crafting `gathering_node_defs`/`gathering_node_instances` with `respawn_time_seconds`/`respawn_at`; no world-scoped unique items); world export/import shipped.
+**Status Note:** Per-area at HEAD (verified 2026-10-08, updated 2026-10-18) — license: partial (`character_license_history` + `src/routes/character-licensing.ts`); world license model landed (migration 063 `world_license_maps`); epochs: partial — `world_timescale` + `world_timescale_history` tables (migration 052) plus `src/worlds/timescale.ts` shipped; maps: partial (2D game canvas via `game_states` (021) + `src/game-state/*`, no `map_zones`/`world_maps`); mode-switch: `src/chat/mode-switch.ts` implements `InteractionMode`; resources: partial (crafting `gathering_node_defs`/`gathering_node_instances` with `respawn_time_seconds`/`respawn_at`; no world-scoped unique items); world export/import shipped.
 **Priority:** Medium
 **Effort:** High
 **Issue:** `6c84baa`
