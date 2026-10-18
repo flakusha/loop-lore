@@ -24,8 +24,9 @@ const RUN_LIMIT = 25;
 export function createHarnessView(
   screen: blessed.Widgets.Screen,
   sessionToken: string | undefined,
+  options: { isBlockedByOverlay?: () => boolean } = {},
 ): HarnessView {
-  return new HarnessView(screen, sessionToken,);
+  return new HarnessView(screen, sessionToken, options,);
 }
 
 export class HarnessView {
@@ -37,10 +38,16 @@ export class HarnessView {
   private runs: HarnessRunSummary[] = [];
   private currentIndex = 0;
   private _visible = false;
+  private isBlockedByOverlay: () => boolean;
 
-  constructor(screen: blessed.Widgets.Screen, sessionToken: string | undefined,) {
+  constructor(
+    screen: blessed.Widgets.Screen,
+    sessionToken: string | undefined,
+    options: { isBlockedByOverlay?: () => boolean } = {},
+  ) {
     this.screen = screen;
     this.sessionToken = sessionToken;
+    this.isBlockedByOverlay = options.isBlockedByOverlay ?? (() => false);
 
     this.box = blessed.box({
       parent: screen,
@@ -89,7 +96,7 @@ export class HarnessView {
     },);
 
     screen.key(["up", "down",], (_ch: string, key: { name: string },) => {
-      if (!this._visible || this.runs.length === 0) { return; }
+      if (!this._visible || this.runs.length === 0 || this.isBlockedByOverlay()) { return; }
       if (key.name === "up") {
         this.currentIndex = (this.currentIndex - 1 + this.runs.length) % this.runs.length;
       } else {
@@ -101,7 +108,7 @@ export class HarnessView {
     },);
 
     screen.key(["enter",], () => {
-      if (!this._visible || this.runs.length === 0) { return; }
+      if (!this._visible || this.runs.length === 0 || this.isBlockedByOverlay()) { return; }
       void this.showDetail(this.currentIndex,);
     },);
   }
