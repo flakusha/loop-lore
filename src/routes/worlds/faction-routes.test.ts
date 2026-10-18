@@ -39,15 +39,18 @@ let guards = "";
 let traders = "";
 let foreignFaction = "";
 
-/** Mount the real routes behind a session identity, as the app wires them. */
-function appFor(userId: string,): Elysia {
+/** Mount the real routes behind a session identity; null means unauthenticated. */
+function appFor(userId: string | null,): Elysia {
   return new Elysia()
-    .derive({ as: "scoped", }, () => ({ userId, userRole: "user", }),)
+    .derive({ as: "scoped", }, () => ({
+      userId,
+      userRole: userId === null ? null : "user",
+    }),)
     .use(factionRoutes({ database: db, config: {} as Config, },),) as unknown as Elysia;
 }
 
 function request(
-  userId: string,
+  userId: string | null,
   method: string,
   path: string,
   body?: Record<string, unknown>,
@@ -192,6 +195,17 @@ describe("relationship + diplomacy routes", () => {
     },);
 
     expect(foreign.status,).toBe(404,);
+  });
+
+  test("diplomacy denies an unauthenticated (null userId) caller", async () => {
+    // Default-deny: without a session the world-owner guard inside
+    // runDiplomacy rejects before any diplomacy verb runs.
+    const res = await request(null, "POST", `/api/worlds/${W1}/factions/relationships/war`, {
+      factionA: guards,
+      factionB: traders,
+    },);
+
+    expect(res.status,).toBe(403,);
   });
 });
 
