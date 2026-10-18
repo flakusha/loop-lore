@@ -272,32 +272,46 @@ describe("item commands", () => {
     }
   });
 
-  test("refuses a moderator and an ordinary user the same world", async () => {
+  test("refuses every unprivileged role the same world the admins read", async () => {
     await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
     const inWorld = { id: "chat-1", worldId: otherWorldId, };
+    const DENIAL = `World ${otherWorldId} not found or access denied.`;
 
-    // Moderator: elevated for user moderation, not world-admin.
-    const modId = `mod-${crypto.randomUUID()}`;
-    await insertUsers(db, `mod-${modId}`, "Mod", { id: modId, role: UserRole.Moderator, },);
-    const asMod = await itemList(
-      [otherWorldId,],
-      ctx({ userId: modId, userRole: UserRole.Moderator, activeChat: inWorld, },),
-    );
+    // The same existing world the allow test above reads, so these refusals
+    // cannot pass merely because the world happens to be missing.
+    for (
+      const role of [
+        UserRole.Moderator,
+        UserRole.Creator,
+        UserRole.Player,
+        UserRole.User,
+        UserRole.Viewer,
+        UserRole.Guest,
+        UserRole.Bot,
+        UserRole.Custom,
+      ]
+    ) {
+      const callerId = `plain-${role}-${crypto.randomUUID()}`;
+      await insertUsers(db, `plain-${role}`, "Plain", { id: callerId, role, },);
 
-    expect(asMod.systemMessage,).toBe(`World ${otherWorldId} not found or access denied.`,);
-    expect(asMod.action,).toBeUndefined();
+      const denied = await itemList([otherWorldId,], ctx({ userId: callerId, userRole: role, activeChat: inWorld, },),);
+      expect(denied.systemMessage,).toBe(DENIAL,);
+      expect(denied.action,).toBeUndefined();
+    }
 
-    // Plain user, and the same user with no resolved role at all.
+    // No resolved role at all — the fail-closed default for anonymous,
+    // deactivated, and unresolvable callers.
     const plainId = `plain-${crypto.randomUUID()}`;
     await insertUsers(db, `plain-${plainId}`, "Plain", { id: plainId, role: UserRole.User, },);
-    const asUser = await itemList(
-      [otherWorldId,],
-      ctx({ userId: plainId, userRole: UserRole.User, activeChat: inWorld, },),
-    );
-
-    expect(asUser.systemMessage,).toBe(`World ${otherWorldId} not found or access denied.`,);
 
     const asNobody = await itemList([otherWorldId,], ctx({ userId: plainId, userRole: null, activeChat: inWorld, },),);
-    expect(asNobody.systemMessage,).toBe(`World ${otherWorldId} not found or access denied.`,);
+    expect(asNobody.systemMessage,).toBe(DENIAL,);
+    expect(asNobody.action,).toBeUndefined();
+
+    // A role string outside the enum. can() has no entry for it, so it must
+    // behave exactly like no role at all.
+    const bogus = await itemList([otherWorldId,], ctx({ userId: plainId, userRole: "wizard", activeChat: inWorld, },),);
+    expect(bogus.systemMessage,).toBe(DENIAL,);
+    expect(bogus.action,).toBeUndefined();
   });
 });

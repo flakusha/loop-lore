@@ -191,8 +191,9 @@ describe("world access commands", () => {
   const sealedWorld = async (): Promise<string> =>
     await insertWorlds(db, otherId, "Sealed Vault", { visibility: WorldVisibility.Private, },);
 
-  test("lets a non-owner with an admin-class role read a private world", async () => {
+  test("admin-class roles read a private world; that same world is refused to everyone else", async () => {
     const secret = await sealedWorld();
+    const DENIAL = `World ${secret} not found or access denied.`;
 
     for (const role of [UserRole.Admin, UserRole.Solo, UserRole.Tester,]) {
       const callerId = `admin-${role}-${crypto.randomUUID()}`;
@@ -202,30 +203,40 @@ describe("world access commands", () => {
       expect(result.action,).toBe("world-get",);
       expect(result.systemMessage,).toContain("Sealed Vault",);
     }
-  });
 
-  test("refuses a moderator, who moderates users but is not world-admin", async () => {
-    const secret = await sealedWorld();
-    const modId = `mod-${crypto.randomUUID()}`;
-    await insertUsers(db, `mod-${modId}`, "Mod", { id: modId, role: UserRole.Moderator, },);
+    // DENY: every role the matrix does not bless, on that same world id.
+    for (
+      const role of [
+        UserRole.Moderator,
+        UserRole.Creator,
+        UserRole.Player,
+        UserRole.User,
+        UserRole.Viewer,
+        UserRole.Guest,
+        UserRole.Bot,
+        UserRole.Custom,
+      ]
+    ) {
+      const callerId = `plain-${role}-${crypto.randomUUID()}`;
+      await insertUsers(db, `plain-${role}`, "Plain", { id: callerId, role, },);
 
-    const result = await worldGet([secret,], ctx({ userId: modId, userRole: UserRole.Moderator, },),);
-    expect(result.systemMessage,).toBe(`World ${secret} not found or access denied.`,);
-    expect(result.action,).toBeUndefined();
-  });
+      const denied = await worldGet([secret,], ctx({ userId: callerId, userRole: role, },),);
+      expect(denied.systemMessage,).toBe(DENIAL,);
+      expect(denied.action,).toBeUndefined();
+    }
 
-  test("refuses an ordinary user, and the same user with no resolved role", async () => {
-    const secret = await sealedWorld();
-    const plainId = `plain-${crypto.randomUUID()}`;
-    await insertUsers(db, `plain-${plainId}`, "Plain", { id: plainId, role: UserRole.User, },);
+    // DENY: no resolved role at all — the fail-closed default for anonymous,
+    // deactivated, and unresolvable callers. ownerId owns a different world,
+    // so ownership cannot carry this one; only the role ever could have.
+    const nobody = await worldGet([secret,], ctx({ userId: ownerId, userRole: null, },),);
+    expect(nobody.systemMessage,).toBe(DENIAL,);
+    expect(nobody.action,).toBeUndefined();
 
-    const asUser = await worldGet([secret,], ctx({ userId: plainId, userRole: UserRole.User, },),);
-    expect(asUser.systemMessage,).toBe(`World ${secret} not found or access denied.`,);
-
-    // No role resolved at all — the fail-closed default for anonymous,
-    // deactivated, and unresolvable callers.
-    const asNobody = await worldGet([secret,], ctx({ userId: plainId, userRole: null, },),);
-    expect(asNobody.systemMessage,).toBe(`World ${secret} not found or access denied.`,);
+    // DENY: a role string outside the enum. can() has no entry for it, so it
+    // must behave exactly like no role at all.
+    const bogus = await worldGet([secret,], ctx({ userId: ownerId, userRole: "wizard", },),);
+    expect(bogus.systemMessage,).toBe(DENIAL,);
+    expect(bogus.action,).toBeUndefined();
   });
 
   test("still lets the world owner in with no role resolved", async () => {
