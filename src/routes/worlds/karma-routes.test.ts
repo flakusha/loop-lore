@@ -111,3 +111,28 @@ describe("the standing routes scope the faction id to the path world", () => {
     expect(own.status,).toBe(200,);
   });
 });
+
+describe("the karma profile + event routes answer for the world owner", () => {
+  test("GET an actor's karma profile (ensureProfile creates the zero row)", async () => {
+    const res = await get(USER_A, `/api/worlds/${W1}/actors/${ACTOR_A}/karma`,);
+
+    expect(res.status,).toBe(200,);
+
+    const body = await res.json() as { data: { overall: number; actor_id: string } };
+    expect(body.data.actor_id,).toBe(ACTOR_A,);
+    expect(body.data.overall,).toBe(0,);
+  });
+
+  test("POST a karma event folds the delta into the profile", async () => {
+    const res = await post(USER_A, `/api/worlds/${W1}/actors/${ACTOR_A}/karma/events`, {
+      category: "honor",
+      delta: 5,
+      reason: "held the gate",
+    },);
+
+    expect(res.status,).toBe(200,);
+
+    const body = await res.json() as { data: { overall: number } };
+    expect(body.data.overall,).toBe(5,);
+  });
+});
