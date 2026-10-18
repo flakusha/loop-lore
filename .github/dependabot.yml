@@ -8,7 +8,7 @@
 version: 2
 updates:
   - package-ecosystem: "cargo"
-    directory: "/native/loop-lore-native"
+    directory: "/"
     schedule:
       interval: "weekly"
     commit-message:

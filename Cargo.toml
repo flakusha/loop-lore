@@ -1,0 +1,4 @@
+[workspace]
+resolver = "2"
+members = ["native/loop-lore-native", "native/loop-lore-egui"]
+default-members = ["native/loop-lore-native"]
