@@ -337,6 +337,53 @@ describe("wardrobe overrides — chat and location writers", () => {
     expect(JSON.parse(row!.outfit_bindings ?? "{}",),).toEqual({ "loc-t": template, },);
   });
 
+  it("setLocationOutfitBindings accepts an actor-owned outfit that also carries a world scope", async () => {
+    // ck_wardrobe_items_scope permits actor_id + world_id together; the
+    // owner disjunct must keep accepting the actor's own row.
+    const own = await insertWardrobeItems(db, "A scoped outfit", {
+      actor_id: actorA,
+      world_id: worldId,
+    },);
+
+    await setLocationOutfitBindings(db, { worldId, actorId: actorA, bindings: { "loc-own": own, }, },);
+    const row = await db
+      .selectFrom("world_avatar_config",)
+      .select(["outfit_bindings",],)
+      .where("world_id", "=", worldId,)
+      .where("actor_id", "=", actorA,)
+      .executeTakeFirst();
+
+    expect(JSON.parse(row!.outfit_bindings ?? "{}",),).toEqual({ "loc-own": own, },);
+  });
+
+  it("setLocationOutfitBindings rejects an outfit owned by another actor, even in the same world", async () => {
+    // The hole this pins: actor_id + world_id can coexist (the check
+    // constraint only demands one), so the world branch must require
+    // actor_id IS NULL or B's outfit would steer A's avatar config.
+    const foreign = await insertWardrobeItems(db, "B same-world outfit", {
+      actor_id: actorB,
+      world_id: worldId,
+    },);
+
+    await expect(
+      setLocationOutfitBindings(db, {
+        worldId,
+        actorId: actorA,
+        bindings: { "loc-x": foreign, },
+      },),
+    ).rejects.toThrow(`Wardrobe item ${foreign} not visible in world`,);
+
+    // The rejected map must NOT have landed.
+    const row = await db
+      .selectFrom("world_avatar_config",)
+      .select(["outfit_bindings",],)
+      .where("world_id", "=", worldId,)
+      .where("actor_id", "=", actorA,)
+      .executeTakeFirst();
+
+    expect(JSON.parse(row?.outfit_bindings ?? "{}",),).not.toHaveProperty("loc-x",);
+  });
+
   it("setLocationOutfitBindings rejects the whole map when any outfit is out of scope", async () => {
     const good = await insertWardrobeItems(db, "Loc good", { actor_id: actorA, },);
     const foreignWorld = await insertWardrobeItems(db, "Other world template", {
