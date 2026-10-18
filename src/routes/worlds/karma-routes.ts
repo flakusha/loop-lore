@@ -16,12 +16,11 @@
  */
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, } from "../../validation/schemas";
-import { FactionError, } from "../../worlds/factions";
 import { adjustFactionStanding, getFactionStanding, getKarma, recordKarmaEvent, } from "../../worlds/karma";
 import { buildStandingEffects, } from "../../worlds/karma-tiers";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, jsonResponse, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
-import { requireFactionsInWorld, } from "./faction-routes-shared";
+import { factionErrorResponse, requireFactionsInWorld, } from "./faction-routes-shared";
 import type { HandleOpts, } from "./types";
 
 /** Success envelope every route here answers with. */
@@ -29,21 +28,6 @@ const DataResponse = { 200: t.Object({ data: t.Any(), },), };
 
 /** Error statuses the access guards and service can produce. */
 const Errors = { 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, };
-
-/**
- * @param error thrown service error
- * @returns mapped HTTP response; 404 for an unknown world, 400 otherwise
- * @throws {unknown} rethrows any non-`FactionError` unchanged
- */
-function karmaErrorResponse(error: unknown,): Response {
-  if (error instanceof FactionError) {
-    const status = error.code === "not-found" ? HttpStatus.NotFound : HttpStatus.BadRequest;
-    return jsonError({ message: error.message, status, },);
-  }
-
-  throw error;
-}
-
 /**
  * @param opts shared route options
  * @param prefix route prefix (`/api`)
@@ -63,7 +47,7 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
           const karma = await getKarma(database, ctx.params.worldId, ctx.params.actorId,);
           return jsonResponse({ data: karma, },);
         } catch (e) {
-          return karmaErrorResponse(e,);
+          return factionErrorResponse(e,);
         }
       },
       {
@@ -93,7 +77,7 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
 
           return jsonResponse({ data: karma, },);
         } catch (e) {
-          return karmaErrorResponse(e,);
+          return factionErrorResponse(e,);
         }
       },
       {
@@ -176,7 +160,7 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
 
           return jsonResponse({ data: standing, },);
         } catch (e) {
-          return karmaErrorResponse(e,);
+          return factionErrorResponse(e,);
         }
       },
       {
