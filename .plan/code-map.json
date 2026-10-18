@@ -11689,6 +11689,12 @@
       "source": ".plan/tickets/TASK-export-frontend-progress.md"
     }
   ],
+  "src/components/federation/admin-federation-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-admin-usage-dashboard-ui.md"
+    }
+  ],
   "src/components/filter-bar.html": [
     {
       "kind": "ticket",
@@ -15923,6 +15929,12 @@
       "source": ".plan/tickets/TASK-professions-service-routes.md"
     }
   ],
+  "src/db/enums-federation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-capability-advertisement.md"
+    }
+  ],
   "src/db/enums-generation.ts": [
     {
       "kind": "epic",
@@ -16171,6 +16183,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-3d-models.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-capability-advertisement.md"
     },
     {
       "kind": "ticket",
@@ -20081,6 +20097,24 @@
       "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md"
     }
   ],
+  "src/federation/admin-federation-view.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-admin-usage-dashboard-ui.md"
+    }
+  ],
+  "src/federation/admin-federation-view.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-admin-usage-dashboard-ui.md"
+    }
+  ],
+  "src/federation/admin-storage-accessor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-admin-usage-dashboard-ui.md"
+    }
+  ],
   "src/federation/audit.ts": [
     {
       "kind": "ticket",
@@ -20451,10 +20485,28 @@
       "source": ".plan/tickets/BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-.md"
     }
   ],
+  "src/federation/peer-capabilities.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-capability-advertisement.md"
+    }
+  ],
   "src/federation/peer-dispatch.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-dispatch-compose-failover.md"
+    }
+  ],
+  "src/federation/peer-dispatch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-dispatch-compose-failover.md"
+    }
+  ],
+  "src/federation/peer-eligibility.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-health-and-load-registry.md"
     }
   ],
   "src/federation/peer-fetch.test.ts": [
@@ -20495,6 +20547,12 @@
       "source": ".plan/tickets/TASK-federation-peer-health-and-load-registry.md"
     }
   ],
+  "src/federation/peer-health.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-health-and-load-registry.md"
+    }
+  ],
   "src/federation/peer-keys.test.ts": [
     {
       "kind": "ticket",
@@ -20523,7 +20581,19 @@
       "source": ".plan/tickets/TASK-mesh-coordinator-server-knowledge-db.md"
     }
   ],
+  "src/federation/peer-registry-validation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-registry-workload-columns.md"
+    }
+  ],
   "src/federation/peer-registry.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-registry-workload-columns.md"
+    }
+  ],
+  "src/federation/peer-registry.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-registry-workload-columns.md"
@@ -20535,10 +20605,58 @@
       "source": ".plan/tickets/TASK-federation-workload-routing-policy.md"
     }
   ],
+  "src/federation/peer-router.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-workload-routing-policy.md"
+    }
+  ],
   "src/federation/peer-table.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md"
+    }
+  ],
+  "src/federation/peer-work-assignments.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-workload-routing-policy.md"
+    }
+  ],
+  "src/federation/peer-work-auth.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md"
+    }
+  ],
+  "src/federation/peer-work-client.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md"
+    }
+  ],
+  "src/federation/peer-work-execute.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md"
+    }
+  ],
+  "src/federation/peer-work-wire.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md"
+    }
+  ],
+  "src/federation/peer-workload-token.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-same-host-loopback-peer-auth.md"
+    }
+  ],
+  "src/federation/performance-quota": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-performance-quota-enforcement.md"
     }
   ],
   "src/federation/performance-quota.test.ts": [
@@ -20605,6 +20723,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-federation-offload-quotas.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md"
     },
     {
       "kind": "ticket",
@@ -27781,6 +27903,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-thinking-block-render.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-offload-adopt-dispatch-in-the-chat-turn-call-site.md"
     },
     {
       "kind": "ticket",
@@ -36889,6 +37015,12 @@
       "source": ".plan/tickets/TASK-admin-danger-zone.md"
     }
   ],
+  "src/routes/admin/federation-guards.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-admin-peer-and-quota-routes.md"
+    }
+  ],
   "src/routes/admin/federation.test.ts": [
     {
       "kind": "ticket",
@@ -36907,6 +37039,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-admin-peer-and-quota-routes.md"
     }
   ],
   "src/routes/admin/item-power.test.ts": [
@@ -39540,6 +39676,12 @@
     }
   ],
   "src/routes/federation-peer-work.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md"
+    }
+  ],
+  "src/routes/federation-peer-work.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md"
@@ -52993,6 +53135,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-wasm-embed-spike.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-admin-usage-dashboard-ui.md"
     },
     {
       "kind": "ticket",

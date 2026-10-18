@@ -165,7 +165,7 @@ export function streamToClient({
             abortController?.signal.throwIfAborted();
           };
 
-          // Federation offload (TASK-federation-offload-chat-turn-call-site):
+          // Federation offload (TASK-federation-offload-adopt-dispatch-in-the-chat-turn-call-site):
           // routing resolves BEFORE the scheduler is entered. A peer is never a
           // member of `failoverList` — a peer is never an `LLMProvider` — so
           // `local` is the caller's own unchanged `scheduledCallWithFailover`
