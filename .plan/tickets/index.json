@@ -35466,7 +35466,7 @@
     "epic": "epic-experimental-egui-frontend",
     "tags": [],
     "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EGUI-SSE-RESPONSE-STREAMING-THROUGH-THE-BROWSER-BRIDGE": {
     "hash": "746adba",
@@ -35479,6 +35479,24 @@
     "epic": "epic-experimental-egui-frontend",
     "tags": [],
     "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md",
+    "status": "done"
+  },
+  "TASK-EGUI-TO-WASM-EXPERIMENTAL-FRONTEND-CRATE-JSON-CLIENT": {
+    "hash": "22c466f",
+    "git_issue": "22c466f",
+    "extid": "TASK-EGUI-TO-WASM-EXPERIMENTAL-FRONTEND-CRATE-JSON-CLIENT",
+    "type": "TASK",
+    "title": "egui to WASM experimental frontend crate (JSON client)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-experimental-egui-frontend",
+    "tags": [
+      "egui",
+      "rust",
+      "wasm",
+      "experimental"
+    ],
+    "source": ".plan/tickets/TASK-egui-to-wasm-experimental-frontend-crate-json-client.md",
     "status": "done"
   },
   "TASK-EGUI-WASM-EMBED-SPIKE": {
@@ -40032,6 +40050,24 @@
     ],
     "title": "HTMX Reuse E2E Verification",
     "type": "TASK"
+  },
+  "TASK-HTMX-TO-EGUI-TO-HTMX-TRANSFERS-WITH-BROWSER-SIDE-CONTEXT-STO": {
+    "hash": "0c7a326",
+    "git_issue": "0c7a326",
+    "extid": "TASK-HTMX-TO-EGUI-TO-HTMX-TRANSFERS-WITH-BROWSER-SIDE-CONTEXT-STO",
+    "type": "TASK",
+    "title": "htmx to egui to htmx transfers with browser-side context storage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-experimental-egui-frontend",
+    "tags": [
+      "egui",
+      "wasm",
+      "htmx",
+      "experimental"
+    ],
+    "source": ".plan/tickets/TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto.md",
+    "status": "done"
   },
   "TASK-HTTP-EXPOSE-AGENCY-EARN-AND-STATUS-ALONGSIDE-SPEND": {
     "epic": "epic-agency-story-points",
