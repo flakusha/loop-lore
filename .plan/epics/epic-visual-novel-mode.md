@@ -171,16 +171,44 @@ flag, and the pending-decision send gate.
 
 ### What remains — implementable now (this branch's slice)
 
+**Update 2026-10-18 (branch landing):** all four items below landed on
+`vn-epic-completion`; the bullets keep their original wording for the
+record, with the landed anchors appended.
+
 1. Composite template execution — `VnCompositeStep` is interface-only
    (`templates/template-engine.ts`); no executor, no condition evaluation,
    no step delay anywhere in `src/`.
+   **Landed:** `templates/composite.ts` (`compositeStepsOf`,
+   `evaluateCondition`, `executeCompositeSteps` — 15 tests) orchestrated
+   pre-mount by `render-scene.ts` `applyCompositeSettings` with a run-token
+   stale-mount guard (composite block in `render-scene.test.ts`).
+   Deviation recorded on `TASK-vn-scene-template-system.md`: single-mount
+   fold, not per-beat re-animation.
 2. Dialogue-template consumption — `typewriter.ts` reads only
    `settings.typewriterSpeed`; `DIALOGUE_TEMPLATES` pacing is never consumed.
+   **Landed:** `typewriter.ts` `resolveDialoguePacing` (scene body text,
+   dialogue body text, custom store via `worldId`; fail-closed) consumed by
+   the `typewrite` call in `render-scene.ts` (+5 tests).
 3. QA validator production caller — `runQaCheck`/`renderQaReport`
    (`src/frontend/vn/qa-mode.ts`) are imported only by their own test.
+   **Landed:** `vnQaActions.runVnQaCheck` in
+   `alpine/chat-settings/vn.ts` (spread into `chatSettings`), mounted in the
+   chat settings modal VN section (`vn-qa-run` button + `vn-qa-report`
+   container); `chat-settings/vn-qa.test.ts`.
 4. Custom-template CRUD callers — `saveTemplate`/`deleteTemplate`/
    `getTemplatesForWorld`/`exportTemplate`/`importTemplate` have no
    production caller and no GM-facing surface.
+   **Landed:** `alpine/vn-templates.ts` `vnTemplateManagerFactory` +
+   `components/chat/vn-templates-panel.html` in the chat settings modal
+   (list / save-import / export / delete; `vn-templates.test.ts`);
+   `worldId` threading `updateVnMode` → `syncVnRenderer` →
+   `initVnRenderer` → `state.currentWorldId` makes the store resolvable at
+   render time (`apply.test.ts` custom-store cases).
+
+With all four landed, the branch definition of done below is met; the five
+tickets stay `In Progress` for their remaining ticket-specific scope
+(picker/preview/builder UIs, write-back ACs, `nextSceneId` follow-up,
+generation-side work).
 
 ### What stays out of this branch (recorded blockers)
 

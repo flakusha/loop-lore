@@ -18,6 +18,7 @@ interaction loop — not started. See `## Status Split` and `## Scope`.
 **Status Note:** (2026-08-23) marked Done while its own body said the Q&A Interaction Loop was NOT STARTED with 10 unchecked ACs. Reconciled 2026-10-09: validator done (but callerless), interaction loop absent — Done → In Progress. Note the closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`. The shipped surface now also carries `POST /api/chats/:id/vn-questions/:qid/dismiss` and the pending-question send gate (`src/routes/messages/guards.ts` 409). Still open: the three deferred write-back ACs, the partial `nextSceneId` follow-up, and the validator's missing production caller. Status line corrected Done → In Progress to match the notes above.
 **Status Note (2026-10-18, vn-epic-completion):** Header set to the truthful In Progress per the 2026-10-18 review adjudication. Git issue 0f9d87d was re-opened to match, but the shared-registry enforcement (any agent's `giwt sync --fix` auto-closes a done-index ticket's open issue as stale) re-closed it within minutes — the tracking system treats the closed registry issue as authoritative for done-ness, so `plan:sync` reports this ticket as ".md status stale" until the registry is re-opened deliberately at review. This branch implements the remaining slice — see the epic's Remaining Scope section.
+**Status Note (2026-10-18, vn-epic-completion landing):** The validator's missing production caller landed: `vnQaActions.runVnQaCheck` (`src/frontend/alpine/chat-settings/vn.ts`) maps the live renderer scenes (`getVnScenes()`) into `runQaCheck` and mounts `renderQaReport` into the chat settings modal's `[data-testid="vn-qa-report"]` container (button `vn-qa-run`, empty-scenes error surfaced inline). Covered by `chat-settings/vn-qa.test.ts`. The three write-back ACs and the `nextSceneId` follow-up remain open.
 **Status Note (2026-10-09):** Q&A interaction loop shipped (minimal, choices-parity). Three ACs remain deferred — mood shift / relationship change / item gain write-back — and one partial (`nextSceneId` is returned but no caller acts on it). The static QA validator still has no production caller. Status stays In Progress until the deferred ACs land; see `## Acceptance Criteria` for the un-defer trigger.
 **Priority:** P2 — Medium
 **Effort:** Medium
@@ -141,8 +142,13 @@ interface VNConsequence {
       (`src/frontend/vn/qa-mode.ts:36-122`, covered by `qa-mode.test.ts`)
 - [x] `runQaCheck()` returns a `VnQaReport` with totals and per-issue severity
 - [x] `renderQaReport()` renders the report into a container
-- [ ] Validator is reachable from GM tooling — **no production caller**; the
-      module is imported only by its own test
+- [x] Validator is reachable from GM tooling — `vnQaActions.runVnQaCheck`
+      (`src/frontend/alpine/chat-settings/vn.ts`) feeds the live scene list
+      (`getVnScenes()` → `runQaCheck`) and renders the report into the chat
+      settings modal's QA section (`chat-settings-modal.html`,
+      `data-testid="vn-qa-run"` button + `vn-qa-report` container);
+      covered by `chat-settings/vn-qa.test.ts`. Landed on
+      `vn-epic-completion`.
 
 ### Q&A Interaction Loop — shipped 2026-10-09 (minimal, choices-parity)
 

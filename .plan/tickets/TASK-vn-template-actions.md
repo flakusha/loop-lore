@@ -18,6 +18,7 @@ See `## Summary`, `## Pre-Configured Templates` (the catalog), `## Design`
 **Status Note:** (2026-08-23) marked Done. Reconciled 2026-10-09: the template arrays and trigger list are real, but no renderer module imported them — `scene-renderer/`, `typewriter.ts`, `transition-engine.ts`, and `chat.html` all had zero references. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: `render-scene.ts:202` now calls `applyTemplateOverrides`, so the scene side is wired; dialogue templates, `evaluateTriggers`, and the picker UI remain open. The closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`: `evaluateTriggers` is now wired too — `scene-renderer/render.ts:11` imports it and calls it on location change, so transition triggers auto-fire. Remaining open: dialogue-template consumption in `typewriter.ts`, template override, chaining, and the GM picker UI. Status line corrected Done → In Progress to match the notes above.
 **Status Note (2026-10-18, vn-epic-completion):** Header set to the truthful In Progress per the 2026-10-18 review adjudication. Git issue 5cf3d0c was re-opened to match, but the shared-registry enforcement (any agent's `giwt sync --fix` auto-closes a done-index ticket's open issue as stale) re-closed it within minutes — the tracking system treats the closed registry issue as authoritative for done-ness, so `plan:sync` reports this ticket as ".md status stale" until the registry is re-opened deliberately at review. This branch implements the remaining slice — see the epic's Remaining Scope section.
+**Status Note (2026-10-18, vn-epic-completion landing):** Branch `vn-epic-completion` landed the remaining wiring: dialogue-template pacing consumed at render time (`typewriter.ts` `resolveDialoguePacing`, called by `render-scene.ts`), template chaining via composite templates (`templates/composite.ts` `executeCompositeSteps` — sequential steps with conditions and delays, folded pre-mount by `render-scene.ts` `applyCompositeSettings`), custom-template overrides (world-scoped localStorage store surfaced by `alpine/vn-templates.ts` + `components/chat/vn-templates-panel.html` in the chat settings modal: list / save-or-import / export / delete), and `applyTemplateOverrides`/`resolveAnyTemplate` now resolving custom templates when `worldId` is threaded (`syncVnRenderer` → `initVnRenderer`). Still open: a per-scene picker (applying a template to the *next* scene from the UI — selection remains implicit via a scene's `templateId`), template preview, favorites/recent, and per-field override forms (overrides today happen by editing the exported JSON).
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, scenes, dialogue, pre-configured, ux
 **Effort:** Med
@@ -112,10 +113,10 @@ interface VnDialogueTemplate {
 
 ### Phase 2: Template Application
 
-- [ ] Apply scene template to current VN scene (merge template → scene config)
-- [ ] Apply dialogue template to dialogue box renderer
-- [ ] Template override — user/GM can override individual template fields
-- [ ] Template chaining — apply multiple templates sequentially
+- [x] Apply scene template to current VN scene (merge template → scene config) (`applyTemplateOverrides` via `vn-mode-qa-loop`; custom-store + composite resolution added on vn-epic-completion)
+- [x] Apply dialogue template to dialogue box renderer (`resolveDialoguePacing`, vn-epic-completion)
+- [x] Template override — user/GM can override individual template fields (custom-store JSON editing, vn-epic-completion)
+- [x] Template chaining — apply multiple templates sequentially (composite steps, vn-epic-completion)
 
 ### Phase 3: GM UI
 
@@ -123,7 +124,7 @@ interface VnDialogueTemplate {
 - [ ] Template preview — show layout preview before applying
 - [ ] Quick-apply button in chat toolbar
 - [ ] Template favorites/recent list
-- [ ] Custom template creation (extends base templates)
+- [x] Custom template creation (extends base templates) (`alpine/vn-templates.ts` + `vn-templates-panel.html`, vn-epic-completion)
 
 ## Files to Create
 
@@ -169,19 +170,42 @@ trigger evaluation are still callerless.
       `layout` / `imageScaling` / `transition` / `typewriterSpeed` subset.
       Landed on `vn-mode-qa-loop` at `e87bd19c0`. Narrower than the original
       "emotion defaults": `apply.ts` ignores every other template key.
-- [ ] Dialogue templates control typewriter speed, pauses, text style —
-      `typewriter.ts` still consumes only `settings.typewriterSpeed`; it never
-      reads a dialogue template. The one speed field that is merged comes in as
-      a layout setting, not a dialogue-style one.
+- [x] Dialogue templates control typewriter speed, pauses, text style —
+      `typewriter.ts` `resolveDialoguePacing(base, scene, worldId?)` resolves
+      the scene's template through the scene, dialogue and custom-store
+      registries and maps `body.text.typewriterSpeed` → speed and
+      `body.text.pauseOnPunctuation` → pausePunctuation (fail-closed to the
+      base options); consumed by the `typewrite` call in
+      `render-scene.ts:346`. `fontStyle` is still unmerged (no text-style
+      field on TypewriterOptions). Landed on `vn-epic-completion`.
 - [x] Transition triggers auto-fire on location change, etc. —
       `scene-renderer/render.ts:11` imports `evaluateTriggers` and calls it
       when `currentLocationId` changes (wired after the 2026-10-09 pass;
       combat-start/character-enter/emotion triggers have no production
       feed yet)
-- [ ] GM can browse and select templates from a picker UI — no modal/sidebar
-      UI; selection is implicit via a scene's `templateId`.
-- [ ] Template override — user/GM can override individual template fields
-- [ ] Template chaining — apply multiple templates sequentially
+- [ ] GM can browse and select templates from a picker UI — the manager
+      panel landed on `vn-epic-completion` (`components/chat/vn-templates-panel.html`
+      in the chat settings modal: browse the world's custom templates,
+      save/import, export, delete), but *selecting* a template for a scene is
+      still implicit via the scene's `templateId`; no apply-to-next-scene
+      picker, preview, or favorites list yet.
+- [x] Template override — user/GM can override individual template fields —
+      world-scoped custom templates (localStorage `vn-templates-<worldId>` via
+      `templates/template-engine.ts` `saveTemplate`, create-or-update with a
+      version bump) are editable through the manager panel's JSON draft
+      (export → edit → save); `applyTemplateOverrides` and the composite fold
+      merge them at render time when `worldId` is threaded. No per-field form
+      UI — the override mechanism is JSON editing. Landed on
+      `vn-epic-completion`.
+- [x] Template chaining — apply multiple templates sequentially — composite
+      templates (`category: "composite"`, `body.steps: VnCompositeStep[]`)
+      run through `executeCompositeSteps` (`templates/composite.ts`): each
+      step's `templateId` resolves through all registries and folds its
+      whitelisted overrides (later steps win), with optional per-step
+      `condition` (eval-free subset, fail-closed) and `delay` (ms before the
+      next step, awaited pre-mount). Orchestrated in `render-scene.ts`
+      `applyCompositeSettings` behind a run-token stale-mount guard. Landed
+      on `vn-epic-completion`.
 - [x] No performance regression in VN mode rendering — the merge is one
       registry lookup per scene and was designed to fail closed to base
       settings on a thrown `resolveVariables` or an out-of-union value (2026-10-09)
