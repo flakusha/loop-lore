@@ -24,7 +24,7 @@ import { jsonStringifyOr, uid, } from "../utils";
 export type { FactionDiplomaticStatus, };
 
 /** Why a faction/diplomacy call was rejected. Routes map not-found→404. */
-export type FactionErrorCode = "not-found" | "duplicate" | "invalid-transition" | "invalid-input";
+export type FactionErrorCode = "not-found" | "duplicate" | "invalid-transition" | "invalid-input" | "conflict";
 
 /** Typed rejection for faction create/membership/diplomacy flows. */
 export class FactionError extends Error {

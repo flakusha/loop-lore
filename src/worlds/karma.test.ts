@@ -89,6 +89,26 @@ describe("karma ledger", () => {
     expect(capped.overall,).toBe(100,);
     expect(capped.tier,).toBe(KarmaTier.Saint,);
   });
+
+  test("concurrent events fold both deltas, not just the last", async () => {
+    // Pre-create the profile so the ensureProfile insert race is not the thing
+    // under test. The bug: both events read overall=0, compute their own delta,
+    // and write it back — the second write clobbers the first.
+    await getKarma(db, "w1", "actor-concurrent",);
+
+    const [a, b,] = await Promise.all([
+      recordKarmaEvent({ db, worldId: "w1", actorId: "actor-concurrent", category: "honor", delta: 10, },),
+      recordKarmaEvent({ db, worldId: "w1", actorId: "actor-concurrent", category: "honor", delta: 10, },),
+    ],);
+
+    // Both deltas landed.
+    expect(a.overall,).toBe(10,);
+    expect(b.overall,).toBe(20,);
+
+    const final = await getKarma(db, "w1", "actor-concurrent",);
+    expect(final.overall,).toBe(20,);
+    expect(final.categories,).toEqual({ honor: 20, },);
+  });
 });
 
 describe("faction standing", () => {
@@ -144,6 +164,23 @@ describe("faction standing", () => {
     const rows = await db.selectFrom("faction_standing",).selectAll().execute();
     expect(rows.length,).toBe(1,);
     expect(rows[0]?.standing,).toBe(15,);
+  });
+
+  test("concurrent adjustments fold both deltas, not just the last", async () => {
+    // Seed a KNOWN row first, so the concurrent pair is the only thing that can
+    // move the value. The bug: both concurrent calls read the same `standing`,
+    // add their own delta, and write the absolute result back — the second write
+    // clobbers the first, so 10 + 10 would leave 10 instead of 20.
+    const faction = await createFaction({ db, worldId: "w1", name: "Concurrent Faction", },);
+    await adjustFactionStanding({ db, worldId: "w1", actorId: "actor-concurrent", factionId: faction.id, delta: 0, },);
+
+    await Promise.all([
+      adjustFactionStanding({ db, worldId: "w1", actorId: "actor-concurrent", factionId: faction.id, delta: 10, },),
+      adjustFactionStanding({ db, worldId: "w1", actorId: "actor-concurrent", factionId: faction.id, delta: 10, },),
+    ],);
+
+    const final = await getFactionStanding({ db, worldId: "w1", actorId: "actor-concurrent", factionId: faction.id, },);
+    expect(final.standing,).toBe(20,);
   });
 
   test("a free-jump price tag is gated on the actor's standing", async () => {
