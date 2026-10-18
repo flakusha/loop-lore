@@ -3,7 +3,7 @@
 
 # TASK: Federation offload two-instance e2e
 
-**Status:** Not Started
+**Status:** Resolved
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas
@@ -104,6 +104,45 @@ Federation-off parity is asserted across the whole run: with
 **Context:** The gate that holds the epic to its claims rather than each slice to its own: two real instances over real route handlers, in the style of `src/routes/federation-transfer.test.ts`, plus an explicit federation-off parity assertion.
 **Acceptance Criteria:** A chat turn routes to a peer and back; a sticky session stays pinned and reassigns on circuit-open; a hard budget 429s on all three entry paths; a timeout aborts the peer attempt only; consent-less offload is refused; federation off leaves every workload path byte-identical.
 
-Implementation complete; tests passing; documentation updated.
+**Resolution:** `tests/e2e/federation-offload.test.ts` boots TWO real
+`federationRoutes` Elysia apps on `Bun.serve` ephemeral loopback ports, each with
+its own migrated SQLite DB, and drives a chat turn from the caller to the peer's
+real `POST /api/peer-work/run` over a real socket (`runPeerWorkload`'s default
+`safeFetch`, no injected transport). The peer runs its production
+`createLocalPeerWorkExecutor` — `buildFailoverList` then
+`scheduledCallWithFailover` — so only the LLM provider itself is a local
+double. Claims are asserted against the two databases after the call.
 
-Implementation complete; tests passing; documentation updated.
+Covered: federation off never touches the wire; a trusted loopback peer with a
+class and a matrix row serves the work; wrong shared token, class outside
+`allowed_workload_classes`, and trusted-origin-without-`workload_trust` are each
+refused with their namespaced `federation.workload_*` code; the concurrency
+ceiling 429s with the namespaced quota code and admits below it; a pre-stream
+peer failure retries local EXACTLY once; a mid-stream failure discards the
+partial output with no retry and no concatenation; sticky chat turns pin to one
+peer and an ineligible peer releases the pin with `previous_origin` /
+`release_reason` read back from `mesh_work_assignments`; and the wire payload
+carries the workload slice without unrelated chat/user identifiers.
+
+**REAL DEFECT FOUND AND FIXED.** `runPeerWorkload` sent the DESTINATION's origin
+in the `x-peer-origin` caller-identity header, so the receiver looked itself up
+in its own `mesh_peers` registry, never found it, and refused every offload
+between two distinct instances with `federation.workload_peer_untrusted`.
+Federated workload offload could not work at all across instances. The unit
+tests hid it because they registered the sender under the destination's own
+origin. `callerOrigin` is now a REQUIRED option on both `runPeerWorkload` and
+`dispatchPeerWorkload`, threaded from the call site, and the header carries it.
+This e2e spec is the only coverage that bites it — reverting the one-line header
+fails three of these tests.
+
+**FIDELITY LIMITATION (stated, not hidden):** both instances run in one process
+and therefore share the process-global singletons the workload plane uses — the
+provider registry, `peer-health` circuits, `performance-quota` counters and the
+scheduler manager. What is genuinely per-instance, and what this spec proves, is
+the HTTP boundary and the database: two ports, two DBs, two independently
+configured route mounts. `beforeEach`/`afterEach` reset the shared state so
+nothing leaks between cases or into other suites.
+
+Two production behaviours were deliberately broken to confirm the spec bites:
+removing the partial-output guard fails the mid-stream case, and ignoring the
+concurrency ceiling fails the quota case.

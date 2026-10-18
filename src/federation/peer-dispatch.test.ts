@@ -27,6 +27,9 @@ import { type PeerWorkRunRequest, } from "./peer-work-wire";
 
 type RunPeerSeam = NonNullable<Parameters<typeof dispatchPeerWorkload>[0]["runPeer"]>;
 
+/** This instance's own origin — the identity a receiver authorizes. */
+const CALLER = "https://business.example";
+
 const ORIGIN_A = "https://gpu-a.example";
 const ORIGIN_B = "https://gpu-b.example";
 
@@ -78,6 +81,7 @@ describe("dispatchPeerWorkload - local decisions", () => {
     let localCalls = 0;
 
     const result = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: localDecision(PeerRouteReason.FederationDisabled,),
       request: wireRequest(),
       local: () => {
@@ -105,6 +109,7 @@ describe("dispatchPeerWorkload - local decisions", () => {
     for (const reason of [PeerRouteReason.NoEligiblePeer, PeerRouteReason.NoMatrixRow,]) {
       let localCalls = 0;
       const result = await dispatchPeerWorkload({
+        callerOrigin: CALLER,
         decision: localDecision(reason,),
         request: wireRequest(),
         local: () => {
@@ -126,6 +131,7 @@ describe("dispatchPeerWorkload - local decisions", () => {
     );
 
     const thrown = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: localDecision(PeerRouteReason.NoMatrixRow,),
       request: wireRequest(),
       local: () => Promise.reject(boom,),
@@ -141,6 +147,7 @@ describe("dispatchPeerWorkload - peer success", () => {
     const chunks: ChunkEvent[] = [];
 
     const result = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(),
       request: wireRequest(),
       local: () => {
@@ -164,6 +171,7 @@ describe("dispatchPeerWorkload - peer success", () => {
     const seen: { origin?: string; assignmentKey?: string } = {};
 
     await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(ORIGIN_B,),
       request: wireRequest(),
       local: () => Promise.resolve(RESPONSE,),
@@ -185,6 +193,7 @@ describe("dispatchPeerWorkload - one retry across the boundary", () => {
     let peerCalls = 0;
 
     const result = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(),
       request: wireRequest(),
       local: () => {
@@ -211,6 +220,7 @@ describe("dispatchPeerWorkload - one retry across the boundary", () => {
     let peerCalls = 0;
 
     const thrown = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(),
       request: wireRequest(),
       local: () => {
@@ -234,6 +244,7 @@ describe("dispatchPeerWorkload - one retry across the boundary", () => {
 
   test("the exhausted error preserves the peer failure as its cause", async () => {
     const thrown = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(ORIGIN_B,),
       request: wireRequest(),
       local: () => Promise.reject(new Error("local provider down",),),
@@ -256,6 +267,7 @@ describe("dispatchPeerWorkload - partial output is discarded, never merged", () 
     const chunks: ChunkEvent[] = [];
 
     const thrown = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(),
       request: wireRequest(),
       local: () => {
@@ -280,6 +292,7 @@ describe("dispatchPeerWorkload - partial output is discarded, never merged", () 
     let localCalled = false;
 
     const thrown = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(),
       request: wireRequest(),
       local: () => {
@@ -312,6 +325,7 @@ describe("dispatchPeerWorkload - partial output is discarded, never merged", () 
     let peerCalls = 0;
 
     const pending = dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(),
       request: wireRequest(),
       local: () => {
@@ -343,6 +357,7 @@ describe("dispatchPeerWorkload - composed with provider failover", () => {
     };
 
     const first = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: localDecision(PeerRouteReason.FederationDisabled,),
       request: wireRequest(),
       local: localPath("scheduled",),
@@ -351,6 +366,7 @@ describe("dispatchPeerWorkload - composed with provider failover", () => {
     expect(first,).toBe(RESPONSE,);
 
     const second = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
       decision: peerDecision(),
       request: wireRequest(),
       local: localPath("scheduled-after-peer",),
