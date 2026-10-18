@@ -9,7 +9,7 @@ import { createConfigSchema, } from "../../config/schema-class";
 import { registerProvider, unregisterProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, LLMProvider, } from "../../generation/providers/types";
 import { createLogger, } from "../../logger";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
 import { type CommandContext, type CommandResult, getCommand, } from "./registry";
 import { LANGUAGES, runTranslate, } from "./translate";
 
@@ -134,17 +134,30 @@ describe("translate command", () => {
       return defaults as unknown as Config;
     };
 
-    /** Invoke the registered /translate handler with a real db + config. */
+    /**
+     * Invoke the registered /translate handler with a real db + config.
+     * Disposes the fixture in `finally` — an undisposed bun:sqlite handle
+     * leaks, and per src/test-utils/create-test-db.ts a closed handle left in
+     * the process-global override is handed to every sibling file.
+     */
     const invokeTranslate = async (name: string, config: Config,): Promise<CommandResult> => {
-      const { db, } = await createTestDb();
+      const fixture = await createTestDb();
       const handler = getCommand(name,);
-      if (!handler) { throw new Error(`command ${name} not registered`,); }
-      return handler(["hello", "to", "fr",], {
-        chatId: "tl-cmd-chat",
-        userId: "tl-cmd-user",
-        config,
-        db,
-      } as CommandContext,);
+      if (!handler) {
+        await destroyTestDb(fixture,);
+        throw new Error(`command ${name} not registered`,);
+      }
+
+      try {
+        return await handler(["hello", "to", "fr",], {
+          chatId: "tl-cmd-chat",
+          userId: "tl-cmd-user",
+          config,
+          db: fixture.db,
+        } as CommandContext,);
+      } finally {
+        await destroyTestDb(fixture,);
+      }
     };
 
     it("/translate calls the configured translator model, not the general one", async () => {
