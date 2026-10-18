@@ -19,7 +19,13 @@
  */
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, } from "../../validation/schemas";
-import { attemptExtraction, listResources, regenerateResources, ResourceError, } from "../../worlds/resources";
+import {
+  attemptExtraction,
+  listResources,
+  MAX_ABILITY_BONUS,
+  regenerateResources,
+  ResourceError,
+} from "../../worlds/resources";
 import { resolvePrimaryActorId, } from "../actor-access";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
@@ -100,8 +106,13 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
         body: t.Object({
           locationId: t.String({ minLength: 1, },),
           nodeInstanceId: t.String({ minLength: 1, },),
-          /** Skill/profession bonus applied to the DC before the roll. */
-          abilityBonus: t.Optional(t.Integer(),),
+          /**
+           * Skill/profession bonus applied to the DC before the roll. Bounded to
+           * [0, MAX_ABILITY_BONUS]: an unbounded bonus is subtracted from the DC,
+           * so `abilityBonus: 1000` would clamp every node to difficulty 1 — a
+           * guaranteed success on every roll. The schema is the trust boundary.
+           */
+          abilityBonus: t.Optional(t.Integer({ minimum: 0, maximum: MAX_ABILITY_BONUS, },),),
         },),
         response: {
           200: t.Object({
@@ -125,7 +136,7 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
 
-        const result = await regenerateResources(database,);
+        const result = await regenerateResources(database, { worldId: ctx.params.worldId, },);
         return jsonResponse({ data: result, },);
       },
       {
