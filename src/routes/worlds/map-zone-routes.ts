@@ -13,6 +13,7 @@
  */
 import { Elysia, t, } from "elysia";
 import { ZoneType, } from "../../db/enums-story";
+import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
 import {
   anchorZoneToLocation,
@@ -28,6 +29,49 @@ import type { HandleOpts, } from "./types";
 
 /** `t.UnionEnum` needs a non-empty TUPLE; `Object.values` widens to a plain array. */
 const ZONE_TYPES = Object.values(ZoneType,) as [ZoneType, ...ZoneType[],];
+
+/**
+ * The gate authorizes `:worldId`, but zones are addressed through `:mapId`,
+ * which the gate never sees. Without this check a caller allowed into ANY
+ * world could read or rewrite another world's zones.
+ * @param database Kysely handle
+ * @param worldId world the caller was authorized for
+ * @param mapId map the request addresses
+ * @returns 404 when the map is missing or belongs to another world, else null
+ */
+async function requireMapInWorld(
+  database: HandleOpts["database"],
+  worldId: string,
+  mapId: string,
+): Promise<Response | null> {
+  const map = await database.selectFrom("world_maps",).select("id",)
+    .where("id", "=", mapId,).where("world_id", "=", worldId,).executeTakeFirst();
+
+  return map ? null : notFound("Map not found",);
+}
+
+/**
+ * Zone-scoped twin of {@link requireMapInWorld}.
+ * @param database Kysely handle
+ * @param worldId world the caller was authorized for
+ * @param zoneId zone the request addresses
+ * @returns 404 when the zone is missing or belongs to another world, else null
+ */
+async function requireZoneInWorld(
+  database: HandleOpts["database"],
+  worldId: string,
+  zoneId: string,
+): Promise<Response | null> {
+  const zone = await database
+    .selectFrom("map_zones",)
+    .innerJoin("world_maps", "world_maps.id", "map_zones.map_id",)
+    .select("map_zones.id",)
+    .where("map_zones.id", "=", zoneId,)
+    .where("world_maps.world_id", "=", worldId,)
+    .executeTakeFirst();
+
+  return zone ? null : notFound("Zone not found",);
+}
 
 /** Body accepted when creating or replacing a zone. */
 const ZoneBody = t.Object({
@@ -91,6 +135,8 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
     .post(
       `${prefix}/worlds/:worldId/maps/:mapId/zones`,
       async (ctx: any,) => {
+        const scoped = await requireMapInWorld(database, ctx.params.worldId as string, ctx.params.mapId as string,);
+        if (scoped) { return scoped; }
         try {
           const zone = await upsertZone(database, {
             mapId: ctx.params.mapId as string,
@@ -117,6 +163,8 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
     .get(
       `${prefix}/worlds/:worldId/maps/:mapId/zones`,
       async (ctx: any,) => {
+        const scoped = await requireMapInWorld(database, ctx.params.worldId as string, ctx.params.mapId as string,);
+        if (scoped) { return scoped; }
         const zones = await listZones(database, { mapId: ctx.params.mapId as string, },);
         return jsonResponse({ data: zones, },);
       },
@@ -133,6 +181,8 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
     .post(
       `${prefix}/worlds/:worldId/maps/:mapId/zones/:zoneId/anchor`,
       async (ctx: any,) => {
+        const scoped = await requireZoneInWorld(database, ctx.params.worldId as string, ctx.params.zoneId as string,);
+        if (scoped) { return scoped; }
         const { locationId, } = ctx.body as { locationId: string };
         try {
           const zone = await anchorZoneToLocation(database, {
@@ -159,6 +209,8 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
     .get(
       `${prefix}/worlds/:worldId/maps/:mapId/zone-at`,
       async (ctx: any,) => {
+        const scoped = await requireMapInWorld(database, ctx.params.worldId as string, ctx.params.mapId as string,);
+        if (scoped) { return scoped; }
         const { x, y, z, } = ctx.query as { x: number; y: number; z?: number };
         const zone: Zone | null = await resolveZoneAtPoint(database, {
           mapId: ctx.params.mapId as string,
