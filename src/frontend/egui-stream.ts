@@ -85,6 +85,17 @@ export function openGenerationStream(
     closeGenerationStream(chatId,);
   },);
 
+  // A fatal failure (401/404, wrong content-type) never reaches the four
+  // named events: the browser fires `error` and the source stays open until
+  // closed, so without this the registry entry lingers and the status line
+  // never updates. `CONNECTING` (0) is a recoverable reconnect — leave it.
+  source.addEventListener("error", () => {
+    if (source.readyState === EventSourceCtor.CLOSED) {
+      closeGenerationStream(chatId,);
+      streamSink()?.onError(chatId, "stream closed",);
+    }
+  },);
+
   openStreams.set(chatId, source,);
 }
 

@@ -338,19 +338,41 @@ impl GalleryFilters {
     use std::fmt::Write;
     let mut out = format!("page={page}");
     if !self.query.is_empty() {
-      let _ = write!(out, "&q={}", self.query);
+      let _ = write!(out, "&q={}", encode_query_component(&self.query));
     }
     if !self.asset_type.is_empty() && self.asset_type != "all" {
-      let _ = write!(out, "&type={}", self.asset_type);
+      let _ = write!(out, "&type={}", encode_query_component(&self.asset_type));
     }
     if !self.tag.is_empty() && self.tag != "all" {
-      let _ = write!(out, "&tag={}", self.tag);
+      let _ = write!(out, "&tag={}", encode_query_component(&self.tag));
     }
     if !self.sort.is_empty() && self.sort != "name" {
-      let _ = write!(out, "&sort={}", self.sort);
+      let _ = write!(out, "&sort={}", encode_query_component(&self.sort));
     }
     out
   }
+}
+
+/// Percent-encode one query-component value.
+///
+/// The filters are user-typed (`q` free text) or come from tag names, so the
+/// raw value must never reach the URL: `cat & dog` used to truncate at the `&`
+/// and a `#` sent the rest into the fragment. Unreserved characters (RFC 3986)
+/// pass through, everything else is escaped byte-wise from the UTF-8 encoding.
+///
+/// No dependency: `percent-encoding` would cost a build for ~12 lines.
+fn encode_query_component(value: &str) -> String {
+  let mut out = String::with_capacity(value.len());
+  for byte in value.bytes() {
+    let unreserved = byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'.' | b'_' | b'~');
+    if unreserved {
+      out.push(byte as char);
+    } else {
+      out.push('%');
+      out.push_str(&format!("{byte:02X}"));
+    }
+  }
+  out
 }
 
 /// URL for the gallery grid view-model page.
@@ -597,6 +619,22 @@ mod tests {
     let value: serde_json::Value = serde_json::from_str(&body).unwrap();
     assert_eq!(value["entityType"], "chat");
     assert_eq!(value["entityId"], "c1");
+  }
+
+  #[test]
+  fn gallery_url_encodes_user_input() {
+    let filters = GalleryFilters {
+      query: "cat & dog".to_string(),
+      asset_type: "image".to_string(),
+      tag: "café#1".to_string(),
+      sort: "newest".to_string(),
+    };
+    assert_eq!(
+      gallery_grid_url(1, &filters),
+      "/dynamic/gallery/search?page=1&q=cat%20%26%20dog&type=image&tag=caf%C3%A9%231&sort=newest"
+    );
+    // Unreserved characters stay readable.
+    assert_eq!(encode_query_component("a-b_c.d~e"), "a-b_c.d~e");
   }
 
   #[test]
