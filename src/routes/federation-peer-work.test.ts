@@ -484,6 +484,7 @@ describe("peer-work wire — two instances over real handlers", () => {
       );
 
     const attempt = await runPeerWorkload({
+      callerOrigin: REMOTE,
       peer: { origin: REMOTE, },
       request: asRequest(),
       bearer: null,
@@ -520,6 +521,7 @@ describe("peer-work wire — two instances over real handlers", () => {
     };
 
     const denied = await runPeerWorkload({
+      callerOrigin: LOOPBACK,
       peer: { origin: LOOPBACK, },
       request: asRequest(),
       bearer: null,
@@ -530,6 +532,7 @@ describe("peer-work wire — two instances over real handlers", () => {
     expect(denied.ok ? "" : denied.failure.code,).toBe("federation.workload_credential_rejected",);
 
     const allowed = await runPeerWorkload({
+      callerOrigin: LOOPBACK,
       peer: { origin: LOOPBACK, },
       request: asRequest(),
       bearer: SHARED,

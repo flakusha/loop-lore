@@ -15,6 +15,12 @@
  * ./peer-dispatch. `emitted` reports how many chunks already reached the caller
  * before the failure, which is what lets the dispatcher honour the
  * discard-partial-output rule instead of concatenating two generations.
+ *
+ * `callerOrigin` is REQUIRED: the receiver authorizes the CALLER, so a sender
+ * that cannot name itself has no business reaching the wire. It used to send
+ * the destination's own origin, which made every offload between two distinct
+ * instances fail — the receiver looked the destination up in its own registry,
+ * never found it, and refused with `federation.workload_peer_untrusted`.
  */
 import { type FederationPeerTrustConfig, } from "../config/schema";
 import { type ChunkEvent, type GenerateResponse, } from "../generation/providers/types";
@@ -98,6 +104,7 @@ async function failureFromRejection(response: Response,): Promise<PeerWorkFailur
 /**
  * Run one workload on a peer.
  * @param options
+ * @param options.callerOrigin This instance's own origin — the identity the receiver authorizes.
  * @param options.peer Origin to call.
  * @param options.request The minimized wire request.
  * @param options.bearer Per-peer shared credential, when the peer's auth mode needs one.
@@ -109,6 +116,7 @@ async function failureFromRejection(response: Response,): Promise<PeerWorkFailur
  * @returns {Promise<PeerWorkAttempt>}
  */
 export async function runPeerWorkload(options: {
+  callerOrigin: string;
   peer: { origin: string };
   request: PeerWorkRunRequest;
   bearer: string | null;
@@ -118,7 +126,7 @@ export async function runPeerWorkload(options: {
   trust?: FederationPeerTrustConfig;
   transport?: PeerWorkTransport;
 },): Promise<PeerWorkAttempt> {
-  const { peer, request, bearer, signal, onChunk, trust, } = options;
+  const { callerOrigin, peer, request, bearer, signal, onChunk, trust, } = options;
   const timeoutMs = options.timeoutMs ?? PEER_WORK_DEFAULT_TIMEOUT_MS;
   const transport = options.transport ?? fetchViaSafeFetch;
 
@@ -143,7 +151,7 @@ export async function runPeerWorkload(options: {
   try {
     const headers: Record<string, string> = {
       "content-type": "application/json",
-      [PEER_ORIGIN_HEADER]: peer.origin,
+      [PEER_ORIGIN_HEADER]: callerOrigin,
     };
 
     if (bearer !== null) { headers.authorization = `Bearer ${bearer}`; }
