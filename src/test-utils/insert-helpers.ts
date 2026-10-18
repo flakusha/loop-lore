@@ -88,6 +88,7 @@ import type {
   NsfwEncounterType,
   NsfwLocationType,
   PeerAuthMode,
+  PeerBudgetMode,
   PeerInstanceKind,
   PeerWorkloadClass,
   PinnedState,
@@ -5859,6 +5860,31 @@ export async function insertMeshWorkAssignments(
     affinity_key,
     workload_class,
     peer_origin,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a federation_performance_budgets row. */
+export async function insertFederationPerformanceBudgets(
+  db: Db,
+  origin: string,
+  workload_class: PeerWorkloadClass,
+  updated_at: string,
+  opts?: {
+    budget_mode?: PeerBudgetMode;
+    max_concurrency?: number | null;
+    max_queue_depth?: number | null;
+    requests_per_minute?: number | null;
+    tokens_per_minute?: number | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("federation_performance_budgets",).values({
+    origin,
+    workload_class,
+    updated_at,
     ...restOpts,
   } as any,).execute();
   return id;

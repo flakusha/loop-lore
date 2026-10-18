@@ -460,7 +460,8 @@
     "connectionFailed": "연결 실패",
     "timeout": "요청 시간 초과",
     "createFailed": "Failed to create",
-    "loadFailed": "Failed to load"
+    "loadFailed": "Failed to load",
+    "federationQuotaExceeded": "페더레이션 피어 성능 할당량을 초과했습니다"
   },
   "characters": {
     "title": "Characters",

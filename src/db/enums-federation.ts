@@ -56,3 +56,17 @@ export const PeerLinkKind = {
   Remote: "remote",
 } as const;
 export type PeerLinkKind = (typeof PeerLinkKind)[keyof typeof PeerLinkKind];
+
+/**
+ * Whether a performance budget is counted or enforced.
+ * `Advisory` is the default for a newly added peer: count and report, never
+ * refuse. `Hard` enforces at the inbound peer-work endpoint.
+ */
+export const PeerBudgetMode = {
+  Advisory: "advisory",
+  Hard: "hard",
+} as const;
+export type PeerBudgetMode = (typeof PeerBudgetMode)[keyof typeof PeerBudgetMode];
+
+/** Stable iteration order for validation and the admin surface. */
+export const PEER_BUDGET_MODES: readonly PeerBudgetMode[] = Object.values(PeerBudgetMode,);

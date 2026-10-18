@@ -3,7 +3,8 @@
 
 # TASK: Federation performance quota enforcement
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** Implemented as `src/federation/performance-quota*.ts` with migration `068_federation_performance_budgets`. The budgets (`max_concurrency`, `max_queue_depth`, `requests_per_minute`, advisory `tokens_per_minute`, plus `advisory|hard` mode) are operator-set rows that survive restart; the counters are in-process per `(peer, class)` on `createRateLimiter` and `createLimiterRegistry`/`ConcurrencyLimiter`, so a restart is permissive for one window. The single enforcement point is `admitPeerWork(options, run)`, which queues under `max_queue_depth` and otherwise returns a 429 with `Retry-After` and `data.error_code = federation.quota_exceeded`; an untrusted peer or an unknown class fails closed at 403 and is never charged. Route-away stays the sender's job and reads `performanceQuotaUsage().headroom` / `.excluded`. `tokensPerMinute` is reported only and never refuses.
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-federation-offload-quotas
