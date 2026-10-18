@@ -8,7 +8,7 @@
 
 
 **Status:** In Progress
-**Status Note:** In Progress — experimental egui wasm frontend shipped on branch egui-wasm-frontend (unmerged); roadmap target 1 (JSON view-models on the gallery and chats dynamic endpoints) landed on branch egui-json-view-models (unmerged); htmx/Alpine parity roadmap drafted 2026-10-16, remaining targets ticketed, none implemented yet.
+**Status Note:** In Progress — experimental egui wasm frontend merged to dev (`src/routes/views/egui.ts`, `src/frontend/egui-bridge.ts`, `src/frontend/egui-stream.ts`); roadmap target 1 (JSON view-models on dynamic endpoints) merged to dev; htmx/Alpine parity targets ticketed, none yet implemented beyond shipped base.
 **Priority:** Low
 **Effort:** Medium
 **Type:** Research / Feature Epic
