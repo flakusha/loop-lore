@@ -38,5 +38,5 @@ Create `scripts/tooling/status.ts`.
 - [ ] No output from either subcommand states or implies that a binary was run or tested.
 - [ ] Each reported artifact carries a source ref or an explicit "unknown" marker.
 - [ ] Neither subcommand launches, executes, or loads any built binary.
-- [ ] A colocated `scripts/tooling/status.test.ts` runs both subcommands against a fixture install tree (including a prefix with stale versioned libraries alongside the unversioned symlink) and asserts the JSON field set, reaching **>= 80% line coverage** of `status.ts` under `bun run test:coverage`, so `bun run scripts/check/coverage.mjs --floor=80` passes for this module with no waiver.
+- [ ] A colocated `scripts/tooling/status.test.ts` runs both subcommands against a fixture install tree (including a prefix with stale versioned libraries alongside the unversioned symlink) and asserts the JSON field set, reaching **>= 80% line coverage** of `status.ts` when measured with `bun test scripts/tooling/ --coverage` (see epic caveat: `bun run test:coverage` scopes to `tests/e2e/` + `src/`, and the gate buckets all of `scripts/**` under one `scripts` module), with no waiver filed for it.
 - [ ] The module passes `giwt plan check-file-size` at 250 code lines.

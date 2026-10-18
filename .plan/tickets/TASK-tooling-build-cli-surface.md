@@ -68,5 +68,5 @@ Create `scripts/tooling/cli.ts` and `scripts/tooling/main.ts`.
 - [ ] All shell-out uses Bun's `$` tagged template.
 - [ ] Every file carries the SPDX header and JSDoc `@throws` on throwing paths.
 - [ ] CLI tests spawn the script as a child process rather than importing it, covering `--dry-run` and the flag defaults.
-- [ ] A colocated `scripts/tooling/cli.test.ts` and `scripts/tooling/main.test.ts` reach **>= 80% line coverage** of `cli.ts` and `main.ts` respectively under `bun run test:coverage`, so `bun run scripts/check/coverage.mjs --floor=80` passes for both modules with no waiver.
+- [ ] A colocated `scripts/tooling/cli.test.ts` and `scripts/tooling/main.test.ts` reach **>= 80% line coverage** of `cli.ts` and `main.ts` respectively when measured with `bun test scripts/tooling/ --coverage` (see epic caveat: `bun run test:coverage` scopes to `tests/e2e/` + `src/`, and the gate buckets all of `scripts/**` under one `scripts` module), with no waiver filed for them.
 - [ ] Both files pass `giwt plan check-file-size` at 250 code lines.
