@@ -114,10 +114,11 @@ export async function resolveDefaultOutfit(
 
 /**
  * Ladder rung 2: the world/location outfit rule. `outfit_bindings` is
- * free-form JSON with no FK (migration 031), so dangling or non-string
- * outfit ids are storable — the mapped value is type-checked and the
- * `wardrobe_items` row verified before the rule wins. Anything invalid
- * returns null and the ladder falls through (bridge → default → none).
+ * free-form JSON with no FK (migration 031), so dangling, non-string or
+ * foreign-actor outfit ids are storable — the mapped value is type-checked
+ * and the `wardrobe_items` row verified (owned by the actor, or an
+ * actor-less world template of this world) before the rule wins. Anything
+ * invalid returns null and the ladder falls through (bridge → default → none).
  * @param db
  * @param ctx
  */
@@ -127,10 +128,14 @@ async function resolveLocationRuleOutfit(
 ): Promise<ResolvedOutfit | null> {
   if (!ctx.worldId || !ctx.locationId) { return null; }
 
+  // Local const: property narrowing does not survive into the where
+  // callback below.
+  const worldId = ctx.worldId;
+
   const config = await db
     .selectFrom("world_avatar_config",)
     .select(["outfit_bindings",],)
-    .where("world_id", "=", ctx.worldId,)
+    .where("world_id", "=", worldId,)
     .where("actor_id", "=", ctx.actorId,)
     .executeTakeFirst();
 
@@ -141,10 +146,18 @@ async function resolveLocationRuleOutfit(
   const mapped = bindings[ctx.locationId];
   if (typeof mapped !== "string") { return null; }
 
+  // Mirrors the write-side guard in setLocationOutfitBindings: another
+  // actor's outfit never wins the rule, even when scoped to this world.
   const item = await db
     .selectFrom("wardrobe_items",)
     .select(["id",],)
     .where("id", "=", mapped,)
+    .where((eb,) =>
+      eb.or([
+        eb("actor_id", "=", ctx.actorId,),
+        eb.and([eb("actor_id", "is", null,), eb("world_id", "=", worldId,),],),
+      ],)
+    )
     .executeTakeFirst();
 
   return item ? { outfitId: item.id, source: "location_rule", } : null;
