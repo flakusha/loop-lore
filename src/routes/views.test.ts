@@ -241,8 +241,11 @@ describe("chat list encryption badge", () => {
     await insertChats(db, "Encrypted chat", "owner-1", { encryption_level: "standard", } as any,);
     await insertChats(db, "Public chat", "owner-1", { encryption_level: "none", } as any,);
 
-    // `/dynamic/chats/list` 401s anonymous callers, so the chat owner drives it.
-    const app = new Elysia({ name: "test-views-chat-list", },)
+    // `/dynamic/chats/list` is a private fragment (views/plugin-dynamic.test.ts
+    // asserts 401 without an identity), so the request has to carry one. Both
+    // chats belong to owner-1, so deriving that identity is the caller the
+    // endpoint is being asserted about.
+    const app = new Elysia({ name: "test-chats-list-badge", },)
       .derive(() => ({ userId: "owner-1", userRole: "user", }))
       .use(viewRoutes({ database: db, },),) as unknown as Elysia;
 
