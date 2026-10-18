@@ -251,32 +251,38 @@ export async function selectVnChoice(
     }
   }
 
-  // History + consequence write-back. Each side effect is guarded on its own:
-  // a failure keeps the selection (the flip above already won the single-shot
-  // race) and only leaves appliedAt null.
+  // History + consequence write-back run inside a single transaction: a
+  // failure anywhere rolls the whole write-back back, so an unstamped
+  // (appliedAt null) selection means nothing was applied to the character
+  // systems. The selection itself (the flip above already won the single-shot
+  // race) is kept — only appliedAt stays null.
   let appliedAt: string | null = null;
   try {
-    const selectionId = await recordVnChoiceSelection(database, {
-      chatId,
-      choiceId,
-      sceneIndex: parsed.scene_index,
-      relationshipImpact: parsed.relationship_impact,
-      moodImpact: parsed.mood_impact,
-      selectedBy: actingUserId,
-    },);
+    appliedAt = await database.transaction().execute(async (trx,) => {
+      const selectionId = await recordVnChoiceSelection(trx, {
+        chatId,
+        choiceId,
+        sceneIndex: parsed.scene_index,
+        relationshipImpact: parsed.relationship_impact,
+        moodImpact: parsed.mood_impact,
+        selectedBy: actingUserId,
+      },);
 
-    const applied = await applyVnImpacts(database, {
-      chatId,
-      actingUserId,
-      relationshipImpact: parsed.relationship_impact,
-      moodImpact: parsed.mood_impact,
-    },);
+      const applied = await applyVnImpacts(trx, {
+        chatId,
+        actingUserId,
+        relationshipImpact: parsed.relationship_impact,
+        moodImpact: parsed.mood_impact,
+      },);
 
-    // Only stamp when something was actually touched; a chat with no
-    // character participants has no consequence to acknowledge.
-    if (applied.moodActorIds.length > 0 || applied.relationshipActorIds.length > 0) {
-      appliedAt = await markVnChoiceSelectionApplied(database, selectionId,);
-    }
+      // Only stamp when something was actually touched; a chat with no
+      // character participants has no consequence to acknowledge.
+      if (applied.moodActorIds.length > 0 || applied.relationshipActorIds.length > 0) {
+        return await markVnChoiceSelectionApplied(trx, selectionId,);
+      }
+
+      return null;
+    },);
   } catch (error) {
     getLogger().child({ module: "vn-choices", },).error(
       "VN choice consequence write-back failed (selection kept)",

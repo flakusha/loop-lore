@@ -215,8 +215,11 @@ describe("guarded VN questions routes under /api/v1", () => {
     expect(body.question.selected_option_id,).toBe("o2",);
     expect(body.question.answered_at,).not.toBeNull();
     expect(body.option.id,).toBe("o2",);
-    expect(body.relationshipImpact,).toEqual({ ada: 10, },);
-    expect(body.moodImpact,).toEqual({ wary: 5, },);
+    // Folded maps: option o2 carries relationship_modifier -10 and
+    // emotion_modifier -5. Modifiers fold under the canonical dimension key
+    // (standing/happiness), alongside any non-canonical base keys.
+    expect(body.relationshipImpact,).toEqual({ ada: 10, standing: -10, },);
+    expect(body.moodImpact,).toEqual({ wary: 5, happiness: -5, },);
 
     // Answered questions drop out of the scene listing.
     const listRes = await app.handle(
