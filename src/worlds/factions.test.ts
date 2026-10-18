@@ -161,4 +161,23 @@ describe("diplomacy", () => {
       /cannot break an alliance/,
     );
   });
+
+  test("concurrent setRelationship calls fold both deltas, not just the last", async () => {
+    // The bug: both calls read standing=0, compute their own delta, and write
+    // it back — the second write clobbers the first. The guard is a
+    // status-matched UPDATE; on bun's single-connection driver the transaction
+    // serializes them so the second re-derives from the first's result.
+    const [a, b,] = await makePair();
+
+    const [first, second,] = await Promise.all([
+      setRelationship({ db, factionA: a, factionB: b, deltaStanding: 10, },),
+      setRelationship({ db, factionA: a, factionB: b, deltaStanding: 10, },),
+    ],);
+
+    expect(first.standing,).toBe(10,);
+    expect(second.standing,).toBe(20,);
+
+    const stored = await getFactionRelationship(db, a, b,);
+    expect(stored?.standing,).toBe(20,);
+  });
 });

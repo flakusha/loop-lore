@@ -144,55 +144,76 @@ export async function setRelationship(
 
   const existing = await getFactionRelationship(options.db, lowId, highId,);
   const fromStatus = existing?.status ?? INITIAL_STATUS;
-  const standing = clampStanding((existing?.standing ?? 0) + (options.deltaStanding ?? 0),);
-  // A delta-only patch re-derives the status from the NEW score, so the
-  // status can never disagree with the score it was derived from.
-  const nextStatus = options.status ?? statusForStanding(standing,);
 
-  if (nextStatus === "allied" && BLOCKED_ALLIANCE_FROM.has(fromStatus,)) {
+  // The hostile → allied rule is a business rule, checked before the write so a
+  // rejected call reports the reason rather than a lost-update conflict.
+  const nextStatusPreview = options.status ??
+    statusForStanding(clampStanding((existing?.standing ?? 0) + (options.deltaStanding ?? 0),),);
+
+  if (nextStatusPreview === "allied" && BLOCKED_ALLIANCE_FROM.has(fromStatus,)) {
     throw new FactionError(
       "invalid-transition",
       `cannot ally while ${fromStatus}: negotiate a peace first`,
     );
   }
 
-  const worldId = await resolveWorldId(options.db, lowId, existing,);
   const stamp = (options.now ?? new Date()).toISOString();
-  const history: DiplomacyEvent[] = [
-    ...(existing?.history ?? []),
-    {
-      at: stamp,
-      action: options.action ?? options.status ?? "standing_changed",
-      fromStatus,
-      toStatus: nextStatus,
-      standing,
-      reason: options.reason ?? "",
-    },
-  ];
-
-  if (existing) {
-    await options.db
-      .updateTable("faction_relationships",)
-      .set({ standing, status: nextStatus, history_json: jsonStringifyOr(history,), updated_at: stamp, },)
-      .where("id", "=", existing.id,)
-      .execute();
-  } else {
-    await options.db
-      .insertInto("faction_relationships",)
-      .values({
-        id: uid(),
-        world_id: worldId,
-        faction_a_id: lowId,
-        faction_b_id: highId,
+  // The read-compute-write runs inside one transaction, and the UPDATE carries
+  // the status we derived from: a verb that raced ahead and moved the row makes
+  // the guard miss and the call reports a conflict, instead of silently
+  // clobbering the other verb's standing and history. On bun's
+  // single-connection driver transactions serialize, so the guard is the
+  // safety net and the transaction is what makes the append correct today.
+  const stored = await options.db.transaction().execute(async (trx,) => {
+    const row = await getFactionRelationship(trx, lowId, highId,);
+    const statusNow = row?.status ?? INITIAL_STATUS;
+    const standing = clampStanding((row?.standing ?? 0) + (options.deltaStanding ?? 0),);
+    const nextStatus = options.status ?? statusForStanding(standing,);
+    const worldId = await resolveWorldId(trx, lowId, row,);
+    const history: DiplomacyEvent[] = [
+      ...(row?.history ?? []),
+      {
+        at: stamp,
+        action: options.action ?? options.status ?? "standing_changed",
+        fromStatus: statusNow,
+        toStatus: nextStatus,
         standing,
-        status: nextStatus,
-        history_json: jsonStringifyOr(history,),
-        updated_at: stamp,
-      },)
-      .execute();
-  }
+        reason: options.reason ?? "",
+      },
+    ];
 
-  const stored = await getFactionRelationship(options.db, lowId, highId,);
+    if (row) {
+      const updated = await trx
+        .updateTable("faction_relationships",)
+        .set({ standing, status: nextStatus, history_json: jsonStringifyOr(history,), updated_at: stamp, },)
+        .where("id", "=", row.id,)
+        .where("status", "=", statusNow,)
+        .executeTakeFirst();
+
+      if (Number(updated.numUpdatedRows ?? 0,) === 0) {
+        // A racing verb moved the row between our read and write; do not
+        // clobber its standing and history silently.
+        throw new FactionError("conflict", "relationship changed concurrently; retry",);
+      }
+    } else {
+      await trx
+        .insertInto("faction_relationships",)
+        .values({
+          id: uid(),
+          world_id: worldId,
+          faction_a_id: lowId,
+          faction_b_id: highId,
+          standing,
+          status: nextStatus,
+          history_json: jsonStringifyOr(history,),
+          updated_at: stamp,
+        },)
+        .execute();
+    }
+
+    return getFactionRelationship(trx, lowId, highId,);
+  },);
+
   if (!stored) {
     throw new FactionError("not-found", `relationship row for ${lowId}/${highId} vanished`,);
   }
