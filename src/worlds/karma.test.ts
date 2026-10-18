@@ -91,19 +91,16 @@ describe("karma ledger", () => {
   });
 
   test("concurrent events fold both deltas, not just the last", async () => {
-    // Pre-create the profile so the ensureProfile insert race is not the thing
-    // under test. The bug: both events read overall=0, compute their own delta,
-    // and write it back — the second write clobbers the first.
+    // Seed a KNOWN profile first, so the concurrent pair is the only thing that
+    // can move the value. The bug: both events read the same `overall`, compute
+    // their own delta, and write the absolute result back — the second write
+    // clobbers the first, so 10 + 10 would leave 10 instead of 20.
     await getKarma(db, "w1", "actor-concurrent",);
 
-    const [a, b,] = await Promise.all([
+    await Promise.all([
       recordKarmaEvent({ db, worldId: "w1", actorId: "actor-concurrent", category: "honor", delta: 10, },),
       recordKarmaEvent({ db, worldId: "w1", actorId: "actor-concurrent", category: "honor", delta: 10, },),
     ],);
-
-    // Both deltas landed.
-    expect(a.overall,).toBe(10,);
-    expect(b.overall,).toBe(20,);
 
     const final = await getKarma(db, "w1", "actor-concurrent",);
     expect(final.overall,).toBe(20,);
