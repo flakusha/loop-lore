@@ -12,71 +12,38 @@
  *   POST /api/worlds/:worldId/storage/:storageId/withdraw
  *
  * Creating a container is a world-owner act; USING one needs world access plus
- * the container's own rules, which `depositItem`/`withdrawItem` enforce
- * internally — a route cannot bypass them by writing the row itself.
+ * the container's own rules, which `depositItem`/`withdrawItem`/
+ * `readStorageContents` enforce internally — a route cannot bypass them by
+ * writing the row itself, and none of them reads its actor from the request.
+ *
+ * IDENTITY: no endpoint here accepts an actor id from the client. The acting
+ * actor comes from the session via `requireActingActor` (see
+ * `./storage-route-support`), so world membership can never be confused with
+ * being the owner.
  */
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, } from "../../validation/schemas";
 import {
   createStorage,
   depositItem,
-  getStorageContents,
   listStorages,
+  readStorageContents,
   StorageError,
   storageUsage,
   withdrawItem,
 } from "../../worlds/storage";
-import {
-  extractAuth,
-  HttpStatus,
-  type HttpStatusCode,
-  jsonCreated,
-  jsonError,
-  jsonResponse,
-} from "../http-utils";
+import { extractAuth, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
+import {
+  requireActingActor,
+  respond,
+  StorageContentBody,
+  storageStatus,
+  StorageSummary,
+  StorageUsageBody,
+  TransferBody,
+} from "./storage-route-support";
 import type { HandleOpts, } from "./types";
-
-const StorageSummary = t.Object({
-  id: t.String(),
-  locationId: t.Union([t.String(), t.Null(),],),
-  name: t.String(),
-  capacity: t.Integer(),
-  security: t.Integer(),
-},);
-
-const StorageUsageBody = t.Object({ used: t.Integer(), capacity: t.Integer(), free: t.Integer(), },);
-
-const StorageContentBody = t.Object({ itemId: t.String(), quantity: t.Integer(), storedAt: t.String(), },);
-
-const TransferBody = t.Object({
-  itemId: t.String({ minLength: 1, },),
-  quantity: t.Integer({ minimum: 1, },),
-  actorId: t.String({ minLength: 1, },),
-},);
-
-/** Domain code → HTTP status. `capacity-exceeded` is a CONFLICT, not a 400: the
- * request was well formed, the container simply could not take it. */
-function storageStatus(code: StorageError["code"],): HttpStatusCode {
-  if (code === "not-found") { return HttpStatus.NotFound; }
-  if (code === "capacity-exceeded") { return HttpStatus.Conflict; }
-  if (code === "access-denied") { return HttpStatus.Forbidden; }
-
-  return HttpStatus.BadRequest;
-}
-
-/** Run a storage call, rendering its typed rejection through the envelope. */
-async function respond(action: () => Promise<unknown>,): Promise<Response> {
-  try {
-    return jsonResponse({ data: await action(), },);
-  } catch (error) {
-    if (error instanceof StorageError) {
-      return jsonError({ message: error.message, status: storageStatus(error.code,), },);
-    }
-
-    throw error;
-  }
-}
 
 export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
@@ -161,11 +128,26 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
 
-        const contents = await getStorageContents(database, ctx.params.storageId,);
-        return jsonResponse({ data: contents, },);
+        // Access-checked: an unguarded contents read hands every world member
+        // every other member's private chest, bypassing the access model.
+        const actor = await requireActingActor(database, ctx,);
+        if (typeof actor !== "string") { return actor; }
+
+        return await respond(() =>
+          readStorageContents(database, {
+            storageId: ctx.params.storageId,
+            actorId: actor,
+            worldId: ctx.params.worldId,
+          },)
+        );
       },
       {
-        response: { 200: t.Object({ data: t.Array(StorageContentBody,), },), 404: ErrorResponse, },
+        response: {
+          200: t.Object({ data: t.Array(StorageContentBody,), },),
+          400: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
         detail: { summary: "List a container's contents", tags: ["Worlds",], },
       },
     )
@@ -176,12 +158,15 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
 
+        const actor = await requireActingActor(database, ctx,);
+        if (typeof actor !== "string") { return actor; }
+
         return await respond(() =>
           depositItem(database, {
             storageId: ctx.params.storageId,
             itemId: ctx.body.itemId,
             quantity: ctx.body.quantity,
-            actorId: ctx.body.actorId,
+            actorId: actor,
             worldId: ctx.params.worldId,
           },)
         );
@@ -205,12 +190,15 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
 
+        const actor = await requireActingActor(database, ctx,);
+        if (typeof actor !== "string") { return actor; }
+
         return await respond(() =>
           withdrawItem(database, {
             storageId: ctx.params.storageId,
             itemId: ctx.body.itemId,
             quantity: ctx.body.quantity,
-            actorId: ctx.body.actorId,
+            actorId: actor,
             worldId: ctx.params.worldId,
           },)
         );

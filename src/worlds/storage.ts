@@ -16,15 +16,21 @@
  * partially succeeds: a player who sees a success must be able to believe the
  * whole stack went in. Routes render the code as 409.
  *
- * WHO is checked lives in `./storage-access` — `depositItem` and
- * `withdrawItem` both call `assertMayAccess`, so no call site can forget.
- * `getStorageContents` deliberately does not: looking at a chest is not taking
- * from it, and a player needs to see a locked chest is locked before they try.
+ * WHO is checked lives in `./storage-access`. Every route-facing entry point
+ * — `readStorageContents`, `depositItem`, `withdrawItem` — calls
+ * `assertMayAccess` with the AUTHENTICATED actor, so no call site can forget.
+ * `getStorageContents` is the raw, unguarded query and is internal only.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
-import { encodeAccessControl, type StorageAccessControl, StorageError, type StorageRow, } from "./storage-access";
+import {
+  assertMayAccess,
+  encodeAccessControl,
+  type StorageAccessControl,
+  StorageError,
+  type StorageRow,
+} from "./storage-access";
 
 /** One stacked line of a container's contents. */
 export interface StorageContent {
@@ -121,8 +127,10 @@ export async function listStorages(
 /**
  * Read a container's stacked contents.
  *
- * No access check: this is the "what is in here" read, and a caller needs to
- * see that a chest exists and is locked before attempting a withdrawal.
+ * UNGUARDED — internal use only. It answers "what is in here" for a caller
+ * that has already established access (tests, and `readStorageContents`).
+ * An authenticated route must go through `readStorageContents`, or the
+ * security model is bypassed entirely.
  * @param db Kysely handle
  * @param storageId the container to read
  * @returns the stacked lines, most numerous first
@@ -136,6 +144,30 @@ export async function getStorageContents(db: Kysely<DB>, storageId: string,): Pr
     .execute();
 
   return rows.map((row,) => ({ itemId: row.item_id, quantity: row.quantity, storedAt: row.stored_at, }));
+}
+
+/**
+ * Read a container's contents ON BEHALF OF AN ACTOR, enforcing its rules.
+ *
+ * This is the read a route must use. `getStorageContents` above is the raw
+ * query and is deliberately unguarded, so it is only for callers that have
+ * already established access (tests, and this function). Routing an
+ * authenticated read through the raw one hands every world member every
+ * private chest in the world.
+ * @param db Kysely handle
+ * @param input the container, the AUTHENTICATED actor, and their world
+ * @returns the stacked lines, oldest first
+ * @throws {StorageError} `not-found` when the container does not exist,
+ *   `access-denied` when the actor may not use it
+ */
+export async function readStorageContents(
+  db: Kysely<DB>,
+  input: { storageId: string; actorId: string; worldId: string },
+): Promise<StorageContent[]> {
+  const storage = await loadStorage(db, input.storageId,);
+  assertMayAccess(storage, input.actorId, input.worldId,);
+
+  return await getStorageContents(db, input.storageId,);
 }
 
 /**

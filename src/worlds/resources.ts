@@ -39,6 +39,7 @@ import {
   type ExtractionNodeState,
   type ExtractionYieldEntry,
   mulberry32,
+  ResourceError,
   rollExtraction,
 } from "./resource-core";
 import { consumeNode, grantYield, loadNode, rollYield, } from "./resource-node";
@@ -165,10 +166,22 @@ export async function attemptExtraction(
   // A failure consumes NOTHING: no yield, no decrement, no respawn stamp.
   const produced = attempt.succeeded ? await rollYield(db, node.node_def_id, rng,) : [];
   let remaining = node.remaining_amount;
+  let succeeded = attempt.succeeded;
 
   if (attempt.succeeded) {
-    remaining = await consumeNode(db, nodeInstanceId, node, attemptedAt,);
-    await grantYield(db, worldId, actorId, produced,);
+    try {
+      remaining = await consumeNode(db, nodeInstanceId, node, attemptedAt,);
+      await grantYield(db, worldId, actorId, produced,);
+    } catch (error) {
+      // A concurrent extraction spent the last unit between our read and the
+      // guarded decrement. Paying out anyway IS the double-yield that guard
+      // exists to prevent, so this attempt yields nothing — it is recorded and
+      // reported as a failure rather than aborting before the roll is logged.
+      if (!(error instanceof ResourceError) || error.code !== "depleted") { throw error; }
+
+      succeeded = false;
+      remaining = 0;
+    }
   }
 
   await db
@@ -179,9 +192,9 @@ export async function attemptExtraction(
       node_instance_id: nodeInstanceId,
       actor_id: actorId,
       attempted_at: attemptedAt,
-      succeeded: attempt.succeeded ? 1 : 0,
+      succeeded: succeeded ? 1 : 0,
       difficulty,
-      yield: jsonStringifyOr(produced, "[]",),
+      yield: jsonStringifyOr(succeeded ? produced : [], "[]",),
     },)
     .execute();
 
@@ -191,7 +204,7 @@ export async function attemptExtraction(
     subjectId: nodeInstanceId,
     actorId,
     tick: 0,
-    payload: { difficulty, roll: attempt.roll, succeeded: attempt.succeeded, remaining, },
+    payload: { difficulty, roll: attempt.roll, succeeded, remaining, },
     dedupeKey: `extraction:${worldId}:${nodeInstanceId}:${actorId}:${attemptedAt}`,
   },);
 
@@ -199,10 +212,10 @@ export async function attemptExtraction(
     worldId,
     nodeInstanceId,
     difficulty,
-    succeeded: attempt.succeeded,
+    succeeded,
   },);
 
-  return { succeeded: attempt.succeeded, difficulty, yield: produced, remaining, };
+  return { succeeded, difficulty, yield: succeeded ? produced : [], remaining, };
 }
 
 /**
