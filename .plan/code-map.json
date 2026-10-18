@@ -10691,6 +10691,10 @@
       "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tooling-build-cli-surface.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/cli-tooling.md"
     }
@@ -12280,6 +12284,10 @@
   "src/config/load/load.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
     },
     {
@@ -12865,6 +12873,10 @@
   ],
   "src/config/schema/providers.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
     },
@@ -12878,6 +12890,10 @@
     }
   ],
   "src/config/schema/sd-provider.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
@@ -13000,6 +13016,10 @@
     }
   ],
   "src/config/sections/byo-key.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations.md"
@@ -13145,6 +13165,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/federation-trust-mechanism.md"
+    }
+  ],
+  "src/config/sections/generation/meta.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    }
+  ],
+  "src/config/sections/generation/section.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
     }
   ],
   "src/config/sections/headers.ts": [
@@ -14221,7 +14253,17 @@
       "source": "docs/spec/crypto.md"
     }
   ],
+  "src/crypto/byok.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    }
+  ],
   "src/crypto/byok.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
@@ -14612,6 +14654,10 @@
     }
   ],
   "src/crypto/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-algorithm-factory.md"
@@ -16516,6 +16562,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-character-core-system.md"
     },
     {
@@ -18349,6 +18399,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-battle-integration-gaps.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
     },
     {
       "kind": "epic",
@@ -27846,6 +27900,10 @@
   "src/generation/image-engine/comfyui.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     },
     {
@@ -27890,6 +27948,14 @@
   "src/generation/image-engine/index.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-lifecycle.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
@@ -27927,7 +27993,23 @@
       "source": ".plan/tickets/TASK-video-provider-minimax-h3.md"
     }
   ],
+  "src/generation/image-engine/openai.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    }
+  ],
+  "src/generation/image-engine/sdapi.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    }
+  ],
   "src/generation/image-engine/sdcpp.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-reference-conditioned-generation.md"
@@ -27977,6 +28059,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-audio-video-sound.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
     },
     {
       "kind": "epic",
@@ -28700,7 +28786,15 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-comfyui-lifecycle.md"
     },
     {
       "kind": "epic",
@@ -28888,6 +28982,10 @@
     }
   ],
   "src/generation/providers/registry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
@@ -36677,6 +36775,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-metric-collection-and-charts.md"
+    }
+  ],
+  "src/routes/api-keys.coverage.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
     }
   ],
   "src/routes/api-keys.ts": [
@@ -49872,6 +49976,10 @@
   "src/test-utils/insert-helpers.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
     },
     {
@@ -51668,6 +51776,10 @@
     }
   ],
   "src/validation/db-schemas.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-byok-api-keys.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
