@@ -36,6 +36,9 @@ let db: Kysely<DB>;
 const locationW1 = "loc-w1";
 const locationW2 = "loc-w2";
 
+/** Fixed base instant, so the sweep's `now` and the seeded respawn never drift. */
+const T0 = new Date("2026-03-01T00:00:00.000Z",);
+
 /** Mount the real routes behind a session identity, as the app wires them. */
 function appFor(userId: string,): Elysia {
   return new Elysia()
@@ -61,8 +64,8 @@ async function depletedNode(worldId: string, locationId: string, id: string,): P
     worldId,
     "Iron Vein",
     GatheringNodeType.OreVein,
-    new Date().toISOString(),
-    new Date().toISOString(),
+    T0.toISOString(),
+    T0.toISOString(),
     { respawn_time_seconds: 60, },
   );
 
@@ -71,13 +74,17 @@ async function depletedNode(worldId: string, locationId: string, id: string,): P
     def,
     worldId,
     0,
-    new Date().toISOString(),
-    new Date().toISOString(),
+    T0.toISOString(),
+    T0.toISOString(),
     {
       id,
       location_id: locationId,
       state: NodeInstanceState.Depleted,
-      respawn_at: new Date(Date.now() - 1000,).toISOString(),
+      // Elapsed relative to the FIXED base: the route's sweep `now` is the
+      // wall clock, so a wall-clock-relative respawn here could drift and
+      // flake under load. One second before T0 is unambiguously elapsed by any
+      // real `now` at test time.
+      respawn_at: new Date(T0.getTime() - 1000,).toISOString(),
       remaining_amount: 0,
     },
   );
@@ -130,8 +137,8 @@ describe("abilityBonus is a bounded client input", () => {
       W1,
       "Rich Vein",
       GatheringNodeType.OreVein,
-      new Date().toISOString(),
-      new Date().toISOString(),
+      T0.toISOString(),
+      T0.toISOString(),
       { respawn_time_seconds: 60, },
     );
 
@@ -140,8 +147,8 @@ describe("abilityBonus is a bounded client input", () => {
       def,
       W1,
       1,
-      new Date().toISOString(),
-      new Date().toISOString(),
+      T0.toISOString(),
+      T0.toISOString(),
       { location_id: locationW1, state: NodeInstanceState.Available, remaining_amount: 5, extraction_difficulty: 60, },
     );
 
