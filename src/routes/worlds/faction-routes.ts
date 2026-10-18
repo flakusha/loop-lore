@@ -109,7 +109,7 @@ async function runDiplomacy(
  * @param factionIds faction ids the request addresses
  * @returns 404 when any id is missing or belongs to another world, else null
  */
-async function requireFactionsInWorld(
+export async function requireFactionsInWorld(
   database: Kysely<DB>,
   worldId: string,
   factionIds: readonly string[],
