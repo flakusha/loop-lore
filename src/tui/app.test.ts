@@ -175,6 +175,12 @@ const blessedStub = {
     return widget;
   },
   textbox: (opts: WidgetOpts = {},) => makeWidget(opts,),
+  // ./markup reads `blessed.helpers.escape` at module scope, so a stub without
+  // `helpers` fails on IMPORT, before any assertion runs. blessed's escape is
+  // pure string work — it opens no terminal — so mirroring it is free.
+  helpers: {
+    escape: (text: string,) => text.replaceAll("{", "{open}",).replaceAll("}", "{close}",),
+  },
 };
 
 if (ISOLATED) {
