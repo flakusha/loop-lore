@@ -134,6 +134,8 @@ afterAll(() => {
       "sm-cov-res-fb",
       "sm-cov-byo-a",
       "sm-cov-byo-b",
+      "sm-cov-byo-blocked",
+      "sm-cov-byo-anthropic",
       "sm-cov-init-a",
       "sm-cov-route-a",
       "sm-cov-route-b",
@@ -364,6 +366,94 @@ describe("resolveProvider", () => {
     },);
 
     expect(resolved.resolvedApiKey,).toBe("sk-byo-secret",);
+  });
+
+  test("ignores a stored BYO key when the provider sets allowUserApiKey: false", async () => {
+    registerMock("sm-cov-byo-blocked",);
+    const secret = "sm-cov-test-secret-key";
+    await testDb.insertInto("users",).values({
+      id: "byo-user-blocked",
+      username: "byo-user-blocked",
+      display_name: "Blocked BYO",
+      role: "user",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    await testDb.insertInto("user_api_keys",).values({
+      user_id: "byo-user-blocked",
+      provider_name: "sm-cov-byo-blocked",
+      api_key_encrypted: await encryptValue("sk-byo-secret", secret,),
+    },).execute();
+
+    const config = emptyConfig();
+    config.byoKey = { enabled: true, encryptionKey: secret, } as Config["byoKey"];
+    config.generation.providers.openaiCompatible = [
+      {
+        name: "sm-cov-byo-blocked",
+        label: "Blocked",
+        baseUrl: "http://localhost:8080/v1",
+        apiKey: "sk-server-key",
+        model: "m",
+        timeout: 1000,
+        retries: 0,
+        allowUserApiKey: false,
+        models: {},
+      },
+    ];
+
+    const resolved = await resolveProvider({
+      provider: "sm-cov-byo-blocked",
+      model: "m",
+      userId: "byo-user-blocked",
+      config,
+      db: testDb,
+    },);
+
+    expect(resolved.resolvedApiKey,).toBeUndefined();
+    expect(await resolved.resolveApiKey("sm-cov-byo-blocked",),).toBeUndefined();
+  });
+
+  test("ignores a stored BYO key when the anthropic instance sets allowUserApiKey: false", async () => {
+    registerMock("sm-cov-byo-anthropic",);
+    const secret = "sm-cov-test-secret-key";
+    await testDb.insertInto("users",).values({
+      id: "byo-user-anthropic",
+      username: "byo-user-anthropic",
+      display_name: "Anthropic BYO",
+      role: "user",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    await testDb.insertInto("user_api_keys",).values({
+      user_id: "byo-user-anthropic",
+      provider_name: "sm-cov-byo-anthropic",
+      api_key_encrypted: await encryptValue("sk-byo-secret", secret,),
+    },).execute();
+
+    const config = emptyConfig();
+    config.byoKey = { enabled: true, encryptionKey: secret, } as Config["byoKey"];
+    config.generation.providers.anthropic = {
+      name: "sm-cov-byo-anthropic",
+      label: "Anthropic",
+      baseUrl: "https://api.anthropic.com",
+      model: "m",
+      timeout: 1000,
+      retries: 0,
+      allowUserApiKey: false,
+      models: {},
+    };
+
+    const resolved = await resolveProvider({
+      provider: "sm-cov-byo-anthropic",
+      model: "m",
+      userId: "byo-user-anthropic",
+      config,
+      db: testDb,
+    },);
+
+    expect(resolved.resolvedApiKey,).toBeUndefined();
   });
 
   test("falls back to the server key when BYO decryption fails", async () => {
