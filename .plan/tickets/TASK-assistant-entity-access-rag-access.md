@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** In Progress (verified 2026-10-18 against `dev` at `08ef7efe7`). Two of the seven acceptance criteria are met. Met: `/rag-search` returns ranked results (`src/assistant/commands/rag.ts:66`, tested at `rag.test.ts:126`) and `/rag-ask` answers over the retrieved context listing its source documents (`rag.ts:101`, tested at `rag.test.ts:212`); both commands compose with the existing access guards — they call `requireWorldAccess` from `src/routes/worlds/access` and deny a caller who cannot access the world (`rag.test.ts:163` and `:191`); and unit tests pass for the two implemented handlers. NOT MET: (a) `/rag-preview` is not registered — `registerCommand` is called only twice in the file (`rag.ts:66` and `:101`), so no preview handler exists; (b) `/rag-decompose` is likewise unregistered, and with no decomposers on `dev` there is no stub message either; (c) quota enforcement does not exist — there is no `src/assistant/quota/` directory and no `QuotaExceededError` in `src/`, so the named prerequisite `TASK-assistant-entity-access-quota-engine` is unbuilt and nothing is blocked pre-call; (d) the retrieval contract differs from the design — `searchLore` (`rag.ts:32`) does in-JS keyword matching over the two lore tables rather than FTS5 over `documents`, and the documented `src/assistant/adapter/rag.ts` adapter file does not exist. Remaining: the preview and decompose handlers, the quota engine, and either an adapter or an amendment of the design.
 **Priority:** High
 **Effort:** High
 **Type:** Task
