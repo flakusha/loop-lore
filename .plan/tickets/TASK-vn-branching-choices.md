@@ -16,7 +16,7 @@ and the Character Core System's relationship and mood systems. See
 re-checked against `src/` on 2026-10-09; six were `[x]` and are now `[ ]`.
 **Effort:** Medium
 **Priority:** Medium
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) "Backend, routes, frontend cards, accumulated impacts, split/reunite detection all live". Reconciled 2026-10-09: the backend half is genuinely done and `initChoiceCards` is now mounted at render time (`vn-mode-qa-loop`, `e87bd19c0`), but choice impacts are still never applied and no choice-history table exists — remains In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`. Card mounting holds (`render-scene.ts:251`, gated on `settings.vnChoicesEnabled`) and the pending-choice send gate is now live (`src/routes/messages/guards.ts` 409 on unresolved choices and questions). Still open: impacts never write to the relationship/mood systems (`getAccumulatedImpacts()` has no production consumer), `unlock_conditions` is never evaluated, and `vn_choice_selections` does not exist. Status line corrected Done → In Progress to match the reconciliation above.
 **Epic:** epic-visual-novel-mode

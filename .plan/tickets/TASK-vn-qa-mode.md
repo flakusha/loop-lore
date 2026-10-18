@@ -14,7 +14,7 @@ interaction loop — not started. See `## Status Split` and `## Scope`.
 (verified in `src/frontend/vn/qa-mode.ts`) vs interaction-loop boxes (no code).
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) marked Done while its own body said the Q&A Interaction Loop was NOT STARTED with 10 unchecked ACs. Reconciled 2026-10-09: validator done (but callerless), interaction loop absent — Done → In Progress. Note the closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`. The shipped surface now also carries `POST /api/chats/:id/vn-questions/:qid/dismiss` and the pending-question send gate (`src/routes/messages/guards.ts` 409). Still open: the three deferred write-back ACs, the partial `nextSceneId` follow-up, and the validator's missing production caller. Status line corrected Done → In Progress to match the notes above.
 **Status Note (2026-10-09):** Q&A interaction loop shipped (minimal, choices-parity). Three ACs remain deferred — mood shift / relationship change / item gain write-back — and one partial (`nextSceneId` is returned but no caller acts on it). The static QA validator still has no production caller. Status stays In Progress until the deferred ACs land; see `## Acceptance Criteria` for the un-defer trigger.
