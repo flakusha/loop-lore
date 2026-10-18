@@ -26,7 +26,7 @@ const ROOT = join(import.meta.dir, "..",);
  */
 function makeCargoShim(): { dir: string; cleanup: () => void } {
   const dir = mkdtempSync(join(tmpdir(), "b6-egui-cargo-",),);
-  writeFileSync(join(dir, "cargo",), "#!/usr/bin/env bash\nexit 0\n",);
+  writeFileSync(join(dir, "cargo",), "#!/bin/sh\nexit 0\n",);
   chmodSync(join(dir, "cargo",), 0o755,);
   return { dir, cleanup: () => rmSync(dir, { recursive: true, force: true, },), };
 }
@@ -64,14 +64,16 @@ describe("build-egui-wasm optional-toolchain contract", () => {
   });
 
   test("skips with exit 0 (and the install hint) when the wasm-bindgen CLI is missing", () => {
+    const { dir: bunOnly, cleanup: cleanupBun, } = makeBunOnlyPath();
     const { dir, cleanup, } = makeCargoShim();
     try {
-      const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${process.env.PATH}`, },);
+      const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${bunOnly}`, },);
       expect(status,).toBe(0,);
       expect(output,).toContain("wasm-bindgen CLI not found - skipping the egui WASM bundle",);
       expect(output,).toContain("cargo install wasm-bindgen-cli",);
     } finally {
       cleanup();
+      cleanupBun();
     }
   });
 
