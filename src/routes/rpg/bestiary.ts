@@ -164,10 +164,14 @@ export function bestiaryRoutes({ database, }: HandlerOpts, prefix = "/api",): El
           rngSeed?: number;
         };
 
+        // Same visibility rule as the bestiary list: this world's templates
+        // plus the global ones. A bare id lookup would let a caller roll the
+        // loot table of another world's private template.
         const template = await database
           .selectFrom("monster_templates",)
           .select(["id", "loot_table",],)
           .where("id", "=", body.templateId,)
+          .where((eb,) => eb.or([eb("world_id", "is", null,), eb("world_id", "=", ctx.params.worldId,),],))
           .executeTakeFirst();
 
         if (!template) { return notFoundResponse("Monster template",); }
