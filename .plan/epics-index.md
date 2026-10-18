@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 329 epics
+**Total:** 331 epics
 
 ## Summary
 
@@ -47,7 +47,7 @@
 | In Progress | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High | High | 0 | [epic-battle-integration-gaps.md](/.plan/epics/epic-battle-integration-gaps.md) |
 | In Progress | Benchmark CI & Performance Regression Detection | High | High | 0 | [epic-benchmark-ci-regression.md](/.plan/epics/epic-benchmark-ci-regression.md) |
 | In Progress | Blog System | Medium | High | 0 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
-| Not Started | BYOK API Keys (Bring Your Own Key) | High | Large | 0 | [epic-byok-api-keys.md](/.plan/epics/epic-byok-api-keys.md) |
+| Not Started | BYOK API Keys (Bring Your Own Key) | high | Large | 0 | [epic-byok-api-keys.md](/.plan/epics/epic-byok-api-keys.md) |
 | Not Started | BYOK Local Models (Bring Your Own Model) | High | Large | 0 | [epic-byok-local-models.md](/.plan/epics/epic-byok-local-models.md) |
 | In Progress | Certificate & TLS Management | High | Large | 0 | [epic-certificate-and-tls-management.md](/.plan/epics/epic-certificate-and-tls-management.md) |
 | In Progress | Character & NPC Lore Access | High | High | 0 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
@@ -67,6 +67,7 @@
 | Not Started | Client-Side Routing | Medium | Medium | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | In Progress | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
 | Not Started | ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup | High | High | 0 | [epic-comfyui-first-class-citizen.md](/.plan/epics/epic-comfyui-first-class-citizen.md) |
+| Not Started | ComfyUI Lifecycle (provisioning, launch contract, portability) | medium | Large | 0 | [epic-comfyui-lifecycle.md](/.plan/epics/epic-comfyui-lifecycle.md) |
 | In Progress | ComfyUI Plugin & Workflow Templates | High | High | 0 | [epic-comfyui-plugin.md](/.plan/epics/epic-comfyui-plugin.md) |
 | Not Started | Communications Integrations | Medium | High (split into 5 sub-epics) | 0 | [epic-communications-integrations.md](/.plan/epics/epic-communications-integrations.md) |
 | Not Started | Communications Integrations — Quick Reference | Medium | High | 0 | [epic-communications-integrations-quickref.md](/.plan/epics/epic-communications-integrations-quickref.md) |
@@ -189,6 +190,7 @@
 | In Progress | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
 | Not Started | External Creative Tool Bridge (MCP) | High | Very High | 0 | [epic-external-creative-tool-bridge.md](/.plan/epics/epic-external-creative-tool-bridge.md) |
 | Not Started | External Search Providers & Context Enrichment | Medium | Low | 0 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
+| Not Started | External tooling build CLI (llama.cpp, stable-diffusion.cpp, llama-swap) | medium | Large | 0 | [epic-external-tooling-build.md](/.plan/epics/epic-external-tooling-build.md) |
 | In Progress | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
 | In Progress | FE-BE Harmonization — Epic | High | Small (one check script + gate) | 0 | [epic-fe-be-harmonization.md](/.plan/epics/epic-fe-be-harmonization.md) |
 | Done | File Splitting & God-Module Refactor | High | Very High | 0 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
@@ -318,7 +320,7 @@
 | Done | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 0 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
 | Not Started | Technical Comparison Charts (multi-image model/generation comparison) | Medium | Large | 0 | [epic-technical-comparison-charts.md](/.plan/epics/epic-technical-comparison-charts.md) |
-| In Progress | Terminal UI (TUI) | Low | Medium | 7/12 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
+| In Progress | Terminal UI (TUI) | Low | Medium | 14/14 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
 | In Progress | Testing & Quality Assurance (Permanently Ongoing) | High | Continuous | 0 | [epic-testing-qa.md](/.plan/epics/epic-testing-qa.md) |
 | In Progress | Testing, Benchmarking & Performance | High | Very High (split into 7 sub-epics) | 0 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | In Progress | Tooling Support & Improvement (Permanently Ongoing) | Medium | Continuous | 0 | [epic-tooling-improvement.md](/.plan/epics/epic-tooling-improvement.md) |
@@ -680,10 +682,10 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 ### BYOK API Keys (Bring Your Own Key)
 
 - **Status:** Not Started
-- **Priority:** High
+- **Priority:** high
 - **Effort:** Large
 - **Type:** Feature Epic
-- **Tags:** byok, api-keys, llm, providers, privacy
+- **Tags:** byok, api-keys, llm, providers, privacy, encryption-at-rest
 - **File:** `.plan/epics/epic-byok-api-keys.md`
 
 ### BYOK Local Models (Bring Your Own Model)
@@ -864,6 +866,15 @@ Loop Lore has accumulated a constellation of chat-shaped product surfaces (assis
 - **File:** `.plan/epics/epic-comfyui-first-class-citizen.md`
 
 `epic-comfyui-plugin` made ComfyUI a first-class *backend* — HTTP client,
+
+### ComfyUI Lifecycle (provisioning, launch contract, portability)
+
+- **Status:** Not Started
+- **Priority:** medium
+- **Effort:** Large
+- **Type:** Integration Epic
+- **Tags:** comfyui, lifecycle, provisioning, uv, llama-swap, portability, contract-tests
+- **File:** `.plan/epics/epic-comfyui-lifecycle.md`
 
 ### ComfyUI Plugin & Workflow Templates
 
@@ -2059,6 +2070,15 @@ Exploration and discovery mechanics — map exploration, fog of war, discovery r
 - **Tags:** rag, search-providers, duckduckgo, searxng, brave, tavily, rss, enrichment
 - **File:** `.plan/epics/epic-rag-context-sources.md`
 
+### External tooling build CLI (llama.cpp, stable-diffusion.cpp, llama-swap)
+
+- **Status:** Not Started
+- **Priority:** medium
+- **Effort:** Large
+- **Type:** Infrastructure
+- **Tags:** tooling, build, llama-swap, llama.cpp, stable-diffusion, provisioning
+- **File:** `.plan/epics/epic-external-tooling-build.md`
+
 ### Factions, Reputation & Persistent Consequences
 
 - **Status:** In Progress
@@ -2722,8 +2742,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### NSFW Interaction UI
 
 - **Status:** Not Started
@@ -3181,7 +3199,6 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
-
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3490,3 +3507,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
