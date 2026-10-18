@@ -20,7 +20,8 @@
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, } from "../../validation/schemas";
 import { attemptExtraction, listResources, regenerateResources, ResourceError, } from "../../worlds/resources";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { resolvePrimaryActorId, } from "../actor-access";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -76,13 +77,16 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
 
+        const actorId = userId ? await resolvePrimaryActorId(database, userId,) : null;
+        if (!actorId) { return notFoundResponse("User actor",); }
+
         try {
           const result = await attemptExtraction(
             database,
             ctx.params.worldId,
             ctx.body.locationId,
             ctx.body.nodeInstanceId,
-            ctx.body.actorId,
+            actorId,
             { abilityBonus: ctx.body.abilityBonus, },
           );
 
@@ -96,7 +100,6 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
         body: t.Object({
           locationId: t.String({ minLength: 1, },),
           nodeInstanceId: t.String({ minLength: 1, },),
-          actorId: t.String({ minLength: 1, },),
           /** Skill/profession bonus applied to the DC before the roll. */
           abilityBonus: t.Optional(t.Integer(),),
         },),
