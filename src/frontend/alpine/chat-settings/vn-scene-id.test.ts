@@ -113,7 +113,7 @@ describe("syncVnRenderer scene-id wiring", () => {
       const { bridge, inits, destroys, } = recordingBridge();
       container.attrs.set(SCENE_ID_ATTR, "chat-1",);
 
-      syncVnRenderer([msg("m1",),], null, false, "chat-1", bridge,);
+      syncVnRenderer([msg("m1",),], null, false, "chat-1", { renderer: bridge, },);
 
       expect(destroys(),).toBe(1,);
       expect(inits,).toHaveLength(0,);
@@ -127,7 +127,7 @@ describe("syncVnRenderer scene-id wiring", () => {
       const { bridge, inits, destroys, } = recordingBridge();
       const gmConfig = JSON.stringify({ renderingOverride: "visual_novel", },);
 
-      syncVnRenderer([msg("m1",),], gmConfig, false, "chat-7", bridge,);
+      syncVnRenderer([msg("m1",),], gmConfig, false, "chat-7", { renderer: bridge, },);
 
       expect(destroys(),).toBe(0,);
       expect(inits,).toHaveLength(1,);
@@ -142,7 +142,7 @@ describe("syncVnRenderer scene-id wiring", () => {
       const { bridge, inits, destroys, } = recordingBridge();
       const gmConfig = JSON.stringify({ renderingOverride: "text", },);
 
-      syncVnRenderer([msg("m1",),], gmConfig, true, "chat-7", bridge,);
+      syncVnRenderer([msg("m1",),], gmConfig, true, "chat-7", { renderer: bridge, },);
 
       expect(destroys(),).toBe(1,);
       expect(inits,).toHaveLength(0,);
@@ -154,7 +154,7 @@ describe("syncVnRenderer scene-id wiring", () => {
     withContainer((container,) => {
       const { bridge, inits, destroys, } = recordingBridge();
 
-      syncVnRenderer([], null, true, "chat-7", bridge,);
+      syncVnRenderer([], null, true, "chat-7", { renderer: bridge, },);
 
       expect(destroys(),).toBe(1,);
       expect(inits,).toHaveLength(0,);

@@ -9,13 +9,14 @@ import { log as rootLog, } from "./logger";
 import { ownershipActions, } from "./chat-settings/ownership";
 import { personaActions, } from "./chat-settings/persona";
 import { presentationGmConfig, } from "./chat-settings/gm-config-presentation";
-import { syncVnRenderer, } from "./chat-settings/vn";
+import { syncVnRenderer, vnQaActions, } from "./chat-settings/vn";
 import { t, } from "./i18n";
 
 const log = rootLog.child({ module: "chat-settings", },);
 export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   ...ownershipActions,
   ...personaActions,
+  ...vnQaActions,
   _chatSettingsName: "",
   _chatSettingsMode: "story",
   _chatSettingsTurnStrategy: "round_robin",
@@ -138,8 +139,14 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
    * gm_config so the renderer and the settings modal stay in sync.
    */
   updateVnMode() {
-    const chat = this.chats.find((c: { id: string },) => c.id === this.activeChat);
-    syncVnRenderer(this.messages, chat?.gm_config, this._vnEnabled, this.activeChat ?? undefined,);
+    const chat = this.chats.find((c: { id: string; world_id?: string },) => c.id === this.activeChat);
+    syncVnRenderer(
+      this.messages,
+      chat?.gm_config,
+      this._vnEnabled,
+      this.activeChat ?? undefined,
+      { worldId: chat?.world_id, },
+    );
   },
 
   async saveChatSettings() {
