@@ -42325,12 +42325,6 @@
       "source": ".plan/tickets/TASK-review-thread-comment-model.md"
     }
   ],
-  "src/routes/views/gallery-cards.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
-    }
-  ],
   "src/routes/views/gallery.test.ts": [
     {
       "kind": "ticket",
@@ -42623,18 +42617,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-view-model-extraction.md"
-    }
-  ],
-  "src/routes/views/view-models/chat-list.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
-    }
-  ],
-  "src/routes/views/view-models/gallery-grid.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md"
     }
   ],
   "src/routes/views/view-serving.ts": [
@@ -50085,16 +50067,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
     }
   ],
   "src/tui/api-contract.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    }
+  ],
+  "src/tui/app-keys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
     }
   ],
   "src/tui/app.test.ts": [
@@ -50158,6 +50142,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
     },
     {
@@ -50177,6 +50165,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assetview-loads-assets-without-auth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
     }
   ],
   "src/tui/asset-view.ts": [
@@ -50195,6 +50187,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-color-for-tui-colors.md"
     },
     {
       "kind": "ticket",
@@ -50225,10 +50221,20 @@
       "source": "docs/spec/terminal-ui.md"
     }
   ],
+  "src/tui/chat-create-api.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-chat-create-api-silent-catch.md"
+    }
+  ],
   "src/tui/chat-picker.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
     },
     {
       "kind": "ticket",
@@ -50258,6 +50264,10 @@
     }
   ],
   "src/tui/chat/api.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
@@ -50326,6 +50336,14 @@
   "src/tui/chat/display.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-stringwidth-for-tui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui.md"
     }
   ],
@@ -50333,6 +50351,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-color-for-tui-colors.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-stringwidth-for-tui.md"
     },
     {
       "kind": "ticket",
@@ -50388,6 +50414,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
     },
     {
@@ -50427,6 +50457,12 @@
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
     }
   ],
+  "src/tui/harness/api.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    }
+  ],
   "src/tui/harness/api.ts": [
     {
       "kind": "epic",
@@ -50444,6 +50480,12 @@
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
     },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    }
+  ],
+  "src/tui/harness/display.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
@@ -50492,6 +50534,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-models-overlay.md"
     },
     {
@@ -50521,13 +50567,27 @@
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
     }
   ],
+  "src/tui/markup.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    }
+  ],
   "src/tui/models-api.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-models-overlay.md"
     }
   ],
   "src/tui/models-display.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-models-overlay.md"
@@ -50537,6 +50597,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
     },
     {
       "kind": "ticket",

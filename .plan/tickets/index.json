@@ -770,6 +770,19 @@
     "source": ".plan/tickets/BUG-asset-upload-chat-key-derivation-failure-silently-downgrades.md",
     "status": "done"
   },
+  "BUG-ASSET-VIEW-ADVERTISES-A-DEL-UNLINK-KEYBINDING-THAT-NO-HANDLE": {
+    "hash": "ed9261f",
+    "git_issue": "ed9261f",
+    "extid": "BUG-ASSET-VIEW-ADVERTISES-A-DEL-UNLINK-KEYBINDING-THAT-NO-HANDLE",
+    "type": "BUG",
+    "title": "Asset view advertises a Del: unlink keybinding that no handler implements",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-terminal-ui",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle.md",
+    "status": "done"
+  },
   "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES": {
     "epic": "",
     "extid": "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES",
@@ -852,6 +865,18 @@
     "tags": [],
     "title": "assets serve: serveFile omits X-Content-Type-Options: nosniff, enabling MIME-sniff attacks",
     "type": "BUG"
+  },
+  "BUG-ASSETVIEW-LOADS-ASSETS-WITHOUT-AUTH": {
+    "hash": "pending",
+    "extid": "BUG-ASSETVIEW-LOADS-ASSETS-WITHOUT-AUTH",
+    "type": "BUG",
+    "title": "AssetView loads assets without auth",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-terminal-ui",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assetview-loads-assets-without-auth.md",
+    "status": "done"
   },
   "BUG-ASSISTANT-AND-GROUP-CHAT-CORRECTNESS-DEFECTS": {
     "hash": "5e09182",
@@ -9503,6 +9528,18 @@
     "tags": [],
     "title": "tui/app.ts never threads a session token into ChatWidget — auth header never sent",
     "type": "BUG"
+  },
+  "BUG-TUI-SEND-INHERITS-THE-30S-DEFAULT-SAFEFETCH-TIMEOUT-AGAINST-": {
+    "hash": "pending",
+    "extid": "BUG-TUI-SEND-INHERITS-THE-30S-DEFAULT-SAFEFETCH-TIMEOUT-AGAINST-",
+    "type": "BUG",
+    "title": "TUI send inherits the 30s default safeFetch timeout against blocking LLM generation",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-terminal-ui",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-.md",
+    "status": "done"
   },
   "BUG-TUI-SHOWERROR-DESYNCS-ITEMCOUNT-FROM-MESSAGELIST-LENGTH": {
     "hash": "71758ac",
@@ -24635,7 +24672,7 @@
     "label": "task",
     "priority": "low",
     "source": ".plan/tickets/TASK-adopt-bun-stringwidth-for-tui.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Adopt Bun.stringWidth for TUI",
     "type": "TASK"
@@ -39544,6 +39581,19 @@
     "status": "Not Started",
     "git_issue": "9349634"
   },
+  "TASK-HARNESS-STATS-ENDPOINT-WAS-IMPLEMENTED-BUT-NEVER-CALLED": {
+    "hash": "87d0310",
+    "git_issue": "87d0310",
+    "extid": "TASK-HARNESS-STATS-ENDPOINT-WAS-IMPLEMENTED-BUT-NEVER-CALLED",
+    "type": "TASK",
+    "title": "Harness stats endpoint was implemented but never called",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-terminal-ui",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-stats-endpoint-was-implemented-but-never-called.md",
+    "status": "done"
+  },
   "TASK-HARNESS-SUBAGENT-DELEGATION": {
     "hash": "5d928d3",
     "extid": "TASK-HARNESS-SUBAGENT-DELEGATION",
@@ -53533,7 +53583,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-tui.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Terminal UI (TUI)",
     "type": "TASK"
@@ -53564,10 +53614,22 @@
     "label": "task",
     "priority": "low",
     "source": ".plan/tickets/TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "tui/asset-view.ts: remove silent catch + void-without-catch pattern in setChatId",
     "type": "TASK"
+  },
+  "TASK-TUI-CHAT-CREATE-API-SILENT-CATCH": {
+    "hash": "pending",
+    "extid": "TASK-TUI-CHAT-CREATE-API-SILENT-CATCH",
+    "type": "TASK",
+    "title": "TUI: silent `catch {}` in chat-create-api.ts",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-terminal-ui",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tui-chat-create-api-silent-catch.md",
+    "status": "Not Started"
   },
   "TASK-TUI-CHAT-PICKER": {
     "hash": "ebcb788",
@@ -53611,6 +53673,18 @@
     "title": "tui.enabled config flag mapped from env but never read at runtime",
     "type": "TASK"
   },
+  "TASK-TUI-FIRE-AND-FORGET-VOID-WITHOUT-CATCH": {
+    "hash": "pending",
+    "extid": "TASK-TUI-FIRE-AND-FORGET-VOID-WITHOUT-CATCH",
+    "type": "TASK",
+    "title": "TUI: fire-and-forget `void` without `.catch()`",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-terminal-ui",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md",
+    "status": "Not Started"
+  },
   "TASK-TUI-MARKUP-INJECTION-UNENCODED-URLS-AND-SHUTDOWN-HYGIENE": {
     "hash": "d178e87",
     "git_issue": "d178e87",
@@ -53619,10 +53693,26 @@
     "title": "TUI markup injection, unencoded URLs, and shutdown hygiene",
     "label": "task",
     "priority": "Medium",
-    "epic": "",
+    "epic": "epic-terminal-ui",
     "tags": [],
     "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md",
-    "status": "Not Started"
+    "status": "done"
+  },
+  "TASK-TUI-MODELS-OVERLAY": {
+    "hash": "pending",
+    "extid": "TASK-TUI-MODELS-OVERLAY",
+    "type": "TASK",
+    "title": "TUI admin models overlay",
+    "label": "task",
+    "priority": "medium",
+    "epic": "`epic-terminal-ui`",
+    "tags": [
+      "tui",
+      "admin",
+      "models"
+    ],
+    "source": ".plan/tickets/TASK-tui-models-overlay.md",
+    "status": "done"
   },
   "TASK-TUI-SHELL-TESTABILITY": {
     "hash": "47b85ad",
@@ -53640,6 +53730,22 @@
     "source": ".plan/tickets/TASK-tui-shell-testability.md",
     "status": "done"
   },
+  "TASK-TUI-SLASH-COMMAND-COMPLETION": {
+    "hash": "pending",
+    "extid": "TASK-TUI-SLASH-COMMAND-COMPLETION",
+    "type": "TASK",
+    "title": "TUI slash-command completion from the live registry",
+    "label": "task",
+    "priority": "high",
+    "epic": "`epic-terminal-ui`",
+    "tags": [
+      "tui",
+      "chat",
+      "commands"
+    ],
+    "source": ".plan/tickets/TASK-tui-slash-command-completion.md",
+    "status": "done"
+  },
   "TASK-TUI-SPEC-SYNC": {
     "hash": "769db3d",
     "git_issue": "769db3d",
@@ -53654,7 +53760,7 @@
       "docs"
     ],
     "source": ".plan/tickets/TASK-tui-spec-sync.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TURN-SEND-GATE": {
     "epic": "",
