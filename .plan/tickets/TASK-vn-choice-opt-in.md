@@ -11,7 +11,7 @@ choices exist. See `## Summary` for the intent; the five boxes in
 **Acceptance Criteria:** The five boxes in `## Acceptance Criteria`.
 
 
-**Status:** In Progress
+**Status:** in_progress
 **Priority:** medium
 **Effort:** Medium
 **Tags:** visual-novel, choices, opt-in, send-gate
