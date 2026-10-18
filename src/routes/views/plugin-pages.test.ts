@@ -80,11 +80,14 @@ describe("pagesRoutes /egui", () => {
     app = pagesRoutes(fakeDb() as unknown as Parameters<typeof pagesRoutes>[0],) as unknown as Elysia;
   },);
 
-  it("serves the standalone egui host page", async () => {
-    const res = await app.handle(new Request("http://test/egui",),);
+  it("serves the standalone egui host page at /egui", async () => {
+    const res = await app.handle(
+      new Request("http://test/egui",),
+    );
+
     expect(res.status,).toBe(200,);
     const html = await res.text();
-    expect(html,).toContain("<!doctype html>",);
-    expect(res.headers.get("Content-Type",),).toContain("text/html",);
+    expect(html,).toContain('<canvas id="egui-canvas"></canvas>',);
+    expect(html,).toContain('data-testid="egui-back-to-htmx"',);
   });
 });
