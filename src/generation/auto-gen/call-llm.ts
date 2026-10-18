@@ -36,7 +36,7 @@ import {
   resolveAutoGenSamplingParams,
 } from "../assistant-tuning";
 import { activeGenerations, processStreamingChunk, } from "../cancellation-manager";
-import type { ChunkEvent, } from "../providers/types";
+import type { ChunkEvent, UserApiKeyResolver, } from "../providers/types";
 import { AUTO_GEN, } from "../routing/task-signal";
 import type { GenerationMessage, } from "../types";
 import { classifyIntent, } from "./classify-intent";
@@ -59,6 +59,7 @@ export interface CallLlmOpts {
     resolvedModel: string;
     resolvedProviderName: string;
     resolvedApiKey?: string;
+    resolveApiKey: UserApiKeyResolver;
     provider: { capabilities: { streaming: boolean } };
   };
   prompt: { messages: GenerationMessage[] };
