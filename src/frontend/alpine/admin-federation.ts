@@ -31,9 +31,15 @@ const log = rootLog.child({ module: "admin-federation", },);
 /** Poll cadence, matching the admin shell's own 30s overview poll. */
 export const FEDERATION_POLL_MS = 30_000;
 
-const EMPTY_USAGE = { enabled: false, peers: [], storage: null, };
-const EMPTY_MATRIX = { matrix: { preferences: {}, }, };
-const EMPTY_PEER_SAVE = {
+// Typed against the inferred schemas so the degraded default is assignable
+// where a real payload lands; a bare literal would infer `never[]` / `null` and
+// reject every genuine response at the assignment.
+type UsageShape = ReturnType<typeof AdminFederationUsage.parse>;
+type PeerSaveShape = ReturnType<typeof AdminFederationPeerSave.parse>;
+
+const EMPTY_USAGE: UsageShape = { enabled: false, peers: [], storage: null, };
+const EMPTY_MATRIX: ReturnType<typeof AdminFederationMatrix.parse> = { matrix: { preferences: {}, }, };
+const EMPTY_PEER_SAVE: PeerSaveShape = {
   peer: null,
   probe: { outcome: "", reason: "", },
 };
