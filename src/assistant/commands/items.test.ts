@@ -272,6 +272,30 @@ describe("item commands", () => {
     }
   });
 
+  test("lets a non-owner with an admin-class role read an item and an inventory it does not own", async () => {
+    const foreign = await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
+    const foreignChar = await insertActors(db, "Vex", { actor_type: "character", owner_id: otherId, },);
+    await insertWorldItems(db, otherWorldId, foreign, { owner_actor_id: foreignChar, quantity: 4, },);
+    const inWorld = { id: "chat-1", worldId: otherWorldId, };
+
+    // /item-get and /inventory reach checkWorldOwnership through items.ts:80 and
+    // :140 — separate call sites from the /item-list one at :34, each needing its
+    // own proof that the role still arrives.
+    for (const role of [UserRole.Admin, UserRole.Solo, UserRole.Tester,]) {
+      const callerId = `admin-${role}-${crypto.randomUUID()}`;
+      await insertUsers(db, `admin-${role}`, "Admin", { id: callerId, role, },);
+      const asRole = ctx({ userId: callerId, userRole: role, activeChat: inWorld, },);
+
+      const got = await itemGet([foreign,], asRole,);
+      expect(got.action,).toBe("item-get",);
+      expect(got.systemMessage,).toContain("Foreign Blade",);
+
+      const inv = await inventory([foreignChar,], asRole,);
+      expect(inv.action,).toBe("inventory",);
+      expect(inv.systemMessage,).toContain("Foreign Blade",);
+    }
+  });
+
   test("refuses every unprivileged role the same world the admins read", async () => {
     await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
     const inWorld = { id: "chat-1", worldId: otherWorldId, };
