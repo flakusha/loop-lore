@@ -87,11 +87,11 @@ describe("requestThumbnail", () => {
     }
 
     expect(sinkCalls.length,).toBe(1,);
-    expect(sinkCalls[0].method,).toBe("eguiThumbReady",);
-    expect(sinkCalls[0].assetId,).toBe("a1",);
-    expect(sinkCalls[0].width,).toBe(2,);
-    expect(sinkCalls[0].height,).toBe(2,);
-    expect(sinkCalls[0].rgba?.length,).toBe(16,);
+    expect(sinkCalls[0]?.method,).toBe("eguiThumbReady",);
+    expect(sinkCalls[0]?.assetId,).toBe("a1",);
+    expect(sinkCalls[0]?.width,).toBe(2,);
+    expect(sinkCalls[0]?.height,).toBe(2,);
+    expect(sinkCalls[0]?.rgba?.length,).toBe(16,);
   });
 
   test("reports failure to the sink on fetch error", async () => {
@@ -101,8 +101,8 @@ describe("requestThumbnail", () => {
     await requestThumbnail("a1", "/api/v1/assets/a1/thumb",);
 
     expect(sinkCalls.length,).toBe(1,);
-    expect(sinkCalls[0].method,).toBe("eguiThumbFailed",);
-    expect(sinkCalls[0].assetId,).toBe("a1",);
+    expect(sinkCalls[0]?.method,).toBe("eguiThumbFailed",);
+    expect(sinkCalls[0]?.assetId,).toBe("a1",);
   });
 });
 
@@ -133,7 +133,7 @@ describe("uploadAsset", () => {
       uploadAsset();
       expect(input.accept,).toContain("image/*",);
       expect(changeHandler,).toBeFunction();
-      changeHandler?.();
+      (changeHandler as (() => void) | null)?.();
       // The upload is async; let the multipart POST settle.
       await new Promise((resolve,) => setTimeout(resolve, 0,));
     } finally {
@@ -141,13 +141,13 @@ describe("uploadAsset", () => {
     }
 
     expect(mockFetchCalls.length,).toBe(1,);
-    expect(mockFetchCalls[0].url,).toBe("/api/v1/assets",);
-    expect(mockFetchCalls[0].options?.method,).toBe("POST",);
-    expect(mockFetchCalls[0].options?.body,).toBeInstanceOf(FormData,);
-    expect((mockFetchCalls[0].options?.body as FormData).get("alt_text",),).toBe("cat.png",);
+    expect(mockFetchCalls[0]?.url,).toBe("/api/v1/assets",);
+    expect(mockFetchCalls[0]?.options?.method,).toBe("POST",);
+    expect(mockFetchCalls[0]?.options?.body,).toBeInstanceOf(FormData,);
+    expect((mockFetchCalls[0]?.options?.body as FormData).get("alt_text",),).toBe("cat.png",);
     expect(sinkCalls.length,).toBe(1,);
-    expect(sinkCalls[0].method,).toBe("eguiAssetUploaded",);
-    expect(sinkCalls[0].assetId,).toBe("new-asset",);
+    expect(sinkCalls[0]?.method,).toBe("eguiAssetUploaded",);
+    expect(sinkCalls[0]?.assetId,).toBe("new-asset",);
   });
 
   test("reports an empty id when the upload request fails", async () => {
@@ -173,14 +173,14 @@ describe("uploadAsset", () => {
 
     try {
       uploadAsset();
-      changeHandler?.();
+      (changeHandler as (() => void) | null)?.();
       await new Promise((resolve,) => setTimeout(resolve, 0,));
     } finally {
       globalThis.document = originalDocument;
     }
 
     expect(sinkCalls.length,).toBe(1,);
-    expect(sinkCalls[0].method,).toBe("eguiAssetUploaded",);
-    expect(sinkCalls[0].assetId,).toBe("",);
+    expect(sinkCalls[0]?.method,).toBe("eguiAssetUploaded",);
+    expect(sinkCalls[0]?.assetId,).toBe("",);
   });
 });
