@@ -17,15 +17,11 @@ import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, } from "
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import {
   DataResponse,
-  DIPLOMACY_ROUTES,
   Errors,
   factionErrorResponse,
-  PairBody,
   requireFactionsInWorld,
-  runDiplomacy,
 } from "./faction-routes-shared";
 import type { HandleOpts, } from "./types";
-
 
 /**
  * @param opts shared route options
@@ -199,8 +195,6 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
         detail: { summary: "Set relationship", description: "Change a pair's status or score.", tags: ["Worlds",], },
       },
     );
-
-  factionDiplomacyRoutes(app, database, prefix,);
 
   return app;
 }
