@@ -66,3 +66,25 @@ describe("pagesRoutes /views/nsfw-moderation authz", () => {
     expect([302, 403,],).toContain(res.status,);
   });
 });
+
+/**
+ * Regression for the /egui route deregistration: the WASM host page is a
+ * static standalone document, so the handler is served directly (never a 404
+ * and never routed through the ALLOWED_VIEWS redirect).
+ */
+describe("pagesRoutes /egui", () => {
+  let app: Elysia;
+
+  beforeEach(() => {
+    setGlobalLogger(createLogger({ level: "fatal", },),);
+    app = pagesRoutes(fakeDb() as unknown as Parameters<typeof pagesRoutes>[0],) as unknown as Elysia;
+  },);
+
+  it("serves the standalone egui host page", async () => {
+    const res = await app.handle(new Request("http://test/egui",),);
+    expect(res.status,).toBe(200,);
+    const html = await res.text();
+    expect(html,).toContain("<!doctype html>",);
+    expect(res.headers.get("Content-Type",),).toContain("text/html",);
+  });
+});
