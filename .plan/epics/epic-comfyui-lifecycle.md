@@ -119,12 +119,17 @@ themselves.
   both the `git fetch` and the `git rebase` (they sit in the same `else`
   branch) but still runs `uv sync`, so the Python environment is resynced while
   the source tree stays pinned — and the script still exits 0.
-- **Remote image generation does not exist.** The generation provider surface
-  carries only an OpenAI-compatible remote provider
-  (`generation.providers.openaiCompatible`); ComfyUI is by definition a local
-  engine, so a BYOK-only user has working remote *chat* inference and **no
-  remote *image* inference**. Declared explicitly in
-  `epic-byok-api-keys.md` rather than left implied.
+- **Remote image generation exists, but BYOK does not reach it.** The image
+  surface is a separate config array, `generation.providers.sd[]`, dispatched by
+  `apiFamily` in `src/generation/image-engine/index.ts:36-61` across four
+  implemented backends -- `openai` (remote:
+  `image-engine/openai.ts` POSTs `${baseUrl}/v1/images/generations`),
+  `sdapi`, `sdcpp`, and `comfyui`. **ComfyUI itself is by definition local**
+  (`image-engine/comfyui.ts` and `src/generation/providers/comfyui.ts` are both
+  HTTP clients over a `baseUrl` and never spawn a process). That is the fact
+  this epic cares about: the *only* backend needing a provisioned local engine
+  is the one this epic provisions. BYOK's non-coverage of the image surface is
+  recorded in `epic-byok-api-keys.md`.
 
 ## Acceptance Criteria
 
@@ -160,6 +165,6 @@ themselves.
 - `epic-llama-swap.md` — owns the proxy lifecycle and the read/never-rewrite contract
 - `epic-comfyui-plugin.md` — ComfyUI as an HTTP client / `comfyui_auto` passthrough (Done)
 - `epic-comfyui-first-class-citizen.md` — workflow library and UX seams
-- `epic-byok-api-keys.md` — declares the missing remote *image* inference surface
+- `epic-byok-api-keys.md` — BYOK credential scope, incl. why it excludes image providers
 - `TASK-external-comfyui-plugin-repo-integration-contract.md` — the external-plugin consumption contract
 - `docs/spec/integrations/llm-serving.md` — where the launch prose lives
