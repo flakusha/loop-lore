@@ -47,7 +47,7 @@ describe("resolveNativeBinaryPath — unsupported platform", () => {
       // We don't pin the exact path (depends on repo layout), only that the
       // supported-platform branch returns a non-null candidate. May still be
       // null on a system where the binary was never built; in CI we expect a
-      // release or debug path under native/loop-lore-native/target/.
+      // release or debug path under the unified root target/.
       if (path !== null) {
         expect(typeof path,).toBe("string",);
         expect(path,).toMatch(/(loop_lore_native|loop-lore-native)/,);
