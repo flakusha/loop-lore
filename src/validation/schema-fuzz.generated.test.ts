@@ -55,6 +55,8 @@ import * as routes_storyItems_definitions from "@/routes/story-items/definitions
 import * as routes_storyItems_instances from "@/routes/story-items/instances";
 import * as routes_trade_shared from "@/routes/trade/shared";
 import * as routes_v1_integrationsSurface from "@/routes/v1/integrations-surface";
+import * as routes_worlds_factionRoutesShared from "@/routes/worlds/faction-routes-shared";
+import * as routes_worlds_storageRouteSupport from "@/routes/worlds/storage-route-support";
 import * as validation_actors from "@/validation/schemas/actors";
 import * as validation_admin from "@/validation/schemas/admin";
 import * as validation_adminTemplates from "@/validation/schemas/admin-templates";
@@ -1825,6 +1827,12 @@ describe("PaginationQuery", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.PaginationQuery,));
 });
 
+describe("PairBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_worlds_factionRoutesShared.PairBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_worlds_factionRoutesShared.PairBody,));
+});
+
 describe("patternBody", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_npcNavigationSchemas.patternBody,));
 
@@ -2101,6 +2109,24 @@ describe("StorageBackendSchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.StorageBackendSchema,));
 });
 
+describe("StorageContentBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_worlds_storageRouteSupport.StorageContentBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_worlds_storageRouteSupport.StorageContentBody,));
+});
+
+describe("StorageSummary", () => {
+  test("accepts generated values", () => checkAllValid(routes_worlds_storageRouteSupport.StorageSummary,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_worlds_storageRouteSupport.StorageSummary,));
+});
+
+describe("StorageUsageBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_worlds_storageRouteSupport.StorageUsageBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_worlds_storageRouteSupport.StorageUsageBody,));
+});
+
 describe("StoryItemDefinitionListResponse", () => {
   test("accepts generated values", () => checkAllValid(routes_storyItems_definitions.StoryItemDefinitionListResponse,));
 
@@ -2277,6 +2303,12 @@ describe("TraitUpdateBody", () => {
   test("accepts generated values", () => checkAllValid(validation_characterSystems.TraitUpdateBody,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_characterSystems.TraitUpdateBody,));
+});
+
+describe("TransferBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_worlds_storageRouteSupport.TransferBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_worlds_storageRouteSupport.TransferBody,));
 });
 
 describe("TranslationMapSchema", () => {
@@ -2577,4 +2609,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 408 schemas discovered across 482 module(s).
+// 413 schemas discovered across 498 module(s).
