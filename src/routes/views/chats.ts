@@ -1,23 +1,55 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, } from "kysely";
+import { type Expression, type ExpressionBuilder, type Kysely, sql, type SqlBool, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { parseIntOr, } from "../../utils/parse-number";
 import { enrichChats, renderChatListItems, } from "./chat-render";
 import { htmlResponse, } from "./layout";
 import { buildChatListViewModel, type ChatListViewModel, } from "./view-models/chat-list";
 
+/** The viewer the chat list is scoped to. */
+export interface ChatListViewer {
+  userId: string;
+  /** `admin.chat` holders see every chat, matching search/activity scoping. */
+  isAdmin: boolean;
+}
+
+/**
+ * The access predicate both chat-list queries share: the viewer's own chats
+ * (created_by) or the ones they participate in (checkChatAccess).
+ * @param viewer - who is asking
+ * @returns a `where()` callback for a `chats` query
+ */
+function visibleToViewer(
+  { userId, isAdmin, }: ChatListViewer,
+): (eb: ExpressionBuilder<DB, "chats">,) => Expression<SqlBool> {
+  if (isAdmin) { return () => sql`1 = 1`; }
+
+  return (eb,) =>
+    eb.or([
+      eb("chats.created_by", "=", userId,),
+      eb.exists(
+        eb.selectFrom("chat_participants",)
+          .select("chat_participants.chat_id",)
+          .whereRef("chat_participants.chat_id", "=", "chats.id",)
+          .where("chat_participants.actor_id", "=", userId,),
+      ),
+    ],);
+}
+
 /**
  * Fetch and project one page of chats — the single data path behind the htmx
  * list fragment and the JSON view-model branch.
- * @param database
- * @param params - list params (`page`, `pageSize`)
+ * @param options
  * @returns the view-model both representations share
  */
 export async function loadChatsListViewModel(
-  database: Kysely<DB>,
-  params: URLSearchParams,
+  { database, params, viewer, }: {
+    database: Kysely<DB>;
+    params: URLSearchParams;
+    viewer: ChatListViewer;
+  },
 ): Promise<ChatListViewModel> {
   const { page, pageSize, offset, } = readPageParams(params,);
 
@@ -37,6 +69,7 @@ export async function loadChatsListViewModel(
         "worlds.name as world_name",
         "locations.name as location_name",
       ],)
+      .where(visibleToViewer(viewer,),)
       .orderBy("chats.is_pinned", "desc",)
       .orderBy("chats.updated_at", "desc",)
       .limit(pageSize,)
@@ -44,6 +77,7 @@ export async function loadChatsListViewModel(
       .execute(),
     database.selectFrom("chats",)
       .select((eb: any,) => eb.fn.countAll().as("total",))
+      .where(visibleToViewer(viewer,),)
       .executeTakeFirst(),
   ],);
 
@@ -61,8 +95,12 @@ export async function loadChatsListViewModel(
  * @param params
  * @returns the paginated chat-list HTML fragment
  */
-async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
-  const viewModel = await loadChatsListViewModel(database, params,);
+async function serveChatsListDb(
+  database: Kysely<DB>,
+  params: URLSearchParams,
+  viewer: ChatListViewer,
+): Promise<Response> {
+  const viewModel = await loadChatsListViewModel({ database, params, viewer, },);
   if (viewModel.chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">💬</div>
@@ -77,13 +115,15 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
 /**
  * Fetch and project one page of chat-search results — the single data path
  * behind the htmx search fragment and the JSON view-model branch.
- * @param database
- * @param params - search params (`q`, `world`, `type`, `sort`, `page`, `pageSize`)
+ * @param options
  * @returns the view-model both representations share
  */
 export async function loadChatsSearchViewModel(
-  database: Kysely<DB>,
-  params: URLSearchParams,
+  { database, params, viewer, }: {
+    database: Kysely<DB>;
+    params: URLSearchParams;
+    viewer: ChatListViewer;
+  },
 ): Promise<ChatListViewModel> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const worldId = params.get("world",)?.trim() ?? "";
@@ -105,7 +145,8 @@ export async function loadChatsSearchViewModel(
       "chats.encryption_level",
       "worlds.name as world_name",
       "locations.name as location_name",
-    ],);
+    ],)
+    .where(visibleToViewer(viewer,),);
 
   if (query) {
     qb = qb.where("chats.name", "like", `%${query}%`,);
@@ -141,8 +182,12 @@ export async function loadChatsSearchViewModel(
  * @param params
  * @returns the paginated chat-search HTML fragment
  */
-async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
-  const viewModel = await loadChatsSearchViewModel(database, params,);
+async function serveChatsSearch(
+  database: Kysely<DB>,
+  params: URLSearchParams,
+  viewer: ChatListViewer,
+): Promise<Response> {
+  const viewModel = await loadChatsSearchViewModel({ database, params, viewer, },);
   if (viewModel.chats.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">🔍</div>
