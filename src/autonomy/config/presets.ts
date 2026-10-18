@@ -45,6 +45,9 @@ export const PRESETS: Readonly<Record<PacingPresetName, PresetDefinition>> = {
     seed: null,
   },
   "unlimited-stress": {
+    // "Unlimited" is scoped to perAgentCap only (null = unbounded).
+    // perUserCap stays finite below as the last backstop so one user's
+    // whole agent fleet cannot saturate the tick loop.
     tickIntervalMs: 1_000,
     jitterRatio: 0.0,
     perAgentCap: null,
