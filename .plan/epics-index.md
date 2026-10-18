@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 331 epics
+**Total:** 332 epics
 
 ## Summary
 
@@ -193,6 +193,7 @@
 | Not Started | External tooling build CLI (llama.cpp, stable-diffusion.cpp, llama-swap) | medium | Large | 0 | [epic-external-tooling-build.md](/.plan/epics/epic-external-tooling-build.md) |
 | In Progress | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
 | In Progress | FE-BE Harmonization — Epic | High | Small (one check script + gate) | 0 | [epic-fe-be-harmonization.md](/.plan/epics/epic-fe-be-harmonization.md) |
+| Not Started | Federated Workload Offload & Instance Quotas | High | Very High | 0 | [epic-federation-offload-quotas.md](/.plan/epics/epic-federation-offload-quotas.md) |
 | Done | File Splitting & God-Module Refactor | High | Very High | 0 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
 | Not Started | Flexible RPG Patterns | Medium | Medium | 0 | [epic-rpg-patterns.md](/.plan/epics/epic-rpg-patterns.md) |
 | Not Started | Fractal Locations — Recursive Containment + Mobile Transports | High | High | 0 | [epic-fractal-locations.md](/.plan/epics/epic-fractal-locations.md) |
@@ -2098,6 +2099,15 @@ Exploration and discovery mechanics — map exploration, fog of war, discovery r
 - **File:** `.plan/epics/epic-fe-be-harmonization.md`
 
 One automated gate that cross-checks every frontend API call against the backend route + TypeBox schema surface and fails on drift: unknown routes, method mismatches, bad body/query shape, unknown flags, and dead endpoints.
+
+### Federated Workload Offload & Instance Quotas
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Very High
+- **Type:** Feature Epic
+- **Tags:** federation, offload, quotas, routing, peers, mesh, admin, storage
+- **File:** `.plan/epics/epic-federation-offload-quotas.md`
 
 ### File Splitting & God-Module Refactor
 
