@@ -53,9 +53,11 @@ export type RouteMatch = "prefix" | "suffix";
 
 /**
  * Route-pattern → policy. First matching rule wins; anything else gets
- * the default policy. `prefix` (default) matches `startsWith`; `suffix`
- * matches `endsWith` — for generation routes nested under an id-bearing
- * path no prefix rule can reach.
+ * the default policy. `prefix` (default) matches on segment boundaries —
+ * the path itself or any segment beneath it (`path === pattern` or
+ * `path.startsWith(pattern + "/")`), so `/api/v1/authx` does NOT classify
+ * as auth. `suffix` matches `endsWith` — for generation routes nested
+ * under an id-bearing path no prefix rule can reach.
  */
 export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: RouteMatch,]> = [
   ["/api/v1/auth", authPolicy,],
@@ -101,7 +103,13 @@ export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: 
  */
 export function policyForRoute(pathname: string,): RatePolicy {
   for (const [pattern, policy, match = "prefix",] of routePolicies) {
-    const hit = match === "suffix" ? pathname.endsWith(pattern,) : pathname.startsWith(pattern,);
+    // Segment-boundary prefix match: a path like /api/v1/authx is not an
+    // auth route and must not eat into the auth budget shared with real
+    // /api/v1/auth/* traffic.
+    const hit = match === "suffix"
+      ? pathname.endsWith(pattern,)
+      : pathname === pattern || pathname.startsWith(`${pattern}/`,);
+
     if (hit) { return policy; }
   }
 
