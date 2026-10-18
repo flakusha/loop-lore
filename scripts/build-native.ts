@@ -87,7 +87,7 @@ function buildNativeCdylib(): boolean {
   }
 
   console.log("[build:native:cdylib] compiling Rust cdylib (release)...",);
-  const result = spawnSync("cargo", ["build", "--release", "--target-dir", "target",], {
+  const result = spawnSync("cargo", ["build", "--release",], {
     cwd: CRATE_DIR,
     stdio: "inherit",
   },);
@@ -141,8 +141,6 @@ function buildWasm(): boolean {
     "--no-default-features",
     "--target",
     WASM_TARGET,
-    "--target-dir",
-    "target",
   ];
 
   for (const { features, outputName, } of builds) {
@@ -159,7 +157,7 @@ function buildWasm(): boolean {
       return false;
     }
 
-    const src = join(CRATE_DIR, "target", WASM_TARGET, "release", "loop_lore_native.wasm",);
+    const src = join(import.meta.dir, "..", "target", WASM_TARGET, "release", "loop_lore_native.wasm",);
     if (!existsSync(src,)) {
       console.error(`[build:native:wasm] expected ${src} not found`,);
       return false;
