@@ -71,8 +71,9 @@ const STORY_STATE = JSON.stringify({
 },);
 
 /** @returns an Elysia app with the story-orchestration routes mounted. */
-function makeApp(db: Kysely<DB>,): Elysia {
+function makeApp(db: Kysely<DB>,) {
   return new Elysia({ name: "test-story-orchestration", },)
+    .derive(() => ({ userId: USER_ID, userRole: "user" as const, }))
     .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 }
 
