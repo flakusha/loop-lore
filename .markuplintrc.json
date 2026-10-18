@@ -111,6 +111,18 @@
         }
       }
     },
+    "src/components/federation/admin-federation-panel.html": {
+      "rules": {
+        "require-owned-elements": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        },
+        "require-parent-role": {
+          "severity": "off",
+          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
+        }
+      }
+    },
     "src/components/harness/admin-harness-panel.html": {
       "rules": {
         "require-owned-elements": {
