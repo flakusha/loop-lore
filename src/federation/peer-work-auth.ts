@@ -21,6 +21,25 @@
  *
  * Fail-closed throughout. A failure names a routable `PeerWorkErrorCode` and
  * never the value that failed, so nothing here can echo a secret.
+ *
+ * TRUST BOUNDARY — read before exposing this port off-host.
+ *
+ * Layers 1-5 are AUTHORIZATION against operator-set policy, and all of them
+ * deny by default. Layer 6 is the only AUTHENTICATION, and it applies to
+ * same-host peers ONLY. For a `tls` peer the claimed origin in `x-peer-origin`
+ * is ASSERTED, never proven: the save path forbids a shared credential on a
+ * TLS peer, and this runtime enforces no client certificate (see
+ * `src/federation/peer-fetch.ts`: "mTLS is NOT enforced — runtimes expose no
+ * client-certificate handle on fetch"). The SPKI pin in
+ * `src/federation/spki-pin.ts` is an OUTBOUND pre-flight that checks a peer
+ * before we call it; it says nothing about who is calling us.
+ *
+ * Consequence: any HTTP client that can reach this port AND knows the origin
+ * of a `trusted`, workload-trusted peer can submit work as that peer. Until a
+ * credential path exists for TLS peers, this endpoint MUST stay behind a
+ * trusted network boundary (loopback or an operator-controlled segment). It is
+ * NOT safe on a public listener. Ticket
+ * TASK-federation-peer-workload-wire-endpoints carries the open item.
  */
 import { type Kysely, } from "kysely";
 import { type Config, } from "../config/schema";
@@ -111,8 +130,8 @@ export async function authorizePeerWork(options: {
     };
   }
 
-  // Required for same-host peers, and only for them: a TLS peer is identified
-  // by its certificate, and the save path forbids storing a credential on one.
+  // Same-host peers only. A TLS peer's identity is ASSERTED, not proven — see
+  // the TRUST BOUNDARY note above before treating this branch as sufficient.
   if (peer.authMode === PeerAuthMode.HostLocal) {
     const ok = await verifyPeerWorkloadToken(database, {
       origin,

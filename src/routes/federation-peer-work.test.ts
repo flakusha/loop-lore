@@ -634,3 +634,58 @@ describe("authorizePeerWork — a credential this instance cannot decrypt is a r
     expect("status" in admission && admission.errorCode,).toBe("federation.workload_credential_rejected",);
   });
 });
+
+describe("peer-work route — the documented trust boundary", () => {
+  test("an absent origin header is denied by default, never treated as anonymous access", async () => {
+    const executor = executorFor(HAPPY_CHUNKS,);
+    const { app, db, } = await appFor(ENABLED, executor,);
+    await seedRemote(db,);
+
+    const res = await app.handle(post(wireRequest(), {},),);
+    const body = await rejection(res,);
+
+    expect(res.status,).toBe(400,);
+    expect(body.errorCode,).toBe("federation.workload_invalid_origin",);
+    expect(executor.calls,).toHaveLength(0,);
+  });
+
+  test("an empty origin header is denied the same way", async () => {
+    const { app, db, } = await appFor(ENABLED, executorFor(HAPPY_CHUNKS,),);
+    await seedRemote(db,);
+
+    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: "", },),);
+
+    expect((await rejection(res,)).errorCode,).toBe("federation.workload_invalid_origin",);
+  });
+
+  // KNOWN LIMITATION, pinned deliberately so it cannot be forgotten. A TLS
+  // peer's identity is asserted by the `x-peer-origin` header and never proven:
+  // the save path forbids a shared credential on a TLS peer and this runtime
+  // enforces no client certificate. This test states that behaviour plainly.
+  // It is NOT a claim that the design is correct — see the TRUST BOUNDARY note
+  // in src/federation/peer-work-auth.ts and the open item on the wire ticket.
+  // If a credential path is added for TLS peers, this test MUST fail so it is
+  // rewritten at the same time.
+  test("KNOWN LIMITATION: a TLS peer is admitted on an asserted origin alone, with no credential", async () => {
+    const executor = executorFor(HAPPY_CHUNKS,);
+    const { app, db, } = await appFor(ENABLED, executor,);
+    await seedRemote(db,);
+
+    // No Authorization header, no proof of anything: only the header.
+    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+
+    expect(res.status,).toBe(200,);
+    expect(executor.calls,).toHaveLength(1,);
+  });
+
+  test("a host-local peer is NOT admitted on its asserted origin alone", async () => {
+    const executor = executorFor(HAPPY_CHUNKS,);
+    const { app, db, } = await appFor(ENABLED, executor,);
+    await seedLoopback(db,);
+
+    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: LOOPBACK, },),);
+
+    expect(res.status,).toBe(403,);
+    expect(executor.calls,).toHaveLength(0,);
+  });
+});
