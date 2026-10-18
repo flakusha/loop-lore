@@ -17,9 +17,12 @@ import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, } from "
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import {
   DataResponse,
+  DIPLOMACY_ROUTES,
   Errors,
   factionErrorResponse,
+  PairBody,
   requireFactionsInWorld,
+  runDiplomacy,
 } from "./faction-routes-shared";
 import type { HandleOpts, } from "./types";
 
@@ -195,6 +198,18 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
         detail: { summary: "Set relationship", description: "Change a pair's status or score.", tags: ["Worlds",], },
       },
     );
+
+  for (const route of DIPLOMACY_ROUTES) {
+    app.post(
+      `${prefix}/worlds/:worldId/factions/relationships/${route.path}`,
+      async (ctx: any,) => runDiplomacy(database, ctx, route.verb,),
+      {
+        body: PairBody,
+        response: { ...DataResponse, ...Errors, },
+        detail: { summary: route.summary, description: route.description, tags: ["Worlds",], },
+      },
+    );
+  }
 
   return app;
 }
