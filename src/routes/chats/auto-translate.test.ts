@@ -14,11 +14,13 @@ import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { buildTranslateDeps, resolveTargetLang, } from "../../chat/auto-translate";
+import { autoTranslateText, buildTranslateDeps, resolveTargetLang, } from "../../chat/auto-translate";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { registerProvider, unregisterProvider, } from "../../generation/providers/registry";
+import type { GenerateRequest, LLMProvider, } from "../../generation/providers/types";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
@@ -31,6 +33,43 @@ import { autoTranslateRoutes, } from "./auto-translate";
 const OWNER_ID = randomUUID();
 const OUTSIDER_ID = randomUUID();
 const CHAT_ID = randomUUID();
+const GENERAL_PROVIDER = "at-test-general";
+const GENERAL_MODEL = "at-general-model";
+const TRANSLATOR_PROVIDER = "at-test-translator";
+const TRANSLATOR_MODEL = "at-translator-model";
+
+/**
+ * Stub provider that records the model it was asked to use.
+ * @param onCall - Invoked with the requested model on every completion.
+ * @returns A stub LLMProvider.
+ */
+function makeEchoProvider(onCall: (model: string,) => void,): LLMProvider {
+  return {
+    capabilities: { label: "Auto Translate Test Provider", streaming: false, },
+    complete: async (req: GenerateRequest,) => {
+      onCall(req.model,);
+      return { content: "hola", };
+    },
+    healthCheck: async () => ({ status: "ok" as const, }),
+    listModels: async () => [],
+  } as unknown as LLMProvider;
+}
+
+/**
+ * Full config (schema defaults) with a general model and the given modelRoles.
+ * @param modelRoles - The `generation.modelRoles` map to install.
+ * @returns A Config the provider registry can resolve against.
+ */
+function makeTranslateConfig(modelRoles: Record<string, unknown>,): Config {
+  const defaults = createConfigSchema().defaults as unknown as {
+    generation: Record<string, unknown>;
+  };
+
+  defaults.generation.defaultProvider = GENERAL_PROVIDER;
+  defaults.generation.defaultModels = { [GENERAL_PROVIDER]: GENERAL_MODEL, };
+  defaults.generation.modelRoles = modelRoles;
+  return defaults as unknown as Config;
+}
 
 /**
  * Build the route app with a fixed session identity injected.
@@ -148,5 +187,99 @@ describe("autoTranslateRoutes", () => {
     const config = createConfigSchema().defaults as Config;
     const deps = await buildTranslateDeps(db, config, OWNER_ID,);
     expect(typeof deps,).toBe("object",);
+  });
+
+  // The consumer contract: the model a translation actually calls with comes
+  // from the translator role, not unconditionally from the general model.
+  test("buildTranslateDeps translates with the configured translator model", async () => {
+    const { db, } = await createTestDb();
+    let captured = "";
+    registerProvider(
+      TRANSLATOR_PROVIDER,
+      makeEchoProvider((model,) => {
+        captured = model;
+      },),
+    );
+
+    registerProvider(
+      GENERAL_PROVIDER,
+      makeEchoProvider((model,) => {
+        captured = `general:${model}`;
+      },),
+    );
+
+    try {
+      const config = makeTranslateConfig({
+        translator: { provider: TRANSLATOR_PROVIDER, model: TRANSLATOR_MODEL, },
+      },);
+
+      const deps = await buildTranslateDeps(db, config, OWNER_ID,);
+      expect(deps.model,).toBe(TRANSLATOR_MODEL,);
+      await deps.complete?.({
+        model: deps.model ?? "",
+        messages: [{ role: "user", content: "hello", },],
+        params: { maxTokens: 16, temperature: 0, },
+      },);
+
+      expect(captured,).toBe(TRANSLATOR_MODEL,);
+    } finally {
+      unregisterProvider(TRANSLATOR_PROVIDER,);
+      unregisterProvider(GENERAL_PROVIDER,);
+    }
+  });
+
+  test("buildTranslateDeps falls back to the general model when translator is unset", async () => {
+    const { db, } = await createTestDb();
+    let captured = "";
+    registerProvider(
+      GENERAL_PROVIDER,
+      makeEchoProvider((model,) => {
+        captured = model;
+      },),
+    );
+
+    try {
+      const config = makeTranslateConfig({},);
+
+      const deps = await buildTranslateDeps(db, config, OWNER_ID,);
+      expect(deps.model,).toBe(GENERAL_MODEL,);
+      await deps.complete?.({
+        model: deps.model ?? "",
+        messages: [{ role: "user", content: "hello", },],
+        params: { maxTokens: 16, temperature: 0, },
+      },);
+
+      expect(captured,).toBe(GENERAL_MODEL,);
+    } finally {
+      unregisterProvider(GENERAL_PROVIDER,);
+    }
+  });
+
+  // A translator naming an unregistered provider must NOT quietly translate on
+  // the general model — it degrades, and the caller keeps the original text.
+  test("buildTranslateDeps degrades instead of using the general model for a bad translator", async () => {
+    const { db, } = await createTestDb();
+    registerProvider(GENERAL_PROVIDER, makeEchoProvider(() => {},),);
+
+    try {
+      const config = makeTranslateConfig({
+        translator: { provider: "no-such-translator-provider", model: TRANSLATOR_MODEL, },
+      },);
+
+      const deps = await buildTranslateDeps(db, config, OWNER_ID,);
+      expect(deps.complete,).toBeUndefined();
+
+      const outcome = await autoTranslateText({
+        text: "hello",
+        storyState: JSON.stringify({ autoTranslateLang: "es", },),
+        chatId: CHAT_ID,
+        deps,
+      },);
+
+      expect(outcome.translated,).toBe(false,);
+      expect(outcome.text,).toBe("hello",);
+    } finally {
+      unregisterProvider(GENERAL_PROVIDER,);
+    }
   });
 });

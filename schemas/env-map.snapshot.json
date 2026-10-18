@@ -212,6 +212,8 @@
   "ENABLE_MODERATION_HOOKS": "hooks.enableModerationHooks",
   "MODERATION_LLM_CLASSIFIER": "hooks.enableModerationLlmClassifier",
   "LLM_DEFAULT_PROVIDER": "generation.defaultProvider",
+  "LLM_TRANSLATOR_PROVIDER": "generation.modelRoles.translator.provider",
+  "LLM_TRANSLATOR_MODEL": "generation.modelRoles.translator.model",
   "BYO_KEY_ENABLED": "byoKey.enabled",
   "BYO_KEY_ENCRYPTION_KEY": "byoKey.encryptionKey",
   "SERVER_ENCRYPTION_KEY": "encryption.serverEncryptionKey",

@@ -107,6 +107,12 @@ export interface GenerationConfig {
     captioning?: ModelRoleAssignment;
     /** Dedicated encoder classifier (Laya/Jev-class); unset resolves via the default provider chain */
     classifier?: ModelRoleAssignment;
+    /**
+     * Translation model for /translate and per-chat auto-translate.
+     * Unset (or set without BOTH provider and model) resolves to the general
+     * model — see resolveTranslatorProvider.
+     */
+    translator?: ModelRoleAssignment;
   };
   /** Model routing policy (see generation/routing/). Default is a no-op. */
   routing?: GenerationRoutingConfig;

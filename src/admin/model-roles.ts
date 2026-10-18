@@ -27,6 +27,7 @@ export const VALID_ROLES = [
   ModelRole.Auxiliary,
   ModelRole.Captioning,
   ModelRole.Classifier,
+  ModelRole.Translator,
 ] as const;
 
 /** A resolved model role with its provider, model, and source. */

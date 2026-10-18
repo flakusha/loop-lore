@@ -257,6 +257,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
   "src/admin/provider-health.test.ts": [
@@ -12505,6 +12509,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations-architecture.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     },
     {
       "kind": "spec",
@@ -30013,6 +30021,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-output-control-transforms.md"
+    }
+  ],
+  "src/generation/translator-role.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
   "src/generation/types.ts": [
