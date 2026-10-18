@@ -597,3 +597,40 @@ describe("authorizePeerWork — the admission decision, called directly", () => 
     expect("status" in untrusted && untrusted.errorCode,).toBe("federation.workload_peer_untrusted",);
   });
 });
+
+describe("authorizePeerWork — a credential this instance cannot decrypt is a rejection", () => {
+  test("the wrong server secret rejects the peer rather than admitting it", async () => {
+    const { db, } = await createTestDb();
+    await seedLoopback(db,);
+
+    // The token was sealed with SECRET; hand the verifier a different key.
+    const admission = await authorizePeerWork({
+      database: db,
+      config: ENABLED,
+      claimedOrigin: LOOPBACK,
+      bearer: SHARED,
+      workloadClass: PeerWorkloadClass.Chat,
+      encryptionKey: "a-different-server-secret-012345",
+    },);
+
+    expect("status" in admission,).toBe(true,);
+    expect("status" in admission && admission.status,).toBe(403,);
+    expect("status" in admission && admission.errorCode,).toBe("federation.workload_credential_rejected",);
+  });
+
+  test("an instance with no encryption key at all cannot admit a same-host peer", async () => {
+    const { db, } = await createTestDb();
+    await seedLoopback(db,);
+
+    const admission = await authorizePeerWork({
+      database: db,
+      config: ENABLED,
+      claimedOrigin: LOOPBACK,
+      bearer: SHARED,
+      workloadClass: PeerWorkloadClass.Chat,
+      encryptionKey: "",
+    },);
+
+    expect("status" in admission && admission.errorCode,).toBe("federation.workload_credential_rejected",);
+  });
+});
