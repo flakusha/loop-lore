@@ -23,6 +23,8 @@ import { LANGUAGES, runTranslate, type TranslateDeps, } from "../assistant/comma
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { resolveProvider, } from "../generation/providers/registry";
+import { resolveTranslatorRole, } from "../generation/translator-role";
+import { getLogger, } from "../logger";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
 
 /** `story_state` JSON key holding the per-chat translation target. */
@@ -142,6 +144,11 @@ export async function autoTranslateText(options: AutoTranslateOptions,): Promise
  * Build `/translate` deps for route hooks: the resolved LLM `complete`, or
  * empty (heuristic-fallback path, which degrades to untranslated) when no
  * provider resolves. Never rejects.
+ *
+ * The model comes from the `translator` role, which falls back to the general
+ * model when unset — see resolveTranslatorRole. A translator pointing at an
+ * unregistered provider surfaces as an empty deps object (the same degraded
+ * heuristic path as no provider at all), never as a silent general-model call.
  * @param database
  * @param config
  * @param userId
@@ -153,12 +160,26 @@ export async function buildTranslateDeps(
   userId: string,
 ): Promise<TranslateDeps> {
   try {
-    const resolved = await resolveProvider({ config, userId, db: database, },);
+    const role = await resolveTranslatorRole(config, database,);
+    const resolved = await resolveProvider({
+      config,
+      userId,
+      db: database,
+      provider: role.provider,
+      model: role.model,
+    },);
+
     return {
       complete: (req,) => resolved.provider.complete(req,),
       model: resolved.resolvedModel,
     };
-  } catch {
+  } catch (error) {
+    getLogger()
+      .child({ module: "auto-translate", },)
+      .warn("Translator provider unavailable — falling back to untranslated text", {
+        error: error instanceof Error ? error.message : String(error,),
+      },);
+
     return {};
   }
 }

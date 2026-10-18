@@ -163,6 +163,8 @@ export const envMap = (): EnvMap => {
   map.ENABLE_MODERATION_HOOKS = "hooks.enableModerationHooks";
   map.MODERATION_LLM_CLASSIFIER = "hooks.enableModerationLlmClassifier";
   map.LLM_DEFAULT_PROVIDER = "generation.defaultProvider";
+  map.LLM_TRANSLATOR_PROVIDER = "generation.modelRoles.translator.provider";
+  map.LLM_TRANSLATOR_MODEL = "generation.modelRoles.translator.model";
   map.BYO_KEY_ENABLED = "byoKey.enabled";
   map.BYO_KEY_ENCRYPTION_KEY = "byoKey.encryptionKey";
   map.SERVER_ENCRYPTION_KEY = "encryption.serverEncryptionKey";
