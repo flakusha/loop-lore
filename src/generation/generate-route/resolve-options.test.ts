@@ -83,6 +83,7 @@ function makeResolved(streamingCapable: boolean,): ResolvedProvider {
     resolvedProviderName: "stub-prov",
     resolvedModel: "stub-model",
     resolvedApiKey: "stub-key",
+    resolveApiKey: () => Promise.resolve(undefined,),
   };
 }
 

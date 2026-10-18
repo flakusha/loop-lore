@@ -22,6 +22,7 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
+import type { UserApiKeyResolver, } from "../providers/types";
 import type { GenerationMessage, } from "../types";
 import type { GenDeps, } from "./deps";
 
@@ -47,6 +48,7 @@ export interface PreparedGeneration {
     resolvedModel: string;
     resolvedProviderName: string;
     resolvedApiKey?: string;
+    resolveApiKey: UserApiKeyResolver;
     provider: { capabilities: { streaming: boolean } };
   };
   prompt: { messages: GenerationMessage[] };

@@ -45,6 +45,7 @@ function makeResolved(): ResolvedProvider {
     resolvedProviderName: "sm-cov-prov",
     resolvedModel: "prov-model",
     resolvedApiKey: "prov-key",
+    resolveApiKey: () => Promise.resolve(undefined,),
   };
 }
 
