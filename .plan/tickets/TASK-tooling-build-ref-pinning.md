@@ -78,5 +78,5 @@ stable-diffusion.cpp declares four (`ggml`, `examples/server/frontend`, `thirdpa
 - [ ] Submodules are initialised for stable-diffusion.cpp and skipped for llama.cpp.
 - [ ] All git shell-out uses Bun's `$` tagged template, never string concatenation.
 - [ ] `resolveRef` and `ensureCheckout` carry JSDoc `@throws` on the refusal and resolution-failure paths.
-- [ ] A colocated `scripts/tooling/pin.test.ts` exercises the resolver against fixture tag lists and the dirty-tree decision table without touching a real checkout, and reaches **>= 80% line coverage** of `pin.ts` under `bun run test:coverage`, so `bun run scripts/check/coverage.mjs --floor=80` passes for this module with no waiver.
+- [ ] A colocated `scripts/tooling/pin.test.ts` exercises the resolver against fixture tag lists and the dirty-tree decision table without touching a real checkout, and reaches **>= 80% line coverage** of `pin.ts` when measured with `bun test scripts/tooling/ --coverage` (see epic caveat: `bun run test:coverage` scopes to `tests/e2e/` + `src/`, and the gate buckets all of `scripts/**` under one `scripts` module), with no waiver filed for it.
 - [ ] The module passes `giwt plan check-file-size` at 250 code lines.
