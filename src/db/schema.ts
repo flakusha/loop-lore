@@ -227,4 +227,5 @@ export interface DB {
   npc_relationships: import("./schema-core").NpcRelationships;
   monster_templates: import("./schema-core").MonsterTemplates;
   monster_spawns: import("./schema-core").MonsterSpawns;
+  vn_choice_selections: import("./schema-core").VnChoiceSelections;
 }

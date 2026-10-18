@@ -27,6 +27,7 @@ export const QUESTION_COLUMNS = [
   "status",
   "selected_option_id",
   "answered_at",
+  "applied_at",
   "created_at",
 ] as const;
 
@@ -46,6 +47,7 @@ interface VnQuestionRow {
   status: string;
   selected_option_id: string | null;
   answered_at: string | null;
+  applied_at: string | null;
   created_at: string;
 }
 
@@ -107,6 +109,7 @@ export function parseVnQuestion(raw: VnQuestionRow,): VnQuestion {
     status: raw.status,
     selected_option_id: raw.selected_option_id,
     answered_at: raw.answered_at,
+    applied_at: raw.applied_at,
     created_at: raw.created_at,
   };
 }

@@ -1230,6 +1230,17 @@ export const SCHEMA = new SchemaManifest()
     seconds_per_unit: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("vn_choice_selections", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    choice_id: col("text", { notNull: true, },),
+    scene_index: col("integer", { notNull: true, },),
+    relationship_impact: col("text", { notNull: true, hasDefault: true, },),
+    mood_impact: col("text", { notNull: true, hasDefault: true, },),
+    selected_by: col("text",),
+    applied_at: col("text",),
+    created_at: col("text", { notNull: true, },),
+  },)
   .table("vn_choices", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),
@@ -1260,6 +1271,7 @@ export const SCHEMA = new SchemaManifest()
     selected_option_id: col("text",),
     answered_at: col("text",),
     created_at: col("text", { notNull: true, },),
+    applied_at: col("text",),
   },)
   .table("wardrobe_items", {
     id: col("text", { primaryKey: true, },),

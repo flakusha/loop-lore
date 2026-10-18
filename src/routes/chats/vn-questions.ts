@@ -117,7 +117,7 @@ function handleAnswerVnQuestion(database: Kysely<DB>,) {
       return jsonError("questionId and optionId are required", HttpStatus.BadRequest,);
     }
 
-    const result = await answerVnQuestion(database, { chatId, questionId, optionId, },);
+    const result = await answerVnQuestion(database, { chatId, questionId, optionId, actingUserId: userId, },);
 
     if ("code" in result) {
       return jsonError(result.message, statusForCode(result.code,), result.code as never,);
@@ -130,6 +130,7 @@ function handleAnswerVnQuestion(database: Kysely<DB>,) {
       locationId: result.locationId,
       relationshipImpact: result.question.relationship_impact,
       moodImpact: result.question.mood_impact,
+      appliedAt: result.appliedAt,
     },);
   };
 }
