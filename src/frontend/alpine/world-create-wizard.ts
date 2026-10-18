@@ -64,7 +64,7 @@ export interface WorldCreateWizardState {
 function readString(body: unknown, field: string,): string | null {
   if (body === null || typeof body !== "object") { return null; }
   if (!(field in body)) { return null; }
-  const value: unknown = body[field];
+  const value: unknown = (body as Record<string, unknown>)[field];
   return typeof value === "string" ? value : null;
 }
 
