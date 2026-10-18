@@ -460,7 +460,8 @@
     "connectionFailed": "Connexion échouée",
     "timeout": "Délai d'attente dépassé",
     "createFailed": "Failed to create",
-    "loadFailed": "Failed to load"
+    "loadFailed": "Failed to load",
+    "federationQuotaExceeded": "Le quota de performance du pair de fédération a été dépassé"
   },
   "characters": {
     "title": "Characters",

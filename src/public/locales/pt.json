@@ -460,7 +460,8 @@
     "connectionFailed": "Falha na conexão",
     "timeout": "Tempo limite excedido",
     "createFailed": "Failed to create",
-    "loadFailed": "Failed to load"
+    "loadFailed": "Failed to load",
+    "federationQuotaExceeded": "A cota de desempenho do peer de federação foi excedida"
   },
   "characters": {
     "title": "Characters",

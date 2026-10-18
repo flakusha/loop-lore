@@ -260,9 +260,14 @@ describe("migration numbering is sequential from 001", () => {
 
     // 058 is parked on the unmerged `world-conditions-time` branch
     // (src/db/migrations/058_world_conditions.ts), so dev legitimately has a
-    // hole at 58 until that branch finalizes. Only numbers listed here may be
+    // hole at 58 until that branch finalizes. 066 (instance storage budgets)
+    // is parked the same way: it belongs to the still-unmerged
+    // `feat-fed-storage-quota` branch of the federation-offload epic, and 068
+    // (performance quota budgets) is numbered past it so no two branches
+    // collide. 065 (peer workload columns) and 067 (workload assignments) have
+    // landed, so they are no longer holes. Only numbers listed here may be
     // absent; any other gap still fails below.
-    const PARKED = [58,];
+    const PARKED = [58, 66,];
     const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
     const expected = Array.from(
       { length: prefixes.length + parkedMissing.length, },
