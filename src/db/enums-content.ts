@@ -98,3 +98,24 @@ export const AssetTagSource = {
 } as const;
 /** */
 export type AssetTagSource = (typeof AssetTagSource)[keyof typeof AssetTagSource];
+
+// ── Instance Storage Budgets ───────────────────────────────────
+
+/** Scope of an `instance_storage_budgets` row. `total` is the instance-wide budget. */
+export const StorageBudgetScope = {
+  Total: "total",
+  Image: "image",
+  Audio: "audio",
+  Video: "video",
+  Other: "other",
+} as const;
+/** */
+export type StorageBudgetScope = (typeof StorageBudgetScope)[keyof typeof StorageBudgetScope];
+
+/** Eviction opt-in. `none` = the hard limit refuses, nothing is ever deleted. */
+export const StorageEvictionPolicy = {
+  None: "none",
+  OldestFirst: "oldest-first",
+} as const;
+/** */
+export type StorageEvictionPolicy = (typeof StorageEvictionPolicy)[keyof typeof StorageEvictionPolicy];

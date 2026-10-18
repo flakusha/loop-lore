@@ -230,4 +230,5 @@ export interface DB {
   vn_choice_selections: import("./schema-core").VnChoiceSelections;
   mesh_work_assignments: import("./schema-core").MeshWorkAssignments;
   federation_performance_budgets: import("./schema-core").FederationPerformanceBudgets;
+  instance_storage_budgets: import("./schema-core").InstanceStorageBudgets;
 }
