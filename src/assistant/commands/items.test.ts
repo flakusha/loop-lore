@@ -10,7 +10,7 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { ItemCategory, } from "../../db/enums";
+import { ItemCategory, UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -246,5 +246,58 @@ describe("item commands", () => {
     },);
 
     expect(result.systemMessage,).toContain("**Items unavailable:** command context missing database.",);
+  });
+
+  // ── Site role (checkWorldOwnership) ────────────────────────
+  //
+  // /item-list is the mirror of the world tests: same command context, but
+  // through checkWorldOwnership, whose only branches are owner and
+  // can(userRole, "admin.world"). Both directions per role level — without
+  // them a pass would prove only that an owner can read.
+
+  test("lets a non-owner with an admin-class role list another world's items", async () => {
+    await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
+
+    for (const role of [UserRole.Admin, UserRole.Solo, UserRole.Tester,]) {
+      const callerId = `admin-${role}-${crypto.randomUUID()}`;
+      await insertUsers(db, `admin-${role}`, "Admin", { id: callerId, role, },);
+
+      const result = await itemList(
+        [otherWorldId,],
+        ctx({ userId: callerId, userRole: role, activeChat: { id: "chat-1", worldId: otherWorldId, }, },),
+      );
+
+      expect(result.action,).toBe("item-list",);
+      expect(result.systemMessage,).toContain("Foreign Blade",);
+    }
+  });
+
+  test("refuses a moderator and an ordinary user the same world", async () => {
+    await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
+    const inWorld = { id: "chat-1", worldId: otherWorldId, };
+
+    // Moderator: elevated for user moderation, not world-admin.
+    const modId = `mod-${crypto.randomUUID()}`;
+    await insertUsers(db, `mod-${modId}`, "Mod", { id: modId, role: UserRole.Moderator, },);
+    const asMod = await itemList(
+      [otherWorldId,],
+      ctx({ userId: modId, userRole: UserRole.Moderator, activeChat: inWorld, },),
+    );
+
+    expect(asMod.systemMessage,).toBe(`World ${otherWorldId} not found or access denied.`,);
+    expect(asMod.action,).toBeUndefined();
+
+    // Plain user, and the same user with no resolved role at all.
+    const plainId = `plain-${crypto.randomUUID()}`;
+    await insertUsers(db, `plain-${plainId}`, "Plain", { id: plainId, role: UserRole.User, },);
+    const asUser = await itemList(
+      [otherWorldId,],
+      ctx({ userId: plainId, userRole: UserRole.User, activeChat: inWorld, },),
+    );
+
+    expect(asUser.systemMessage,).toBe(`World ${otherWorldId} not found or access denied.`,);
+
+    const asNobody = await itemList([otherWorldId,], ctx({ userId: plainId, userRole: null, activeChat: inWorld, },),);
+    expect(asNobody.systemMessage,).toBe(`World ${otherWorldId} not found or access denied.`,);
   });
 });

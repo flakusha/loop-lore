@@ -10,7 +10,7 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { ActorType, WorldVisibility, } from "../../db/enums";
+import { ActorType, UserRole, WorldVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -176,5 +176,63 @@ describe("world access commands", () => {
   test("answers unavailable instead of throwing when ctx has no db", async () => {
     const result = await worldGet([worldId,], { chatId: "chat-1", userId: ownerId, },);
     expect(result.systemMessage,).toContain("**Worlds unavailable:** command context missing database.",);
+  });
+
+  // ── Site role (requireWorldAccess) ─────────────────────────
+  //
+  // requireWorldAccess grants its privileged branch on
+  // can(userRole, "admin.world"), which the permission matrix grants only to
+  // the roles carrying the wildcard grant (admin, solo, tester). Every level
+  // is asserted in BOTH directions — allowed AND refused — so widening the
+  // matrix, or losing the role on the way into the command, cannot pass
+  // unnoticed.
+
+  /** A private world owned by `otherId`; nobody but its owner can read it. */
+  const sealedWorld = async (): Promise<string> =>
+    await insertWorlds(db, otherId, "Sealed Vault", { visibility: WorldVisibility.Private, },);
+
+  test("lets a non-owner with an admin-class role read a private world", async () => {
+    const secret = await sealedWorld();
+
+    for (const role of [UserRole.Admin, UserRole.Solo, UserRole.Tester,]) {
+      const callerId = `admin-${role}-${crypto.randomUUID()}`;
+      await insertUsers(db, `admin-${role}`, "Admin", { id: callerId, role, },);
+
+      const result = await worldGet([secret,], ctx({ userId: callerId, userRole: role, },),);
+      expect(result.action,).toBe("world-get",);
+      expect(result.systemMessage,).toContain("Sealed Vault",);
+    }
+  });
+
+  test("refuses a moderator, who moderates users but is not world-admin", async () => {
+    const secret = await sealedWorld();
+    const modId = `mod-${crypto.randomUUID()}`;
+    await insertUsers(db, `mod-${modId}`, "Mod", { id: modId, role: UserRole.Moderator, },);
+
+    const result = await worldGet([secret,], ctx({ userId: modId, userRole: UserRole.Moderator, },),);
+    expect(result.systemMessage,).toBe(`World ${secret} not found or access denied.`,);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("refuses an ordinary user, and the same user with no resolved role", async () => {
+    const secret = await sealedWorld();
+    const plainId = `plain-${crypto.randomUUID()}`;
+    await insertUsers(db, `plain-${plainId}`, "Plain", { id: plainId, role: UserRole.User, },);
+
+    const asUser = await worldGet([secret,], ctx({ userId: plainId, userRole: UserRole.User, },),);
+    expect(asUser.systemMessage,).toBe(`World ${secret} not found or access denied.`,);
+
+    // No role resolved at all — the fail-closed default for anonymous,
+    // deactivated, and unresolvable callers.
+    const asNobody = await worldGet([secret,], ctx({ userId: plainId, userRole: null, },),);
+    expect(asNobody.systemMessage,).toBe(`World ${secret} not found or access denied.`,);
+  });
+
+  test("still lets the world owner in with no role resolved", async () => {
+    // Ownership is compared against userId, not the role, so a caller who
+    // owns the world keeps access even when their role cannot be resolved.
+    const result = await worldGet([worldId,], ctx({ userId: ownerId, userRole: null, },),);
+    expect(result.action,).toBe("world-get",);
+    expect(result.systemMessage,).toContain("Emberfall",);
   });
 });
