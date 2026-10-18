@@ -3,7 +3,8 @@
 
 # TASK: Federation admin peer and quota routes
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** Routes landed under `src/routes/admin/federation/`, mounted at `/api/v1/admin/federation` via `federationAdminRoutes` and wired into the admin route tree. Peers: `GET/POST /peers`, `PATCH/DELETE /peers/:origin`, `PATCH /peers/:origin/workload` for workload-trust and allowed classes. Budgets: `GET/PUT /budgets/:origin/:workloadClass`. Matrix: `GET/PUT /matrix`. Usage: `GET /usage`. Every route gates on the existing `admin.system` permission via `withPermissionAuth`; no `federation.*` permission was invented. Save runs a live probe and stores an unreachable peer as `pending`. The shared token is write-only: accepted on save, never returned by any route, never logged. Federation-off is honoured on every mutation and surfaced as `enabled: false` on the usage read. 59 consumer-visible route tests in `src/routes/admin/federation.test.ts`, including a raw-response-text assertion that the token never leaves the server, and an integration test that drives the real `resolvePeerRoute` with the matrix read back from the DB.
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-federation-offload-quotas

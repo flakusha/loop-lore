@@ -37,12 +37,16 @@ export function federationAdminRoutes(
   const routeOpts: AdminFederationRouteOpts = {
     database: opts.database,
     config: opts.config,
-    federationEnabled: opts.config.federation.enabled,
+    // Federation is off by default at every layer, so a config with no
+    // `federation` block (or a partial one) is the disabled case, not an error.
+    // Reading it defensively here keeps every caller that builds a partial
+    // admin config working instead of throwing at mount time.
+    federationEnabled: opts.config.federation?.enabled ?? false,
     // The BYOK encryption key is optional in the config schema; the registry's
     // encrypt-then-store path needs one, so an instance without it passes the
     // empty string and the save is refused by the token write rather than
     // storing a token encrypted under no key.
-    encryptionKey: opts.config.byoKey.encryptionKey ?? "",
+    encryptionKey: opts.config.byoKey?.encryptionKey ?? "",
     ...(opts.probeFetch === undefined ? {} : { probeFetch: opts.probeFetch, }),
   };
 

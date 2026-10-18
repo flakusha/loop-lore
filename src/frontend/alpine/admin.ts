@@ -7,6 +7,7 @@ import { adminAnalytics, } from "./admin-analytics";
 import { adminApprovals, } from "./admin-approvals";
 import { adminAudit, } from "./admin-audit";
 import { adminChats, } from "./admin-chats";
+import { adminFederation, } from "./admin-federation";
 import { adminHarness, } from "./admin-harness";
 import { adminModels, } from "./admin-models";
 import { adminReview, } from "./admin-review";
@@ -70,6 +71,7 @@ import { apiFetch, } from "./htmx";
     ...adminTemplates,
     ...adminWorkflows,
     ...adminAnalytics,
+    ...adminFederation,
 
     // ── Lifecycle ───────────────────────────────────────
     /**
@@ -86,6 +88,7 @@ import { apiFetch, } from "./htmx";
      * @returns {void}
      */
     destroy() {
+      this.destroyFederation();
       if (!this._overviewPollTimer) { return; }
       clearInterval(this._overviewPollTimer,);
       this._overviewPollTimer = null;
@@ -179,6 +182,12 @@ import { apiFetch, } from "./htmx";
 
         case "harness": {
           this.loadHarness();
+          break;
+        }
+
+        case "federation": {
+          this.loadFederation();
+          this.loadFederationMatrix();
           break;
         }
       }
