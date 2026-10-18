@@ -122,7 +122,7 @@ describe("depositItem", () => {
     // The refused deposit must leave nothing behind — no partial stack.
     const contents = await getStorageContents(db, storageId,);
     expect(contents[0]!.quantity,).toBe(8,);
-    expect((await storageUsage(db, storageId,)).used,).toBe(8,);
+    expect((await storageUsage(db, storageId, WORLD,)).used,).toBe(8,);
   });
 
   test("rejects a non-positive-integer quantity before touching the DB", async () => {

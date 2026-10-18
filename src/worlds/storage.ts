@@ -51,14 +51,16 @@ export interface StorageUsage {
  * Load a container by id.
  * @param db Kysely handle
  * @param storageId the container to load
+ * @param worldId world scope — a container in another world is not found
  * @returns the row
- * @throws {StorageError} `not-found` when no such container exists
+ * @throws {StorageError} `not-found` when no such container exists in this world
  */
-async function loadStorage(db: Kysely<DB>, storageId: string,): Promise<StorageRow> {
+async function loadStorage(db: Kysely<DB>, storageId: string, worldId: string,): Promise<StorageRow> {
   const storage = await db
     .selectFrom("location_storage",)
     .selectAll()
     .where("id", "=", storageId,)
+    .where("world_id", "=", worldId,)
     .executeTakeFirst();
 
   if (!storage) { throw new StorageError("not-found", `storage "${storageId}" not found`,); }
@@ -103,7 +105,7 @@ export async function createStorage(
     },)
     .execute();
 
-  return await loadStorage(db, id,);
+  return await loadStorage(db, id, input.worldId,);
 }
 
 /**
@@ -164,7 +166,7 @@ export async function readStorageContents(
   db: Kysely<DB>,
   input: { storageId: string; actorId: string; worldId: string },
 ): Promise<StorageContent[]> {
-  const storage = await loadStorage(db, input.storageId,);
+  const storage = await loadStorage(db, input.storageId, input.worldId,);
   assertMayAccess(storage, input.actorId, input.worldId,);
 
   return await getStorageContents(db, input.storageId,);
@@ -174,11 +176,12 @@ export async function readStorageContents(
  * How full a container is, in item units.
  * @param db Kysely handle
  * @param storageId the container to measure
+ * @param worldId world scope — a container in another world is not found
  * @returns used, capacity, and free units
  * @throws {StorageError} `not-found` when the container does not exist
  */
-export async function storageUsage(db: Kysely<DB>, storageId: string,): Promise<StorageUsage> {
-  const storage = await loadStorage(db, storageId,);
+export async function storageUsage(db: Kysely<DB>, storageId: string, worldId: string,): Promise<StorageUsage> {
+  const storage = await loadStorage(db, storageId, worldId,);
   const totals = await db
     .selectFrom("location_storage_items",)
     .select((eb,) => eb.fn.sum("quantity",).as("used",))

@@ -23,14 +23,16 @@ import { assertMayAccess, StorageError, type StorageRow, } from "./storage-acces
  * Load a container, or fail.
  * @param db Kysely handle
  * @param storageId the container to load
+ * @param worldId world scope — a container in another world is not found
  * @returns the row
- * @throws {StorageError} `not-found` when it does not exist
+ * @throws {StorageError} `not-found` when it does not exist in this world
  */
-async function loadStorage(db: Kysely<DB>, storageId: string,): Promise<StorageRow> {
+async function loadStorage(db: Kysely<DB>, storageId: string, worldId: string,): Promise<StorageRow> {
   const storage = await db
     .selectFrom("location_storage",)
     .selectAll()
     .where("id", "=", storageId,)
+    .where("world_id", "=", worldId,)
     .executeTakeFirst();
 
   if (!storage) { throw new StorageError("not-found", `storage "${storageId}" not found`,); }
@@ -91,11 +93,11 @@ export async function depositItem(
   input: { storageId: string; itemId: string; quantity: number; actorId: string; worldId: string },
 ): Promise<StorageUsage> {
   assertQuantity(input.quantity,);
-  const storage = await loadStorage(db, input.storageId,);
+  const storage = await loadStorage(db, input.storageId, input.worldId,);
   assertMayAccess(storage, input.actorId, input.worldId,);
 
   await db.transaction().execute(async (trx,) => {
-    const usage = await storageUsage(trx, input.storageId,);
+    const usage = await storageUsage(trx, input.storageId, input.worldId,);
     if (usage.used + input.quantity > usage.capacity) {
       throw new StorageError(
         "capacity-exceeded",
@@ -125,7 +127,7 @@ export async function depositItem(
     quantity: input.quantity,
   },);
 
-  return await storageUsage(db, input.storageId,);
+  return await storageUsage(db, input.storageId, input.worldId,);
 }
 
 /**
@@ -171,7 +173,7 @@ export async function withdrawItem(
   input: { storageId: string; itemId: string; quantity: number; actorId: string; worldId: string },
 ): Promise<StorageUsage> {
   assertQuantity(input.quantity,);
-  const storage = await loadStorage(db, input.storageId,);
+  const storage = await loadStorage(db, input.storageId, input.worldId,);
   assertMayAccess(storage, input.actorId, input.worldId,);
 
   const stackId = await loadStackId(db, input.storageId, input.itemId,);
@@ -208,5 +210,5 @@ export async function withdrawItem(
     }
   }
 
-  return await storageUsage(db, input.storageId,);
+  return await storageUsage(db, input.storageId, input.worldId,);
 }
