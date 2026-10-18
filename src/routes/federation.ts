@@ -21,7 +21,9 @@ import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { getGossipOrigins, } from "../federation/gossip";
 import { declaredWorkloadClasses, } from "../federation/peer-capabilities";
+import { createLocalPeerWorkExecutor, } from "../federation/peer-work-execute";
 import { type MeshRouteOpts, mountMeshApi, } from "./federation-mesh";
+import { mountPeerWorkApi, } from "./federation-peer-work";
 import { jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
@@ -131,6 +133,11 @@ export function federationRoutes(opts: MeshRouteOpts,): Elysia {
   );
 
   mountMeshApi(app, opts,);
+  mountPeerWorkApi(app, {
+    ...opts,
+    encryptionKey: config.byoKey?.encryptionKey ?? "",
+    runWorkload: createLocalPeerWorkExecutor({ config, },),
+  },);
 
   return app;
 }

@@ -50,6 +50,9 @@ import type {
   NoteCategory,
   NotificationStatus,
   NpcRelationshipType,
+  PeerAuthMode,
+  PeerInstanceKind,
+  PeerWorkloadClass,
   PinnedState,
   PlayerAchievementStatus,
   PlaythroughStatus,
@@ -3683,4 +3686,15 @@ export interface VnChoiceSelections {
   selected_by: string | null;
   applied_at: string | null;
   created_at: string;
+}
+
+// ── mesh_work_assignments ────────────────────────────────────────────
+export interface MeshWorkAssignments {
+  affinity_key: string;
+  workload_class: PeerWorkloadClass;
+  peer_origin: string;
+  assigned_at: Generated<string>;
+  previous_origin: string | null;
+  released_at: string | null;
+  release_reason: string | null;
 }

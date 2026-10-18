@@ -3,7 +3,7 @@
 
 # TASK: Federation workload routing policy
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-federation-offload-quotas
@@ -120,3 +120,5 @@ recorded, not silent.
 Implementation complete; tests passing; documentation updated.
 
 Implementation complete; tests passing; documentation updated.
+
+**Resolution:** Landed `src/federation/peer-router.ts` (pure `resolvePeerRoute`) and `src/federation/peer-work-assignments.ts` over migration `067_mesh_work_assignments.ts`. Precedence is eligibility, then chat-only stickiness, then the per-class assignment matrix (no row is local-only), then the four-tier ranking chain with local as the universal fallback. A release on circuit-open is recorded with `previous_origin`/`release_reason` and leaves the outgoing pin's `peer_origin` intact for audit. 30 tests in `peer-router.test.ts`.
