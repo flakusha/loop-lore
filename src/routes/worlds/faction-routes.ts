@@ -18,6 +18,7 @@ import { addMember, createFaction, FactionError, listFactions, removeMember, } f
 import type { DiplomaticActionOptions, } from "../../worlds/factions-diplomacy";
 import { breakAlliance, declareWar, formAlliance, proposePeace, } from "../../worlds/factions-diplomacy";
 import { getFactionRelationship, setRelationship, } from "../../worlds/factions-relationships";
+import { resolveActorAccess, } from "../actor-access";
 import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
@@ -182,8 +183,13 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+        if (!userId) { return jsonError({ message: "Authentication required", status: HttpStatus.Unauthorized, },); }
         const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [ctx.params.factionId,],);
         if (factionErr) { return factionErr; }
+        // Validate the actorId belongs to the session user — prevents
+        // cross-user faction membership injection via body spoofing.
+        const actorDenial = await resolveActorAccess(database, ctx.body.actorId, userId,);
+        if (actorDenial) { return actorDenial; }
         try {
           const member = await addMember({
             db: database,
