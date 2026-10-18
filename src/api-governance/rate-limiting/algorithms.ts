@@ -33,6 +33,11 @@ export interface TokenBucketDecision {
 
 /**
  * Sliding-window steady-state check. Caller persists `kept` on allow.
+ *
+ * Boundary contract (shared with the middleware limiter's `pruneExpired`,
+ * src/middleware/rate-limit.ts — BUG-rate-limit-off-by-one): a timestamp
+ * exactly AT the cutoff (age == windowMs) is still in-window and is KEPT;
+ * only strictly older ones drop. The window is [nowMs - windowMs, nowMs].
  * @param nowMs
  * @param timestamps In-window request times (ms epoch), oldest first.
  * @param windowMs
@@ -45,7 +50,7 @@ export function slidingWindow(
   windowMs: number,
   max: number,
 ): SlidingWindowDecision & { kept: number[] } {
-  const fresh = timestamps.filter((t,) => t > nowMs - windowMs);
+  const fresh = timestamps.filter((t,) => t >= nowMs - windowMs);
   if (fresh.length < max) {
     fresh.push(nowMs,);
     return { allowed: true, remaining: max - fresh.length, retryAfterSec: 0, kept: fresh, };
