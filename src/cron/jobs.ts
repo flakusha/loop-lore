@@ -157,6 +157,36 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "federation.storage-reconcile",
+      schedule: "@hourly",
+      enabled: true,
+      run: async ({ config, database, logger, },) => {
+        if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
+        const { reconcileStorageUsage, } = await import("../federation/storage-reconcile");
+
+        const report = await reconcileStorageUsage({
+          database,
+          uploadDir: config.assets.uploadDir,
+        },);
+
+        if (report.status === "in-sync") {
+          logger.info("storage reconcile complete", {
+            module: "cron",
+            dbBytes: report.dbBytes,
+            diskBytes: report.diskBytes,
+          },);
+        }
+
+        return {
+          status: report.status,
+          dbBytes: report.dbBytes,
+          diskBytes: report.diskBytes,
+          vanished: report.vanishedIds.length,
+          orphans: report.orphanPaths.length,
+        };
+      },
+    },),
+    defineJob({
       name: "providers.health-rescan",
       schedule: "*/15 * * * *",
       enabled: true,

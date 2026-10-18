@@ -7,9 +7,11 @@ import { persistGeneratedImages, } from "../assets/service";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
 import { pickSdProvider, } from "../config/schema";
+import { AssetType, } from "../db/enums";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { forbiddenResponse, } from "../routes/http-utils";
+import { ErrorCode, } from "../routes/http-utils/status";
 import { generateImages, } from "./image-engine";
 import type { LoRAConfig, } from "./lora/types";
 import {
@@ -17,6 +19,13 @@ import {
   getOwnedTemplate,
 } from "./template-service";
 import { type ImageTemplatePayload, parseTemplatePayload, } from "./template-types";
+
+/**
+ * Flat per-image byte estimate for the PRE-PROVIDER quota gate, taken before
+ * the output size is known. One 1024x1024 PNG is roughly this big; refusing
+ * here avoids paying for a generation this instance cannot store.
+ */
+const ESTIMATED_IMAGE_BYTES = 1_500_000;
 
 interface ImageGenBody {
   prompt?: string;
@@ -129,6 +138,32 @@ export async function handleImageGeneration(
 
   const n = Math.min(req.n ?? 1, 4,);
   const outputFormat = req.output_format ?? "png";
+
+  // Pre-provider quota gate: refuse BEFORE the provider call when the output
+  // cannot fit the remaining hard budget. Paying for an image this instance
+  // cannot store is the failure worth preventing, so this runs ahead of
+  // `generateImages`. Off by default (no budget row -> one query, no effect).
+  // ponytail: a flat per-image estimate; replace with a real size projection
+  // only if operators start setting budgets near typical image sizes.
+  const { assertGenerationFitsStorage, quotaExceededResponse, storageUnavailableResponse, StorageWriteRefusedError, } =
+    await import("../federation/storage-quota");
+
+  try {
+    await assertGenerationFitsStorage({
+      database: db,
+      uploadDir: config.assets.uploadDir,
+      estimatedBytes: ESTIMATED_IMAGE_BYTES * n,
+      assetType: AssetType.Image,
+    },);
+  } catch (error) {
+    if (error instanceof StorageWriteRefusedError) {
+      return error.errorCode === ErrorCode.QuotaExceeded
+        ? quotaExceededResponse(error,)
+        : storageUnavailableResponse(error,);
+    }
+
+    throw error;
+  }
 
   const outcome = await generateImages(sdConfig, {
     prompt,

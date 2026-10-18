@@ -125,6 +125,10 @@ export const PART_1: Record<string, Record<string, string>> = {
     "is_default": "DefaultState",
     "enabled": "LoreEntryStatus",
   },
+  "InstanceStorageBudgets": {
+    "asset_class": "StorageBudgetScope",
+    "eviction_policy": "StorageEvictionPolicy",
+  },
   "GenerationAttempts": {
     "cancel_reason": "CancelReason",
     "cancel_source": "CancelSource",

@@ -624,6 +624,14 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text",),
     updated_at: col("text",),
   },)
+  .table("instance_storage_budgets", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    asset_class: col("text", { notNull: true, hasDefault: true, },),
+    soft_limit_bytes: col("integer",),
+    hard_limit_bytes: col("integer",),
+    eviction_policy: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("interaction_logs", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),
