@@ -46,6 +46,9 @@ const FAKE_NAME = "test-fake-provider";
 /** Provider registered by the gated registry suite at the bottom of this file. */
 const COV_PROVIDER = "test-cov-provider";
 
+/** Provider whose health probe fails with internal detail. */
+const LEAKY_PROVIDER = "test-leaky-provider";
+
 /**
  * Minimal LLMProvider double: a healthy check plus two listed models, enough
  * for scanAllProviders() to populate the health cache the routes read.
@@ -306,6 +309,33 @@ describeOrSkip("providers routes — populated registry + health cache", () => {
     expect(mine!.latencyMs,).toBe(42,);
     expect(typeof mine!.lastChecked,).toBe("string",);
     expect(mine!.error,).toBeUndefined();
+  });
+
+  test("public list never carries raw upstream error text", async () => {
+    const secret = "sk-upstream-leak-canary-9f3a";
+    registerProvider(LEAKY_PROVIDER, {
+      capabilities: { type: "openai-compatible", label: "Internal Mesh", },
+      healthCheck: () => Promise.reject(new Error(`401 from http://internal-llm:8080/v1 ${secret}`,),),
+      listModels: () => Promise.resolve([],),
+    } as unknown as LLMProvider,);
+
+    try {
+      await scanAllProviders();
+
+      const app = makeApp(db,);
+      const res = await app.handle(new Request("http://localhost/api/providers",),);
+      const raw = await res.text();
+      const body = JSON.parse(raw,) as { providers: Record<string, unknown>[] };
+
+      expect(raw,).not.toContain(secret,);
+      expect(raw,).not.toContain("internal-llm",);
+      for (const provider of body.providers) {
+        expect(Object.keys(provider,).sort(),).toEqual(["label", "name", "status",],);
+      }
+    } finally {
+      unregisterProvider(LEAKY_PROVIDER,);
+      resetHealthCache();
+    }
   });
 
   test("models endpoint returns 200 for a provider with a cached health entry", async () => {

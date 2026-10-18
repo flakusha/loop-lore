@@ -4,11 +4,15 @@
 /**
  * Health Check Endpoint
  *
- * GET /api/health — Returns server health status including provider connectivity.
- * No authentication required (used by load balancers, monitoring).
+ * GET /api/health — Returns server health status.
+ * No authentication required (used by load balancers, monitoring), so the
+ * body carries no upstream error text and no per-provider detail: raw error
+ * strings leak internal endpoints and vendor responses to anonymous callers.
+ * The full per-provider detail (label, model count, latency, error) stays on
+ * the permission-gated /api/admin/providers surface.
  */
 import { Elysia, } from "elysia";
-import { getHealthCache, hasUnhealthyProviders, providerToSummary, } from "../admin/provider-health";
+import { getHealthCache, hasUnhealthyProviders, } from "../admin/provider-health";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { SuccessResponse, } from "../validation/schemas";
@@ -29,7 +33,7 @@ export function healthRoutes(_opts: { database: Db; config: Config }, prefix = "
     const degraded = hasUnhealthyProviders();
     const uptime = Math.floor((Date.now() - startTime) / 1000,);
     const timestamp = new Date().toISOString();
-    const providerList = Array.from(providers, (p,) => providerToSummary(p,),);
+    const providerList = Array.from(providers, (p,) => ({ name: p.name, status: p.status, }),);
 
     return jsonResponse({
       status: degraded ? "degraded" : "ok",

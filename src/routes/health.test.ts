@@ -5,8 +5,11 @@
  * (the standard fetch handler). No DB or I/O needed — the handler reads
  * from the global provider health cache.
  */
-import { describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
+import { resetHealthCache, scanAllProviders, } from "../admin/provider-health";
 import { getProvider, registerProvider, unregisterProvider, } from "../generation/providers/registry";
+import type { LLMProvider, } from "../generation/providers/types";
+import { createLogger, } from "../logger";
 import { healthRoutes, } from "./health";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
@@ -32,6 +35,14 @@ const registryPristine = (() => {
 })();
 
 const describeReal = registryPristine ? describe : describe.skip;
+
+beforeAll(() => {
+  try {
+    createLogger({ level: "error", },);
+  } catch {
+    // Logger already initialized by another test file — reuse it.
+  }
+},);
 
 describeReal("healthRoutes", () => {
   test("GET /api/health returns 200", async () => {
@@ -90,6 +101,35 @@ describeReal("healthRoutes", () => {
     const app = healthRoutes({} as never,);
     const res = await app.handle(new Request("http://localhost/api/health", { method: "POST", },),);
     expect(res.status,).toBe(404,);
+  });
+
+  test("an anonymous caller never sees raw upstream error text or per-provider detail", async () => {
+    const secret = "token-abc123-internal-llm-10-0-0-7";
+    const leaky = "__health_leaky_provider__";
+    registerProvider(leaky, {
+      capabilities: { type: "openai-compatible", label: "Internal Mesh", },
+      healthCheck: () => Promise.reject(new Error(`fetch failed for http://internal-llm:8080/v1 ${secret}`,),),
+      listModels: () => Promise.resolve([],),
+    } as unknown as LLMProvider,);
+
+    try {
+      await scanAllProviders();
+
+      const app = healthRoutes({} as never,);
+      const res = await app.handle(new Request("http://localhost/api/health",),);
+      const raw = await res.text();
+      const body = JSON.parse(raw,) as { status: string; providers: Record<string, unknown>[] };
+
+      expect(raw,).not.toContain(secret,);
+      expect(raw,).not.toContain("internal-llm",);
+      expect(body.status,).toBe("degraded",);
+      for (const provider of body.providers) {
+        expect(Object.keys(provider,).sort(),).toEqual(["name", "status",],);
+      }
+    } finally {
+      unregisterProvider(leaky,);
+      resetHealthCache();
+    }
   });
 
   test("Content-Type is application/json", async () => {
