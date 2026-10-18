@@ -35,8 +35,10 @@ const NEXT_RESERVATION: Record<"reserved" | "pushed", ReservationState> = {
 /** Default reservation TTL (push must complete within this window). */
 export const DEFAULT_RESERVATION_TTL_MS = 10 * 60 * 1_000;
 
-/** Open (non-terminal) reservation states holding capacity. */
-const OPEN_RESERVATION_STATES = ["reserved", "pushed",] as const;
+/** Open (non-terminal) reservation states holding capacity.
+ * Exported so the admin storage accessor computes held bytes against the SAME
+ * set the sharing path releases against, rather than a second copy of it. */
+export const OPEN_RESERVATION_STATES = ["reserved", "pushed",] as const;
 
 /**
  * Bytes currently held by open reservations for one peer.

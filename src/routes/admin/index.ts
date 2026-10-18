@@ -10,6 +10,7 @@ import { carriageRoutes, } from "./carriage";
 import { chatsRoutes, } from "./chats";
 import { cronRoutes, } from "./cron";
 import { dangerZoneRoutes, } from "./danger-zone";
+import { federationAdminRoutes, } from "./federation";
 import { itemPowerRoutes, } from "./item-power";
 import { keyRotationRoutes, } from "./key-rotation";
 import { modelCapabilitiesRoutes, } from "./model-capabilities";
@@ -68,5 +69,6 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(dangerZoneRoutes(opts, prefix,),)
       .use(keyRotationRoutes(opts, prefix,),)
       .use(auxTelemetryRoutes(opts, prefix,),)
+      .use(federationAdminRoutes(opts, prefix,),)
   );
 }
