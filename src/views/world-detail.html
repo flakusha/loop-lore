@@ -40,9 +40,8 @@
   x-data="worldTimelineBar('{{worldId}}')"
   x-init="init()"
 >
-  <label class="timeline-label" for="timeline-select">{{t("worlds.timeline")}}</label>
+  <label class="timeline-label">{{t("worlds.timeline")}}</label>
   <select
-    id="timeline-select"
     class="timeline-select"
     x-model="selectedTimeline"
     @change="switchTimeline()"
@@ -126,17 +125,323 @@
 
       <!-- World management panels (world-management UI epic) -->
       <div class="world-page" x-data="worldState('{{worldId}}')" x-init="init()" data-testid="world-page">
-        <!--
-          World management panels (world-management UI epic). Each panel
-          lives in src/components/ so this view stays a thin composition.
-        -->
-        {{> world-conditions-panel.html}}
+        <!-- Conditions strip: time/weather widget (TASK-time-weather) -->
+        <section class="panel world-conditions-panel" data-testid="time-weather">
+          <h3>Conditions</h3>
+          <div x-show="!hasConditions" class="muted">No conditions recorded yet.</div>
+          <div x-show="hasConditions" class="conditions-row">
+            <span class="condition" data-testid="condition-time" x-text="`${timeIcon} ${timeOfDay || '—'}`"></span>
+            <span
+              class="condition"
+              data-testid="condition-weather"
+              x-text="`${weatherIcon} ${weather || '—'}`"
+            ></span>
+            <span class="condition" data-testid="condition-day-night" x-text="dayNightLabel"></span>
+            <span class="condition muted" x-show="conditionsLocationName" x-text="conditionsLocationName"></span>
+            <span
+              class="sse-dot"
+              :class="sseConnected ? 'on' : 'off'"
+              x-text="sseConnected ? 'live' : 'offline'"
+            ></span>
+          </div>
+          <div x-show="!forecastAvailable" class="muted">No forecast available.</div>
+        </section>
 
         <div class="world-page-columns">
-          {{> world-location-panel.html}} {{> world-travel-panel.html}}
+          <!-- Location details + quick actions (TASK-location-details) -->
+          <section class="panel" data-testid="location-details-panel">
+            <h3>Location details</h3>
+            <select
+              class="form-select"
+              x-model="selectedLocationId"
+              @change="selectLocation(selectedLocationId)"
+              data-testid="details-select"
+            >
+              <option value="">Choose a location…</option>
+              {{> location-options.html }}
+            </select>
+
+            <div x-show="detailLoading" class="muted">Loading…</div>
+            <div x-show="detailError" class="muted">Could not load this location.</div>
+            <template x-if="detail">
+              <div class="detail-body">
+                <h4 x-text="detail.name"></h4>
+                <p x-text="detail.description || detail.state?.description_override || 'No description.'"></p>
+                <div class="muted" x-show="detail.parent" x-text="detail.parent ? `Part of ${detail.parent.name}` : ''">
+                </div>
+                <div class="conditions-row" x-show="detail.state && (detail.state.time_of_day || detail.state.weather)">
+                  <span class="condition" x-text="detail.state?.time_of_day || ''"></span>
+                  <span class="condition" x-text="detail.state?.weather || ''"></span>
+                  <span class="condition muted" x-text="detail.state?.atmosphere || ''"></span>
+                </div>
+                <div x-show="detailHazards.length > 0">
+                  <span class="muted">Hazards:</span>
+                  <template x-for="h in detailHazards" :key="h">
+                    <span class="tag" x-text="h"></span>
+                  </template>
+                </div>
+
+                <h5>Connections</h5>
+                <ul class="detail-list">
+                  <template x-for="c in detail.connections" :key="c.id">
+                    <li><a href="#" @click.prevent="selectLocation(c.id)" x-text="c.name"></a></li>
+                  </template>
+                </ul>
+                <div x-show="detail.connections.length === 0" class="muted">No connections.</div>
+
+                <h5>NPCs present</h5>
+                <ul class="detail-list">
+                  <template x-for="n in detailNpcs" :key="n.actorId">
+                    <li x-text="n.displayName"></li>
+                  </template>
+                </ul>
+                <div x-show="detailNpcs.length === 0" class="muted">No one is here.</div>
+
+                <div class="quick-actions">
+                  <button
+                    class="btn btn-secondary btn-sm"
+                    data-testid="action-trade"
+                    @click="showItems = !showItems"
+                    x-text="showItems ? 'Hide items' : 'Trade'"
+                  >
+                  </button>
+                  <button class="btn btn-secondary btn-sm" data-testid="action-explore" @click="navigateExplore()">
+                    Explore
+                  </button>
+                </div>
+                <div x-show="showItems" class="items-list">
+                  <template x-for="item in detailItems" :key="item">
+                    <span class="tag" x-text="item"></span>
+                  </template>
+                  <div x-show="detailItems.length === 0" class="muted">Nothing to trade here.</div>
+                </div>
+
+                <h5>Your chats here</h5>
+                <template x-for="chat in chatsAt(selectedLocationId)" :key="chat.id">
+                  <div class="muted" x-text="chat.name"></div>
+                </template>
+                <div x-show="chatsAt(selectedLocationId).length === 0" class="muted">
+                  None of your chats are stationed here — use Travel to send one.
+                </div>
+              </div>
+            </template>
+          </section>
+
+          <!-- Travel interface (TASK-travel-interface) -->
+          <section class="panel" data-testid="travel-interface-panel">
+            <h3>Travel</h3>
+            <div class="travel-form">
+              <label class="form-label" for="travel-origin">From</label>
+              <select id="travel-origin" class="form-select" x-model="originId" data-testid="travel-origin">
+                {{> location-options.html }}
+              </select>
+
+              <label class="form-label" for="travel-destination">To</label>
+              <select
+                id="travel-destination"
+                class="form-select"
+                x-model="destinationId"
+                data-testid="travel-destination"
+              >
+                <template x-for="loc in destinations" :key="loc.id">
+                  <option
+                    :value="loc.id"
+                    x-text="(travelConnected && loc.id === destinationId ? '🔗 ' : '') + loc.name"
+                  >
+                  </option>
+                </template>
+              </select>
+
+              <label class="form-label">Method</label>
+              <div class="methods-row">
+                <label class="condition">
+                  <input type="radio" value="walk" x-model="travelMethodId" /> 🚶 Walk
+                </label>
+                <label class="condition">
+                  <input type="radio" value="ride" x-model="travelMethodId" /> 🐎 Ride
+                </label>
+                <label class="condition">
+                  <input type="radio" value="teleport" x-model="travelMethodId" /> ✨ Teleport
+                </label>
+              </div>
+
+              <div
+                class="muted"
+                x-text="`Estimated time: ${travelEtaLabel}${travelConnected ? ' (direct connection)' : ''} — estimate only`"
+              >
+              </div>
+              <div
+                class="muted"
+                x-show="edgeInfoLabel"
+                x-text="edgeInfoLabel"
+                data-testid="travel-edge-info"
+              >
+              </div>
+              <button class="btn btn-primary btn-sm" data-testid="travel-confirm-open" @click="openTravelConfirm()">
+                Travel
+              </button>
+            </div>
+
+            <!-- Confirmation dialog -->
+            <div
+              class="modal-backdrop"
+              x-show="showTravelConfirm"
+              x-cloak
+              @click.self="showTravelConfirm = false"
+              @keydown.escape.window="showTravelConfirm = false"
+            >
+              <div class="modal" @click.stop data-testid="travel-confirm-dialog">
+                <h3>Confirm travel</h3>
+                <p class="muted">
+                  Teleport one of your chats to <strong x-text="locationById(destinationId)?.name || '—'"></strong>.
+                  Walking/riding times above are estimates — instant fast-travel moves the chat now.
+                </p>
+                <div class="form-group">
+                  <label class="form-label" for="travel-chat">Chat to move</label>
+                  <select id="travel-chat" class="form-select" x-model="travelChatId" data-testid="travel-chat">
+                    <option value="">Choose a chat…</option>
+                    <template x-for="chat in worldChats" :key="chat.id">
+                      <option :value="chat.id" x-text="`${chat.name} (${chat.location_name || 'nowhere'})`"></option>
+                    </template>
+                  </select>
+                </div>
+                <div class="muted" x-show="travelMessage" x-text="travelMessage"></div>
+                <div class="modal-actions">
+                  <button type="button" class="btn btn-secondary" @click="showTravelConfirm = false">Cancel</button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    :disabled="travelBusy || !travelChatId"
+                    data-testid="travel-confirm-go"
+                    @click="confirmTravel()"
+                  >
+                    Move chat
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Real-time progress: transports on routes -->
+            <h5>On the move</h5>
+            <div x-show="travelLoading" class="muted">Loading…</div>
+            <div x-show="!travelLoading && transportProgresses.length === 0" class="muted">No transports en route.</div>
+            <template x-for="t in transportProgresses" :key="t.name">
+              <div class="transport-row">
+                <div>
+                  <strong x-text="t.name"></strong>
+                  <span
+                    class="muted"
+                    x-text="` — ${t.routeName}${t.nextStopName ? ` → ${t.nextStopName}` : ''}`"
+                  ></span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" :style="`width:${t.pct}%`"></div></div>
+                <div x-show="t.hazards.length > 0">
+                  <span class="muted">Hazards:</span>
+                  <template x-for="h in t.hazards" :key="h"><span class="tag" x-text="h"></span></template>
+                </div>
+              </div>
+            </template>
+
+            <!-- Fast-travel status: parties -->
+            <h5>Parties</h5>
+            <div x-show="!travelLoading && partyStatuses.length === 0" class="muted">No parties traveling.</div>
+            <template x-for="p in partyStatuses" :key="p.id">
+              <div
+                class="muted"
+                x-text="`${p.name} — ${p.status}${p.currentLocationName ? ` at ${p.currentLocationName}` : ''}`"
+              >
+              </div>
+            </template>
+          </section>
         </div>
 
-        {{> world-lore-panel.html}}
+        <!-- World lore editor (TASK-world-dashboard) -->
+        <section class="panel world-lore-panel" data-testid="world-lore">
+          <h3>Lore</h3>
+          <div class="quick-actions">
+            <button class="btn btn-primary btn-sm" data-testid="lore-new" @click="openLoreForm(null)">New entry</button>
+          </div>
+          <div x-show="loreLoading" class="muted">Loading…</div>
+          <div x-show="loreError" class="muted">Could not load lore.</div>
+          <div x-show="loreMessage" class="muted" x-text="loreMessage"></div>
+
+          <!-- Editor form (create + edit) -->
+          <template x-if="loreFormOpen">
+            <div class="lore-form" data-testid="lore-form">
+              <div class="form-group">
+                <label class="form-label" for="lore-name">Name</label>
+                <input id="lore-name" class="form-input" x-model="loreForm.name" placeholder="Entry title (optional)" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lore-content">Content</label>
+                <textarea
+                  id="lore-content"
+                  class="form-input"
+                  x-model="loreForm.content"
+                  rows="4"
+                  placeholder="Lore text (required)"
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lore-keys">Keywords</label>
+                <input
+                  id="lore-keys"
+                  class="form-input"
+                  x-model="loreForm.keys"
+                  placeholder="comma, separated, keywords"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lore-priority">Priority</label>
+                <input id="lore-priority" class="form-input" type="number" x-model="loreForm.priority" />
+                <label class="condition"><input type="checkbox" x-model="loreForm.constant" /> Always included</label>
+              </div>
+              <div class="quick-actions">
+                <button class="btn btn-secondary btn-sm" @click="cancelLoreForm()">Cancel</button>
+                <button
+                  class="btn btn-primary btn-sm"
+                  :disabled="loreBusy"
+                  data-testid="lore-save"
+                  @click="saveLore()"
+                  x-text="loreEditingId ? 'Save' : 'Create'"
+                >
+                </button>
+              </div>
+            </div>
+          </template>
+
+          <!-- Entries grouped: constant / enabled / disabled -->
+          <div x-show="!loreLoading && loreEntries.length === 0" class="muted">No lore entries yet.</div>
+          <template
+            x-for="group in [{ label: 'Always included', rows: loreGroups.constant }, { label: 'Enabled', rows: loreGroups.enabled }, { label: 'Disabled', rows: loreGroups.disabled }]"
+            :key="group.label"
+          >
+            <div x-show="group.rows.length > 0" class="lore-group">
+              <h5 x-text="group.label"></h5>
+              <template x-for="entry in group.rows" :key="entry.id">
+                <div class="lore-entry" data-testid="lore-entry">
+                  <div>
+                    <strong x-text="entry.name || 'Untitled'"></strong>
+                    <span class="muted" x-show="entry.priority" x-text="` · priority ${entry.priority}`"></span>
+                    <div
+                      class="muted"
+                      x-show="parseLoreKeys(entry.keys).length"
+                      x-text="parseLoreKeys(entry.keys).join(', ')"
+                    >
+                    </div>
+                    <p class="lore-content" x-text="entry.content"></p>
+                  </div>
+                  <div class="quick-actions">
+                    <button class="btn btn-secondary btn-sm" @click="openLoreForm(entry.id)">Edit</button>
+                    <button class="btn btn-secondary btn-sm" :disabled="loreBusy" @click="deleteLore(entry.id)">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </section>
       </div>
     </div>
     <div id="modal-container"></div>
