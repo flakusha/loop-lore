@@ -299,8 +299,12 @@ describe("applyProviderEnvVars", () => {
     }
   });
 
-  test("allowUserApiKey stays true for any value other than exact 'false'", () => {
-    const restore = withEnv({ LLM_PROVIDER_BASE_URL: "http://localhost/v1", LLM_PROVIDER_ALLOW_USER_KEY: "0", },);
+  test("allowUserApiKey stays true when LLM_PROVIDER_ALLOW_USER_KEY is unset", () => {
+    const restore = withEnv({
+      LLM_PROVIDER_BASE_URL: "http://localhost/v1",
+      LLM_PROVIDER_ALLOW_USER_KEY: undefined,
+    },);
+
     try {
       const config = freshConfig();
       applyProviderEnvVars(config,);
@@ -309,6 +313,42 @@ describe("applyProviderEnvVars", () => {
       restore();
     }
   });
+
+  test.each(["true", "1", "on", "yes", "TRUE", " yes ",],)(
+    "allowUserApiKey is true for the enabling spelling %p",
+    (value,) => {
+      const restore = withEnv({
+        LLM_PROVIDER_BASE_URL: "http://localhost/v1",
+        LLM_PROVIDER_ALLOW_USER_KEY: value,
+      },);
+
+      try {
+        const config = freshConfig();
+        applyProviderEnvVars(config,);
+        expect(config.generation.providers.openaiCompatible[0]?.allowUserApiKey,).toBe(true,);
+      } finally {
+        restore();
+      }
+    },
+  );
+
+  test.each(["false", "0", "off", "no", "OFF", " no ", "maybe", "",],)(
+    "allowUserApiKey is false for the disabling or unrecognised spelling %p",
+    (value,) => {
+      const restore = withEnv({
+        LLM_PROVIDER_BASE_URL: "http://localhost/v1",
+        LLM_PROVIDER_ALLOW_USER_KEY: value,
+      },);
+
+      try {
+        const config = freshConfig();
+        applyProviderEnvVars(config,);
+        expect(config.generation.providers.openaiCompatible[0]?.allowUserApiKey,).toBe(false,);
+      } finally {
+        restore();
+      }
+    },
+  );
 
   test("LLM_DEFAULT_PROVIDER sets defaultProvider when none exists", () => {
     const restore = withEnv({ LLM_PROVIDER_BASE_URL: "http://localhost/v1", LLM_DEFAULT_PROVIDER: "other", },);

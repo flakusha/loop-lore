@@ -71,6 +71,12 @@ export function liftFlatEnvKeys(
 }
 
 /**
+ * Spellings that turn a boolean env var on. Mirrors the disabled-value set
+ * used for system_config flags (`"false"|"0"|"off"|"no"`).
+ */
+const ENABLED_VALUES = new Set(["true", "1", "on", "yes",],);
+
+/**
  * Create a default provider instance from LLM_PROVIDER_* env vars
  * @param config
  * @returns void
@@ -78,6 +84,11 @@ export function liftFlatEnvKeys(
 export function applyProviderEnvVars(config: Config,): void {
   const baseUrl = process.env.LLM_PROVIDER_BASE_URL;
   if (!baseUrl) { return; }
+
+  // Unset keeps the permissive default; a present-but-unrecognised value
+  // denies, so a typo fails closed rather than silently admitting a user's
+  // credential to the provider.
+  const allowUserKey = process.env.LLM_PROVIDER_ALLOW_USER_KEY?.trim().toLowerCase();
 
   const provider: ProviderInstanceConfig = {
     name: process.env.LLM_PROVIDER_NAME ?? "default",
@@ -91,7 +102,7 @@ export function applyProviderEnvVars(config: Config,): void {
     retries: Number.isNaN(Number(process.env.LLM_PROVIDER_RETRIES,),)
       ? 3
       : Number(process.env.LLM_PROVIDER_RETRIES,),
-    allowUserApiKey: process.env.LLM_PROVIDER_ALLOW_USER_KEY !== "false",
+    allowUserApiKey: allowUserKey === undefined ? true : ENABLED_VALUES.has(allowUserKey,),
     models: {},
   };
 
