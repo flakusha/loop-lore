@@ -59,20 +59,25 @@ import type {
   ChunkEvent,
   GenerateRequest,
   GenerateResponse,
-  LLMProvider,
   ModelInfo,
   StreamHandler,
 } from "@/generation/providers/types";
 import { federationRoutes, } from "@/routes/federation";
 import { createTestDb, destroyTestDb, } from "@/test-utils/create-test-db";
 import { MockLLMProvider, } from "@/test-utils/mock-provider";
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
 
 const SECRET = "e2e-fed-secret-0123456789";
 const PSK = "e2e-fed-psk";
 const SHARED_TOKEN = "e2e-shared-workload-credential";
 /** The provider profile the wire requests; the peer resolves it in its own registry. */
 const PROVIDER = "peer-llm";
+
+/** Every instance booted by the current test, so none can leak on a throw. */
+const bootedInstances: Instance[] = [];
+
+/** This file's original NO_PROXY, restored in afterAll. */
+const originalNoProxy = process.env.NO_PROXY;
 
 /** Every request the peer instance's LOCAL provider chain actually received. */
 const peerProviderSaw: GenerateRequest[] = [];
@@ -102,17 +107,6 @@ class PeerProvider extends MockLLMProvider {
     }
 
     return super.stream(req, handler,);
-  }
-
-  override complete(req: GenerateRequest,): Promise<GenerateResponse> {
-    peerProviderSaw.push(req,);
-    return Promise.resolve(
-      {
-        content: "served by the peer",
-        finishReason: "stop",
-        usage: { promptTokens: 3, completionTokens: 4, totalTokens: 7, },
-      } satisfies GenerateResponse,
-    );
   }
 
   override listModels(): Promise<ModelInfo[]> {
@@ -165,12 +159,13 @@ async function instance(): Promise<Instance> {
     fetch: (request: Request,) => app.handle(request,),
   },);
 
-  // Loopback fetches must not be proxied.
+  // Loopback fetches must not be proxied. Restored in afterAll — a mutated
+  // NO_PROXY leaks into every suite that runs after this one.
   process.env.NO_PROXY = process.env.NO_PROXY
     ? `${process.env.NO_PROXY},127.0.0.1,localhost`
     : "127.0.0.1,localhost";
 
-  return {
+  const booted: Instance = {
     origin: `http://127.0.0.1:${server.port}`,
     db: fixture.db as Db,
     close: async () => {
@@ -178,6 +173,11 @@ async function instance(): Promise<Instance> {
       await destroyTestDb(fixture,);
     },
   };
+
+  // Every instance registers itself, so one thrown assertion cannot leak a
+  // listening socket or an open SQLite handle into the rest of the run.
+  bootedInstances.push(booted,);
+  return booted;
 }
 
 /** Register the caller as a trusted, workload-trusting loopback peer. */
@@ -296,6 +296,7 @@ describe("federation offload — two real instances", () => {
   let peer: Instance;
 
   beforeEach(async () => {
+    bootedInstances.length = 0;
     resetPeerHealth();
     resetPerformanceQuota();
     peerProviderSaw.length = 0;
@@ -305,13 +306,26 @@ describe("federation offload — two real instances", () => {
     peer = await instance();
   }, 30_000,);
 
+  // Close EVERY instance this test booted, not just the two it named. A test
+  // that throws part-way through would otherwise leave a listening socket and
+  // an open SQLite handle behind for every suite that runs after it.
   afterEach(async () => {
     resetPeerHealth();
     resetPerformanceQuota();
     unregisterProvider(PROVIDER,);
-    await caller?.close();
-    await peer?.close();
+    for (const booted of bootedInstances.splice(0,)) {
+      await booted.close();
+    }
   }, 30_000,);
+
+  afterAll(() => {
+    if (originalNoProxy === undefined) {
+      process.env.NO_PROXY = undefined;
+      delete process.env.NO_PROXY;
+    } else {
+      process.env.NO_PROXY = originalNoProxy;
+    }
+  },);
 
   test("federation off by default: with no peer configured the wire is never touched", async () => {
     let localCalls = 0;
@@ -553,26 +567,44 @@ describe("federation offload — two real instances", () => {
   });
 
   test("chat stickiness pins repeated turns to the same peer", async () => {
+    const standIn = await instance();
     await trustCallerOnPeer(peer.db, caller.origin, [PeerWorkloadClass.Chat,],);
     await registerPeerOnCaller(caller.db, peer.origin, [PeerWorkloadClass.Chat,],);
-    await writeAssignmentMatrix({ database: caller.db, matrix: { preferences: { chat: [peer.origin,], }, }, },);
+    await registerPeerOnCaller(caller.db, standIn.origin, [PeerWorkloadClass.Chat,],);
+    // TWO eligible peers, and the matrix RANKING prefers `standIn`. A pin to
+    // the lower-ranked `peer` is therefore load-bearing: without it the router
+    // would send turn 2 to `standIn`, so this cannot pass by coincidence.
+    await writeAssignmentMatrix({
+      database: caller.db,
+      matrix: { preferences: { chat: [standIn.origin, peer.origin,], }, },
+    },);
 
     const affinityKey = "chat-affinity-key-1";
 
-    // Turn 1: nothing pinned, the ranked peer wins and the pin is written.
+    // Turn 1: nothing pinned, so RANKING decides. Which peer that is depends on
+    // headroom, latency EWMA and finally an origin-string tiebreak — and the
+    // tiebreak is not predictable, because ephemeral ports make the origins
+    // differ every run. So do NOT assert a particular winner; pin the peer
+    // ranking did NOT choose, which is what makes the pin load-bearing.
     const first = await routeFor(caller.db, { workloadClass: PeerWorkloadClass.Chat, affinityKey, },);
     expect(first.target,).toBe("peer",);
+    if (first.target !== "peer") { throw new Error("expected a peer route",); }
+
+    const pinnedOrigin = first.peer.origin === standIn.origin ? peer.origin : standIn.origin;
+
     await pinWorkloadPeer(caller.db, {
       affinityKey,
       workloadClass: PeerWorkloadClass.Chat,
-      peerOrigin: peer.origin,
+      peerOrigin: pinnedOrigin,
     },);
 
-    // Turn 2: the same affinity key honours the pin.
+    // Turn 2: the pin wins over the ranking.
     const second = await routeFor(caller.db, { workloadClass: PeerWorkloadClass.Chat, affinityKey, },);
     expect(second.target,).toBe("peer",);
     if (second.target !== "peer") { throw new Error("expected a peer route",); }
-    expect(second.peer.origin,).toBe(peer.origin,);
+    expect(second.peer.origin,).toBe(pinnedOrigin,);
+    // And it is genuinely NOT the peer ranking chose on its own.
+    expect(second.peer.origin,).not.toBe(first.peer.origin,);
     expect(second.reason,).toBe("sticky-assignment",);
 
     // The pin is durable state, read back from the caller's DB.
@@ -581,7 +613,7 @@ describe("federation offload — two real instances", () => {
       workloadClass: PeerWorkloadClass.Chat,
     },);
 
-    expect(pinned?.peerOrigin,).toBe(peer.origin,);
+    expect(pinned?.peerOrigin,).toBe(pinnedOrigin,);
   });
 
   test("an ineligible peer releases the pin, and the release is recorded with its reason", async () => {
@@ -652,8 +684,6 @@ describe("federation offload — two real instances", () => {
 
     expect(afterRelease.released_at,).not.toBeNull();
     expect(afterRelease.release_reason,).toBe("circuit-open",);
-
-    await standIn.close();
   });
 
   test("data minimization: the peer receives the workload slice and no unrelated chat or user data", async () => {
