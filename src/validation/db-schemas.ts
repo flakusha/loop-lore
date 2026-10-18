@@ -477,6 +477,7 @@ export const NsfwLocationTypeSchema = t.UnionEnum([
   "workshop",
 ],);
 export const PeerAuthModeSchema = t.UnionEnum(["tls", "host-local",],);
+export const PeerBudgetModeSchema = t.UnionEnum(["advisory", "hard",],);
 export const PeerInstanceKindSchema = t.UnionEnum(["business", "rpg", "assistant", "dedicated-gpu", "general",],);
 export const PeerLinkKindSchema = t.UnionEnum(["loopback", "remote",],);
 export const PeerWorkloadClassSchema = t.UnionEnum([
@@ -3640,4 +3641,16 @@ export const MeshWorkAssignmentsSchema = t.Object({
   previous_origin: t.Optional(t.String(),),
   released_at: t.Optional(t.String(),),
   release_reason: t.Optional(t.String(),),
+},);
+
+// ── federation_performance_budgets ────────────────────────────────────────────
+export const FederationPerformanceBudgetsSchema = t.Object({
+  origin: t.String(),
+  workload_class: PeerWorkloadClassSchema,
+  updated_at: t.String(),
+  budget_mode: t.Optional(PeerBudgetModeSchema,),
+  max_concurrency: t.Optional(t.Number(),),
+  max_queue_depth: t.Optional(t.Number(),),
+  requests_per_minute: t.Optional(t.Number(),),
+  tokens_per_minute: t.Optional(t.Number(),),
 },);

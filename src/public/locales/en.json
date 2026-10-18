@@ -460,7 +460,8 @@
     "connectionFailed": "Connection failed",
     "timeout": "Request timed out",
     "createFailed": "Failed to create",
-    "loadFailed": "Failed to load"
+    "loadFailed": "Failed to load",
+    "federationQuotaExceeded": "Federation peer performance quota exceeded"
   },
   "filter": {
     "allTypes": "All types",

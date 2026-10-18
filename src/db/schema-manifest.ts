@@ -492,6 +492,16 @@ export const SCHEMA = new SchemaManifest()
     territory_json: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("federation_performance_budgets", {
+    origin: col("text", { notNull: true, },),
+    workload_class: col("text", { notNull: true, },),
+    budget_mode: col("text", { notNull: true, hasDefault: true, },),
+    max_concurrency: col("integer",),
+    max_queue_depth: col("integer",),
+    requests_per_minute: col("integer",),
+    tokens_per_minute: col("integer",),
+    updated_at: col("text", { notNull: true, },),
+  },)
   .table("game_states", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),

@@ -460,7 +460,8 @@
     "connectionFailed": "Verbindung fehlgeschlagen",
     "timeout": "Zeitüberschreitung",
     "createFailed": "Failed to create",
-    "loadFailed": "Failed to load"
+    "loadFailed": "Failed to load",
+    "federationQuotaExceeded": "Das Leistungskontingent des Föderations-Peers wurde überschritten"
   },
   "characters": {
     "title": "Characters",

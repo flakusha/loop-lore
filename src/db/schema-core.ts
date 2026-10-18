@@ -52,6 +52,7 @@ import type {
   NotificationStatus,
   NpcRelationshipType,
   PeerAuthMode,
+  PeerBudgetMode,
   PeerInstanceKind,
   PeerWorkloadClass,
   PinnedState,
@@ -1969,4 +1970,16 @@ export interface MeshWorkAssignments {
   previous_origin: string | null;
   released_at: string | null;
   release_reason: string | null;
+}
+
+// ── federation_performance_budgets ────────────────────────────────────────────
+export interface FederationPerformanceBudgets {
+  origin: string;
+  workload_class: PeerWorkloadClass;
+  budget_mode: Generated<PeerBudgetMode>;
+  max_concurrency: number | null;
+  max_queue_depth: number | null;
+  requests_per_minute: number | null;
+  tokens_per_minute: number | null;
+  updated_at: string;
 }
