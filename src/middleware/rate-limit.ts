@@ -88,6 +88,11 @@ export function createRateLimiter(config: RateLimitConfig,) {
   // strict boundary (sliding-window math). A timestamp exactly AT `cutoff`
   // (now - windowMs == ts) is still in-window and is KEPT; only timestamps
   // strictly older than the cutoff are dropped.
+  //
+  // Boundary contract shared with the governance sliding window
+  // (src/api-governance/rate-limiting/algorithms.ts `slidingWindow`): age
+  // == windowMs stays in-window there too — the two limiters must not
+  // differ at the boundary.
   function pruneExpired(queue: number[], cutoff: number,): void {
     while (queue.length > 0 && queue[0]! < cutoff) { queue.shift(); }
   }

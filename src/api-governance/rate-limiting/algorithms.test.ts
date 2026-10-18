@@ -25,6 +25,21 @@ describe("slidingWindow", () => {
     expect(res.retryAfterSec,).toBe(1,);
     expect(res.kept,).toHaveLength(3,);
   });
+
+  test("keeps a timestamp exactly at the cutoff — boundary aligned with the middleware limiter", () => {
+    // Window 1_000 at now=2_000 → cutoff 1_000. A stamp exactly AT the
+    // cutoff is still in-window (age == windowMs), so a full window of
+    // boundary-aged stamps must still block; the slot frees only at
+    // nowMs+1. The pre-fix predicate (`t > cutoff`) admitted a request
+    // at exactly windowMs — one ms looser than src/middleware/rate-limit.ts.
+    const boundary = slidingWindow(2_000, [1_000, 1_200, 1_400,], 1_000, 3,);
+    expect(boundary.allowed,).toBe(false,);
+    expect(boundary.kept,).toEqual([1_000, 1_200, 1_400,],);
+
+    const freed = slidingWindow(2_001, [1_000, 1_200, 1_400,], 1_000, 3,);
+    expect(freed.allowed,).toBe(true,);
+    expect(freed.kept,).toEqual([1_200, 1_400, 2_001,],);
+  });
 });
 
 describe("tokenBucket", () => {
