@@ -19,6 +19,8 @@ loop-lore-data/
 
 # Native module build output (Rust cdylib — compiled at build stage, never committed)
 native/loop-lore-native/target/
+/target/
+native/*/target/
 
 # Environment overrides (env.yaml replaces .env — supports nested/arrays/multiline)
 env.yaml
