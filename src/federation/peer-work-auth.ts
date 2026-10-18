@@ -15,9 +15,10 @@
  *   5. the class is in the row's allow-list AND in this instance's declared
  *      `workloadOffload.classes` — so a peer can never reach a class the
  *      operator did not publish;
- *   6. for `host-local` peers, the per-peer shared token verifies in constant
- *      time. Loopback is not a trust boundary: a peer with no credential would
- *      accept work from anything that can open a socket to the port.
+ *   6. the per-peer shared token verifies in constant time — for EVERY
+ *      workload-trusted peer, whatever its `auth_kind`. Loopback is not a trust
+ *      boundary: a peer with no credential would accept work from anything that
+ *      can open a socket to the port.
  *
  * Fail-closed throughout. A failure names a routable `PeerWorkErrorCode` and
  * never the value that failed, so nothing here can echo a secret.
@@ -25,25 +26,25 @@
  * TRUST BOUNDARY — read before exposing this port off-host.
  *
  * Layers 1-5 are AUTHORIZATION against operator-set policy, and all of them
- * deny by default. Layer 6 is the only AUTHENTICATION, and it applies to
- * same-host peers ONLY. For a `tls` peer the claimed origin in `x-peer-origin`
- * is ASSERTED, never proven: the save path forbids a shared credential on a
- * TLS peer, and this runtime enforces no client certificate (see
+ * deny by default. Layer 6 is the only AUTHENTICATION, and it applies to every
+ * workload-trusted peer. `auth_kind` does NOT select a different check: for a
+ * `tls` peer the claimed origin in `x-peer-origin` is still only ASSERTED,
+ * because this runtime enforces no client certificate (see
  * `src/federation/peer-fetch.ts`: "mTLS is NOT enforced — runtimes expose no
- * client-certificate handle on fetch"). The SPKI pin in
- * `src/federation/spki-pin.ts` is an OUTBOUND pre-flight that checks a peer
- * before we call it; it says nothing about who is calling us.
+ * client-certificate handle on fetch"). TLS and the SPKI pin in
+ * `src/federation/spki-pin.ts` are an OUTBOUND pre-flight that checks a peer
+ * before we call it; they say nothing about who is calling us, so for a remote
+ * peer they are an ADDITIONAL layer, never the authentication itself.
  *
- * Consequence: any HTTP client that can reach this port AND knows the origin
- * of a `trusted`, workload-trusted peer can submit work as that peer. Until a
- * credential path exists for TLS peers, this endpoint MUST stay behind a
- * trusted network boundary (loopback or an operator-controlled segment). It is
- * NOT safe on a public listener. Ticket
- * TASK-federation-peer-workload-wire-endpoints carries the open item.
+ * The invariant this module enforces, therefore: a `trusted`,
+ * workload-trusted peer with no valid per-peer credential is refused, so
+ * naming such a peer in `x-peer-origin` buys an attacker nothing. The
+ * save-time counterpart is `peer-registry-validation.ts`: a workload-trusted
+ * peer cannot be saved without a token, whatever its `auth_kind`.
  */
 import { type Kysely, } from "kysely";
 import { type Config, } from "../config/schema";
-import { PeerAuthMode, type PeerWorkloadClass, } from "../db/enums";
+import { type PeerWorkloadClass, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getChildLogger, } from "../logger";
 import { declaredWorkloadClasses, } from "./peer-capabilities";
@@ -130,31 +131,31 @@ export async function authorizePeerWork(options: {
     };
   }
 
-  // Same-host peers only. A TLS peer's identity is ASSERTED, not proven — see
-  // the TRUST BOUNDARY note above before treating this branch as sufficient.
-  if (peer.authMode === PeerAuthMode.HostLocal) {
-    const ok = await verifyPeerWorkloadToken(database, {
+  // Every workload-trusted peer, whatever its auth_kind: the per-peer token is
+  // the authentication. `auth_mode` selects no bypass — a `tls` peer's origin
+  // in `x-peer-origin` is ASSERTED, so TLS trust cannot stand in for a
+  // credential. See the TRUST BOUNDARY note above.
+  const credentialed = await verifyPeerWorkloadToken(database, {
+    origin,
+    presented: bearer,
+    encryptionKey,
+  },).catch((error: unknown,) => {
+    // A decrypt failure (wrong or absent server secret) is a REJECTION, never
+    // a bypass: an unverifiable credential proves nothing.
+    getChildLogger("federation/peer-work-auth",)?.warn("peer workload credential unreadable", {
       origin,
-      presented: bearer,
-      encryptionKey,
-    },).catch((error: unknown,) => {
-      // A decrypt failure (wrong or absent server secret) is a REJECTION, never
-      // a bypass: an unverifiable credential proves nothing.
-      getChildLogger("federation/peer-work-auth",)?.warn("peer workload credential unreadable", {
-        origin,
-        reason: error instanceof Error ? error.message : "unknown",
-      },);
-
-      return false;
+      reason: error instanceof Error ? error.message : "unknown",
     },);
 
-    if (!ok) {
-      return {
-        status: 403,
-        errorCode: Codes.CredentialRejected,
-        message: "peer workload credential rejected",
-      };
-    }
+    return false;
+  },);
+
+  if (!credentialed) {
+    return {
+      status: 403,
+      errorCode: Codes.CredentialRejected,
+      message: "peer workload credential rejected",
+    };
   }
 
   return { origin, peer, };

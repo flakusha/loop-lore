@@ -201,6 +201,33 @@ async function trustCallerOnPeer(
   await setPeerState(peerDb, callerOrigin, "trusted",);
 }
 
+/** A remote (TLS) caller's origin: the peer's registry keys on what it CLAIMS. */
+const REMOTE_CALLER = "https://business.remote.example";
+
+/** A second remote caller, so one peer's credential cannot open another's. */
+const OTHER_REMOTE_CALLER = "https://other.remote.example";
+
+/**
+ * Register a remote (TLS) caller on the peer: trusted, workload-trusted, and
+ * holding its own shared token. `auth_mode` derives to `tls` from the origin.
+ */
+async function trustRemoteCallerOnPeer(
+  peerDb: Db,
+  callerOrigin: string,
+  token: string,
+): Promise<void> {
+  await savePeerWorkload(peerDb, {
+    origin: callerOrigin,
+    encryptionKey: SECRET,
+    displayName: "remote business instance",
+    authMode: PeerAuthMode.Tls,
+    sharedToken: token,
+    workloadTrust: true,
+    allowedWorkloadClasses: [PeerWorkloadClass.Chat,],
+  },);
+
+  await setPeerState(peerDb, callerOrigin, "trusted",);
+}
 /**
  * Register the peer as routable on the caller.
  *
@@ -406,6 +433,66 @@ describe("federation offload — two real instances", () => {
     expect(await errorCodeOf(response,),).toBe("federation.workload_credential_rejected",);
     // Refused BEFORE admission: no work ran on the peer.
     expect(peerProviderSaw,).toEqual([],);
+  });
+
+  // THE DEFECT THIS SPEC PINS: a remote (TLS) peer used to be admitted on the
+  // strength of the caller-controlled `x-peer-origin` header alone, so anyone
+  // who could reach the port and name a trusted origin got that peer's
+  // workloads executed. TLS trust is an outbound layer, never the inbound
+  // authentication: the per-peer shared token is required for every
+  // workload-trusted peer, whatever its auth_kind.
+  test("a remote workload-trusted peer with NO credential is refused and nothing runs", async () => {
+    await trustRemoteCallerOnPeer(peer.db, REMOTE_CALLER, SHARED_TOKEN,);
+
+    // The caller is trusted, workload-trusted and allows the chat class. It
+    // presents the origin header and nothing else.
+    const response = await postToPeer(peer, REMOTE_CALLER, CHAT_WIRE_REQUEST,);
+
+    expect(response.status,).toBe(403,);
+    expect(await errorCodeOf(response,),).toBe("federation.workload_credential_rejected",);
+    // The peer's executor never ran: zero provider invocations, not a retry.
+    expect(peerProviderSaw,).toEqual([],);
+  });
+
+  test("a remote workload-trusted peer is refused on a wrong token and admitted on its own", async () => {
+    await trustRemoteCallerOnPeer(peer.db, REMOTE_CALLER, SHARED_TOKEN,);
+
+    const wrong = await postToPeer(peer, REMOTE_CALLER, CHAT_WIRE_REQUEST, "not-the-shared-token",);
+    expect(wrong.status,).toBe(403,);
+    expect(await errorCodeOf(wrong,),).toBe("federation.workload_credential_rejected",);
+    expect(peerProviderSaw,).toEqual([],);
+
+    const right = await postToPeer(peer, REMOTE_CALLER, CHAT_WIRE_REQUEST, SHARED_TOKEN,);
+    expect(right.status,).toBe(200,);
+    expect(peerProviderSaw,).toHaveLength(1,);
+  });
+
+  test("a remote peer's token is refused when presented as a different remote peer", async () => {
+    await trustRemoteCallerOnPeer(peer.db, REMOTE_CALLER, SHARED_TOKEN,);
+    await trustRemoteCallerOnPeer(peer.db, OTHER_REMOTE_CALLER, "other-remote-credential",);
+
+    const forged = await postToPeer(peer, OTHER_REMOTE_CALLER, CHAT_WIRE_REQUEST, SHARED_TOKEN,);
+    expect(forged.status,).toBe(403,);
+    expect(await errorCodeOf(forged,),).toBe("federation.workload_credential_rejected",);
+    expect(peerProviderSaw,).toEqual([],);
+
+    // The other peer's OWN token is admitted, so the refusal is the mismatch.
+    const own = await postToPeer(peer, OTHER_REMOTE_CALLER, CHAT_WIRE_REQUEST, "other-remote-credential",);
+    expect(own.status,).toBe(200,);
+    expect(peerProviderSaw,).toHaveLength(1,);
+  });
+
+  test("a loopback peer is unchanged: no token refused, its own token admitted", async () => {
+    await trustCallerOnPeer(peer.db, caller.origin, [PeerWorkloadClass.Chat,],);
+
+    const bare = await postToPeer(peer, caller.origin, CHAT_WIRE_REQUEST,);
+    expect(bare.status,).toBe(403,);
+    expect(await errorCodeOf(bare,),).toBe("federation.workload_credential_rejected",);
+    expect(peerProviderSaw,).toEqual([],);
+
+    const admitted = await postToPeer(peer, caller.origin, CHAT_WIRE_REQUEST, SHARED_TOKEN,);
+    expect(admitted.status,).toBe(200,);
+    expect(peerProviderSaw,).toHaveLength(1,);
   });
 
   test("a class outside the peer's allowed_workload_classes is refused", async () => {
