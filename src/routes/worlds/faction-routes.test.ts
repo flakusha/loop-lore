@@ -14,8 +14,18 @@ import { WorldVisibility, } from "../../db/enums-story/world";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
-import { createFaction, } from "../../worlds/factions";
+import { createFaction, FactionError, } from "../../worlds/factions";
+import { declareWar, } from "../../worlds/factions-diplomacy";
 import { factionRoutes, } from "./faction-routes";
+import {
+  DataResponse,
+  DIPLOMACY_ROUTES,
+  Errors,
+  factionErrorResponse,
+  PairBody,
+  requireFactionsInWorld,
+  runDiplomacy,
+} from "./faction-routes-shared";
 
 const W1 = "w1";
 const W2 = "w2";
@@ -182,5 +192,87 @@ describe("relationship + diplomacy routes", () => {
     },);
 
     expect(foreign.status,).toBe(404,);
+  });
+});
+
+describe("faction-routes-shared surface", () => {
+  test("DIPLOMACY_ROUTES mounts the four verbs, each drivable through its transition", async () => {
+    expect(DIPLOMACY_ROUTES.map((r,) => r.path),).toEqual(["war", "peace", "alliance", "alliance/break",],);
+
+    // war → peace on one pair (proposePeace requires at_war).
+    const war = await request(USER_A, "POST", `/api/worlds/${W1}/factions/relationships/war`, {
+      factionA: guards,
+      factionB: traders,
+    },);
+
+    expect(war.status,).toBe(200,);
+
+    const peace = await request(USER_A, "POST", `/api/worlds/${W1}/factions/relationships/peace`, {
+      factionA: guards,
+      factionB: traders,
+    },);
+
+    expect(peace.status,).toBe(200,);
+
+    // alliance → break on a fresh pair (break requires allied).
+    const scouts = (await createFaction({ db, worldId: W1, name: "Scouts", },)).id;
+
+    const alliance = await request(USER_A, "POST", `/api/worlds/${W1}/factions/relationships/alliance`, {
+      factionA: guards,
+      factionB: scouts,
+    },);
+
+    expect(alliance.status,).toBe(200,);
+
+    const broken = await request(
+      USER_A,
+      "POST",
+      `/api/worlds/${W1}/factions/relationships/alliance/break`,
+      { factionA: guards, factionB: scouts, },
+    );
+
+    expect(broken.status,).toBe(200,);
+  });
+
+  test("PairBody and the shared response envelopes carry the route contract", () => {
+    expect(Object.keys(PairBody.properties ?? {},),).toContain("factionA",);
+    expect(Object.keys(DataResponse,),).toEqual(["200",],);
+    expect(Object.keys(Errors,),).toEqual(["400", "401", "403", "404",],);
+  });
+
+  test("requireFactionsInWorld only accepts factions of the path world", async () => {
+    expect(await requireFactionsInWorld(db, W1, [guards, traders,],),).toBeNull();
+
+    const denial = await requireFactionsInWorld(db, W1, [foreignFaction,],);
+
+    expect(denial,).toBeInstanceOf(Response,);
+    expect(denial?.status,).toBe(404,);
+  });
+
+  test("factionErrorResponse maps FactionError codes and rethrows the rest", () => {
+    expect(factionErrorResponse(new FactionError("not-found", "gone",),).status,).toBe(404,);
+
+    expect(factionErrorResponse(new FactionError("invalid-input", "bad",),).status,).toBe(400,);
+
+    expect(() => factionErrorResponse(new Error("boom",),)).toThrow("boom",);
+  });
+
+  test("runDiplomacy applies the verb behind the world-owner guard", async () => {
+    const res = await runDiplomacy(
+      db,
+      {
+        userId: USER_A,
+        userRole: "user",
+        params: { worldId: W1, },
+        body: { factionA: guards, factionB: traders, },
+      },
+      declareWar,
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const body = await res.json() as { data: { status: string } };
+
+    expect(body.data.status,).toBe("at_war",);
   });
 });
