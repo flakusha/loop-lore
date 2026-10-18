@@ -22,6 +22,8 @@ const OPENED_CHAT_IDS = ["c1", "c2",];
 /** One recorded fake source: listeners keyed by event type. */
 class FakeEventSource {
   static instances: FakeEventSource[] = [];
+  static readonly CONNECTING = 0;
+  static readonly CLOSED = 2;
   closed = false;
   readyState = 0;
   readonly url: string;
@@ -157,10 +159,22 @@ describe("frontend/egui-stream", () => {
     const source = FakeEventSource.instances[0]!;
     // The browser surfaces a dropped connection (it will reconnect and replay)
     // as `error` with readyState CONNECTING; that is NOT a terminal event.
-    source.readyState = 0;
+    source.readyState = FakeEventSource.CONNECTING;
     source.dispatch("error", "",);
     expect(sinkCalls,).toEqual([],);
     expect(source.closed,).toBe(false,);
+  });
+
+  test("a closed source relays the terminal and tears down", () => {
+    withSink(recordingSink,);
+    openGenerationStream("c1", { eventSource: FakeEventSource as unknown as typeof EventSource, },);
+    const source = FakeEventSource.instances[0]!;
+    // A fatal failure (401/404, wrong content-type) lands here: readyState is
+    // CLOSED and none of the four named events ever fires.
+    source.readyState = FakeEventSource.CLOSED;
+    source.dispatch("error", "",);
+    expect(source.closed,).toBe(true,);
+    expect(sinkCalls,).toEqual([{ method: "onError", chatId: "c1", payload: "stream closed", },],);
   });
 
   test("init exposes the globals the Rust side imports", () => {
