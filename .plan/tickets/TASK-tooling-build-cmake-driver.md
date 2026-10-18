@@ -44,5 +44,5 @@ Watch the interaction: `ggml/CMakeLists.txt:141-144` flips `INS_ENB` based on `G
 - [ ] `-DCMAKE_INSTALL_RPATH='$ORIGIN:$ORIGIN/../lib64'` is set on the configure step.
 - [ ] The build type is set once via `CMAKE_BUILD_TYPE`; no redundant `--config Release`.
 - [ ] No `console.*`; all output goes through the logger from `src/logger/`.
-- [ ] A colocated `scripts/tooling/cmake.test.ts` asserts the emitted argv for the cpu and vulkan cells — argv strings only, never a claim that a compile ran — and covers the step-named failure path and the `--jobs` default, reaching **>= 80% line coverage** of `cmake.ts` under `bun run test:coverage`, so `bun run scripts/check/coverage.mjs --floor=80` passes for this module with no waiver.
+- [ ] A colocated `scripts/tooling/cmake.test.ts` asserts the emitted argv for the cpu and vulkan cells — argv strings only, never a claim that a compile ran — and covers the step-named failure path and the `--jobs` default, reaching **>= 80% line coverage** of `cmake.ts` when measured with `bun test scripts/tooling/ --coverage` (see epic caveat: `bun run test:coverage` scopes to `tests/e2e/` + `src/`, and the gate buckets all of `scripts/**` under one `scripts` module), with no waiver filed for it.
 - [ ] The module passes `giwt plan check-file-size` at 250 code lines.

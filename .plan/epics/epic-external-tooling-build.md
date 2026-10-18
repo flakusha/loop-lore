@@ -147,7 +147,8 @@ The host has no CUDA, ROCm, or oneAPI toolchain. And more broadly: **the audit e
 - [ ] The documentation states plainly which accelerators are unverified on this host.
 - [ ] The implementation is exactly eight modules under `scripts/tooling/` (`cli`, `variants`, `pin`, `paths`, `cmake`, `go-build`, `status`, `main`) with no separate `types.ts` and no separate `link.ts`.
 - [ ] Every file passes `giwt plan check-file-size` at the 250-line code budget, with an explicit `// size-allow: N` in the first 512 characters of `variants.ts` if the merged file genuinely exceeds it.
-- [ ] **Every module under `scripts/tooling/` reaches >= 80% line coverage**, verified by `bun run test:coverage` (which writes `.tmp/coverage/lcov.info`) and gated by `bun run scripts/check/coverage.mjs --floor=80`, which gates EACH module at 80%. Each module ships a colocated `*.test.ts`; no waiver is filed for any of them.
+- [ ] **Every module under `scripts/tooling/` reaches >= 80% line coverage**, verified per-file by `bun run scripts/check/coverage.mjs --floor=80`. Each module ships a colocated `*.test.ts`; no waiver is filed for any of them.
+- [ ] The `scripts/tooling/` test files are measured, not skipped. Caveat recorded here because it is a real limit of the current gate, not an assumption: `bun run test:coverage` scopes its path list to `tests/e2e/` and `src/`, so `scripts/` tests are excluded from that run; and `scripts/check/coverage.mjs` buckets every `scripts/**` file under a single `scripts` module (`scripts/check/coverage/lcov.mjs`), so it floors the aggregate, not each tooling file individually. Per-file enforcement therefore needs either a targeted `bun test scripts/tooling/ --coverage` run whose lcov is fed to the gate, or a waiver entry scoped to the aggregate.
 - [ ] No GPU detection, no release-asset download, and no llama-swap config rewriting anywhere in the implementation.
 
 ## Linked Tasks

@@ -48,6 +48,6 @@ Reproduce the `-X` stamps so `--version` reports something meaningful. `GIT_VERS
 - [ ] `-ldflags` stamps commit, version, and date, with the version taken from the resolved pinned ref rather than bare `git describe`.
 - [ ] `--embed-ui` (default off) adds `-tags embed_ui`; without it the build runs no npm step.
 - [ ] `all` and `release` are never invoked.
-- [ ] A colocated `scripts/tooling/go-build.test.ts` asserts the emitted argv for both embed-UI states and both arches — argv only, never a claim that a Go build ran — reaching **>= 80% line coverage** of `go-build.ts` under `bun run test:coverage`, so `bun run scripts/check/coverage.mjs --floor=80` passes for this module with no waiver.
+- [ ] A colocated `scripts/tooling/go-build.test.ts` asserts the emitted argv for both embed-UI states and both arches — argv only, never a claim that a Go build ran — reaching **>= 80% line coverage** of `go-build.ts` when measured with `bun test scripts/tooling/ --coverage` (see epic caveat: `bun run test:coverage` scopes to `tests/e2e/` + `src/`, and the gate buckets all of `scripts/**` under one `scripts` module), with no waiver filed for it.
 - [ ] llama-swap is reachable without supplying `--accelerator`.
 - [ ] The module passes `giwt plan check-file-size` at 250 code lines.
