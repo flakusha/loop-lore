@@ -116,10 +116,10 @@ export function __resetNativeModuleCache(): void {
 /**
  * Locate the shared library for the current platform/arch.
  *
- * Resolves against the repo's in-tree release target dir
- * (`native/loop-lore-native/target/release/`). Relative to the repo root so
- * the sample works from any cwd — `import.meta.dir` points at
- * `src/native/`, so `../..` lands on the repo root.
+ * Resolves against the repo's in-tree release target dir (`target/release/`
+ * at the workspace root). Relative to the repo root so the sample works from
+ * any cwd — `import.meta.dir` points at `src/native/`, so `../..` lands on
+ * the repo root.
  * @returns Absolute path to the binary, or null when this platform is unsupported.
  */
 export function resolveNativeBinaryPath(): string | null {
@@ -131,8 +131,6 @@ export function resolveNativeBinaryPath(): string | null {
   const repoRoot = join(import.meta.dir, "..", "..",);
   const debugCandidate = join(
     repoRoot,
-    "native",
-    "loop-lore-native",
     "target",
     "debug",
     fileName,
@@ -140,8 +138,6 @@ export function resolveNativeBinaryPath(): string | null {
 
   const releaseCandidate = join(
     repoRoot,
-    "native",
-    "loop-lore-native",
     "target",
     "release",
     fileName,
