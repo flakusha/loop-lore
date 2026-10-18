@@ -14,7 +14,7 @@
  * This is world karma, NOT `src/rpg/reputation.ts`: that module is
  * character-scoped and NSFW-gated and is left untouched.
  */
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { KarmaCategory, } from "../db/enums-story";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../utils";
@@ -83,31 +83,53 @@ export interface RecordKarmaEventOptions {
  */
 export async function recordKarmaEvent(options: RecordKarmaEventOptions,): Promise<KarmaProfile> {
   const stamp = (options.now ?? new Date()).toISOString();
-  const row = await ensureProfile(options.db, options.worldId, options.actorId,);
-  const categories = jsonParseOr<Record<string, number>>(row.categories_json, {},);
-  const overall = clampScore(row.overall + options.delta,);
-  categories[options.category] = clampScore((categories[options.category] ?? 0) + options.delta,);
+  const db = options.db;
+  // Two concurrent events for the same actor used to read the same `overall`,
+  // compute their own delta, and write it back — the second write clobbered the
+  // first (a lost update). The delta is now folded in by the DATABASE, so the
+  // write does not depend on the value the read saw.
+  const applied = await db.transaction().execute(async (trx,) => {
+    const row = await ensureProfile(trx, options.worldId, options.actorId,);
+    const categories = jsonParseOr<Record<string, number>>(row.categories_json, {},);
+    const overall = clampScore(row.overall + options.delta,);
+    categories[options.category] = clampScore((categories[options.category] ?? 0) + options.delta,);
 
-  await options.db
-    .updateTable("karma_profiles",)
-    .set({ overall, categories_json: jsonStringifyOr(categories,), updated_at: stamp, },)
-    .where("id", "=", row.id,)
-    .execute();
+    await trx
+      .updateTable("karma_profiles",)
+      .set({
+        // Aggregate in SQL: the row moves by `delta` from whatever it holds now,
+        // clamped into the -100..100 column range. No read-then-write of an
+        // absolute value, so a racing event cannot be lost.
+        overall: sql`min(100, max(-100, overall + ${options.delta}))`,
+        categories_json: jsonStringifyOr(categories,),
+        updated_at: stamp,
+      },)
+      .where("id", "=", row.id,)
+      .execute();
 
-  await options.db
-    .insertInto("karma_events",)
-    .values({
-      id: uid(),
-      world_id: options.worldId,
-      actor_id: options.actorId,
-      category: options.category,
-      delta: options.delta,
-      reason: options.reason ?? "",
-      occurred_at: stamp,
-    },)
-    .execute();
+    await trx
+      .insertInto("karma_events",)
+      .values({
+        id: uid(),
+        world_id: options.worldId,
+        actor_id: options.actorId,
+        category: options.category,
+        delta: options.delta,
+        reason: options.reason ?? "",
+        occurred_at: stamp,
+      },)
+      .execute();
 
-  return getKarma(options.db, options.worldId, options.actorId,);
+    return { overall, categories, };
+  },);
+
+  return {
+    actor_id: options.actorId,
+    world_id: options.worldId,
+    overall: applied.overall,
+    categories: applied.categories,
+    tier: computeKarmaTier({ overall: applied.overall, },),
+  };
 }
 
 /** Options for `getFactionStanding`. */
@@ -162,9 +184,11 @@ export async function adjustFactionStanding(
   options: AdjustFactionStandingOptions,
 ): Promise<ActorFactionStanding> {
   const stamp = (options.now ?? new Date()).toISOString();
-  const current = await getFactionStanding(options,);
-  const standing = clampScore(current.standing + options.delta,);
-
+  // The delta is folded in by the database, not read-computed-written. A
+  // concurrent adjust used to read the same `standing`, add its own delta, and
+  // write the absolute result back, so the second write clobbered the first.
+  // `insert ... on conflict do update set standing = clamp(standing + delta)`
+  // is one atomic statement: no read-then-write window, no lost update.
   await options.db
     .insertInto("faction_standing",)
     .values({
@@ -172,7 +196,7 @@ export async function adjustFactionStanding(
       world_id: options.worldId,
       faction_id: options.factionId,
       actor_id: options.actorId,
-      standing,
+      standing: clampScore(options.delta,),
       quests_completed: 0,
       quests_failed: 0,
       items_traded: 0,
@@ -180,7 +204,12 @@ export async function adjustFactionStanding(
       updated_at: stamp,
     },)
     .onConflict((oc,) =>
-      oc.columns(["world_id", "faction_id", "actor_id",],).doUpdateSet({ standing, updated_at: stamp, },)
+      oc
+        .columns(["world_id", "faction_id", "actor_id",],)
+        .doUpdateSet({
+          standing: sql`min(100, max(-100, faction_standing.standing + ${options.delta}))`,
+          updated_at: stamp,
+        },)
     )
     .execute();
 
