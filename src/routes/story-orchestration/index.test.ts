@@ -321,4 +321,211 @@ describe("story-orchestration routes", () => {
 
     expect(res.status,).toBe(404,);
   });
+
+  test("GET /story/state returns 401 for anonymous caller", async () => {
+    const chatId = await seedChat();
+    const app = new Elysia({ name: "test-anon", },)
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(new Request(`http://localhost/api/chats/${chatId}/story/state`,),);
+    expect(res.status,).toBe(401,);
+  });
+
+  test("GET /story/state returns 403 for non-owner", async () => {
+    const chatId = await seedChat();
+    const otherUserId = crypto.randomUUID();
+    await insertUsers(db, "other", "Other", { id: otherUserId, },);
+    const app = new Elysia({ name: "test-other-user", },)
+      .derive(() => ({ userId: otherUserId, userRole: "user" as const, }))
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(new Request(`http://localhost/api/chats/${chatId}/story/state`,),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST /story/step returns 403 for non-participant forceActorId", async () => {
+    const worldId = await seedWorld();
+    const chatId = await seedChat({ worldId, },);
+    const strangerActorId = crypto.randomUUID();
+    await insertActors(db, "Stranger", { id: strangerActorId, },);
+    const res = await makeApp(db,).handle(
+      request("POST", `http://localhost/api/chats/${chatId}/story/step`, { forceActorId: strangerActorId, },),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST /story/step returns 401 for anonymous caller", async () => {
+    const chatId = await seedChat();
+    const app = new Elysia({ name: "test-anon-step", },)
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/story/step`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("POST /gm/escalate returns 403 for non-owner", async () => {
+    const chatId = await seedChat();
+    const actorId = await seedParticipant(chatId,);
+    await insertStoryTurns(db, chatId, 1, actorId, TurnType.CharacterAction, "prompt", {
+      status: TurnStatus.Pending,
+    },);
+
+    const otherUserId = crypto.randomUUID();
+    await insertUsers(db, "other2", "Other2", { id: otherUserId, },);
+    const app = new Elysia({ name: "test-other-escalate", },)
+      .derive(() => ({ userId: otherUserId, userRole: "user" as const, }))
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      request("POST", `http://localhost/api/chats/${chatId}/gm/escalate`,),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST /story/narration returns 401 for anonymous caller", async () => {
+    const worldId = await seedWorld();
+    const chatId = await seedChat({ worldId, },);
+    const app = new Elysia({ name: "test-anon-narr", },)
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/story/narration`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ text: "hello", },),
+      },),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("POST /story/pause returns 401 for anonymous caller", async () => {
+    const chatId = await seedChat();
+    const app = new Elysia({ name: "test-anon-pause", },)
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      request("POST", `http://localhost/api/chats/${chatId}/story/pause`,),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("POST /story/resume returns 401 for anonymous caller", async () => {
+    const chatId = await seedChat();
+    const app = new Elysia({ name: "test-anon-resume", },)
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      request("POST", `http://localhost/api/chats/${chatId}/story/resume`,),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("POST /story/configure returns 401 for anonymous caller", async () => {
+    const chatId = await seedChat();
+    const app = new Elysia({ name: "test-anon-config", },)
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/story/configure`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("POST /gm/escalate returns 401 for anonymous caller", async () => {
+    const chatId = await seedChat();
+    const app = new Elysia({ name: "test-anon-escalate", },)
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      request("POST", `http://localhost/api/chats/${chatId}/gm/escalate`,),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("POST /story/pause returns 403 for non-owner", async () => {
+    const chatId = await seedChat();
+    const otherUserId = crypto.randomUUID();
+    await insertUsers(db, "other3", "Other3", { id: otherUserId, },);
+    const app = new Elysia({ name: "test-other-pause", },)
+      .derive(() => ({ userId: otherUserId, userRole: "user" as const, }))
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      request("POST", `http://localhost/api/chats/${chatId}/story/pause`,),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST /story/resume returns 403 for non-owner", async () => {
+    const chatId = await seedChat();
+    const otherUserId = crypto.randomUUID();
+    await insertUsers(db, "other4", "Other4", { id: otherUserId, },);
+    const app = new Elysia({ name: "test-other-resume", },)
+      .derive(() => ({ userId: otherUserId, userRole: "user" as const, }))
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      request("POST", `http://localhost/api/chats/${chatId}/story/resume`,),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST /story/configure returns 403 for non-owner", async () => {
+    const chatId = await seedChat();
+    const otherUserId = crypto.randomUUID();
+    await insertUsers(db, "other5", "Other5", { id: otherUserId, },);
+    const app = new Elysia({ name: "test-other-config", },)
+      .derive(() => ({ userId: otherUserId, userRole: "user" as const, }))
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/story/configure`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST /story/narration returns 403 for non-owner", async () => {
+    const worldId = await seedWorld();
+    const chatId = await seedChat({ worldId, },);
+    const otherUserId = crypto.randomUUID();
+    await insertUsers(db, "other6", "Other6", { id: otherUserId, },);
+    const app = new Elysia({ name: "test-other-narr", },)
+      .derive(() => ({ userId: otherUserId, userRole: "user" as const, }))
+      .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/story/narration`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ text: "hello", },),
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
 });
