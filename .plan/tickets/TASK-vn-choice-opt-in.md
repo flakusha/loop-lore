@@ -11,12 +11,13 @@ choices exist. See `## Summary` for the intent; the five boxes in
 **Acceptance Criteria:** The five boxes in `## Acceptance Criteria`.
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Tags:** visual-novel, choices, opt-in, send-gate
 **Epic:** epic-visual-novel-mode
 **Git Issue:** ce429a2
+**Status Note (2026-10-18):** Shipped against `dev`: the per-chat `vnChoicesEnabled` flag (default off, allowlisted on both the backend `src/chat/service/access.ts` and frontend `gm-config-presentation.ts` sides; `getVnSettings` never leaks it across chats) and the pending-decision send gate (`src/routes/messages/guards.ts` rejects free-text send with a 409 while an unresolved choice or question exists; `destroyChoiceCards`/`destroyQuestionCards` clear the pending flag). `render-scene.ts:245-252` gates card mounting + fetches on the flag, so an opt-out chat never shows choice UI. Open: consequence/next-scene application on resolution (shared with `TASK-vn-branching-choices.md`).
 
 **Related:** `TASK-vn-branching-choices.md` (choice generation + the send path
 this gate must intercept), `TASK-visual-novel-mode.md` (where a per-chat VN
@@ -28,8 +29,19 @@ VN branching choices exist (POST /api/chats/:id/vn/generate-choices, vn_choices 
 
 ## Acceptance Criteria
 
-- [ ] Per-chat opt-in flag for VN choice elements (default off)
-- [ ] Pending choice blocks free send via the turn send gate until resolved/dismissed
+- [x] Per-chat opt-in flag for VN choice elements (default off) —
+      `vnChoicesEnabled` in `gm_config` (`src/chat/types/config.ts`),
+      allowlisted on both sides, default off (2026-10-18)
+- [x] Pending choice blocks free send via the turn send gate until
+      resolved/dismissed — `src/routes/messages/guards.ts` 409 path
+      (2026-10-18)
 - [ ] Choice resolution consumes the beat and applies consequences/next scene
-- [ ] Opt-out chat never shows choice UI and never blocks on choices
-- [ ] Tests passing
+      — impacts are stored/summed only; nothing writes them to the
+      relationship/mood systems and no caller acts on `nextSceneId`
+- [x] Opt-out chat never shows choice UI and never blocks on choices —
+      `render-scene.ts` gates mounting and fetches on the flag; the gate
+      only fires when a pending row exists (2026-10-18)
+- [ ] Tests passing — dedicated suites exist (`gm-config.test.ts` flag
+      round-trip + default off, `settings.test.ts` no-cross-chat-leak,
+      `render-scene.test.ts` flag on/off mounting + fetches, messages guard
+      tests); not re-run in this docs-only pass
