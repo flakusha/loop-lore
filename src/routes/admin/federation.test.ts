@@ -21,11 +21,16 @@ import type { Config, } from "../../config/schema";
 import { PeerWorkloadClass, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { listPeers, upsertPeer, } from "../../federation/coordinator";
+import type { PeerProbeFetch, } from "../../federation/peer-health-probe";
 import { listWorkloadPeers, } from "../../federation/peer-registry";
+import type { PeerAssignmentMatrix, } from "../../federation/peer-router";
 import { PeerRouteReason, resolvePeerRoute, } from "../../federation/peer-router";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { federationAdminRoutes, } from "./federation";
+import { federationBudgetRoutes, } from "./federation-budgets";
+import { federationPeersRoutes, } from "./federation-peers";
+import { federationUsageRoutes, } from "./federation-usage";
 
 const SECRET = "admin-fed-encryption-key-0123456789";
 const REMOTE = "https://gpu.example";
@@ -33,16 +38,46 @@ const OTHER_REMOTE = "https://cpu.example";
 const LOOPBACK = "http://127.0.0.1:4010";
 
 /** A reachable probe: the peer's own advertisement answers. */
-const REACHABLE_FETCH: typeof fetch = async () =>
-  new Response(JSON.stringify({ instanceId: "peer-1", workloadClasses: [PeerWorkloadClass.Chat,], },), {
-    status: 200,
-    headers: { "Content-Type": "application/json", },
-  },);
+const REACHABLE_FETCH: PeerProbeFetch = async () => ({
+  ok: true,
+  status: 200,
+  body: { instanceId: "peer-1", workloadClasses: [PeerWorkloadClass.Chat,], },
+});
 
-/** An unreachable probe: connection refused. */
-const UNREACHABLE_FETCH: typeof fetch = async () => {
+/** A non-ok probe: the peer answered, but not with a success. */
+const NOT_OK_FETCH: PeerProbeFetch = async () => ({ ok: false, status: 503, body: null, });
+
+/** A malformed probe: a success carrying a non-advertisement body. */
+const MALFORMED_FETCH: PeerProbeFetch = async () => ({ ok: true, status: 200, body: "not-an-object", });
+
+/** An unreachable probe: connection refused. `probePeerHealth` never throws. */
+const UNREACHABLE_FETCH: PeerProbeFetch = async () => {
   throw new Error("connection refused",);
 };
+
+/** A well-formed peer-create request body for `origin`. */
+function peerPost(origin: string,): Request {
+  return new Request("http://localhost/api/admin/federation/peers", {
+    method: "POST",
+    body: JSON.stringify({ origin, },),
+    headers: { "Content-Type": "application/json", },
+  },);
+}
+
+/**
+ * Read the matrix back over HTTP and narrow it to the router's input type. A
+ * real parse rather than a cast, so a shape change in the route surfaces here.
+ * @param app
+ * @returns {Promise<PeerAssignmentMatrix>}
+ */
+async function readMatrix(app: Elysia,): Promise<PeerAssignmentMatrix> {
+  const res = await app.handle(new Request("http://localhost/api/admin/federation/matrix",),);
+  const body: unknown = await res.json();
+  if (typeof body !== "object" || body === null || !("matrix" in body)) { throw new Error("matrix read failed",); }
+  const { matrix, } = body as { matrix: PeerAssignmentMatrix };
+
+  return matrix;
+}
 
 /**
  * @param federationEnabled
@@ -66,13 +101,13 @@ function createApp(
   db: Kysely<DB>,
   userRole: string,
   federationEnabled = true,
-  probeFetch: typeof fetch = REACHABLE_FETCH,
+  probeFetch: PeerProbeFetch = REACHABLE_FETCH,
 ): Elysia {
   return new Elysia({ name: `test-fed-admin-${userRole}`, },)
     .derive(() => ({ userId: `test-user-${userRole}`, userRole, sessionId: "s1", }))
     .use(
       federationAdminRoutes(
-        { database: db, config: testConfig(federationEnabled,), probeFetch: probeFetch as never, },
+        { database: db, config: testConfig(federationEnabled,), probeFetch, },
         "/api",
       ),
     ) as unknown as Elysia;
@@ -188,6 +223,57 @@ describe("federation admin — POST /peers validation", () => {
     const { db, } = await createTestDb();
     const res = await post(db, { origin: `https://gpu.example/${"x".repeat(4000,)}`, },);
     expect(res.status,).toBe(422,);
+    await db.destroy();
+  });
+});
+
+describe("federation admin — save-time health probe", () => {
+  test("a reachable peer is stored trusted", async () => {
+    const { db, } = await createTestDb();
+    const app = createApp(db, "admin", true, REACHABLE_FETCH,);
+    const res = await app.handle(peerPost(REMOTE,),);
+    const body = await res.json() as { peer: { state: string }; probe: { outcome: string } };
+
+    expect(res.status,).toBe(200,);
+    expect(body.probe.outcome,).toBe("reachable",);
+    expect(body.peer.state,).toBe("trusted",);
+    await db.destroy();
+  });
+
+  test("an unreachable peer is stored pending, never trusted", async () => {
+    const { db, } = await createTestDb();
+    const app = createApp(db, "admin", true, UNREACHABLE_FETCH,);
+    const res = await app.handle(peerPost(REMOTE,),);
+    const body = await res.json() as { peer: { state: string }; probe: { outcome: string; reason: string } };
+
+    expect(res.status,).toBe(200,);
+    expect(body.probe.outcome,).toBe("unreachable",);
+    expect(body.peer.state,).toBe("pending",);
+    // The operator is told why.
+    expect(body.probe.reason,).toContain("connection refused",);
+    await db.destroy();
+  });
+
+  test("a peer answering non-ok is stored pending", async () => {
+    const { db, } = await createTestDb();
+    const app = createApp(db, "admin", true, NOT_OK_FETCH,);
+    const res = await app.handle(peerPost(REMOTE,),);
+    const body = await res.json() as { peer: { state: string }; probe: { outcome: string; reason: string } };
+
+    expect(body.probe.outcome,).toBe("not-ok",);
+    expect(body.peer.state,).toBe("pending",);
+    expect(body.probe.reason,).toContain("503",);
+    await db.destroy();
+  });
+
+  test("a peer answering a non-advertisement body is stored pending", async () => {
+    const { db, } = await createTestDb();
+    const app = createApp(db, "admin", true, MALFORMED_FETCH,);
+    const res = await app.handle(peerPost(REMOTE,),);
+    const body = await res.json() as { peer: { state: string }; probe: { outcome: string } };
+
+    expect(body.probe.outcome,).toBe("malformed",);
+    expect(body.peer.state,).toBe("pending",);
     await db.destroy();
   });
 });
@@ -405,6 +491,41 @@ describe("federation admin — budgets", () => {
   });
 });
 
+describe("federation admin — sub-surface composition", () => {
+  test("each sub-surface mounts independently under the shared prefix", async () => {
+    const { db, } = await createTestDb();
+    const opts = {
+      database: db,
+      config: testConfig(true,),
+      federationEnabled: true,
+      encryptionKey: SECRET,
+      probeFetch: REACHABLE_FETCH,
+    };
+
+    // Each factory is a real mount point, not just an internal helper reached
+    // through federationAdminRoutes; mounting them alone must serve their routes.
+    // The derive supplies the same auth context the admin tree does.
+    const admin = () =>
+      new Elysia({ name: "t-fed", },).derive(() => ({
+        userId: "test-user-admin",
+        userRole: "admin",
+        sessionId: "s1",
+      }));
+
+    const peers = admin().use(federationPeersRoutes(opts, "/api",),) as unknown as Elysia;
+    const budgets = admin().use(federationBudgetRoutes(opts, "/api",),) as unknown as Elysia;
+    const usage = admin().use(federationUsageRoutes(opts, "/api",),) as unknown as Elysia;
+
+    expect((await peers.handle(new Request("http://localhost/api/admin/federation/peers",),)).status,).toBe(200,);
+    expect((await budgets.handle(new Request("http://localhost/api/admin/federation/matrix",),)).status,).toBe(200,);
+    const usageBody = await (await usage.handle(new Request("http://localhost/api/admin/federation/usage",),))
+      .json() as { enabled: boolean };
+
+    expect(usageBody.enabled,).toBe(true,);
+    await db.destroy();
+  });
+});
+
 describe("federation admin — assignment matrix drives the real router", () => {
   test("an empty matrix row is local-only; a populated row admits the peer", async () => {
     const { db, } = await createTestDb();
@@ -433,14 +554,13 @@ describe("federation admin — assignment matrix drives the real router", () => 
 
     /** Resolve against the REAL router, with the matrix read back from the DB. */
     const routeWithMatrix = async () => {
-      const matrixBody = await (await app.handle(new Request("http://localhost/api/admin/federation/matrix",),))
-        .json() as any;
+      const matrix = await readMatrix(app,);
 
       return resolvePeerRoute({
         federationEnabled: true,
         workloadClass: PeerWorkloadClass.Chat,
         peers: await listWorkloadPeers(db,),
-        matrix: matrixBody.matrix,
+        matrix,
       },);
     };
 
@@ -462,7 +582,10 @@ describe("federation admin — assignment matrix drives the real router", () => 
     // 3. The REAL router now picks the peer. This is the load-bearing assertion.
     decision = await routeWithMatrix();
     expect(decision.reason,).not.toBe(PeerRouteReason.NoMatrixRow,);
-    expect(decision.peer?.origin,).toBe(REMOTE,);
+    expect(decision.target,).toBe("peer",);
+    // Narrowed to the remote variant so the origin is a real read, not a cast.
+    if (decision.target !== "peer") { throw new Error("expected a peer route",); }
+    expect(decision.peer.origin,).toBe(REMOTE,);
     await db.destroy();
   });
 
@@ -477,10 +600,9 @@ describe("federation admin — assignment matrix drives the real router", () => 
       },),
     );
 
-    const matrixBody = await (await app.handle(new Request("http://localhost/api/admin/federation/matrix",),))
-      .json() as any;
+    const matrix = await readMatrix(app,);
 
-    expect(matrixBody.matrix.preferences.chat,).toEqual(["https://nobody.example",],);
+    expect(matrix.preferences.chat,).toEqual(["https://nobody.example",],);
     await db.destroy();
   });
 
@@ -501,10 +623,11 @@ describe("federation admin — assignment matrix drives the real router", () => 
 });
 
 describe("federation admin — disabled federation", () => {
+  // [method, path, body]; `body` is undefined for the bodiless DELETE.
   const MUTATIONS: [string, string, unknown,][] = [
     ["POST", "/api/admin/federation/peers", { origin: REMOTE, },],
     ["PATCH", "/api/admin/federation/peers/https%3A%2F%2Fgpu.example/workload", { workloadTrust: true, },],
-    ["DELETE", "/api/admin/federation/peers/https%3A%2F%2Fgpu.example",],
+    ["DELETE", "/api/admin/federation/peers/https%3A%2F%2Fgpu.example", undefined,],
     ["PUT", "/api/admin/federation/budgets", { origin: REMOTE, workloadClass: "chat", mode: "advisory", },],
     ["PUT", "/api/admin/federation/matrix", { preferences: {}, },],
   ];
