@@ -174,19 +174,31 @@ it cannot drift from the URL. The only persisted difference is `auth_mode`:
 | Transport trust | CA bundle and/or SPKI pin from `FederationPeerTrustConfig` | none required — loopback is not remotely reachable |
 | SPKI pre-flight (`src/federation/spki-pin.ts`) | enforced when `spkiPins` is set | **skipped** — there is no public cert to pin |
 | Content encryption | receiver's per-sender inbound key, PSK fallback (`src/federation/peer-keys.ts:231`) | identical — the existing key machinery already treats sealed-wire and plaintext-PSK as two modes |
-| Workload auth | mesh PSK + `workload_trust` | mesh PSK + `workload_trust` + a per-peer shared token |
+| Workload auth | mesh PSK + `workload_trust` + a per-peer shared token | mesh PSK + `workload_trust` + a per-peer shared token |
 
-A same-host peer therefore differs only in that TLS trust checks are
-unnecessary and a shared token is mandatory. The shared token is stored with
-`encryptValue` (`src/crypto/byok.ts:83`) under the same server secret the BYOK
-key store already uses, and presented as a bearer credential on the workload
-wire. It is **required** for `host-local` and **forbidden** for `tls`: a
-loopback peer with no token would accept workload calls from any process that
-can open a socket to that port, which is not a trust boundary.
+A same-host peer therefore differs only in that TLS trust checks are unnecessary.
+The shared token is stored with `encryptValue` (`src/crypto/byok.ts:83`) under
+the same server secret the BYOK key store already uses, and presented as a
+bearer credential on the workload wire.
+
+**A shared token is mandatory for EVERY `workload_trust` peer, whatever its
+`auth_kind`** — and additionally for `host-local`, whatever its workload trust.
+Two independent reasons, and neither of them is "TLS is good enough":
+
+- a loopback peer with no token would accept workload calls from any process
+  that can open a socket to that port, which is not a trust boundary;
+- for a `tls` peer the `x-peer-origin` header is **asserted, never proven**:
+  `src/federation/peer-fetch.ts` records that this runtime enforces no client
+  certificate, and the SPKI pin in `src/federation/spki-pin.ts` is an
+  *outbound* pre-flight that says nothing about who is calling us. TLS trust is
+  an additional layer for a remote peer, never the authentication itself.
 
 Validation on save rejects: a non-`http(s)` origin, a loopback origin without a
-token, a token on a non-loopback origin, an `allowed_workload_classes` entry
-outside the enum, and a duplicate origin.
+token, a `workload_trust` grant with no token on **any** link kind, an
+`allowed_workload_classes` entry outside the enum, and a duplicate origin. An
+earlier draft of this epic said the opposite — a token on a non-loopback origin
+was *forbidden* — which is what left a remote workload-trusted peer with no
+credential at all. That rule is replaced, not extended.
 
 ### 2. Workload routing / offload
 
@@ -468,10 +480,21 @@ that is a follow-up decision, deliberately not taken here.
 ### 6. Security and trust
 
 - **Peer authentication** is layered, not invented. The workload wire requires
-  the mesh PSK *and* `workload_trust = true` *and*, for `host-local`, the
-  per-peer shared token. A peer that is trusted for content replication is
-  **not** thereby trusted to run workloads — the default for `workload_trust`
-  is false, and the check happens before admission, not before the write.
+  the mesh PSK *and* `workload_trust = true` *and* the per-peer shared token,
+  for **every** workload-trusted peer whatever its `auth_kind`. A peer that is
+  trusted for content replication is **not** thereby trusted to run workloads —
+  the default for `workload_trust` is false, and the check happens before
+  admission, not before the write.
+- **One invariant, enforced twice.** `authorizePeerWork`
+  (`src/federation/peer-work-auth.ts`) verifies the credential unconditionally,
+  and `validatePeerWorkloadSave`
+  (`src/federation/peer-registry-validation.ts`) refuses to store a
+  `workload_trust` grant with no token on any link kind — so a peer that
+  cannot authenticate cannot be configured to be admitted. TLS and the SPKI pin
+  are an **additional outbound layer** for a remote peer, never the inbound
+  authentication: this runtime enforces no client certificate, so for a `tls`
+  peer the `x-peer-origin` header is asserted, not proven. Missing, malformed,
+  wrong-peer or empty-key credentials all fail closed.
 - **Secret storage** reuses `encryptValue` / `decryptValue`
   (`src/crypto/byok.ts:83,101`, re-exported from `src/crypto/index.ts:51`)
   under the same server secret the BYOK key store uses. No second encryption

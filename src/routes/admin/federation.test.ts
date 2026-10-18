@@ -168,10 +168,18 @@ describe("federation admin — POST /peers validation", () => {
     );
   }
 
-  test("accepts a remote peer with no token", async () => {
+  test("accepts a remote peer with no token while it holds no workload trust", async () => {
+    const { db, } = await createTestDb();
+    const res = await post(db, { origin: REMOTE, allowedWorkloadClasses: ["chat",], },);
+    expect(res.status,).toBe(200,);
+    await db.destroy();
+  });
+
+  test("rejects a workload-trusted remote peer with no token", async () => {
     const { db, } = await createTestDb();
     const res = await post(db, { origin: REMOTE, workloadTrust: true, allowedWorkloadClasses: ["chat",], },);
-    expect(res.status,).toBe(200,);
+    expect(res.status,).toBe(400,);
+    expect((await res.json() as any).data?.reason,).toBe("workload_trust_without_token",);
     await db.destroy();
   });
 
@@ -197,11 +205,43 @@ describe("federation admin — POST /peers validation", () => {
     await db.destroy();
   });
 
-  test("rejects a token on a remote origin", async () => {
+  test("accepts a token on a remote origin when the peer is workload-trusted", async () => {
     const { db, } = await createTestDb();
-    const res = await post(db, { origin: REMOTE, sharedToken: "nope", },);
-    expect(res.status,).toBe(400,);
-    expect((await res.json() as any).data?.reason,).toBe("token_on_remote_origin",);
+    const res = await post(db, { origin: REMOTE, sharedToken: "remote-secret", workloadTrust: true, },);
+    expect(res.status,).toBe(200,);
+    await db.destroy();
+  });
+
+  test("refuses to store a token for ANY origin when byoKey.encryptionKey is unset", async () => {
+    const { db, } = await createTestDb();
+    const app = new Elysia({ name: "test-fed-admin-no-key", },)
+      .derive(() => ({ userId: "test-user-admin", userRole: "admin", sessionId: "s1", }))
+      .use(
+        federationAdminRoutes(
+          {
+            database: db,
+            config: { federation: { enabled: true, peers: [], seeds: [], }, } as unknown as Config,
+            probeFetch: REACHABLE_FETCH,
+          },
+          "/api",
+        ),
+      ) as unknown as Elysia;
+
+    const send = (body: unknown,): Promise<Response> =>
+      app.handle(
+        new Request("http://localhost/api/admin/federation/peers", {
+          method: "POST",
+          body: JSON.stringify(body,),
+          headers: { "Content-Type": "application/json", },
+        },),
+      );
+
+    for (const origin of [REMOTE, LOOPBACK,]) {
+      const res = await send({ origin, sharedToken: "a-token-value", workloadTrust: true, },);
+      expect(res.status,).toBe(400,);
+      expect((await res.json() as any).data?.reason,).toBe("missing_encryption_key",);
+    }
+
     await db.destroy();
   });
 
@@ -332,6 +372,42 @@ describe("federation admin — shared token is write-only", () => {
     const raw = await res.text();
     expect(raw,).not.toContain("super-secret-token-value",);
     expect(raw,).not.toContain("sharedToken",);
+    await db.destroy();
+  });
+
+  test("a REMOTE peer's token never reaches any response, on raw text either", async () => {
+    const { db, } = await createTestDb();
+    const app = createApp(db, "admin",);
+    const saved = await app.handle(
+      new Request("http://localhost/api/admin/federation/peers", {
+        method: "POST",
+        body: JSON.stringify({
+          origin: REMOTE,
+          sharedToken: "remote-super-secret-token-value",
+          workloadTrust: true,
+          allowedWorkloadClasses: ["chat",],
+        },),
+        headers: { "Content-Type": "application/json", },
+      },),
+    );
+
+    expect(saved.status,).toBe(200,);
+
+    for (
+      const path of [
+        "/api/admin/federation/peers",
+        "/api/admin/federation/usage",
+        `/api/admin/federation/peers/${encodeURIComponent(REMOTE,)}/workload`,
+      ]
+    ) {
+      const raw = await (await app.handle(new Request(`http://localhost${path}`,),)).text();
+      expect(raw, `${path} must not carry the token`,).not.toContain("remote-super-secret-token-value",);
+      expect(raw,).not.toContain("sharedToken",);
+    }
+
+    // And it is encrypted at rest, never plaintext in the stored row either.
+    const rows = await db.selectFrom("mesh_peers",).selectAll().execute();
+    expect(JSON.stringify(rows,),).not.toContain("remote-super-secret-token-value",);
     await db.destroy();
   });
 });
