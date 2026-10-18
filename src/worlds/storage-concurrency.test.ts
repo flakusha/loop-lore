@@ -94,7 +94,7 @@ describe("withdrawItem with MIXED quantities on one pile", () => {
 
     // Conservation: at most 5 left the chest, so at least 0 remain. The point
     // is that `used` never goes negative and never exceeds what was taken.
-    const used = (await storageUsage(db, storageId,)).used;
+    const used = (await storageUsage(db, storageId, WORLD,)).used;
     expect(used >= 0,).toBe(true,);
     expect(used,).toBe(3,);
   });
@@ -116,7 +116,7 @@ describe("withdrawItem under concurrency", () => {
     expect(outcome.refused,).toEqual(["insufficient-quantity",],);
 
     // Conservation: 10 units went in, at most 10 came out, nothing is left.
-    expect((await storageUsage(db, storageId,)).used,).toBe(0,);
+    expect((await storageUsage(db, storageId, WORLD,)).used,).toBe(0,);
     expect(await getStorageContents(db, storageId,),).toEqual([],);
   });
 
@@ -172,7 +172,7 @@ describe("depositItem under concurrency", () => {
     expect(outcome.refused,).toEqual(["capacity-exceeded", "capacity-exceeded",],);
 
     // The load-bearing assertion: capacity is a hard limit, not a target.
-    const usage = await storageUsage(db, storageId,);
+    const usage = await storageUsage(db, storageId, WORLD,);
     expect(usage.used,).toBe(98,);
     expect(usage.used <= usage.capacity,).toBe(true,);
   });

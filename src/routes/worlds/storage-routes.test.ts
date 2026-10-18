@@ -182,4 +182,29 @@ describe("the contents route is access-checked", () => {
     const body = await res.json() as { data: { quantity: number }[] };
     expect(body.data[0]!.quantity,).toBe(7,);
   });
+
+  test("the usage route scopes the container to the path world", async () => {
+    // OWNER_USER must PASS the world gate on w2, or the request 404s before the
+    // storage scope check runs and the test would pass for the wrong reason. So
+    // w2 is PUBLIC (membership by access) and its chest belongs to STRANGER_USER.
+    await insertWorlds(db, STRANGER_USER, "Second World", { id: "w2", visibility: WorldVisibility.Public, },);
+    await insertLocations(db, "w2", "Camp", { id: "loc2", },);
+    await createStorage(db, {
+      worldId: "w2",
+      locationId: "loc2",
+      name: "Stranger Chest",
+      capacity: 100,
+      security: 0,
+      accessControl: { ownerActorId: STRANGER_ACTOR, },
+    },);
+
+    // OWNER_USER is a member of w2 but the chest is in w1 — the world-scoped
+    // lookup must not find it in w2.
+    const foreign = await get(OWNER_USER, `/api/worlds/w2/storage/${storageId}`,);
+    expect(foreign.status,).toBe(404,);
+
+    // Control: w1's own usage still reads.
+    const own = await get(OWNER_USER, `/api/worlds/${WORLD}/storage/${storageId}`,);
+    expect(own.status,).toBe(200,);
+  });
 });
