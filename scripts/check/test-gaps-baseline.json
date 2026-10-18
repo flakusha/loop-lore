@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-18T07:39:29.645Z",
-  "count": 1501,
+  "generatedAt": "2026-10-18T09:12:59.100Z",
+  "count": 1496,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -1181,11 +1181,7 @@
     "src/routes/worlds/autonomy-control.ts#setActorAutonomy",
     "src/routes/worlds/chats.ts#chatsRoutes",
     "src/routes/worlds/encounter-routes.ts#encounterRoutes",
-    "src/routes/worlds/faction-diplomacy-routes.ts#DataResponse",
-    "src/routes/worlds/faction-diplomacy-routes.ts#Errors",
-    "src/routes/worlds/faction-diplomacy-routes.ts#factionDiplomacyRoutes",
     "src/routes/worlds/faction-routes.ts#factionRoutes",
-    "src/routes/worlds/faction-routes.ts#requireFactionsInWorld",
     "src/routes/worlds/fractal-locations-routes.ts#fractalLocationsRoutes",
     "src/routes/worlds/fractal-travel-routes.ts#fractalTravelRoutes",
     "src/routes/worlds/location-chat.ts#createLocationChat",
@@ -1490,7 +1486,6 @@
     "src/worlds/license.ts#isValidSpdxId",
     "src/worlds/license.ts#resolveLicenseKind",
     "src/worlds/maps.ts#containsPoint",
-    "src/worlds/resource-core.ts#MAX_ABILITY_BONUS",
     "src/worlds/resource-core.ts#mulberry32",
     "src/worlds/resource-core.ts#rollExtraction",
     "src/worlds/resource-node.ts#consumeNode",
