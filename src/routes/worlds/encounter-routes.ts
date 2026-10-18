@@ -16,7 +16,9 @@
  * that lives on the templates POST.
  */
 import { Elysia, t, } from "elysia";
-import { safeJsonStringify, } from "../../utils";
+import type { Insertable, } from "kysely";
+import type { DB, } from "../../db/schema";
+import { jsonStringifyOr, } from "../../utils";
 import {
   EncounterTemplateStateSchema,
   EncounterTravelPhaseSchema,
@@ -116,8 +118,10 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
 
-        const body = ctx.body;
-        const row = await database.insertInto("encounter_templates",).values({
+        // Typed off the TypeBox schema Elysia already validated against: the
+        // insert below must typecheck against the real Kysely column types.
+        const body = ctx.body as typeof CreateTemplateBody.static;
+        const values: Insertable<DB["encounter_templates"]> = {
           world_id: ctx.params.worldId,
           name: body.name,
           type: body.type ?? "event",
@@ -125,14 +129,16 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
           trigger_chance: body.triggerChance ?? 0,
           cooldown_seconds: body.cooldownSeconds ?? 0,
           difficulty: body.difficulty ?? 0,
-          requirements: safeJsonStringify(body.requirements ?? {},),
-          rewards: safeJsonStringify(body.rewards ?? {},),
-          consequences: safeJsonStringify(body.consequences ?? {},),
+          requirements: jsonStringifyOr(body.requirements ?? {},),
+          rewards: jsonStringifyOr(body.rewards ?? {},),
+          consequences: jsonStringifyOr(body.consequences ?? {},),
           story_notes: body.storyNotes ?? null,
           assistant_driven: body.assistantDriven ?? "automatic",
           travel_phase: body.travelPhase ?? null,
           active: body.active ?? "enabled",
-        } as any,)
+        };
+
+        const row = await database.insertInto("encounter_templates",).values(values,)
           .returningAll()
           .executeTakeFirstOrThrow();
 
