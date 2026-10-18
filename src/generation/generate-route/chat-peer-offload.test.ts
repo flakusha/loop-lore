@@ -3,7 +3,7 @@
 
 /**
  * CONSUMER-VISIBLE tests for the ONE live peer-offload call site
- * (TASK-federation-offload-chat-turn-call-site).
+ * (TASK-federation-offload-adopt-dispatch-in-the-chat-turn-call-site).
  *
  * Every test drives the real `streamToClient` — the production chat turn —
  * against a real migrated SQLite DB and, where a peer is eligible, a real
