@@ -10,12 +10,18 @@
  * reaching transition-engine leaves the scene at opacity 0 forever, which a
  * DOM-level assertion cannot distinguish from a passing render.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { VnScene, } from "../scene-renderer/types";
 import type { VnSettings, } from "../settings";
-import { applyTemplateOverrides, } from "./apply";
+import {
+  applyResolvedTemplate,
+  applyTemplateOverrides,
+  resolveAnyTemplate,
+  resolveTemplateForScene,
+} from "./apply";
 import { DIALOGUE_TEMPLATES, } from "./scene-templates/dialogue-templates";
 import { SCENE_TEMPLATES, } from "./scene-templates/scene-templates";
+import { saveTemplate, type VnTemplate, } from "./template-engine";
 
 /** Base settings with values distinct from template bodies where possible. */
 function baseSettings(): VnSettings {
@@ -154,5 +160,125 @@ describe("applyTemplateOverrides — portrait fields are not mapped", () => {
     expect(base.transition,).toBe("fade",);
     expect(base.layout,).toBe("overlay",);
     expect(base.typewriterSpeed,).toBe(30,);
+  });
+});
+
+// ── Custom-template resolution & composite fail-closed (vn-epic-completion) ──
+
+const WORLD = "apply-test-world";
+
+// bun:test has no DOM storage; install a per-test in-memory stub so the
+// custom-template store is hermetic (no cross-file global leakage).
+const storage = new Map<string, string>();
+const originalLocalStorage = (globalThis as { localStorage?: unknown }).localStorage;
+
+beforeEach(() => {
+  storage.clear();
+  (globalThis as { localStorage?: unknown }).localStorage = {
+    getItem: (key: string,) => storage.get(key,) ?? null,
+    setItem: (key: string, value: string,) => void storage.set(key, String(value,),),
+    removeItem: (key: string,) => void storage.delete(key,),
+  };
+},);
+
+afterEach(() => {
+  (globalThis as { localStorage?: unknown }).localStorage = originalLocalStorage;
+},);
+
+function customTemplate(overrides: Partial<VnTemplate>,): VnTemplate {
+  return {
+    id: "custom_scene",
+    name: "Custom Scene",
+    description: "",
+    worldId: WORLD,
+    category: "scene",
+    version: 1,
+    variables: [],
+    body: { layout: "split", transition: "dissolve", },
+    tags: [],
+    createdAt: "2024-01-01T00:00:00Z",
+    modifiedAt: "2024-01-01T00:00:00Z",
+    ...overrides,
+  };
+}
+
+// Storage cleanup between tests is handled by the shared beforeEach
+// (testStorage.clear()); nothing persists to restore here.
+
+describe("resolveTemplateForScene — custom store", () => {
+  test("a world custom template resolves after the built-in registry misses", () => {
+    saveTemplate(customTemplate({},),);
+    const resolved = resolveTemplateForScene(scene("custom_scene",), WORLD,);
+    expect(resolved?.id,).toBe("custom_scene",);
+  });
+
+  test("custom lookup is skipped without a world id", () => {
+    saveTemplate(customTemplate({},),);
+    expect(resolveTemplateForScene(scene("custom_scene",), null,),).toBeUndefined();
+  });
+
+  test("built-in ids keep winning over same-named custom templates", () => {
+    saveTemplate(customTemplate({ id: "introduction", body: { layout: "below", transition: "fade", }, },),);
+    const resolved = resolveTemplateForScene(scene("introduction",), WORLD,);
+    expect(resolved?.body.layout,).toBe("split",);
+  });
+});
+
+describe("resolveAnyTemplate", () => {
+  test("resolves scene registry, dialogue registry, then the custom store", () => {
+    expect(resolveAnyTemplate("introduction",)?.category,).toBe("scene",);
+    expect(resolveAnyTemplate("dialogue_tense",)?.category,).toBe("dialogue",);
+
+    saveTemplate(customTemplate({},),);
+    expect(resolveAnyTemplate("custom_scene", WORLD,)?.id,).toBe("custom_scene",);
+    expect(resolveAnyTemplate("custom_scene",),).toBeUndefined();
+  });
+});
+
+describe("applyTemplateOverrides — custom & composite templates", () => {
+  test("a world custom scene template is applied at render resolution", () => {
+    saveTemplate(customTemplate({},),);
+    const result = applyTemplateOverrides(baseSettings(), scene("custom_scene",), WORLD,);
+    expect(result.layout,).toBe("split",);
+    expect(result.transition,).toBe("dissolve",);
+  });
+
+  test("custom templates never resolve when no worldId is threaded", () => {
+    saveTemplate(customTemplate({},),);
+    const base = baseSettings();
+    expect(applyTemplateOverrides(base, scene("custom_scene",),),).toBe(base,);
+  });
+
+  test("a composite template fails closed to base settings on this one-shot path", () => {
+    saveTemplate(customTemplate({
+      category: "composite",
+      body: {
+        layout: "inherit",
+        transition: "inherit",
+        steps: [{ templateId: "confrontation", },],
+      },
+    },),);
+
+    const base = baseSettings();
+    const result = applyTemplateOverrides(base, scene("custom_scene",), WORLD,);
+    expect(result,).toBe(base,);
+  });
+});
+
+describe("applyResolvedTemplate — dialogue bodies merge pacing only", () => {
+  test("a dialogue template's typewriter speed applies; its none transition does not", () => {
+    const tense = DIALOGUE_TEMPLATES.find((t,) => t.id === "dialogue_tense")!;
+    const result = applyResolvedTemplate(baseSettings(), tense, {},);
+    expect(result.typewriterSpeed,).toBe(tense.body.text?.typewriterSpeed ?? -1,);
+    expect(result.transition,).toBe("fade",);
+    expect(result.layout,).toBe("overlay",);
+  });
+
+  test("later applications override earlier ones (fold order)", () => {
+    const narration = DIALOGUE_TEMPLATES.find((t,) => t.id === "narration")!;
+    const base = baseSettings();
+    const once = applyResolvedTemplate(base, narration, {},);
+    const twice = applyResolvedTemplate(once, narration, {},);
+    expect(twice.typewriterSpeed,).toBe(narration.body.text?.typewriterSpeed ?? -1,);
   });
 });
