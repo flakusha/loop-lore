@@ -114,7 +114,9 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
 
-        return await respond(() => storageUsage(database, ctx.params.storageId, ctx.params.worldId,));
+        // The container is scoped to `:worldId` INSIDE the engine load, so a
+        // foreign id is a 404 rather than that world's usage report.
+        return await respond(() => storageUsage(database, ctx.params.worldId, ctx.params.storageId,));
       },
       {
         response: { 200: t.Object({ data: StorageUsageBody, },), 404: ErrorResponse, },

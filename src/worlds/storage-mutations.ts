@@ -20,12 +20,12 @@ import { type StorageUsage, storageUsage, } from "./storage";
 import { assertMayAccess, StorageError, type StorageRow, } from "./storage-access";
 
 /**
- * Load a container, or fail.
+ * Load a container scoped to the caller's world, or fail.
  * @param db Kysely handle
  * @param storageId the container to load
- * @param worldId world scope — a container in another world is not found
+ * @param worldId world the caller is acting in
  * @returns the row
- * @throws {StorageError} `not-found` when it does not exist in this world
+ * @throws {StorageError} `not-found` when it does not exist or lives elsewhere
  */
 async function loadStorage(db: Kysely<DB>, storageId: string, worldId: string,): Promise<StorageRow> {
   const storage = await db
@@ -35,7 +35,9 @@ async function loadStorage(db: Kysely<DB>, storageId: string, worldId: string,):
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
 
-  if (!storage) { throw new StorageError("not-found", `storage "${storageId}" not found`,); }
+  if (!storage) {
+    throw new StorageError("not-found", `storage "${storageId}" not found in world "${worldId}"`,);
+  }
 
   return storage;
 }
@@ -97,7 +99,7 @@ export async function depositItem(
   assertMayAccess(storage, input.actorId, input.worldId,);
 
   await db.transaction().execute(async (trx,) => {
-    const usage = await storageUsage(trx, input.storageId, input.worldId,);
+    const usage = await storageUsage(trx, input.worldId, input.storageId,);
     if (usage.used + input.quantity > usage.capacity) {
       throw new StorageError(
         "capacity-exceeded",
@@ -127,7 +129,7 @@ export async function depositItem(
     quantity: input.quantity,
   },);
 
-  return await storageUsage(db, input.storageId, input.worldId,);
+  return await storageUsage(db, input.worldId, input.storageId,);
 }
 
 /**
@@ -210,5 +212,5 @@ export async function withdrawItem(
     }
   }
 
-  return await storageUsage(db, input.storageId, input.worldId,);
+  return await storageUsage(db, input.worldId, input.storageId,);
 }

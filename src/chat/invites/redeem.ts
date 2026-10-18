@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, Selectable, } from "kysely";
+import { type Kysely, type Selectable, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { redeemInviteCode, type RedeemPortals, } from "./redeem-core";
+import { InviteUsedUpError, redeemInviteCode, type RedeemPortals, } from "./redeem-core";
 import type { RedeemOutcome, } from "./types";
 
 /**
@@ -14,7 +14,11 @@ import type { RedeemOutcome, } from "./types";
  * is already a participant the redemption still succeeds (idempotent join).
  *
  * The redemption and participant insert are committed in the same transaction
- * to avoid double-redeeming a capped invite under concurrency.
+ * to avoid double-redeeming a capped invite under concurrency. The consume
+ * update inside that transaction is the CAP GUARD, not a write of a previously
+ * read count: it increments relatively and matches only while `uses <
+ * max_uses`, so the winner of a race is decided by the row's current value
+ * (BUG-invite-max-uses-double-spend).
  * @param database
  * @param input
  * @param input.code
@@ -53,6 +57,22 @@ export async function redeemInvite(
       database
         .transaction()
         .execute(async (trx,) => {
+          // THE GUARD IS THE UPDATE. The cap check in `redeemInviteCode` runs
+          // on a row read BEFORE this transaction opened, so it cannot see a
+          // concurrent redemption; an absolute `uses = invite.uses + 1` write
+          // then makes the second caller overwrite the first and BOTH members
+          // are admitted against a one-use invite (BUG-invite-max-uses-double-
+          // spend). A relative increment guarded by the cap itself is decided by
+          // the row's CURRENT value, so exactly one caller matches.
+          const consumed = await trx
+            .updateTable("chat_invites",)
+            .set({ uses: sql`uses + 1`, },)
+            .where("id", "=", invite.id,)
+            .where("uses", "<", invite.max_uses ?? Number.MAX_SAFE_INTEGER,)
+            .executeTakeFirst();
+
+          if (Number(consumed.numUpdatedRows ?? 0,) === 0) { throw new InviteUsedUpError(); }
+
           await trx
             .insertInto("chat_participants",)
             .values({
@@ -60,12 +80,6 @@ export async function redeemInvite(
               actor_id: actorId,
               role_in_chat: "member" as never,
             },)
-            .execute();
-
-          await trx
-            .updateTable("chat_invites",)
-            .set({ uses: invite.uses + 1, },)
-            .where("id", "=", invite.id,)
             .execute();
         },),
   };

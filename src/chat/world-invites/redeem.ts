@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, Selectable, } from "kysely";
+import { type Kysely, type Selectable, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { redeemInviteCode, type RedeemPortals, } from "../invites/redeem-core";
+import { InviteUsedUpError, redeemInviteCode, type RedeemPortals, } from "../invites/redeem-core";
 import type { WorldRedeemOutcome, } from "./types";
 
 /**
@@ -53,18 +53,25 @@ export async function redeemWorldInvite(
       database
         .transaction()
         .execute(async (trx,) => {
+          // Same guard as the plain-chat portal: the consume update decides the
+          // cap against the CURRENT row (relative increment, `uses <
+          // max_uses` predicate) rather than writing a count read before the
+          // transaction, so concurrent redemptions cannot both take a use.
+          const consumed = await trx
+            .updateTable("world_invites",)
+            .set({ uses: sql`uses + 1`, },)
+            .where("id", "=", invite.id,)
+            .where("uses", "<", invite.max_uses ?? Number.MAX_SAFE_INTEGER,)
+            .executeTakeFirst();
+
+          if (Number(consumed.numUpdatedRows ?? 0,) === 0) { throw new InviteUsedUpError(); }
+
           await trx
             .insertInto("world_members",)
             .values({
               world_id: invite.world_id,
               actor_id: actorId,
             },)
-            .execute();
-
-          await trx
-            .updateTable("world_invites",)
-            .set({ uses: invite.uses + 1, },)
-            .where("id", "=", invite.id,)
             .execute();
         },),
   };

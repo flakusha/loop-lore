@@ -43,9 +43,10 @@ describe("create_location tool", () => {
     await db?.destroy();
   },);
 
-  test("creates a location in an explicitly provided world", async () => {
+  test("creates a location in the chat's world", async () => {
+    await insertChats(db, "World chat", userId, { id: "chat-1", world_id: "world-a", } as never,);
     const result = await locationCreationTool.handler(
-      { name: "The Gilded Tavern", description: "A cozy inn.", worldId: "world-a", },
+      { name: "The Gilded Tavern", description: "A cozy inn.", },
       { db, actorId, chatId: "chat-1", },
     );
 
@@ -62,7 +63,7 @@ describe("create_location tool", () => {
     expect(row.description,).toBe("A cozy inn.",);
   });
 
-  test("resolves world from the generating chat when no explicit world", async () => {
+  test("resolves world from the generating chat", async () => {
     await insertChats(db, "World chat", userId, { id: "chat-1", world_id: "chat-world", } as never,);
     const result = await locationCreationTool.handler(
       { name: "Harbor", },
@@ -197,7 +198,7 @@ describe("create_location tool", () => {
     expect(chats,).toHaveLength(0,);
   }, 10000,);
 
-  test("creates no bound chat when the generating actor has no owning user", async () => {
+  test("refuses an actor with no owning user", async () => {
     const orphanId = crypto.randomUUID();
     await insertActors(db, "Orphan", { id: orphanId, user_id: null, owner_id: null, } as never,);
     await insertChatSetupTemplates(db, "template-world", "World template", { id: "template-world", },);
@@ -206,22 +207,10 @@ describe("create_location tool", () => {
       { db, actorId: orphanId, chatId: "chat-1", },
     );
 
-    const parsed = JSON.parse(result.content,);
-    const chats = await db
-      .selectFrom("chats",)
-      .select("id",)
-      .where("current_location_id", "=", parsed.id,)
-      .execute();
-
-    expect(chats,).toHaveLength(0,);
-    // The location itself is still created.
-    const row = await db
-      .selectFrom("locations",)
-      .select("id",)
-      .where("id", "=", parsed.id,)
-      .executeTakeFirstOrThrow();
-
-    expect(row.id,).toBe(parsed.id,);
+    // The world gate resolves the owning user through the generating actor;
+    // an actor with none cannot be authorized, so nothing is written.
+    expect(result.isError,).toBe(true,);
+    expect(await db.selectFrom("locations",).select("id",).execute(),).toHaveLength(0,);
   }, 10000,);
 
   test("rejects a whitespace-only name", async () => {
@@ -242,12 +231,38 @@ describe("create_location tool", () => {
     expect(result.isError,).toBe(true,);
   });
 
-  test("trims an explicit worldId param", async () => {
+  // ── BUG-llm-chosen-worldid-cross-world-write ───────────────
+  //
+  // The second call site of the defect: a model-authored `worldId` reached an
+  // unguarded `locations` insert (and the auto-created bound chat with it). The
+  // parameter is gone; the chat's world is the only source, and the world gate
+  // still runs against the generating actor.
+  test("a model-supplied worldId cannot move the write into another world", async () => {
+    await insertUsers(db, `rival-${userId}`, "Rival", { id: "rival-user", } as never,);
+    await insertWorlds(db, "rival-user", "rival-world", { id: "rival-world", } as never,);
+    await insertChats(db, "World chat", userId, { id: "chat-1", world_id: "world-a", } as never,);
+
     const result = await locationCreationTool.handler(
-      { name: "Trimmed", worldId: "  world-a  ", },
+      // `additionalProperties: false` is a hint to the model, not a filter.
+      { name: "Trojan Tavern", worldId: "rival-world", },
       { db, actorId, chatId: "chat-1", },
     );
 
     expect(JSON.parse(result.content,),).toMatchObject({ ok: true, worldId: "world-a", },);
+    expect(await db.selectFrom("locations",).select("world_id",).execute(),).toEqual([{ world_id: "world-a", },],);
+  });
+
+  test("a chat bound to a world the actor cannot access is refused", async () => {
+    await insertUsers(db, `rival-${userId}`, "Rival", { id: "rival-user", } as never,);
+    await insertWorlds(db, "rival-user", "rival-world", { id: "rival-world", } as never,);
+    await insertChats(db, "Rival chat", userId, { id: "chat-1", world_id: "rival-world", } as never,);
+
+    const result = await locationCreationTool.handler(
+      { name: "Trojan Tavern", },
+      { db, actorId, chatId: "chat-1", },
+    );
+
+    expect(result.isError,).toBe(true,);
+    expect(await db.selectFrom("locations",).select("id",).execute(),).toHaveLength(0,);
   });
 });

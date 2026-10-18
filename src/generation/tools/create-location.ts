@@ -32,10 +32,6 @@ const PARAMETERS: Record<string, unknown> = {
       type: "string",
       description: "1-2 paragraph location description.",
     },
-    worldId: {
-      type: "string",
-      description: "World id the location belongs to (defaults to the current chat's world).",
-    },
   },
   required: ["name",],
   additionalProperties: false,
@@ -48,7 +44,7 @@ const PARAMETERS: Record<string, unknown> = {
 export const locationCreationTool: ToolDefinition = {
   name: CREATE_LOCATION,
   description:
-    "Create a new location in a world. Provide a name (required) and optionally a description and world id. A bound chat is auto-created so the location is immediately reachable.",
+    "Create a new location in the current chat's world. Provide a name (required) and optionally a description. A bound chat is auto-created so the location is immediately reachable.",
   parameters: PARAMETERS,
   handler: async (params, ctx,): Promise<ToolResult> => {
     if (!ctx) {
@@ -61,7 +57,12 @@ export const locationCreationTool: ToolDefinition = {
     }
 
     const description = stringParam(params, "description",);
-    const worldId = await resolveWorldId(ctx.db, ctx.chatId, stringParam(params, "worldId",),);
+    const world = await resolveWorldId(ctx.db, { chatId: ctx.chatId, actorId: ctx.actorId, },);
+    if (!world.ok) {
+      return { content: jsonStringifyOr({ error: world.message, },), isError: true, };
+    }
+
+    const worldId = world.worldId;
 
     // The bound chat's `created_by` references users.id (mirrors `/create loc`,
     // which uses the user id for both the chat owner and participant actor).
