@@ -114,7 +114,7 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
 
-        return await respond(() => storageUsage(database, ctx.params.storageId,));
+        return await respond(() => storageUsage(database, ctx.params.storageId, ctx.params.worldId,));
       },
       {
         response: { 200: t.Object({ data: StorageUsageBody, },), 404: ErrorResponse, },
