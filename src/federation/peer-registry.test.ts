@@ -142,11 +142,48 @@ describe("save-time validation", () => {
     expect(await listPeers(db,),).toHaveLength(0,);
   });
 
-  test("rejects a token on a remote origin", async () => {
+  test("rejects a workload-trusted remote peer with no token", async () => {
     const { db, } = await createTestDb();
+    // The rule this replaced was "token_on_remote_origin": a token on a remote
+    // origin was forbidden, which left a remote workload-trusted peer with no
+    // credential at all. The invariant is now the other way round — the trust
+    // grant requires the token, whatever the link kind.
     await expect(
-      savePeerWorkload(db, { origin: REMOTE, sharedToken: "t", encryptionKey: SECRET, },),
-    ).rejects.toMatchObject({ reason: "token_on_remote_origin", },);
+      savePeerWorkload(db, {
+        origin: REMOTE,
+        encryptionKey: SECRET,
+        workloadTrust: true,
+        allowedWorkloadClasses: [PeerWorkloadClass.Chat,],
+      },),
+    ).rejects.toMatchObject({ reason: "workload_trust_without_token", },);
+
+    // An empty or whitespace-only token is no token either.
+    await expect(
+      savePeerWorkload(db, {
+        origin: REMOTE,
+        sharedToken: "   ",
+        encryptionKey: SECRET,
+        workloadTrust: true,
+      },),
+    ).rejects.toMatchObject({ reason: "workload_trust_without_token", },);
+
+    // Nothing was written by either refused save.
+    expect(await listPeers(db,),).toHaveLength(0,);
+  });
+
+  test("accepts a workload-trusted remote peer WITH a token", async () => {
+    const { db, } = await createTestDb();
+    const remote = await savePeerWorkload(db, {
+      origin: REMOTE,
+      sharedToken: "remote-secret",
+      encryptionKey: SECRET,
+      workloadTrust: true,
+      allowedWorkloadClasses: [PeerWorkloadClass.Chat,],
+    },);
+
+    expect(remote.linkKind,).toBe("remote",);
+    expect(remote.authMode,).toBe(PeerAuthMode.Tls,);
+    expect(remote.hasSharedToken,).toBe(true,);
   });
 
   test("rejects an allowed_workload_classes entry outside the enum", async () => {
@@ -227,8 +264,20 @@ describe("validator unit surface", () => {
     expect(validated.sharedToken,).toBe("tok",);
   });
 
-  test("an explicit host-local token on a remote origin is rejected before it is stored", () => {
-    expect(() => validatePeerWorkloadSave({ origin: REMOTE, sharedToken: "tok", },)).toThrow(
+  test("a token on a remote origin is accepted: the trust grant requires one", () => {
+    const validated = validatePeerWorkloadSave({
+      origin: REMOTE,
+      sharedToken: "tok",
+      workloadTrust: true,
+    },);
+
+    expect(validated.authMode,).toBe(PeerAuthMode.Tls,);
+    expect(validated.sharedToken,).toBe("tok",);
+    expect(validated.workloadTrust,).toBe(1,);
+  });
+
+  test("a workload grant without a token is rejected on either link kind", () => {
+    expect(() => validatePeerWorkloadSave({ origin: REMOTE, workloadTrust: true, },)).toThrow(
       PeerWorkloadValidationError,
     );
   });
@@ -314,6 +363,7 @@ describe("workload eligibility", () => {
     await savePeerWorkload(db, {
       origin: "https://blocked.example",
       encryptionKey: SECRET,
+      sharedToken: "blocked-secret",
       workloadTrust: true,
       allowedWorkloadClasses: [PeerWorkloadClass.Chat,],
     },);
@@ -323,6 +373,7 @@ describe("workload eligibility", () => {
     await savePeerWorkload(db, {
       origin: REMOTE,
       encryptionKey: SECRET,
+      sharedToken: "remote-secret",
       workloadTrust: true,
       allowedWorkloadClasses: [PeerWorkloadClass.Chat,],
     },);

@@ -16,7 +16,6 @@ import {
   listWorkloadPeers,
   savePeerWorkload,
   setAllowedWorkloadClasses,
-  setWorkloadTrust,
 } from "../federation/peer-registry";
 import { authorizePeerWork, } from "../federation/peer-work-auth";
 import { type PeerWorkTransport, runPeerWorkload, } from "../federation/peer-work-client";
@@ -37,6 +36,10 @@ import { mountPeerWorkApi, } from "./federation-peer-work";
 const SECRET = "peer-wire-secret-0123456789";
 const PSK = "peer-wire-psk";
 const REMOTE = "https://gpu.example";
+/** A second remote peer, so a credential issued for one cannot open another. */
+const REMOTE_B = "https://gpu-b.example";
+const REMOTE_SHARED = "remote-shared-credential";
+const REMOTE_B_SHARED = "remote-b-shared-credential";
 const LOOPBACK = "http://127.0.0.1:4010";
 const SHARED = "same-host-shared-credential";
 
@@ -114,11 +117,26 @@ function asRequest(overrides: Partial<PeerWorkRunRequest> = {},): PeerWorkRunReq
   };
 }
 
-/** Seed a remote TLS peer that is fully workload-eligible. */
+/** Seed a remote TLS peer that is fully workload-eligible and holds its token. */
 async function seedRemote(db: Db,): Promise<void> {
+  await savePeerWorkload(db, {
+    origin: REMOTE,
+    authMode: PeerAuthMode.Tls,
+    sharedToken: REMOTE_SHARED,
+    encryptionKey: SECRET,
+    allowedWorkloadClasses: [PeerWorkloadClass.Chat,],
+    workloadTrust: true,
+  },);
+
   await upsertPeer(db, { origin: REMOTE, state: "trusted", capabilities: [PeerWorkloadClass.Chat,], },);
-  await setAllowedWorkloadClasses(db, { origin: REMOTE, classes: [PeerWorkloadClass.Chat,], },);
-  await setWorkloadTrust(db, { origin: REMOTE, workloadTrust: true, },);
+}
+
+/** Headers a trusted remote caller presents: its own origin AND its own token. */
+function remoteHeaders(bearer: string | null = REMOTE_SHARED,): Record<string, string> {
+  return {
+    [PEER_ORIGIN_HEADER]: REMOTE,
+    ...(bearer === null ? {} : { authorization: `Bearer ${bearer}`, }),
+  };
 }
 
 /** Seed a same-host peer carrying a shared credential. */
@@ -173,7 +191,7 @@ describe("peer-work route — mounting", () => {
     const { app, db, } = await appFor(DISABLED, executorFor(HAPPY_CHUNKS,),);
     await seedRemote(db,);
 
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(wireRequest(), remoteHeaders(),),);
     expect(res.status,).toBe(404,);
   });
 
@@ -181,7 +199,7 @@ describe("peer-work route — mounting", () => {
     const { app, db, } = await appFor(configWith({ enabled: true, meshPsk: "", },), executorFor(HAPPY_CHUNKS,),);
     await seedRemote(db,);
 
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(wireRequest(), remoteHeaders(),),);
     const body = await rejection(res,);
 
     expect(body.status,).toBe(503,);
@@ -194,7 +212,7 @@ describe("peer-work route — authentication", () => {
     const { app, db, } = await appFor(ENABLED, executorFor(HAPPY_CHUNKS,),);
     await seedRemote(db,);
 
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(wireRequest(), remoteHeaders(),),);
 
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-type",),).toBe(PEER_WORK_STREAM_TYPE,);
@@ -234,7 +252,7 @@ describe("peer-work route — workload trust is independent of content trust", (
     await upsertPeer(db, { origin: REMOTE, state: "trusted", capabilities: [PeerWorkloadClass.Chat,], },);
     await setAllowedWorkloadClasses(db, { origin: REMOTE, classes: [PeerWorkloadClass.Chat,], },);
 
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(wireRequest(), remoteHeaders(),),);
     const body = await rejection(res,);
 
     expect(body.status,).toBe(403,);
@@ -250,7 +268,7 @@ describe("peer-work route — workload trust is independent of content trust", (
     await seedRemote(db,);
 
     const body400 = wireRequest({ workloadClass: PeerWorkloadClass.Vision, },);
-    const res = await app.handle(post(body400, { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(body400, remoteHeaders(),),);
     const body = await rejection(res,);
 
     expect(body.status,).toBe(403,);
@@ -261,7 +279,7 @@ describe("peer-work route — workload trust is independent of content trust", (
     const { app, db, } = await appFor(NO_DECLARED_CLASSES, executorFor(HAPPY_CHUNKS,),);
     await seedRemote(db,);
 
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(wireRequest(), remoteHeaders(),),);
     expect((await rejection(res,)).errorCode,).toBe("federation.workload_class_not_allowed",);
   });
 
@@ -269,7 +287,7 @@ describe("peer-work route — workload trust is independent of content trust", (
     const { app, db, } = await appFor(ENABLED, executorFor(HAPPY_CHUNKS,),);
     await seedRemote(db,);
 
-    const res = await app.handle(post({ workloadClass: "chat", }, { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post({ workloadClass: "chat", }, remoteHeaders(),),);
     const body = await rejection(res,);
 
     expect(body.status,).toBe(400,);
@@ -281,7 +299,7 @@ describe("peer-work route — workload trust is independent of content trust", (
     await seedRemote(db,);
 
     const tainted = { workloadClass: "chat", userId: "u-1", apiKey: "sk-live-secret-value", };
-    const res = await app.handle(post(tainted, { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(tainted, remoteHeaders(),),);
     const body = await rejection(res,);
 
     expect(body.status,).toBe(400,);
@@ -295,7 +313,7 @@ describe("peer-work route — workload trust is independent of content trust", (
     await seedRemote(db,);
 
     const unknownClass: Record<string, unknown> = { ...wireRequest(), workloadClass: "telepathy", };
-    const res = await app.handle(post(unknownClass, { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(unknownClass, remoteHeaders(),),);
 
     expect((await rejection(res,)).status,).toBe(400,);
     expect(executor.calls,).toHaveLength(0,);
@@ -372,7 +390,7 @@ describe("peer-work route — data minimization across the wire", () => {
     await seedRemote(db,);
     await app.handle(post(
       wireRequest({ messages: [{ role: "user", content: "chat A only", },], },),
-      { [PEER_ORIGIN_HEADER]: REMOTE, },
+      remoteHeaders(),
     ),);
 
     expect(JSON.stringify(executor.calls[0],),).not.toMatch(LEAK,);
@@ -383,7 +401,7 @@ describe("peer-work route — data minimization across the wire", () => {
     const { app, db, } = await appFor(ENABLED, executorFor(HAPPY_CHUNKS,),);
     await seedRemote(db,);
 
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(wireRequest(), remoteHeaders(),),);
     expect(await res.text(),).not.toMatch(LEAK,);
   });
 
@@ -419,7 +437,7 @@ describe("peer-work route — cancellation and mid-stream failure", () => {
     await seedRemote(db,);
 
     const controller = new AbortController();
-    const pending = app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, }, controller.signal,),);
+    const pending = app.handle(post(wireRequest(), remoteHeaders(), controller.signal,),);
     await entered;
     controller.abort();
     await pending;
@@ -433,7 +451,7 @@ describe("peer-work route — cancellation and mid-stream failure", () => {
     const { app, db, } = await appFor(ENABLED, executor,);
     await seedRemote(db,);
 
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(wireRequest(), remoteHeaders(),),);
     const body = await rejection(res,);
 
     expect(body.status,).toBe(500,);
@@ -451,7 +469,7 @@ describe("peer-work route — cancellation and mid-stream failure", () => {
     const { app, db, } = await appFor(ENABLED, executor,);
     await seedRemote(db,);
 
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    const res = await app.handle(post(wireRequest(), remoteHeaders(),),);
     expect(res.status,).toBe(200,);
 
     const chunks = await chunksOf(res,);
@@ -487,7 +505,7 @@ describe("peer-work wire — two instances over real handlers", () => {
       callerOrigin: REMOTE,
       peer: { origin: REMOTE, },
       request: asRequest(),
-      bearer: null,
+      bearer: REMOTE_SHARED,
       transport: forwardToReceiver,
     },);
 
@@ -563,7 +581,7 @@ describe("authorizePeerWork — the admission decision, called directly", () => 
       database: db,
       config: ENABLED,
       claimedOrigin: REMOTE,
-      bearer: null,
+      bearer: REMOTE_SHARED,
       workloadClass: PeerWorkloadClass.Chat,
       encryptionKey: SECRET,
     },);
@@ -661,23 +679,80 @@ describe("peer-work route — the documented trust boundary", () => {
     expect((await rejection(res,)).errorCode,).toBe("federation.workload_invalid_origin",);
   });
 
-  // KNOWN LIMITATION, pinned deliberately so it cannot be forgotten. A TLS
-  // peer's identity is asserted by the `x-peer-origin` header and never proven:
-  // the save path forbids a shared credential on a TLS peer and this runtime
-  // enforces no client certificate. This test states that behaviour plainly.
-  // It is NOT a claim that the design is correct — see the TRUST BOUNDARY note
-  // in src/federation/peer-work-auth.ts and the open item on the wire ticket.
-  // If a credential path is added for TLS peers, this test MUST fail so it is
-  // rewritten at the same time.
-  test("KNOWN LIMITATION: a TLS peer is admitted on an asserted origin alone, with no credential", async () => {
+  // The defect this file pins: a TLS peer's identity is asserted by the
+  // `x-peer-origin` header and this runtime enforces no client certificate, so
+  // a remote peer MUST still prove itself with its per-peer shared token. TLS
+  // and SPKI pinning are an outbound layer, never the authentication.
+  test("a TLS peer presenting no credential is refused before admission", async () => {
     const executor = executorFor(HAPPY_CHUNKS,);
     const { app, db, } = await appFor(ENABLED, executor,);
     await seedRemote(db,);
 
-    // No Authorization header, no proof of anything: only the header.
-    const res = await app.handle(post(wireRequest(), { [PEER_ORIGIN_HEADER]: REMOTE, },),);
+    // The origin header names a trusted, workload-trusted peer and nothing else
+    // is presented: that must buy the caller nothing.
+    const res = await app.handle(post(wireRequest(), remoteHeaders(null,),),);
+    // Status first: an admitted call answers a 200 ndjson stream, so parsing it
+    // as an envelope would hide the defect behind a JSON error.
+    expect(res.status,).toBe(403,);
 
-    expect(res.status,).toBe(200,);
+    const body = await rejection(res,);
+    expect(body.errorCode,).toBe("federation.workload_credential_rejected",);
+    // Refused BEFORE admission: the executor never ran.
+    expect(executor.calls,).toHaveLength(0,);
+    // And the rejection echoes no part of the credential.
+    expect(body.raw,).not.toContain(REMOTE_SHARED,);
+    expect(body.raw,).not.toContain(SECRET,);
+  });
+
+  test("a TLS peer presenting the wrong credential is refused, and the right one is admitted", async () => {
+    const executor = executorFor(HAPPY_CHUNKS,);
+    const { app, db, } = await appFor(ENABLED, executor,);
+    await seedRemote(db,);
+
+    const wrong = await app.handle(post(wireRequest(), remoteHeaders("not-the-remote-credential",),),);
+    expect(wrong.status,).toBe(403,);
+    expect((await rejection(wrong,)).errorCode,).toBe("federation.workload_credential_rejected",);
+    expect(executor.calls,).toHaveLength(0,);
+
+    const right = await app.handle(post(wireRequest(), remoteHeaders(),),);
+    expect(right.status,).toBe(200,);
+    expect(executor.calls,).toHaveLength(1,);
+  });
+
+  test("a credential issued for one remote peer is refused when presented as another", async () => {
+    const executor = executorFor(HAPPY_CHUNKS,);
+    const { app, db, } = await appFor(ENABLED, executor,);
+    await seedRemote(db,);
+    await savePeerWorkload(db, {
+      origin: REMOTE_B,
+      authMode: PeerAuthMode.Tls,
+      sharedToken: REMOTE_B_SHARED,
+      encryptionKey: SECRET,
+      allowedWorkloadClasses: [PeerWorkloadClass.Chat,],
+      workloadTrust: true,
+    },);
+
+    await upsertPeer(db, { origin: REMOTE_B, state: "trusted", capabilities: [PeerWorkloadClass.Chat,], },);
+
+    // Claims to be peer B while presenting A's credential: A's token is valid,
+    // B's is not, so the pair must not authenticate.
+    const forged = await app.handle(post(wireRequest(), {
+      [PEER_ORIGIN_HEADER]: REMOTE_B,
+      authorization: `Bearer ${REMOTE_SHARED}`,
+    },),);
+
+    expect(forged.status,).toBe(403,);
+    expect((await rejection(forged,)).errorCode,).toBe("federation.workload_credential_rejected",);
+    expect(executor.calls,).toHaveLength(0,);
+
+    // B's OWN credential is admitted, so the refusal above is the mismatch and
+    // not simply "peer B is not trusted".
+    const own = await app.handle(post(wireRequest(), {
+      [PEER_ORIGIN_HEADER]: REMOTE_B,
+      authorization: `Bearer ${REMOTE_B_SHARED}`,
+    },),);
+
+    expect(own.status,).toBe(200,);
     expect(executor.calls,).toHaveLength(1,);
   });
 

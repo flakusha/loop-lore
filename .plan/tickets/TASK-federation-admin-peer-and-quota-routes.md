@@ -47,8 +47,10 @@ DEK export grants, matching `revokeDekExportsForPeer`
   state, derived link kind, workload trust, allowed classes and storage usage.
 
 - `POST` rejects: a non-`http(s)` origin, a loopback origin without a token, a
-  token on a non-loopback origin, a class outside the enum, a duplicate
-  origin.
+  `workloadTrust` grant with no token on ANY origin, a class outside the enum, a
+  duplicate origin. (Updated on `fix-federation-peer-credential`: the old rule
+  rejected a token on a non-loopback origin; it is replaced, not extended — see
+  TASK-federation-same-host-loopback-peer-auth.)
 
 - Saving a peer whose `/api/instance-state` probe fails stores it as `pending`
   and returns the failure reason.

@@ -26,7 +26,7 @@ export type PeerWorkloadRejection =
   | "unknown_workload_class"
   | "auth_mode_mismatch"
   | "loopback_without_token"
-  | "token_on_remote_origin"
+  | "workload_trust_without_token"
   | "duplicate_origin";
 
 /** Typed rejection from the peer workload save path. Carries no secret. */
@@ -82,7 +82,7 @@ export interface PeerWorkloadSave {
   allowedWorkloadClasses?: readonly PeerWorkloadClass[];
   /** Whether chat sessions may pin to this peer. */
   stickyEnabled?: boolean;
-  /** Shared workload token; required for loopback, forbidden otherwise. */
+  /** Shared workload token; required for every workload-trusted peer. */
   sharedToken?: string | null;
 }
 
@@ -133,7 +133,12 @@ export function derivedLinkKind(origin: unknown,): PeerLinkKind | null {
  *
  * Rejects (in order): a non-http(s) origin, an `allowed_workload_classes`
  * entry outside the closed enum, an `auth_mode` that contradicts the derived
- * link kind, a loopback origin with no token, and a token on a remote origin.
+ * link kind, a loopback origin with no token, and a `workloadTrust` grant with
+ * no token on any link kind. The last rule is the save-time half of the
+ * invariant `authorizePeerWork` enforces at request time: a workload-trusted
+ * peer always authenticates with its per-peer shared token, whatever its
+ * `auth_kind` — TLS/SPKI trust is an additional outbound layer, never the
+ * authentication.
  * @param input
  * @returns {ValidatedPeerWorkload}
  * @throws {PeerWorkloadValidationError}
@@ -173,10 +178,10 @@ export function validatePeerWorkloadSave(input: PeerWorkloadSave,): ValidatedPee
     );
   }
 
-  if (linkKind === LinkKind.Remote && sharedToken !== null) {
+  if (input.workloadTrust === true && sharedToken === null) {
     throw new PeerWorkloadValidationError(
-      "token_on_remote_origin",
-      "a remote peer authenticates with TLS trust and must not carry a sharedToken",
+      "workload_trust_without_token",
+      "a workload-trusted peer requires a sharedToken whatever its linkKind: TLS trust is an outbound layer, not the authentication",
     );
   }
 
