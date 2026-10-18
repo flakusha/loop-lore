@@ -10,7 +10,7 @@
  *   POST /api/worlds/:worldId/resources/regenerate
  *
  * `extract` is a PLAYER action, so it needs only world access; `regenerate` is a
- * world-wide sweep over every location and belongs to the owner.
+ * sweep over every location IN THAT WORLD and belongs to the owner.
  *
  * The caller never sees a seed or a clock: `attemptExtraction` derives both from
  * the node and the request. A re-rolled client is not a replay client, because
@@ -107,6 +107,7 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
           locationId: t.String({ minLength: 1, },),
           nodeInstanceId: t.String({ minLength: 1, },),
           /**
+// hint: Logic changed on both sides. Requires understanding intent of each change.
            * Skill/profession bonus applied to the DC before the roll. Bounded to
            * [0, MAX_ABILITY_BONUS]: an unbounded bonus is subtracted from the DC,
            * so `abilityBonus: 1000` would clamp every node to difficulty 1 — a

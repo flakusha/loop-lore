@@ -38,7 +38,8 @@ const OWNER_USER = "user-owner";
 const STRANGER_USER = "user-stranger";
 const OWNER_ACTOR = "actor-owner";
 const STRANGER_ACTOR = "actor-stranger";
-
+const OTHER_WORLD = "w2";
+const OTHER_LOCATION = "loc2";
 let db: Kysely<DB>;
 let itemId = "";
 let storageId = "";
@@ -206,5 +207,47 @@ describe("the contents route is access-checked", () => {
     // Control: w1's own usage still reads.
     const own = await get(OWNER_USER, `/api/worlds/${WORLD}/storage/${storageId}`,);
     expect(own.status,).toBe(200,);
+  });
+});
+
+describe("the usage route is world-scoped", () => {
+  // BUG-storage-usage-not-world-scoped — `GET /storage/:storageId` dropped
+  // `:worldId` and the engine load carried no `world_id` predicate, so a
+  // member of world A who learned a container id in world B was told B's
+  // used/capacity/free instead of getting a 404. The engine now scopes the
+  // load on (id, world_id), mirroring `loadNode`.
+  test("a container from another world is a 404, not that world's usage", async () => {
+    await insertWorlds(db, OWNER_USER, "Rival World", { id: OTHER_WORLD, },);
+    await insertLocations(db, OTHER_WORLD, "Rival Camp", { id: OTHER_LOCATION, },);
+    const foreign = (
+      await createStorage(db, {
+        worldId: OTHER_WORLD,
+        locationId: OTHER_LOCATION,
+        name: "Rival Chest",
+        capacity: 42,
+      },)
+    ).id;
+
+    const res = await get(OWNER_USER, `/api/worlds/${WORLD}/storage/${foreign}`,);
+
+    expect(res.status,).toBe(404,);
+  });
+
+  test("the same container read from its OWN world still answers", async () => {
+    await insertWorlds(db, OWNER_USER, "Rival World", { id: OTHER_WORLD, },);
+    await insertLocations(db, OTHER_WORLD, "Rival Camp", { id: OTHER_LOCATION, },);
+    const own = (
+      await createStorage(db, {
+        worldId: OTHER_WORLD,
+        locationId: OTHER_LOCATION,
+        name: "Rival Chest",
+        capacity: 42,
+      },)
+    ).id;
+
+    const res = await get(OWNER_USER, `/api/worlds/${OTHER_WORLD}/storage/${own}`,);
+
+    expect(res.status,).toBe(200,);
+    expect(await res.json() as { data: { capacity: number } },).toMatchObject({ data: { capacity: 42, }, },);
   });
 });

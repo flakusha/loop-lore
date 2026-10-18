@@ -52,10 +52,6 @@ const PARAMETERS: Record<string, unknown> = {
       enum: ["unique", "stackable",],
       description: "Stackability; defaults to unique.",
     },
-    worldId: {
-      type: "string",
-      description: "World id the item belongs to (defaults to the current chat's world).",
-    },
   },
   required: ["name",],
   additionalProperties: false,
@@ -93,7 +89,7 @@ function enumParam<T extends string,>(
 export const itemCreationTool: ToolDefinition = {
   name: CREATE_ITEM,
   description:
-    "Create a new item in a world. Provide a name (required) and optionally a description, category, rarity, stackability, and world id.",
+    "Create a new item in the current chat's world. Provide a name (required) and optionally a description, category, rarity, and stackability.",
   parameters: PARAMETERS,
   handler: async (params, ctx,): Promise<ToolResult> => {
     if (!ctx) {
@@ -109,7 +105,12 @@ export const itemCreationTool: ToolDefinition = {
     const category = enumParam(params, "category", Object.values(ItemCategory,), ItemCategory.Other,);
     const rarity = enumParam(params, "rarity", Object.values(ItemRarity,), ItemRarity.Common,);
     const stackable = enumParam(params, "stackable", ["unique", "stackable",] as const, StackableState.Unique,);
-    const worldId = await resolveWorldId(ctx.db, ctx.chatId, stringParam(params, "worldId",),);
+    const world = await resolveWorldId(ctx.db, { chatId: ctx.chatId, actorId: ctx.actorId, },);
+    if (!world.ok) {
+      return { content: jsonStringifyOr({ error: world.message, },), isError: true, };
+    }
+
+    const worldId = world.worldId;
     const definition = {
       worldId,
       name,
