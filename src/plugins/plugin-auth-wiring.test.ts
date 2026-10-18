@@ -155,3 +155,74 @@ describe("unauthenticated request", () => {
     expect(seen[0],).toEqual({ userId: null, userRole: null, },);
   },);
 });
+
+
+/**
+ * GET /api/v1/chats/activity is a real, non-plugin route whose first statement
+ * is `requireUserId(ctx)` (src/routes/activity.ts). It is the representative
+ * consumer of the `userId: null` contract, so it is the one that proves the
+ * invariant end to end rather than only at the derive boundary.
+ */
+const REAL_GUARDED_ROUTE = "/chats/activity";
+
+describe("the userId: null contract reaches real route handlers", () => {
+  test("a real route behind requireUserId answers 401 when the derive yields null", async () => {
+    config.auth.required = true;
+
+    // No token is sent, so `authenticate` fails and the derive returns
+    // userId: null instead of rejecting the request (src/elysia-app.ts).
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1${REAL_GUARDED_ROUTE}`,),
+    );
+
+    expect(res.status,).toBe(401,);
+  },);
+
+  test("that 401 body is the unauthorized error, not an empty or chat payload", async () => {
+    config.auth.required = true;
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1${REAL_GUARDED_ROUTE}`,),
+    );
+
+    expect(res.status,).toBe(401,);
+
+    // A guard that fell through would answer 200 with a chats array; pin that
+    // the body is the error shape and carries no user-scoped data.
+    const body = await res.json() as Record<string, unknown>;
+    expect(Object.keys(body,),).toContain("error",);
+    expect(body["chats"],).toBeUndefined();
+  },);
+
+  test("a client-supplied x-user-id cannot stand in for a failed auth", async () => {
+    config.auth.required = true;
+
+    // The derive deletes a spoofable x-user-id on the auth-failure path
+    // (src/elysia-app.ts) so the spoofed id cannot reach requireUserId.
+    const res = await app.handle(new Request(
+      `http://localhost/api/v1${REAL_GUARDED_ROUTE}`,
+      { headers: { "x-user-id": "forged-user", }, },
+    ),);
+
+    expect(res.status,).toBe(401,);
+  },);
+
+  test("the same route is served once authentication resolves an identity", async () => {
+    // Solo mode authenticates the seeded instance user, so requireUserId
+    // returns a string and the handler runs instead of short-circuiting.
+    config.auth.required = false;
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/v1${REAL_GUARDED_ROUTE}`,),
+    );
+
+    // Proves the 401 above comes from the null userId, not from the route
+    // being permanently unavailable.
+    expect(res.status,).toBe(200,);
+
+    // computeActivity returns a chat-id → ActivityEntry record (not a list).
+    const body = await res.json() as { chats: Record<string, unknown> };
+    expect(body.chats,).toBeDefined();
+    expect(typeof body.chats,).toBe("object",);
+  },);
+});
