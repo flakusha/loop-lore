@@ -462,3 +462,74 @@ describe("outfit_bindings validation (JSON column, no FK)", () => {
     expect(resolved.source,).toBe("location_rule",);
   });
 });
+
+describe("default outfit materializes actors.outfits catalog ids", () => {
+  let db: Kysely<DB>;
+  let actorId: string;
+
+  beforeAll(async () => {
+    const testDb = await createTestDb();
+    db = testDb.db;
+    ({ actorId, } = await createTestActors(db, "wardrobe-catalog-actor",));
+    await db
+      .updateTable("actors",)
+      .set({
+        default_outfit: "cat-robes",
+        outfits: JSON.stringify([
+          { id: "cat-robes", name: "Catalog Robes", descriptor: "velvet robes", tags: ["formal",], },
+        ],),
+      },)
+      .where("id", "=", actorId,)
+      .execute();
+  },);
+
+  it("materializes the catalog entry into wardrobe_items on first resolution", async () => {
+    const resolved = await resolveOutfit(db, { actorId, },);
+
+    expect(resolved.source,).toBe("default",);
+    expect(resolved.outfitId,).toBe(`${actorId}:cat-robes`,);
+    const row = await db
+      .selectFrom("wardrobe_items",)
+      .select(["id", "tags",],)
+      .where("id", "=", `${actorId}:cat-robes`,)
+      .executeTakeFirst();
+
+    expect(row?.id,).toBe(`${actorId}:cat-robes`,);
+    expect(row?.tags,).toBe('["formal"]',);
+  });
+
+  it("is idempotent — a second resolution reuses the materialized row", async () => {
+    const first = await resolveOutfit(db, { actorId, },);
+    const second = await resolveOutfit(db, { actorId, },);
+
+    expect(second.outfitId,).toBe(first.outfitId,);
+    const rows = await db
+      .selectFrom("wardrobe_items",)
+      .select(["id",],)
+      .where("actor_id", "=", actorId,)
+      .execute();
+
+    expect(rows.length,).toBe(1,);
+  });
+
+  it("an actor with no outfits catalog degrades to none", async () => {
+    const { actorId: bareId, } = await createTestActors(db, "wardrobe-bare-actor",);
+    await db.updateTable("actors",).set({ default_outfit: "ghost", },).where("id", "=", bareId,).execute();
+
+    expect(await resolveOutfit(db, { actorId: bareId, },),).toEqual({ outfitId: null, source: "none", },);
+  });
+
+  it("a default_outfit id missing from the catalog degrades to none", async () => {
+    const { actorId: danglingId, } = await createTestActors(db, "wardrobe-dangling-actor",);
+    await db
+      .updateTable("actors",)
+      .set({
+        default_outfit: "not-in-catalog",
+        outfits: JSON.stringify([{ id: "cat-robes", name: "Catalog Robes", descriptor: "velvet", },],),
+      },)
+      .where("id", "=", danglingId,)
+      .execute();
+
+    expect(await resolveOutfit(db, { actorId: danglingId, },),).toEqual({ outfitId: null, source: "none", },);
+  });
+});
