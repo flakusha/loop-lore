@@ -3,7 +3,7 @@
 
 # TASK: JSON view-models for gallery and chat list endpoints (egui client parity)
 
-**Status:** in_progress
+**Status:** Done
 **Scope:** plan: reopen TASK-json-view-models ticket falsely auto-closed as Done; work is unlanded on egui-json-view-models
 **Status Note:** implemented on branch `egui-json-view-models` (357d8d2dd, 473ce213a) but UNLANDED — not on `dev`. A post-merge reconciliation commit (07ea4d69d) auto-closed git issue 0852403 and appended a false close marker to this file; reopened 2026-10-16 and that marker was removed. Landing that branch is a separate decision.
 **Priority:** high
@@ -54,3 +54,4 @@ JSON branch is additive and the golden-markup snapshots are the guard.
       seeded fixture, and a golden-markup test pins the htmx response
 - [ ] openapi/spec surfaces updated if the dynamic endpoints are documented
 
+**Resolved:** 2026-10-18 registry-driven close: git issue 0852403 (registry tip: 5cab337b2 Konstantin Fedotov Close issue)
