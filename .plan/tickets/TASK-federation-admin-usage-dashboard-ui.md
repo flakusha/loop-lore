@@ -3,7 +3,8 @@
 
 # TASK: Federation admin usage dashboard UI
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** A federation tab on the EXISTING admin federation panel (no second surface). `src/frontend/alpine/admin-federation.ts` holds the slice, spread into the admin page state like `admin-audit.ts`; the tab body is in `src/partials/`, wired from the existing federation panel markup. Per peer the tab shows link kind, trust state, declared vs advertised classes, circuit state, in-flight, latency EWMA, headroom, and budget-vs-usage per workload class, plus the instance storage budget/usage row read through `readStorageBudget`. Editing is covered by an inline budget editor, a typed-confirm delete (exact origin match required), and the per-class assignment matrix editor where an empty row means local-only. Refresh reuses the existing mechanisms unchanged: `apiFetch` for transport, `parseOr` against the response schemas so a payload failing validation degrades to the empty default instead of throwing inside the tab, and a 30s `setInterval` matching the admin shell's own cadence - no new polling mechanism, no SSE. Federation-off renders an explicit off state and a 403 renders an error state rather than a blank tab. All user-visible strings exist in all nine locales. 15 component tests in `src/frontend/alpine/admin-federation.test.ts`.
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-federation-offload-quotas
