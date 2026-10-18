@@ -14,10 +14,10 @@
  * Arbitraries come from `@/test-utils/schema-arbitrary`, which only emits
  * schema-valid values — a failure here means the mapper drifted from the schema.
  */
-import fc from "fast-check";
 import type { TSchema, } from "@sinclair/typebox";
 import { Value, } from "@sinclair/typebox/value";
 import { describe, expect, test, } from "bun:test";
+import fc from "fast-check";
 
 import { schemaToArbitrary, } from "@/test-utils/schema-arbitrary";
 
