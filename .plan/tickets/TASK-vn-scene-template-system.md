@@ -23,6 +23,7 @@ not implemented.
 **Status Note:** (2026-08-23) "Engine Complete — GM builder UI not implemented". Reconciled 2026-10-09: engine verified present and tested, composite execution never existed (only the step interface), and there is no GM builder UI. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: Phase 5 is now partly closed — `render-scene.ts:202` calls `applyTemplateOverrides` — so the remaining gaps are composites, conditions/delays, dialogue-template consumption, and the builder UI. The closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`: `transition-engine.ts` wiring is now real — `scene-renderer/render.ts` imports and calls `evaluateTriggers` (the transition engine itself still reads no templates, but triggers feed scene templates in). Remaining open: composites, conditions/delays, `typewriter.ts` dialogue wiring, custom-template CRUD callers (save/import/export have no production caller), and the builder UI. Status line corrected Done → In Progress to match the notes above.
 **Status Note (2026-10-18, vn-epic-completion):** Header set to the truthful In Progress per the 2026-10-18 review adjudication. Git issue 83a03a9 was re-opened to match, but the shared-registry enforcement (any agent's `giwt sync --fix` auto-closes a done-index ticket's open issue as stale) re-closed it within minutes — the tracking system treats the closed registry issue as authoritative for done-ness, so `plan:sync` reports this ticket as ".md status stale" until the registry is re-opened deliberately at review. This branch implements the remaining slice — see the epic's Remaining Scope section.
+**Status Note (2026-10-18, vn-epic-completion landing):** The composite executor landed: `templates/composite.ts` (`compositeStepsOf`, eval-free `evaluateCondition` — fail-closed on unparseable/unresolved/mistyped comparisons — and `executeCompositeSteps`, sequential application with per-step `condition` and `delay`, delay awaited after the applying step). `render-scene.ts` orchestrates it via `applyCompositeSettings`: the fold runs BEFORE the mount, so the previous scene stays visible during waits and a run token cancels stale mounts when a newer render supersedes a delayed run. **Deviation from the ticket's per-beat vision:** steps do NOT re-mount or re-animate the live scene between beats — all applied steps fold into one final settings object for a single mount. Per-beat re-mounting was deliberately excluded from this slice (see the epic's Remaining Scope). Also landed here: the engine's first production CRUD callers (`alpine/vn-templates.ts` + `components/chat/vn-templates-panel.html`: list / save-import / export / delete through the per-world localStorage store) and the `typewriter.ts` dialogue wiring (`resolveDialoguePacing`). Still open: the drag-and-drop builder UI, gallery, variable autocomplete/editing, enum/asset type validation, and the layered context-source chain.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, system, engine, custom, gm-tools
 **Effort:** Med
@@ -161,9 +162,9 @@ Example: `combat_intro` composite:
 
 - [ ] Parent template lookup and field merge
 - [ ] Override detection (child fields override parent)
-- [ ] Composite template executor (sequential step application)
-- [ ] Conditional steps (`condition` expression evaluation)
-- [ ] Step delay for timing control
+- [x] Composite template executor (sequential step application) — `templates/composite.ts` + `render-scene.ts` fold (vn-epic-completion)
+- [x] Conditional steps (`condition` expression evaluation) — eval-free fail-closed subset, `evaluateCondition` (vn-epic-completion)
+- [x] Step delay for timing control — awaited between steps, pre-mount (vn-epic-completion; per-beat re-animation deliberately out of scope — see the status note)
 
 ### Phase 4: GM Template Builder
 
@@ -179,7 +180,7 @@ Example: `combat_intro` composite:
 - [x] Wire template engine to `scene-renderer.ts` — partially: `render-scene.ts:202`
       calls `applyTemplateOverrides` (`templates/apply.ts`), merging the
       layout / transition / typewriter-speed subset (2026-10-09)
-- [ ] Wire template engine to `typewriter.ts`
+- [x] Wire template engine to `typewriter.ts` — `resolveDialoguePacing` (vn-epic-completion)
 - [ ] Wire template engine to `transition-engine.ts`
 - [ ] Template quick-apply in chat toolbar
 - [ ] Template auto-suggest based on scene context
@@ -227,10 +228,16 @@ Verified 2026-10-09 in `src/frontend/vn/templates/template-engine.ts`
 
 ### 🟡 Partially wired / not implemented
 
-- [ ] Composite template execution — **the 2026-08-23 AC claiming a
-      "composite executor" was false**: only the `VnCompositeStep` *interface*
-      exists (`template-engine.ts:66`); nothing in `src/` steps through a
-      composite, evaluates a step `condition`, or honours a step `delay`
+- [x] Composite template execution — `templates/composite.ts`
+      `executeCompositeSteps({steps, context, apply, wait?})` steps through a
+      composite sequentially (applied count + per-step skip record:
+      `condition` / `unknown-template`); `render-scene.ts`
+      `applyCompositeSettings` resolves each step id via `resolveAnyTemplate`
+      (scene registry → dialogue registry → custom store) and folds its
+      whitelisted overrides (later steps win) before the single mount.
+      Covered by `composite.test.ts` (15 tests) + the composite block in
+      `render-scene.test.ts` (fold order, condition skips, unknown ids,
+      delay-await, stale-run cancellation). Landed on `vn-epic-completion`.
 - [x] Scene-renderer reads the template registry (Phase 5, partial) —
       `render-scene.ts:202` calls `applyTemplateOverrides(baseSettings, scene)`
       from `src/frontend/vn/templates/apply.ts`, which resolves the scene's
@@ -240,13 +247,21 @@ Verified 2026-10-09 in `src/frontend/vn/templates/template-engine.ts`
       engine": composites, conditions, and delays are still absent, and
       `apply.ts` deliberately fails closed to base settings rather than
       propagating an unresolved variable.
-- [ ] `typewriter.ts` wiring — reads `settings.typewriterSpeed` only; it never
-      reads a dialogue template
+- [x] `typewriter.ts` wiring — `resolveDialoguePacing(base, scene, worldId?)`
+      resolves the scene's template through all registries; a dialogue body's
+      `text.typewriterSpeed` / `pauseOnPunctuation` (or a scene body's own
+      text block) map onto the typewriter options, fail-closed to the base.
+      Consumed by the `typewrite` call in `render-scene.ts`. Landed on
+      `vn-epic-completion`.
 - [x] `transition-engine.ts` wiring (via triggers) — `scene-renderer/render.ts`
       imports and calls `evaluateTriggers` on location change; the engine
       module itself still consumes no templates directly
 - [ ] GM builder UI — `template-builder.ts` and `template-gallery.ts` were
-      never created (see `## Files to Create`)
+      never created (see `## Files to Create`). A JSON-based manager panel
+      DID land on `vn-epic-completion` (`alpine/vn-templates.ts` +
+      `components/chat/vn-templates-panel.html`: list / save-import / export /
+      delete of the world's custom templates) — no drag-and-drop builder,
+      gallery, or variable editor.
 - [ ] Template builder UI allows drag-and-drop scene element configuration
 - [ ] Template gallery shows all templates by category
 - [ ] Variable autocomplete shows available variables in GM UI
@@ -257,8 +272,20 @@ Verified 2026-10-09 in `src/frontend/vn/templates/template-engine.ts`
 - [ ] Context sources 1-5 in `## Design` (character → location → chat → GM →
       default) — `resolveVariables` takes a flat `Record<string, unknown>`; the
       per-source lookup chain is not implemented
-- [ ] Conditional steps (`condition` expression evaluation)
-- [ ] Step delay for timing control
+- [ ] Conditional steps (`condition` expression evaluation) — **landed on
+      `vn-epic-completion`** as an eval-free subset (`evaluateCondition` in
+      `templates/composite.ts`: comparisons over string/number/boolean
+      literals and context idents, `&&`/`||`/parens; unparseable, unresolved
+      or mistyped comparisons fail closed to skip). Kept unchecked as an AC
+      only because the ticket's design names a fuller expression grammar
+      (enum/asset variable types, nested data paths) — the shipped subset
+      covers the render-time gates.
+- [ ] Step delay for timing control — **landed on `vn-epic-completion`**:
+      `VnCompositeStep.delay` is awaited after the applying step and before
+      the next one (`executeCompositeSteps`), pre-mount in the render fold.
+      Kept unchecked as an AC only because the ticket's design pairs delays
+      with per-beat scene re-animation, which this slice deliberately
+      excludes (single-mount fold — see the status note).
 
 ### 🟢 Performance
 
