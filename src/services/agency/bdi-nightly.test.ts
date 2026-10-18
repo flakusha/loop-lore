@@ -7,6 +7,7 @@ import { Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import { createInMemoryDb, } from "./__helpers/in-mem-db";
 import { recordChatTurn, runNightlyReflectionCycle, } from "./bdi-nightly";
+import { sanitizeDailyPlan, } from "./bdi-plan-shape";
 
 let db: Kysely<DB>;
 let raw: Database;
@@ -239,5 +240,39 @@ describe("recordChatTurn — cooldown + consecutive cap", () => {
     await recordChatTurn(db, "a1", "a2", t0,);
     const toOther = await recordChatTurn(db, "a1", "a3", t0,);
     expect(toOther.allowed,).toBe(true,);
+  });
+});
+
+describe("sanitizeDailyPlan — injected-seam plan validation", () => {
+  test("rejects non-plans: null, primitives, blank summary, unknown priority, non-array activities", () => {
+    expect(sanitizeDailyPlan(null,),).toBeNull();
+    expect(sanitizeDailyPlan("high",),).toBeNull();
+    expect(sanitizeDailyPlan({ summary: "   ", priority: "high", activities: [], },),).toBeNull();
+    expect(sanitizeDailyPlan({ summary: "ok", priority: "bogus-tier", activities: [], },),).toBeNull();
+    expect(sanitizeDailyPlan({ summary: "ok", priority: "high", activities: "nope", },),).toBeNull();
+  });
+
+  test("accepts the four vocabulary priorities, case-insensitively", () => {
+    for (const priority of ["low", "normal", "high", "critical",]) {
+      expect(sanitizeDailyPlan({ summary: "s", priority, activities: [], },)?.priority,).toBe(priority,);
+    }
+
+    expect(sanitizeDailyPlan({ summary: "s", priority: " HIGH ", activities: [], },)?.priority,).toBe("high",);
+  });
+
+  test("clamps summary length, activity count, and scores", () => {
+    const plan = sanitizeDailyPlan({
+      summary: "x".repeat(600,),
+      priority: "normal",
+      activities: [
+        ...Array.from({ length: 7, }, (_, i,) => ({ description: `a${i}`, score: i * 25, }),),
+        { description: "fine", score: Number.NaN, },
+        { description: "  ", score: 1, },
+      ],
+    },);
+
+    expect(plan?.summary,).toHaveLength(500,);
+    expect(plan?.activities,).toHaveLength(5,);
+    expect(plan?.activities.map((a,) => a.score),).toEqual([0, 25, 50, 75, 100,],);
   });
 });
