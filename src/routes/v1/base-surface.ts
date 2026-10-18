@@ -3,29 +3,29 @@
 /**
  * v1 baseSurface barrel (split out: one Elysia chain per file keeps TS2589 away).
  */
-import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import { Elysia, } from "elysia";
-import { actorPlanRoutes, } from "../actor-plan";
 import { ageGateRoutes, } from "../../age-gate/controller";
+import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { localInferenceRoutes, } from "../../inference/routes";
+import { actorPlanRoutes, } from "../actor-plan";
 import { apiKeysRoutes, } from "../api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "../auth";
-import { deprecationAfterHandle, } from "../middleware/deprecation-headers";
 import { emojiRoutes, } from "../emoji";
 import { frontendLogsRoutes, } from "../frontend-logs";
 import { healthRoutes, } from "../health";
 import { i18nRoutes, } from "../i18n";
 import { keyManagementRoutes, } from "../key-management";
-import { localInferenceRoutes, } from "../../inference/routes";
 import { messageEncryptionRoutes, } from "../message-encryption";
-import { planningBoardRoutes, } from "../planning-board";
+import { deprecationAfterHandle, } from "../middleware/deprecation-headers";
+import { versionResolver, } from "../middleware/version-resolver";
 import { planningRoutes, } from "../planning";
+import { planningBoardRoutes, } from "../planning-board";
 import { requestStatusRoutes, } from "../requests";
 import { sessionsRoutes, } from "../sessions";
-import { settingsRoutes, } from "../settings";
 import { switchSessionRoutes, } from "../sessions-switch";
+import { settingsRoutes, } from "../settings";
 import { telemetryRoutes, } from "../telemetry";
 import { usersRoutes, } from "../users";
-import { versionResolver, } from "../middleware/version-resolver";
 
 /**
  * @param {RegisterPluginsOpts} opts
