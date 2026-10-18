@@ -161,7 +161,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
   });
 
   test("chats list renders with HX-Request", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/chats/list", { headers: { "HX-Request": "true", }, },),
     );
 
@@ -171,13 +171,41 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
   });
 
   test("chats search renders with HX-Request", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/chats/search?q=alpha", { headers: { "HX-Request": "true", }, },),
     );
 
     expect(res.status,).toBe(200,);
     const html = await res.text();
     expect(html,).toContain("chat-a",);
+  });
+
+  test("chats list denies unauthenticated JSON callers", async () => {
+    const res = await makeApp(db,).handle(
+      new Request("http://localhost/dynamic/chats/list", { headers: { Accept: "application/json", }, },),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("chats list JSON is scoped to the caller", async () => {
+    const res = await makeApp(db, "other", "user",).handle(
+      new Request("http://localhost/dynamic/chats/list", { headers: { Accept: "application/json", }, },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = safeJsonParse<{ chats: unknown[] }>(await res.text(),);
+    expect(body.ok && body.value.chats,).toEqual([],);
+  });
+
+  test("chats search JSON is scoped to the caller", async () => {
+    const res = await makeApp(db, "other", "user",).handle(
+      new Request("http://localhost/dynamic/chats/search?q=alpha", { headers: { Accept: "application/json", }, },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = safeJsonParse<{ chats: unknown[] }>(await res.text(),);
+    expect(body.ok && body.value.chats,).toEqual([],);
   });
 
   test("world detail renders for owner", async () => {
