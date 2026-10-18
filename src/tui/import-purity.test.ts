@@ -52,6 +52,12 @@ const blessedStub = {
   screen: count,
   text: count,
   textbox: count,
+  // ./markup reads `blessed.helpers.escape` at module scope, and this sweep
+  // imports EVERY module under src/tui/ — a stub without `helpers` fails the
+  // sweep on import. blessed's escape is pure string work, no terminal.
+  helpers: {
+    escape: (text: string,) => text.replaceAll("{", "{open}",).replaceAll("}", "{close}",),
+  },
 };
 
 if (ISOLATED) {
