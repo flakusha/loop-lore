@@ -46,6 +46,34 @@ export type RedeemFlowResult<Invite,> =
   | { ok: true; invite: Invite; alreadyMember: boolean }
   | { ok: false; error: InviteError };
 
+/**
+ * Raised by a portal when its guarded consume matched no row, i.e. the invite
+ * reached its cap between the pre-flight read and the write. Thrown from
+ * inside the transaction so the membership insert rolls back with it.
+ */
+export class InviteUsedUpError extends Error {
+  constructor() {
+    super("Invite has reached its usage limit",);
+    this.name = "InviteUsedUpError";
+  }
+}
+
+/**
+ * Report an invite as used up and retire it when the state machine allows.
+ * Shared by the pre-flight cap check and the raced-consume path so both end in
+ * the same status.
+ */
+async function exhaustedOutcome<Invite extends RedeemableInvite,>(
+  portals: RedeemPortals<Invite>,
+  invite: Invite,
+): Promise<{ ok: false; error: InviteError }> {
+  if (inviteStatusMachine.canTransition(invite.status, InviteStatus.Exhausted,)) {
+    await portals.setStatus(invite.id, InviteStatus.Exhausted,);
+  }
+
+  return { ok: false, error: usedUpError(), };
+}
+
 /** */
 function notFoundError(): InviteError {
   return { code: "not_found", message: "Invalid invite code", };
@@ -119,16 +147,17 @@ export async function redeemInviteCode<Invite extends RedeemableInvite,>(
     return { ok: true, invite, alreadyMember: true, };
   }
 
-  if (invite.max_uses !== null && invite.uses >= invite.max_uses) {
-    if (!inviteStatusMachine.canTransition(invite.status, InviteStatus.Exhausted,)) {
-      return { ok: false, error: usedUpError(), };
-    }
+  if (invite.max_uses !== null && invite.uses >= invite.max_uses) { return await exhaustedOutcome(portals, invite,); }
 
-    await portals.setStatus(invite.id, InviteStatus.Exhausted,);
-    return { ok: false, error: usedUpError(), };
+  // The portal's consume update IS the cap guard: when it matches no row, a
+  // concurrent redemption took the last use between this function's read and
+  // the transaction, and the membership insert has rolled back.
+  try {
+    await portals.insertMemberAndConsumeUse(invite, input.actorId,);
+  } catch (error) {
+    if (!(error instanceof InviteUsedUpError)) { throw error; }
+    return await exhaustedOutcome(portals, invite,);
   }
-
-  await portals.insertMemberAndConsumeUse(invite, input.actorId,);
 
   return { ok: true, invite, alreadyMember: false, };
 }

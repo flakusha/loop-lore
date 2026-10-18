@@ -2,113 +2,101 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * src/routes/worlds/karma-routes.test.ts — the faction id in the standing path
- * must belong to the world in the path.
+ * src/routes/worlds/karma-routes.test.ts — `:factionId` is scoped to
+ * `:worldId` on the faction-standing routes.
  *
- * Both standing endpoints gate on the world (`requireWorldOwner` for the write,
- * `requireWorldAccess` for the read) but the faction is addressed by its OWN id:
- * without a faction-in-world scope check a caller who owns ANY world could read
- * or rewrite another world's faction standing by guessing the id.
- *
- * The attack each case reproduces: authenticated as the owner of w1, send a
- * standing GET/POST naming a faction that lives in w2. Before the fix both
- * returned 200; now both return 404.
+ * BUG-karma-standing-skips-faction-in-world-check — both standing routes
+ * accepted any `factionId`. `adjustFactionStanding` writes
+ * `faction_standing(world_id, faction_id, actor_id)` and the FK only requires
+ * that the faction exist SOMEWHERE, so a world owner could attach a standing
+ * row for another world's faction into their own world; the GET reported
+ * "neutral" for a foreign faction instead of 404ing. The routes now run
+ * `requireFactionsInWorld`, the guard faction-routes already used.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { WorldVisibility, } from "../../db/enums-story/world";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import {
-  insertActors,
-  insertUsers,
-  insertWorlds,
-} from "../../test-utils/insert-helpers";
-import { createFaction, } from "../../worlds/factions";
+import { insertActors, insertFactions, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { karmaRoutes, } from "./karma-routes";
+import type { HandleOpts, } from "./types";
 
-const W1 = "w1";
-const W2 = "w2";
-const USER_A = "user-a";
-const USER_B = "user-b";
-const ACTOR_A = "actor-a";
-
+const WORLD = "w1";
+const OTHER_WORLD = "w2";
 let db: Kysely<DB>;
-let factionInW1 = "";
-let factionInW2 = "";
-
-/** Mount the real routes behind a session identity, as the app wires them. */
+let ownFaction = "";
+let foreignFaction = "";
+let ownFaction = "";
+let foreignFaction = "";
+/** Mount the real karma routes behind a session identity. */
 function appFor(userId: string,): Elysia {
   return new Elysia()
     .derive({ as: "scoped", }, () => ({ userId, userRole: "user", }),)
-    .use(karmaRoutes({ database: db, config: {} as Config, },),) as unknown as Elysia;
+    .use(karmaRoutes({ database: db, config: {} as Config, } as HandleOpts,),) as unknown as Elysia;
 }
 
-/** A JSON POST to a karma path, authenticated as `userId`. */
-function post(userId: string, path: string, body: Record<string, unknown>,): Promise<Response> {
-  return appFor(userId,).handle(
+/** A request authenticated as the world owner. */
+function call(method: "GET" | "POST", path: string, body?: Record<string, unknown>,): Promise<Response> {
+  return appFor(OWNER,).handle(
     new Request(`http://localhost${path}`, {
-      method: "POST",
+      method,
       headers: { "content-type": "application/json", },
-      body: JSON.stringify(body,),
+      body: body === undefined ? null : JSON.stringify(body,),
     },),
   );
 }
 
-/** A GET of a karma path, authenticated as `userId`. */
-function get(userId: string, path: string,): Promise<Response> {
-  return appFor(userId,).handle(new Request(`http://localhost${path}`,),);
+/** The standing rows written for a faction in a world. */
+async function standingRows(): Promise<unknown[]> {
+  return await db
+    .selectFrom("faction_standing",)
+    .select(["world_id", "faction_id",],)
+    .execute();
 }
-
 beforeEach(async () => {
   ({ db, } = await createTestDb());
 
-  await insertUsers(db, "Alice", "Alice", { id: USER_A, },);
-  await insertUsers(db, "Bob", "Bob", { id: USER_B, },);
-  // w1 is owned by USER_A (passes the write gate); w2 is public (passes the
-  // read gate) but its faction is USER_B's — the faction scope check is what
-  // must refuse the cross-world ids below.
-  await insertWorlds(db, USER_A, "World One", { id: W1, visibility: WorldVisibility.Public, },);
-  await insertWorlds(db, USER_B, "World Two", { id: W2, visibility: WorldVisibility.Public, },);
-  await insertActors(db, "Alice Actor", { id: ACTOR_A, user_id: USER_A, },);
-  factionInW1 = (await createFaction({ db, worldId: W1, name: "Guard", },)).id;
-  factionInW2 = (await createFaction({ db, worldId: W2, name: "Compact", },)).id;
+  await insertUsers(db, "owner", "Owner", { id: OWNER, },);
+  await insertWorlds(db, OWNER, "Home World", { id: WORLD, },);
+  await insertWorlds(db, OWNER, "Other World", { id: OTHER_WORLD, },);
+  await insertActors(db, "Actor", { id: ACTOR, },);
+  ownFaction = await insertFactions(db, WORLD, "Guild", { id: "faction-own", },);
+  foreignFaction = await insertFactions(db, OTHER_WORLD, "Rival Guild", { id: "faction-foreign", },);
 },);
 
 afterEach(async () => {
   await db.destroy();
 },);
 
-describe("the standing routes scope the faction id to the path world", () => {
-  test("GET standing for another world's faction returns 404", async () => {
-    const foreign = await get(USER_A, `/api/worlds/${W1}/actors/${ACTOR_A}/factions/${factionInW2}/standing`,);
-    expect(foreign.status,).toBe(404,);
+describe("faction standing is scoped to the world", () => {
+  test("POSTing standing for another world's faction is a 404 and writes nothing", async () => {
+    const res = await call("POST", `/api/worlds/${WORLD}/actors/${ACTOR}/factions/${foreignFaction}/standing`, {
+      delta: 10,
+      reason: "bribed",
+    },);
 
-    // Control: the faction that DOES belong to w1 reads fine.
-    const own = await get(USER_A, `/api/worlds/${W1}/actors/${ACTOR_A}/factions/${factionInW1}/standing`,);
-
-    expect(own.status,).toBe(200,);
+    expect(res.status,).toBe(404,);
+    expect(await standingRows(),).toEqual([],);
   });
 
-  test("POST standing for another world's faction returns 404", async () => {
-    const foreign = await post(
-      USER_A,
-      `/api/worlds/${W1}/actors/${ACTOR_A}/factions/${factionInW2}/standing`,
-      { delta: 10, reason: "cross-world write", },
-    );
+  test('GETting standing for another world\'s faction is a 404, not "neutral"', async () => {
+    const res = await call("GET", `/api/worlds/${WORLD}/actors/${ACTOR}/factions/${foreignFaction}/standing`,);
 
-    expect(foreign.status,).toBe(404,);
+    expect(res.status,).toBe(404,);
+  });
 
-    // Control: the same call against w1's own faction succeeds.
-    const own = await post(
-      USER_A,
-      `/api/worlds/${W1}/actors/${ACTOR_A}/factions/${factionInW1}/standing`,
-      { delta: 10, reason: "own-world write", },
-    );
+  test("the world's OWN faction still works on both verbs", async () => {
+    const post = await call("POST", `/api/worlds/${WORLD}/actors/${ACTOR}/factions/${ownFaction}/standing`, {
+      delta: 10,
+    },);
 
-    expect(own.status,).toBe(200,);
+    expect(post.status,).toBe(200,);
+
+    const get = await call("GET", `/api/worlds/${WORLD}/actors/${ACTOR}/factions/${ownFaction}/standing`,);
+    expect(get.status,).toBe(200,);
+    expect(await get.json(),).toMatchObject({ data: { standing: 10, }, },);
   });
 });
 
@@ -136,3 +124,11 @@ describe("the karma profile + event routes answer for the world owner", () => {
     expect(body.data.overall,).toBe(5,);
   });
 });
+
+const OWNER = "user-owner";
+
+const WORLD = "w1";
+
+const ACTOR = "actor1";
+
+const OTHER_WORLD = "w2";
