@@ -10,7 +10,9 @@
  * only timer waits are zero-delay scheduler-boundary flushes.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { isTypewriting, skipTypewrite, typewrite, } from "./typewriter";
+import type { VnScene, } from "./scene-renderer/types";
+import { getDialogueTemplate, getSceneTemplate, } from "./templates/scene-templates";
+import { isTypewriting, resolveDialoguePacing, skipTypewrite, typewrite, } from "./typewriter";
 
 // ── Global stubs ────────────────────────────────────────────────────────────
 
@@ -22,6 +24,8 @@ const originalCancelRaf = (globalThis as Globals).cancelAnimationFrame;
 let reducedMotion = false;
 const pendingFrames = new Map<number, () => void>();
 let nextFrameId = 0;
+const testStorage = new Map<string, string>();
+const originalStorage = (globalThis as Globals).localStorage;
 
 /** Flush pending macrotasks once: lets stubbed animation frames settle. */
 function tick(): Promise<void> {
@@ -33,6 +37,13 @@ function tick(): Promise<void> {
 beforeEach(() => {
   reducedMotion = false;
   pendingFrames.clear();
+  // bun:test has no DOM storage; the custom-template store needs a stub.
+  (globalThis as Globals).localStorage = {
+    getItem: (key: string,) => testStorage.get(key,) ?? null,
+    setItem: (key: string, value: string,) => void testStorage.set(key, String(value,),),
+    removeItem: (key: string,) => void testStorage.delete(key,),
+  };
+
   (globalThis as Globals).matchMedia = (query: string,): { matches: boolean } => ({
     matches: reducedMotion && query.includes("reduce",),
   });
@@ -58,6 +69,8 @@ afterEach(() => {
   (globalThis as Globals).matchMedia = originalMatchMedia;
   (globalThis as Globals).requestAnimationFrame = originalRaf;
   (globalThis as Globals).cancelAnimationFrame = originalCancelRaf;
+  (globalThis as Globals).localStorage = originalStorage;
+  testStorage.clear();
 },);
 
 // ── Fake element ────────────────────────────────────────────────────────────
@@ -155,5 +168,73 @@ describe("skipTypewrite", () => {
     skipTypewrite(el, "done",);
     expect(el.textContent,).toBe("done",);
     expect(isTypewriting(),).toBe(false,);
+  });
+});
+
+// ── resolveDialoguePacing ──────────────────────────────────────────────────
+
+describe("resolveDialoguePacing", () => {
+  const base = { speed: 30, pausePunctuation: true, };
+
+  /** Minimal VnScene carrying only a template id. */
+  function pacingScene(templateId?: string,): VnScene {
+    return {
+      messageId: "m1",
+      characterName: "Someone",
+      text: "...",
+      role: "assistant",
+      templateId,
+    };
+  }
+
+  test("no template id returns the base options object unchanged", () => {
+    expect(resolveDialoguePacing(base, pacingScene(undefined,),),).toBe(base,);
+  });
+
+  test("an unknown template id and no world falls back to base", () => {
+    expect(resolveDialoguePacing(base, pacingScene("no-such-template",),),).toBe(base,);
+  });
+
+  test("a dialogue-category template id contributes its own text pacing", () => {
+    const tense = getDialogueTemplate("dialogue_tense",)!;
+    const result = resolveDialoguePacing(base, pacingScene("dialogue_tense",),);
+    expect(result.speed,).toBe(tense.body.text?.typewriterSpeed ?? -1,);
+    expect(result.pausePunctuation,).toBe(tense.body.text?.pauseOnPunctuation ?? false,);
+  });
+
+  test("a scene-category template uses its body.text pacing directly", () => {
+    // confrontation ships typewriterSpeed 20 / pauseOnPunctuation false.
+    const result = resolveDialoguePacing(base, pacingScene("confrontation",),);
+    const expected = getSceneTemplate("confrontation",)?.body.text;
+    expect(result.speed,).toBe(expected?.typewriterSpeed ?? -1,);
+    expect(result.pausePunctuation,).toBe(expected?.pauseOnPunctuation ?? false,);
+  });
+
+  test("a world custom dialogue template resolves when worldId is threaded", () => {
+    const worldId = "pacing-test-world";
+    const custom = {
+      id: "custom_pacing",
+      name: "Custom Pacing",
+      description: "",
+      worldId,
+      category: "dialogue" as const,
+      version: 1,
+      variables: [],
+      body: { layout: "overlay", transition: "none", text: { typewriterSpeed: 77, pauseOnPunctuation: false, }, },
+      tags: [],
+      createdAt: "2024-01-01T00:00:00Z",
+      modifiedAt: "2024-01-01T00:00:00Z",
+    };
+
+    localStorage.setItem(`vn-templates-${worldId}`, JSON.stringify([custom,],),);
+
+    const result = resolveDialoguePacing(base, pacingScene("custom_pacing",), worldId,);
+    expect(result.speed,).toBe(77,);
+    expect(result.pausePunctuation,).toBe(false,);
+
+    // Without the world id the custom store is invisible.
+    expect(resolveDialoguePacing(base, pacingScene("custom_pacing",),),).toBe(base,);
+
+    localStorage.removeItem(`vn-templates-${worldId}`,);
   });
 });

@@ -24,8 +24,8 @@
  */
 import type { VnScene, } from "../scene-renderer/types";
 import type { VnSettings, } from "../settings";
-import { getSceneTemplate, } from "./scene-templates";
-import { resolveVariables, substituteTemplate, type VnTemplate, } from "./template-engine";
+import { getDialogueTemplate, getSceneTemplate, } from "./scene-templates";
+import { getTemplate, resolveVariables, substituteTemplate, type VnTemplate, } from "./template-engine";
 
 /** The only transition values the renderer accepts (see transition-engine). */
 const ALLOWED_TRANSITIONS: ReadonlySet<string> = new Set([
@@ -40,34 +40,60 @@ const ALLOWED_LAYOUTS: ReadonlySet<string> = new Set(["overlay", "below", "split
 const ALLOWED_IMAGE_SCALING: ReadonlySet<string> = new Set(["contain", "cover", "fill", "auto",],);
 
 /**
- * Apply a scene template's overrides onto the base settings.
+ * Resolve a scene's `templateId` against the built-in scene registry first,
+ * then the world's custom templates in local storage.
+ * @param scene Scene carrying the optional templateId.
+ * @param worldId World scope for custom-template lookup; null skips it.
+ * @returns The template, or undefined when the id is unknown.
+ */
+export function resolveTemplateForScene(
+  scene: VnScene,
+  worldId?: string | null,
+): VnTemplate | undefined {
+  if (!scene.templateId) { return undefined; }
+  const builtin = getSceneTemplate(scene.templateId,);
+  if (builtin) { return builtin; }
+  return worldId ? (getTemplate(worldId, scene.templateId,) ?? undefined) : undefined;
+}
+
+/**
+ * Resolve any template id: built-in scene registry, built-in dialogue
+ * registry, then the world's custom templates. Composite steps may reference
+ * scene or dialogue templates, so both registries are consulted.
+ * @param templateId Template id from a scene or composite step.
+ * @param worldId World scope for custom-template lookup; null skips it.
+ * @returns The template, or undefined when the id is unknown.
+ */
+export function resolveAnyTemplate(
+  templateId: string,
+  worldId?: string | null,
+): VnTemplate | undefined {
+  return getSceneTemplate(templateId,) ??
+    getDialogueTemplate(templateId,) ??
+    (worldId ? (getTemplate(worldId, templateId,) ?? undefined) : undefined);
+}
+
+/**
+ * Merge an already-resolved template's body onto the base settings.
  *
  * Only `layout`, `imageScaling`, `transition` and `typewriterSpeed` are
- * merged. `body.portrait.size` is deliberately NOT mapped: the template value
- * is scale-like (e.g. 1.2) while `settings.portraitSize` is a percentage, so
- * mapping it would render a 1.2%-tall portrait. `body.portrait.position` is
- * skipped because the renderer derives position from `scene.role`.
+ * merged — same whitelist (and for the same blank-scene reasons) as the
+ * single-template path. Dialogue templates carry `"none"` transitions and
+ * overlay layouts, which the whitelists reject, so only their pacing fields
+ * survive; `body.portrait.size` is deliberately NOT mapped (template values
+ * are scale-like, settings wants a percentage) and `body.portrait.position`
+ * is skipped because the renderer derives position from `scene.role`.
  *
  * @param settings Base render settings.
- * @param scene Scene carrying the optional templateId/templateVars.
- * @returns Settings to render with — the base object itself when the scene
- *   has no template, the template is unknown, or resolution threw.
+ * @param template Resolved template (scene or dialogue category).
+ * @param variables Substitution variables for `{{var}}` fields.
+ * @returns A settings copy with the template's whitelisted overrides.
  */
-export function applyTemplateOverrides(settings: VnSettings, scene: VnScene,): VnSettings {
-  if (!scene.templateId) { return settings; }
-
-  const template: VnTemplate | undefined = getSceneTemplate(scene.templateId,);
-  if (!template) { return settings; }
-
-  let variables: Record<string, unknown>;
-  try {
-    variables = resolveVariables(template, scene.templateVars ?? {},);
-  } catch {
-    // Missing required variable — render with base settings rather than
-    // aborting the scene build. See header invariant 1.
-    return settings;
-  }
-
+export function applyResolvedTemplate(
+  settings: VnSettings,
+  template: VnTemplate,
+  variables: Record<string, unknown>,
+): VnSettings {
   const merged: VnSettings = { ...settings, };
   const { body, } = template;
 
@@ -94,4 +120,42 @@ export function applyTemplateOverrides(settings: VnSettings, scene: VnScene,): V
   }
 
   return merged;
+}
+
+/**
+ * Apply a scene template's overrides onto the base settings.
+ *
+ * Resolution order: built-in scene templates, then the world's custom
+ * templates (when `worldId` is given). Composite templates return the base
+ * settings unchanged here — their step sequence (conditions, delays,
+ * per-step application) is executed by the render path via composite.ts,
+ * which folds each step through `applyResolvedTemplate`.
+ *
+ * @param settings Base render settings.
+ * @param scene Scene carrying the optional templateId/templateVars.
+ * @param worldId World scope for custom-template lookup; optional.
+ * @returns Settings to render with — the base object itself when the scene
+ *   has no template, the template is unknown or composite, or resolution
+ *   threw.
+ */
+export function applyTemplateOverrides(
+  settings: VnSettings,
+  scene: VnScene,
+  worldId?: string | null,
+): VnSettings {
+  const template = resolveTemplateForScene(scene, worldId,);
+  // Composite templates are orchestrated by the render path; failing closed
+  // to base settings here keeps this one-shot path non-composite only.
+  if (!template || template.category === "composite") { return settings; }
+
+  let variables: Record<string, unknown>;
+  try {
+    variables = resolveVariables(template, scene.templateVars ?? {},);
+  } catch {
+    // Missing required variable — render with base settings rather than
+    // aborting the scene build. See header invariant 1.
+    return settings;
+  }
+
+  return applyResolvedTemplate(settings, template, variables,);
 }

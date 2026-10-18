@@ -18,6 +18,8 @@ export const state: {
   container: HTMLElement | null;
   settings: VnSettings | null;
   currentChatId: string | null;
+  /** World scope for custom-template resolution; null = built-ins only. */
+  currentWorldId: string | null;
   loadingIndicator: LoadingIndicator | null;
   locationChangeHandler: ((e: Event,) => void) | null;
   /** Listener for `vn:navigate-to-scene` (send-gate recovery). */
@@ -29,6 +31,7 @@ export const state: {
   container: null,
   settings: null,
   currentChatId: null,
+  currentWorldId: null,
   loadingIndicator: null,
   locationChangeHandler: null,
   navigateHandler: null,

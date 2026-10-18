@@ -11,24 +11,37 @@
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { type FakeDom, type FakeEl, installVnFakeDom, makeAttachment, makeEl, } from "../../tests/vn-fake-dom";
+import type { VnCompositeStep, } from "../templates/template-engine";
 import { renderCurrentScene, type SceneNavigator, } from "./render-scene";
 import { state, } from "./state";
 import type { VnScene, } from "./types";
 
 let dom: FakeDom;
+// bun:test has no DOM storage; the custom-template store needs a stub.
+const testStorage = new Map<string, string>();
+const originalStorage = (globalThis as { localStorage?: unknown }).localStorage;
 
 beforeEach(() => {
   dom = installVnFakeDom();
+  testStorage.clear();
+  (globalThis as { localStorage?: unknown }).localStorage = {
+    getItem: (key: string,) => testStorage.get(key,) ?? null,
+    setItem: (key: string, value: string,) => void testStorage.set(key, String(value,),),
+    removeItem: (key: string,) => void testStorage.delete(key,),
+  };
+
   state.scenes = [];
   state.currentIndex = 0;
   state.container = null;
   state.settings = null;
   state.currentChatId = null;
+  state.currentWorldId = null;
   state.loadingIndicator = null;
 },);
 
 afterEach(() => {
   dom.restore();
+  (globalThis as { localStorage?: unknown }).localStorage = originalStorage;
 },);
 
 // ── Fixture ─────────────────────────────────────────────────────────────────
@@ -376,5 +389,124 @@ describe("renderCurrentScene choice opt-in", () => {
 
     expect(container.querySelector(".vn-choices-container",),).toBeNull();
     expect(container.querySelector(".vn-questions-container",),).toBeNull();
+  });
+});
+
+// ── Composite template orchestration ────────────────────────────────────────
+
+describe("renderCurrentScene composite templates", () => {
+  const WORLD = "render-composite-world";
+
+  /** Seed a custom composite template for WORLD and scope the renderer to it. */
+  function installComposite(
+    steps: VnCompositeStep[],
+    scenes: VnScene[],
+    index = 0,
+  ): FakeEl {
+    localStorage.setItem(
+      `vn-templates-${WORLD}`,
+      JSON.stringify([{
+        id: "combo",
+        name: "Combo",
+        description: "",
+        worldId: WORLD,
+        category: "composite",
+        version: 1,
+        variables: [],
+        body: { layout: "inherit", transition: "inherit", steps, },
+        tags: [],
+        createdAt: "2024-01-01T00:00:00Z",
+        modifiedAt: "2024-01-01T00:00:00Z",
+      },],),
+    );
+
+    const container = install(scenes, index,);
+    state.currentWorldId = WORLD;
+
+    return container;
+  }
+
+  afterEach(() => {
+    localStorage.removeItem(`vn-templates-${WORLD}`,);
+  },);
+
+  test("folds each applied step's overrides; later steps win", async () => {
+    // quiet_moment ships layout below, confrontation ships layout split; the
+    // fold order decides the mounted layout class.
+    const container = installComposite([
+      { templateId: "confrontation", },
+      { templateId: "quiet_moment", },
+    ], [baseScene({ templateId: "combo", },),],);
+
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    const sceneEl = container.querySelector(".vn-scene",)!;
+    expect(sceneEl.className,).toBe("vn-scene vn-layout-below",);
+  });
+
+  test("false conditions skip their step without aborting the rest", async () => {
+    const container = installComposite([
+      { templateId: "quiet_moment", condition: "mood == 'calm'", },
+      { templateId: "confrontation", },
+    ], [baseScene({ templateId: "combo", templateVars: { mood: "tense", }, },),],);
+
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    // confrontation ships layout overlay; the skipped quiet_moment (below)
+    // did not override it afterwards.
+    expect(container.querySelector(".vn-scene",)!.className,).toBe("vn-scene vn-layout-overlay",);
+  });
+
+  test("unknown step ids are skipped; the scene still renders on base settings", async () => {
+    const container = installComposite([
+      { templateId: "no-such-template", },
+    ], [baseScene({ templateId: "combo", },),],);
+
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    // Base SETTINGS layout is split, nothing applied.
+    expect(container.querySelector(".vn-scene",)!.className,).toBe("vn-scene vn-layout-split",);
+    expect(container.querySelector(".vn-text",)!.textContent,).toBe("Well met.",);
+  });
+
+  test("awaits step delays before mounting", async () => {
+    const container = installComposite([
+      { templateId: "quiet_moment", delay: 20, },
+    ], [baseScene({ templateId: "combo", },),],);
+
+    const pending = renderCurrentScene(false, spyNavigator().nav,);
+    // Still inside the 20ms step delay: nothing mounted yet.
+    expect(container.querySelector(".vn-scene",),).toBeNull();
+
+    await pending;
+    expect(container.querySelector(".vn-scene",)!.className,).toBe("vn-scene vn-layout-below",);
+  });
+
+  test("a newer render cancels a delayed composite run's mount", async () => {
+    const container = installComposite(
+      [{ templateId: "quiet_moment", delay: 60, },],
+      [
+        baseScene({ messageId: "slow", templateId: "combo", },),
+        baseScene({ messageId: "fast", text: "Second.", },),
+      ],
+    );
+
+    const slowRun = renderCurrentScene(false, spyNavigator().nav,);
+    state.currentIndex = 1;
+    await renderCurrentScene(false, spyNavigator().nav,);
+    await slowRun;
+
+    const sceneEls = container.children.filter((c,) => c.className.startsWith("vn-scene",));
+    expect(sceneEls,).toHaveLength(1,);
+    expect(sceneEls[0]!.querySelector(".vn-text",)!.textContent,).toBe("Second.",);
+  });
+
+  test("a scene template outside the custom store renders with base settings", async () => {
+    // Without the world scoped to the store, the composite id is unknown and
+    // the non-composite path applies built-in resolution only.
+    const container = install([baseScene({ templateId: "combo", },),], 0,);
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    expect(container.querySelector(".vn-scene",)!.className,).toBe("vn-scene vn-layout-split",);
   });
 });
