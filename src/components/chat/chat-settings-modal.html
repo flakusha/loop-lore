@@ -585,6 +585,42 @@
               data-testid="vn-split-ratio"
             />
           </div>
+
+          <!-- QA check over the currently rendered scenes (TASK-vn-qa-mode) -->
+          <div style="border-top: 1px solid var(--border); padding-top: var(--space-2)">
+            <label class="form-label" style="margin: 0">QA Check</label>
+            <div style="display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1)">
+              <button
+                type="button"
+                class="btn btn-secondary btn-xs"
+                @click="runVnQaCheck()"
+                data-testid="vn-qa-run"
+              >
+                Run QA Check
+              </button>
+              <span
+                x-show="_vnQaError"
+                style="color: #c66; font-size: 12px"
+                x-text="_vnQaError"
+                data-testid="vn-qa-error"
+              ></span>
+            </div>
+            <div data-testid="vn-qa-report" x-show="_vnQaReport"></div>
+          </div>
+
+          <!--
+            World-scoped custom template manager (TASK-vn-template-actions).
+            Own Alpine scope, like the autonomy panel above.
+          -->
+          <template x-if="currentChat?.world_id">
+            <div
+              style="border-top: 1px solid var(--border); padding-top: var(--space-2)"
+              x-data="vnTemplateManagerFactory(currentChat.world_id)"
+              data-testid="vn-template-manager"
+            >
+              {{> chat/vn-templates-panel.html }}
+            </div>
+          </template>
         </div>
       </div>
       <div class="form-group">

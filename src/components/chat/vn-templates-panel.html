@@ -1,0 +1,92 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  VN Template Manager — world-scoped custom VN templates (GM surface).
+  Mounted inside the chat settings modal's VN section with its own Alpine
+  scope from vnTemplateManagerFactory(worldId). Plain-English literals,
+  matching the surrounding VN section (no i18n keys there).
+-->
+<div style="display: flex; flex-direction: column; gap: var(--space-2)" data-testid="vn-templates-panel">
+  <label class="form-label" style="margin: 0">Scene Templates (this world)</label>
+
+  <template x-if="templates.length === 0">
+    <small style="color: var(--text-secondary)">
+      No custom templates yet — paste template JSON below and press Save.
+    </small>
+  </template>
+
+  <template x-for="tpl in templates" :key="tpl.id">
+    <div
+      style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-2)"
+      data-testid="vn-template-row"
+    >
+      <span style="font-size: 13px">
+        <span x-text="tpl.name"></span>
+        <small style="color: var(--text-secondary)" x-text="' · ' + tpl.category + ' · v' + tpl.version"></small>
+      </span>
+      <span style="display: flex; gap: var(--space-1)">
+        <button
+          type="button"
+          class="btn btn-secondary btn-xs"
+          @click="exportTpl(tpl.id)"
+          :data-testid="'vn-template-export-' + tpl.id"
+        >
+          Export
+        </button>
+        <button
+          type="button"
+          class="btn btn-warning btn-xs"
+          @click="remove(tpl.id)"
+          :data-testid="'vn-template-delete-' + tpl.id"
+        >
+          Delete
+        </button>
+      </span>
+    </div>
+  </template>
+
+  <textarea
+    class="form-input form-textarea"
+    rows="4"
+    x-model="draftJson"
+    placeholder='Template JSON, e.g. {"id":"my_scene","name":"My Scene","worldId":"…","category":"scene","body":{"layout":"split","transition":"fade"},"variables":[],"tags":[]}'
+    data-testid="vn-template-draft"
+  ></textarea>
+
+  <div style="display: flex; align-items: center; gap: var(--space-2)">
+    <button
+      type="button"
+      class="btn btn-secondary btn-xs"
+      @click="saveDraft()"
+      data-testid="vn-template-save"
+    >
+      Save / Import
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondary btn-xs"
+      @click="refresh()"
+      data-testid="vn-template-refresh"
+    >
+      Refresh
+    </button>
+    <span
+      x-show="message"
+      style="color: var(--text-secondary); font-size: 12px"
+      x-text="message"
+      data-testid="vn-template-message"
+    ></span>
+    <span
+      x-show="error"
+      style="color: #c66; font-size: 12px"
+      x-text="error"
+      data-testid="vn-template-error"
+    ></span>
+  </div>
+
+  <small style="color: var(--text-secondary)">
+    Custom templates are stored per world in this browser. Reference them from scene metadata via their template id;
+    composite templates (category "composite") run their steps in order with optional conditions and delays.
+  </small>
+</div>
