@@ -19,6 +19,7 @@ import { adjustFactionStanding, getFactionStanding, getKarma, recordKarmaEvent, 
 import { buildStandingEffects, } from "../../worlds/karma-tiers";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
+import { requireFactionsInWorld, } from "./faction-routes";
 import type { HandleOpts, } from "./types";
 
 /** Success envelope every route here answers with. */
@@ -122,6 +123,11 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+        // The world gate authorizes `:worldId`, but the faction is addressed by
+        // its own id in the path: without this scope check a member of world A
+        // could read world B's standing.
+        const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [ctx.params.factionId,],);
+        if (factionErr) { return factionErr; }
         const standing = await getFactionStanding({
           db: database,
           worldId: ctx.params.worldId,
@@ -148,6 +154,11 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+        // Same scope check as the GET: the faction must belong to the world the
+        // caller owns, or a GM could write standing against another world's
+        // faction row.
+        const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [ctx.params.factionId,],);
+        if (factionErr) { return factionErr; }
         try {
           const standing = await adjustFactionStanding({
             db: database,
