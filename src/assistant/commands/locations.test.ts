@@ -11,6 +11,7 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -179,5 +180,113 @@ describe("location commands", () => {
     const result = await locGet([`loc-${crypto.randomUUID()}`,], { chatId: "chat-1", userId: ownerId, },);
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("**Locations unavailable:** command context missing database.",);
+  });
+
+  // ── Site role (requireWorldAccess) ─────────────────────────
+  //
+  // Both command sites (locations.ts:29 and :96) branch on
+  // can(userRole, "admin.world"), which the matrix grants only to the wildcard
+  // roles (admin, solo, tester). Every level is asserted in BOTH directions on
+  // ONE existing world, so a regression that dropped the bypass — or the role on
+  // the way into the command — cannot pass. The world is created in beforeEach,
+  // so the refusals below cannot be passing merely because the world is missing.
+
+  const UNPRIVILEGED = [
+    UserRole.Moderator,
+    UserRole.Creator,
+    UserRole.Player,
+    UserRole.User,
+    UserRole.Viewer,
+    UserRole.Guest,
+    UserRole.Bot,
+    UserRole.Custom,
+  ];
+
+  const caller = async (prefix: string, role: UserRole,): Promise<string> => {
+    const id = `${prefix}-${role}-${crypto.randomUUID()}`;
+    // username is unique per row, so it has to carry the uuid too.
+    await insertUsers(db, id, "Caller", { id, role, },);
+    return id;
+  };
+
+  test("admin-class roles list another world's locations", async () => {
+    await insertLocations(db, otherWorldId, "Foreign Hall", {},);
+
+    for (const role of [UserRole.Admin, UserRole.Solo, UserRole.Tester,]) {
+      const callerId = await caller("admin", role,);
+      const result = await locList([otherWorldId,], ctx({ userId: callerId, userRole: role, },),);
+
+      expect(result.action,).toBe("loc-list",);
+      expect(result.systemMessage,).toContain("Foreign Hall",);
+    }
+  });
+
+  test("admin-class roles read a location in another world", async () => {
+    const foreign = await insertLocations(db, otherWorldId, "Foreign Hall", {},);
+
+    for (const role of [UserRole.Admin, UserRole.Solo, UserRole.Tester,]) {
+      const callerId = await caller("admin", role,);
+      const result = await locGet([foreign,], ctx({ userId: callerId, userRole: role, },),);
+
+      expect(result.action,).toBe("loc-get",);
+      expect(result.systemMessage,).toContain("Foreign Hall",);
+    }
+  });
+
+  test("/loc-list refuses every unprivileged role the world the admins read", async () => {
+    await insertLocations(db, otherWorldId, "Foreign Hall", {},);
+    const DENIAL = `World ${otherWorldId} not found or access denied.`;
+
+    for (const role of UNPRIVILEGED) {
+      const callerId = await caller("plain", role,);
+      const denied = await locList([otherWorldId,], ctx({ userId: callerId, userRole: role, },),);
+
+      expect(denied.systemMessage,).toBe(DENIAL,);
+      expect(denied.systemMessage,).not.toContain("Foreign Hall",);
+      expect(denied.action,).toBeUndefined();
+    }
+  });
+
+  test("/loc-get refuses every unprivileged role the world the admins read", async () => {
+    const foreign = await insertLocations(db, otherWorldId, "Foreign Hall", {},);
+    const DENIAL = `Location ${foreign} not found or access denied.`;
+
+    for (const role of UNPRIVILEGED) {
+      const callerId = await caller("plain", role,);
+      const denied = await locGet([foreign,], ctx({ userId: callerId, userRole: role, },),);
+
+      expect(denied.systemMessage,).toBe(DENIAL,);
+      expect(denied.systemMessage,).not.toContain("Foreign Hall",);
+      expect(denied.action,).toBeUndefined();
+    }
+  });
+
+  test("refuses a null and an unknown role, worded exactly like a missing world or location", async () => {
+    const foreign = await insertLocations(db, otherWorldId, "Foreign Hall", {},);
+    const missingWorld = `world-${crypto.randomUUID()}`;
+    const missingLoc = `loc-${crypto.randomUUID()}`;
+
+    for (const userRole of [null, "wizard",]) {
+      const asNothing = ctx({ userId: ownerId, userRole, },);
+
+      // Normalise the id before comparing, exactly as the existence-oracle test
+      // above does — the wording is identical, the id is the only difference.
+      const listDenied = await locList([otherWorldId,], asNothing,);
+      const listAbsent = await locList([missingWorld,], asNothing,);
+      expect(listDenied.systemMessage!.replace(otherWorldId, "<id>",),).toBe(
+        listAbsent.systemMessage!.replace(missingWorld, "<id>",),
+      );
+
+      expect(listDenied.action,).toBeUndefined();
+
+      const getDenied = await locGet([foreign,], asNothing,);
+      const getAbsent = await locGet([missingLoc,], asNothing,);
+      expect(getDenied.systemMessage!.replace(foreign, "<id>",),).toBe(
+        getAbsent.systemMessage!.replace(missingLoc, "<id>",),
+      );
+
+      expect(getDenied.systemMessage,).not.toContain("Foreign Hall",);
+      expect(getDenied.action,).toBeUndefined();
+    }
   });
 });
