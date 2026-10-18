@@ -26,6 +26,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
+import { MAX_ABILITY_BONUS, } from "../../worlds/resource-core";
 import { resourceRoutes, } from "./resource-routes";
 
 const W1 = "w1";
@@ -152,7 +153,7 @@ describe("abilityBonus is a bounded client input", () => {
       { location_id: locationW1, state: NodeInstanceState.Available, remaining_amount: 5, extraction_difficulty: 60, },
     );
 
-    const body = { locationId: locationW1, nodeInstanceId: def, abilityBonus: 1000, };
+    const body = { locationId: locationW1, nodeInstanceId: def, abilityBonus: MAX_ABILITY_BONUS + 1, };
     const res = await post(USER_A, `/api/worlds/${W1}/resources/extract`, body,);
 
     expect(res.status,).toBe(422,);
