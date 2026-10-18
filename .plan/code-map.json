@@ -1147,6 +1147,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
     }
   ],
   "src/assets/controller.ts": [
@@ -21110,6 +21114,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-image-backends-x-assistant-image-command-backend-routing-fai.md"
     }
   ],
@@ -21799,6 +21807,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-batch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
     },
     {
       "kind": "ticket",
