@@ -76,7 +76,7 @@ Verified points:
   row for `(user_id, provider_name)` and calls
   `decryptValue(row.api_key_encrypted, config.byoKey.encryptionKey)`. **The server
   does recover the raw key**, on every request, in order to call the provider.
-- `src/db/schema-core.ts:219-226` -- the row is
+- `src/db/schema-core.ts:220-227` -- `interface UserApiKeys` is the row shape:
   `{ id, user_id, provider_name, api_key_encrypted, created_at, updated_at }`.
   **There is no hash column and no key-prefix column.** The previous
   `keyHash` / SHA-256 claims described a column that does not exist.
@@ -118,7 +118,9 @@ Verified points:
   `byoKey.encryptionKey` the ciphertext is inert: there is no hash to reverse and
   no plaintext column to read.
 - **Cross-user isolation.** Every read and write is scoped by `user_id`
-  (`registry.ts:129`; `api-keys.ts:46`, `:103`, `:115`). One player cannot list or
+  (`registry.ts:129`; `api-keys.ts:44-47`, `:100-105`, `:150-155` -- every write
+  is reached only through a `(user_id, provider_name)` lookup, then applied by
+  primary key). One player cannot list or
   delete another's key -- asserted by
   `src/routes/api-keys.coverage.test.ts:171-188`.
 - **No key material in logs.** The single failure path logs provider, `userId`
@@ -233,8 +235,8 @@ interface PlayerProviderConfig {
       format
 - [ ] BYOK settings UI (add / list / revoke) -- does not exist
 - [ ] Write the missing `docs/spec/byok-api-keys.md`
-- [ ] Decide whether a hosted image provider is ever in scope; it currently is
-      not (see *Known Gap* below)
+- [ ] Decide whether BYOK should cover image providers; it currently does not
+      (see *Known Gap* below)
 
 ## Files
 
@@ -245,13 +247,13 @@ interface PlayerProviderConfig {
 - `src/crypto/byok.ts` -- AES-256-GCM encrypt/decrypt with a per-record salt
 - `src/crypto/byok.test.ts` -- round-trip, tamper, wrong-secret, wire-format tests
 - `src/crypto/index.ts` -- re-exports `encryptValue` / `decryptValue`
-- `src/db/schema-core.ts` -- the `user_api_keys` table (`:219-226`)
-- `src/db/migrations/001_init.ts` -- the table's original migration (`:216-220`)
+- `src/db/schema-core.ts` -- the `UserApiKeys` table (`:220-227`)
+- `src/db/migrations/001_init.ts` -- the table's original migration (`:212-220`)
 - `src/generation/providers/registry.ts` -- `resolveProvider` BYO-key resolution
   and server-default fallback
 - `src/config/sections/byo-key.ts` -- `byoKey.enabled` / `byoKey.encryptionKey`
 - `src/config/sections/generation/meta.ts` -- the `generation.providers` surface
-- `src/validation/db-schemas.ts` -- the `UserApiKey` validation schema
+- `src/validation/db-schemas.ts` -- the `UserApiKeysSchema` validation schema
 - `src/test-utils/insert-helpers.ts` -- `user_api_keys` test fixture insert
 
 *Removed from the previous list because these files do not exist:* `src/crypto/key-manager.ts`,
@@ -259,30 +261,60 @@ interface PlayerProviderConfig {
 `src/generation/fallback.ts`, `src/frontend/settings/api-keys.ts`,
 `docs/spec/byok-api-keys.md`.
 
-## Known Gap: there is no remote image generation
+## Known Gap: BYOK does not cover image providers
 
-**Remote/hosted IMAGE generation does not exist, and this epic does not add it.**
-The generation provider surface carries only an **OpenAI-compatible remote
-provider**: `src/config/sections/generation/meta.ts:14`,
-`src/config/sections/generation/defaults.ts:13` and
-`src/config/sections/generation/section.ts:15` all declare
-`providers.openaiCompatible` and nothing else. ComfyUI -- the only other image
-backend -- is by definition a **local** engine: `src/generation/providers/comfyui.ts`
-is an HTTP client built from a `baseUrl` (`:82-106`) that talks to
-`${baseUrl}/prompt`, `/history/{id}`, `/interrupt`, `/object_info` and `/view`
-(`:116`, `:151`, `:244`, `:257`, `:297`) and never spawns a process. There is no
-ComfyUI-compatible hosted endpoint other than a ComfyUI you run yourself.
+> **Corrected 2026-10-18 during self-review.** An earlier draft of this section
+> claimed "remote/hosted image generation does not exist". **That was wrong.**
+> It was derived from the audit's reading of `generation.providers`, which
+> describes the *LLM* provider map only. The image surface is a separate array,
+> `generation.providers.sd[]`, and it has a fully implemented **remote** backend.
+> The accurate gap is narrower: BYOK resolves credentials for chat providers only.
 
-The consequence is user-visible and is declared here rather than left implied:
-**a BYOK-only user has working remote chat inference and no remote image
-inference.** BYOK covers the remote *chat* surface; it does not and cannot cover
-the remote *image* surface, because none exists.
+**Remote image generation does exist.** Image generation is configured as
+`generation.providers.sd: ImageProviderConfig[]`
+(`src/config/schema/providers.ts:111`) and dispatched by `apiFamily` in
+`src/generation/image-engine/index.ts:36-61` across four implemented backends:
 
-Out of scope for this epic: adding a hosted image provider; modelling an
-OpenAI-compatible *image* endpoint as a distinct provider kind (`# sd: []` is
-commented out in `configs/config.generation.example.yaml`); and any hosted
-ComfyUI offering. If a hosted image provider is wanted, it is a separate epic.
-Provisioning for a *local* ComfyUI is `epic-comfyui-lifecycle.md`'s job.
+| `apiFamily` | Backend | Remote? |
+|---|---|---|
+| `openai` | `src/generation/image-engine/openai.ts` -- POSTs `${baseUrl}/v1/images/generations` with `Authorization: Bearer ${apiKey}` (`:22-25`) | **Yes -- hosted** |
+| `sdapi` | `src/generation/image-engine/sdapi.ts` | Usually local |
+| `sdcpp` | `src/generation/image-engine/sdcpp.ts` | Local |
+| `comfyui` | `src/generation/image-engine/comfyui.ts` | Local (a ComfyUI you run) |
+
+`src/generation/image-gen-route.ts:105` selects one via
+`pickSdProvider(config.generation.providers.sd, "generate")` and returns 501 when
+none is configured; `src/config/schema/sd-provider.ts:19` implements the picker.
+Note that `generationMeta` (`src/config/sections/generation/meta.ts:14-17`) and
+`GenerationSection` (`src/config/sections/generation/section.ts:14-16`) describe
+only `openaiCompatible` -- `meta.ts` is descriptive metadata, not a gate, and
+`src/config/load/load.ts:141-143` still normalises `providers.sd`. Do not read
+`meta.ts` as the shape of the config.
+
+**The real gap: BYOK does not reach any of them.**
+
+- BYOK resolution lives only on the chat path: `resolveProvider` reads
+  `user_api_keys` for the resolved LLM provider (`registry.ts:123-135`).
+- `POST /api/user-api-keys` validates the provider name against
+  `generation.providers.openaiCompatible` only (`api-keys.ts:82-86`), so a user
+  **cannot even store** a key for an image provider -- see
+  `BUG-byok-store-rejects-non-openaicompatible-provider-names.md`.
+- `src/generation/image-gen-route.ts` never consults `byoKey`, `user_api_keys`,
+  or `resolveProvider`; `userId` is used only for chat-access and ownership
+  checks. The image credential is the static `ImageProviderConfig.apiKey` read
+  from the server's own config file.
+
+So the user-visible statement is: **a BYOK-only user gets remote chat inference
+but cannot supply an image-provider credential through BYOK.** Remote image
+generation itself works -- it is operator-configured, not user-supplied. That is
+a credential-coverage gap, not a missing feature.
+
+Out of scope for this epic: widening the BYOK provider allowlist beyond
+`openaiCompatible`; per-user image-provider credentials; and hosted ComfyUI
+offerings (ComfyUI is local by definition -- `src/generation/providers/comfyui.ts`
+is an HTTP client over a `baseUrl` (`:82-106`, `:116`, `:151`, `:244`, `:257`,
+`:297`) that never spawns a process). Provisioning for a *local* ComfyUI is
+`epic-comfyui-lifecycle.md`'s job.
 
 ## Linked Tasks
 
@@ -296,5 +328,5 @@ Provisioning for a *local* ComfyUI is `epic-comfyui-lifecycle.md`'s job.
 - `src/crypto/` -- existing encryption utilities
 - `docs/spec/crypto.md` -- the encryption primitives spec
 - `docs/spec/implementation.md` -- implementation patterns
-- `epic-comfyui-lifecycle.md` -- local ComfyUI provisioning and launch, the reason
-  remote image inference has no surface here
+- `epic-comfyui-lifecycle.md` -- local ComfyUI provisioning and launch (ComfyUI is
+  local by definition; see *Known Gap*)
