@@ -127,13 +127,22 @@ carries the workload slice without unrelated chat/user identifiers.
 **REAL DEFECT FOUND AND FIXED.** `runPeerWorkload` sent the DESTINATION's origin
 in the `x-peer-origin` caller-identity header, so the receiver looked itself up
 in its own `mesh_peers` registry, never found it, and refused every offload
-between two distinct instances with `federation.workload_peer_untrusted`.
-Federated workload offload could not work at all across instances. The unit
-tests hid it because they registered the sender under the destination's own
-origin. `callerOrigin` is now a REQUIRED option on both `runPeerWorkload` and
-`dispatchPeerWorkload`, threaded from the call site, and the header carries it.
-This e2e spec is the only coverage that bites it — reverting the one-line header
-fails three of these tests.
+between two distinct instances with `federation.workload_peer_untrusted`. The
+workload plane could not work across instances at all. `callerOrigin` is now a
+REQUIRED option on both `runPeerWorkload` and `dispatchPeerWorkload`, threaded
+to the header.
+
+Two things bound the severity, both verified rather than assumed:
+
+- The defect was **LATENT, not live**. No production code path calls
+  `dispatchPeerWorkload` or `runPeerWorkload` yet — a whole-repo sweep finds
+  them only in tests. Nothing user-facing was broken today; the module was dead
+  on arrival for whoever wires the first real call site.
+- The existing unit tests are **blind** to it. Reintroducing the defective
+  header leaves `federation-peer-work.test.ts` and `peer-dispatch.test.ts` at
+  46 pass / 0 fail, because they register the sender under the destination's own
+  origin. This e2e spec is the only coverage that bites it: reverting the
+  one-line header fails three of these tests.
 
 **FIDELITY LIMITATION (stated, not hidden):** both instances run in one process
 and therefore share the process-global singletons the workload plane uses — the
