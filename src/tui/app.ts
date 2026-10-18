@@ -103,6 +103,10 @@ export class TUIApp {
     this.chat = new ChatWidget(this.screen, {
       sessionToken,
       sendTimeoutMs,
+      // The overlays are built after the chat; the closure runs at keypress
+      // time, when all of them exist. Without this the screen-level Tab would
+      // pull focus into the chat input underneath an open overlay.
+      isOverlayOpen: () => this.overlayOpen(),
       onChatChange: (chatId,) => {
         this.assets.setChatId(chatId,);
         this.updateStatus(`chat: ${chatId.slice(0, 8,)}... | F2: assets`,);
@@ -200,6 +204,18 @@ export class TUIApp {
       this.healthSegment = next;
       this.updateStatus(this.statusMessage,);
     })();
+  }
+
+  // ── Overlay ownership ───────────────────────────────────────────────
+
+  /**
+   * True when any full-screen overlay owns the keyboard. Screen-level key
+   * bindings on overlays must check this so keys do not fire beneath an
+   * overlay stacked on top (e.g. harness up/down/enter under the models
+   * overlay).
+   */
+  private overlayOpen(): boolean {
+    return this.chatPicker.isVisible() || this.harness.isVisible() || this.models.isVisible();
   }
 
   // ── Shutdown ───────────────────────────────────────────────

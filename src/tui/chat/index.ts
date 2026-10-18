@@ -39,6 +39,7 @@ export class ChatWidget implements ChatHost {
   sessionToken: string | undefined;
   sendTimeoutMs: number;
   private onChatChange?: (chatId: string,) => void;
+  private isOverlayOpen: () => boolean;
   cursor: string | null = null; // pagination cursor
 
   /**
@@ -53,6 +54,7 @@ export class ChatWidget implements ChatHost {
     this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
     this.sendTimeoutMs = options.sendTimeoutMs ?? TUI_DEFAULTS.sendTimeoutMs;
     this.onChatChange = options.onChatChange;
+    this.isOverlayOpen = options.isOverlayOpen ?? (() => false);
     // Main container box
     this.box = blessed.box({
       parent: screen,
@@ -170,6 +172,9 @@ export class ChatWidget implements ChatHost {
     // Focus management. A live completion owns Tab while one is on offer;
     // with nothing to complete Tab keeps its input <-> list switch.
     screen.key(["tab",], () => {
+      // An overlay on top owns the keyboard. Acting here would pull focus
+      // into a hidden input box underneath it.
+      if (this.isOverlayOpen()) { return; }
       if (this.completer.cycle()) {
         screen.render();
         return;
