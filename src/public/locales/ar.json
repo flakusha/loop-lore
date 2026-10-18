@@ -460,7 +460,8 @@
     "connectionFailed": "فشل الاتصال",
     "timeout": "انتهت مهلة الطلب",
     "createFailed": "Failed to create",
-    "loadFailed": "Failed to load"
+    "loadFailed": "Failed to load",
+    "federationQuotaExceeded": "تم تجاوز حصة أداء نظير الاتحاد"
   },
   "characters": {
     "title": "Characters",

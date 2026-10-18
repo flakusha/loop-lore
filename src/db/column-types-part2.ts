@@ -26,6 +26,7 @@ export const PART_2: Record<string, Record<string, string>> = {
     "instance_kind": "PeerInstanceKind",
     "auth_mode": "PeerAuthMode",
   },
+  // 068_federation_performance_budgets
   "MeshWorkAssignments": {
     "workload_class": "PeerWorkloadClass",
   },
@@ -179,5 +180,9 @@ export const PART_2: Record<string, Record<string, string>> = {
     "size": "MonsterSize",
     "alignment": "MonsterAlignment",
     "difficulty": "MonsterDifficulty",
+  },
+  "FederationPerformanceBudgets": {
+    "workload_class": "PeerWorkloadClass",
+    "budget_mode": "PeerBudgetMode",
   },
 };

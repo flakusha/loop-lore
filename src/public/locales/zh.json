@@ -460,7 +460,8 @@
     "connectionFailed": "连接失败",
     "timeout": "请求超时",
     "createFailed": "Failed to create",
-    "loadFailed": "Failed to load"
+    "loadFailed": "Failed to load",
+    "federationQuotaExceeded": "已超出联邦对等节点的性能配额"
   },
   "characters": {
     "title": "Characters",

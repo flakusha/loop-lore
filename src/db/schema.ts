@@ -229,4 +229,5 @@ export interface DB {
   map_zones: import("./schema-core").MapZones;
   vn_choice_selections: import("./schema-core").VnChoiceSelections;
   mesh_work_assignments: import("./schema-core").MeshWorkAssignments;
+  federation_performance_budgets: import("./schema-core").FederationPerformanceBudgets;
 }
