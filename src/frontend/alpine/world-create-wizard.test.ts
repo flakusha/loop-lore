@@ -108,7 +108,9 @@ describeOrSkip("world creation wizard", () => {
     ],);
 
     expect(calls.every((c,) => c.opts.method === "POST"),).toBe(true,);
-    expect(String(calls[0].opts.body ?? "",),).toContain(`"name":"Test World"`,);
+    const [worldPost,] = calls;
+    if (!worldPost) { throw new Error("no world POST recorded",); }
+    expect(String(worldPost.opts.body ?? "",),).toContain(`"name":"Test World"`,);
     expect(assignedUrl,).toBe("/worlds/w-new/edit",);
     expect(w.busy,).toBe(false,);
   });
