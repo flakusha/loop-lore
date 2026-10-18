@@ -19,8 +19,9 @@ not implemented.
 
 
 **Priority:** Medium
-**Status:** Done
+**Status:** In Progress
 **Status Note:** (2026-08-23) "Engine Complete — GM builder UI not implemented". Reconciled 2026-10-09: engine verified present and tested, composite execution never existed (only the step interface), and there is no GM builder UI. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: Phase 5 is now partly closed — `render-scene.ts:202` calls `applyTemplateOverrides` — so the remaining gaps are composites, conditions/delays, dialogue-template consumption, and the builder UI. The closed git issue is left as-is; re-opening it is out of scope here.
+**Status Note (2026-10-18):** Re-verified against `dev`: `transition-engine.ts` wiring is now real — `scene-renderer/render.ts` imports and calls `evaluateTriggers` (the transition engine itself still reads no templates, but triggers feed scene templates in). Remaining open: composites, conditions/delays, `typewriter.ts` dialogue wiring, custom-template CRUD callers (save/import/export have no production caller), and the builder UI. Status line corrected Done → In Progress to match the notes above.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, system, engine, custom, gm-tools
 **Effort:** Med
@@ -240,7 +241,9 @@ Verified 2026-10-09 in `src/frontend/vn/templates/template-engine.ts`
       propagating an unresolved variable.
 - [ ] `typewriter.ts` wiring — reads `settings.typewriterSpeed` only; it never
       reads a dialogue template
-- [ ] `transition-engine.ts` wiring — `evaluateTriggers` still has no caller
+- [x] `transition-engine.ts` wiring (via triggers) — `scene-renderer/render.ts`
+      imports and calls `evaluateTriggers` on location change; the engine
+      module itself still consumes no templates directly
 - [ ] GM builder UI — `template-builder.ts` and `template-gallery.ts` were
       never created (see `## Files to Create`)
 - [ ] Template builder UI allows drag-and-drop scene element configuration

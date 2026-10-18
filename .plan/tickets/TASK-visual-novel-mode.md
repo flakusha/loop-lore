@@ -17,6 +17,7 @@ verified in `src/frontend/vn/scene-renderer/`, `src/frontend/vn/typewriter.ts`,
 
 **Status:** Done
 **Status Note:** (2026-08-23) claimed 'Modal UI, scene renderer, choice/QA wiring all live'. Re-verified 2026-10-09: the modal UI and scene renderer are live — `vn.ts::syncVnRenderer` builds the renderer from persisted `gm_config.renderingOverride`, the renderer calls `transitionScene` and `typewrite` directly, and `chat.html:34` gates `#vn-container` on `_vnEnabled`. The choice/QA half of that sentence is **not** part of this ticket and does not hold: choice cards are never mounted (see `TASK-vn-branching-choices.md`) and `qa-mode.ts` has no production caller (see `TASK-vn-qa-mode.md`). The nine ACs below stay `[x]` — all verified in `src/`.
+**Status Note (2026-10-18):** Re-verified against `dev`; status stays Done. The cross-references above are now stale in the other direction: choice cards ARE mounted (`render-scene.ts:251`, gated on `vnChoicesEnabled`) and the Q&A interaction loop is live (`vn-questions` routes + `question-cards.ts`); `qa-mode.ts` the validator remains callerless. This ticket's own scope (renderer, wiring, settings) is unchanged.
 **Priority:** Medium
 **Effort:** Med-High (frontend rendering)
 **Epic:** epic-visual-novel-mode
