@@ -19,7 +19,7 @@ import { adjustFactionStanding, getFactionStanding, getKarma, recordKarmaEvent, 
 import { buildStandingEffects, } from "../../worlds/karma-tiers";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
-import { requireFactionsInWorld, } from "./faction-routes";
+import { requireFactionsInWorld, } from "./faction-routes-shared";
 import type { HandleOpts, } from "./types";
 
 /** Success envelope every route here answers with. */
