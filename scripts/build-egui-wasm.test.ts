@@ -21,13 +21,21 @@ const ROOT = join(import.meta.dir, "..",);
 
 /**
  * Shim dir holding a cargo that passes every invocation with no real build
- * behind it.
+ * behind it, and nothing else. `bun` is symlinked in because runScript
+ * spawns the script BY NAME, so resolving it goes through this PATH too.
+ *
+ * The dir must be the WHOLE PATH, not a prefix of the real one: the case
+ * under test is "cargo present, wasm-bindgen absent", and a real
+ * /usr/local/bin/wasm-bindgen leaking through would make the script take
+ * the BUILD path (a fake cargo produces no artifacts -> exit 1) instead of
+ * the skip path this test asserts.
  * @returns { dir, cleanup }
  */
 function makeCargoShim(): { dir: string; cleanup: () => void } {
   const dir = mkdtempSync(join(tmpdir(), "b6-egui-cargo-",),);
   writeFileSync(join(dir, "cargo",), "#!/bin/sh\nexit 0\n",);
   chmodSync(join(dir, "cargo",), 0o755,);
+  symlinkSync(process.execPath, join(dir, "bun",),);
   return { dir, cleanup: () => rmSync(dir, { recursive: true, force: true, },), };
 }
 
