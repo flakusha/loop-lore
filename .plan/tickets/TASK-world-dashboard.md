@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Done
+**Status:** Postponed
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-world-management-ui
@@ -25,6 +25,10 @@ Implement world management dashboard with world list, conditions display, settin
 - [ ] World settings editor
 - [ ] World lore editor
 - [ ] Mobile responsive
+
+## Note
+
+Feature was reverted in commit `508c1e6a4` (verified: IS ancestor of HEAD). All acceptance criteria remain unchecked — the feature was never completed before revert. Ticket marked Postponed pending re-implementation.
 
 ## Implementation Details
 
