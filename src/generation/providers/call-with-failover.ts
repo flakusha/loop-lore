@@ -84,8 +84,15 @@ export async function callWithFailover(
       continue;
     }
 
+    // Per-attempt credential: a BYO key resolved once for the primary must
+    // never travel to another vendor's HTTP endpoint. Without a resolver the
+    // request is dispatched verbatim (server keys are legitimately shared).
+    const attempt = req.resolveApiKey === undefined
+      ? req
+      : { ...req, apiKey: await req.resolveApiKey(name,), };
+
     try {
-      const response = handler ? await prov.stream(req, handler,) : await prov.complete(req,);
+      const response = handler ? await prov.stream(attempt, handler,) : await prov.complete(attempt,);
 
       circuitBreaker.onSuccess(name,);
       logRun(name, "ok", null, response.usage,);

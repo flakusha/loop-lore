@@ -53,6 +53,7 @@ export async function callMergeLlm(
       model: resolved.resolvedModel,
       messages: messages as never,
       apiKey: resolved.resolvedApiKey,
+      resolveApiKey: resolved.resolveApiKey,
       params: { temperature: 0.7, maxTokens: 2048, },
     };
 
