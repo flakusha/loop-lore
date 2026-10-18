@@ -85,8 +85,9 @@ function peerWorkRejectionResponse(rejection: PeerWorkRejection,): Response {
 }
 
 /**
- * Extract the bearer credential a same-host peer must present. Returns null for
- * a missing or non-Bearer header, which the trust chain treats as absent.
+ * Extract the bearer credential every workload-trusted peer must present.
+ * Returns null for a missing or non-Bearer header, which the trust chain
+ * treats as absent.
  * @param header Raw `Authorization` header value.
  * @returns {string | null}
  */
@@ -167,7 +168,7 @@ export function mountPeerWorkApi(app: Elysia, opts: PeerWorkRouteOpts,): void {
     detail: {
       summary: "Run a workload class for a trusted federation peer",
       description:
-        "Executes one workload class locally on a peer's behalf. Requires a trusted peer with workload trust and, for same-host peers, the per-peer shared credential. Federation opt-in.",
+        "Executes one workload class locally on a peer's behalf. Requires a trusted peer with workload trust and the per-peer shared credential. Federation opt-in.",
       tags: ["Federation",],
     },
   },);
