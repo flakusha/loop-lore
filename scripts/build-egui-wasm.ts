@@ -70,7 +70,7 @@ function wasmBindgenAvailable(): boolean {
  * @returns the pinned crate version, or null when Cargo.lock is absent
  */
 function pinnedWasmBindgenVersion(): string | null {
-  const lockPath = join(CRATE_DIR, "Cargo.lock",);
+  const lockPath = join(import.meta.dir, "..", "Cargo.lock",);
   if (!existsSync(lockPath,)) { return null; }
 
   const lines = readFileSync(lockPath, "utf8",).split("\n",);
