@@ -5,26 +5,28 @@
 
 **Overview:** Three planning surfaces (todo / kanban / graph) over one planning-item model, giving the assistant a side-channel for multi-step flow tracking distinct from direct chat. Backend: SQLite tables + REST API. Frontend: htmx/Alpine views reusing existing chat/panel patterns.
 
-**Status:** Not Started
-**Status Note:** Not Started (verified 2026-10-09: no `plan_items`/`plan_links` tables in any migration, no `src/planning/` module, no planning REST routes or htmx views)
+**Status:** In Progress
+**Status Note:** In Progress (verified 2026-10-18 against `dev` at `08ef7efe7` — by file existence on `dev`, line-level reads of each cited path, and a `git log dev..<branch>` check that excludes unmerged work). The previous "Not Started" note in this file (dated 2026-10-09) was false: commit `1793c87c1` landed the backend the same day. SHIPPED AND LIVE: the `plan_items` + `plan_links` tables (`src/db/migrations/049_plan_items.ts:23` and `:45`, indexes at `:37`/`:41`/`:54`/`:58`); the planning service — CRUD plus an enforced todo/doing/done/blocked state machine and link management (`src/planning/service.ts:75`, illegal transitions throw and leave the row untouched); the assistant bridge projecting workflow steps onto plan rows (`src/planning/workflow-bridge.ts:26`); the REST surface (`src/routes/planning.ts:32`, nine endpoints under `/api/plans`) which is mounted at `src/routes/v1/base-surface.ts:67` and reached via `src/routes/v1/index.ts:59` (NOT `elysia-app.ts`); and the todo htmx partial (`src/views/partials/planning-todo.html:10`). Unit coverage ships with all of it (`src/planning/service.test.ts`, `src/planning/workflow-bridge.test.ts`). REMAINS: the kanban board and the graph view. The kanban implementation (`src/planning/board.ts`, `src/routes/planning-board.ts`, `src/components/planning/kanban.html`) exists only on the UNMERGED `step-planning-kanban` branch (3 commits) and is deliberately not counted; the graph view has no code on `dev` at all. Two gaps also remain inside the shipped todo slice: `emitWorkflowPlanSteps` has no caller in `src/assistant/workflow-runner.ts` (grep finds it only in its own test), so the runner still does not emit plan steps, and `planning-todo.html` is not rendered by any view or route. The per-item Tasks/Acceptance-Criteria checklists further down this file are stale in the same way and are left for a follow-up pass.
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
 **Tags:** assistant, planning, todo, kanban, graph, visualization
 **Related:** epic-workflow-engine.md, epic-assistant-creative-studio-workflows.md, epic-assistant-gm-flows.md, epic-rag-context-sources.md, epic-analytics-observability.md, epic-project-spaces-pm-integration.md
 
-## Current State (2026-10-08)
+## Current State (verified 2026-10-18 against `dev`)
 
-### Backend: ❌ Not Started
+### Backend: 🟡 Partial — service + REST ship, assistant wiring does not
 
-- No `plan_items` or `plan_links` tables exist
-- No `src/planning/` module
-- No planning REST API
+- `plan_items` / `plan_links` exist (`src/db/migrations/049_plan_items.ts`)
+- `src/planning/` exists: `service.ts` (CRUD, state machine, links) and `workflow-bridge.ts` (workflow-step emission)
+- Planning REST API exists and is mounted (`src/routes/planning.ts`, via `src/routes/v1/base-surface.ts:67`)
+- Assistant tool wiring (`plan.add` / `plan.advance` / `plan.list`) and workflow-runner emission are NOT wired
 
-### Frontend: ❌ Not Started
+### Frontend: 🟡 Partial
 
-- No planning views (todo/kanban/graph)
-- No planning htmx partials
+- Todo htmx partial exists (`src/views/partials/planning-todo.html`) but no view or route renders it
+- Kanban board: unmerged branch `step-planning-kanban`, not on `dev`
+- Graph view: no code on `dev`
 
 ### Dependencies: 🟡 Partial
 
@@ -101,7 +103,7 @@ src/views/planning/    # htmx partials: todo list, kanban board, graph (SVG)
 - `TASK-assistant-todo-planning-tables-service-assistant-wiring.md` — `plan_items`/`plan_links` tables, planning service, assistant tool wiring
 - `TASK-kanban-board-for-story-task-context-creative-drafts-planning.md` — kanban board view over the planning-item model
 
-Both Not Started. Dependency tickets (not owned by this epic): `TASK-rag-knowledge-graph.md` (entity storage reuse) and `FEAT-memory-visualizer-knowledge-graph-over-asset-links.md` (graph rendering reuse), both Not Started.
+Verified 2026-10-18 against `dev`: `TASK-assistant-todo-planning-tables-service-assistant-wiring` is In Progress (tables, service, REST and tests ship; the assistant tool wiring and workflow-runner emission its title names do not). `TASK-kanban-board-for-story-task-context-creative-drafts-planning` is Not Started — its implementation lives only on the unmerged `step-planning-kanban` branch. Dependency tickets (not owned by this epic): `TASK-rag-knowledge-graph.md` (entity storage reuse) and `FEAT-memory-visualizer-knowledge-graph-over-asset-links.md` (graph rendering reuse).
 
 ## References
 

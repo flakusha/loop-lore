@@ -7,8 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** migration 019 ships (actor_story_points table); earn/spend/balance service implemented in src/services/agency/story-points/; GET /api/agency/balance + POST /api/agency/spend + POST /api/agency/earn all wired (src/routes/agency/); spend validation + pipeline hook + gradient acceptance open in TASK-storypoints-acceptance; BDI loop shipped under epic-research-agency-decision.md
+**Status:** In Progress
+**Status Note:** In Progress (verified 2026-10-18 against `dev` at `08ef7efe7` — by file existence on `dev`, line-level reads of each cited path, and a `git log dev..<branch>` check that excludes unmerged work). This file previously contradicted itself: the `**Status:**` field read `Not Started` while the note immediately below described shipped code. The field was the false half. SHIPPED AND LIVE: the `actor_story_points` table (`src/db/migrations/019_actor_story_points.ts`) plus the partial-unique follow-up `020_actor_story_points_partial_unique.ts`; the earn/spend/balance service split across `src/services/agency/story-points/{mutations,queries,types,index}.ts`; the HTTP surface — `GET /api/agency/balance`, `POST /api/agency/spend`, `POST /api/agency/earn` assembled by the barrel `src/routes/agency/index.ts:29` and mounted LIVE at `src/app/register-plugins.ts:61` (`app.use(agencyRoutes(...))`, NOT `elysia-app.ts`); the generation-pipeline hook `chargeStoryPointsForChat` (`src/services/agency/spend-helpers.ts:122`) consumed by the regenerate (`src/generation/generation-routes/regenerate.ts:172`) and retry (`retry.ts:67`) routes; and the chat UI affordance `src/components/chat/story-points-chip.html`, mounted from `src/views/chat.html:63`. Unit tests ship for each layer (`src/services/agency/story-points.test.ts`, `src/routes/agency/{spend,balance,earn}.test.ts`, `src/db/020_actor_story_points_partial_unique.test.ts`). REMAINS: earn hooks are not wired — nothing credits points from roleplay signal, arc completion, or in-world achievement, so balances move only through explicit service calls (`TASK-story-points-prototype` records the same gap); spend validation rules, the generation-pipeline hook CONTRACT and the gradient (non-binary) point levels are all still open in `TASK-storypoints-acceptance`; and the NPC goal-pursuit table in §Tasks is superseded and reference-only (see the BDI scope note in §Related) — it ships under `epic-research-agency-decision.md` and its `Not Started` rows there are historical, not this epic's scope.
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -194,10 +194,14 @@ When generating NPC plans and reactions, the prompt includes:
 
 ## Tasks
 
-- TASK-story-points-prototype
-- Schema: `actor_story_points` table (per actor/world) — ships (migration `019_actor_story_points.ts`); acceptance open in `TASK-storypoints-acceptance.md`
-- UI: spend affordance in chat input
-- Hook into generation pipeline (bias / retry path)
+(status verified 2026-10-18 against `dev`)
+
+- TASK-story-points-prototype — In Progress (schema, service, spend hook and UI chip ship; earn hooks deferred)
+- Schema: `actor_story_points` table (per actor/world) — SHIPPED (migrations `019_actor_story_points.ts` + `020_actor_story_points_partial_unique.ts`); acceptance open in `TASK-storypoints-acceptance.md`
+- UI: spend affordance in chat input — SHIPPED (`src/components/chat/story-points-chip.html`, mounted at `src/views/chat.html:63`)
+- Hook into generation pipeline (bias / retry path) — SHIPPED (`chargeStoryPointsForChat` at `src/services/agency/spend-helpers.ts:122`, consumed by `regenerate.ts:172` and `retry.ts:67`)
+- Earn hooks (roleplay signal / arc completion / achievement) — NOT WIRED
+- Spend validation rules + gradient levels — open in `TASK-storypoints-acceptance`
 
 ## Spec Alignment
 

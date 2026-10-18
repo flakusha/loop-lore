@@ -3,8 +3,8 @@
 
 # EPIC: Assistant Personality — Presets & Character-as-Assistant
 
-**Status:** Not Started
-**Status Note:** Not Started (verified 2026-10-09: no `src/assistant/personality/` module, no personality task in `src/aux-pipeline/`; all six bound tickets Not Started)
+**Status:** In Progress
+**Status Note:** In Progress (verified 2026-10-18 against `dev` at `08ef7efe7` — by file existence on `dev`, line-level reads of each cited path, and a `git log dev..<branch>` check that excludes unmerged work). The previous "Not Started" note in this file (dated 2026-10-09) was false on its first claim: `src/assistant/personality/` DOES exist, landed in commit `1793c87c1` the same day. SHIPPED AND LIVE: the ten-preset catalog (`src/assistant/personality/presets.ts:15`, with `findPersonalityPreset` at `:173` and `isPersonalityPresetKey` at `:182`); the composer — binding parsing, state resolution and block emission (`src/assistant/personality/composer.ts:50`, `:75`, `:88` and `:110`, including the character-as-assistant path at `:168` and the drift advisory at `:189`); the types module; and the prompt wiring, which makes the whole feature live: `resolvePersonalityState` is called from `src/assistant/prompt-personality.ts:33`, which `src/assistant/prompt-assembler.ts:293` invokes on every assembly, feeding the registered `assistantPersonalitySection` (`src/assistant/prompt/sections/assistant-personality.ts:14`, registered at `src/assistant/prompt/registry.ts:59`). The binding lives in the chat's `gm_config` blob under `assistantPersonality` (`composer.ts:32`). Unit coverage ships (`src/assistant/personality/composer.test.ts`, `src/assistant/prompt-personality.test.ts`, `src/assistant/prompt/sections/assistant-personality.test.ts`). REMAINS: no selector UI, no continuity/persistence, no aux drift pipeline. There is no `user_assistant_personality` table anywhere in `src/`, no `assistant-personality-picker` Alpine component, and no `personality` task in `src/aux-pipeline/` (the composer computes a drift advisory from a `driftScore` that nothing yet supplies). `convertToCharacter` exists in the persona service (`src/personas/service.ts:163`) but the character-as-assistant composer path does not reuse it. Of the six bound tickets, only the presets catalog is complete; the other five are Not Started.
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -62,16 +62,18 @@ assistant/GM slot.
 
 ## Tasks
 
-- [ ] Personality presets catalog (8-12 canonical presets, voice + tone + scenario seeds)
+(status verified 2026-10-18 against `dev`)
+
+- [x] Personality presets catalog (8-12 canonical presets, voice + tone + scenario seeds) — `src/assistant/personality/presets.ts`
 - [ ] Personality preset selector (chat/world assistant settings)
-- [ ] Character-as-assistant selector (pick a character card as assistant)
-- [ ] System-prompt composer integration (preset block + character persona block)
-- [ ] Per-chat and per-world assistant-personality override
-- [ ] Personality continuity across chats (per-user default persisted)
-- [ ] Auxiliary LLM personality-drift advisory (reuses aux-pipeline personality task)
+- [ ] Character-as-assistant selector (pick a character card as assistant) — composer-side rendering ships (`composer.ts:168`); no picker UI
+- [x] System-prompt composer integration (preset block + character persona block) — `composer.ts`, `sections/assistant-personality.ts`, wired at `prompt-assembler.ts:293`
+- [ ] Per-chat and per-world assistant-personality override — per-chat only, via the chat's `gm_config` blob; no world-level override
+- [ ] Personality continuity across chats (per-user default persisted) — no `user_assistant_personality` table exists
+- [ ] Auxiliary LLM personality-drift advisory (reuses aux-pipeline personality task) — no `personality` task in `src/aux-pipeline/`; `driftScore` is never populated in production
 - [ ] Reset-to-default personality command
 - [ ] Assistant personality editor UI (preset grid + character picker)
-- [ ] Tests (server-side composer, aux drift, persona continuity)
+- [ ] Tests — composer/section/prompt-wiring tests ship; aux drift and persona-continuity tests do not
 
 ## Design
 
@@ -138,21 +140,23 @@ appropriate block:
 
 ## Acceptance Criteria
 
-- [ ] 8-12 canonical personality presets defined with voice, tone, and scenario seeds
-- [ ] Per-chat and per-world assistant-personality override functional
-- [ ] Character-as-assistant selector picks an existing character card as GM voice
-- [ ] System-prompt composer emits preset block or character persona block based on active state
-- [ ] Personality continuity persists per-user default across chats
-- [ ] Auxiliary LLM personality-drift advisory emits when assistant speech diverges from chosen voice
-- [ ] Reset-to-default personality command restores server-default behavior
-- [ ] Assistant personality editor UI provides preset grid + character picker
-- [ ] Tests cover server-side composer, aux drift, and persona continuity
+(status verified 2026-10-18 against `dev`)
 
-## Files (proposed)
+- [x] 8-12 canonical personality presets defined with voice, tone, and scenario seeds — `src/assistant/personality/presets.ts:15` (10 presets), pinned by `composer.test.ts:115`
+- [ ] Per-chat and per-world assistant-personality override functional — per-chat works (`gm_config.assistantPersonality`); no world-level override
+- [ ] Character-as-assistant selector picks an existing character card as GM voice — the composer renders a character voice (`composer.ts:168`) but no selector UI exists to pick one
+- [x] System-prompt composer emits preset block or character persona block based on active state — `composePersonalityBlock` (`composer.ts:110`), wired at `prompt-assembler.ts:293`
+- [ ] Personality continuity persists per-user default across chats — no persistence layer
+- [ ] Auxiliary LLM personality-drift advisory emits when assistant speech diverges from chosen voice — advisory rendering ships (`composer.ts:189`) but no aux task feeds `driftScore`
+- [ ] Reset-to-default personality command restores server-default behavior — absent
+- [ ] Assistant personality editor UI provides preset grid + character picker — absent
+- [ ] Tests cover server-side composer, aux drift, and persona continuity — composer/section tests ship; drift and continuity tests do not
 
-- `src/assistant/personality/presets.ts` — canonical personality preset catalog
+## Files (proposed — status verified 2026-10-18 against `dev`)
+
+- `src/assistant/personality/presets.ts` — canonical personality preset catalog — **SHIPPED**
 - `src/assistant/personality/selector.ts` — per-chat/world personality override
-- `src/assistant/personality/composer.ts` — system-prompt composer integration
+- `src/assistant/personality/composer.ts` — system-prompt composer integration — **SHIPPED** (plus `src/assistant/prompt-personality.ts` and `src/assistant/prompt/sections/assistant-personality.ts`)
 - `src/assistant/personality/drift.ts` — auxiliary LLM drift advisory
 - `src/assistant/personality/continuity.ts` — per-user default persistence
 - `src/assistant/personality/reset.ts` — reset-to-default command

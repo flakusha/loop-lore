@@ -3,7 +3,8 @@
 
 # TASK: Assistant Personality Presets Catalog
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** In Progress (verified 2026-10-18 against `dev` at `08ef7efe7`). The presets catalog itself is COMPLETE and live, but two acceptance criteria are not met as written, so this ticket is not Done. Met: `src/assistant/personality/presets.ts:15` exports `PERSONALITY_PRESETS` covering all ten canonical keys (pinned key-by-key at `src/assistant/personality/composer.test.ts:115`); every preset carries `key`, `displayName`, `voice`, `scenarioSeeds[]`, `promptBlocks[]`, `defaultMood` (`presets.ts:16-30`, asserted non-empty at `composer.test.ts:131`); `key` uniqueness is enforced by the lookup helpers `findPersonalityPreset` (`presets.ts:173`) and `isPersonalityPresetKey` (`presets.ts:182`); no new dependencies were added. NOT MET: (a) "Catalog loaded at startup" — the catalog is a module-level constant imported on demand by `src/assistant/personality/composer.ts:137`, not registered through any startup loader, so there is no startup-load step to point at; (b) "unit-tested snapshot" — the tests are explicit assertions over the catalog (`composer.test.ts:114-147`), there is no snapshot fixture anywhere in `src/assistant/personality/`. Remaining: the startup registration (or an explicit decision to drop that criterion) and a real snapshot test.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-character-multi-personality

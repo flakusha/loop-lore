@@ -31,10 +31,10 @@
 | Done | Archival Workflow | Medium | Medium | 0 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
 | In Progress | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 0 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
 | In Progress | Asset Transform Editing + Metadata | Medium | Medium | 0 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
-| Not Started | Assistant Entity Access & Manipulation | High | High | 0 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
+| In Progress | Assistant Entity Access & Manipulation | High | High | 0 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
 | In Progress | Assistant Generation Extensions (SD, Intent, Scenario Source) | Medium | High | 0 | [epic-assistant-generation-extensions.md](/.plan/epics/epic-assistant-generation-extensions.md) |
-| Not Started | Assistant Personality — Presets & Character-as-Assistant | High | Medium | 0 | [epic-character-multi-personality.md](/.plan/epics/epic-character-multi-personality.md) |
-| Not Started | Assistant Step Planning Surfaces (Todo / Kanban / Graph) | High | Large | 0 | [epic-assistant-step-planning.md](/.plan/epics/epic-assistant-step-planning.md) |
+| In Progress | Assistant Personality — Presets & Character-as-Assistant | High | Medium | 0 | [epic-character-multi-personality.md](/.plan/epics/epic-character-multi-personality.md) |
+| In Progress | Assistant Step Planning Surfaces (Todo / Kanban / Graph) | High | Large | 0 | [epic-assistant-step-planning.md](/.plan/epics/epic-assistant-step-planning.md) |
 | In Progress | Assistant/GM Flows Reconciliation | High | High | 0 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
 | Not Started | Audio, Video & Sound Generation | Medium | Very High (split into 5 sub-epics) | 0 | [epic-audio-video-sound.md](/.plan/epics/epic-audio-video-sound.md) |
 | Not Started | Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock | High (security-critical provisioning) | High | 0 | [epic-auth-channel-provisioning.md](/.plan/epics/epic-auth-channel-provisioning.md) |
@@ -268,7 +268,7 @@
 | Not Started | Perspective & Voice Control (1st / 3rd / Narrator) | High | Medium | 0 | [epic-perspective-narration-voice.md](/.plan/epics/epic-perspective-narration-voice.md) |
 | Not Started | Platform & Provider Integrations (EPIC-046) | P1-High | Very High | 0 | [epic-platform-integrations.md](/.plan/epics/epic-platform-integrations.md) |
 | In Progress | Platform Research & Feature Adoption (Permanently Ongoing) | Medium | Continuous | 0 | [epic-platform-research.md](/.plan/epics/epic-platform-research.md) |
-| Not Started | Player Agency — Story Points | Medium | Medium | 0 | [epic-agency-story-points.md](/.plan/epics/epic-agency-story-points.md) |
+| In Progress | Player Agency — Story Points | Medium | Medium | 0 | [epic-agency-story-points.md](/.plan/epics/epic-agency-story-points.md) |
 | Not Started | Player State Machine — Cross-System Design | Medium | Medium | 0 | [epic-player-state-machine.md](/.plan/epics/epic-player-state-machine.md) |
 | Not Started | Plugin Management UI | P2 — Medium | Medium | 0 | [epic-plugin-management-ui.md](/.plan/epics/epic-plugin-management-ui.md) |
 | Not Started | Plugin System & Extensibility | High | Very High | 0 | [epic-plugin-system.md](/.plan/epics/epic-plugin-system.md) |
@@ -525,7 +525,7 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 
 ### Assistant Entity Access & Manipulation
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -545,7 +545,7 @@ Extends the Assistant/GM generation surface (see `epic-assistant-gm-flows.md`)
 
 ### Assistant Personality — Presets & Character-as-Assistant
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -554,7 +554,7 @@ Extends the Assistant/GM generation surface (see `epic-assistant-gm-flows.md`)
 
 ### Assistant Step Planning Surfaces (Todo / Kanban / Graph)
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Feature Epic
@@ -2804,7 +2804,7 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 
 ### Player Agency — Story Points
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic

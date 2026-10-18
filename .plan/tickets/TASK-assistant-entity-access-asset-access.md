@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** In Progress (verified 2026-10-18 against `dev` at `08ef7efe7`). Three of the six acceptance criteria are met. Met: `/asset-list` returns the owner's visible assets with thumbnails and a validated `kind` filter (`src/assistant/commands/assets.ts:22`, tested at `assets.test.ts:154` and `:168`); `/asset-preview` shows full metadata plus links (`assets.ts:61`, tested at `assets.test.ts:207`, with the Alt/Links omission branches pinned at `:239`); `/asset-search` returns ranked assets (`assets.ts:99`, tested at `assets.test.ts:247` and the multi-word join at `:266`); all three are registered for real because the file is imported by the command barrel (`src/assistant/commands/index.ts:9`), asserted by `assets.test.ts:128`; and unit tests pass including access-denial cases (`assets.test.ts:189`, `:226`, `:273`). NOT MET: (a) `/asset-link` is not registered — `registerCommand` is called exactly three times (`assets.ts:22`, `:61`, `:99`), so no handler sets `documents.source_asset_id` or creates an `asset_links` row, and the 🧠 chip the design describes does not exist; (b) quota enforcement does not exist — there is no `src/assistant/quota/` directory and no `QuotaExceededError` in `src/`, so nothing is blocked pre-call; (c) `/asset-search` delegates to the shared `searchAssets` service (`src/search/`, FTS5 + vector fusion via `reciprocalRankFusion`) rather than the specified FTS5 + pHash hybrid — perceptual hashing does not appear in `src/search/` at all. Remaining: the link handler, the quota engine, and either pHash support or an amendment of the design.
 **Priority:** High
 **Effort:** Medium
 **Type:** Task

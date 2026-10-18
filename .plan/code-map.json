@@ -996,6 +996,10 @@
   "src/app/register-plugins.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
     },
     {
@@ -1085,6 +1089,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-skills-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
     },
     {
       "kind": "spec",
@@ -2327,6 +2335,10 @@
   ],
   "src/assistant/commands/assets.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     }
@@ -2339,6 +2351,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-batch-rag-asset.md"
     }
   ],
   "src/assistant/commands/attack.test.ts": [
@@ -2683,6 +2699,18 @@
   ],
   "src/assistant/commands/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-batch-rag-asset.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
     }
@@ -2783,6 +2811,10 @@
   ],
   "src/assistant/commands/rag.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
     }
@@ -2791,6 +2823,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-batch-rag-asset.md"
     },
     {
       "kind": "ticket",
@@ -3333,10 +3369,36 @@
       "source": ".plan/epics/epic-character-npc-lore-access.md"
     }
   ],
+  "src/assistant/personality/composer.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-presets-catalog.md"
+    }
+  ],
   "src/assistant/personality/composer.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-multi-personality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-presets-catalog.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-as-assistant-pick-character-as-gm.md"
     }
   ],
   "src/assistant/personality/continuity.ts": [
@@ -3390,6 +3452,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
     },
     {
@@ -3423,6 +3489,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-068.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
     },
     {
       "kind": "ticket",
@@ -3497,6 +3567,26 @@
       "source": ".plan/epics/epic-wardrobe-avatar-variants.md"
     }
   ],
+  "src/assistant/prompt-personality.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
+    }
+  ],
+  "src/assistant/prompt-personality.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
+    }
+  ],
   "src/assistant/prompt/assembly.ts": [
     {
       "kind": "ticket",
@@ -3539,6 +3629,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
     },
     {
       "kind": "epic",
@@ -3586,7 +3680,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-as-assistant-pick-character-as-gm.md"
     },
     {
       "kind": "ticket",
@@ -3663,6 +3765,26 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    }
+  ],
+  "src/assistant/prompt/sections/assistant-personality.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
+    }
+  ],
+  "src/assistant/prompt/sections/assistant-personality.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-personality-composer-integration.md"
     }
   ],
   "src/assistant/prompt/sections/author-note.test.ts": [
@@ -3927,6 +4049,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-as-assistant-pick-character-as-gm.md"
     }
   ],
   "src/assistant/prompt/sections/lore-activation.ts": [
@@ -4721,6 +4847,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-third-party-api-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md"
     },
     {
       "kind": "ticket",
@@ -11483,6 +11613,16 @@
       "source": ".plan/tickets/TASK-chat-flow-section-navigation.md"
     }
   ],
+  "src/components/chat/story-points-chip.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
   "src/components/chat/story-view.html": [
     {
       "kind": "ticket",
@@ -11695,6 +11835,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-multi-personality.md"
+    }
+  ],
+  "src/components/planning/kanban.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
     }
   ],
   "src/components/prompt-library.html": [
@@ -14955,6 +15101,16 @@
       "source": ".plan/tickets/TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri.md"
     }
   ],
+  "src/db/020_actor_story_points_partial_unique.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
   "src/db/024_memory_embeddings_cascade_fk.test.ts": [
     {
       "kind": "ticket",
@@ -16827,6 +16983,12 @@
       "source": ".plan/tickets/TASK-019-hot-path-indexes.md"
     }
   ],
+  "src/db/migrations/019_actor_story_points.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    }
+  ],
   "src/db/migrations/019_audit_columns_for_underdocumented_tables.ts": [
     {
       "kind": "ticket",
@@ -17027,6 +17189,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-sqlite-fk-pragma-no-op-in-migration-047-rebuild.md"
+    }
+  ],
+  "src/db/migrations/049_plan_items.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md"
     }
   ],
   "src/db/migrations/050_lorebook_activation.ts": [
@@ -27339,6 +27511,10 @@
   ],
   "src/generation/generation-routes/regenerate.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-buildstyleprompt-never-injected-into-llm-request.md"
     },
@@ -27357,6 +27533,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
   "src/generation/generation-routes/retry.ts": [
@@ -33630,6 +33810,10 @@
   "src/personas/service.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-character-multi-personality.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
     },
     {
@@ -33647,6 +33831,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-as-assistant-pick-character-as-gm.md"
     },
     {
       "kind": "ticket",
@@ -33695,7 +33883,43 @@
       "source": ".plan/tickets/BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign.md"
     }
   ],
+  "src/planning/board.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    }
+  ],
+  "src/planning/service.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md"
+    }
+  ],
   "src/planning/service.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md"
+    }
+  ],
+  "src/planning/workflow-bridge.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md"
+    }
+  ],
+  "src/planning/workflow-bridge.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-step-planning.md"
@@ -36341,10 +36565,26 @@
       "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
+  "src/routes/agency/earn.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
+    }
+  ],
   "src/routes/agency/earn.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-agency-story-points.md"
+    }
+  ],
+  "src/routes/agency/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
   "src/routes/agency/spend.test.ts": [
@@ -40841,10 +41081,20 @@
       "source": ".plan/tickets/TASK-character-personality-integrity.md"
     }
   ],
+  "src/routes/planning-board.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    }
+  ],
   "src/routes/planning.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md"
     }
   ],
   "src/routes/plugins.ts": [
@@ -41916,6 +42166,10 @@
   "src/routes/v1/base-surface.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-auth-access.md"
     },
     {
@@ -42031,6 +42285,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-versioning.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
     },
     {
       "kind": "epic",
@@ -42945,6 +43203,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/templates.md"
+    }
+  ],
+  "src/routes/worlds/access": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-rag-access.md"
     }
   ],
   "src/routes/worlds/access.ts": [
@@ -48175,11 +48439,19 @@
   ],
   "src/services/agency/spend-helpers.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
   "src/services/agency/story-points.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on.md"
@@ -52224,6 +52496,10 @@
   "src/views/chat.html": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-agency-story-points.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
     },
     {
@@ -52646,6 +52922,14 @@
     }
   ],
   "src/views/partials/planning-todo.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-todo-planning-tables-service-assistant-wiring.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css.md"
