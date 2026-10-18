@@ -103,7 +103,9 @@ export function createApp(deps: AppDeps,): Elysia {
     .derive(async ({ request, },) => {
       const authResult = await authenticate({ request, database, authConfig: config.auth, },);
       // When auth fails, we still return values (will be null)
-      // Route handlers check for userId === null and return 401
+      // Route handlers are responsible for checking userId (null = unauthenticated)
+      // and returning 401 where appropriate — not all do; null userId in a SQL
+      // query silently returns zero rows rather than an error.
       if (authResult instanceof Response) {
         // Still detect locale even when auth fails
         const locale = detectLocale(request,);

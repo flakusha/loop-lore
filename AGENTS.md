@@ -85,7 +85,7 @@ The gate is a no-op unless `WEAVE_BASE` is set, so normal runs are unaffected.
 4. **`docs/spec/*`** — design specs (aspirational, may be stale)
 5. **`docs/meta/code-practices-improvements/*`** — research only
 
-⚠️ **Zod/TypeBox trap**: Specs describe Zod in `src/schemas/` — **does not exist**. Real stack: **Elysia `t` (TypeBox)** in `src/validation/schemas.ts`.
+⚠️ **Zod/TypeBox trap**: Specs that describe Zod schemas in `src/schemas/` are wrong — `src/schemas/` holds domain types (consent, nsfw-rating, reputation) and is live-imported by `src/nsfw/social-integration.ts`. Real stack: **Elysia `t` (TypeBox)** in `src/validation/schemas/`.
 
 ## Context Loading
 
