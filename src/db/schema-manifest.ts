@@ -795,6 +795,15 @@ export const SCHEMA = new SchemaManifest()
     expires_at: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("mesh_work_assignments", {
+    affinity_key: col("text", { notNull: true, },),
+    workload_class: col("text", { notNull: true, },),
+    peer_origin: col("text", { notNull: true, },),
+    assigned_at: col("text", { notNull: true, hasDefault: true, },),
+    previous_origin: col("text",),
+    released_at: col("text",),
+    release_reason: col("text",),
+  },)
   .table("message_reactions", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),

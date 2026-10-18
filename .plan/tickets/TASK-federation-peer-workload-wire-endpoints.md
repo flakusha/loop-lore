@@ -3,7 +3,7 @@
 
 # TASK: Federation peer workload wire endpoints
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-federation-offload-quotas
@@ -114,3 +114,5 @@ existing generation stream contract rather than inventing a new one.
 Implementation complete; tests passing; documentation updated.
 
 Implementation complete; tests passing; documentation updated.
+
+**Resolution:** Landed the receiver side: `mountPeerWorkApi` in `src/routes/federation-peer-work.ts`, the fail-closed trust chain in `src/federation/peer-work-auth.ts`, the ndjson codec in `src/federation/peer-work-wire.ts`, the sender client in `src/federation/peer-work-client.ts`, and `createLocalPeerWorkExecutor` in `src/federation/peer-work-execute.ts`. Rejections carry a namespaced `federation.workload_*` `error_code` in the existing envelope and never echo the value that failed. Quota enforcement is deliberately absent; the executor is the seam a quota slice wraps. 14 codec tests plus 26 route tests, including a two-instance pass where the sender's bytes cross the receiver's real handler.
