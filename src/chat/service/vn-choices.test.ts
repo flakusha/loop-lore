@@ -142,7 +142,7 @@ describe("VN choice card service (C7 Phase 4)", () => {
 
   describe("selectVnChoice", () => {
     test("marks choice as selected and returns consequences", async () => {
-      const result = await selectVnChoice(db, { chatId, choiceId: "choice-cave", },);
+      const result = await selectVnChoice(db, { chatId, choiceId: "choice-cave", actingUserId: ownerId, },);
 
       if ("code" in result) {
         throw new Error(`Unexpected error: ${result.code}`,);
@@ -156,7 +156,7 @@ describe("VN choice card service (C7 Phase 4)", () => {
     });
 
     test("returns locationId when choice has location consequence", async () => {
-      const result = await selectVnChoice(db, { chatId, choiceId: "choice-forest", },);
+      const result = await selectVnChoice(db, { chatId, choiceId: "choice-forest", actingUserId: ownerId, },);
 
       if ("code" in result) {
         throw new Error(`Unexpected error: ${result.code}`,);
@@ -168,7 +168,7 @@ describe("VN choice card service (C7 Phase 4)", () => {
     });
 
     test("returns not_found for non-existent choice", async () => {
-      const result = await selectVnChoice(db, { chatId, choiceId: missingChoiceId, },);
+      const result = await selectVnChoice(db, { chatId, choiceId: missingChoiceId, actingUserId: ownerId, },);
 
       expect(result,).toEqual({
         code: "not_found",
@@ -177,7 +177,11 @@ describe("VN choice card service (C7 Phase 4)", () => {
     });
 
     test("returns not_found when choice belongs to different chat", async () => {
-      const result = await selectVnChoice(db, { chatId: missingChatId, choiceId: "choice-cave", },);
+      const result = await selectVnChoice(db, {
+        chatId: missingChatId,
+        choiceId: "choice-cave",
+        actingUserId: ownerId,
+      },);
 
       expect(result,).toEqual({
         code: "not_found",

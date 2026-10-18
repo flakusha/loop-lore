@@ -1659,6 +1659,7 @@ export interface VnQuestions {
   selected_option_id: string | null;
   answered_at: string | null;
   created_at: string;
+  applied_at: string | null;
 }
 
 // ── location_edges ────────────────────────────────────────────
@@ -1934,4 +1935,17 @@ export interface MonsterSpawns {
   territory_center_y: Generated<number>;
   territory_radius: Generated<number>;
   despawn_at: string | null;
+}
+
+// ── vn_choice_selections ────────────────────────────────────────────
+export interface VnChoiceSelections {
+  id: Generated<string>;
+  chat_id: string;
+  choice_id: string;
+  scene_index: number;
+  relationship_impact: Generated<string>;
+  mood_impact: Generated<string>;
+  selected_by: string | null;
+  applied_at: string | null;
+  created_at: string;
 }
