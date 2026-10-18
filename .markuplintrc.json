@@ -135,30 +135,6 @@
         }
       }
     },
-    "src/components/{world-conditions-panel,world-location-panel,world-lore-panel,world-travel-panel}.html": {
-      "rules": {
-        "require-owned-elements": {
-          "severity": "off",
-          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
-        },
-        "require-parent-role": {
-          "severity": "off",
-          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
-        }
-      }
-    },
-    "src/partials/worlds/create-wizard.html": {
-      "rules": {
-        "require-owned-elements": {
-          "severity": "off",
-          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
-        },
-        "require-parent-role": {
-          "severity": "off",
-          "reason": "Alpine <template x-for> content is parsed into a DocumentFragment and never enters the accessibility tree, so the required parent/child role pair cannot exist in the static DOM."
-        }
-      }
-    },
     "src/views/{admin,blog,config,layout,notifications,personas,quests,settings,world-detail,world-edit}.html": {
       "rules": {
         "require-owned-elements": {
