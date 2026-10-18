@@ -11,17 +11,15 @@
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { decryptValue, } from "../../crypto";
-import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
-import { getLogger, } from "../../logger";
 import { routingReorders, sharedRouter, } from "../routing/router";
 import type { TaskSignal, } from "../routing/task-signal";
 import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
 import { OllamaNativeProvider, } from "./ollama-native";
 import { OpenAiCompatibleProvider, } from "./openai-compatible";
-import type { LLMProvider, } from "./types";
+import type { LLMProvider, UserApiKeyResolver, } from "./types";
+import { userApiKeyResolver, } from "./user-api-key";
 
 // ── Registry ──────────────────────────────────────────────
 
@@ -78,6 +76,12 @@ export interface ResolvedProvider {
   resolvedProviderName: string;
   resolvedModel: string;
   resolvedApiKey?: string;
+  /**
+   * Per-provider BYO key lookup. Always present (never a user key scoped to
+   * one vendor), so a failover attempt against another provider resolves its
+   * own key — usually undefined — instead of replaying `resolvedApiKey`.
+   */
+  resolveApiKey: UserApiKeyResolver;
 }
 
 /**
@@ -117,32 +121,10 @@ export async function resolveProvider({
   let resolvedProviderName = provider ?? config.generation.defaultProvider;
   let resolvedModel = model ?? "";
 
-  let resolvedApiKey: string | undefined;
-
-  // 1. User BYO API key
-  if (userId && config.byoKey.enabled && config.byoKey.encryptionKey) {
-    const database = db ?? getDatabase();
-    try {
-      const row = await database
-        .selectFrom("user_api_keys",)
-        .selectAll()
-        .where("user_id", "=", userId,)
-        .where("provider_name", "=", resolvedProviderName,)
-        .executeTakeFirst();
-
-      if (row) {
-        resolvedApiKey = await decryptValue(row.api_key_encrypted, config.byoKey.encryptionKey,);
-      }
-    } catch (error) {
-      // Non-fatal fallback — log provider + userId (never key material).
-      const reason = error instanceof Error ? error.message : String(error,);
-      getLogger().warn("BYO API key decrypt failed — falling back to server key", {
-        provider: resolvedProviderName,
-        userId,
-        error: reason,
-      },);
-    }
-  }
+  // 1. User BYO API key — scoped to the provider it was resolved for, and
+  // re-resolvable per provider name for the rest of the failover chain.
+  const resolveApiKey = userApiKeyResolver({ userId, config, db, },);
+  const resolvedApiKey = await resolveApiKey(resolvedProviderName,);
 
   // 4. Fall back to server defaults
   if (!resolvedProviderName) {
@@ -168,6 +150,7 @@ export async function resolveProvider({
     resolvedProviderName,
     resolvedModel,
     resolvedApiKey,
+    resolveApiKey,
   };
 }
 

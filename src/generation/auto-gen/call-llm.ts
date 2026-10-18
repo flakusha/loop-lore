@@ -166,6 +166,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     model: resolved.resolvedModel,
     messages: prompt.messages,
     apiKey: resolved.resolvedApiKey,
+    resolveApiKey: resolved.resolveApiKey,
     params: { temperature, maxTokens, },
     signal: tracking?.abortSignal,
     // Exec-log context for the auto-gen dispatch (both stream + non-stream
