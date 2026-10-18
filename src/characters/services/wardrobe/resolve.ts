@@ -113,6 +113,44 @@ export async function resolveDefaultOutfit(
 }
 
 /**
+ * Ladder rung 2: the world/location outfit rule. `outfit_bindings` is
+ * free-form JSON with no FK (migration 031), so dangling or non-string
+ * outfit ids are storable — the mapped value is type-checked and the
+ * `wardrobe_items` row verified before the rule wins. Anything invalid
+ * returns null and the ladder falls through (bridge → default → none).
+ * @param db
+ * @param ctx
+ */
+async function resolveLocationRuleOutfit(
+  db: Kysely<DB>,
+  ctx: OutfitResolutionContext,
+): Promise<ResolvedOutfit | null> {
+  if (!ctx.worldId || !ctx.locationId) { return null; }
+
+  const config = await db
+    .selectFrom("world_avatar_config",)
+    .select(["outfit_bindings",],)
+    .where("world_id", "=", ctx.worldId,)
+    .where("actor_id", "=", ctx.actorId,)
+    .executeTakeFirst();
+
+  const bindings = config?.outfit_bindings
+    ? jsonParseOr<Record<string, string>>(config.outfit_bindings, {},)
+    : {};
+
+  const mapped = bindings[ctx.locationId];
+  if (typeof mapped !== "string") { return null; }
+
+  const item = await db
+    .selectFrom("wardrobe_items",)
+    .select(["id",],)
+    .where("id", "=", mapped,)
+    .executeTakeFirst();
+
+  return item ? { outfitId: item.id, source: "location_rule", } : null;
+}
+
+/**
  * Resolve the active outfit for one actor in one context.
  * Precedence: chat override > location/world rule > character default.
  * @param db
@@ -134,21 +172,8 @@ export async function resolveOutfit(
     if (override) { return { outfitId: override.outfit_id, source: "chat_override", }; }
   }
 
-  if (ctx.worldId && ctx.locationId) {
-    const config = await db
-      .selectFrom("world_avatar_config",)
-      .select(["outfit_bindings",],)
-      .where("world_id", "=", ctx.worldId,)
-      .where("actor_id", "=", ctx.actorId,)
-      .executeTakeFirst();
-
-    const bindings = config?.outfit_bindings
-      ? jsonParseOr<Record<string, string>>(config.outfit_bindings, {},)
-      : {};
-
-    const mapped = bindings[ctx.locationId];
-    if (mapped) { return { outfitId: mapped, source: "location_rule", }; }
-  }
+  const locationRule = await resolveLocationRuleOutfit(db, ctx,);
+  if (locationRule) { return locationRule; }
 
   // Rung 3 (flag-gated): equipped-items → outfit loadout bridge.
   // Off (default) = manual behavior preserved: fall straight to default.
