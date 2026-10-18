@@ -15,6 +15,7 @@ import { NodeInstanceState, } from "../db/enums";
 import { ResourceQuality, } from "../db/enums-story/resources";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { insertLocations, insertWorlds, } from "../test-utils/insert-helpers";
 import { attemptExtraction, calculateExtractionDifficulty, listResources, regenerateResources, } from "./resources";
 import {
   ACTOR,
@@ -83,16 +84,41 @@ describe("regenerateResources", () => {
     await attemptExtraction(db, WORLD, LOCATION, node, ACTOR, { rngSeed: 3, now: T0, },);
     expect((await readNode(db, node,)).state,).toBe(NodeInstanceState.Depleted,);
 
-    const early = await regenerateResources(db, { now: new Date(T0.getTime() + 599_000,), },);
+    const early = await regenerateResources(db, { now: new Date(T0.getTime() + 599_000,), worldId: WORLD, },);
     expect(early.regenerated,).toBe(0,);
     expect((await readNode(db, node,)).state,).toBe(NodeInstanceState.Depleted,);
 
-    const late = await regenerateResources(db, { now: new Date(T0.getTime() + 601_000,), },);
+    const late = await regenerateResources(db, { now: new Date(T0.getTime() + 601_000,), worldId: WORLD, },);
     expect(late.regenerated,).toBe(1,);
 
     const after = await readNode(db, node,);
     expect(after.state,).toBe(NodeInstanceState.Available,);
     expect(after.respawn_at,).toBeNull();
+  });
+
+  test("a sweep for one world leaves another world's node alone", async () => {
+    // `seedNode` hardcodes w1, and the extraction below moves an item into the
+    // actor's inventory — an item defined in w1 cannot be granted while acting
+    // in w2. So the w2 node is depleted directly, with the same stored columns
+    // the sweep matches on (`state` + elapsed `respawn_at`).
+    await insertWorlds(db, "user-owner", "Other World", { id: "w2", },);
+    await insertLocations(db, "w2", "Grove", { id: "loc2", },);
+    const other = await seedNode(db, { difficulty: TRIVIAL, remaining: 1, respawnSeconds: 600, },);
+    await db
+      .updateTable("gathering_node_instances",)
+      .set({
+        world_id: "w2",
+        location_id: "loc2",
+        state: NodeInstanceState.Depleted,
+        respawn_at: new Date(T0.getTime() - 1_000,).toISOString(),
+      },)
+      .where("id", "=", other,)
+      .execute();
+
+    await regenerateResources(db, { now: new Date(T0.getTime() + 601_000,), worldId: WORLD, },);
+
+    expect((await readNode(db, other,)).state,).toBe(NodeInstanceState.Depleted,);
+    expect((await readNode(db, other,)).respawn_at,).not.toBeNull();
   });
 });
 
