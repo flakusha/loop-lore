@@ -149,6 +149,40 @@ function normalizeActivities(
 }
 
 /**
+ * Runtime validation for a `PlanRecomputeFn` result. The seam is
+ * injectable and only JS-typed, so a hostile or buggy generator can hand
+ * back anything; the nightly cycle must not persist it verbatim. Follows
+ * `parsePlan`'s rules (unknown priority is malformed, never widened),
+ * except an empty activity list stays valid — the cycle's contract allows
+ * it. Clamps the bounded fields (text caps, activity count, scores).
+ * @param value whatever the injected generator returned
+ * @param maxActivities cap on retained activities
+ * @returns a storage-safe plan, or null when the value is not one
+ */
+export function sanitizeDailyPlan(
+  value: unknown,
+  maxActivities: number = MAX_ACTIVITIES,
+): DailyPlan | null {
+  if (typeof value !== "object" || value === null) { return null; }
+  const record = value as Record<string, unknown>;
+
+  const summary = typeof record.summary === "string" ? record.summary.trim() : "";
+  if (!summary) { return null; }
+
+  const rawPriority = typeof record.priority === "string" ? record.priority.toLowerCase().trim() : "";
+  const priority = Object.values(PLAN_PRIORITIES,).find((p,) => p === rawPriority);
+  if (priority === undefined) { return null; }
+
+  if (!Array.isArray(record.activities,)) { return null; }
+
+  return {
+    summary: summary.slice(0, MAX_TEXT_CHARS,),
+    priority,
+    activities: normalizeActivities(record.activities, maxActivities,),
+  };
+}
+
+/**
  * Deterministic plan from the NPC's own state. Used when the model is
  * unreachable or its output is unusable — the cycle still records a plan
  * row for the night instead of stalling the remaining actors.
