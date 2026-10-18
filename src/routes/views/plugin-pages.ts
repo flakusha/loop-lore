@@ -8,6 +8,7 @@ import { adminViewGuard, } from "../../middleware/admin-gate";
 import { requirePermission, } from "../../middleware/permissions";
 import { SuccessResponse, } from "../../validation/schemas";
 import { ALLOWED_VIEWS, } from "./constants";
+import { serveEguiFrontendPage, } from "./egui";
 import { serveNsfwModerationAudit, } from "./nsfw-audit";
 import {
   serveCharacterChat,
@@ -182,6 +183,12 @@ export function pagesRoutes(database: Kysely<DB>,) {
       if (result) { return result; }
       return new Response("Not found", { status: 404, },);
     }, {
+      response: { 200: SuccessResponse, },
+    },)
+    // ── egui WASM host page (standalone document, no view template) ──
+    // Static HTML: never 404s, so no ALLOWED_VIEWS entry and no
+    // src/views/egui.html — the handler owns the whole document.
+    .get("/egui", ({ request, }: { request: Request },) => serveEguiFrontendPage(request,), {
       response: { 200: SuccessResponse, },
     },);
 }
