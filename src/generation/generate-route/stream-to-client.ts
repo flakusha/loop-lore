@@ -42,6 +42,7 @@ import { scheduledCallWithFailover, } from "../scheduler";
 import { getOrCreateBuffer, scheduleBufferCleanup, } from "../stream-buffer";
 import type { GenerationMessage, } from "../types";
 import { streamCancelCleanup, } from "./cancel-stream";
+import { dispatchChatGeneration, } from "./chat-peer-offload";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { renderToolCallBlock, sseData, } from "./sse-utils";
 import { flushChunk, recordLastRendered, } from "./stream-flush";
@@ -125,6 +126,10 @@ export function streamToClient({
           }
         }
 
+        // Captured once so the tool-call loop and the federation dispatch seam
+        // share one signal; `abortController` is reassigned nowhere below.
+        const turnSignal = abortController?.signal;
+
         let currentMessages = messages;
         let finalResponse: GenerateResponse | null = null;
         const allToolResults: GenerationMessage[] = [];
@@ -132,35 +137,60 @@ export function streamToClient({
           let roundContent = "";
           let _roundThinking = "";
 
-          const response = await scheduledCallWithFailover({
-            id: `${attemptId}:round-${round}`,
-            failoverList,
-            req: { ...providerReq, messages: currentMessages, signal: abortController.signal, },
-            handler: (chunk: ChunkEvent,) => {
-              if (abortController?.signal.aborted) { return; }
-              if (chunk.type === "content" && chunk.content) {
-                accumulatedContent += chunk.content;
-                roundContent += chunk.content;
-                void processStreamingChunk({ attemptId, chunk: chunk.content, db: database, },)
-                  .catch((error: unknown,) => {
-                    log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
-                  },);
+          // One handler for both hops: a peer's chunks and a local retry's
+          // chunks reach the client through exactly the same code, so nothing
+          // is emitted by a path the other one cannot see.
+          const onChunk = (chunk: ChunkEvent,): void => {
+            if (abortController?.signal.aborted) { return; }
+            if (chunk.type === "content" && chunk.content) {
+              accumulatedContent += chunk.content;
+              roundContent += chunk.content;
+              void processStreamingChunk({ attemptId, chunk: chunk.content, db: database, },)
+                .catch((error: unknown,) => {
+                  log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
+                },);
 
-                const seq = flushChunk(controller, buffer, sseData({ type: "content", content: chunk.content, },),);
-                recordLastRendered(attemptId, seq,);
-              } else if (chunk.type === "thinking" && chunk.content) {
-                accumulatedThinking += chunk.content;
-                _roundThinking += chunk.content;
-                const seq = flushChunk(controller, buffer, sseData({ type: "thinking", content: chunk.content, },),);
-                recordLastRendered(attemptId, seq,);
-              }
+              const seq = flushChunk(controller, buffer, sseData({ type: "content", content: chunk.content, },),);
+              recordLastRendered(attemptId, seq,);
+            } else if (chunk.type === "thinking" && chunk.content) {
+              accumulatedThinking += chunk.content;
+              _roundThinking += chunk.content;
+              const seq = flushChunk(controller, buffer, sseData({ type: "thinking", content: chunk.content, },),);
+              recordLastRendered(attemptId, seq,);
+            }
 
-              // BUG-generation-error-handling-gaps: throwIfAborted AFTER
-              // processing each chunk so cancellation terminates accumulation
-              // promptly (not only at start).
-              abortController?.signal.throwIfAborted();
-            },
-            scheduler,
+            // BUG-generation-error-handling-gaps: throwIfAborted AFTER
+            // processing each chunk so cancellation terminates accumulation
+            // promptly (not only at start).
+            abortController?.signal.throwIfAborted();
+          };
+
+          // Federation offload (TASK-federation-offload-chat-turn-call-site):
+          // routing resolves BEFORE the scheduler is entered. A peer is never a
+          // member of `failoverList` — a peer is never an `LLMProvider` — so
+          // `local` is the caller's own unchanged `scheduledCallWithFailover`
+          // thunk. With federation off (the default) this is one extra call
+          // frame and zero extra queries.
+          const response = await dispatchChatGeneration({
+            database,
+            config: cfg,
+            chatId: input.chatId,
+            attemptId,
+            providerName,
+            modelId,
+            messages: currentMessages,
+            ...(providerReq.params.temperature === undefined ? {} : { temperature: providerReq.params.temperature, }),
+            ...(providerReq.params.maxTokens === undefined ? {} : { maxTokens: providerReq.params.maxTokens, }),
+            ...(turnSignal === undefined ? {} : { signal: turnSignal, }),
+            onChunk,
+            local: () =>
+              scheduledCallWithFailover({
+                id: `${attemptId}:round-${round}`,
+                failoverList,
+                req: { ...providerReq, messages: currentMessages, signal: turnSignal, },
+                handler: onChunk,
+                scheduler,
+              },),
           },);
 
           if (!response.toolCalls || response.toolCalls.length === 0) {
