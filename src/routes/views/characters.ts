@@ -6,6 +6,8 @@ import { ActorType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getNonce, } from "../../middleware/csp-nonce";
 import { sqliteUtcToIso, } from "../../utils/date";
+import { checkActorOwnership, } from "../actor-auth";
+import { type ViewsViewer, visibleCharactersTo, visibleChatsTo, } from "./access";
 import { buildEditFormHtml, } from "./character-edit-form";
 import { escapeHtml, htmlResponse, } from "./layout";
 import type { CharactersGridViewModel, } from "./view-models/characters-grid";
@@ -59,14 +61,19 @@ function renderCharactersGrid(viewModel: CharactersGridViewModel,): string {
 
 /**
  * @param database - database handle
+ * @param viewer - who is asking; only owned characters are listed
  * @returns the characters grid view-model: the query plus the pure projection,
  *   shared by the HTML fragment and the `application/json` branch
  */
-async function loadCharactersGridViewModel(database: Kysely<DB>,): Promise<CharactersGridViewModel> {
+async function loadCharactersGridViewModel(
+  database: Kysely<DB>,
+  viewer: ViewsViewer,
+): Promise<CharactersGridViewModel> {
   const actors = await database
     .selectFrom("actors",)
     .selectAll()
     .where("actor_type", "!=", ActorType.User,)
+    .where(visibleCharactersTo(viewer,),)
     .orderBy("display_name", "asc",)
     .limit(200,)
     .execute();
@@ -76,23 +83,37 @@ async function loadCharactersGridViewModel(database: Kysely<DB>,): Promise<Chara
 
 /**
  * @param database - database handle
+ * @param viewer - who is asking; only owned characters are listed
  * @returns the characters grid HTML response
  */
-async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
-  return htmlResponse(renderCharactersGrid(await loadCharactersGridViewModel(database,),),);
+async function serveCharactersGrid(database: Kysely<DB>, viewer: ViewsViewer,): Promise<Response> {
+  return htmlResponse(renderCharactersGrid(await loadCharactersGridViewModel(database, viewer,),),);
 }
 
 /**
  * @param characterId - actor id
  * @param database - database handle
+ * @param viewer - who is asking; the form renders prompts and scenario, so it
+ *   is owner-only (`admin.character` aside, per `checkActorOwnership`)
  * @param request - incoming request (CSP nonce source)
  * @returns the edit form HTML response
  */
 async function serveCharacterEditForm(
   characterId: string,
   database: Kysely<DB>,
+  viewer: ViewsViewer,
   request?: Request,
 ): Promise<Response> {
+  // A foreign character and a missing one render the same state, so the
+  // response never reveals whether the id exists (banned-patterns: 404,
+  // not 403, to avoid leaking resource existence).
+  if (!(await checkActorOwnership(database, characterId, viewer.userId, viewer.userRole,))) {
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">⚠️</div>
+      <div class="title">Character not found</div>
+    </div>`,);
+  }
+
   const actor = await database
     .selectFrom("actors",)
     .selectAll()
@@ -187,13 +208,18 @@ async function serveCharacterEditForm(
 /**
  * @param slug - chat name search substring
  * @param database - database handle
+ * @param viewer - who is asking; only their own chats match
  * @returns the chat list fragment response
  */
-
-async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Promise<Response> {
+async function serveCharacterChatListDb(
+  slug: string,
+  database: Kysely<DB>,
+  viewer: ViewsViewer,
+): Promise<Response> {
   const chats = await database
     .selectFrom("chats",)
     .selectAll()
+    .where(visibleChatsTo(viewer,),)
     .where("name", "like", `%${slug}%`,)
     .orderBy("updated_at", "desc",)
     .limit(50,)

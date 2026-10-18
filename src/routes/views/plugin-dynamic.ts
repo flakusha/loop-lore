@@ -7,6 +7,7 @@ import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { SuccessResponse, } from "../../validation/schemas";
 import { requireUserId, } from "../http-utils";
+import { type ViewsViewer, } from "./access";
 import {
   loadCharactersGridViewModel,
   serveCharacterChatListDb,
@@ -40,6 +41,20 @@ function chatListViewer(ctx: unknown,): ChatListViewer | Response {
 }
 
 /**
+ * The viewer behind `/dynamic/characters/*`, or the 401 the auth middleware
+ * returns. Anonymous callers must not reach the grid, the edit form or the
+ * chat list: the grid reads actor rows and the edit form renders system
+ * prompts, both under the same ownership rule.
+ * @param ctx
+ * @returns the viewer, or a Response to send back
+ */
+function characterViewer(ctx: unknown,): ViewsViewer | Response {
+  const userId = requireUserId(ctx,);
+  if (typeof userId !== "string") { return userId; }
+  return { userId, userRole: (ctx as { userRole?: string | null }).userRole ?? null, };
+}
+
+/**
  * @param database
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { dynamic: { characters: { ...; }; }; } & ... 9 more ... & { ...; }, { ...; }, { ...; }>}
  */
@@ -53,11 +68,14 @@ export function dynamicRoutes(database: Kysely<DB>,) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
+      const viewer = characterViewer(ctx,);
+      if (viewer instanceof Response) { return viewer; }
+
       if (wantsJson) {
-        return jsonViewModelResponse(await loadCharactersGridViewModel(database,),);
+        return jsonViewModelResponse(await loadCharactersGridViewModel(database, viewer,),);
       }
 
-      return await serveCharactersGrid(database,);
+      return await serveCharactersGrid(database, viewer,);
     }, {
       response: { 200: SuccessResponse, },
     },)
@@ -218,7 +236,10 @@ export function dynamicRoutes(database: Kysely<DB>,) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
-      return await serveCharacterEditForm(ctx.params.id, database, ctx.request,);
+      const viewer = characterViewer(ctx,);
+      if (viewer instanceof Response) { return viewer; }
+
+      return await serveCharacterEditForm(ctx.params.id, database, viewer, ctx.request,);
     }, {
       response: { 200: SuccessResponse, },
     },)
@@ -228,7 +249,10 @@ export function dynamicRoutes(database: Kysely<DB>,) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
-      return await serveCharacterChatListDb(ctx.params.id, database,);
+      const viewer = characterViewer(ctx,);
+      if (viewer instanceof Response) { return viewer; }
+
+      return await serveCharacterChatListDb(ctx.params.id, database, viewer,);
     }, {
       response: { 200: SuccessResponse, },
     },);

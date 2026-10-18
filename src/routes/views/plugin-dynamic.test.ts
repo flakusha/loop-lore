@@ -89,7 +89,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
   });
 
   test("characters grid renders with HX-Request", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/characters/grid", { headers: { "HX-Request": "true", }, },),
     );
 
@@ -236,7 +236,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
   });
 
   test("character edit-form renders with HX-Request", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/characters/actor-aria/edit-form", { headers: { "HX-Request": "true", }, },),
     );
 
@@ -246,11 +246,86 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
   });
 
   test("character chat-list renders with HX-Request", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/characters/actor-aria/chat-list", { headers: { "HX-Request": "true", }, },),
     );
 
     expect(res.status,).toBe(200,);
+  });
+
+  /**
+   * The auth derive in `src/elysia-app.ts` leaves `ctx.userId` null instead of
+   * 401ing, so each character route narrows it itself. The grid negotiates a
+   * JSON view-model (an `Accept` header alone reaches it); edit-form and
+   * chat-list are htmx-only, so they 401 behind `HX-Request`.
+   */
+  describe("character endpoints — authentication", () => {
+    test("an anonymous JSON grid request is 401, not an actor dump", async () => {
+      const res = await makeApp(db,).handle(
+        new Request("http://localhost/dynamic/characters/grid", { headers: { Accept: "application/json", }, },),
+      );
+
+      expect(res.status,).toBe(401,);
+      expect(await res.text(),).not.toContain("actor-aria",);
+    });
+
+    test("an anonymous htmx request is 401 on the grid, edit form and chat list", async () => {
+      const paths = [
+        "/dynamic/characters/grid",
+        "/dynamic/characters/actor-aria/edit-form",
+        "/dynamic/characters/actor-aria/chat-list",
+      ];
+
+      for (const path of paths) {
+        const res = await makeApp(db,).handle(
+          new Request(`http://localhost${path}`, { headers: { "HX-Request": "true", }, },),
+        );
+
+        expect(res.status,).toBe(401,);
+        expect(await res.text(),).not.toContain("actor-aria",);
+      }
+    });
+  });
+
+  /**
+   * `actor-aria` and `chat-a` both belong to the seeded `owner`, so `other`
+   * must see nothing on any of the three surfaces.
+   */
+  describe("character endpoints — ownership scoping", () => {
+    test("another user's characters grid JSON omits foreign characters", async () => {
+      const res = await makeApp(db, "other", "user",).handle(
+        new Request("http://localhost/dynamic/characters/grid", { headers: { Accept: "application/json", }, },),
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(await res.text(),).not.toContain("actor-aria",);
+    });
+
+    test("another user cannot open a foreign character edit form", async () => {
+      const res = await makeApp(db, "other", "user",).handle(
+        new Request("http://localhost/dynamic/characters/actor-aria/edit-form", {
+          headers: { "HX-Request": "true", },
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const html = await res.text();
+      expect(html,).toContain("Character not found",);
+      expect(html,).not.toContain("character-edit-form",);
+    });
+
+    test("another user's character chat-list omits foreign chats", async () => {
+      const res = await makeApp(db, "other", "user",).handle(
+        new Request("http://localhost/dynamic/characters/Alpha/chat-list", {
+          headers: { "HX-Request": "true", },
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const html = await res.text();
+      expect(html,).not.toContain("chat-a",);
+      expect(html,).toContain("No chats yet",);
+    });
   });
 
   /**

@@ -85,6 +85,47 @@ describe("admin system-config routes", () => {
     expect(body.some((c,) => c.key === "test.key.1" && c.value === "value-1"),).toBe(true,);
   });
 
+  test("GET /api/admin/system-config redacts secret-classified keys", async () => {
+    await setConfig(db, "list.apiKey", "sk-live-abcdef",);
+    await setConfig(db, "list.jwtSecret", "s3cr3t",);
+    await setConfig(db, "list.plain", "visible-value",);
+
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(new Request("http://localhost/api/admin/system-config",),);
+    expect(res.status,).toBe(200,);
+
+    const body = await res.json() as { key: string; value: string }[];
+    const byKey = new Map(body.map((c,) => [c.key, c.value,]),);
+
+    expect(byKey.get("list.apiKey",),).toBe("***REDACTED***",);
+    expect(byKey.get("list.jwtSecret",),).toBe("***REDACTED***",);
+    expect(byKey.get("list.plain",),).toBe("visible-value",);
+
+    const raw = JSON.stringify(body,);
+    expect(raw,).not.toContain("sk-live-abcdef",);
+    expect(raw,).not.toContain("s3cr3t",);
+  });
+
+  test("PATCH still stores a secret value verbatim", async () => {
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config", {
+        method: "PATCH",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ key: "write.token", value: "tok-123", },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const stored = await db
+      .selectFrom("system_config",)
+      .select("value",)
+      .where("key", "=", "write.token",)
+      .executeTakeFirst();
+
+    expect(stored?.value,).toBe("tok-123",);
+  });
+
   test("PATCH /api/admin/system-config returns 200 with valid body", async () => {
     const app = makeApp(db, "admin",);
     const res = await app.handle(
