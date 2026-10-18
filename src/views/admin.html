@@ -75,6 +75,14 @@
         >
           {{{t("harness.tabLabel")}}}
         </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'federation' }"
+          @click="showTab('federation')"
+          data-testid="admin-tab-federation"
+        >
+          {{{t("admin.federation")}}}
+        </button>
       </div>
 
       <!-- Overview Tab -->
@@ -3023,6 +3031,11 @@
     <!-- Harness Tab (TASK-harness-frontend-consolidation) -->
     <div x-show="activeTab === 'harness'">
       {{> harness/admin-harness-panel.html }}
+    </div>
+
+    <!-- Federation Tab (TASK-federation-admin-usage-dashboard-ui) -->
+    <div x-show="activeTab === 'federation'">
+      {{> federation/admin-federation-panel.html }}
     </div>
   </main>
 </div>

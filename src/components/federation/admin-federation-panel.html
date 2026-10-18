@@ -1,0 +1,234 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+<!--
+  Federation admin panel — mounted as a tab on the existing admin shell.
+
+  Every string goes through {{{t(...)}}} so the i18n reconcile gate sees it.
+  The panel never renders a peer token: the wire contract carries only
+  `hasSharedToken`, and the add form's token field is write-only.
+-->
+<div style="padding: var(--space-6)">
+  <!-- Federation OFF: explicit state, not an error toast. -->
+  <template x-if="fedForbidden">
+    <div class="empty-state" data-testid="fed-forbidden">
+      <div class="title">{{{t("admin.federationForbidden")}}}</div>
+      <div class="description">{{{t("admin.federationForbiddenHint")}}}</div>
+    </div>
+  </template>
+
+  <template x-if="!fedForbidden && fedUsage.enabled === false">
+    <div class="empty-state" data-testid="fed-disabled">
+      <div class="title">{{{t("admin.federationOff")}}}</div>
+      <div class="description">{{{t("admin.federationOffHint")}}}</div>
+    </div>
+  </template>
+
+  <template x-if="!fedForbidden && fedUsage.enabled">
+    <div>
+      <!-- Instance storage -->
+      <div x-show="fedUsage.storage" style="margin-bottom: var(--space-5)">
+        <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-2)">
+          {{{t("admin.federationStorage")}}}
+        </h3>
+        <div style="font-size: 13px; color: var(--text-secondary)">
+          <span x-text="fedUsage.storage ? fedUsage.storage.totalBytes : 0"></span>
+          <span>{{{t("admin.federationStorageHeld")}}}</span>
+          <span x-text="fedUsage.storage ? fedUsage.storage.heldBytes : 0"></span>
+        </div>
+      </div>
+
+      <!-- Peer list -->
+      <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">
+        {{{t("admin.federationPeers")}}}
+      </h3>
+      <div x-show="loadingFederation" class="empty-state">
+        <div class="title">{{{t("admin.federationLoadingPeers")}}}</div>
+      </div>
+      <div x-show="!loadingFederation && fedPeers.length === 0" class="empty-state">
+        <div class="title">{{{t("admin.federationNoPeers")}}}</div>
+      </div>
+      <template x-for="peer in fedPeers" :key="peer.origin">
+        <div
+          class="card"
+          style="margin-bottom: var(--space-3); padding: var(--space-4)"
+          data-testid="fed-peer-row"
+          :data-origin="peer.origin"
+        >
+          <div style="display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap">
+            <strong style="font-family: monospace" x-text="peer.origin"></strong>
+            <span class="badge" x-text="peer.state"></span>
+            <span class="badge" x-text="peer.linkKind"></span>
+            <span class="badge" x-text="peer.instanceKind"></span>
+            <span class="badge" x-show="peer.workloadTrust" x-text="t('admin.federationTrusted')"></span>
+            <span
+              class="badge"
+              x-show="peer.hasSharedToken"
+              x-text="t('admin.federationTokenStored')"
+            ></span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: var(--space-2)">
+            <span x-text="t('admin.federationDeclaredClasses')"></span>
+            <span x-text="peer.allowedWorkloadClasses.join(', ') || '-'"></span>
+            <span x-text="t('admin.federationAdvertisedClasses')"></span>
+            <span x-text="peer.advertisedWorkloadClasses.join(', ') || '-'"></span>
+          </div>
+          <table style="width: 100%; margin-top: var(--space-3); font-size: 12px">
+            <thead>
+              <tr>
+                <th style="text-align: left">{{{t("admin.federationColumn.class")}}}</th>
+                <th>{{{t("admin.federationColumn.inFlight")}}}</th>
+                <th>{{{t("admin.federationColumn.headroom")}}}</th>
+                <th>{{{t("admin.federationColumn.latency")}}}</th>
+                <th>{{{t("admin.federationColumn.circuit")}}}</th>
+                <th>{{{t("admin.federationColumn.budget")}}}</th>
+                <th>{{{t("admin.federationColumn.used")}}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="cell in peer.classes" :key="cell.workloadClass">
+                <tr>
+                  <td x-text="cell.workloadClass"></td>
+                  <td style="text-align: right" x-text="cell.inFlight"></td>
+                  <td style="text-align: right" x-text="cell.headroom === null ? '-' : cell.headroom"></td>
+                  <td style="text-align: right" x-text="cell.ewmaLatencyMs === null ? '-' : cell.ewmaLatencyMs"></td>
+                  <td style="text-align: right" x-text="cell.circuitOpen ? t('admin.federationCircuitOpen') : '-'"></td>
+                  <td style="text-align: right" x-text="cell.budget ? cell.budget.mode : '-'"></td>
+                  <td style="text-align: right" x-text="cell.quota ? cell.quota.tokensUsed : 0"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+          <div style="margin-top: var(--space-3); display: flex; gap: var(--space-2); align-items: center">
+            <input
+              type="text"
+              :placeholder="t('admin.federationDeleteConfirmHint')"
+              x-model="fedDeleteConfirm"
+              data-testid="fed-delete-confirm"
+            />
+            <button
+              class="btn btn-danger"
+              :disabled="!fedDeleteConfirmed(peer.origin)"
+              @click="fedDeleteOrigin = peer.origin"
+              x-text="t('admin.federationArmDelete')"
+            >
+            </button>
+            <button
+              class="btn btn-danger"
+              :disabled="!fedDeleteConfirmed(peer.origin)"
+              @click="deleteFederationPeer(peer.origin)"
+              data-testid="fed-delete-submit"
+              x-text="t('admin.federationDelete')"
+            >
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <!-- Add peer -->
+      <h3 style="font-size: 14px; font-weight: 600; margin: var(--space-5) 0 var(--space-3)">
+        {{{t("admin.federationAddPeer")}}}
+      </h3>
+      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: flex-end">
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.federationColumn.origin")}}}</span>
+          <input type="text" x-model="fedPeerDraft.origin" data-testid="fed-origin-input" />
+        </label>
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.displayName")}}}</span>
+          <input type="text" x-model="fedPeerDraft.displayName" />
+        </label>
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.federationTokenWriteOnly")}}}</span>
+          <input
+            type="password"
+            autocomplete="new-password"
+            x-model="fedPeerDraft.sharedToken"
+            data-testid="fed-token-input"
+          />
+        </label>
+        <label style="display: flex; gap: var(--space-2); align-items: center; font-size: 12px">
+          <input type="checkbox" x-model="fedPeerDraft.workloadTrust" />
+          {{{t("admin.federationTrusted")}}}
+        </label>
+        <button class="btn btn-primary" @click="saveFederationPeer()" data-testid="fed-save-peer">
+          {{{t("admin.federationAddPeer")}}}
+        </button>
+      </div>
+      <!-- Probe verdict from the last save, inline. -->
+      <div x-show="fedProbeOutcome" style="margin-top: var(--space-3); font-size: 12px" data-testid="fed-probe-verdict">
+        <span x-text="t('admin.federationProbeResult')"></span>
+        <strong x-text="fedProbeOutcome"></strong>
+        <span x-show="fedProbeReason" x-text="fedProbeReason"></span>
+      </div>
+
+      <!-- Budget editor -->
+      <h3 style="font-size: 14px; font-weight: 600; margin: var(--space-5) 0 var(--space-3)">
+        {{{t("admin.federationBudgets")}}}
+      </h3>
+      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: flex-end">
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.federationColumn.origin")}}}</span>
+          <input type="text" x-model="fedBudgetDraft.origin" data-testid="fed-budget-origin" />
+        </label>
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.federationColumn.class")}}}</span>
+          <input type="text" x-model="fedBudgetDraft.workloadClass" data-testid="fed-budget-class" />
+        </label>
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.federationColumn.mode")}}}</span>
+          <select x-model="fedBudgetDraft.mode">
+            <option value="advisory">advisory</option>
+            <option value="hard">hard</option>
+          </select>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.federationColumn.concurrency")}}}</span>
+          <input type="number" min="1" x-model="fedBudgetDraft.maxConcurrency" />
+        </label>
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.federationColumn.rpm")}}}</span>
+          <input type="number" min="1" x-model="fedBudgetDraft.requestsPerMinute" />
+        </label>
+        <label style="display: flex; flex-direction: column; gap: var(--space-1)">
+          <span style="font-size: 12px">{{{t("admin.federationColumn.advisoryTokens")}}}</span>
+          <input type="number" min="1" x-model="fedBudgetDraft.tokensPerMinute" />
+        </label>
+        <button class="btn btn-primary" @click="saveFederationBudget()" data-testid="fed-save-budget">
+          {{{t("admin.federationSaveBudget")}}}
+        </button>
+      </div>
+      <div style="font-size: 11px; color: var(--text-secondary); margin-top: var(--space-2)">
+        {{{t("admin.federationBudgetUnlimitedHint")}}}
+      </div>
+
+      <!-- Assignment matrix: rows are classes, an empty row is local-only. -->
+      <h3 style="font-size: 14px; font-weight: 600; margin: var(--space-5) 0 var(--space-3)">
+        {{{t("admin.federationMatrix")}}}
+      </h3>
+      <template x-for="(peersForClass, workloadClass) in fedMatrix" :key="workloadClass">
+        <div style="display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-2)">
+          <strong style="min-width: 120px; font-size: 12px" x-text="workloadClass"></strong>
+          <input
+            type="text"
+            style="flex: 1"
+            :placeholder="t('admin.federationMatrixLocalOnly')"
+            :value="peersForClass.join(', ')"
+            @input="fedMatrix[workloadClass] = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)"
+          />
+        </div>
+      </template>
+      <div x-show="Object.keys(fedMatrix).length === 0" class="empty-state">
+        <div class="title">{{{t("admin.federationMatrixEmpty")}}}</div>
+        <div class="description">{{{t("admin.federationMatrixLocalOnly")}}}</div>
+      </div>
+      <button
+        class="btn btn-primary"
+        style="margin-top: var(--space-3)"
+        @click="saveFederationMatrix()"
+        data-testid="fed-save-matrix"
+      >
+        {{{t("admin.federationSaveMatrix")}}}
+      </button>
+    </div>
+  </template>
+</div>
