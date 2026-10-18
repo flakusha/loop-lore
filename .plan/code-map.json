@@ -22145,6 +22145,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/frontend/alpine/chat-slash.ts": [
