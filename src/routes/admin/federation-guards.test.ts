@@ -18,7 +18,7 @@ import {
   ADMIN_FEDERATION_TOKEN_MAX,
 } from "../../validation/schemas/admin-federation";
 import { MAX_ABILITY_BONUS, } from "../../worlds/resource-core";
-import { requireFactionsInWorld, } from "../worlds/faction-routes";
+import { requireFactionsInWorld, } from "../worlds/faction-routes-shared";
 import {
   auditFederationChange,
   federationOffResponse,
