@@ -47,7 +47,8 @@ export function healthRoutes(_opts: { database: Db; config: Config }, prefix = "
     },
     detail: {
       summary: "Health check",
-      description: "Returns server health status including provider connectivity. No authentication required.",
+      description:
+        "Returns server health status and per-provider name/status. No upstream error text, no authentication required.",
       tags: ["Health",],
     },
   },);
