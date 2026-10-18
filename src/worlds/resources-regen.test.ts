@@ -16,7 +16,13 @@ import { ResourceQuality, } from "../db/enums-story/resources";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertLocations, insertWorlds, } from "../test-utils/insert-helpers";
-import { attemptExtraction, calculateExtractionDifficulty, listResources, regenerateResources, } from "./resources";
+import {
+  attemptExtraction,
+  calculateExtractionDifficulty,
+  listResources,
+  MAX_ABILITY_BONUS,
+  regenerateResources,
+} from "./resources";
 import {
   ACTOR,
   LOCATION,
@@ -58,6 +64,16 @@ describe("calculateExtractionDifficulty", () => {
   test("clamps into [1, 100] so no node is trivially or impossibly winnable", () => {
     expect(calculateExtractionDifficulty(node, { abilityBonus: 999, },),).toBe(1,);
     expect(calculateExtractionDifficulty({ ...node, extraction_difficulty: 500, },),).toBe(100,);
+  });
+
+  test("MAX_ABILITY_BONUS stays a real bound, not a formality", () => {
+    // The route schema rejects anything above this (resource-routes.ts), so the
+    // constant is only as good as its value: at the cap a node must still be
+    // rollable rather than pinned to the floor.
+    expect(MAX_ABILITY_BONUS,).toBeGreaterThan(0,);
+    expect(
+      calculateExtractionDifficulty({ ...node, extraction_difficulty: 100, }, { abilityBonus: MAX_ABILITY_BONUS, },),
+    ).toBeGreaterThan(1,);
   });
 });
 
