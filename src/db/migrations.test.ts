@@ -257,9 +257,19 @@ describe("migration numbering is sequential from 001", () => {
     expect(dupes, `duplicate migration prefix(es): ${dupes.join(", ",)}`,).toEqual([],);
 
     expect(prefixes[0],).toBe(1,);
-    for (const [i, n,] of prefixes.entries()) {
-      expect(n, `${MIGRATION_NAMES[i]} must follow ${MIGRATION_NAMES[i - 1] ?? "(none)"}`,).toBe(i + 1,);
-    }
+
+    // 058 is parked on the unmerged `world-conditions-time` branch
+    // (src/db/migrations/058_world_conditions.ts), so dev legitimately has a
+    // hole at 58 until that branch finalizes. Only numbers listed here may be
+    // absent; any other gap still fails below.
+    const PARKED = [58,];
+    const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
+    const expected = Array.from(
+      { length: prefixes.length + parkedMissing.length, },
+      (_, i,) => i + 1,
+    ).filter((n,) => !parkedMissing.includes(n,));
+
+    expect(prefixes, `prefixes must be 001..N with no gaps (parked: ${parkedMissing.join(", ",)})`,).toEqual(expected,);
   });
 });
 
