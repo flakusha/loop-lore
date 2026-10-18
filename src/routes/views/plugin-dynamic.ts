@@ -4,18 +4,40 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 import { SuccessResponse, } from "../../validation/schemas";
+import { requireUserId, } from "../http-utils";
 import {
   loadCharactersGridViewModel,
   serveCharacterChatListDb,
   serveCharacterEditForm,
   serveCharactersGrid,
 } from "./characters";
-import { loadChatsListViewModel, loadChatsSearchViewModel, serveChatsListDb, serveChatsSearch, } from "./chats";
+import {
+  type ChatListViewer,
+  loadChatsListViewModel,
+  loadChatsSearchViewModel,
+  serveChatsListDb,
+  serveChatsSearch,
+} from "./chats";
 import { loadGalleryGridViewModel, serveGalleryGrid, } from "./gallery";
 import { jsonViewModelResponse, wantsJsonViewModel, } from "./negotiate";
 import { loadGallerySearchViewModel, serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 import { serveWorldDetailContent, serveWorldsListDb, } from "./worlds";
+
+/**
+ * The viewer behind `/dynamic/chats/*`, or the 401 the auth middleware
+ * returns. Anonymous callers must not reach either chat loader: both branches
+ * (JSON and htmx) read the same private data.
+ * @param ctx
+ * @returns the viewer, or a Response to send back
+ */
+function chatListViewer(ctx: unknown,): ChatListViewer | Response {
+  const userId = requireUserId(ctx,);
+  if (typeof userId !== "string") { return userId; }
+  const userRole = (ctx as { userRole?: string | null }).userRole;
+  return { userId, isAdmin: can(userRole ?? null, "admin.chat",), };
+}
 
 /**
  * @param database
@@ -144,12 +166,16 @@ export function dynamicRoutes(database: Kysely<DB>,) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
+      // Chats are private per user: every branch (JSON view-model and htmx
+      // fragment) needs a viewer, and the loaders scope the query to it.
+      const viewer = chatListViewer(ctx,);
+      if (viewer instanceof Response) { return viewer; }
       const url = new URL(ctx.request.url,);
       if (wantsJson) {
-        return jsonViewModelResponse(await loadChatsListViewModel(database, url.searchParams,),);
+        return jsonViewModelResponse(await loadChatsListViewModel({ database, params: url.searchParams, viewer, },),);
       }
 
-      return await serveChatsListDb(database, url.searchParams,);
+      return await serveChatsListDb(database, url.searchParams, viewer,);
     }, {
       response: { 200: SuccessResponse, },
     },)
@@ -160,12 +186,14 @@ export function dynamicRoutes(database: Kysely<DB>,) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
 
+      const viewer = chatListViewer(ctx,);
+      if (viewer instanceof Response) { return viewer; }
       const url = new URL(ctx.request.url,);
       if (wantsJson) {
-        return jsonViewModelResponse(await loadChatsSearchViewModel(database, url.searchParams,),);
+        return jsonViewModelResponse(await loadChatsSearchViewModel({ database, params: url.searchParams, viewer, },),);
       }
 
-      return await serveChatsSearch(database, url.searchParams,);
+      return await serveChatsSearch(database, url.searchParams, viewer,);
     }, {
       response: { 200: SuccessResponse, },
     },)
