@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { HandleOpts, } from "./types";
 import { Elysia, } from "elysia";
 import { anomalyRoutes, } from "./anomaly-routes";
 import { autonomyRoutes, } from "./autonomy-routes";
@@ -18,10 +17,10 @@ import { resourceRoutes, } from "./resource-routes";
 import { storageRoutes, } from "./storage-routes";
 import { timelinesRoutes, } from "./timelines";
 import { travelStatusRoutes, } from "./travel-status";
-import { worldConditionsRoutes, } from "./world-conditions-routes";
+import type { HandleOpts, } from "./types";
 import { worldLicenseRoutes, } from "./world-license-routes";
-import { worldRoutes, } from "./worlds-routes";
 import { worldStreamRoutes, } from "./world-stream";
+import { worldRoutes, } from "./worlds-routes";
 /**
  * @param opts
  * @param prefix
@@ -45,7 +44,6 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(karmaRoutes(opts, prefix,),)
     .use(resourceRoutes(opts, prefix,),)
     .use(storageRoutes(opts, prefix,),)
-    .use(worldConditionsRoutes(opts, prefix,),)
     .use(worldLicenseRoutes(opts, prefix,),)
     .use(mapRoutes(opts, prefix,),)
     .use(mapZoneRoutes(opts, prefix,),);
