@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { HandleOpts, } from "./types";
 import { Elysia, } from "elysia";
 import { anomalyRoutes, } from "./anomaly-routes";
 import { autonomyRoutes, } from "./autonomy-routes";
@@ -16,8 +15,9 @@ import { resourceRoutes, } from "./resource-routes";
 import { storageRoutes, } from "./storage-routes";
 import { timelinesRoutes, } from "./timelines";
 import { travelStatusRoutes, } from "./travel-status";
-import { worldRoutes, } from "./worlds-routes";
+import type { HandleOpts, } from "./types";
 import { worldStreamRoutes, } from "./world-stream";
+import { worldRoutes, } from "./worlds-routes";
 /**
  * @param opts
  * @param prefix
