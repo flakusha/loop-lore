@@ -156,7 +156,7 @@ AWS Bedrock remains a schema-only item awaiting TASK-native-aws-bedrock-adapter.
 
 ## Config
 
-Env vars (`src/config/load/env.ts` — `LLAMACPP_*` does not exist in code): `LLM_PROVIDER_BASE_URL` (creates a `default` provider entry when set), `LLM_PROVIDER_NAME`/`LLM_PROVIDER_LABEL`/`LLM_PROVIDER_API_KEY`/`LLM_PROVIDER_MODEL`, `LLM_PROVIDER_TIMEOUT` (default 30000ms), `LLM_PROVIDER_RETRIES` (default 3), `LLM_PROVIDER_ALLOW_USER_KEY` (default true), `LLM_DEFAULT_PROVIDER`.
+Env vars (`src/config/load/env.ts` — `LLAMACPP_*` does not exist in code): `LLM_PROVIDER_BASE_URL` (creates a `default` provider entry when set), `LLM_PROVIDER_NAME`/`LLM_PROVIDER_LABEL`/`LLM_PROVIDER_API_KEY`/`LLM_PROVIDER_MODEL`, `LLM_PROVIDER_TIMEOUT` (default 30000ms), `LLM_PROVIDER_RETRIES` (default 3), `LLM_PROVIDER_ALLOW_USER_KEY` (unset → true; enabled only by `true`/`1`/`on`/`yes` — every other present value, including `false`/`0`/`off`/`no` and unrecognised input, denies user keys), `LLM_DEFAULT_PROVIDER`.
 
 Server lifecycle NOT managed by loop-lore — run separately via a llama-server start script, systemd, or container.
 
