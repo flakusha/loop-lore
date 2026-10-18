@@ -16,10 +16,11 @@ and the Character Core System's relationship and mood systems. See
 re-checked against `src/` on 2026-10-09; six were `[x]` and are now `[ ]`.
 **Effort:** Medium
 **Priority:** Medium
-**Status:** Done
+**Status:** In Progress
 **Scope:** VN epic open ACs: choice consequences (vn_choice_selections + impacts to relationship/mood services), typewriter dialogue-template pacing
 **Status Note:** (2026-08-23) "Backend, routes, frontend cards, accumulated impacts, split/reunite detection all live". Reconciled 2026-10-09: the backend half is genuinely done and `initChoiceCards` is now mounted at render time (`vn-mode-qa-loop`, `e87bd19c0`), but choice impacts are still never applied and no choice-history table exists — remains In Progress. The closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`. Card mounting holds (`render-scene.ts:251`, gated on `settings.vnChoicesEnabled`) and the pending-choice send gate is now live (`src/routes/messages/guards.ts` 409 on unresolved choices and questions). Still open: impacts never write to the relationship/mood systems (`getAccumulatedImpacts()` has no production consumer), `unlock_conditions` is never evaluated, and `vn_choice_selections` does not exist. Status line corrected Done → In Progress to match the reconciliation above.
+**Status Note (2026-10-18, vn-epic-completion):** Header set to the truthful In Progress per the 2026-10-18 review adjudication. Git issue 768f67a was re-opened to match, but the shared-registry enforcement (any agent's `giwt sync --fix` auto-closes a done-index ticket's open issue as stale) re-closed it within minutes — the tracking system treats the closed registry issue as authoritative for done-ness, so `plan:sync` reports this ticket as ".md status stale" until the registry is re-opened deliberately at review. This branch implements the remaining slice — see the epic's Remaining Scope section.
 **Epic:** epic-visual-novel-mode
 **Tags:** visual-novel, branching, choices, relationships, immersion
 

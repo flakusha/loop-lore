@@ -144,6 +144,71 @@ The extension gap this section used to describe is closed:
   dismissing it from the card releases the gate
   (`destroyChoiceCards`/`destroyQuestionCards` clear the pending flag).
 
+## Remaining Scope — branch `vn-epic-completion` (2026-10-18)
+
+Reconciliation source: the 2026-10-18 review adjudication of the VN cluster.
+The five VN tickets whose `**Status:**` header said `Done` while their own
+body notes said "corrected Done → In Progress" (template-actions,
+scene-template-system, qa-mode, branching-choices, dynamic-generation) are
+re-synced to `In Progress` on this branch; the code inventory itself was
+already truthful.
+
+Tracking-system caveat: the ticket registry still carries these five issues
+as closed. Re-opening them via `giwt state` does not hold — the shared
+registry's sync enforcement auto-closes a done-index ticket's open issue as
+stale on the next `giwt sync --fix` by any agent, so `plan:sync` reports
+these five as ".md status stale" until the registry is re-opened deliberately
+at review (one source of truth still needs picking; this branch picks the
+truthful .md status and leaves the registry decision to the reviewer).
+
+### What is DONE
+
+`## Current State` above carries the full landed inventory with file anchors:
+renderer, chat-view wiring, choices backend + mounted cards, the Q&A
+interaction loop, scene templates at render time (`templates/apply.ts` via
+`render-scene.ts`), transition triggers (`render.ts`), the per-chat opt-in
+flag, and the pending-decision send gate.
+
+### What remains — implementable now (this branch's slice)
+
+1. Composite template execution — `VnCompositeStep` is interface-only
+   (`templates/template-engine.ts`); no executor, no condition evaluation,
+   no step delay anywhere in `src/`.
+2. Dialogue-template consumption — `typewriter.ts` reads only
+   `settings.typewriterSpeed`; `DIALOGUE_TEMPLATES` pacing is never consumed.
+3. QA validator production caller — `runQaCheck`/`renderQaReport`
+   (`src/frontend/vn/qa-mode.ts`) are imported only by their own test.
+4. Custom-template CRUD callers — `saveTemplate`/`deleteTemplate`/
+   `getTemplatesForWorld`/`exportTemplate`/`importTemplate` have no
+   production caller and no GM-facing surface.
+
+### What stays out of this branch (recorded blockers)
+
+- Choice/question impact write-backs to the relationship/mood systems and the
+  `vn_choice_selections` history table — blocked on the un-defer trigger
+  recorded in `TASK-vn-qa-mode.md` (service locator reachability in the VN
+  routes AND create-or-update semantics in `updateRelationship`/
+  `updateMood`).
+- Dynamic image generation — owned by `epic-comfyui-plugin`.
+- Text-to-VN importer — no code; tracked by its own ticket.
+- The full GM template builder (drag-and-drop editor, preview, gallery,
+  variable autocomplete) — the CRUD surface in item 4 is the smallest real
+  slice; the builder remains open on `TASK-vn-scene-template-system.md`.
+
+### Definition of done for this branch
+
+- A composite template referenced by a scene's `templateId` renders through
+  the existing `applyTemplateOverrides` path: steps apply sequentially,
+  step conditions gate application, step delays are honoured, and
+  non-composite templates keep today's behaviour unchanged.
+- `typewriter.ts` consumes dialogue-template pacing (speed + punctuation
+  pauses) when the scene's template chain names a dialogue style.
+- `runQaCheck` has a production consumer on a GM-facing surface.
+- Custom-template save/import/export/delete are reachable from a GM-facing
+  surface (chat settings modal, VN section).
+- Every behaviour above ships with unit tests; `bun run plan:validate`
+  stays green for the touched `.plan/` files.
+
 ## Core Features
 
 ### Dynamic Image Generation
