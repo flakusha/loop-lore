@@ -128,8 +128,8 @@ function handleAnswerVnQuestion(database: Kysely<DB>,) {
       option: result.option,
       nextSceneId: result.nextSceneId,
       locationId: result.locationId,
-      relationshipImpact: result.question.relationship_impact,
-      moodImpact: result.question.mood_impact,
+      relationshipImpact: result.relationshipImpact,
+      moodImpact: result.moodImpact,
       appliedAt: result.appliedAt,
     },);
   };
