@@ -14,8 +14,9 @@ See `## Summary`, `## Pre-Configured Templates` (the catalog), `## Design`
 
 
 **Priority:** Medium
-**Status:** Done
+**Status:** In Progress
 **Status Note:** (2026-08-23) marked Done. Reconciled 2026-10-09: the template arrays and trigger list are real, but no renderer module imported them — `scene-renderer/`, `typewriter.ts`, `transition-engine.ts`, and `chat.html` all had zero references. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: `render-scene.ts:202` now calls `applyTemplateOverrides`, so the scene side is wired; dialogue templates, `evaluateTriggers`, and the picker UI remain open. The closed git issue is left as-is; re-opening it is out of scope here.
+**Status Note (2026-10-18):** Re-verified against `dev`: `evaluateTriggers` is now wired too — `scene-renderer/render.ts:11` imports it and calls it on location change, so transition triggers auto-fire. Remaining open: dialogue-template consumption in `typewriter.ts`, template override, chaining, and the GM picker UI. Status line corrected Done → In Progress to match the notes above.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, scenes, dialogue, pre-configured, ux
 **Effort:** Med
@@ -171,8 +172,11 @@ trigger evaluation are still callerless.
       `typewriter.ts` still consumes only `settings.typewriterSpeed`; it never
       reads a dialogue template. The one speed field that is merged comes in as
       a layout setting, not a dialogue-style one.
-- [ ] Transition triggers auto-fire on location change, combat start, etc. —
-      `evaluateTriggers` still has no caller.
+- [x] Transition triggers auto-fire on location change, etc. —
+      `scene-renderer/render.ts:11` imports `evaluateTriggers` and calls it
+      when `currentLocationId` changes (wired after the 2026-10-09 pass;
+      combat-start/character-enter/emotion triggers have no production
+      feed yet)
 - [ ] GM can browse and select templates from a picker UI — no modal/sidebar
       UI; selection is implicit via a scene's `templateId`.
 - [ ] Template override — user/GM can override individual template fields

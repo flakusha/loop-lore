@@ -54421,7 +54421,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-vn-branching-choices.md",
-    "status": "Done",
+    "status": "in_progress",
     "tags": [
       "visual-novel",
       "branching",
@@ -54453,7 +54453,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-vn-choice-opt-in.md",
-    "status": "open",
+    "status": "in_progress",
     "tags": [
       "visual-novel",
       "choices",
@@ -54471,7 +54471,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-vn-dynamic-generation.md",
-    "status": "Done",
+    "status": "in_progress",
     "tags": [
       "visual-novel",
       "dynamic-image",
@@ -54516,7 +54516,7 @@
     "label": "task",
     "priority": "P2 — Medium",
     "source": ".plan/tickets/TASK-vn-qa-mode.md",
-    "status": "Done",
+    "status": "in_progress",
     "tags": [
       "visual-novel",
       "qa-mode",
@@ -54533,7 +54533,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-vn-scene-template-system.md",
-    "status": "Done",
+    "status": "in_progress",
     "tags": [
       "vn",
       "templates",
@@ -54579,7 +54579,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-vn-template-actions.md",
-    "status": "Done",
+    "status": "in_progress",
     "tags": [
       "vn",
       "templates",

@@ -8961,6 +8961,10 @@
       "source": ".plan/epics/epic-guest-access.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
     },
@@ -8991,6 +8995,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-choice-opt-in.md"
     }
   ],
   "src/chat/service/ask": [
@@ -10326,6 +10334,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-worlds-extension.md"
     },
     {
@@ -10347,6 +10359,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-choice-opt-in.md"
     }
   ],
   "src/chat/types/context.ts": [
@@ -21343,6 +21359,12 @@
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     }
   ],
+  "src/frontend/alpine/chat-settings/gm-config-presentation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    }
+  ],
   "src/frontend/alpine/chat-settings/gm-config.test.ts": [
     {
       "kind": "ticket",
@@ -25315,10 +25337,6 @@
       "source": ".plan/epics/epic-chat-transfer-location.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-visual-novel-mode.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-resolution-missing-empty-input-adapter.md"
     },
@@ -25543,6 +25561,10 @@
   ],
   "src/frontend/vn/templates/apply.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     },
@@ -25600,10 +25622,6 @@
     }
   ],
   "src/frontend/vn/templates/template-engine.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-visual-novel-mode.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comic-page-panel-layout-model.md"
@@ -38149,6 +38167,10 @@
   ],
   "src/routes/chats/vn-questions.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
@@ -39895,8 +39917,24 @@
   ],
   "src/routes/messages/guards.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-branching-choices.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-choice-opt-in.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/routes/messages/handle-scene-transitions.ts": [
@@ -41155,12 +41193,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-professions-service-routes.md"
-    }
-  ],
-  "src/routes/rpg/questions.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-visual-novel-mode.md"
     }
   ],
   "src/routes/rpg/replayability.ts": [
@@ -42699,15 +42731,15 @@
   ],
   "src/routes/vn-generate/index.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-visual-novel-mode.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-dynamic-generation.md"
     }
   ],
   "src/routes/vn-generate/questions.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
