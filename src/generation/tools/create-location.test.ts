@@ -198,7 +198,26 @@ describe("create_location tool", () => {
     expect(chats,).toHaveLength(0,);
   }, 10000,);
 
-  test("refuses an actor with no owning user", async () => {
+  test("allows an actor owned by nobody into the CHAT's own world", async () => {
+    // The character-driven case: `validateGenerateRequest` admits any actor
+    // that is a participant of the authorized chat, and NPC characters carry
+    // no `user_id`, so denying them outright would break generation
+    // mid-session. `chats.world_id` is server-set and never model-supplied, so
+    // this grants nothing the calling user did not already have.
+    const orphanId = crypto.randomUUID();
+    await insertActors(db, "Orphan", { id: orphanId, user_id: null, owner_id: null, } as never,);
+    await insertChats(db, "World chat", userId, { id: "chat-1", world_id: "world-a", } as never,);
+
+    const result = await locationCreationTool.handler(
+      { name: "Orphan's Harbor", },
+      { db, actorId: orphanId, chatId: "chat-1", },
+    );
+
+    expect(result.isError,).not.toBe(true,);
+    expect(JSON.parse(result.content,),).toMatchObject({ ok: true, worldId: "world-a", },);
+  }, 10000,);
+
+  test("refuses an actor with no owning user when no chat world authorizes it", async () => {
     const orphanId = crypto.randomUUID();
     await insertActors(db, "Orphan", { id: orphanId, user_id: null, owner_id: null, } as never,);
     await insertChatSetupTemplates(db, "template-world", "World template", { id: "template-world", },);

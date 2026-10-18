@@ -33,7 +33,9 @@ export type WorldResolution = { ok: true; worldId: string } | { ok: false; messa
  * it choose the destination would hand an authorization decision to a
  * non-deterministic third party (BUG-llm-chosen-worldid-cross-world-write).
  * The chat's own `world_id` is the only source, and the resolved world is
- * still checked against the generating actor's user.
+ * still checked against the generating actor's user — except for an actor owned
+ * by nobody, where the chat itself is the authority and only the chat's own
+ * world is accepted (see the branch below).
  * @param db - Kysely instance
  * @param ctx.chatId - Generating chat id (may be empty when unset)
  * @param ctx.actorId - Generating actor id
@@ -44,6 +46,7 @@ export async function resolveWorldId(
   ctx: { chatId: string | undefined; actorId: string },
 ): Promise<WorldResolution> {
   let worldId = DEFAULT_WORLD_ID;
+  let fromChat = false;
 
   if (ctx.chatId) {
     const chat = await db
@@ -52,10 +55,33 @@ export async function resolveWorldId(
       .where("id", "=", ctx.chatId,)
       .executeTakeFirst();
 
-    if (chat?.world_id) { worldId = chat.world_id; }
+    if (chat?.world_id) {
+      worldId = chat.world_id;
+      fromChat = true;
+    }
   }
 
   const userId = await resolveOwnerUserId(db, ctx.actorId,);
+
+  // An actor owned by nobody (an NPC character participating in a chat) has no
+  // user to authorize against, and denying it outright breaks character-driven
+  // turns mid-session. The CHAT is the authority in that case:
+  // `validateGenerateRequest` already binds (actorId, chatId) to the calling
+  // user, and `chats.world_id` is server-set and never model-supplied, so this
+  // grants nothing the session did not already have. Scoped to the chat's own
+  // world on purpose: on the DEFAULT fallback there is no chat-derived
+  // authority and the write is refused.
+  if (userId === null) {
+    if (!fromChat) {
+      return { ok: false, message: `No owning user for the generating actor and no chat world to authorize.`, };
+    }
+
+    const world = await db.selectFrom("worlds",).select("id",).where("id", "=", worldId,).executeTakeFirst();
+    if (!world) { return { ok: false, message: `World "${worldId}" not found.`, }; }
+
+    return { ok: true, worldId, };
+  }
+
   const denied = await requireWorldAccess(db, worldId, userId, null,);
   if (denied) { return { ok: false, message: `World "${worldId}" not found or access denied.`, }; }
 
