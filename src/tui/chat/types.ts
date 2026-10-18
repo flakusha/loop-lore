@@ -17,6 +17,12 @@ export interface ChatWidgetOptions {
   onChatChange?: (chatId: string,) => void;
   /** Overrides the send-message timeout; defaults to `TUI_DEFAULTS.sendTimeoutMs`. */
   sendTimeoutMs?: number;
+  /**
+   * Reports whether a full-screen overlay (chat picker, harness, models)
+   * owns the keyboard. While true the widget's screen-level keys (Tab)
+   * must not fire, or focus jumps into a hidden element.
+   */
+  isOverlayOpen?: () => boolean;
 }
 
 /**
