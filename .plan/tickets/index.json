@@ -54455,7 +54455,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-vn-choice-opt-in.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [
       "visual-novel",
       "choices",

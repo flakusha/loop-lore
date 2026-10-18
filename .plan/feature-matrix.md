@@ -279,7 +279,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | check-gate | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | check-gates | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | checker | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| choices | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
+| choices | 3 | 2 | 0 | 1 | 0 | 0 | 0 |
 | chroma | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | chronology | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | chunking | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -1008,7 +1008,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | openspec | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | opentelemetry | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | ops | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| opt-in | 4 | 0 | 1 | 3 | 0 | 0 | 0 |
+| opt-in | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | optimistic-concurrency | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | oracle | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | orchestration | 2 | 1 | 0 | 0 | 1 | 0 | 0 |
@@ -1347,7 +1347,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | semantic | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | semantic-index | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | semaphore | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| send-gate | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| send-gate | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | service | 4 | 1 | 0 | 1 | 0 | 0 | 2 |
 | services | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | sessions | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1602,7 +1602,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | viewership | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | views | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | visibility | 5 | 0 | 0 | 2 | 0 | 0 | 3 |
-| visual-novel | 10 | 4 | 2 | 2 | 0 | 0 | 2 |
+| visual-novel | 10 | 5 | 1 | 2 | 0 | 0 | 2 |
 | visualization | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | vitepress | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | viz | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -2020,7 +2020,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | epic-use-case-agentic-workspace.md ✅ (verified 2026-09-07 — epic confirmed as fit, see "Epic fit" below) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-user-stories | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-vector-graphics-generation | 4 | 0 | 0 | 0 | 2 | 0 | 2 |
-| epic-visual-novel-mode | 10 | 7 | 1 | 2 | 0 | 0 | 0 |
+| epic-visual-novel-mode | 10 | 8 | 0 | 2 | 0 | 0 | 0 |
 | epic-wardrobe-avatar-variants | 17 | 12 | 0 | 4 | 0 | 0 | 1 |
 | epic-weather-environment | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-workflow-engine | 18 | 8 | 1 | 7 | 0 | 0 | 2 |
