@@ -22,6 +22,15 @@ export interface CommandContext {
   db?: Kysely<DB>;
   config?: Config;
   userId?: string;
+  /**
+   * The caller's site role (`users.role`), resolved by `resolveUserRole` from
+   * the same column the HTTP auth layer reads. Pass it to the shared world
+   * access helpers (`requireWorldAccess`, `checkWorldOwnership`) instead of a
+   * literal null, so an admin/owner caller takes the same privileged branch the
+   * routes do. Absent or null means unresolved, which `can()` treats as no
+   * permissions — fail closed.
+   */
+  userRole?: string | null;
 }
 
 /** Result returned by a command handler */

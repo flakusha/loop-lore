@@ -76,7 +76,7 @@ registerCommand("world-get", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: "**Worlds unavailable:** command context missing database.", handled: true, };
   }
 
-  const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, null,);
+  const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, ctx.userRole ?? null,);
   if (denied) {
     return { systemMessage: `World ${worldId} not found or access denied.`, handled: true, };
   }
