@@ -36,6 +36,14 @@
       "name": "caption"
     },
     {
+      "name": "char-list",
+      "requiredRole": "member"
+    },
+    {
+      "name": "char-get",
+      "requiredRole": "member"
+    },
+    {
       "name": "context"
     },
     {
@@ -121,7 +129,27 @@
       "name": "study"
     },
     {
+      "name": "item-list",
+      "requiredRole": "member"
+    },
+    {
+      "name": "item-get",
+      "requiredRole": "member"
+    },
+    {
+      "name": "inventory",
+      "requiredRole": "member"
+    },
+    {
       "name": "link",
+      "requiredRole": "member"
+    },
+    {
+      "name": "loc-list",
+      "requiredRole": "member"
+    },
+    {
+      "name": "loc-get",
       "requiredRole": "member"
     },
     {
@@ -158,6 +186,14 @@
     },
     {
       "name": "sum"
+    },
+    {
+      "name": "world-list",
+      "requiredRole": "member"
+    },
+    {
+      "name": "world-get",
+      "requiredRole": "member"
     }
   ],
   "roleGate": [
@@ -221,6 +257,8 @@
         "translate",
         "tl",
         "caption",
+        "char-list",
+        "char-get",
         "context",
         "create",
         "debug",
@@ -247,7 +285,12 @@
         "persuade",
         "hide",
         "study",
+        "item-list",
+        "item-get",
+        "inventory",
         "link",
+        "loc-list",
+        "loc-get",
         "narrate",
         "ooc",
         "quest",
@@ -258,7 +301,9 @@
         "review",
         "stats",
         "summarize",
-        "sum"
+        "sum",
+        "world-list",
+        "world-get"
       ]
     },
     {
@@ -279,6 +324,8 @@
         "battle",
         "translate",
         "caption",
+        "char-list",
+        "char-get",
         "create",
         "detail",
         "constraint",
