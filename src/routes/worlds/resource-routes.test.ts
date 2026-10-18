@@ -25,9 +25,25 @@ import {
   insertLocations,
   insertUsers,
   insertWorlds,
+  insertActors,
 } from "../../test-utils/insert-helpers";
 import { MAX_ABILITY_BONUS, } from "../../worlds/resource-core";
 import { resourceRoutes, } from "./resource-routes";
+
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * src/routes/worlds/resource-routes.test.ts — the two route-level invariants
+ * the extraction endpoints must not lose:
+ *
+ * 1. `regenerate` is owner-gated, and the sweep it triggers is scoped to the
+ *    world in the path. Before the fix the owner of w1 could restore every
+ *    depleted node in w2.
+ * 2. `abilityBonus` is a client input on the trust boundary. It is subtracted
+ *    from the DC, so an unbounded value clamped every node to difficulty 1 — a
+ *    guaranteed success on every roll. The schema bounds it.
+ */
 
 const W1 = "w1";
 const W2 = "w2";
@@ -97,6 +113,9 @@ beforeEach(async () => {
   ({ db, } = await createTestDb());
 
   await insertUsers(db, "Alice", "Alice", { id: USER_A, },);
+  // The extract route resolves a primary persona — an actor row with
+  // `owner_id IS NULL` (the user's own player-actor) — and 404s without one.
+  await insertActors(db, "Alice", { id: USER_A, user_id: USER_A, owner_id: null, } as never,);
   // w1 owned by USER_A (the owner gate); w2 public but with no nodes of its own
   // at setup — the test seeds its own.
   await insertWorlds(db, USER_A, "World One", { id: W1, visibility: WorldVisibility.Public, },);
@@ -157,5 +176,57 @@ describe("abilityBonus is a bounded client input", () => {
     const res = await post(USER_A, `/api/worlds/${W1}/resources/extract`, body,);
 
     expect(res.status,).toBe(422,);
+  });
+});
+
+describe("the abilityBonus schema bound tracks MAX_ABILITY_BONUS", () => {
+  /** Seed an extractable node and POST one attempt with the given bonus. */
+  async function attemptWithBonus(abilityBonus: number,): Promise<Response> {
+    const def = await insertGatheringNodeDefs(
+      db,
+      W1,
+      "Bounded Vein",
+      GatheringNodeType.OreVein,
+      T0.toISOString(),
+      T0.toISOString(),
+      { respawn_time_seconds: 60, },
+    );
+
+    // The route resolves nodeInstanceId, not the definition id, so the
+    // instance row's own id is what must go in the body.
+    const instanceId = await insertGatheringNodeInstances(
+      db,
+      def,
+      W1,
+      1,
+      T0.toISOString(),
+      T0.toISOString(),
+      {
+        location_id: locationW1,
+        state: NodeInstanceState.Available,
+        remaining_amount: 5,
+        extraction_difficulty: 60,
+      },
+    );
+
+    return post(USER_A, `/api/worlds/${W1}/resources/extract`, {
+      locationId: locationW1,
+      nodeInstanceId: instanceId,
+      abilityBonus,
+    },);
+  }
+
+  test("the constant is the exact value the schema accepts as its ceiling", async () => {
+    // Pins BOTH sides of the edge rather than the constant's literal: the
+    // value itself is enforced against the schema below, so raising the
+    // constant without widening the schema fails the "at the bound" leg.
+    expect((await attemptWithBonus(MAX_ABILITY_BONUS,)).status,).toBe(200,);
+    expect((await attemptWithBonus(MAX_ABILITY_BONUS + 1,)).status,).toBe(422,);
+  });
+
+  test("a negative bonus is rejected (the bonus is subtracted from the DC)", async () => {
+    // Without the minimum: 0 a client could pass -1000, RAISING the DC to 100
+    // and hard-locking a node. The schema's lower edge is part of the contract.
+    expect((await attemptWithBonus(-1,)).status,).toBe(422,);
   });
 });
