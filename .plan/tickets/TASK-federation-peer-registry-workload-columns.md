@@ -3,7 +3,8 @@
 
 # TASK: Federation peer registry workload columns
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** Migration `065_mesh_peer_workload_columns.ts` adds `display_name`, `instance_kind`, `auth_mode` (default `tls`), `workload_trust` (default 0), `allowed_workload_classes` (JSON text, default `[]`), `sticky_enabled` (default 0) and `shared_token_enc` to `mesh_peers` — one `ALTER TABLE` per statement; generated files regenerated via `db:sync-types` / `db:sync-manifest`. `src/federation/peer-registry.ts` types the row into `WorkloadPeer` (booleans, parsed class arrays, `hasSharedToken`) and adds `savePeerWorkload`, `listWorkloadPeers`, `setWorkloadTrust`, `setAllowedWorkloadClasses` on top of the existing `coordinator.ts` seams — no second registry. `derivedLinkKind(origin)` is a pure function of the origin host in `src/federation/peer-registry-validation.ts:105` (`127.0.0.1`, `::1`, `localhost`, `*.localhost` -> `loopback`, else `remote`); nothing derived is stored. Tests: `src/federation/peer-registry.test.ts`.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas

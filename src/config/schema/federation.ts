@@ -3,6 +3,8 @@
 
 // src/config/schema/federation.ts — Federation/mesh interconnect config types
 
+import { type PeerWorkloadClass, } from "../../db/enums-federation";
+
 /** Per-peer trust override consumed by the TLS peer-trust ticket. */
 export interface FederationPeerTrustConfig {
   /** PEM CA bundle(s) to trust for this peer (overrides system store). */
@@ -37,6 +39,12 @@ export interface DuplicationPolicy extends WorldDuplicationPolicy {
    */
   worlds?: Record<string, WorldDuplicationPolicy>;
 }
+
+/** Workload classes this instance accepts from federation peers. */
+export interface WorkloadOffloadConfig {
+  /** Declared workload classes published in the instance-state advertisement. */
+  classes: PeerWorkloadClass[];
+}
 /** Federation/mesh interconnect config. All opt-in; disabled by default. */
 export interface FederationConfig {
   /** Enable federation/mesh interconnect. Default false. */
@@ -49,4 +57,11 @@ export interface FederationConfig {
   meshPsk: string;
   /** Duplication policy for pushed content. Default `{ mode: "trusted", peers: [] }`. */
   duplication: DuplicationPolicy;
+  /**
+   * Workload offload: the classes this instance DECLARES it accepts and
+   * publishes as `capabilities` in `/api/instance-state`. Absent = declares
+   * nothing, which keeps the advertisement `[]`. A peer class is only ever
+   * selected when it is both declared here and advertised by the peer.
+   */
+  workloadOffload?: WorkloadOffloadConfig;
 }

@@ -20,6 +20,7 @@ import { computeBuildIdentity, } from "../build/identity";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { getGossipOrigins, } from "../federation/gossip";
+import { declaredWorkloadClasses, } from "../federation/peer-capabilities";
 import { type MeshRouteOpts, mountMeshApi, } from "./federation-mesh";
 import { jsonResponse, } from "./http-utils";
 
@@ -112,7 +113,7 @@ export function federationRoutes(opts: MeshRouteOpts,): Elysia {
           version: APP_VERSION,
         },
         protocols: ["activitypub",],
-        capabilities: [],
+        capabilities: declaredWorkloadClasses(config,),
         uptime: Math.floor(process.uptime(),),
         state: coarseState(),
         peers: getGossipOrigins(),

@@ -14,6 +14,7 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { safeJsonStringify, } from "../utils";
+import { parseAdvertisedClasses, } from "./peer-capabilities";
 import {
   canonicalOrigin,
   fetchPeerAdvertisement,
@@ -122,6 +123,11 @@ export async function listPeers(database: Kysely<DB>, state?: PeerState,) {
 /**
  * Record a successful advertisement fetch: refresh capabilities, last_seen,
  * and — when the peer reports a valid figure — inbound capacity.
+ *
+ * `capabilities` holds the peer's ADVERTISED workload classes, normalized
+ * through `parseAdvertisedClasses`: unknown strings are dropped, and a class
+ * the peer stops advertising is removed rather than retained.
+ *
  * Capacity from the wire is untrusted: non-finite or negative values are
  * ignored and leave the stored figure untouched.
  * @param database
@@ -135,11 +141,9 @@ export async function touchPeer(
   origin: string,
   advertisement: InstanceAdvertisement,
 ): Promise<void> {
-  const peers = Array.isArray(advertisement.peers,)
-    ? advertisement.peers.filter((p,): p is string => typeof p === "string").slice(0, 128,)
-    : [];
+  const advertised = parseAdvertisedClasses(advertisement.capabilities,);
 
-  const encoded = safeJsonStringify(peers,);
+  const encoded = safeJsonStringify(advertised,);
   if (!encoded.ok) { throw new Error("peer capabilities not serializable",); }
   const reported = advertisement.capacityBytes;
   const capacity = typeof reported === "number" && Number.isFinite(reported,) && reported >= 0
