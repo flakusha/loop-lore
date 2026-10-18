@@ -23,6 +23,7 @@ import blessed from "blessed";
 import { safeFetch, } from "../utils";
 import { API_BASE, } from "./chat";
 import { createChat, } from "./chat-create-api";
+import { escapeMarkup, } from "./markup";
 
 /** One row of GET /api/v1/chats, narrowed to what the picker renders. */
 export interface ChatSummary {
@@ -376,7 +377,7 @@ export class ChatPicker {
         this.chats.map(
           (chat,) =>
             `${chat.is_pinned === "pinned" ? "{bold-fg3}[pinned]{/bold-fg3} " : ""}${
-              chat.name || "(unnamed)"
+              escapeMarkup(chat.name,) || "(unnamed)"
             }  {gray}(${chat.id.slice(0, 8,)}…){/gray}`,
         ),
       );
