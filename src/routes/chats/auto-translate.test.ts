@@ -10,7 +10,7 @@
  *   - DELETE clears the target (null echo).
  *   - Non-participants get 403; unknown chats get 404.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
@@ -21,7 +21,7 @@ import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { registerProvider, unregisterProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, LLMProvider, } from "../../generation/providers/types";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
   insertChatParticipants,
@@ -191,95 +191,108 @@ describe("autoTranslateRoutes", () => {
 
   // The consumer contract: the model a translation actually calls with comes
   // from the translator role, not unconditionally from the general model.
-  test("buildTranslateDeps translates with the configured translator model", async () => {
-    const { db, } = await createTestDb();
-    let captured = "";
-    registerProvider(
-      TRANSLATOR_PROVIDER,
-      makeEchoProvider((model,) => {
-        captured = model;
-      },),
-    );
+  //
+  // These share one fixture disposed in `afterEach`: an undisposed bun:sqlite
+  // handle leaks, and per src/test-utils/create-test-db.ts a closed handle left
+  // in the process-global override is handed to every sibling file.
+  describe("translator role wiring", () => {
+    let fixture: TestDb;
 
-    registerProvider(
-      GENERAL_PROVIDER,
-      makeEchoProvider((model,) => {
-        captured = `general:${model}`;
-      },),
-    );
+    beforeEach(async () => {
+      fixture = await createTestDb();
+    },);
 
-    try {
-      const config = makeTranslateConfig({
-        translator: { provider: TRANSLATOR_PROVIDER, model: TRANSLATOR_MODEL, },
-      },);
+    afterEach(async () => {
+      await destroyTestDb(fixture,);
+    },);
 
-      const deps = await buildTranslateDeps(db, config, OWNER_ID,);
-      expect(deps.model,).toBe(TRANSLATOR_MODEL,);
-      await deps.complete?.({
-        model: deps.model ?? "",
-        messages: [{ role: "user", content: "hello", },],
-        params: { maxTokens: 16, temperature: 0, },
-      },);
+    test("buildTranslateDeps translates with the configured translator model", async () => {
+      let captured = "";
+      registerProvider(
+        TRANSLATOR_PROVIDER,
+        makeEchoProvider((model,) => {
+          captured = model;
+        },),
+      );
 
-      expect(captured,).toBe(TRANSLATOR_MODEL,);
-    } finally {
-      unregisterProvider(TRANSLATOR_PROVIDER,);
-      unregisterProvider(GENERAL_PROVIDER,);
-    }
-  });
+      registerProvider(
+        GENERAL_PROVIDER,
+        makeEchoProvider((model,) => {
+          captured = `general:${model}`;
+        },),
+      );
 
-  test("buildTranslateDeps falls back to the general model when translator is unset", async () => {
-    const { db, } = await createTestDb();
-    let captured = "";
-    registerProvider(
-      GENERAL_PROVIDER,
-      makeEchoProvider((model,) => {
-        captured = model;
-      },),
-    );
+      try {
+        const config = makeTranslateConfig({
+          translator: { provider: TRANSLATOR_PROVIDER, model: TRANSLATOR_MODEL, },
+        },);
 
-    try {
-      const config = makeTranslateConfig({},);
+        const deps = await buildTranslateDeps(fixture.db, config, OWNER_ID,);
+        expect(deps.model,).toBe(TRANSLATOR_MODEL,);
+        await deps.complete?.({
+          model: deps.model ?? "",
+          messages: [{ role: "user", content: "hello", },],
+          params: { maxTokens: 16, temperature: 0, },
+        },);
 
-      const deps = await buildTranslateDeps(db, config, OWNER_ID,);
-      expect(deps.model,).toBe(GENERAL_MODEL,);
-      await deps.complete?.({
-        model: deps.model ?? "",
-        messages: [{ role: "user", content: "hello", },],
-        params: { maxTokens: 16, temperature: 0, },
-      },);
+        expect(captured,).toBe(TRANSLATOR_MODEL,);
+      } finally {
+        unregisterProvider(TRANSLATOR_PROVIDER,);
+        unregisterProvider(GENERAL_PROVIDER,);
+      }
+    });
 
-      expect(captured,).toBe(GENERAL_MODEL,);
-    } finally {
-      unregisterProvider(GENERAL_PROVIDER,);
-    }
-  });
+    test("buildTranslateDeps falls back to the general model when translator is unset", async () => {
+      let captured = "";
+      registerProvider(
+        GENERAL_PROVIDER,
+        makeEchoProvider((model,) => {
+          captured = model;
+        },),
+      );
 
-  // A translator naming an unregistered provider must NOT quietly translate on
-  // the general model — it degrades, and the caller keeps the original text.
-  test("buildTranslateDeps degrades instead of using the general model for a bad translator", async () => {
-    const { db, } = await createTestDb();
-    registerProvider(GENERAL_PROVIDER, makeEchoProvider(() => {},),);
+      try {
+        const config = makeTranslateConfig({},);
 
-    try {
-      const config = makeTranslateConfig({
-        translator: { provider: "no-such-translator-provider", model: TRANSLATOR_MODEL, },
-      },);
+        const deps = await buildTranslateDeps(fixture.db, config, OWNER_ID,);
+        expect(deps.model,).toBe(GENERAL_MODEL,);
+        await deps.complete?.({
+          model: deps.model ?? "",
+          messages: [{ role: "user", content: "hello", },],
+          params: { maxTokens: 16, temperature: 0, },
+        },);
 
-      const deps = await buildTranslateDeps(db, config, OWNER_ID,);
-      expect(deps.complete,).toBeUndefined();
+        expect(captured,).toBe(GENERAL_MODEL,);
+      } finally {
+        unregisterProvider(GENERAL_PROVIDER,);
+      }
+    });
 
-      const outcome = await autoTranslateText({
-        text: "hello",
-        storyState: JSON.stringify({ autoTranslateLang: "es", },),
-        chatId: CHAT_ID,
-        deps,
-      },);
+    // A translator naming an unregistered provider must NOT quietly translate
+    // on the general model — it degrades, and the caller keeps the original.
+    test("buildTranslateDeps degrades instead of using the general model for a bad translator", async () => {
+      registerProvider(GENERAL_PROVIDER, makeEchoProvider(() => {},),);
 
-      expect(outcome.translated,).toBe(false,);
-      expect(outcome.text,).toBe("hello",);
-    } finally {
-      unregisterProvider(GENERAL_PROVIDER,);
-    }
+      try {
+        const config = makeTranslateConfig({
+          translator: { provider: "no-such-translator-provider", model: TRANSLATOR_MODEL, },
+        },);
+
+        const deps = await buildTranslateDeps(fixture.db, config, OWNER_ID,);
+        expect(deps.complete,).toBeUndefined();
+
+        const outcome = await autoTranslateText({
+          text: "hello",
+          storyState: JSON.stringify({ autoTranslateLang: "es", },),
+          chatId: CHAT_ID,
+          deps,
+        },);
+
+        expect(outcome.translated,).toBe(false,);
+        expect(outcome.text,).toBe("hello",);
+      } finally {
+        unregisterProvider(GENERAL_PROVIDER,);
+      }
+    });
   });
 });
