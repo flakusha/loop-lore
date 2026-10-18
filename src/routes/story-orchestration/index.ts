@@ -21,7 +21,7 @@ import type { Db, } from "../../db";
 import { TurnStrategy, } from "../../db/enums";
 import { TurnStatus, } from "../../db/enums-story/turns";
 import { safeJsonStringify, } from "../../utils";
-import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { forbiddenResponse, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { createGm, latestOpenTurn, loadChat, notFound, parseGmConfig, } from "./helpers";
 
 /** Body accepted by POST /story/step. */
@@ -51,9 +51,13 @@ export function storyOrchestrationRoutes(
   return new Elysia({ name: "story-orchestration", },)
     .get(
       `${prefix}/chats/:id/story/state`,
-      async ({ params, }: { params: { id: string } },) => {
+      async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { params, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
+        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
         const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         return jsonResponse({
@@ -66,9 +70,13 @@ export function storyOrchestrationRoutes(
     )
     .post(
       `${prefix}/chats/:id/story/pause`,
-      async ({ params, }: { params: { id: string } },) => {
+      async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { params, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
+        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
         const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         await gm.pause();
@@ -77,9 +85,13 @@ export function storyOrchestrationRoutes(
     )
     .post(
       `${prefix}/chats/:id/story/resume`,
-      async ({ params, }: { params: { id: string } },) => {
+      async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { params, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
+        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
         const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         await gm.resume();
@@ -88,9 +100,26 @@ export function storyOrchestrationRoutes(
     )
     .post(
       `${prefix}/chats/:id/story/step`,
-      async ({ params, body, }: { params: { id: string }; body: { forceActorId?: string } },) => {
+      async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { params, body, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
+        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
+
+        if (body.forceActorId) {
+          const participant = await db.selectFrom("chat_participants",)
+            .select("actor_id",)
+            .where("chat_id", "=", params.id,)
+            .where("actor_id", "=", body.forceActorId,)
+            .executeTakeFirst();
+
+          if (!participant) {
+            return forbiddenResponse("Actor is not a participant in this chat",);
+          }
+        }
+
         const gm = createGm(db, opts.config, params.id, chat.gm_config, chat.created_by,);
         await gm.initialize();
         const result = await gm.executeTurn(body.forceActorId,);
@@ -105,12 +134,13 @@ export function storyOrchestrationRoutes(
     )
     .post(
       `${prefix}/chats/:id/story/configure`,
-      async ({ params, body, }: {
-        params: { id: string };
-        body: { turnStrategy?: TurnStrategy; maxTurns?: number; qualityThresholds?: Record<string, number> };
-      },) => {
+      async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { params, body, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
+        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
         const merged = parseGmConfig(chat.gm_config,);
         if (body.qualityThresholds) {
           merged.qualityThresholds = { ...merged.qualityThresholds, ...body.qualityThresholds, };
@@ -138,9 +168,13 @@ export function storyOrchestrationRoutes(
     )
     .post(
       `${prefix}/chats/:id/story/narration`,
-      async ({ params, body, }: { params: { id: string }; body: { text: string } },) => {
+      async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { params, body, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
+        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
         if (!chat.world_id) {
           return jsonError({
             message: "Chat has no world — narration requires a world context",
@@ -157,9 +191,13 @@ export function storyOrchestrationRoutes(
     )
     .post(
       `${prefix}/chats/:id/gm/escalate`,
-      async ({ params, }: { params: { id: string } },) => {
+      async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { params, } = ctx;
         const chat = await loadChat(db, params.id,);
         if (!chat) { return notFound(); }
+        if (chat.created_by !== userId) { return forbiddenResponse("Not allowed",); }
         const turn = await latestOpenTurn(db, params.id,);
         if (!turn) {
           return jsonError({ message: "No open story turn to escalate", status: HttpStatus.NotFound, },);
