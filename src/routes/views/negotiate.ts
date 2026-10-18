@@ -48,12 +48,10 @@ export function wantsJsonViewModel({ accept, }: { accept: string | null },): boo
 
 /**
  * @param viewModel - the same object the HTML template bound to
- * @param init - optional response init (e.g. a non-200 status)
  * @returns the view-model serialized as an `application/json` response
  */
-export function jsonViewModelResponse(viewModel: unknown, init?: ResponseInit,): Response {
+export function jsonViewModelResponse(viewModel: unknown,): Response {
   return new Response(jsonStringifyOr(viewModel,), {
-    ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers, },
+    headers: { "Content-Type": "application/json", },
   },);
 }
