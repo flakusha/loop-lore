@@ -219,6 +219,7 @@ export async function attemptExtraction(
 }
 
 /**
+// hint: Logic and cosmetic changes overlap. Resolve logic first, then reformat.
  * Restore every node in ONE world whose respawn window has elapsed.
  *
  * Respects the def's `respawn_time_seconds` through the instance's `respawn_at`:

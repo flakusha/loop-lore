@@ -48,12 +48,16 @@ export interface StorageUsage {
 }
 
 /**
- * Load a container by id.
+ * Load a container by id, scoped to its world.
+ *
+ * World scoping is the security boundary, not a convenience: without the
+ * `world_id` predicate a container id learned from another world answers for
+ * that world (mirrors `loadNode` in `./resource-node`).
  * @param db Kysely handle
  * @param storageId the container to load
- * @param worldId world scope — a container in another world is not found
+ * @param worldId world the caller is acting in
  * @returns the row
- * @throws {StorageError} `not-found` when no such container exists in this world
+ * @throws {StorageError} `not-found` when absent or in another world
  */
 async function loadStorage(db: Kysely<DB>, storageId: string, worldId: string,): Promise<StorageRow> {
   const storage = await db
@@ -63,7 +67,9 @@ async function loadStorage(db: Kysely<DB>, storageId: string, worldId: string,):
     .where("world_id", "=", worldId,)
     .executeTakeFirst();
 
-  if (!storage) { throw new StorageError("not-found", `storage "${storageId}" not found`,); }
+  if (!storage) {
+    throw new StorageError("not-found", `storage "${storageId}" not found in world "${worldId}"`,);
+  }
 
   return storage;
 }
@@ -175,12 +181,16 @@ export async function readStorageContents(
 /**
  * How full a container is, in item units.
  * @param db Kysely handle
+ * @param worldId world the caller is acting in
  * @param storageId the container to measure
- * @param worldId world scope — a container in another world is not found
  * @returns used, capacity, and free units
- * @throws {StorageError} `not-found` when the container does not exist
+ * @throws {StorageError} `not-found` when absent or in another world
  */
-export async function storageUsage(db: Kysely<DB>, storageId: string, worldId: string,): Promise<StorageUsage> {
+export async function storageUsage(
+  db: Kysely<DB>,
+  worldId: string,
+  storageId: string,
+): Promise<StorageUsage> {
   const storage = await loadStorage(db, storageId, worldId,);
   const totals = await db
     .selectFrom("location_storage_items",)

@@ -10,7 +10,9 @@
  *   POST /api/worlds/:worldId/actors/:actorId/factions/:factionId/standing
  *
  * Reads follow world access; writes are world-owner (GM) actions, because
- * both karma and standing are declared by the world, not self-reported.
+ * both karma and standing are declared by the world, not self-reported. Both
+ * standing routes additionally scope `:factionId` to `:worldId` through
+ * `requireFactionsInWorld` — the world gate alone does not say which faction.
  */
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, } from "../../validation/schemas";
@@ -123,11 +125,13 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+
         // The world gate authorizes `:worldId`, but the faction is addressed by
-        // its own id in the path: without this scope check a member of world A
-        // could read world B's standing.
+        // its own id: without this, any world member reads "neutral" for a
+        // faction in ANOTHER world instead of getting a 404.
         const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [ctx.params.factionId,],);
         if (factionErr) { return factionErr; }
+
         const standing = await getFactionStanding({
           db: database,
           worldId: ctx.params.worldId,
@@ -154,9 +158,10 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
-        // Same scope check as the GET: the faction must belong to the world the
-        // caller owns, or a GM could write standing against another world's
-        // faction row.
+
+        // Owning the world is not owning every faction id: without this a world
+        // owner writes a `faction_standing` row for a faction in another world
+        // (the FK only requires that the faction exist SOMEWHERE).
         const factionErr = await requireFactionsInWorld(database, ctx.params.worldId, [ctx.params.factionId,],);
         if (factionErr) { return factionErr; }
         try {
