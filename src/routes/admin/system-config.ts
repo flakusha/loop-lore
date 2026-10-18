@@ -115,7 +115,11 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         if (typeof userId !== "string") { return userId; }
 
         const configs = await getAllConfig(opts.database,);
-        const decorated = configs.map((c,) => decorateConfigEntry(c,));
+        const decorated = configs.map((c,) => ({
+          ...decorateConfigEntry(c,),
+          value: SECRET_KEY_PATTERN.test(c.key,) ? "***REDACTED***" : c.value,
+        }));
+
         return jsonResponse(decorated,);
       }, {
         response: {

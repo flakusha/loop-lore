@@ -15,12 +15,20 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
+import { type ViewsViewer, } from "./access";
 import {
   loadCharactersGridViewModel,
   serveCharacterChatListDb,
   serveCharacterEditForm,
   serveCharactersGrid,
 } from "./characters";
+
+/**
+ * These tests exercise rendering, not access. `admin.character` sees every
+ * character, so the seeded (unowned) rows still render; ownership scoping is
+ * covered in the `ownership scoping` block below.
+ */
+const ADMIN: ViewsViewer = { userId: "admin-1", userRole: "admin", };
 
 describe("views/characters", () => {
   let db: Kysely<DB>;
@@ -37,7 +45,7 @@ describe("views/characters", () => {
 
   describe("serveCharactersGrid", () => {
     test("returns empty state when no characters exist", async () => {
-      const res = await serveCharactersGrid(db,);
+      const res = await serveCharactersGrid(db, ADMIN,);
       const html = await res.text();
       expect(res.status,).toBe(200,);
       expect(html,).toContain("characters-empty",);
@@ -45,8 +53,8 @@ describe("views/characters", () => {
     });
 
     test("loadCharactersGridViewModel returns the same rows the fragment renders", async () => {
-      const viewModel = await loadCharactersGridViewModel(db,);
-      const html = await (await serveCharactersGrid(db,)).text();
+      const viewModel = await loadCharactersGridViewModel(db, ADMIN,);
+      const html = await (await serveCharactersGrid(db, ADMIN,)).text();
 
       expect(viewModel.characters,).toEqual([],);
       expect(html,).toContain("characters-empty",);
@@ -58,8 +66,8 @@ describe("views/characters", () => {
         review_state: "approved",
       },);
 
-      const populated = await loadCharactersGridViewModel(db,);
-      const populatedHtml = await (await serveCharactersGrid(db,)).text();
+      const populated = await loadCharactersGridViewModel(db, ADMIN,);
+      const populatedHtml = await (await serveCharactersGrid(db, ADMIN,)).text();
 
       expect(populated.characters.length,).toBe(1,);
       const [only,] = populated.characters;
@@ -83,7 +91,7 @@ describe("views/characters", () => {
 
       await insertActors(db, "Hidden", { id: "actor-hidden" as never, actor_type: "user" as never, },);
 
-      const res = await serveCharactersGrid(db,);
+      const res = await serveCharactersGrid(db, ADMIN,);
       const html = await res.text();
       expect(html,).toContain("character-card-actor-zed",);
       expect(html,).toContain("character-card-actor-alice",);
@@ -104,7 +112,7 @@ describe("views/characters", () => {
 
       await insertActors(db, "Plain", { id: "actor-plain" as never, actor_type: "character" as never, },);
 
-      const html = await (await serveCharactersGrid(db,)).text();
+      const html = await (await serveCharactersGrid(db, ADMIN,)).text();
       expect(html,).toContain("/api/v1/assets/asset-1/thumb",);
       expect(html,).toContain("<span>👤</span>",);
     });
@@ -115,7 +123,7 @@ describe("views/characters", () => {
         description: "<script>x</script>",
       },);
 
-      const html = await (await serveCharactersGrid(db,)).text();
+      const html = await (await serveCharactersGrid(db, ADMIN,)).text();
       expect(html,).not.toContain("<b>Evil</b>",);
       expect(html,).toContain("&lt;b&gt;Evil&lt;/b&gt;",);
       expect(html,).toContain("&lt;script&gt;x&lt;/script&gt;",);
@@ -124,7 +132,7 @@ describe("views/characters", () => {
 
   describe("serveCharacterEditForm", () => {
     test("returns not-found state for missing character", async () => {
-      const res = await serveCharacterEditForm("missing", db,);
+      const res = await serveCharacterEditForm("missing", db, ADMIN,);
       const html = await res.text();
       expect(html,).toContain("Character not found",);
     });
@@ -142,7 +150,7 @@ describe("views/characters", () => {
         post_history_instructions: "p",
       },);
 
-      const html = await (await serveCharacterEditForm(id, db,)).text();
+      const html = await (await serveCharacterEditForm(id, db, ADMIN,)).text();
       expect(html,).toContain("Hero",);
       expect(html,).toContain("desc &lt;&amp;&gt;",);
       expect(html,).toContain("calm",);
@@ -161,7 +169,7 @@ describe("views/characters", () => {
         avatar_asset_id: "asset-9",
       },);
 
-      const html = await (await serveCharacterEditForm(id, db,)).text();
+      const html = await (await serveCharacterEditForm(id, db, ADMIN,)).text();
       expect(html,).toContain("/api/v1/assets/asset-9/thumb",);
       expect(html,).toContain("Remove",);
     });
@@ -189,7 +197,7 @@ describe("views/characters", () => {
         reason: "Not yet confirmed",
       },);
 
-      const html = await (await serveCharacterEditForm(id, db,)).text();
+      const html = await (await serveCharacterEditForm(id, db, ADMIN,)).text();
       expect(html,).toContain("character-growth-section",);
       expect(html,).toContain("initialMode: 'static'",);
       expect(html,).toContain("initialLlmAssist: true",);
@@ -203,7 +211,7 @@ describe("views/characters", () => {
 
   describe("serveCharacterChatListDb", () => {
     test("returns empty state when no chats match", async () => {
-      const html = await (await serveCharacterChatListDb("nope", db,)).text();
+      const html = await (await serveCharacterChatListDb("nope", db, ADMIN,)).text();
       expect(html,).toContain("No chats yet",);
     });
 
@@ -211,10 +219,64 @@ describe("views/characters", () => {
       await insertUsers(db, "u2", "U Two", { id: "u2" as never, },);
       await insertChats(db, "Adventure One", "u2", { id: "c1" as never, },);
       await insertChats(db, "<script>bad</script>", "u2", { id: "c2" as never, },);
-      const html = await (await serveCharacterChatListDb("Adventure", db,)).text();
+      const html = await (await serveCharacterChatListDb("Adventure", db, ADMIN,)).text();
       expect(html,).toContain("chat-item-c1",);
       expect(html,).not.toContain("chat-item-c2",);
       expect(html,).toContain("/views/chat?chatid=c1",);
+    });
+  });
+
+  /**
+   * The edit form renders `system_prompt`, `scenario` and friends, so a
+   * character id from the path must be gated on `actors.owner_id` before the
+   * row is read — and the denial must be indistinguishable from a miss.
+   */
+  describe("ownership scoping", () => {
+    const OWNER: ViewsViewer = { userId: "u-scope-owner", userRole: "user", };
+    const STRANGER: ViewsViewer = { userId: "u-scope-stranger", userRole: "user", };
+
+    test("the grid lists only the viewer's own characters", async () => {
+      await insertUsers(db, "u-scope-owner", "Scope Owner", { id: "u-scope-owner" as never, },);
+      await insertUsers(db, "u-scope-stranger", "Scope Stranger", { id: "u-scope-stranger" as never, },);
+      await insertActors(db, "Mine", {
+        id: "actor-scope-mine" as never,
+        actor_type: "character" as never,
+        owner_id: "u-scope-owner" as never,
+      },);
+
+      await insertActors(db, "Theirs", {
+        id: "actor-scope-theirs" as never,
+        actor_type: "character" as never,
+        owner_id: "u-scope-stranger" as never,
+      },);
+
+      const mine = await loadCharactersGridViewModel(db, OWNER,);
+      expect(mine.characters.map((c,) => c.id),).toContain("actor-scope-mine",);
+      expect(mine.characters.map((c,) => c.id),).not.toContain("actor-scope-theirs",);
+
+      const theirs = await loadCharactersGridViewModel(db, STRANGER,);
+      expect(theirs.characters.map((c,) => c.id),).toContain("actor-scope-theirs",);
+      expect(theirs.characters.map((c,) => c.id),).not.toContain("actor-scope-mine",);
+    });
+
+    test("the edit form renders for the owner and refuses everyone else", async () => {
+      const html = await (await serveCharacterEditForm("actor-scope-mine", db, OWNER,)).text();
+      expect(html,).toContain("character-edit-form",);
+
+      const denied = await (await serveCharacterEditForm("actor-scope-mine", db, STRANGER,)).text();
+      expect(denied,).toContain("Character not found",);
+      expect(denied,).not.toContain("character-edit-form",);
+    });
+
+    test("the character chat-list is scoped to the viewer's chats", async () => {
+      await insertChats(db, "Scope Adventure", "u-scope-owner", { id: "chat-scope" as never, },);
+
+      const owned = await (await serveCharacterChatListDb("Scope Adventure", db, OWNER,)).text();
+      expect(owned,).toContain("chat-item-chat-scope",);
+
+      const denied = await (await serveCharacterChatListDb("Scope Adventure", db, STRANGER,)).text();
+      expect(denied,).not.toContain("chat-item-chat-scope",);
+      expect(denied,).toContain("No chats yet",);
     });
   });
 });
