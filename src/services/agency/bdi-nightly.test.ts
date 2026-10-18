@@ -253,7 +253,7 @@ describe("sanitizeDailyPlan — injected-seam plan validation", () => {
   });
 
   test("accepts the four vocabulary priorities, case-insensitively", () => {
-    for (const priority of ["low", "normal", "high", "critical",]) {
+    for (const priority of ["low", "normal", "high", "critical",] as const) {
       expect(sanitizeDailyPlan({ summary: "s", priority, activities: [], },)?.priority,).toBe(priority,);
     }
 
