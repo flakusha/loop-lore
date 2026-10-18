@@ -228,4 +228,5 @@ export interface DB {
   world_maps: import("./schema-core").WorldMaps;
   map_zones: import("./schema-core").MapZones;
   vn_choice_selections: import("./schema-core").VnChoiceSelections;
+  mesh_work_assignments: import("./schema-core").MeshWorkAssignments;
 }

@@ -9,6 +9,7 @@ import type { ApiError, ApiResponseMeta, JsonPaginatedOptions, ValidationError, 
 // Error helpers live in `./errors`; re-exported here so existing importers of
 // `http-utils/responses` keep resolving.
 export {
+  API_META,
   API_VERSION,
   badRequestResponse,
   conflictResponse,

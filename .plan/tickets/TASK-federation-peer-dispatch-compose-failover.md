@@ -3,7 +3,7 @@
 
 # TASK: Federation peer dispatch compose failover
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Large
 **Epic:** epic-federation-offload-quotas
@@ -128,3 +128,5 @@ remote attempts are never made; a local failure never goes remote.
 Implementation complete; tests passing; documentation updated.
 
 Implementation complete; tests passing; documentation updated.
+
+**Resolution:** Landed `src/federation/peer-dispatch.ts`: `dispatchPeerWorkload` is a pre-step, not a provider. A local decision calls the caller's thunk and nothing else; a peer decision makes exactly one remote attempt and, on failure, retries local exactly once; a local failure never goes remote; partial output from a failed peer attempt is discarded rather than concatenated, so a peer that already streamed raises `PeerWorkPartialOutputError` instead of retrying; a caller cancellation is rethrown rather than retried around. 12 tests.

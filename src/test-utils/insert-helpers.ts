@@ -89,6 +89,7 @@ import type {
   NsfwLocationType,
   PeerAuthMode,
   PeerInstanceKind,
+  PeerWorkloadClass,
   PinnedState,
   PlayerAchievementStatus,
   PlaythroughStatus,
@@ -5834,6 +5835,30 @@ export async function insertVnChoiceSelections(
     choice_id,
     scene_index,
     created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a mesh_work_assignments row. */
+export async function insertMeshWorkAssignments(
+  db: Db,
+  affinity_key: string,
+  workload_class: PeerWorkloadClass,
+  peer_origin: string,
+  opts?: {
+    assigned_at?: string;
+    previous_origin?: string | null;
+    released_at?: string | null;
+    release_reason?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_work_assignments",).values({
+    affinity_key,
+    workload_class,
+    peer_origin,
     ...restOpts,
   } as any,).execute();
   return id;
