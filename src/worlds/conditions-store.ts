@@ -162,6 +162,10 @@ export async function listConditionHistory(
  */
 export function isTickDue(row: WorldConditionsRow, stamp: string,): boolean {
   if (row.last_tick_at === null) { return true; }
-  const elapsedMinutes = (parseExpiryMs(stamp,) - parseExpiryMs(row.last_tick_at,)) / 60_000;
+  const stampMs = parseExpiryMs(stamp,);
+  if (stampMs === null) { return false; }
+  const lastTickMs = parseExpiryMs(row.last_tick_at,);
+  if (lastTickMs === null) { return false; }
+  const elapsedMinutes = (stampMs - lastTickMs) / 60_000;
   return elapsedMinutes >= row.tick_interval_minutes;
 }
