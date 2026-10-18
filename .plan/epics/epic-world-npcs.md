@@ -54,7 +54,7 @@ Part of the **World & Locations** mega-epic. See parent epic for full scope and 
 
 - **Tables:** `npc_states`, `actor_locations` (001); `actor_daily_plans` + BDI-lite plan tables (011); `npc_migrations` (040).
 - **Modules:** `src/rpg/npc-navigation/` (movement, pathfinding, tick-driver); routes `rpg/npc-navigation` + `npc-movement`.
-- **Shipped:** placement and migration. Inventories, memory decay/emotional state, and monsters/bestiary remain unstarted.
+- **Shipped:** placement and migration. Inventories, memory decay/emotional state shipped (migration 061 + `src/rpg/bestiary.ts`). Bestiary admin/GM UI unstarted.
 
 ## Design
 

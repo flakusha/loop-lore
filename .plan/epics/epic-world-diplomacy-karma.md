@@ -7,7 +7,7 @@
 
 
 **Status:** Not Started
-**Status Note:** No faction/karma tables or code at HEAD; adjacent shipped: per-actor-pair relationship scores in `character_relationships` (standing/trust/familiarity) and NSFW-scoped `src/rpg/reputation.ts`.
+**Status Note:** Migration 062 (factions_karma) landed; `src/db/enums-story/factions.ts` exists at HEAD. Faction UI, diplomacy logic, and karma tracking remain unstarted.
 **Priority:** Medium
 **Effort:** High
 **Type:** Feature Epic
