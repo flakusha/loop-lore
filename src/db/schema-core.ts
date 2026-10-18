@@ -60,6 +60,8 @@ import type {
   PlaythroughStatus,
   PluginStatus,
   SkillLockState,
+  StorageBudgetScope,
+  StorageEvictionPolicy,
   TemplateDetailLevel,
   TemplateModality,
   TransformContext,
@@ -1982,4 +1984,14 @@ export interface FederationPerformanceBudgets {
   requests_per_minute: number | null;
   tokens_per_minute: number | null;
   updated_at: string;
+}
+
+// ── instance_storage_budgets ────────────────────────────────────────────
+export interface InstanceStorageBudgets {
+  id: Generated<string>;
+  asset_class: Generated<StorageBudgetScope>;
+  soft_limit_bytes: number | null;
+  hard_limit_bytes: number | null;
+  eviction_policy: Generated<StorageEvictionPolicy>;
+  updated_at: Generated<string>;
 }

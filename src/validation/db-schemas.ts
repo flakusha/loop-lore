@@ -600,6 +600,8 @@ export const StackableStateSchema = t.UnionEnum(["unique", "stackable",],);
 export const StationLocationSchema = t.UnionEnum(["player_home", "world", "guild", "portable",],);
 export const StorageAccessDenialSchema = t.UnionEnum(["not-allowed", "security-too-low", "cross-world",],);
 export const StorageBackendSchema = t.UnionEnum(["local", "s3", "gcs",],);
+export const StorageBudgetScopeSchema = t.UnionEnum(["total", "image", "audio", "video", "other",],);
+export const StorageEvictionPolicySchema = t.UnionEnum(["none", "oldest-first",],);
 export const SyntheticDataStatusSchema = t.UnionEnum(["generated", "validated", "approved", "rejected", "archived",],);
 export const SyntheticDataTypeSchema = t.UnionEnum([
   "turn_sequence",
@@ -3653,4 +3655,13 @@ export const FederationPerformanceBudgetsSchema = t.Object({
   max_queue_depth: t.Optional(t.Number(),),
   requests_per_minute: t.Optional(t.Number(),),
   tokens_per_minute: t.Optional(t.Number(),),
+},);
+
+// ── instance_storage_budgets ────────────────────────────────────────────
+export const InstanceStorageBudgetsSchema = t.Object({
+  asset_class: t.Optional(StorageBudgetScopeSchema,),
+  soft_limit_bytes: t.Optional(t.Number(),),
+  hard_limit_bytes: t.Optional(t.Number(),),
+  eviction_policy: t.Optional(StorageEvictionPolicySchema,),
+  updated_at: t.Optional(t.String(),),
 },);

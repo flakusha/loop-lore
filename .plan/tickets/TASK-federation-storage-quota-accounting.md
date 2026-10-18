@@ -3,7 +3,8 @@
 
 # TASK: Federation storage quota accounting
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** Migration `066_instance_storage_budgets` adds per-instance soft/hard byte limits (optionally per asset class) plus an opt-in eviction policy. `src/federation/storage-usage.ts` reads usage as `SUM(assets.size_bytes)` + open `mesh_reservations` holds with no disk walk; `storage-quota.ts` warns on soft, refuses the write at `createAsset` and at the image-generation route BEFORE the provider call (`federation.quota_exceeded`, asserted by a provider spy recording zero invocations); `storage-eviction.ts` is archive-first, oldest-first, audit-logged and never touches an asset a live chat message references; `storage-reconcile.ts` runs on the existing cron seam as `federation.storage-reconcile`, reports each drift direction and never adopts an orphan or re-creates a vanished file. Federation stays off by default: with no budget row every gate returns after one query.
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-federation-offload-quotas
