@@ -71,6 +71,7 @@ export class PeerWorkExhaustedError extends Error {
  * Dispatch one workload to the target the router chose.
  *
  * @param options
+ * @param options.callerOrigin This instance's own origin, the identity the peer authorizes.
  * @param options.decision The router's decision. A local decision short-circuits.
  * @param options.request The minimized wire request for the peer attempt.
  * @param options.local The caller's unchanged local path (scheduled failover).
@@ -86,6 +87,7 @@ export class PeerWorkExhaustedError extends Error {
  * @returns {Promise<GenerateResponse>}
  */
 export async function dispatchPeerWorkload(options: {
+  callerOrigin: string;
   decision: PeerRouteDecision;
   request: PeerWorkRunRequest;
   local: () => Promise<GenerateResponse>;
@@ -106,6 +108,7 @@ export async function dispatchPeerWorkload(options: {
     { origin: peer.origin, workloadClass: request.workloadClass, },
     () =>
       (options.runPeer ?? runPeerWorkload)({
+        callerOrigin: options.callerOrigin,
         peer,
         request,
         bearer: options.bearer ?? null,
