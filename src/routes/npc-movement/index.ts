@@ -51,6 +51,23 @@ export function npcMovementRoutes(opts: HandlerOpts, prefix = "/api",) {
       const body = ctx.body as { messageId: string; events: MovementEvent[] };
 
       try {
+        // Load the message and verify the caller has access to its chat —
+        // prevents writing movement metadata into any message by id.
+        const message = await opts.database
+          .selectFrom("messages",)
+          .select("chat_id",)
+          .where("id", "=", body.messageId,)
+          .executeTakeFirst();
+
+        if (!message) {
+          return jsonError("Message not found", 404,);
+        }
+
+        const access = await checkChatAccess(opts.database, message.chat_id, userId, ctx.userRole as string | null,);
+        if (!access.ok) {
+          return jsonError("Chat not found", 404,);
+        }
+
         await svc().storeMovementEvents(body.messageId, body.events,);
         return jsonResponse({ success: true, },);
       } catch (error) {
