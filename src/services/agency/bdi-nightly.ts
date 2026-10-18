@@ -17,6 +17,7 @@
 import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db";
 import { createLogger, getLogger, } from "../../logger";
+import { sanitizeDailyPlan, } from "./bdi-plan-shape";
 import {
   applyReflectionCheckpoint,
   DEFAULT_REFLECTION_STEP_INTERVAL,
@@ -63,6 +64,8 @@ export interface NightlyResult {
   processed: number;
   skippedBudget: number;
   revisionsEmitted: number;
+  /** Actors whose recompute threw or returned a non-plan; the rest of the loop still runs. */
+  failed: number;
   /** Per-actor decision telemetry: `bdi:plan_created` on a new plan,
    *  `bdi:priority_shift` when a revision row was emitted. Feeds
    *  `interaction_logs.action_type` stamping via quality-metrics
@@ -93,53 +96,79 @@ export async function runNightlyReflectionCycle(
     processed: 0,
     skippedBudget: 0,
     revisionsEmitted: 0,
+    failed: 0,
     decisionEvents: [] as Array<{ actorId: string; actionType: string }>,
   };
 
   for (const actorId of target) {
-    const allowed = await opts.budgetApprove(actorId,);
-    if (!allowed) {
-      summary.skippedBudget += 1;
-      continue;
-    }
-
-    const prevPlan = await db
-      .selectFrom("actor_daily_plans",)
-      .selectAll()
-      .where("actor_id", "=", actorId,)
-      .where("plan_date", "=", today,)
-      .executeTakeFirst();
-
-    const worldId = await actorWorldId(db, actorId,);
-    const next = await opts.planRecompute(actorId, worldId ?? undefined, today,);
-
-    if (!prevPlan) {
-      await insertPlan(db, actorId, worldId, today, next,);
-      summary.decisionEvents.push({ actorId, actionType: "bdi:plan_created", },);
-    } else if (
-      shouldReflectAt(prevPlan.reflection_step_count, stepInterval,) ||
-      prevPlan.priority !== next.priority
-    ) {
-      // Cadence-due revisit (positive interval) attempts the checkpoint
-      // every N steps — applyReflectionCheckpoint is a no-op while the
-      // priorities hold, so no revision row appears without a shift.
-      // Interval 0 keeps the legacy shift-only behavior.
-      const result = await applyReflectionCheckpoint(db, prevPlan.id, {
-        revision_kind: "priority_shift",
-        before: prevPlan.priority,
-        after: next.priority,
-        reason: "nightly reflection",
-      },);
-
-      if (result.emitted) {
-        summary.revisionsEmitted += 1;
-        summary.decisionEvents.push({ actorId, actionType: "bdi:priority_shift", },);
+    // Fault isolation: one actor's throwing recompute (or a failed DB
+    // write) must not abort the remaining actors' nightly plans.
+    try {
+      const allowed = await opts.budgetApprove(actorId,);
+      if (!allowed) {
+        summary.skippedBudget += 1;
+        continue;
       }
 
-      if (stepInterval > 0) { await resetReflectionSteps(db, prevPlan.id,); }
-    }
+      const prevPlan = await db
+        .selectFrom("actor_daily_plans",)
+        .selectAll()
+        .where("actor_id", "=", actorId,)
+        .where("plan_date", "=", today,)
+        .executeTakeFirst();
 
-    summary.processed += 1;
+      const worldId = await actorWorldId(db, actorId,);
+      const next = sanitizeDailyPlan(await opts.planRecompute(actorId, worldId ?? undefined, today,),);
+
+      if (next === null) {
+        // Defense-in-depth: the production generator (createPlanRecompute)
+        // already clamps its output, but the seam is injectable — never
+        // persist a non-plan (garbage priority/summary) verbatim.
+        log.warn("bdi-nightly: planRecompute returned a non-plan — skipping actor", {
+          actorId,
+          planDate: today,
+        },);
+
+        summary.failed += 1;
+        continue;
+      }
+
+      if (!prevPlan) {
+        await insertPlan(db, actorId, worldId, today, next,);
+        summary.decisionEvents.push({ actorId, actionType: "bdi:plan_created", },);
+      } else if (
+        shouldReflectAt(prevPlan.reflection_step_count, stepInterval,) ||
+        prevPlan.priority !== next.priority
+      ) {
+        // Cadence-due revisit (positive interval) attempts the checkpoint
+        // every N steps — applyReflectionCheckpoint is a no-op while the
+        // priorities hold, so no revision row appears without a shift.
+        // Interval 0 keeps the legacy shift-only behavior.
+        const result = await applyReflectionCheckpoint(db, prevPlan.id, {
+          revision_kind: "priority_shift",
+          before: prevPlan.priority,
+          after: next.priority,
+          reason: "nightly reflection",
+        },);
+
+        if (result.emitted) {
+          summary.revisionsEmitted += 1;
+          summary.decisionEvents.push({ actorId, actionType: "bdi:priority_shift", },);
+        }
+
+        if (stepInterval > 0) { await resetReflectionSteps(db, prevPlan.id,); }
+      }
+
+      summary.processed += 1;
+    } catch (error) {
+      log.error(
+        "bdi-nightly: actor failed — continuing with the remaining actors",
+        error instanceof Error ? error : undefined,
+        { actorId, planDate: today, },
+      );
+
+      summary.failed += 1;
+    }
   }
 
   log.info("bdi-nightly complete", summary,);
