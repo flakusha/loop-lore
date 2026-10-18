@@ -11,8 +11,8 @@ Asset, World, Location, Character, Item, Addition, Modification, Duplication,
 Adaptation) delivered across 6 batches.
 
 
-**Status:** Not Started
-**Status Note:** Not Started (verified 2026-10-09: none of the ten feature areas has command files or handlers in `src/assistant/commands/` — no RAG, asset, world/loc/char/item access, modification, duplication, adaptation, or import commands are registered)
+**Status:** In Progress
+**Status Note:** In Progress (verified 2026-10-18 against `dev` at `08ef7efe7` — by file existence on `dev`, line-level reads of each cited path, and a `git log dev..<branch>` check that excludes unmerged work). The previous "Not Started" note in this file (dated 2026-10-09) was partly false: two of the ten feature areas DO have command handlers in `src/assistant/commands/`. SHIPPED AND LIVE: area 1 (RAG access) — `src/assistant/commands/rag.ts` registers `rag-search` at `:66` (keyword search over `world_lore_entries` + `actor_lore_entries`, world-scoped via `requireWorldAccess`) and `rag-ask` at `:101` (aux-LLM answer over the retrieved context); area 2 (Asset access) — `src/assistant/commands/assets.ts` registers `asset-list` at `:22` (kind-filtered via `listAssets`), `asset-preview` at `:61` (metadata + links, gated by `canAccessAsset`) and `asset-search` at `:99` (`searchAssets`). Both files are imported for side effects by the command barrel (`src/assistant/commands/index.ts:9` and `:31`), so the commands are registered at runtime. Unit coverage ships for every handler (`src/assistant/commands/rag.test.ts`, `src/assistant/commands/assets.test.ts`), including access-denial cases. REMAINS — genuinely absent from `dev`: areas 3 (World), 4 (Location), 5 (Character), 6 (Item & Inventory), 7 (Addition), 8 (Modification), 9 (Duplication) and 10 (Adaptation) have no command files or handlers at all; `/rag-preview` and `/rag-decompose` are unregistered; `/asset-link` is unregistered; there is no `EntityAdapter` layer (`src/assistant/adapter/` does not exist) and no quota engine (`src/assistant/quota/` does not exist), so the epic's "Quota-aware" core principle is unimplemented. NOT COUNTED AS DONE: an unmerged branch `entity-access-batch-a` carries entity read commands (`src/assistant/commands/{worlds-access,locations-access,characters-access,items}.ts` and their tests) plus world-UI panels; those commits are NOT reachable from `dev` and are deliberately excluded from this assessment. The `## Acceptance Criteria` block further down predates the RAG/Asset work and is stale in the same way.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -231,15 +231,17 @@ The adaptation engine:
 
 ## Acceptance Criteria
 
-- [ ] RAG search/ask commands work end-to-end with FTS5 fallback
-- [ ] Asset list/preview/search commands return correct results
-- [ ] World/location/character/item CRUD commands enforce ownership guards
-- [ ] Inventory commands track character-held items
-- [ ] Duplication creates a new entity with copied + modified fields
-- [ ] Adaptation produces context-aware modifications with quality gates
-- [ ] All mutation commands require user confirmation
-- [ ] All commands compose with existing access guards (no new access layer)
-- [ ] Unit tests for all command handlers
+(status verified 2026-10-18 against `dev`)
+
+- [ ] RAG search/ask commands work end-to-end with FTS5 fallback — `/rag-search` and `/rag-ask` ship (`rag.ts:66`, `:101`) but search LORE tables by keyword, not `documents` via FTS5; `/rag-preview` and `/rag-decompose` are unregistered
+- [x] Asset list/preview/search commands return correct results — `assets.ts:22`, `:61`, `:99`, covered by `assets.test.ts`
+- [ ] World/location/character/item CRUD commands enforce ownership guards — no command files exist for these areas on `dev`
+- [ ] Inventory commands track character-held items — absent
+- [ ] Duplication creates a new entity with copied + modified fields — absent
+- [ ] Adaptation produces context-aware modifications with quality gates — absent
+- [ ] All mutation commands require user confirmation — no mutation commands exist yet
+- [ ] All commands compose with existing access guards (no new access layer) — true for the five shipped commands (they call `requireWorldAccess` / `canAccessAsset`); unproven for the rest
+- [ ] Unit tests for all command handlers — `rag.test.ts` and `assets.test.ts` cover the five shipped handlers; nothing covers the unbuilt areas
 - [ ] E2E tests for the full command flow (chat → command → response)
 
 ## Tasks
@@ -309,7 +311,7 @@ The adaptation engine:
 
 ## Tickets
 
-All Not Started; filed per batch/feature area:
+Filed per batch/feature area; ticket statuses verified 2026-10-18 against `dev` (In Progress = partial ship, Not Started = no code on `dev`):
 
 - `TASK-assistant-entity-access-schema.md` — EntityAdapter interface + command scaffolding
 - `TASK-assistant-entity-access-batch-rag-asset.md` — B1 RAG + Asset Access MVP
