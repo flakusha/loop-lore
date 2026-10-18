@@ -210,7 +210,7 @@ function handleContinue(database: Kysely<DB>, config: Config,) {
           actorId,
           userRole: null,
           prompt: body.prompt,
-          responderId: body.actorId,
+          responderId: actorId,
         },
         request: (ctx as { request: Request }).request,
       },);
