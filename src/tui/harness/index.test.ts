@@ -226,7 +226,7 @@ interface Fixture {
 
 function buildView(): Fixture {
   const screen = { ...makeWidget(), append: () => {}, focused: null, };
-  const view = new HarnessViewCtor(screen as never, "tok",);
+  const view = new HarnessViewCtor(screen as never, { sessionToken: "tok", },);
   const inner = view as unknown as Record<string, WidgetStub>;
   return { view, screen, list: inner.list!, box: inner.box!, detailLabel: inner.detailLabel!, };
 }
