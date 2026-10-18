@@ -6,7 +6,13 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertChatParticipants,
+  insertChats,
+  insertUsers,
+  insertVnChoices,
+} from "../../test-utils/insert-helpers";
 import { dismissVnChoice, listVnChoices, selectVnChoice, } from "./vn-choices";
 
 describe("VN choice card service (C7 Phase 4)", () => {
@@ -286,5 +292,72 @@ describe("VN choice card service (C7 Phase 4)", () => {
 
       expect(await statusOf("choice-tower-avail", chatId,),).toBe("available",);
     });
+  });
+});
+
+describe("selectVnChoice atomic write-back", () => {
+  test("a failing relationship write rolls the mood write and history row back", async () => {
+    const { db, } = await createTestDb();
+    createLogger({ level: "error", },);
+
+    const ownerId = await insertUsers(db, "owner-atomic", "Owner Atomic", {} as never,);
+    const ownerActorId = await insertActors(db, "Owner Atomic", {
+      actor_type: "user",
+      user_id: ownerId,
+      owner_id: ownerId,
+    } as never,);
+
+    const characterActorId = await insertActors(db, "Mira", {
+      actor_type: "character",
+    } as never,);
+
+    const chatId = await insertChats(db, "VN chat atomic", ownerId, {
+      type: "group",
+      mode: "vn",
+    } as never,);
+
+    await insertChatParticipants(db, chatId, ownerActorId, {} as never,);
+    await insertChatParticipants(db, chatId, characterActorId, {} as never,);
+
+    const choiceId = await insertVnChoices(
+      db,
+      chatId,
+      0,
+      "Break the ledger",
+      new Date().toISOString(),
+      {
+        relationship_impact: JSON.stringify({ standing: 10, },),
+        mood_impact: JSON.stringify({ happiness: 20, },),
+        status: "available" as never,
+      },
+    );
+
+    // Force the relationship leg to fail after the mood leg has already run
+    // inside the transaction: the missing table makes every relationship
+    // query throw.
+    await db.schema.dropTable("character_relationships",).execute();
+
+    const result = await selectVnChoice(db, { chatId, choiceId, actingUserId: ownerId, },);
+
+    if (!("ok" in result) || !result.ok) {
+      throw new Error("selection should survive the write-back failure",);
+    }
+
+    expect(result.appliedAt,).toBeNull();
+
+    // Observable state, not echoes: the mood write that ran before the
+    // failure must be rolled back, and no history row may remain.
+    const moodRows = await db.selectFrom("character_mood",).selectAll().execute();
+    expect(moodRows,).toHaveLength(0,);
+    const selectionRows = await db.selectFrom("vn_choice_selections",).selectAll().execute();
+    expect(selectionRows,).toHaveLength(0,);
+
+    // The selection itself survived the failed write-back.
+    const choice = await db.selectFrom("vn_choices",).select("status",)
+      .where("id", "=", choiceId,).executeTakeFirstOrThrow();
+
+    expect(choice.status,).toBe("selected",);
+
+    await db.destroy();
   });
 });

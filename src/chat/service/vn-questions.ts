@@ -141,32 +141,42 @@ export async function answerVnQuestion(
   const locationId = (typeof option.consequence?.location === "string" ? option.consequence.location : undefined) ??
     (typeof parsed.consequences?.location === "string" ? parsed.consequences.location : undefined);
 
-  // Consequence write-back: the question's impact maps folded with the chosen
-  // option's modifiers, applied to the character systems. Guarded so a failing
-  // write never loses the answer that already won the single-shot race.
+  // The question's impact maps folded with the chosen option's modifiers;
+  // exactly what applyVnImpacts writes (and what the route surfaces).
+  const relationshipImpact = withOptionModifier(
+    parsed.relationship_impact,
+    "standing",
+    option.relationship_modifier,
+  );
+
+  const moodImpact = withOptionModifier(
+    parsed.mood_impact,
+    "happiness",
+    option.emotion_modifier,
+  );
+
+  // Consequence write-back: application and stamp run inside a single
+  // transaction, so a failure rolls everything back and appliedAt null means
+  // nothing was applied. The answer itself (already the single-shot winner)
+  // is kept.
   let appliedAt: string | null = null;
   try {
-    const relationshipImpact = withOptionModifier(
-      parsed.relationship_impact,
-      "standing",
-      option.relationship_modifier,
-    );
+    appliedAt = await database.transaction().execute(async (trx,) => {
+      const applied = await applyVnImpacts(trx, {
+        chatId,
+        actingUserId,
+        relationshipImpact,
+        moodImpact,
+      },);
 
-    const moodImpact = withOptionModifier(
-      parsed.mood_impact,
-      "happiness",
-      option.emotion_modifier,
-    );
+      if (applied.moodActorIds.length > 0 || applied.relationshipActorIds.length > 0) {
+        return await markVnQuestionApplied(trx, questionId,);
+      }
 
-    const applied = await applyVnImpacts(database, {
-      chatId,
-      actingUserId,
-      relationshipImpact,
-      moodImpact,
+      return null;
     },);
 
-    if (applied.moodActorIds.length > 0 || applied.relationshipActorIds.length > 0) {
-      appliedAt = await markVnQuestionApplied(database, questionId,);
+    if (appliedAt !== null) {
       parsed.applied_at = appliedAt;
     }
   } catch (error) {
@@ -183,6 +193,8 @@ export async function answerVnQuestion(
     option,
     nextSceneId: option.next_scene_id ?? parsed.next_scene_id,
     locationId,
+    relationshipImpact,
+    moodImpact,
     appliedAt,
   };
 }
