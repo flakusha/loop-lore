@@ -241,7 +241,10 @@ describe("chat list encryption badge", () => {
     await insertChats(db, "Encrypted chat", "owner-1", { encryption_level: "standard", } as any,);
     await insertChats(db, "Public chat", "owner-1", { encryption_level: "none", } as any,);
 
-    const app = viewRoutes({ database: db, },);
+    const app = new Elysia({ name: "test-views-badge", },)
+      .derive(() => ({ userId: "owner-1", userRole: "member", }))
+      .use(viewRoutes({ database: db, },),) as unknown as Elysia;
+
     const res = await app.handle(
       new Request("http://localhost/dynamic/chats/list", { headers: { "HX-Request": "true", }, },),
     );
