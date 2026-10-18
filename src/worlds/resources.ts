@@ -219,25 +219,31 @@ export async function attemptExtraction(
 }
 
 /**
- * Restore every node whose respawn window has elapsed.
+ * Restore every node in ONE world whose respawn window has elapsed.
  *
  * Respects the def's `respawn_time_seconds` through the instance's `respawn_at`:
  * only rows already stamped depleted AND past their stamp are touched, so a
  * node that has not waited out its timer is left alone.
  *
+ * The sweep is world-scoped on purpose: the route gates it with
+ * `requireWorldOwner` for the world in the path, so an unscoped UPDATE would
+ * touch every world's nodes under a single world's owner gate. The sibling
+ * `expireAnomalies` takes an optional `worldId` for the same reason.
+ *
  * @param db Kysely handle
- * @param options optional `now` — the instant to judge the window against
+ * @param options `now` fixes the clock; `worldId` bounds the sweep
  * @returns how many nodes were restored
  */
 export async function regenerateResources(
   db: Kysely<DB>,
-  options: { now?: Date } = {},
+  options: { now?: Date; worldId: string },
 ): Promise<RegenerateResult> {
   const now = (options.now ?? new Date()).toISOString();
 
   const result = await db
     .updateTable("gathering_node_instances",)
     .set({ state: NodeInstanceState.Available, respawn_at: null, updated_at: now, },)
+    .where("world_id", "=", options.worldId,)
     .where("state", "=", NodeInstanceState.Depleted,)
     .where("respawn_at", "is not", null,)
     .where("respawn_at", "<=", now,)
@@ -255,5 +261,11 @@ export function parseStoredYield(raw: string,): ExtractionYieldEntry[] {
 }
 
 /** Re-exported so callers get the whole extraction surface from one module. */
-export { calculateExtractionDifficulty, mulberry32, ResourceError, rollExtraction, } from "./resource-core";
+export {
+  calculateExtractionDifficulty,
+  MAX_ABILITY_BONUS,
+  mulberry32,
+  ResourceError,
+  rollExtraction,
+} from "./resource-core";
 export type { ExtractionActorModifiers, ExtractionNodeState, ExtractionYieldEntry, } from "./resource-core";
