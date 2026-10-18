@@ -60,6 +60,8 @@ export interface VnTemplateBody {
     fontStyle?: string;
   };
   content?: string;
+  /** Sequential steps of a composite-category template (see composite.ts). */
+  steps?: VnCompositeStep[];
 }
 
 /** */

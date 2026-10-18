@@ -10,6 +10,7 @@ export {
   destroyVnRenderer,
   getCurrentSceneIndex,
   getSceneCount,
+  getVnScenes,
   initVnRenderer,
   jumpToScene,
   nextScene,

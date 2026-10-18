@@ -17,7 +17,7 @@ import {
   type SceneNavigator,
 } from "./render-scene";
 import { state, } from "./state";
-import type { VnMessage, } from "./types";
+import type { VnMessage, VnScene, } from "./types";
 
 const navigate: SceneNavigator = { next: nextScene, prev: prevScene, };
 
@@ -52,6 +52,7 @@ function syncRosterFromScenes(): void {
  * @param messages
  * @param gmConfig
  * @param chatId
+ * @param worldId World scope for custom-template resolution.
  * @returns {void}
  */
 export function initVnRenderer(
@@ -59,6 +60,7 @@ export function initVnRenderer(
   messages: VnMessage[],
   gmConfig?: Record<string, unknown>,
   chatId?: string,
+  worldId?: string,
 ): void {
   state.container = containerEl;
   state.settings = getVnSettings(gmConfig,);
@@ -66,6 +68,7 @@ export function initVnRenderer(
   syncRosterFromScenes();
   state.currentIndex = Math.max(0, state.scenes.length - 1,);
   state.currentChatId = chatId ?? null;
+  state.currentWorldId = worldId ?? null;
   state.loadingIndicator = createLoadingIndicator(containerEl,);
 
   // React to chat location changes (frontend-driven) with a short travel
@@ -122,6 +125,7 @@ export function destroyVnRenderer(): void {
   state.currentIndex = 0;
   state.settings = null;
   state.currentChatId = null;
+  state.currentWorldId = null;
   state.roster = null;
 }
 
@@ -204,6 +208,14 @@ export function getCurrentSceneIndex(): number {
  */
 export function getSceneCount(): number {
   return state.scenes.length;
+}
+
+/**
+ * Snapshot of the loaded scenes (for QA checks over the rendered story).
+ * @returns {VnScene[]} The live array; callers treat it as read-only.
+ */
+export function getVnScenes(): VnScene[] {
+  return state.scenes;
 }
 
 /**
