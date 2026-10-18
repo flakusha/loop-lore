@@ -3,7 +3,8 @@
 
 # TASK: Federation offload: adopt dispatch in the chat turn call site
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** Shipped in ee0caad03: `dispatchChatGeneration` in `src/generation/generate-route/chat-peer-offload.ts` gates the chat turn in `stream-to-client.ts` on `config.federation.enabled` plus a declared chat class and hands the caller's `scheduledCallWithFailover` thunk to `dispatchPeerWorkload` as `local`. `chat-peer-offload.test.ts` 10 pass / 0 fail (`--isolate`), each mutation proven to bite.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas
