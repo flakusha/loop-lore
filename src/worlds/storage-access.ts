@@ -134,3 +134,25 @@ export class StorageError extends Error {
 export function encodeAccessControl(rules: StorageAccessControl,): string {
   return jsonStringifyOr(rules, "{}",);
 }
+
+/**
+ * Enforce the access rules on a container a caller has already loaded.
+ *
+ * Every read AND every write on a container goes through this, so an authz
+ * decision can never be quietly skipped at a call site — an unreadable
+ * contents route is exactly the hole this exists to close. `actorId` MUST be
+ * the AUTHENTICATED actor: a body-supplied id makes this check theatre.
+ * @param storage the loaded container row
+ * @param actorId the authenticated actor acting on the container
+ * @param worldId the world the caller is acting in
+ * @throws {StorageError} `access-denied` when the actor may not use the container
+ */
+export function assertMayAccess(storage: StorageRow, actorId: string, worldId: string,): void {
+  const verdict = checkStorageAccess({ storage, actorId, worldId, },);
+  if (!verdict.allowed) {
+    throw new StorageError(
+      "access-denied",
+      `actor "${actorId}" may not use storage "${storage.id}" (${verdict.reason})`,
+    );
+  }
+}

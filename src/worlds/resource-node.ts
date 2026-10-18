@@ -8,7 +8,7 @@
  * engine runs around a roll, none of which is part of the public surface. They
  * all read the CRAFTING epic's tables — there is no node table of our own.
  */
-import type { Kysely, Selectable, } from "kysely";
+import { type Kysely, type Selectable, sql, } from "kysely";
 import { NodeInstanceState, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { ItemsService, } from "../story/items";
@@ -116,11 +116,25 @@ export async function rollYield(
  *
  * A NULL `remaining_amount` is INFINITE and is never written, so a renewable
  * node can neither deplete nor acquire a respawn stamp it does not need.
+ *
+ * The decrement is a GUARDED conditional update —
+ * `SET remaining_amount = remaining_amount - 1 WHERE id = ? AND remaining_amount > 0`
+ * — rather than an absolute write of a value derived from the row the caller
+ * read before rolling. Deriving it lets two concurrent successes on a node
+ * with one unit left both write 0 and BOTH proceed to grant their yield: the
+ * node yields twice for one unit. Zero updated rows means someone else took
+ * the last unit, and the attempt is reported as `depleted` rather than paid
+ * out. The RETURNING clause gives the post-decrement value from the same
+ * atomic statement, so the respawn stamp below is written only by the one
+ * caller that actually spent the node.
+ *
  * @param db Kysely handle
  * @param nodeInstanceId the node to update
  * @param node the pre-attempt row
  * @param nowIso the attempt instant
  * @returns `remaining_amount` after the attempt; NULL still means infinite
+ * @throws {ResourceError} `depleted` when the last unit was taken by a
+ *   concurrent attempt, so this one yields nothing
  */
 export async function consumeNode(
   db: Kysely<DB>,
@@ -130,16 +144,34 @@ export async function consumeNode(
 ): Promise<number | null> {
   if (node.remaining_amount === null) { return null; }
 
-  const remaining = Math.max(0, node.remaining_amount - 1,);
-  const spent = remaining === 0;
+  const consumed = await db
+    .updateTable("gathering_node_instances",)
+    .set({
+      remaining_amount: sql`remaining_amount - 1`,
+      current_uses: sql`max(0, current_uses - 1)`,
+      state: NodeInstanceState.Available,
+      updated_at: nowIso,
+    },)
+    .where("id", "=", nodeInstanceId,)
+    .where("remaining_amount", ">", 0,)
+    .returning(["remaining_amount",],)
+    .executeTakeFirst();
+
+  if (!consumed) {
+    throw new ResourceError(
+      "depleted",
+      `node instance "${nodeInstanceId}" was consumed by a concurrent extraction`,
+    );
+  }
+
+  const remaining = Number(consumed.remaining_amount,);
+  if (remaining > 0) { return remaining; }
+
   await db
     .updateTable("gathering_node_instances",)
     .set({
-      remaining_amount: remaining,
-      current_uses: Math.max(0, node.current_uses - 1,),
-      state: spent ? NodeInstanceState.Depleted : NodeInstanceState.Available,
-      updated_at: nowIso,
-      ...(spent ? { respawn_at: await nextRespawnAt(db, nodeInstanceId, nowIso,), } : {}),
+      state: NodeInstanceState.Depleted,
+      respawn_at: await nextRespawnAt(db, nodeInstanceId, nowIso,),
     },)
     .where("id", "=", nodeInstanceId,)
     .execute();
