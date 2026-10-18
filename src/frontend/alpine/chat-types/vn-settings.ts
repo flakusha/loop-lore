@@ -25,4 +25,8 @@ export interface ChatCoreVnSettingsState {
   _portraitSize: number;
   /** VN portrait:text split ratio (split layout). */
   _splitRatio: number;
+  /** Last VN QA report (transient — never persisted to gm_config). */
+  _vnQaReport: import("../../vn/qa-mode").VnQaReport | null;
+  /** VN QA surface error text (transient). */
+  _vnQaError: string;
 }

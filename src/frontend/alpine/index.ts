@@ -56,6 +56,7 @@ import "./theme";
 import "./types";
 import "./user-info";
 import "./user-notifications";
+import "./vn-templates";
 import "./world";
 import "./world-create-wizard";
 import "./world-edit";

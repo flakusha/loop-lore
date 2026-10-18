@@ -10,7 +10,8 @@
  */
 
 import { SCENE_ID_ATTR, } from "../../scene/view-mode";
-import { destroyVnRenderer, initVnRenderer, type VnMessage, } from "../../vn";
+import { destroyVnRenderer, getVnScenes, initVnRenderer, type VnMessage, } from "../../vn";
+import { renderQaReport, runQaCheck, type VnQaReport, } from "../../vn/qa-mode";
 import { jsonParseOr, } from "../json";
 import type { GmConfig, Message, } from "../types";
 
@@ -60,8 +61,17 @@ export interface VnRendererBridge {
     messages: VnMessage[],
     config: Record<string, unknown>,
     chatId: string | undefined,
+    worldId?: string,
   ): void;
   destroy(): void;
+}
+
+/** Optional syncVnRenderer inputs. */
+export interface VnSyncOptions {
+  /** World scope for custom-template resolution. */
+  worldId?: string;
+  /** Renderer bridge; defaults to the real scene renderer. */
+  renderer?: VnRendererBridge;
 }
 
 /**
@@ -72,7 +82,8 @@ export interface VnRendererBridge {
  * @param gmConfig
  * @param vnEnabled
  * @param chatId
- * @param renderer Renderer bridge; defaults to the real scene renderer.
+ * @param opts.worldId World scope for custom-template resolution.
+ * @param opts.renderer Renderer bridge; defaults to the real scene renderer.
  * @returns {void}
  */
 export function syncVnRenderer(
@@ -80,8 +91,9 @@ export function syncVnRenderer(
   gmConfig: string | null | undefined,
   vnEnabled: boolean,
   chatId: string | undefined,
-  renderer: VnRendererBridge = { init: initVnRenderer, destroy: destroyVnRenderer, },
+  opts: VnSyncOptions = {},
 ): void {
+  const renderer = opts.renderer ?? { init: initVnRenderer, destroy: destroyVnRenderer, };
   const config = gmConfig ? jsonParseOr<GmConfig>(gmConfig, {},) : {};
   const enabled = config.renderingOverride != null
     ? config.renderingOverride === "visual_novel"
@@ -103,5 +115,41 @@ export function syncVnRenderer(
   }
 
   syncSceneId(container, chatId,);
-  renderer.init(container, vnMessages, config as Record<string, unknown>, chatId,);
+  renderer.init(container, vnMessages, config as Record<string, unknown>, chatId, opts.worldId,);
 }
+
+/**
+ * VN QA actions spread into the chat-settings Alpine scope: runs the QA
+ * validator over the currently rendered scenes and mounts the report into
+ * the modal's `[data-testid="vn-qa-report"]` container. Transient state —
+ * `saveChatSettings` picks persisted fields explicitly, so nothing leaks
+ * into gm_config.
+ */
+export const vnQaActions = {
+  _vnQaReport: null as VnQaReport | null,
+  _vnQaError: "",
+
+  /** Validate the live scene list and render the report when a container exists. */
+  runVnQaCheck(): void {
+    const scenes = getVnScenes();
+    this._vnQaError = "";
+
+    if (scenes.length === 0) {
+      this._vnQaReport = null;
+      this._vnQaError = "No VN scenes rendered yet — enable Visual Novel Mode with at least one message first.";
+      return;
+    }
+
+    this._vnQaReport = runQaCheck(scenes.map((scene,) => ({
+      text: scene.text,
+      characterName: scene.characterName,
+      backgroundUrl: scene.backgroundUrl,
+      role: scene.role,
+    })),);
+
+    const container = document.querySelector<HTMLElement>('[data-testid="vn-qa-report"]',);
+    if (container && this._vnQaReport) {
+      renderQaReport(this._vnQaReport, container,);
+    }
+  },
+};

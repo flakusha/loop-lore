@@ -50,6 +50,7 @@ export interface ChatCoreState
     story_state?: string;
     gm_config?: string;
     thinking_visibility?: string;
+    world_id?: string;
     prompt_override?: string | null;
     quick_replies?: string | null;
     custom_instructions?: string | null;
