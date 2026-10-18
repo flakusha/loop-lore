@@ -75,6 +75,16 @@ export interface AnswerVnQuestionSuccess {
    */
   locationId?: string;
   /**
+   * Relationship deltas actually applied: the question's base map folded with
+   * the chosen option's `relationship_modifier`.
+   */
+  relationshipImpact: Record<string, number>;
+  /**
+   * Mood deltas actually applied: the question's base map folded with the
+   * chosen option's `emotion_modifier`.
+   */
+  moodImpact: Record<string, number>;
+  /**
    * When the answer's impacts were written to the character systems; null
    * when application had no targets or failed (the answer still stands).
    */
