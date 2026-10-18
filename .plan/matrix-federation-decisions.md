@@ -32,6 +32,24 @@ Companion to `epic-federation-swarm-sync.md` (sections *Gaps & Open Questions*, 
 - **Recommendation:** `FEAT-radicle-integration` AC implies build; clarify whether Phase C is ticketize-only or build. If build, thicken AC first (see G11).
 - **Status:** open · **Blocks:** Phase C · **Linked:** `BUG-feat-radicle-integration-acceptance-criteria-too-thin`
 
+### C13 — Same-host peer identity
+
+- **Options:** a separate same-host subsystem · a peer with a loopback URL and a host-local auth mode
+- **Recommendation:** the second. `link_kind` is *derived* from the origin host and never stored, so it cannot drift; the only persisted difference is `auth_mode`, where `host-local` requires a per-peer shared token (loopback is not remotely reachable, so TLS trust checks are unnecessary but a token is not — an open loopback port is not a trust boundary). Owned by `epic-federation-offload-quotas.md`.
+- **Status:** decided (2026-10-18)
+
+### C14 — Peer failover vs provider failover
+
+- **Options:** register a peer as an `LLMProvider` · keep routing a pre-step outside the provider registry
+- **Recommendation:** the second. One list means a peer failure trips a *vendor's* circuit breaker, offers a peer as a fallback for a chat whose sticky assignment says otherwise, and silently adds a remote candidate to the aux pipeline's deliberately single-element failover list. Each hop owns exactly one failover decision. Owned by `epic-federation-offload-quotas.md`.
+- **Status:** decided (2026-10-18)
+
+### C15 — Where counters live
+
+- **Options:** DB-backed counters · in-process counters in the receiving instance
+- **Recommendation:** in-process, keyed `(peer, workloadClass)`. The only truthful authority for "is this peer over its concurrency budget right now" is the process holding the in-flight requests; a DB counter would need a distributed reservation to be atomic across instances, which is consensus — explicitly out of scope. Consequence stated rather than hidden: counters reset on restart, so a restarted instance is permissive for one window. Budgets themselves are config and survive. Storage budgets use the opposite answer (DB is the source of truth, disk is reconciled against). Owned by `epic-federation-offload-quotas.md`.
+- **Status:** decided (2026-10-18)
+
 ## Policy choices (map to gap tickets)
 
 ### C5 — Identity model

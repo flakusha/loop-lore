@@ -26,6 +26,7 @@ documents are complementary: this matrix decides *what* to build; integration po
 | Fediverse | `epic-communications-integrations.md` Phase 1 (Matrix); `epic-anonymity-decentralization.md` Phase 5 (Radicle) | **ActivityPub / Lemmy / threadiverse** federation; Mastodon-compatible world feeds |
 | E-mail / messaging | `TASK-matrix-integration.md`, `TASK-xmpp-integration.md`, `TASK-email-integration.md` (+ `TASK-email-modernization-exploration.md`), `epic-communications-integrations.md` Phases 1–4 | **Signal / Telegram / Discord bridges**; generic `ProtocolAdapter` bridge registry |
 | Swarm / multi-instance | `epic-multi-instance-reconciliation.md` (leader-based single-writer reconciliation, schema drift, horizontal scaling) | **Swarm-mode CRDT multi-writer sync** (peer-to-peer, any node writes) |
+| Workload offload / budgets (added 2026-10-18) | `epic-mesh-federation-content-sharing.md` (peer registry, reservation lifecycle, per-peer content capacity); `epic-instance-federation.md` (user-facing instance switching) | **Workload placement + per-instance budgets** — see `epic-federation-offload-quotas.md`. Assignment and quotas only: no scheduler election, no gossip for placement, no consensus. A same-host peer is a peer with a loopback URL and a host-local token, not a separate subsystem. |
 
 ## Feature Matrix
 
