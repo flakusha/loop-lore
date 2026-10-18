@@ -639,20 +639,24 @@ describe("authorizePeerWork — a credential this instance cannot decrypt is a r
     expect("status" in admission && admission.errorCode,).toBe("federation.workload_credential_rejected",);
   });
 
-  test("an instance with no encryption key at all cannot admit a same-host peer", async () => {
+  test("an instance with no encryption key at all admits neither a same-host nor a remote peer", async () => {
     const { db, } = await createTestDb();
     await seedLoopback(db,);
+    await seedRemote(db,);
 
-    const admission = await authorizePeerWork({
-      database: db,
-      config: ENABLED,
-      claimedOrigin: LOOPBACK,
-      bearer: SHARED,
-      workloadClass: PeerWorkloadClass.Chat,
-      encryptionKey: "",
-    },);
+    for (const [claimedOrigin, bearer,] of [[LOOPBACK, SHARED,], [REMOTE, REMOTE_SHARED,],] as const) {
+      const admission = await authorizePeerWork({
+        database: db,
+        config: ENABLED,
+        claimedOrigin,
+        bearer,
+        workloadClass: PeerWorkloadClass.Chat,
+        encryptionKey: "",
+      },);
 
-    expect("status" in admission && admission.errorCode,).toBe("federation.workload_credential_rejected",);
+      expect("status" in admission, `${claimedOrigin} must be refused`,).toBe(true,);
+      expect("status" in admission && admission.errorCode,).toBe("federation.workload_credential_rejected",);
+    }
   });
 });
 
