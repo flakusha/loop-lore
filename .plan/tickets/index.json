@@ -867,7 +867,7 @@
     "type": "BUG"
   },
   "BUG-ASSETVIEW-LOADS-ASSETS-WITHOUT-AUTH": {
-    "hash": "pending",
+    "hash": "79e5174",
     "extid": "BUG-ASSETVIEW-LOADS-ASSETS-WITHOUT-AUTH",
     "type": "BUG",
     "title": "AssetView loads assets without auth",
@@ -876,7 +876,8 @@
     "epic": "epic-terminal-ui",
     "tags": [],
     "source": ".plan/tickets/BUG-assetview-loads-assets-without-auth.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "79e5174"
   },
   "BUG-ASSISTANT-AND-GROUP-CHAT-CORRECTNESS-DEFECTS": {
     "hash": "5e09182",
@@ -9530,7 +9531,7 @@
     "type": "BUG"
   },
   "BUG-TUI-SEND-INHERITS-THE-30S-DEFAULT-SAFEFETCH-TIMEOUT-AGAINST-": {
-    "hash": "pending",
+    "hash": "d07e0df",
     "extid": "BUG-TUI-SEND-INHERITS-THE-30S-DEFAULT-SAFEFETCH-TIMEOUT-AGAINST-",
     "type": "BUG",
     "title": "TUI send inherits the 30s default safeFetch timeout against blocking LLM generation",
@@ -9539,7 +9540,8 @@
     "epic": "epic-terminal-ui",
     "tags": [],
     "source": ".plan/tickets/BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "d07e0df"
   },
   "BUG-TUI-SHOWERROR-DESYNCS-ITEMCOUNT-FROM-MESSAGELIST-LENGTH": {
     "hash": "71758ac",
@@ -54421,7 +54423,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-vn-branching-choices.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [
       "visual-novel",
       "branching",
@@ -54471,7 +54473,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-vn-dynamic-generation.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [
       "visual-novel",
       "dynamic-image",
@@ -54516,7 +54518,7 @@
     "label": "task",
     "priority": "P2 — Medium",
     "source": ".plan/tickets/TASK-vn-qa-mode.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [
       "visual-novel",
       "qa-mode",
@@ -54533,7 +54535,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-vn-scene-template-system.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [
       "vn",
       "templates",
@@ -54579,7 +54581,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-vn-template-actions.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [
       "vn",
       "templates",

@@ -209,7 +209,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | branch | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | branch-merge | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | branches | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| branching | 5 | 1 | 1 | 1 | 2 | 0 | 0 |
+| branching | 5 | 2 | 0 | 1 | 2 | 0 | 0 |
 | brave | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | bridge | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | bridges | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -279,7 +279,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | check-gate | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | check-gates | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | checker | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| choices | 3 | 0 | 2 | 1 | 0 | 0 | 0 |
+| choices | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
 | chroma | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | chronology | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | chunking | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -402,7 +402,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | css | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | culture | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
 | currency | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
-| custom | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| custom | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | custom-llm | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | customization | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | cwd | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -457,7 +457,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | dev-loop | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | device-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | devops | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| dialogue | 2 | 0 | 1 | 0 | 1 | 0 | 0 |
+| dialogue | 2 | 1 | 0 | 0 | 1 | 0 | 0 |
 | dice | 8 | 0 | 1 | 1 | 1 | 0 | 5 |
 | dice-result | 2 | 0 | 0 | 0 | 1 | 0 | 1 |
 | diplomacy | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -500,7 +500,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | durability | 4 | 2 | 0 | 1 | 0 | 0 | 1 |
 | dx | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | dynamic | 3 | 0 | 0 | 3 | 0 | 0 | 0 |
-| dynamic-image | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
+| dynamic-image | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | dynamic-selection | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | e2e | 33 | 10 | 1 | 18 | 0 | 0 | 4 |
 | e2e-blocking | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -541,7 +541,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | enemies | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | enforcement | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | engagement | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| engine | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
+| engine | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | enhance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | enrichment | 4 | 0 | 0 | 1 | 1 | 0 | 2 |
 | enrichment-pipeline | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -681,7 +681,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | gm | 23 | 6 | 4 | 4 | 0 | 0 | 9 |
 | gm-beats | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | gm-notes | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| gm-tools | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
+| gm-tools | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | go-no-go | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | goal-pursuit | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | goals | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
@@ -747,10 +747,10 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | image-backends | 3 | 0 | 0 | 3 | 0 | 0 | 0 |
 | image-edit | 6 | 1 | 0 | 1 | 0 | 0 | 4 |
 | image-engine | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| image-gen | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| image-gen | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | image-generation | 7 | 0 | 1 | 1 | 0 | 0 | 5 |
 | imap | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
-| immersion | 5 | 2 | 1 | 0 | 0 | 0 | 2 |
+| immersion | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
 | impersonation | 3 | 2 | 1 | 0 | 0 | 0 | 0 |
 | import | 4 | 3 | 0 | 1 | 0 | 0 | 0 |
 | import-export | 6 | 0 | 0 | 4 | 0 | 0 | 2 |
@@ -780,7 +780,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | interactable | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | interaction | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | interactive | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| interactive-storytelling | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| interactive-storytelling | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | interface-merge | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | internal-notes | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | internal-traits | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -846,7 +846,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | llama-cpp-alternative | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | llama-swap | 5 | 0 | 0 | 2 | 0 | 0 | 3 |
 | llama.cpp | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
-| llm | 26 | 4 | 1 | 8 | 1 | 0 | 12 |
+| llm | 26 | 5 | 0 | 8 | 1 | 0 | 12 |
 | llm-authored | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | llm-context-cap | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | llm-narrative | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1105,7 +1105,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | pre-agent | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pre-commit | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pre-compiled-templates | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| pre-configured | 2 | 0 | 1 | 1 | 0 | 0 | 0 |
+| pre-configured | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | pre-generation | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | preact | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | predator-prey | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1165,7 +1165,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | push | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pwa | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | python | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| qa-mode | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
+| qa-mode | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | quality | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | quality-assurance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | quality-gates | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1228,7 +1228,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | regression | 3 | 0 | 1 | 1 | 0 | 0 | 1 |
 | reinit | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | relationship | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| relationships | 11 | 3 | 1 | 3 | 3 | 0 | 1 |
+| relationships | 11 | 4 | 0 | 3 | 3 | 0 | 1 |
 | release | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | release-010 | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | release-closeout | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
@@ -1311,7 +1311,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | scene | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
 | scene-art | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | scene-exposition | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| scenes | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| scenes | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | schedule | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | scheduled | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | scheduler | 12 | 6 | 0 | 1 | 0 | 0 | 5 |
@@ -1434,7 +1434,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | story | 13 | 4 | 3 | 3 | 1 | 0 | 2 |
 | story-coherence | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | story-drive | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| story-generation | 2 | 0 | 2 | 0 | 0 | 0 | 0 |
+| story-generation | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | story-points | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | story-steering | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | streaming | 12 | 0 | 1 | 1 | 0 | 0 | 10 |
@@ -1454,7 +1454,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | swipe | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | sync | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | sync-index | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| system | 3 | 0 | 1 | 1 | 0 | 0 | 1 |
+| system | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
 | system-design | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | system-message | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | systems | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1477,7 +1477,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | telegram | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | telemetry | 20 | 4 | 2 | 2 | 2 | 0 | 10 |
 | template | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
-| templates | 31 | 7 | 4 | 15 | 1 | 0 | 4 |
+| templates | 31 | 9 | 2 | 15 | 1 | 0 | 4 |
 | tenancy | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | terminal | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | terrain | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1588,7 +1588,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | user-message | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | users | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | utility-ai | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| ux | 26 | 10 | 1 | 11 | 1 | 0 | 3 |
+| ux | 26 | 11 | 0 | 11 | 1 | 0 | 3 |
 | validation | 23 | 5 | 2 | 6 | 0 | 0 | 10 |
 | validator | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | variant | 13 | 0 | 0 | 12 | 0 | 0 | 1 |
@@ -1602,11 +1602,11 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | viewership | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | views | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | visibility | 5 | 0 | 0 | 2 | 0 | 0 | 3 |
-| visual-novel | 10 | 1 | 5 | 2 | 0 | 0 | 2 |
+| visual-novel | 10 | 4 | 2 | 2 | 0 | 0 | 2 |
 | visualization | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | vitepress | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | viz | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| vn | 7 | 2 | 2 | 1 | 0 | 0 | 2 |
+| vn | 7 | 4 | 0 | 1 | 0 | 0 | 2 |
 | voice | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | voice-notes | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | vrm | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -2020,7 +2020,7 @@ Total tickets: **3821** — untagged: **2599** — unbound to epic: **1528**
 | epic-use-case-agentic-workspace.md ✅ (verified 2026-09-07 — epic confirmed as fit, see "Epic fit" below) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-user-stories | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-vector-graphics-generation | 4 | 0 | 0 | 0 | 2 | 0 | 2 |
-| epic-visual-novel-mode | 10 | 2 | 6 | 2 | 0 | 0 | 0 |
+| epic-visual-novel-mode | 10 | 7 | 1 | 2 | 0 | 0 | 0 |
 | epic-wardrobe-avatar-variants | 17 | 12 | 0 | 4 | 0 | 0 | 1 |
 | epic-weather-environment | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-workflow-engine | 18 | 8 | 1 | 7 | 0 | 0 | 2 |
