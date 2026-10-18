@@ -99,6 +99,15 @@ const MIN_DIFFICULTY = 1;
 const MAX_DIFFICULTY = 100;
 
 /**
+ * Upper bound on a client-supplied ability bonus. A bonus is subtracted from
+ * the DC, so an unbounded one (`abilityBonus: 1000`) would clamp every node to
+ * difficulty 1 — a guaranteed success on every roll. The route schema
+ * validates against this; it lives beside the DC bounds so the two drift
+ * together.
+ */
+export const MAX_ABILITY_BONUS = 20;
+
+/**
  * The DC one attempt actually rolls against: the node's stored base, shifted by
  * its quality tier and the actor's bonus, then clamped into [1, 100].
  *
