@@ -6,6 +6,7 @@ import { visibleTagNames, } from "../../assets/service/tag-facets";
 import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
+import { type ViewsViewer, visibleCharactersTo, } from "./access";
 import { applyGalleryAssetFilters, inheritedHiddenAssetIds, } from "./gallery";
 import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";
 import { escapeHtml, htmlResponse, } from "./layout";
@@ -94,13 +95,22 @@ async function serveGallerySearch(
 /**
  * @param database
  * @param params
+ * @param viewer - who is asking; scopes the rows to the characters they own
  * @returns the matching character cards as HTML
  */
-async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+async function serveCharactersSearch(
+  database: Kysely<DB>,
+  params: URLSearchParams,
+  viewer: ViewsViewer,
+): Promise<Response> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const sort = params.get("sort",) ?? "name";
 
-  let qb = database.selectFrom("actors",).selectAll().where("actor_type", "!=", ActorType.User,);
+  let qb = database
+    .selectFrom("actors",)
+    .selectAll()
+    .where("actor_type", "!=", ActorType.User,)
+    .where(visibleCharactersTo(viewer,),);
 
   if (query) {
     qb = qb.where("display_name", "like", `%${query}%`,);
