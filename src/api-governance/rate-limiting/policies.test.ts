@@ -85,6 +85,18 @@ describe("policyForRoute", () => {
     expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
   });
 
+  test("prefix rules match on segment boundaries, not raw startsWith", () => {
+    // /api/v1/authx is not an auth route — a raw startsWith match let
+    // non-auth paths eat into the tight 10/min auth budget.
+    expect(policyForRoute("/api/v1/authx",),).toBe(defaultPolicy,);
+    expect(policyForRoute("/api/v1/authentication-bypass",),).toBe(defaultPolicy,);
+    expect(policyForRoute("/api/v1/chats-legacy",),).toBe(defaultPolicy,);
+    // The exact path and true segment children still match.
+    expect(policyForRoute("/api/v1/auth",),).toBe(authPolicy,);
+    expect(policyForRoute("/api/v1/auth/login",),).toBe(authPolicy,);
+    expect(policyForRoute("/api/v1/chats",),).toBe(chatPolicy,);
+  });
+
   test("seen-poller volume routes to the chat policy, not the shared default", () => {
     // Real call pattern: loadAllSeen N-GETs every message id every 5s —
     // a 26-message chat sustains 312 req/min, above the default 300 cap.
