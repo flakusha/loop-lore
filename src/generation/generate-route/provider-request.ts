@@ -70,6 +70,7 @@ export async function buildProviderRequest(opts: {
     messages,
     tools,
     apiKey: resolved.resolvedApiKey,
+    resolveApiKey: resolved.resolveApiKey,
     params: {
       stream,
       temperature: input.temperature,

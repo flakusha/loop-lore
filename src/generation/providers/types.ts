@@ -72,6 +72,8 @@ export interface GenerateRequest {
   messages: GenerationMessage[];
   /** Per-request API key override (BYO key support) */
   apiKey?: string;
+  /** Per-attempt BYO key lookup; absent = `apiKey` is shared by every attempt */
+  resolveApiKey?: UserApiKeyResolver;
   /** Tool definitions for function calling */
   tools?: ToolDef[];
   /** Generation parameters */
@@ -138,6 +140,13 @@ export interface ChunkEvent {
 
 /** Stream handler called per chunk */
 export type StreamHandler = (chunk: ChunkEvent,) => void;
+
+/**
+ * Resolves the BYO API key for one named provider. Returning undefined means
+ * "no user key for this provider" — the provider then falls back to its own
+ * configured server key.
+ */
+export type UserApiKeyResolver = (providerName: string,) => Promise<string | undefined>;
 
 // ── Error types ───────────────────────────────────────────
 
