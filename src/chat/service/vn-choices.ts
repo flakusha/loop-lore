@@ -10,8 +10,14 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
 import { safeJsonParse, } from "../../utils";
 import type { ServiceError, } from "./types";
+import {
+  applyVnImpacts,
+  markVnChoiceSelectionApplied,
+  recordVnChoiceSelection,
+} from "./vn-impacts";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -44,6 +50,8 @@ export type ListVnChoicesResult = ServiceError | { ok: true; choices: VnChoice[]
 export interface SelectVnChoiceParams {
   chatId: string;
   choiceId: string;
+  /** User who selected; resolves the actor the impacts land on. */
+  actingUserId: string;
 }
 
 /** */
@@ -52,6 +60,11 @@ export interface SelectVnChoiceSuccess {
   choice: VnChoice;
   /** Location ID if this choice triggers a location change. */
   locationId?: string;
+  /**
+   * When the choice's impacts were written to the character systems; null
+   * when application had no targets or failed (the selection still stands).
+   */
+  appliedAt: string | null;
 }
 
 /** */
@@ -164,12 +177,17 @@ export async function listVnChoices(
 // ── Select choice ──────────────────────────────────────────────────────────
 
 /**
- * Select a VN choice: marks it as selected with a timestamp, and returns
- * the choice consequences.
+ * Select a VN choice: marks it as selected with a timestamp, records the
+ * selection history row, and applies the choice's relationship/mood impacts
+ * to the character systems.
  *
  * If the choice has a "location" consequence, the `locationId` field in the
  * result can be used to trigger a location change (the caller handles the
  * `PUT /api/chats/:id/location` call).
+ *
+ * Side effects after the single-shot status flip are individually guarded: a
+ * failing history insert or impact write never loses the selection — it only
+ * leaves `appliedAt` null (see the response contract).
  * @param database
  * @param params
  * @returns void
@@ -178,7 +196,7 @@ export async function selectVnChoice(
   database: Kysely<DB>,
   params: SelectVnChoiceParams,
 ): Promise<SelectVnChoiceResult> {
-  const { chatId, choiceId, } = params;
+  const { chatId, choiceId, actingUserId, } = params;
 
   const row = await database
     .selectFrom("vn_choices",)
@@ -233,7 +251,41 @@ export async function selectVnChoice(
     }
   }
 
-  return { ok: true, choice: parsed, locationId, };
+  // History + consequence write-back. Each side effect is guarded on its own:
+  // a failure keeps the selection (the flip above already won the single-shot
+  // race) and only leaves appliedAt null.
+  let appliedAt: string | null = null;
+  try {
+    const selectionId = await recordVnChoiceSelection(database, {
+      chatId,
+      choiceId,
+      sceneIndex: parsed.scene_index,
+      relationshipImpact: parsed.relationship_impact,
+      moodImpact: parsed.mood_impact,
+      selectedBy: actingUserId,
+    },);
+
+    const applied = await applyVnImpacts(database, {
+      chatId,
+      actingUserId,
+      relationshipImpact: parsed.relationship_impact,
+      moodImpact: parsed.mood_impact,
+    },);
+
+    // Only stamp when something was actually touched; a chat with no
+    // character participants has no consequence to acknowledge.
+    if (applied.moodActorIds.length > 0 || applied.relationshipActorIds.length > 0) {
+      appliedAt = await markVnChoiceSelectionApplied(database, selectionId,);
+    }
+  } catch (error) {
+    getLogger().child({ module: "vn-choices", },).error(
+      "VN choice consequence write-back failed (selection kept)",
+      error instanceof Error ? error : new Error(String(error,),),
+      { chatId, choiceId, },
+    );
+  }
+
+  return { ok: true, choice: parsed, locationId, appliedAt, };
 }
 
 /**

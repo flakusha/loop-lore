@@ -38,6 +38,8 @@ export interface VnQuestion {
   status: string;
   selected_option_id: string | null;
   answered_at: string | null;
+  /** When the answer's impacts were written to the character systems. */
+  applied_at: string | null;
   created_at: string;
 }
 
@@ -55,6 +57,8 @@ export interface AnswerVnQuestionParams {
   chatId: string;
   questionId: string;
   optionId: string;
+  /** User who answered; resolves the actor the impacts land on. */
+  actingUserId: string;
 }
 
 /** Successful answer, including the impacts the choice carried. */
@@ -70,6 +74,11 @@ export interface AnswerVnQuestionSuccess {
    * Absent when neither carries one.
    */
   locationId?: string;
+  /**
+   * When the answer's impacts were written to the character systems; null
+   * when application had no targets or failed (the answer still stands).
+   */
+  appliedAt: string | null;
 }
 
 /** Result of answering a question. */

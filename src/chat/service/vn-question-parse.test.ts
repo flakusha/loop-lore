@@ -35,6 +35,7 @@ function row(overrides: Partial<RawRow> = {},): RawRow {
     status: "available",
     selected_option_id: null,
     answered_at: null,
+    applied_at: null,
     created_at: "2024-01-01T00:00:00Z",
     ...overrides,
   };

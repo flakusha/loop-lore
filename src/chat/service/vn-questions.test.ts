@@ -72,12 +72,13 @@ describe("vn question service", () => {
   let db: Kysely<DB>;
   let chatId: string;
   let otherChatId: string;
+  let ownerId: string;
 
   beforeEach(async () => {
     createLogger({ level: "error", },);
     ({ db, } = await createTestDb());
 
-    const ownerId = await insertUsers(db, "owner", "Owner", {} as never,);
+    ownerId = await insertUsers(db, "owner", "Owner", {} as never,);
     await insertActors(db, "Owner", { user_id: ownerId, owner_id: ownerId, } as never,);
     chatId = await insertChats(db, "VN chat", ownerId, { type: "group", mode: "vn", } as never,);
     otherChatId = await insertChats(db, "Other chat", ownerId, { type: "group", mode: "vn", } as never,);
@@ -164,7 +165,7 @@ describe("vn question service", () => {
       },);
 
       const result = answered(
-        await answerVnQuestion(db, { chatId, questionId: id, optionId: "o2", },),
+        await answerVnQuestion(db, { chatId, questionId: id, actingUserId: ownerId, optionId: "o2", },),
       );
 
       expect(result.option.id,).toBe("o2",);
@@ -190,7 +191,7 @@ describe("vn question service", () => {
         status: "available",
       },);
 
-      await answerVnQuestion(db, { chatId, questionId: id, optionId: "o1", },);
+      await answerVnQuestion(db, { chatId, questionId: id, actingUserId: ownerId, optionId: "o1", },);
 
       expect(await listVnQuestions(db, { chatId, sceneIndex: 0, },),).toEqual({
         ok: true,
@@ -204,8 +205,8 @@ describe("vn question service", () => {
         status: "available",
       },);
 
-      await answerVnQuestion(db, { chatId, questionId: id, optionId: "o1", },);
-      const second = await answerVnQuestion(db, { chatId, questionId: id, optionId: "o2", },);
+      await answerVnQuestion(db, { chatId, questionId: id, actingUserId: ownerId, optionId: "o1", },);
+      const second = await answerVnQuestion(db, { chatId, questionId: id, actingUserId: ownerId, optionId: "o2", },);
 
       expect(second,).toEqual({
         code: "bad_request",
@@ -229,7 +230,7 @@ describe("vn question service", () => {
         status: "available",
       },);
 
-      const result = await answerVnQuestion(db, { chatId, questionId: id, optionId: "o1", },);
+      const result = await answerVnQuestion(db, { chatId, questionId: id, actingUserId: ownerId, optionId: "o1", },);
 
       expect(result,).toEqual({ code: "not_found", message: "Question not found", },);
       expect(await statusOf(db, id, otherChatId,),).toBe("available",);
@@ -241,7 +242,7 @@ describe("vn question service", () => {
         status: "available",
       },);
 
-      const result = await answerVnQuestion(db, { chatId, questionId: id, optionId: "nope", },);
+      const result = await answerVnQuestion(db, { chatId, questionId: id, actingUserId: ownerId, optionId: "nope", },);
 
       expect(result,).toEqual({
         code: "bad_request",
@@ -281,11 +282,11 @@ describe("vn question service", () => {
       );
 
       const optionWins = answered(
-        await answerVnQuestion(db, { chatId, questionId: withOption, optionId: "o1", },),
+        await answerVnQuestion(db, { chatId, questionId: withOption, actingUserId: ownerId, optionId: "o1", },),
       );
 
       const questionWins = answered(
-        await answerVnQuestion(db, { chatId, questionId: withoutOption, optionId: "o1", },),
+        await answerVnQuestion(db, { chatId, questionId: withoutOption, actingUserId: ownerId, optionId: "o1", },),
       );
 
       expect(optionWins.nextSceneId,).toBe("option-scene",);
@@ -331,15 +332,15 @@ describe("vn question service", () => {
       );
 
       const first = answered(
-        await answerVnQuestion(db, { chatId, questionId: optionLocation, optionId: "o1", },),
+        await answerVnQuestion(db, { chatId, questionId: optionLocation, actingUserId: ownerId, optionId: "o1", },),
       );
 
       const second = answered(
-        await answerVnQuestion(db, { chatId, questionId: questionLocation, optionId: "o1", },),
+        await answerVnQuestion(db, { chatId, questionId: questionLocation, actingUserId: ownerId, optionId: "o1", },),
       );
 
       const third = answered(
-        await answerVnQuestion(db, { chatId, questionId: noLocation, optionId: "o1", },),
+        await answerVnQuestion(db, { chatId, questionId: noLocation, actingUserId: ownerId, optionId: "o1", },),
       );
 
       expect(first.locationId,).toBe("option-loc",);

@@ -3324,6 +3324,7 @@ export const VnQuestionsSchema = t.Object({
   status: t.Optional(t.String(),),
   selected_option_id: t.Optional(t.String(),),
   answered_at: t.Optional(t.String(),),
+  applied_at: t.Optional(t.String(),),
 },);
 
 // ── world_timescale ────────────────────────────────────────────
@@ -3597,4 +3598,16 @@ export const MonsterSpawnsSchema = t.Object({
   territory_center_y: t.Optional(t.Number(),),
   territory_radius: t.Optional(t.Number(),),
   despawn_at: t.Optional(t.String(),),
+},);
+
+// ── vn_choice_selections ────────────────────────────────────────────
+export const VnChoiceSelectionsSchema = t.Object({
+  chat_id: t.String(),
+  choice_id: t.String(),
+  scene_index: t.Number(),
+  created_at: t.String(),
+  relationship_impact: t.Optional(t.String(),),
+  mood_impact: t.Optional(t.String(),),
+  selected_by: t.Optional(t.String(),),
+  applied_at: t.Optional(t.String(),),
 },);
