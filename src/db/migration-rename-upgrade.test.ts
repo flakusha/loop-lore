@@ -201,7 +201,11 @@ describe("column rename upgrade path", () => {
     // Guards the premise of every assertion below: if 056 already carried the
     // new names, this file would pass while testing nothing.
     const sqlite = new Database(":memory:",);
-    const db = new Kysely({ dialect: createSqliteDialect(sqlite,), },);
+    // Kysely<DB> (not the bare Kysely<unknown> inference): this premise test
+    // issues no typed query — it migrates and then reads columns off the raw
+    // sqlite handle — so the DB interface is the right one to install as the
+    // test override, with no cast.
+    const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
     setTestDatabase(db,);
     const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
 
