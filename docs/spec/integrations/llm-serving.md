@@ -160,6 +160,16 @@ Env vars (`src/config/load/env.ts` — `LLAMACPP_*` does not exist in code): `LL
 
 Server lifecycle NOT managed by loop-lore — run separately via a llama-server start script, systemd, or container.
 
+### Model Roles
+
+A model role names the provider + model used for one class of work. Roles resolve DB override → config `generation.modelRoles.<role>` → server default (`src/admin/model-roles.ts`), and are assignable per role from the admin panel (PUT `/api/admin/model-roles/:role`). Roles currently exposed there: `main`, `auxiliary`, `captioning`, `classifier`, `translator`.
+
+The `translator` role selects the model for `/translate`, its `/tl` alias, and per-chat auto-translate. **Unset (or set without both provider and model), it resolves to the general model** — resolved through the `main` role, so a `main` override is honoured. The rule lives in one place, `resolveTranslatorRole` (`src/generation/translator-role.ts`); callers must not re-implement `translator ?? general`.
+
+Config env vars (manual overrides in `src/config/schema-class/env-map.ts`): `LLM_TRANSLATOR_PROVIDER`, `LLM_TRANSLATOR_MODEL`.
+
+A `translator` naming an unregistered provider is not silently swapped for another model: the translation degrades to the untranslated original (auto-translate) or the local-heuristic note (`/translate`), with a warn log.
+
 ## References
 
 - llama.cpp: https://github.com/ggml-org/llama.cpp

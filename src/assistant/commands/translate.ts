@@ -12,6 +12,7 @@
 
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
+import { resolveTranslatorRole, } from "../../generation/translator-role";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
 /** Known language identifiers with display names. */
@@ -138,42 +139,47 @@ export async function runTranslate(
 }
 
 /**
+ * Registered handler shared by `/translate` and its `/tl` alias.
+ *
+ * Resolves the `translator` role (falling back to the general model when
+ * unset). A translator pointing at an unregistered provider degrades to the
+ * heuristic path rather than silently translating on some other model.
+ * @param args
+ * @param ctx
+ * @returns {Promise<CommandResult>}
+ */
+async function runTranslateCommand(args: string[], ctx: CommandContext,): Promise<CommandResult> {
+  const { config, db, } = ctx;
+  if (!db || !config) {
+    return runTranslate(args, ctx, { complete: async () => ({ content: "", }), },);
+  }
+
+  try {
+    const role = await resolveTranslatorRole(config, db,);
+    const resolved = await resolveProvider({
+      config,
+      userId: ctx.userId,
+      db,
+      provider: role.provider,
+      model: role.model,
+    },);
+
+    return runTranslate(args, ctx, {
+      complete: (req,) => resolved.provider.complete(req,),
+      model: resolved.resolvedModel,
+    },);
+  } catch {
+    return runTranslate(args, ctx, {},);
+  }
+}
+
+/**
  * Translate command registration.
  * @returns void
  */
-registerCommand("translate", async (args, ctx,): Promise<CommandResult> => {
-  const { config, db, } = ctx;
-  if (!db || !config) {
-    return runTranslate(args, ctx, { complete: async () => ({ content: "", }), },);
-  }
-
-  try {
-    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
-    return runTranslate(args, ctx, {
-      complete: (req,) => resolved.provider.complete(req,),
-      model: resolved.resolvedModel,
-    },);
-  } catch {
-    return runTranslate(args, ctx, {},);
-  }
-},);
+registerCommand("translate", runTranslateCommand,);
 
 /** Alias: /tl → /translate */
-registerCommand("tl", async (args, ctx,): Promise<CommandResult> => {
-  const { config, db, } = ctx;
-  if (!db || !config) {
-    return runTranslate(args, ctx, { complete: async () => ({ content: "", }), },);
-  }
-
-  try {
-    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
-    return runTranslate(args, ctx, {
-      complete: (req,) => resolved.provider.complete(req,),
-      model: resolved.resolvedModel,
-    },);
-  } catch {
-    return runTranslate(args, ctx, {},);
-  }
-},);
+registerCommand("tl", runTranslateCommand,);
 
 export { LANGUAGES, };
