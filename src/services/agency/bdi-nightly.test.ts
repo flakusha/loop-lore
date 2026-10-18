@@ -134,6 +134,69 @@ describe("runNightlyReflectionCycle — budget-exceeded skip", () => {
   });
 });
 
+describe("runNightlyReflectionCycle — injected-seam hardening", () => {
+  test("garbage plan (empty summary, unknown priority) is rejected, not persisted", async () => {
+    const result = await runNightlyReflectionCycle(db, ["actor1",], {
+      budgetApprove: async () => true,
+      planRecompute: async () => ({ summary: "", priority: "bogus-tier", activities: [], }),
+    },);
+
+    expect(result.processed,).toBe(0,);
+    expect(result.failed,).toBe(1,);
+    expect(result.decisionEvents,).toEqual([],);
+    expect(raw.query("SELECT * FROM actor_daily_plans",).all().length,).toBe(0,);
+    expect(raw.query("SELECT * FROM actor_planned_activities",).all().length,).toBe(0,);
+  });
+
+  test("well-typed but oversized plan is clamped before insert", async () => {
+    const activities = Array.from({ length: 8, }, (_, i,) => ({ description: `act-${i}`, score: i * 20, }),);
+    const result = await runNightlyReflectionCycle(db, ["actor1",], {
+      budgetApprove: async () => true,
+      planRecompute: async () => ({ summary: "x".repeat(600,), priority: "high", activities, }),
+    },);
+
+    expect(result.processed,).toBe(1,);
+    expect(result.failed,).toBe(0,);
+    const plan = raw.query("SELECT * FROM actor_daily_plans",).get() as { summary: string };
+    expect(plan.summary,).toHaveLength(500,);
+    const acts = raw.query("SELECT * FROM actor_planned_activities",).all() as unknown[];
+    expect(acts.length,).toBe(5,);
+  });
+
+  test("a mid-loop throw is isolated: later actors still get their plans", async () => {
+    const result = await runNightlyReflectionCycle(db, ["boom", "steady",], {
+      budgetApprove: async () => true,
+      planRecompute: async (id,) => {
+        if (id === "boom") { throw new Error("generator exploded",); }
+        return { summary: "fine", priority: "normal", activities: [], };
+      },
+    },);
+
+    expect(result.processed,).toBe(1,);
+    expect(result.failed,).toBe(1,);
+    const rows = raw.query("SELECT actor_id FROM actor_daily_plans",).all() as Array<{
+      actor_id: string;
+    }>;
+
+    expect(rows.map((r,) => r.actor_id),).toEqual(["steady",],);
+  });
+
+  test("garbage priority never emits a bogus revision against an existing plan", async () => {
+    raw.exec(
+      `INSERT INTO actor_daily_plans(id, actor_id, plan_date, summary, priority, created_at) VALUES ('plan1', 'actor1', '2026-09-25', 'old', 'normal', datetime('now'));`,
+    );
+
+    const result = await runNightlyReflectionCycle(db, ["actor1",], {
+      budgetApprove: async () => true,
+      planRecompute: async () => ({ summary: "new", priority: "bogus-tier", activities: [], }),
+      today: "2026-09-25",
+    },);
+
+    expect(result.revisionsEmitted,).toBe(0,);
+    expect(raw.query("SELECT * FROM actor_plan_revisions",).all().length,).toBe(0,);
+  });
+});
+
 describe("recordChatTurn — cooldown + consecutive cap", () => {
   test("first chat creates buffer; second immediate chat blocked", async () => {
     const now = new Date("2026-09-25T12:00:00Z",);
