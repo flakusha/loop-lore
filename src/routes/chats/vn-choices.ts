@@ -139,7 +139,7 @@ function handleSelectVnChoice(database: Kysely<DB>,) {
       return jsonError("choiceId is required", HttpStatus.BadRequest,);
     }
 
-    const result = await selectVnChoice(database, { chatId, choiceId, },);
+    const result = await selectVnChoice(database, { chatId, choiceId, actingUserId: userId, },);
 
     if ("code" in result) {
       const status = result.code === "not_found"
@@ -151,6 +151,10 @@ function handleSelectVnChoice(database: Kysely<DB>,) {
       return jsonError(result.message, status, result.code as never,);
     }
 
-    return jsonResponse({ choice: result.choice, locationId: result.locationId, },);
+    return jsonResponse({
+      choice: result.choice,
+      locationId: result.locationId,
+      appliedAt: result.appliedAt,
+    },);
   };
 }

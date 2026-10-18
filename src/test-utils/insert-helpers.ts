@@ -5295,6 +5295,7 @@ export async function insertVnQuestions(
     status?: string;
     selected_option_id?: string | null;
     answered_at?: string | null;
+    applied_at?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -5868,6 +5869,34 @@ export async function insertEncounterRolls(
     id,
     world_id,
     template_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a vn_choice_selections row. */
+export async function insertVnChoiceSelections(
+  db: Db,
+  chat_id: string,
+  choice_id: string,
+  scene_index: number,
+  created_at: string,
+  opts?: {
+    id?: string;
+    relationship_impact?: string;
+    mood_impact?: string;
+    selected_by?: string | null;
+    applied_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("vn_choice_selections",).values({
+    id,
+    chat_id,
+    choice_id,
+    scene_index,
+    created_at,
     ...restOpts,
   } as any,).execute();
   return id;

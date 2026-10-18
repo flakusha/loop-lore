@@ -8,14 +8,14 @@
  * in the `vn_questions` table; the LLM generation layer creates them during
  * story generation.
  *
- * Impact parity note: like `vn_choices`, mood/relationship impacts are stored
- * on the row and returned to the caller — nothing here writes them back to the
- * character systems. `updateRelationship`/`updateMood` require a service
- * locator the VN routes do not carry and both throw when no row exists yet,
- * so cross-system mutation is deferred (see TASK-vn-qa-mode.md).
+ * Impact note: answering a question applies its relationship/mood impacts to
+ * the character systems via `vn-impacts.ts` (get-or-create, guarded), and
+ * stamps `vn_questions.applied_at` when something was touched.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
+import { applyVnImpacts, markVnQuestionApplied, withOptionModifier, } from "./vn-impacts";
 import { parseVnQuestion, QUESTION_COLUMNS, } from "./vn-question-parse";
 import type {
   AnswerVnQuestionParams,
@@ -73,10 +73,13 @@ export async function listVnQuestions(
 
 /**
  * Answer a VN question: marks it answered with the chosen option and a
- * timestamp, and returns the option's impacts for the caller to surface.
+ * timestamp, applies the question's relationship/mood impacts (folded with
+ * the chosen option's modifiers) to the character systems, and returns the
+ * option's impacts for the caller to surface.
  *
- * Impacts are returned, not persisted to the character systems — same contract
- * as `selectVnChoice` (see module header).
+ * Side effects after the single-shot status flip are individually guarded: a
+ * failing impact write never loses the answer — it only leaves `appliedAt`
+ * null.
  * @param database
  * @param params
  * @returns void
@@ -85,7 +88,7 @@ export async function answerVnQuestion(
   database: Kysely<DB>,
   params: AnswerVnQuestionParams,
 ): Promise<AnswerVnQuestionResult> {
-  const { chatId, questionId, optionId, } = params;
+  const { chatId, questionId, optionId, actingUserId, } = params;
 
   // chat_id is part of the WHERE so a question from another chat reads as
   // not_found rather than leaking existence (IDOR guard).
@@ -138,12 +141,49 @@ export async function answerVnQuestion(
   const locationId = (typeof option.consequence?.location === "string" ? option.consequence.location : undefined) ??
     (typeof parsed.consequences?.location === "string" ? parsed.consequences.location : undefined);
 
+  // Consequence write-back: the question's impact maps folded with the chosen
+  // option's modifiers, applied to the character systems. Guarded so a failing
+  // write never loses the answer that already won the single-shot race.
+  let appliedAt: string | null = null;
+  try {
+    const relationshipImpact = withOptionModifier(
+      parsed.relationship_impact,
+      "standing",
+      option.relationship_modifier,
+    );
+
+    const moodImpact = withOptionModifier(
+      parsed.mood_impact,
+      "happiness",
+      option.emotion_modifier,
+    );
+
+    const applied = await applyVnImpacts(database, {
+      chatId,
+      actingUserId,
+      relationshipImpact,
+      moodImpact,
+    },);
+
+    if (applied.moodActorIds.length > 0 || applied.relationshipActorIds.length > 0) {
+      appliedAt = await markVnQuestionApplied(database, questionId,);
+      parsed.applied_at = appliedAt;
+    }
+  } catch (error) {
+    getLogger().child({ module: "vn-questions", },).error(
+      "VN question consequence write-back failed (answer kept)",
+      error instanceof Error ? error : new Error(String(error,),),
+      { chatId, questionId, },
+    );
+  }
+
   return {
     ok: true,
     question: parsed,
     option,
     nextSceneId: option.next_scene_id ?? parsed.next_scene_id,
     locationId,
+    appliedAt,
   };
 }
 

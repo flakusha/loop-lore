@@ -271,6 +271,88 @@ describe("POST /api/v1/chats/:id/vn-choices/:choiceId/select", () => {
 
     await db.destroy();
   });
+
+  test("selecting a choice with impacts writes them to the character systems and records history", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    // A character actor joins the chat and the choice carries mood/relationship
+    // impacts; selecting must reach character_mood / character_relationships.
+    const characterActorId = await insertActors(db, "Mira", {
+      actor_type: "character",
+    } as never,);
+
+    await insertChatParticipants(db, CHAT_ID, characterActorId, {} as never,);
+    await db.updateTable("vn_choices",).set({
+      relationship_impact: JSON.stringify({ standing: 10, },),
+      mood_impact: JSON.stringify({ happiness: 10, },),
+    },).where("id", "=", choiceId,).execute();
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/select`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { appliedAt: string | null };
+    expect(body.appliedAt,).not.toBeNull();
+
+    // Mood row created for the character with the scaled delta applied.
+    const mood = await db.selectFrom("character_mood",).selectAll()
+      .where("actor_id", "=", characterActorId,).executeTakeFirst();
+
+    expect(mood,).toBeDefined();
+    expect(mood!.happiness,).toBeCloseTo(57.5, 5,);
+
+    // Relationship created between the character and the selecting user's actor.
+    const rel = await db.selectFrom("character_relationships",).selectAll()
+      .where("actor_id", "=", characterActorId,).executeTakeFirst();
+
+    expect(rel,).toBeDefined();
+    expect(rel!.target_actor_id,).toBe(PARTICIPANT_ID,);
+    expect(rel!.standing,).toBe(10,);
+
+    // History row recorded and stamped as applied.
+    const selection = await db.selectFrom("vn_choice_selections",).selectAll()
+      .where("choice_id", "=", choiceId,).executeTakeFirstOrThrow();
+
+    expect(selection.chat_id,).toBe(CHAT_ID,);
+    expect(selection.selected_by,).toBe(PARTICIPANT_ID,);
+    expect(selection.applied_at,).toBe(body.appliedAt,);
+
+    await db.destroy();
+  });
+
+  test("a choice without impacts still records history but leaves appliedAt null", async () => {
+    const { db, } = await createTestDb();
+    const choiceId = await seed(db,);
+
+    const characterActorId = await insertActors(db, "Mira", {
+      actor_type: "character",
+    } as never,);
+
+    await insertChatParticipants(db, CHAT_ID, characterActorId, {} as never,);
+
+    const res = await makeApp(db, PARTICIPANT_ID,).handle(
+      new Request(`http://localhost/api/v1/chats/${CHAT_ID}/vn-choices/${choiceId}/select`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { appliedAt: string | null };
+    expect(body.appliedAt,).toBeNull();
+
+    // History exists (the choice WAS taken) with an empty impact payload.
+    const selection = await db.selectFrom("vn_choice_selections",).selectAll()
+      .where("choice_id", "=", choiceId,).executeTakeFirstOrThrow();
+
+    expect(selection.applied_at,).toBeNull();
+    expect(JSON.parse(selection.relationship_impact,),).toEqual({},);
+
+    // And no character rows were invented.
+    expect(await db.selectFrom("character_mood",).selectAll().execute(),).toHaveLength(0,);
+    expect(await db.selectFrom("character_relationships",).selectAll().execute(),).toHaveLength(0,);
+
+    await db.destroy();
+  });
 });
 
 // ── POST /vn-choices/:choiceId/dismiss ─────────────────────────────────────
