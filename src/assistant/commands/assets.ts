@@ -32,7 +32,7 @@ registerCommand("asset-list", async (args, ctx,): Promise<CommandResult> => {
 
   const worldId = ctx.activeChat?.worldId;
   if (worldId) {
-    const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, null,);
+    const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, ctx.userRole ?? null,);
     if (denied) {
       return { systemMessage: "**Access denied:** cannot list assets in this world.", handled: true, };
     }
@@ -40,7 +40,7 @@ registerCommand("asset-list", async (args, ctx,): Promise<CommandResult> => {
 
   const { data, total, } = await listAssets(db, {
     actorId: ctx.userId ?? null,
-    actorRole: null,
+    actorRole: ctx.userRole ?? null,
     pageSize: 50,
   },);
 
@@ -69,7 +69,7 @@ registerCommand("asset-preview", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: "**Assets unavailable:** command context missing database.", handled: true, };
   }
 
-  const allowed = await canAccessAsset(db, assetId, ctx.userId ?? null, null,);
+  const allowed = await canAccessAsset(db, assetId, ctx.userId ?? null, ctx.userRole ?? null,);
   if (!allowed) {
     return { systemMessage: "**Access denied:** cannot preview this asset.", handled: true, };
   }
@@ -109,7 +109,7 @@ registerCommand("asset-search", async (args, ctx,): Promise<CommandResult> => {
 
   const worldId = ctx.activeChat?.worldId;
   if (worldId) {
-    const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, null,);
+    const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, ctx.userRole ?? null,);
     if (denied) {
       return { systemMessage: "**Access denied:** cannot search assets in this world.", handled: true, };
     }
@@ -117,7 +117,7 @@ registerCommand("asset-search", async (args, ctx,): Promise<CommandResult> => {
 
   const hits = await searchAssets(db, query, {
     userId: ctx.userId ?? "",
-    userRole: null,
+    userRole: ctx.userRole ?? null,
   },);
 
   if (hits.length === 0) {
