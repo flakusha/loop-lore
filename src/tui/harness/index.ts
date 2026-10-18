@@ -21,12 +21,20 @@ export type { HarnessRunDetail, HarnessRunSummary, HarnessStats, } from "./types
 const DETAIL_TOP = 3;
 const RUN_LIMIT = 25;
 
+/** Construction options for {@link HarnessView}. */
+export interface HarnessViewOptions {
+  /** Bearer token for the harness API; omit to run anonymous. */
+  sessionToken?: string;
+  /** Return true when another overlay is stacked above this view and this view's
+   *  key handlers should be no-ops. */
+  isBlockedByOverlay?: () => boolean;
+}
+
 export function createHarnessView(
   screen: blessed.Widgets.Screen,
-  sessionToken: string | undefined,
-  options: { isBlockedByOverlay?: () => boolean } = {},
+  options: HarnessViewOptions = {},
 ): HarnessView {
-  return new HarnessView(screen, sessionToken, options,);
+  return new HarnessView(screen, options,);
 }
 
 export class HarnessView {
@@ -42,11 +50,10 @@ export class HarnessView {
 
   constructor(
     screen: blessed.Widgets.Screen,
-    sessionToken: string | undefined,
-    options: { isBlockedByOverlay?: () => boolean } = {},
+    options: HarnessViewOptions = {},
   ) {
     this.screen = screen;
-    this.sessionToken = sessionToken;
+    this.sessionToken = options.sessionToken;
     this.isBlockedByOverlay = options.isBlockedByOverlay ?? (() => false);
 
     this.box = blessed.box({

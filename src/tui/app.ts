@@ -118,7 +118,8 @@ export class TUIApp {
     this.assets = new AssetView(this.screen, { sessionToken, },);
 
     // ── Harness view (full-screen overlay, toggleable) ──────
-    this.harness = createHarnessView(this.screen, sessionToken, {
+    this.harness = createHarnessView(this.screen, {
+      sessionToken,
       // F3 shows this view; if another overlay is stacked on top, harness
       // up/down/enter must not fire beneath it.
       isBlockedByOverlay: () => this.chatPicker.isVisible() || this.models.isVisible(),
