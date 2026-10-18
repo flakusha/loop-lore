@@ -19,6 +19,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { redeemInvite, } from "./redeem";
+import { InviteUsedUpError, } from "./redeem-core";
 import type { RedeemOutcome, } from "./types";
 const CODE = "ONCEONLY";
 const CHAT = "chat1";
@@ -109,6 +110,17 @@ describe("a capped invite under concurrent redemption", () => {
     expect(outcomes.filter((o,) => o.ok).length,).toBe(2,);
     expect(await memberIds(),).toHaveLength(2,);
     expect(await uses(),).toBe(2,);
+  });
+
+  test("the guard signal is the error redeem-core catches", () => {
+    // `redeemInvite` throws this from inside the transaction to roll the
+    // participant insert back; `redeemInviteCode` maps exactly this class to
+    // `used_up` (asserted above). Pin the identity: a rename or a change of
+    // base class would make the catch fall through and rethrow a 500.
+    const guard = new InviteUsedUpError();
+
+    expect(guard,).toBeInstanceOf(Error,);
+    expect(guard.name,).toBe("InviteUsedUpError",);
   });
 
   test("an UNCAPPED invite still admits every racing redemption", async () => {
