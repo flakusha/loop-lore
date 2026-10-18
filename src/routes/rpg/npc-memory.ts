@@ -33,7 +33,6 @@ import type { HandlerOpts, } from "./types";
 const DEFAULT_LIMIT = 20;
 
 const memoryBody = t.Object({
-  worldId: t.String(),
   content: t.String({ minLength: 1, },),
   memoryType: t.Optional(t.Enum(MemoryType,),),
   importance: t.Optional(t.Integer({ minimum: 0, maximum: 100, },),),
@@ -46,7 +45,6 @@ const memoryBody = t.Object({
 },);
 
 const relationshipBody = t.Object({
-  worldId: t.String(),
   npcId: t.String(),
   targetId: t.String(),
   delta: t.Integer({ minimum: -100, maximum: 100, },),
@@ -142,6 +140,18 @@ export function npcMemoryRoutes({ database, }: HandlerOpts, prefix = "/api",): E
       const denied = await requireWorldOwner(database, ctx.params.worldId, userId, ctx.userRole,);
       if (denied) { return denied; }
       try {
+        // The owner gate covers `:worldId`, but the memory is addressed by id
+        // alone: without this scope check a caller who owns ANY world could
+        // pair their own `:worldId` with another world's `memoryId`.
+        const owned = await database
+          .selectFrom("npc_memories",)
+          .select("id",)
+          .where("id", "=", ctx.params.memoryId,)
+          .where("world_id", "=", ctx.params.worldId,)
+          .executeTakeFirst();
+
+        if (!owned) { return jsonError("Memory not found", 404,); }
+
         const memory = await reinforceMemory(database, ctx.params.memoryId, new Date(),);
         return jsonResponse(memory,);
       } catch (error) {
