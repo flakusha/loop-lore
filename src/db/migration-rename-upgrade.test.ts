@@ -316,8 +316,11 @@ describe("column rename upgrade path", () => {
 
   test("the rename is reversible: down restores the old column names", async () => {
     const { db, sqlite, migrator, } = await upgradeSeededDb();
-    const down = await migrator.migrateDown();
-    expect(down.error, "rolling 057 back should not error",).toBeUndefined();
+    // migrateTo(BEFORE_RENAME) rolls back every migration above 056 — including
+    // 057 itself — regardless of how many newer migrations exist. migrateDown()
+    // only rolls back the tail, which is no longer 057 once 059-063 land.
+    const down = await migrator.migrateTo(BEFORE_RENAME,);
+    expect(down.error, "rolling back to pre-rename should not error",).toBeUndefined();
 
     for (const [table, oldName,] of RENAMES) {
       const cols = columnsOf(sqlite, table,);
