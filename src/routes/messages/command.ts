@@ -35,6 +35,7 @@ import {
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { stripLeadingMention, } from "../../group-chat/mention-parser";
+import { resolveUserRole, } from "../../users/roles";
 import { toErrorMessage, uid, } from "../../utils";
 import { jsonResponse, } from "../http-utils";
 import { log, } from "./helpers";
@@ -128,20 +129,23 @@ export function commandActiveChat(
 }
 
 /**
- * Fetch the chat row and the actor's participant role concurrently — the two
- * reads every command execution path (slash dispatch and GM tool execution)
- * needs before deciding authority. Rejections degrade to undefined, matching
- * the fail-open contract of the GM path.
+ * Fetch the chat row, the actor's participant role, and the actor's site role
+ * concurrently — the reads every command execution path (slash dispatch and GM
+ * tool execution) needs before deciding authority. Rejections degrade to
+ * undefined/null, matching the fail-open contract of the GM path. `role` is the
+ * chat-participant tier (command gating); `userRole` is the `users.role` site
+ * role the shared world-access helpers consume, read from the database rather
+ * than from the caller so it cannot be forged.
  * @param database - Kysely instance
  * @param chatId - Target chat
  * @param actorId - Acting actor id
- * @returns the chat row and the actor's role, either undefined on a failed read
+ * @returns the chat row, the actor's chat role, and the actor's site role
  */
 export async function fetchChatAndRole(
   database: Kysely<DB>,
   chatId: string,
   actorId: string,
-): Promise<{ chat: CommandChatRow | undefined; role: ChatParticipantRole }> {
+): Promise<{ chat: CommandChatRow | undefined; role: ChatParticipantRole; userRole: string | null }> {
   const settled = await Promise.allSettled([
     // Caller role first, chat row second — order differs from the adjacent
     // transition-cut lookup so the shared builder boilerplate is not a clone.
@@ -156,11 +160,14 @@ export async function fetchChatAndRole(
       .select(["id", "mode", "type", "gm_config", "world_id",],)
       .where("id", "=", chatId,)
       .executeTakeFirst(),
+    resolveUserRole(database, actorId,),
   ],);
 
   const participant = settled[0]?.status === "fulfilled" ? settled[0].value : undefined;
   const chat = settled[1]?.status === "fulfilled" ? settled[1].value : undefined;
-  return { chat, role: participant?.role_in_chat ?? ChatParticipantRole.Member, };
+  // Fail closed: an unreadable site role stays null, which `can()` denies.
+  const userRole = settled[2]?.status === "fulfilled" ? settled[2].value : null;
+  return { chat, role: participant?.role_in_chat ?? ChatParticipantRole.Member, userRole, };
 }
 
 /**
@@ -229,7 +236,7 @@ export async function dispatchCommand(
 
   const context = settled[0]?.status === "fulfilled"
     ? settled[0].value
-    : { chat: undefined, role: ChatParticipantRole.Member, };
+    : { chat: undefined, role: ChatParticipantRole.Member, userRole: null, };
 
   const chatRecord = context.chat;
   const recentMessages = settled[1]?.status === "fulfilled" ? settled[1].value : [];
@@ -258,6 +265,7 @@ export async function dispatchCommand(
     db: database,
     config,
     userId: actorId,
+    userRole: context.userRole,
   };
 
   let result: CommandResult;

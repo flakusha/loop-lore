@@ -87,7 +87,7 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
   const noop: GmToolOutcome = { handled: false, };
 
   // Single shared helper serves both the GM gate and the command context.
-  const { chat: chatRecord, role: roleInChat, } = await fetchChatAndRole(database, chatId, actorId,);
+  const { chat: chatRecord, role: roleInChat, userRole, } = await fetchChatAndRole(database, chatId, actorId,);
   if (!chatRecord || !isGmModeChat(chatRecord.gm_config,)) { return noop; }
 
   let detection: GmToolDetection | null = null;
@@ -136,6 +136,7 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
     db: database,
     config,
     userId: actorId,
+    userRole,
   };
 
   const args = [...(mapping.prefixArgs ?? []), ...paramsToArgs(detection.params,),];

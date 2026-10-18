@@ -75,7 +75,7 @@ registerCommand("rag-search", async (args, ctx,): Promise<CommandResult> => {
   }
 
   const worldId = ctx.activeChat?.worldId ?? "default";
-  const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, null,);
+  const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, ctx.userRole ?? null,);
   if (denied) {
     return { systemMessage: "**Access denied:** cannot search documents in this world.", handled: true, };
   }
@@ -115,7 +115,7 @@ registerCommand("rag-ask", async (args, ctx,): Promise<CommandResult> => {
   }
 
   const worldId = ctx.activeChat?.worldId ?? "default";
-  const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, null,);
+  const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, ctx.userRole ?? null,);
   if (denied) {
     return { systemMessage: "**Access denied:** cannot search documents in this world.", handled: true, };
   }

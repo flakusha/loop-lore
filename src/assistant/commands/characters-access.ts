@@ -4,10 +4,12 @@
 /**
  * /char-list, /char-get — assistant read access to the caller's own characters.
  *
- * Characters have no world scope: the authoritative guard is `actors.owner_id`,
- * the same check `src/routes/characters.ts` applies before returning a card.
- * `CommandContext` carries no user role, so the check is strictly
- * owner-or-nothing — there is no admin bypass to inherit here.
+ * Characters have no world scope: the authoritative guard is `actors.owner_id`.
+ * `checkActorOwnership` (src/routes/actor-auth.ts), which the character routes
+ * use, also admits admins via `can(userRole, "admin.character")`. These two
+ * commands deliberately do NOT inherit that branch: `ctx.userRole` now exists
+ * but is unused here, and ownership stays a WHERE clause so another user's row
+ * is never fetched into this process. Narrower than the route, on purpose.
  */
 
 import { ActorType, } from "../../db/enums";

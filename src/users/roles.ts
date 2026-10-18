@@ -7,7 +7,9 @@
 // place for role validation, admin detection, and the authoritative role list,
 // used by the seeding pipeline and available to route/middleware code.
 
-import { UserRole, } from "../db/enums";
+import type { Kysely, } from "kysely";
+import { UserRole, UserStatus, } from "../db/enums";
+import type { DB, } from "../db/schema";
 
 /** All assignable user roles in display order (admin → least privileged). */
 export const ALL_ROLES: readonly UserRole[] = [
@@ -60,4 +62,40 @@ export const ELEVATED_ROLES: readonly UserRole[] = [
  */
 export function isElevatedRole(role: string | null | undefined,): boolean {
   return role != null && ELEVATED_ROLES.includes(role as UserRole,);
+}
+
+/**
+ * Resolve a caller's site role from the database, the way the HTTP layer does.
+ *
+ * Mirrors `verifyTokenContext` (`src/middleware/auth/authenticate.ts:97-106`):
+ * the live `users.role` column, NOT the JWT `role` claim, so a demotion takes
+ * effect on the next call rather than when the token expires. A missing row, a
+ * disabled/deactivated account, or an anonymous caller resolves to `null` —
+ * which every `can()` consumer treats as "no permissions", so an unresolved
+ * role is always the least-privileged answer.
+ *
+ * This only *resolves* the role; it does not decide anything with it. Callers
+ * hand the result to the same `can(userRole, "admin.world")` branch the world
+ * routes use, so the command and HTTP paths cannot drift apart.
+ * @param db - Database handle
+ * @param userId - Caller id, or null/undefined for an anonymous caller
+ * @returns The user's `users.role`, or null when it cannot be resolved
+ */
+export async function resolveUserRole(
+  db: Kysely<DB>,
+  userId: string | null | undefined,
+): Promise<string | null> {
+  if (!userId) { return null; }
+
+  const user = await db
+    .selectFrom("users",)
+    .select(["role", "status",],)
+    .where("id", "=", userId,)
+    .executeTakeFirst();
+
+  if (!user || user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
+    return null;
+  }
+
+  return user.role;
 }

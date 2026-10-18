@@ -65,10 +65,9 @@ function isTurnPriority(value: string | undefined,): value is TurnPriority {
 /**
  * Resolve the caller's story chat and current GM guidance, or the error
  * result to return. Authority mirrors the HTTP gm-guidance route
- * (`checkChatSettingsAccess`): chat creator, owner or GM participant. The
- * HTTP route additionally admits site admins via its `userRole` argument;
- * `CommandContext` carries no site role, so that branch is unreachable here
- * (fail-closed).
+ * (`checkChatSettingsAccess`): chat creator, owner or GM participant, plus
+ * site admins via `ctx.userRole` (the same `users.role` column the route
+ * resolves from auth). An unresolved role stays null and `can()` denies it.
  * @param ctx
  */
 async function loadGmTarget(ctx: CommandContext,): Promise<GmTarget | CommandResult> {
@@ -77,7 +76,7 @@ async function loadGmTarget(ctx: CommandContext,): Promise<GmTarget | CommandRes
   const userId = ctx.userId;
   if (!userId) { return message("**GM guidance unavailable:** command context missing user.",); }
 
-  const access = await checkChatSettingsAccess(db, ctx.chatId, userId, null,);
+  const access = await checkChatSettingsAccess(db, ctx.chatId, userId, ctx.userRole ?? null,);
   if (!access.ok) {
     return message(`**Permission denied:** ${access.error.message}.`,);
   }
@@ -243,7 +242,7 @@ registerCommand("skip", async (args, ctx,): Promise<CommandResult> => {
     actorId,
     mode: "advance",
     userId: target.userId,
-    userRole: null,
+    userRole: ctx.userRole ?? null,
   },);
 
   if (!result.ok) { return message(`**Skip failed:** ${result.message}`,); }

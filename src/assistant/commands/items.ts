@@ -31,7 +31,7 @@ registerCommand("item-list", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: "**Items unavailable:** command context missing database.", handled: true, };
   }
 
-  const owned = await checkWorldOwnership(db, worldId, ctx.userId ?? null, null,);
+  const owned = await checkWorldOwnership(db, worldId, ctx.userId ?? null, ctx.userRole ?? null,);
   if (!owned) {
     return { systemMessage: `World ${worldId} ${DENIED}.`, handled: true, };
   }
@@ -77,7 +77,7 @@ registerCommand("item-get", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: `Item ${itemId} ${DENIED}.`, handled: true, };
   }
 
-  const owned = await checkWorldOwnership(db, row.world_id, ctx.userId ?? null, null,);
+  const owned = await checkWorldOwnership(db, row.world_id, ctx.userId ?? null, ctx.userRole ?? null,);
   if (!owned) {
     return { systemMessage: `Item ${itemId} ${DENIED}.`, handled: true, };
   }
@@ -137,7 +137,7 @@ registerCommand("inventory", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: "**Items unavailable:** command context missing database.", handled: true, };
   }
 
-  const owned = await checkWorldOwnership(db, worldId, ctx.userId ?? null, null,);
+  const owned = await checkWorldOwnership(db, worldId, ctx.userId ?? null, ctx.userRole ?? null,);
   if (!owned) {
     return { systemMessage: `World ${worldId} ${DENIED}.`, handled: true, };
   }

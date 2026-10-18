@@ -26,7 +26,7 @@ registerCommand("loc-list", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: "**Locations unavailable:** command context missing database.", handled: true, };
   }
 
-  const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, null,);
+  const denied = await requireWorldAccess(db, worldId, ctx.userId ?? null, ctx.userRole ?? null,);
   if (denied) {
     return { systemMessage: `World ${worldId} not found or access denied.`, handled: true, };
   }
@@ -93,7 +93,7 @@ registerCommand("loc-get", async (args, ctx,): Promise<CommandResult> => {
     return { systemMessage: `Location ${locId} not found or access denied.`, handled: true, };
   }
 
-  const denied = await requireWorldAccess(db, loc.world_id, ctx.userId ?? null, null,);
+  const denied = await requireWorldAccess(db, loc.world_id, ctx.userId ?? null, ctx.userRole ?? null,);
   if (denied) {
     return { systemMessage: `Location ${locId} not found or access denied.`, handled: true, };
   }
