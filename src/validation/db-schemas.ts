@@ -3630,3 +3630,14 @@ export const VnChoiceSelectionsSchema = t.Object({
   selected_by: t.Optional(t.String(),),
   applied_at: t.Optional(t.String(),),
 },);
+
+// ── mesh_work_assignments ────────────────────────────────────────────
+export const MeshWorkAssignmentsSchema = t.Object({
+  affinity_key: t.String(),
+  workload_class: PeerWorkloadClassSchema,
+  peer_origin: t.String(),
+  assigned_at: t.Optional(t.String(),),
+  previous_origin: t.Optional(t.String(),),
+  released_at: t.Optional(t.String(),),
+  release_reason: t.Optional(t.String(),),
+},);

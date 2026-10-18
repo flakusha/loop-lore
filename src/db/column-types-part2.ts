@@ -26,6 +26,9 @@ export const PART_2: Record<string, Record<string, string>> = {
     "instance_kind": "PeerInstanceKind",
     "auth_mode": "PeerAuthMode",
   },
+  "MeshWorkAssignments": {
+    "workload_class": "PeerWorkloadClass",
+  },
   "Messages": {
     "content_encoding": "ContentEncoding",
     "content_format": "MessageContentFormat",
