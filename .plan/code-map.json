@@ -12801,6 +12801,10 @@
   ],
   "src/config/schema/federation.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-federation-offload-quotas.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot.md"
     },
@@ -50890,6 +50894,10 @@
     }
   ],
   "src/transport/peer-table.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-federation-offload-quotas.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on.md"

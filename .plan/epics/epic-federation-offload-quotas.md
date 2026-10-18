@@ -108,7 +108,27 @@ own hardware. Three concrete failures follow from that:
 ### 1. Instance registry / discovery
 
 The registry is **the existing `mesh_peers` table plus a forward migration**.
-No new peer table, no second registry, no parallel discovery path.
+This epic adds no fifth peer table. It does *not* get to pretend there are not
+already four peer representations, so they are named here explicitly:
+
+| # | Representation | Lifetime | Owns |
+| --- | --- | --- | --- |
+| 1 | `config.federation.peers[]` (`src/config/schema/federation.ts:15`) | config file | Admin **trust** — which origins are `trusted`, plus per-peer CA/SPKI overrides |
+| 2 | `config.federation.seeds[]` (`src/config/schema/federation.ts:45`) | config file | Bootstrap origins to learn peers *from* |
+| 3 | `mesh_peers` table (`src/db/schema-core.ts:1156`) | database | Content-plane runtime row: `state`, `capabilities`, `capacity_bytes` |
+| 4 | `PeerEntry[]` in `src/transport/peer-table.ts:23` | in-memory, TTL | Liveness only: heartbeat, eviction, replay window |
+
+**Unresolved, and deliberately left to the implementing session:** (1) and (3)
+can disagree — config says `trusted`, the row says `pending` — and today nothing
+reconciles them; `runResyncPass` only *touches* rows it already knows. (2) and
+(4) overlap: `peer-table.ts` is seeded from `seeds` and evicts on heartbeat TTL,
+while the gossip pass re-adds from the same list, so a peer can oscillate
+between "evicted" and "re-added". This epic does **not** attempt to merge the
+four. It attaches workload metadata to (3), treats (1) as the precedence rule
+for `workload_trust` (an admin who did not list the origin in
+`federation.peers` gets no workload grant, even if the row says `trusted`), and
+reads (4) only for liveness. Consolidating the four is a separate change;
+naming it here is the correct move rather than silently widening this epic.
 
 | Column | Type | Purpose |
 | --- | --- | --- |
@@ -420,7 +440,7 @@ that is a follow-up decision, deliberately not taken here.
 | Component registration | a `src/frontend/alpine/admin-federation.ts` exporting a plain object spread into `adminPage()`, exactly like `admin-audit.ts` |
 | Data fetch | `apiFetch` (`src/frontend/alpine/htmx.ts:30`) over `feFetch` (`src/frontend/fe-fetch.ts:45`) |
 | Server-rendered response validation | `parseOr(Schema, …, EMPTY)` against `src/validation/schemas/responses` |
-| Live refresh | interval polling, matching the existing admin pattern (`admin.ts:80`, 30s) — **not** a new SSE channel |
+| Live refresh | interval polling, matching the existing admin pattern (`src/frontend/alpine/admin.ts:80`, 30s) — **not** a new SSE channel |
 | REST routes | `src/routes/admin/*.ts` with `withPermissionAuth(ctx, "admin.system", …)` and `{ 200, 403 }` response schemas |
 | Audit entries | direct insert into `log_entries`, same column set as `src/routes/admin/users.ts:169` |
 | Toast / error surfacing | `hx-target-error="#toast-container"` |
@@ -619,6 +639,11 @@ deployment changes nothing:
 | `.plan/epics/epic-error-envelope.md` | **blocked-by** | Quota rejections must emit namespaced `error_code` strings peers can route on. |
 | `.plan/epics/epic-database-backup-recovery.md` | **overlaps** | Peer-accepted assets change what a restore contains; §4 constrains storage so no second backup path is needed. |
 | `.plan/epics/epic-analytics-observability.md` | **sibling** | Dashboard conventions; quota metrics are operational, not product analytics. |
+| `.plan/tickets/TASK-federation-interconnect-peer-config.md` | **blocked-by (done)** | Landed the `federation` config section that owns admin trust and TLS overrides — the *other* half of the four peer representations named in §1. Its acceptance criteria define the per-peer trust shape this epic's `workload_trust` grant sits on top of. |
+| `.plan/tickets/TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtls.md` | **blocked-by (open)** | Owns per-peer CA pinning and optional mTLS. This epic's same-host rule *skips* the SPKI pre-flight for loopback origins and requires a host-local token instead — that exemption must be reconciled with this ticket's trust model before shipping, and the two must not each assume the other covered it. |
+| `.plan/tickets/TASK-federation-peer-audit-probe-zero-trust-cross-instance-verifi.md` | **overlaps** | Its zero-trust cross-instance probe is the natural home for the negative cases §6 requires (a peer claiming capabilities it cannot serve, exceeding an advertised budget). Reusing it beats a second probe. |
+| `.plan/tickets/TASK-federation-defederation-admin-operations-peer-state-block-al.md` | **overlaps** | Block/allow and peer-state admin operations. A `suspended` or blocked peer must be excluded from routing, not just from content push — this epic's routing filter has to honour that state. |
+| `.plan/tickets/TASK-federation-admin-ui-for-follows-blocklists-key-rotation.md` | **sibling** | The existing federation admin panel. This epic adds a *tab* to that panel rather than a second federation surface in the admin shell. |
 | `.plan/matrix-federation-swarm.md` | **context** | The scored feature matrix behind `epic-federation-swarm-sync.md`; this epic is the workload-planning axis that matrix left open. |
 | `.plan/matrix-federation-decisions.md` | **context** | Records that identity, authorization, and inbound moderation for federation are open decisions. This epic assumes a peer is already trusted and does not re-open them. |
 | `.plan/matrix-protocol-chat-group-integration.md` | **context** | Establishes that chat-group work rides a protocol seam; the workload wire follows the same shape. |
