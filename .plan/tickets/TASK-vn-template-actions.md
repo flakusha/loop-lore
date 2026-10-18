@@ -14,9 +14,10 @@ See `## Summary`, `## Pre-Configured Templates` (the catalog), `## Design`
 
 
 **Priority:** Medium
-**Status:** Done
+**Status:** In Progress
 **Status Note:** (2026-08-23) marked Done. Reconciled 2026-10-09: the template arrays and trigger list are real, but no renderer module imported them — `scene-renderer/`, `typewriter.ts`, `transition-engine.ts`, and `chat.html` all had zero references. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: `render-scene.ts:202` now calls `applyTemplateOverrides`, so the scene side is wired; dialogue templates, `evaluateTriggers`, and the picker UI remain open. The closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`: `evaluateTriggers` is now wired too — `scene-renderer/render.ts:11` imports it and calls it on location change, so transition triggers auto-fire. Remaining open: dialogue-template consumption in `typewriter.ts`, template override, chaining, and the GM picker UI. Status line corrected Done → In Progress to match the notes above.
+**Status Note (2026-10-18, vn-epic-completion):** Header set to the truthful In Progress per the 2026-10-18 review adjudication. Git issue 5cf3d0c was re-opened to match, but the shared-registry enforcement (any agent's `giwt sync --fix` auto-closes a done-index ticket's open issue as stale) re-closed it within minutes — the tracking system treats the closed registry issue as authoritative for done-ness, so `plan:sync` reports this ticket as ".md status stale" until the registry is re-opened deliberately at review. This branch implements the remaining slice — see the epic's Remaining Scope section.
 **Epic:** epic-visual-novel-mode
 **Tags:** vn, templates, scenes, dialogue, pre-configured, ux
 **Effort:** Med
