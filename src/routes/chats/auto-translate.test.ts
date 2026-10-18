@@ -33,9 +33,14 @@ import { autoTranslateRoutes, } from "./auto-translate";
 const OWNER_ID = randomUUID();
 const OUTSIDER_ID = randomUUID();
 const CHAT_ID = randomUUID();
-const GENERAL_PROVIDER = "at-test-general";
+// Provider names are unique per RUN: the registry is process-global and
+// registerProvider() is idempotent (registry.ts:36-38), so a fixed name lets a
+// sibling file's registration silently win and these stubs never install.
+// Teardown unregisters each in `finally`.
+const RUN_ID = randomUUID().slice(0, 8,);
+const GENERAL_PROVIDER = `at-test-general-${RUN_ID}`;
 const GENERAL_MODEL = "at-general-model";
-const TRANSLATOR_PROVIDER = "at-test-translator";
+const TRANSLATOR_PROVIDER = `at-test-translator-${RUN_ID}`;
 const TRANSLATOR_MODEL = "at-translator-model";
 
 /**

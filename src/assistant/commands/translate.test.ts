@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { beforeAll, describe, expect, it, } from "bun:test";
+import { randomUUID, } from "node:crypto";
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import type { Config, } from "../../config/schema";
@@ -108,9 +109,14 @@ describe("translate command", () => {
   // `translator` role. Driven through the REAL registered handler so the
   // command wiring itself is covered, not just runTranslate's deps.
   describe("translator role wiring (registered handler)", () => {
-    const GENERAL_PROVIDER = "tl-cmd-general";
+    // Provider names are unique per RUN: the registry is process-global and
+    // registerProvider() is idempotent (registry.ts:36-38) — a fixed name
+    // would let a sibling file's registration silently win, and these stubs
+    // would never be installed. Teardown unregisters each in `finally`.
+    const RUN_ID = randomUUID().slice(0, 8,);
+    const GENERAL_PROVIDER = `tl-cmd-general-${RUN_ID}`;
     const GENERAL_MODEL = "tl-general-model";
-    const TRANSLATOR_PROVIDER = "tl-cmd-translator";
+    const TRANSLATOR_PROVIDER = `tl-cmd-translator-${RUN_ID}`;
     const TRANSLATOR_MODEL = "tl-translator-model";
 
     /** Stub provider recording the model it was asked to use. */
