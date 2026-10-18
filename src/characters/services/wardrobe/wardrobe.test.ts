@@ -387,3 +387,78 @@ describe("Outfit-scoped regen isolation", () => {
     expect(await avatarService.getAvatar(armorJoy,),).toBeDefined();
   });
 });
+
+describe("outfit_bindings validation (JSON column, no FK)", () => {
+  let db: Kysely<DB>;
+  let actorId: string;
+  let worldId: string;
+  let locationId: string;
+  const robesId = "bindval-robes-001";
+
+  beforeAll(async () => {
+    const testDb = await createTestDb();
+    db = testDb.db;
+    ({ actorId, } = await createTestActors(db, "wardrobe-bindval-actor",));
+    worldId = await createTestWorld(db, "wardrobe-bindval-world",);
+    locationId = await createTestLocation(db, worldId, "wardrobe-bindval-loc",);
+
+    const now = new Date().toISOString();
+    await db.insertInto("wardrobe_items",).values({
+      id: robesId,
+      actor_id: actorId,
+      world_id: null,
+      name: "Robes",
+      descriptor: "soft robes",
+      tags: "[]",
+      sort_order: 0,
+      created_at: now,
+      updated_at: now,
+    },).execute();
+
+    await db.updateTable("actors",).set({ default_outfit: robesId, },).where("id", "=", actorId,).execute();
+  },);
+
+  async function setBindings(bindings: string,): Promise<void> {
+    await db.deleteFrom("world_avatar_config",).where("world_id", "=", worldId,).execute();
+    await db.insertInto("world_avatar_config",).values({
+      id: "wac-bindval",
+      world_id: worldId,
+      actor_id: actorId,
+      selection_rule_override: null,
+      weights_override: null,
+      outfit_bindings: bindings,
+      created_at: "2026-10-18T00:00:00.000Z",
+      updated_at: "2026-10-18T00:00:00.000Z",
+    },).execute();
+  }
+
+  it("non-string binding value degrades to the default outfit, never returned verbatim", async () => {
+    // outfit_bindings has no FK and no CHECK — a number is storable, and
+    // returning it as outfitId would dangle every downstream lookup.
+    await setBindings(JSON.stringify({ [locationId]: 42, },),);
+    const resolved = await resolveOutfit(db, { actorId, worldId, locationId, },);
+    expect(resolved.outfitId,).toBe(robesId,);
+    expect(resolved.source,).toBe("default",);
+  });
+
+  it("dangling outfit id degrades to the default outfit", async () => {
+    await setBindings(JSON.stringify({ [locationId]: "no-such-outfit", },),);
+    const resolved = await resolveOutfit(db, { actorId, worldId, locationId, },);
+    expect(resolved.outfitId,).toBe(robesId,);
+    expect(resolved.source,).toBe("default",);
+  });
+
+  it("malformed bindings JSON degrades cleanly to the default outfit", async () => {
+    await setBindings("{not json",);
+    const resolved = await resolveOutfit(db, { actorId, worldId, locationId, },);
+    expect(resolved.outfitId,).toBe(robesId,);
+    expect(resolved.source,).toBe("default",);
+  });
+
+  it("a valid rule still wins over the default", async () => {
+    await setBindings(JSON.stringify({ [locationId]: robesId, },),);
+    const resolved = await resolveOutfit(db, { actorId, worldId, locationId, },);
+    expect(resolved.outfitId,).toBe(robesId,);
+    expect(resolved.source,).toBe("location_rule",);
+  });
+});
