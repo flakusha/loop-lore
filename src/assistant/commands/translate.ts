@@ -13,6 +13,7 @@
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { resolveTranslatorRole, } from "../../generation/translator-role";
+import { getLogger, } from "../../logger";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
 /** Known language identifiers with display names. */
@@ -168,7 +169,15 @@ async function runTranslateCommand(args: string[], ctx: CommandContext,): Promis
       complete: (req,) => resolved.provider.complete(req,),
       model: resolved.resolvedModel,
     },);
-  } catch {
+  } catch (error) {
+    // A translator role naming an unregistered provider must not silently
+    // translate on some other model — degrade, but say why.
+    getLogger()
+      .child({ module: "translate", },)
+      .warn("Translator provider unavailable — falling back to local heuristics", {
+        error: error instanceof Error ? error.message : String(error,),
+      },);
+
     return runTranslate(args, ctx, {},);
   }
 }
