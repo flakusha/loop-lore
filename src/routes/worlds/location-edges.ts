@@ -216,15 +216,18 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
         const worldId = ctx.params.worldId as string;
 
         const isPrivileged = await isOwnerOrAdmin(database, worldId, userId, userRole,);
-        const hint = typeof ctx.query?.actorId === "string" ? (ctx.query.actorId as string) : null;
+        const hint = typeof ctx.query?.actorId === "string" ? ctx.query.actorId : null;
         let actorId: string | null = null;
         if (!isPrivileged && userId) {
+          // Non-privileged callers always get their own actor — never the
+          // client-supplied hint — to prevent fog-of-war information leaks.
           try {
-            actorId = hint ?? await new EdgeTravelService(database,).resolveActor(userId, null,);
+            actorId = await new EdgeTravelService(database,).resolveActor(userId, null,);
           } catch {
             actorId = null;
           }
         } else {
+          // Privileged callers may query any actor's discovery state.
           actorId = hint;
         }
 
