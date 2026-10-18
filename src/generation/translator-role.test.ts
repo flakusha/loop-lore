@@ -7,8 +7,8 @@
  * These pin CONSUMER-VISIBLE resolution: which provider/model a translation
  * call would actually use, given config and DB state.
  */
-import type { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { randomUUID, } from "node:crypto";
 
 import type { Kysely, } from "kysely";
 import { setModelRoleOverride, } from "../admin/model-roles";
@@ -16,7 +16,7 @@ import type { Config, } from "../config/schema";
 import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
-import { createTestDb, } from "../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { registerProvider, unregisterProvider, } from "./providers/registry";
 import type { LLMProvider, } from "./providers/types";
 import { resolveTranslatorRole, } from "./translator-role";
@@ -33,9 +33,14 @@ function makeProvider(): LLMProvider {
   } as unknown as LLMProvider;
 }
 
-const GENERAL_PROVIDER = "translator-test-general";
+// Provider names are unique per RUN: the registry is process-global and
+// registerProvider() is idempotent (registry.ts:36-38), so a fixed name lets a
+// sibling file's registration silently win and these stubs never install.
+// Teardown unregisters in `finally`.
+const RUN_ID = randomUUID().slice(0, 8,);
+const GENERAL_PROVIDER = `translator-test-general-${RUN_ID}`;
 const GENERAL_MODEL = "general-model";
-const TRANSLATOR_PROVIDER = "translator-test-translator";
+const TRANSLATOR_PROVIDER = `translator-test-translator-${RUN_ID}`;
 const TRANSLATOR_MODEL = "translator-model";
 
 /** General model is what a translator-free install must resolve to. */
@@ -51,17 +56,19 @@ function makeConfig(modelRoles: Record<string, unknown> = {},): Config {
 
 describe("resolveTranslatorRole", () => {
   let db: Kysely<DB>;
-  let sqlite: Database;
+  let fixture: TestDb;
 
   beforeEach(async () => {
     createLogger({ level: "error", },);
-    const testDb = await createTestDb();
-    db = testDb.db;
-    sqlite = testDb.sqlite;
+    fixture = await createTestDb();
+    db = fixture.db;
   },);
 
-  afterEach(() => {
-    sqlite.close();
+  afterEach(async () => {
+    // destroyTestDb, not a bare sqlite.close(): it also clears a stale
+    // process-global override that would otherwise hand a closed handle to
+    // every sibling file (src/test-utils/create-test-db.ts:63-82).
+    await destroyTestDb(fixture,);
   },);
 
   // (a) unset translator config resolves to the general model
