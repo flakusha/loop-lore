@@ -16031,6 +16031,31 @@
     "title": "Rarity Extensions",
     "type": "EPIC"
   },
+  "EPIC-REACTIVE-ACTOR-APPEARANCE": {
+    "hash": "pending",
+    "extid": "EPIC-REACTIVE-ACTOR-APPEARANCE",
+    "type": "EPIC",
+    "title": "Reactive Actor Appearance",
+    "label": "epic",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "avatar",
+      "wardrobe",
+      "outfit",
+      "pose",
+      "framing",
+      "reactive",
+      "narrative-extraction",
+      "hooks",
+      "per-message",
+      "selection",
+      "identity-lock",
+      "img2img"
+    ],
+    "source": ".plan/tickets/epic-reactive-actor-appearance.md",
+    "status": "Not Started"
+  },
   "EPIC-REALTIME-TRANSPORTS": {
     "epic": "",
     "extid": "EPIC-REALTIME-TRANSPORTS",
@@ -25574,6 +25599,19 @@
     "title": "API Routes Implementation",
     "type": "TASK"
   },
+  "TASK-APPEARANCE-EDIT-VS-GENERATION-STRATEGY-SELECTOR": {
+    "hash": "e47fa31",
+    "git_issue": "e47fa31",
+    "extid": "TASK-APPEARANCE-EDIT-VS-GENERATION-STRATEGY-SELECTOR",
+    "type": "TASK",
+    "title": "Appearance edit-vs-generation strategy selector",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-appearance-edit-vs-generation-strategy-selector.md",
+    "status": "Not Started"
+  },
   "TASK-APPLY-JSDOC-ACROSS-SRC-TO-SATISFY-JSDOC-REQUIRE-PARAM-RETURN": {
     "epic": "",
     "extid": "TASK-APPLY-JSDOC-ACROSS-SRC-TO-SATISFY-JSDOC-REQUIRE-PARAM-RETURN",
@@ -27438,6 +27476,45 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin.md",
+    "status": "Not Started"
+  },
+  "TASK-AVATAR-FRAMING-COLUMN-MIGRATION-FUTURE": {
+    "hash": "2b7ab4e",
+    "git_issue": "2b7ab4e",
+    "extid": "TASK-AVATAR-FRAMING-COLUMN-MIGRATION-FUTURE",
+    "type": "TASK",
+    "title": "Framing as a migration column (future — supersedes the JSON tag)",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-framing-column-migration-future.md",
+    "status": "Postponed"
+  },
+  "TASK-AVATAR-FRAMING-TAG-MEMBER": {
+    "hash": "6813314",
+    "git_issue": "6813314",
+    "extid": "TASK-AVATAR-FRAMING-TAG-MEMBER",
+    "type": "TASK",
+    "title": "Framing discriminator as an `AvatarTagType` member",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-framing-tag-member.md",
+    "status": "Not Started"
+  },
+  "TASK-AVATAR-POSE-VIA-ACTION-TAG": {
+    "hash": "843a4b6",
+    "git_issue": "843a4b6",
+    "extid": "TASK-AVATAR-POSE-VIA-ACTION-TAG",
+    "type": "TASK",
+    "title": "Pose axis via `AvatarTagType.Action`",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md",
     "status": "Not Started"
   },
   "TASK-AVATAR-TEMPLATE-EXAMPLE-DOCUMENTS-OUTFITS-DEFAULT-OUTFIT-THA": {
@@ -30172,6 +30249,19 @@
     ],
     "title": "Chat Autorenaming",
     "type": "TASK"
+  },
+  "TASK-CHAT-AVATAR-RESOLVER-OUTFIT-AWARE": {
+    "hash": "78d2380",
+    "git_issue": "78d2380",
+    "extid": "TASK-CHAT-AVATAR-RESOLVER-OUTFIT-AWARE",
+    "type": "TASK",
+    "title": "Chat avatar resolver outfit-aware (fix the dead read path)",
+    "label": "task",
+    "priority": "critical",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md",
+    "status": "in_progress"
   },
   "TASK-CHAT-BACKGROUNDS-LOCATION-SYNC": {
     "epic": "",
@@ -36281,6 +36371,19 @@
     "title": "# TASK-epic17-encryption-e2e-expansion",
     "type": "TASK"
   },
+  "TASK-EQUIP-BINDS-OUTFIT-WRITE-SIDE": {
+    "hash": "963e154",
+    "git_issue": "963e154",
+    "extid": "TASK-EQUIP-BINDS-OUTFIT-WRITE-SIDE",
+    "type": "TASK",
+    "title": "Equip binds outfit (write side)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md",
+    "status": "Not Started"
+  },
   "TASK-EQUIPMENT-MARKET-DEMAND-FEEDBACK": {
     "epic": "",
     "extid": "TASK-EQUIPMENT-MARKET-DEMAND-FEEDBACK",
@@ -39249,6 +39352,19 @@
     "title": "Graph view of plan links to chats, stories, RAG items, assets",
     "type": "TASK"
   },
+  "TASK-GROUND-UP-SCENE-GENERATION-WITH-BACKGROUND": {
+    "hash": "f6b9bd0",
+    "git_issue": "f6b9bd0",
+    "extid": "TASK-GROUND-UP-SCENE-GENERATION-WITH-BACKGROUND",
+    "type": "TASK",
+    "title": "Ground-up scene generation with background",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md",
+    "status": "Blocked"
+  },
   "TASK-GROUP-CHAT-FRONTEND-VIEWER": {
     "hash": "8e3fdc1",
     "git_issue": "8e3fdc1",
@@ -40066,6 +40182,19 @@
     "title": "Health Bar Component",
     "type": "TASK"
   },
+  "TASK-HELD-ITEM-WHOLE-OUTFIT-VARIANT-AXIS": {
+    "hash": "ccce847",
+    "git_issue": "ccce847",
+    "extid": "TASK-HELD-ITEM-WHOLE-OUTFIT-VARIANT-AXIS",
+    "type": "TASK",
+    "title": "Held item as a whole-outfit variant axis",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md",
+    "status": "Not Started"
+  },
   "TASK-HELP-FULL-COMMAND-LIST-WITH-DESCRIPTIONS": {
     "epic": "",
     "extid": "TASK-HELP-FULL-COMMAND-LIST-WITH-DESCRIPTIONS",
@@ -40512,6 +40641,19 @@
     "title": "i18n Template String Replacement",
     "type": "TASK"
   },
+  "TASK-IDENTITY-LOCK-SEED-NEGATIVE-PROMPT-AND-ANCHOR": {
+    "hash": "603e552",
+    "git_issue": "603e552",
+    "extid": "TASK-IDENTITY-LOCK-SEED-NEGATIVE-PROMPT-AND-ANCHOR",
+    "type": "TASK",
+    "title": "Identity lock — seed + negativePrompt + non-degenerate anchor",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md",
+    "status": "Not Started"
+  },
   "TASK-ILLUSTRATED-BOOK-REFERENCE-PASS": {
     "hash": "175160e",
     "extid": "TASK-ILLUSTRATED-BOOK-REFERENCE-PASS",
@@ -40658,6 +40800,19 @@
     "source": ".plan/tickets/TASK-image-edit-workflows-dedicated.md",
     "status": "Not Started",
     "git_issue": "439ff25"
+  },
+  "TASK-IMG2IMG-INIT-IMAGE-PLUMBING": {
+    "hash": "e45d155",
+    "git_issue": "e45d155",
+    "extid": "TASK-IMG2IMG-INIT-IMAGE-PLUMBING",
+    "type": "TASK",
+    "title": "img2img init-image plumbing (prerequisite for the edit rung)",
+    "label": "task",
+    "priority": "critical",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md",
+    "status": "Blocked"
   },
   "TASK-IMMERSION-PRESENTATION": {
     "epic": "epic-immersion-presentation",
@@ -43913,6 +44068,19 @@
     "title": "Messages & Message Pipeline",
     "type": "TASK"
   },
+  "TASK-MESSAGES-OUTFIT-ID-COLUMN": {
+    "hash": "c5c7b08",
+    "git_issue": "c5c7b08",
+    "extid": "TASK-MESSAGES-OUTFIT-ID-COLUMN",
+    "type": "TASK",
+    "title": "`messages.outfit_id` column",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-messages-outfit-id-column.md",
+    "status": "Not Started"
+  },
   "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER": {
     "epic": "epic-middleware-request-lifecycle",
     "extid": "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER",
@@ -46012,6 +46180,71 @@
     "tags": [],
     "title": "Outbound fetch HTTP/2 and HTTP/3 protocol hints for providers",
     "type": "TASK"
+  },
+  "TASK-OUTFIT-CHANGE-AUX-TASK-AND-TYPEBOX-SCHEMA": {
+    "hash": "446a8d5",
+    "git_issue": "446a8d5",
+    "extid": "TASK-OUTFIT-CHANGE-AUX-TASK-AND-TYPEBOX-SCHEMA",
+    "type": "TASK",
+    "title": "Outfit-change AUX task and TypeBox schema",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md",
+    "status": "Not Started"
+  },
+  "TASK-OUTFIT-CHANGE-GATE-INITIATOR-MAPPING": {
+    "hash": "0e547da",
+    "git_issue": "0e547da",
+    "extid": "TASK-OUTFIT-CHANGE-GATE-INITIATOR-MAPPING",
+    "type": "TASK",
+    "title": "Outfit-change gate initiator mapping",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-outfit-change-gate-initiator-mapping.md",
+    "status": "Not Started"
+  },
+  "TASK-OUTFIT-CHANGE-HOOK": {
+    "hash": "08ed4c6",
+    "git_issue": "08ed4c6",
+    "extid": "TASK-OUTFIT-CHANGE-HOOK",
+    "type": "TASK",
+    "title": "Outfit-change hook",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-outfit-change-hook.md",
+    "status": "Not Started"
+  },
+  "TASK-OUTFIT-CHANGE-MULTI-ACTOR-NAME-RESOLUTION": {
+    "hash": "6777474",
+    "git_issue": "6777474",
+    "extid": "TASK-OUTFIT-CHANGE-MULTI-ACTOR-NAME-RESOLUTION",
+    "type": "TASK",
+    "title": "Multi-actor member-set name resolution",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md",
+    "status": "Not Started"
+  },
+  "TASK-OUTFIT-NARRATIVE-EXTRACTOR-REGEX-PREFILTER": {
+    "hash": "c6cc76a",
+    "git_issue": "c6cc76a",
+    "extid": "TASK-OUTFIT-NARRATIVE-EXTRACTOR-REGEX-PREFILTER",
+    "type": "TASK",
+    "title": "Outfit narrative extractor — regex prefilter",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md",
+    "status": "Not Started"
   },
   "TASK-OUTFIT-SCOPED-GENERATION-JOBS-AND-PROMPT-SLOT": {
     "epic": "epic-wardrobe-avatar-variants",
@@ -52464,6 +52697,19 @@
     "title": "Stable Stored Chat Key (Future)",
     "type": "TASK"
   },
+  "TASK-STAGE-DIRECTIVES-SWAP-ARM": {
+    "hash": "adf4a18",
+    "git_issue": "adf4a18",
+    "extid": "TASK-STAGE-DIRECTIVES-SWAP-ARM",
+    "type": "TASK",
+    "title": "`swap` stage-directive arm + widened payload",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-stage-directives-swap-arm.md",
+    "status": "Not Started"
+  },
   "TASK-STATE-MANAGEMENT-MODE-TRANSITIONS": {
     "epic": "epic-rpg-mechanics",
     "extid": "TASK-STATE-MANAGEMENT-MODE-TRANSITIONS",
@@ -54909,6 +55155,19 @@
     ],
     "title": "Visual Novel Mode — Branching Choices & Relationship Impact",
     "type": "TASK"
+  },
+  "TASK-VN-CAST-SERVER-PRODUCER": {
+    "hash": "ca40acf",
+    "git_issue": "ca40acf",
+    "extid": "TASK-VN-CAST-SERVER-PRODUCER",
+    "type": "TASK",
+    "title": "VN cast server producer",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-cast-server-producer.md",
+    "status": "Not Started"
   },
   "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT": {
     "epic": "epic-avatar-alpha-vn-layering",
