@@ -15549,6 +15549,10 @@
       "source": ".plan/tickets/TASK-nsfw-species-mechanics.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-specify-content-warnings-write-the-frontend-contract.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/nsfw-integration.md"
     }
@@ -33335,6 +33339,10 @@
       "source": ".plan/tickets/TASK-harness-sync-ledger-v2.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-specify-content-warnings-write-the-frontend-contract.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/nsfw-integration.md"
     }
@@ -33949,6 +33957,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c4-inbound-federated-content-verdict-notices.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-task-037-s-overstated-resolution-no-contentwarning-t.md"
     },
     {
       "kind": "ticket",
@@ -45403,6 +45415,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-037.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-task-037-s-overstated-resolution-no-contentwarning-t.md"
     }
   ],
   "src/rpg/fantasies/service/fulfill.ts": [
@@ -45413,6 +45429,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-041.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-task-037-s-overstated-resolution-no-contentwarning-t.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-specify-content-warnings-write-the-frontend-contract.md"
     }
   ],
   "src/rpg/fantasies/service/index.test.ts": [
@@ -45439,6 +45463,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-037.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-task-037-s-overstated-resolution-no-contentwarning-t.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-specify-content-warnings-write-the-frontend-contract.md"
     }
   ],
   "src/rpg/fantasy.ts": [
@@ -45449,6 +45481,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-missing-rpg-module-barrels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-correct-task-037-s-overstated-resolution-no-contentwarning-t.md"
     },
     {
       "kind": "ticket",
