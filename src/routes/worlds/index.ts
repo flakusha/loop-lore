@@ -18,6 +18,7 @@ import { storageRoutes, } from "./storage-routes";
 import { timelinesRoutes, } from "./timelines";
 import { travelStatusRoutes, } from "./travel-status";
 import type { HandleOpts, } from "./types";
+import { worldConditionsRoutes, } from "./world-conditions-routes";
 import { worldLicenseRoutes, } from "./world-license-routes";
 import { worldStreamRoutes, } from "./world-stream";
 import { worldRoutes, } from "./worlds-routes";
@@ -46,5 +47,6 @@ export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
     .use(storageRoutes(opts, prefix,),)
     .use(worldLicenseRoutes(opts, prefix,),)
     .use(mapRoutes(opts, prefix,),)
-    .use(mapZoneRoutes(opts, prefix,),);
+    .use(mapZoneRoutes(opts, prefix,),)
+    .use(worldConditionsRoutes(opts, prefix,),);
 }
