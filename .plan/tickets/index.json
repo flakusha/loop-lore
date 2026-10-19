@@ -9621,6 +9621,19 @@
     "title": "Turn state blind read-modify-write — lost updates on concurrent turns",
     "type": "BUG"
   },
+  "BUG-TWO-GATES-READ-AGE-GATE-ACCEPTED-AT-UNDER-DIVERGENT-CONFIG-K": {
+    "hash": "b5ecf3f",
+    "git_issue": "b5ecf3f",
+    "extid": "BUG-TWO-GATES-READ-AGE-GATE-ACCEPTED-AT-UNDER-DIVERGENT-CONFIG-K",
+    "type": "BUG",
+    "title": "Two gates read age_gate_accepted_at under divergent config keys with no single source of truth",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-frontend-age-gate",
+    "tags": [],
+    "source": ".plan/tickets/BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k.md",
+    "status": "Not Started"
+  },
   "BUG-TYPE-SCANALLPROVIDERS-DB-PARAM-AS-KYSELY-DB-INSTEAD-OF-UNKNO": {
     "epic": "",
     "extid": "BUG-TYPE-SCANALLPROVIDERS-DB-PARAM-AS-KYSELY-DB-INSTEAD-OF-UNKNO",
@@ -32875,6 +32888,23 @@
     "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md",
     "status": "Not Started"
   },
+  "TASK-CORRECT-TASK-037-S-OVERSTATED-RESOLUTION-NO-CONTENTWARNING-T": {
+    "hash": "0c1adb7",
+    "git_issue": "0c1adb7",
+    "extid": "TASK-CORRECT-TASK-037-S-OVERSTATED-RESOLUTION-NO-CONTENTWARNING-T",
+    "type": "TASK",
+    "title": "Correct TASK-037's overstated Resolution: no ContentWarning type, no content_warning event",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-nsfw-game-mechanics",
+    "tags": [
+      "plan",
+      "docs",
+      "nsfw"
+    ],
+    "source": ".plan/tickets/TASK-correct-task-037-s-overstated-resolution-no-contentwarning-t.md",
+    "status": "Not Started"
+  },
   "TASK-CORS-MIDDLEWARE": {
     "epic": "epic-headless-alternative-frontends",
     "extid": "TASK-CORS-MIDDLEWARE",
@@ -52212,6 +52242,24 @@
       "giwt"
     ],
     "source": ".plan/tickets/TASK-space-aware-admin-tasks-filter-move-item-derives-link-op.md",
+    "status": "Not Started"
+  },
+  "TASK-SPECIFY-CONTENT-WARNINGS-WRITE-THE-FRONTEND-CONTRACT": {
+    "hash": "ac54172",
+    "git_issue": "ac54172",
+    "extid": "TASK-SPECIFY-CONTENT-WARNINGS-WRITE-THE-FRONTEND-CONTRACT",
+    "type": "TASK",
+    "title": "Specify content warnings: write the frontend contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-nsfw-game-mechanics",
+    "tags": [
+      "nsfw",
+      "frontend",
+      "content-warnings",
+      "spec"
+    ],
+    "source": ".plan/tickets/TASK-specify-content-warnings-write-the-frontend-contract.md",
     "status": "Not Started"
   },
   "TASK-SPKI-PIN-VERIFICATION-FOR-FEDERATION-PEERS": {
