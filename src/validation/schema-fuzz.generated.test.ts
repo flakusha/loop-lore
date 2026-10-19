@@ -55,6 +55,7 @@ import * as routes_storyItems_definitions from "@/routes/story-items/definitions
 import * as routes_storyItems_instances from "@/routes/story-items/instances";
 import * as routes_trade_shared from "@/routes/trade/shared";
 import * as routes_v1_integrationsSurface from "@/routes/v1/integrations-surface";
+import * as routes_worlds_factionRoutesShared from "@/routes/worlds/faction-routes-shared";
 import * as routes_worlds_storageRouteSupport from "@/routes/worlds/storage-route-support";
 import * as validation_actors from "@/validation/schemas/actors";
 import * as validation_admin from "@/validation/schemas/admin";
@@ -376,6 +377,7 @@ describe("AdminFederationWorkloadBody", () => {
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_adminFederation.AdminFederationWorkloadBody,));
 });
+
 describe("AdminModelRoleOverrideBody", () => {
   test("accepts generated values", () => checkAllValid(validation_admin.AdminModelRoleOverrideBody,));
 
@@ -1894,6 +1896,13 @@ describe("PaginationQuery", () => {
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_primitives.PaginationQuery,));
 });
+
+describe("PairBody", () => {
+  test("accepts generated values", () => checkAllValid(routes_worlds_factionRoutesShared.PairBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_worlds_factionRoutesShared.PairBody,));
+});
+
 describe("patternBody", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_npcNavigationSchemas.patternBody,));
 
@@ -2670,4 +2679,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 423 schemas discovered across 506 module(s).
+// 424 schemas discovered across 509 module(s).
