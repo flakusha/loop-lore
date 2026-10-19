@@ -5331,6 +5331,56 @@ export async function insertLocationEdges(
   return id;
 }
 
+/** Insert a world_conditions row. */
+export async function insertWorldConditions(
+  db: Db,
+  opts?: {
+    world_id?: string;
+    weather?: string;
+    time_of_day?: string;
+    season?: string;
+    temperature?: number;
+    global_modifiers?: string;
+    weather_seed?: number;
+    mode?: string;
+    tick_interval_minutes?: number;
+    last_tick_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_conditions",).values({
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_condition_history row. */
+export async function insertWorldConditionHistory(
+  db: Db,
+  world_id: string,
+  weather: string,
+  time_of_day: string,
+  season: string,
+  world_minute: number,
+  opts?: { id?: string; recorded_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_condition_history",).values({
+    id,
+    world_id,
+    weather,
+    time_of_day,
+    season,
+    world_minute,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
 /** Insert a location_anomalies row. */
 export async function insertLocationAnomalies(
   db: Db,

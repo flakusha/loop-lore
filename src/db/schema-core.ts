@@ -1995,3 +1995,30 @@ export interface InstanceStorageBudgets {
   eviction_policy: Generated<StorageEvictionPolicy>;
   updated_at: Generated<string>;
 }
+
+// ── world_conditions ────────────────────────────────────────────
+export interface WorldConditions {
+  world_id: Generated<string>;
+  weather: Generated<string>;
+  time_of_day: Generated<string>;
+  season: Generated<string>;
+  temperature: Generated<number>;
+  global_modifiers: Generated<string>;
+  weather_seed: Generated<number>;
+  mode: Generated<string>;
+  tick_interval_minutes: Generated<number>;
+  last_tick_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_condition_history ────────────────────────────────────────────
+export interface WorldConditionHistory {
+  id: Generated<string>;
+  world_id: string;
+  recorded_at: Generated<string>;
+  weather: string;
+  time_of_day: string;
+  season: string;
+  world_minute: number;
+}

@@ -3665,3 +3665,29 @@ export const InstanceStorageBudgetsSchema = t.Object({
   eviction_policy: t.Optional(StorageEvictionPolicySchema,),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── world_conditions ────────────────────────────────────────────
+export const WorldConditionsSchema = t.Object({
+  world_id: t.Optional(t.String(),),
+  weather: t.Optional(t.String(),),
+  time_of_day: t.Optional(t.String(),),
+  season: t.Optional(t.String(),),
+  temperature: t.Optional(t.Number(),),
+  global_modifiers: t.Optional(t.String(),),
+  weather_seed: t.Optional(t.Number(),),
+  mode: t.Optional(t.String(),),
+  tick_interval_minutes: t.Optional(t.Number(),),
+  last_tick_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_condition_history ────────────────────────────────────────────
+export const WorldConditionHistorySchema = t.Object({
+  world_id: t.String(),
+  weather: t.String(),
+  time_of_day: t.String(),
+  season: t.String(),
+  world_minute: t.Number(),
+  recorded_at: t.Optional(t.String(),),
+},);
