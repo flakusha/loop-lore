@@ -19,7 +19,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertFactions, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
-import { requireFactionsInWorld, } from "./faction-routes";
+import { requireFactionsInWorld, } from "./faction-routes-shared";
 
 const OWNER_ID = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
 const UNKNOWN_FACTION_ID = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
