@@ -291,6 +291,7 @@
 | Not Started | RAG Evaluation & Observability | High (blocks shipping `epic-rag-assets-unified-storage-and-assistant-flows.md` B-R4 + B-R5 with confidence) | Medium | 0 | [epic-rag-evaluation-observability.md](/.plan/epics/epic-rag-evaluation-observability.md) |
 | Not Started | RAG Ingestion & Document Processing | High | High | 0 | [epic-rag-ingestion.md](/.plan/epics/epic-rag-ingestion.md) |
 | Not Started | RAG Retrieval & Context Injection | High | Medium | 0 | [epic-rag-retrieval.md](/.plan/epics/epic-rag-retrieval.md) |
+| Not Started | Reactive Actor Appearance | high | Large | 0 | [epic-reactive-actor-appearance.md](/.plan/epics/epic-reactive-actor-appearance.md) |
 | Not Started | Realtime Transports | Medium | Medium | 0 | [epic-realtime-transports.md](/.plan/epics/epic-realtime-transports.md) |
 | Not Started | Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development | High | Very High | 0 | [epic-recursive-self-improvement.md](/.plan/epics/epic-recursive-self-improvement.md) |
 | Not Started | Reference-Conditioned Generation — Model Matrix, Templates, and Generic Graph Pattern | High | High | 0 | [epic-reference-conditioned-generation.md](/.plan/epics/epic-reference-conditioned-generation.md) |
@@ -655,6 +656,8 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** battle, items, social, npc, weather, resolution, integration
 - **File:** `.plan/epics/epic-battle-integration-gaps.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 
@@ -2752,6 +2755,10 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
+
+### Current State Assessment
+
+
 ### NSFW Interaction UI
 
 - **Status:** Not Started
@@ -3012,6 +3019,16 @@ The repo already has an i18n system, and it is the wrong tool for this job — o
 - **Tags:** rag, retrieval, hybrid-search, reranking, citations, prompt-injection
 - **File:** `.plan/epics/epic-rag-retrieval.md`
 
+
+### Reactive Actor Appearance
+
+- **Status:** Not Started
+- **Priority:** high
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** avatar, wardrobe, outfit, pose, framing, reactive, narrative-extraction, hooks, per-message, selection, identity-lock, img2img
+- **File:** `.plan/epics/epic-reactive-actor-appearance.md`
+
 ### Realtime Transports
 
 - **Status:** Not Started
@@ -3206,6 +3223,8 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 - **Type:** Feature Epic
 - **Tags:** schemas, reputation, consent, nsfw, shared, cross-system
 - **File:** `.plan/epics/epic-shared-schemas.md`
+
+### Current State Assessment
 
 ### Current State Assessment
 

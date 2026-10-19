@@ -3315,6 +3315,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-emotion-avatar.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     }
   ],
   "src/assistant/lore/audience.test.ts": [
@@ -3594,6 +3598,10 @@
     }
   ],
   "src/assistant/prompt-outfit.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-wardrobe-avatar-variants.md"
@@ -5975,6 +5983,10 @@
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
     },
@@ -5997,6 +6009,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-mood-classification.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
     },
     {
       "kind": "ticket",
@@ -7443,13 +7459,31 @@
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
     }
   ],
+  "src/characters/services/avatar-service/avatar-service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
+    }
+  ],
   "src/characters/services/avatar-service/config.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-avatar-select-fallback-chain-unwired.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
     }
   ],
   "src/characters/services/avatar-service/selection.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-wardrobe-avatar-variants.md"
@@ -7468,11 +7502,41 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-column-migration-future.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-domain-residual-defects.md"
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-avatar-selection-fallback-empty-coverage.md"
+    }
+  ],
+  "src/characters/services/avatar-service/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
     }
   ],
   "src/characters/services/avatar/crud.ts": [
@@ -7493,6 +7557,10 @@
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
     },
@@ -7503,6 +7571,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-doc-spec-emotion-avatars.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
     },
     {
       "kind": "spec",
@@ -7564,6 +7640,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-appearance-edit-vs-generation-strategy-selector.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
     },
     {
@@ -7578,6 +7662,10 @@
     }
   ],
   "src/characters/services/emotion-avatar-service/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
@@ -7611,6 +7699,24 @@
     {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
+  "src/characters/services/emotion-avatar-service/single-generation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-appearance-edit-vs-generation-strategy-selector.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
     }
   ],
   "src/characters/services/emotion-avatar-service/types.ts": [
@@ -7881,16 +7987,92 @@
       "source": ".plan/epics/epic-character-internal-traits.md"
     }
   ],
+  "src/characters/services/wardrobe/bindings.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
+    }
+  ],
   "src/characters/services/wardrobe/change-gate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-gate-initiator-mapping.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
     }
   ],
   "src/characters/services/wardrobe/loadout-bridge.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-inventory-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
+    }
+  ],
+  "src/characters/services/wardrobe/resolve.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    }
+  ],
+  "src/characters/services/wardrobe/selection-ladder.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
+    }
+  ],
+  "src/characters/services/wardrobe/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
     }
   ],
   "src/characters/shared/character-systems-utils.test.ts": [
@@ -10299,6 +10481,10 @@
       "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/chat-lifecycle-moderation.md"
     }
@@ -10627,6 +10813,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
     }
   ],
   "src/chat/variants.test.ts": [
@@ -11551,6 +11741,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-emotion-avatar.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
     },
     {
       "kind": "ticket",
@@ -12508,6 +12702,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     },
     {
@@ -12553,12 +12751,20 @@
   ],
   "src/config/schema-class/hooks.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     }
   ],
   "src/config/schema-class/idempotency.test.ts": [
@@ -12601,6 +12807,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    }
+  ],
+  "src/config/schema-class/json-schema/hooks.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     }
   ],
   "src/config/schema-class/json-schema/index.ts": [
@@ -12864,6 +13076,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-appearance-edit-vs-generation-strategy-selector.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-rate-limiting-and-concurrency-limits.md"
     },
     {
@@ -12883,6 +13099,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cors-middleware.md"
+    }
+  ],
+  "src/config/schema/hooks.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     }
   ],
   "src/config/schema/idempotency.ts": [
@@ -12966,7 +13192,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-appearance-edit-vs-generation-strategy-selector.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-fan-out-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
     },
     {
       "kind": "ticket",
@@ -13505,6 +13739,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-first-class-admin-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     },
     {
       "kind": "ticket",
@@ -15405,6 +15643,10 @@
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
     },
@@ -15415,6 +15657,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-validation-avatarselectionruleschema-missing-action-first-an.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
     },
     {
       "kind": "ticket",
@@ -15607,6 +15857,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-column-migration-future.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
     },
     {
       "kind": "ticket",
@@ -17473,6 +17731,20 @@
       "source": ".plan/tickets/TASK-publication-unit-translation-store.md"
     }
   ],
+  "src/db/migrations/064_vn_choice_selections.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-column-migration-future.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    }
+  ],
   "src/db/migrations/065_moderation_supersede.ts": [
     {
       "kind": "ticket",
@@ -18355,6 +18627,10 @@
       "source": ".plan/epics/epic-character-world-setup.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md"
     },
@@ -18373,6 +18649,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-mood-classification.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-column-migration-future.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
     },
     {
       "kind": "ticket",
@@ -18473,6 +18757,10 @@
       "source": ".plan/epics/epic-narrative-publishing-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
@@ -18487,6 +18775,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-column-migration-future.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
     },
     {
       "kind": "ticket",
@@ -18632,6 +18928,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-research-agency-decision.md"
     },
     {
@@ -18753,6 +19053,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-markdown-canonical-intermediate-contract.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
     },
     {
       "kind": "ticket",
@@ -19099,6 +19403,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-state-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
     },
     {
       "kind": "ticket",
@@ -20811,6 +21119,10 @@
   ],
   "src/frontend": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     },
@@ -20825,6 +21137,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
     },
     {
       "kind": "ticket",
@@ -21921,6 +22237,16 @@
       "source": ".plan/tickets/BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-.md"
     }
   ],
+  "src/frontend/alpine/chat-outfit-switcher.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    }
+  ],
   "src/frontend/alpine/chat-panels.ts": [
     {
       "kind": "ticket",
@@ -22149,6 +22475,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
     }
   ],
   "src/frontend/alpine/chat-slash.ts": [
@@ -22267,6 +22597,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-frontend-wizard-ui.md"
+    }
+  ],
+  "src/frontend/alpine/chat-types/mood-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
     }
   ],
   "src/frontend/alpine/chat-types/npc-state.ts": [
@@ -23442,6 +23778,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
     }
   ],
@@ -23459,6 +23799,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
     },
     {
       "kind": "ticket",
@@ -23479,6 +23823,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
     },
     {
       "kind": "ticket",
@@ -26238,7 +26590,65 @@
   "src/frontend/vn/scene-renderer/render-scene.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-scene-template-system.md"
+    }
+  ],
+  "src/frontend/vn/scene-renderer/render.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
+    }
+  ],
+  "src/frontend/vn/scene-renderer/render.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-stage-directives-swap-arm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
+    }
+  ],
+  "src/frontend/vn/scene-renderer/stage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
+    }
+  ],
+  "src/frontend/vn/scene-renderer/stage.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-stage-directives-swap-arm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
+    }
+  ],
+  "src/frontend/vn/scene-renderer/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
     }
   ],
   "src/frontend/vn/settings.test.ts": [
@@ -26259,6 +26669,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
+    }
+  ],
+  "src/frontend/vn/sprite-stage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
     }
   ],
   "src/frontend/vn/sprite-stage.ts": [
@@ -26284,10 +26700,36 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-stage-directives-swap-arm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
     }
   ],
+  "src/frontend/vn/stage-directives.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-stage-directives-swap-arm.md"
+    }
+  ],
   "src/frontend/vn/stage-directives.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-stage-directives-swap-arm.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
@@ -26933,6 +27375,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
     }
   ],
   "src/generation/auto-gen/call-llm.ts": [
@@ -27033,6 +27479,10 @@
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-content-hooks-ts-missing-imports-breaks-typecheck.md"
     },
@@ -27058,11 +27508,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-age-gate-never-verified-at-generation-time.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
     },
     {
       "kind": "ticket",
@@ -27292,6 +27754,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md"
     }
   ],
@@ -27299,6 +27765,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
     },
     {
       "kind": "ticket",
@@ -27311,6 +27781,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     },
     {
       "kind": "ticket",
@@ -27355,6 +27829,10 @@
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generation-service-silent-catch-blocks-mask-production-error.md"
     },
@@ -27369,9 +27847,25 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-introduction-generation-propagation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
     }
   ],
   "src/generation/auto-gen/store-message.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-assistant-message-swipe-index-read-modify-write-is-not-a.md"
@@ -27387,6 +27881,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-game-state-extraction-and-analysis-pipeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
     },
     {
       "kind": "ticket",
@@ -27444,6 +27942,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que.md"
     },
     {
@@ -27459,6 +27961,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     }
   ],
   "src/generation/auto-gen/stream-render.ts": [
@@ -28395,6 +28909,10 @@
   ],
   "src/generation/hooks/registry.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
     },
@@ -28409,6 +28927,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-hook-result-payload-carry-context.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     }
   ],
   "src/generation/hooks/types.ts": [
@@ -28419,6 +28941,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-hook-result-payload-carry-context.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
     }
   ],
   "src/generation/image-edit-service/apply.ts": [
@@ -28456,11 +28986,19 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-reference-conditioned-generation.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-appearance-edit-vs-generation-strategy-selector.md"
     },
     {
       "kind": "ticket",
@@ -28473,6 +29011,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-cell-detail-metadata.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
     },
     {
       "kind": "ticket",
@@ -28509,6 +29059,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-2026-openwebui-comfyui-websocket-progress.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-appearance-edit-vs-generation-strategy-selector.md"
     },
     {
       "kind": "ticket",
@@ -28589,8 +29143,24 @@
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-appearance-edit-vs-generation-strategy-selector.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
     }
   ],
   "src/generation/image-gen-route.test.ts": [
@@ -28933,6 +29503,12 @@
       "source": ".plan/tickets/TASK-sam3-concept-cutout-wiring-sprites-avatar-matting-vn-alpha.md"
     }
   ],
+  "src/generation/matting/comfy-provider.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
+    }
+  ],
   "src/generation/matting/factory.ts": [
     {
       "kind": "epic",
@@ -29160,6 +29736,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-rpg-rule-system.md"
     },
     {
@@ -29301,8 +29881,16 @@
   ],
   "src/generation/providers/comfyui-upload.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-parameter-form-renderer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
     },
     {
       "kind": "ticket",
@@ -29435,6 +30023,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-external-comfyui-plugin-repo-integration-contract.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
     },
     {
       "kind": "ticket",
@@ -30153,6 +30745,12 @@
       "source": ".plan/tickets/TASK-external-comfyui-plugin-repo-integration-contract.md"
     }
   ],
+  "src/generation/workflow-loader/convenience.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
+    }
+  ],
   "src/generation/workflow-loader/loader.ts": [
     {
       "kind": "epic",
@@ -30213,6 +30811,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-external-comfyui-plugin-repo-integration-contract.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
     },
     {
       "kind": "ticket",
@@ -30758,6 +31360,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-reference-conditioned-generation.md"
     },
     {
@@ -30831,6 +31437,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-image-edit-run-authz-error-shape-regression.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
     }
   ],
   "src/image-edit/run-authz.ts": [
@@ -30923,10 +31537,32 @@
       "source": ".plan/epics/epic-derived-map-generation.md"
     }
   ],
+  "src/image-edit/templates/builtin/img2img.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
+    }
+  ],
   "src/image-edit/templates/builtin/inpaint.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-provider-and-template-capabilities-disagree.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
     }
   ],
   "src/image-edit/templates/builtin/lora.ts": [
@@ -36302,6 +36938,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-property-test-the-regex-action-parser-verb-and-target-extrac.md"
     }
   ],
@@ -36363,10 +37011,28 @@
       "source": "docs/spec/output-control-transforms.md"
     }
   ],
+  "src/regex/image-edit.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
+    }
+  ],
   "src/regex/image-edit.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
     }
   ],
   "src/regex/index.ts": [
@@ -36525,6 +37191,20 @@
       "source": ".plan/tickets/TASK-regex-safety-xml-utils-tag-unescaped-narrative-greedy.md"
     }
   ],
+  "src/regex/outfit-events.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
+    }
+  ],
   "src/regex/placeholders.ts": [
     {
       "kind": "ticket",
@@ -36552,6 +37232,10 @@
   "src/regex/stage2-llm.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-research-agency-affordance.md"
     },
     {
@@ -36561,6 +37245,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
     }
   ],
   "src/regex/story-events.test.ts": [
@@ -36571,8 +37263,16 @@
   ],
   "src/regex/story-events.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-item-transfers-double-report-one-sentence-and-item-take-item.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
     }
   ],
   "src/regex/transforms.ts": [
@@ -43961,12 +44661,36 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-column-migration-future.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
     }
   ],
   "src/routes/wardrobe-overrides.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c6-outfit-gate-verdict-notices-with-avatar-refresh.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-gate-initiator-mapping.md"
     }
   ],
   "src/routes/weather.ts": [
@@ -48806,6 +49530,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-recursive-self-improvement.md"
     },
     {
@@ -48911,6 +49639,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ocsp-stapling-for-tls-certificate-status.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-hook.md"
     },
     {
       "kind": "ticket",
@@ -49156,6 +49888,10 @@
   "src/services/actor-items.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-research-agency-affordance.md"
     },
     {
@@ -49169,6 +49905,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-affordance-lookup-table.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md"
     },
     {
       "kind": "ticket",
@@ -49197,6 +49937,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-inventory.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
     }
   ],
   "src/services/actor-items/transfer.ts": [
@@ -50844,6 +51592,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
     },
     {
@@ -51764,6 +52516,14 @@
     }
   ],
   "src/tui/harness/display.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
@@ -53035,6 +53795,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-avatar-regeneration-control.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
     }
   ],
   "src/validation/schemas/entities.ts": [
@@ -53151,6 +53919,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on.md"
+    }
+  ],
+  "src/validation/schemas/wardrobe.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
     }
   ],
   "src/validation/schemas/worlds.ts": [
