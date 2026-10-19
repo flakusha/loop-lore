@@ -40391,6 +40391,19 @@
     "title": "i18n Alpine.js Client (Phase 4)",
     "type": "TASK"
   },
+  "TASK-I18N-DOC-DRIFT-TRANSLATION-LLM-SPEC-IS-UNIMPLEMENTED": {
+    "hash": "14b3a8b",
+    "git_issue": "14b3a8b",
+    "extid": "TASK-I18N-DOC-DRIFT-TRANSLATION-LLM-SPEC-IS-UNIMPLEMENTED",
+    "type": "TASK",
+    "title": "i18n doc drift: TRANSLATION_LLM_* spec is unimplemented",
+    "label": "task",
+    "priority": "medium",
+    "epic": "aux-enrichment-pipeline",
+    "tags": [],
+    "source": ".plan/tickets/TASK-i18n-doc-drift-translation-llm-spec-is-unimplemented.md",
+    "status": "Not Started"
+  },
   "TASK-I18N-LOCALE-COMPLETION": {
     "epic": "epic-i18n",
     "extid": "TASK-I18N-LOCALE-COMPLETION",
@@ -53805,6 +53818,19 @@
     ],
     "title": "AUX LLM Fallback for Transition Intent Detection",
     "type": "TASK"
+  },
+  "TASK-TRANSLATOR-MODEL-ROLE-WITH-GENERAL-MODEL-FALLBACK": {
+    "hash": "fccc8f5",
+    "git_issue": "fccc8f5",
+    "extid": "TASK-TRANSLATOR-MODEL-ROLE-WITH-GENERAL-MODEL-FALLBACK",
+    "type": "TASK",
+    "title": "Translator model role with general-model fallback",
+    "label": "task",
+    "priority": "medium",
+    "epic": "aux-enrichment-pipeline",
+    "tags": [],
+    "source": ".plan/tickets/TASK-translator-model-role-with-general-model-fallback.md",
+    "status": "Not Started"
   },
   "TASK-TRANSPORT-EXPANSION": {
     "epic": "epic-transport-expansion",
