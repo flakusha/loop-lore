@@ -31,7 +31,11 @@ import {
   listWardrobeItems,
   updateWardrobeItem,
 } from "./crud";
-import { setChatOutfitOverride, setLocationOutfitBindings, } from "./overrides";
+import {
+  setChatOutfitOverride,
+  setLocationOutfitBindings,
+  WardrobeItemNotVisibleError,
+} from "./overrides";
 
 describe("wardrobe CRUD — visibility and ownership", () => {
   let db: Kysely<DB>;
