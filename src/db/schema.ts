@@ -231,4 +231,6 @@ export interface DB {
   mesh_work_assignments: import("./schema-core").MeshWorkAssignments;
   federation_performance_budgets: import("./schema-core").FederationPerformanceBudgets;
   instance_storage_budgets: import("./schema-core").InstanceStorageBudgets;
+  world_conditions: import("./schema-core").WorldConditions;
+  world_condition_history: import("./schema-core").WorldConditionHistory;
 }
