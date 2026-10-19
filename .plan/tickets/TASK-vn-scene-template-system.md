@@ -19,7 +19,7 @@ not implemented.
 
 
 **Priority:** Medium
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) "Engine Complete — GM builder UI not implemented". Reconciled 2026-10-09: engine verified present and tested, composite execution never existed (only the step interface), and there is no GM builder UI. Done → In Progress. Updated the same day after `vn-mode-qa-loop` was found: Phase 5 is now partly closed — `render-scene.ts:202` calls `applyTemplateOverrides` — so the remaining gaps are composites, conditions/delays, dialogue-template consumption, and the builder UI. The closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`: `transition-engine.ts` wiring is now real — `scene-renderer/render.ts` imports and calls `evaluateTriggers` (the transition engine itself still reads no templates, but triggers feed scene templates in). Remaining open: composites, conditions/delays, `typewriter.ts` dialogue wiring, custom-template CRUD callers (save/import/export have no production caller), and the builder UI. Status line corrected Done → In Progress to match the notes above.
 **Status Note (2026-10-18, vn-epic-completion):** Header set to the truthful In Progress per the 2026-10-18 review adjudication. Git issue 83a03a9 was re-opened to match, but the shared-registry enforcement (any agent's `giwt sync --fix` auto-closes a done-index ticket's open issue as stale) re-closed it within minutes — the tracking system treats the closed registry issue as authoritative for done-ness, so `plan:sync` reports this ticket as ".md status stale" until the registry is re-opened deliberately at review. This branch implements the remaining slice — see the epic's Remaining Scope section.
