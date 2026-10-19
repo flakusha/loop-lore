@@ -19,12 +19,12 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
+  insertActors,
   insertGatheringNodeDefs,
   insertGatheringNodeInstances,
   insertLocations,
   insertUsers,
   insertWorlds,
-  insertActors,
 } from "../../test-utils/insert-helpers";
 import { MAX_ABILITY_BONUS, } from "../../worlds/resource-core";
 import { resourceRoutes, } from "./resource-routes";
@@ -200,7 +200,6 @@ describe("POST /resources/extract bounds the client abilityBonus", () => {
     expect(await db.selectFrom("extraction_rolls",).select("id",).execute(),).toHaveLength(1,);
   });
 });
-
 
 const OWNER = "user-owner";
 
