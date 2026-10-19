@@ -75,6 +75,11 @@ async function ensureCatalogOutfit(
       created_at: now,
       updated_at: now,
     },)
+    // The SELECT above and this INSERT are not atomic: two concurrent
+    // readers of the same actor (e.g. two GETs of one message page) can both
+    // miss and both insert. Materializing is idempotent, so the loser of the
+    // race discards its row and reuses the winner's id.
+    .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
 
   return materializedId;
