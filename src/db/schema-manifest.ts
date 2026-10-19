@@ -2530,6 +2530,29 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, },),
     outfit_bindings: col("text",),
   },)
+  .table("world_condition_history", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    recorded_at: col("text", { notNull: true, hasDefault: true, },),
+    weather: col("text", { notNull: true, },),
+    time_of_day: col("text", { notNull: true, },),
+    season: col("text", { notNull: true, },),
+    world_minute: col("integer", { notNull: true, },),
+  },)
+  .table("world_conditions", {
+    world_id: col("text", { primaryKey: true, },),
+    weather: col("text", { notNull: true, hasDefault: true, },),
+    time_of_day: col("text", { notNull: true, hasDefault: true, },),
+    season: col("text", { notNull: true, hasDefault: true, },),
+    temperature: col("real", { notNull: true, hasDefault: true, },),
+    global_modifiers: col("text", { notNull: true, hasDefault: true, },),
+    weather_seed: col("integer", { notNull: true, hasDefault: true, },),
+    mode: col("text", { notNull: true, hasDefault: true, },),
+    tick_interval_minutes: col("integer", { notNull: true, hasDefault: true, },),
+    last_tick_at: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("world_event_log", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     world_id: col("text", { notNull: true, },),
