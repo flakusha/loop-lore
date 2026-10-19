@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-19T01:51:19.375Z",
-  "count": 1494,
+  "generatedAt": "2026-10-19T03:53:54.511Z",
+  "count": 1492,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -1193,10 +1193,6 @@
     "src/routes/worlds/map-routes-shared.ts#mapServiceErrorResponse",
     "src/routes/worlds/map-routes.ts#mapRoutes",
     "src/routes/worlds/map-zone-routes.ts#mapZoneRoutes",
-    "src/routes/worlds/storage-route-support.ts#StorageContentBody",
-    "src/routes/worlds/storage-route-support.ts#StorageSummary",
-    "src/routes/worlds/storage-route-support.ts#StorageUsageBody",
-    "src/routes/worlds/storage-route-support.ts#TransferBody",
     "src/routes/worlds/storage-route-support.ts#requireActingActor",
     "src/routes/worlds/storage-route-support.ts#respond",
     "src/routes/worlds/storage-route-support.ts#storageStatus",
