@@ -19,7 +19,7 @@
 | Done | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 0 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
 | Done | Actors & Entity System | High | High | 0 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | Done | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
-| Not Started | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
+| Done | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
 | Not Started | Anonymity & Decentralization — Epic | medium | Medium | 0 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Epic | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
@@ -416,7 +416,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Age Gate & Content Warnings
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** epic
@@ -3517,4 +3517,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

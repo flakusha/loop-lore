@@ -347,6 +347,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k.md"
     }
   ],
   "src/age-gate/service.test.ts": [
@@ -13023,6 +13031,16 @@
       "source": ".plan/tickets/TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt.md"
     }
   ],
+  "src/config/sections/age-gate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k.md"
+    }
+  ],
   "src/config/sections/assets.ts": [
     {
       "kind": "ticket",
@@ -21443,6 +21461,30 @@
       "source": ".plan/tickets/TASK-MANAGEMENT-INTEGRATION.md"
     }
   ],
+  "src/frontend/alpine/age-gate-guard.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    }
+  ],
+  "src/frontend/alpine/age-gate-interpolation.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    }
+  ],
+  "src/frontend/alpine/age-gate.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    }
+  ],
+  "src/frontend/alpine/age-gate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    }
+  ],
   "src/frontend/alpine/analytics.ts": [
     {
       "kind": "ticket",
@@ -21450,6 +21492,10 @@
     }
   ],
   "src/frontend/alpine/app.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
@@ -23029,6 +23075,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
     },
     {
       "kind": "epic",
@@ -33259,6 +33309,14 @@
   ],
   "src/middleware/nsfw-gate/base-eval.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char.md"
     },
@@ -38866,6 +38924,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     },
     {
@@ -43269,6 +43331,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/search-and-filter.md"
+    }
+  ],
+  "src/routes/views/age-gate.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
     }
   ],
   "src/routes/views/blog.test.ts": [
@@ -53211,6 +53279,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-admin-ui-for-follows-blocklists-key-rotation.md"
+    }
+  ],
+  "src/views/age-gate.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-age-gate.md"
     }
   ],
   "src/views/blog.html": [
