@@ -539,6 +539,34 @@ describe("default outfit materializes actors.outfits catalog ids", () => {
     expect(rows.length,).toBe(1,);
   });
 
+  it("concurrent first-resolutions do not collide on the primary key", async () => {
+    // ensureCatalogOutfit is SELECT-then-INSERT, so two readers racing on the
+    // same not-yet-materialized catalog outfit can both miss. The insert is
+    // guarded with onConflict so the loser reuses the winner's row instead of
+    // throwing SQLITE_CONSTRAINT_PRIMARYKEY out of a GET.
+    const { actorId: raceId, } = await createTestActors(db, "wardrobe-race-actor",);
+    await db
+      .updateTable("actors",)
+      .set({
+        default_outfit: "cat-cloak",
+        outfits: JSON.stringify([{ id: "cat-cloak", name: "Cloak", },],),
+      },)
+      .where("id", "=", raceId,)
+      .execute();
+
+    const results = await Promise.all([
+      resolveOutfit(db, { actorId: raceId, },),
+      resolveOutfit(db, { actorId: raceId, },),
+    ],);
+
+    expect(results[0].outfitId,).toBe(`${raceId}:cat-cloak`,);
+    expect(results[1].outfitId,).toBe(`${raceId}:cat-cloak`,);
+    const rows = await db.selectFrom("wardrobe_items",).select(["id",],)
+      .where("actor_id", "=", raceId,).execute();
+
+    expect(rows.length,).toBe(1,);
+  });
+
   it("an actor with no outfits catalog degrades to none", async () => {
     const { actorId: bareId, } = await createTestActors(db, "wardrobe-bare-actor",);
     await db.updateTable("actors",).set({ default_outfit: "ghost", },).where("id", "=", bareId,).execute();

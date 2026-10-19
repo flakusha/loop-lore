@@ -110,11 +110,12 @@
       <template x-if="msg.role !== 'system'">
         <div class="message-content">
           <!--
-            Avatar for character/assistant messages (first in group only);
-            resolved per message from its detected emotion via `avatarForMessage`
+            Avatar for character/assistant messages (first in group only).
+            `avatar_asset_id` is the server's outfit-aware answer; when absent
+            the resolver falls back to the per-message emotion walk.
           -->
           <template
-            x-if="!msg.group && (msg.role !== 'user') && (msg.emotion ? avatarForMessage(msg) !== null : !!currentCharacter?.avatar_asset_id)"
+            x-if="!msg.group && (msg.role !== 'user') && (msg.avatar_asset_id ? true : (msg.emotion ? avatarForMessage(msg) !== null : !!currentCharacter?.avatar_asset_id))"
           >
             <img
               class="avatar"
