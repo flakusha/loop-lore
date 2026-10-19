@@ -1901,5 +1901,20 @@
   },
   "planning": {
     "board": "Planning Board"
+  },
+
+  "ageGate": {
+    "logo": "loop-lore",
+    "heading": "Age Verification",
+    "intro": "To use this service, you must confirm you are old enough.",
+    "birthDateLabel": "Date of birth",
+    "minimumAge": "You must be at least {age} years old.",
+    "consent": "I confirm I am old enough to use this service.",
+    "confirm": "I confirm",
+    "submitting": "Verifying...",
+    "dataNote": "Your birth date is stored securely and never shared. It is only used for age verification.",
+    "errorUnderage": "You must be at least {age} years old to use this service.",
+    "errorInvalidDate": "Please enter a valid date (YYYY-MM-DD)",
+    "errorGeneric": "Server error. Please try again later."
   }
 }
