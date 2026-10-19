@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-18T09:12:59.100Z",
-  "count": 1496,
+  "generatedAt": "2026-10-19T01:51:19.375Z",
+  "count": 1494,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -1181,7 +1181,6 @@
     "src/routes/worlds/autonomy-control.ts#setActorAutonomy",
     "src/routes/worlds/chats.ts#chatsRoutes",
     "src/routes/worlds/encounter-routes.ts#encounterRoutes",
-    "src/routes/worlds/faction-routes.ts#factionRoutes",
     "src/routes/worlds/fractal-locations-routes.ts#fractalLocationsRoutes",
     "src/routes/worlds/fractal-travel-routes.ts#fractalTravelRoutes",
     "src/routes/worlds/location-chat.ts#createLocationChat",
@@ -1438,7 +1437,6 @@
     "src/tui/harness/display.ts#formatStats",
     "src/tui/harness/display.ts#resultMarker",
     "src/tui/harness/index.ts#createHarnessView",
-    "src/tui/markup.ts#escapeMarkup",
     "src/tui/models-api.ts#API_BASE",
     "src/tui/models-display.ts#providerLine",
     "src/tui/models-display.ts#roleLine",
