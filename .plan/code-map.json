@@ -20583,6 +20583,10 @@
   ],
   "src/federation/peer-registry-validation.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-federation-offload-quotas.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-registry-workload-columns.md"
     }
@@ -20625,8 +20629,16 @@
   ],
   "src/federation/peer-work-auth.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-federation-offload-quotas.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-same-host-loopback-peer-auth.md"
     }
   ],
   "src/federation/peer-work-client.ts": [
@@ -27733,6 +27745,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
+    }
+  ],
+  "src/generation/generate-route/chat-peer-offload.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-offload-adopt-dispatch-in-the-chat-turn-call-site.md"
     }
   ],
   "src/generation/generate-route/gatePluginToolsByRole": [

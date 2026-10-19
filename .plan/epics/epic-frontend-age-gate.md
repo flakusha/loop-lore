@@ -9,7 +9,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** Done
 **Status Note:** Not Started
 **Priority:** Medium
 
@@ -57,3 +57,4 @@ _TBD — create implementation tickets._
 | ----- | --------- | ------- |
 | — | — | Server-rendered verification page |
 
+**Resolved:** 2026-10-19 registry-driven close: git issue c38ad66 (registry tip: 375d430f5 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-FRONTEND-AGE-GATE done)

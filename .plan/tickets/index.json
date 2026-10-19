@@ -13317,6 +13317,27 @@
     "title": "# FE-BE Harmonization — Epic",
     "type": "EPIC"
   },
+  "EPIC-FEDERATION-OFFLOAD-QUOTAS": {
+    "hash": "pending",
+    "extid": "EPIC-FEDERATION-OFFLOAD-QUOTAS",
+    "type": "EPIC",
+    "title": "Federated Workload Offload & Instance Quotas",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "federation",
+      "offload",
+      "quotas",
+      "routing",
+      "peers",
+      "mesh",
+      "admin",
+      "storage"
+    ],
+    "source": ".plan/tickets/epic-federation-offload-quotas.md",
+    "status": "Not Started"
+  },
   "EPIC-FEDERATION-SWARM-SYNC": {
     "epic": "",
     "extid": "EPIC-FEDERATION-SWARM-SYNC",
@@ -13439,7 +13460,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-age-gate.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "frontend",
       "security",
@@ -36904,6 +36925,19 @@
     "source": ".plan/tickets/TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-.md",
     "status": "Not Started"
   },
+  "TASK-FEDERATION-ADMIN-PEER-AND-QUOTA-ROUTES": {
+    "hash": "a20a095",
+    "git_issue": "a20a095",
+    "extid": "TASK-FEDERATION-ADMIN-PEER-AND-QUOTA-ROUTES",
+    "type": "TASK",
+    "title": "Federation admin peer and quota routes",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-admin-peer-and-quota-routes.md",
+    "status": "done"
+  },
   "TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION": {
     "epic": "epic-federation-swarm-sync",
     "extid": "TASK-FEDERATION-ADMIN-UI-FOR-FOLLOWS-BLOCKLISTS-KEY-ROTATION",
@@ -36924,6 +36958,19 @@
     ],
     "title": "Federation admin UI for follows, blocklists, defederation, key rotation",
     "type": "TASK"
+  },
+  "TASK-FEDERATION-ADMIN-USAGE-DASHBOARD-UI": {
+    "hash": "ec8363a",
+    "git_issue": "ec8363a",
+    "extid": "TASK-FEDERATION-ADMIN-USAGE-DASHBOARD-UI",
+    "type": "TASK",
+    "title": "Federation admin usage dashboard UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-admin-usage-dashboard-ui.md",
+    "status": "done"
   },
   "TASK-FEDERATION-CONTENT-CLEARANCE-GATE-PER-CHAT-CONSENT-BEFORE-ME": {
     "epic": "epic-mesh-federation-content-sharing",
@@ -36998,6 +37045,45 @@
     "title": "Federation interconnect peer connectivity config",
     "type": "TASK"
   },
+  "TASK-FEDERATION-OFFLOAD-ADOPT-DISPATCH-IN-THE-CHAT-TURN-CALL-SITE": {
+    "hash": "9bb9393",
+    "git_issue": "9bb9393",
+    "extid": "TASK-FEDERATION-OFFLOAD-ADOPT-DISPATCH-IN-THE-CHAT-TURN-CALL-SITE",
+    "type": "TASK",
+    "title": "Federation offload: adopt dispatch in the chat turn call site",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-offload-adopt-dispatch-in-the-chat-turn-call-site.md",
+    "status": "done"
+  },
+  "TASK-FEDERATION-OFFLOAD-ADOPT-DISPATCH-IN-THE-REMAINING-GENERATIO": {
+    "hash": "b167297",
+    "git_issue": "b167297",
+    "extid": "TASK-FEDERATION-OFFLOAD-ADOPT-DISPATCH-IN-THE-REMAINING-GENERATIO",
+    "type": "TASK",
+    "title": "Federation offload: adopt dispatch in the remaining generation call sites",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-offload-adopt-dispatch-in-the-remaining-generatio.md",
+    "status": "Not Started"
+  },
+  "TASK-FEDERATION-OFFLOAD-TWO-INSTANCE-E2E": {
+    "hash": "f27584c",
+    "git_issue": "f27584c",
+    "extid": "TASK-FEDERATION-OFFLOAD-TWO-INSTANCE-E2E",
+    "type": "TASK",
+    "title": "Federation offload two-instance e2e",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-offload-two-instance-e2e.md",
+    "status": "done"
+  },
   "TASK-FEDERATION-PEER-AUDIT-PROBE-ZERO-TRUST-CROSS-INSTANCE-VERIFI": {
     "epic": "epic-federation-swarm-sync",
     "extid": "TASK-FEDERATION-PEER-AUDIT-PROBE-ZERO-TRUST-CROSS-INSTANCE-VERIFI",
@@ -37016,6 +37102,110 @@
     "title": "Federation peer audit probe (zero-trust cross-instance verification)",
     "type": "TASK"
   },
+  "TASK-FEDERATION-PEER-CAPABILITY-ADVERTISEMENT": {
+    "hash": "526a78a",
+    "git_issue": "526a78a",
+    "extid": "TASK-FEDERATION-PEER-CAPABILITY-ADVERTISEMENT",
+    "type": "TASK",
+    "title": "Federation peer capability advertisement",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-peer-capability-advertisement.md",
+    "status": "done"
+  },
+  "TASK-FEDERATION-PEER-DISPATCH-COMPOSE-FAILOVER": {
+    "hash": "18242c7",
+    "git_issue": "18242c7",
+    "extid": "TASK-FEDERATION-PEER-DISPATCH-COMPOSE-FAILOVER",
+    "type": "TASK",
+    "title": "Federation peer dispatch compose failover",
+    "label": "task",
+    "priority": "critical",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-peer-dispatch-compose-failover.md",
+    "status": "done"
+  },
+  "TASK-FEDERATION-PEER-HEALTH-AND-LOAD-REGISTRY": {
+    "hash": "eb033a5",
+    "git_issue": "eb033a5",
+    "extid": "TASK-FEDERATION-PEER-HEALTH-AND-LOAD-REGISTRY",
+    "type": "TASK",
+    "title": "Federation peer health and load registry",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-peer-health-and-load-registry.md",
+    "status": "done"
+  },
+  "TASK-FEDERATION-PEER-REGISTRY-WORKLOAD-COLUMNS": {
+    "hash": "1d80416",
+    "git_issue": "1d80416",
+    "extid": "TASK-FEDERATION-PEER-REGISTRY-WORKLOAD-COLUMNS",
+    "type": "TASK",
+    "title": "Federation peer registry workload columns",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-peer-registry-workload-columns.md",
+    "status": "done"
+  },
+  "TASK-FEDERATION-PEER-WORKLOAD-WIRE-ENDPOINTS": {
+    "hash": "1d5dd61",
+    "git_issue": "1d5dd61",
+    "extid": "TASK-FEDERATION-PEER-WORKLOAD-WIRE-ENDPOINTS",
+    "type": "TASK",
+    "title": "Federation peer workload wire endpoints",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-peer-workload-wire-endpoints.md",
+    "status": "done"
+  },
+  "TASK-FEDERATION-PERFORMANCE-QUOTA-ENFORCEMENT": {
+    "hash": "e8e174d",
+    "git_issue": "e8e174d",
+    "extid": "TASK-FEDERATION-PERFORMANCE-QUOTA-ENFORCEMENT",
+    "type": "TASK",
+    "title": "Federation performance quota enforcement",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-performance-quota-enforcement.md",
+    "status": "done"
+  },
+  "TASK-FEDERATION-SAME-HOST-LOOPBACK-PEER-AUTH": {
+    "hash": "2b84d84",
+    "git_issue": "2b84d84",
+    "extid": "TASK-FEDERATION-SAME-HOST-LOOPBACK-PEER-AUTH",
+    "type": "TASK",
+    "title": "Federation same-host loopback peer auth",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-same-host-loopback-peer-auth.md",
+    "status": "done"
+  },
+  "TASK-FEDERATION-STORAGE-QUOTA-ACCOUNTING": {
+    "hash": "72d8afe",
+    "git_issue": "72d8afe",
+    "extid": "TASK-FEDERATION-STORAGE-QUOTA-ACCOUNTING",
+    "type": "TASK",
+    "title": "Federation storage quota accounting",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-storage-quota-accounting.md",
+    "status": "Not Started"
+  },
   "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL": {
     "epic": "epic-certificate-and-tls-management",
     "extid": "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL",
@@ -37028,6 +37218,19 @@
     "tags": [],
     "title": "Federation TLS peer trust custom CA pinning and optional mTLS",
     "type": "TASK"
+  },
+  "TASK-FEDERATION-WORKLOAD-ROUTING-POLICY": {
+    "hash": "9a63753",
+    "git_issue": "9a63753",
+    "extid": "TASK-FEDERATION-WORKLOAD-ROUTING-POLICY",
+    "type": "TASK",
+    "title": "Federation workload routing policy",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-offload-quotas",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-workload-routing-policy.md",
+    "status": "done"
   },
   "TASK-FETCHSKIPCOOLDOWNS-ISSUES-ONE-QUERY-PER-COOLING-ACTOR": {
     "hash": "8383ed3",
