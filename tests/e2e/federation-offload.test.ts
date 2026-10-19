@@ -465,7 +465,7 @@ describe("federation offload — two real instances", () => {
     await reloadPerformanceQuota({ database: peer.db, enabled: true, },);
 
     const cell = { origin: caller.origin, workloadClass: PeerWorkloadClass.Chat, };
-    let releaseHeld: (() => void) | null = null;
+    let releaseHeld: (() => void) | undefined;
     const held = new Promise<void>((resolve,) => {
       releaseHeld = resolve;
     },);
@@ -482,7 +482,11 @@ describe("federation offload — two real instances", () => {
     expect(await errorCodeOf(atCeiling.response,),).toBe(FederationQuotaErrorCode.QuotaExceeded,);
     const retryAfterSec = Number(atCeiling.response.headers.get("retry-after",),);
 
-    releaseHeld?.();
+    // The executor above assigns this before `held` settles, so it is set by
+    // now; assert it explicitly rather than narrowing away an assignment TS
+    // cannot see through the promise constructor.
+    if (!releaseHeld) { throw new Error("held release was never assigned",); }
+    releaseHeld();
     expect((await first).admitted,).toBe(true,);
 
     // The slot is free, but the refusal above QUARANTINED the cell for its
@@ -703,6 +707,7 @@ describe("federation offload — two real instances", () => {
     // What actually reached the peer's own provider, read from the peer side.
     expect(peerProviderSaw,).toHaveLength(1,);
     const received = peerProviderSaw[0];
+    if (!received) { throw new Error("peer provider received no workload",); }
 
     // The workload's needs are present.
     expect(received.messages,).toEqual([{ role: "user", content: "roll a perception check", },],);
