@@ -113,6 +113,8 @@ import type {
   SkillLockState,
   StackableState,
   StorageBackend,
+  StorageBudgetScope,
+  StorageEvictionPolicy,
   SyntheticDataStatus,
   SyntheticDataType,
   TemplateDetailLevel,
@@ -133,11 +135,8 @@ import type {
   WorldTraitCategory,
   WorldVisibility,
   ZoneType,
-  StorageBudgetScope,
-  StorageEvictionPolicy,
 } from "../db/enums";
 import type { DB, } from "../db/schema";
-
 
 /**
  * Test Insert Helpers — Auto-generated

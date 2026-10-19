@@ -235,6 +235,7 @@ async function trustRemoteCallerOnPeer(
  * declared and observed, so a peer that never advertised a class is not
  * eligible for it.
  */
+
 async function registerPeerOnCaller(
   callerDb: Db,
   peerOrigin: string,
