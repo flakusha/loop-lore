@@ -373,6 +373,16 @@ describe("wardrobe overrides — chat and location writers", () => {
       },),
     ).rejects.toThrow(`Wardrobe item ${foreign} not visible in world`,);
 
+    // The refusal carries the tagged error the route boundary maps; a
+    // regression back to a bare `Error` must fail here, not in production.
+    try {
+      await setLocationOutfitBindings(db, { worldId, actorId: actorA, bindings: { "loc-x": foreign, }, },);
+      throw new Error("expected setLocationOutfitBindings to reject",);
+    } catch (error) {
+      expect(error,).toBeInstanceOf(WardrobeItemNotVisibleError,);
+      expect((error as WardrobeItemNotVisibleError).tag,).toBe("wardrobe-item-not-visible",);
+    }
+
     // The rejected map must NOT have landed.
     const row = await db
       .selectFrom("world_avatar_config",)
