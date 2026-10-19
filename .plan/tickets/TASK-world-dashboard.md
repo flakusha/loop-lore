@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Postponed
+**Status:** Done
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-world-management-ui
