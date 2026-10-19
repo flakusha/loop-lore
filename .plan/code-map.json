@@ -252,6 +252,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-models-overlay.md"
     },
     {
@@ -5873,6 +5877,14 @@
       "source": ".plan/tickets/TASK-harness-model-routing.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/generation-scheduler.md"
     }
@@ -6013,6 +6025,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
     },
     {
       "kind": "ticket",
@@ -8031,6 +8047,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
+    }
+  ],
+  "src/characters/services/wardrobe/message-avatar.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
     }
   ],
   "src/characters/services/wardrobe/resolve.ts": [
@@ -10600,6 +10622,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-party-aux-transition.md"
     },
     {
@@ -12401,6 +12431,12 @@
       "source": "docs/spec/federation-trust-mechanism.md"
     }
   ],
+  "src/config/json-schema/hooks.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    }
+  ],
   "src/config/license.ts": [
     {
       "kind": "epic",
@@ -12702,6 +12738,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-change-hook.md"
     },
     {
@@ -12764,7 +12804,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-change-hook.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
     }
   ],
   "src/config/schema-class/idempotency.test.ts": [
@@ -13087,6 +13135,14 @@
       "source": ".plan/tickets/TASK-harness-model-routing.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/generation-scheduler.md"
     }
@@ -13108,7 +13164,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-change-hook.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
     }
   ],
   "src/config/schema/idempotency.ts": [
@@ -13499,6 +13563,16 @@
       "source": ".plan/tickets/TASK-csp-allows-unsafe-inline-and-unsafe-eval-defeating-nonce.md"
     }
   ],
+  "src/config/sections/hooks.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
+    }
+  ],
   "src/config/sections/index.ts": [
     {
       "kind": "ticket",
@@ -13602,6 +13676,10 @@
     }
   ],
   "src/config/sections/nsfw.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
@@ -16073,6 +16151,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
     },
     {
       "kind": "ticket",
@@ -22474,11 +22560,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-vn-qa-mode.md"
+      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-vn-cast-server-producer.md"
+      "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
   "src/frontend/alpine/chat-slash.ts": [
@@ -28084,6 +28170,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-art-quality-gates.md"
     },
     {
@@ -30443,6 +30533,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-model-routing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
     }
   ],
   "src/generation/scheduler.ts": [
@@ -52673,6 +52767,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-extractjsonobject-slices-an-unbounded-llm-response-before-js.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
     }
   ],
   "src/turning/index.ts": [
