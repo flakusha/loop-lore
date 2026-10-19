@@ -42,6 +42,15 @@ export function federationOffResponse(enabled: boolean,): Response | null {
   },);
 }
 
+/** A malformed origin, refused before anything is stored or probed. */
+export function badOriginResponse(): Response {
+  return jsonError({
+    message: "origin must be an http(s) URL",
+    status: HttpStatus.BadRequest,
+    code: ErrorCode.BadRequest,
+  },);
+}
+
 /** Narrow a submitted workload class against the closed enum. */
 export function isWorkloadClass(value: unknown,): value is PeerWorkloadClass {
   return typeof value === "string" && (PEER_WORKLOAD_CLASSES as readonly string[]).includes(value,);
