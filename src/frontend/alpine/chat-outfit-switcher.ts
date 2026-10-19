@@ -14,6 +14,7 @@
  *   GET  /api/v1/chats/:chatId/wardrobe-override/:actorId
  *   PUT  /api/v1/chats/:chatId/wardrobe-override
  */
+import { awaitChatStateAction, } from "./chat-state-global";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -125,6 +126,10 @@ interface SwitcherOutfit {
 
         this.overrideId = outfitId;
         this.open = false;
+        // TASK-chat-avatar-resolver-outfit-aware: the message read path resolves
+        // each message's avatar from the chat override, so reload it or the
+        // rendered avatars keep showing the previous outfit.
+        await awaitChatStateAction("loadMessages",);
       } catch (error) {
         log.error("Failed to switch outfit", error instanceof Error ? error : undefined, {},);
         this.error = t("status.wardrobeSaveFailed",);
