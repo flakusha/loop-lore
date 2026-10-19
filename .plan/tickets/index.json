@@ -37337,7 +37337,7 @@
     "epic": "epic-federation-offload-quotas",
     "tags": [],
     "source": ".plan/tickets/TASK-federation-storage-quota-accounting.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL": {
     "epic": "epic-certificate-and-tls-management",
