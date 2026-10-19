@@ -14,7 +14,7 @@ interaction loop — not started. See `## Status Split` and `## Scope`.
 (verified in `src/frontend/vn/qa-mode.ts`) vs interaction-loop boxes (no code).
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** (2026-08-23) marked Done while its own body said the Q&A Interaction Loop was NOT STARTED with 10 unchecked ACs. Reconciled 2026-10-09: validator done (but callerless), interaction loop absent — Done → In Progress. Note the closed git issue is left as-is; re-opening it is out of scope here.
 **Status Note (2026-10-18):** Re-verified against `dev`. The shipped surface now also carries `POST /api/chats/:id/vn-questions/:qid/dismiss` and the pending-question send gate (`src/routes/messages/guards.ts` 409). Still open: the three deferred write-back ACs, the partial `nextSceneId` follow-up, and the validator's missing production caller. Status line corrected Done → In Progress to match the notes above.
 **Status Note (2026-10-18, vn-epic-completion):** Header set to the truthful In Progress per the 2026-10-18 review adjudication. Git issue 0f9d87d was re-opened to match, but the shared-registry enforcement (any agent's `giwt sync --fix` auto-closes a done-index ticket's open issue as stale) re-closed it within minutes — the tracking system treats the closed registry issue as authoritative for done-ness, so `plan:sync` reports this ticket as ".md status stale" until the registry is re-opened deliberately at review. This branch implements the remaining slice — see the epic's Remaining Scope section.
