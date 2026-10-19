@@ -108,8 +108,8 @@ describeOrSkip("world creation wizard", () => {
     ],);
 
     expect(calls.every((c,) => c.opts.method === "POST"),).toBe(true,);
-// hint: Logic changed on both sides. Requires understanding intent of each change.
-// hint: Logic changed on both sides. Requires understanding intent of each change.
+    // hint: Logic changed on both sides. Requires understanding intent of each change.
+    // hint: Logic changed on both sides. Requires understanding intent of each change.
     const [worldPost,] = calls;
     if (!worldPost) { throw new Error("no world POST recorded",); }
     expect(String(worldPost.opts.body ?? "",),).toContain(`"name":"Test World"`,);
