@@ -16,6 +16,7 @@ import {
   destroyVnRenderer,
   getCurrentSceneIndex,
   getSceneCount,
+  getVnScenes,
   handleNavigateToScene,
   initVnRenderer,
   jumpToScene,
@@ -131,7 +132,28 @@ describe("initVnRenderer", () => {
   });
 });
 
-// ── Navigation ──────────────────────────────────────────────────────────────
+// ── Scene snapshot ─────────────────────────────────────────────────────────
+
+describe("getVnScenes", () => {
+  test("exposes the loaded scenes in order as the live array", async () => {
+    initTwo(freshContainer(),);
+    await tick();
+
+    const scenes = getVnScenes();
+    expect(scenes.map((s,) => s.text),).toEqual(["First.", "Second.",],);
+    expect(scenes,).toBe(state.scenes,);
+  });
+
+  test("is empty before init and after destroy", () => {
+    expect(getVnScenes(),).toEqual([],);
+
+    initVnRenderer(freshContainer() as unknown as HTMLElement, [msg("m1", "First.",),], GM_CONFIG,);
+    expect(getVnScenes(),).toHaveLength(1,);
+
+    destroyVnRenderer();
+    expect(getVnScenes(),).toEqual([],);
+  });
+});
 
 describe("navigation", () => {
   test("next stops at the last scene; prev stops at the first", async () => {
