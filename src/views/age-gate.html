@@ -1,0 +1,69 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Age Gate — self-declaration birth-date verification.
+  Served at /views/age-gate by the auto-discovered view route
+  (src/routes/views/constants.ts discoverViews). Speaks the JSON contract
+  in src/age-gate/controller.ts; client state lives in
+  src/frontend/alpine/age-gate.ts.
+-->
+<div class="login-page" x-data="ageGate()" data-testid="age-gate">
+  <div class="login-card">
+    <div class="login-logo">{{{t("ageGate.logo")}}}</div>
+
+    <h2 style="text-align: center; margin: var(--space-4) 0">{{{t("ageGate.heading")}}}</h2>
+    <p style="text-align: center; font-size: 14px">{{{t("ageGate.intro")}}}</p>
+
+    <div id="age-gate-error" class="login-error" data-testid="age-gate-error" x-text="_error"></div>
+
+    <form
+      method="post"
+      action="/api/v1/age-gate/accept"
+      x-on:submit.prevent="submit()"
+      x-bind:aria-busy="_submitting"
+    >
+      <label class="form-label" for="age-gate-birthdate">{{{t("ageGate.birthDateLabel")}}}</label>
+      <input
+        id="age-gate-birthdate"
+        class="form-input"
+        type="date"
+        name="birthDate"
+        x-model="_birthDate"
+        x-bind:disabled="_submitting"
+        x-bind:aria-invalid="Boolean(_error)"
+        data-testid="age-gate-birthdate"
+      />
+
+      <!--
+        minAgeText(), not $t(): the $t magic does not interpolate params
+        (src/frontend/alpine-init.ts:79), so it would print a literal {age}.
+      -->
+      <p style="font-size: 13px; margin-top: var(--space-2)" data-testid="age-gate-minimum-age">
+        <span x-text="minAgeText()"></span>
+      </p>
+
+      <label style="display: flex; gap: var(--space-2); font-size: 13px; margin-top: var(--space-3)">
+        <input type="checkbox" name="consent" x-model="_consent" x-bind:disabled="_submitting" />
+        <span>{{{t("ageGate.consent")}}}</span>
+      </label>
+
+      <button
+        id="age-gate-submit"
+        type="submit"
+        class="btn btn-primary login-btn"
+        x-bind:disabled="_submitting || !canSubmit()"
+        data-testid="age-gate-submit"
+      >
+        <span x-text="_submitting ? $t('ageGate.submitting') : $t('ageGate.confirm')"></span>
+      </button>
+    </form>
+
+    <p
+      style="font-size: 12px; color: var(--text-secondary); margin-top: var(--space-4)"
+      data-testid="age-gate-data-note"
+    >
+      {{{t("ageGate.dataNote")}}}
+    </p>
+  </div>
+</div>
