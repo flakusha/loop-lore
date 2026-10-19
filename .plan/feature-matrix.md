@@ -1679,7 +1679,7 @@ Total tickets: **3873** — untagged: **2642** — unbound to epic: **1532**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2642 | 958 | 45 | 905 | 32 | 0 | 702 |
+| (untagged) | 2642 | 959 | 45 | 905 | 32 | 0 | 701 |
 
 ## By epic × status
 
@@ -1886,7 +1886,7 @@ Total tickets: **3873** — untagged: **2642** — unbound to epic: **1532**
 | epic-external-tooling-build.md | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
 | epic-faction-reputation | 6 | 2 | 0 | 1 | 0 | 0 | 3 |
 | epic-fe-be-harmonization | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| epic-federation-offload-quotas | 14 | 12 | 0 | 0 | 0 | 0 | 2 |
+| epic-federation-offload-quotas | 14 | 13 | 0 | 0 | 0 | 0 | 1 |
 | epic-federation-swarm-sync | 11 | 6 | 0 | 1 | 0 | 0 | 4 |
 | epic-file-splitting | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | epic-fractal-locations | 13 | 0 | 0 | 0 | 0 | 0 | 13 |

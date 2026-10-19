@@ -21185,6 +21185,12 @@
       "source": ".plan/tickets/TASK-federation-storage-quota-accounting.md"
     }
   ],
+  "src/federation/storage-usage.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-storage-quota-accounting.md"
+    }
+  ],
   "src/federation/switcher/migration.ts": [
     {
       "kind": "spec",
