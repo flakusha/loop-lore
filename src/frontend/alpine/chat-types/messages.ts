@@ -48,6 +48,8 @@ export interface Message {
   tokens_per_second?: number;
   status?: string;
   emotion?: string;
+  /** Server-resolved, outfit-aware avatar asset (message read path). */
+  avatar_asset_id?: string;
   reactions?: { emoji: string; count: number; userReacted: boolean }[];
   pinned?: boolean;
   /** Chat section this message belongs to (multi-location sectioning). */

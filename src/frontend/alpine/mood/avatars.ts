@@ -143,17 +143,23 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   /**
-   * Resolve the avatar asset for a single assistant message based on its
-   * detected emotion. Emotion avatars are bound per message (and per chat's
-   * current character), not globally. Falls back to the character's base
-   * avatar when the message has no emotion or no matching variant exists.
+   * Resolve the avatar asset for a single assistant message.
+   *
+   * `msg.avatar_asset_id` is the server's answer: the message-read path walks
+   * the one wardrobe ladder owner (`selectAvatar`), so the header outfit
+   * switcher reaches the render. It is absent when no outfit is in play for
+   * the message's actor, and the emotion-only walk below then owns the render
+   * unchanged. Emotion avatars are bound per message (and per chat's current
+   * character), not globally.
    * @param msg - The message being rendered
    * @param msg.role
    * @param msg.emotion
+   * @param msg.avatar_asset_id - Server-resolved, outfit-aware asset id.
    * @returns Asset id to display, or null to hide the avatar
    */
-  avatarForMessage(msg: { role?: string; emotion?: string | null },): string | null {
+  avatarForMessage(msg: { role?: string; emotion?: string | null; avatar_asset_id?: string | null },): string | null {
     if (msg.role === "user") { return null; }
+    if (msg.avatar_asset_id) { return msg.avatar_asset_id; }
     if (msg.emotion) {
       // Pure per-message lookup (does NOT mutate the mood-driven global
       // _currentEmotionAvatar, which stays for non-message avatar areas).

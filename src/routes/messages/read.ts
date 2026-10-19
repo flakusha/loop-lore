@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { attachMessageAvatars, } from "../../characters/services/wardrobe/message-avatar";
 import { checkChatAccess, getMessageWithAccess, listMessages, } from "../../chat/service";
+import { getChildLogger, } from "../../logger";
 import { notFound, } from "../../validation/middleware";
 import {
   ChatIdParams,
@@ -65,6 +67,23 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         const enriched: Record<string, unknown>[] = [];
         for (const r of enrichResults) {
           if (r.status === "fulfilled") { enriched.push(r.value,); }
+        }
+
+        // TASK-chat-avatar-resolver-outfit-aware: resolve each message's avatar
+        // server-side through the single wardrobe ladder owner, so the header
+        // outfit switcher reaches the render path. A row whose actor resolves
+        // no outfit keeps its field absent and renders exactly as before.
+        // Belt-and-braces: the resolver already swallows per-row failures, but
+        // the endpoint contract is that a wardrobe problem must never cost the
+        // reader their message page, so the boundary holds the line too.
+        try {
+          await attachMessageAvatars({ database, chatId, messages: enriched, },);
+        } catch (error) {
+          getChildLogger("routes.messages.read",)?.error(
+            "Failed to attach message avatars",
+            error instanceof Error ? error : undefined,
+            { chatId, },
+          );
         }
 
         return jsonPaginated({ data: enriched, total, page, pageSize, },);

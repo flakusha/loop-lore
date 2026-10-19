@@ -100,6 +100,7 @@ export const MessageRow = Type.Object({
   tokens_per_second: Type.Optional(Type.Union([Type.Number(), Type.Null(),]),),
   status: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
   emotion: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
+  avatar_asset_id: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
   pinned: Type.Optional(Type.Boolean(),),
   section_id: Type.Optional(Type.Union([Type.String(), Type.Null(),]),),
 },);

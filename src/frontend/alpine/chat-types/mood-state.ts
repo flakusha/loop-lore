@@ -30,7 +30,7 @@ export interface ChatMoodState {
   _pollEmotionJob(actorId: string, jobId: string | null,): Promise<void>;
   loadEmotions(): Promise<void>;
   getActiveEmotions(): { def: { id: string; icon: string | null; display_name: string }; intensity: number }[];
-  avatarForMessage(msg: { role?: string; emotion?: string | null },): string | null;
+  avatarForMessage(msg: { role?: string; emotion?: string | null; avatar_asset_id?: string | null },): string | null;
   selectEmotionAvatar(emotion: string,): string | null;
   updateMoodHappiness(happiness: number,): Promise<void>;
   applyMoodDelta(delta: number,): Promise<void>;
