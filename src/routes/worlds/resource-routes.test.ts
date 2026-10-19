@@ -20,16 +20,15 @@ import { GatheringNodeType, NodeInstanceState, WorldVisibility, } from "../../db
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
+  insertActors,
   insertGatheringNodeDefs,
   insertGatheringNodeInstances,
   insertLocations,
   insertUsers,
   insertWorlds,
-  insertActors,
 } from "../../test-utils/insert-helpers";
 import { MAX_ABILITY_BONUS, } from "../../worlds/resource-core";
 import { resourceRoutes, } from "./resource-routes";
-
 
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
