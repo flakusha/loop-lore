@@ -9,6 +9,7 @@ import {
   saveLocale,
   type TranslationMap,
 } from "../i18n";
+import { enforceAgeGate, } from "./age-gate";
 import { log as rootLog, } from "./logger";
 import { initTelemetry, } from "./telemetry";
 
@@ -50,6 +51,12 @@ globalThis.app = function() {
       }
 
       this.applyTheme(this.currentTheme,);
+
+      // Gated user → verification screen. `<body x-data="app()">` is on every
+      // layout-wrapped page, so this is the one place a landed user always
+      // passes through. Fire-and-forget: never blocks init, and enforceAgeGate
+      // returns early on /views/age-gate itself, so it cannot loop.
+      void enforceAgeGate();
 
       // Load saved locale (cookie already set by server)
       const locale = getSavedLocale();

@@ -12,6 +12,7 @@ import "./actor-systems";
 import "./actor-traits";
 import "./actor-wardrobe";
 import "./admin";
+import "./age-gate";
 import "./app";
 import "./autonomy-panel";
 import "./blog";
