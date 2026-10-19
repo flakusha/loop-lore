@@ -59,6 +59,7 @@ import * as routes_worlds_factionRoutesShared from "@/routes/worlds/faction-rout
 import * as routes_worlds_storageRouteSupport from "@/routes/worlds/storage-route-support";
 import * as validation_actors from "@/validation/schemas/actors";
 import * as validation_admin from "@/validation/schemas/admin";
+import * as validation_adminFederation from "@/validation/schemas/admin-federation";
 import * as validation_adminTemplates from "@/validation/schemas/admin-templates";
 import * as validation_apiKeys from "@/validation/schemas/api-keys";
 import * as validation_assetTags from "@/validation/schemas/asset-tags";
@@ -81,6 +82,7 @@ import * as validation_primitives from "@/validation/schemas/primitives";
 import * as validation_quests from "@/validation/schemas/quests";
 import * as validation_responses from "@/validation/schemas/responses";
 import * as validation_responsesAdmin from "@/validation/schemas/responses-admin";
+import * as validation_responsesFederation from "@/validation/schemas/responses-federation";
 import * as validation_responsesInteraction from "@/validation/schemas/responses-interaction";
 import * as validation_settings from "@/validation/schemas/settings";
 import * as validation_story from "@/validation/schemas/story";
@@ -306,6 +308,74 @@ describe("AdminChatUpdateBody", () => {
   test("accepts generated values", () => checkAllValid(validation_admin.AdminChatUpdateBody,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminChatUpdateBody,));
+});
+
+describe("AdminFederationBudget", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesFederation.AdminFederationBudget,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesFederation.AdminFederationBudget,));
+});
+
+describe("AdminFederationBudgetBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_adminFederation.AdminFederationBudgetBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_adminFederation.AdminFederationBudgetBody,));
+});
+
+describe("AdminFederationClassCell", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesFederation.AdminFederationClassCell,));
+
+  test("survives a JSON round-trip", () =>
+    checkJsonRoundTrip(validation_responsesFederation.AdminFederationClassCell,));
+});
+
+describe("AdminFederationMatrix", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesFederation.AdminFederationMatrix,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesFederation.AdminFederationMatrix,));
+});
+
+describe("AdminFederationMatrixBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_adminFederation.AdminFederationMatrixBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_adminFederation.AdminFederationMatrixBody,));
+});
+
+describe("AdminFederationPeer", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesFederation.AdminFederationPeer,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesFederation.AdminFederationPeer,));
+});
+
+describe("AdminFederationPeerBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_adminFederation.AdminFederationPeerBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_adminFederation.AdminFederationPeerBody,));
+});
+
+describe("AdminFederationPeerSave", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesFederation.AdminFederationPeerSave,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesFederation.AdminFederationPeerSave,));
+});
+
+describe("AdminFederationQuotaUsage", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesFederation.AdminFederationQuotaUsage,));
+
+  test("survives a JSON round-trip", () =>
+    checkJsonRoundTrip(validation_responsesFederation.AdminFederationQuotaUsage,));
+});
+
+describe("AdminFederationUsage", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesFederation.AdminFederationUsage,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesFederation.AdminFederationUsage,));
+});
+
+describe("AdminFederationWorkloadBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_adminFederation.AdminFederationWorkloadBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_adminFederation.AdminFederationWorkloadBody,));
 });
 
 describe("AdminModelRoleOverrideBody", () => {
@@ -2609,4 +2679,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 413 schemas discovered across 499 module(s).
+// 424 schemas discovered across 508 module(s).
