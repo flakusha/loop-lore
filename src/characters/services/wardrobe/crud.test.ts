@@ -34,6 +34,7 @@ import {
 import {
   setChatOutfitOverride,
   setLocationOutfitBindings,
+  WardrobeItemNotVisibleError,
 } from "./overrides";
 
 describe("wardrobe CRUD — visibility and ownership", () => {
