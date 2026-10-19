@@ -18,7 +18,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { MAX_ABILITY_BONUS, } from "../../worlds/resources";
-import { requireFactionsInWorld, } from "./faction-routes";
+import { requireFactionsInWorld, } from "./faction-routes-shared";
 
 const WORLD = "world-a";
 const RIVAL = "world-b";
