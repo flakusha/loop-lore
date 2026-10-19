@@ -13,9 +13,13 @@ import { describe, expect, test, } from "bun:test";
 import type { ChunkEvent, } from "../generation/providers/types";
 import { PEER_WORK_DEFAULT_TIMEOUT_MS, runPeerWorkload, } from "./peer-work-client";
 import type { PeerWorkTransport, } from "./peer-work-client";
+import { PEER_ORIGIN_HEADER, } from "./peer-work-wire";
 import type { PeerWorkRunRequest, } from "./peer-work-wire";
 
 const PEER = { origin: "https://gpu.example", };
+
+/** This instance's own origin — the identity the receiver authorizes. */
+const CALLER_ORIGIN = "https://caller.example";
 
 /** A minimal run request for the stub. */
 const REQUEST: PeerWorkRunRequest = {
@@ -74,6 +78,7 @@ describe("runPeerWorkload", () => {
     const sink: { url?: string; headers?: Record<string, string>; body?: unknown; signal?: AbortSignal } = {};
     const chunks: ChunkEvent[] = [];
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: "token-abc",
@@ -104,6 +109,7 @@ describe("runPeerWorkload", () => {
   test("sends the origin header but no bearer when none is supplied", async () => {
     const sink: { url?: string; headers?: Record<string, string>; body?: unknown; signal?: AbortSignal } = {};
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -111,11 +117,13 @@ describe("runPeerWorkload", () => {
     },);
 
     expect(attempt.ok,).toBe(true,);
+    expect(sink.headers?.[PEER_ORIGIN_HEADER],).toBe(CALLER_ORIGIN,);
     expect(sink.headers?.authorization,).toBeUndefined();
   });
 
   test("a non-2xx error envelope routes the peer's own error code", async () => {
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -133,6 +141,7 @@ describe("runPeerWorkload", () => {
 
   test("a non-2xx without a peer error code falls back to transport", async () => {
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -149,6 +158,7 @@ describe("runPeerWorkload", () => {
   test("an error chunk mid-stream ends the attempt as a transport failure", async () => {
     const chunks: ChunkEvent[] = [];
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -171,6 +181,7 @@ describe("runPeerWorkload", () => {
 
   test("a malformed chunk line is a protocol failure", async () => {
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -190,6 +201,7 @@ describe("runPeerWorkload", () => {
     },);
 
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -204,6 +216,7 @@ describe("runPeerWorkload", () => {
 
   test("a transport throw is a transport failure, not a crash", async () => {
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -220,6 +233,7 @@ describe("runPeerWorkload", () => {
 
   test("a 200 with a null body is a protocol failure", async () => {
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -235,6 +249,7 @@ describe("runPeerWorkload", () => {
   test("the caller abort signal aborts the attempt as aborted", async () => {
     const sink: { signal?: AbortSignal } = {};
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
@@ -266,6 +281,7 @@ describe("runPeerWorkload", () => {
   test("the per-attempt timeout aborts the transport signal", async () => {
     const sink: { signal?: AbortSignal } = {};
     const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
       peer: PEER,
       request: REQUEST,
       bearer: null,
