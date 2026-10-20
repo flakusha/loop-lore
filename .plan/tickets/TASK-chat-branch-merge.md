@@ -125,3 +125,8 @@ enabled.
 - `detectSplitIntent`/`detectReuniteIntent` only detect narration; they do not carry branch specs (locations + actor sets) or a secondary chat id.
 - No `/split`/`/reunite` command exists in `src/routes/messages/command.ts`; execution requires either explicit command syntax with branch specs or GM/assistant derivation.
 - Safe auto-execution therefore needs a separate task: command parser + branch spec validation + owner/permission guards + tests. Detection wiring remains the scope of this slice.
+
+## Aux/0-shot classification (2026-10-20)
+
+- Regex detection is deterministic and cheap; aux LLM could derive branch specs (locations/actors) from narration, but that adds latency/cost and failure modes.
+- Recommend a SEPARATE ticket for aux-driven branch proposal (mirroring `classifyTransition`), keeping regex detection in this slice. Rationale: different verification (LLM eval corpus) and rollback surface.
