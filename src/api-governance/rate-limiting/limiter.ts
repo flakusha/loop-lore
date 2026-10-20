@@ -17,17 +17,32 @@ export class GovernanceRateLimiter {
   private store: RateLimitStore;
   private now: () => number;
 
+  /**
+   * Create a new rate limiter with optional store and clock.
+   * @param opts
+   */
   constructor(opts: { store?: RateLimitStore; now?: () => number } = {},) {
     this.store = opts.store ?? new InMemoryRateLimitStore();
     this.now = opts.now ?? (() => Date.now());
   }
 
+  /** Read-only view for the status endpoint — consumes nothing. */
+  /**
+   * @param key
+   * @param policy
+   */
   peek(key: string, policy: RatePolicy,): { policy: string; limit: number; remaining: number } {
     const nowMs = this.now();
     const fresh = this.store.loadWindow(key, nowMs,).filter((t,) => t > nowMs - policy.windowMs);
     return { policy: policy.name, limit: policy.max, remaining: Math.max(0, policy.max - fresh.length,), };
   }
 
+  /** Consume cost units against the key's policy. Returns verdict. */
+  /**
+   * @param key
+   * @param policy
+   * @param cost
+   */
   consume(key: string, policy: RatePolicy, cost = 1,): RateLimitVerdict {
     const nowMs = this.now();
     const win = slidingWindow(nowMs, this.store.loadWindow(key, nowMs,), policy.windowMs, policy.max,);
@@ -66,6 +81,10 @@ export class GovernanceRateLimiter {
     return { allowed: true, policy: policy.name, limit: policy.max, remaining: win.remaining, };
   }
 
+  /** Stop timers and release resources. */
+  /**
+   * @returns {void}
+   */
   destroy(): void {
     this.store.destroy();
   }
