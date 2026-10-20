@@ -3,6 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { getChildLogger, } from "../../logger";
 import { notifyGmAction, } from "../../notifications/service";
 import { WorldStateService, } from "../../story/world-state";
 import { can, } from "../../users/permissions";
@@ -76,10 +77,9 @@ export async function handleNpcState(
   void notifyGmAction(database, {
     worldId,
     description: `NPC ${actorId} state updated`,
-  },)
-    // GM-action notification failure is non-fatal — swallow.
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    .catch(() => {},);
+  },).catch((err,) => {
+    getChildLogger("routes/story-states",)?.warn("gm-action notification failed", { err, },);
+  },);
 
   return jsonResponse(updated,);
 }
@@ -166,10 +166,9 @@ export async function handleLocationState(
     void notifyGmAction(database, {
       worldId: locWorldRow.world_id,
       description: `Location ${locationId} state updated`,
-    },)
-      // GM-action notification failure is non-fatal — swallow.
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .catch(() => {},);
+    },).catch((err,) => {
+      getChildLogger("routes/story-states",)?.warn("gm-action notification failed", { err, },);
+    },);
   }
 
   const updated = await state.getLocationState(locationId,);
