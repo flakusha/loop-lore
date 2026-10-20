@@ -12,12 +12,20 @@ import pkg from "../../package.json" with { type: "json", };
  * `test:unit:parallel`). `bun run <missing>` exits 1, so those CI steps failed
  * unconditionally and the drift stayed invisible until a run reached them.
  * Every script name referenced by a workflow MUST exist in the `scripts` block.
+ *
+ * A `bun run <path/to/file>` invocation runs a FILE, not a package.json
+ * script — the house convention for a script file is `bun run scripts/foo.ts`
+ * (package.json itself does it a dozen times), and the first segment of a
+ * path ("scripts") is not a script name. The lookahead keeps those out: the
+ * captured token must not be followed by another token character or a path
+ * separator, and it must not be a PREFIX of one (the greedy capture
+ * backtracks, so a bare `(?!\/)` would re-match "script" out of "scripts").
  */
 
 const WORKFLOWS_DIR = join(import.meta.dir, "..", "..", ".github", "workflows",);
 
 /** Captures the script name of a `bun run <script>` invocation. */
-const RUN_SCRIPT = /\bbun run ([a-zA-Z0-9:_-]+)/gu;
+const RUN_SCRIPT = /\bbun run ([a-zA-Z0-9:_-]+)(?![a-zA-Z0-9:_\/-])/gu;
 
 test("every `bun run <script>` in .github/workflows exists in package.json scripts", () => {
   const { scripts, } = pkg;
