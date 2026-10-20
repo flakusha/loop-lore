@@ -42,6 +42,6 @@ export const AdminModelRoleOverrideBody = t.Object({
 
 export const AdminChatUpdateBody = t.Object({
   status: t.Optional(t.String(),),
-  is_pinned: t.Optional(t.String(),),
+  is_pinned: t.Optional(t.Union([t.Literal("pinned"), t.Literal("unpinned"), t.Literal("archived"),],),),
   world_id: OptionalId,
 },);
