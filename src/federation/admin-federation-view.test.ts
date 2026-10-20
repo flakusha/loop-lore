@@ -79,13 +79,12 @@ describe("admin storage accessor", () => {
     await db.destroy();
   });
 
-  test("budgets are unavailable while the storage-quota tables are absent", async () => {
+  test("budgets are available once the storage-quota migration has landed", async () => {
     const { db, } = await createTestDb();
 
-    // The instance-storage-budgets migration is deliberately NOT merged into
-    // this branch, so the accessor must report the feature as unavailable
-    // rather than throw or invent numbers.
-    expect(await storageBudgetsAvailable(db,),).toBe(false,);
+    // The instance-storage-budgets migration (066) is merged into this branch,
+    // so the accessor must report the feature as available.
+    expect(await storageBudgetsAvailable(db,),).toBe(true,);
     await db.destroy();
   });
 });
