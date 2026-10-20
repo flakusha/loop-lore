@@ -48,7 +48,6 @@ export async function updateMood(
 
   if (opts.happiness !== undefined) {
     updateData.happiness = Math.max(0, Math.min(100, opts.happiness,),);
-    updateData.last_mood_change = now;
   }
 
   if (opts.currentMood !== undefined) {
