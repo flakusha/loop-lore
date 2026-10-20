@@ -170,7 +170,7 @@ function tryParseToml(text: string,): ParseResult | null {
 
 function tryParseYaml(text: string,): ParseResult | null {
   try {
-    if (!text.includes(":",) || text.includes("{",)) { return null; }
+    if (!text.includes(":",)) { return null; }
 
     const parsed = yamlLoad(text,);
     if (!parsed || typeof parsed !== "object") { return null; }
