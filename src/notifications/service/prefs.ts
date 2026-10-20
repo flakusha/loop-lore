@@ -69,32 +69,43 @@ export async function setPrefs(
   userId: string,
   patch: { enabled?: Partial<Record<NotificationType, boolean>>; mutedWorlds?: string[] },
 ): Promise<NotificationPreferences> {
-  const current = await getPrefs(db, userId,);
-  const merged: NotificationPreferences = {
-    enabled: { ...current.enabled, ...patch.enabled, },
-    mutedWorlds: patch.mutedWorlds ?? current.mutedWorlds,
-  };
+  return db.transaction().execute(async (trx,) => {
+    const user = await trx
+      .selectFrom("users",)
+      .select("settings",)
+      .where("id", "=", userId,)
+      .executeTakeFirst();
 
-  const user = await db
-    .selectFrom("users",)
-    .select("settings",)
-    .where("id", "=", userId,)
-    .executeTakeFirst();
+    if (!user) {
+      throw new Error("User not found",);
+    }
 
-  const settings = jsonParseOr(user?.settings ?? "{}", {},) as Record<string, unknown>;
-  settings.notifications = merged;
+    const parsed = jsonParseOr(user.settings ?? "{}", {},) as { notifications?: Partial<NotificationPreferences> };
+    const current = mergePrefs(parsed.notifications,);
+    const merged: NotificationPreferences = {
+      enabled: { ...current.enabled, ...patch.enabled, },
+      mutedWorlds: patch.mutedWorlds ?? current.mutedWorlds,
+    };
 
-  const serialized = safeJsonStringify(settings,);
-  if (!serialized.ok) {
-    // Don't report success for a preference we failed to persist.
-    throw new Error("Failed to serialize notification preferences",);
-  }
+    const settings = jsonParseOr(user.settings ?? "{}", {},) as Record<string, unknown>;
+    settings.notifications = merged;
 
-  await db
-    .updateTable("users",)
-    .set({ settings: serialized.value, },)
-    .where("id", "=", userId,)
-    .execute();
+    const serialized = safeJsonStringify(settings,);
+    if (!serialized.ok) {
+      // Don't report success for a preference we failed to persist.
+      throw new Error("Failed to serialize notification preferences",);
+    }
 
-  return merged;
+    const result = await trx
+      .updateTable("users",)
+      .set({ settings: serialized.value, },)
+      .where("id", "=", userId,)
+      .executeTakeFirst();
+
+    if ((result?.numUpdatedRows ?? 0n) === 0n) {
+      throw new Error("User not found",);
+    }
+
+    return merged;
+  },);
 }
