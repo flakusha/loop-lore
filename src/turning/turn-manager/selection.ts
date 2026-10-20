@@ -27,26 +27,22 @@ export async function selectNextActor(
 
   const resolvedStrategy = strategy ?? host.state.strategy;
   const mode = context?.chatMode === "group" ? "group" : "story";
-  const participants = await fetchTurnParticipants(host, mode,);
-
-  if (participants.length === 0) { return null; }
-
-  // Skip cooldown (TASK-chat-feature-turn-talkativity-skip AC4): a skipped
-  // actor is re-ineligible for a short window so selection cannot pick them
-  // again immediately. Fall back to the full set when EVERY candidate is
-  // cooling — a solo/small cast must still be able to take its turn.
-  const cooling = await fetchSkipCooldowns(host.db, host.chatId,);
-  const eligible = participants.filter((p,) => !cooling.has(p.actorId,));
-  const candidates = eligible.length > 0 ? eligible : participants;
-
-  // Selection happens inside persistState's mutation closure: on a CAS
-  // conflict, the closure re-runs against the freshest committed state, so
-  // currentTurn increments relative to (and currentActorId reads from) the
-  // concurrent writer's values instead of a stale snapshot. Blind
-  // read-modify-write would clobber the other writer's turn (BUG-turn-state).
   const selectFn = STRATEGY_MAP[resolvedStrategy];
   let selectedId: string | null = null;
-  await persistState(host, (state,) => {
+  let noParticipants = false;
+  await persistState(host, async (state,) => {
+    // Recompute candidates inside the closure so a CAS retry re-reads a
+    // fresh participant/cooling snapshot instead of a stale capture.
+    const participants = await fetchTurnParticipants(host, mode,);
+    if (participants.length === 0) {
+      noParticipants = true;
+      return;
+    }
+
+    const cooling = await fetchSkipCooldowns(host.db, host.chatId,);
+    const eligible = participants.filter((p,) => !cooling.has(p.actorId,));
+    const candidates = eligible.length > 0 ? eligible : participants;
+
     state.currentTurn = state.currentTurn + 1;
     selectedId = selectFn(
       candidates,
@@ -54,15 +50,13 @@ export async function selectNextActor(
       state.currentTurn,
       state.turnOrder,
       context,
-      // Pass the previous speaker as `lastActorId` so the strategy can
-      // skip them when alternatives exist (consecutive-turn guard —
-      // BUG-group-cascade-consecutive-turn-guard).
       state.currentActorId,
     );
 
     state.currentActorId = selectedId;
   },);
 
+  if (noParticipants) { return null; }
   return selectedId;
 }
 
@@ -110,6 +104,7 @@ async function decrementInitiative(host: TurnManagerHost, actorId: string,): Pro
       .where("chat_id", "=", host.chatId,)
       .where("scene_id", "=", currentScene,)
       .where("actor_id", "=", actorId,)
+      .where("score", "=", current.score,)
       .execute();
   } else {
     // No row yet (default 1) — create with the decremented value so future
