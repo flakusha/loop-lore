@@ -160,7 +160,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
 
     for (const filename of filenames) {
       const buffer = await client.downloadImage(filename,);
-      const ext = filename.split(".",).pop() ?? "png";
+      const ext = (filename.split(".",).pop() ?? "png").toLowerCase();
       const meta = extractImageMetadata(buffer,);
 
       const { asset, } = await createAsset({
