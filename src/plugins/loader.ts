@@ -161,6 +161,13 @@ export async function loadSinglePlugin(
       return;
     }
 
+    // Reserved built-in namespaces (e.g. "core") must not be claimed by a
+    // community/local plugin — doing so overwrites the built-in definitions.
+    if (origin !== "core" && manifest.name === "core") {
+      log.warn({ message: `Plugin name "core" is reserved for built-ins`, pluginName, origin });
+      return;
+    }
+
     registeredName = manifest.name;
     registry.register({ manifest, origin, directory: pluginDir, });
     // Approval is origin-scoped: a community/local plugin only runs once
