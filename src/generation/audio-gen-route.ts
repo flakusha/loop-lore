@@ -63,9 +63,20 @@ export async function handleAmbientGeneration(
 
   const req = body as AmbientGenBody;
 
-  if (req.chatId) {
-    const db = database ?? getDatabase();
-    const access = await checkChatAccess(db, req.chatId, userId, userRole,);
+  const db = database ?? getDatabase();
+  let resolvedChatId = req.chatId;
+  if (req.messageId) {
+    const msg = await db.selectFrom("messages",).select("chat_id",).where("id", "=", req.messageId,).executeTakeFirst();
+    if (!msg) { return Response.json({ error: "Message not found", status: 404, }, { status: 404, },); }
+    if (resolvedChatId && msg.chat_id !== resolvedChatId) {
+      return Response.json({ error: "Message does not belong to chat", status: 400, }, { status: 400, },);
+    }
+
+    resolvedChatId = resolvedChatId ?? msg.chat_id;
+  }
+
+  if (resolvedChatId) {
+    const access = await checkChatAccess(db, resolvedChatId, userId, userRole,);
     if (!access.ok) { return forbiddenResponse(); }
   }
 
@@ -115,7 +126,6 @@ export async function handleAmbientGeneration(
     );
   }
 
-  const db = database ?? getDatabase();
   const assetId = uid();
   const filename = `ambient-${assetId.slice(0, 8,)}.wav`;
   const { asset, } = await createAsset({
@@ -141,11 +151,11 @@ export async function handleAmbientGeneration(
     },);
   }
 
-  if (req.chatId) {
+  if (resolvedChatId) {
     await linkAsset({
       database: db,
       assetId: asset.id,
-      link: { entityType: "chat", entityId: req.chatId, label: "ambient", },
+      link: { entityType: "chat", entityId: resolvedChatId, label: "ambient", },
     },);
   }
 
