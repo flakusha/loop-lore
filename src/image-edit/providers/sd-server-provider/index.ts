@@ -104,15 +104,15 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   async listCapabilities(): Promise<ImageEditCategory[]> {
     const caps: ImageEditCategory[] = ["txt2img", "img2img",];
 
-    const cfg = this.getConfig();
-    if (cfg) {
+    const sdCpp = loadConfig().autoStart?.sdCpp;
+    if (sdCpp) {
       // ControlNet available if configured
-      if ("controlNetPath" in cfg && cfg.controlNetPath) {
+      if (sdCpp.controlNetPath) {
         caps.push("controlnet",);
       }
 
       // Upscale available if upscaler models configured
-      if ("hiresUpscalersDir" in cfg && cfg.hiresUpscalersDir) {
+      if (sdCpp.hiresUpscalersDir) {
         caps.push("upscale",);
       }
     }
