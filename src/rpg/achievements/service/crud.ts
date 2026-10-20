@@ -135,13 +135,15 @@ export async function updateAchievement(
  */
 export async function deleteAchievement(db: Kysely<DB>, achievementId: string,): Promise<void> {
   // Delete player progress first
-  await (db as any)
-    .deleteFrom("player_achievements",)
-    .where("achievement_id", "=", achievementId,)
-    .execute();
+  await db.transaction().execute(async (trx,) => {
+    await (trx as any)
+      .deleteFrom("player_achievements",)
+      .where("achievement_id", "=", achievementId,)
+      .execute();
 
-  await (db as any)
-    .deleteFrom("achievements",)
-    .where("id", "=", achievementId,)
-    .execute();
+    await (trx as any)
+      .deleteFrom("achievements",)
+      .where("id", "=", achievementId,)
+      .execute();
+  },);
 }
