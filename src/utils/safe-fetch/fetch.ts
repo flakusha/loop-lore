@@ -31,7 +31,15 @@ function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortS
   if (!external) { return timeoutSignal; }
   const combined = new AbortController();
   if (external.aborted) { combined.abort(); }
-  else { external.addEventListener("abort", () => combined.abort(), { once: true, },); }
+  else {
+    const onExternalAbort = (): void => combined.abort();
+    external.addEventListener("abort", onExternalAbort, { once: true, },);
+    // Drop the external listener when the timeout fires first, so a shared
+    // long-lived external signal does not accumulate permanent listeners.
+    timeoutSignal.addEventListener("abort", () => external.removeEventListener("abort", onExternalAbort,), {
+      once: true,
+    },);
+  }
 
   if (timeoutSignal.aborted) { combined.abort(); }
   else { timeoutSignal.addEventListener("abort", () => combined.abort(), { once: true, },); }
