@@ -8,9 +8,11 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
+import type { HandleOpts, } from "./types";
 import { worldConditionsRoutes, } from "./world-conditions-routes";
 
 const WORLD_ID = "11111111-1111-4111-8111-111111111111";
@@ -25,7 +27,7 @@ beforeAll(async () => {
   await insertWorlds(db, OWNER_ID, "Test World", { id: WORLD_ID, },);
   app = new Elysia({ name: "test-conditions-routes", },)
     .derive(() => ({ userId: OWNER_ID, userRole: "owner", }))
-    .use(worldConditionsRoutes({ database: db, },),);
+    .use(worldConditionsRoutes({ database: db, config: {} as Config, } as HandleOpts,),) as unknown as Elysia;
 },);
 
 afterAll(async () => {
