@@ -130,3 +130,7 @@ enabled.
 
 - Regex detection is deterministic and cheap; aux LLM could derive branch specs (locations/actors) from narration, but that adds latency/cost and failure modes.
 - Recommend a SEPARATE ticket for aux-driven branch proposal (mirroring `classifyTransition`), keeping regex detection in this slice. Rationale: different verification (LLM eval corpus) and rollback surface.
+
+## Auto-execution scope (2026-10-20)
+
+- Minimal scope: detect + log only (shipped). Full execution requires explicit command syntax + branch specs and is tracked separately.
