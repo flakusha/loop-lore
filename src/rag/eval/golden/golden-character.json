@@ -1,0 +1,17 @@
+{
+  "name": "golden-character",
+  "queries": [
+    {
+      "id": "q1",
+      "query": "character traits",
+      "expectedDocIds": ["doc-trait-schema"],
+      "tags": ["character"]
+    },
+    {
+      "id": "q2",
+      "query": "relationship graph",
+      "expectedDocIds": ["doc-relationships"],
+      "tags": ["character"]
+    }
+  ]
+}
