@@ -18,7 +18,15 @@ import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { safeFetch, } from "../utils";
 import type { FetchResult, SafeFetchOptions, } from "../utils/safe-fetch/types";
 import { createChat, } from "./chat-create-api";
-import { ChatPicker, CREATE_STATUS, loadChats, NO_CHATS_MESSAGE, setCreateChat, setFetch, } from "./chat-picker";
+import {
+  ChatPicker,
+  CREATE_STATUS,
+  CREATING_STATUS,
+  loadChats,
+  NO_CHATS_MESSAGE,
+  setCreateChat,
+  setFetch,
+} from "./chat-picker";
 import type { ChatSummary, } from "./chat-picker";
 
 interface RecordedCall {
@@ -246,6 +254,26 @@ describe("ChatPicker", () => {
     expect(picker.list.items[1],).toContain("[pinned]",);
   });
 
+  // `is_pinned` is the PinnedState enum, so "archived" is a third state and
+  // a row carrying it is NOT live — it used to render exactly like an active one.
+  it("marks an archived chat as archived rather than rendering it as active", async () => {
+    stubClient({
+      data: [
+        { id: "aaaaaaaa-1111", name: "Sunken Keep", is_pinned: "archived", },
+        { id: "bbbbbbbb-2222", name: "Night Market", is_pinned: "unpinned", },
+      ],
+    },);
+
+    const picker = buildPicker();
+
+    await picker.refresh();
+
+    expect(picker.list.items[0],).toContain("[archived]",);
+    expect(picker.list.items[0],).not.toContain("[pinned]",);
+    expect(picker.list.items[1],).not.toContain("[archived]",);
+    expect(picker.list.items[1],).not.toContain("[pinned]",);
+  });
+
   it("reports the selected chat id through onSelect", async () => {
     stubClient(TWO_CHATS,);
     const selected: string[] = [];
@@ -364,6 +392,47 @@ describe("ChatPicker create flow", () => {
     expect(prompt.emitted,).toContain("blur",);
     expect(prompt.hidden,).toBe(true,);
     expect(picker.statusLabel.content,).toBe(NO_CHATS_MESSAGE,);
+  });
+
+  // Esc on the create prompt walks blessed's textarea teardown: the blur emit
+  // removes the read listener and the `cancel` handler calls back into
+  // cancelCreate. With `prompt` still set that nested call emitted a second blur
+  // and then read a widget the outer call had already torn down.
+  it("survives the blur-cancel re-entry chain without throwing", () => {
+    const picker = buildPicker();
+    const prompt = promptStub();
+    prompt.emit = (event: string,): void => {
+      prompt.emitted.push(event,);
+      if (event === "blur") { picker.cancelCreate(); }
+    };
+
+    picker.prompt = prompt;
+
+    expect(() => picker.cancelCreate()).not.toThrow();
+
+    expect(picker.prompt,).toBeNull();
+    expect(prompt.emitted,).toEqual(["blur",],);
+    expect(prompt.hidden,).toBe(true,);
+    expect(picker.statusLabel.content,).toBe(NO_CHATS_MESSAGE,);
+  });
+
+  it("commitCreate tears the prompt down once, not once per listener", async () => {
+    const selected: string[] = [];
+    const picker = buildPicker(selected,);
+    const prompt = promptStub();
+    prompt.emit = (event: string,): void => {
+      prompt.emitted.push(event,);
+      if (event === "blur") { picker.cancelCreate(); }
+    };
+
+    picker.prompt = prompt;
+    setCreateChat(() => Promise.resolve({ ok: true, chatId: "new-chat-9", },));
+
+    await picker.commitCreate("Nested",);
+
+    expect(selected,).toEqual(["new-chat-9",],);
+    expect(prompt.emitted,).toEqual(["blur",],);
+    expect(picker.statusLabel.content,).toBe(CREATING_STATUS,);
   });
 
   it("isCreating transitions through the commit cycle", async () => {

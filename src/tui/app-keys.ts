@@ -37,6 +37,13 @@ export interface KeyBindingHost {
   shutdown(): never;
 }
 
+/** What an exclusive full-screen overlay must offer to be closable in a chain. */
+export interface FullScreenOverlay {
+  isVisible(): boolean;
+  /** Close if open, reporting whether it was. */
+  dismiss(): boolean;
+}
+
 /**
  * Bind the shell's global shortcuts on `host.screen`.
  *
@@ -45,6 +52,20 @@ export interface KeyBindingHost {
  */
 export function bindGlobalKeys(host: KeyBindingHost,): void {
   const { chat, chatPicker, models, harness, assets, screen, } = host;
+
+  /**
+   * Close every full-screen overlay except `keep`.
+   *
+   * Two of them open at once used to leave the keyboard on the one underneath:
+   * the newcomer took focus, the older box stayed visible, and every keystroke
+   * acted on a screen the user could no longer see. Only the asset sidebar is
+   * left alone — it is not full-screen and does not take the keyboard.
+   */
+  const closeOtherOverlays = (keep: FullScreenOverlay,): void => {
+    for (const overlay of [chatPicker, harness, models,]) {
+      if (overlay !== keep) { overlay.dismiss(); }
+    }
+  };
 
   screen.key(["escape", "q", "C-c",], () => {
     // An open overlay swallows the key: Esc closes it rather than killing the
@@ -80,6 +101,7 @@ export function bindGlobalKeys(host: KeyBindingHost,): void {
       chatPicker.hide();
       chat.focusInput();
     } else {
+      closeOtherOverlays(chatPicker,);
       // Release the chat box first: an overlay cannot take focus while a
       // widget still holds `screen.grabKeys`.
       chat.releaseInput();
@@ -99,6 +121,7 @@ export function bindGlobalKeys(host: KeyBindingHost,): void {
       harness.hide();
       chat.focusInput();
     } else {
+      closeOtherOverlays(harness,);
       chat.releaseInput();
       harness.show();
       void harness.refresh();
@@ -114,6 +137,7 @@ export function bindGlobalKeys(host: KeyBindingHost,): void {
       models.hide();
       chat.focusInput();
     } else {
+      closeOtherOverlays(models,);
       chat.releaseInput();
       models.show();
     }

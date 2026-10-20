@@ -173,13 +173,14 @@ describe("POST /api/v1/chats/:id/messages — chat/api.ts handleSend reads", () 
 });
 
 // ── GET /api/v1/chats/:id/messages ─────────────────────────────────────────
-// `chat/api.ts` loadMessages reads `data.cursor` (falling back to the host's
-// own cursor) and `data.data`, whose elements it treats as `ChatMessage`:
-// `id`, `role`, `content`, `actorName` — the last drives the display prefix in
-// `chat/display.ts` formatMessageLine.
+// `chat/api.ts` loadMessages requests `page`/`pageSize` and reads the rows under
+// `data`, whose elements it treats as `ChatMessage`: `id`, `role`, `content`,
+// `actorName` — the last drives the display prefix in `chat/display.ts`
+// formatMessageLine. Page metadata is read off `pagination.totalPages`, which is
+// where `jsonPaginated` puts it (src/routes/http-utils/responses.ts).
 describe("GET /api/v1/chats/:id/messages — chat/api.ts loadMessages reads", () => {
   test("every message row carries the ChatMessage fields as the right types", async () => {
-    const res = await call(`/api/v1/chats/${chatId}/messages?pageSize=200`,);
+    const res = await call(`/api/v1/chats/${chatId}/messages?page=1&pageSize=200`,);
     expect(res.status,).toBe(200,);
 
     const body = (await res.json()) as { data?: unknown };
@@ -201,7 +202,7 @@ describe("GET /api/v1/chats/:id/messages — chat/api.ts loadMessages reads", ()
   });
 
   test("returns the posted turn's content verbatim under role 'user'", async () => {
-    const res = await call(`/api/v1/chats/${chatId}/messages?pageSize=200`,);
+    const res = await call(`/api/v1/chats/${chatId}/messages?page=1&pageSize=200`,);
     const body = (await res.json()) as { data: ChatMessage[] };
 
     const turn = body.data.find((m,) => m.content === "contract: durable turn");
@@ -209,15 +210,38 @@ describe("GET /api/v1/chats/:id/messages — chat/api.ts loadMessages reads", ()
     expect(turn!.role,).toBe("user",);
   });
 
-  test("sends no cursor key, so loadMessages keeps the host cursor instead of resetting it", async () => {
-    const res = await call(`/api/v1/chats/${chatId}/messages?pageSize=200`,);
+  // The contract the TUI codes against: the envelope carries `pagination`
+  // (total/page/pageSize/totalPages) and no `cursor` at all. loadMessages reads
+  // `totalPages` to reach the LAST page — page 1 is the oldest page — so a
+  // cursor-shaped key silently collapsing to undefined would pin the client to
+  // the opening turns of every chat.
+  test("pages by page/pageSize under a pagination envelope, with no cursor", async () => {
+    const res = await call(`/api/v1/chats/${chatId}/messages?page=1&pageSize=200`,);
     const body = (await res.json()) as Record<string, unknown>;
 
-    // The TUI reads `data.cursor`; the envelope is `jsonPaginated`, which serves
-    // page metadata under `pagination`. `cursor` staying absent IS the contract:
-    // `data.cursor ?? host.cursor` then keeps the caller's cursor.
     expect(body.cursor,).toBeUndefined();
-    expect(body.pagination,).toBeDefined();
+
+    const pagination = body.pagination as
+      | { total: number; page: number; pageSize: number; totalPages: number }
+      | undefined;
+
+    expect(pagination,).toBeDefined();
+    expect(pagination!.page,).toBe(1,);
+    expect(pagination!.pageSize,).toBe(200,);
+    expect(typeof pagination!.total,).toBe("number",);
+    expect(typeof pagination!.totalPages,).toBe("number",);
+  });
+
+  test("honours an explicit page number, so the last page is reachable", async () => {
+    const res = await call(`/api/v1/chats/${chatId}/messages?page=1&pageSize=1`,);
+    const body = (await res.json()) as {
+      data: ChatMessage[];
+      pagination: { totalPages: number; pageSize: number };
+    };
+
+    expect(body.data,).toHaveLength(1,);
+    expect(body.pagination.pageSize,).toBe(1,);
+    expect(body.pagination.totalPages,).toBeGreaterThan(1,);
   });
 });
 
