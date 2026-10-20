@@ -149,24 +149,26 @@ export async function updateRelationship(
     updateData.metadata = jsonStringifyOr(opts.metadata,);
   }
 
-  await withWorldId(
-    thisL.db.updateTable("character_relationships",)
-      .set(updateData,)
-      .where("actor_id", "=", actorId,)
-      .where("target_actor_id", "=", targetActorId,),
-    worldId,
-  ).execute();
-
-  // Update reverse if bidirectional
-  if (existing.isBidirectional) {
+  await thisL.db.transaction().execute(async (trx,) => {
     await withWorldId(
-      thisL.db.updateTable("character_relationships",)
+      trx.updateTable("character_relationships",)
         .set(updateData,)
-        .where("actor_id", "=", targetActorId,)
-        .where("target_actor_id", "=", actorId,),
+        .where("actor_id", "=", actorId,)
+        .where("target_actor_id", "=", targetActorId,),
       worldId,
     ).execute();
-  }
+
+    // Update reverse if bidirectional
+    if (existing.isBidirectional) {
+      await withWorldId(
+        trx.updateTable("character_relationships",)
+          .set(updateData,)
+          .where("actor_id", "=", targetActorId,)
+          .where("target_actor_id", "=", actorId,),
+        worldId,
+      ).execute();
+    }
+  },);
 }
 
 /** Args for {@link deleteRelationship}. */
