@@ -86,6 +86,9 @@ function makeWidget(): WidgetStub {
       items.push(line,);
     },
     popItem: (): string | undefined => items.pop(),
+    removeItem: (index: number,) => {
+      items.splice(index, 1,);
+    },
     clearItems: (): void => {
       items.length = 0;
     },
@@ -410,6 +413,23 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
     expect(handleSendMock,).toHaveBeenCalledWith(chat, "hi",);
   });
 
+  // A send can block for minutes (TUI_DEFAULTS.sendTimeoutMs). Clearing the box
+  // on a submission that was NOT dispatched threw away whatever the user typed
+  // while waiting for the turn to finish.
+  it("keeps text typed during an in-flight send instead of clearing it", () => {
+    const chat = buildWidget();
+    const inputBox = widgetOf(chat, "inputBox",);
+    chat.isSending = true;
+    inputBox.setValue("typed while busy",);
+    inputBox.emit("submit", "typed while busy",);
+    expect(inputBox.getValue(),).toBe("typed while busy",);
+
+    chat.isSending = false;
+    inputBox.emit("submit", "typed while busy",);
+    expect(handleSendMock,).toHaveBeenCalledWith(chat, "typed while busy",);
+    expect(inputBox.getValue(),).toBe("",);
+  });
+
   it("trims and dispatches a normal submission", () => {
     const chat = buildWidget();
     widgetOf(chat, "inputBox",).emit("submit", "  hello world  ",);
@@ -433,7 +453,7 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
     expect(list.state.focusCount,).toBe(1,);
   });
 
-  it("setChatId switches chat, resets cursor, clears messages, notifies listener", () => {
+  it("setChatId switches chat, clears messages, notifies listener", () => {
     const seen: string[] = [];
     const chat = buildWidget({
       onChatChange: (id,) => {
@@ -441,11 +461,11 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
       },
     },);
 
-    chat.cursor = "cursor-abc";
+    chat.addMessage({ id: "m1", role: "user", content: "old chat", },);
     chat.setChatId("chat-1",);
     expect(chat.getChatId(),).toBe("chat-1",);
-    expect(chat.cursor,).toBeNull();
     expect(chat.itemCount,).toBe(0,);
+    expect(widgetOf(chat, "messageList",).items,).toEqual([],);
     expect(seen,).toEqual(["chat-1",],);
   });
 
@@ -539,13 +559,63 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
     expect(widgetOf(chat, "messageList",).items,).toEqual([],);
   });
 
-  it("hideTyping on an empty list is a no-op that still renders", () => {
+  it("hideTyping with no placeholder showing changes nothing", () => {
     const chat = buildWidget();
-    const screen = widgetOf(chat, "screen",);
+    chat.addMessage({ id: "m1", role: "user", content: "hello", },);
+    chat.hideTyping();
+    expect(chat.itemCount,).toBe(1,);
+    expect(widgetOf(chat, "messageList",).items,).toEqual(["{bold}user{/bold}: hello",],);
+  });
+
+  it("showTyping twice keeps a single placeholder", () => {
+    const chat = buildWidget();
+    chat.showTyping();
+    chat.showTyping();
+    expect(chat.itemCount,).toBe(1,);
     chat.hideTyping();
     expect(chat.itemCount,).toBe(0,);
-    expect(widgetOf(chat, "messageList",).items,).toEqual([],);
-    expect(screen.state.renderCount,).toBe(1,);
+  });
+
+  // The defect: hideTyping popped the TAIL. After a load or an error line the tail
+  // is a real message, so every send deleted one — and with the counter left
+  // counting a row that was no longer there, scrollToBottom selected past the end
+  // and the list rendered blank.
+  it("removes its OWN placeholder row after a load, keeping the loaded rows", () => {
+    const chat = buildWidget();
+    chat.showTyping();
+    chat.setMessages([
+      { id: "m1", role: "user", content: "one", },
+      { id: "m2", role: "assistant", content: "two", },
+    ],);
+
+    chat.showTyping();
+
+    const list = widgetOf(chat, "messageList",);
+    expect(list.items,).toEqual([
+      "{bold}user{/bold}: one",
+      "{bold}assistant{/bold}: two",
+      "{italic}{yellow}... typing{/yellow}{/italic}",
+    ],);
+
+    chat.hideTyping();
+
+    expect(list.items,).toEqual(["{bold}user{/bold}: one", "{bold}assistant{/bold}: two",],);
+    expect(chat.itemCount,).toBe(2,);
+    expect(list.state.selectedIndex,).toBe(1,);
+  });
+
+  it("sends a message onto a loaded transcript in view", () => {
+    const chat = buildWidget();
+    chat.setMessages([{ id: "m1", role: "user", content: "one", },],);
+
+    chat.showTyping();
+    chat.addMessage({ id: "m2", role: "user", content: "two", },);
+    chat.hideTyping();
+
+    const list = widgetOf(chat, "messageList",);
+    expect(list.items,).toEqual(["{bold}user{/bold}: one", "{bold}user{/bold}: two",],);
+    expect(chat.itemCount,).toBe(list.items.length,);
+    expect(list.state.selectedIndex,).toBe(1,);
   });
 
   it("showError appends a red error line and scrolls", () => {
@@ -554,7 +624,7 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
     chat.showError("boom",);
     const list = widgetOf(chat, "messageList",);
     expect(list.items,).toEqual(["{red-fg}⚠ Error: boom{/red-fg}",],);
-    // scrollToBottom renders; itemCount is not bumped by showError (see report).
+    expect(chat.itemCount,).toBe(1,);
     expect(screen.state.renderCount,).toBe(1,);
   });
 
@@ -605,6 +675,7 @@ interface WidgetStub {
   pushItem(line: string,): void;
   addItem(line: string,): void;
   popItem(): string | undefined;
+  removeItem(index: number,): void;
   clearItems(): void;
   setItems(newItems: string[],): void;
   getItemIndex(): number;

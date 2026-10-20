@@ -34,13 +34,14 @@ export interface ChatHost {
   messageList: blessed.Widgets.ListElement;
   chatId: string | null;
   messages: ChatMessage[];
-  itemCount: number;
   isSending: boolean;
   sessionToken: string | undefined;
-  cursor: string | null; // pagination cursor
   /** Send-message timeout in ms; covers one full assistant generation. */
   sendTimeoutMs: number;
   addMessage(message: ChatMessage,): void;
+  /** Replace the rendered transcript; the list and its row counter are the
+   * widget's to keep in step, so the dispatcher hands the page over whole. */
+  setMessages(messages: ChatMessage[],): void;
   scrollToBottom(): void;
   showTyping(): void;
   hideTyping(): void;

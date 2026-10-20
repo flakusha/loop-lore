@@ -252,12 +252,4 @@ export class AssetView {
       this.renderInfo(`Error: ${(error as Error).message}`,);
     }
   }
-
-  /** Reload assets for the current chat (e.g., after upload). */
-  /**
-   * @returns {Promise<void>}
-   */
-  async refresh(): Promise<void> {
-    await this.loadAssets();
-  }
 }

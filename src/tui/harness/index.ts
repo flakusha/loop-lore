@@ -122,6 +122,9 @@ export class HarnessView {
 
   show(): void {
     this._visible = true;
+    // blessed has no z-index: draw order is the screen's children order, so
+    // re-appending the box is what puts the overlay shown last on top.
+    this.screen.append(this.box,);
     this.box.show();
     this.screen.render();
   }

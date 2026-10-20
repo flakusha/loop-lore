@@ -24,7 +24,10 @@ export interface QueueOptions {
 /** */
 export abstract class AsyncLogQueueBase {
   protected buffer: LogEntry[] = [];
-  protected transports: Transport[] = [];
+  /** The owner's live transport list. `readonly` here, not a copy: the logger
+   *  that handed it over stays the sole mutator (`addTransport`), so a snapshot
+   *  would diverge the moment a transport is registered at runtime. */
+  protected readonly transports: readonly Transport[];
   protected timer: ReturnType<typeof setInterval> | null = null;
   protected flushing = false;
   protected readonly flushInterval: number;
@@ -33,10 +36,10 @@ export abstract class AsyncLogQueueBase {
   protected droppedCount = 0;
 
   /**
-   * @param transports
+   * @param transports the owning logger's live transport list — never copied
    * @param options
    */
-  constructor(transports: Transport[], options?: QueueOptions,) {
+  constructor(transports: readonly Transport[], options?: QueueOptions,) {
     this.transports = transports;
     this.flushInterval = options?.flushInterval ?? DEFAULT_FLUSH_INTERVAL;
     this.batchSize = options?.batchSize ?? DEFAULT_BATCH_SIZE;
@@ -126,7 +129,7 @@ export abstract class AsyncLogQueueBase {
     const batch = this.buffer.splice(0, this.batchSize,);
 
     const results = await Promise.allSettled(
-      Array.from(this.transports, async (transport,) => {
+      this.transports.map(async (transport,) => {
         const writes = Array.from(batch, (logEntry,) => transport.write(logEntry,),);
         // Keep per-transport abort semantics: if any write fails, that
         // transport's entry rejects (outer allSettled records the reason).

@@ -31,7 +31,7 @@ function makeScreen(): ChatHost["screen"] {
 const CAPTURE_KEY = "__tui_chat_captured__" as const;
 
 interface CaptureGlobal {
-  [CAPTURE_KEY]?: Captured;
+  [CAPTURE_KEY]?: Captured[];
 }
 
 /** Type cast used only for stubbing blessed widget refs and fetch in tests
@@ -47,15 +47,18 @@ function setFetch(stub: StubFetch,): void {
 interface HostExtras {
   showErrorMessages: string[];
   addedMessages: ChatMessage[];
+  /** One entry per `setMessages` call: the pages the dispatcher handed the list. */
+  rendered: ChatMessage[][];
 }
 
 /** Minimal ChatHost stub. Blessed types are cast via `as unknown as …`
  * since the test environment is non-TTY; the dispatcher module only
- * branches on host's plain-data fields (chatId, sessionToken, cursor,
- * isSending, messages, itemCount). */
+ * branches on host's plain-data fields (chatId, sessionToken, isSending) and
+ * drives the list through the callbacks. */
 function makeHost(overrides: Partial<ChatHost> = {},): ChatHost & HostExtras {
   const showErrorMessages: string[] = [];
   const addedMessages: ChatMessage[] = [];
+  const rendered: ChatMessage[][] = [];
   const host: ChatHost & HostExtras = {
     screen: makeScreen(),
     messageList: {
@@ -67,13 +70,14 @@ function makeHost(overrides: Partial<ChatHost> = {},): ChatHost & HostExtras {
     } as unknown as ChatHost["messageList"],
     chatId: "chat-1",
     messages: [],
-    itemCount: 0,
     isSending: false,
     sessionToken: undefined,
-    cursor: null,
     sendTimeoutMs: TUI_DEFAULTS.sendTimeoutMs,
     addMessage(message: ChatMessage,) {
       addedMessages.push(message,);
+    },
+    setMessages(messages: ChatMessage[],) {
+      rendered.push(messages,);
     },
     scrollToBottom() {/* no-op */},
     showTyping() {/* no-op */},
@@ -83,6 +87,7 @@ function makeHost(overrides: Partial<ChatHost> = {},): ChatHost & HostExtras {
     },
     showErrorMessages,
     addedMessages,
+    rendered,
     ...overrides,
   };
 
@@ -115,14 +120,7 @@ function headersToRecord(init: HeadersInit | undefined,): Record<string, string>
 
 function stubFetchJson(status: number, payload: unknown,): void {
   setFetch(async (url: string | URL | Request, init?: RequestInit,) => {
-    const captured: Captured = {
-      url: String(url,),
-      method: (init?.method ?? "GET").toUpperCase(),
-      headers: headersToRecord(init?.headers,),
-      body: typeof init?.body === "string" ? init?.body : "",
-    };
-
-    (globalThis as CaptureGlobal)[CAPTURE_KEY] = captured;
+    recordRequest(url, init,);
     return new Response(JSON.stringify(payload,), {
       status,
       headers: { "Content-Type": "application/json", },
@@ -130,10 +128,41 @@ function stubFetchJson(status: number, payload: unknown,): void {
   },);
 }
 
+/** Answer successive calls with successive payloads; the last one repeats. */
+function stubFetchJsonSequence(status: number, payloads: unknown[],): void {
+  let call = 0;
+  setFetch(async (url: string | URL | Request, init?: RequestInit,) => {
+    recordRequest(url, init,);
+    const payload = payloads[Math.min(call, payloads.length - 1,)];
+    call++;
+    return new Response(JSON.stringify(payload,), {
+      status,
+      headers: { "Content-Type": "application/json", },
+    },);
+  },);
+}
+
+function recordRequest(url: string | URL | Request, init: RequestInit | undefined,): void {
+  const log = (globalThis as CaptureGlobal)[CAPTURE_KEY] ?? [];
+  log.push({
+    url: String(url,),
+    method: (init?.method ?? "GET").toUpperCase(),
+    headers: headersToRecord(init?.headers,),
+    body: typeof init?.body === "string" ? init?.body : "",
+  },);
+
+  (globalThis as CaptureGlobal)[CAPTURE_KEY] = log;
+}
+
 function getCaptured(): Captured {
-  const cap = (globalThis as CaptureGlobal)[CAPTURE_KEY];
+  const cap = allCaptured().at(-1,);
   if (!cap) { throw new Error("No captured request — fetch stub was not invoked",); }
   return cap;
+}
+
+/** Every request the stub saw, oldest first. */
+function allCaptured(): Captured[] {
+  return (globalThis as CaptureGlobal)[CAPTURE_KEY] ?? [];
 }
 
 function fetchMustNotBeCalled(): StubFetch {
@@ -223,52 +252,95 @@ describe("loadMessages", () => {
     setFetch(fetchMustNotBeCalled(),);
     const host = makeHost({ chatId: null, },);
     await loadMessages(host,);
-    expect(host.messages,).toEqual([],);
+    expect(host.rendered,).toEqual([],);
   });
 
-  it("fetches the messages URL without cursor on the first call", async () => {
+  it("asks for page 1 at the page size it renders, with the bearer token", async () => {
     stubFetchJson(200, {
       data: [{ id: "m1", role: "user", content: "hi", }, { id: "m2", role: "assistant", content: "yo", },],
-      cursor: null,
+      pagination: { total: 2, page: 1, pageSize: 200, totalPages: 1, },
     },);
 
-    await loadMessages(makeHost({ sessionToken: "tok", },),);
+    const host = makeHost({ sessionToken: "tok", },);
+    await loadMessages(host,);
+
     const captured = getCaptured();
-    expect(captured.url,).toBe("http://localhost:3000/api/v1/chats/chat-1/messages?pageSize=200",);
+    expect(captured.url,).toBe("http://localhost:3000/api/v1/chats/chat-1/messages?page=1&pageSize=200",);
     expect(captured.method,).toBe("GET",);
     expect(captured.headers["authorization"],).toBe("Bearer tok",);
+    // One request for a chat that fits the page, and its rows reach the list.
+    expect(allCaptured(),).toHaveLength(1,);
+    expect(host.rendered,).toEqual([[
+      { id: "m1", role: "user", content: "hi", },
+      { id: "m2", role: "assistant", content: "yo", },
+    ],],);
   });
 
-  it("appends cursor to the URL on subsequent calls", async () => {
-    stubFetchJson(200, { data: [], cursor: "next-cursor", },);
-    const host = makeHost({ cursor: "current-cursor", },);
-    await loadMessages(host,);
-    const captured = getCaptured();
-    expect(captured.url,).toBe(
-      "http://localhost:3000/api/v1/chats/chat-1/messages?pageSize=200&cursor=current-cursor",
-    );
-  });
+  // The defect this pins: the endpoint pages by page/pageSize and its envelope
+  // carries the metadata under `pagination`, so a read of page 1 alone showed the
+  // OPENING turns of a long chat forever. The TUI now reads the last page.
+  it("re-reads the last page when the chat is longer than one page", async () => {
+    const firstPage = {
+      data: [{ id: "m1", role: "user", content: "oldest", },],
+      pagination: { total: 250, page: 1, pageSize: 200, totalPages: 2, },
+    };
 
-  it("prepends older messages when host.messages is non-empty", async () => {
-    stubFetchJson(200, { data: [{ id: "old1", role: "user", content: "first", },], cursor: null, },);
-    const host = makeHost({ messages: [{ id: "new1", role: "user", content: "latest", },], itemCount: 1, },);
-    await loadMessages(host,);
-    expect(host.messages.map((m,) => m.id),).toEqual(["old1", "new1",],);
-    expect(host.itemCount,).toBe(2,);
-  });
+    const lastPage = {
+      data: [{ id: "m49", role: "user", content: "newest", }, { id: "m50", role: "assistant", content: "reply", },],
+      pagination: { total: 250, page: 2, pageSize: 200, totalPages: 2, },
+    };
 
-  it("replaces host.messages when previously empty", async () => {
-    stubFetchJson(200, { data: [{ id: "m1", role: "user", content: "a", },], cursor: null, },);
+    stubFetchJsonSequence(200, [firstPage, lastPage,],);
+
     const host = makeHost();
     await loadMessages(host,);
-    expect(host.messages.map((m,) => m.id),).toEqual(["m1",],);
+
+    expect(allCaptured().map((c,) => c.url),).toEqual([
+      "http://localhost:3000/api/v1/chats/chat-1/messages?page=1&pageSize=200",
+      "http://localhost:3000/api/v1/chats/chat-1/messages?page=2&pageSize=200",
+    ],);
+
+    // Only the tail is rendered — and exactly once, never prepended to.
+    expect(host.rendered,).toHaveLength(1,);
+    expect(host.rendered[0]!.map((m,) => m.content),).toEqual(["newest", "reply",],);
   });
 
-  it("updates host.cursor from the response", async () => {
-    stubFetchJson(200, { data: [], cursor: "new-cursor", },);
-    const host = makeHost({ cursor: "old-cursor", },);
+  it("renders an empty list when the chat has no messages", async () => {
+    stubFetchJson(200, {
+      data: [],
+      pagination: { total: 0, page: 1, pageSize: 200, totalPages: 0, },
+    },);
+
+    const host = makeHost();
     await loadMessages(host,);
-    expect(host.cursor,).toBe("new-cursor",);
+
+    expect(host.rendered,).toEqual([[],],);
+    expect(allCaptured(),).toHaveLength(1,);
+  });
+
+  it("reports the failure and renders nothing when the last page read fails", async () => {
+    let call = 0;
+    setFetch(async () => {
+      call++;
+      const ok = call === 1;
+      return new Response(
+        JSON.stringify(
+          ok
+            ? { data: [], pagination: { total: 900, page: 1, pageSize: 200, totalPages: 5, }, }
+            : { error: "boom", },
+        ),
+        {
+          status: ok ? 200 : 500,
+          headers: { "Content-Type": "application/json", },
+        },
+      );
+    },);
+
+    const host = makeHost();
+    await loadMessages(host,);
+
+    expect(host.showErrorMessages,).toEqual(["Failed to load messages (HTTP 500)",],);
+    expect(host.rendered,).toEqual([],);
   });
 
   it("routes a 4xx response to showError with status-aware message", async () => {
@@ -276,6 +348,7 @@ describe("loadMessages", () => {
     const host = makeHost();
     await loadMessages(host,);
     expect(host.showErrorMessages,).toEqual(["Failed to load messages (HTTP 401)",],);
+    expect(host.rendered,).toEqual([],);
   });
 
   it("routes a network throw to showError", async () => {
@@ -307,19 +380,11 @@ describe("loadMessages", () => {
     expect(captured.url,).toContain("abc%3Fdef",);
   });
 
-  it("percent-encodes chatId containing / in loadMessages", async () => {
+  it("percent-encodes chatId in loadMessages", async () => {
     const host = makeHost({ chatId: "abc/def", },);
-    stubFetchJson(200, { data: [], cursor: null, },);
+    stubFetchJson(200, { data: [], pagination: { total: 0, page: 1, pageSize: 200, totalPages: 0, }, },);
     await loadMessages(host,);
     const captured = getCaptured();
     expect(captured.url,).toContain("abc%2Fdef",);
-  });
-
-  it("percent-encodes cursor in loadMessages", async () => {
-    const host = makeHost({ chatId: "c1", cursor: "abc/def?ghi", },);
-    stubFetchJson(200, { data: [], cursor: null, },);
-    await loadMessages(host,);
-    const captured = getCaptured();
-    expect(captured.url,).toContain("cursor=abc%2Fdef%3Fghi",);
   });
 });
