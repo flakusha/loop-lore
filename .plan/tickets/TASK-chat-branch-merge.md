@@ -119,3 +119,9 @@ enabled.
 - [x] Party split creates branched chats with correct participants (Phase 3) — `splitParty` (`src/chat/service/split.ts:81`) → `createBranchChat` per sub-group with `parent_chat_id`, destination `current_location_id`, and the branch's `actorIds`
 - [x] Party merge combines messages and deduplicates participants (Phase 3) — `reuniteChats` (`src/chat/service/split.ts:170`) → `copyMessagesToPrimary` + `mergeParticipantsIntoPrimary` (dedupes by `actor_id`, `src/chat/service/split-utils.ts:82`); covered by `src/chat/service/split.test.ts`
 - [ ] VN choice cards can trigger location changes (Phase 4)
+
+## Auto-execution research (2026-10-20)
+
+- `detectSplitIntent`/`detectReuniteIntent` only detect narration; they do not carry branch specs (locations + actor sets) or a secondary chat id.
+- No `/split`/`/reunite` command exists in `src/routes/messages/command.ts`; execution requires either explicit command syntax with branch specs or GM/assistant derivation.
+- Safe auto-execution therefore needs a separate task: command parser + branch spec validation + owner/permission guards + tests. Detection wiring remains the scope of this slice.
