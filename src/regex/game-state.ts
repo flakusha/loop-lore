@@ -14,10 +14,10 @@
 // ── Game State Block Patterns ─────────────────────────────
 
 /** Fenced ```game-state block; capture group 1 is the inner payload. */
-export const GAME_STATE_BLOCK = /^```game-state\n([\s\S]*?)```/m;
+export const GAME_STATE_BLOCK = /^```game-state\n([\s\S]*?)^```/m;
 
 /** All fenced ```game-state blocks (global iterator). */
-export const GAME_STATE_BLOCK_ALL = /^```game-state\n([\s\S]*?)```/mg;
+export const GAME_STATE_BLOCK_ALL = /^```game-state\n([\s\S]*?)^```/mg;
 
 /**
  * Extract the first fenced game-state block payload, trimmed.
