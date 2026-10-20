@@ -81,9 +81,12 @@ impl FrontendContext {
   }
 
   /// The htmx chat URL for the active chat, or the bare chat list.
+  ///
+  /// The chat id is percent-encoded: it comes from persisted storage, so a
+  /// traversal-shaped value must not walk out of the query string.
   pub fn htmx_chat_url(&self) -> String {
     match &self.active_chat_id {
-      Some(id) => format!("{DEFAULT_RETURN_TO}?chatid={id}"),
+      Some(id) => format!("{DEFAULT_RETURN_TO}?chatid={}", crate::api::encode_url_component(id)),
       None => DEFAULT_RETURN_TO.to_string(),
     }
   }
