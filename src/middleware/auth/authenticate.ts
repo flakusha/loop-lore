@@ -114,8 +114,8 @@ async function verifyTokenContext(
       .where("id", "=", payload.sub,)
       .where("last_seen_at", "<", fiveMinutesAgo,)
       .execute();
-  } catch {
-    /* non-critical */
+  } catch (err) {
+    getLog()?.warn("Failed to update last_seen_at", { sub: payload.sub, err, },);
   }
 
   return createRequestContext({
