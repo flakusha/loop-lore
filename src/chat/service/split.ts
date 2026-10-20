@@ -223,3 +223,26 @@ export async function reuniteChats(
     reunionNarration: "The party reunites! The separate groups come back together.",
   };
 }
+// --- Narration detection (regex) ---
+
+const SPLIT_PATTERNS: RegExp[] = [
+  /\bwe\s+split\s+up\b/i,
+  /\bsplit\s+up\b/i,
+  /\bi'll\s+go\s+\w+,\s*you\s+go\s+\w+/i,
+  /\bparty\s+splits\b/i,
+];
+
+const REUNITE_PATTERNS: RegExp[] = [
+  /\bwe\s+meet\s+back\b/i,
+  /\bgroup\s+reunites\b/i,
+  /\bparty\s+reunites\b/i,
+  /\breunite\b/i,
+];
+
+export function detectSplitIntent(text: string,): boolean {
+  return SPLIT_PATTERNS.some((pattern,) => pattern.test(text,));
+}
+
+export function detectReuniteIntent(text: string,): boolean {
+  return REUNITE_PATTERNS.some((pattern,) => pattern.test(text,));
+}

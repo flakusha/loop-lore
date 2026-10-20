@@ -68,6 +68,8 @@ export {
 
 // ── Party split / reunion (C7 Phase 3) ─────────────────────────
 export {
+  detectReuniteIntent,
+  detectSplitIntent,
   reuniteChats,
   type ReunitePartyParams,
   type ReunitePartyResult,
