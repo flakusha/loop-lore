@@ -173,7 +173,7 @@ export async function startChatFromChar(btn: HTMLElement,) {
 
 export function editCharacter(btn: HTMLElement,) {
   const id = btn.dataset.id;
-  if (id) { location.assign(`/character/${id}/edit`,); }
+  if (id) { location.assign(`/character/${encodeURIComponent(id,)}/edit`,); }
 }
 
 export async function deleteCharacter(btn: HTMLElement,) {
@@ -241,7 +241,11 @@ export function exportCharacter(btn: HTMLElement,) {
   }
 
   // Trigger download - backend uses /api/v1/actors/:actorId/export
-  globalThis.location.assign(`/api/v1/actors/${characterId}/export?format=${format}`,);
+  const fmt = format && format !== "undefined" ? format : "json";
+  globalThis.location.assign(
+    `/api/v1/actors/${encodeURIComponent(characterId,)}/export?format=${encodeURIComponent(fmt,)}`,
+  );
+
   closeModal(btn,);
 }
 
