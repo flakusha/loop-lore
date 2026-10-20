@@ -184,19 +184,19 @@ export function registerConfigWorkflows(
   }
 }
 
-let builtinTemplatesRegistered = false;
+const builtinTemplatesRegistered = new WeakSet<TemplateRegistry>();
 
 /**
  * Register the built-in ComfyUI workflow templates into the singleton registry.
- * Idempotent — safe to call on every route mount.
+ * Idempotent per registry — safe to call on every route mount.
  * @param registry
  * @returns {void}
  */
 export function registerBuiltinTemplates(registry: TemplateRegistry = templateRegistry,): void {
-  if (builtinTemplatesRegistered) { return; }
+  if (builtinTemplatesRegistered.has(registry,)) { return; }
   for (const template of builtinTemplates) {
     registry.register(template,);
   }
 
-  builtinTemplatesRegistered = true;
+  builtinTemplatesRegistered.add(registry,);
 }
