@@ -41,7 +41,7 @@ export const adminWorlds = {
     }
   },
   get worldPages(): number {
-    return Math.ceil(this.worldTotal / (this as any).pageSize,) || 1;
+    return Math.max(1, Math.ceil(this.worldTotal / (this as any).pageSize,),);
   },
   /**
    * @param {number} p

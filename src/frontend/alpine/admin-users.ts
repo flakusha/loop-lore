@@ -49,7 +49,7 @@ export const adminUsers = {
     }
   },
   get userPages(): number {
-    return Math.ceil(this.userTotal / (this as any).pageSize,) || 1;
+    return Math.max(1, Math.ceil(this.userTotal / (this as any).pageSize,),);
   },
   /**
    * @param {number} p
