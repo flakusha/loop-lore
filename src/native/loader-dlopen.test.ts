@@ -77,7 +77,7 @@ describeOrSkipIsolated("loader gaps — dlopen success path", () => {
     expect(isNativeAvailable(),).toBe(true,);
     const status = getNativeStatus();
     expect(status,).toMatchObject({ available: true, implementation: "rust", version: (0 << 16) | (4 << 8), },);
-    expect(status.binaryPath,).toContain("loop-lore-native",);
+    expect(status.binaryPath,).toContain("loop_lore_native",);
     expect(status.platform,).toBe(process.platform,);
   });
 
