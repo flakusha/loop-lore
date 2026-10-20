@@ -3,7 +3,7 @@
 
 # TASK: Federation offload two-instance e2e
 
-**Status:** Resolved
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas
