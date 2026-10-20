@@ -244,11 +244,12 @@ export function createAdapterRateLimiter(options: AdapterRateLimiterOptions,): A
       }
 
       const elapsed = nowMs - bucket.lastRefillAt;
-      bucket.tokens = Math.min(rule.capacity, bucket.tokens + Math.floor(elapsed / rule.refillMs,),);
-      bucket.lastRefillAt = nowMs;
+      const gained = Math.floor(elapsed / rule.refillMs,);
+      bucket.tokens = Math.min(rule.capacity, bucket.tokens + gained,);
+      if (gained > 0) { bucket.lastRefillAt += gained * rule.refillMs; }
 
       if (bucket.tokens < 1) {
-        const nextTokenMs = rule.refillMs - (elapsed % rule.refillMs);
+        const nextTokenMs = rule.refillMs - ((nowMs - bucket.lastRefillAt) % rule.refillMs);
         return { ok: false, code: "rate_limited", retryAfterMs: Math.max(1, nextTokenMs,), };
       }
 
