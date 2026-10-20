@@ -16,7 +16,7 @@ export const inpaint: WorkflowTemplate = {
   name: "Inpainting",
   description: "Fill in a masked region of an image with AI-generated content",
   category: "inpaint",
-  backends: ["comfyui", "sd-server",],
+  backends: ["comfyui",],
   required_nodes: [
     "KSampler",
     "CheckpointLoaderSimple",
