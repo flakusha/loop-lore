@@ -21,6 +21,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { getChildLogger, } from "../../logger";
 import { loadChatLocation, loadChatParticipants, } from "./random-event-context";
 
 /**
@@ -62,7 +63,8 @@ export async function resolveChatKnownEntityNames(
     }
 
     return Array.from(names,);
-  } catch {
+  } catch (err) {
+    getChildLogger("generation/resolve-known-names",)?.warn("resolve known names failed", { err, },);
     return [];
   }
 }

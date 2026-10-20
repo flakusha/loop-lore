@@ -35,7 +35,9 @@ export async function handleGenerationError(
   if (attemptId) {
     try {
       await d.failGeneration({ attemptId, error: error as Error, db: database, },);
-    } catch { /* Best-effort */ }
+    } catch (err) {
+      getLogger().child({ module: "auto-gen", },).warn("failGeneration failed", { err, },);
+    }
   }
 
   if (isTelemetryEnabled()) {
@@ -56,7 +58,9 @@ export async function handleGenerationError(
     const buf = d.getOrCreateBuffer(chatId,);
     buf.signalError((error as Error).message,);
     d.scheduleBufferCleanup(chatId,);
-  } catch { /* best-effort */ }
+  } catch (err) {
+    getLogger().child({ module: "auto-gen", },).warn("signalError failed", { err, },);
+  }
 
   const err = error instanceof Error ? error : new Error(String(error,),);
   const log = getLogger().child({ module: "auto-gen", },);
