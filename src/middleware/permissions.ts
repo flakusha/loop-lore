@@ -111,11 +111,7 @@ export function requirePermission(
     try {
       (log ?? getLogger()).warn("Permission denied", auditEntry,);
     } catch {
-      // Logger not initialized yet — fall back to console for boot-time denials.
-      // This catch is only reachable when getLogger() itself threw, i.e. when
-      // no logger exists at all, so console is the sole remaining sink.
-      /* eslint-disable-next-line no-console */
-      console.warn("Permission denied", auditEntry,);
+      // Logger unavailable — drop the audit entry rather than leaking it to stdout.
     }
 
     return jsonError({
