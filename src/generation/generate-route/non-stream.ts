@@ -249,8 +249,8 @@ export async function runNonStreaming({
     if (active) { active.deliveryConfirmed = false; }
     try {
       await failGeneration({ attemptId, error: error as Error, db: database, },);
-    } catch {
-      // failGeneration already logs errors
+    } catch (failErr) {
+      log.warn("failGeneration threw", { attemptId, err: failErr, },);
     }
 
     return jsonError({ message: `Generation failed: ${errMsg}`, status: 500, },);
