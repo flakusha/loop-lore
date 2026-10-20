@@ -18,6 +18,7 @@
 import { mkdirSync, writeFileSync, } from "node:fs";
 import { dirname, join, } from "node:path";
 import sharp, {} from "sharp";
+import { getChildLogger, } from "../../logger";
 import { resolveUploadDir, } from "./file-system";
 
 /** Maximum thumbnail dimension (longest edge), per spec assets.md line 86. */
@@ -58,7 +59,8 @@ export async function writeThumbnail(
   let encoded: Buffer;
   try {
     encoded = await encodeThumbnail(buffer,);
-  } catch {
+  } catch (error) {
+    getChildLogger("assets:thumbnail",)?.warn({ message: "thumbnail encode failed", error, },);
     return null;
   }
 
