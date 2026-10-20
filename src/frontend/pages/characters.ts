@@ -188,9 +188,11 @@ export async function deleteCharacter(btn: HTMLElement,) {
       document.querySelector("#character-detail-modal",)?.classList.remove("open",);
       showToast("success", "Character deleted",);
       refreshHtmx("#character-grid",);
+    } else {
+      showToast("error", "Failed to delete character",);
     }
   } catch {
-    /* ignore */
+    showToast("error", "Failed to delete character",);
   }
 }
 
