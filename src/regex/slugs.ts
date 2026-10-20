@@ -53,7 +53,7 @@ export const HASH_FILENAME = /^(.+)-([a-z0-9]{8})\.((?:js|css))$/;
 export const KEYWORD_SPLIT = /[^a-z0-9]+/i;
 
 /** Greeting/filler words to strip from chat auto-rename */
-export const GREETING_FILLER = /^(hey|hi|hello|yo|sup|what's up|so|well|um|uh|like)\s*/i;
+export const GREETING_FILLER = /^(hey|hi|hello|yo|sup|what's up|so|well|um|uh|like)\b[\s,]*/i;
 
 /** Proper noun extraction (multi-word, 2-5 words) */
 export const PROPER_NOUN_EXTRACT = /\b[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]{2,}){0,3}\b/g;
