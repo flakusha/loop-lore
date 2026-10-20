@@ -210,6 +210,9 @@ export class ModelsOverlay {
     this.cursor = 0;
     this.targetRole = undefined;
     this.targetProvider = undefined;
+    // blessed has no z-index: draw order is the screen's children order, so
+    // re-appending the box is what puts the overlay shown last on top.
+    this.screen.append(this.box,);
     this.box.show();
     // Focus the BOX, not the list: every key below is bound on the box, and
     // blessed only dispatches element keys to the focused element

@@ -24,9 +24,9 @@
  * double-press idempotence is exercised rather than assumed.
  */
 import { afterEach, beforeAll, beforeEach, expect, it, mock, spyOn, } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
-import { join, } from "node:path";
-import { setGlobalLogger, } from "../logger";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { dirname, join, } from "node:path";
+import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import type { safeFetch, } from "../utils";
 import type { FetchResult, } from "../utils/safe-fetch/types";
@@ -203,6 +203,8 @@ if (ISOLATED) {
 }
 
 let createTUIApp: () => TUIApp;
+/** Where the TUI's structured log is written — the constant under test. */
+let TUI_LOG_PATH: string;
 let setFetch: (fn: typeof safeFetch,) => void;
 let setPickerFetch: (fn: typeof safeFetch,) => void;
 let setModelsFetch: (fn: typeof safeFetch,) => void;
@@ -220,7 +222,9 @@ let publicProviders: Array<{ name: string; label: string; status: string }> = [
 beforeAll(async () => {
   // Dynamic import required: `mock.module` replaces the resolution table only
   // for modules imported after the stub registers.
-  createTUIApp = (await import("./app")).createTUIApp;
+  const app = await import("./app");
+  createTUIApp = app.createTUIApp;
+  TUI_LOG_PATH = app.TUI_LOG_PATH;
   setFetch = (await import("./harness/api")).setFetch;
   setPickerFetch = (await import("./chat-picker")).setFetch;
   setModelsFetch = (await import("./models-api")).setFetch;
@@ -341,6 +345,57 @@ describeOrSkip("TUIApp", () => {
     const before = screenCreations;
     createTUIApp();
     expect(screenCreations - before,).toBe(1,);
+  });
+
+  // T6: blessed owns stdout. A log line written straight to the terminal lands
+  // between two frames and corrupts the render, so the TUI logger keeps its
+  // records in a file and carries no console transport at all.
+  it("leaves the TUI logger with a file transport and no console transport", () => {
+    createTUIApp();
+
+    const logger = getLogger() as unknown as { transports: { name: string }[] };
+    const names = logger.transports.map((transport,) => transport.name);
+
+    expect(names,).not.toContain("console",);
+    expect(names,).toContain("file",);
+  });
+
+  // The file transport is only useful if it writes WHERE the TUI says it
+  // writes. `TUI_LOG_PATH` is that contract: move it and the shell's records
+  // land somewhere nobody reads. The marker is unique per run, so a log file
+  // left over from an earlier run cannot satisfy the assertion — the record
+  // has to be written by THIS logger.
+  it("writes the TUI's structured log to the TUI log path", async () => {
+    createTUIApp();
+
+    const marker = `tui log path probe ${Date.now()}-${Math.random()}`;
+    const logger = getLogger();
+    logger.warn(marker,);
+
+    await logger.flush();
+
+    expect(dirname(TUI_LOG_PATH,),).toBe(".tmp/tui",);
+    expect(existsSync(TUI_LOG_PATH,),).toBe(true,);
+    expect(readFileSync(TUI_LOG_PATH, "utf8",),).toContain(marker,);
+  });
+
+  // `createLogger` adopts the global root with `??=` (src/logger/index.ts:31):
+  // when a root already exists it returns a fresh LoggerImpl that never becomes
+  // the root. Cleaning THAT instance would leave the root's console transport
+  // painting over the blessed screen. This seeds the root from elsewhere first —
+  // the shape of a TUI launched from a process that logged during bootstrap.
+  it("strips the console transport from a root logger it did not create", () => {
+    const foreign = createLogger({ level: "error", },);
+    setGlobalLogger(foreign,);
+    const names = (): string[] =>
+      (getLogger() as unknown as { transports: { name: string }[] })
+        .transports.map((transport,) => transport.name);
+
+    expect(names(),).toContain("console",);
+
+    createTUIApp();
+
+    expect(names(),).not.toContain("console",);
   });
 
   it("threads the config session token into the chat widget", () => {
@@ -584,15 +639,84 @@ describeOrSkip("TUIApp", () => {
     expect(app.models.isVisible(),).toBe(false,);
   });
 
-  it("closes the chat picker on Esc even when the models overlay is also open", () => {
+  // Two full-screen overlays used to coexist: the newcomer took the keyboard
+  // while the older box stayed painted, so keys acted on a screen the user could
+  // no longer see. Opening one now closes the others.
+  it("closes the models overlay when the chat picker opens", () => {
+    const app = createTUIApp();
+    pressKey(app, "f6",);
+    expect(app.models.isVisible(),).toBe(true,);
+
+    pressKey(app, "f1",);
+
+    expect(app.chatPicker.isVisible(),).toBe(true,);
+    expect(app.models.isVisible(),).toBe(false,);
+  });
+
+  it("closes the harness overlay when the models overlay opens", () => {
+    const app = createTUIApp();
+    pressKey(app, "f3",);
+    expect(app.harness.isVisible(),).toBe(true,);
+
+    pressKey(app, "f6",);
+
+    expect(app.models.isVisible(),).toBe(true,);
+    expect(app.harness.isVisible(),).toBe(false,);
+  });
+
+  it("closes the chat picker when the harness overlay opens", () => {
+    const app = createTUIApp();
+    pressKey(app, "f1",);
+
+    pressKey(app, "f3",);
+
+    expect(app.harness.isVisible(),).toBe(true,);
+    expect(app.chatPicker.isVisible(),).toBe(false,);
+  });
+
+  it("leaves the asset sidebar alone when an overlay opens", () => {
+    const app = createTUIApp();
+    pressKey(app, "f2",);
+
+    pressKey(app, "f1",);
+
+    expect(app.chatPicker.isVisible(),).toBe(true,);
+    expect(app.assets.isVisible(),).toBe(true,);
+  });
+
+  // blessed has no z-index: draw order IS the screen's children order, so the
+  // overlay opened last has to re-append itself to sit on top.
+  it("re-appends an overlay box on show so the last one shown paints on top", () => {
+    const app = createTUIApp();
+    const screen = app.screen as unknown as WidgetStub & {
+      appended: unknown[];
+      append(el: unknown,): void;
+    };
+
+    screen.appended = [];
+    screen.append = (el: unknown,): void => {
+      screen.appended.push(el,);
+    };
+
+    pressKey(app, "f6",);
+    pressKey(app, "f1",);
+
+    const models = app.models as unknown as { box: unknown };
+    const picker = app.chatPicker as unknown as { box: unknown };
+    expect(screen.appended,).toEqual([models.box, picker.box,],);
+  });
+
+  it("Esc closes the only open overlay without quitting", () => {
     const app = createTUIApp();
     pressKey(app, "f6",);
     pressKey(app, "f1",);
 
+    exitSpy = spyOn(process, "exit",).mockImplementation((() => {}) as never,);
     pressKey(app, "escape",);
 
+    expect(exitSpy,).not.toHaveBeenCalled();
     expect(app.chatPicker.isVisible(),).toBe(false,);
-    expect(app.models.isVisible(),).toBe(true,);
+    expect(app.models.isVisible(),).toBe(false,);
   });
 
   it("closes the chat picker on Esc without quitting", () => {

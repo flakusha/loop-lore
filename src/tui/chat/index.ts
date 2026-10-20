@@ -34,13 +34,19 @@ export class ChatWidget implements ChatHost {
   private completer: CommandCompleter;
   chatId: string | null = null;
   messages: ChatMessage[] = [];
+  /** Rows currently in the list. Owned by the widget alone: every append and
+   * removal below moves it with the list, so `scrollToBottom`'s `select()` can
+   * never point at a row the list does not have. */
   itemCount = 0;
+  /** Row the typing placeholder occupies, or null when none is showing.
+   * `hideTyping` removes THIS row, not the tail — after a load or an error line
+   * the tail is a real message, and popping it lost one per send. */
+  private typingRow: number | null = null;
   isSending = false;
   sessionToken: string | undefined;
   sendTimeoutMs: number;
   private onChatChange?: (chatId: string,) => void;
   private isOverlayOpen: () => boolean;
-  cursor: string | null = null; // pagination cursor
 
   /**
    * @param screen
@@ -161,10 +167,12 @@ export class ChatWidget implements ChatHost {
 
       if (value.trim() && !this.isSending) {
         void this.handleSend(value.trim(),);
+        // Clear only what was actually dispatched. A send already in flight can
+        // run for minutes, and clearing here threw away whatever the user typed
+        // while waiting for it.
+        this.inputBox.clearValue();
       }
 
-      // Clear after handleSend completes (avoid race)
-      this.inputBox.clearValue();
       this.focusInput();
       screen.render();
     },);
@@ -249,7 +257,7 @@ export class ChatWidget implements ChatHost {
    */
   setChatId(chatId: string,): void {
     this.chatId = chatId;
-    this.cursor = null;
+    this.typingRow = null;
     this.clearMessages();
     this.onChatChange?.(chatId,);
   }
@@ -274,10 +282,14 @@ export class ChatWidget implements ChatHost {
   }
 
   /**
-   * @param messages - replacement message list (cursor page or empty)
+   * Replace the rendered transcript with `messages` and scroll to its last row.
+   * @param messages - the page `loadMessages` read, or an empty list
    */
   setMessages(messages: ChatMessage[],): void {
     this.messages = messages;
+    // A fresh transcript has no typing placeholder: whatever row one held is
+    // gone with the old items.
+    this.typingRow = null;
     const items = Array.from(messages, (msg,) => formatMessageLine(msg,),);
     this.messageList.setItems(items,);
     this.itemCount = items.length;
@@ -285,19 +297,14 @@ export class ChatWidget implements ChatHost {
   }
 
   /** Clear the message list and item counter. */
-  /**
-   * @returns {void}
-   */
   clearMessages(): void {
     this.messages = [];
     this.itemCount = 0;
+    this.typingRow = null;
     this.messageList.clearItems();
   }
 
   /** Scroll the message list to the last item and re-render the screen. */
-  /**
-   * @returns {void}
-   */
   scrollToBottom(): void {
     if (this.itemCount > 0) {
       this.messageList.select(this.itemCount - 1,);
@@ -307,26 +314,23 @@ export class ChatWidget implements ChatHost {
   }
 
   /** Append a "…typing" placeholder and re-render. */
-  /**
-   * @returns {void}
-   */
   showTyping(): void {
+    if (this.typingRow !== null) { return; }
+    this.typingRow = this.itemCount;
     this.messageList.addItem("{italic}{yellow}... typing{/yellow}{/italic}",);
     this.itemCount++;
     this.scrollToBottom();
   }
 
   /** Remove the "…typing" placeholder if present, then re-render. */
-  /**
-   * @returns {void}
-   */
   hideTyping(): void {
-    if (this.itemCount > 0) {
-      this.messageList.popItem();
-      this.itemCount--;
-    }
+    const row = this.typingRow;
+    if (row === null) { return; }
 
-    this.screen.render();
+    this.typingRow = null;
+    this.messageList.removeItem(row,);
+    this.itemCount--;
+    this.scrollToBottom();
   }
 
   /**
@@ -354,8 +358,8 @@ export class ChatWidget implements ChatHost {
   }
 
   /**
-   * Load messages from GET /api/chats/:id/messages with cursor-based pagination.
-   * @returns resolves after updating the local message cache.
+   * Load the chat's newest page from GET /api/chats/:id/messages into the list.
+   * @returns resolves once the list holds that page.
    */
   async loadMessages(): Promise<void> {
     return loadMessagesDispatch(this,);

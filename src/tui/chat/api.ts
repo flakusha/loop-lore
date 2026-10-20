@@ -95,41 +95,84 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
   }
 }
 
+/** Rows per page. The widget renders one page — the newest one. */
+const PAGE_SIZE = 200;
+
+/** One page of GET /api/v1/chats/:id/messages, as `jsonPaginated` shapes it. */
+interface MessagesPage {
+  data: ChatMessage[];
+  pagination?: {
+    total?: number;
+    page?: number;
+    pageSize?: number;
+    totalPages?: number;
+  };
+}
+
+/** Result of one page fetch; the failure arm carries the line to render. */
+type PageFetch = { ok: true; page: MessagesPage } | { ok: false; message: string };
+
+/** Fetch one page of a chat's messages.
+ * @param options - the host (for its token), the percent-encoded chat id, the page
+ * @returns the page envelope, or the error message to show in the list
+ */
+async function fetchMessagesPage(
+  options: { host: ChatHost; chatId: string; page: number },
+): Promise<PageFetch> {
+  const { host, chatId, page, } = options;
+  const url = `${API_BASE}/api/v1/chats/${chatId}/messages?page=${page}&pageSize=${PAGE_SIZE}`;
+  const result = await _fetch<MessagesPage>(url, {
+    auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
+    handle401: false,
+  },);
+
+  if (!result.ok) {
+    return {
+      ok: false,
+      message: result.status !== undefined
+        ? `Failed to load messages (HTTP ${result.status})`
+        : `Network error loading messages: ${result.error.message}`,
+    };
+  }
+
+  return { ok: true, page: result.data, };
+}
+
 /**
- * Load messages from GET /api/chats/:id/messages with cursor-based pagination
+ * Load the chat's newest messages into the list.
+ *
+ * The endpoint pages by `page`/`pageSize` and answers `jsonPaginated`, which
+ * nests its metadata under `pagination` (src/routes/http-utils/responses.ts);
+ * there is no cursor. Rows come back oldest-first, so page 1 is the START of the
+ * chat — reading only that page would show the opening turns forever. The first
+ * read therefore learns `totalPages`, and a chat longer than one page is re-read
+ * at its last page. Two requests, and only for the long ones.
  * @param host
  * @returns {Promise<void>}
  */
 export async function loadMessages(host: ChatHost,): Promise<void> {
   if (!host.chatId) { return; }
+  const chatId = encodeURIComponent(host.chatId,);
   try {
-    const url = host.cursor
-      ? `${API_BASE}/api/v1/chats/${encodeURIComponent(host.chatId,)}/messages?pageSize=200&cursor=${
-        encodeURIComponent(host.cursor,)
-      }`
-      : `${API_BASE}/api/v1/chats/${encodeURIComponent(host.chatId,)}/messages?pageSize=200`;
-
-    const result = await _fetch<{ data: ChatMessage[]; cursor: string | null }>(url, {
-      auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
-      handle401: false,
-    },);
-
-    if (!result.ok) {
-      host.showError(
-        result.status !== undefined
-          ? `Failed to load messages (HTTP ${result.status})`
-          : `Network error loading messages: ${result.error.message}`,
-      );
-
+    const first = await fetchMessagesPage({ host, chatId, page: 1, },);
+    if (!first.ok) {
+      host.showError(first.message,);
       return;
     }
 
-    const data = result.data;
-    host.cursor = data.cursor ?? host.cursor;
-    // Prepend older messages (cursor fetches older)
-    host.messages = host.messages.length > 0 ? [...data.data, ...host.messages,] : data.data;
-    host.itemCount = host.messages.length;
-    host.scrollToBottom();
+    const totalPages = first.page.pagination?.totalPages ?? 1;
+    if (totalPages <= 1) {
+      host.setMessages(first.page.data ?? [],);
+      return;
+    }
+
+    const last = await fetchMessagesPage({ host, chatId, page: totalPages, },);
+    if (!last.ok) {
+      host.showError(last.message,);
+      return;
+    }
+
+    host.setMessages(last.page.data ?? [],);
   } catch (error) {
     host.showError(`Network error loading messages: ${(error as Error).message}`,);
   }

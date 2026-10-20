@@ -143,6 +143,10 @@ export interface LoggerConfig {
   limits?: SizeLimits;
   /** Max queue entries before dropping. Default 10_000. */
   queueMaxSize?: number;
+  /** Human-readable stdout/stderr transport. Default true. Set false when the
+   *  host owns the terminal (e.g. the blessed TUI), where a console write lands
+   *  between frames and corrupts the render. */
+  console?: boolean;
 }
 
 // ── Factory ────────────────────────────────────────────────
