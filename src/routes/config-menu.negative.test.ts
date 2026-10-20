@@ -258,7 +258,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     );
 
     console.log("3j. user PATCH registration_open status:", res.status,);
-    expect(res.status,).toBe(403,);
+    expect(res.status,).toBe(400,);
   });
 
   test("3k. admin PATCH non-editable admin field → 400?", async () => {

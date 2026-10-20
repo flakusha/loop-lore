@@ -101,7 +101,10 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
 
         const adminSections = buildConfigMenu(true,);
         const userSections = buildConfigMenu(false,);
-        const field = findField(adminSections, key,) ?? findField(userSections, key,);
+        const field = isAdmin
+          ? (findField(adminSections, key,) ?? findField(userSections, key,))
+          : findField(userSections, key,);
+
         if (!field) { return jsonError(`Unknown config key: ${key}`, HttpStatus.BadRequest, ErrorCode.BadRequest,); }
 
         if (field.scope === "admin" && !isAdmin) {
@@ -125,7 +128,7 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
             .executeTakeFirst();
 
           const current = user?.settings ? jsonParseOr(user.settings, {},) : {};
-          const merged = { ...current, [key]: body?.value, };
+          const merged = { ...current, [key]: coerced, };
           const result = safeJsonStringify(merged,);
           if (!result.ok) { return jsonError("Invalid settings data", HttpStatus.BadRequest, ErrorCode.BadRequest,); }
           await database.updateTable("users",).set({ settings: result.value, },).where("id", "=", userId,).execute();
