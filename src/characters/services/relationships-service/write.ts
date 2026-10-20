@@ -44,44 +44,46 @@ export async function createRelationship(
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  await thisL.db
-    .insertInto("character_relationships",)
-    .values({
-      id,
-      actor_id: opts.actorId,
-      target_actor_id: opts.targetActorId,
-      world_id: opts.worldId ?? null,
-      relationship_type: opts.relationshipType,
-      standing: opts.standing ?? 0,
-      trust: opts.trust ?? 0,
-      familiarity: opts.familiarity ?? 0,
-      is_bidirectional: opts.isBidirectional ? 1 : 0,
-      metadata: jsonStringifyOr(opts.metadata ?? {},),
-      created_at: now,
-      updated_at: now,
-    },)
-    .execute();
-
-  // Create reverse relationship if bidirectional
-  if (opts.isBidirectional) {
-    await thisL.db
+  await thisL.db.transaction().execute(async (trx,) => {
+    await trx
       .insertInto("character_relationships",)
       .values({
-        id: randomUUID(),
-        actor_id: opts.targetActorId,
-        target_actor_id: opts.actorId,
+        id,
+        actor_id: opts.actorId,
+        target_actor_id: opts.targetActorId,
         world_id: opts.worldId ?? null,
         relationship_type: opts.relationshipType,
         standing: opts.standing ?? 0,
         trust: opts.trust ?? 0,
         familiarity: opts.familiarity ?? 0,
-        is_bidirectional: 1,
+        is_bidirectional: opts.isBidirectional ? 1 : 0,
         metadata: jsonStringifyOr(opts.metadata ?? {},),
         created_at: now,
         updated_at: now,
       },)
       .execute();
-  }
+
+    // Create reverse relationship if bidirectional
+    if (opts.isBidirectional) {
+      await trx
+        .insertInto("character_relationships",)
+        .values({
+          id: randomUUID(),
+          actor_id: opts.targetActorId,
+          target_actor_id: opts.actorId,
+          world_id: opts.worldId ?? null,
+          relationship_type: opts.relationshipType,
+          standing: opts.standing ?? 0,
+          trust: opts.trust ?? 0,
+          familiarity: opts.familiarity ?? 0,
+          is_bidirectional: 1,
+          metadata: jsonStringifyOr(opts.metadata ?? {},),
+          created_at: now,
+          updated_at: now,
+        },)
+        .execute();
+    }
+  },);
 
   return id;
 }
