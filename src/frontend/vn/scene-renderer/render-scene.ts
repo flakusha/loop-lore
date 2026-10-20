@@ -3,6 +3,7 @@
 
 import { initChoiceCards, loadChoices, } from "../choice-cards";
 import { initQuestionCards, loadQuestions, } from "../question-cards";
+import type { VnSettings, } from "../settings";
 import { decorateStageAnchors, } from "../sprite-anchor";
 import {
   applyResolvedTemplate,
@@ -24,6 +25,7 @@ import {
 } from "./dom-elements";
 import { createStage, } from "./stage";
 import { state, } from "./state";
+import type { VnScene, } from "./types";
 
 export type { SceneNavigator, } from "./dom-elements";
 

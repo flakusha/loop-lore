@@ -27,6 +27,20 @@ export interface SceneNavigator {
 // ── DOM construction helpers --------------------------------
 
 /**
+ * Sanitize a URL for use inside a quoted CSS url() token.
+ *
+ * Rejects control characters and the url()-token terminator `)` outright; any
+ * other value is percent-encoded, which also removes `"` and whitespace so the
+ * value cannot be reinterpreted as another CSS token.
+ *
+ * @param url
+ * @returns the encoded url() argument, or an empty string when unsafe
+ */
+function sanitizeCssUrl(url: string,): string {
+  return /[\p{Cc})]/u.test(url,) ? "" : encodeURIComponent(url,);
+}
+
+/**
  * @param scene
  * @param scene.backgroundUrl
  * @param settings
@@ -35,9 +49,7 @@ export interface SceneNavigator {
 export function createBackground(scene: { backgroundUrl?: string }, settings: { imageScaling: string },): HTMLElement {
   const bg = document.createElement("div",);
   bg.className = "vn-background";
-  const url = scene.backgroundUrl ?? "";
-  // Reject ) and control characters that would break out of the url() token.
-  bg.style.backgroundImage = /[\p{Cc})]/u.test(url,) ? "url()" : `url(${url})`;
+  bg.style.backgroundImage = `url("${sanitizeCssUrl(scene.backgroundUrl ?? "",)}")`;
   bg.style.backgroundSize = settings.imageScaling === "auto" ? "cover" : settings.imageScaling;
   return bg;
 }
