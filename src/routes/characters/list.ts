@@ -6,7 +6,7 @@ import {
   ActorsQuery,
   ErrorResponse,
 } from "../../validation/schemas";
-import { jsonPaginated, } from "../http-utils";
+import { jsonPaginated, parsePagination, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -21,7 +21,8 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
     .get(
       `${prefix}/actors`,
       async (ctx: any,) => {
-        const { page, pageSize, type, } = ctx.query;
+        const type = ctx.query.type;
+        const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
         const offset = (page - 1) * pageSize;
 
         let countQuery = database.selectFrom("actors",).select(database.fn.countAll<number>().as("total",),);
