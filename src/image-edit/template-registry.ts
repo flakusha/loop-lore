@@ -166,6 +166,7 @@ export function registerConfigWorkflows(
   config: ImageEditTemplateConfig,
   registry: TemplateRegistry = templateRegistry,
 ): void {
+  const templates: WorkflowTemplate[] = [];
   for (const [id, workflow,] of Object.entries(config.workflows,)) {
     // Convert config workflow to WorkflowTemplate format
     // Config workflows are definitions; build function returns empty workflow
@@ -180,8 +181,12 @@ export function registerConfigWorkflows(
       build: () => (workflow.nodes as ComfyUIWorkflow) ?? {},
     };
 
-    registry.register(template,);
+    templates.push(template,);
   }
+
+  // Idempotent across reloads: replace the whole config-owned slice instead
+  // of re-registering on top of stale state.
+  registry.replaceManaged("config", templates,);
 }
 
 const builtinTemplatesRegistered = new WeakSet<TemplateRegistry>();
