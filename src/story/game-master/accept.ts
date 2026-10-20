@@ -12,7 +12,7 @@ import { TurnStatus, turnStatusMachine, } from "../../db/enums-story/turns";
 import { TransitionError, } from "../../db/state";
 import { safeJsonStringify, } from "../../utils";
 import { applyEvents, extractEvents, validateEvents, } from "../events";
-import type { GameMasterDecision, } from "../types";
+import type { GameMasterDecision, WorldEvent, } from "../types";
 import { buildResult, } from "./decisions";
 import type { GmState, GmTurnResult, } from "./types";
 
@@ -55,10 +55,11 @@ export async function acceptResponse(state: GmState, turnId: string, response: s
     currentLocationId: context?.world.currentLocation.id ?? null,
   },);
 
+  let validatedEvents: WorldEvent[] = [];
   if (context) {
     const validated = await validateEvents({ db: state.db, worldId: context.world.id, events: worldEvents, },);
     if (validated.valid) {
-      await applyEvents({ db: state.db, worldId: context.world.id, events: validated.filteredEvents, },);
+      validatedEvents = validated.filteredEvents;
     }
   }
 
@@ -104,24 +105,30 @@ export async function acceptResponse(state: GmState, turnId: string, response: s
       throw new TransitionError(turn.status, TurnStatus.Accepted,);
     }
 
-    await state.db
-      .updateTable("story_turns",)
-      .set({
-        response_received: response,
-        quality_score: qualityEval.scores.overall,
-        quality_details: (() => {
-          const r = safeJsonStringify(qualityEval.details,);
-          return r.ok ? r.value : "{}";
-        })(),
-        status: TurnStatus.Accepted,
-        completed_at: new Date().toISOString(),
-        world_events: (() => {
-          const r = safeJsonStringify(worldEvents,);
-          return r.ok ? r.value : "[]";
-        })(),
-      },)
-      .where("id", "=", turnId,)
-      .execute();
+    await state.db.transaction().execute(async (trx,) => {
+      if (context && validatedEvents.length > 0) {
+        await applyEvents({ db: state.db, trx, worldId: context.world.id, events: validatedEvents, },);
+      }
+
+      await trx
+        .updateTable("story_turns",)
+        .set({
+          response_received: response,
+          quality_score: qualityEval.scores.overall,
+          quality_details: (() => {
+            const r = safeJsonStringify(qualityEval.details,);
+            return r.ok ? r.value : "{}";
+          })(),
+          status: TurnStatus.Accepted,
+          completed_at: new Date().toISOString(),
+          world_events: (() => {
+            const r = safeJsonStringify(worldEvents,);
+            return r.ok ? r.value : "[]";
+          })(),
+        },)
+        .where("id", "=", turnId,)
+        .execute();
+    },);
 
     await state.turnManager.recordTurn();
   }
