@@ -92,7 +92,13 @@ export interface EmailSpamGate {
  */
 export function senderAddress(raw: string,): string {
   const angled = /<([^>]*)>/.exec(raw,);
-  return (angled === null ? raw : angled[1] ?? raw).trim().toLowerCase();
+  const addr = (angled === null ? raw : angled[1] ?? raw).trim().toLowerCase();
+  // Strip plus-tag subaddressing (user+tag@host → user@host) so a blocked
+  // sender cannot bypass lists or gain a fresh per-sender bucket.
+  const at = addr.lastIndexOf("@",);
+  if (at < 0) { return addr; }
+  const local = addr.slice(0, at,).split("+",)[0]!;
+  return `${local}@${addr.slice(at + 1,)}`;
 }
 
 /**
