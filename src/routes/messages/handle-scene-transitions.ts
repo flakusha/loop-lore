@@ -11,6 +11,7 @@
  */
 import type { Kysely, } from "kysely";
 import { classifyTransitionMessage, } from "../../chat";
+import { detectReuniteIntent, detectSplitIntent, } from "../../chat/service";
 import { recordLocationChange, } from "../../chat/service/location-events";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
@@ -94,6 +95,14 @@ export async function handleSceneTransitions(
     .execute();
 
   const recentContent = Array.from(recentMsgs, (m,) => m.content,).reverse();
+
+  if (detectSplitIntent(effectiveContent,)) {
+    log().info("Split narration detected", { chatId, },);
+  }
+
+  if (detectReuniteIntent(effectiveContent,)) {
+    log().info("Reunite narration detected", { chatId, },);
+  }
 
   const classification = await classifyTransitionMessage(
     effectiveContent,
