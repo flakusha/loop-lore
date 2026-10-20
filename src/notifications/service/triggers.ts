@@ -13,11 +13,12 @@ import { NotificationService, } from "./service";
 async function participantActorIds(db: Kysely<DB>, chatId: string,): Promise<string[]> {
   const rows = await db
     .selectFrom("chat_participants",)
-    .select("actor_id",)
+    .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+    .select("actors.user_id",)
     .where("chat_id", "=", chatId,)
     .execute();
 
-  return Array.from(rows, (r,) => r.actor_id,);
+  return [...new Set(Array.from(rows, (r,) => r.user_id,).filter((id,): id is string => id != null),),];
 }
 
 /**
@@ -27,12 +28,13 @@ async function participantActorIds(db: Kysely<DB>, chatId: string,): Promise<str
 async function worldParticipantActorIds(db: Kysely<DB>, worldId: string,): Promise<string[]> {
   const rows = await db
     .selectFrom("chat_participants",)
-    .select("chat_participants.actor_id",)
     .innerJoin("chats", "chats.id", "chat_participants.chat_id",)
+    .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+    .select("actors.user_id",)
     .where("chats.world_id", "=", worldId,)
     .execute();
 
-  return [...new Set(Array.from(rows, (r,) => r.actor_id,),),];
+  return [...new Set(Array.from(rows, (r,) => r.user_id,).filter((id,): id is string => id != null),),];
 }
 
 /**
