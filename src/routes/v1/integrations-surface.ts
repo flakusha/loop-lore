@@ -139,7 +139,10 @@ export async function ingestWebhook(
     signature: string | undefined;
   },
 ): Promise<WebhookIngestResult> {
-  const secretRef = deps.adapterSecrets[adapter];
+  const secretRef = Object.prototype.hasOwnProperty.call(deps.adapterSecrets, adapter,)
+    ? deps.adapterSecrets[adapter]
+    : undefined;
+
   if (secretRef === undefined) {
     return { ok: false, code: "unknown_adapter", message: `Unknown adapter: ${adapter}`, };
   }
