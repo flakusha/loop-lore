@@ -163,6 +163,13 @@ describe("slugs regex", () => {
     it("returns full string if no greeting", () => {
       expect("What do you think".replace(GREETING_FILLER, "",),).toBe("What do you think",);
     });
+
+    it.each(["history of Rome", "soak the bread", "umpteenth",],)(
+      "does not mangle '%s'",
+      (title,) => {
+        expect(title.replace(GREETING_FILLER, "",),).toBe(title,);
+      },
+    );
   });
 
   describe("PROPER_NOUN_EXTRACT", () => {
