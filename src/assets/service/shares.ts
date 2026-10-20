@@ -7,6 +7,7 @@
 import type { Kysely, } from "kysely";
 import { AssetVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getChildLogger, } from "../../logger";
 import { uid, } from "../../utils";
 import type { AssetRecord, ShareAssetOpts, ShareRecord, UnshareAssetOpts, UpdateVisibilityOpts, } from "./types";
 
@@ -69,7 +70,8 @@ export async function shareAsset({
       .insertInto("asset_shares",)
       .values({ id, asset_id: assetId, shared_with_id: sharedWithId, shared_by_id: sharedById, },)
       .execute();
-  } catch {
+  } catch (error) {
+    getChildLogger("assets:shares",)?.warn({ message: "share insert failed (duplicate or FK)", error, },);
     return null; /* duplicate or FK failure */
   }
 
