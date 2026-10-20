@@ -43,7 +43,7 @@ export const adminChats = {
     }
   },
   get chatPages(): number {
-    return Math.ceil(this.chatTotal / (this as any).pageSize,) || 1;
+    return Math.max(1, Math.ceil(this.chatTotal / (this as any).pageSize,),);
   },
   /**
    * @param {number} p
