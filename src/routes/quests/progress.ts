@@ -11,6 +11,7 @@ import {
   QuestProgressBody,
   QuestResponse,
 } from "../../validation/schemas";
+import { requireUserId, } from "../http-utils";
 import { handleProgress, } from "./handlers";
 export const QuestProgressListResponse = ListResponse(QuestResponse,);
 
@@ -23,7 +24,8 @@ export const QuestProgressListResponse = ListResponse(QuestResponse,);
 export function questProgressRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "quests-progress", },)
     .post(`${prefix}/quests/:id/progress`, async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
       return handleProgress(
         database,
@@ -48,7 +50,8 @@ export function questProgressRoutes({ database, }: { database: Kysely<DB> }, pre
       },
     },)
     .get(`${prefix}/quests/:id/progress/:chatId`, async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
       return handleProgress(
         database,

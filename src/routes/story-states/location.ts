@@ -5,6 +5,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { ErrorResponse, Id, LocationStateBody, SuccessResponse, } from "../../validation/schemas";
+import { requireUserId, } from "../http-utils";
 import { handleLocationState, } from "./handlers";
 
 const locationStateResponse = t.Object({
@@ -22,7 +23,8 @@ const locationStateResponse = t.Object({
 export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-states-location", },)
     .get(`${prefix}/locations/:id/state`, async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
       return handleLocationState(database, "GET", ctx.params.id, userId, userRole,);
     }, {
@@ -39,7 +41,8 @@ export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> }
       },
     },)
     .put(`${prefix}/locations/:id/state`, async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const userRole = ctx.userRole as string | null;
       return handleLocationState(
         database,
