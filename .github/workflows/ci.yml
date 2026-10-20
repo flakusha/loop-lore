@@ -53,11 +53,21 @@ jobs:
       - name: Build frontend
         run: bun run build:frontend
 
-      # Rust toolchain for the `lint - native (clippy)` gate in the suite below.
-      # The runner image ships cargo/rustc/rustfmt but does not list clippy, and
-      # `stable` is what actually gets exercised: the crate's rust-toolchain.toml
-      # pin sits in native/loop-lore-native/ while every cargo invocation runs
-      # from the repo root, so rustup never resolves it.
+      # Rust toolchain for the Rust gates in the suite below: `lint - native
+      # (clippy)`, `format - native (rustfmt)`, and the egui peers
+      # `lint - egui (clippy)` / `format - egui (rustfmt)` / `test - egui`.
+      #
+      # The ROOT rust-toolchain.toml pins 1.97.1 with clippy + rustfmt, and
+      # rustup DOES resolve it: every cargo invocation in this repo runs from
+      # the repo root, so that is the file it reads. (An earlier version of this
+      # comment claimed the pin lived in native/loop-lore-native/ and went
+      # unresolved, and that the runner lacked clippy — both false since the
+      # root pin landed.)
+      #
+      # `stable` is passed anyway because dtolnay/rust-toolchain installs a
+      # toolchain by name and the root pin is honoured by rustup at build time;
+      # naming the channel explicitly makes the install step's intent readable.
+      # Do NOT weaken the root pin: it is what makes local and CI agree.
       - uses: dtolnay/rust-toolchain@stable
 
       - name: Run local gate suite
@@ -199,10 +209,52 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+  egui-wasm:
+    name: egui WASM Typecheck (wasm32)
+    # The ONLY check that compiles app.rs and web.rs: lib.rs gates them behind
+    # `#[cfg(target_arch = "wasm32")]`, so the host target never sees them -
+    # not cargo test, not clippy, not the gates suite. It lives in its own job
+    # so a broken UI fails the pipeline without reddening the app build, and
+    # it needs the wasm32 TARGET but not the wasm-bindgen CLI, so it works
+    # where the browser bundle cannot be built.
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # A missing Rust toolchain is a SUPPORTED state: the step is allowed to
+      # fail so the check below can SKIP with a reason instead of reddening
+      # the pipeline. The check itself FAILS when the crate does not compile.
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        continue-on-error: true
+        with:
+          targets: wasm32-unknown-unknown
+
+      # The action adds the target to the toolchain IT installs (stable) and
+      # makes that the default; the repo's rust-toolchain.toml pins the
+      # channel, and rustup resolves that pin over the default inside this
+      # directory. So the target has to land on the PINNED toolchain - the
+      # one cargo actually runs here. Allowed to fail: the check below asks
+      # for the target itself and SKIPs with a reason when it is missing.
+      - name: Add the wasm32 target to the pinned toolchain
+        run: rustup target add wasm32-unknown-unknown
+        continue-on-error: true
+
+      # SKIPS with a reason when no wasm-capable toolchain exists (a missing
+      # Rust toolchain is a supported state); FAILS when the crate does not
+      # compile - that is the whole point of the job.
+      - name: Type-check the egui crate for wasm32
+        run: bun run scripts/native/check-wasm.ts
+
   build:
     name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     needs: [test-unit, test-e2e, test-browser]
     steps:
       - uses: actions/checkout@v4
@@ -219,6 +271,48 @@ jobs:
 
       - name: Build server
         run: bun run build:server
+
+      # The Rust stages were absent here, so `dist/` — the artifact this job
+      # uploads and every downstream release checksums — never contained the
+      # egui bundle or the native addon. Both DEGRADE WITH A WARNING when the
+      # toolchain is missing (see build-native.ts / build-egui-wasm.ts), so
+      # adding them cannot redden this job; the egui report below names what the
+      # uploaded dist actually contains.
+      # A missing Rust toolchain is a SUPPORTED state: the steps below are
+      # allowed to fail so the build stages can WARN and skip instead of
+      # reddening this job.
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        continue-on-error: true
+        with:
+          targets: wasm32-unknown-unknown
+
+      # The action adds the target to the toolchain IT installs (stable) and
+      # makes that the default; the repo's rust-toolchain.toml pins the
+      # channel, and rustup resolves that pin over the default inside this
+      # directory - so the target has to land on the PINNED toolchain, the one
+      # cargo actually runs here. Allowed to fail: the build stages resolve
+      # their own toolchain and skip with a reason when it is missing.
+      - name: Add the wasm32 target to the pinned toolchain
+        run: rustup target add wasm32-unknown-unknown
+        continue-on-error: true
+
+      - name: Build native addon
+        run: bun run build:native
+
+      # The wasm-bindgen CLI, at the version the workspace Cargo.lock
+      # resolves. Without it `build:egui` skips before compiling anything, so
+      # the bundle this job uploads would never exist. Never fails the job: a
+      # provisioning failure warns and the bundle stage skips with it.
+      - name: Provision the wasm-bindgen CLI (pinned to the workspace lock)
+        run: bun run scripts/native/provision-wasm-bindgen.ts
+        continue-on-error: true
+
+      - name: Build egui WASM bundle
+        run: bun run build:egui
+
+      - name: Report egui artifact presence
+        run: bun run scripts/check/egui-release-warn.mjs dist
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

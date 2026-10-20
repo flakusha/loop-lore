@@ -25,7 +25,7 @@ describe("getContentType", () => {
     expect(getContentType("bundle.js.gz",),).toBe("application/gzip",);
     expect(getContentType("bundle.js.br",),).toBe("application/brotli",);
     expect(getContentType("bundle.js.zst",),).toBe("application/zstd",);
-    expect(getContentType("egui/app.wasm",),).toBe("application/wasm",);
+    expect(getContentType("egui/app_bg.wasm",),).toBe("application/wasm",);
   });
 
   test("falls back to text/plain for unknown extensions", () => {
@@ -105,7 +105,7 @@ describe("findCompressedVariant", () => {
   });
 
   test("serves the pre-compressed .br sibling of a wasm asset", () => {
-    const wasmPath = join(dir, "app.wasm",);
+    const wasmPath = join(dir, "app_bg.wasm",);
     writeFileSync(wasmPath, "wasm-bytes",);
     writeFileSync(`${wasmPath}.br`, "wasm-br",);
     expect(findCompressedVariant(wasmPath, "br",),).toEqual({ path: `${wasmPath}.br`, encoding: "br", },);

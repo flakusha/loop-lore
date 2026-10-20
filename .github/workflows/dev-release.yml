@@ -17,7 +17,7 @@ jobs:
     name: Dev Release
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -60,8 +60,50 @@ jobs:
       - name: Run E2E tests
         run: E2E_SAFEGUARD=1 bun run test:e2e
 
+      # The ONLY check that compiles app.rs and web.rs: lib.rs gates them behind
+      # `#[cfg(target_arch = "wasm32")]`, so the host target never sees them.
+      # A missing Rust toolchain is a SUPPORTED state: the steps are allowed to
+      # fail so the check can SKIP with a reason instead of reddening the
+      # release. The check itself FAILS when the crate does not compile, so a
+      # broken UI cannot be released.
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        continue-on-error: true
+        with:
+          targets: wasm32-unknown-unknown
+
+      # The action adds the target to the toolchain IT installs (stable) and
+      # makes that the default; the repo's rust-toolchain.toml pins the
+      # channel, and rustup resolves that pin over the default inside this
+      # directory - so the target has to land on the PINNED toolchain, the one
+      # cargo actually runs here. Allowed to fail: the check below asks for the
+      # target itself and SKIPs with a reason when it is missing.
+      - name: Add the wasm32 target to the pinned toolchain
+        run: rustup target add wasm32-unknown-unknown
+        continue-on-error: true
+
+      - name: Type-check the egui crate for wasm32
+        run: bun run scripts/native/check-wasm.ts
+
+      # The wasm-bindgen CLI, at the version the workspace Cargo.lock
+      # resolves. Without it `build:egui` skips before compiling anything, so
+      # the bundle this release uploads would never exist. Never fails the
+      # job: a provisioning failure warns and the bundle stage skips with it.
+      - name: Provision the wasm-bindgen CLI (pinned to the workspace lock)
+        run: bun run scripts/native/provision-wasm-bindgen.ts
+        continue-on-error: true
+
       - name: Build
         run: bun run build
+
+      # Non-fatal by design: a missing Rust toolchain is a SUPPORTED state
+      # (build:egui skips with a warning). Names what the uploaded artifact
+      # actually contains; never fails the release.
+      - name: Report egui artifact presence
+        id: egui
+        run: |
+          bun run scripts/check/egui-release-warn.mjs dist | tee /tmp/egui-presence
+          echo "present=$(tail -1 /tmp/egui-presence | cut -d= -f2)" >> $GITHUB_OUTPUT
 
       - name: Predict dev version
         id: version
@@ -91,6 +133,8 @@ jobs:
             **Version:** ${{ steps.version.outputs.dev_version }}
             **Commit:** ${{ github.event.pull_request.merge_commit_sha }}
             **Branch:** ${{ github.event.pull_request.head.ref }}
+
+            ${{ steps.egui.outputs.present == 'true' && '' || '**egui WASM bundle omitted** — this dev build has no `dist/public/egui`: `build:egui` skipped (no Rust toolchain or no wasm-bindgen CLI on the runner, or the crate did not compile). See the run log for the reason.' }}
 
             This is a pre-release for testing purposes.
           draft: false
