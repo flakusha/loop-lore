@@ -155,60 +155,64 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
-          // Fetch content + reveal bookkeeping before update so narration and
-          // the `revealed_to` append can use them.
-          const note = await database
-            .selectFrom("shadow_notes",)
-            .select(["content", "status", "visibility", "revealed_to",],)
-            .where("id", "=", noteId,)
-            .where("chat_id", "=", id,)
-            .executeTakeFirst();
-
-          if (!note) { return notFound("Shadow note not found",); }
-
           const body = ctx.body as typeof RevealBody.static;
           const incoming = body?.revealedTo ?? [];
-          // Append + dedupe; only real arrays feed the append — hostile
-          // stored values (objects, bare strings) count as no audience.
-          const parsed = note.revealed_to
-            ? jsonParseOr<unknown>(note.revealed_to, [],)
-            : [];
 
-          const existing = Array.isArray(parsed,) ? parsed : [];
+          const outcome = await database.transaction().execute(async (trx,) => {
+            // Fetch content + reveal bookkeeping inside the transaction so
+            // concurrent reveals serialize and no append is lost.
+            const note = await trx
+              .selectFrom("shadow_notes",)
+              .select(["content", "status", "visibility", "revealed_to",],)
+              .where("id", "=", noteId,)
+              .where("chat_id", "=", id,)
+              .executeTakeFirst();
 
-          const unique = new Set([...existing, ...incoming,],);
-          const revealedTo = Array.from(unique,);
+            if (!note) { return { kind: "notfound" as const, }; }
 
-          // `revealed:hidden` is drift per the status x visibility invariant,
-          // so revealing also flips visibility; revealed notes are excluded
-          // from LLM injection by `status`, so the flip only affects reading.
-          const nextVisibility = note.visibility === ShadowNoteVisibility.UserVisible
-            ? note.visibility
-            : ShadowNoteVisibility.UserVisible;
+            // Append + dedupe; only real arrays feed the append — hostile
+            // stored values (objects, bare strings) count as no audience.
+            const parsed = note.revealed_to
+              ? jsonParseOr<unknown>(note.revealed_to, [],)
+              : [];
 
-          assertValidWrite("shadow_notes", { status: ShadowNoteStatus.Revealed, visibility: nextVisibility, },);
+            const existing = Array.isArray(parsed,) ? parsed : [];
 
-          const serialized = safeJsonStringify(revealedTo,);
-          const result = await database
-            .updateTable("shadow_notes",)
-            .set({
-              status: ShadowNoteStatus.Revealed,
-              visibility: nextVisibility,
-              // String[] always serializes; fall back to the prior value so a
-              // (theoretical) failure never drops recorded ids.
-              revealed_to: serialized.ok ? serialized.value : note.revealed_to,
-            },)
-            .where("id", "=", noteId,)
-            .where("chat_id", "=", id,)
-            .executeTakeFirst();
+            const unique = new Set([...existing, ...incoming,],);
+            const revealedTo = Array.from(unique,);
 
-          if (Number(result?.numUpdatedRows ?? 0,) === 0) {
-            return notFound("Shadow note not found",);
-          }
+            // `revealed:hidden` is drift per the status x visibility invariant,
+            // so revealing also flips visibility; revealed notes are excluded
+            // from LLM injection by `status`, so the flip only affects reading.
+            const nextVisibility = note.visibility === ShadowNoteVisibility.UserVisible
+              ? note.visibility
+              : ShadowNoteVisibility.UserVisible;
+
+            assertValidWrite("shadow_notes", { status: ShadowNoteStatus.Revealed, visibility: nextVisibility, },);
+
+            const serialized = safeJsonStringify(revealedTo,);
+            const result = await trx
+              .updateTable("shadow_notes",)
+              .set({
+                status: ShadowNoteStatus.Revealed,
+                visibility: nextVisibility,
+                revealed_to: serialized.ok ? serialized.value : note.revealed_to,
+              },)
+              .where("id", "=", noteId,)
+              .where("chat_id", "=", id,)
+              .executeTakeFirst();
+
+            if (Number(result?.numUpdatedRows ?? 0,) === 0) { return { kind: "notfound" as const, }; }
+
+            const wasRevealed = note.status === ShadowNoteStatus.Revealed;
+            return { kind: "ok" as const, note, revealedTo, nextVisibility, wasRevealed, };
+          },);
+
+          if (outcome.kind === "notfound") { return notFound("Shadow note not found",); }
+          const { note, wasRevealed, } = outcome;
 
           // Narrate only on the hidden -> revealed transition — re-revealing
           // must not re-emit; gm_only reveals never narrate (dev log only).
-          const wasRevealed = note.status === ShadowNoteStatus.Revealed;
           if (!wasRevealed && note.visibility === ShadowNoteVisibility.UserVisible) {
             await injectShadowRevealNarration(database, id, note.content,);
           } else if (!wasRevealed) {
