@@ -199,7 +199,7 @@ describe("quest routes", () => {
       new Request(`http://localhost/api/quests/${QUEST_ID}`,),
     );
 
-    expect(anon.status,).toBe(404,);
+    expect(anon.status,).toBe(401,);
   });
 
   test("PUT quest renames the quest persistently", async () => {

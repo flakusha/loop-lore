@@ -135,7 +135,7 @@ describe("story-state routes", () => {
       new Request(`http://localhost/api/locations/${LOCATION_ID}/state`,),
     );
 
-    expect(anon.status,).toBe(404,);
+    expect(anon.status,).toBe(401,);
   });
 
   test("GET NPC state returns the seeded row", async () => {
