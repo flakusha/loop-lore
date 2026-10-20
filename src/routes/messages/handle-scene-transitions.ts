@@ -11,8 +11,8 @@
  */
 import type { Kysely, } from "kysely";
 import { classifyTransitionMessage, } from "../../chat";
-import { detectReuniteIntent, detectSplitIntent, } from "../../chat/service";
 import { recordLocationChange, } from "../../chat/service/location-events";
+import { classifySplitIntent, } from "../../chat/split-classifier";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
@@ -96,12 +96,13 @@ export async function handleSceneTransitions(
 
   const recentContent = Array.from(recentMsgs, (m,) => m.content,).reverse();
 
-  if (detectSplitIntent(effectiveContent,)) {
-    log().info("Split narration detected", { chatId, },);
+  const splitClass = await classifySplitIntent(effectiveContent, [], config, database, actorId ?? undefined,);
+  if (splitClass.isSplit) {
+    log().info("Split narration detected", { chatId, source: splitClass.source, },);
   }
 
-  if (detectReuniteIntent(effectiveContent,)) {
-    log().info("Reunite narration detected", { chatId, },);
+  if (splitClass.isReunite) {
+    log().info("Reunite narration detected", { chatId, source: splitClass.source, },);
   }
 
   const classification = await classifyTransitionMessage(
