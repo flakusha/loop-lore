@@ -158,7 +158,11 @@ export async function buildRecentEvents(
   chatId?: string,
 ): Promise<string> {
   let query = db.selectFrom("notifications",).selectAll().where("user_id", "=", userId,);
-  if (chatId) { query = query.where("link", "like", `%${chatId}%`,); }
+  if (chatId) {
+    const link = chatId.startsWith("/",) ? chatId : `/chat/${chatId}`;
+    query = query.where("link", "=", link,);
+  }
+
   const rows = await query.orderBy("created_at", "desc",).limit(5,).execute();
   if (rows.length === 0) { return ""; }
   const lines = Array.from(rows, (r,) => {
