@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import { Elysia, t, } from "elysia";
-import { type SelectQueryBuilder, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonPaginated, parsePagination, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
+import { Elysia, t, } from "elysia";
+import { jsonPaginated, parsePagination, requireUserId, } from "../http-utils";
+import { type Expression, type ExpressionBuilder, type SelectQueryBuilder, sql, type SqlBool, } from "kysely";
 
 /**
  * Query params for GET /api/chats. Filters are optional and compose with AND;
@@ -91,6 +90,29 @@ function orderChatList<T,>(
 }
 
 /**
+ * The access predicate both chat-list queries share: chats the viewer created
+ * OR participates in. Mirrors `visibleToViewer` in
+ * `src/routes/views/chats.ts`; without the participant arm a chat you were
+ * invited to is reachable in htmx but missing from this JSON list.
+ * @param userId viewer whose chats are listed
+ * @returns a `where()` callback for a `chats` query
+ */
+function visibleToViewer(
+  userId: string,
+): (eb: ExpressionBuilder<DB, "chats">,) => Expression<SqlBool> {
+  return (eb,) =>
+    eb.or([
+      eb("chats.created_by", "=", userId,),
+      eb.exists(
+        eb
+          .selectFrom("chat_participants",)
+          .select("chat_participants.chat_id",)
+          .whereRef("chat_participants.chat_id", "=", "chats.id",)
+          .where("chat_participants.actor_id", "=", userId,),
+      ),
+    ],);
+}
+/**
  * @param opts
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { get: { body: unknown; params: {}; query: { ...; }; headers: unknown; response: { ...; }; }; }; }; }, { ......}
@@ -120,12 +142,12 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
           let countQuery = database
             .selectFrom("chats",)
             .select(database.fn.countAll<number>().as("total",),)
-            .where("created_by", "=", userId,);
+            .where(visibleToViewer(userId,),);
 
           let listQuery = database
             .selectFrom("chats",)
             .selectAll()
-            .where("created_by", "=", userId,);
+            .where(visibleToViewer(userId,),);
 
           if (type) {
             countQuery = countQuery.where("type", "=", type,);

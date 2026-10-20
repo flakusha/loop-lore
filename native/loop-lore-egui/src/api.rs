@@ -51,10 +51,14 @@ pub struct ChatMessage {
 }
 
 /// Result of a successful send: the stored user message plus the auto-reply.
+///
+/// The 201 envelope is not uniform: a replied send nests the assistant row
+/// under `assistantMessage` and echoes no user row at all (see
+/// `message-vectors.json`), so both members are optional.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SentMessage {
-  /// The stored user message.
-  pub message: ChatMessage,
+  /// The stored user message, when the envelope carried one.
+  pub message: Option<ChatMessage>,
   /// The assistant auto-reply, when the server produced one.
   pub assistant: Option<ChatMessage>,
 }
@@ -66,12 +70,15 @@ pub fn chats_list_url(page: u32) -> String {
 
 /// URL for one chat's message page.
 pub fn messages_url(chat_id: &str, page: u32) -> String {
-  format!("/api/v1/chats/{chat_id}/messages?page={page}&pageSize={PAGE_SIZE}")
+  format!(
+    "/api/v1/chats/{}/messages?page={page}&pageSize={PAGE_SIZE}",
+    encode_url_component(chat_id)
+  )
 }
 
 /// URL for the send endpoint.
 pub fn send_message_url(chat_id: &str) -> String {
-  format!("/api/v1/chats/{chat_id}/messages")
+  format!("/api/v1/chats/{}/messages", encode_url_component(chat_id))
 }
 
 /// URL for the emoji shortcode registry.
@@ -108,7 +115,7 @@ pub fn parse_emoji_registry(raw: &str) -> Result<Vec<(String, String)>, String> 
 /// for role-gated display.
 pub fn command_list_url(chat_id: Option<&str>) -> String {
   match chat_id {
-    Some(id) => format!("/api/v1/commands?chatId={id}"),
+    Some(id) => format!("/api/v1/commands?chatId={}", encode_url_component(id)),
     None => String::from("/api/v1/commands"),
   }
 }
@@ -240,27 +247,48 @@ pub fn parse_messages_page(raw: &str) -> Result<Vec<ChatMessage>, String> {
   Ok(messages)
 }
 
-/// Parse `POST /api/v1/chats/:id/messages` into the stored pair.
+/// Parse `POST /api/v1/chats/:id/messages` into whatever rows it echoed.
+///
+/// The 201 envelope (`src/routes/messages/create-response.ts`) is not
+/// uniform — `message-vectors.json` pins all three real shapes:
+///
+/// - `{id, context, meta}` — a non-replied send echoes the user row;
+/// - `{assistantMessage, context, meta}` — the assistant row, nothing else;
+/// - `{context, meta}` — no rows at all (a replied send whose generation
+///   body carried none).
+///
+/// Roles are inferred from position rather than required: the top-level row
+/// on a send is the caller's own message and `assistantMessage` is the
+/// assistant's by construction. Only non-JSON and non-object bodies are
+/// errors; a missing row is not, because the server legitimately sends none.
 pub fn parse_sent_message(raw: &str) -> Result<SentMessage, String> {
   let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
-  let message = parse_message_row(value.get("data").unwrap_or(&value))?;
+  if !value.is_object() {
+    return Err(String::from("send response is not an object"));
+  }
+  let row = value.get("data").filter(|data| data.is_object()).unwrap_or(&value);
+  let message = parse_message_row(row, "user").ok();
   let assistant = value
     .get("assistantMessage")
-    .and_then(|row| parse_message_row(row).ok());
+    .and_then(|row| parse_message_row(row, "assistant").ok());
   Ok(SentMessage { message, assistant })
 }
 
 /// Parse one message row from an already-decoded JSON value.
-fn parse_message_row(row: &serde_json::Value) -> Result<ChatMessage, String> {
-  let (Some(id), Some(role)) = (
-    row.get("id").and_then(serde_json::Value::as_str),
-    row.get("role").and_then(serde_json::Value::as_str),
-  ) else {
-    return Err("message missing id/role".to_string());
+///
+/// `fallback_role` applies when the row omits `role`, which the send
+/// envelope always does.
+fn parse_message_row(row: &serde_json::Value, fallback_role: &str) -> Result<ChatMessage, String> {
+  let Some(id) = row.get("id").and_then(serde_json::Value::as_str) else {
+    return Err(String::from("message missing id"));
   };
   Ok(ChatMessage {
     id: id.to_string(),
-    role: role.to_string(),
+    role: row
+      .get("role")
+      .and_then(serde_json::Value::as_str)
+      .unwrap_or(fallback_role)
+      .to_string(),
     content: row
       .get("content")
       .and_then(serde_json::Value::as_str)
@@ -338,38 +366,42 @@ impl GalleryFilters {
     use std::fmt::Write;
     let mut out = format!("page={page}");
     if !self.query.is_empty() {
-      let _ = write!(out, "&q={}", encode_query_component(&self.query));
+      let _ = write!(out, "&q={}", encode_url_component(&self.query));
     }
     if !self.asset_type.is_empty() && self.asset_type != "all" {
-      let _ = write!(out, "&type={}", encode_query_component(&self.asset_type));
+      let _ = write!(out, "&type={}", encode_url_component(&self.asset_type));
     }
     if !self.tag.is_empty() && self.tag != "all" {
-      let _ = write!(out, "&tag={}", encode_query_component(&self.tag));
+      let _ = write!(out, "&tag={}", encode_url_component(&self.tag));
     }
     if !self.sort.is_empty() && self.sort != "name" {
-      let _ = write!(out, "&sort={}", encode_query_component(&self.sort));
+      let _ = write!(out, "&sort={}", encode_url_component(&self.sort));
     }
     out
   }
 }
 
-/// Percent-encode one query-component value.
+/// Percent-encode one URL component — a query value or a path segment.
 ///
-/// The filters are user-typed (`q` free text) or come from tag names, so the
-/// raw value must never reach the URL: `cat & dog` used to truncate at the `&`
-/// and a `#` sent the rest into the fragment. Unreserved characters (RFC 3986)
-/// pass through, everything else is escaped byte-wise from the UTF-8 encoding.
+/// Filters are user-typed (`q` free text) or come from tag names, and chat and
+/// asset ids come from the persisted context, so neither may reach a URL raw:
+/// `cat & dog` truncates at the `&`, `#` starts the fragment, and an id shaped
+/// `../../admin` walks out of its own path. The pass-through set is exactly
+/// `encodeURIComponent`'s (unreserved plus `! ' ( ) *`), so this client and
+/// the htmx twin's `encodeURIComponent` calls escape identically.
 ///
 /// No dependency: `percent-encoding` would cost a build for ~12 lines.
-fn encode_query_component(value: &str) -> String {
+pub(crate) fn encode_url_component(value: &str) -> String {
+  use std::fmt::Write;
   let mut out = String::with_capacity(value.len());
   for byte in value.bytes() {
-    let unreserved = byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'.' | b'_' | b'~');
+    let unreserved =
+      byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'.' | b'_' | b'~' | b'!' | b'\'' | b'(' | b')' | b'*');
     if unreserved {
       out.push(byte as char);
     } else {
       out.push('%');
-      out.push_str(&format!("{byte:02X}"));
+      let _ = write!(out, "{byte:02X}");
     }
   }
   out
@@ -393,7 +425,7 @@ pub fn gallery_grid_url(page: u32, filters: &GalleryFilters) -> String {
 /// Rust owns the attach request (see `EguiApp::attach_asset`); only upload and
 /// thumbnail decode cross the bridge, because both need browser-only APIs.
 pub fn gallery_attach_url(asset_id: &str) -> String {
-  format!("/api/v1/assets/{asset_id}/links")
+  format!("/api/v1/assets/{}/links", encode_url_component(asset_id))
 }
 
 /// Parse the gallery grid view-model into assets, preserving order.
@@ -520,27 +552,118 @@ mod tests {
     assert_eq!(messages[0].id, "m3");
   }
 
-  #[test]
-  fn sent_message_parses_pair_and_optional_reply() {
-    let raw =
-      r#"{"id":"m1","role":"user","content":"hi","assistantMessage":{"id":"m2","role":"assistant","content":"yo"}}"#;
-    let sent = parse_sent_message(raw).unwrap();
-    assert_eq!(sent.message.id, "m1");
-    assert_eq!(sent.assistant.unwrap().content, "yo");
+  /// The shared conformance vectors: `message-vectors.json` holds the real
+  /// 201 bodies `src/routes/messages/create-response.test.ts` asserts, so a
+  /// server-side envelope change fails this suite until the parser follows.
+  #[derive(serde::Deserialize)]
+  struct MessageVectors {
+    sent: Vec<SentCase>,
+  }
+
+  #[derive(serde::Deserialize)]
+  struct SentCase {
+    name: String,
+    body: serde_json::Value,
+    expected: SentExpectation,
+  }
+
+  #[derive(serde::Deserialize)]
+  struct SentExpectation {
+    message: Option<ExpectedMessage>,
+    assistant: Option<ExpectedMessage>,
+  }
+
+  #[derive(serde::Deserialize)]
+  struct ExpectedMessage {
+    id: String,
+    role: String,
+    content: String,
+    created_at: String,
+  }
+
+  impl ExpectedMessage {
+    fn to_message(&self) -> ChatMessage {
+      ChatMessage {
+        id: self.id.clone(),
+        role: self.role.clone(),
+        content: self.content.clone(),
+        created_at: self.created_at.clone(),
+      }
+    }
+  }
+
+  fn sent_vectors() -> MessageVectors {
+    serde_json::from_str(include_str!("../message-vectors.json")).expect("message-vectors.json is valid")
   }
 
   #[test]
-  fn sent_message_without_reply_parses() {
-    let raw = r#"{"data":{"id":"m1","role":"user","content":"hi"}}"#;
+  fn sent_message_parses_every_real_server_envelope() {
+    let vectors = sent_vectors();
+    let names: Vec<&str> = vectors.sent.iter().map(|case| case.name.as_str()).collect();
+    assert_eq!(
+      names,
+      vec![
+        "no_reply",
+        "reply_with_assistant_message",
+        "reply_without_any_message_row"
+      ],
+      "the fixture must pin every 201 shape the server sends"
+    );
+    for case in &vectors.sent {
+      let sent = parse_sent_message(&case.body.to_string()).unwrap_or_else(|e| panic!("{}: {e}", case.name));
+      let expected_user = case.expected.message.as_ref().map(ExpectedMessage::to_message);
+      let expected_assistant = case.expected.assistant.as_ref().map(ExpectedMessage::to_message);
+      assert_eq!(sent.message, expected_user, "{}: user row", case.name);
+      assert_eq!(sent.assistant, expected_assistant, "{}: assistant row", case.name);
+    }
+  }
+
+  #[test]
+  fn sent_message_infers_roles_from_position() {
+    let raw = r#"{"data":{"id":"m1","content":"hi"}}"#;
     let sent = parse_sent_message(raw).unwrap();
-    assert_eq!(sent.message.id, "m1");
+    let message = sent.message.expect("the data row is the caller's own");
+    assert_eq!(message.role, "user");
+    assert_eq!(message.content, "hi");
     assert!(sent.assistant.is_none());
   }
 
   #[test]
   fn sent_message_rejects_garbage() {
     assert!(parse_sent_message("nope").is_err());
-    assert!(parse_sent_message("{\"role\":\"user\"}").is_err());
+    assert!(parse_sent_message("[1,2]").is_err());
+    // No row at all is a legitimate envelope, not an error.
+    let sent = parse_sent_message(r#"{"context":{},"meta":{}}"#).unwrap();
+    assert!(sent.message.is_none());
+    assert!(sent.assistant.is_none());
+  }
+
+  #[test]
+  fn ids_are_percent_encoded_into_urls() {
+    // A traversal-shaped id cannot escape its own path or query segment.
+    assert_eq!(
+      messages_url("../../admin", 1),
+      "/api/v1/chats/..%2F..%2Fadmin/messages?page=1&pageSize=50"
+    );
+    assert_eq!(
+      send_message_url("../../admin"),
+      "/api/v1/chats/..%2F..%2Fadmin/messages"
+    );
+    assert_eq!(
+      command_list_url(Some("../../admin")),
+      "/api/v1/commands?chatId=..%2F..%2Fadmin"
+    );
+    assert_eq!(
+      gallery_attach_url("../assets/1"),
+      "/api/v1/assets/..%2Fassets%2F1/links"
+    );
+    // Ordinary ids stay readable, and encodeURIComponent's pass-through set
+    // (unreserved plus `!'()*`) survives untouched.
+    assert_eq!(
+      messages_url("chat-1", 2),
+      "/api/v1/chats/chat-1/messages?page=2&pageSize=50"
+    );
+    assert_eq!(encode_url_component("a b/c?d#e'f"), "a%20b%2Fc%3Fd%23e'f");
   }
 
   #[test]
@@ -634,7 +757,7 @@ mod tests {
       "/dynamic/gallery/search?page=1&q=cat%20%26%20dog&type=image&tag=caf%C3%A9%231&sort=newest"
     );
     // Unreserved characters stay readable.
-    assert_eq!(encode_query_component("a-b_c.d~e"), "a-b_c.d~e");
+    assert_eq!(encode_url_component("a-b_c.d~e"), "a-b_c.d~e");
   }
 
   #[test]

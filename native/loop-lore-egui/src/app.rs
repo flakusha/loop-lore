@@ -33,17 +33,30 @@ fn byte_index(text: &str, chars: usize) -> usize {
 }
 
 /// A result handed back from a spawned fetch.
+///
+/// Every chat-scoped variant carries the chat it was requested for: a response
+/// that lands after the user switched chats is stale and must not overwrite
+/// the new transcript, palette or role gate.
 enum FetchEvent {
   /// Chat list page resolved.
   Chats(Result<Vec<ChatSummary>, String>),
-  /// Message page resolved.
-  Messages(Result<Vec<ChatMessage>, String>),
-  /// Send resolved.
-  Sent(Result<SentMessage, String>),
+  /// Message page resolved for `chat_id`.
+  Messages {
+    chat_id: String,
+    result: Result<Vec<ChatMessage>, String>,
+  },
+  /// Send resolved for `chat_id`.
+  Sent {
+    chat_id: String,
+    result: Result<SentMessage, String>,
+  },
   /// Emoji registry resolved.
   EmojiRegistry(Result<Vec<(String, String)>, String>),
-  /// Command list resolved.
-  CommandList(Result<(Vec<CommandEntry>, Option<String>), String>),
+  /// Command list resolved for `chat_id` (`None` = no chat, so not scoped).
+  CommandList {
+    chat_id: Option<String>,
+    result: Result<(Vec<CommandEntry>, Option<String>), String>,
+  },
   /// Gallery grid page resolved. Carries the request's own `page`/`replace`/
   /// `filters` so a response superseded by a newer search is dropped instead
   /// of being applied under the current filters' paging.
@@ -173,7 +186,7 @@ impl EguiApp {
       let result = client::get_json(&api::command_list_url(chat_id.as_deref()))
         .await
         .and_then(|raw| api::parse_command_list(&raw));
-      events.borrow_mut().push(FetchEvent::CommandList(result));
+      events.borrow_mut().push(FetchEvent::CommandList { chat_id, result });
       ctx.request_repaint();
     });
   }
@@ -199,6 +212,9 @@ impl EguiApp {
     storage::save_context(&self.context);
     self.status = String::from("loading messages");
     self.messages.clear();
+    // `roleInChat` is per chat: without this the palette keeps gating on the
+    // previous chat's role.
+    self.reload_commands(ctx);
     self.fetch_messages(chat_id, ctx);
   }
 
@@ -207,11 +223,12 @@ impl EguiApp {
     let events = Rc::clone(&self.events);
     let ctx = ctx.clone();
     let url = api::messages_url(chat_id, 1);
+    let chat_id = chat_id.to_string();
     client::spawn(async move {
       let result = client::get_json(&url)
         .await
         .and_then(|raw| api::parse_messages_page(&raw));
-      events.borrow_mut().push(FetchEvent::Messages(result));
+      events.borrow_mut().push(FetchEvent::Messages { chat_id, result });
       ctx.request_repaint();
     });
   }
@@ -232,11 +249,15 @@ impl EguiApp {
     self.status = String::from("sending");
     let events = Rc::clone(&self.events);
     let ctx = ctx.clone();
+    let sent_chat_id = chat_id.clone();
     client::spawn(async move {
       let result = client::post_json(&url, &body)
         .await
         .and_then(|raw| api::parse_sent_message(&raw));
-      events.borrow_mut().push(FetchEvent::Sent(result));
+      events.borrow_mut().push(FetchEvent::Sent {
+        chat_id: sent_chat_id,
+        result,
+      });
       ctx.request_repaint();
     });
     // htmx parity: the stream is connected when a generation is STARTED
@@ -366,6 +387,7 @@ impl EguiApp {
   /// Apply every fetch result queued since the last frame.
   fn drain_events(&mut self) {
     let drained: Vec<FetchEvent> = self.events.borrow_mut().drain(..).collect();
+    let active = self.context.active_chat_id.clone();
     for event in drained {
       match event {
         FetchEvent::Chats(Ok(chats)) => {
@@ -373,28 +395,48 @@ impl EguiApp {
           self.status = String::from("chats loaded");
         }
         FetchEvent::Chats(Err(e)) => self.status = format!("chat list failed: {e}"),
-        FetchEvent::Messages(Ok(messages)) => {
-          self.messages = messages;
-          self.status = String::from("ready");
-        }
-        FetchEvent::Messages(Err(e)) => self.status = format!("messages failed: {e}"),
-        FetchEvent::Sent(Ok(sent)) => {
-          self.messages.push(sent.message);
-          if let Some(assistant) = sent.assistant {
-            self.messages.push(assistant);
+        FetchEvent::Messages { chat_id, result } => {
+          if Some(&chat_id) != active.as_ref() {
+            continue;
           }
-          self.status = String::from("ready");
+          match result {
+            Ok(messages) => {
+              self.messages = messages;
+              self.status = String::from("ready");
+            }
+            Err(e) => self.status = format!("messages failed: {e}"),
+          }
         }
-        FetchEvent::Sent(Err(e)) => self.status = format!("send failed: {e}"),
+        FetchEvent::Sent { chat_id, result } => {
+          if Some(&chat_id) != active.as_ref() {
+            continue;
+          }
+          match result {
+            Ok(sent) => {
+              if let Some(message) = sent.message {
+                self.messages.push(message);
+              }
+              if let Some(assistant) = sent.assistant {
+                self.messages.push(assistant);
+              }
+              self.status = String::from("ready");
+            }
+            Err(e) => self.status = format!("send failed: {e}"),
+          }
+        }
         // The registry is a best-effort asset: without it bubbles show raw
         // `:shortcode:` text and the popup stays empty — never a hard error.
         FetchEvent::EmojiRegistry(Ok(registry)) => self.emoji_registry = registry,
         FetchEvent::EmojiRegistry(Err(_)) => {}
-        FetchEvent::CommandList(Ok((commands, role))) => {
-          self.commands = commands;
-          self.role_in_chat = role;
+        FetchEvent::CommandList { chat_id, result } => {
+          if chat_id != active {
+            continue;
+          }
+          if let Ok((commands, role)) = result {
+            self.commands = commands;
+            self.role_in_chat = role;
+          }
         }
-        FetchEvent::CommandList(Err(_)) => {}
         FetchEvent::GalleryPage {
           result,
           page,
@@ -693,9 +735,11 @@ impl App for EguiApp {
       self.started = true;
       self.reload_chats(ctx);
       self.reload_emoji_registry(ctx);
-      self.reload_commands(ctx);
-      if let Some(id) = self.context.active_chat_id.clone() {
-        self.open_chat(&id, ctx);
+      // With an active chat `open_chat` owns the command fetch (it is
+      // chat-scoped); only the no-chat case needs one here.
+      match self.context.active_chat_id.clone() {
+        Some(id) => self.open_chat(&id, ctx),
+        None => self.reload_commands(ctx),
       }
     }
   }
