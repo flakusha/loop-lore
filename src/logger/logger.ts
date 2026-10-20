@@ -32,6 +32,7 @@ export class LoggerImpl implements Logger {
   private readonly queue: AsyncLogQueue;
   private levelBox: { name: LogLevel; threshold: number };
   private bindings: LoggerBindings;
+  private readonly consoleEnabled: boolean;
   private readonly censorEnabled: boolean;
   private readonly censorFields: string[];
   private readonly limits: Partial<SizeLimits>;
@@ -43,6 +44,7 @@ export class LoggerImpl implements Logger {
   constructor(config?: Partial<LoggerConfig>, bindings?: LoggerBindings,) {
     this.bindings = bindings ?? {};
     this.levelBox = { name: config?.level ?? "debug", threshold: levelFromConfig(config?.level ?? "debug",), };
+    this.consoleEnabled = config?.console ?? true;
     this.censorEnabled = config?.censorEnabled ?? true;
     this.censorFields = config?.censorFields ?? [];
 
@@ -66,7 +68,10 @@ export class LoggerImpl implements Logger {
 
     this.limits = { ...limitsFromNested, ...limitsFromFlat, };
 
-    this.transports = [new ConsoleTransport(),];
+    this.transports = [];
+    // Hosts that own the terminal (the blessed TUI) opt out: a stdout write
+    // lands between two frames and corrupts the render.
+    if (this.consoleEnabled) { this.transports.push(new ConsoleTransport(),); }
     // Canonical machine-readable JSONL output when a path is configured.
     if (config?.jsonlPath) {
       this.transports.push(
@@ -78,6 +83,8 @@ export class LoggerImpl implements Logger {
       );
     }
 
+    // Same array, single owner: the queue only reads it, `addTransport` only
+    // mutates it — a defensive copy here would silently drop later transports.
     this.queue = new AsyncLogQueue(this.transports, {
       queueMaxSize: config?.queueMaxSize ?? 10_000,
     },);
@@ -198,6 +205,7 @@ export class LoggerImpl implements Logger {
     const child = new LoggerImpl(
       {
         level: this.levelBox.name,
+        console: this.consoleEnabled,
         censorEnabled: this.censorEnabled,
         censorFields: this.censorFields,
         limits: this.limits,

@@ -34,6 +34,25 @@ export interface ChatSummary {
   updated_at?: string | null;
 }
 
+/**
+ * Leading marker for a chat row, or an empty string.
+ *
+ * `is_pinned` is the PinnedState enum (src/db/enums-core/flags.ts): `archived`
+ * is a third state, and rendering it bare listed archived chats as live ones.
+ * @param state - the row's `is_pinned` value, when the route returned one
+ * @returns the marker to prefix the row with
+ */
+function pinnedTag(state: string | null | undefined,): string {
+  switch (state) {
+    case "pinned":
+      return "{bold-fg3}[pinned]{/bold-fg3} ";
+    case "archived":
+      return "{gray}[archived]{/gray} ";
+    default:
+      return "";
+  }
+}
+
 /** Envelope shape returned by GET /api/v1/chats. */
 export interface ChatListEnvelope {
   data: ChatSummary[];
@@ -197,10 +216,19 @@ export class ChatPicker {
   /** Show the overlay and load the chat list. */
   show(): void {
     this.visible = true;
+    this.raise();
     this.box.show();
     this.list.focus();
     this.screen.render();
     void this.refresh();
+  }
+
+  /**
+   * Move the box to the end of the screen's children, which is how blessed
+   * decides draw order — the overlay shown last paints on top.
+   */
+  private raise(): void {
+    this.screen.append(this.box,);
   }
 
   /** Hide the overlay without touching the bound chat. */
@@ -275,14 +303,16 @@ export class ChatPicker {
    * on its own answer, which is what re-arms the status line and re-enables `c`.
    */
   cancelCreate(): void {
-    if (!this.prompt) { return; }
+    const prompt = this.prompt;
+    if (!prompt) { return; }
 
-    // `emit("blur")` is blessed's own teardown hook (widgets/textarea.js:206):
-    // it drops the read listener and clears `screen.grabKeys`, which is the
-    // invariant every overlay `hide()` must restore.
-    this.prompt.emit("blur",);
-    this.prompt.hide();
+    // Drop the field BEFORE the teardown emit. `emit("blur")` is blessed's own
+    // hook (widgets/textarea.js:206) and it re-enters this method through the
+    // textbox's `cancel` listener — with `prompt` still set, that nested call
+    // emitted blur a second time and then touched an already-torn-down widget.
     this.prompt = null;
+    prompt.emit("blur",);
+    prompt.hide();
     this.statusLabel.setContent(
       this.chats.length > 0
         ? `${this.chats.length} chat(s) | Enter: bind chat | Esc: close`
@@ -313,10 +343,13 @@ export class ChatPicker {
     if (this.creating) { return; }
 
     this.creating = true;
-    if (this.prompt) {
-      this.prompt.emit("blur",);
-      this.prompt.hide();
+    const prompt = this.prompt;
+    if (prompt) {
+      // Same order as cancelCreate: the field goes first, because the blur emit
+      // can re-enter cancelCreate through the textbox's own `cancel` listener.
       this.prompt = null;
+      prompt.emit("blur",);
+      prompt.hide();
     }
 
     this.statusLabel.setContent(CREATING_STATUS,);
@@ -374,11 +407,10 @@ export class ChatPicker {
       this.statusLabel.setContent(NO_CHATS_MESSAGE,);
     } else {
       this.list.setItems(
-        this.chats.map(
-          (chat,) =>
-            `${chat.is_pinned === "pinned" ? "{bold-fg3}[pinned]{/bold-fg3} " : ""}${
-              escapeMarkup(chat.name,) || "(unnamed)"
-            }  {gray}(${chat.id.slice(0, 8,)}…){/gray}`,
+        this.chats.map((chat,) =>
+          `${pinnedTag(chat.is_pinned,)}${escapeMarkup(chat.name,) || "(unnamed)"}  {gray}(${
+            chat.id.slice(0, 8,)
+          }…){/gray}`
         ),
       );
 
