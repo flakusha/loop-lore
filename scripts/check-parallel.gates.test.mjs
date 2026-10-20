@@ -69,6 +69,35 @@ const LONG_RUN_MS = 300_000;
  */
 const EGUI_GATES = ["lint - egui (clippy)", "format - egui (rustfmt)", "test - egui",];
 
+/**
+ * `md - lint` is skipped by the whole-suite runs for the same reason, and
+ * for a worse one: its cost is NOT a property of the gate but of the
+ * WORKING TREE. `--diff-base HEAD` narrows it to the changed .md files, so
+ * on a dirty tree it lints one file and on a clean tree it lints all 4k+
+ * tracked .md files — long enough to blow the gate's own 900s budget. A
+ * test whose duration depends on whether the tree happens to be dirty is
+ * not a test; the gate itself is covered by `bun run check`.
+ */
+const MD_LINT = "md - lint";
+
+/**
+ * Gates that are RED in this tree for reasons that predate this work: an
+ * unused e2e fixture (both knip gates), DB schemas left stale by a migration
+ * (db - schema gate), and a 304-code-line frontend file (size - strict).
+ *
+ * The whole-suite runs skip them so the run can come back GREEN: the tests
+ * in this file assert the FILTER's behaviour — which gates ran, which were
+ * skipped, that the arithmetic balances — and a red gate inherited from
+ * another change would fail them for the wrong reason. Fixing that debt is
+ * separate work; skipping it here is not a claim that it is fixed.
+ */
+const RED_GATES = [
+  "db - schema gate",
+  "dead - code (knip)",
+  "dead - code (src files)",
+  "size - strict",
+];
+
 // Per-run artifacts created by runners spawned in THIS test process. The
 // runner's own retention keeps 20 per-run reports / scratch dirs, so a test
 // suite that leaves its 8 behind silently evicts the operator's real check
@@ -235,8 +264,20 @@ describe("selective gate filter — --gates (whitelist)", () => {
   },);
 
   test("multiple comma-separated names are honored", { timeout: 120_000, }, () => {
-    const r = runRunner(["--gates", "md - lint,format - dprint",], { defaultSkip: [], },);
+    // Two CHEAP gates: the property under test is the CSV parsing, not which
+    // gates run. `md - lint` scans 4k+ .md files whenever the tree is clean
+    // (the diff-scope narrowing finds no .md file to narrow to), so it ate
+    // the whole 120s budget on its own and the test timed out on the gate
+    // rather than on the filter. Both names are asserted as EXECUTED below,
+    // which is stronger than the summary line alone: a filter that
+    // whitelisted two names and ran neither fails here.
+    const names = ["format - dprint", "no - shell - refs",];
+    const r = runRunner(["--gates", names.join(",",),], { defaultSkip: [], },);
     expect(r.stderr,).toMatch(/gates filter: whitelisted 2 of \d+ gates/,);
+    const executed = executedGateNames(r.stdout,);
+    for (const name of names) {
+      expect(executed, `whitelisted gate did not run: ${name}`,).toContain(name,);
+    }
   },);
 
   test("gate names with parentheses are selectable (no CSV-split collision)", { timeout: 120_000, }, () => {
@@ -257,7 +298,13 @@ describe("selective gate filter — --skip-gates (inverse)", () => {
   // `availableGateNames()`, so a number in this comment is the only thing that
   // could go stale.
   test("inverse filter runs every other gate", { timeout: LONG_RUN_MS, }, () => {
-    const skipNames = ["coverage - per-module line %", "e2e - browser (baseline)", ...EGUI_GATES,];
+    const skipNames = [
+      "coverage - per-module line %",
+      "e2e - browser (baseline)",
+      MD_LINT,
+      ...EGUI_GATES,
+      ...RED_GATES,
+    ];
     const r = runRunner(["--skip-gates", skipNames.join(",",),], {
       defaultSkip: [],
       timeout: LONG_RUN_MS,
@@ -274,7 +321,9 @@ describe("selective gate filter — --skip-gates (inverse)", () => {
       "no - shell - refs",
       "context - weight",
       "e2e - browser (baseline)",
+      MD_LINT,
       ...EGUI_GATES,
+      ...RED_GATES,
     ];
     const r = runRunner(
       ["--skip-gates", skipNames.join(",",),],
@@ -384,7 +433,9 @@ describe("selective gate filter — mutual exclusion", () => {
         defaultSkip: [
           "coverage - per-module line %",
           "e2e - browser (baseline)",
+          MD_LINT,
           ...EGUI_GATES,
+          ...RED_GATES,
         ],
         timeout: LONG_RUN_MS,
       },
