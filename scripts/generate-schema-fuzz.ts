@@ -193,7 +193,6 @@ async function discoverSchemas(): Promise<{
     // at runtime, so no static import list can cover it.
     let namespace: Record<string, unknown>;
     try {
-      // eslint-disable-next-line no-await-in-loop
       namespace = await import(new URL(file, directory,).href);
     } catch {
       // A route module can throw at import time (config read at module scope,

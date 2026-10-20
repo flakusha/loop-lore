@@ -383,6 +383,7 @@ export const ModelRoleSchema = t.UnionEnum([
   "embeddings",
   "summarization",
   "classifier",
+  "translator",
 ],);
 export const ModerationActionSchema = t.UnionEnum(["none", "warned", "content_removed", "nsfw_revoked", "banned",],);
 export const ModerationFlagReasonSchema = t.UnionEnum([
@@ -3380,6 +3381,32 @@ export const LocationEdgesSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
+// ── world_conditions ────────────────────────────────────────────
+export const WorldConditionsSchema = t.Object({
+  world_id: t.Optional(t.String(),),
+  weather: t.Optional(t.String(),),
+  time_of_day: t.Optional(t.String(),),
+  season: t.Optional(t.String(),),
+  temperature: t.Optional(t.Number(),),
+  global_modifiers: t.Optional(t.String(),),
+  weather_seed: t.Optional(t.Number(),),
+  mode: t.Optional(t.String(),),
+  tick_interval_minutes: t.Optional(t.Number(),),
+  last_tick_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_condition_history ────────────────────────────────────────────
+export const WorldConditionHistorySchema = t.Object({
+  world_id: t.String(),
+  weather: t.String(),
+  time_of_day: t.String(),
+  season: t.String(),
+  world_minute: t.Number(),
+  recorded_at: t.Optional(t.String(),),
+},);
+
 // ── location_anomalies ────────────────────────────────────────────
 export const LocationAnomaliesSchema = t.Object({
   location_id: t.String(),
@@ -3634,6 +3661,15 @@ export const VnChoiceSelectionsSchema = t.Object({
   applied_at: t.Optional(t.String(),),
 },);
 
+// ── instance_storage_budgets ────────────────────────────────────────────
+export const InstanceStorageBudgetsSchema = t.Object({
+  asset_class: t.Optional(StorageBudgetScopeSchema,),
+  soft_limit_bytes: t.Optional(t.Number(),),
+  hard_limit_bytes: t.Optional(t.Number(),),
+  eviction_policy: t.Optional(StorageEvictionPolicySchema,),
+  updated_at: t.Optional(t.String(),),
+},);
+
 // ── mesh_work_assignments ────────────────────────────────────────────
 export const MeshWorkAssignmentsSchema = t.Object({
   affinity_key: t.String(),
@@ -3655,39 +3691,4 @@ export const FederationPerformanceBudgetsSchema = t.Object({
   max_queue_depth: t.Optional(t.Number(),),
   requests_per_minute: t.Optional(t.Number(),),
   tokens_per_minute: t.Optional(t.Number(),),
-},);
-
-// ── instance_storage_budgets ────────────────────────────────────────────
-export const InstanceStorageBudgetsSchema = t.Object({
-  asset_class: t.Optional(StorageBudgetScopeSchema,),
-  soft_limit_bytes: t.Optional(t.Number(),),
-  hard_limit_bytes: t.Optional(t.Number(),),
-  eviction_policy: t.Optional(StorageEvictionPolicySchema,),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_conditions ────────────────────────────────────────────
-export const WorldConditionsSchema = t.Object({
-  world_id: t.Optional(t.String(),),
-  weather: t.Optional(t.String(),),
-  time_of_day: t.Optional(t.String(),),
-  season: t.Optional(t.String(),),
-  temperature: t.Optional(t.Number(),),
-  global_modifiers: t.Optional(t.String(),),
-  weather_seed: t.Optional(t.Number(),),
-  mode: t.Optional(t.String(),),
-  tick_interval_minutes: t.Optional(t.Number(),),
-  last_tick_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_condition_history ────────────────────────────────────────────
-export const WorldConditionHistorySchema = t.Object({
-  world_id: t.String(),
-  weather: t.String(),
-  time_of_day: t.String(),
-  season: t.String(),
-  world_minute: t.Number(),
-  recorded_at: t.Optional(t.String(),),
 },);
