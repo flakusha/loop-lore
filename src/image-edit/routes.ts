@@ -12,6 +12,7 @@
  * @module image-edit-routes
  */
 
+import { getDatabase, } from "../db";
 import { ensureWorkflowRegistry, } from "../generation/workflow-library";
 import { HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
@@ -86,6 +87,8 @@ export async function handleRun(request: Request, opts?: HandleRunAuth,): Promis
     return jsonError({ message: "Missing required field: backend", status: HttpStatus.BadRequest, },);
   }
 
+  const db = opts?.database ?? getDatabase();
+  await ensureWorkflowRegistry(db,).catch(() => 0);
   const template = templateRegistry.get(body.template_id,);
   if (!template) {
     return jsonError({ message: `Unknown template: ${body.template_id}`, status: HttpStatus.NotFound, },);
@@ -101,9 +104,10 @@ export async function handleRun(request: Request, opts?: HandleRunAuth,): Promis
   const provider = getProvider(body.backend,);
 
   // Check required parameters
+  const params = body.params ?? {};
   const missing: string[] = [];
   for (const p of template.parameters) {
-    if (p.required && !body.params[p.name]) { missing.push(p.name,); }
+    if (p.required && params[p.name] === undefined) { missing.push(p.name,); }
   }
 
   if (missing.length > 0) {
