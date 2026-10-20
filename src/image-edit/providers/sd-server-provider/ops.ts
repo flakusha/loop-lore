@@ -125,6 +125,7 @@ export async function executeImg2Img(
   onProgress?.({ status: "running", message: "Transforming image...", },);
 
   const prompt = (params.prompt as string) ?? "";
+  const emotion = (params.emotion as string) ?? "";
   const negative = (params.negative_prompt as string) ?? "";
   const denoise = (params.denoise_strength as number) ?? 0.75;
   const steps = (params.steps as number) ?? cfg.defaults.steps;
@@ -133,9 +134,12 @@ export async function executeImg2Img(
   const seed = (params.seed as number) ?? -1;
   const inputImage = (params.input_image as string) ?? "";
 
+  const emotionModifier = emotion ? getEmotionModifier(emotion,) : "";
+  const finalPrompt = emotionModifier ? `${prompt}, ${emotionModifier}` : prompt;
+
   if (host.apiFamily === "sdcpp") {
     return sdcppGenerate(host, "img2img", {
-      prompt,
+      prompt: finalPrompt,
       negative_prompt: negative,
       init_image: inputImage,
       denoising_strength: denoise,
@@ -150,7 +154,7 @@ export async function executeImg2Img(
 
   if (host.apiFamily === "sdapi") {
     return sdapiGenerate(host, "img2img", {
-      prompt,
+      prompt: finalPrompt,
       negative_prompt: negative,
       init_images: [inputImage,],
       denoising_strength: denoise,
