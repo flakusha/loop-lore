@@ -79,7 +79,7 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
     throw new TypeError(`encryptAtRest requires plaintext string, got ${typeof plaintext}`,);
   }
 
-  if (isEncryptedPayload(plaintext,)) {
+  if (encryptionLevel !== "none" && isEncryptedPayload(plaintext,)) {
     return { storedContent: plaintext, keyId: extractKeyIdFromPayload(plaintext,), wasEncrypted: true, };
   }
 
