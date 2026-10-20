@@ -7,6 +7,7 @@ import type { Kysely, } from "kysely";
 import { QuestStatus, } from "../../db/enums";
 import type { QuestCategory as QuestCategoryEnum, QuestType as QuestTypeEnum, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getChildLogger, } from "../../logger";
 import { notifyQuestUpdate, } from "../../notifications/service";
 import { QuestEngine, } from "../../story/quest-engine";
 import type { QuestConfig, } from "../../story/types";
@@ -182,10 +183,9 @@ export async function handleQuest(
   void notifyQuestUpdate(database, {
     worldId: questRow.world_id,
     questName: updated?.name ?? "Quest",
-  },)
-    // Quest-update notification failure is non-fatal — swallow.
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    .catch(() => {},);
+  },).catch((err,) => {
+    getChildLogger("routes/quests",)?.warn("quest-update notification failed", { err, },);
+  },);
 
   return jsonResponse(updated,);
 }
@@ -234,10 +234,9 @@ export async function handleProgress(
     worldId: questRow.world_id,
     chatId: body?.chatId as string | undefined,
     questName: questNameRow?.name ?? "Quest",
-  },)
-    // Quest-progress notification failure is non-fatal — swallow.
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    .catch(() => {},);
+  },).catch((err,) => {
+    getChildLogger("routes/quests",)?.warn("quest-progress notification failed", { err, },);
+  },);
 
   return jsonResponse(entry,);
 }
