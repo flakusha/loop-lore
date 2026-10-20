@@ -12,6 +12,7 @@
  */
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../config/constants";
 import { deriveChatKeyForChat, getSmk, } from "../crypto";
+import { getChildLogger, } from "../logger";
 import { notFoundResponse, } from "../routes/http-utils";
 import { serveFile, } from "./serve-file";
 import { resolveForServe, type ServeRawOpts, } from "./serve-handlers";
@@ -80,7 +81,8 @@ export async function handleServeRaw({
           "X-Content-Type-Options": "nosniff",
         },
       },);
-    } catch {
+    } catch (error) {
+      getChildLogger("assets:serve-raw",)?.error({ message: "Failed to decrypt asset", error, },);
       return new Response("Failed to decrypt asset", { status: 500, },);
     }
   }
@@ -150,7 +152,8 @@ export async function handleDownload({
           "Content-Disposition": `attachment; filename="${safeName}"`,
         },
       },);
-    } catch {
+    } catch (error) {
+      getChildLogger("assets:serve-raw",)?.error({ message: "Failed to decrypt asset", error, },);
       return new Response("Failed to decrypt asset", { status: 500, },);
     }
   }
