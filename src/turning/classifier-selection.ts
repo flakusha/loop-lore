@@ -67,11 +67,14 @@ export const TURN_SELECTION_PROMPT = [
  * @param content - Raw LLM response text
  * @returns The JSON substring, or null when no object is present
  */
+const EXTRACT_JSON_MAX_BYTES = 64 * 1024;
+
 function extractJsonObject(content: string,): string | null {
-  const start = content.indexOf("{",);
-  const end = content.lastIndexOf("}",);
+  const window = content.length > EXTRACT_JSON_MAX_BYTES ? content.slice(0, EXTRACT_JSON_MAX_BYTES,) : content;
+  const start = window.indexOf("{",);
+  const end = window.lastIndexOf("}",);
   if (start < 0 || end <= start) { return null; }
-  return content.slice(start, end + 1,);
+  return window.slice(start, end + 1,);
 }
 
 /**
