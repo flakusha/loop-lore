@@ -120,7 +120,10 @@ impl GalleryState {
       // A new query invalidates any pending thumbnails.
       self.pending_thumbs.clear();
     }
-    self.has_more = assets.len() >= crate::api::GALLERY_PAGE_SIZE as usize;
+    // Filtered pages are served by `/dynamic/gallery/search`, which ignores
+    // `page` and hard-caps at GRID_PAGE_SIZE (`src/routes/views/search.ts`),
+    // so "Load more" would append the same 200 rows forever.
+    self.has_more = self.filters.is_empty() && assets.len() >= crate::api::GALLERY_PAGE_SIZE as usize;
     for asset in assets {
       self.cells.push(GalleryCell::new(asset));
     }
@@ -351,6 +354,23 @@ mod tests {
     let mut state2 = GalleryState::new();
     state2.apply_page(vec![asset("a1", "image", None)], 1, true);
     assert!(!state2.has_more);
+  }
+
+  #[test]
+  fn has_more_is_suppressed_under_filters() {
+    // A filtered page of GRID_PAGE_SIZE rows is the server's hard cap, not a
+    // first page — "Load more" would re-append the same rows forever.
+    let mut state = GalleryState::new();
+    state.set_filters(GalleryFilters {
+      query: "cat".to_string(),
+      ..GalleryFilters::default()
+    });
+    let full = (0..crate::api::GALLERY_PAGE_SIZE)
+      .map(|i| asset(&format!("a{i}"), "image", None))
+      .collect();
+    state.apply_page(full, 1, true);
+    assert!(!state.has_more);
+    assert_eq!(state.cells.len(), crate::api::GALLERY_PAGE_SIZE as usize);
   }
 
   #[test]
