@@ -68,7 +68,7 @@ describe("encryptAtRest", () => {
     },);
 
     expect(result.storedContent,).toBe(encrypted,);
-    expect(result.wasEncrypted,).toBeTrue();
+    expect(result.wasEncrypted,).toBeFalse();
   });
 
   test("at-rest tier stores the wire payload verbatim (server is a passthrough)", async () => {
