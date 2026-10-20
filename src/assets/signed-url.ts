@@ -187,7 +187,8 @@ export async function verifyAssetUrl(opts: VerifyAssetUrlOpts,): Promise<SignedU
     }
 
     return { valid: true, };
-  } catch {
+  } catch (error) {
+    getLog()?.warn({ message: "malformed signed url", error, },);
     return { valid: false, reason: "malformed", };
   }
 }
