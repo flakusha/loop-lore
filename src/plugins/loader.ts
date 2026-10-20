@@ -234,6 +234,15 @@ export async function initializePlugin({ db, manifest, }: InitializePluginOpts,)
 }
 
 /**
+ * Reset the one-shot init marker so a retried enable can re-run onLoad.
+ * Mirrors the loader's rollback without dropping the registered manifest.
+ * @param name
+ */
+export function resetPluginInit(name: string,): void {
+  initializedPlugins.delete(name,);
+}
+
+/**
  * Register static extension points declared in a plugin manifest.
  * @param manifest
  * @throws When the plugin origin cannot register a declared extension point.
