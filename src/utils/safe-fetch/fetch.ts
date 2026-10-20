@@ -222,6 +222,15 @@ export async function safeFetch<T = unknown,>(
 
     // Return raw text
     const text = await response.text();
+    if (text.length > maxSize) {
+      return {
+        ok: false,
+        error: new Error(`Response body too large: ${text.length} chars (max: ${maxSize})`,),
+        status: response.status,
+        headers: response.headers,
+      };
+    }
+
     return { ok: true, data: text as unknown as T, status: response.status, headers: response.headers, };
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error,),);
