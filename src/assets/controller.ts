@@ -511,7 +511,11 @@ export async function handleUpload({
   let formData;
   try {
     formData = await request.formData();
-  } catch {
+  } catch (error) {
+    getLogger()
+      .child({ module: "assets.controller", },)
+      .error("Failed to parse multipart form data", error instanceof Error ? error : new Error(String(error,),),);
+
     return badRequestResponse("Failed to parse multipart form data",);
   }
 
