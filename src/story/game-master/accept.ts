@@ -161,7 +161,9 @@ export async function humanOverride(
   decision: GameMasterDecision,
 ): Promise<void> {
   const gmSerialized = safeJsonStringify(decision,);
-  if (!gmSerialized.ok) { return; }
+  if (!gmSerialized.ok) {
+    throw new Error(`humanOverride: failed to serialize decision: ${gmSerialized.error}`,);
+  }
 
   const turn = await state.db
     .selectFrom("story_turns",)
