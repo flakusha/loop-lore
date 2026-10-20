@@ -139,7 +139,9 @@ export function handleTemplates(request: Request,): Response {
 
   let templates: WorkflowTemplate[];
 
-  if (backend) {
+  if (backend && category) {
+    templates = templateRegistry.listForBackend(backend,).filter((t,) => t.category === category);
+  } else if (backend) {
     templates = templateRegistry.listForBackend(backend,);
   } else if (category) {
     templates = templateRegistry.listByCategory(category as WorkflowTemplate["category"],);
