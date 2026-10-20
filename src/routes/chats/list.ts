@@ -4,7 +4,7 @@
 import { Elysia, t, } from "elysia";
 import { type SelectQueryBuilder, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonPaginated, requireUserId, } from "../http-utils";
+import { jsonPaginated, parsePagination, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -105,8 +105,7 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
-          const page = (ctx.query.page as number) ?? 1;
-          const pageSize = (ctx.query.pageSize as number) ?? 20;
+          const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
           const offset = (page - 1) * pageSize;
           const type = ctx.query.type as "direct" | "group" | undefined;
           const archived = ctx.query.archived as string | undefined;
