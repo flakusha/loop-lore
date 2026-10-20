@@ -43,7 +43,7 @@ export const adminAudit = {
     }
   },
   get auditPages(): number {
-    return Math.ceil(this.auditTotal / (this as any).pageSize,) || 1;
+    return Math.max(1, Math.ceil(this.auditTotal / (this as any).pageSize,),);
   },
   /**
    * @param {number} p
