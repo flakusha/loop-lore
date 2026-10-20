@@ -31,12 +31,14 @@ export function calculateRallyEffect(
   // Can't rally above max
   const moraleEffect = Math.min(rallyAmount, maxMorale - currentMorale,);
 
-  const newMorale = applyMoraleModifier(allyMorale, {
-    reason: "rallied",
-    value: moraleEffect,
-    duration: 3,
-    appliedAt: new Date().toISOString(),
-  },);
+  const newMorale = moraleEffect === 0
+    ? allyMorale
+    : applyMoraleModifier(allyMorale, {
+      reason: "rallied",
+      value: moraleEffect,
+      duration: 3,
+      appliedAt: new Date().toISOString(),
+    },);
 
   return {
     action: "rally",
@@ -71,12 +73,14 @@ export function calculateInspireEffect(
   // Can't inspire above max
   const moraleEffect = Math.min(inspireAmount, 100 - currentMorale,);
 
-  const newMorale = applyMoraleModifier(allyMorale, {
-    reason: "inspired",
-    value: moraleEffect,
-    duration: 4,
-    appliedAt: new Date().toISOString(),
-  },);
+  const newMorale = moraleEffect === 0
+    ? allyMorale
+    : applyMoraleModifier(allyMorale, {
+      reason: "inspired",
+      value: moraleEffect,
+      duration: 4,
+      appliedAt: new Date().toISOString(),
+    },);
 
   return {
     action: "inspire",
