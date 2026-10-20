@@ -6,15 +6,15 @@
 import { t, } from "./i18n";
 
 interface ConversationOverview {
-  totalMessages: number;
-  totalTokens: number;
+  totalMessages?: number;
+  totalTokens?: number;
   tokensByRole?: { user: number; assistant: number; system: number };
-  averageSessionLength: number;
-  totalGenerations: number;
-  avgLatencyMs: number;
+  averageSessionLength?: number;
+  totalGenerations?: number;
+  avgLatencyMs?: number;
   latencyBuckets?: { label: string; count: number }[];
-  costEstimate: number;
-  topChats: { id: string; name: string; totalMessages: number; totalTokens: number }[];
+  costEstimate?: number;
+  topChats?: { id: string; name: string; totalMessages: number; totalTokens: number }[];
 }
 
 interface CharacterStat {
@@ -78,7 +78,15 @@ export const adminAnalytics = {
       if (errorsRes.value.ok) { this.errorEvents = await errorsRes.value.json(); }
       if (conversationRes.value.ok) {
         const overview = await conversationRes.value.json() as ConversationOverview;
-        this.conversationOverview = overview;
+        this.conversationOverview = { ...this.conversationOverview, ...overview, };
+        this.conversationOverview.averageSessionLength ??= 0;
+        this.conversationOverview.avgLatencyMs ??= 0;
+        this.conversationOverview.totalMessages ??= 0;
+        this.conversationOverview.totalTokens ??= 0;
+        this.conversationOverview.totalGenerations ??= 0;
+        this.conversationOverview.costEstimate ??= 0;
+        this.conversationOverview.topChats ??= [];
+        this.conversationOverview.tokensByRole ??= { user: 0, assistant: 0, system: 0, };
         const roles = overview.tokensByRole ?? { user: 0, assistant: 0, system: 0, };
         const roleTotal = roles.user + roles.assistant + roles.system;
         this.analyticsRoleSegments = [
