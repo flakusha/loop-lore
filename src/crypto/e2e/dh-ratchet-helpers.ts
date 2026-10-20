@@ -43,7 +43,7 @@ export interface SkippedKey {
 export async function skipOldChain(state: DhRatchetStateReadonly, untilCounter: number,): Promise<SkippedKey[]> {
   if (untilCounter === 0) { return []; }
   const skipped: SkippedKey[] = [];
-  let chainKey: Uint8Array = state.receivingChainKey;
+  let chainKey: Uint8Array = new Uint8Array(state.receivingChainKey,);
   for (let i = 0; i < untilCounter; i++) {
     const step = await chainStep(chainKey,);
     chainKey.fill(0,);
