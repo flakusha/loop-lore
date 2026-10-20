@@ -1,0 +1,71 @@
+{
+  "context": {
+    "usedTokens": 42,
+    "maxTokens": 100
+  },
+  "sent": [
+    {
+      "name": "no_reply",
+      "body": {
+        "id": "msg-1",
+        "context": {
+          "usedTokens": 42,
+          "maxTokens": 100
+        },
+        "meta": {
+          "api_version": "1"
+        }
+      },
+      "expected": {
+        "message": {
+          "id": "msg-1",
+          "role": "user",
+          "content": "",
+          "created_at": ""
+        },
+        "assistant": null
+      }
+    },
+    {
+      "name": "reply_with_assistant_message",
+      "body": {
+        "assistantMessage": {
+          "id": "a1",
+          "content": "hello"
+        },
+        "context": {
+          "usedTokens": 42,
+          "maxTokens": 100
+        },
+        "meta": {
+          "api_version": "1"
+        }
+      },
+      "expected": {
+        "message": null,
+        "assistant": {
+          "id": "a1",
+          "role": "assistant",
+          "content": "hello",
+          "created_at": ""
+        }
+      }
+    },
+    {
+      "name": "reply_without_any_message_row",
+      "body": {
+        "context": {
+          "usedTokens": 42,
+          "maxTokens": 100
+        },
+        "meta": {
+          "api_version": "1"
+        }
+      },
+      "expected": {
+        "message": null,
+        "assistant": null
+      }
+    }
+  ]
+}
