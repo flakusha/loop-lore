@@ -66,7 +66,7 @@ export function generateResponse(params: GenerateResponseParams,): AssistantResp
   for (const [keyword, responses,] of Object.entries(RESPONSE_MAP,)) {
     // Use word boundary regex to avoid false positives (e.g., "helpme" matching "help")
     const escaped = keyword.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`,);
-    const pattern = new RegExp(String.raw`\b${escaped}\b`, "i",);
+    const pattern = new RegExp(String.raw`(?:^|\W)${escaped}\b`, "i",);
     if (pattern.test(lower,)) {
       return responses[0] ?? null;
     }
