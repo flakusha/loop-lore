@@ -1,0 +1,17 @@
+{
+  "name": "golden-text",
+  "queries": [
+    {
+      "id": "gt-001",
+      "query": "how does key rotation work",
+      "expectedDocIds": ["doc-key-rotation"],
+      "tags": ["crypto"]
+    },
+    {
+      "id": "gt-002",
+      "query": "chat creation variant defaults",
+      "expectedDocIds": ["doc-chat-variants"],
+      "tags": ["chat"]
+    }
+  ]
+}
