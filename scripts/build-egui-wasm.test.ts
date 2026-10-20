@@ -5,14 +5,25 @@
  * Tests for the build-egui-wasm.ts optional-native contract: a MISSING
  * toolchain (no cargo / no wasm-bindgen CLI) skips the stage with exit 0 —
  * the absence of the experimental egui artifact must never block the
- * application build, mirroring scripts/build-native.ts. A toolchain that IS
- * present but fails still exits non-zero — not covered here: that case needs
- * a real cargo + target tree, and the `--version` probe cannot distinguish
- * "absent" from "broken".
+ * application build, mirroring scripts/build-native.ts. A crate that does
+ * not compile skips with a warning too, for the same reason: `bun run build`
+ * runs this stage, so a non-zero exit here IS a red application build over an
+ * optional artifact. What fails the build on a broken crate is the wasm32
+ * type-check (scripts/native/check-wasm.ts), a gate of its own. That case is
+ * not covered here: it needs a real cargo + target tree, and the `--version`
+ * probe cannot distinguish "absent" from "broken".
  */
 import { describe, expect, test, } from "bun:test";
 import { spawnSync, } from "node:child_process";
-import { chmodSync, mkdtempSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
@@ -65,7 +76,7 @@ describe("build-egui-wasm optional-toolchain contract", () => {
     try {
       const { status, output, } = runScript({ ...process.env, PATH: dir, },);
       expect(status,).toBe(0,);
-      expect(output,).toContain("cargo not found - skipping the egui WASM bundle",);
+      expect(output,).toContain("cargo not found - SKIPPING the egui WASM bundle",);
     } finally {
       cleanup();
     }
@@ -77,8 +88,59 @@ describe("build-egui-wasm optional-toolchain contract", () => {
     try {
       const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${bunOnly}`, },);
       expect(status,).toBe(0,);
-      expect(output,).toContain("wasm-bindgen CLI not found - skipping the egui WASM bundle",);
+      expect(output,).toContain("wasm-bindgen CLI not found - SKIPPING the egui WASM bundle",);
       expect(output,).toContain("cargo install wasm-bindgen-cli",);
+    } finally {
+      cleanup();
+      cleanupBun();
+    }
+  });
+
+  test("a skip removes the stale bundle so it can never be served", () => {
+    const bundle = join(ROOT, "dist", "public", "egui",);
+    const stamp = join(ROOT, "dist", "egui-build.json",);
+    const wasm = join(bundle, "app_bg.wasm",);
+    const hadBundle = existsSync(wasm,);
+    const hadStamp = existsSync(stamp,);
+    mkdirSync(bundle, { recursive: true, },);
+    writeFileSync(wasm, "stale",);
+    writeFileSync(stamp, "{}",);
+
+    const { dir, cleanup, } = makeBunOnlyPath();
+    try {
+      const { status, } = runScript({ ...process.env, PATH: dir, },);
+      expect(status,).toBe(0,);
+      expect(existsSync(wasm,),).toBe(false,);
+      expect(existsSync(stamp,),).toBe(false,);
+    } finally {
+      cleanup();
+      rmSync(join(ROOT, "dist",), { recursive: true, force: true, },);
+      if (hadBundle) {
+        mkdirSync(bundle, { recursive: true, },);
+        writeFileSync(wasm, "",);
+      }
+      if (hadStamp) {
+        writeFileSync(stamp, "",);
+      }
+    }
+  });
+
+  test("the install hint names the workspace-locked wasm-bindgen version", async () => {
+    // The hint used to cite `native/loop-lore-egui/Cargo.lock`, which does not
+    // exist: this is a unified workspace with ONE root Cargo.lock. A hint that
+    // names a missing file is worse than none, so the version must come from
+    // the real lock and must be a concrete semver.
+    const lockText = await Bun.file(join(ROOT, "Cargo.lock",),).text();
+    const pinned = /name = "wasm-bindgen"\nversion = "([^"]+)"/.exec(lockText,)?.[1];
+    expect(pinned,).toMatch(/^\d+\.\d+\.\d+/,);
+
+    const { dir: bunOnly, cleanup: cleanupBun, } = makeBunOnlyPath();
+    const { dir, cleanup, } = makeCargoShim();
+    try {
+      const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${bunOnly}`, },);
+      expect(status,).toBe(0,);
+      expect(output,).toContain(`cargo install wasm-bindgen-cli --version ${pinned}`,);
+      expect(output,).not.toContain("<version from",);
     } finally {
       cleanup();
       cleanupBun();

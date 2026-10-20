@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 320
+// size-allow: 350
 
 /**
  * Build identity hash — tamper-detection surface for federation.
@@ -28,6 +28,7 @@ import path from "node:path";
 import { fileURLToPath, } from "node:url";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import { safeJsonStringify, } from "../utils";
+import { type EguiArtifactState, readEguiArtifactState, } from "./egui-artifact";
 
 /**
  * Project root resolved from this module's URL. Used as the default for
@@ -71,6 +72,15 @@ export interface BuildIdentity {
   builtAt: string;
   /** Echo of the manifest for diagnostics. */
   manifest: BuildManifest;
+
+  /**
+   * Freshness of the optional egui wasm bundle against the Rust sources it was
+   * compiled from. `dist` is excluded from `sourceTreeHash` (it is an output),
+   * so without this the identity reports a moving source hash while the server
+   * keeps serving a stale artifact. `absent` is a supported state (no Rust
+   * toolchain); `stale` is the false-assurance case `build:verify` must report.
+   */
+  egui: EguiArtifactState;
 }
 
 /** Static exclusion list for the source-tree hash. */
@@ -293,6 +303,12 @@ export async function computeBuildIdentity(
     [gitHead, sourceTreeHash, lockfileHash, manifestHash,].join("\0",),
   );
 
+  // Reported, NOT hashed into buildHash: whether the bundle exists is
+  // environment-dependent (no Rust toolchain means no dist/public/egui), so
+  // folding it in would make two identical checkouts disagree on the
+  // federation pin. Freshness is a local claim, not a federation one.
+  const egui = readEguiArtifactState(projectRoot,);
+
   const identity: BuildIdentity = {
     buildHash,
     buildHashShort: buildHash.slice(0, 16,),
@@ -302,6 +318,7 @@ export async function computeBuildIdentity(
     manifestHash,
     builtAt: new Date().toISOString(),
     manifest,
+    egui,
   };
 
   memo.set(projectRoot, identity,);

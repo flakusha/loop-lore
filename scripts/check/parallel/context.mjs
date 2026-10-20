@@ -227,3 +227,27 @@ export const SCOPED_COVERAGE_PATHS = scopedCoveragePaths(CHANGED_FILES,);
 export const SCOPED_DIFF_SRC_FILES = (DIFF_BASE ? CHANGED_FILES : [])
   .filter((f,) => f.startsWith("src/",) && f.endsWith(".ts",) && !f.endsWith(".test.ts",));
 export const NOOP_OK = "true # diff-scope: no matching files";
+
+// Prefix every skip marker shares. A gate that could not be EVALUATED — no
+// diff-scope match, no Rust toolchain — reports skipped, never passed, so the
+// marker must be recognisable without knowing which gate emitted it. Exact
+// equality against NOOP_OK would miss every other reason.
+const NOOP_PREFIX = "true #";
+
+/**
+ * The reason a no-op gate carries, or "" when the command is a real gate.
+ * @param {string} command - a gate command from the assembled table
+ * @returns {string} the trailing comment, or "" for a real command
+ */
+export function noopReason(command,) {
+  return command.startsWith(NOOP_PREFIX,) ? command.slice(NOOP_PREFIX.length,).trim() : "";
+}
+
+/**
+ * A skip marker naming why the gate could not be evaluated.
+ * @param {string} reason - human-readable cause
+ * @returns {string} the no-op shell command
+ */
+export function noopSkip(reason,) {
+  return `${NOOP_PREFIX} ${reason}`;
+}

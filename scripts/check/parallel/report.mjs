@@ -33,7 +33,7 @@ import {
   RUN_ID,
   RUN_TMP_DIR,
 } from "./config.mjs";
-import { NOOP_OK, } from "./context.mjs";
+import { noopReason, } from "./context.mjs";
 import { GIT_CONTEXT, } from "./git-context.mjs";
 import { pruneOldReports, pruneOldRunTmpDirs, } from "./retention.mjs";
 import { GIWT_ISSUE_CLI_UNAVAILABLE, } from "./runner.mjs";
@@ -92,12 +92,17 @@ export function reportResults(results,) {
   for (const result of results) {
     if (result.skipped) {
       console.log(`SKIP: ${result.name}`,);
-      // A skip is either the issue CLI being unreachable or a NOOP_OK command;
-      // printing the giwt marker for both would misattribute a no-op gate.
-      if (result.command === NOOP_OK) {
+      // A skip is either a no-op marker (empty diff scope, absent toolchain) or
+      // the issue CLI being unreachable; printing the giwt marker for a no-op
+      // gate would misattribute it. The marker carries its own reason, so print
+      // that rather than one hardcoded hint.
+      const reason = noopReason(result.command,);
+      if (reason !== "") {
         console.log(
-          `  no-op gate (${NOOP_OK}) - nothing to evaluate. ` +
-            `Re-run without --diff-base, or with a base that touches this gate.`,
+          `  not evaluated: ${reason}` +
+            (reason === "diff-scope: no matching files"
+              ? ". Re-run without --diff-base, or with a base that touches this gate."
+              : "."),
         );
       } else {
         console.log(

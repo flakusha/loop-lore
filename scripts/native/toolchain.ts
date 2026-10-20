@@ -40,9 +40,9 @@
 import { spawnSync, } from "node:child_process";
 import { existsSync, readdirSync, } from "node:fs";
 import { homedir, } from "node:os";
-import { join, } from "node:path";
+import { dirname, join, } from "node:path";
 import { provisionWasmStd, } from "./provision";
-import { type RustcInstall, WASM_TARGET, } from "./shared";
+import { REPO_ROOT, type RustcInstall, WASM_TARGET, } from "./shared";
 
 /** A resolved wasm-capable toolchain, ready to hand to cargo. */
 export interface WasmToolchain {
@@ -152,10 +152,42 @@ function discoverInstalls(): RustcInstall[] {
 }
 
 /**
- * `true` when this rustc path is resolved by a rustup proxy present on PATH.
+ * The discovered installs in resolution order: the one the PATH rustc
+ * resolves to FIRST, then the rest by descending version.
+ *
+ * The PATH rustc is the toolchain cargo will actually build with: with a
+ * rustup proxy that is the repo's rust-toolchain.toml pin, NOT the newest
+ * toolchain on the box (a CI action installs `stable` as the default, and
+ * the pin overrides it inside this directory). The rest stay in the list as
+ * the fallbacks this resolver exists for - a distro with several system
+ * installs, where the default slot may lack the wasm std and another slot
+ * carries it.
+ * @param installs - the discovered installs, newest first
+ * @returns the installs in resolution order
+ */
+function orderInstalls(installs: RustcInstall[],): RustcInstall[] {
+  const pathRustc = Bun.which("rustc",);
+  const effective = pathRustc ? installs.find((install,) => install.path === pathRustc) : undefined;
+  if (!effective) { return installs; }
+
+  return [effective, ...installs.filter((install,) => install !== effective),];
+}
+
+/**
+ * `true` when this rustc is rustup's: either the proxy rustup installs next
+ * to itself in $CARGO_HOME/bin, or the toolchain rustc `rustup which` names.
+ *
+ * The proxy is the one that matters. It resolves the repo's
+ * rust-toolchain.toml pin, so the toolchain behind it is the one cargo
+ * actually builds with - and `rustup target add` (no --toolchain) acts on
+ * exactly that toolchain. `rustup which rustc` names the toolchain's own
+ * rustc instead, which is a different path than the proxy.
  * @param path rustc path
  */
 function rustupManages(path: string,): boolean {
+  const rustup = Bun.which("rustup",);
+  if (rustup && dirname(path,) === dirname(rustup,)) { return true; }
+
   const resolved = spawnSync("rustup", ["which", "rustc",], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "ignore",],
@@ -199,7 +231,9 @@ export function ensureWasmToolchain(
     )
   );
 
-  for (const install of installs) {
+  const ordered = orderInstalls(installs,);
+
+  for (const install of ordered) {
     if (hasWasmStd(install,)) {
       log?.(`[toolchain] ${install.path} (${install.version}) ships ${WASM_TARGET} std`,);
       return { strategy: "system", rustc: install.path, env: {}, };
@@ -207,11 +241,13 @@ export function ensureWasmToolchain(
   }
 
   const preferred = installs.find((install,) => install.path === process.env.RUSTC) ??
-    installs.find((install,) => install.path === Bun.which("rustc",)) ??
-    installs[0];
+    ordered[0];
 
   if (rustupManages(preferred.path,)) {
-    const added = spawnSync("rustup", ["target", "add", WASM_TARGET,], { stdio: "inherit", },);
+    // The ACTIVE toolchain is the one the toolchain file pins, and it is the
+    // one cargo resolves here - so the target has to land there, not on the
+    // toolchain a CI action installed as the default.
+    const added = spawnSync("rustup", ["target", "add", WASM_TARGET,], { stdio: "inherit", cwd: REPO_ROOT, },);
     if (added.status === 0) {
       const reprobe = probeInstall(preferred.path,);
       if (reprobe && hasWasmStd(reprobe,)) {
