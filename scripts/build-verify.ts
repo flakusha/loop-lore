@@ -14,9 +14,15 @@
  *                                              #   BUILD_VERIFY_ADMIN_TOKEN)
  *
  * Exit code:
- *   0  — local computed, remote (if requested) matches local
- *   1  — remote (if requested) does NOT match local
+ *   0  — local computed, remote (if requested) matches local, egui not stale
+ *   1  — remote (if requested) does NOT match local, OR the egui wasm on disk is
+ *        stale (a bundle that exists but was not built from the current Rust
+ *        sources - the case a source-hash-only check cannot see)
  *   2  — script/network error (printed to stderr)
+ *
+ * An ABSENT egui bundle is not an error: no Rust toolchain is a supported
+ * state and the app build degrades with it. Only an existing bundle that
+ * disagrees with its stamp is a failure.
  */
 import { computeBuildIdentity, } from "../src/build/identity";
 import { flag, object, option, optional, runScript, string, withDefault, } from "../src/cli/parser";
@@ -54,8 +60,16 @@ async function main(): Promise<number> {
   process.stdout.write(`local buildHashShort: ${local.buildHashShort}\n`,);
   process.stdout.write(`local gitHead:      ${local.gitHead || "(none)"}\n`,);
   process.stdout.write(`local builtAt:      ${local.builtAt}\n`,);
+  process.stdout.write(`local egui:          ${local.egui.status} — ${local.egui.detail}\n`,);
+  if (local.egui.status === "stale") {
+    process.stderr.write(
+      `STALE egui artifact: ${local.egui.detail}\n` +
+        `  stamp rustSourceHash:    ${local.egui.stamp?.rustSourceHash ?? "(none)"}\n` +
+        `  current rustSourceHash: ${local.egui.rustSourceHash}\n`,
+    );
+  }
 
-  if (!args.url) { return 0; }
+  if (!args.url) { return local.egui.status === "stale" ? 1 : 0; }
 
   let remote: Record<string, unknown>;
   try {
@@ -89,7 +103,7 @@ async function main(): Promise<number> {
     return 1;
   }
   process.stdout.write("OK: remote buildHash matches local\n",);
-  return 0;
+  return local.egui.status === "stale" ? 1 : 0;
 }
 
 await main().then(

@@ -58,6 +58,17 @@ const RUNNER = resolve(PROJECT_ROOT, "scripts/check-parallel.mjs",);
  */
 const LONG_RUN_MS = 300_000;
 
+/**
+ * The three Rust gates for the egui crate (native/loop-lore-egui).
+ *
+ * Excluded from the whole-suite runs in this file: on a COLD cargo cache they
+ * cost minutes on top of the base run (cargo test over the crate graph, plus
+ * clippy), and raising LONG_RUN_MS to fit them would weaken the timeout
+ * contract for every other gate. They are covered by `bun run check` and by
+ * the egui CI steps — this file only exercises the FILTER, not the gates.
+ */
+const EGUI_GATES = ["lint - egui (clippy)", "format - egui (rustfmt)", "test - egui",];
+
 // Per-run artifacts created by runners spawned in THIS test process. The
 // runner's own retention keeps 20 per-run reports / scratch dirs, so a test
 // suite that leaves its 8 behind silently evicts the operator's real check
@@ -161,9 +172,9 @@ function assertSkipFilter(run, skipNames,) {
 
 /**
  * Run the gate runner with the given extra args. `defaultSkip` provides
- * a fallback `--skip-gates` for slow gates (coverage) when no
- * filter-skip is needed; pass `defaultSkip: []` to exercise the
- * filter in isolation.
+ * a fallback `--skip-gates` for the slow gates (coverage, e2e, the Rust
+ * gates) when no filter-skip is needed; pass `defaultSkip: []` to exercise
+ * the filter in isolation.
  *
  * `timeout` is the inner spawnSync kill deadline and MUST NOT be lower than
  * the driving test's outer bun-test timeout: a shorter inner ceiling kills the
@@ -173,7 +184,7 @@ function assertSkipFilter(run, skipNames,) {
  */
 function runRunner(extraArgs, options = {},) {
   const {
-    defaultSkip = ["coverage - per-module line %", "e2e - browser (baseline)",],
+    defaultSkip = ["coverage - per-module line %", "e2e - browser (baseline)", ...EGUI_GATES,],
     env: envOverrides = {},
     timeout = 120_000,
   } = options;
@@ -240,32 +251,38 @@ describe("selective gate filter — --gates (whitelist)", () => {
 });
 
 describe("selective gate filter — --skip-gates (inverse)", () => {
-  // These drive ~37 of the 39 gates at CHECK_JOBS=1 — measured 130s on the dev
-  // host — so outer and inner ceilings both come from LONG_RUN_MS.
+  // These drive nearly the whole gate set at CHECK_JOBS=1, so outer and inner
+  // ceilings both come from LONG_RUN_MS. The gate count is deliberately NOT
+  // quoted here: `assertSkipFilter` reads the live registry from
+  // `availableGateNames()`, so a number in this comment is the only thing that
+  // could go stale.
   test("inverse filter runs every other gate", { timeout: LONG_RUN_MS, }, () => {
-    const r = runRunner(["--skip-gates", "coverage - per-module line %,e2e - browser (baseline)",], {
+    const skipNames = ["coverage - per-module line %", "e2e - browser (baseline)", ...EGUI_GATES,];
+    const r = runRunner(["--skip-gates", skipNames.join(",",),], {
       defaultSkip: [],
       timeout: LONG_RUN_MS,
     },);
     assertSkipFilter(
       { stderr: r.stderr, stdout: r.stdout, },
-      ["coverage - per-module line %", "e2e - browser (baseline)",],
+      skipNames,
     );
   },);
 
   test("multiple comma-separated skips accepted", { timeout: LONG_RUN_MS, }, () => {
+    const skipNames = [
+      "coverage - per-module line %",
+      "no - shell - refs",
+      "context - weight",
+      "e2e - browser (baseline)",
+      ...EGUI_GATES,
+    ];
     const r = runRunner(
-      ["--skip-gates", "coverage - per-module line %,no - shell - refs,context - weight,e2e - browser (baseline)",],
+      ["--skip-gates", skipNames.join(",",),],
       { defaultSkip: [], timeout: LONG_RUN_MS, },
     );
     assertSkipFilter(
       { stderr: r.stderr, stdout: r.stdout, },
-      [
-        "coverage - per-module line %",
-        "no - shell - refs",
-        "context - weight",
-        "e2e - browser (baseline)",
-      ],
+      skipNames,
     );
   },);
 });
@@ -357,13 +374,18 @@ describe("selective gate filter — mutual exclusion", () => {
     // filter rather than fail with "left no checks to run" or silently
     // activate an empty whitelist.
     //
-    // A no-filter run is nearly the whole gate set again (only coverage and
-    // e2e stay skipped), so it carries the same ceiling as the skip-filter
-    // cases — otherwise the child is killed before the verdict exists.
+    // A no-filter run is nearly the whole gate set again (only coverage, e2e
+    // and the Rust gates stay skipped), so it carries the same ceiling as the
+    // skip-filter cases — otherwise the child is killed before the verdict
+    // exists.
     const r = runRunner(
       ["--gates", "   ",],
       {
-        defaultSkip: ["coverage - per-module line %", "e2e - browser (baseline)",],
+        defaultSkip: [
+          "coverage - per-module line %",
+          "e2e - browser (baseline)",
+          ...EGUI_GATES,
+        ],
         timeout: LONG_RUN_MS,
       },
     );

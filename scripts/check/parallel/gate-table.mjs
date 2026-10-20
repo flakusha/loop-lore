@@ -64,6 +64,17 @@ export const checks = {
   // second — the sequence is the point, not the gate.
   "lint - native (clippy)": "bun run lint:native",
 
+  // Clippy for the egui crate (native/loop-lore-egui) — the Rust-side peer of
+  // `lint - native (clippy)` for the WASM frontend. The crate's own Cargo.toml
+  // sets all+pedantic to warn, so `--all-targets -- -D warnings` needs no config
+  // here. These three gates were defined in package.json with no gate and no CI
+  // step running them; the NOOP placeholders below are replaced in gates.mjs by
+  // real commands, or by a skip marker naming the missing Rust toolchain (a
+  // host without cargo must report SKIPPED, never red — see AGENTS.md).
+  "lint - egui (clippy)": NOOP_OK, // placeholder; toolchain-aware, replaced in gates.mjs
+  "format - egui (rustfmt)": NOOP_OK, // placeholder; replaced in gates.mjs
+  "test - egui": NOOP_OK, // placeholder; replaced in gates.mjs
+
   // Formatting
   "format - dprint": "bun run format",
 
@@ -74,6 +85,7 @@ export const checks = {
   // native/loop-lore-native/rustfmt.toml (2-space, max_width 120), which cargo
   // resolves from the manifest dir — no config needed here.
   "format - native (rustfmt)": "bun run format:native:check",
+
   "md - lint": "bun run md:lint",
   // Mermaid block lint — every ```mermaid fence in docs/ and .plan/ must parse.
   // mmdlint is headless (jsdom-backed), no browser, bun-native, <30s on the whole tree.
