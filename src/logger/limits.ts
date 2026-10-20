@@ -33,12 +33,13 @@ function bytes(str: string,): number {
  */
 function truncateString(s: string, maxBytes: number, label = "chars",): string {
   if (bytes(s,) <= maxBytes) { return s; }
-  // Binary-search for cut point that fits
+  // Binary-search for cut point that fits, reserving room for the suffix.
   let lo = 0;
   let hi = s.length;
   while (lo < hi) {
     const mid = (lo + hi + 1) >>> 1;
-    if (bytes(s.slice(0, mid,),) <= maxBytes) { lo = mid; }
+    const suffix = `...[truncated ${s.length - mid} ${label}]`;
+    if (bytes(s.slice(0, mid,),) + bytes(suffix,) <= maxBytes) { lo = mid; }
     else { hi = mid - 1; }
   }
 
