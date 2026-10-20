@@ -186,7 +186,14 @@ export async function answerQuestion(
       body: jsonBody({ optionId, },),
     },);
 
-    if (!res.ok) { return null; }
+    if (!res.ok) {
+      document.dispatchEvent(
+        new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to answer question", }, },),
+      );
+
+      return null;
+    }
+
     const data = await res.json();
     const { question: returned, option, nextSceneId, locationId, } = data as AnsweredPayload;
 
@@ -223,6 +230,10 @@ export async function answerQuestion(
 
     return { question: returned, option, nextSceneId, locationId, locationChanged, };
   } catch {
+    document.dispatchEvent(
+      new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to answer question", }, },),
+    );
+
     return null;
   }
 }
