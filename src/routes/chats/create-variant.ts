@@ -33,6 +33,10 @@ export function resolveVariantOverrides(
   resolvedMode?: string;
   resolvedPurpose?: string;
   resolvedGmConfig?: Record<string, unknown>;
+  resolvedMaxTurns?: number | null;
+  resolvedAutoAdvance?: number | null;
+  resolvedTalkativity?: number | null;
+  resolvedPromptOverride?: string | null;
   error?: string;
 } {
   const rawVariant = rawBody.variant as string | undefined;
@@ -48,6 +52,10 @@ export function resolveVariantOverrides(
   const suppliedType = hasExplicit("type",) ? body.type : undefined;
   const suppliedMode = hasExplicit("mode",) ? body.mode : templateMode;
   const suppliedPurpose = hasExplicit("purpose",) ? (rawBody.purpose as string) : undefined;
+  const suppliedMaxTurns = hasExplicit("maxTurns",) ? body.maxTurns : undefined;
+  const suppliedAutoAdvance = hasExplicit("autoAdvance",) ? body.autoAdvance : undefined;
+  const suppliedTalkativity = hasExplicit("talkativity",) ? body.talkativity : undefined;
+  const suppliedPromptOverride = hasExplicit("promptOverride",) ? body.promptOverride : undefined;
   if (suppliedType !== undefined || suppliedMode !== undefined || suppliedPurpose !== undefined) {
     const err = validateVariantTriple(
       variant,
@@ -67,5 +75,9 @@ export function resolveVariantOverrides(
     resolvedGmConfig: !hasExplicit("gmConfig",) && def.gm_config !== null
       ? (def.gm_config as Record<string, unknown>)
       : undefined,
+    resolvedMaxTurns: suppliedMaxTurns ?? def.max_turns,
+    resolvedAutoAdvance: suppliedAutoAdvance ?? def.auto_advance,
+    resolvedTalkativity: suppliedTalkativity ?? def.talkativity,
+    resolvedPromptOverride: suppliedPromptOverride ?? def.prompt_override_default,
   };
 }
