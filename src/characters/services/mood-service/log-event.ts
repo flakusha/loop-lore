@@ -31,30 +31,33 @@ export async function logEvent(
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  await thisL.db
-    .insertInto("mood_events",)
-    .values({
-      id,
-      actor_id: opts.actorId,
-      world_id: opts.worldId ?? null,
-      event_type: opts.eventType,
-      happiness_delta: opts.happinessDelta ?? 0,
-      mood_override: opts.moodOverride ?? null,
-      source: opts.source ?? "unknown",
-      source_id: opts.sourceId ?? null,
-      created_at: now,
-    },)
-    .execute();
+  await thisL.db.transaction().execute(async (trx,) => {
+    await trx
+      .insertInto("mood_events",)
+      .values({
+        id,
+        actor_id: opts.actorId,
+        world_id: opts.worldId ?? null,
+        event_type: opts.eventType,
+        happiness_delta: opts.happinessDelta ?? 0,
+        mood_override: opts.moodOverride ?? null,
+        source: opts.source ?? "unknown",
+        source_id: opts.sourceId ?? null,
+        created_at: now,
+      },)
+      .execute();
 
-  // Apply the happiness delta
-  if (opts.happinessDelta !== undefined) {
-    await applyHappinessDelta({
-      thisL,
-      actorId: opts.actorId,
-      worldId: opts.worldId,
-      delta: opts.happinessDelta,
-    },);
-  }
+    const trxContext = { ...thisL, db: trx, } as MoodServiceContext;
+    // Apply the happiness delta
+    if (opts.happinessDelta !== undefined) {
+      await applyHappinessDelta({
+        thisL: trxContext,
+        actorId: opts.actorId,
+        worldId: opts.worldId,
+        delta: opts.happinessDelta,
+      },);
+    }
+  },);
 
   return id;
 }
