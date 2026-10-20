@@ -114,7 +114,7 @@ describe("renderCurrentScene structure", () => {
     expect(sceneEl.className,).toBe("vn-scene vn-layout-split",);
 
     const bg = sceneEl.querySelector(".vn-background",)!;
-    expect(bg.style.backgroundImage,).toBe("url(bg.png)",);
+    expect(bg.style.backgroundImage,).toBe('url("bg.png")',);
     expect(bg.style.backgroundSize,).toBe("cover",);
 
     const portrait = sceneEl.querySelector(".vn-portrait",)!;
@@ -142,7 +142,7 @@ describe("renderCurrentScene structure", () => {
     await renderCurrentScene(false, spyNavigator().nav,);
 
     const bg = container.querySelector(".vn-background",)!;
-    expect(bg.style.backgroundImage,).toBe("url()",);
+    expect(bg.style.backgroundImage,).toBe('url("")',);
   });
 
   test("overlay layout omits the portrait; narration speaks as Narrator", async () => {
