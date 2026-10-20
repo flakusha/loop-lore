@@ -13,7 +13,7 @@
  *    context still stored.
  *
  * The wasm bundle is not compiled in the test env, so /egui/app.js and
- * /egui/app.wasm 404 by design: the transfer contract (URL, DOM, context),
+ * /egui/app_bg.wasm 404 by design: the transfer contract (URL, DOM, context),
  * not canvas paint, is what gets asserted. The contract itself lives in
  * src/frontend/egui-bridge.ts (TS side) and native/loop-lore-egui/src/
  * context.rs (Rust side); see the two egui tickets under .plan/tickets/.
