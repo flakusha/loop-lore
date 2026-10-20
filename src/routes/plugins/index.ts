@@ -17,7 +17,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { initializePlugin, } from "../../plugins/loader";
+import { initializePlugin, resetPluginInit, } from "../../plugins/loader";
 import { getComponentsForMountPoint, } from "../../plugins/mount-points";
 import { registry, } from "../../plugins/registry";
 import { can, } from "../../users/permissions";
@@ -130,6 +130,7 @@ export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "
           await initializePlugin({ db: database, manifest: plugin.manifest, },);
         } catch (error) {
           registry.setEnabled(name, false,);
+          resetPluginInit(name,);
           log().error({ message: `Plugin failed to initialize`, plugin: name, error: String(error,), },);
           return jsonError({ message: "Plugin failed to initialize", status: HttpStatus.InternalServerError, },);
         }
