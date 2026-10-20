@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 332 epics
+**Total:** 333 epics
 
 ## Summary
 
@@ -656,8 +656,6 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** battle, items, social, npc, weather, resolution, integration
 - **File:** `.plan/epics/epic-battle-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -2755,10 +2753,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
-
-### Current State Assessment
-
-
 ### NSFW Interaction UI
 
 - **Status:** Not Started
@@ -3019,7 +3013,6 @@ The repo already has an i18n system, and it is the wrong tool for this job — o
 - **Tags:** rag, retrieval, hybrid-search, reranking, citations, prompt-injection
 - **File:** `.plan/epics/epic-rag-retrieval.md`
 
-
 ### Reactive Actor Appearance
 
 - **Status:** Not Started
@@ -3223,8 +3216,6 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 - **Type:** Feature Epic
 - **Tags:** schemas, reputation, consent, nsfw, shared, cross-system
 - **File:** `.plan/epics/epic-shared-schemas.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -3536,3 +3527,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
