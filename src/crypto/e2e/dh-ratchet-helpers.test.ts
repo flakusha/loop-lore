@@ -51,9 +51,9 @@ describe("skipOldChain", () => {
     expect(record.ephemeralPublicJwk,).toEqual({ kty: "EC", x: "x", y: "y", },);
     expect(record.id,).toMatch(/^[0-9a-f-]{36}$/i,);
     expect(record.messageKeyBytes.byteLength,).toBe(KEY_BYTES,);
-    // The captured receivingChainKey buffer was zeroed in place — the
-    // input array is the one `state` exposes, so the mutation is visible.
-    expect(Array.from(state.receivingChainKey,),).toEqual(new Array(KEY_BYTES,).fill(0,),);
+    // skipOldChain must not mutate the caller's buffer (does-not-mutate-input
+    // contract); the original key material is preserved.
+    expect(Array.from(state.receivingChainKey,),).toEqual(new Array(KEY_BYTES,).fill(0xaa,),);
   });
 
   test("multi-step gap captures every intermediate counter and rotates the chain key", async () => {
