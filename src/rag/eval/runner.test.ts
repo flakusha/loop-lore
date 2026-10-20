@@ -13,4 +13,12 @@ describe("runSuite", () => {
     expect(res[0].recallAt5,).toBe(1,);
     expect(res[1].recallAt5,).toBe(1,);
   });
+
+  test("loads golden-character suite", async () => {
+    const goldenCharacter = (await import("./golden/golden-character.json")).default;
+    const retrieve = async (q: string,) => q.includes("traits",) ? ["doc-trait-schema",] : ["doc-relationships",];
+    const res = await runSuite(goldenCharacter as any, retrieve,);
+    expect(res.length,).toBe(2,);
+    expect(res.every((r,) => r.recallAt5 === 1),).toBe(true,);
+  });
 });
