@@ -9,26 +9,41 @@
  * server pick them up.
  *
  * A MISSING optional toolchain (no cargo / no wasm-bindgen CLI) skips this
- * stage with a notice, the same rule build-native.ts follows - the absence
+ * stage with a WARNING, the same rule build-native.ts follows - the absence
  * of the experimental egui artifact must never block the application build.
  * The /egui host page survives missing assets at runtime by design (the
  * status line carries the failure, the back button keeps working), so the
- * absence is surfaced there rather than papered over. A toolchain that is
- * present but FAILS (compile error, bindgen error) still fails this stage:
- * that is a genuine breakage, not an absent optional build.
+ * absence is surfaced there rather than papered over.
  *
- * The wasm-bindgen CLI version MUST match the wasm-bindgen crate version in
- * native/loop-lore-egui/Cargo.lock; a mismatch yields glue that rejects the
- * module at runtime, so the install hint names the pinned version.
+ * A crate that does not COMPILE warns too, for the same reason: `bun run
+ * build` runs this stage, so a non-zero exit here would be a red application
+ * build over an OPTIONAL artifact. What keeps the pipeline honest about a
+ * broken crate is the wasm32 type-check (scripts/native/check-wasm.ts) - a
+ * gate of its own that fails the build, while this stage warns and omits
+ * the bundle.
+ *
+ * Skipping INVALIDATES rather than leaves behind: a bundle from a previous
+ * build is removed before the stage returns, so `dist/public/egui` can never
+ * serve a stale artifact under a "successful" exit. A skip that cannot delete
+ * the bundle says so loudly and still exits 0 - an undeletable file must not
+ * block the app build either.
+ *
+ * The wasm-bindgen CLI version MUST match the wasm-bindgen crate version in the
+ * workspace `Cargo.lock`; a mismatch yields glue that rejects the module at
+ * runtime, so the install hint names the version resolved from there
+ * (shared.pinnedWasmBindgenVersion) and points at the provisioner that
+ * installs exactly that version (scripts/native/provision-wasm-bindgen.ts).
  *
  * Run via: `bun run build:egui`
  */
 
 import { spawnSync, } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { brotliCompressSync, constants, } from "node:zlib";
+import { writeEguiStamp, } from "../src/build/egui-artifact";
 import { jsonParseOr, } from "../src/utils/safe-json";
+import { pinnedWasmBindgenVersion, REPO_ROOT, WASM_TARGET, } from "./native/shared";
 import { ensureWasmToolchain, type WasmToolchain, } from "./native/toolchain";
 
 /** Crate dir relative to this script (scripts/ → native/loop-lore-egui/). */
@@ -37,13 +52,10 @@ const CRATE_DIR = join(import.meta.dir, "..", "native", "loop-lore-egui",);
 /** Browser bundle dir — also the /egui/ static mount point. */
 const OUT_DIR = join(import.meta.dir, "..", "dist", "public", "egui",);
 
-/** WASM target triple. */
-const WASM_TARGET = "wasm32-unknown-unknown";
-
 /** wasm-bindgen --out-name; the host page imports /egui/app.js. */
 const OUT_NAME = "app";
 
-/** Brotli quality for app.wasm.br — max: the bundle is fetched once per visit. */
+/** Brotli quality for app_bg.wasm.br — max: the bundle is fetched once per visit. */
 const BROTLI_QUALITY = 11;
 
 // ── Detection helpers ────────────────────────────────────────────
@@ -57,30 +69,19 @@ function cargoAvailable(): boolean {
 }
 
 /**
- * @returns `true` when the wasm-bindgen CLI answers `--version`
+ * The installed wasm-bindgen CLI version, for the provenance stamp.
+ * @returns the version string, or "" when the CLI cannot be interrogated
  */
-function wasmBindgenAvailable(): boolean {
-  const probe = spawnSync("wasm-bindgen", ["--version",], { stdio: "ignore", },);
-  return probe.status === 0;
+function wasmBindgenVersion(): string {
+  const probe = spawnSync("wasm-bindgen", ["--version",], { encoding: "utf8", },);
+  return probe.status === 0 ? probe.stdout.trim() : "";
 }
 
 /**
- * The wasm-bindgen CLI must match the wasm-bindgen crate version in
- * Cargo.lock, so the install hint reads the pin from there.
- * @returns the pinned crate version, or null when Cargo.lock is absent
+ * @returns `true` when the wasm-bindgen CLI answers `--version`
  */
-function pinnedWasmBindgenVersion(): string | null {
-  const lockPath = join(import.meta.dir, "..", "Cargo.lock",);
-  if (!existsSync(lockPath,)) { return null; }
-
-  const lines = readFileSync(lockPath, "utf8",).split("\n",);
-  for (const [index, line,] of lines.entries()) {
-    if (line.trim() !== 'name = "wasm-bindgen"') { continue; }
-    const version = /version = "([^"]+)"/.exec(lines[index + 1] ?? "",);
-    if (version) { return version[1]; }
-  }
-
-  return null;
+function wasmBindgenAvailable(): boolean {
+  return wasmBindgenVersion() !== "";
 }
 
 /**
@@ -123,36 +124,87 @@ function cargoReleaseDir(env: NodeJS.ProcessEnv,): string {
 // ── Build stages ─────────────────────────────────────────────────
 
 /**
- * Single failure path: one stderr line, non-zero exit.
- * @param message
+ * Invalidate the bundle so a skip can never leave a stale artifact behind.
+ * A "successful" build that skips must not leave last build's wasm on the
+ * static mount: the /egui page would load it and report success while serving
+ * bytes built from older Rust. Removes the bundle and its build stamp together
+ * (a stamp without its bundle is as misleading as a bundle without a stamp).
+ *
+ * Removal failure is a WARNING, never fatal: an undeletable file must not
+ * block the application build, but it must never pass silently either.
+ *
+ * @param reason - why the stage is skipping, echoed in the warning
  */
-function fail(message: string,): never {
-  console.error(`[build:egui] ${message}`,);
-  process.exit(1,);
+function invalidateStaleBundle(reason: string,): void {
+  const stamp = join(REPO_ROOT, "dist", "egui-build.json",);
+  try {
+    rmSync(OUT_DIR, { recursive: true, force: true, },);
+    rmSync(stamp, { force: true, },);
+  } catch (error: unknown) {
+    console.warn(
+      `[build:egui] WARNING: could not remove the stale egui bundle at ${OUT_DIR} ` +
+        `(${error instanceof Error ? error.message : String(error,)}). It may still be served - ` +
+        `delete it by hand. Reason for the skip: ${reason}`,
+    );
+    return;
+  }
+
+  if (existsSync(OUT_DIR,)) {
+    console.warn(
+      `[build:egui] WARNING: ${OUT_DIR} still exists after the skip; a stale egui bundle may be served. Delete it by hand. Reason for the skip: ${reason}`,
+    );
+  }
+}
+
+/**
+ * The single failure path of this stage: warn, invalidate the bundle, and
+ * let the application build continue.
+ *
+ * The egui artifact must never block the app build - `bun run build` runs
+ * this stage, so a non-zero exit here IS a red application build. A missing
+ * toolchain AND a crate that does not compile both land here, each with its
+ * own reason. What keeps the pipeline honest about a broken crate is the
+ * wasm32 type-check (scripts/native/check-wasm.ts): a gate of its own that
+ * fails the build, while this stage only warns and omits the bundle.
+ * @param reason - why the stage is giving up, echoed in the warning
+ * @param hint - what the operator can do about it
+ */
+function degrade(reason: string, hint?: string,): never {
+  invalidateStaleBundle(reason,);
+  console.warn(
+    `[build:egui] WARNING: ${reason} - SKIPPING the egui WASM bundle.\n` +
+      `  The /egui page degrades to its status line; no egui bundle will be produced or served.\n` +
+      `  ${hint ?? "The UI code is still type-checked by scripts/native/check-wasm.ts."}`,
+  );
+
+  process.exit(0,);
 }
 
 /**
  * Optional-toolchain preflight: a missing wasm-bindgen CLI (or cargo) means
- * this stage is SKIPPED with a notice, mirroring build-native.ts - the app
+ * this stage is SKIPPED with a WARNING, mirroring build-native.ts - the app
  * build must never be blocked by the experimental egui artifact. The /egui
  * host page survives missing assets at runtime by design: the wasm boot
  * fails into the `#egui-status` text and the back button keeps working.
  *
- * A toolchain that IS present but fails (compile error, bindgen error,
- * missing artifact) still fails the stage with exit 1 - that is a genuine
- * breakage, not an absent optional native build.
+ * The hint pins the CLI to `pinnedWasmBindgenVersion()` (the wasm-bindgen
+ * CRATE version in the workspace Cargo.lock). A CLI whose version differs from
+ * the crate emits glue the module rejects at runtime - the silent failure the
+ * old `<version from ...>` placeholder used to invite, by naming a lockfile
+ * this unified workspace does not have. The version now comes from the real
+ * lock, and the provisioner installs exactly that version.
  */
 function requireWasmBindgenCli(): void {
   if (wasmBindgenAvailable()) { return; }
 
   const pinned = pinnedWasmBindgenVersion();
-  const version = pinned ?? "<version from native/loop-lore-egui/Cargo.lock>";
-  console.log(
-    `[build:egui] wasm-bindgen CLI not found - skipping the egui WASM bundle. ` +
-      `The /egui page degrades to its status line. Install to build it: cargo install wasm-bindgen-cli --version ${version}`,
-  );
+  const hint = pinned
+    ? `To build it: cargo install wasm-bindgen-cli --version ${pinned} ` +
+      `(or: bun run scripts/native/provision-wasm-bindgen.ts - installs that exact version).`
+    : `To build it: bun run scripts/native/provision-wasm-bindgen.ts ` +
+      `(resolves the version the workspace Cargo.lock pins).`;
 
-  process.exit(0,);
+  degrade("wasm-bindgen CLI not found", hint,);
 }
 
 /**
@@ -165,7 +217,7 @@ function buildWasm(): string {
   try {
     toolchain = ensureWasmToolchain({ log: (line,) => console.log(line,), },);
   } catch (error: unknown) {
-    fail(error instanceof Error ? error.message : String(error,),);
+    degrade(error instanceof Error ? error.message : String(error,),);
   }
 
   const result = spawnSync(
@@ -175,12 +227,12 @@ function buildWasm(): string {
   );
 
   if (result.status !== 0) {
-    fail(`cargo build failed (status ${result.status})`,);
+    degrade(`cargo build failed (status ${result.status}) - the crate does not compile for ${WASM_TARGET}`,);
   }
 
   const artifact = join(cargoReleaseDir(toolchain.env,), wasmArtifactName(),);
   if (!existsSync(artifact,)) {
-    fail(`expected ${artifact} not found`,);
+    degrade(`expected ${artifact} not found`,);
   }
 
   return artifact;
@@ -202,19 +254,19 @@ function runWasmBindgen(artifact: string,): void {
   );
 
   if (result.status !== 0) {
-    fail(`wasm-bindgen failed (status ${result.status})`,);
+    degrade(`wasm-bindgen failed (status ${result.status})`,);
   }
 }
 
 /**
- * Write app.wasm.br next to app.wasm so the static server's pre-compressed
- * variant negotiation (br > zstd > gzip) can serve the bundle.
+ * Write app_bg.wasm.br next to app_bg.wasm so the static server's
+ * pre-compressed variant negotiation (br > zstd > gzip) can serve the bundle.
  */
 function writeBrotliVariant(): void {
   // wasm-bindgen `--target web` emits `<out-name>_bg.wasm` next to the glue.
   const wasmPath = join(OUT_DIR, `${OUT_NAME}_bg.wasm`,);
   if (!existsSync(wasmPath,)) {
-    fail(`expected ${wasmPath} not found after wasm-bindgen`,);
+    degrade(`expected ${wasmPath} not found after wasm-bindgen`,);
   }
 
   const compressed = brotliCompressSync(readFileSync(wasmPath,), {
@@ -231,17 +283,17 @@ function writeBrotliVariant(): void {
 function main(): void {
   console.log("=== build:egui ===",);
   if (!existsSync(join(CRATE_DIR, "Cargo.toml",),)) {
-    fail(`${CRATE_DIR}/Cargo.toml missing`,);
+    degrade(`${CRATE_DIR}/Cargo.toml missing`,);
   }
 
   if (!cargoAvailable()) {
     // Optional native stage (parity with build-native.ts): never block the
-    // application build. The /egui page degrades at runtime instead.
-    console.log(
-      "[build:egui] cargo not found - skipping the egui WASM bundle (the /egui page degrades to its status line)",
+    // application build. The /egui page degrades at runtime instead — but the
+    // previous build's bundle is removed first so nothing stale survives.
+    degrade(
+      "cargo not found",
+      "To build it: install a Rust toolchain (https://rustup.rs), then `bun run build:egui`.",
     );
-
-    return;
   }
 
   requireWasmBindgenCli();
@@ -249,6 +301,8 @@ function main(): void {
   const artifact = buildWasm();
   runWasmBindgen(artifact,);
   writeBrotliVariant();
+  const stamp = writeEguiStamp(REPO_ROOT, { wasmBindgenVersion: wasmBindgenVersion(), },);
+  console.log(`[build:egui] provenance stamp: ${stamp}`,);
   console.log(`[build:egui] bundle ready at ${OUT_DIR}`,);
 }
 

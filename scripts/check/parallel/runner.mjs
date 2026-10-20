@@ -12,7 +12,7 @@
 
 import { DEFAULT_GATE_TIMEOUT_MS, runGateWithTimeout, } from "../gate-timeout.mjs";
 import { MAX_OUTPUT_CHARS, PROJECT_ROOT, } from "./config.mjs";
-import { NOOP_OK, } from "./context.mjs";
+import { noopReason, } from "./context.mjs";
 import { ADVISORY_GATES, checks, } from "./gates.mjs";
 
 // ── Concurrency cap ────────────────────────────────────────────
@@ -155,12 +155,13 @@ export async function runCheck(name, command,) {
         } exceeded its ${timeoutMs}ms budget and was killed. Raise the budget with CHECK_GATE_TIMEOUT_MS=<ms>.`
         : gateOutput;
     // A NOOP command is a gate that could not be evaluated, exactly like the
-    // giwt case above: `true # diff-scope: no matching files` exits 0, so it
-    // graded as PASS having run zero tests, and a `--diff-base` scope that
-    // matched nothing printed `=== All checks passed ===`. AGENTS.md is the
-    // governing convention — a gate that could not be evaluated is SKIPPED,
-    // never passed — so the flag is set from an exact command match on NOOP_OK,
-    // the marker the gate table already emits, with no parallel mechanism.
+    // giwt case above: `true # <reason>` exits 0, so it graded as PASS having
+    // run zero tests, and a `--diff-base` scope that matched nothing printed
+    // `=== All checks passed ===`. AGENTS.md is the governing convention - a
+    // gate that could not be evaluated is SKIPPED, never passed - so the flag
+    // comes from the marker PREFIX (`true #`), not an exact string: a gate with
+    // no Rust toolchain skips for a different reason than an empty diff scope,
+    // and matching only NOOP_OK would grade the first one PASSED.
     //
     // `passed` is forced false alongside it because buildReport derives
     // failedCount as `total - passed - skipped`; a result that counted as both
@@ -175,7 +176,7 @@ export async function runCheck(name, command,) {
     // The marker still scopes the reclassification to the known giwt condition:
     // without it, any gate whose binary was renamed (127) would silently skip
     // instead of failing — a new false-green in place of the old one.
-    const skipped = !gate.timedOut && (command === NOOP_OK ||
+    const skipped = !gate.timedOut && (noopReason(command,) !== "" ||
       (!gate.ok && COULD_NOT_START_EXIT_CODES.has(gate.exitCode,) &&
         gateOutput.includes(GIWT_ISSUE_CLI_UNAVAILABLE,)));
     // oxlint-disable-next-line sort-keys
