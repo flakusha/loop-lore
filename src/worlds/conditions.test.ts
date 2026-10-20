@@ -13,8 +13,28 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
-import { advanceConditions, getConditions, listConditionHistory, runConditionsTick, } from "./conditions";
-import { MINUTES_PER_DAY, SEASON, SEASON_LENGTH_DAYS, TIME_OF_DAY, } from "./conditions-rules";
+import {
+  advanceConditions,
+  buildEnvironmentModifiers,
+  getConditions,
+  listConditionHistory,
+  runConditionsTick,
+  WEATHER,
+  WorldConditionMode,
+} from "./conditions";
+import {
+  dayOf,
+  hourOf,
+  MINUTES_PER_DAY,
+  SEASON,
+  SEASON_LENGTH_DAYS,
+  seasonAt,
+  temperatureAt,
+  TIME_OF_DAY,
+  timeOfDayAt,
+  weatherAt,
+} from "./conditions-rules";
+import { ConditionsError, defaultSeed, ensureConditionsRow, isTickDue, snapshot, } from "./conditions-store";
 
 let db: Kysely<DB>;
 
@@ -173,5 +193,146 @@ describe("getConditions", () => {
 
   test("rejects an unknown world", async () => {
     await expect(getConditions({ db, worldId: "nope", },),).rejects.toThrow("does not exist",);
+  });
+});
+
+describe("pure clock math", () => {
+  test("dayOf returns the 1-based day", () => {
+    expect(dayOf(0,),).toBe(1,);
+    expect(dayOf(MINUTES_PER_DAY - 1,),).toBe(1,);
+    expect(dayOf(MINUTES_PER_DAY,),).toBe(2,);
+  });
+
+  test("hourOf returns the 0-23 hour", () => {
+    expect(hourOf(0,),).toBe(0,);
+    expect(hourOf(59,),).toBe(0,);
+    expect(hourOf(60,),).toBe(1,);
+    expect(hourOf(MINUTES_PER_DAY - 1,),).toBe(23,);
+  });
+
+  test("timeOfDayAt maps hours to periods", () => {
+    expect(timeOfDayAt(0,),).toBe(TIME_OF_DAY.Night,);
+    expect(timeOfDayAt(5 * 60,),).toBe(TIME_OF_DAY.Dawn,);
+    expect(timeOfDayAt(8 * 60,),).toBe(TIME_OF_DAY.Morning,);
+    expect(timeOfDayAt(12 * 60,),).toBe(TIME_OF_DAY.Afternoon,);
+    expect(timeOfDayAt(18 * 60,),).toBe(TIME_OF_DAY.Evening,);
+    expect(timeOfDayAt(22 * 60,),).toBe(TIME_OF_DAY.Night,);
+  });
+
+  test("seasonAt cycles every SEASON_LENGTH_DAYS days", () => {
+    const seasonMinute = SEASON_LENGTH_DAYS * MINUTES_PER_DAY;
+    expect(seasonAt(0,),).toBe(SEASON.Spring,);
+    expect(seasonAt(seasonMinute - 1,),).toBe(SEASON.Spring,);
+    expect(seasonAt(seasonMinute,),).toBe(SEASON.Summer,);
+    expect(seasonAt(4 * seasonMinute,),).toBe(SEASON.Spring,);
+  });
+
+  test("weatherAt is a pure function of seed and day", () => {
+    const a = weatherAt(42, 1,);
+    const b = weatherAt(42, 1,);
+    expect(a,).toBe(b,);
+    expect(Object.values(WEATHER,),).toContain(a,);
+  });
+
+  test("weatherAt diverges for different seeds", () => {
+    const a = weatherAt(1, 1,);
+    const b = weatherAt(2, 1,);
+    expect(a,).not.toBe(b,);
+  });
+
+  test("temperatureAt applies winter snow penalty", () => {
+    const winterSnow = temperatureAt(SEASON.Winter, TIME_OF_DAY.Morning, WEATHER.Snow,);
+    const summerClear = temperatureAt(SEASON.Summer, TIME_OF_DAY.Morning, WEATHER.Clear,);
+    expect(winterSnow,).toBeLessThan(summerClear,);
+  });
+
+  test("temperatureAt gives snow outside winter a wintry nudge", () => {
+    const snow = temperatureAt(SEASON.Summer, TIME_OF_DAY.Morning, WEATHER.Snow,);
+    const clear = temperatureAt(SEASON.Summer, TIME_OF_DAY.Morning, WEATHER.Clear,);
+    expect(snow,).toBe(clear - 3,);
+  });
+
+  test("buildEnvironmentModifiers returns visibility, fatigue and season effect", () => {
+    const mods = buildEnvironmentModifiers({
+      weather: WEATHER.Fog,
+      timeOfDay: TIME_OF_DAY.Morning,
+      season: SEASON.Winter,
+      temperature: 0,
+    },);
+
+    expect(mods.weatherVisibility,).toBe(120,);
+    expect(mods.temperatureFatigue,).toBe(1,);
+    expect(mods.seasonEffect,).toBe(0.8,);
+  });
+
+  test("WorldConditionMode has three modes", () => {
+    expect(WorldConditionMode.RealTime,).toBe("real_time",);
+    expect(WorldConditionMode.Tick,).toBe("tick",);
+    expect(WorldConditionMode.Manual,).toBe("manual",);
+  });
+});
+
+describe("store helpers", () => {
+  test("defaultSeed is deterministic per world", () => {
+    expect(defaultSeed("w1",),).toBe(defaultSeed("w1",),);
+    expect(defaultSeed("w1",),).not.toBe(defaultSeed("w2",),);
+    expect(typeof defaultSeed("w1",),).toBe("number",);
+  });
+
+  test("ensureConditionsRow creates a row for an existing world", async () => {
+    const row = await ensureConditionsRow({ db, worldId: "w1", stamp: "2026-01-01T00:00:00Z", },);
+    expect(row.world_id,).toBe("w1",);
+    expect(row.mode,).toBe("tick",);
+  });
+
+  test("ensureConditionsRow throws ConditionsError for an unknown world", async () => {
+    await expect(ensureConditionsRow({ db, worldId: "nope", stamp: "2026-01-01T00:00:00Z", },),).rejects.toThrow(
+      ConditionsError,
+    );
+  });
+
+  test("snapshot decodes a row with the correct day", () => {
+    const row = {
+      world_id: "w1",
+      weather: "clear",
+      time_of_day: "morning",
+      season: "spring",
+      temperature: 14,
+      day: 1,
+      world_minute: 0,
+      mode: "tick",
+      tick_interval_minutes: 60,
+      weather_seed: 42,
+      last_tick_at: null,
+      created_at: "2026-01-01T00:00:00Z",
+      updated_at: "2026-01-01T00:00:00Z",
+    } as never;
+
+    const snap = snapshot(row, MINUTES_PER_DAY + 60,);
+    expect(snap.day,).toBe(2,);
+
+    expect(snap.worldMinute,).toBe(MINUTES_PER_DAY + 60,);
+
+    expect(snap.weather,).toBe("clear",);
+  });
+
+  test("isTickDue returns true when never ticked", () => {
+    const row = { last_tick_at: null, tick_interval_minutes: 60, } as never;
+    expect(isTickDue(row, "2026-01-01T01:00:00Z",),).toBe(true,);
+  });
+
+  test("isTickDue returns false when the interval has not elapsed", () => {
+    const row = { last_tick_at: "2026-01-01T00:30:00Z", tick_interval_minutes: 60, } as never;
+    expect(isTickDue(row, "2026-01-01T01:00:00Z",),).toBe(false,);
+  });
+
+  test("isTickDue returns true when the interval has elapsed", () => {
+    const row = { last_tick_at: "2026-01-01T00:00:00Z", tick_interval_minutes: 60, } as never;
+    expect(isTickDue(row, "2026-01-01T01:00:00Z",),).toBe(true,);
+  });
+
+  test("isTickDue returns false for an invalid stamp", () => {
+    const row = { last_tick_at: "2026-01-01T00:00:00Z", tick_interval_minutes: 60, } as never;
+    expect(isTickDue(row, "not-a-date",),).toBe(false,);
   });
 });
