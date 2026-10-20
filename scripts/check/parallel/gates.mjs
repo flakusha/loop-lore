@@ -23,6 +23,7 @@ import {
   CHANGED_FILES,
   DIFF_BASE,
   NOOP_OK,
+  noopSkip,
   SCOPED_COVERAGE_PATHS,
   SCOPED_DIFF_SRC_FILES,
 } from "./context.mjs";
@@ -142,6 +143,33 @@ function walkTestFiles(root, dir,) {
 }
 
 checks["coverage - per-module line %"] = coverageCommand();
+
+/**
+ * Rust gates for the egui crate. ~130KB of Rust carries pedantic clippy in its
+ * own Cargo.toml and no gate ran either check, so nothing was enforcing them.
+ *
+ * A host with no `cargo` cannot evaluate these at all, and AGENTS.md is
+ * explicit that a gate which could not be evaluated reports SKIPPED, never
+ * passed and never red — the absence of a Rust toolchain is a SUPPORTED state
+ * (build:native and build:egui both degrade on it), so a red gate here would
+ * punish exactly the environment the product decision protects. `noopSkip`
+ * carries the reason into the report so the skip is visible, not silent.
+ *
+ * `cargo` on PATH is the honest probe: these are host-target gates (clippy /
+ * fmt / test), not the wasm32 build, so they need no provisioned std.
+ *
+ * @param {string} command - the real gate command
+ * @returns {string} `command`, or a skip marker naming the missing toolchain
+ */
+function rustGate(command,) {
+  return Bun.which("cargo",) === null
+    ? noopSkip("rust toolchain unavailable: cargo is not on PATH",)
+    : command;
+}
+
+checks["lint - egui (clippy)"] = rustGate("bun run lint:egui",);
+checks["format - egui (rustfmt)"] = rustGate("bun run format:egui:check",);
+checks["test - egui"] = rustGate("bun run test:egui",);
 
 // Browser specs live in one flat directory; this is the same filter the
 // plain-mode runner script uses, kept here so the scoped builder and the full
