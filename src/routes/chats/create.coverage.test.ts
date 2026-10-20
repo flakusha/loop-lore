@@ -63,7 +63,7 @@ function postChat(
 async function loadChat(db: Kysely<DB>, name: string,) {
   return await db
     .selectFrom("chats",)
-    .select(["type", "mode", "gm_config",],)
+    .select(["type", "mode", "gm_config", "max_turns", "auto_advance", "prompt_override",],)
     .where("name", "=", name,)
     .executeTakeFirst();
 }
@@ -109,6 +109,36 @@ describe("chats/create — variant taxonomy wiring", () => {
     expect(chat?.type,).toBe(def.chat_type,);
     expect(chat?.mode,).toBe(def.chat_mode,);
     expect(JSON.parse(chat!.gm_config!,),).toMatchObject(def.gm_config as object,);
+    await db.destroy();
+  });
+
+  test("variant seeds max_turns, auto_advance, prompt_override, and participant talkativity", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const res = await postChat(makeApp(db, USER_ID,), {
+      name: "Seeded",
+      variant: "rpg_group",
+    },);
+
+    expect(res.status,).toBe(201,);
+    const chat = await loadChat(db, "Seeded",);
+    const def = VARIANT_DEFAULTS.rpg_group;
+    expect(chat?.max_turns,).toBe(def.max_turns,);
+    expect(chat?.auto_advance,).toBe(def.auto_advance,);
+    expect(chat?.prompt_override,).toBe(def.prompt_override_default,);
+
+    const participant = await db
+      .selectFrom("chat_participants",)
+      .select(["talkativity",],)
+      .where(
+        "chat_id",
+        "=",
+        (await db.selectFrom("chats",).select("id",).where("name", "=", "Seeded",).executeTakeFirst())!.id,
+      )
+      .executeTakeFirst();
+
+    expect(participant?.talkativity,).toBe(def.talkativity,);
     await db.destroy();
   });
 
