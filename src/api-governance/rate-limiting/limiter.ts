@@ -81,6 +81,9 @@ export class GovernanceRateLimiter {
       const bucket = tokenBucket(nowMs, state, policy.burst, refillPerSec, cost,);
       this.store.saveBucket(key, bucket.state, policy.windowMs, nowMs,);
       if (!bucket.allowed) {
+        // Burst denied: drop the just-pushed timestamp from the window so
+        // the rejected request does not erode steady-state budget.
+        this.store.saveWindow(key, win.kept.slice(0, -1,), policy.windowMs, nowMs,);
         return {
           allowed: false,
           policy: policy.name,
