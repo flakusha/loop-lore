@@ -98,12 +98,14 @@ export function calculateTauntEffect(
     moraleEffect = 5; // Low morale target gains confidence from taunt
   }
 
-  const newMorale = applyMoraleModifier(targetMorale, {
-    reason: "taunted",
-    value: moraleEffect,
-    duration: 2,
-    appliedAt: new Date().toISOString(),
-  },);
+  const newMorale = moraleEffect === 0
+    ? targetMorale
+    : applyMoraleModifier(targetMorale, {
+      reason: "taunted",
+      value: moraleEffect,
+      duration: 2,
+      appliedAt: new Date().toISOString(),
+    },);
 
   return {
     action: "taunt",
