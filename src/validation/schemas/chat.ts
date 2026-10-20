@@ -38,6 +38,13 @@ export const ChatCreateBody = t.Object({
   // with a `variant` it must agree with the table.
   purpose: t.Optional(t.String({ minLength: 1, },),),
   variant: t.Optional(t.String({ minLength: 1, },),),
+  maxTurns: t.Optional(t.Nullable(t.Number(),),),
+  autoAdvance: t.Optional(t.Nullable(t.Number(),),),
+  talkativity: t.Optional(t.Nullable(t.Numeric({ minimum: 1, maximum: 10, },),),),
+  promptOverride: t.Optional(t.Union([
+    t.String({ maxLength: 20_000, },),
+    t.Null(),
+  ],),),
   turnStrategy: t.Optional(TurnStrategySchema,),
   participantIds: t.Optional(t.Array(t.String(),),),
   worldId: OptionalId,

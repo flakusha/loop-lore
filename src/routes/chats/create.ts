@@ -202,6 +202,10 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           const resolvedMode = variantOverride.resolvedMode;
           const resolvedPurpose = variantOverride.resolvedPurpose;
           const resolvedGmConfig = variantOverride.resolvedGmConfig;
+          const resolvedMaxTurns = variantOverride.resolvedMaxTurns;
+          const resolvedAutoAdvance = variantOverride.resolvedAutoAdvance;
+          const resolvedTalkativity = variantOverride.resolvedTalkativity;
+          const resolvedPromptOverride = variantOverride.resolvedPromptOverride;
 
           const newChatId = await createChat(database, {
             name: body.name,
@@ -229,6 +233,11 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             encryptionLevel: body.encryptionLevel,
             templateId: template?.id,
             purpose: resolvedPurpose ?? (hasExplicit("purpose",) ? body.purpose : undefined),
+            maxTurns: resolvedMaxTurns ?? (hasExplicit("maxTurns",) ? body.maxTurns : undefined),
+            autoAdvance: resolvedAutoAdvance ?? (hasExplicit("autoAdvance",) ? body.autoAdvance : undefined),
+            talkativity: resolvedTalkativity ?? (hasExplicit("talkativity",) ? body.talkativity : undefined),
+            promptOverride: resolvedPromptOverride ??
+              (hasExplicit("promptOverride",) ? body.promptOverride : undefined),
           },);
 
           await seedWelcomeMessages(database, newChatId, body, opts, userId,);

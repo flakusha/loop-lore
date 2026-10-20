@@ -60,6 +60,14 @@ export interface CreateChatParams {
   memoryCarryIds?: string[];
   /** Chat purpose (e.g. "rpg", "roleplay"). Null = no specific purpose. */
   purpose?: string | null;
+  /** Max turns for turn-driven chats; null = unlimited. */
+  maxTurns?: number | null;
+  /** Auto-advance flag (1 = auto, 0/null = manual). */
+  autoAdvance?: number | null;
+  /** Chat-level talkativity (1-10). */
+  talkativity?: number | null;
+  /** System prompt override seeded from variant defaults. */
+  promptOverride?: string | null;
 }
 
 /** */

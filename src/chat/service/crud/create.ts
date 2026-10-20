@@ -41,13 +41,21 @@ export async function createChat(
       visibility: params.visibility ?? "private",
       encryption_level: params.encryptionLevel ?? "none",
       purpose: params.purpose ?? null,
+      max_turns: params.maxTurns ?? null,
+      auto_advance: params.autoAdvance ?? null,
+      prompt_override: params.promptOverride ?? null,
     },)
     .execute();
 
   // Add owner
   await database
     .insertInto("chat_participants",)
-    .values({ chat_id: newChatId, actor_id: params.createdBy, role_in_chat: "owner", },)
+    .values({
+      chat_id: newChatId,
+      actor_id: params.createdBy,
+      role_in_chat: "owner",
+      talkativity: params.talkativity ?? undefined,
+    },)
     .execute();
 
   // Add additional participants
