@@ -178,7 +178,14 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
       body: jsonBody({ choiceId, },),
     },);
 
-    if (!res.ok) { return null; }
+    if (!res.ok) {
+      document.dispatchEvent(
+        new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to select choice", }, },),
+      );
+
+      return null;
+    }
+
     const data = await res.json();
     const { choice: returned, locationId, } = (data.choice ?? data.data) as { choice: VnChoice; locationId?: string };
     const returnedLabel = returned.label ?? returned.text ?? "Untitled choice";
@@ -228,6 +235,10 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
 
     return { choice: returned, locationId, splitTriggered, reunionTriggered, locationChanged, };
   } catch {
+    document.dispatchEvent(
+      new CustomEvent("show-toast", { detail: { type: "error", message: "Failed to select choice", }, },),
+    );
+
     return null;
   }
 }
