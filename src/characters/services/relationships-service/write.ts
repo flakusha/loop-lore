@@ -203,20 +203,22 @@ export async function deleteRelationship(
     );
   }
 
-  await withWorldId(
-    thisL.db.deleteFrom("character_relationships",)
-      .where("actor_id", "=", actorId,)
-      .where("target_actor_id", "=", targetActorId,),
-    worldId,
-  ).execute();
-
-  // Delete reverse if bidirectional
-  if (existing.isBidirectional) {
+  await thisL.db.transaction().execute(async (trx,) => {
     await withWorldId(
-      thisL.db.deleteFrom("character_relationships",)
-        .where("actor_id", "=", targetActorId,)
-        .where("target_actor_id", "=", actorId,),
+      trx.deleteFrom("character_relationships",)
+        .where("actor_id", "=", actorId,)
+        .where("target_actor_id", "=", targetActorId,),
       worldId,
     ).execute();
-  }
+
+    // Delete reverse if bidirectional
+    if (existing.isBidirectional) {
+      await withWorldId(
+        trx.deleteFrom("character_relationships",)
+          .where("actor_id", "=", targetActorId,)
+          .where("target_actor_id", "=", actorId,),
+        worldId,
+      ).execute();
+    }
+  },);
 }
