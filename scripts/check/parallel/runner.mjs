@@ -102,6 +102,7 @@ const COULD_NOT_START_EXIT_CODES = new Set([126, 127,],);
 const GATE_TIMEOUT_MS = {
   "coverage - per-module line %": 30 * 60 * 1000,
   "e2e - browser (baseline)": 45 * 60 * 1000,
+  "md - lint": 1200 * 1000,
 };
 
 /**
