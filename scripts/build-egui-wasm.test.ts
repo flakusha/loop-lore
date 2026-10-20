@@ -12,6 +12,15 @@
  * type-check (scripts/native/check-wasm.ts), a gate of its own. That case is
  * not covered here: it needs a real cargo + target tree, and the `--version`
  * probe cannot distinguish "absent" from "broken".
+ *
+ * Resource contract (every test here runs in parallel with every other test
+ * file in the worktree - `bun test` runs with --parallel):
+ * - ALLOCATES: one `mkdtemp` PATH shim per test and one `mkdtemp` output
+ *   root per test. Both are removed in the test's own `finally`.
+ * - WRITES: only inside its own output root. The stage is pointed there via
+ *   `EGUI_OUT_ROOT`, so the worktree's shared `dist/` - the gate suite's
+ *   frontend build, the operator's `bun run build` - is never touched.
+ * - READS: `Cargo.lock` and `package.json`, both read-only.
  */
 import { describe, expect, test, } from "bun:test";
 import { spawnSync, } from "node:child_process";
@@ -62,66 +71,87 @@ function makeBunOnlyPath(): { dir: string; cleanup: () => void } {
 }
 
 /**
+ * A throwaway project root the stage writes its bundle and stamp into.
+ *
+ * The stage's skip path DELETES the bundle and the stamp, so it must never
+ * be pointed at the worktree's own `dist/`: that tree is the shared output
+ * of every other build in this worktree. A test that writes - or deletes -
+ * there races the gate suite (which builds the frontend into `dist/`), the
+ * operator's `bun run build`, and every test that reads the bundle. Each
+ * test below owns one of these roots and removes it again.
+ *
+ * @returns { root, cleanup }
+ */
+function makeOutRoot(): { root: string; cleanup: () => void } {
+  const root = mkdtempSync(join(tmpdir(), "b6-egui-out-",),);
+  return { root, cleanup: () => rmSync(root, { recursive: true, force: true, },), };
+}
+
+/**
  * @param env - child environment
+ * @param outRoot - project root the stage writes into (this test's own tree)
  * @returns { status, output } of the script run
  */
-function runScript(env: Record<string, string | undefined>,): { status: number | null; output: string } {
-  const result = spawnSync("bun", [SCRIPT,], { cwd: ROOT, env, encoding: "utf8", },);
+function runScript(
+  env: Record<string, string | undefined>,
+  outRoot: string,
+): { status: number | null; output: string } {
+  const result = spawnSync("bun", [SCRIPT,], {
+    cwd: ROOT,
+    env: { ...env, EGUI_OUT_ROOT: outRoot, },
+    encoding: "utf8",
+  },);
   return { status: result.status, output: (result.stderr ?? "") + (result.stdout ?? ""), };
 }
 
 describe("build-egui-wasm optional-toolchain contract", () => {
   test("skips with exit 0 when cargo is missing", () => {
     const { dir, cleanup, } = makeBunOnlyPath();
+    const { root, cleanup: cleanupOut, } = makeOutRoot();
     try {
-      const { status, output, } = runScript({ ...process.env, PATH: dir, },);
+      const { status, output, } = runScript({ ...process.env, PATH: dir, }, root,);
       expect(status,).toBe(0,);
       expect(output,).toContain("cargo not found - SKIPPING the egui WASM bundle",);
     } finally {
       cleanup();
+      cleanupOut();
     }
   });
 
   test("skips with exit 0 (and the install hint) when the wasm-bindgen CLI is missing", () => {
     const { dir: bunOnly, cleanup: cleanupBun, } = makeBunOnlyPath();
     const { dir, cleanup, } = makeCargoShim();
+    const { root, cleanup: cleanupOut, } = makeOutRoot();
     try {
-      const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${bunOnly}`, },);
+      const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${bunOnly}`, }, root,);
       expect(status,).toBe(0,);
       expect(output,).toContain("wasm-bindgen CLI not found - SKIPPING the egui WASM bundle",);
       expect(output,).toContain("cargo install wasm-bindgen-cli",);
     } finally {
       cleanup();
       cleanupBun();
+      cleanupOut();
     }
   });
 
   test("a skip removes the stale bundle so it can never be served", () => {
-    const bundle = join(ROOT, "dist", "public", "egui",);
-    const stamp = join(ROOT, "dist", "egui-build.json",);
+    const { root, cleanup, } = makeOutRoot();
+    const bundle = join(root, "dist", "public", "egui",);
+    const stamp = join(root, "dist", "egui-build.json",);
     const wasm = join(bundle, "app_bg.wasm",);
-    const hadBundle = existsSync(wasm,);
-    const hadStamp = existsSync(stamp,);
     mkdirSync(bundle, { recursive: true, },);
     writeFileSync(wasm, "stale",);
     writeFileSync(stamp, "{}",);
 
-    const { dir, cleanup, } = makeBunOnlyPath();
+    const { dir, cleanup: cleanupPath, } = makeBunOnlyPath();
     try {
-      const { status, } = runScript({ ...process.env, PATH: dir, },);
+      const { status, } = runScript({ ...process.env, PATH: dir, }, root,);
       expect(status,).toBe(0,);
       expect(existsSync(wasm,),).toBe(false,);
       expect(existsSync(stamp,),).toBe(false,);
     } finally {
+      cleanupPath();
       cleanup();
-      rmSync(join(ROOT, "dist",), { recursive: true, force: true, },);
-      if (hadBundle) {
-        mkdirSync(bundle, { recursive: true, },);
-        writeFileSync(wasm, "",);
-      }
-      if (hadStamp) {
-        writeFileSync(stamp, "",);
-      }
     }
   });
 
@@ -136,14 +166,16 @@ describe("build-egui-wasm optional-toolchain contract", () => {
 
     const { dir: bunOnly, cleanup: cleanupBun, } = makeBunOnlyPath();
     const { dir, cleanup, } = makeCargoShim();
+    const { root, cleanup: cleanupOut, } = makeOutRoot();
     try {
-      const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${bunOnly}`, },);
+      const { status, output, } = runScript({ ...process.env, PATH: `${dir}:${bunOnly}`, }, root,);
       expect(status,).toBe(0,);
       expect(output,).toContain(`cargo install wasm-bindgen-cli --version ${pinned}`,);
       expect(output,).not.toContain("<version from",);
     } finally {
       cleanup();
       cleanupBun();
+      cleanupOut();
     }
   });
 

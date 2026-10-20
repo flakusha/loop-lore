@@ -41,7 +41,7 @@ import { spawnSync, } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { brotliCompressSync, constants, } from "node:zlib";
-import { writeEguiStamp, } from "../src/build/egui-artifact";
+import { EGUI_BUNDLE_DIR, EGUI_STAMP_FILE, writeEguiStamp, } from "../src/build/egui-artifact";
 import { jsonParseOr, } from "../src/utils/safe-json";
 import { pinnedWasmBindgenVersion, REPO_ROOT, WASM_TARGET, } from "./native/shared";
 import { ensureWasmToolchain, type WasmToolchain, } from "./native/toolchain";
@@ -49,8 +49,20 @@ import { ensureWasmToolchain, type WasmToolchain, } from "./native/toolchain";
 /** Crate dir relative to this script (scripts/ → native/loop-lore-egui/). */
 const CRATE_DIR = join(import.meta.dir, "..", "native", "loop-lore-egui",);
 
+/**
+ * Project root the bundle and its stamp are written under. Defaults to the
+ * repo root; `EGUI_OUT_ROOT` points it at a throwaway tree so a test can
+ * exercise this stage - whose skip path DELETES the bundle - without
+ * touching the worktree's shared `dist/`, which every other build in the
+ * same worktree writes to.
+ */
+const OUT_ROOT = process.env.EGUI_OUT_ROOT ?? REPO_ROOT;
+
 /** Browser bundle dir — also the /egui/ static mount point. */
-const OUT_DIR = join(import.meta.dir, "..", "dist", "public", "egui",);
+const OUT_DIR = join(OUT_ROOT, EGUI_BUNDLE_DIR,);
+
+/** Build stamp written next to the bundle. */
+const STAMP_FILE = join(OUT_ROOT, EGUI_STAMP_FILE,);
 
 /** wasm-bindgen --out-name; the host page imports /egui/app.js. */
 const OUT_NAME = "app";
@@ -136,10 +148,9 @@ function cargoReleaseDir(env: NodeJS.ProcessEnv,): string {
  * @param reason - why the stage is skipping, echoed in the warning
  */
 function invalidateStaleBundle(reason: string,): void {
-  const stamp = join(REPO_ROOT, "dist", "egui-build.json",);
   try {
     rmSync(OUT_DIR, { recursive: true, force: true, },);
-    rmSync(stamp, { force: true, },);
+    rmSync(STAMP_FILE, { force: true, },);
   } catch (error: unknown) {
     console.warn(
       `[build:egui] WARNING: could not remove the stale egui bundle at ${OUT_DIR} ` +
@@ -301,7 +312,7 @@ function main(): void {
   const artifact = buildWasm();
   runWasmBindgen(artifact,);
   writeBrotliVariant();
-  const stamp = writeEguiStamp(REPO_ROOT, { wasmBindgenVersion: wasmBindgenVersion(), },);
+  const stamp = writeEguiStamp(OUT_ROOT, { wasmBindgenVersion: wasmBindgenVersion(), },);
   console.log(`[build:egui] provenance stamp: ${stamp}`,);
   console.log(`[build:egui] bundle ready at ${OUT_DIR}`,);
 }
