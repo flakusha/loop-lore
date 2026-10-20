@@ -3,6 +3,7 @@
 
 import { allocateNodeId, } from "../../../generation/node-id";
 import type { ComfyUIWorkflow, } from "../../../generation/providers/comfyui";
+import { getChildLogger, } from "../../../logger";
 import type { LoraEntry, } from "../../types";
 
 /**
@@ -23,6 +24,8 @@ export function parseLoraString(loraStr: string,): LoraEntry[] {
       const strength = Number.parseFloat(trimmed.slice(colonIdx + 1,),);
       if (path && !Number.isNaN(strength,)) {
         entries.push({ path, strength, },);
+      } else {
+        getChildLogger("image-edit:lora",)?.warn({ message: `Skipping malformed LoRA entry: ${trimmed}`, },);
       }
     } else {
       entries.push({ path: trimmed, strength: 1, },);
