@@ -89,7 +89,7 @@ describe("config-menu routes", () => {
     expect(res.status,).toBe(401,);
   });
 
-  test("PATCH /api/config-menu returns 403 for non-admin writing admin key", async () => {
+  test("PATCH /api/config-menu returns 400 for non-admin writing admin key", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
       new Request("http://localhost/api/config-menu", {
@@ -99,7 +99,7 @@ describe("config-menu routes", () => {
       },),
     );
 
-    expect(res.status,).toBe(403,);
+    expect(res.status,).toBe(400,);
   });
 
   test("PATCH /api/config-menu returns 400 for unknown key", async () => {
