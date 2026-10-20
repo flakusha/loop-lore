@@ -208,6 +208,8 @@ export interface DB {
   world_timescale: import("./schema-story").WorldTimescale;
   world_timescale_history: import("./schema-story").WorldTimescaleHistory;
   location_edges: import("./schema-core").LocationEdges;
+  world_conditions: import("./schema-core").WorldConditions;
+  world_condition_history: import("./schema-core").WorldConditionHistory;
   location_anomalies: import("./schema-core").LocationAnomalies;
   encounter_templates: import("./schema-core").EncounterTemplates;
   encounter_rolls: import("./schema-core").EncounterRolls;
@@ -228,9 +230,7 @@ export interface DB {
   world_maps: import("./schema-core").WorldMaps;
   map_zones: import("./schema-core").MapZones;
   vn_choice_selections: import("./schema-core").VnChoiceSelections;
+  instance_storage_budgets: import("./schema-core").InstanceStorageBudgets;
   mesh_work_assignments: import("./schema-core").MeshWorkAssignments;
   federation_performance_budgets: import("./schema-core").FederationPerformanceBudgets;
-  instance_storage_budgets: import("./schema-core").InstanceStorageBudgets;
-  world_conditions: import("./schema-core").WorldConditions;
-  world_condition_history: import("./schema-core").WorldConditionHistory;
 }

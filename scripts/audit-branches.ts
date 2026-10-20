@@ -34,7 +34,7 @@
  */
 
 import process from "node:process";
-import { flag, object, runScript, withDefault, } from "../src/cli/parser";
+import { flag, object, option, runScript, string, withDefault, } from "../src/cli/parser";
 
 /** Branch names this script never audits (the base is added at runtime). */
 const PROTECTED: Record<string, true> = { dev: true, master: true, };
@@ -174,7 +174,7 @@ function printTable(base: string, reports: BranchReport[],): void {
 if (import.meta.main) {
   const { base, json, strict, } = runScript(
     object({
-      base: withDefault(flag("--base",), "dev",),
+      base: withDefault(option("--base", string(),), "dev",),
       json: withDefault(flag("--json",), false,),
       strict: withDefault(flag("--strict",), false,),
     },),
