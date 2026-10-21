@@ -3,7 +3,7 @@
 
 # BUG: Spam-gate sender identity ignores plus-tag subaddressing: blocklist and per-sender bucket are bypassable
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

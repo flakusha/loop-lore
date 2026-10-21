@@ -3,7 +3,7 @@
 
 # BUG: humanOverride silently drops the GM decision when serialization fails, returning success
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 

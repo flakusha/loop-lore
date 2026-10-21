@@ -3,7 +3,7 @@
 
 # BUG: Turn-manager selection uses a stale candidate list and a read-then-write initiative decrement
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 

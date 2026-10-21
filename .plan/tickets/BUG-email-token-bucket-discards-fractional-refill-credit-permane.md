@@ -3,7 +3,7 @@
 
 # BUG: Email token bucket discards fractional refill credit, permanently starving senders below one token per refill
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
