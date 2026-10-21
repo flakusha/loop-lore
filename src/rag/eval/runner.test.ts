@@ -10,8 +10,8 @@ describe("runSuite", () => {
     const retrieve = async (q: string,) => (q.includes("key",) ? ["doc-key-rotation",] : ["doc-chat-variants",]);
     const res = await runSuite(goldenText as any, retrieve,);
     expect(res.length,).toBe(2,);
-    expect(res[0].recallAt5,).toBe(1,);
-    expect(res[1].recallAt5,).toBe(1,);
+    expect(res[0]!.recallAt5,).toBe(1,);
+    expect(res[1]!.recallAt5,).toBe(1,);
   });
 
   test("loads golden-character suite", async () => {
