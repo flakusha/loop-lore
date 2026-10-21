@@ -153,7 +153,15 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       if (existing) {
         const effective = composeLicenseRow(existing, body,);
-        assertValidWrite("character_licensing", { ...effective, },);
+        try {
+          assertValidWrite("character_licensing", { ...effective, },);
+        } catch (error: unknown) {
+          return jsonError({
+            message: error instanceof Error ? error.message : "Invalid licensing",
+            status: HttpStatus.BadRequest,
+          },);
+        }
+
         await database
           .updateTable("character_licensing",)
           .set({
@@ -169,7 +177,15 @@ export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       const id = crypto.randomUUID();
       const created = composeLicenseRow(undefined, body,);
-      assertValidWrite("character_licensing", { ...created, },);
+      try {
+        assertValidWrite("character_licensing", { ...created, },);
+      } catch (error: unknown) {
+        return jsonError({
+          message: error instanceof Error ? error.message : "Invalid licensing",
+          status: HttpStatus.BadRequest,
+        },);
+      }
+
       await database
         .insertInto("character_licensing",)
         .values({
