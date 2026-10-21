@@ -232,7 +232,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-audit-get-by-id-has-no-params-schema-validation.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-AUDIT-PAGINATION-USES-1-SO-AN-EMPTY-RESULT-SET-REPORTS": {
     "hash": "d790244",
@@ -362,7 +362,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-system-config-delete-passes-user-controlled-key-withou.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-SYSTEM-CONFIG-DELETE-RETURNS-400-FOR-KEYS-THE-TEST-EXP": {
     "hash": "d69dc94",
@@ -5723,7 +5723,7 @@
       "frontend"
     ],
     "source": ".plan/tickets/BUG-journal-keyphrase-panel-reads-only-page-1-of-the-paginated-m.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-JSCPD-RATCHET-COUNTS-CLUSTERS-NOT-DUPLICATED-LINES": {
     "hash": "47b15be",

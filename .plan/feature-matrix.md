@@ -650,7 +650,7 @@ Total tickets: **3874** — untagged: **2643** — unbound to epic: **1532**
 | free-will | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | fresh | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | friends | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| frontend | 161 | 36 | 7 | 66 | 0 | 0 | 52 |
+| frontend | 161 | 37 | 7 | 66 | 0 | 0 | 51 |
 | fts | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | furniture | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | future | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1679,7 +1679,7 @@ Total tickets: **3874** — untagged: **2643** — unbound to epic: **1532**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2643 | 968 | 45 | 905 | 32 | 0 | 693 |
+| (untagged) | 2643 | 970 | 45 | 905 | 32 | 0 | 691 |
 
 ## By epic × status
 
@@ -2110,7 +2110,7 @@ Total tickets: **3874** — untagged: **2643** — unbound to epic: **1532**
 | routing-versioning-consolidation | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | sam3-segmentation-integration | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | server-hardening | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
-| (unbound) | 1532 | 603 | 54 | 262 | 47 | 0 | 566 |
+| (unbound) | 1532 | 606 | 54 | 262 | 47 | 0 | 563 |
 
 ## Ticket detail
 
