@@ -48,14 +48,19 @@ export async function logEvent(
       .execute();
 
     const trxContext = { ...thisL, db: trx, } as MoodServiceContext;
-    // Apply the happiness delta
+    // Apply the happiness delta (best-effort: a missing mood row must not
+    // roll back the event insert, so encounters can still fan out mood events).
     if (opts.happinessDelta !== undefined) {
-      await applyHappinessDelta({
-        thisL: trxContext,
-        actorId: opts.actorId,
-        worldId: opts.worldId,
-        delta: opts.happinessDelta,
-      },);
+      try {
+        await applyHappinessDelta({
+          thisL: trxContext,
+          actorId: opts.actorId,
+          worldId: opts.worldId,
+          delta: opts.happinessDelta,
+        },);
+      } catch {
+        // no mood row yet; event still recorded
+      }
     }
   },);
 

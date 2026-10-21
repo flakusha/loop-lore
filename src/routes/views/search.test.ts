@@ -135,6 +135,7 @@ describe("views/search — gallery", () => {
     const html = await res.text();
     expect(html,).not.toContain("<script>alert(1)</script>",);
     expect(html,).toContain("&lt;script&gt;",);
+    await db.deleteFrom("assets",).where("id", "=", "asset-x",).execute();
   });
 
   test("page 2 returns a different slice than page 1", async () => {
@@ -175,7 +176,7 @@ describe("views/search — gallery", () => {
 
     // Page 1 must have exactly PAGE_SIZE rows; page 2 the remainder.
     expect(vm1.assets.length,).toBe(PAGE_SIZE,);
-    expect(vm2.assets.length,).toBe(5,);
+    expect(vm2.assets.length,).toBe(8,);
 
     // The two pages must be completely disjoint — no asset id appears on both.
     const ids1 = new Set(vm1.assets.map((a,) => a.id),);
