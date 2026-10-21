@@ -3,7 +3,7 @@
 
 # BUG: Proactive backoff increment loses updates under concurrency
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

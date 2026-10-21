@@ -3,7 +3,7 @@
 
 # BUG: Context window willTrim is stale after injectMemories/injectEvents
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
