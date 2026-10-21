@@ -216,7 +216,7 @@ Everything else is the static registry in `gate-table.mjs`, unchanged.
 | gate | file-list scoping possible? | mechanism | must stay project-wide because |
 | --- | --- | --- | --- |
 | lint - eslint | yes | append the changed `ts/js/md` paths to the same `bunx eslint --concurrency=8` invocation | typed rules read the whole program (`parserOptions.project`), so a changed shared type can newly violate a rule in an UNTOUCHED file. Implemented with a full-run fallback on any config change. |
-| md - lint | yes | `markdownlint-cli2 <changed .md>` | markdownlint has no cross-file rule; every configured rule is per-file. Implemented, same fallback. The scoped invocation still auto-discovers `.markdownlint.json`: that file only DISABLES rules (MD013, MD033, MD041, …) and this doc has 34 lines over 80 chars, so a run that missed the config would have failed MD013. It passed, which is the proof. |
+| md - lint | yes | `markdownlint-cli2 <changed .md>` | markdownlint has no cross-file rule; every configured rule is per-file. Implemented, same fallback. The scoped invocation still auto-discovers `.markdownlint.json`: that file only DISABLES rules (MD013, MD033, MD041, …) and this doc has 34 lines over 80 chars, so a run that missed the config would have failed MD013. It passed, which is the proof. It also auto-discovers `.markdownlint-cli2.jsonc` (the ignore set and the `gitignore` switch), so that file is a scope breaker for the same reason. |
 | format - dprint | yes | `dprint check <paths>` | per-file formatter. **Not implemented**: 0.2s median, nothing to win. |
 | mermaid - lint (mmdlint) | yes | `mmdlint <changed .md>` | per-file parser. **Not implemented**: 0.7s median. |
 | typecheck x4 | **no** | — | `tsgo --noEmit -p <tsconfig>` is whole-program by construction; `type-coverage` computes a ratio over the whole project, and a `--files=` subset would change the denominator, i.e. the FLOOR would silently move. |
@@ -245,8 +245,9 @@ Everything else is the static registry in `gate-table.mjs`, unchanged.
   behaviour, unchanged, and it applies to every scoped gate in the registry.
 - **Config changes** fall back to the full run by construction
   (`SCOPE_BREAKERS` in `scripts/check/parallel/gates-scope.mjs`):
-  `.markdownlint.json`, `dprint.json`, `eslint.config.mjs`, `oxlint.config.ts`,
-  `package.json`, and the four `tsconfig*.json`.
+  `.markdownlint-cli2.jsonc`, `.markdownlint.json`, `dprint.json`,
+  `eslint.config.mjs`, `oxlint.config.ts`, `package.json`, and the four
+  `tsconfig*.json`.
 - **Shell safety.** The gate command runs through `bash -c`
   (`scripts/check/gate-timeout.mjs:71`), so a changed path outside
   `[A-Za-z0-9._/@-]` forces the full run rather than being quoted.
