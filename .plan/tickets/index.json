@@ -338,6 +338,19 @@
     "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md",
     "status": "Not Started"
   },
+  "BUG-ADMIN-PROVIDERS-LIST-VS-AUTH-CONFLICT-NEEDS-CONTRACT-DECISIO": {
+    "hash": "1568edc",
+    "git_issue": "1568edc",
+    "extid": "BUG-ADMIN-PROVIDERS-LIST-VS-AUTH-CONFLICT-NEEDS-CONTRACT-DECISIO",
+    "type": "BUG",
+    "title": "admin providers list-vs-auth conflict needs contract decision",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio.md",
+    "status": "Not Started"
+  },
   "BUG-ADMIN-SET-SECRETS-STORED-PLAINTEXT-IN-SYSTEM-CONFIG": {
     "hash": "03d2296",
     "git_issue": "03d2296",
@@ -808,6 +821,19 @@
     "tags": [],
     "title": "WebP VP8X dimension truncation — 14-bit mask on 24-bit spec field",
     "type": "BUG"
+  },
+  "BUG-ASSETS-CATCH-LOG-CLUSTER-ERROR-SERIALIZED-AS-LOSES-STACK-CON": {
+    "hash": "2e001b6",
+    "git_issue": "2e001b6",
+    "extid": "BUG-ASSETS-CATCH-LOG-CLUSTER-ERROR-SERIALIZED-AS-LOSES-STACK-CON",
+    "type": "BUG",
+    "title": "assets catch-log cluster: Error serialized as {} loses stack; controller builds child logger per statement",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con.md",
+    "status": "Not Started"
   },
   "BUG-ASSETS-DELETE-ASSETS-ID-LINKS-LINKID-IGNORES-LINKID-PATH-PAR": {
     "epic": "",
@@ -2578,6 +2604,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi.md",
     "status": "done"
+  },
+  "BUG-CHAT-SPLIT-CLASSIFIER-SHIPS-UNTESTED-WITH-HOT-PATH-AUX-LLM-C": {
+    "hash": "e20f01c",
+    "git_issue": "e20f01c",
+    "extid": "BUG-CHAT-SPLIT-CLASSIFIER-SHIPS-UNTESTED-WITH-HOT-PATH-AUX-LLM-C",
+    "type": "BUG",
+    "title": "chat split-classifier ships untested with hot-path aux LLM call against own scope",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md",
+    "status": "Not Started"
   },
   "BUG-CHAT-SWIPE-INDEX-RACE": {
     "epic": "",
@@ -6620,6 +6659,19 @@
     "source": ".plan/tickets/BUG-mood-and-relationship-services-mutate-multi-row-state-withou.md",
     "status": "Not Started"
   },
+  "BUG-MOOD-LAST-MOOD-CHANGE-FIX-IS-A-NO-OP-FOR-ALL-PRODUCTION-CALL": {
+    "hash": "1d65877",
+    "git_issue": "1d65877",
+    "extid": "BUG-MOOD-LAST-MOOD-CHANGE-FIX-IS-A-NO-OP-FOR-ALL-PRODUCTION-CALL",
+    "type": "BUG",
+    "title": "mood last_mood_change fix is a no-op for all production callers",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call.md",
+    "status": "Not Started"
+  },
   "BUG-MUSIC-LINKS-PANEL-SENDS-EXPLICIT-NULL-SECTIONID-CAUSING-422-": {
     "epic": "",
     "extid": "BUG-MUSIC-LINKS-PANEL-SENDS-EXPLICIT-NULL-SECTIONID-CAUSING-422-",
@@ -7391,6 +7443,19 @@
     "title": "parseAcceptLanguage ignores quality values (returns header order, not preference)",
     "type": "BUG"
   },
+  "BUG-PARSEPAGINATION-DEFAULT-50-SILENTLY-OVERRIDES-ACTORSQUERY-SC": {
+    "hash": "3f7bbc4",
+    "git_issue": "3f7bbc4",
+    "extid": "BUG-PARSEPAGINATION-DEFAULT-50-SILENTLY-OVERRIDES-ACTORSQUERY-SC",
+    "type": "BUG",
+    "title": "parsePagination default 50 silently overrides ActorsQuery schema default 20",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-parsepagination-default-50-silently-overrides-actorsquery-sc.md",
+    "status": "Not Started"
+  },
   "BUG-PATCH-SETTINGS-ENDPOINT-HAS-NO-KEY-ALLOWLIST-CURRENTSETTINGS": {
     "epic": "",
     "extid": "BUG-PATCH-SETTINGS-ENDPOINT-HAS-NO-KEY-ALLOWLIST-CURRENTSETTINGS",
@@ -8125,6 +8190,19 @@
     "tags": [],
     "title": "Relationship bidirectional reverse row grafts onto foreign characters",
     "type": "BUG"
+  },
+  "BUG-RELATIONSHIP-DUPLICATE-GUARD-RUNS-BEFORE-TXN-CONCURRENT-SAME": {
+    "hash": "36b945a",
+    "git_issue": "36b945a",
+    "extid": "BUG-RELATIONSHIP-DUPLICATE-GUARD-RUNS-BEFORE-TXN-CONCURRENT-SAME",
+    "type": "BUG",
+    "title": "relationship duplicate guard runs before txn: concurrent same-pair creates can double-insert",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same.md",
+    "status": "Not Started"
   },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
     "epic": "",
@@ -9529,6 +9607,19 @@
     "tags": [],
     "title": "tui/app.ts never threads a session token into ChatWidget — auth header never sent",
     "type": "BUG"
+  },
+  "BUG-TUI-EGUI-FIXES-HOLD-LANDING-PAGE-1-ONLY-CLIENT-GALLERY-HAS-M": {
+    "hash": "8a7a393",
+    "git_issue": "8a7a393",
+    "extid": "BUG-TUI-EGUI-FIXES-HOLD-LANDING-PAGE-1-ONLY-CLIENT-GALLERY-HAS-M",
+    "type": "BUG",
+    "title": "tui-egui-fixes hold landing: page-1-only client, gallery has_more regression, TUI stale-chat race, unawaited stamp write",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md",
+    "status": "Not Started"
   },
   "BUG-TUI-SEND-INHERITS-THE-30S-DEFAULT-SAFEFETCH-TIMEOUT-AGAINST-": {
     "hash": "d07e0df",
@@ -49943,6 +50034,19 @@
     "title": "Remove no-op oxlint (correctness) gate from runner registry",
     "type": "TASK"
   },
+  "TASK-REMOVE-OR-RECORD-INTENT-FOR-STALE-EMPTY-DIFF-WORKTREES-G2-TI": {
+    "hash": "ca72bcb",
+    "git_issue": "ca72bcb",
+    "extid": "TASK-REMOVE-OR-RECORD-INTENT-FOR-STALE-EMPTY-DIFF-WORKTREES-G2-TI",
+    "type": "TASK",
+    "title": "remove or record intent for stale empty-diff worktrees g2-timeline-branching-ui and plan-mark-tickets-closed",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-remove-or-record-intent-for-stale-empty-diff-worktrees-g2-ti.md",
+    "status": "Not Started"
+  },
   "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES": {
     "epic": "epic-asset-transform-metadata",
     "extid": "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES",
@@ -53322,6 +53426,71 @@
     ],
     "title": "Test DB Dialect Parameterization (Postgres Matrix)",
     "type": "TASK"
+  },
+  "TASK-TEST-DEBT-ADMIN-FRONTEND-NOTIFICATIONS-REGRESSION-TESTS-FOR-": {
+    "hash": "e327438",
+    "git_issue": "e327438",
+    "extid": "TASK-TEST-DEBT-ADMIN-FRONTEND-NOTIFICATIONS-REGRESSION-TESTS-FOR-",
+    "type": "TASK",
+    "title": "test debt: admin/frontend/notifications regression tests for 8 fixes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-debt-admin-frontend-notifications-regression-tests-for-.md",
+    "status": "Not Started"
+  },
+  "TASK-TEST-DEBT-COORDINATION-PRIORITY-QUEUE-CAP-REGRESSION-TEST": {
+    "hash": "0d4bc82",
+    "git_issue": "0d4bc82",
+    "extid": "TASK-TEST-DEBT-COORDINATION-PRIORITY-QUEUE-CAP-REGRESSION-TEST",
+    "type": "TASK",
+    "title": "test debt: coordination-priority queue-cap regression test",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-debt-coordination-priority-queue-cap-regression-test.md",
+    "status": "Not Started"
+  },
+  "TASK-TEST-DEBT-IMAGE-EDIT-AND-SD-PROVIDER-REGRESSION-TESTS-FOR-9-": {
+    "hash": "d265e90",
+    "git_issue": "d265e90",
+    "extid": "TASK-TEST-DEBT-IMAGE-EDIT-AND-SD-PROVIDER-REGRESSION-TESTS-FOR-9-",
+    "type": "TASK",
+    "title": "test debt: image-edit and SD provider regression tests for 9 fixes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-debt-image-edit-and-sd-provider-regression-tests-for-9-.md",
+    "status": "Not Started"
+  },
+  "TASK-TEST-DEBT-TXN-ATOMICITY-REGRESSION-TESTS-FOR-9-FIXES-INCL-GM": {
+    "hash": "9a35720",
+    "git_issue": "9a35720",
+    "extid": "TASK-TEST-DEBT-TXN-ATOMICITY-REGRESSION-TESTS-FOR-9-FIXES-INCL-GM",
+    "type": "TASK",
+    "title": "test debt: txn/atomicity regression tests for 9 fixes (incl gm-shadow concurrent reveal)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-debt-txn-atomicity-regression-tests-for-9-fixes-incl-gm.md",
+    "status": "Not Started"
+  },
+  "TASK-TEST-DEBT-UTILS-INTEGRATIONS-CRYPTO-REGRESSION-TESTS-FOR-13-": {
+    "hash": "2329992",
+    "git_issue": "2329992",
+    "extid": "TASK-TEST-DEBT-UTILS-INTEGRATIONS-CRYPTO-REGRESSION-TESTS-FOR-13-",
+    "type": "TASK",
+    "title": "test debt: utils/integrations/crypto regression tests for 13 fixes",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-debt-utils-integrations-crypto-regression-tests-for-13-.md",
+    "status": "Not Started"
   },
   "TASK-TEST-DIALECT-MATRIX": {
     "epic": "epic-testing-qa",
