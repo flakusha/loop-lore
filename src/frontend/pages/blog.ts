@@ -8,7 +8,7 @@ import { log, } from "../alpine/logger";
 
 const blogLog = log.child({ module: "blog-page", },);
 
-document.addEventListener("htmx:load", () => {
+document.addEventListener("htmx:after:init", () => {
   blogLog.info("Blog page loaded",);
 },);
 
