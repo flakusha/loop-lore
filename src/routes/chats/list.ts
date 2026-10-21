@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { DB, } from "../../db/schema";
-import type { HandlerOpts, } from "./types";
+
 import { Elysia, t, } from "elysia";
-import { jsonPaginated, parsePagination, requireUserId, } from "../http-utils";
 import { type Expression, type ExpressionBuilder, type SelectQueryBuilder, sql, type SqlBool, } from "kysely";
+import type { DB, } from "../../db/schema";
+import { jsonPaginated, parsePagination, requireUserId, } from "../http-utils";
+import type { HandlerOpts, } from "./types";
 
 /**
  * Query params for GET /api/chats. Filters are optional and compose with AND;
@@ -112,6 +113,7 @@ function visibleToViewer(
       ),
     ],);
 }
+
 /**
  * @param opts
  * @param prefix
