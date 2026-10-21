@@ -8899,6 +8899,7 @@
         "src/config/load/load.ts",
         "src/config/template-expansion/run.ts",
         "src/logger",
+        "src/tui/app-keys.ts",
         "src/tui/app.ts",
         "src/tui/asset-view.ts"
       ],
@@ -8914,7 +8915,7 @@
         "src/config/load/load.ts",
         "src/config/schema/tui.ts",
         "src/config/sections/tui.ts",
-        "src/frontend/alpine/transports/server.ts",
+        "src/frontend/alpine/htmx.ts",
         "src/frontend/fe-fetch.ts",
         "src/tui/app.ts",
         "src/tui/chat/api.ts",
@@ -46845,14 +46846,18 @@
         "src/frontend/alpine/emoji-autocomplete.ts",
         "src/frontend/alpine/index.ts",
         "src/frontend/egui-bridge.ts",
+        "src/frontend/egui-gallery.ts",
         "src/frontend/egui-stream.ts",
+        "src/frontend/stores/index.ts",
         "src/frontend/wasm-loader.ts",
+        "src/generation/stream-buffer.ts",
         "src/routes/export-sse",
         "src/routes/v1/admin-surface.ts",
         "src/routes/v1/openapi.ts",
         "src/routes/views/egui.ts",
         "src/routes/views/layout.ts",
         "src/routes/views/negotiate.ts",
+        "src/routes/views/plugin-dynamic.ts",
         "src/views/admin.html",
         "src/views/gallery.html",
         "src/views/world-edit.html"
@@ -63547,6 +63552,7 @@
         "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
         "BUG-frontend-dead-csrf-bearer-header-machinery",
         "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
+        "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
         "TASK-book-unit-editor-review-surface",
         "TASK-codemod-fetch-json-safe-utils",
         "TASK-cors-middleware",
@@ -64143,7 +64149,6 @@
       "path": "src/frontend/alpine/transports/server.ts",
       "owners": [
         "BUG-frontend-dead-csrf-bearer-header-machinery",
-        "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
         "TASK-frontend-exposes-session-token-in-localstorage",
         "TASK-tui"
       ]
@@ -64906,6 +64911,12 @@
       ]
     },
     {
+      "path": "src/frontend/egui-gallery.ts",
+      "owners": [
+        "epic-experimental-egui-frontend"
+      ]
+    },
+    {
       "path": "src/frontend/egui-stream.ts",
       "owners": [
         "epic-experimental-egui-frontend"
@@ -65550,7 +65561,8 @@
       "path": "src/frontend/stores/index.ts",
       "owners": [
         "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
-        "TASK-frontend-view-model-extraction"
+        "TASK-frontend-view-model-extraction",
+        "epic-experimental-egui-frontend"
       ]
     },
     {
@@ -67826,7 +67838,8 @@
         "TASK-2026-openwebui-stream-event-type-registry",
         "TASK-2026-openwebui-structured-toolcall-renderer",
         "TASK-2026-openwebui-thinking-block-render",
-        "epic-architecture"
+        "epic-architecture",
+        "epic-experimental-egui-frontend"
       ]
     },
     {
@@ -76011,7 +76024,8 @@
         "TASK-frontend-view-model-json-negotiation",
         "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
         "TASK-publication-reader-locale-selector",
-        "TASK-publication-viewer-read-mode"
+        "TASK-publication-viewer-read-mode",
+        "epic-experimental-egui-frontend"
       ]
     },
     {
@@ -81006,6 +81020,7 @@
     {
       "path": "src/tui/app-keys.ts",
       "owners": [
+        "BUG-tui-app-getlogger-throws-when-running-standalone",
         "TASK-tui-fire-and-forget-void-without-catch"
       ]
     },
@@ -84083,7 +84098,7 @@
       "from": "TASK-frontend-view-model-extraction",
       "kind": "consumes",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/frontend/alpine/index.ts; src/routes/views/layout.ts"
+      "via": "src/frontend/alpine/index.ts; src/frontend/stores/index.ts; src/routes/views/layout.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-frontend-view-model-json-negotiation",
@@ -84095,7 +84110,7 @@
       "from": "TASK-frontend-view-model-json-negotiation",
       "kind": "consumes",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/routes/views/layout.ts; src/routes/views/negotiate.ts"
+      "via": "src/routes/views/layout.ts; src/routes/views/negotiate.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-gallery-filter-generated-derived-content",
@@ -103554,6 +103569,11 @@
     {
       "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
       "kind": "produces",
+      "to": "src/tui/app-keys.ts"
+    },
+    {
+      "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
+      "kind": "produces",
       "to": "src/tui/app.ts"
     },
     {
@@ -103579,7 +103599,7 @@
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "produces",
-      "to": "src/frontend/alpine/transports/server.ts"
+      "to": "src/frontend/alpine/htmx.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
@@ -143569,12 +143589,27 @@
     {
       "from": "epic-experimental-egui-frontend",
       "kind": "produces",
+      "to": "src/frontend/egui-gallery.ts"
+    },
+    {
+      "from": "epic-experimental-egui-frontend",
+      "kind": "produces",
       "to": "src/frontend/egui-stream.ts"
     },
     {
       "from": "epic-experimental-egui-frontend",
       "kind": "produces",
+      "to": "src/frontend/stores/index.ts"
+    },
+    {
+      "from": "epic-experimental-egui-frontend",
+      "kind": "produces",
       "to": "src/frontend/wasm-loader.ts"
+    },
+    {
+      "from": "epic-experimental-egui-frontend",
+      "kind": "produces",
+      "to": "src/generation/stream-buffer.ts"
     },
     {
       "from": "epic-experimental-egui-frontend",
@@ -143605,6 +143640,11 @@
       "from": "epic-experimental-egui-frontend",
       "kind": "produces",
       "to": "src/routes/views/negotiate.ts"
+    },
+    {
+      "from": "epic-experimental-egui-frontend",
+      "kind": "produces",
+      "to": "src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "epic-experimental-egui-frontend",
@@ -169182,6 +169222,12 @@
     {
       "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
       "kind": "sibling",
+      "to": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
+      "kind": "sibling",
       "to": "BUG-turn-skip-concurrent-advance-posts-double-fire-auto-generati",
       "via": "src/routes/chats/turn-skip-routes.test.ts"
     },
@@ -179610,6 +179656,12 @@
     {
       "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
       "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
+      "kind": "sibling",
       "to": "epic-federation-offload-quotas",
       "via": "src/users/permissions.ts"
     },
@@ -188581,7 +188633,7 @@
       "from": "BUG-frontend-dead-csrf-bearer-header-machinery",
       "kind": "sibling",
       "to": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
-      "via": "src/frontend/alpine/transports/server.ts; src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "BUG-frontend-dead-csrf-bearer-header-machinery",
@@ -189596,6 +189648,12 @@
       "kind": "sibling",
       "to": "WIRE-nsfw-audit-page-missing-inline-authz",
       "via": "src/routes/views/plugin-pages.ts"
+    },
+    {
+      "from": "BUG-gallery-search-401s-anonymous-users-while-grid-serves-them",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "BUG-game-state-block-regex-truncates-payloads-containing-an-inne",
@@ -193880,6 +193938,12 @@
       "kind": "sibling",
       "to": "epic-frontend-headers-management",
       "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
+      "kind": "sibling",
+      "to": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "via": "src/frontend/alpine/htmx.ts"
     },
     {
       "from": "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
@@ -216487,7 +216551,7 @@
       "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
       "kind": "sibling",
       "to": "TASK-tui-fire-and-forget-void-without-catch",
-      "via": "src/tui/app.ts"
+      "via": "src/tui/app-keys.ts; src/tui/app.ts"
     },
     {
       "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
@@ -216582,14 +216646,26 @@
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
+      "to": "TASK-book-unit-editor-review-surface",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
+      "to": "TASK-codemod-fetch-json-safe-utils",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
       "to": "TASK-cors-middleware",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
       "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
@@ -216618,20 +216694,20 @@
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
+      "to": "TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
       "to": "TASK-federation-admin-usage-dashboard-ui",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
       "to": "TASK-frontend-and-http-utils-type-safety-batch",
       "via": "src/config/load/load.ts"
-    },
-    {
-      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
-      "kind": "sibling",
-      "to": "TASK-frontend-exposes-session-token-in-localstorage",
-      "via": "src/frontend/alpine/transports/server.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
@@ -216644,6 +216720,24 @@
       "kind": "sibling",
       "to": "TASK-harness-topic-tui-surface",
       "via": "src/tui/app.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
+      "to": "TASK-html-dedup-audit",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
+      "to": "TASK-html-dedup-shared-partials",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
+      "to": "TASK-htmx-ajax-request-helper",
+      "via": "src/frontend/alpine/htmx.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
@@ -216721,7 +216815,7 @@
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
       "to": "TASK-tui",
-      "via": "src/frontend/alpine/transports/server.ts; src/frontend/fe-fetch.ts; src/tui/chat/api.ts"
+      "via": "src/frontend/fe-fetch.ts; src/tui/chat/api.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
@@ -216775,13 +216869,25 @@
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
       "to": "epic-federation-offload-quotas",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
       "to": "epic-frontend-backend-integration",
       "via": "src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
+      "to": "epic-frontend-components",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
+      "to": "epic-frontend-html-dedup-htmx-reuse",
+      "via": "src/frontend/alpine/htmx.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
@@ -242790,6 +242896,12 @@
     {
       "from": "TASK-2026-openwebui-comfyui-websocket-progress",
       "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/generation/stream-buffer.ts"
+    },
+    {
+      "from": "TASK-2026-openwebui-comfyui-websocket-progress",
+      "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/generation/image-engine/comfyui.ts"
     },
@@ -242940,6 +243052,12 @@
     {
       "from": "TASK-2026-openwebui-retry-from-point",
       "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/generation/stream-buffer.ts"
+    },
+    {
+      "from": "TASK-2026-openwebui-retry-from-point",
+      "kind": "sibling",
       "to": "epic-gallery-batch-operations",
       "via": "src/frontend/alpine/chat-types/core.ts"
     },
@@ -242994,6 +243112,12 @@
     {
       "from": "TASK-2026-openwebui-sse-reconnect-replay",
       "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/generation/stream-buffer.ts"
+    },
+    {
+      "from": "TASK-2026-openwebui-sse-reconnect-replay",
+      "kind": "sibling",
       "to": "epic-gallery-batch-operations",
       "via": "src/frontend/alpine/chat-types/core.ts"
     },
@@ -243025,6 +243149,12 @@
       "from": "TASK-2026-openwebui-stream-event-type-registry",
       "kind": "sibling",
       "to": "epic-architecture",
+      "via": "src/generation/stream-buffer.ts"
+    },
+    {
+      "from": "TASK-2026-openwebui-stream-event-type-registry",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
       "via": "src/generation/stream-buffer.ts"
     },
     {
@@ -243224,6 +243354,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/generation/stream-buffer.ts; src/views/chat.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-structured-toolcall-renderer",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/generation/stream-buffer.ts"
     },
     {
       "from": "TASK-2026-openwebui-structured-toolcall-renderer",
@@ -243428,6 +243564,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/generation/stream-buffer.ts; src/views/chat.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-thinking-block-render",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/generation/stream-buffer.ts"
     },
     {
       "from": "TASK-2026-openwebui-thinking-block-render",
@@ -260527,7 +260669,7 @@
       "from": "TASK-author-suggestion-resolution-surface",
       "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/frontend/alpine/index.ts"
+      "via": "src/frontend/alpine/index.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-author-suggestion-resolution-surface",
@@ -264697,7 +264839,7 @@
       "from": "TASK-book-unit-editor-review-surface",
       "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/frontend/alpine/index.ts"
+      "via": "src/frontend/alpine/index.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-book-unit-editor-review-surface",
@@ -280020,6 +280162,12 @@
     {
       "from": "TASK-comic-page-panel-layout-model",
       "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-comic-page-panel-layout-model",
+      "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/frontend/vn/sprite-stage.ts"
     },
@@ -281322,6 +281470,12 @@
     {
       "from": "TASK-comparison-gallery-comparison-set-integration",
       "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-comparison-gallery-comparison-set-integration",
+      "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/assets/service/links.ts; src/db/enums-content.ts"
     },
@@ -281527,7 +281681,7 @@
       "from": "TASK-comparison-grid-frontend",
       "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/frontend/alpine/index.ts; src/views/gallery.html"
+      "via": "src/frontend/alpine/index.ts; src/routes/views/plugin-dynamic.ts; src/views/gallery.html"
     },
     {
       "from": "TASK-comparison-grid-frontend",
@@ -283964,6 +284118,12 @@
       "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/frontend/stores/index.ts"
     },
     {
       "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
@@ -287527,6 +287687,12 @@
       "from": "TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn",
       "kind": "sibling",
       "to": "TASK-publication-viewer-read-mode",
+      "via": "src/routes/views/plugin-dynamic.ts"
+    },
+    {
+      "from": "TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
       "via": "src/routes/views/plugin-dynamic.ts"
     },
     {
@@ -292597,7 +292763,7 @@
       "from": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
       "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/views/gallery.html"
+      "via": "src/routes/views/plugin-dynamic.ts; src/views/gallery.html"
     },
     {
       "from": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
@@ -309373,7 +309539,7 @@
       "from": "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
       "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/routes/views/layout.ts; src/routes/views/negotiate.ts"
+      "via": "src/routes/views/layout.ts; src/routes/views/negotiate.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt",
@@ -321379,7 +321545,7 @@
       "from": "TASK-publication-reader-locale-selector",
       "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/frontend/alpine/index.ts"
+      "via": "src/frontend/alpine/index.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-publication-reader-locale-selector",
@@ -321769,7 +321935,7 @@
       "from": "TASK-publication-viewer-read-mode",
       "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/frontend/alpine/index.ts"
+      "via": "src/frontend/alpine/index.ts; src/routes/views/plugin-dynamic.ts"
     },
     {
       "from": "TASK-publication-viewer-read-mode",
@@ -335257,7 +335423,7 @@
       "from": "epic-architecture",
       "kind": "sibling",
       "to": "epic-experimental-egui-frontend",
-      "via": "src/elysia-app.ts"
+      "via": "src/elysia-app.ts; src/generation/stream-buffer.ts"
     },
     {
       "from": "epic-architecture",
