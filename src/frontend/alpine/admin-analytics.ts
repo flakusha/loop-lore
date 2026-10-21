@@ -6,15 +6,15 @@
 import { t, } from "./i18n";
 
 interface ConversationOverview {
-  totalMessages?: number;
-  totalTokens?: number;
-  tokensByRole?: { user: number; assistant: number; system: number };
-  averageSessionLength?: number;
-  totalGenerations?: number;
-  avgLatencyMs?: number;
+  totalMessages: number;
+  totalTokens: number;
+  tokensByRole?: { user?: number; assistant?: number; system?: number };
+  averageSessionLength: number;
+  totalGenerations: number;
+  avgLatencyMs: number;
   latencyBuckets?: { label: string; count: number }[];
-  costEstimate?: number;
-  topChats?: { id: string; name: string; totalMessages: number; totalTokens: number }[];
+  costEstimate: number;
+  topChats: { id: string; name: string; totalMessages: number; totalTokens: number }[];
 }
 
 interface CharacterStat {
@@ -45,16 +45,12 @@ export const adminAnalytics = {
     topChats: [] as { id: string; name: string; totalMessages: number; totalTokens: number }[],
   } as ConversationOverview,
   analyticsCharacters: [] as CharacterStat[],
-  // Chart-ready projections computed on load so the template stays dumb.
   analyticsDailyBars: [] as { date: string; count: number; pct: number }[],
   analyticsLatencyBars: [] as { label: string; count: number; pct: number }[],
   analyticsRoleSegments: [] as { role: string; label: string; tokens: number; color: string; pct: number }[],
   loadingAnalytics: false,
   purgingAnalytics: false,
 
-  /**
-   * @returns {Promise<void>}
-   */
   async loadAnalytics() {
     this.loadingAnalytics = true;
     try {
@@ -74,20 +70,25 @@ export const adminAnalytics = {
       }
 
       if (summaryRes.value.ok) { this.analyticsSummary = await summaryRes.value.json(); }
-      if (dailyRes.value.ok) { this.dailyStats = await dailyRes.value.json(); }
-      if (errorsRes.value.ok) { this.errorEvents = await errorsRes.value.json(); }
+      if (dailyRes.value.ok) {
+        const daily = await dailyRes.value.json();
+        this.dailyStats = Array.isArray(daily,) ? daily : [];
+      }
+
+      if (errorsRes.value.ok) {
+        const errors = await errorsRes.value.json();
+        this.errorEvents = Array.isArray(errors,) ? errors : [];
+      }
+
       if (conversationRes.value.ok) {
         const overview = await conversationRes.value.json() as ConversationOverview;
-        this.conversationOverview = { ...this.conversationOverview, ...overview, };
-        this.conversationOverview.averageSessionLength ??= 0;
-        this.conversationOverview.avgLatencyMs ??= 0;
-        this.conversationOverview.totalMessages ??= 0;
-        this.conversationOverview.totalTokens ??= 0;
-        this.conversationOverview.totalGenerations ??= 0;
-        this.conversationOverview.costEstimate ??= 0;
-        this.conversationOverview.topChats ??= [];
-        this.conversationOverview.tokensByRole ??= { user: 0, assistant: 0, system: 0, };
-        const roles = overview.tokensByRole ?? { user: 0, assistant: 0, system: 0, };
+        this.conversationOverview = overview;
+        const roles = {
+          user: overview.tokensByRole?.user ?? 0,
+          assistant: overview.tokensByRole?.assistant ?? 0,
+          system: overview.tokensByRole?.system ?? 0,
+        };
+
         const roleTotal = roles.user + roles.assistant + roles.system;
         this.analyticsRoleSegments = [
           { role: "user", label: t("admin.roleUser",), tokens: roles.user, color: ROLE_COLORS.user, },
@@ -100,25 +101,25 @@ export const adminAnalytics = {
           { role: "system", label: t("admin.roleSystem",), tokens: roles.system, color: ROLE_COLORS.system, },
         ].map((seg,) => ({ ...seg, pct: roleTotal > 0 ? Math.round(seg.tokens / roleTotal * 100,) : 0, }));
 
-        const maxDaily = Math.max(1, ...this.dailyStats.map((d,) => d.count),);
+        const maxDaily = Math.max(1, ...this.dailyStats.map((d,) => d?.count ?? 0),);
         this.analyticsDailyBars = this.dailyStats.map((d,) => ({
-          date: d.date,
-          count: d.count,
-          pct: Math.round(d.count / maxDaily * 100,),
+          date: d?.date ?? "",
+          count: d?.count ?? 0,
+          pct: Math.round((d?.count ?? 0) / maxDaily * 100,),
         }));
 
-        const buckets = overview.latencyBuckets ?? [];
-        const maxLatency = Math.max(1, ...buckets.map((b,) => b.count),);
+        const buckets = Array.isArray(overview.latencyBuckets,) ? overview.latencyBuckets : [];
+        const maxLatency = Math.max(1, ...buckets.map((b,) => b?.count ?? 0),);
         this.analyticsLatencyBars = buckets.map((b,) => ({
-          label: b.label,
-          count: b.count,
-          pct: Math.round(b.count / maxLatency * 100,),
+          label: b?.label ?? "",
+          count: b?.count ?? 0,
+          pct: Math.round((b?.count ?? 0) / maxLatency * 100,),
         }));
       }
 
       if (charactersRes.value.ok) {
         const chars = await charactersRes.value.json() as { characters?: CharacterStat[] };
-        this.analyticsCharacters = chars.characters ?? [];
+        this.analyticsCharacters = Array.isArray(chars?.characters,) ? chars.characters : [];
       }
     } catch {
       showToast("error", t("toasts.failedLoadAnalytics",),);
@@ -127,9 +128,6 @@ export const adminAnalytics = {
     }
   },
 
-  /**
-   * @returns {Promise<void>}
-   */
   async purgeAnalytics() {
     if (this.purgingAnalytics) { return; }
     this.purgingAnalytics = true;
@@ -139,8 +137,8 @@ export const adminAnalytics = {
         showToast("success", t("toasts.telemetryPurged",),);
         await this.loadAnalytics();
       } else {
-        const err = await res.json();
-        showToast("error", err.message || t("toasts.failed",),);
+        const err = await res.json().catch(() => ({}));
+        showToast("error", (err as { message?: string })?.message || t("toasts.failed",),);
       }
     } catch {
       showToast("error", t("toasts.networkError",),);
