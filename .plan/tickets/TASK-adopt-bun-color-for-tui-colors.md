@@ -23,7 +23,7 @@
 
 ## Resolution
 
-Code evidence — `src/tui/asset-view.ts:74,85,95` use blessed string colors:
+Code evidence — `src/tui/asset-view.ts:75,86,96` use blessed string colors:
 
 ```ts
 style: { bg: "black", fg: "white", border: { fg: "yellow", }, },
@@ -31,7 +31,7 @@ style: { fg: "cyan", },
 style: { fg: "white", },
 ```
 
-`Bun.color()` returns a number (e.g., `0x00FFFF` for cyan). Blessed's `style` object expects strings for `fg`/`bg`. Converting `Bun.color()` output to a string for blessed is pure overhead with no functional gain. The `Bun.stringWidth()` half shipped separately in `src/tui/chat/display.ts:23,27`.
+`Bun.color()` returns a number (e.g., `0x00FFFF` for cyan). Blessed's `style` object expects strings for `fg`/`bg`. Converting `Bun.color()` output to a string for blessed is pure overhead with no functional gain. The `Bun.stringWidth()` half shipped separately in `src/tui/chat/display.ts:24,28`.
 
 ## Notes
 

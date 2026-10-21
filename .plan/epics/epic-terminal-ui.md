@@ -41,7 +41,7 @@
 
 ## Summary
 
-The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.screen()`: a `ChatWidget` (F2 toggles an `AssetView` sidebar), and a `HarnessView` overlay (F3). The layout core (`src/tui/app.ts`) contains the full blessed lifecycle — `screen()` at `:41`. Construction now sits behind an exported `createTUIApp()` factory and an `import.meta.main` guard, so importing the module builds nothing. Every bug in shortcut registration, F2/F3 toggle, or resize is verifiable under test rather than by manual smoke test. The web feature surface has almost no TUI coverage.
+The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.screen()`: a `ChatWidget` (F2 toggles an `AssetView` sidebar), and a `HarnessView` overlay (F3). The layout core (`src/tui/app.ts`) contains the full blessed lifecycle — `screen()` at `:70`. Construction now sits behind an exported `createTUIApp()` factory and an `import.meta.main` guard, so importing the module builds nothing. Every bug in shortcut registration, F2/F3 toggle, or resize is verifiable under test rather than by manual smoke test. The web feature surface has almost no TUI coverage.
 
 ## Implementation analysis
 
@@ -49,18 +49,18 @@ The TUI is a shipped-but-hollow shell. Three panels are wired over a `blessed.sc
 
 | File | Lines | Key exports | Blessed-at | Testable? |
 |---|---|---|---|---|
-| `src/tui/app.ts` | 173 | `TUIApp`, `createTUIApp` | `blessed.screen()` at `:41` in ctor; `createLogger` at `:164` inside `createTUIApp()`, called only under the `import.meta.main` guard at `:171` | **Yes** — importing builds nothing (`app.test.ts` asserts zero screens at import); `mock.module('blessed')` covers construction |
-| `src/tui/asset-view.ts` | 237 | `AssetView`, `LinkedAsset` | `blessed.box()` at `:44` in ctor | **Yes** — constructed by `app.ts` and by suites via the `mock.module('blessed')` stub, no production change |
-| `src/tui/harness/index.ts` | 214 | `createHarnessView`, `HarnessView` | `blessed.box()` at `:53` + `blessed.list()` at `:67` in ctor | **Yes** — `createHarnessView` at `:28` is the seam; covered by `harness/index.test.ts` |
-| `src/tui/chat/index.ts` | 251 | `ChatWidget`, `API_BASE` re-export | widget construction in ctor (`:50`, `:59`) | Via `mock.module('blessed')`, covered by `index.test.ts` under an `ISOLATED` gate; its former per-file coverage waiver is retired |
-| `src/tui/chat/api.ts` | 104 | `API_BASE`, `handleSend`, `loadMessages`, `setFetch` seam | none | **Yes** — pure HTTP dispatcher, `setFetch` enables full stubbing |
-| `src/tui/chat/display.ts` | 17 | `formatMessageLine` | none | **Yes** — pure formatter |
-| `src/tui/chat/types.ts` | 38 | pure types (`ChatMessage`, `ChatWidgetOptions`, `ChatHost`) | none | **Yes** — types only |
-| `src/tui/harness/api.ts` | 83 | `loadRuns`, `loadRunDetail`, `loadStats`, `setFetch` seam | none | **Yes** — pure HTTP client, `setFetch` enables full stubbing |
-| `src/tui/harness/display.ts` | 112 | `formatDuration`, `truncateTask`, `resultMarker`, `formatRunLine`, `formatRunDetail`, `formatEmptyRuns` | none | **Yes** — pure formatters |
+| `src/tui/app.ts` | 272 | `TUIApp`, `createTUIApp` | `blessed.screen()` at `:70` in ctor; `createLogger` at `:263` inside `createTUIApp()`, called only under the `import.meta.main` guard at `:270-272` | **Yes** — importing builds nothing (`app.test.ts` asserts zero screens at import); `mock.module('blessed')` covers construction |
+| `src/tui/asset-view.ts` | 255 | `AssetView`, `LinkedAsset` | `blessed.box()` at `:66` in ctor | **Yes** — constructed by `app.ts` and by suites via the `mock.module('blessed')` stub, no production change |
+| `src/tui/harness/index.ts` | 232 | `createHarnessView`, `HarnessView` | `blessed.box()` at `:59` + `blessed.list()` at `:73` in ctor | **Yes** — `createHarnessView` at `:33` is the seam; covered by `harness/index.test.ts` |
+| `src/tui/chat/index.ts` | 367 | `ChatWidget`, `API_BASE` re-export | widget construction in ctor (`:65`, `:74`) | Via `mock.module('blessed')`, covered by `index.test.ts` under an `ISOLATED` gate; its former per-file coverage waiver is retired |
+| `src/tui/chat/api.ts` | 208 | `API_BASE`, `handleSend`, `loadMessages`, `setFetch` seam | none | **Yes** — pure HTTP dispatcher, `setFetch` enables full stubbing |
+| `src/tui/chat/display.ts` | 31 | `formatMessageLine` | none | **Yes** — pure formatter |
+| `src/tui/chat/types.ts` | 49 | pure types (`ChatMessage`, `ChatWidgetOptions`, `ChatHost`) | none | **Yes** — types only |
+| `src/tui/harness/api.ts` | 86 | `loadRuns`, `loadRunDetail`, `loadStats`, `setFetch` seam | none | **Yes** — pure HTTP client, `setFetch` enables full stubbing |
+| `src/tui/harness/display.ts` | 144 | `formatDuration`, `truncateTask`, `resultMarker`, `formatRunLine`, `formatRunDetail`, `formatEmptyRuns` | none | **Yes** — pure formatters |
 | `src/tui/harness/types.ts` | 22 | re-exports from `harness/read-models` + `harness/types`; single source of truth against `durationMs`/`runMs` drift | none | **Yes** — types only |
-| `src/tui/chat-picker.ts` | 225 | `ChatPicker`, `loadChats`, `setFetch` seam | `blessed.box()` at `:94` in ctor | **Yes** — `setFetch` enables full stubbing |
-| `src/config/sections/tui.ts` | 39 | `TUI_DEFAULTS`, `TuiSection`, `tuiMeta`; `enabled` defaults `true`, `sessionToken` optional | none | **Yes** |
+| `src/tui/chat-picker.ts` | 425 | `ChatPicker`, `loadChats`, `setFetch` seam | `blessed.box()` at `:158` in ctor | **Yes** — `setFetch` enables full stubbing |
+| `src/config/sections/tui.ts` | 50 | `TUI_DEFAULTS`, `TuiSection`, `tuiMeta`; `enabled` defaults `true`, `sessionToken` optional | none | **Yes** |
 | `src/config/schema/tui.ts` | 9 | `TuiConfig` alias | none | **Yes** |
 
 ### Testability debt
@@ -72,10 +72,10 @@ Resolved. Construction is no longer reachable at import time: `createTUIApp()` b
 | Drift | Spec side | Code side | Owner |
 |---|---|---|---|
 | Spec file name | `docs/spec/tui.md` cited at Related Epics; does not exist | Actual file is `docs/spec/terminal-ui.md` | `TASK-tui-spec-sync` |
-| API routes (assets) | `:15` claims integration with `/api/assets` | Code calls `/api/v1/assets` (`asset-view.ts:206`) | `TASK-tui-spec-sync` |
-| API routes (chat) | `:15` claims integration with `/api/assistant` | `/api/assistant` is called nowhere in `src/tui/`; chat calls `/api/v1/chats/:id/messages` (`chat/api.ts:32,77`) | `TASK-tui-spec-sync` |
+| API routes (assets) | pre-fix `docs/spec/terminal-ui.md:15` claimed integration with `/api/assets` | Code calls `/api/v1/assets` (`asset-view.ts:228`) | `TASK-tui-spec-sync` |
+| API routes (chat) | pre-fix `docs/spec/terminal-ui.md:15` claimed integration with `/api/assistant` | `/api/assistant` is called nowhere in `src/tui/`; chat calls `/api/v1/chats/:id/messages` (`chat/api.ts:59,123`) | `TASK-tui-spec-sync` |
 | Feature list | Feature list predates `src/tui/harness/` and `/api/v1/harness/runs` | Harness overlay and API exist in code but not in spec | `TASK-tui-spec-sync` |
-| `ENABLE_TUI` env var | Maps to `tui.enabled` (`env-map.ts:113`); defaults `true` (`config/sections/tui.ts:7`) | Read at startup: `TUIApp` exits 0 with a status message when false | resolved |
+| `ENABLE_TUI` env var | Maps to `tui.enabled` (`env-map.ts:116`); defaults `true` (`config/sections/tui.ts:7`) | Read at startup: `TUIApp` exits 0 with a status message when false | resolved |
 
 ## Feature research — coverage gap vs the web UI
 
@@ -120,7 +120,7 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 
 ## Plan
 
-1. **P1 — Testability seam** — shipped (`TASK-tui-shell-testability.md`): `new TUIApp()` moved out of module scope into `createTUIApp()` behind an `import.meta.main` guard, following the `createHarnessView` factory at `harness/index.ts:28`. No `createAssetView` extraction was needed — `AssetView` was already constructible under the `mock.module('blessed')` stub. Unblocked `TASK-tui-dedupe-api-base.md` and `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md`. Cheap and unblocked: `TASK-adopt-bun-color-for-tui-colors.md`, `TASK-adopt-bun-stringwidth-for-tui.md`.
+1. **P1 — Testability seam** — shipped (`TASK-tui-shell-testability.md`): `new TUIApp()` moved out of module scope into `createTUIApp()` behind an `import.meta.main` guard, following the `createHarnessView` factory at `harness/index.ts:33`. No `createAssetView` extraction was needed — `AssetView` was already constructible under the `mock.module('blessed')` stub. Unblocked `TASK-tui-dedupe-api-base.md` and `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md`. Cheap and unblocked: `TASK-adopt-bun-color-for-tui-colors.md`, `TASK-adopt-bun-stringwidth-for-tui.md`.
 2. **P2 — Spec sync** — correct `docs/spec/terminal-ui.md` against code: route paths, feature list addition of harness overlay. Unblocks `TASK-tui-spec-sync`.
 3. **P3 — Chat picker** — list existing chats, pre-select on enter, wire `ChatWidget.setChatId`. Unblocks `TASK-tui-chat-picker`.
 4. **P4 — Work-topic surface** — add topic column + F4 filter to harness overlay. Unblocks `TASK-harness-topic-tui-surface`.
@@ -129,15 +129,15 @@ See `epic-harness-integration.md` §18 for the full topic lifecycle and auto-sco
 
 ## Acceptance Criteria
 
-- [x] `src/tui/app.ts` creates its logger before constructing the screen, so importing it standalone does not throw (`createLogger` at `:155` precedes `new TUIApp()` at `:157`).
+- [x] `src/tui/app.ts` creates its logger before constructing the screen, so importing it standalone does not throw (`createLogger` at `:263` precedes `new TUIApp()` at `:264`).
 - [x] `config.tui.sessionToken` reaches `ChatWidget`, with an empty string normalized to undefined.
 - [x] `ChatWidget` message send/load is covered by tests that stub fetch instead of mounting blessed.
-- [x] `import("src/tui/app.ts")` in a non-TTY process does not construct a screen — `new TUIApp()` is behind `createTUIApp()` factory and `import.meta.main` guard (`app.ts:230-240`).
-- [x] `AssetView` and the harness overlay are constructible in tests (`AssetView` constructed by `app.ts` and test suites; `createHarnessView` factory at `harness/index.ts:24-28`).
+- [x] `import("src/tui/app.ts")` in a non-TTY process does not construct a screen — `new TUIApp()` is behind `createTUIApp()` factory and `import.meta.main` guard (`app.ts:270-272`).
+- [x] `AssetView` and the harness overlay are constructible in tests (`AssetView` constructed by `app.ts` and test suites; `createHarnessView` factory at `harness/index.ts:33-38`).
 - [x] Every row in §Spec drift is closed against `docs/spec/terminal-ui.md`: the spec cites `/api/v1/assets` and `/api/v1/chats/:id/messages` instead of `/api/assets` and `/api/assistant`, and lists the harness overlay and `/api/v1/harness/*`. Harness routes (`GET /api/v1/harness/runs`, `GET /api/v1/harness/runs/:runId`, `GET /api/v1/harness/stats`) added to the Integration line in `docs/spec/terminal-ui.md:19`.
 - [x] A chat-picker screen exists (`src/tui/chat-picker.ts`), so the TUI can start a chat without an externally supplied `chatId`.
-- [x] `ENABLE_TUI` either gates startup or is removed from `env-map.ts` — `tui.enabled` gates startup at `app.ts:95-100`.
-- [x] `Bun.stringWidth()` is adopted for safe truncation (`src/tui/chat/display.ts:23,27`). `Bun.color()` half: **Wontfix** — blessed consumes colour strings; `Bun.color()` returns a number requiring conversion back to a string, so the colour half of this criterion was closed Wontfix per `TASK-adopt-bun-color-for-tui-colors.md`.
+- [x] `ENABLE_TUI` either gates startup or is removed from `env-map.ts` — `tui.enabled` gates startup at `app.ts:99-104`.
+- [x] `Bun.stringWidth()` is adopted for safe truncation (`src/tui/chat/display.ts:24,28`). `Bun.color()` half: **Wontfix** — blessed consumes colour strings; `Bun.color()` returns a number requiring conversion back to a string, so the colour half of this criterion was closed Wontfix per `TASK-adopt-bun-color-for-tui-colors.md`.
 
 
 ## Linked Tasks
@@ -164,11 +164,11 @@ Bound to this epic via the `**Epic:** epic-terminal-ui` header on each ticket.
 
 - [x] `BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle.md` — sidebar advertised `Del: unlink` with no handler behind it; fixed in `050eb320d` by removing the claim rather than shipping a one-keypress irreversible delete
 - [x] `TASK-harness-stats-endpoint-was-implemented-but-never-called.md` — `loadStats` had zero production callers, so `GET /api/v1/harness/stats` was never fetched; fixed in `42abe9123` by wiring it into the empty-runs branch of the F3 refresh with quiet 403 degradation
-- [x] `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — **Done**: IIFE removed, `setChatId` now calls `void this.loadAssets()` directly; `loadAssets` catches internally via `renderInfo` (`asset-view.ts:199-204,219-250`)
+- [x] `TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md` — **Done**: IIFE removed, `setChatId` now calls `void this.loadAssets()` directly; `loadAssets` catches internally via `renderInfo` (`asset-view.ts:200-205,220-254`)
 - [x] `TASK-adopt-bun-color-for-tui-colors.md` — **Wontfix**: blessed consumes colour strings (`fg: "cyan"`); `Bun.color()` returns a number requiring round-trip conversion; `Bun.stringWidth()` half shipped separately
 
-- `TASK-tui-dedupe-api-base.md` — **premise no longer holds**: `API_BASE` is declared once at `src/tui/chat/api.ts:7`, re-exported by `harness/api.ts:8` and imported by `app.ts:16`, which is exactly what the ticket asks for. Re-scope or close rather than re-implement
-- `TASK-tui-fire-and-forget-void-without-catch.md` — **new**: audit `void <asyncCall>()` sites; many are safe by design (callees catch internally); `app.ts:190` IIFE is the compliance gap
+- `TASK-tui-dedupe-api-base.md` — **premise no longer holds**: `API_BASE` is declared once at `src/tui/chat/api.ts:7`, re-exported by `harness/api.ts:8` and imported by `app.ts:18`, which is exactly what the ticket asks for. Re-scope or close rather than re-implement
+- `TASK-tui-fire-and-forget-void-without-catch.md` — **new**: audit `void <asyncCall>()` sites; many are safe by design (callees catch internally); `app.ts:203` IIFE is the compliance gap
 - `TASK-tui-chat-create-api-silent-catch.md` — **new**: `chat-create-api.ts` catch blocks are deliberate Result-returning fallbacks, not silent swallows; recommend close with comment clarification
 - `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md` — markup injection (defects 1–2) are real and actionable; defect 3 (transport) is stale (no WebSocket in TUI); defect 4 (DB filename) is scripts/ not TUI; defect 5 (API_BASE) is low value
 

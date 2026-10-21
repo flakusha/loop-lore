@@ -19,6 +19,6 @@ Use Bun.stringWidth() and Bun.stripAnsi() for TUI string operations. ~6756x fast
 
 ## Acceptance Criteria
 
-- [x] Implementation complete — `src/tui/chat/display.ts:23,27` use `Bun.stringWidth()` for column-accurate truncation
+- [x] Implementation complete — `src/tui/chat/display.ts:24,28` use `Bun.stringWidth()` for column-accurate truncation
 - [x] Tests passing — `src/tui/chat/display.test.ts` covers surrogate pairs, CJK glyphs, ANSI codes
 - [x] Documentation updated — no spec changes needed (internal optimization)
