@@ -18,12 +18,7 @@ import type {
 
 declare global {
   interface DocumentEventMap {
-    "htmx:configRequest": CustomEvent<{ headers: Record<string, string> }>;
-    "htmx:beforeSwap": CustomEvent<{ content: string }>;
-    "htmx:afterSwap": CustomEvent<{ target: Element }>;
-    "htmx:load": CustomEvent<{ elt: Element }>;
-    "htmx:responseError": CustomEvent<{ xhr?: XMLHttpRequest }>;
-    "htmx:loadTheme": CustomEvent<{ theme?: string }>;
+    "htmx:after:initTheme": CustomEvent<{ theme?: string }>;
     "show-toast": CustomEvent<{ type?: string; message: string; icon?: string }>;
   }
 

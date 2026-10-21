@@ -55,7 +55,7 @@
     <script src="/locale-init.js" nonce="{{cspNonce}}" defer></script>
 
   </head>
-  <body x-data="app()" hx-ext="alpine-morph">
+  <body x-data="app()">
     <!-- Toast container (fixed, outside layout) -->
     <div class="toast-container" id="toast-container" data-testid="toast-container" aria-live="polite" aria-atomic="false" role="region" aria-label="Notifications"></div>
 
@@ -296,7 +296,6 @@
     <div
       id="app-root"
       data-testid="app-root"
-      hx-ext="response-targets"
       hx-target-error="#toast-container"
       role="main"
       tabindex="-1"

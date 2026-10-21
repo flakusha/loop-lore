@@ -70,10 +70,10 @@ g.timeBadgeHtml = timeBadgeHtml;
 Alpine.plugin(morph,);
 
 // ── 4. htmx config ──────────────────────────────────────────────
-const cspNonce = (g.__cspNonce as string) || "";
-if (cspNonce) {
-  htmx.config.inlineScriptNonce = cspNonce;
-}
+// Preserve htmx 2.x implicit inheritance behavior during migration.
+htmx.config.implicitInheritance = true;
+// Preserve htmx 2.x no-swap-on-error behavior.
+htmx.config.noSwap = [204, 304, "4xx", "5xx",] as any;
 
 // ── 5. Alpine magic: $t (i18n) ──────────────────────────────────
 Alpine.magic("t", (el: HTMLElement,) => {
@@ -120,7 +120,7 @@ function hydrateClientDates(root: ParentNode = document,): void {
 
 g.hydrateClientDates = hydrateClientDates;
 document.addEventListener("DOMContentLoaded", () => hydrateClientDates(),);
-document.addEventListener("htmx:afterSwap", (e: Event,) => {
+document.addEventListener("htmx:after:swap", (e: Event,) => {
   // htmx dispatches afterSwap on each settled element (bubbles to document);
   // detail.target is the swap target. Hydrate both subtrees — each call is
   // a scoped querySelectorAll, so over-coverage costs one extra scan.
@@ -133,9 +133,9 @@ document.addEventListener("htmx:afterSwap", (e: Event,) => {
 
 // ── 6. htmx extensions (CJS side-effects) ───────────────────────
 
-require("htmx.org/dist/ext/alpine-morph.js",);
+require("htmx.org/dist/ext/hx-alpine-compat.js",);
 
-require("htmx-ext-sse/sse.js",);
+require("htmx.org/dist/ext/hx-sse.js",);
 initAlpineStores();
 
 // ── 12. Start Alpine (after all registrations) ──────────────────
