@@ -15,7 +15,7 @@
 
 ## Summary
 
-Modernize the TUI chat layer's request wiring and add coverage. The current `src/tui/chat/api.ts` builds an `Authorization` header manually via a local `getAuthHeaders` helper. The codebase already exposes `safeFetch`'s `auth: { sessionToken }` parameter (`src/utils/safe-fetch/headers.ts:29-31`) used by `src/frontend/fe-fetch.ts:69` and `src/frontend/alpine/transports/server.ts:45`. Switching to the shared helper drops duplicated logic. Three test files pin the contract.
+Modernize the TUI chat layer's request wiring and add coverage. The current `src/tui/chat/api.ts` builds an `Authorization` header manually via a local `getAuthHeaders` helper. The codebase already exposes `safeFetch`'s `auth: { sessionToken }` parameter (`src/utils/safe-fetch/headers.ts:29-31`) used by `src/frontend/fe-fetch.ts:82` and `src/frontend/alpine/transports/server.ts:45`. Switching to the shared helper drops duplicated logic. Three test files pin the contract.
 
 ## Linked Epics
 

@@ -10,7 +10,7 @@
 **Tags:** tui, testing, api, client-contract
 **Related:** `.plan/epics/epic-experimental-egui-frontend.md`, `.plan/epics/epic-terminal-ui.md`, `.plan/tickets/TASK-frontend-client-contract-doc.md`, `.plan/tickets/TASK-frontend-view-model-json-negotiation.md`
 **Summary:** Add a suite that drives the real Elysia app through the endpoints the TUI parses, so an API shape change fails a test instead of silently breaking a screen.
-**Context:** The TUI is already the reference non-htmx client (`src/tui/`), which `docs/meta/code-practices-improvements/07-alternative-frontend-support.md:8-13` and §Recommendations item 5 both single out: "Keep TUI as the reference alt-client. Its tests double as API contract smoke tests." Today every TUI test stubs `globalThis.fetch` — `src/tui/chat/api.ts` exposes a `setFetch` seam and `src/tui/harness/api.ts` does too — so the suite proves the TUI parses what it was *told*, not what the server *sends*. A shape drift between `src/routes/v1/` and `src/tui/*/api.ts` is currently invisible until a human runs the TUI. This ticket closes that gap for the endpoints the TUI already calls, which is the cheapest live contract coverage available; it does not add TUI screens.
+**Context:** The TUI is already the reference non-htmx client (`src/tui/`), which `docs/meta/code-practices-improvements/07-alternative-frontend-support.md:8-10` and §Recommendations item 5 both single out: "Keep TUI as the reference alt-client. Its tests double as API contract smoke tests." Today every TUI test stubs `globalThis.fetch` — `src/tui/chat/api.ts` exposes a `setFetch` seam and `src/tui/harness/api.ts` does too — so the suite proves the TUI parses what it was *told*, not what the server *sends*. A shape drift between `src/routes/v1/` and `src/tui/*/api.ts` is currently invisible until a human runs the TUI. This ticket closes that gap for the endpoints the TUI already calls, which is the cheapest live contract coverage available; it does not add TUI screens.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
 ## Scope
@@ -50,7 +50,7 @@
 
 - `src/tui/chat/api.ts` — `setFetch` seam, message endpoints
 - `src/tui/harness/api.ts` — `setFetch` seam, harness endpoints
-- `src/tui/asset-view.ts:206` — the assets call
+- `src/tui/asset-view.ts:232` — the assets call
 - `docs/meta/code-practices-improvements/07-alternative-frontend-support.md` —
   recommendation 5, which this implements
 
@@ -64,7 +64,7 @@ outside the new test file changed.
 
 ### Boot harness reused
 
-`src/routes/v1/v1-enforcement.test.ts:16-69` — `createTestDb()` for the
+`src/routes/v1/v1-enforcement.test.ts:45-72` — `createTestDb()` for the
 in-memory DB, `loadConfig()` with cron disabled, then `createApp({ database,
 config, asyncStore })` and `app.handle(new Request(...))`. That harness already
 boots the REAL composed app (registerPlugins + the v1 barrel + catch-all)
@@ -103,7 +103,7 @@ individually (no snapshot blob).
 
 ### Mutation proof (fail → revert, both directions)
 
-Mutation A — `src/routes/messages/create-response.ts:46`, the field
+Mutation A — `src/routes/messages/create-response.ts:47`, the field
 `handleSend` reads for the user-message id:
 
 ```diff
@@ -124,7 +124,7 @@ Mutation A — `src/routes/messages/create-response.ts:46`, the field
   error: expect(received).toBe(expected)
   Expected: "contract: durable turn"
   Received: undefined
-  at src/tui/api-contract.test.ts:170:27
+  at src/tui/api-contract.test.ts:171:27
 
 SUMMARY:
   10 pass
@@ -149,7 +149,7 @@ Mutation B — `src/routes/harness/index.ts:71`, the envelope key
   error: expect(received).toBe(expected)
   Expected: true
   Received: false
-  at src/tui/api-contract.test.ts:318:40
+  at src/tui/api-contract.test.ts:345:40
 
 SUMMARY:
   9 pass

@@ -1,5 +1,5 @@
-<!-- SPDX-License-Identifier: Apache-2.0-->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors-->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 # BUG: TUI send inherits the 30s default safeFetch timeout against blocking LLM generation
 

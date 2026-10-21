@@ -23478,6 +23478,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-book-unit-editor-review-surface.md"
     },
     {
@@ -24421,10 +24425,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
     },
     {
       "kind": "ticket",
@@ -25479,6 +25479,12 @@
       "source": ".plan/tickets/TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto.md"
     }
   ],
+  "src/frontend/egui-gallery.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    }
+  ],
   "src/frontend/egui-stream.ts": [
     {
       "kind": "epic",
@@ -26392,6 +26398,10 @@
     }
   ],
   "src/frontend/stores/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-correct-dead-file-references-and-store-shape-drift-in-the-in.md"
@@ -30665,6 +30675,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
     },
     {
       "kind": "ticket",
@@ -44573,6 +44587,10 @@
   ],
   "src/routes/views/plugin-dynamic.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-.md"
     },
@@ -52280,6 +52298,10 @@
     }
   ],
   "src/tui/app-keys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
