@@ -44,8 +44,10 @@ globalThis.apiFetch = apiFetch;
 
 // ── htmx event handlers ───────────────────────────────────
 
-document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Record<string, string> }>,) => {
-  apiLog.debug("htmx:configRequest", { path: (e as any)?.detail?.path, },);
+document.addEventListener("htmx:config:request", (e: Event,) => {
+  const detail = (e as CustomEvent<{ ctx?: { request?: { headers: Record<string, string> } } }>)?.detail;
+  const headers = detail?.ctx?.request?.headers;
+  apiLog.debug("htmx:config:request", { path: (detail as any)?.path, },);
   // Browser auth rides the HttpOnly `ll_token` cookie (same-origin, automatic)
   // — no Bearer fallback: `localStorage.session_token` has no writer.
   // CSRF double-submit: echo the (non-HttpOnly) csrf_token cookie value in
@@ -53,11 +55,11 @@ document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Recor
   // half is already present; without this header the both-halves gate
   // (src/middleware/csrf.ts) rejects every hx-post/hx-put partial with 403.
   const csrf = getCsrfToken();
-  if (csrf) { e.detail.headers["X-CSRF-Token"] = csrf; }
+  if (csrf && headers) { headers["X-CSRF-Token"] = csrf; }
 },);
 
-document.addEventListener("htmx:beforeSwap", () => {
-  apiLog.debug("htmx:beforeSwap",);
+document.addEventListener("htmx:before:swap", () => {
+  apiLog.debug("htmx:before:swap",);
 },);
 
 // Trigger page-specific loaders on htmx content swaps (for pages still using JS)
@@ -72,9 +74,9 @@ function triggerPageLoaders(): void {
   }
 }
 
-document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>,) => {
-  const elt = e.detail.elt;
-  apiLog.debug("htmx:load", { tag: elt?.tagName, id: (elt as any)?.id, },);
+document.addEventListener("htmx:after:init", (e: Event,) => {
+  const elt = ((e as any).target || (e as any).elt || (e as any)?.detail?.elt) as Element;
+  apiLog.debug("htmx:after:init", { tag: elt?.tagName, id: (elt as any)?.id, },);
   if (elt && (globalThis as any).htmx && globalThis.Alpine) {
     htmx.process(elt as HTMLElement,);
     try {
@@ -89,7 +91,7 @@ document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>,) => {
 },);
 
 // Update document title from header title after navigation
-document.addEventListener("htmx:afterSwap", (e: Event,) => {
+document.addEventListener("htmx:after:swap", (e: Event,) => {
   const target = (e as CustomEvent<{ target: Element }>)?.detail?.target;
   if (target) {
     const header = document.querySelector<HTMLElement>("#header-slot .title",);
@@ -102,18 +104,43 @@ document.addEventListener("htmx:afterSwap", (e: Event,) => {
   }
 },);
 
-document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpRequest }>,) => {
-  const xhr = e.detail.xhr;
-  if (!xhr) { return; }
-  try {
-    const body = jsonParseOr<Record<string, unknown>>(xhr.responseText, {},);
-    const msg = (body as any)?.error || `Error ${xhr.status}`;
+document.addEventListener("htmx:response:error", (e: Event,) => {
+  const detail = (e as CustomEvent<any>)?.detail;
+  const xhr = detail?.xhr;
+  if (xhr) {
+    let msg = `Error ${xhr.status}`;
+    try {
+      const body = jsonParseOr<Record<string, unknown>>(xhr.responseText, {},);
+      if (body?.error) { msg = body.error as string; }
+    } catch {
+      /* not JSON */
+    }
+
     document.dispatchEvent(new CustomEvent("show-toast", { detail: { type: "error", message: msg, }, },),);
-  } catch {
-    document.dispatchEvent(
-      new CustomEvent("show-toast", { detail: { type: "error", message: `Error ${xhr.status}`, }, },),
-    );
+    return;
   }
+
+  const res = detail?.ctx?.response;
+  if (!res) { return; }
+  res
+    .clone()
+    .text()
+    .then((text: string,) => {
+      let msg = `Error ${res.status}`;
+      try {
+        const body = jsonParseOr<Record<string, unknown>>(text, {},);
+        if (body?.error) { msg = body.error as string; }
+      } catch {
+        /* not JSON */
+      }
+
+      document.dispatchEvent(new CustomEvent("show-toast", { detail: { type: "error", message: msg, }, },),);
+    },)
+    .catch(() => {
+      document.dispatchEvent(
+        new CustomEvent("show-toast", { detail: { type: "error", message: `Error ${res.status}`, }, },),
+      );
+    },);
 },);
 
 // ── Alpine stores ────────────────────────────────────────
@@ -124,7 +151,7 @@ document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpR
 document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
 
 // ── hx-on::after-request replacements (success events) ──────
-document.addEventListener("htmx:afterRequest", (e: Event,) => {
+document.addEventListener("htmx:after:request", (e: Event,) => {
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   if (!detail.successful) { return; }
   const successEvent = detail.elt.dataset.hxSuccessEvent;
