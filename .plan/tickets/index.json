@@ -52560,6 +52560,18 @@
     "title": "Split `src/routes/messages.ts` (1013L)",
     "type": "TASK"
   },
+  "TASK-SPLIT-REUNITE-AUX-CLASSIFICATION": {
+    "hash": "pending",
+    "extid": "TASK-SPLIT-REUNITE-AUX-CLASSIFICATION",
+    "type": "TASK",
+    "title": "Split/Reunite Aux (0-shot) Classification",
+    "label": "task",
+    "priority": "P2-B",
+    "epic": "epic-chat-transfer-location",
+    "tags": [],
+    "source": ".plan/tickets/TASK-split-reunite-aux-classification.md",
+    "status": "Not Started"
+  },
   "TASK-SPLIT-SERVER": {
     "epic": ":",
     "extid": "TASK-SPLIT-SERVER",
