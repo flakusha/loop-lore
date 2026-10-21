@@ -719,7 +719,7 @@ describe("characters.ts page actions", () => {
     test("confirmed + non-ok → silent", async () => {
       routeFetch({ "/api/v1/actors/a1": () => jsonResponse({}, 404,), },);
       await mod.deleteCharacter(deleteBtn("a1",) as unknown as HTMLElement,);
-      expect(toasts(doc,),).toEqual([],);
+      expect(toasts(doc,),).toEqual([{ type: "error", message: "Failed to delete character", },],);
       expect(htmxCalls.length,).toBe(0,);
     });
 
@@ -729,7 +729,7 @@ describe("characters.ts page actions", () => {
       };
 
       await mod.deleteCharacter(deleteBtn("a1",) as unknown as HTMLElement,);
-      expect(toasts(doc,),).toEqual([],);
+      expect(toasts(doc,),).toEqual([{ type: "error", message: "Failed to delete character", },],);
     });
   });
 
