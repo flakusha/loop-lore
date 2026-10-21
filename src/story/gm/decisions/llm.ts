@@ -27,17 +27,29 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
   const log = getLogger().child({ module: "gm-decision", },);
 
   const assembler = new PromptAssembler(deps.db,);
-  const assembled = await assembler.assemble({
-    actorId,
-    chatId: deps.chatId,
-    modelId: resolvedModel ?? "default",
-    systemPromptOverride: systemPrompt,
-    includeStoryContext: true,
-    includeExamples: false,
-    config: deps.appConfig,
-    task: "gm-decision",
-    action: `advance story at "${context.world.currentLocation.name}"`,
-  },);
+  let assembled: Awaited<ReturnType<typeof assembler.assemble>>;
+  try {
+    assembled = await assembler.assemble({
+      actorId,
+      chatId: deps.chatId,
+      modelId: resolvedModel ?? "default",
+      systemPromptOverride: systemPrompt,
+      includeStoryContext: true,
+      includeExamples: false,
+      config: deps.appConfig,
+      task: "gm-decision",
+      action: `advance story at "${context.world.currentLocation.name}"`,
+    },);
+  } catch (error) {
+    log.warn("llmDecision: prompt assembly failed — falling back to hardcoded decision", {
+      actorId,
+      chatId: deps.chatId,
+      error: error instanceof Error ? error.message : String(error,),
+    },);
+
+    const fallback = await hardcodedDecision(deps, context, actorId,);
+    return { ...fallback, fallback: true, };
+  }
 
   const location = context.world.currentLocation;
   const instructions = [
