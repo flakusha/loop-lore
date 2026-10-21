@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3561
+- tickets: 3574
 - epics: 336
-- src paths owned: 4279
-- edges: produces 11003, consumes 398, sibling 31584, owns 1950, related 1166
+- src paths owned: 4284
+- edges: produces 11019, consumes 398, sibling 31651, owns 1950, related 1166
 
 ## Shared src hubs
 
@@ -54,6 +54,7 @@ output is byte-identical for identical inputs.
 | `src/api-governance/rate-limiting/store.ts` | `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-`, `BUG-rate-limit-in-memory-store-never-evicts-idle-keys`, `epic-api-rate-limiting` |
 | `src/api-governance/telemetry/collector.ts` | `BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa`, `FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard`, `TASK-harness-otel-replay`, `TASK-rate-limiting-telemetry`, `epic-api-telemetry` |
 | `src/api-governance/telemetry/tracing.ts` | `TASK-rate-limiting-telemetry`, `epic-api-telemetry` |
+| `src/app.rs` | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m`, `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` |
 | `src/app/register-plugins.ts` | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it`, `BUG-bug-async-result-store-track-never-called-request-results-pi`, `BUG-dual-vn-choices-route-registration-shadows-guarded-route`, `BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop`, `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und`, `BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori`, `BUG-register-plugins-150-references-undefined-chatsectionsroutes`, `BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m`, `FEAT-memory-visualizer-knowledge-graph-over-asset-links`, `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-crafting-stations-execution`, `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag`, `TASK-lora-discovery-application`, `TASK-middleware-global-idempotency-replay-for-re-fired-requests`, `TASK-middleware-idempotency-wire-into-elysia`, `TASK-middleware-in-progress-status-endpoint-for-long-running-requ`, `TASK-skills-routes`, `TASK-story-points-prototype`, `epic-agency-story-points`, `epic-character-growth`, `epic-db-cold-storage-high-perf`, `epic-e2e-integration-testing`, `epic-effect-v4-adoption-evaluation`, `epic-file-splitting` |
 | `src/assets/alpha-detect.ts` | `TASK-assets-has-alpha-column-and-store-computation`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `epic-avatar-alpha-vn-layering` |
 | `src/assets/controller.routes.test.ts` | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par`, `TASK-assistant-entity-access-asset-access` |
@@ -289,11 +290,12 @@ output is byte-identical for identical inputs.
 | `src/characters/services/mood-service/apply-happiness-delta.ts` | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou`, `TASK-041`, `TASK-mood-shift-delta-tuning-word-boundary` |
 | `src/characters/services/mood-service/index.ts` | `TASK-041`, `TASK-add-missing-rpg-module-barrels` |
 | `src/characters/services/mood-service/log-event.ts` | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou`, `TASK-041` |
+| `src/characters/services/mood-service/update-mood.ts` | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou`, `BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call` |
 | `src/characters/services/personality-service.ts` | `FEAT-character-spec-inclusion-race-origin-culture`, `FEAT-origin-capture-generation-seeding`, `FEAT-race-origin-lore-identity-model`, `FEAT-seed-default-characters-identity` |
 | `src/characters/services/personality-service/resolve.ts` | `BUG-characters-resolvecharactertraits-silently-drops-world-layer`, `TASK-character-domain-residual-defects` |
 | `src/characters/services/personality-service/utility-scorer.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-npc-reaction-system`, `TASK-npc-social-decision`, `epic-research-agency-decision` |
 | `src/characters/services/relationships-service-bridge.ts` | `TASK-fix-lint-baseline-debt`, `epic-character-growth` |
-| `src/characters/services/relationships-service/write.ts` | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou`, `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c`, `epic-character-growth` |
+| `src/characters/services/relationships-service/write.ts` | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou`, `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c`, `BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same`, `epic-character-growth` |
 | `src/characters/services/skills-service-bridge.ts` | `TASK-fix-lint-baseline-debt`, `epic-character-growth` |
 | `src/characters/services/traits-service-bridge.ts` | `TASK-fix-lint-baseline-debt`, `epic-character-growth` |
 | `src/characters/services/traits-service/types.ts` | `epic-character-growth`, `epic-character-internal-traits` |
@@ -375,7 +377,7 @@ output is byte-identical for identical inputs.
 | `src/chat/service/seen.ts` | `BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok`, `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` |
 | `src/chat/service/split-utils.ts` | `BUG-chat-reunite-copymessagestoprimary-carries-source-chat-key-i`, `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-plugin-tool-authorization-fails-open`, `TASK-chat-branch-merge`, `TASK-chat-feature-rpg-chronological-navigation`, `TASK-typescript-7-migration-typecheck-failures`, `epic-chat-product-features` |
 | `src/chat/service/split.test.ts` | `BUG-pre-existing-unit-test-failures-blocking-clean-suite`, `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha`, `TASK-chat-branch-merge`, `TASK-travel-party-migration` |
-| `src/chat/service/split.ts` | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a`, `BUG-chat-reunite-secondary-ownership-check-missing`, `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha`, `TASK-chat-branch-merge`, `TASK-chat-feature-rpg-chronological-navigation`, `TASK-chat-transfer-location`, `TASK-travel-party-migration`, `TASK-typescript-7-migration-typecheck-failures`, `epic-chat-product-features`, `epic-chat-transfer-location` |
+| `src/chat/service/split.ts` | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a`, `BUG-chat-reunite-secondary-ownership-check-missing`, `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c`, `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha`, `TASK-chat-branch-merge`, `TASK-chat-feature-rpg-chronological-navigation`, `TASK-chat-transfer-location`, `TASK-travel-party-migration`, `TASK-typescript-7-migration-typecheck-failures`, `epic-chat-product-features`, `epic-chat-transfer-location` |
 | `src/chat/service/template-crud.ts` | `TASK-chat-feature-settings-templates-compat-matrix`, `epic-chat-product-features` |
 | `src/chat/service/template-defaults.ts` | `TASK-chat-feature-settings-templates-compat-matrix`, `epic-chat-product-features` |
 | `src/chat/service/templates.ts` | `BUG-character-and-chat-setup-example-configs-document-fields-the`, `BUG-character-seed-dedupes-on-display-name`, `BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi`, `FEAT-world-template-chat-lifecycle`, `TASK-adopt-bun-yaml-to-replace-js-yaml`, `TASK-chat-feature-settings-templates-compat-matrix`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char`, `epic-chat-product-features`, `epic-context-injection-templates` |
@@ -674,7 +676,7 @@ output is byte-identical for identical inputs.
 | `src/federation/sharing.test.ts` | `BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun`, `BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie`, `TASK-federation-storage-quota-accounting` |
 | `src/federation/sharing.ts` | `BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori`, `BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat`, `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot`, `TASK-expose-dek-export-and-import-over-the-federation-wire-routes`, `TASK-federation-storage-quota-accounting`, `TASK-mesh-encrypted-content-sharing-reservation-duplication`, `epic-federation-offload-quotas` |
 | `src/federation/spki-pin.ts` | `TASK-federation-peer-workload-wire-endpoints`, `TASK-federation-same-host-loopback-peer-auth`, `epic-federation-offload-quotas` |
-| `src/frontend` | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam`, `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null`, `BUG-frontend-dead-csrf-bearer-header-machinery`, `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-chat-composer-gif-picker`, `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e`, `TASK-coverage-waivers-for-3-modules-below-80-floor`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-equipment-stat-preview`, `TASK-item-provisioning-dashboard`, `TASK-npc-inventory-frontend`, `TASK-professions-frontend`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `TASK-skills-frontend`, `TASK-world-item-instance-npc`, `epic-reactive-actor-appearance` |
+| `src/frontend` | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio`, `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam`, `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null`, `BUG-frontend-dead-csrf-bearer-header-machinery`, `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-chat-composer-gif-picker`, `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e`, `TASK-coverage-waivers-for-3-modules-below-80-floor`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-equipment-stat-preview`, `TASK-item-provisioning-dashboard`, `TASK-npc-inventory-frontend`, `TASK-professions-frontend`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `TASK-skills-frontend`, `TASK-world-item-instance-npc`, `epic-reactive-actor-appearance` |
 | `src/frontend/3d/expression-controller.ts` | `TASK-3d-character-avatars`, `TASK-3d-vrm-foundation` |
 | `src/frontend/3d/vrm-loader.ts` | `TASK-3d-character-avatars`, `TASK-3d-vrm-foundation` |
 | `src/frontend/a11y/a11y.css` | `TASK-keyboard-navigation`, `epic-accessibility-input` |
@@ -1074,7 +1076,7 @@ output is byte-identical for identical inputs.
 | `src/logger` | `BUG-tui-app-getlogger-throws-when-running-standalone`, `epic-effect-v4-adoption-evaluation` |
 | `src/logger/censors.ts` | `BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-`, `TASK-input-hardening-batch`, `TASK-logging-censor-exact-match-rules-error-stack-path-leak`, `epic-logging` |
 | `src/logger/formatters.ts` | `TASK-logging-hardening-minors-injection-rotation-races-sink-path-`, `epic-logging-telemetry` |
-| `src/logger/index.ts` | `TASK-code-quality`, `TASK-per-chat-auto-translation-layer`, `TASK-recursive-self-improvement-deep-analysis-logging-and-telemet`, `TASK-split-logger-god-module`, `epic-logging` |
+| `src/logger/index.ts` | `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con`, `TASK-code-quality`, `TASK-per-chat-auto-translation-layer`, `TASK-recursive-self-improvement-deep-analysis-logging-and-telemet`, `TASK-split-logger-god-module`, `epic-logging` |
 | `src/logger/logger.test.ts` | `BUG-logger-tests-leak-global-logger-state`, `BUG-pre-existing-unit-test-failures-blocking-clean-suite` |
 | `src/logger/logger.ts` | `TASK-dedup-top-jscpd-clone-clusters`, `TASK-logger-censor-bypasses-message-field-pii-secret-leak`, `TASK-logging-censor-exact-match-rules-error-stack-path-leak`, `epic-logging`, `epic-logging-telemetry` |
 | `src/logger/queue.ts` | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-logging-telemetry` |
@@ -1261,7 +1263,7 @@ output is byte-identical for identical inputs.
 | `src/routes/admin/danger-zone.ts` | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen`, `BUG-factory-reset-deletes-tables-without-transaction-silent-per-`, `BUG-telemetry-purge-unbounded-days`, `TASK-admin-danger-zone`, `epic-frontend-admin` |
 | `src/routes/admin/index.ts` | `TASK-056`, `TASK-comfyui-first-class-admin-workflows`, `TASK-federation-admin-peer-and-quota-routes`, `epic-frontend-admin` |
 | `src/routes/admin/model-roles.ts` | `TASK-tui-models-overlay`, `epic-frontend-admin` |
-| `src/routes/admin/providers.ts` | `BUG-admin-providers-list-endpoint-is-public`, `TASK-tui-models-overlay`, `epic-frontend-admin` |
+| `src/routes/admin/providers.ts` | `BUG-admin-providers-list-endpoint-is-public`, `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio`, `TASK-tui-models-overlay`, `epic-frontend-admin` |
 | `src/routes/admin/stats.ts` | `TASK-admin-overview-dashboard`, `epic-frontend-admin` |
 | `src/routes/admin/system-config.test.ts` | `BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp`, `TASK-federation-admin-peer-and-quota-routes` |
 | `src/routes/admin/system-config.ts` | `BUG-admin-system-config-delete-passes-user-controlled-key-withou`, `BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp`, `TASK-comfyui-first-class-admin-workflows`, `TASK-federation-admin-peer-and-quota-routes`, `epic-comfyui-first-class-citizen`, `epic-frontend-admin` |
@@ -1309,7 +1311,7 @@ output is byte-identical for identical inputs.
 | `src/routes/characters/create.ts` | `BUG-character-create-silently-drops-personality-scenario-welcome`, `BUG-plugin-tool-authorization-fails-open`, `TASK-nsfw-rating-enforcement`, `WIRE-characters-create-avatar-linking-missing`, `WIRE-impersonate-command-palette-no-actionpayload-dispatch`, `WIRE-nsfw-audit-page-missing-inline-authz` |
 | `src/routes/characters/export.ts` | `BUG-community-share-missing-lorebook-export`, `FEAT-expand-character-templates-to-canonical-fields` |
 | `src/routes/characters/index.ts` | `epic-character-core-system`, `epic-character-spec` |
-| `src/routes/characters/list.ts` | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida`, `epic-character-core-system` |
+| `src/routes/characters/list.ts` | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida`, `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc`, `epic-character-core-system` |
 | `src/routes/characters/update.ts` | `FEAT-expand-character-templates-to-canonical-fields`, `TASK-char-growth-api`, `TASK-nsfw-rating-enforcement`, `TASK-size-allow-waivers-characters-update-ts-and-chat-bootstrap-t`, `epic-character-growth` |
 | `src/routes/chat-export.test.ts` | `BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi`, `epic-import-export-io` |
 | `src/routes/chat-export.ts` | `TASK-collapse-duplicate-markdown-exporter`, `TASK-epic14-import-export-reconciliation`, `TASK-widen-import-export-io-for-publications`, `epic-import-export-io`, `epic-logic-reconciliation` |
@@ -1328,7 +1330,7 @@ output is byte-identical for identical inputs.
 | `src/routes/chats/auto-translate.ts` | `TASK-frontend-chat-auto-translate`, `TASK-per-chat-auto-translation-layer` |
 | `src/routes/chats/branch-merges.ts` | `TASK-branch-merge-tests-and-coverage`, `TASK-branch-merges-routes-and-typebox-schemas` |
 | `src/routes/chats/branches.ts` | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx`, `FEAT-046`, `TASK-branch-merges-routes-and-typebox-schemas` |
-| `src/routes/chats/create.ts` | `BUG-encryption-tier-not-enforced`, `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva`, `BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k`, `FEAT-world-template-chat-lifecycle`, `TASK-024`, `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r`, `TASK-chat-variant-behavioral-wiring`, `TASK-typescript-7-migration-typecheck-failures` |
+| `src/routes/chats/create.ts` | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c`, `BUG-encryption-tier-not-enforced`, `BUG-generate-route-authorizes-chatid-but-not-actorid`, `BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva`, `BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k`, `FEAT-world-template-chat-lifecycle`, `TASK-024`, `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r`, `TASK-chat-variant-behavioral-wiring`, `TASK-typescript-7-migration-typecheck-failures` |
 | `src/routes/chats/extras.ts` | `FEAT-chat-transfer-location-change`, `TASK-chat-location-change-event-log`, `TASK-chat-locations-worlds-finalize-current-implementation`, `TASK-chat-transfer-location`, `WIRE-extras-impersonateactorid-schema-validation`, `epic-chat-transfer-location`, `epic-impersonation` |
 | `src/routes/chats/index.ts` | `TASK-per-chat-auto-translation-layer`, `TASK-vn-branching-choices`, `epic-visual-novel-mode` |
 | `src/routes/chats/list.ts` | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida`, `TASK-archival-workflow`, `epic-archival-workflow` |
@@ -1781,7 +1783,7 @@ output is byte-identical for identical inputs.
 | `src/tui/chat-picker.ts` | `TASK-tui-fire-and-forget-void-without-catch`, `TASK-tui-models-overlay`, `TASK-tui-slash-command-completion`, `epic-terminal-ui` |
 | `src/tui/chat.ts` | `TASK-rigged-model-buffer-render`, `TASK-update-terminal-ui-spec-to-actual-file-layout` |
 | `src/tui/chat/api.test.ts` | `TASK-tui`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene` |
-| `src/tui/chat/api.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-`, `TASK-tui`, `TASK-tui-api-contract-smoke-tests`, `TASK-tui-chat-picker`, `TASK-tui-dedupe-api-base`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-tui-slash-command-completion`, `TASK-tui-spec-sync`, `TASK-update-terminal-ui-spec-to-actual-file-layout`, `epic-harness-integration`, `epic-terminal-ui` |
+| `src/tui/chat/api.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m`, `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-`, `TASK-tui`, `TASK-tui-api-contract-smoke-tests`, `TASK-tui-chat-picker`, `TASK-tui-dedupe-api-base`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-tui-slash-command-completion`, `TASK-tui-spec-sync`, `TASK-update-terminal-ui-spec-to-actual-file-layout`, `epic-harness-integration`, `epic-terminal-ui` |
 | `src/tui/chat/display.test.ts` | `TASK-adopt-bun-stringwidth-for-tui`, `TASK-tui`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene` |
 | `src/tui/chat/display.ts` | `TASK-adopt-bun-color-for-tui-colors`, `TASK-adopt-bun-stringwidth-for-tui`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-update-terminal-ui-spec-to-actual-file-layout`, `epic-terminal-ui` |
 | `src/tui/chat/index.test.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate`, `TASK-tui-shell-testability` |
@@ -1831,7 +1833,7 @@ output is byte-identical for identical inputs.
 | `src/validation/schema-fuzz.generated.test.ts` | `TASK-frontend-view-model-extraction`, `TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d`, `epic-fuzzing-infrastructure` |
 | `src/validation/schemas` | `BUG-chat-idempotency-not-enforced`, `TASK-comparison-set-routes-crud-ownership-validation`, `TASK-define-and-document-the-src-programmatic-api-surface`, `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida`, `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` |
 | `src/validation/schemas.ts` | `BUG-chat-settings-modal-invalid-mode`, `BUG-e2e-test-infrastructure-fixes`, `EPIC-2026-24`, `FEAT-065-sub-llm`, `FEAT-chat-template-config-lifecycle`, `FEAT-lore-structured-generation-via-assistant`, `FEAT-origin-capture-generation-seeding`, `FEAT-race-origin-lore-identity-model`, `IDEA-chat-setup-templates`, `TASK-actors-api-routes`, `TASK-add-response-schemas-remaining-routes`, `TASK-admin-assistant-tooling-allowlist`, `TASK-assistant-capability-disclosure`, `TASK-bestiary-crud-routes-admin-gm`, `TASK-character-rpg-stats`, `TASK-consent-schema`, `TASK-gallery-fuzzy-search-pagination`, `TASK-nsfw-rating-schema`, `TASK-reputation-schema`, `TASK-schema-validation`, `TASK-wardrobe-routes-validation-crud-outfit-override-endpoints`, `epic-auth-channel-provisioning`, `epic-character-core-system`, `epic-chat-lifecycle-moderation`, `epic-config-templates`, `epic-cross-layer-reconciliation`, `epic-effect-v4-adoption-evaluation`, `epic-file-splitting`, `epic-openapi-reference`, `epic-shared-schemas` |
-| `src/validation/schemas/actors.ts` | `BUG-character-create-silently-drops-personality-scenario-welcome`, `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d`, `TASK-affordance-lookup-table`, `TASK-growth-epic-reconciliation`, `TASK-nsfw-rating-enforcement` |
+| `src/validation/schemas/actors.ts` | `BUG-character-create-silently-drops-personality-scenario-welcome`, `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc`, `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d`, `TASK-affordance-lookup-table`, `TASK-growth-epic-reconciliation`, `TASK-nsfw-rating-enforcement` |
 | `src/validation/schemas/character-systems.ts` | `BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500`, `TASK-character-domain-residual-defects` |
 | `src/validation/schemas/chat.ts` | `BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve`, `BUG-settings-save-omits-gmconfig-for-online-chats`, `BUG-visualnovel-type-mismatch-across-api-db-layers`, `FEAT-world-template-chat-lifecycle`, `TASK-bound-linked-travel-prompts`, `TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min`, `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings`, `WIRE-extras-impersonateactorid-schema-validation` |
 | `src/validation/schemas/emotion-avatars.ts` | `TASK-identity-lock-seed-negative-prompt-and-anchor`, `epic-avatar-regeneration-control`, `epic-reactive-actor-appearance` |
@@ -4301,6 +4303,8 @@ output is byte-identical for identical inputs.
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | produces | `src/plugins/loader.ts` | - |
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | produces | `src/routes/plugins/index.ts` | - |
 | `BUG-admin-providers-list-endpoint-is-public` | produces | `src/routes/admin/providers.ts` | - |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | produces | `src/frontend` | - |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | produces | `src/routes/admin/providers.ts` | - |
 | `BUG-admin-set-secrets-stored-plaintext-in-system-config` | produces | `src/admin/config.ts` | - |
 | `BUG-admin-system-config-delete-passes-user-controlled-key-withou` | produces | `src/routes/admin/system-config.ts` | - |
 | `BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp` | produces | `src/routes/admin/system-config.test.ts` | - |
@@ -4376,6 +4380,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes` | produces | `src/assets/metadata.ts` | - |
 | `BUG-asset-webp-vp8x-dimension-truncation` | produces | `src/assets/metadata.test.ts` | - |
 | `BUG-asset-webp-vp8x-dimension-truncation` | produces | `src/assets/metadata.ts` | - |
+| `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | produces | `src/logger/index.ts` | - |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | produces | `src/assets/controller.routes.test.ts` | - |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | produces | `src/assets/controller.ts` | - |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | produces | `src/assets/service/links.test.ts` | - |
@@ -4724,6 +4729,11 @@ output is byte-identical for identical inputs.
 | `BUG-chat-settings-modal-invalid-mode` | produces | `src/validation/schemas.ts` | - |
 | `BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi` | produces | `src/chat/service/templates.ts` | - |
 | `BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi` | produces | `src/chat/service/types.ts` | - |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | produces | `src/chat/scene/handle-scene-transitions.ts` | - |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | produces | `src/chat/service/split.ts` | - |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | produces | `src/chat/split-classifier.test.ts` | - |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | produces | `src/chat/split-classifier.ts` | - |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | produces | `src/routes/chats/create.ts` | - |
 | `BUG-chat-swipe-index-race` | produces | `src/routes/messages/reply.ts` | - |
 | `BUG-chat-transitions-memory-poisoning` | produces | `src/chat/transition-classifier.ts` | - |
 | `BUG-chat-transitions-memory-poisoning` | produces | `src/chat/transitions.test.ts` | - |
@@ -5427,6 +5437,7 @@ output is byte-identical for identical inputs.
 | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | produces | `src/characters/services/mood-service/log-event.ts` | - |
 | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | produces | `src/characters/services/mood-service/update-mood.ts` | - |
 | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | produces | `src/characters/services/relationships-service/write.ts` | - |
+| `BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call` | produces | `src/characters/services/mood-service/update-mood.ts` | - |
 | `BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-` | produces | `src/frontend/alpine/chat-music-links.ts` | - |
 | `BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-` | produces | `src/routes/music-links.coverage.test.ts` | - |
 | `BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-` | produces | `src/routes/music-links.ts` | - |
@@ -5556,6 +5567,9 @@ output is byte-identical for identical inputs.
 | `BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-` | produces | `src/federation/outbox.ts` | - |
 | `BUG-parseacceptlanguage-ignores-quality-values-returns-header-or` | produces | `src/middleware/i18n.ts` | - |
 | `BUG-parseacceptlanguage-ignores-quality-values-returns-header-or` | produces | `src/transport/negotiation-parsers.ts` | - |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | produces | `src/http-utils/parse.ts` | - |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | produces | `src/routes/characters/list.ts` | - |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | produces | `src/validation/schemas/actors.ts` | - |
 | `BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings` | produces | `src/routes/settings.test.ts` | - |
 | `BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings` | produces | `src/routes/settings.ts` | - |
 | `BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings` | produces | `src/validation/schemas/settings.ts` | - |
@@ -5687,6 +5701,7 @@ output is byte-identical for identical inputs.
 | `BUG-register-rate-limiter-consumes-on-username-collision-retries` | produces | `src/routes/auth/shared.ts` | - |
 | `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c` | produces | `src/characters/services/relationships-service/write.ts` | - |
 | `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c` | produces | `src/routes/character-relationships.ts` | - |
+| `BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same` | produces | `src/characters/services/relationships-service/write.ts` | - |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | produces | `src/middleware/auth/token.ts` | - |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | produces | `src/routes/export-sse/start.ts` | - |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | produces | `src/routes/export.ts` | - |
@@ -5995,6 +6010,9 @@ output is byte-identical for identical inputs.
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | produces | `src/tui/chat/index.test.ts` | - |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | produces | `src/tui/chat/index.ts` | - |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | produces | `src/tui/chat/types.ts` | - |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | produces | `src/app.rs` | - |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | produces | `src/build/egui-artifact.ts` | - |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | produces | `src/tui/chat/api.ts` | - |
 | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | produces | `src/config/sections/tui.ts` | - |
 | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | produces | `src/tui/chat/api.ts` | - |
 | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | produces | `src/tui/chat/send-timeout.test.ts` | - |
@@ -17069,8 +17087,28 @@ output is byte-identical for identical inputs.
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `epic-plugin-system` | `src/plugins/loader.ts` |
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `epic-provider-plugin-ecosystem` | `src/plugins/loader.ts` |
 | `BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat` | sibling | `epic-security-sandboxing` | `src/plugins/loader.ts` |
+| `BUG-admin-providers-list-endpoint-is-public` | sibling | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | `src/routes/admin/providers.ts` |
 | `BUG-admin-providers-list-endpoint-is-public` | sibling | `TASK-tui-models-overlay` | `src/routes/admin/providers.ts` |
 | `BUG-admin-providers-list-endpoint-is-public` | sibling | `epic-frontend-admin` | `src/routes/admin/providers.ts` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `BUG-frontend-dead-csrf-bearer-header-machinery` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-chat-avatar-resolver-outfit-aware` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-chat-composer-gif-picker` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-coverage-waivers-for-3-modules-below-80-floor` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-equipment-stat-preview` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-professions-frontend` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-skills-frontend` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-tui-models-overlay` | `src/routes/admin/providers.ts` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `TASK-world-item-instance-npc` | `src/frontend` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `epic-frontend-admin` | `src/routes/admin/providers.ts` |
+| `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio` | sibling | `epic-reactive-actor-appearance` | `src/frontend` |
 | `BUG-admin-set-secrets-stored-plaintext-in-system-config` | sibling | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | `src/admin/config.ts` |
 | `BUG-admin-set-secrets-stored-plaintext-in-system-config` | sibling | `BUG-archive-retention-hardcoded-30-days-should-be-configurable-9` | `src/admin/config.ts` |
 | `BUG-admin-set-secrets-stored-plaintext-in-system-config` | sibling | `FEAT-chat-archive-retention-config-archive-retention-days-admin-s` | `src/admin/config.ts` |
@@ -17554,6 +17592,11 @@ output is byte-identical for identical inputs.
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `TASK-multimodal-asset-reuse` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `epic-technical-comparison-charts` | `src/assets/metadata.ts` |
+| `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `TASK-code-quality` | `src/logger/index.ts` |
+| `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `TASK-per-chat-auto-translation-layer` | `src/logger/index.ts` |
+| `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `TASK-recursive-self-improvement-deep-analysis-logging-and-telemet` | `src/logger/index.ts` |
+| `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `TASK-split-logger-god-module` | `src/logger/index.ts` |
+| `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `epic-logging` | `src/logger/index.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/controller.ts` |
@@ -18801,6 +18844,7 @@ output is byte-identical for identical inputs.
 | `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip` | sibling | `epic-research-agency-affordance` | `src/characters/exporters/character-systems.ts` |
 | `BUG-character-ccv3-export-and-import-lose-fields-on-round-trip` | sibling | `epic-rpg-patterns` | `src/characters` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | `src/partials/characters/create-modal.html` |
+| `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | `src/validation/schemas/actors.ts` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `BUG-plugin-tool-authorization-fails-open` | `src/routes/characters/create.ts` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d` | `src/validation/schemas/actors.ts` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `TASK-affordance-lookup-table` | `src/validation/schemas/actors.ts` |
@@ -18982,6 +19026,7 @@ output is byte-identical for identical inputs.
 | `BUG-characters-flow-browser-e2e-trips-on-the-by-design-game-stat` | sibling | `epic-agency-story-points` | `src/views/chat.html` |
 | `BUG-characters-flow-browser-e2e-trips-on-the-by-design-game-stat` | sibling | `epic-architecture` | `src/views/chat.html` |
 | `BUG-characters-flow-browser-e2e-trips-on-the-by-design-game-stat` | sibling | `epic-visual-novel-mode` | `src/views/chat.html` |
+| `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | `src/routes/characters/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `EPIC-2026-24` | `src/routes/http-utils/parse.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-archival-workflow` | `src/routes/chats/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `epic-archival-workflow` | `src/routes/chats/list.ts` |
@@ -19424,6 +19469,7 @@ output is byte-identical for identical inputs.
 | `BUG-chat-reunite-copymessagestoprimary-carries-source-chat-key-i` | sibling | `TASK-typescript-7-migration-typecheck-failures` | `src/chat/service/split-utils.ts` |
 | `BUG-chat-reunite-copymessagestoprimary-carries-source-chat-key-i` | sibling | `epic-chat-product-features` | `src/chat/service/carry-history.ts; src/chat/service/split-utils.ts` |
 | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a` | sibling | `BUG-chat-reunite-secondary-ownership-check-missing` | `src/chat/service/split.ts` |
+| `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a` | sibling | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | `src/chat/service/split.ts` |
 | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a` | sibling | `FEAT-chat-archive-purge-notifications-emit-on-archive-restore-pur` | `src/chat/service/crud/archive.ts` |
 | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a` | sibling | `TASK-archival-workflow` | `src/chat/service/crud/archive.ts` |
 | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a` | sibling | `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha` | `src/chat/service/split.ts` |
@@ -19435,6 +19481,7 @@ output is byte-identical for identical inputs.
 | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a` | sibling | `epic-archival-workflow` | `src/chat/service/crud/archive.ts` |
 | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a` | sibling | `epic-chat-product-features` | `src/chat/service/split.ts` |
 | `BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a` | sibling | `epic-chat-transfer-location` | `src/chat/service/split.ts` |
+| `BUG-chat-reunite-secondary-ownership-check-missing` | sibling | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | `src/chat/service/split.ts` |
 | `BUG-chat-reunite-secondary-ownership-check-missing` | sibling | `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha` | `src/chat/service/split.ts` |
 | `BUG-chat-reunite-secondary-ownership-check-missing` | sibling | `TASK-chat-branch-merge` | `src/chat/service/split.ts; src/routes/chats/split.ts` |
 | `BUG-chat-reunite-secondary-ownership-check-missing` | sibling | `TASK-chat-feature-rpg-chronological-navigation` | `src/chat/service/split.ts` |
@@ -19523,6 +19570,22 @@ output is byte-identical for identical inputs.
 | `BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi` | sibling | `TASK-test-chat-module` | `src/chat/service/types.ts` |
 | `BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi` | sibling | `epic-chat-product-features` | `src/chat/service/templates.ts` |
 | `BUG-chat-setup-config-drops-user-gmconfig-and-never-reads-worldi` | sibling | `epic-context-injection-templates` | `src/chat/service/templates.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `BUG-encryption-tier-not-enforced` | `src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `BUG-generate-route-authorizes-chatid-but-not-actorid` | `src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva` | `src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k` | `src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `FEAT-world-template-chat-lifecycle` | `src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-024` | `src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | `src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha` | `src/chat/service/split.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-chat-branch-merge` | `src/chat/service/split.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-chat-feature-rpg-chronological-navigation` | `src/chat/service/split.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-chat-transfer-location` | `src/chat/service/split.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-chat-variant-behavioral-wiring` | `src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-travel-party-migration` | `src/chat/service/split.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-typescript-7-migration-typecheck-failures` | `src/chat/service/split.ts; src/routes/chats/create.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `epic-chat-product-features` | `src/chat/service/split.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `epic-chat-transfer-location` | `src/chat/service/split.ts` |
 | `BUG-chat-swipe-index-race` | sibling | `BUG-chat-trigger-auto-generation-unhandled-rejection` | `src/routes/messages/reply.ts` |
 | `BUG-chat-swipe-index-race` | sibling | `BUG-hsts-header-missing-from-response-policy` | `src/routes/messages/reply.ts` |
 | `BUG-chat-swipe-index-race` | sibling | `BUG-message-create-503-passthrough-omits-persisted-id-and-duplic` | `src/routes/messages/reply.ts` |
@@ -24131,7 +24194,9 @@ output is byte-identical for identical inputs.
 | `BUG-module-level-in-memory-state-grows-without-eviction` | sibling | `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature` | `src/utils/safe-fetch/fetch.ts` |
 | `BUG-module-level-in-memory-state-grows-without-eviction` | sibling | `TASK-delete-unreferenced-platform-service-util-modules-dead-barre` | `src/services/agency/coordination-priority.ts` |
 | `BUG-module-level-in-memory-state-grows-without-eviction` | sibling | `epic-actor-turn-skip` | `src/generation/continuation.ts` |
+| `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | sibling | `BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call` | `src/characters/services/mood-service/update-mood.ts` |
 | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | sibling | `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c` | `src/characters/services/relationships-service/write.ts` |
+| `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | sibling | `BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same` | `src/characters/services/relationships-service/write.ts` |
 | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | sibling | `TASK-041` | `src/characters/services/mood-service/apply-happiness-delta.ts; src/characters/services/mood-service/log-event.ts` |
 | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | sibling | `TASK-mood-shift-delta-tuning-word-boundary` | `src/characters/services/mood-service/apply-happiness-delta.ts` |
 | `BUG-mood-and-relationship-services-mutate-multi-row-state-withou` | sibling | `epic-character-growth` | `src/characters/services/relationships-service/write.ts` |
@@ -24563,6 +24628,11 @@ output is byte-identical for identical inputs.
 | `BUG-parseacceptlanguage-ignores-quality-values-returns-header-or` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/transport/negotiation-parsers.ts` |
 | `BUG-parseacceptlanguage-ignores-quality-values-returns-header-or` | sibling | `TASK-server-side-i18n-middleware` | `src/middleware/i18n.ts` |
 | `BUG-parseacceptlanguage-ignores-quality-values-returns-header-or` | sibling | `epic-architecture` | `src/middleware/i18n.ts` |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d` | `src/validation/schemas/actors.ts` |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `TASK-affordance-lookup-table` | `src/validation/schemas/actors.ts` |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `TASK-growth-epic-reconciliation` | `src/validation/schemas/actors.ts` |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `TASK-nsfw-rating-enforcement` | `src/validation/schemas/actors.ts` |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `epic-character-core-system` | `src/routes/characters/list.ts` |
 | `BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings` | sibling | `BUG-settings-export-endpoint-has-no-rate-limiting` | `src/routes/settings.ts` |
 | `BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings` | sibling | `TASK-format-version-migration` | `src/routes/settings.ts` |
 | `BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings` | sibling | `TASK-response-length-control` | `src/routes/settings.ts` |
@@ -25183,8 +25253,10 @@ output is byte-identical for identical inputs.
 | `BUG-register-rate-limiter-consumes-on-username-collision-retries` | sibling | `epic-guest-access` | `src/routes/auth/shared.ts` |
 | `BUG-register-rate-limiter-consumes-on-username-collision-retries` | sibling | `epic-local-process-swarm` | `src/middleware/rate-limit.ts` |
 | `BUG-register-rate-limiter-consumes-on-username-collision-retries` | sibling | `epic-recursive-self-improvement` | `src/middleware/rate-limit.ts` |
+| `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c` | sibling | `BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same` | `src/characters/services/relationships-service/write.ts` |
 | `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c` | sibling | `TASK-char-editor-db-storage-sync` | `src/routes/character-relationships.ts` |
 | `BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c` | sibling | `epic-character-growth` | `src/characters/services/relationships-service/write.ts` |
+| `BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same` | sibling | `epic-character-growth` | `src/characters/services/relationships-service/write.ts` |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m` | `src/middleware/auth/token.ts` |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `FEAT-gdpr-user-data-rights` | `src/routes/export.ts` |
 | `BUG-resolveuseridfromrequest-missing-user-status-check` | sibling | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | `src/middleware/auth/token.ts` |
@@ -26567,6 +26639,7 @@ output is byte-identical for identical inputs.
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `epic-effect-v4-adoption-evaluation` | `src/logger` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `epic-harness-integration` | `src/tui/asset-view.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `epic-terminal-ui` | `src/tui/app.ts; src/tui/asset-view.ts` |
+| `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | `src/tui/chat/api.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | `src/config/sections/tui.ts; src/tui/chat/api.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `BUG-tui-showerror-desyncs-itemcount-from-messagelist-length` | `src/tui/chat/index.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `TASK-adopt-bun-csrf-for-csrf-protection` | `src/frontend/fe-fetch.ts` |
@@ -26613,6 +26686,18 @@ output is byte-identical for identical inputs.
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `epic-frontend-html-dedup-htmx-reuse` | `src/frontend/alpine/htmx.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `epic-harness-integration` | `src/tui/chat/api.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `epic-terminal-ui` | `src/config/schema/tui.ts; src/config/sections/tui.ts; src/tui/app.ts; src/tui/chat/api.ts; src/tui/chat/index.ts; src/tui/chat/types.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | `src/app.rs` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-api-contract-smoke-tests` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-chat-picker` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-dedupe-api-base` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-slash-command-completion` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-spec-sync` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-update-terminal-ui-spec-to-actual-file-layout` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `epic-harness-integration` | `src/tui/chat/api.ts` |
+| `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `epic-terminal-ui` | `src/tui/chat/api.ts` |
 | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | sibling | `TASK-tui-api-contract-smoke-tests` | `src/tui/chat/api.ts` |
 | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | sibling | `TASK-tui-chat-picker` | `src/tui/chat/api.ts` |
 | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | sibling | `TASK-tui-dedupe-api-base` | `src/tui/chat/api.ts` |
