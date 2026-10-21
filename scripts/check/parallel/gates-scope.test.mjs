@@ -32,7 +32,15 @@ test("returns null when nothing matches — never an empty file list", () => {
 });
 
 test("returns null when a config file changed: the rules themselves moved", () => {
-  for (const breaker of ["eslint.config.mjs", "package.json", "tsconfig.json", ".markdownlint.json",]) {
+  for (
+    const breaker of [
+      "eslint.config.mjs",
+      "package.json",
+      "tsconfig.json",
+      ".markdownlint.json",
+      ".markdownlint-cli2.jsonc",
+    ]
+  ) {
     expect(pickScopedFiles(["src/a.ts", breaker,], TS, all,), breaker,).toBeNull();
   }
 });
