@@ -104,7 +104,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   async listCapabilities(): Promise<ImageEditCategory[]> {
     const caps: ImageEditCategory[] = ["txt2img", "img2img",];
 
-    const sdCpp = loadConfig().autoStart?.sdCpp;
+    const sdCpp = loadConfig().generation.autoStart?.sdCpp;
     if (sdCpp) {
       // ControlNet available if configured
       if (sdCpp.controlNetPath) {
