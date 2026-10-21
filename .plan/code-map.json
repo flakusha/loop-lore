@@ -41684,6 +41684,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-workflow-template-and-command.md"
     },
     {
@@ -41877,6 +41881,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-transfer-location-change.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-branch-merge.md"
     },
     {
       "kind": "ticket",
