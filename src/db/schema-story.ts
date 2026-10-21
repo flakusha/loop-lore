@@ -299,9 +299,9 @@ export interface ActorMemories {
   source_message_ids: string | null;
   source_chat_ids: string | null;
   extraction_kind: ExtractionKind | null;
-  emotion_impact: string | null;
   context_window_start: string | null;
   context_window_end: string | null;
+  emotion_impact: string | null;
 }
 
 // ── quest_reward_ledger ────────────────────────────────────────────

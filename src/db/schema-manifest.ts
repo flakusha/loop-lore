@@ -1502,6 +1502,7 @@ export const SCHEMA = new SchemaManifest()
     extraction_kind: col("text",),
     context_window_start: col("text",),
     context_window_end: col("text",),
+    emotion_impact: col("text",),
   },)
   .table("actor_notes", {
     id: col("text", { primaryKey: true, },),

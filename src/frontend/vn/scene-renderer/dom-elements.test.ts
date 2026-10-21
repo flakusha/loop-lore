@@ -73,7 +73,7 @@ describe("createBackground", () => {
 
 describe("createPortrait", () => {
   test("omits the portrait entirely in overlay layout", () => {
-    expect(createPortrait({ role: "assistant", characterName: "Mira", }, { layout: "overlay", },),)
+    expect(createPortrait({ role: "assistant", characterName: "Mira", }, { layout: "overlay", portraitSize: 35, },),)
       .toBeNull();
   });
 
@@ -88,7 +88,7 @@ describe("createPortrait", () => {
     expect(portrait.className,).toBe("vn-portrait vn-portrait-left",);
     expect(portrait.style.width,).toBe("35%",);
     expect(portrait.querySelector(".vn-portrait-name",)!.textContent,).toBe("Mira",);
-    const img = portrait.querySelector(".vn-portrait-img",)!;
+    const img = portrait.querySelector(".vn-portrait-img",) as HTMLImageElement;
     expect(img.src,).toBe("/api/v1/assets/av1/thumb",);
     expect(img.alt,).toBe("Mira",);
   });
@@ -168,15 +168,21 @@ describe("createDialogue", () => {
 
 describe("createNav", () => {
   test("disables prev at the first scene and reports the 1-based counter", () => {
-    state.scenes = [{ messageId: "m1", }, { messageId: "m2", },];
+    state.scenes = [{ messageId: "m1", characterName: "Mira", text: "hi", role: "assistant", }, {
+      messageId: "m2",
+      characterName: "Mira",
+      text: "hi",
+      role: "assistant",
+    },];
+
     state.currentIndex = 0;
 
     const nav = createNav({ next: () => {}, prev: () => {}, },);
 
     expect(nav.tagName,).toBe("DIV",);
     expect(nav.className,).toBe("vn-nav",);
-    const prev = nav.querySelector(".vn-prev",)!;
-    const next = nav.querySelector(".vn-next",)!;
+    const prev = nav.querySelector(".vn-prev",) as HTMLButtonElement;
+    const next = nav.querySelector(".vn-next",) as HTMLButtonElement;
     expect(prev.textContent,).toBe("←",);
     expect(next.textContent,).toBe("→",);
     expect(prev.disabled,).toBe(true,);
@@ -185,13 +191,19 @@ describe("createNav", () => {
   });
 
   test("disables next at the last scene", () => {
-    state.scenes = [{ messageId: "m1", }, { messageId: "m2", },];
+    state.scenes = [{ messageId: "m1", characterName: "Mira", text: "hi", role: "assistant", }, {
+      messageId: "m2",
+      characterName: "Mira",
+      text: "hi",
+      role: "assistant",
+    },];
+
     state.currentIndex = 1;
 
     const nav = createNav({ next: () => {}, prev: () => {}, },);
 
-    expect(nav.querySelector(".vn-prev",)!.disabled,).toBe(false,);
-    expect(nav.querySelector(".vn-next",)!.disabled,).toBe(true,);
+    expect((nav.querySelector(".vn-prev",) as HTMLButtonElement).disabled,).toBe(false,);
+    expect((nav.querySelector(".vn-next",) as HTMLButtonElement).disabled,).toBe(true,);
     expect(nav.querySelector(".vn-counter",)!.textContent,).toBe("2 / 2",);
   });
 
@@ -199,8 +211,8 @@ describe("createNav", () => {
     const calls: string[] = [];
     const nav = createNav({ next: () => calls.push("next",), prev: () => calls.push("prev",), },);
 
-    nav.querySelector(".vn-prev",)!.dispatch("click",);
-    nav.querySelector(".vn-next",)!.dispatch("click",);
+    (nav.querySelector(".vn-prev",) as unknown as { dispatch(e: string,): void }).dispatch("click",);
+    (nav.querySelector(".vn-next",) as unknown as { dispatch(e: string,): void }).dispatch("click",);
     expect(calls,).toEqual(["prev", "next",],);
   });
 });
@@ -225,20 +237,23 @@ describe("createAttachments", () => {
     expect(items,).toHaveLength(2,);
 
     const first = items[0]!;
-    expect(first.querySelector(".vn-attachment-thumb",)!.src,).toBe("thumbs/a1.png",);
+    expect((first.querySelector(".vn-attachment-thumb",) as HTMLImageElement).src,).toBe("thumbs/a1.png",);
     expect(first.querySelector(".vn-attachment-caption",)!.textContent,).toBe("Map",);
 
     const second = items[1]!;
-    expect(second.querySelector(".vn-attachment-thumb",)!.src,).toBe("/api/v1/assets/a%202/thumb",);
+    expect((second.querySelector(".vn-attachment-thumb",) as HTMLImageElement).src,).toBe(
+      "/api/v1/assets/a%202/thumb",
+    );
+
     expect(second.querySelector(".vn-attachment-caption",)!.textContent,).toBe("notes.txt",);
   });
 
   test("the caption falls back to the filename, then a neutral alt", () => {
     const withFilename = createAttachments({ attachments: [{ assetId: "a1", filename: "notes.txt", },], },)!;
-    expect(withFilename.querySelector(".vn-attachment-thumb",)!.alt,).toBe("notes.txt",);
+    expect((withFilename.querySelector(".vn-attachment-thumb",) as HTMLImageElement).alt,).toBe("notes.txt",);
 
     const bare = createAttachments({ attachments: [{ assetId: "a1", },], },)!;
-    expect(bare.querySelector(".vn-attachment-thumb",)!.alt,).toBe("Attachment",);
+    expect((bare.querySelector(".vn-attachment-thumb",) as HTMLImageElement).alt,).toBe("Attachment",);
     expect(bare.querySelector(".vn-attachment-caption",),).toBeNull();
   });
 });

@@ -159,6 +159,7 @@ describe("views/search — gallery", () => {
       actorId: "owner",
       actorRole: "user",
     },);
+
     const vm2 = await loadGallerySearchViewModel({
       database: db,
       params: new URLSearchParams({ page: "2", },),

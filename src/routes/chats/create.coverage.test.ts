@@ -138,7 +138,7 @@ describe("chats/create — variant taxonomy wiring", () => {
       )
       .executeTakeFirst();
 
-    expect(participant?.talkativity,).toBe(def.talkativity,);
+    expect(participant!.talkativity === def.talkativity,).toBe(true,);
     await db.destroy();
   });
 
