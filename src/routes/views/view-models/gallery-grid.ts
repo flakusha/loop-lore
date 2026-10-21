@@ -42,9 +42,11 @@ export interface GalleryGridViewModel {
   pageSize: number;
 }
 
-/** The search result set — capped server-side, unpaginated like the htmx view. */
+/** The paginated search result set. `page`/`pageSize` echo the request the rows came from. */
 export interface GallerySearchViewModel {
   assets: GalleryAssetItem[];
+  page: number;
+  pageSize: number;
 }
 
 /**
@@ -90,10 +92,17 @@ export function buildGalleryGridViewModel(
  * Project fetched rows into the gallery search view-model.
  * @param rows - the matching asset rows in display order
  * @param tagMap - asset id → visible tag names
+ * @param page - the 1-based page the rows came from
+ * @param pageSize - the page size the query used
  * @returns the view-model the HTML card renderer and the JSON branch share
  */
 export function buildGallerySearchViewModel(
-  { rows, tagMap, }: { rows: readonly GalleryAssetRow[]; tagMap: ReadonlyMap<string, string[]> },
+  { rows, tagMap, page, pageSize, }: {
+    rows: readonly GalleryAssetRow[];
+    tagMap: ReadonlyMap<string, string[]>;
+    page: number;
+    pageSize: number;
+  },
 ): GallerySearchViewModel {
-  return { assets: buildGalleryAssetItems({ rows, tagMap, },), };
+  return { assets: buildGalleryAssetItems({ rows, tagMap, },), page, pageSize, };
 }

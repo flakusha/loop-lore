@@ -7,7 +7,7 @@ import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { type ViewsViewer, visibleCharactersTo, } from "./access";
-import { applyGalleryAssetFilters, inheritedHiddenAssetIds, } from "./gallery";
+import { applyGalleryAssetFilters, GRID_PAGE_SIZE, inheritedHiddenAssetIds, } from "./gallery";
 import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";
 import { escapeHtml, htmlResponse, } from "./layout";
 import { buildGallerySearchViewModel, type GallerySearchViewModel, } from "./view-models/gallery-grid";
@@ -32,6 +32,7 @@ export async function loadGallerySearchViewModel(
   const entityType = params.get("entityType",) ?? null;
   const entityId = params.get("entityId",) ?? null;
   const tag = params.get("tag",) ?? null;
+  const page = Math.max(Number(params.get("page",) ?? "1",) || 1, 1,);
   const isAdmin = can(actorRole ?? null, "admin.character",);
 
   let qb = database
@@ -54,7 +55,7 @@ export async function loadGallerySearchViewModel(
   else if (sort === "oldest") { qb = qb.orderBy("created_at", "asc",); }
   else { qb = qb.orderBy("filename", "asc",); }
 
-  const assets = await qb.limit(200,).execute();
+  const assets = await qb.limit(GRID_PAGE_SIZE,).offset((page - 1) * GRID_PAGE_SIZE,).execute();
 
   // G6 visibility inheritance — hide private-owner's character assets from non-owners
   const ids = Array.from(assets, (a,) => a.id,);
@@ -68,7 +69,7 @@ export async function loadGallerySearchViewModel(
   }
 
   const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
-  return buildGallerySearchViewModel({ rows: visible, tagMap, },);
+  return buildGallerySearchViewModel({ rows: visible, tagMap, page, pageSize: GRID_PAGE_SIZE, },);
 }
 
 /**
