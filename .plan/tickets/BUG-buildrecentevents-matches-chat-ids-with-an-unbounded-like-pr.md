@@ -3,7 +3,7 @@
 
 # BUG: buildRecentEvents matches chat ids with an unbounded LIKE prefix
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
