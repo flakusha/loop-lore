@@ -30,6 +30,7 @@ const FULL_MD_LINT = "bun run md:lint";
 // run: narrowing on a config change is how you get a green gate that checked
 // nothing.
 const SCOPE_BREAKERS = new Set([
+  ".markdownlint-cli2.jsonc",
   ".markdownlint.json",
   "dprint.json",
   "eslint.config.mjs",
@@ -107,8 +108,9 @@ export function applyDiffScopedStaticGates(checks,) {
       // Called directly rather than through `bun run md:lint`, whose script
       // hard-codes the two tree globs — appending files to it lints the globs
       // AND the files, i.e. no narrowing at all. markdownlint-cli2
-      // auto-discovers `.markdownlint.json`, which is why that file is a scope
-      // breaker.
+      // auto-discovers `.markdownlint.json` (the rules) AND
+      // `.markdownlint-cli2.jsonc` (the ignore set + gitignore switch), so
+      // both are scope breakers.
       checks["md - lint"] = `bunx markdownlint-cli2 ${scopedMd.join(" ",)}`;
     }
   }
