@@ -236,7 +236,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-audit-get-by-id-has-no-params-schema-validation.md",
       "title": "Admin audit get-by-id has no params schema validation",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/admin/audit.ts"
       ],
@@ -294,7 +294,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-chat-patch-accepts-arbitrary-string-for-is-pinned.md",
       "title": "Admin chat PATCH accepts arbitrary string for is_pinned",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/admin/chats.ts",
         "src/validation/schemas/admin.ts"
@@ -349,7 +349,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-system-config-delete-passes-user-controlled-key-withou.md",
       "title": "Admin system-config DELETE passes user-controlled key without validation",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/admin/system-config.ts"
       ],
@@ -372,7 +372,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-template-update-writes-to-unvalidated-detail-mode-keys.md",
       "title": "Admin template update writes to unvalidated detail/mode keys",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/admin-templates/update.ts"
       ],
@@ -568,7 +568,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-api-rate-limiter-persists-the-sliding-window-before-the-burs.md",
       "title": "API rate limiter persists the sliding window before the burst check, so burst-denied requests consume steady-state budget",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/api-governance/rate-limiting/limiter.ts"
       ],
@@ -1638,7 +1638,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr.md",
       "title": "buildRecentEvents matches chat ids with an unbounded LIKE prefix",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/notifications/service/crud.ts"
       ],
@@ -1981,7 +1981,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md",
       "title": "character seed dedupes on display_name",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/seed/templates.ts",
         "src/chat/service/templates.ts",
@@ -2785,7 +2785,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-context-window-willtrim-is-stale-after-injectmemories-inject.md",
       "title": "Context window willTrim is stale after injectMemories/injectEvents",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/context-window.ts"
       ],
@@ -3366,7 +3366,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-email-token-bucket-discards-fractional-refill-credit-permane.md",
       "title": "Email token bucket discards fractional refill credit, permanently starving senders below one token per refill",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/integrations/email/spam-gate.ts",
         "src/integrations/health.ts"
@@ -5066,7 +5066,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-humanoverride-silently-drops-the-gm-decision-when-serializat.md",
       "title": "humanOverride silently drops the GM decision when serialization fails, returning success",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/story/game-master/accept.ts"
       ],
@@ -5368,7 +5368,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-journal-keyphrase-panel-reads-only-page-1-of-the-paginated-m.md",
       "title": "Journal keyphrase panel reads only page 1 of the paginated memories envelope",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/pages/characters-journal-keyphrases.ts"
       ],
@@ -5568,7 +5568,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-llmdecision-assembles-the-prompt-outside-the-try-block-so-an.md",
       "title": "llmDecision assembles the prompt outside the try block, so an assembly failure kills the turn instead of falling back",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/story/gm/decisions/llm.ts"
       ],
@@ -7211,7 +7211,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-proactive-backoff-increment-loses-updates-under-concurrency.md",
       "title": "Proactive backoff increment loses updates under concurrency",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/proactive/index.ts"
       ],
@@ -8165,7 +8165,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-skipoldchain-zeroes-the-caller-s-receivingchainkey-despite-i.md",
       "title": "skipOldChain zeroes the caller's receivingChainKey despite its does-not-mutate-input contract",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/crypto/e2e/dh-ratchet-helpers.ts",
         "src/crypto/e2e/dh-ratchet.ts"
@@ -8206,7 +8206,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-spam-gate-sender-identity-ignores-plus-tag-subaddressing-blo.md",
       "title": "Spam-gate sender identity ignores plus-tag subaddressing: blocklist and per-sender bucket are bypassable",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/integrations/email/spam-gate.ts"
       ],
@@ -8883,7 +8883,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-tryparseyaml-rejects-any-document-containing-a-brace.md",
       "title": "tryParseYaml rejects any document containing a brace",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/parser.ts"
       ],
@@ -8965,7 +8965,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-turn-manager-selection-uses-a-stale-candidate-list-and-a-rea.md",
       "title": "Turn-manager selection uses a stale candidate list and a read-then-write initiative decrement",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/turning/turn-manager/selection.ts"
       ],
@@ -21322,7 +21322,9 @@
         "src/chat/service/split-utils.ts",
         "src/chat/service/split.test.ts",
         "src/chat/service/split.ts",
-        "src/routes/chats/split.ts"
+        "src/routes/chats/split.ts",
+        "src/routes/messages/command.ts",
+        "src/routes/messages/handle-scene-transitions.ts"
       ],
       "related": [
         "TASK-party-aux-transition",
@@ -40730,6 +40732,17 @@
         "src/routes/messages.ts"
       ],
       "related": []
+    },
+    {
+      "id": "TASK-split-reunite-aux-classification",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-split-reunite-aux-classification.md",
+      "title": "Split/Reunite Aux (0-shot) Classification",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": [
+        "TASK-chat-branch-merge"
+      ]
     },
     {
       "id": "TASK-split-server-ts",
@@ -74403,6 +74416,7 @@
         "PERF-chat-dispatch-command-three-sequential-queries",
         "TASK-action-applicability-gate",
         "TASK-book-outline-generation-workflow",
+        "TASK-chat-branch-merge",
         "TASK-comparison-workflow-template-and-command",
         "TASK-harness-frontend-consolidation",
         "TASK-interaction-service-foundation",
@@ -74501,6 +74515,7 @@
       "path": "src/routes/messages/handle-scene-transitions.ts",
       "owners": [
         "FEAT-chat-transfer-location-change",
+        "TASK-chat-branch-merge",
         "TASK-chat-locations-worlds-finalize-current-implementation"
       ]
     },
@@ -87695,6 +87710,11 @@
       "from": "epic-chat-transfer-location",
       "kind": "owns",
       "to": "TASK-scene-chat-transition-context"
+    },
+    {
+      "from": "epic-chat-transfer-location",
+      "kind": "owns",
+      "to": "TASK-split-reunite-aux-classification"
     },
     {
       "from": "epic-chat-transfer-location",
@@ -115095,6 +115115,16 @@
       "from": "TASK-chat-branch-merge",
       "kind": "produces",
       "to": "src/routes/chats/split.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "produces",
+      "to": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "produces",
+      "to": "src/routes/messages/handle-scene-transitions.ts"
     },
     {
       "from": "TASK-chat-composer-gif-picker",
@@ -154837,6 +154867,11 @@
       "to": "TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl"
     },
     {
+      "from": "TASK-split-reunite-aux-classification",
+      "kind": "related",
+      "to": "TASK-chat-branch-merge"
+    },
+    {
       "from": "TASK-stills-lifecycle-queue-progress-client",
       "kind": "related",
       "to": "TASK-comfyui-first-class-image-generation-queue-honors-comfyui-ba"
@@ -163234,6 +163269,12 @@
     {
       "from": "BUG-assistant-and-group-chat-correctness-defects",
       "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-assistant-and-group-chat-correctness-defects",
+      "kind": "sibling",
       "to": "TASK-chat-feature-component-buttons",
       "via": "src/group-chat/mention-parser.ts"
     },
@@ -163998,6 +164039,12 @@
       "kind": "sibling",
       "to": "TASK-book-outline-generation-workflow",
       "via": "src/assistant/workflow-routing.ts; src/regex/intent.ts; src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-assistant-intent-regexes-hijack-normal-chat-messages",
+      "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "BUG-assistant-intent-regexes-hijack-normal-chat-messages",
@@ -173446,6 +173493,12 @@
     {
       "from": "BUG-chat-prompt-override-bypass-on-reply",
       "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-chat-prompt-override-bypass-on-reply",
+      "kind": "sibling",
       "to": "TASK-comparison-workflow-template-and-command",
       "via": "src/routes/messages/command.ts"
     },
@@ -175613,6 +175666,12 @@
       "from": "BUG-command-dispatch-async-handler-uncaught",
       "kind": "sibling",
       "to": "TASK-book-outline-generation-workflow",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "BUG-command-dispatch-async-handler-uncaught",
+      "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
       "via": "src/routes/messages/command.ts"
     },
     {
@@ -226696,6 +226755,12 @@
     {
       "from": "FEAT-chat-transfer-location-change",
       "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
+      "via": "src/routes/messages/handle-scene-transitions.ts"
+    },
+    {
+      "from": "FEAT-chat-transfer-location-change",
+      "kind": "sibling",
       "to": "TASK-chat-feature-location-transition-transfer",
       "via": "src/chat/service/carry-location.ts; src/chat/service/location-events.ts"
     },
@@ -236063,6 +236128,12 @@
       "from": "PERF-chat-dispatch-command-three-sequential-queries",
       "kind": "sibling",
       "to": "TASK-book-outline-generation-workflow",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "PERF-chat-dispatch-command-three-sequential-queries",
+      "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
       "via": "src/routes/messages/command.ts"
     },
     {
@@ -245447,6 +245518,12 @@
       "from": "TASK-action-applicability-gate",
       "kind": "sibling",
       "to": "TASK-book-outline-generation-workflow",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-action-applicability-gate",
+      "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
       "via": "src/routes/messages/command.ts"
     },
     {
@@ -264358,6 +264435,12 @@
     {
       "from": "TASK-book-outline-generation-workflow",
       "kind": "sibling",
+      "to": "TASK-chat-branch-merge",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-book-outline-generation-workflow",
+      "kind": "sibling",
       "to": "TASK-comic-storyboard-panel-generation-workflow",
       "via": "src/assistant/workflow-routing.test.ts; src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates-workflow.ts; src/regex/intent.ts"
     },
@@ -270292,14 +270375,62 @@
     {
       "from": "TASK-chat-branch-merge",
       "kind": "sibling",
+      "to": "TASK-chat-locations-worlds-finalize-current-implementation",
+      "via": "src/routes/messages/handle-scene-transitions.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
       "to": "TASK-chat-transfer-location",
       "via": "src/chat/service/split.ts; src/routes/chats/split.ts"
     },
     {
       "from": "TASK-chat-branch-merge",
       "kind": "sibling",
+      "to": "TASK-comparison-workflow-template-and-command",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
+      "to": "TASK-harness-frontend-consolidation",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
+      "to": "TASK-interaction-service-foundation",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
       "to": "TASK-typescript-7-migration-typecheck-failures",
       "via": "src/chat/service/split-utils.ts; src/chat/service/split.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
+      "to": "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
+      "to": "TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
+      "to": "epic-assistant-creative-studio-workflows",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
+      "to": "epic-assistant-gm-flows",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "TASK-chat-branch-merge",
@@ -270312,6 +270443,18 @@
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
       "via": "src/chat/service/split.ts; src/routes/chats/split.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
+      "to": "epic-entity-generation-workflows",
+      "via": "src/routes/messages/command.ts"
+    },
+    {
+      "from": "TASK-chat-branch-merge",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/routes/messages/command.ts"
     },
     {
       "from": "TASK-chat-composer-gif-picker",

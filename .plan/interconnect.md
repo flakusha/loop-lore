@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3560
+- tickets: 3561
 - epics: 336
 - src paths owned: 4279
-- edges: produces 11001, consumes 398, sibling 31566, owns 1949, related 1165
+- edges: produces 11003, consumes 398, sibling 31584, owns 1950, related 1166
 
 ## Shared src hubs
 
@@ -1405,13 +1405,13 @@ output is byte-identical for identical inputs.
 | `src/routes/messages/archiving.coverage.test.ts` | `FEAT-2026-007`, `TASK-archival-workflow`, `epic-archival-workflow` |
 | `src/routes/messages/archiving.ts` | `BUG-archive-retention-hardcoded-30-days-should-be-configurable-9`, `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx`, `FEAT-2026-007`, `FEAT-chat-archive-retention-config-archive-retention-days-admin-s`, `TASK-archival-workflow`, `epic-archival-workflow` |
 | `src/routes/messages/command.test.ts` | `BUG-chat-prompt-override-bypass-on-reply`, `BUG-command-dispatch-async-handler-uncaught` |
-| `src/routes/messages/command.ts` | `BUG-assistant-and-group-chat-correctness-defects`, `BUG-assistant-intent-regexes-hijack-normal-chat-messages`, `BUG-chat-prompt-override-bypass-on-reply`, `BUG-command-dispatch-async-handler-uncaught`, `PERF-chat-dispatch-command-three-sequential-queries`, `TASK-action-applicability-gate`, `TASK-book-outline-generation-workflow`, `TASK-comparison-workflow-template-and-command`, `TASK-harness-frontend-consolidation`, `TASK-interaction-service-foundation`, `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui`, `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc`, `epic-assistant-creative-studio-workflows`, `epic-assistant-gm-flows`, `epic-entity-generation-workflows`, `epic-narrative-publishing-workflows` |
+| `src/routes/messages/command.ts` | `BUG-assistant-and-group-chat-correctness-defects`, `BUG-assistant-intent-regexes-hijack-normal-chat-messages`, `BUG-chat-prompt-override-bypass-on-reply`, `BUG-command-dispatch-async-handler-uncaught`, `PERF-chat-dispatch-command-three-sequential-queries`, `TASK-action-applicability-gate`, `TASK-book-outline-generation-workflow`, `TASK-chat-branch-merge`, `TASK-comparison-workflow-template-and-command`, `TASK-harness-frontend-consolidation`, `TASK-interaction-service-foundation`, `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui`, `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc`, `epic-assistant-creative-studio-workflows`, `epic-assistant-gm-flows`, `epic-entity-generation-workflows`, `epic-narrative-publishing-workflows` |
 | `src/routes/messages/create-entity-confirm.test.ts` | `FEAT-human-in-the-loop-approval-gates`, `TASK-human-in-the-loop-tool-approval-gates`, `epic-assistant-gm-flows` |
 | `src/routes/messages/create-entity-confirm.ts` | `BUG-create-entity-confirm-bypasses-world-ownership`, `TASK-book-outline-generation-workflow`, `epic-assistant-gm-flows` |
 | `src/routes/messages/create.ts` | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it`, `BUG-bug-async-result-store-track-never-called-request-results-pi`, `BUG-bug-message-create-accepts-parentid-from-any-chat-cross-chat`, `BUG-chat-idempotency-not-enforced`, `BUG-chat-message-create-swipe-race`, `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `BUG-message-create-503-passthrough-omits-persisted-id-and-duplic`, `BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated`, `BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup`, `BUG-nsfw-flag-side-effect-runs-before-access-check`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-middleware-fe-be-db-record-content-hashing`, `TASK-middleware-global-idempotency-replay-for-re-fired-requests`, `TASK-msg-forward-across-chats`, `TASK-per-chat-auto-translation-layer`, `TASK-proactive-messaging`, `TASK-profanity-filter-hot-reload-per-chat-sensitivity`, `TASK-tui-slash-command-completion`, `TASK-turn-send-gate` |
 | `src/routes/messages/forward.ts` | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-msg-forward-across-chats`, `TASK-tmp-janitor-and-staleness-markers` |
 | `src/routes/messages/guards.ts` | `TASK-chat-feature-moderation`, `TASK-vn-branching-choices`, `TASK-vn-choice-opt-in`, `TASK-vn-qa-mode`, `epic-visual-novel-mode` |
-| `src/routes/messages/handle-scene-transitions.ts` | `FEAT-chat-transfer-location-change`, `TASK-chat-locations-worlds-finalize-current-implementation` |
+| `src/routes/messages/handle-scene-transitions.ts` | `FEAT-chat-transfer-location-change`, `TASK-chat-branch-merge`, `TASK-chat-locations-worlds-finalize-current-implementation` |
 | `src/routes/messages/helpers.ts` | `BUG-chat-key-history-loss-join-leave`, `BUG-encryption-tier-not-enforced`, `BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export`, `BUG-private-tier-no-true-e2e`, `BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10`, `epic-ambient-music-sfx`, `epic-audio-video-sound`, `epic-crypto`, `epic-review-dev-2026-08-26-security-data-integrity-merges` |
 | `src/routes/messages/insert-message.ts` | `BUG-user-message-swipe-insert-retries-all-errors-and-mislabels-t`, `TASK-branch-merge-continuation-semantics` |
 | `src/routes/messages/post.ts` | `BUG-chat-fts-encrypt-mismatch`, `BUG-chat-mention-silent-error-swall`, `BUG-chat-message-create-swipe-race`, `BUG-chat-message-delete-soft-fails-compliance`, `BUG-chat-persist-init-hardcoded-scene`, `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en`, `BUG-encryption-tier-not-enforced`, `BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export`, `BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh`, `BUG-size-strict-pre-existing-dev-drift`, `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc`, `epic-crypto` |
@@ -2807,6 +2807,7 @@ output is byte-identical for identical inputs.
 | `epic-chat-transfer-location` | owns | `TASK-party-aux-transition` | - |
 | `epic-chat-transfer-location` | owns | `TASK-party-join-leave` | - |
 | `epic-chat-transfer-location` | owns | `TASK-scene-chat-transition-context` | - |
+| `epic-chat-transfer-location` | owns | `TASK-split-reunite-aux-classification` | - |
 | `epic-chat-transfer-location` | owns | `TASK-travel-party-migration` | - |
 | `epic-chat-variants-taxonomy` | owns | `TASK-chat-variant-assistant-group` | - |
 | `epic-chat-variants-taxonomy` | owns | `TASK-chat-variant-assistant` | - |
@@ -8287,6 +8288,8 @@ output is byte-identical for identical inputs.
 | `TASK-chat-branch-merge` | produces | `src/chat/service/split.test.ts` | - |
 | `TASK-chat-branch-merge` | produces | `src/chat/service/split.ts` | - |
 | `TASK-chat-branch-merge` | produces | `src/routes/chats/split.ts` | - |
+| `TASK-chat-branch-merge` | produces | `src/routes/messages/command.ts` | - |
+| `TASK-chat-branch-merge` | produces | `src/routes/messages/handle-scene-transitions.ts` | - |
 | `TASK-chat-composer-gif-picker` | produces | `src/frontend/alpine/chat-actions/gif-picker.test.ts` | - |
 | `TASK-chat-composer-gif-picker` | produces | `src/frontend/alpine/chat-actions/gif-picker.ts` | - |
 | `TASK-chat-composer-gif-picker` | produces | `src/frontend` | - |
@@ -16235,6 +16238,7 @@ output is byte-identical for identical inputs.
 | `TASK-specify-content-warnings-write-the-frontend-contract` | related | `epic-frontend-age-gate` | - |
 | `TASK-specify-content-warnings-write-the-frontend-contract` | related | `epic-nsfw-game-mechanics` | - |
 | `TASK-spki-pin-verification-for-federation-peers` | related | `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl` | - |
+| `TASK-split-reunite-aux-classification` | related | `TASK-chat-branch-merge` | - |
 | `TASK-stills-lifecycle-queue-progress-client` | related | `TASK-comfyui-first-class-image-generation-queue-honors-comfyui-ba` | - |
 | `TASK-stills-lifecycle-queue-progress-client` | related | `TASK-comfyui-graph-builder-ts-port` | - |
 | `TASK-stills-lifecycle-queue-progress-client` | related | `TASK-comfyui-ws-client-id-progress-reference-generation` | - |
@@ -17660,6 +17664,7 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-aux-emotion-avatar` | `src/assistant/intent.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-book-outline-generation-workflow` | `src/assistant/workflow-runner.ts; src/routes/messages/command.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery` | `src/group-chat/mention-parser.ts` |
+| `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-chat-feature-component-buttons` | `src/group-chat/mention-parser.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-chat-feature-entry-field-pre-send` | `src/group-chat/mention-parser.ts` |
 | `BUG-assistant-and-group-chat-correctness-defects` | sibling | `TASK-chat-feature-rpg-rule-system` | `src/group-chat/turn-selector.ts` |
@@ -17788,6 +17793,7 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-assistant-creative-studio-workflow-world` | `src/regex/intent.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-assistant-creative-studio-workflows` | `src/regex/intent.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-book-outline-generation-workflow` | `src/assistant/workflow-routing.ts; src/regex/intent.ts; src/routes/messages/command.ts` |
+| `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-comic-storyboard-panel-generation-workflow` | `src/assistant/workflow-routing.ts; src/regex/intent.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-comparison-workflow-template-and-command` | `src/assistant/workflow-routing.ts; src/regex/intent.ts; src/routes/messages/command.ts` |
 | `BUG-assistant-intent-regexes-hijack-normal-chat-messages` | sibling | `TASK-gm-chat-assistant-gm-handoff-via-intent-to-workflow-routing` | `src/assistant/workflow-routing.ts` |
@@ -19362,6 +19368,7 @@ output is byte-identical for identical inputs.
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-async-store-complete-fail-lifecycle-hooks` | `src/generation/auto-gen/auto-generation.ts; src/routes/messages/reply.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-backlog-size-strict-regression-recovery` | `src/routes/chats/manage.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/command.ts` |
+| `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-comparison-workflow-template-and-command` | `src/routes/messages/command.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-frontend-chat-rename-and-migrate` | `src/routes/chats/manage.ts` |
 | `BUG-chat-prompt-override-bypass-on-reply` | sibling | `TASK-harness-frontend-consolidation` | `src/routes/messages/command.ts` |
@@ -19724,6 +19731,7 @@ output is byte-identical for identical inputs.
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-assistant-slash-command-typed-token-autocomplete` | `src/assistant/commands/registry.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-assistant-tool-injection-guard` | `src/assistant/commands/registry.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/command.ts` |
+| `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-comparison-workflow-template-and-command` | `src/routes/messages/command.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-fast-action-prompt-pipeline` | `src/assistant/commands/registry.ts` |
 | `BUG-command-dispatch-async-handler-uncaught` | sibling | `TASK-harness-frontend-consolidation` | `src/assistant/commands/registry.ts; src/routes/messages/command.ts` |
@@ -28237,6 +28245,7 @@ output is byte-identical for identical inputs.
 | `FEAT-chat-template-config-lifecycle` | sibling | `epic-shared-schemas` | `src/validation/schemas.ts` |
 | `FEAT-chat-template-config-lifecycle` | sibling | `epic-world-chat-channels-invites` | `src/routes/chats.ts` |
 | `FEAT-chat-transfer-location-change` | sibling | `TASK-bound-linked-travel-prompts` | `src/chat/service/carry-location.ts` |
+| `FEAT-chat-transfer-location-change` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/handle-scene-transitions.ts` |
 | `FEAT-chat-transfer-location-change` | sibling | `TASK-chat-feature-location-transition-transfer` | `src/chat/service/carry-location.ts; src/chat/service/location-events.ts` |
 | `FEAT-chat-transfer-location-change` | sibling | `TASK-chat-lifecycle-moderation` | `src/chat/service/location-events.ts` |
 | `FEAT-chat-transfer-location-change` | sibling | `TASK-chat-location-change-event-log` | `src/chat/service/location-events.ts; src/routes/chats/extras.ts` |
@@ -29799,6 +29808,7 @@ output is byte-identical for identical inputs.
 | `IMPROVE-impersonate-explicit-else-branch` | sibling | `epic-impersonation` | `src/chat/service/participants.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-action-applicability-gate` | `src/routes/messages/command.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/command.ts` |
+| `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-comparison-workflow-template-and-command` | `src/routes/messages/command.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-harness-frontend-consolidation` | `src/routes/messages/command.ts` |
 | `PERF-chat-dispatch-command-three-sequential-queries` | sibling | `TASK-interaction-service-foundation` | `src/routes/messages/command.ts` |
@@ -31363,6 +31373,7 @@ output is byte-identical for identical inputs.
 | `TASK-action-applicability-gate` | sibling | `TASK-assistant-slash-command-typed-token-autocomplete` | `src/assistant/commands/registry.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-assistant-tool-injection-guard` | `src/assistant/commands/registry.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-book-outline-generation-workflow` | `src/routes/messages/command.ts` |
+| `TASK-action-applicability-gate` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-chat-feature-moderation` | `src/generation/hooks/moderation-hook.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-chat-feature-rpg-rule-system` | `src/group-chat/turn-selector.ts` |
 | `TASK-action-applicability-gate` | sibling | `TASK-chat-feature-turn-talkativity-skip` | `src/group-chat/turn-selector.ts` |
@@ -34514,6 +34525,7 @@ output is byte-identical for identical inputs.
 | `TASK-blog-unit-scheduled-serialization` | sibling | `TASK-review-thread-comment-model` | `src/db/schema-blog.ts` |
 | `TASK-blog-unit-scheduled-serialization` | sibling | `TASK-rpg-and-blog-service-db-handles-are-typed-as-any-losing-quer` | `src/rpg/blog/service/posts.ts` |
 | `TASK-blog-unit-scheduled-serialization` | sibling | `epic-editorial-workflow` | `src/db/schema-blog.ts` |
+| `TASK-book-outline-generation-workflow` | sibling | `TASK-chat-branch-merge` | `src/routes/messages/command.ts` |
 | `TASK-book-outline-generation-workflow` | sibling | `TASK-comic-storyboard-panel-generation-workflow` | `src/assistant/workflow-routing.test.ts; src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates-workflow.ts; src/regex/intent.ts` |
 | `TASK-book-outline-generation-workflow` | sibling | `TASK-comparison-fan-out-engine` | `src/assistant/workflow-runner.ts; src/config/sections/templates-workflow.ts` |
 | `TASK-book-outline-generation-workflow` | sibling | `TASK-comparison-workflow-template-and-command` | `src/assistant/commands/workflow.ts; src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/sections/templates-workflow.ts; src/config/templates-loader/discovery.ts; src/regex/intent.ts; src/routes/messages/command.ts` |
@@ -35503,10 +35515,20 @@ output is byte-identical for identical inputs.
 | `TASK-chat-backgrounds-location-sync` | sibling | `epic-visual-novel-mode` | `src/views/chat.html` |
 | `TASK-chat-backgrounds-location-sync` | sibling | `epic-worlds-extension` | `src/db/schema.ts` |
 | `TASK-chat-branch-merge` | sibling | `TASK-chat-feature-rpg-chronological-navigation` | `src/chat/service/split-utils.ts; src/chat/service/split.ts` |
+| `TASK-chat-branch-merge` | sibling | `TASK-chat-locations-worlds-finalize-current-implementation` | `src/routes/messages/handle-scene-transitions.ts` |
 | `TASK-chat-branch-merge` | sibling | `TASK-chat-transfer-location` | `src/chat/service/split.ts; src/routes/chats/split.ts` |
+| `TASK-chat-branch-merge` | sibling | `TASK-comparison-workflow-template-and-command` | `src/routes/messages/command.ts` |
+| `TASK-chat-branch-merge` | sibling | `TASK-harness-frontend-consolidation` | `src/routes/messages/command.ts` |
+| `TASK-chat-branch-merge` | sibling | `TASK-interaction-service-foundation` | `src/routes/messages/command.ts` |
 | `TASK-chat-branch-merge` | sibling | `TASK-typescript-7-migration-typecheck-failures` | `src/chat/service/split-utils.ts; src/chat/service/split.ts` |
+| `TASK-chat-branch-merge` | sibling | `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui` | `src/routes/messages/command.ts` |
+| `TASK-chat-branch-merge` | sibling | `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc` | `src/routes/messages/command.ts` |
+| `TASK-chat-branch-merge` | sibling | `epic-assistant-creative-studio-workflows` | `src/routes/messages/command.ts` |
+| `TASK-chat-branch-merge` | sibling | `epic-assistant-gm-flows` | `src/routes/messages/command.ts` |
 | `TASK-chat-branch-merge` | sibling | `epic-chat-product-features` | `src/chat/service/split-utils.ts; src/chat/service/split.ts` |
 | `TASK-chat-branch-merge` | sibling | `epic-chat-transfer-location` | `src/chat/service/split.ts; src/routes/chats/split.ts` |
+| `TASK-chat-branch-merge` | sibling | `epic-entity-generation-workflows` | `src/routes/messages/command.ts` |
+| `TASK-chat-branch-merge` | sibling | `epic-narrative-publishing-workflows` | `src/routes/messages/command.ts` |
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e` | `src/frontend` |
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-coverage-waivers-for-3-modules-below-80-floor` | `src/frontend` |
 | `TASK-chat-composer-gif-picker` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/frontend` |
