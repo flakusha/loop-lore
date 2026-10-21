@@ -1679,7 +1679,7 @@ Total tickets: **3874** — untagged: **2643** — unbound to epic: **1532**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2643 | 970 | 45 | 905 | 32 | 0 | 691 |
+| (untagged) | 2643 | 974 | 45 | 905 | 32 | 0 | 687 |
 
 ## By epic × status
 
@@ -2110,7 +2110,7 @@ Total tickets: **3874** — untagged: **2643** — unbound to epic: **1532**
 | routing-versioning-consolidation | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | sam3-segmentation-integration | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | server-hardening | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
-| (unbound) | 1532 | 606 | 54 | 262 | 47 | 0 | 563 |
+| (unbound) | 1532 | 610 | 54 | 262 | 47 | 0 | 559 |
 
 ## Ticket detail
 
