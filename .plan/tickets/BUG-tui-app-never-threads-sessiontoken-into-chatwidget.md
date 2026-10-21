@@ -15,15 +15,15 @@
 
 ## Summary
 
-`src/tui/chat/index.ts:34` declares `ChatWidget.sessionToken: string | undefined`; `ChatWidgetOptions.sessionToken?` is the constructor hook (`src/tui/chat/types.ts:16`). `ChatWidget.handleSend` and `ChatWidget.loadMessages` both forward `host.sessionToken` to the request layer. But `src/tui/app.ts:49-55` constructs `new ChatWidget(this.screen, { onChatChange: ... })` with **no `sessionToken` field**. Result: every TUI request goes out without `Authorization: Bearer <token>`, so authenticated chat routes (`/api/chats/:id/messages`) reject as 401 in non-solo deployments.
+`src/tui/chat/index.ts:46` declares `ChatWidget.sessionToken: string | undefined`; `ChatWidgetOptions.sessionToken?` is the constructor hook (`src/tui/chat/types.ts:16`). `ChatWidget.handleSend` and `ChatWidget.loadMessages` both forward `host.sessionToken` to the request layer. But `src/tui/app.ts:106-118` constructs `new ChatWidget(this.screen, { onChatChange: ... })` with **no `sessionToken` field**. Result: every TUI request goes out without `Authorization: Bearer <token>`, so authenticated chat routes (`/api/chats/:id/messages`) reject as 401 in non-solo deployments.
 
-`src/tui/chat/index.ts:125-127` also exposes `setSessionToken(token: string)`, but no caller invokes it.
+`src/tui/chat/index.ts:249-251` also exposes `setSessionToken(token: string)`, but no caller invokes it.
 
-There is no existing env-var convention for the TUI session token — frontend reads from `localStorage.session_token` (`src/frontend/fe-fetch.ts:41`, `src/frontend/alpine/transports/server.ts:40`). Need to pick a TUI source (env var, config flag, prompt-on-startup) before fixing.
+There is no existing env-var convention for the TUI session token — frontend reads from `localStorage.session_token` (`src/frontend/fe-fetch.ts:11-12`, `src/frontend/alpine/htmx.ts:50`). Need to pick a TUI source (env var, config flag, prompt-on-startup) before fixing.
 
 - [x] Session token sourced at TUI startup. Decision: `[tui].sessionToken` in TOML/YAML config (no env-var or runtime prompt in this fix; consistent with frontend `localStorage.session_token` model).
-- [x] Token threaded into `ChatWidget` constructor via `sessionToken` option (`src/tui/app.ts:58-65`).
-- [x] Empty-string `sessionToken` from TOML normalized to `undefined` (matches frontend `if (token)` pattern in `src/frontend/fe-fetch.ts:41`).
+- [x] Token threaded into `ChatWidget` constructor via `sessionToken` option (`src/tui/app.ts:106-118`).
+- [x] Empty-string `sessionToken` from TOML normalized to `undefined` (matches frontend `if (token)` pattern in `src/frontend/fe-fetch.ts:11-12`).
 - [x] `loadConfig` failure during TUI startup logged via `getLogger().warn`, TUI still constructs (anonymous mode).
 - [x] Verified via new test `src/tui/chat/index.test.ts` (3 cases: forwarded, omitted, empty-string normalized).
 
@@ -33,12 +33,12 @@ There is no existing env-var convention for the TUI session token — frontend r
 
 ## Resolution
 
-- `src/config/schema/tui.ts:7-10` — added optional `sessionToken?: string` to the `TuiConfig` interface.
-- `src/config/sections/tui.ts:13-39` — `TuiSection` carries `sessionToken?: string` (no `TUI_DEFAULTS` entry, so absence = anonymous); `tuiMeta.properties.sessionToken` added with the required Bearer-token description. Note (strict-review correction): the class is NOT instantiated by the runtime load path — `loadConfig` builds plain objects via `deepClone(createConfigSchema().defaults)` + `deepMerge`, so the constructor's `""` normalization never executes. Runtime guarantees are: the `ChatWidget` constructor normalization plus the falsy guard in `src/tui/chat/api.ts` (`host.sessionToken ? { sessionToken } : undefined`), both of which make a stray `""` from TOML inert.
+- `src/config/sections/tui.ts:20` — added optional `sessionToken?: string` to the `TuiConfig` interface.
+- `src/config/sections/tui.ts:20,44-47` — `TuiSection` carries `sessionToken?: string` (no `TUI_DEFAULTS` entry, so absence = anonymous); `tuiMeta.properties.sessionToken` added with the required Bearer-token description. Note (strict-review correction): the class is NOT instantiated by the runtime load path — `loadConfig` builds plain objects via `deepClone(createConfigSchema().defaults)` + `deepMerge`, so the constructor's `""` normalization never executes. Runtime guarantees are: the `ChatWidget` constructor normalization plus the falsy guard in `src/tui/chat/api.ts` (`host.sessionToken ? { sessionToken } : undefined`), both of which make a stray `""` from TOML inert.
 - Empirical verification (2026-09-15, throwaway script against `loadConfig`): `[tui] sessionToken = "abc123"` → `config.tui.sessionToken === "abc123"`; `sessionToken = ""` → loader delivers raw `""` (inert downstream per above); section omitted → `undefined`.
-- `src/tui/chat/index.ts:42-48` — `ChatWidget` constructor normalizes empty-string `options.sessionToken` to `undefined` so a stray `""` from TOML never ships as a `Bearer ` header.
-- `src/tui/app.ts:13,28-65` — `TUIApp` constructor calls `loadConfig()` inside try/catch (`getLogger().warn` on failure, falling back to anonymous) and forwards `config.tui.sessionToken` into `new ChatWidget(this.screen, { sessionToken, ... })`.
-- `src/tui/app.ts:137-141` (follow-up, `tui-logger-init`): `createLogger({ level: "warn" })` at module top — required for the `getLogger().warn` fallback above to actually work, since `loadConfig()` itself calls `getLogger()` unconditionally (`runTemplateExpansion`); without init the constructor's catch block rethrew and `bun run tui` crashed at startup. See BUG-tui-app-getlogger-throws-when-running-standalone.
+- `src/tui/chat/index.ts:55-60` — `ChatWidget` constructor normalizes empty-string `options.sessionToken` to `undefined` so a stray `""` from TOML never ships as a `Bearer ` header.
+- `src/tui/app.ts:13,61-68,106-118` — `TUIApp` constructor calls `loadConfig()` inside try/catch (`getLogger().warn` on failure, falling back to anonymous) and forwards `config.tui.sessionToken` into `new ChatWidget(this.screen, { sessionToken, ... })`.
+- `src/tui/app.ts:263-264` (follow-up, `tui-logger-init`): `createLogger({ level: "warn" })` inside `createTUIApp()` — required for the `getLogger().warn` fallback above to actually work, since `loadConfig()` itself calls `getLogger()` unconditionally (`runTemplateExpansion`); without init the constructor's catch block rethrew and `bun run tui` crashed at startup. See BUG-tui-app-getlogger-throws-when-running-standalone.
 - `src/tui/chat/index.test.ts` — new test file covering the three contract points: explicit token forwarded, omitted token stays undefined, empty-string token normalized to undefined. `blessed` is mocked at module level so the suite runs under `bun test src/tui/chat/index.test.ts` without a TTY.
 
 Acceptance criteria:
@@ -48,4 +48,4 @@ Acceptance criteria:
 - [x] Verified: outgoing `/api/chats/:id/messages` requests carry `Authorization: Bearer <token>` when token is set (covered by `src/tui/chat/api.ts` consuming `host.sessionToken` — token plumbing now reaches it via `app.ts` → `ChatWidget` → `host`).
 - [x] Verified: requests without token omit the header (anonymous mode still works against solo deployments).
 - Workaround for now: in solo mode, server ignores missing token → TUI works for development; broken for remote/multi-user.
-- Re-verified 2026-09-24 against `bug-batch-2026-09-24b` HEAD `376be137e` — full chain present: `TuiConfig.sessionToken` (`src/config/schema/tui.ts:9`), `tuiMeta.properties.sessionToken` (`src/config/sections/tui.ts:33-36`), `tui` section registered in defaults/schema-class/json-schema/env-map/hot-reload, `loadConfig` deep-merges raw TOML so `[tui] sessionToken` survives (`src/config/load/load.ts:45,60,79`), constructor threading (`src/tui/app.ts:31-37,56-63`), `ChatWidget` `""`→`undefined` normalization (`src/tui/chat/index.ts:47`), `auth:` consumption (`src/tui/chat/api.ts:32,77`), and the 3-case contract test (`src/tui/chat/index.test.ts:111-126`). No code change required in this batch.
+- Re-verified 2026-09-24 against `bug-batch-2026-09-24b` HEAD `376be137e` — full chain present: `TuiConfig.sessionToken` (`src/config/schema/tui.ts:9`), `tuiMeta.properties.sessionToken` (`src/config/sections/tui.ts:44-47`), `tui` section registered in defaults/schema-class/json-schema/env-map/hot-reload, `loadConfig` deep-merges raw TOML so `[tui] sessionToken` survives (`src/config/load/load.ts:46,61,80`), constructor threading (`src/tui/app.ts:61-68,106-118`), `ChatWidget` `""`→`undefined` normalization (`src/tui/chat/index.ts:60`), `auth:` consumption (`src/tui/chat/api.ts:61,125`), and the 3-case contract test (`src/tui/chat/index.test.ts:225-238`). No code change required in this batch.

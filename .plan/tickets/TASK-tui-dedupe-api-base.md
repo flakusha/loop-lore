@@ -15,7 +15,7 @@
 
 ## Summary
 
-`src/tui/app.ts:17` declares `const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";` (used only for display in the status bar at line 114). `src/tui/chat/api.ts:7` declares the same constant (used in 3 request URL constructions). `API_BASE` is already re-exported from `src/tui/chat/index.ts:21` (`export { API_BASE } from "./api"`), so `app.ts` could import from `./chat` instead of redeclaring.
+`src/tui/app.ts:18` declares `const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";` (used only for display in the status bar at line 189). `src/tui/chat/api.ts:7` declares the same constant (used in 3 request URL constructions). `API_BASE` is already re-exported from `src/tui/chat/index.ts:24` (`export { API_BASE } from "./api"`), so `app.ts` could import from `./chat` instead of redeclaring.
 
 ## Acceptance Criteria
 

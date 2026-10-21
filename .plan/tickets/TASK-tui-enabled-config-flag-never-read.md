@@ -15,7 +15,7 @@
 
 ## Summary
 
-`src/config/schema-class/env-map.ts:110` maps `ENABLE_TUI` → `tui.enabled`. `src/config/schema/tui.ts` declares `TuiConfig { enabled: boolean }`. Default is `true` (`src/config/sections/tui.ts:9`).
+`src/config/schema-class/env-map.ts:116` maps `ENABLE_TUI` → `tui.enabled`. `src/config/schema/tui.ts` declares `TuiConfig { enabled: boolean }`. Default is `true` (`src/config/sections/tui.ts:7`).
 
 But no runtime code reads `config.tui.enabled`. The TUI binary is gated solely by the `bun run tui` script invocation; an admin who sets `ENABLE_TUI=false` expecting the binary to refuse or no-op gets silent acceptance.
 
