@@ -1753,7 +1753,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-BUILDSKILLTREE-SILENTLY-DROPS-ORPHAN-NODES": {
     "hash": "174d08d",
