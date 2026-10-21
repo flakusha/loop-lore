@@ -128,7 +128,7 @@ export function ensureFrontendBuild(): string {
   const expectedHash = hashFrontendSources(root,);
   const buildDir = join(dist, `${E2E_BUILD_PREFIX}${expectedHash.slice(0, 16,)}`,);
   const hashPath = join(buildDir, ".build-hash",);
-  const alpineInitPattern = new RegExp(`^alpine-init-(${HASH_ALPHABET}{8})$\.js$`,);
+  const alpineInitPattern = new RegExp(`^alpine-init-(${HASH_ALPHABET}{8})\\.js$`,);
   const isReady = (): boolean => {
     const hashOk = existsSync(hashPath,) && readFileSync(hashPath, "utf8",) === expectedHash;
     if (!hashOk) { return false; }
