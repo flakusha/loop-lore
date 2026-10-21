@@ -1018,6 +1018,10 @@
   "src/app.rs": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
     }
   ],
@@ -6601,6 +6605,12 @@
       "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     }
   ],
+  "src/build/egui-artifact.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
+    }
+  ],
   "src/build/identity.test.ts": [
     {
       "kind": "ticket",
@@ -7877,6 +7887,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-mood-and-relationship-services-mutate-multi-row-state-withou.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call.md"
     }
   ],
   "src/characters/services/personality-service.ts": [
@@ -7965,6 +7979,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same.md"
     }
   ],
   "src/characters/services/skills-service-bridge.ts": [
@@ -9237,6 +9255,12 @@
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
     }
   ],
+  "src/chat/scene/handle-scene-transitions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
+    }
+  ],
   "src/chat/service": [
     {
       "kind": "ticket",
@@ -10182,6 +10206,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
     },
     {
@@ -10523,6 +10551,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-settings-templates-compat-matrix.md"
+    }
+  ],
+  "src/chat/split-classifier.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
+    }
+  ],
+  "src/chat/split-classifier.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
     }
   ],
   "src/chat/token-counter.ts": [
@@ -21216,6 +21256,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam.md"
     },
     {
@@ -31215,6 +31259,12 @@
       "source": ".plan/tickets/TASK-wire-nsfw-5-tier-rating-into-enforcement-epic-open-item-b4.md"
     }
   ],
+  "src/http-utils/parse.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-parsepagination-default-50-silently-overrides-actorsquery-sc.md"
+    }
+  ],
   "src/i18n/__tests/middleware.test.ts": [
     {
       "kind": "ticket",
@@ -32795,6 +32845,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-logging.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con.md"
     },
     {
       "kind": "ticket",
@@ -38008,6 +38062,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-models-overlay.md"
     }
   ],
@@ -39293,6 +39351,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-characters-list-and-chats-list-bypass-parsepagination-valida.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-parsepagination-default-50-silently-overrides-actorsquery-sc.md"
     }
   ],
   "src/routes/characters/update.ts": [
@@ -39726,6 +39788,10 @@
     }
   ],
   "src/routes/chats/create.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
@@ -52426,6 +52492,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-.md"
     },
     {
@@ -53799,6 +53869,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-create-silently-drops-personality-scenario-welcome.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-parsepagination-default-50-silently-overrides-actorsquery-sc.md"
     },
     {
       "kind": "ticket",
