@@ -3,7 +3,7 @@
 
 # BUG: Admin chat PATCH accepts arbitrary string for is_pinned
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
