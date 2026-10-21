@@ -17,7 +17,7 @@ Current pin: `htmx.org@2.0.11`. Target: htmx 4.x (npm latest stays 2.x until ear
 
 ## Recommended approach
 
-1. Stay on 2.x until needed (npm latest). 
+1. Stay on 2.x until needed (npm latest).
 2. If upgrading, set `htmx.config.implicitInheritance = true` and `noSwap = [204,304,'4xx','5xx']` to preserve 2.x behavior.
 3. Rename events and attributes incrementally behind tests.
 4. Run e2e suite (`E2E_SAFEGUARD=1`).
