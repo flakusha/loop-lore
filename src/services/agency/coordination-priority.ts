@@ -90,6 +90,9 @@ export function enqueueIfNoPlayerIntent(
   action: { actorId: string; payload: unknown },
 ): QueueResult {
   if (hasPlayerIntent(sceneId,)) {
+    // Cap the in-process queue so an abandoned scene (stream crash, client
+    // disconnect) cannot grow it without bound: evict the oldest entry.
+    if (queuedActions.length >= 1000) { queuedActions.shift(); }
     queuedActions.push({ sceneId, action, enqueuedAt: Date.now(), },);
     return { status: "queued", reason: "player_intent_in_flight", };
   }
