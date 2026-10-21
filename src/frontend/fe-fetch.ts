@@ -11,7 +11,7 @@
  * No Bearer fallback: `localStorage.session_token` has no writer, and the
  * `FetchAuth.sessionToken` field is non-browser only (TUI/server callers).
  * On a 401 it redirects to the login page — mirroring the behaviour the HTMX
- * layer applies to its own requests via `htmx:configRequest`.
+ * layer applies to its own requests via `htmx:config:request`.
  *
  * This is the single canonical request helper for non-Alpine (vanilla) pages.
  * Alpine/chat code keeps `apiFetch` (alpine/htmx.ts) which delegates here so the

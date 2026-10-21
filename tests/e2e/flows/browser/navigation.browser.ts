@@ -188,7 +188,7 @@ describe("Navigation E2E", () => {
       try {
         await goto(page, "/views/new-chat",);
         await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 15_000, },);
-        // loadNewChatPage() is only called on htmx:load — page.goto() bypasses htmx,
+        // loadNewChatPage() is only called on htmx:after:init — page.goto() bypasses htmx,
         // so we must manually initialize the form submit handler. Await it: it
         // fires /api/v1/actors, /api/v1/chat-setup-templates and /api/v1/worlds,
         // and leaving them in flight lets the test finish — and abort them on

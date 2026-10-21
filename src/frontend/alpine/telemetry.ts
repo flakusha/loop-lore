@@ -43,7 +43,7 @@ export function initTelemetry(): void {
 
   // Captures htmx-driven navigation; trackPageView dedupes to actual path
   // changes, so fragment swaps on the same path no longer emit page_views.
-  document.addEventListener("htmx:afterSettle", () => trackPageView(),);
+  document.addEventListener("htmx:after:settle", () => trackPageView(),);
 
   globalThis.addEventListener("error", (event: ErrorEvent,) => {
     try {

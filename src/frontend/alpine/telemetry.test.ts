@@ -190,7 +190,7 @@ describe("trackTelemetry", () => {
 });
 
 describe("initTelemetry (enabled)", () => {
-  it("registers popstate/error/unhandledrejection + htmx:afterSettle listeners", async () => {
+  it("registers popstate/error/unhandledrejection + htmx:after:settle listeners", async () => {
     const mod = await importTelemetry("init-listeners",);
     globalObj.__TELEMETRY_FRONTEND_ENABLED = true;
     vi.useFakeTimers();
@@ -198,7 +198,7 @@ describe("initTelemetry (enabled)", () => {
     expect(harness.globalListeners.has("popstate",),).toBe(true,);
     expect(harness.globalListeners.has("error",),).toBe(true,);
     expect(harness.globalListeners.has("unhandledrejection",),).toBe(true,);
-    expect(harness.docListeners.has("htmx:afterSettle",),).toBe(true,);
+    expect(harness.docListeners.has("htmx:after:settle",),).toBe(true,);
   });
 
   it("binds userId/sessionId from the injected globals", async () => {
@@ -246,7 +246,7 @@ describe("initTelemetry (enabled)", () => {
     expect(views[0]?.path,).toBe("/chat",);
   });
 
-  it("dedupes page_view when the path is unchanged (popstate + htmx:afterSettle)", async () => {
+  it("dedupes page_view when the path is unchanged (popstate + htmx:after:settle)", async () => {
     const mod = await importTelemetry("init-dedup",);
     globalObj.__TELEMETRY_FRONTEND_ENABLED = true;
     vi.useFakeTimers();
@@ -254,7 +254,7 @@ describe("initTelemetry (enabled)", () => {
     vi.advanceTimersByTime(300,);
     const afterInit = pageViews().length;
     harness.globalListeners.get("popstate",)!();
-    harness.docListeners.get("htmx:afterSettle",)!();
+    harness.docListeners.get("htmx:after:settle",)!();
     vi.advanceTimersByTime(500,);
     expect(pageViews().length,).toBe(afterInit,);
   });
