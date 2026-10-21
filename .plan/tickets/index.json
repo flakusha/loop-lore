@@ -2117,7 +2117,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CHARACTER-TEMPLATE-VALIDATOR-REJECTS-EVERY-LEGAL-CONTENT-RAT": {
     "hash": "0096d4e",
