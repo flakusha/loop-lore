@@ -15,7 +15,7 @@
 
 ## Summary
 
-`src/tui/asset-view.ts:199-204` now reads:
+`src/tui/asset-view.ts:200-205` now reads:
 
 ```ts
 setChatId(chatId: string,): void {
@@ -26,7 +26,7 @@ setChatId(chatId: string,): void {
 }
 ```
 
-The banned `void (async () => { try {...} catch {...} })()` IIFE is gone. `loadAssets` (`:219-250`) catches internally and calls `renderInfo` on failure, so the outer catch was unreachable dead weight.
+The banned `void (async () => { try {...} catch {...} })()` IIFE is gone. `loadAssets` (`:220-254`) catches internally and calls `renderInfo` on failure, so the outer catch was unreachable dead weight.
 
 ## Acceptance Criteria
 
@@ -37,7 +37,7 @@ The banned `void (async () => { try {...} catch {...} })()` IIFE is gone. `loadA
 
 ## Resolution
 
-Code evidence — `src/tui/asset-view.ts:199-204`:
+Code evidence — `src/tui/asset-view.ts:200-205`:
 
 ```ts
 setChatId(chatId: string,): void {
@@ -48,7 +48,7 @@ setChatId(chatId: string,): void {
 }
 ```
 
-`loadAssets` at `:219-250` catches internally:
+`loadAssets` at `:220-254` catches internally:
 
 ```ts
 } catch (error) {

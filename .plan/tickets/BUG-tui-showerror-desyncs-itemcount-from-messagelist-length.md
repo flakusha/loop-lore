@@ -28,6 +28,6 @@ src/tui/chat/index.ts: showError() appends a line to messageList but never incre
 Re-verified against current `dev`; the defect described in this ticket is
 already fixed. The ticket was left open past the fix.
 
-Evidence: `src/tui/chat/index.ts:219-226`
+Evidence: `src/tui/chat/index.ts:339-346`
 
 - `showError()` now increments `itemCount`, and `show-error.test.ts` covers it.
