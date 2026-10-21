@@ -3,7 +3,7 @@
 
 # BUG: tryParseYaml rejects any document containing a brace
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
