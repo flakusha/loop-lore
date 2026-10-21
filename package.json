@@ -237,7 +237,7 @@
     "eslint-plugin-unicorn": "^78.0.0",
     "fast-check": "^4.10.2",
     "globals": "^17.13.0",
-    "htmx.org": "2.0.11",
+    "htmx.org": "4.0.0",
     "jscpd": "^5.4.1",
     "knip": "^6.41.0",
     "madge": "^8.0.0",
