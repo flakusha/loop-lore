@@ -3,7 +3,7 @@
 
 # BUG: Admin system-config DELETE passes user-controlled key without validation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 

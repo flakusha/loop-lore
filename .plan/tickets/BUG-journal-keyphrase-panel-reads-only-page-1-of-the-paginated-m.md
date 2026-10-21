@@ -3,7 +3,7 @@
 
 # BUG: Journal keyphrase panel reads only page 1 of the paginated memories envelope
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Tags:** frontend
