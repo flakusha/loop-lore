@@ -51,7 +51,7 @@ export class NotificationsManager {
 
     this.syncHandler = () => this.syncFromDom();
     this.beforeUnloadHandler = () => this.stop();
-    document.addEventListener("htmx:afterSwap", this.syncHandler,);
+    document.addEventListener("htmx:after:swap", this.syncHandler,);
     window.addEventListener("beforeunload", this.beforeUnloadHandler,);
   }
 
@@ -65,7 +65,7 @@ export class NotificationsManager {
     if (this.pollTimer) { clearInterval(this.pollTimer,); }
     this.pollTimer = undefined;
     if (this.syncHandler) {
-      document.removeEventListener("htmx:afterSwap", this.syncHandler,);
+      document.removeEventListener("htmx:after:swap", this.syncHandler,);
       this.syncHandler = null;
     }
 

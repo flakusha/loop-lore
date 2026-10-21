@@ -7,7 +7,7 @@
  *
  * `src/frontend/alpine/htmx.ts:80-84` re-runs `Alpine.initTree` after every htmx
  * swap — and SWALLOWS its errors (`/* Alpine may fail on partial swaps *`), while
- * `alpine-init.ts:105-115` re-hydrates client dates on `htmx:afterSwap`. Nothing
+ * `alpine-init.ts:105-115` re-hydrates client dates on `htmx:after:swap`. Nothing
  * before this suite asserted that the swapped subtree actually became reactive.
  *
  * Test 1 drives a sidebar htmx swap and asserts the swapped view hydrates
@@ -90,7 +90,7 @@ describe("Post-swap Alpine hydration E2E", () => {
       // The swapped characters subtree is fully reactive.
       await assertSwappedSubtreeHydrated(page,);
 
-      // htmx:afterSwap title sync (src/frontend/alpine/htmx.ts) reflects the
+      // htmx:after:swap title sync (src/frontend/alpine/htmx.ts) reflects the
       // new view's header title.
       await page.waitForFunction(
         () => /Characters/.test(document.title,),
