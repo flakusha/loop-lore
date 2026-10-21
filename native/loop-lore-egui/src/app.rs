@@ -57,12 +57,12 @@ enum FetchEvent {
     chat_id: Option<String>,
     result: Result<(Vec<CommandEntry>, Option<String>), String>,
   },
-  /// Gallery grid page resolved. Carries the request's own `page`/`replace`/
-  /// `filters` so a response superseded by a newer search is dropped instead
-  /// of being applied under the current filters' paging.
+  /// Gallery page resolved. Carries the request's own `replace`/`filters` so a
+  /// response superseded by a newer search is dropped instead of being applied
+  /// under the current filters' paging; the response carries the page and the
+  /// row window the server served.
   GalleryPage {
-    result: Result<Vec<crate::api::GalleryAsset>, String>,
-    page: u32,
+    result: Result<crate::api::GalleryPage, String>,
     replace: bool,
     filters: crate::api::GalleryFilters,
   },
@@ -439,7 +439,6 @@ impl EguiApp {
         }
         FetchEvent::GalleryPage {
           result,
-          page,
           replace,
           filters,
         } => {
@@ -448,8 +447,8 @@ impl EguiApp {
             continue;
           }
           match result {
-            Ok(assets) => {
-              self.gallery.apply_page(assets, page, replace);
+            Ok(page) => {
+              self.gallery.apply_gallery_page(page, replace);
               self.status = String::from("gallery loaded");
             }
             Err(e) => {
@@ -483,10 +482,9 @@ impl EguiApp {
       let url = api::gallery_grid_url(page, &filters);
       let result = client::get_json(&url)
         .await
-        .and_then(|raw| api::parse_gallery_grid(&raw));
+        .and_then(|raw| api::parse_gallery_page(&raw, page));
       events.borrow_mut().push(FetchEvent::GalleryPage {
         result,
-        page,
         replace,
         filters,
       });

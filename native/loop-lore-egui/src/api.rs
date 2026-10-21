@@ -307,6 +307,9 @@ fn parse_message_row(row: &serde_json::Value, fallback_role: &str) -> Result<Cha
 // ---------------------------------------------------------------------------
 
 /// Server-side page size of the gallery grid (`GRID_PAGE_SIZE` server-side).
+///
+/// The fallback for a response that omits `pageSize`; a response that reports
+/// its own row window wins (`GalleryPage::page_size`).
 pub(crate) const GALLERY_PAGE_SIZE: u32 = 200;
 
 /// One gallery asset as the grid needs it — the JSON view-model seam
@@ -332,6 +335,20 @@ pub struct GalleryAsset {
   pub visibility: String,
   /// Raw `created_at` column.
   pub created_at: String,
+}
+
+/// One page of gallery rows plus the paging the server reported.
+///
+/// Both gallery endpoints answer with `{ assets, page, pageSize }`: `page` is
+/// the page the server served, `pageSize` the row window it applied.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GalleryPage {
+  /// The asset rows, in display order.
+  pub assets: Vec<GalleryAsset>,
+  /// The 1-based page the server served.
+  pub page: u32,
+  /// The number of rows the server's page window holds.
+  pub page_size: u32,
 }
 
 /// Gallery grid filters — the same params the htmx filter bar sends to
@@ -428,12 +445,17 @@ pub fn gallery_attach_url(asset_id: &str) -> String {
   format!("/api/v1/assets/{}/links", encode_url_component(asset_id))
 }
 
-/// Parse the gallery grid view-model into assets, preserving order.
+/// Parse a gallery page view-model into rows plus the paging the server reported.
 ///
 /// The server returns `{assets: [{id, filename, assetType, sizeBytes,
-/// sizeLabel, thumbUrl, tags, visibility, createdAt}]}`. `thumbUrl` is null
-/// for non-images.
-pub fn parse_gallery_grid(raw: &str) -> Result<Vec<GalleryAsset>, String> {
+/// sizeLabel, thumbUrl, tags, visibility, createdAt}], page, pageSize}` for
+/// both `/dynamic/gallery/grid` and `/dynamic/gallery/search`. `thumbUrl` is
+/// null for non-images.
+///
+/// `page` echoes the request, so a response that omits it falls back to
+/// `requested_page` — the page the client asked for — rather than rewinding
+/// the pager to page 1.
+pub fn parse_gallery_page(raw: &str, requested_page: u32) -> Result<GalleryPage, String> {
   let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
   let assets = value
     .get("assets")
@@ -444,7 +466,23 @@ pub fn parse_gallery_grid(raw: &str) -> Result<Vec<GalleryAsset>, String> {
     let asset = parse_gallery_row(row).map_err(|e| format!("asset {index}: {e}"))?;
     out.push(asset);
   }
-  Ok(out)
+  let page = value
+    .get("page")
+    .and_then(serde_json::Value::as_u64)
+    .and_then(|page| u32::try_from(page).ok())
+    .filter(|page| *page >= 1)
+    .unwrap_or_else(|| requested_page.max(1));
+  let page_size = value
+    .get("pageSize")
+    .and_then(serde_json::Value::as_u64)
+    .and_then(|size| u32::try_from(size).ok())
+    .filter(|size| *size > 0)
+    .unwrap_or(GALLERY_PAGE_SIZE);
+  Ok(GalleryPage {
+    assets: out,
+    page,
+    page_size,
+  })
 }
 
 fn parse_gallery_row(row: &serde_json::Value) -> Result<GalleryAsset, String> {
@@ -766,28 +804,46 @@ mod tests {
       {"id":"a1","filename":"cat.png","assetType":"image","sizeBytes":2048,"sizeLabel":"2.0 KB","thumbUrl":"/api/v1/assets/a1/thumb","tags":["pet"],"visibility":"public","createdAt":"2026-10-01"},
       {"id":"a2","filename":"voice.mp3","assetType":"audio","sizeBytes":1048576,"sizeLabel":"1.0 MB","thumbUrl":null,"tags":[],"visibility":"private","createdAt":"2026-10-02"}
     ]}"#;
-    let assets = parse_gallery_grid(raw).unwrap();
-    assert_eq!(assets.len(), 2);
-    assert_eq!(assets[0].id, "a1");
-    assert_eq!(assets[0].thumb_url.as_deref(), Some("/api/v1/assets/a1/thumb"));
-    assert_eq!(assets[0].tags, vec!["pet"]);
-    assert_eq!(assets[0].size_label, "2.0 KB");
-    assert_eq!(assets[1].id, "a2");
-    assert_eq!(assets[1].thumb_url, None);
-    assert_eq!(assets[1].visibility, "private");
+    let page = parse_gallery_page(raw, 1).unwrap();
+    assert_eq!(page.assets.len(), 2);
+    assert_eq!(page.assets[0].id, "a1");
+    assert_eq!(page.assets[0].thumb_url.as_deref(), Some("/api/v1/assets/a1/thumb"));
+    assert_eq!(page.assets[0].tags, vec!["pet"]);
+    assert_eq!(page.assets[0].size_label, "2.0 KB");
+    assert_eq!(page.assets[1].id, "a2");
+    assert_eq!(page.assets[1].thumb_url, None);
+    assert_eq!(page.assets[1].visibility, "private");
   }
 
   #[test]
   fn gallery_grid_defaults_and_rejects_garbage() {
     let minimal = r#"{"assets":[{"id":"a1"}]}"#;
-    let assets = parse_gallery_grid(minimal).unwrap();
-    assert_eq!(assets[0].filename, "");
-    assert_eq!(assets[0].asset_type, "image");
-    assert_eq!(assets[0].size_bytes, 0);
-    assert_eq!(assets[0].tags.len(), 0);
-    assert_eq!(assets[0].visibility, "public");
-    assert!(parse_gallery_grid("nope").is_err());
-    assert!(parse_gallery_grid("{\"assets\":\"x\"}").is_err());
-    assert!(parse_gallery_grid("{\"assets\":[{\"noId\":1}]}").is_err());
+    let page = parse_gallery_page(minimal, 1).unwrap();
+    assert_eq!(page.assets[0].filename, "");
+    assert_eq!(page.assets[0].asset_type, "image");
+    assert_eq!(page.assets[0].size_bytes, 0);
+    assert_eq!(page.assets[0].tags.len(), 0);
+    assert_eq!(page.assets[0].visibility, "public");
+    assert!(parse_gallery_page("nope", 1).is_err());
+    assert!(parse_gallery_page("{\"assets\":\"x\"}", 1).is_err());
+    assert!(parse_gallery_page("{\"assets\":[{\"noId\":1}]}", 1).is_err());
+  }
+
+  #[test]
+  fn gallery_page_reads_the_paging_the_server_reported() {
+    // Owns its own JSON literals only — no shared resource, no ordering
+    // dependency.
+    let raw = r#"{"assets":[{"id":"a1"}],"page":3,"pageSize":50}"#;
+    let page = parse_gallery_page(raw, 3).unwrap();
+    assert_eq!(page.page, 3);
+    assert_eq!(page.page_size, 50);
+    // A response without `page` falls back to the page the client asked for —
+    // rewinding the pager to page 1 would re-append the same rows.
+    let no_page = parse_gallery_page(r#"{"assets":[{"id":"a1"}]}"#, 4).unwrap();
+    assert_eq!(no_page.page, 4);
+    assert_eq!(no_page.page_size, GALLERY_PAGE_SIZE);
+    // A nonsense window falls back to the server's grid page size.
+    let no_size = parse_gallery_page(r#"{"assets":[{"id":"a1"}],"pageSize":0}"#, 1).unwrap();
+    assert_eq!(no_size.page_size, GALLERY_PAGE_SIZE);
   }
 }

@@ -4,8 +4,10 @@
 //! Gallery grid state: asset rows, paging, and the texture seam.
 //!
 //! The grid consumes the JSON view-model (`GET /dynamic/gallery/grid` with
-//! `Accept: application/json`)//! through [`crate::api`] — the same rows the htmx
-//! fragment renders. Thumbnails are requested from the bridge
+//! `Accept: application/json`) through [`crate::api`] — the same rows the htmx
+//! fragment renders. The filtered view (`GET /dynamic/gallery/search`) serves
+//! the same paginated view-model, so both page alike. Thumbnails are
+//! requested from the bridge
 //! (`src/frontend/egui-gallery.ts`, global `window.loopLoreEguiGallery`), which
 //! fetches the bytes, decodes them in the browser, and calls back into Rust.
 //!
@@ -15,7 +17,7 @@
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-use crate::api::{GalleryAsset, GalleryFilters};
+use crate::api::{GalleryAsset, GalleryFilters, GalleryPage};
 
 /// Shorten a filename for a grid cell, appending `...` past `max_chars` chars.
 ///
@@ -84,7 +86,7 @@ impl GalleryCell {
 pub struct GalleryState {
   /// Asset rows in display order (page-concatenated).
   pub cells: Vec<GalleryCell>,
-  /// Current 1-based page.
+  /// Current 1-based page (the page the server last served).
   pub page: u32,
   /// Grid filters (mirror the htmx filter bar: `q`, `type`, `tag`, `sort`).
   pub filters: GalleryFilters,
@@ -94,6 +96,10 @@ pub struct GalleryState {
   pub error: Option<String>,
   /// `true` when a full page came back (more likely available).
   pub has_more: bool,
+  /// Row window the server reported (`pageSize`); `None` until the first
+  /// response arrives, then the server's own window decides what a full page
+  /// is.
+  page_size: Option<u32>,
   /// Pending thumbnail requests, drained each frame.
   pending_thumbs: Vec<ThumbRequest>,
   /// Resolved thumbnails, drained each frame.
@@ -120,13 +126,23 @@ impl GalleryState {
       // A new query invalidates any pending thumbnails.
       self.pending_thumbs.clear();
     }
-    // Filtered pages are served by `/dynamic/gallery/search`, which ignores
-    // `page` and hard-caps at GRID_PAGE_SIZE (`src/routes/views/search.ts`),
-    // so "Load more" would append the same 200 rows forever.
-    self.has_more = self.filters.is_empty() && assets.len() >= crate::api::GALLERY_PAGE_SIZE as usize;
+    // A full page came back, so another page may follow. Both gallery
+    // endpoints page the same way — filtered or not.
+    let page_size = self.page_size.unwrap_or(crate::api::GALLERY_PAGE_SIZE) as usize;
+    self.has_more = assets.len() >= page_size;
     for asset in assets {
       self.cells.push(GalleryCell::new(asset));
     }
+  }
+
+  /// Merge a fetched gallery page — the rows plus the paging the server
+  /// reported (`page`/`pageSize`).
+  ///
+  /// The server's own row window decides what a full page is, so a filtered
+  /// search pages exactly like the grid.
+  pub fn apply_gallery_page(&mut self, page: GalleryPage, replace: bool) {
+    self.page_size = Some(page.page_size);
+    self.apply_page(page.assets, page.page, replace);
   }
 
   /// Record a page fetch failure.
@@ -357,9 +373,32 @@ mod tests {
   }
 
   #[test]
-  fn has_more_is_suppressed_under_filters() {
-    // A filtered page of GRID_PAGE_SIZE rows is the server's hard cap, not a
-    // first page — "Load more" would re-append the same rows forever.
+  fn gallery_page_response_drives_the_pager() {
+    // Owns a local GalleryState only — no shared resource, no ordering
+    // dependency.
+    // The server's own row window decides what a full page is: two rows of a
+    // two-row page still leave another page to load.
+    let raw = r#"{"assets":[{"id":"a1"},{"id":"a2"}],"page":2,"pageSize":2}"#;
+    let mut state = GalleryState::new();
+    state.apply_gallery_page(crate::api::parse_gallery_page(raw, 2).unwrap(), true);
+    assert_eq!(state.page, 2);
+    assert_eq!(state.cells.len(), 2);
+    assert!(state.has_more);
+    // A short page ends the pager — and its rows still append.
+    let short = r#"{"assets":[{"id":"a3"}],"page":3,"pageSize":2}"#;
+    state.apply_gallery_page(crate::api::parse_gallery_page(short, 3).unwrap(), false);
+    assert_eq!(state.page, 3);
+    assert_eq!(state.cells.len(), 3);
+    assert!(!state.has_more);
+  }
+
+  #[test]
+  fn filtered_search_pages_and_appends_rows() {
+    // Owns a local GalleryState only — no shared resource, no ordering
+    // dependency.
+    // A filtered search is paginated like the grid: page 1 comes back full,
+    // "Load more" asks the search endpoint for page 2, and page 2's rows are
+    // appended to the rows already shown.</new_string>
     let mut state = GalleryState::new();
     state.set_filters(GalleryFilters {
       query: "cat".to_string(),
@@ -369,8 +408,18 @@ mod tests {
       .map(|i| asset(&format!("a{i}"), "image", None))
       .collect();
     state.apply_page(full, 1, true);
-    assert!(!state.has_more);
+    // "Load more" stays available under filters: the page came back full.
+    assert!(state.has_more, "a full filtered page must keep \"Load more\" available");
     assert_eq!(state.cells.len(), crate::api::GALLERY_PAGE_SIZE as usize);
+    // The next page is requested from the search endpoint, with the filters.
+    assert_eq!(
+      crate::api::gallery_grid_url(state.page + 1, &state.filters),
+      "/dynamic/gallery/search?page=2&q=cat"
+    );
+    // Page 2 appends to the rows already shown.
+    state.apply_page(vec![asset("a200", "image", None)], 2, false);
+    assert_eq!(state.cells.len(), crate::api::GALLERY_PAGE_SIZE as usize + 1);
+    assert_eq!(state.page, 2);
   }
 
   #[test]
