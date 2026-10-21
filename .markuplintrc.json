@@ -13,7 +13,7 @@
     "no-disallowed-attr": {
       "options": {
         "ignoreAttrNamePrefix": ["hx-", "x-", "x-on:", ":", "@"],
-        "allowAttrs": ["autofocus"]
+        "allowAttrs": ["autofocus", "download"]
       }
     },
     "no-invalid-attr-value": {
