@@ -14,7 +14,7 @@ import {
   type GalleryGridViewModel,
 } from "./view-models/gallery-grid";
 
-const GRID_PAGE_SIZE = 200;
+export const GRID_PAGE_SIZE = 200;
 
 /** Filter inputs shared by the gallery grid and the gallery search. */
 export interface GalleryAssetFilters {

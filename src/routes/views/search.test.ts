@@ -17,7 +17,7 @@ import {
   insertWorlds,
 } from "../../test-utils/insert-helpers";
 import { type ViewsViewer, } from "./access";
-import { serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
+import { loadGallerySearchViewModel, serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 
 describe("views/search — gallery", () => {
   let db: Kysely<DB>;
@@ -135,6 +135,52 @@ describe("views/search — gallery", () => {
     const html = await res.text();
     expect(html,).not.toContain("<script>alert(1)</script>",);
     expect(html,).toContain("&lt;script&gt;",);
+  });
+
+  test("page 2 returns a different slice than page 1", async () => {
+    // Seed 205 assets so page 1 (200) and page 2 (5) have no overlap.
+    const PAGE_SIZE = 200;
+    for (let i = 1; i <= 205; i++) {
+      await insertAssets(
+        db,
+        "owner",
+        `asset-p${String(i,).padStart(3, "0",)}.png`,
+        "image/png",
+        "image",
+        1024,
+        `path/p${i}`,
+        { id: `asset-p${i}` as never, },
+      );
+    }
+
+    const vm1 = await loadGallerySearchViewModel({
+      database: db,
+      params: new URLSearchParams({ page: "1", },),
+      actorId: "owner",
+      actorRole: "user",
+    },);
+    const vm2 = await loadGallerySearchViewModel({
+      database: db,
+      params: new URLSearchParams({ page: "2", },),
+      actorId: "owner",
+      actorRole: "user",
+    },);
+
+    // Both view-models must carry pagination fields.
+    expect(vm1.page,).toBe(1,);
+    expect(vm1.pageSize,).toBe(PAGE_SIZE,);
+    expect(vm2.page,).toBe(2,);
+    expect(vm2.pageSize,).toBe(PAGE_SIZE,);
+
+    // Page 1 must have exactly PAGE_SIZE rows; page 2 the remainder.
+    expect(vm1.assets.length,).toBe(PAGE_SIZE,);
+    expect(vm2.assets.length,).toBe(5,);
+
+    // The two pages must be completely disjoint — no asset id appears on both.
+    const ids1 = new Set(vm1.assets.map((a,) => a.id),);
+    const ids2 = new Set(vm2.assets.map((a,) => a.id),);
+    const overlap = [...ids1,].filter((id,) => ids2.has(id,));
+    expect(overlap,).toEqual([],);
   });
 });
 
