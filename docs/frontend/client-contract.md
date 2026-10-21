@@ -84,7 +84,7 @@ higher JSON q-value, and without `HX-Request: true`, keeps the existing 302 to
 | Endpoint | JSON shape | View-model module |
 |----------|-----------|-------------------|
 | `GET /dynamic/characters/grid` | `{ characters }` | `view-models/characters-grid.ts` |
-| `GET /dynamic/gallery/grid`, `/dynamic/gallery/search` | `{ assets }` | `view-models/gallery-grid.ts` |
+| `GET /dynamic/gallery/grid`, `/dynamic/gallery/search` | `{ assets, page, pageSize }` | `view-models/gallery-grid.ts` |
 | `GET /dynamic/chats/list`, `/dynamic/chats/search` | `{ chats, page, pageSize, total, hasMore }` | `view-models/chat-list.ts` |
 
 Values are raw and unescaped (escaping is the renderer's job), so a JSON client
