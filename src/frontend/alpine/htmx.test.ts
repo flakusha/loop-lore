@@ -401,32 +401,32 @@ describe("apiFetch", () => {
   });
 });
 
-// ── htmx:configRequest ───────────────────────────────────────────
+// ── htmx:config:request ───────────────────────────────────────────
 
-describe("htmx:configRequest", () => {
+describe("htmx:config:request", () => {
   it("adds the X-CSRF-Token header from the cookie", async () => {
     fakeDocument.cookie = "csrf_token=token-9";
     await importHtmx("configrequest-csrf",);
     const headers: Record<string, string> = {};
-    fireDoc("htmx:configRequest", { headers, },);
+    fireDoc("htmx:config:request", { ctx: { request: { headers, }, }, },);
     expect(headers["X-CSRF-Token"],).toBe("token-9",);
   });
 
   it("leaves headers untouched when no CSRF cookie exists", async () => {
     await importHtmx("configrequest-no-csrf",);
     const headers: Record<string, string> = {};
-    fireDoc("htmx:configRequest", { headers, },);
+    fireDoc("htmx:config:request", { ctx: { request: { headers, }, }, },);
     expect("X-CSRF-Token" in headers,).toBe(false,);
   });
 });
 
-// ── htmx:load ────────────────────────────────────────────────────
+// ── htmx:after:init ────────────────────────────────────────────────────
 
-describe("htmx:load", () => {
+describe("htmx:after:init", () => {
   it("processes the element with htmx and initializes Alpine", async () => {
     await importHtmx("load-basic",);
     const elt = new FakeElement("div",);
-    fireDoc("htmx:load", { elt, },);
+    fireDoc("htmx:after:init", { elt, },);
     expect(htmxCalls.some((c,) => c.fn === "process"),).toBe(true,);
     expect(alpineCalls.some((c,) => c.fn === "initTree"),).toBe(true,);
   });
@@ -438,7 +438,7 @@ describe("htmx:load", () => {
     globalObj.htmx = undefined;
     globalObj.Alpine = undefined;
     const elt = new FakeElement("div",);
-    fireDoc("htmx:load", { elt, },);
+    fireDoc("htmx:after:init", { elt, },);
     expect(htmxCalls.length,).toBe(0,);
     expect(alpineCalls.length,).toBe(0,);
     globalObj.htmx = savedHtmx;
@@ -456,13 +456,13 @@ describe("htmx:load", () => {
     };
 
     const elt = new FakeElement("div",);
-    expect(() => fireDoc("htmx:load", { elt, },)).not.toThrow();
+    expect(() => fireDoc("htmx:after:init", { elt, },)).not.toThrow();
     globalObj.Alpine = savedAlpine;
   });
 
   it("handles a missing element detail", async () => {
     await importHtmx("load-no-elt",);
-    fireDoc("htmx:load", {},);
+    fireDoc("htmx:after:init", {},);
     expect(htmxCalls.length,).toBe(0,);
     expect(alpineCalls.length,).toBe(0,);
   });
@@ -475,7 +475,7 @@ describe("htmx:load", () => {
     };
 
     elements.set("#create-chat-form", new FakeElement("form",),);
-    fireDoc("htmx:load", { elt: new FakeElement("div",), },);
+    fireDoc("htmx:after:init", { elt: new FakeElement("div",), },);
     expect(loaderCalls,).toEqual(["loadNewChatPage",],);
     delete (globalThis as Record<string, unknown>)["loadNewChatPage"];
   });
@@ -487,21 +487,21 @@ describe("htmx:load", () => {
       loaderCalls.push("loadNewChatPage",);
     };
 
-    fireDoc("htmx:load", { elt: new FakeElement("div",), },);
+    fireDoc("htmx:after:init", { elt: new FakeElement("div",), },);
     expect(loaderCalls.length,).toBe(0,);
     delete (globalThis as Record<string, unknown>)["loadNewChatPage"];
   });
 });
 
-// ── htmx:afterSwap (title sync) ──────────────────────────────────
+// ── htmx:after:swap (title sync) ──────────────────────────────────
 
-describe("htmx:afterSwap", () => {
+describe("htmx:after:swap", () => {
   it("updates the document title from the header slot", async () => {
     await importHtmx("afterswap-title",);
     const title = new FakeElement("h1",);
     title.textContent = "  Chat List  ";
     elements.set("#header-slot .title", title,);
-    fireDoc("htmx:afterSwap", { target: new FakeElement("div",), },);
+    fireDoc("htmx:after:swap", { target: new FakeElement("div",), },);
     expect(fakeDocument.title,).toBe("Chat List — Loop Lore",);
   });
 
@@ -510,13 +510,13 @@ describe("htmx:afterSwap", () => {
     const title = new FakeElement("h1",);
     title.textContent = "   ";
     elements.set("#header-slot .title", title,);
-    fireDoc("htmx:afterSwap", { target: new FakeElement("div",), },);
+    fireDoc("htmx:after:swap", { target: new FakeElement("div",), },);
     expect(fakeDocument.title,).toBe("",);
   });
 
   it("leaves the title alone when the header slot is missing", async () => {
     await importHtmx("afterswap-no-header",);
-    fireDoc("htmx:afterSwap", { target: new FakeElement("div",), },);
+    fireDoc("htmx:after:swap", { target: new FakeElement("div",), },);
     expect(fakeDocument.title,).toBe("",);
   });
 
@@ -525,17 +525,17 @@ describe("htmx:afterSwap", () => {
     const title = new FakeElement("h1",);
     title.textContent = "Chat";
     elements.set("#header-slot .title", title,);
-    fireDoc("htmx:afterSwap", {},);
+    fireDoc("htmx:after:swap", {},);
     expect(fakeDocument.title,).toBe("",);
   });
 });
 
-// ── htmx:responseError ───────────────────────────────────────────
+// ── htmx:response:error ───────────────────────────────────────────
 
-describe("htmx:responseError", () => {
+describe("htmx:response:error", () => {
   it("shows the server error message as a toast", async () => {
     await importHtmx("responseerror-json",);
-    fireDoc("htmx:responseError", {
+    fireDoc("htmx:response:error", {
       xhr: { responseText: JSON.stringify({ error: "bad thing", },), status: 400, },
     },);
 
@@ -545,7 +545,7 @@ describe("htmx:responseError", () => {
 
   it("falls back to the status code when the body has no error field", async () => {
     await importHtmx("responseerror-nomsg",);
-    fireDoc("htmx:responseError", {
+    fireDoc("htmx:response:error", {
       xhr: { responseText: JSON.stringify({ other: 1, },), status: 500, },
     },);
 
@@ -554,7 +554,7 @@ describe("htmx:responseError", () => {
 
   it("falls back to the status code when the body is not JSON", async () => {
     await importHtmx("responseerror-badjson",);
-    fireDoc("htmx:responseError", {
+    fireDoc("htmx:response:error", {
       xhr: { responseText: "<html>oops</html>", status: 502, },
     },);
 
@@ -563,19 +563,19 @@ describe("htmx:responseError", () => {
 
   it("ignores events without an xhr", async () => {
     await importHtmx("responseerror-no-xhr",);
-    fireDoc("htmx:responseError", {},);
+    fireDoc("htmx:response:error", {},);
     expect(toasts.length,).toBe(0,);
   });
 });
 
-// ── htmx:afterRequest (hx-on::after-request replacements) ────────
+// ── htmx:after:request (hx-on::after-request replacements) ────────
 
-describe("htmx:afterRequest", () => {
+describe("htmx:after:request", () => {
   it("dispatches the element's hx-success-event on success", async () => {
     await importHtmx("afterrequest-success",);
     const elt = new FakeElement("button",);
     elt.dataset.hxSuccessEvent = "my:done";
-    fireDoc("htmx:afterRequest", { successful: true, elt, },);
+    fireDoc("htmx:after:request", { successful: true, elt, },);
     expect(dispatched.some((e,) => e.type === "my:done"),).toBe(true,);
   });
 
@@ -583,14 +583,14 @@ describe("htmx:afterRequest", () => {
     await importHtmx("afterrequest-failure",);
     const elt = new FakeElement("button",);
     elt.dataset.hxSuccessEvent = "my:done";
-    fireDoc("htmx:afterRequest", { successful: false, elt, },);
+    fireDoc("htmx:after:request", { successful: false, elt, },);
     expect(dispatched.length,).toBe(0,);
   });
 
   it("does nothing when the element has no hx-success-event", async () => {
     await importHtmx("afterrequest-no-event",);
     const elt = new FakeElement("button",);
-    fireDoc("htmx:afterRequest", { successful: true, elt, },);
+    fireDoc("htmx:after:request", { successful: true, elt, },);
     expect(dispatched.length,).toBe(0,);
   });
 });
