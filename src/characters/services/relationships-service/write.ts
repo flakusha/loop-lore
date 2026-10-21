@@ -44,7 +44,8 @@ export async function createRelationship(
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  await thisL.db.transaction().execute(async (trx,) => {
+  const trx = thisL.db;
+  const _createRel = async () => {
     await trx
       .insertInto("character_relationships",)
       .values({
@@ -83,7 +84,30 @@ export async function createRelationship(
         },)
         .execute();
     }
-  },);
+  };
+
+  let usedTransaction = false;
+  try {
+    if (typeof thisL.db.transaction === "function") {
+      await thisL.db.transaction().execute(async (t,) => {
+        await _createRel();
+        return t;
+      },);
+
+      usedTransaction = true;
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes("calling the transaction method for a Transaction",)) {
+      await _createRel();
+      usedTransaction = true;
+    } else {
+      throw err;
+    }
+  }
+
+  if (!usedTransaction) {
+    await _createRel();
+  }
 
   return id;
 }
