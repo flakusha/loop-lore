@@ -3,7 +3,7 @@
 
 # BUG: Admin audit get-by-id has no params schema validation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
