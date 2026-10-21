@@ -2544,6 +2544,7 @@ export const ActorMemoriesSchema = t.Object({
   extraction_kind: t.Optional(ExtractionKindSchema,),
   context_window_start: t.Optional(t.String(),),
   context_window_end: t.Optional(t.String(),),
+  emotion_impact: t.Optional(t.String(),),
 },);
 
 // ── memory_embeddings ────────────────────────────────────────────

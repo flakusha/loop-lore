@@ -46,6 +46,8 @@ describe("views/gallery-cards renderer", () => {
         item("d1", "notes.txt", "other",),
         item("m1", "mem.bin", "memory",),
       ],
+      page: 1,
+      pageSize: 200,
     },);
 
     expect(html,).toContain("🎵",);
@@ -56,7 +58,7 @@ describe("views/gallery-cards renderer", () => {
   });
 
   test("an empty asset list renders the empty state, not cards", () => {
-    expect(renderGalleryCards({ assets: [], },),).toContain("gallery-empty",);
+    expect(renderGalleryCards({ assets: [], page: 1, pageSize: 200, },),).toContain("gallery-empty",);
   });
 
   test("the error card carries the message escaped", () => {
