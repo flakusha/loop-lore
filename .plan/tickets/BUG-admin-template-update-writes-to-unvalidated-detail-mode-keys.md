@@ -3,7 +3,7 @@
 
 # BUG: Admin template update writes to unvalidated detail/mode keys
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
