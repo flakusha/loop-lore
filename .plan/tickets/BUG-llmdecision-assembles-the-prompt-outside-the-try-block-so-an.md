@@ -3,7 +3,7 @@
 
 # BUG: llmDecision assembles the prompt outside the try block, so an assembly failure kills the turn instead of falling back
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # BUG: API rate limiter persists the sliding window before the burst check, so burst-denied requests consume steady-state budget
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
