@@ -3,7 +3,7 @@
 
 # BUG: character seed dedupes on display_name
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 
