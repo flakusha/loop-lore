@@ -3,7 +3,7 @@
 
 # BUG: skipOldChain zeroes the caller's receivingChainKey despite its does-not-mutate-input contract
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
