@@ -297,7 +297,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-chat-patch-accepts-arbitrary-string-for-is-pinned.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-DASHBOARD-BROWSER-TESTS-REPEAT-THE-LOGIN-HX-REDIRECT-R": {
     "hash": "cd3e6ad",
@@ -388,7 +388,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-template-update-writes-to-unvalidated-detail-mode-keys.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE": {
     "epic": "",
@@ -2944,7 +2944,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-context-window-willtrim-is-stale-after-injectmemories-inject.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-COVERAGE-MJS-COUNTS-TOP-LEVEL-SRC-FILES-AS-MODULES": {
     "epic": "",
@@ -7718,7 +7718,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-proactive-backoff-increment-loses-updates-under-concurrency.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PROBES-TS-LIVENESS-ACCEPTS-ANY-HTTP-RESPONSE-INCLUDING-404-A": {
     "hash": "c23dba2",
