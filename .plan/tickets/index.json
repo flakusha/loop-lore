@@ -607,7 +607,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-api-rate-limiter-persists-the-sliding-window-before-the-burs.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-APP-REGISTERPLUGINS-ACCEPTS-ASYNCSTORE-BUT-NEVER-USES-IT": {
     "epic": "",
@@ -3610,7 +3610,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-email-token-bucket-discards-fractional-refill-credit-permane.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-EMOTION-AVATAR-BASEAVATARID-IS-UNCHECKED-CROSS-USER-ASSET-ME": {
     "epic": "",
@@ -5376,7 +5376,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-humanoverride-silently-drops-the-gm-decision-when-serializat.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-I18N-TEST-RESTORE-GUARD-LEAKS-STUBBED-LOCALE-STRINGS-ACROSS-": {
     "hash": "bb51e44",
@@ -5957,7 +5957,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-llmdecision-assembles-the-prompt-outside-the-try-block-so-an.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-LOCALE-JSON-IS-EMBEDDED-IN-A-SCRIPT-TAG-WITHOUT-HTML-ESCAPIN": {
     "hash": "89387d0",
@@ -8734,7 +8734,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-skipoldchain-zeroes-the-caller-s-receivingchainkey-despite-i.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SLASH-AUTOCOMPLETE-REGEX-NOT-CARET-ANCHORED-SWALLOWS-ENTER": {
     "epic": "",
@@ -8774,7 +8774,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-spam-gate-sender-identity-ignores-plus-tag-subaddressing-blo.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SPKI-PIN-GATE-IS-NOT-ENFORCED-ACROSS-HTTP-REDIRECTS": {
     "hash": "bc4950c",
@@ -9502,7 +9502,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-tryparseyaml-rejects-any-document-containing-a-brace.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TUI-APP-GETLOGGER-THROWS-WHEN-RUNNING-STANDALONE": {
     "epic": "epic-terminal-ui",
@@ -9580,7 +9580,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-turn-manager-selection-uses-a-stale-candidate-list-and-a-rea.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TURN-SKIP-CONCURRENT-ADVANCE-POSTS-DOUBLE-FIRE-AUTO-GENERATI": {
     "hash": "c4f570d",
