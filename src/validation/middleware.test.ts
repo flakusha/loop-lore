@@ -407,6 +407,14 @@ describe("onValidationError direct branches", () => {
     expect(body.code,).toBe("FORBIDDEN",);
     expect(body.error,).toBe("nope",);
   });
+
+  test("500 branch carries api_version meta", () => {
+    const set: { status?: number } = { status: undefined, };
+    const body = onValidationError("UNKNOWN", new Error("boom",), set,);
+    expect(set.status,).toBe(500,);
+    expect(body.code,).toBe("SERVER_ERROR",);
+    expect((body.meta as { api_version: string }).api_version,).toBe("1",);
+  });
 });
 
 // ── Guard response helpers ─────────────────────────────────

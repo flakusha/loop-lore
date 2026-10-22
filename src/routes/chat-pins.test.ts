@@ -45,6 +45,8 @@ interface PinResponse {
   already?: boolean;
   id?: string;
   error?: string;
+  code?: string;
+  meta?: unknown;
 }
 
 describe("chat-pins routes", () => {
@@ -181,6 +183,10 @@ describe("chat-pins routes", () => {
       );
 
       expect(res.status,).toBe(403,);
+      const body = await res.json() as PinResponse;
+      expect(body.error,).toBe("Not authorized to unpin",);
+      expect(body.code,).toBe("FORBIDDEN",);
+      expect(body.meta,).toBeDefined();
     });
 
     test("404 for missing pin", async () => {

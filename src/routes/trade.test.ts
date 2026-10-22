@@ -235,4 +235,26 @@ describe("trade routes (auth-gated)", () => {
 
     expect(res.status,).toBe(400,);
   });
+
+  test("plugin onError answers VALIDATION with the 400 envelope (not the global 422)", async () => {
+    const app = authedApp();
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/trade/execute`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          buyerActorId: buyer,
+          sellerActorId: seller,
+          buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+          sellerItems: [],
+          price: Number.MAX_SAFE_INTEGER,
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const body = await res.json() as { error: string; code: string; meta: { api_version: string } };
+    expect(body.code,).toBe("BAD_REQUEST",);
+    expect(body.meta.api_version,).toBe("1",);
+  });
 });
