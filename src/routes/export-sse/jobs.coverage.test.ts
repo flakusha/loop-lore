@@ -12,6 +12,7 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { loadConfig, } from "../../config/load";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -56,6 +57,35 @@ function stageJob(_db: Kysely<DB>, overrides: Partial<ExportJob> = {},): ExportJ
 
   jobs.set(id, job,);
   return job;
+}
+
+/**
+ * Read an export SSE stream to its natural end and return the announced job id.
+ * Reads to the end instead of cancelling: the route's polling interval throws
+ * "Controller is already closed" when it ticks after a client disconnect, so
+ * cancelling mid-stream would leak an unhandled error into the module run.
+ * @param res SSE response
+ */
+async function readSseJobId(res: Response,): Promise<string> {
+  const reader = res.body?.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  let done = false;
+  for (let i = 0; i < 200 && !done; i += 1) {
+    const chunk = await reader?.read();
+    if (chunk?.value) {
+      buf += decoder.decode(chunk.value,);
+    }
+
+    done = chunk?.done ?? true;
+  }
+
+  const match = /"jobId":"([^"]+)"/.exec(buf.replaceAll(" ", "",),);
+  if (!match?.[1]) {
+    throw new Error("SSE stream did not announce a job id",);
+  }
+
+  return match[1];
 }
 
 describe("export-sse jobs helpers", () => {
@@ -409,4 +439,57 @@ describe("export-sse routes", () => {
     expect(res.status,).toBe(404,);
     jobs.delete(job.id,);
   });
+
+  test("the export job is owned by the derive-resolved identity, so the owner can read it", async () => {
+    // The global auth derive already resolved the acting identity. A route
+    // that re-resolves the request instead binds the job to the solo
+    // identity, and the owner's own status lookup then 404s.
+    const res = await app.handle(
+      new Request("http://localhost/api/export/progress", {
+        method: "POST",
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const jobId = await readSseJobId(res,);
+    expect(jobs.get(jobId,)?.userId,).toBe("cov-user",);
+    const status = await app.handle(
+      new Request(`http://localhost/api/export/status/${jobId}`,),
+    );
+
+    expect(status.status,).toBe(200,);
+    jobs.delete(jobId,);
+  }, 30000,);
+
+  test("the export job falls back to the configured demo username, not a hardcoded 'solo'", async () => {
+    // Mounted without the global auth derive, the route resolves the acting
+    // identity itself. That fallback identity is the CONFIGURED demo user;
+    // the pre-fix route passed the literal "solo" and bound the job to a
+    // phantom account instead.
+    const local = await createTestDb();
+    try {
+      const solo = new Elysia({ name: "test-export-sse-fallback", },)
+        .use(startRoutes({ database: local.db, },),) as unknown as Elysia;
+
+      const res = await solo.handle(
+        new Request("http://localhost/api/export/progress", {
+          method: "POST",
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+      const jobId = await readSseJobId(res,);
+      const demoUser = await local.db
+        .selectFrom("users",)
+        .select("id",)
+        .where("username", "=", loadConfig().auth.demoUsername,)
+        .executeTakeFirst();
+
+      expect(demoUser?.id,).toBeDefined();
+      expect(jobs.get(jobId,)?.userId,).toBe(demoUser?.id,);
+      jobs.delete(jobId,);
+    } finally {
+      await local.db.destroy();
+    }
+  }, 30000,);
 });

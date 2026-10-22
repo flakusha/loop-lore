@@ -4,7 +4,7 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
-import { NotificationService, NotificationType, notifyMention, notifyQuestUpdate, } from "./service";
+import { NotificationService, NotificationType, notifyGmAction, notifyMention, notifyQuestUpdate, } from "./service";
 
 describe("NotificationService", () => {
   let db: Kysely<DB>;
@@ -246,5 +246,106 @@ describe("NotificationService", () => {
     const row = items.find((item,) => item.title === "circular");
     expect(row,).toBeDefined();
     expect(row?.data,).toBeNull();
+  });
+
+  test("notifyGmAction notifies every recipient even when one insert fails", async () => {
+    // Two world participants: one whose user row is gone (its notification
+    // insert fails the FK) and one healthy. The recipients are notified
+    // independently, so the healthy one still gets its row and the first
+    // failure is surfaced to the caller. The ghost actor id sorts first so
+    // the recipient order cannot hide a sequential abort.
+    const local = await createTestDb();
+    try {
+      const worldId = uid();
+      const ghostUser = uid();
+      const healthyUser = uid();
+      const ghostActor = "00000000-0000-4000-a000-000000000000";
+      const healthyActor = uid();
+      const chatId = uid();
+
+      for (const id of [ghostUser, healthyUser,]) {
+        await local.db
+          .insertInto("users",)
+          .values({
+            id,
+            username: `u-${id}`,
+            display_name: "U",
+            role: "solo",
+            status: "active",
+            settings: "{}",
+          },)
+          .execute();
+      }
+
+      await local.db
+        .insertInto("actors",)
+        .values([
+          {
+            id: ghostActor,
+            actor_type: "user",
+            display_name: "Ghost",
+            user_id: ghostUser,
+            owner_id: ghostUser,
+            agent_type: "none",
+            settings: "{}",
+            row_version: 0,
+            visibility: "private",
+            import_spec: "{}",
+          },
+          {
+            id: healthyActor,
+            actor_type: "user",
+            display_name: "Healthy",
+            user_id: healthyUser,
+            owner_id: healthyUser,
+            agent_type: "none",
+            settings: "{}",
+            row_version: 0,
+            visibility: "private",
+            import_spec: "{}",
+          },
+        ],)
+        .execute();
+
+      await local.db
+        .insertInto("worlds",)
+        .values({ id: worldId, owner_id: healthyUser, name: "Parallel World", },)
+        .execute();
+
+      await local.db
+        .insertInto("chats",)
+        .values({
+          id: chatId,
+          name: "Parallel World Chat",
+          type: "direct",
+          mode: "direct",
+          created_by: healthyUser,
+          world_id: worldId,
+        },)
+        .execute();
+
+      await local.db
+        .insertInto("chat_participants",)
+        .values([
+          { chat_id: chatId, actor_id: ghostActor, },
+          { chat_id: chatId, actor_id: healthyActor, },
+        ],)
+        .execute();
+
+      // Drop the ghost user with FK enforcement off: the actor keeps a
+      // dangling user_id, so its notification insert fails.
+      try {
+        local.sqlite.run("PRAGMA foreign_keys = OFF",);
+        await local.db.deleteFrom("users",).where("id", "=", ghostUser,).execute();
+      } finally {
+        local.sqlite.run("PRAGMA foreign_keys = ON",);
+      }
+
+      const svc = new NotificationService(local.db,);
+      await expect(notifyGmAction(local.db, { worldId, description: "D", },),).rejects.toThrow();
+      expect(await svc.getUnreadCount(healthyUser,),).toBe(1,);
+    } finally {
+      await local.db.destroy();
+    }
   });
 });
