@@ -2056,3 +2056,26 @@ export interface LinkPreviews {
   image_url: string | null;
   fetched_at: Generated<string>;
 }
+
+// ── character_stat_allocation ────────────────────────────────────────────
+export interface CharacterStatAllocation {
+  actor_id: Generated<string>;
+  world_id: string;
+  allocated_str: number;
+  allocated_dex: number;
+  allocated_con: number;
+  allocated_int: number;
+  allocated_wis: number;
+  allocated_cha: number;
+  allocated_at: string;
+  allocated_by_user_id: string | null;
+}
+
+// ── character_trait_assignments ────────────────────────────────────────────
+export interface CharacterTraitAssignments {
+  actor_id: string;
+  trait_id: string;
+  world_id: string;
+  granted_at: string;
+  granted_by_user_id: string | null;
+}
