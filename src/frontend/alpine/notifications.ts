@@ -141,8 +141,8 @@ export class NotificationsManager {
       this.es.addEventListener("error", () => {
         // Browser auto-reconnects; polling covers the gap.
       },);
-    } catch {
-      // SSE unavailable — polling alone is sufficient.
+    } catch (error) {
+      console.warn("SSE unavailable — polling only", error,);
     }
   }
 
@@ -156,8 +156,8 @@ export class NotificationsManager {
       if (!res.ok) { return; }
       const data = parseOr(ActivitySnapshot, await res.json(), { chats: {}, },);
       this.applySnapshot(data.chats,);
-    } catch {
-      // transient — next tick retries
+    } catch (error) {
+      console.warn("Activity poll failed", error,);
     }
   }
 
