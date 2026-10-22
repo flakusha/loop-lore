@@ -2461,6 +2461,7 @@ export async function insertMessages(
     content_version?: number;
     record_hash?: string;
     merge_id?: string | null;
+    outfit_id?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

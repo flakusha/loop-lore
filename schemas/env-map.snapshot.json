@@ -128,6 +128,7 @@
   "FEDERATION_MESHPSK": "federation.meshPsk",
   "FEDERATION_DUPLICATION_MODE": "federation.duplication.mode",
   "FEDERATION_DUPLICATION_PEERS": "federation.duplication.peers",
+  "FEDERATION_WORKLOADOFFLOAD_CLASSES": "federation.workloadOffload.classes",
   "INTEGRATIONS_ENABLED": "integrations.enabled",
   "INTEGRATIONS_EMAIL_ENABLED": "integrations.email.enabled",
   "INTEGRATIONS_EMAIL_IMAPHOST": "integrations.email.imapHost",

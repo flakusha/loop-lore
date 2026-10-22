@@ -2272,6 +2272,7 @@ export const SCHEMA = new SchemaManifest()
     content_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     merge_id: col("text",),
+    outfit_id: col("text",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {
