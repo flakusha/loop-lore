@@ -204,6 +204,51 @@ describe("at-rest tier — wire-passthrough semantics", () => {
     expect(out.storedContent,).toBe(wire,);
     expect(out.wasEncrypted,).toBe(true,);
   });
+
+  test("at-rest tier: an envelope from another chat is stored verbatim without adopting its key id", async () => {
+    // The envelope is produced by the standard tier for a DIFFERENT chat, so
+    // its key id belongs to that chat. The at-rest tier stores the payload
+    // verbatim and must not claim a key id it does not own.
+    const otherChatId = "chat-at-rest-other-001";
+    await db.insertInto("chats",).values({
+      id: otherChatId,
+      name: otherChatId,
+      type: "direct",
+      mode: "direct",
+      created_by: USER_ID,
+      encryption_level: "standard",
+    },).execute();
+
+    const envelope = await encryptAtRest({
+      database: db,
+      chatId: otherChatId,
+      plaintext: "payload owned by another chat",
+      encryptionLevel: "standard",
+    },);
+
+    expect(isEncryptedPayload(envelope.storedContent,),).toBe(true,);
+
+    const chatId = "chat-at-rest-002";
+    await db.insertInto("chats",).values({
+      id: chatId,
+      name: chatId,
+      type: "direct",
+      mode: "direct",
+      created_by: USER_ID,
+      encryption_level: "at-rest",
+    },).execute();
+
+    const out = await encryptAtRest({
+      database: db,
+      chatId,
+      plaintext: envelope.storedContent,
+      encryptionLevel: "at-rest",
+    },);
+
+    expect(out.storedContent,).toBe(envelope.storedContent,);
+    expect(out.keyId,).toBeNull();
+    expect(out.wasEncrypted,).toBe(true,);
+  });
 });
 
 describe("getChatEncryptionLevel", () => {
