@@ -57,6 +57,22 @@ describe("extractEvents — item transfer direction", () => {
     expect(item!.locationId,).toBe(LOC,);
   });
 
+  test("take with source-verb item name → actor still receives (pattern identity, not match text)", () => {
+    for (
+      const [msg, name,] of [
+        ["Sam takes the Scattered Leaves.", "Scattered Leaves",],
+        ["Sam takes the Iron Sword leaves.", "Iron Sword leaves",],
+      ] as [string, string,][]
+    ) {
+      const events = extractEvents({ messageContent: msg, actorId: ACTOR, currentLocationId: LOC, },);
+      const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
+      expect(item,).toBeDefined();
+      expect(item!.data.itemName,).toBe(name,);
+      expect(item!.data.fromActorId,).toBeNull();
+      expect(item!.data.toActorId,).toBe(ACTOR,);
+    }
+  });
+
   test("leave behind → actor is the source", () => {
     const events = extractEvents({
       messageContent: "Sam leaves behind the Shield.",
@@ -176,6 +192,18 @@ describe("extractEvents — location change detection", () => {
     expect(loc,).toBeDefined();
     expect(loc!.locationId,).toBeUndefined();
     expect(loc!.data.fromLocationId,).toBeUndefined();
+  });
+
+  test("long location name → full name captured", () => {
+    const events = extractEvents({
+      messageContent: "Sam enters the Ancient Drowned Harbour of the Northern Reaches.",
+      actorId: ACTOR,
+      currentLocationId: LOC,
+    },);
+
+    const loc = events.find((e,) => e.type === WorldEventType.LocationChange);
+    expect(loc,).toBeDefined();
+    expect(loc!.data.toLocationName,).toBe("the Ancient Drowned Harbour of the Northern Reaches",);
   });
 
   test("no location keyword → no LocationChange", () => {
@@ -568,6 +596,29 @@ describe("extractEvents — item transfer edge cases", () => {
       expect(item!.data.fromActorId,).toBe(ACTOR,);
       expect(item!.data.toActorId,).toBeNull();
     }
+  });
+
+  test("multiline message → item name stops at the newline", () => {
+    for (
+      const msg of [
+        "Sam takes the Sword\nHe leaves.",
+        "Sam takes the Sword\nThe room is cold.",
+        "Sam drops the Torch\nHe walks on.",
+      ]
+    ) {
+      const events = extractEvents({ messageContent: msg, actorId: ACTOR, currentLocationId: LOC, },);
+      const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
+      expect(item,).toBeDefined();
+      expect(item!.data.itemName,).not.toContain("\n",);
+    }
+
+    const take = extractEvents({
+      messageContent: "Sam takes the Sword\nHe leaves.",
+      actorId: ACTOR,
+      currentLocationId: LOC,
+    },).find((e,) => e.type === WorldEventType.ItemTransfer);
+
+    expect(take!.data.itemName,).toBe("Sword",);
   });
 
   test("multiple transfers in one message → one event per matching pattern", () => {
