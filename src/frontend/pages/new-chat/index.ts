@@ -9,6 +9,12 @@ import { bindSelectionHandlers, } from "./selection";
 import { createCtx, type NewChatCtx, } from "./state";
 import { bindSubmitHandler, } from "./submit";
 
+/**
+ * Only the RPG variants bind a chat to a world and location
+ * (epic-chat-variants-taxonomy). Every other variant is world-agnostic.
+ */
+const WORLD_REQUIRED_VARIANTS = new Set(["rpg", "rpg_group",],);
+
 globalThis.loadNewChatPage = async function(): Promise<void> {
   const ctx: NewChatCtx = createCtx();
 
@@ -173,7 +179,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   // When RPG variants are selected, world picker becomes required.
   const syncWorldRequired = () => {
     if (ctx.worldSelect && ctx.variantSelect) {
-      ctx.worldSelect.required = ctx.variantSelect.value !== "standard";
+      ctx.worldSelect.required = WORLD_REQUIRED_VARIANTS.has(ctx.variantSelect.value,);
     }
   };
 

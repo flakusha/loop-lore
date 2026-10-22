@@ -70,6 +70,15 @@ export interface VariantDefaults {
   prompt_override_default: string | null;
 }
 
+/**
+ * Default system prompt for the LLM-only validation variants (6 and 7).
+ * Those chats pair an LLM with an LLM and have no human counterpart to
+ * prompt, so the harness instruction is the only system prompt the subject
+ * sees. The epic requires a test prompt for both.
+ */
+const LLM_ONLY_PROMPT_OVERRIDE =
+  "You are a validation subject in an automated harness. Follow the incoming instruction exactly and reply with only the requested output.";
+
 export const VARIANT_DEFAULTS: Record<ChatVariant, VariantDefaults> = {
   // 1. assistant chat
   assistant: {
@@ -135,7 +144,7 @@ export const VARIANT_DEFAULTS: Record<ChatVariant, VariantDefaults> = {
     auto_advance: 1,
     gm_config: { validation: { harness: "", }, },
     talkativity: 8,
-    prompt_override_default: "",
+    prompt_override_default: LLM_ONLY_PROMPT_OVERRIDE,
   },
   // 7. llm-only group chat
   llm_only_group: {
@@ -146,7 +155,7 @@ export const VARIANT_DEFAULTS: Record<ChatVariant, VariantDefaults> = {
     auto_advance: 1,
     gm_config: { validation: { harness: "", }, },
     talkativity: 7,
-    prompt_override_default: "",
+    prompt_override_default: LLM_ONLY_PROMPT_OVERRIDE,
   },
   // 8. llm-only group + gm
   llm_only_group_gm: {
