@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { VariantPicker, } from "../../alpine/chat-creation/variants";
 import { jsonBody, } from "../../alpine/json";
 import { $, } from "../../dom";
 import { feFetch, } from "../../fe-fetch";
@@ -96,35 +95,26 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   // default decide).
   if (templateId) { fineTunePayload.renderingOverride = visualNovel === true ? "visual_novel" : null; }
 
-  // For RPG variants, send `variant` and let the backend resolve the canonical
-  // triple (type/mode/purpose) and gm_config. For standard, fall back to
-  // the explicit type/mode from the form (gmGuided overrides mode to "story").
-  let fineTunePayloadWithVariant = { ...fineTunePayload, };
-  if (variant === "rpg" || variant === "rpg_group") {
-    // Resolve through the mounted variantPicker slice (read via globalThis —
-    // the pages bundle must not import Alpine modules at runtime). triple()
-    // returns the canonical VARIANT_DEFAULTS entry; the fallback keeps the
-    // form value when the Alpine bundle has not registered the slice.
-    const picker = (globalThis as { variantPicker?: VariantPicker }).variantPicker;
-    const triple = picker?.triple() ?? null;
-    fineTunePayloadWithVariant.variant = triple?.variant ?? variant;
-    fineTunePayloadWithVariant.purpose = triple?.chat_purpose ?? "rpg";
-  }
+  // A variant chat sends `variant` and lets the backend resolve the canonical
+  // triple (type/mode/purpose) plus the auxiliary defaults — the taxonomy is
+  // server-owned, so the client never re-derives it. "standard" is not a
+  // variant: it falls back to the explicit type/mode from the form (gmGuided
+  // overrides mode to "story").
+  const isVariant = variant !== "standard";
+  if (isVariant) { fineTunePayload.variant = variant; }
 
   return {
     name,
-    type: variant !== "rpg" && variant !== "rpg_group" ? ctx.chatType!.value : undefined,
-    mode: variant !== "rpg" && variant !== "rpg_group"
-      ? (gmGuided ? "story" : mode)
-      : undefined,
+    type: isVariant ? undefined : ctx.chatType!.value,
+    mode: isVariant ? undefined : (gmGuided ? "story" : mode),
     participantIds: Array.from(ctx.selected, (a: any,) => a.id,),
     personaId,
     impersonateActorId: impersonateId,
     memoryCarry: memoryCarryMode,
     memoryCarryIds,
     templateId,
-    ...fineTunePayloadWithVariant,
-    ...(gmGuided && variant === "standard" && { gmConfig: { assistantRole: "gm", storyMode: true, }, }),
+    ...fineTunePayload,
+    ...(gmGuided && !isVariant && { gmConfig: { assistantRole: "gm", storyMode: true, }, }),
   };
 }
 

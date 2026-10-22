@@ -114,16 +114,20 @@
               <option value="">{{{t("chats.useDefault")}}}</option>
             </select>
           </div>
-          <div class="form-group" id="variant-group" x-data="variantPicker">
+          <div class="form-group" id="variant-group">
             <label class="form-label" for="chat-variant">{{{t("chats.chatVariant")}}}</label>
-            <select
-              class="form-select"
-              name="variant"
-              id="chat-variant"
-              data-testid="chat-variant"
-              x-on:change="syncFromSelect($event.target.value)"
-            >
+            <select class="form-select" name="variant" id="chat-variant" data-testid="chat-variant">
               <option value="standard">{{{t("chats.variantStandard")}}}</option>
+              <option value="assistant">{{{t("chats.variantAssistant")}}}</option>
+              <option value="assistant_group">{{{t("chats.variantAssistantGroup")}}}</option>
+              <option value="user_1x1">{{{t("chats.variantUser1x1")}}}</option>
+              <option value="user_group">{{{t("chats.variantUserGroup")}}}</option>
+              <option value="user_group_admin">{{{t("chats.variantUserGroupAdmin")}}}</option>
+              <option value="llm_only">{{{t("chats.variantLlmOnly")}}}</option>
+              <option value="llm_only_group">{{{t("chats.variantLlmOnlyGroup")}}}</option>
+              <option value="llm_only_group_gm">{{{t("chats.variantLlmOnlyGroupGm")}}}</option>
+              <option value="character">{{{t("chats.variantCharacter")}}}</option>
+              <option value="character_group">{{{t("chats.variantCharacterGroup")}}}</option>
               <option value="rpg">{{{t("chats.variantRpg")}}}</option>
               <option value="rpg_group">{{{t("chats.variantRpgGroup")}}}</option>
             </select>

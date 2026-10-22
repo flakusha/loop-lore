@@ -145,7 +145,7 @@
     // UNWIRED, owned elsewhere — NOT dead (TASK-delete-or-wire-dead-modules-
     // flagged-in-glm-review-sweep triaged these; each needs a product call, not
     // a deletion):
-    //   nsfw-context.ts, chat-creation/variants.ts -> owned by wire-deadcode
+    //   nsfw-context.ts -> owned by wire-deadcode
     //   activitypub-keys.ts -> prerequisite for FEAT-activitypub-federation
     //     (BUG-activitypub-actor-keys-table... says keep until that FEAT lands)
     //   touch.ts, keynav-help.ts, mobile-composer.ts -> open WIRE tickets under
@@ -155,7 +155,6 @@
     //     epic-transport-expansion.md lists both as Built deliverables
     "src/assistant/prompt/sections/nsfw-context.ts",
     "src/crypto/activitypub-keys.ts",
-    "src/frontend/alpine/chat-creation/variants.ts",
     "src/frontend/alpine/keynav-help.ts",
     "src/frontend/alpine/mobile-composer.ts",
     "src/frontend/touch.ts",

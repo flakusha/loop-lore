@@ -223,4 +223,60 @@ describe("chats/create — variant taxonomy wiring", () => {
     expect(messages,).toEqual([{ actor_id: "greeter-actor", content: "Hello!", },],);
     await db.destroy();
   });
+
+  test("the variant talkativity seeds every participant, not just the owner", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    await insertActors(db, "Companion", {
+      id: "companion-actor",
+      owner_id: USER_ID,
+    } as never,);
+
+    const res = await postChat(makeApp(db, USER_ID,), {
+      name: "Cast",
+      variant: "character",
+      participantIds: ["companion-actor",],
+    },);
+
+    expect(res.status,).toBe(201,);
+    const def = VARIANT_DEFAULTS.character;
+    const chatId = (await db.selectFrom("chats",).select("id",).where("name", "=", "Cast",).executeTakeFirst())!.id;
+    const participants = await db
+      .selectFrom("chat_participants",)
+      .select(["actor_id", "talkativity",],)
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    expect(participants,).toHaveLength(2,);
+    for (const participant of participants) {
+      expect(participant.talkativity,).toBe(def.talkativity,);
+    }
+
+    await db.destroy();
+  });
+
+  test("a template preset mode never conflicts with the variant — the variant wins", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    await db
+      .insertInto("chat_setup_templates",)
+      .values({
+        id: "template-battle",
+        slug: "battle-arena",
+        name: "Battle arena",
+        mode: "battle",
+      },)
+      .execute();
+
+    const res = await postChat(makeApp(db, USER_ID,), {
+      name: "Variant beats template",
+      variant: "rpg",
+      templateId: "template-battle",
+    },);
+
+    expect(res.status,).toBe(201,);
+    const chat = await loadChat(db, "Variant beats template",);
+    expect(chat?.mode,).toBe(VARIANT_DEFAULTS.rpg.chat_mode,);
+    await db.destroy();
+  });
 });

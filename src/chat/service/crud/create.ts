@@ -64,7 +64,15 @@ export async function createChat(
       try {
         await database
           .insertInto("chat_participants",)
-          .values({ chat_id: newChatId, actor_id: actorId, role_in_chat: "member", },)
+          .values({
+            chat_id: newChatId,
+            actor_id: actorId,
+            role_in_chat: "member",
+            // Seed the chat-level talkativity (the variant default) so every
+            // participant of a variant chat shares it instead of falling back
+            // to the column default.
+            talkativity: params.talkativity ?? undefined,
+          },)
           .execute();
       } catch {
         /* skip duplicate */
