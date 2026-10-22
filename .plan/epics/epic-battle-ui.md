@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** Partially shipped — chat battle panel with roster HP, attack/heal/end action bar, and keyboard nav is live (verified 2026-10-09); battle log, status-effect badges, turn-order visualization, and skill-check UI remain open.
+**Status Note:** Partially shipped — chat battle panel with roster HP, keyboard nav, and a full action bar (attack/heal/end, item-use menu, social verbs incl. negotiate) is live, plus a reusable health-bar widget and an acting-first turn-order strip (verified 2026-10-23). Remaining open: battle log, status-effect badges, skill-check UI. A flee action stays unwired by design: no backend verb or route exists for it.
 **Priority:** P0 — Critical
 **Effort:** High
 **Type:** Feature Epic
@@ -17,11 +17,11 @@
 
 Complete battle interface for turn-based combat, including state display, action selection, turn order visualization, and battle log. Required to make the battle system usable by end users.
 
-## Implemented (verified 2026-10-09)
+## Implemented (verified 2026-10-23)
 
-- **Modules:** `src/frontend/battle/panel.ts` (VN-style overlay panel: mount/destroy/render, keyboard focus cycle over combatants + actions), `src/frontend/battle/commands.ts` (attack/heal/end action set + slash-command mapping), `src/frontend/battle/render.ts` (header/roster/actions DOM builders with HP-percentage display); `src/frontend/alpine/chat-battle.ts` + `src/frontend/alpine/chat-actions/battle.ts` (chat-side dispatch of `/attack`, `/heal`, `/battle` commands)
-- **Shipped:** battle screen embedded in chat, combatant roster with HP display, single-target selection via focus cycle, keyboard shortcuts (arrows/Enter/Space), dispatch into the backend battle routes
-- **Not shipped:** item-use/social/spell/flee buttons (action bar is attack/heal/end only — `src/frontend/battle/commands.ts:38-41`), battle log component, status-effect badges, dedicated health-bar/turn-order widget, skill-check dice animation, dynamic backgrounds
+- **Modules:** `src/frontend/battle/panel.ts` (VN-style overlay panel: mount/destroy/render, keyboard focus cycle over combatants + actions + items), `src/frontend/battle/commands.ts` (attack/heal/end + item toggle + social-* verb action set + slash-command mapping), `src/frontend/battle/render.ts` (header/roster/actions DOM builders), `src/frontend/battle/health-bar.ts` (reusable HP progressbar widget), `src/frontend/battle/turn-order.ts` (acting-first initiative queue strip); `src/frontend/alpine/chat-battle.ts` + `src/frontend/alpine/chat-actions/battle.ts` (chat-side dispatch of `/attack`, `/heal`, `/battle` commands)
+- **Shipped:** battle screen embedded in chat, combatant roster with HP display via the reusable health-bar widget, single-target selection via focus cycle, keyboard shortcuts (arrows/Enter/Space), dispatch into the backend battle routes, turn-order visualization (current turn + upcoming queue, derived from the delivered turnIndex/initiative roster), item-use menu (`/battle use`) and social verbs incl. negotiate (`/battle social`)
+- **Not shipped:** flee button (no backend verb or route — `/battle social` rejects `flee`; no flee endpoint), battle log component, status-effect badges, skill-check dice animation, dynamic backgrounds
 
 ## Current State
 
@@ -29,17 +29,17 @@ Complete battle interface for turn-based combat, including state display, action
 | --- | --- | --- |
 | Battle panel (roster + action bar) | Shipped | `src/frontend/battle/panel.ts`, `src/frontend/battle/render.ts` |
 | Chat battle dispatch (`/attack`, `/heal`, `/battle`) | Shipped | `src/frontend/alpine/chat-battle.ts`, `src/frontend/alpine/chat-actions/battle.ts` |
-| Action bar breadth (attack/heal/end only) | Partial | `src/frontend/battle/commands.ts:38-41` |
-| Health display (HP only; no mana/stamina widget) | Partial | `hpPercent` + roster in `src/frontend/battle/render.ts` |
-| Turn order visualization | Not Started | — |
-| Status effect badges | Not Started | — |
-| Battle log viewer | Not Started | — |
+| Action bar breadth (attack/heal/end, item-use, social verbs) | Shipped | `src/frontend/battle/commands.ts`, `src/frontend/battle/render.ts` (flee absent — no backend verb/route) |
+| Health display (HP progressbar widget; no mana/stamina data) | Shipped (HP) | `src/frontend/battle/health-bar.ts` + roster in `src/frontend/battle/render.ts` |
+| Turn order visualization | Shipped | `src/frontend/battle/turn-order.ts` (current turn + queue from delivered turnIndex/initiative) |
+| Status effect badges | Not Started | — (client payload carries no conditions: `serializeBattle` drops `Combatant.conditions`) |
+| Battle log viewer | Not Started | — (server keeps `battle.log` but never serializes it into the panel payload) |
 | Skill check UI (dice animation) | Not Started | — |
 | Dynamic backgrounds | Not Started | — (see `./epic-battle-action-systems.md`) |
 
-## Unticketed Gaps
+## Unticketed Gaps (resolved / re-scoped 2026-10-23)
 
-The backend social actions and combat item-use routes already ship (`src/routes/battle/social.ts`, `src/routes/battle/equipment.ts`), but the shipped action bar cannot reach them — adding item-use/social/flee buttons to `src/frontend/battle/commands.ts` is unticketed (see `./epic-battle-integration-gaps.md`). No battle-scoped status-effect badge or reusable health-bar component exists under `src/frontend/` — the only status-effect surface there is character-condition state in `src/frontend/alpine/rpg-stats.ts` (`statusEffects`), despite the reuse expectations in the component table below.
+The earlier gap here — backend social and combat item-use routes unreachable from the UI — is closed: the shipped action bar reaches item use (`/battle use` menu) and the social verbs incl. negotiate (`/battle social`) through the chat command path, ticketed and shipped (verified 2026-10-23). Remaining backend-backed display gaps: the battle state the panel receives carries no conditions (`serializeBattle` drops `Combatant.conditions`) and no history (`battle.log` stays server-side), so status-effect badges and a battle log need payload delivery work before they can be built — they must not be faked client-side. A flee action has no backend at all (no verb in `/battle social`, no flee endpoint). The reusable health-bar widget now exists (`src/frontend/battle/health-bar.ts`); status-effect badges under `src/frontend/` still do not — the only status-effect surface remains character-condition state in `src/frontend/alpine/rpg-stats.ts` (`statusEffects`).
 
 ## Core Features
 
@@ -117,9 +117,9 @@ The backend social actions and combat item-use routes already ship (`src/routes/
 
 ## Acceptance Criteria
 
-- [ ] Battle state displays all participants with health/mana/stamina bars
+- [x] Battle state displays all participants with health bars (HP only — mana/stamina have no data source yet; `src/frontend/battle/health-bar.ts`, verified 2026-10-23)
 - [ ] Status effects shown as badges with tooltips
-- [ ] Turn order visualization shows current turn and queue
+- [x] Turn order visualization shows current turn and queue (`src/frontend/battle/turn-order.ts`, verified 2026-10-23)
 - [ ] Action selection interface with all action types
 - [ ] Target selection for single/area/self actions
 - [ ] Action cost and cooldown display
@@ -175,13 +175,16 @@ The backend social actions and combat item-use routes already ship (`src/routes/
 - `TASK-skill-check.md` (Not Started)
 - `TASK-health-bar.md` (Not Started)
 - `TASK-status-effects.md` (Not Started)
+- `TASK-battle-panel-health-bar-widget-turn-order-strip.md` (open)
 
 ## Files
 
-Implemented (verified 2026-10-09):
+Implemented (verified 2026-10-23):
 - `src/frontend/battle/panel.ts` — battle panel mount/state/keyboard
 - `src/frontend/battle/commands.ts` — action set + slash-command mapping
 - `src/frontend/battle/render.ts` — roster/actions DOM builders
+- `src/frontend/battle/health-bar.ts` — reusable HP progressbar widget
+- `src/frontend/battle/turn-order.ts` — acting-first initiative queue strip
 - `src/frontend/alpine/chat-battle.ts` — chat battle mode glue
 - `src/frontend/alpine/chat-actions/battle.ts` — `/attack`, `/heal`, `/battle` dispatch
 
@@ -191,7 +194,6 @@ Planned (do not exist yet):
 - `src/frontend/battle/action-selector.ts` — action selection UI
 - `src/frontend/battle/battle-log.ts` — battle log component
 - `src/frontend/battle/skill-check.ts` — dice roll animation
-- `src/frontend/battle/health-bar.ts` — reusable health bar
 - `src/frontend/battle/status-effects.ts` — status effect badges
 - `src/frontend/alpine/battle.ts` — standalone Alpine battle logic (chat-battle.ts covers the chat surface)
 
