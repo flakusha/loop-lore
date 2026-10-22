@@ -4,6 +4,7 @@
 # TASK: Notification and telemetry service nits
 
 **Status:** Done
+**Status Note:** `src/notifications/service/crud.ts` uses the `NotificationStatus` enum for the read/unread predicates and logs the failing notification (userId, type) on a create error. `src/telemetry/service.ts` compares the UTF-8 BYTE length of the payload against `TELEMETRY_EVENT_DATA_MAX_BYTES` (the old check compared UTF-16 code units, so a CJK payload passed the cap), and `src/telemetry/config.ts` makes the master switch gate the per-sink flags (`TELEMETRY_ENABLED=0` now keeps the events and frontend sinks off).
 **Priority:** Medium
 **Effort:** Medium
 **Caveats:** observability — a notification whose data cannot be serialized is still stored with data null and the failure is logged with its userId and type, so a dropped payload is never silent; partial failure — the byte cap now compares UTF-8 bytes rather than UTF-16 code units, so a CJK payload that previously passed the character limit is dropped whole and the dropped event is not retried; stale state — TELEMETRY_ENABLED=0 now gates the per-sink flags, so a deployment that relied on a per-sink flag alone to enable telemetry stops emitting until the master switch is on
