@@ -12464,6 +12464,10 @@
   "src/components/text-toolbar.html": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-shared-text-surface-toolbar.md"
     }
   ],
@@ -24815,6 +24819,16 @@
       "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
     }
   ],
+  "src/frontend/alpine/text-enhance.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-enhance-any-text-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md"
+    }
+  ],
   "src/frontend/alpine/text-enhance.ts": [
     {
       "kind": "epic",
@@ -24823,6 +24837,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-enhance-any-text-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md"
     }
   ],
   "src/frontend/alpine/text-toolbar.ts": [
@@ -35839,6 +35857,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migrate-text-surfaces-to-shared-primitives.md"
     }
   ],
   "src/partials/characters/detail-modal.html": [
@@ -35969,6 +35991,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md"
+    }
+  ],
+  "src/partials/worlds/create-wizard.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migrate-text-surfaces-to-shared-primitives.md"
     }
   ],
   "src/partials/worlds/edit-modal.html": [
