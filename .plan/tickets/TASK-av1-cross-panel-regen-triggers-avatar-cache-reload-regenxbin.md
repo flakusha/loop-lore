@@ -19,7 +19,7 @@
 - Failure path shows no avatar-less window (fallback or retry).
 - Tests cover cross-panel reload signal.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 6, R02 candidate 6 and BLOCKING-2, TASK-persistent-regen-job-store-migration (distinct).
+**Related:** candidate 6, R02 candidate 6 and BLOCKING-2, TASK-persistent-regen-job-store-migration (distinct).
 
 **Context:**
 

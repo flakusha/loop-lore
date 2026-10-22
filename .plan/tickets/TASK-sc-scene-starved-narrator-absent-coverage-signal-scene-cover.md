@@ -20,7 +20,7 @@
 - Chat UI shows a subtle scene-needs-narration hint, localized in all 10 locale files.
 - Scorer and spotlight tests cover threshold, above-threshold silence, and escalation.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 10, R02 candidate 10, turn.skipped hook ticket (sibling signal).
+**Related:** candidate 10, R02 candidate 10, turn.skipped hook ticket (sibling signal).
 
 **Context:**
 

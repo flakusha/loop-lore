@@ -19,7 +19,7 @@
 - Notification fires only on successful role-change, not on validation failures.
 - Tests cover role-change notify path and no-notify on failure.
 - bun run check green.
-**Related:** 02-extract-features.md row 5, R02 candidate 5 and BLOCKING-1, 05-prioritization.md Now, TASK-admin-user-management-ui.
+**Related:** row 5, R02 candidate 5 and BLOCKING-1, Now,
 
 **Context:**
 

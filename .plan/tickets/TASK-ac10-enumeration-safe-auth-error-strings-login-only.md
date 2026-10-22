@@ -20,7 +20,7 @@
 - login.test.ts and responses.test.ts updated to assert identical strings.
 - All 10 locale files carry the unified string.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 8, R02 candidate 8, FB8 login notification (coordinate messaging).
+**Related:** candidate 8, R02 candidate 8, FB8 login notification (coordinate messaging).
 
 **Context:**
 

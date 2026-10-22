@@ -20,7 +20,6 @@
 **Assignee**:
 **Epic**: EPIC-38 (Output Control & Transforms)
 **Parent**: FEAT-065 (Prompt Library)
-**Related**: FEAT-063 (Regex output transforms), FEAT-064 (Smart-regen polish)
 
 ---
 

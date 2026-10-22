@@ -20,7 +20,7 @@
 **Parents:** 03-X4 (user-visible edge of gate verdicts).
 **Differs:** from 02-#6 (AV1 cache-bust on regen -- same refresh primitive, different trigger).
 **X-map:** 03-X4 is covered by this ticket; do NOT file X4 separately.
-**Related:** Siblings TASK-c1-moderation-action-notices-with-actor-thumb, TASK-c2-bridged-turn-skip-propagation-bridge-only, TASK-c4-inbound-federated-content-verdict-notices, TASK-c3-quiet-hours-aware-federated-world-event-notices, TASK-c7-throttled-login-plus-role-change-security-digest.
+**Related:** Siblings TASK-c1-moderation-action-notices-with-actor-thumb, TASK-c2-bridged-turn-skip-propagation-bridge-only, TASK-c4-inbound-federated-content-verdict-notices, TASK-c3-quiet-hours-aware-federated-world-event-notices,
 
 **Context:**
 

@@ -19,7 +19,7 @@
 - Hook carries enough context (chat, actor, timestamp) for GM beat claim.
 - Tests cover hook emission on skip and no duplicate on deduped advance.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 9, R02 candidate 9, TASK-gm-beat-scheduling, TASK-turn-skip-event, TASK-turn-skip-cascade, C2 composition (dependent).
+**Related:** candidate 9, R02 candidate 9, TASK-gm-beat-scheduling, TASK-turn-skip-event, TASK-turn-skip-cascade, C2 composition (dependent).
 
 **Context:**
 
