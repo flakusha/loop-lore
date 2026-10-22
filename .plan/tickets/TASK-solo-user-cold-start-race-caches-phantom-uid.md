@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -21,3 +21,5 @@ src/middleware/auth/solo-user.ts:55-95 getOrCreateSoloUserForAuth: concurrent ca
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue bee01ca (registry tip: 38543459a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SOLO-USER-COLD-START-RACE-C)

@@ -3,7 +3,7 @@
 
 # TASK: Notification and telemetry service nits
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -33,3 +33,5 @@ Source: .tmp/longcat/review-misc-services.md n3, n5, n6, t1, t2.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 2942731 (registry tip: 405a2b305 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-NOTIFICATION-AND-TELEMETRY-)
