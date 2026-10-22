@@ -7,7 +7,9 @@
 // Pins the test-gap ratchet contract: an export no test file names is a gap
 // and one a test does name is not; `export interface` / `export type` are not
 // gaps while enum / const / function / class / let / var / abstract class are;
-// the generated-file and migration paths yield no gaps at all; coverage
+// a pure type/definition module is excluded from the scan entirely, and a type
+// export published by a runtime module is not a gap either; the generated-file
+// and migration paths yield no gaps at all; coverage
 // matching is whole-word, so `getValueFactory` in a test does NOT cover
 // `getValue`; and a baseline the gate cannot read fails closed instead of
 // reading as zero-known gaps.
@@ -185,6 +187,43 @@ test("type exports are not gaps; enum, const, function, class, let, var and abst
   ) { expect(err,).toContain(`| src/kinds.ts#${name} |`,); }
   expect(err,).not.toContain("| src/kinds.ts#SomeInterface |",);
   expect(err,).not.toContain("| src/kinds.ts#SomeType |",);
+});
+
+test("a pure type/definition module is excluded: it holds no runtime behaviour", () => {
+  const { code, err, } = scanFixture({
+    "src/types-only.ts": [
+      'import type { Other, } from "./other";',
+      "export interface Row {",
+      "  id: string;",
+      "}",
+      "export type Id = string;",
+      "export { type Other, };",
+      "",
+    ].join("\n",),
+    "src/other.ts": "export interface Other {\n  a: string;\n}\n",
+  },);
+  // The compiler sees no runtime statement in the module, so no runtime test
+  // can reach it and nothing in it is a test requirement.
+  expect(code,).toBe(0,);
+  expect(err,).not.toContain("types-only",);
+});
+
+test("a type export in a runtime module is not a gap, but the runtime export is", () => {
+  const { code, err, } = scanFixture({
+    "src/mixed.ts": [
+      "export interface Row {",
+      "  id: string;",
+      "}",
+      "export { type Row, };",
+      "export function realWork() {",
+      "  return 1;",
+      "}",
+      "",
+    ].join("\n",),
+  },);
+  expect(code,).toBe(1,);
+  expect(err,).toContain("| src/mixed.ts#realWork |",);
+  expect(err,).not.toContain("| src/mixed.ts#Row |",);
 });
 
 test("a local export list is a gap; a re-export list and export default are not", () => {
