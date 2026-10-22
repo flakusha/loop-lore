@@ -152,9 +152,24 @@ test("a new file is skipped, not scored against a zero baseline", () => {
   },);
 });
 
+// The gate runs on every branch now, so the base has to be DERIVED when no
+// ref is named: the merge-base of HEAD and the root branch. Without a root
+// branch to merge against there is no base, and the scan skips.
+test("the base is derived from the root branch when no ref is named", () => {
+  withRepo((dir,) => {
+    // The root branch the scan merges against, and a branch forked from it.
+    spawnGit(dir, ["branch", "dev",],);
+    spawnGit(dir, ["checkout", "-q", "-b", "feature",],);
+    writeFileSync(join(dir, "tracked.ts",), `${sixteen}\n${sixteen}\n`, { flag: "a", },);
+    const { code, out, } = runGate(dir, { weaveBase: null, },);
+    expect(out,).toContain("tracked.ts",);
+    expect(code,).toBe(1,);
+  },);
+});
+
 // Argv contract after the Optique migration: the positional ref, the
-// WEAVE_BASE fallback, and the zero-arg no-op the gate registry relies on
-// (`checks["weave - damage scan"]` is NOOP_OK unless WEAVE_BASE is set).
+// WEAVE_BASE fallback, and the derived base the gate registry relies on
+// (`checks["weave - damage scan"]` always runs the scan).
 test("a positional ref drives the scan with no WEAVE_BASE set", () => {
   withRepo((dir,) => {
     writeFileSync(join(dir, "tracked.ts",), `${sixteen}\n${sixteen}\n`, { flag: "a", },);
