@@ -3910,7 +3910,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-auth-make-session-expiry-handling-agree-across-authentic.md",
       "title": "fix(auth): make session-expiry handling agree across authenticate() and token.ts (fail closed)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/middleware/auth/authenticate.ts",
         "src/middleware/auth/token.ts"
@@ -6457,7 +6457,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-notification-participant-helpers-write-actor-id-into-the-use.md",
       "title": "Notification participant helpers write actor_id into the users foreign key",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/notifications/service/triggers.ts"
       ],
@@ -6993,7 +6993,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-permissions-middleware-auditentry-reaches-console-warn-in-pr.md",
       "title": "permissions middleware auditEntry reaches console.warn in production",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/middleware/permissions.ts"
       ],
@@ -19212,7 +19212,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-backlog-chat-variants-taxonomy.md",
       "title": "backlog — schedule Chat Variants Taxonomy cluster (RPG / character-group / LLM-only-GM)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22234,7 +22234,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-assistant.md",
       "title": "Chat Variant — Assistant Chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22243,7 +22243,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-assistant-group.md",
       "title": "Chat Variant — Assistant Group Chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22252,7 +22252,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md",
       "title": "Chat variant behavioral wiring",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/types.ts",
         "src/chat/types/variants.ts",
@@ -22269,7 +22269,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-character.md",
       "title": "Chat Variant — Chat (with Character)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22278,7 +22278,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-character-group.md",
       "title": "Chat Variant — Group Chat (Multi-Character)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/components/chat/participant-mgmt.html"
       ],
@@ -22289,7 +22289,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-llm-only.md",
       "title": "Chat Variant — LLM-Only Chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22298,7 +22298,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-llm-only-group.md",
       "title": "Chat Variant — LLM-Only Group Chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22307,7 +22307,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-llm-only-group-gm.md",
       "title": "Chat Variant — LLM-Only Group Chat with Admin / GM",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22316,7 +22316,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-rpg.md",
       "title": "Chat Variant — RPG Chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22325,7 +22325,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-rpg-group.md",
       "title": "Chat Variant — RPG Group Chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22334,7 +22334,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-user-1x1.md",
       "title": "Chat Variant — User 1×1 Chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22343,7 +22343,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-user-group.md",
       "title": "Chat Variant — User Group Chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -22352,7 +22352,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-chat-variant-user-group-admin.md",
       "title": "Chat Variant — User Group Chat with Admin / Moderator",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -34321,7 +34321,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-notification-and-telemetry-service-nits.md",
       "title": "Notification and telemetry service nits",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/notifications/service/crud.ts",
         "src/notifications/service/service.ts",
@@ -40739,7 +40739,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-solo-user-cold-start-race-caches-phantom-uid.md",
       "title": "Solo-user cold-start race caches phantom uid",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/middleware/auth/solo-user.ts"
       ],
@@ -43705,7 +43705,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-wire-variant-picker-into-new-chat-form.md",
       "title": "Wire variant picker into new-chat form",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -45957,7 +45957,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-chat-variants-taxonomy.md",
       "title": "Chat Variants Taxonomy",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/enums-core/chat.ts",
         "src/db/migrations/parts/006_chat.ts",

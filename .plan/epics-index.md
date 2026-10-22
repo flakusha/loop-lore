@@ -61,7 +61,7 @@
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 0 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
 | Not Started | Chat Product Features | High | High | 0 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
 | Not Started | Chat Rich Engagement (draft for new worktree) | Medium — messenger/AI parity gap | Medium | 0 | [epic-chat-rich-engagement.md](/.plan/epics/epic-chat-rich-engagement.md) |
-| Not Started | Chat Variants Taxonomy | High | Medium | 0 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
+| Done | Chat Variants Taxonomy | High | Medium | 0 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
 | In Progress | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 0 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
 | Not Started | CI/CD Pipeline | Low | Medium | 0 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
 | Not Started | Client-Side Routing | Medium | Medium | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
@@ -813,7 +813,7 @@ Cross-cutting product feature coverage for the chat surface: rich-message
 
 ### Chat Variants Taxonomy
 
-- **Status:** Not Started
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Feature Epic
