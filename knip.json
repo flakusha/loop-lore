@@ -126,7 +126,12 @@
     "@mermaid-js/parser",
     "mermaid",
     "vitepress-mermaid-renderer",
-    "vitepress-plugin-mermaid"
+    "vitepress-plugin-mermaid",
+    // jscpd clone scanner: run as a binary spawned by name from
+    // scripts/check/jscpd-scan.mjs (Bun.spawnSync(["bunx", "jscpd", ...])),
+    // never imported. The package.json `jscpd`/`jscpd:full` scripts and the
+    // `jscpd ratchet` gate all reach it through that one module.
+    "jscpd"
   ],
   "ignoreBinaries": [
     "scancode", // license compliance gate (scripts/check-licenses.ts)
