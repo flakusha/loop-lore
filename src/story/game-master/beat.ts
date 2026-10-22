@@ -36,6 +36,7 @@
 import type { Kysely, } from "kysely";
 import { ChatMode, GameMasterType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { isGenerationHeld, } from "../../generation/global-hold";
 import { jsonParseOr, } from "../../utils";
 import type { GameMasterService, } from "./index";
 import type { GmTurnResult, } from "./types";
@@ -69,6 +70,7 @@ export type GmBeatSkipReason =
   | "gm_chat_ambiguous"
   | "gm_requires_human"
   | "gm_paused"
+  | "gm_generation_held"
   | "gm_story_complete";
 
 /** What one beat did. `dispatched: 1` — a beat is one unit of work, so the
@@ -138,6 +140,10 @@ export async function runGmBeat(
   const chats = await resolveBeatChats(db, worldId,);
   if (chats.length === 0) { return { skipped: "gm_no_chat", }; }
   if (chats.length > 1) { return { skipped: "gm_chat_ambiguous", }; }
+
+  // Global hold: operator kill-switch checked BEFORE initialize() — no
+  // provider call, no GM object yet. Same hold as the route + cascade gates.
+  if (await isGenerationHeld(db,)) { return { skipped: "gm_generation_held", }; }
 
   const chat = chats[0]!;
   if (gmTypeOf(chat.gmConfig,) === GameMasterType.Human) {

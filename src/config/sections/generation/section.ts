@@ -3,6 +3,7 @@
 
 import type {
   GenerationConfig,
+  GenerationFlowControl,
   GenerationProvidersConfig,
   MattingConfig,
   ModelRoleAssignment,
@@ -18,6 +19,7 @@ export class GenerationSection implements GenerationConfig {
   defaultModels: Record<string, string> = {};
   modelRoles: Record<string, ModelRoleAssignment> = {};
   routing = GENERATION_DEFAULTS.routing;
+  flowControl: GenerationFlowControl | undefined;
   autoStart: GenerationConfig["autoStart"];
   localModels: GenerationConfig["localModels"];
   matting: MattingConfig | undefined;
