@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -59,3 +59,5 @@ Public/private flavour is a property of the `chat_participants` visibility / joi
 - `epic-message-seen-state` — read receipts
 - `FEAT-irc-integration-channels-as-group-chat-pm-as-chat` — IRC channel ↔ variant 4 mapping
 - Sibling variants: `TASK-chat-variant-user-1x1`, `TASK-chat-variant-user-group-admin`
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 6d73b17 (registry tip: 0c4ca9694 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-USER-GROUP don)

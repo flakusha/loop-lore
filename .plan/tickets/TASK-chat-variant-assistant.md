@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Low
 **Type:** Feature Ticket
@@ -60,3 +60,5 @@ Auxiliary columns on `chats`:
 ## Open Questions
 
 - Should `prompt_override` here allow referencing assistant-scoped tool rosters explicitly, or inherit from the assistant role? Today it inherits; explicit override deferred.
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 97449e1 (registry tip: bd33d322d Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-ASSISTANT done)

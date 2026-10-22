@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -64,3 +64,5 @@ Auxiliary columns on `chats`:
 ## Current implementation
 
 - `src/components/chat/participant-mgmt.html` — group participant management surface.
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 56d253f (registry tip: 5ed992bec Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-CHARACTER-GROU)

@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** Done
 **Status Note:** taxonomy agreed; column mapping established; per-variant implementation open (see task list)
 **Priority:** High
 **Effort:** Medium
@@ -159,3 +159,5 @@ For pre-existing chats that pre-date the unified schema, a one-time backfill tas
 2. **`chat_purpose` enum shape**: this epic treats it as a free string (`assistant | roleplay | rpg | social | guided | validation`). `epic-chat-lifecycle-moderation` has hinted at `direct | group | story`. Need a single canonical enum. Filed under cross-cutting.
 3. **Authority resolution**: "chat admin" unification across variants needs a small resolver (creator OR global admin OR owning gm). The resolver does not require a column — it derives from existing `chat_participants.role` + a per-chat `owner_user_id` — but no ticket currently owns it. Opened as cross-cutting.
 4. **Variant 8 (llm-only + gm) vs variant 12 (rpg group) overlap**: variant 8 has a gm but no world; variant 12 has a world but no required gm. Today the only differentiator is `chat_purpose`. If product wants both "world + gm" cleanly, an explicit `gm_required boolean` on `chats` would help — but adding that column is out of scope here and parked under `epic-rpg-wiring-phase3`.
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 685caea (registry tip: 70c38804b Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-CHAT-VARIANTS-TAXONOMY done)

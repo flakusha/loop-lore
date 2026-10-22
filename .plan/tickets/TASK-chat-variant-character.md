@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -59,3 +59,5 @@ Auxiliary columns on `chats`:
 - `TASK-chat-sectioning-multi-location` — sectioning per location
 - `TASK-chat-transfer-location` — location transitions
 - Sibling variants: `TASK-chat-variant-character-group`, `TASK-chat-variant-rpg`
+
+**Resolved:** 2026-10-22 registry-driven close: git issue fdbd4dc (registry tip: 2cea01c82 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-CHARACTER done)

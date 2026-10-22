@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -57,3 +57,5 @@ Auxiliary columns on `chats`:
 - `epic-actor-turn-skip` — turn skipping in battle mode
 - `epic-battle-action-systems` — turn arbitration
 - Sibling variants: `TASK-chat-variant-llm-only`, `TASK-chat-variant-llm-only-group-gm`
+
+**Resolved:** 2026-10-22 registry-driven close: git issue a69217f (registry tip: 289232044 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-LLM-ONLY-GROUP)

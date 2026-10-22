@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -58,3 +58,5 @@ Encryption posture: handled by `epic-chat-privacy` / `epic-frontend-encryption`.
 - `TASK-chat-lifecycle-moderation` — moderation
 - `FEAT-irc-integration-channels-as-group-chat-pm-as-chat` — IRC PM ↔ variant 3 mapping
 - Sibling variants: `TASK-chat-variant-user-group`, `TASK-chat-variant-user-group-admin`
+
+**Resolved:** 2026-10-22 registry-driven close: git issue a864d58 (registry tip: 7891611aa Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-USER-1X1 done)

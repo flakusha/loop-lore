@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** High
 **Type:** Feature Ticket
@@ -75,3 +75,5 @@ World + location binding via `chats.world_id` / `chats.location_id`.
 ## Open Questions
 
 - Whether `chat_mode = battle` should be replaced by a future `chat_mode = rpg` once `epic-rpg-wiring-phase3` lands. Decision is deferred per the parent epic's Open Questions §1.
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 93ee155 (registry tip: 114bd430a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-RPG-GROUP done)
