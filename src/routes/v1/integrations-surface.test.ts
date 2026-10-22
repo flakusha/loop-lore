@@ -191,6 +191,21 @@ describe("integrations webhook surface", () => {
     expect(calls,).toHaveLength(2,);
   });
 
+  test("unauthenticated junk POSTs do not consume the signed delivery budget", async () => {
+    const calls: ReceivedCall[] = [];
+    const app = buildApp(calls, { limiter: createRateLimiter({ windowMs: 60_000, maxRequests: 2, },), },);
+
+    // Two junk deliveries: no signature header, then a wrong signature.
+    expect((await post(app, ADAPTER, VALID_BODY,)).status,).toBe(401,);
+    expect((await post(app, ADAPTER, VALID_BODY, "not-a-signature",)).status,).toBe(401,);
+
+    // The legitimate delivery still gets through: the junk spent the
+    // separate unauthenticated bucket, not the verified-delivery budget.
+    const res = await post(app, ADAPTER, VALID_BODY, sign(VALID_BODY,),);
+    expect(res.status,).toBe(202,);
+    expect(calls,).toHaveLength(1,);
+  });
+
   test("payload without id/timestamp gets synthetic id and current timestamp", async () => {
     const calls: ReceivedCall[] = [];
     const before = Date.now();

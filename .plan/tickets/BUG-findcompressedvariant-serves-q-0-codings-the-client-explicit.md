@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Caveats:** security — a coding the client refused with q=0 is no longer served; the response falls back to the next acceptable coding, or to no compressed variant at all
 
 **Summary:**
 
@@ -27,8 +28,6 @@ Source: .tmp/glm-review/mechanical-sweep-1015.md section 8b, first row (gitignor
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
-
-**Resolved:** 2026-10-22 registry-driven close: git issue cf72ad0 (registry tip: 282c92761 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-FINDCOMPRESSEDVARIANT-SERVES)
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

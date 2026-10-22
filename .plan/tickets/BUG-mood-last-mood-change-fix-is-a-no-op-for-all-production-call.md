@@ -4,9 +4,10 @@
 # BUG: mood last_mood_change fix is a no-op for all production callers
 
 **Status:** Done
+**Status Note:** fixed on this branch — update-mood.ts bumps last_mood_change only on a real category change (a happiness band flip, or a currentMood label that actually differs); regression test in src/characters/services/mood-service.test.ts
 **Priority:** medium
 **Effort:** Medium
-**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
+**Caveats:** stale state — last_mood_change no longer advances on an intra-band happiness nudge or a same-label rewrite, so a consumer that treats the timestamp as a mood-change signal now sees fewer updates; observability — the timestamp still moves on every real category flip, so the change signal itself is unchanged in kind
 
 **Summary:**
 
@@ -20,9 +21,9 @@ Fix direction: gate on actual change: if (opts.currentMood !== undefined && opts
 
 Acceptance Criteria:
 
-- [ ] updateMood happiness-only same-category leaves last_mood_change unchanged
-- [ ] category flip bumps last_mood_change
-- [ ] mood-service suite green
+- [x] updateMood happiness-only same-category leaves last_mood_change unchanged
+- [x] category flip bumps last_mood_change
+- [x] mood-service suite green
 
 Report: .tmp/glm-review/2026-10-21/minimal-b.md (mood-last-change-fix).
 
@@ -34,8 +35,6 @@ Caveats: data-semantics change to a timestamp column; no auth impact; no partial
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
-
-**Resolved:** 2026-10-22 registry-driven close: git issue 1d65877 (registry tip: a0b8f00e1 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-MOOD-LAST-MOOD-CHANGE-FIX-IS)
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

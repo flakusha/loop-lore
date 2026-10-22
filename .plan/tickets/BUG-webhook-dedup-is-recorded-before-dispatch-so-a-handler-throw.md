@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Small
+**Caveats:** partial failure — a handler that throws now rolls the dedup entry back and rethrows, so the provider redelivery dispatches again instead of being swallowed for the whole dedup TTL; idempotency — a redelivery after a failed dispatch reaches the handler a second time, so a handler must tolerate seeing the same message id twice
 **Tags:** integrations
 
 **Summary:**
@@ -18,8 +19,6 @@ src/integrations/bridge.ts:196-198 records the dedup key (seen.set) BEFORE handl
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
-
-**Resolved:** 2026-10-22 registry-driven close: git issue ebafd77 (registry tip: a7ebdf96a Konstantin Fedotov Auto-closed: appended .md marker marks BUG-WEBHOOK-DEDUP-IS-RECORDED-BE)
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

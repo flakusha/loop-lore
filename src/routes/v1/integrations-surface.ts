@@ -147,6 +147,41 @@ export async function ingestWebhook(
     return { ok: false, code: "unknown_adapter", message: `Unknown adapter: ${adapter}`, };
   }
 
+  // Unauthenticated attempts are metered on their own bucket: junk POSTs
+  // must never spend the verified-delivery budget below.
+  const rejectUnauthenticated = (message: string,): WebhookIngestError => {
+    const junk = deps.limiter.consume(`webhook-unverified:${adapter}`,);
+    if (!junk.allowed) {
+      return {
+        ok: false,
+        code: "rate_limited",
+        message: "Too many unauthenticated webhook attempts",
+        retryAfterSec: junk.resetSec,
+      };
+    }
+
+    return { ok: false, code: "invalid_signature", message, };
+  };
+
+  if (signature === undefined || signature.trim() === "") {
+    return rejectUnauthenticated("Missing signature",);
+  }
+
+  let secret: string;
+  try {
+    secret = await resolveCredential(secretRef,);
+  } catch {
+    return rejectUnauthenticated("Invalid signature",);
+  }
+
+  const expected = createHmac("sha256", secret,).update(rawBody, "utf8",).digest("hex",);
+  if (!signaturesMatch(expected, signature,)) {
+    return rejectUnauthenticated("Invalid signature",);
+  }
+
+  // The per-adapter delivery budget is spent only by deliveries that proved
+  // the secret: consuming it before the HMAC check let unauthenticated junk
+  // starve every legitimate delivery (429 for the whole window).
   const budget = deps.limiter.consume(`webhook:${adapter}`,);
   if (!budget.allowed) {
     return {
@@ -155,22 +190,6 @@ export async function ingestWebhook(
       message: "Too many webhook deliveries for this adapter",
       retryAfterSec: budget.resetSec,
     };
-  }
-
-  if (signature === undefined || signature.trim() === "") {
-    return { ok: false, code: "invalid_signature", message: "Missing signature", };
-  }
-
-  let secret: string;
-  try {
-    secret = await resolveCredential(secretRef,);
-  } catch {
-    return { ok: false, code: "invalid_signature", message: "Invalid signature", };
-  }
-
-  const expected = createHmac("sha256", secret,).update(rawBody, "utf8",).digest("hex",);
-  if (!signaturesMatch(expected, signature,)) {
-    return { ok: false, code: "invalid_signature", message: "Invalid signature", };
   }
 
   const parsedResult = safeJsonParse<unknown>(rawBody,);

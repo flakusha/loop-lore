@@ -120,16 +120,21 @@ function respondWithFile(
 /**
  * @param url - parsed request URL
  * @param request - incoming request (used for headers)
- * @param docs - docs configuration
+ * @param docs - resolved docs configuration
+ * @param docs.enabled - whether docs serving is enabled (default: enabled)
  * @param docs.public - optional whitelist of allowed top-level doc sections
  * @returns served `Response`, or `null` when the URL is not under `/docs/`, docs are disabled, or path traversal is detected.
  */
 export function handleDocsRequest(
   url: URL,
   request: Request,
-  docs: { public?: string[] },
+  docs: { enabled?: boolean; public?: string[] },
 ): Response | null {
-  if (process.env.DOCS_ENABLED === "false") { return null; }
+  if (docs.enabled === false) { return null; }
+  if (url.pathname === "/docs") {
+    return new Response(null, { status: 302, headers: { Location: "/docs/", }, },);
+  }
+
   if (!url.pathname.startsWith("/docs/",)) { return null; }
 
   let docPath = url.pathname.slice(5,);
@@ -174,7 +179,7 @@ export function handleDocsRequest(
  * @returns async request handler returning a `Response` (200/302/304/404).
  */
 export function createNonApiHandler(
-  docs: { public?: string[] },
+  docs: { enabled?: boolean; public?: string[] },
 ): (request: Request,) => Promise<Response> {
   return async (request: Request,): Promise<Response> => {
     const url = new URL(request.url,);
