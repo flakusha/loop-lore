@@ -4,6 +4,7 @@
 # BUG: Webhook dedup is recorded before dispatch, so a handler throw makes provider retries silently swallowed
 
 **Status:** Done
+**Status Note:** fixed on this branch — the dedup key is rolled back (`seen.delete(key)`) when the handler throws, and the error is rethrown, so the provider's redelivery dispatches the message again instead of being answered `202 {dispatched:false}` and lost for the whole dedup TTL (`src/integrations/bridge.ts:194-208`). Regression test in src/integrations/bridge.test.ts ("a handler throw rolls back the dedup entry so a redelivery dispatches again").
 **Priority:** high
 **Effort:** Small
 **Caveats:** partial failure — a handler that throws now rolls the dedup entry back and rethrows, so the provider redelivery dispatches again instead of being swallowed for the whole dedup TTL; idempotency — a redelivery after a failed dispatch reaches the handler a second time, so a handler must tolerate seeing the same message id twice
