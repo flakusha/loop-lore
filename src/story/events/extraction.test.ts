@@ -310,7 +310,7 @@ describe("extractEvents — combat detection", () => {
     expect(events.find((e,) => e.type === WorldEventType.CombatEvent),).toBeDefined();
   });
 
-  test("'Health drops to 5.' also trips the drop item pattern (nested marker collision)", () => {
+  test("combat 'drops to N' phrasing no longer trips the drop item pattern", () => {
     const events = extractEvents({
       messageContent: "Health drops to 5.",
       actorId: ACTOR,
@@ -318,10 +318,9 @@ describe("extractEvents — combat detection", () => {
     },);
 
     expect(events.find((e,) => e.type === WorldEventType.CombatEvent),).toBeDefined();
-    const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
-    expect(item,).toBeDefined();
-    expect(item!.data.itemName,).toBe("t",);
-    expect(item!.data.fromActorId,).toBe(ACTOR,);
+    // "drops to 5." is combat damage, not an item transfer: the bounded
+    // ITEM_DROP capture needs a letter-led name, not a bare number.
+    expect(events.find((e,) => e.type === WorldEventType.ItemTransfer),).toBeUndefined();
   });
 
   test("no combat keyword → no CombatEvent", () => {
@@ -510,6 +509,29 @@ describe("extractEvents — item transfer edge cases", () => {
       expect(item!.data.toActorId,).toBeNull();
       expect(item!.data.itemName,).toBe(name,);
       expect(item!.data.quantity,).toBe(1,);
+    }
+  });
+
+  test("take-class verbs capture the full item name, not one letter", () => {
+    const cases: [string, string,][] = [
+      ["Sam takes the Sword.", "Sword",],
+      ["Sam drops the Torch and walks on.", "Torch",],
+      ["He takes the key from the table.", "key",],
+      ["He drops the broken sword.", "broken sword",],
+      // A bare number is not an item name: combat phrasing must not emit.
+      ["Health drops to 5.", "",],
+    ];
+
+    for (const [msg, name,] of cases) {
+      const events = extractEvents({ messageContent: msg, actorId: ACTOR, currentLocationId: LOC, },);
+      const item = events.find((e,) => e.type === WorldEventType.ItemTransfer);
+      if (name === "") {
+        expect(item,).toBeUndefined();
+        continue;
+      }
+
+      expect(item,).toBeDefined();
+      expect(item!.data.itemName,).toBe(name,);
     }
   });
 

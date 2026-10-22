@@ -239,6 +239,27 @@ describe("touchMemory", () => {
     // 0.3 + 0.1 + 0.1 = 0.5
     expect(updated?.strength,).toBeCloseTo(0.5, 5,);
   });
+
+  it("clamps strength at 1.0 so repeated touches never exceed the ceiling", async () => {
+    await seedMemory(db, {
+      id: "mem-1",
+      strength: 0.95,
+      decay_rate: 0.1,
+      last_accessed_at: "2024-01-01T00:00:00Z",
+    },);
+
+    await touchMemory(db, "mem-1",);
+    await touchMemory(db, "mem-1",);
+    await touchMemories(db, ["mem-1",],);
+
+    const updated = await db
+      .selectFrom("actor_memories",)
+      .select("strength",)
+      .where("id", "=", "mem-1",)
+      .executeTakeFirst();
+
+    expect(updated?.strength,).toBe(1,);
+  });
 });
 
 describe("touchMemories", () => {

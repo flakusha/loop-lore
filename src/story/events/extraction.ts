@@ -11,52 +11,36 @@
  * Future: delegate to lightweight LLM for structured extraction.
  */
 import { WorldEventType, } from "../../db/enums";
+import {
+  COMBAT_PATTERNS,
+  ITEM_PATTERNS,
+  LOCATION_PATTERNS,
+  LORE_PATTERNS,
+  NPC_PATTERNS,
+  TIME_PATTERNS,
+} from "../../regex/story-events";
 import type { WorldEvent, } from "../types";
 
 // ── Location Change Patterns ─────────────────────────────────
 
-const locationPatterns = [
-  /(?:enters?|moves?\s+to|arrives?\s+at|steps?\s+into|walks?\s+into|goes?\s+to|heads?\s+(?:to|toward)|leaves?\s+the)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/i,
-  /(?:makes?\s+(?:their\s+)?way\s+to(?:wards?)?|travels?\s+to|ventures?\s+into)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/i,
-];
+// Single source of truth for every pattern lives in
+// src/regex/story-events.ts; the detectors below read these aliases.
+const locationPatterns = LOCATION_PATTERNS;
+const timePatterns = TIME_PATTERNS;
+const combatPatterns = COMBAT_PATTERNS;
+const npcPatterns = NPC_PATTERNS;
+const itemPatterns = ITEM_PATTERNS;
+const lorePatterns = LORE_PATTERNS;
 
-// ── Time Advancement Patterns ─────────────────────────────────
+// ── Time Advancement Patterns (see aliases above; kept as a section marker) ─
 
-const timePatterns = [
-  /(?:hours?\s+(?:pass|go\s+by|elapse)|later\s+that\s+(?:day|night|evening|morning|afternoon)|(?:after|by)\s+(?:a\s+)?few\s+hours)/i,
-  /(?:the\s+(?:sun|moon)\s+(?:rises?|sets?)|dawn\s+(?:breaks?|approaches?)|dusk\s+(?:falls?|settles?)|night\s+(?:falls?|arrives?))/i,
-  /(?:the\s+next\s+(?:day|morning|evening)|a\s+(?:day|week|month)\s+later)/i,
-];
+// ── Combat Patterns (see aliases above; kept as a section marker) ─
 
-// ── Combat Patterns ───────────────────────────────────────────
+// ── NPC State Change Patterns (see aliases above; kept as a section marker) ─
 
-const combatPatterns = [
-  /(?:strikes?|hits?|slashes?|stabs?|shoots?|fires?\s+(?:at|upon)|attacks?|battles?|fights?|wounds?|injures?)/i,
-  /(?:takes?\s+\d+\s+(?:damage|hits?)|loses?\s+\d+\s+hp|health\s+(?:drops?|falls?)\s+to\s+\d+)/i,
-];
+// ── Item Transfer Patterns (see aliases above; kept as a section marker) ─
 
-// ── NPC State Change Patterns ─────────────────────────────────
-
-const npcPatterns = [
-  /(?:looks?\s+(?:calm|afraid|angry|suspicious|friendly|worried|happy|sad|confused|determined))/i,
-  /(?:becomes?\s+(?:more|less)\s+(?:friendly|hostile|suspicious|trusting))/i,
-  /(?:reveals?|tells?\s+|confesses?|shares?|admits?)\s+(?:that\s+)?(?:he|she|they)\s+(?:knows?|has|found|discovered)/i,
-];
-
-// ── Item Transfer Patterns ────────────────────────────────────
-
-const itemPatterns = [
-  /(?:gives?|hands?|offers?|passes?|trades?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?\s+(?:to\s+|for\s+)/i,
-  /(?:takes?|picks?\s+up|grabs?|collects?|acquires?|receives?|finds?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?/i,
-  /(?:drops?|leaves?\s+behind|abandons?|puts?\s+down)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?/i,
-];
-
-// ── Lore Update Patterns ──────────────────────────────────────
-
-const lorePatterns = [
-  /(?:reveals?\s+that|discover(?:s|ed)\s+that|learn(?:s|ed)\s+that|uncovers?|unearth(?:s|ed)|realiz(?:es?|ed)\s+that)/i,
-  /(?:according\s+to\s+(?:legend|ancient|old)\s+(?:texts?|records?|tales?|scrolls?))/i,
-];
+// ── Lore Update Patterns (see aliases above; kept as a section marker) ─
 
 // ── Options ──────────────────────────────────────────────────
 
