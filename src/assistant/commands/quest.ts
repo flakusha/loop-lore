@@ -161,7 +161,7 @@ registerCommand("quest", async (args, ctx,): Promise<CommandResult> => {
         .where("world_id", "=", worldId,)
         .where("name", "like", `%${questName}%`,)
         .where("status", "=", QuestStatus.Active,)
-        .select(["id", "name", "creator_id", "category",],)
+        .select(["id", "name", "creator_id", "world_id", "category",],)
         .executeTakeFirst();
 
       if (!quest) {

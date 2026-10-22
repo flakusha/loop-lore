@@ -93,6 +93,7 @@ export async function performAttack(
       await applyVictoryXpLeg(deps.database, {
         battleId: battle.id,
         chatId: battle.chatId,
+        worldId: battle.worldId,
         combatants: updated,
       },);
     }
