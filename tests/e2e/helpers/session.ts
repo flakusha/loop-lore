@@ -49,7 +49,9 @@ export async function createTestSession(
     .values({
       id: sessionId,
       user_id: userId,
-      secret_hash: crypto.randomUUID(),
+      // Same shape as a real login row (src/routes/auth/session.ts): the
+      // session id IS the identity, the secret is derived from it.
+      secret_hash: `jwt:${sessionId}`,
       expires_at: new Date(Date.now() + 3_600_000,).toISOString(),
     },)
     .execute();
