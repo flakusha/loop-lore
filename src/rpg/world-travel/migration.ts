@@ -27,6 +27,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { awardXpToActor, } from "../level/index.js";
+import { checkMechanicEnabled, RpgMechanic, } from "../service/world-gate.js";
 import { encodeReferencePair, xpForTravelLeg, XpSource, } from "../xp/sources.js";
 import { ACTION_COST, chargeBudget, toSqlDate, } from "./budget";
 import { type TravelContext, type TravelDb, travelDb, type TravelResult, } from "./types";
@@ -49,11 +50,24 @@ const CONTINUOUS = "continuous";
 async function awardArrivalXp(
   db: Kysely<DB>,
   actorId: string,
+  worldId: string,
   migrationId: string,
   currentTick: number,
   destination: string | null,
 ): Promise<void> {
   try {
+    // Per-world rpg_xp opt-in (FEAT-gate-xp): the travel tick always has
+    // the world, so a denial is a real opt-out — not a missing context.
+    const gate = await checkMechanicEnabled(db, worldId, RpgMechanic.Xp,);
+    if (!gate.allowed) {
+      getLogger().child({ module: "world-travel", },).debug(`Travel XP skipped: world opted out`, {
+        worldId,
+        actorId,
+      },);
+
+      return;
+    }
+
     await awardXpToActor(db, {
       actorId,
       amount: xpForTravelLeg(),
@@ -214,7 +228,7 @@ export async function migrateNpc(
         .where("id", "=", row.id,)
         .execute();
 
-      await awardArrivalXp(db, row.actor_id, row.id, currentTick, destination,);
+      await awardArrivalXp(db, row.actor_id, worldId, row.id, currentTick, destination,);
     }
 
     result.actions.push({ kind, subjectId: row.actor_id, tick: currentTick, cost: ACTION_COST, },);

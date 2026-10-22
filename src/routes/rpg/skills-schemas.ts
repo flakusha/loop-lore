@@ -33,6 +33,7 @@ export const updateSkillBody = t.Partial(
 
 export const xpBody = t.Object({
   xpAmount: t.Number({ minimum: 0, },),
+  worldId: t.Optional(t.String(),),
 },);
 
 export const specializeBody = t.Object({

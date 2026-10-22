@@ -23,6 +23,16 @@ import {
 } from "./skills-schemas";
 import type { HandlerOpts, } from "./types";
 
+import { checkMechanicEnabled, RpgMechanic, } from "../../rpg/service/world-gate";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * Skills progression routes — actor-scoped skill tree, prerequisites, XP and
+ * specialization. Split from `skills.ts` to keep both files under the 250-line
+ * ceiling.
+ */
+
 /**
  * @param root0
  * @param root0.database
@@ -131,7 +141,16 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
-        const body = ctx.body as { xpAmount: number };
+        const body = ctx.body as { xpAmount: number; worldId?: string };
+        // Per-world rpg_xp opt-in (FEAT-gate-xp): an explicit worldId that
+        // is opted out rejects with 403. World-less calls stay fail-open.
+        if (body.worldId) {
+          const gate = await checkMechanicEnabled(database, body.worldId, RpgMechanic.Xp,);
+          if (!gate.allowed) {
+            return jsonError(gate.reason ?? "RPG XP not enabled for this world", 403,);
+          }
+        }
+
         const result = await svc().addXp(ctx.params.id, body.xpAmount,);
         return jsonResponse(result,);
       } catch (error) {

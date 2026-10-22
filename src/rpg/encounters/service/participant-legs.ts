@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import type { Kysely, } from "kysely";
-import { MoodService, } from "../../../characters/services/mood-service";
 import type { DB, } from "../../../db/schema";
-import type { getLogger, } from "../../../logger";
-import { jsonStringifyOr, } from "../../../utils";
-import { IntimacyService, } from "../../intimacy/service";
-import { logXp, } from "../../service/xp";
-import { XpSource, } from "../../xp/sources";
 import type { EncounterOutcome, NsfwEncounter, } from "./types";
+import type { Kysely, } from "kysely";
+import type { getLogger, } from "../../../logger";
+import { IntimacyService, } from "../../intimacy/service";
+import { MoodService, } from "../../../characters/services/mood-service";
+import { XpSource, } from "../../xp/sources";
+import { awardXpToActor, } from "../../level/index.js";
+import { checkMechanicEnabled, RpgMechanic, } from "../../service/world-gate.js";
+import { jsonStringifyOr, } from "../../../utils";
+import { logXp, } from "../../service/xp";
 
 /**
  * First participant that is not `self` (pair leg needs a target).
@@ -91,6 +92,11 @@ export async function applyMoodLeg(ctx: LegContext,): Promise<void> {
 
 /**
  * Shared XP ledger leg (TASK-040): satisfaction bonus mirrors as XP.
+ *
+ * Per-world rpg_xp opt-in (FEAT-gate-xp): encounters carry their world, so
+ * a denial is a real opt-out — but opting out of *character progression*
+ * must not erase the encounter payout, so a denied world keeps the raw
+ * ledger mirror instead of the pipeline grant.
  * @param db
  * @param ctx
  * @returns {Promise<void>}
@@ -99,12 +105,31 @@ export async function applyXpLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void
   const { log, encounter, outcome, participant, } = ctx;
   try {
     if (outcome.effects.satisfactionBonus > 0) {
-      await logXp({ database: db, }, {
+      const grant = {
         actorId: participant,
         amount: outcome.effects.satisfactionBonus,
         source: XpSource.NsfwEncounter,
         description: `Encounter ${outcome.type} (${encounter.encounterType})`,
-      },);
+      };
+
+      let pipelined = false;
+      if (encounter.worldId) {
+        const gate = await checkMechanicEnabled(db, encounter.worldId, RpgMechanic.Xp,);
+        if (gate.allowed) {
+          try {
+            await awardXpToActor(db, grant,);
+            pipelined = true;
+          } catch (cause) {
+            log.warn(`Encounter pipeline XP skipped for ${participant}, falling back to ledger:`, {
+              error: cause instanceof Error ? cause.message : String(cause,),
+            },);
+          }
+        }
+      }
+
+      if (!pipelined) {
+        await logXp({ database: db, }, grant,);
+      }
     }
   } catch (cause) {
     log.warn(`XP fan-out skipped for ${participant}:`, {

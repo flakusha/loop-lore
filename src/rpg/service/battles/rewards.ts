@@ -23,6 +23,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema.js";
 import type { Combatant, } from "../../../rpg/combat.js";
 import { awardXpToActor, } from "../../level/index.js";
+import { checkMechanicEnabled, RpgMechanic, } from "../../service/world-gate.js";
 import { xpForEnemyDefeat, XpSource, } from "../../xp/sources.js";
 import { log, } from "../log.js";
 
@@ -32,6 +33,8 @@ export interface VictoryXpContext {
   battleId: string;
   /** Chat the battle belongs to (ledger provenance). */
   chatId: string;
+  /** World the battle belongs to — the rpg_xp gate. Null stays fail-open. */
+  worldId?: string | null;
   /** Final roster: survivors and the fallen. */
   combatants: Combatant[];
 }
@@ -47,6 +50,20 @@ export async function applyVictoryXpLeg(
   ctx: VictoryXpContext,
 ): Promise<void> {
   try {
+    // Per-world rpg_xp opt-in (FEAT-gate-xp): battles without a world stay
+    // fail-open like the chat command gate.
+    if (ctx.worldId) {
+      const gate = await checkMechanicEnabled(db, ctx.worldId, RpgMechanic.Xp,);
+      if (!gate.allowed) {
+        log().debug("Victory XP skipped: world opted out", {
+          worldId: ctx.worldId,
+          battleId: ctx.battleId,
+        },);
+
+        return;
+      }
+    }
+
     const fallen = ctx.combatants.filter((c,) => c.isNpc && c.hp <= 0);
     // Roster echoes (the same actor listed twice) must not dilute the split.
     const survivorIds = new Set<string>();

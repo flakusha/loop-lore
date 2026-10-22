@@ -24,6 +24,7 @@ import { Elysia, t, } from "elysia";
 import { awardXpToActor, } from "../../rpg/level";
 import { LevelServiceError, } from "../../rpg/level/types.js";
 import { generateLoot, type LootEntry, type LootResult, persistLoot, } from "../../rpg/loot";
+import { checkMechanicEnabled, RpgMechanic, } from "../../rpg/service/world-gate";
 import { getXpHistory, } from "../../rpg/service/xp";
 import { levelFromXp, xpToNextLevel, } from "../../rpg/xp";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
@@ -56,10 +57,24 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
           description?: string;
           referenceId?: string;
           chatId?: string;
+          worldId?: string;
+          currentLevel?: number;
+          currentXp?: number;
         };
 
         const actorId = await requireNsfwActorAccess(database, body.actorId, ctx,);
         if (typeof actorId !== "string") { return actorId; }
+
+        // Per-world rpg_xp opt-in (FEAT-gate-xp): an explicit worldId that is
+        // opted out rejects with 403. No worldId stays fail-open (world-less
+        // callers have no gate to consult).
+        if (body.worldId) {
+          const gate = await checkMechanicEnabled(database, body.worldId, RpgMechanic.Xp,);
+          if (!gate.allowed) {
+            return jsonError(gate.reason ?? "RPG XP not enabled for this world", 403,);
+          }
+        }
+
         try {
           const result = await awardXpToActor(database, {
             actorId: body.actorId,
