@@ -22,6 +22,7 @@ export function extractAuth(ctx: unknown,): { userId: string | null; userRole: s
 export const HttpStatus = {
   OK: 200,
   Created: 201,
+  Accepted: 202,
   NoContent: 204,
   BadRequest: 400,
   Unauthorized: 401,
@@ -53,6 +54,11 @@ export const ErrorCode = {
   Conflict: "CONFLICT",
   NotImplemented: "NOT_IMPLEMENTED",
   ServiceUnavailable: "SERVICE_UNAVAILABLE",
+  ParseError: "PARSE_ERROR",
+  Gone: "GONE",
+  BadGateway: "BAD_GATEWAY",
+  GatewayTimeout: "GATEWAY_TIMEOUT",
+  InsufficientStorage: "INSUFFICIENT_STORAGE",
   QuotaExceeded: "federation.quota_exceeded",
   StorageUnavailable: "federation.storage_unavailable",
 } as const;

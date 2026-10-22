@@ -186,6 +186,10 @@ describe("messageReactionsRoutes access checks", () => {
     );
 
     expect(res.status,).toBe(400,);
+    const body = (await res.json()) as { error: string; code: string; meta: unknown };
+    expect(body.error,).toBe("emoji is required",);
+    expect(body.code,).toBe("BAD_REQUEST",);
+    expect(body.meta,).toBeDefined();
   });
 
   test("quick-emojis returns the picker allowlist", async () => {

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { HttpStatus, type HttpStatusCode, } from "../http-utils";
+import { HttpStatus, } from "../http-utils";
 import {
   errorHtml,
   errorJson,
@@ -57,17 +57,30 @@ describe("errorJson", () => {
   test("maps status to the http-utils envelope code", async () => {
     const res = errorJson(HttpStatus.Unauthorized, "bad credentials",);
     expect(res.status,).toBe(401,);
-    expect(res.headers.get("Content-Type",),).toBe("application/json",);
+    expect(res.headers.get("Content-Type",)?.startsWith("application/json",),).toBe(true,);
     const body = (await res.json()) as { error: string; code: string; meta: { api_version: string } };
     expect(body.error,).toBe("bad credentials",);
     expect(body.code,).toBe("UNAUTHORIZED",);
     expect(body.meta.api_version,).toBe("1",);
   });
 
-  test("unknown status falls back to generic ERROR code", async () => {
-    const res = errorJson(599 as HttpStatusCode, "odd",);
-    const body = (await res.json()) as { code: string };
-    expect(body.code,).toBe("ERROR",);
+  test("previously-unmapped 5xx statuses carry the shared-map code", async () => {
+    const internal = (await errorJson(HttpStatus.InternalServerError, "boom",).json()) as {
+      error: string;
+      code: string;
+      meta: { api_version: string };
+    };
+
+    expect(internal.code,).toBe("SERVER_ERROR",);
+    expect(internal.meta.api_version,).toBe("1",);
+
+    const unavailable = (await errorJson(HttpStatus.ServiceUnavailable, "down",).json()) as {
+      code: string;
+      meta: { api_version: string };
+    };
+
+    expect(unavailable.code,).toBe("SERVICE_UNAVAILABLE",);
+    expect(unavailable.meta.api_version,).toBe("1",);
   });
 
   test("uses the translator when provided", async () => {

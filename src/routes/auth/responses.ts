@@ -3,8 +3,7 @@
 
 import type { TranslatorFn, } from "../../i18n/types";
 import { LL_TOKEN, } from "../../regex/cookies";
-import { safeJsonStringify, } from "../../utils";
-import { HttpStatus, type HttpStatusCode, } from "../http-utils";
+import { type HttpStatusCode, jsonError, } from "../http-utils";
 
 /**
  * @param str
@@ -56,38 +55,25 @@ function wantsJson(request: Request,): boolean {
 }
 
 /**
- * JSON error response for API clients. Mirrors the envelope shape used by
- * `routes/http-utils` (`{ error, code, meta }`) so callers don't have to
- * special-case which helper emitted the response.
+ * JSON error response for API clients. Delegates to the shared `jsonError`
+ * envelope so every status resolves through the one code table in
+ * `routes/http-utils` (including 5xx, which the old local copy lacked).
  * @param status
  * @param message
  * @param t
  * @returns the JSON error envelope with the requested status
  */
 function errorJson(status: HttpStatusCode, message: string, t?: TranslatorFn,): Response {
-  const resolved = t ? t(message,) : message;
-  const STATUS_TO_CODE: Record<number, string> = {
-    [HttpStatus.BadRequest]: "BAD_REQUEST",
-    [HttpStatus.Unauthorized]: "UNAUTHORIZED",
-    [HttpStatus.Forbidden]: "FORBIDDEN",
-    [HttpStatus.NotFound]: "NOT_FOUND",
-    [HttpStatus.Conflict]: "CONFLICT",
-    [HttpStatus.UnprocessableEntity]: "VALIDATION_ERROR",
-    [HttpStatus.TooManyRequests]: "TOO_MANY_REQUESTS",
-  };
-
-  const body = safeJsonStringify({
-    error: resolved,
-    code: STATUS_TO_CODE[status] ?? "ERROR",
-    meta: { api_version: "1", },
-  },);
-
-  // Payload is provably JSON-safe (plain strings); serialization failure is
-  // unreachable in practice, so fall back to a static minimal body.
-  return new Response(body.ok ? body.value : '{"error":"serialization failed"}', {
-    status,
-    headers: { "Content-Type": "application/json", },
-  },);
+  try {
+    return jsonError({ message, status, t, },);
+  } catch {
+    // Payload is provably JSON-safe (plain strings); serialization failure is
+    // unreachable in practice, so fall back to a static minimal body.
+    return new Response('{"error":"serialization failed"}', {
+      status,
+      headers: { "Content-Type": "application/json", },
+    },);
+  }
 }
 
 /**
