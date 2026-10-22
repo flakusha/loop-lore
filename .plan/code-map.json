@@ -33730,6 +33730,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-routes-re-resolve-identity-and-fall-back-to-solo.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-auth-make-session-expiry-handling-agree-across-authentic.md"
     },
     {
@@ -34710,6 +34714,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-quest-update-notifications-ignore-the-muted-world-scope.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-notification-and-telemetry-service-nits.md"
     },
     {
@@ -34745,6 +34753,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-notification-participant-helpers-write-actor-id-into-the-use.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-quest-update-notifications-ignore-the-muted-world-scope.md"
     },
     {
       "kind": "ticket",
@@ -40652,6 +40664,10 @@
   "src/routes/export-sse/start.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-routes-re-resolve-identity-and-fall-back-to-solo.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-export-sse-start-throws-controller-is-already-closed-on-clie.md"
     },
     {
@@ -40695,6 +40711,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-routes-re-resolve-identity-and-fall-back-to-solo.md"
     },
     {
       "kind": "ticket",
