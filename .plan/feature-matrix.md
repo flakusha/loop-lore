@@ -80,7 +80,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | allocation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | allowlist | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | alpha | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| alpine | 27 | 5 | 2 | 14 | 0 | 0 | 6 |
+| alpine | 27 | 6 | 2 | 14 | 0 | 0 | 5 |
 | alpn | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | alternate-paths | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | alternative-flows | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
@@ -267,7 +267,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | character-traits | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | characters | 19 | 8 | 2 | 6 | 3 | 0 | 0 |
 | charts | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| chat | 81 | 39 | 7 | 18 | 1 | 0 | 16 |
+| chat | 81 | 40 | 7 | 18 | 1 | 0 | 15 |
 | chat-branches | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | chat-mode | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
 | chat-purpose | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -329,7 +329,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | compliance | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | component | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | components | 6 | 1 | 1 | 1 | 1 | 0 | 2 |
-| composer | 7 | 0 | 1 | 0 | 0 | 0 | 6 |
+| composer | 7 | 4 | 1 | 0 | 0 | 0 | 2 |
 | composite | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | composition | 9 | 0 | 0 | 1 | 0 | 0 | 8 |
 | compression | 3 | 1 | 0 | 1 | 1 | 0 | 0 |
@@ -490,7 +490,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | download | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | draft | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | draft-store | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| drafts | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| drafts | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | dreams | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | drift | 4 | 0 | 0 | 1 | 2 | 0 | 1 |
 | duckduckgo | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -544,7 +544,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | enforcement | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | engagement | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | engine | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
-| enhance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| enhance | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | enrichment | 4 | 0 | 0 | 1 | 1 | 0 | 2 |
 | enrichment-pipeline | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | enrichment-task | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -640,7 +640,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | format-version | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
 | formatting | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | formula | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| forward | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| forward | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | forward-secrecy | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | foundation | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | fp | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -649,7 +649,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | free-will | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | fresh | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | friends | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| frontend | 161 | 37 | 7 | 66 | 0 | 0 | 51 |
+| frontend | 161 | 41 | 7 | 66 | 0 | 0 | 47 |
 | fts | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | furniture | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | future | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -851,7 +851,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | llama-cpp-alternative | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | llama-swap | 8 | 0 | 0 | 2 | 0 | 0 | 6 |
 | llama.cpp | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
-| llm | 26 | 8 | 0 | 5 | 1 | 0 | 12 |
+| llm | 26 | 9 | 0 | 5 | 1 | 0 | 11 |
 | llm-authored | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | llm-context-cap | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | llm-narrative | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -923,14 +923,14 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | message-kind | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | messages | 9 | 2 | 0 | 4 | 0 | 0 | 3 |
 | messaging | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| messenger | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| messenger | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | meta-currency | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | metadata | 11 | 1 | 0 | 1 | 0 | 0 | 9 |
 | metrics | 4 | 0 | 0 | 2 | 1 | 0 | 1 |
 | mfa | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | mid-response | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | middleware | 3 | 2 | 0 | 0 | 0 | 0 | 1 |
-| migration | 20 | 5 | 0 | 4 | 1 | 0 | 10 |
+| migration | 20 | 6 | 0 | 4 | 1 | 0 | 9 |
 | migrations | 8 | 3 | 0 | 1 | 1 | 0 | 3 |
 | milestones | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | missions | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1224,7 +1224,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | recursive-cte | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | redaction | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | redis | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| refactor | 13 | 6 | 0 | 5 | 0 | 0 | 2 |
+| refactor | 13 | 7 | 0 | 5 | 0 | 0 | 1 |
 | refactoring | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | reference-conditioning | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | reference-image | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1247,7 +1247,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | relevance | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | reliability | 6 | 1 | 1 | 3 | 1 | 0 | 0 |
 | reload | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| reminders | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| reminders | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | rename | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | rendering | 6 | 2 | 1 | 2 | 0 | 0 | 1 |
 | renditions | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1325,7 +1325,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | scene-exposition | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | scenes | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | schedule | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| scheduled | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| scheduled | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | scheduler | 12 | 6 | 0 | 1 | 0 | 0 | 5 |
 | scheduling | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | schema | 25 | 3 | 0 | 10 | 1 | 0 | 11 |
@@ -1579,7 +1579,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | types | 4 | 2 | 0 | 0 | 0 | 0 | 2 |
 | typescript | 5 | 2 | 2 | 0 | 0 | 0 | 1 |
 | typescript7 | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| ui | 62 | 10 | 2 | 31 | 1 | 0 | 18 |
+| ui | 62 | 11 | 2 | 31 | 1 | 0 | 17 |
 | unification | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | unified | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | unified-search | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
@@ -1678,7 +1678,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2659 | 996 | 45 | 904 | 32 | 0 | 682 |
+| (untagged) | 2659 | 997 | 45 | 904 | 32 | 0 | 681 |
 
 ## By epic × status
 
@@ -1810,7 +1810,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | epic-character-npc-lore-access | 8 | 0 | 0 | 8 | 0 | 0 | 0 |
 | epic-character-spec | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | epic-character-world-setup | 4 | 2 | 0 | 1 | 0 | 0 | 1 |
-| epic-chat-composer-flows | 10 | 4 | 0 | 0 | 0 | 0 | 6 |
+| epic-chat-composer-flows | 10 | 9 | 0 | 0 | 0 | 0 | 1 |
 | epic-chat-context-optimization | 18 | 2 | 0 | 12 | 1 | 0 | 3 |
 | epic-chat-context-optimization, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation | 37 | 18 | 1 | 15 | 0 | 0 | 3 |
@@ -2109,7 +2109,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | routing-versioning-consolidation | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | sam3-segmentation-integration | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | server-hardening | 7 | 1 | 0 | 0 | 0 | 0 | 6 |
-| (unbound) | 1547 | 629 | 54 | 261 | 47 | 0 | 556 |
+| (unbound) | 1547 | 630 | 54 | 261 | 47 | 0 | 555 |
 
 ## Ticket detail
 

@@ -3,7 +3,7 @@
 
 # TASK: Shared text-surface toolbar
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-chat-composer-flows
@@ -38,3 +38,5 @@ Phase 2 of the composer-reuse epic: `textToolbar()` (src/frontend/alpine/text-to
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue a00d051 (registry tip: 782e807ef Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SHARED-TEXT-SURFACE-TOOLBAR)
