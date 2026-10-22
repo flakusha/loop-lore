@@ -7,17 +7,52 @@ Whether the TypeScript-7 toolchain dependencies added during the TS7 migration
 can now be dropped, given that Bun 1.4.3 ships `bun check` — a built-in
 TypeScript 7 type checker.
 
-**Verdict: no dependency can be dropped today.** `typescript@^5.9.3` is
-load-bearing (two independent upstream blockers, §2). The nominally redundant
-one, `@typescript/native-preview`, has no safe replacement: `bun check` is
-shadowed by this repo's `check` script, and the documented escape hatch
-`bun --check` silently drops one of the four typecheck projects (§3).
+**Verdict: `typescript@^5.9.3` cannot be dropped. `@typescript/native-preview`
+is no longer blocked by the reason this review first recorded, but is not
+dropped here.**
 
-Every claim below carries the probe that produced it. Two claims in the first
+`typescript@^5.9.3` is load-bearing — two independent upstream blockers, both
+re-verified on 2026-10-22 (§2): the `typescript-eslint` peer ceiling, and
+`type-coverage-core` needing the TS5/TS6 compiler API.
+
+The nominally redundant one, `@typescript/native-preview`, was recorded here as
+having "no safe replacement", because the `bun check` script shadows the
+built-in subcommand and the documented escape hatch `bun --check` was believed
+unable to select a project. **That second reason was wrong** (§3.2, corrected):
+Bun's *global* `--tsconfig-override` flag does select a project, and it works
+on all three of this repo's project tsconfigs, with the same error kinds
+`tsgo` reports. A drop-in replacement for the three `tsgo` gates therefore
+exists. Dropping the dependency is still not done here: it means rewiring
+three gate call sites, which is a code change, not a documentation conclusion.
+What does *not* change is that `bun check` (the bare subcommand) stays
+shadowed, and that `type-coverage` still blocks moving `typescript` to `^7`.
+
+Every claim below carries the probe that produced it. Three claims in the first
 draft of this review were wrong and are corrected in place — the "no escape
-hatch" claim (§3.1) and the shadowing rule (§4); see the correction notes there.
+hatch" claim (§3.1), the shadowing rule (§4), and the "no project selection"
+claim (§3.2); see the correction notes there, and the correction log below for
+the full list.
 
 Worktree: `experimental-ts7-bun`. Host Bun: `1.4.3`.
+Correction pass: 2026-10-22, on `dev`.
+
+---
+
+## Correction log
+
+Dated, so the correction history is itself auditable. Each entry says what was
+wrong, what the probe showed, and where the text changed.
+
+| Date | Claim | What was wrong | What the probe showed | Changed in |
+| --- | --- | --- | --- | --- |
+| 2026-10-22 | §3.2 — "The escape hatch does not cover this repo's gate layout" | `bun --check` was claimed unable to select a project, and `typecheck - scripts` was claimed to have no substitute | Bun has a **global** `--tsconfig-override=<val>` flag. It selects a project, works on all three of this repo's project tsconfigs, and reports the same error kinds `tsgo` does | §3.2, §3.3, §3.4, §5 |
+| 2026-10-22 | §2.1 — `typescript-eslint@8.71.2` | The version cite was stale | Installed and published-latest is `8.72.0`; the peer ceiling `>=4.8.4 <6.1.0` is unchanged, and there is still no newer major | §2.1 |
+| 2026-10-22 | §2.2 — `type-coverage-core` "is still broken", "no upstream fix exists" | The failure mode was mis-described as an unhandled `TypeError` at `checker.js:669` | `core.js:211-218` `assertCompilerApi()` runs *first* and throws a designed, actionable error; the CLI exits 1 with a clean message. It fails loudly and cleanly — it does not crash. The *conclusion* (typescript stays at 5.x) is unchanged | §2.2 |
+| 2026-10-22 | §3.1 — the `bun check` script shadowing | Not wrong — recorded so the log is complete | There is no `--no-script` escape in Bun 1.4.3: `bun check --no-script` → `error: Unknown flag "--no-script"` | §3.1 |
+
+One downstream comment is now stale but was left alone, being outside this
+document: `scripts/check/parallel/gate-table.mjs` describes `typecheck - bun` as
+unable to select a project. That is the C1 claim this log corrects.
 
 ---
 
@@ -49,15 +84,21 @@ compiler.
 
 ### 2.1 `typescript-eslint` peer range rejects TS7
 
-`typescript-eslint@8.71.2` (current, and the installed version) declares:
+`typescript-eslint@8.72.0` (current, and the installed version) declares:
 
 ```json
-"peerDependencies": { "typescript": ">=4.8.4 <6.1.0" }
+"peerDependencies": { "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" }
 ```
 
-Verified from the published metadata. There is no newer major that lifts the
-ceiling: `npm view typescript-eslint version` → `8.71.2`. ESLint is a blocking
-gate (`lint - eslint`), so this alone pins `typescript` below 6.1.0.
+Verified from the installed `node_modules/typescript-eslint/package.json` and
+from the published metadata. There is no newer major that lifts the ceiling:
+`npm view typescript-eslint version` → `8.72.0` (dist-tags: `latest` 8.72.0,
+`canary` 8.72.1-alpha.7, `rc-v8` 8.0.0-alpha.62 — no 9.x). ESLint is a
+blocking gate (`lint - eslint`), so this alone pins `typescript` below 6.1.0.
+
+> **Correction (2026-10-22).** The first draft cited `8.71.2`. The version
+> moved to `8.72.0`; the peer ceiling did not. The conclusion of this section is
+> unchanged — `typescript` still cannot move to `^7` on the ESLint gate alone.
 
 ### 2.2 TS7's default export is not the compiler
 
@@ -102,21 +143,83 @@ Three consumers in this repo import that API:
 
 `type-coverage-core@2.30.4` is the **latest published** version and is *newer*
 than the `2.30.1` recorded as broken in
-`docs/meta/code-practices-improvements/01-strict-typing.md`. It is still broken:
-`dist/checker.js:669` reads `ts.SyntaxKind.Unknown`, and the local-preview
-failure with the same code path was never about that alias alone — TS7's
-default export carries no `SyntaxKind` at all (`grep SyntaxKind` over
-typescript@7.0.2's `lib/version.*` returns nothing), so the reference cannot
-resolve in any spelling. Grepping both published versions side by side:
+`docs/meta/code-practices-improvements/01-strict-typing.md`. It still does not
+run under TS7 — but it fails **loudly and cleanly**, not by crashing.
+
+> **Correction (2026-10-22).** The first draft of this section described the
+> failure as an unhandled `TypeError` at `dist/checker.js:669`, said the
+> reference "cannot resolve in any spelling", and framed the package as simply
+> broken. The mechanism was wrong; the conclusion was not. `checker.js:164`
+> does call `createSkippedNodeKinds()` unguarded, and `checker.js:669` does
+> read `ts.SyntaxKind.Unknown` — but **that call site is unreachable in the
+> real CLI**, because `core.js:211-218` `assertCompilerApi()` runs first and
+> throws a designed, actionable error. Under a real `typescript@7.0.2` the CLI
+> exits 1 with a clean message. It does not crash, and it does not need to be
+> debugged at `checker.js:669`.
+
+The guard that actually fires, `type-coverage-core@2.30.4` `dist/core.js:211-218`,
+verbatim:
+
+```js
+function assertCompilerApi() {
+    if (typeof ts.createProgram !== 'function') {
+        throw new Error(`type-coverage needs the TypeScript compiler API (ts.createProgram), which typescript@${ts.version} does not export.
+Keep typescript@${ts.version} for your project and give type-coverage TypeScript 6. With npm, add this to package.json:
+  "overrides": { "type-coverage-core": { "typescript": "npm:@typescript/typescript6@^6" } }
+TypeScript 7 support: https://github.com/plantain-00/type-coverage/issues/147`);
+    }
+}
+```
+
+And the unreachable site it pre-empts, `dist/checker.js:164`:
+
+```js
+    skippedNodeKinds !== null && skippedNodeKinds !== void 0 ? skippedNodeKinds : (skippedNodeKinds = createSkippedNodeKinds());
+```
+
+which reads `ts.SyntaxKind.Unknown` at `dist/checker.js:669`:
+
+```js
+const createSkippedNodeKinds = () => new Set([
+    ts.SyntaxKind.Unknown,
+```
+
+The upstream comment at `dist/checker.js:666` —
+`// Built on first use so this module still loads when typescript has no SyntaxKind (typescript@7)` —
+is accurate about module **load** only, not a runtime guard: it keeps the
+module importable, which is what lets `core.js` reach its own check and print
+the designed message.
+
+Reproduced end to end in a throwaway sandbox (`.tmp/ts7doc/sandbox/`, deleted
+afterwards) with the *real* published packages — `typescript@7.0.2` +
+`type-coverage@2.30.4` + `type-coverage-core@2.30.4`, against a minimal
+`tsconfig.json` and one source file:
 
 ```
-2.30.1  checker.js:662 → ts.SyntaxKind.Unknown   (broken)
-2.30.4  checker.js:669 → ts.SyntaxKind.Unknown   (still broken)
+$ node -p "require('typescript/package.json').version"
+7.0.2
+$ ./node_modules/.bin/type-coverage --strict --at-least 95 --project tsconfig.json
+type-coverage needs the TypeScript compiler API (ts.createProgram), which typescript@7.0.2 does not export.
+Keep typescript@7.0.2 for your project and give type-coverage TypeScript 6. With npm, add this to package.json:
+  "overrides": { "type-coverage-core": { "typescript": "npm:@typescript/typescript6@^6" } }
+TypeScript 7 support: https://github.com/plantain-00/type-coverage/issues/147
+EXIT=1
 ```
 
-No upstream fix exists. So `typescript` cannot move to `^7` until
+stdout carries the message; stderr is empty. Exit code 1, no stack trace, no
+`TypeError`.
+
+(That message names the upstream issue the maintainers track for TS7 support:
+`plantain-00/type-coverage#147`. The mechanism is a deliberate, documented
+guard — so "no upstream fix exists" was the wrong framing. The *outcome* the
+review needs is the same: `type-coverage-core` cannot run against TS7's
+default export.)
+
+**Conclusion unchanged:** `typescript` cannot move to `^7` until
 `type-coverage-core` is rewritten against the `./unstable/sync` API (or replaced)
-**and** `typescript-eslint` lifts its peer ceiling.
+**and** `typescript-eslint` lifts its peer ceiling. A reader should not take
+the mechanism correction above as a verdict reversal — the blocker is real and
+is still there.
 
 > Note for the future: `typescript@6.0.3` exists and *is* JS-API capable
 > (`@markuplint/pretenders@5.1.1` depends on it as a plain runtime dependency).
@@ -132,7 +235,8 @@ pre-stable channel. `bun check` (Bun 1.4.3) is a port of the same
 `typescript-go` and advertises 100% of TypeScript 7.0.2's conformance suite
 (51,210/51,210), so a zero-install replacement exists in principle.
 
-It cannot be used in this repo — for two different reasons, both silent.
+It cannot be used in this repo as `bun check` — for two different reasons,
+both silent. (One of the two reasons was mis-described; see §3.2.)
 
 ### 3.1 `bun check` is shadowed — but there is a documented escape hatch
 
@@ -174,60 +278,199 @@ $ bun --check
 [exit=0]
 ```
 
-### 3.2 The escape hatch does not cover this repo's gate layout
+There is **no `--no-script` escape** in Bun 1.4.3. Probed in a fixture with no
+`check` script, so the built-in is what answers:
 
-`bun --check` cannot select a project. The repo has four:
-`tsconfig.json` (root), `tsconfig.backend.json`, `tsconfig.frontend.json` and
-`tsconfig.scripts.json`.
-
-- `bun --check -p tsconfig.backend.json` — **does not work.** `-p` is Bun's own
-  `--print` flag, so the tsconfig path is evaluated as code:
-  `<error file="[eval]" code="TS2304"> Cannot find name 'tsconfig'`, exit 1.
-- `bun --check --project tsconfig.backend.json` — **does not work.** Bun treats
-  it as an entry point to run: `error: Cannot run ".../tsconfig.backend.json" /
-  note: Bun cannot run json files directly`.
-- `bun --check --project=tsconfig.frontend.json` — **silently ignored.** Reports
-  the root project's file count (4,375), not the frontend project's.
-
-Bare `bun --check` always uses the nearest `tsconfig.json` from cwd, and the
-repo has exactly one at the root. That project's `include` is
-`["src/**/*", "tests/**/*"]` — so **`scripts/**/*.ts` is not in it**, and
-`typecheck - scripts` has no substitute.
-
-Proven by planting a real error, not inferred. In a file that only the scripts
-project covers:
-
-```ts
-// scripts/__ts7probe.ts
-export const ts7Probe: number = "this must be a number";
 ```
+$ bun check --no-script
+error: Unknown flag "--no-script"
+note: run 'bun check --help' for more information
+[exit=1]
+```
+
+The flag is not recognised at all. So the script-shadowing problem has exactly
+two workarounds in 1.4.3: the documented `bun --check` escape hatch, and
+`bun check` from a directory whose nearest `package.json` has no `check` script.
+There is no third.
+
+### 3.2 The escape hatch *can* select a project — via `--tsconfig-override`
+
+> **Correction (2026-10-22).** The heading of this section used to read "The
+> escape hatch does not cover this repo's gate layout", and the body claimed
+> `bun --check` cannot select a project. **That claim was wrong.** Bun has a
+> *global* `--tsconfig-override=<val>` flag, and it selects a project. The
+> original probes were all *subcommand-local* flags (`-p`, `--project`), which
+> behave differently from the global one — the probes were real, the inference
+> from them was not. Re-probed and corrected below; both the old probes and the
+> new one are shown so the correction is evidenced in both directions.
+
+Bun's own help lists the flag:
+
+```
+$ bun --help | grep tsconfig
+      --tsconfig-override=<val>       Specify custom tsconfig.json. Default $cwd/tsconfig.json
+```
+
+The repo has four tsconfigs: `tsconfig.json` (root), `tsconfig.backend.json`,
+`tsconfig.frontend.json` and `tsconfig.scripts.json`. The flag works on all
+three project tsconfigs — bare `bun --check` (root project, `src/**` ∪
+`tests/**`) for comparison:
 
 ```
 $ bun --check
-✓ No type errors in 4,375 files [1060.13ms]      # exit 0 — MISSES IT
-$ ./node_modules/.bin/tsgo --noEmit -p tsconfig.scripts.json
-scripts/__ts7probe.ts(1,14): error TS2322: Type 'string' is not assignable to type 'number'.
-                                                          # exit 1 — catches it
+✓ No type errors in 4,589 files [1.84s]
+[exit=0]
+$ bun --check --tsconfig-override=tsconfig.backend.json
+✓ No type errors in 3,889 files [2.19s]
+[exit=0]
+$ bun --check --tsconfig-override=tsconfig.frontend.json
+✓ No type errors in 1,767 files [1460.17ms]
+[exit=0]
+$ bun --check --tsconfig-override=tsconfig.scripts.json
+✓ No type errors in 2,253 files [1.68s]
+[exit=0]
 ```
 
-`bun --check` would silently *widen* nothing and *narrow* one blocking gate.
-That is the same removed-gate failure mode as `bun check`, reached through the
-documented escape hatch. (Probe file deleted afterwards.)
+The file counts differ per project, so the flag is genuinely selecting, not
+ignoring. It also accepts an absolute path
+(`--tsconfig-override=/home/flak/git-ai/loop-lore/tsconfig.backend.json` → the
+same backend count as the relative form, exit 0), which matters because the
+`typecheck - scripts` gate runs `bunx tsgo` from the repo root.
 
-### 3.3 The unblock is more expensive than the dependency
+Proven by planting real errors, not inferred. One error in `scripts/**` (only
+the scripts project covers it) and one in `src/frontend/**` (only the frontend
+project covers it):
 
-Switching to `bun --check` requires either renaming the `check` script (so the
-built-in is reachable under its own name) or accepting a narrower gate set.
-Options, all rejected:
+```
+$ bun --check
+<error file="src/frontend/__ts7probe.ts" line="1" column="14" code="TS2322">
+Type 'string' is not assignable to type 'number'.
+[exit=1]
+$ bun --check --tsconfig-override=tsconfig.backend.json
+✓ No type errors in 3,889 files [1.68s]           # exit 0 — correctly excludes src/frontend
+$ bun --check --tsconfig-override=tsconfig.frontend.json
+<error file="src/frontend/__ts7probe.ts" line="1" column="14" code="TS2322">
+Type 'string' is not assignable to type 'number'.
+[exit=1]
+$ bun --check --tsconfig-override=tsconfig.scripts.json
+<error file="scripts/__ts7probe.ts" line="1" column="14" code="TS2322">
+Type 'string' is not assignable to type 'number'.
+[exit=1]
+```
 
-- **Rename the `check` script.** `bun run check` is the canonical entry point in
-  `AGENTS.md` (verification gates, scratchpad table, worktree section),
-  `CONTRIBUTING.md`, the PR checklist, all six localized `README`s`, and
-  `docs/meta/**`. Renaming it to free a bun built-in name is a doc-contract
-  change, not a `devDependency` change.
+Each project sees exactly its own scope: the backend override excludes
+`src/frontend/**` (per `tsconfig.backend.json`'s `exclude`), the frontend
+override sees only `src/frontend/**`, the scripts override sees only
+`scripts/**` and catches the scripts error that bare `bun --check` misses.
+(Probe files deleted afterwards.)
+
+The override also honours each project's `compilerOptions`, so it is a real
+project selection and not a different file glob. `tsconfig.backend.json` sets
+`noUnusedLocals: true`; `tsconfig.scripts.json` overrides it to `false`:
+
+```
+$ bun --check --tsconfig-override=tsconfig.backend.json
+<error file="src/__ts7strict.ts" line="2" column="9" code="TS6133">
+'unusedLocal' is declared but its value is never read.
+[exit=1]
+$ bun --check --tsconfig-override=tsconfig.scripts.json
+✓ No type errors in 2,253 files [1281.16ms]
+[exit=0]
+```
+
+`tsconfig.scripts.json` `extends` `tsconfig.backend.json`, so `strict` still
+applies to the scripts project through the override — an implicit-any
+parameter is caught identically by both compilers:
+
+```
+tsgo --noEmit -p tsconfig.scripts.json             → 1× TS7006
+bun --check --tsconfig-override=tsconfig.scripts.json → 1× TS7006
+```
+
+And the error *kinds* match `tsgo` one for one, per project. Planted a TS2322
+(type mismatch), a TS2304 (unknown identifier) and a TS6133 (unused local) in
+the backend project, and a TS2322 + TS2304 in the scripts project:
+
+```
+BACKEND  tsgo → 1× TS2304, 1× TS2322, 1× TS6133   (exit 1)
+BACKEND  bun  → 1× TS2304, 1× TS2322, 1× TS6133
+SCRIPTS  tsgo → 1× TS2304, 1× TS2322               (exit 1)
+SCRIPTS  bun  → 1× TS2304, 1× TS2322
+```
+
+`tsgo --noEmit -p tsconfig.<project>.json` and
+`bun --check --tsconfig-override=tsconfig.<project>.json` agree on the error
+kinds and the affected files, for all three project tsconfigs.
+
+#### The old probes, re-run
+
+The first draft's probes are reproduced verbatim so the correction is evidenced
+in both directions. They were accurate observations — of the wrong flags:
+
+- `bun --check -p tsconfig.backend.json` — **does not work.** `-p` is Bun's own
+  `--print` flag, so the tsconfig path is evaluated as code:
+  `<error file="[eval]" line="1" column="1" code="TS2304"> Cannot find name
+  'tsconfig'`, exit 1.
+- `bun --check --project tsconfig.backend.json` — **does not work.** Bun treats
+  it as an entry point to run: `error: Cannot run ".../tsconfig.backend.json" /
+  note: Bun cannot run json files directly`, exit 1.
+- `bun --check --project=tsconfig.frontend.json` — **silently ignored.** Reports
+  the root project's file count, not the frontend project's.
+
+Note what those three have in common: none of them is
+`--tsconfig-override`. `-p` and `--project` are not project-selection flags on
+`bun --check`; the global `--tsconfig-override` is. `bun check` (the built-in
+subcommand, not the `bun --check` escape hatch) does have its own `-p` /
+`--project` flag — verified from `bun check --help` — but that subcommand is
+the one this repo's `check` script shadows (§3.1), so it is not reachable
+here.
+
+#### What this changes, and what it does not
+
+What changes: the escape hatch now covers **all three** project tsconfigs, so
+`typecheck - scripts` is not left without a substitute, and the "same
+removed-gate failure mode reached through the documented escape hatch"
+argument no longer holds. §3.3's conclusion is revisited below.
+
+What does not change:
+
+- `bun check` (bare subcommand) is still shadowed by this repo's `check`
+  script, and there is still no `--no-script` escape in 1.4.3 (§3.1).
+- `type-coverage` still blocks moving `typescript` to `^7` (§2.2). The
+  `bun --check` replacement covers the three *tsgo* gates only; the
+  `typecheck - coverage*` gates run `type-coverage`, which needs the TS5/TS6
+  compiler API and is unaffected by any Bun flag.
+- The `bun check` shadowing trap is still a trap: writing
+  `"typecheck": "bun check -p tsconfig.backend.json"` still type-checks
+  nothing.
+
+### 3.3 The unblock is no longer blocked by the escape hatch
+
+> **Correction (2026-10-22).** This section originally concluded "the unblock
+> is more expensive than the dependency", on the strength of §3.2's (falsified)
+> claim that `bun --check` could not select a project. With `--tsconfig-override`
+> in hand the premise is gone: the escape hatch reaches all three project
+> tsconfigs with `tsgo`-equivalent error kinds. The options below are
+> re-evaluated against the corrected §3.2.
+
+The original argument was that switching to `bun --check` required either
+renaming the `check` script or accepting a narrower gate set, because the
+escape hatch could not select a project. That argument no longer holds: the
+escape hatch *can* select a project, so the narrow-gate-set fallback is off the
+table. What remains:
+
+- **Rename the `check` script.** Still rejected, and now unnecessary for this
+  purpose. `bun run check` is the canonical entry point in `AGENTS.md`
+  (verification gates, scratchpad table, worktree section), `CONTRIBUTING.md`,
+  the PR checklist, all six localized `README`s, and `docs/meta/**`. Renaming
+  it to free a bun built-in name is a doc-contract change, not a
+  `devDependency` change — and it is not needed, because `bun --check` (the
+  leading-`--` escape hatch) is not shadowed and *does* take
+  `--tsconfig-override`.
 - **Commit a stub `package.json` without a `check` script** (e.g.
-  `tooling/tscheck/`) and run the gates from there. Adds a confusing directory
-  whose only purpose is to defeat name resolution.
+  `tooling/tscheck/`) and run the gates from there. Still rejected. Adds a
+  confusing directory whose only purpose is to defeat name resolution, and
+  buys nothing now that `--tsconfig-override` selects the project directly.
 - **`typescript@7` under an npm alias** (`"ts7": "npm:typescript@^7.0.2"`). This
   installs the same compiler under a stable tag, but the bin collision resolves
   **silently and the alias wins**. Verified in an isolated scratch install
@@ -254,15 +497,27 @@ The two compilers are the same lineage, now on different release channels —
 `tsc --version` reports `7.0.2`. The stable tag postdates the July 2026 dev
 preview, so `@typescript/native-preview` is strictly the older build.
 
-**Skipped: dropping `@typescript/native-preview`. Add it only when
+**Skipped: dropping `@typescript/native-preview`. The obstacle to dropping it
+is no longer the escape hatch.** The remaining cost is rewiring three gate call
+sites (`package.json` -> `typecheck`, `typecheck:frontend`, and
+`scripts/check/parallel/gate-table.mjs` -> `typecheck - scripts`) from `tsgo` to
+`bun --check --tsconfig-override=<project>`, which is a code change rather than
+a dependency decision. Note also that the `typecheck - coverage*` gates are
+*not* covered by that swap: they run `type-coverage`, which needs the TS5/TS6
+compiler API (§2.2) and is untouched by any Bun flag. Add the drop when
 `type-coverage-core` runs against the TS7 `./unstable/sync` API *and*
 `typescript-eslint` lifts its peer ceiling — at that point `typescript@^7`
 replaces both packages and no alias is needed.**
 
 ### 3.4 Adopted anyway: `bun --check` as a *complementary* gate
 
-Not a replacement — the analysis above rules that out. What `bun --check` *does*
-have is coverage no other gate has. Root `tsconfig.json` includes
+Not a replacement — at the time it landed, the analysis above ruled that out.
+(§3.2 has since been corrected: `bun --check --tsconfig-override=<project>`
+*can* select a project, so the escape hatch is no longer disqualified as a
+replacement on capability grounds. What `bun --check` *does* have that no other
+gate has is coverage of `tests/**`.)
+
+Root `tsconfig.json` includes
 `src/**` ∪ `tests/**`, and `tests/**` is type-checked by nothing:
 `tsconfig.backend.json` is `src/**` minus `src/frontend/**`,
 `tsconfig.frontend.json` is `src/frontend/**`, `tsconfig.scripts.json` is
@@ -320,9 +575,13 @@ the bundler reads from the given entry points, so it is not a substitute for a
   `scripts/check/parallel/*`, or CI workflows. It resolves to the gate runner
   and the resulting gate passes vacuously. Write `bun --check` if you want the
   built-in type checker.
-- **`bun --check` is not a drop-in for the tsgo gates** — it cannot select
-  a project, and it silently skips `scripts/**`. Do not repoint
-  `typecheck - scripts` at it. It *is* wired as the complementary
-  `typecheck - bun` gate for the `tests/**` coverage nothing else has (§3.4).
+- **`bun --check` needs `--tsconfig-override` to select a project** — bare, it
+  uses the nearest root `tsconfig.json` and so silently skips `scripts/**`.
+  `bun --check --tsconfig-override=tsconfig.scripts.json` does cover it, and
+  matches `tsgo`'s error kinds (§3.2). The first draft of this review claimed
+  no project selection was possible at all; that was wrong.
+- **`bun --check` is wired as the complementary `typecheck - bun` gate** for the
+  `tests/**` coverage nothing else has (§3.4). Repointing the `tsgo` gates at
+  it is a separate, unadopted change.
 - **`tsgo` and `tsc` remain the unambiguous spellings** for a project-scoped
   check in this repo.
