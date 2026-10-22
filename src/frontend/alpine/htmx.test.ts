@@ -520,13 +520,13 @@ describe("htmx:after:swap", () => {
     expect(fakeDocument.title,).toBe("",);
   });
 
-  it("ignores events without a target", async () => {
+  it("syncs the title from the header slot even without a target", async () => {
     await importHtmx("afterswap-no-target",);
     const title = new FakeElement("h1",);
     title.textContent = "Chat";
     elements.set("#header-slot .title", title,);
     fireDoc("htmx:after:swap", {},);
-    expect(fakeDocument.title,).toBe("",);
+    expect(fakeDocument.title,).toBe("Chat — Loop Lore",);
   });
 });
 
