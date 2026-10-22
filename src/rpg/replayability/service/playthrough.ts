@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../../db";
 import { jsonStringifyOr, } from "../../../utils";
 import { getRpgLog, parseJsonField, } from "../../shared/rpg-service-utils";
@@ -160,10 +160,12 @@ export async function getPlayerPlaythroughs(
  * @returns {Promise<void>}
  */
 export async function recordChoice(db: Kysely<DB>, playthroughId: string,): Promise<void> {
-  await (db as any)
+  // Atomic server-side increment: `choices_made + 1` is evaluated by SQLite,
+  // so two concurrent choices cannot clobber each other's tally.
+  await db
     .updateTable("playthroughs",)
     .set({
-      choices_made: (db as any).raw("choices_made + 1",),
+      choices_made: sql`choices_made + 1`,
       updated_at: new Date().toISOString(),
     },)
     .where("id", "=", playthroughId,)
@@ -186,7 +188,11 @@ export async function recordSecretFound(
   const playthrough = await getPlaythrough(db, playthroughId,);
   if (!playthrough) { throw new Error("Playthrough not found",); }
 
-  const secrets = parseJsonField<string[]>(playthrough.metadata.secrets ?? [], [],);
+  // `metadata` is already the parsed object; `secrets` is a plain array on
+  // it — re-parsing it as a JSON string would always yield the fallback and
+  // silently drop every previously found secret.
+  const storedSecrets = playthrough.metadata.secrets;
+  const secrets = Array.isArray(storedSecrets,) ? [...storedSecrets,] : [];
   if (!secrets.includes(secretId,)) {
     secrets.push(secretId,);
   }
