@@ -48,4 +48,35 @@ describe("withTransaction", () => {
       },),
     ).rejects.toThrow("boom",);
   });
+
+  it("commits writes when the callback succeeds", async () => {
+    await withTransaction(db, async (trx,) => {
+      await trx.insertInto("actors",).values({ display_name: "withTransaction-commit", },).execute();
+    },);
+
+    const rows = await db
+      .selectFrom("actors",)
+      .where("display_name", "=", "withTransaction-commit",)
+      .selectAll()
+      .execute();
+
+    expect(rows,).toHaveLength(1,);
+  });
+
+  it("rolls back writes when the callback throws", async () => {
+    await expect(
+      withTransaction(db, async (trx,) => {
+        await trx.insertInto("actors",).values({ display_name: "withTransaction-rollback", },).execute();
+        throw new Error("boom",);
+      },),
+    ).rejects.toThrow("boom",);
+
+    const rows = await db
+      .selectFrom("actors",)
+      .where("display_name", "=", "withTransaction-rollback",)
+      .selectAll()
+      .execute();
+
+    expect(rows,).toHaveLength(0,);
+  });
 });
