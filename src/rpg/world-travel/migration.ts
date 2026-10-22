@@ -27,7 +27,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { awardXpToActor, } from "../level/index.js";
-import { encodeReferencePair, xpForTravelLeg, } from "../xp/sources.js";
+import { encodeReferencePair, xpForTravelLeg, XpSource, } from "../xp/sources.js";
 import { ACTION_COST, chargeBudget, toSqlDate, } from "./budget";
 import { type TravelContext, type TravelDb, travelDb, type TravelResult, } from "./types";
 
@@ -57,7 +57,7 @@ async function awardArrivalXp(
     await awardXpToActor(db, {
       actorId,
       amount: xpForTravelLeg(),
-      source: "travel",
+      source: XpSource.Travel,
       // JSON pair (see encodeReferencePair): `:`-joined ids could collide.
       referenceId: encodeReferencePair(migrationId, currentTick,),
       description: `Arrived at ${destination ?? "destination"}`,

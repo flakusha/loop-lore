@@ -4,11 +4,11 @@
 /**
  * XP & Loot Routes.
  *
- * XP: pure level/calculation endpoints plus XP ledger persistence.
+ * XP: pure level/calculation endpoints plus the LevelService award pipeline.
  * Loot: generation, persistence, and loot-table management.
  *
  *   XP:
- *     POST /api/rpg/xp/award   — log XP + report level-up
+ *     POST /api/rpg/xp/award   — award XP through the pipeline + persist
  *     GET  /api/rpg/xp/history — XP ledger history for an actor
  *     POST /api/rpg/xp/level   — compute level from XP
  *     POST /api/rpg/xp/next    — XP needed to reach next level
@@ -21,9 +21,11 @@
  *     POST /api/rpg/loot/tables/:id/roll   — roll a loot table
  */
 import { Elysia, t, } from "elysia";
+import { awardXpToActor, } from "../../rpg/level";
+import { LevelServiceError, } from "../../rpg/level/types.js";
 import { generateLoot, type LootEntry, type LootResult, persistLoot, } from "../../rpg/loot";
-import { getXpHistory, logXp, } from "../../rpg/service/xp";
-import { awardXp, levelFromXp, xpToNextLevel, } from "../../rpg/xp";
+import { getXpHistory, } from "../../rpg/service/xp";
+import { levelFromXp, xpToNextLevel, } from "../../rpg/xp";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
@@ -54,14 +56,12 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
           description?: string;
           referenceId?: string;
           chatId?: string;
-          currentLevel?: number;
-          currentXp?: number;
         };
 
         const actorId = await requireNsfwActorAccess(database, body.actorId, ctx,);
         if (typeof actorId !== "string") { return actorId; }
         try {
-          const ledgerId = await logXp(deps, {
+          const result = await awardXpToActor(database, {
             actorId: body.actorId,
             amount: body.amount,
             source: body.source,
@@ -70,20 +70,21 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
             chatId: body.chatId,
           },);
 
-          const level = body.currentLevel ?? 1;
-          const xp = body.currentXp ?? 0;
-          const result = awardXp(level, xp, body.amount,);
-          return jsonResponse({ ledgerId, ...result, },);
+          return jsonResponse(result,);
         } catch (error) {
+          if (error instanceof LevelServiceError) {
+            return jsonError(error.message, 400,);
+          }
+
           log().error("Failed to award XP", error instanceof Error ? error : undefined,);
           return jsonError("Internal server error", 500,);
         }
       }, {
         body: AwardBody,
-        response: { 200: SuccessResponse, 401: ErrorResponse, },
+        response: { 200: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, },
         detail: {
           summary: "Award XP",
-          description: "Log XP to the ledger and report level-up calculation.",
+          description: "Award XP through the LevelService pipeline (level-up, HP, growth, ASI staging).",
           tags: ["RPG", "XP",],
         },
       },)

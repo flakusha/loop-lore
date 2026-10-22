@@ -75,7 +75,7 @@ describe("XP & loot (auth-gated)", () => {
     return res.json() as T;
   }
 
-  test("awards XP and reports level-up", async () => {
+  test("awards XP through the pipeline and persists the row + ledger", async () => {
     const app = authedApp();
     const res = await app.handle(
       new Request("http://localhost/api/rpg/xp/award", {
@@ -85,15 +85,36 @@ describe("XP & loot (auth-gated)", () => {
           actorId: "actor-xp",
           amount: 300,
           source: "quest",
-          currentLevel: 1,
-          currentXp: 0,
         },),
       },),
     );
 
     expect(res.status,).toBe(200,);
-    const body = await json<{ ledgerId: string }>(res,);
+    const body = await json<{ ledgerId: string; level: number; xp: number }>(res,);
     expect(typeof body.ledgerId,).toBe("string",);
+    expect(body.xp,).toBe(300,);
+    expect(body.level,).toBe(2,); // 300 XP hits the level-2 threshold
+
+    const history = await app.handle(
+      new Request(`http://localhost/api/rpg/xp/history?actorId=actor-xp`,),
+    );
+
+    expect(history.status,).toBe(200,);
+    const { entries, } = await json<{ entries: { amount: number }[] }>(history,);
+    expect(entries.some((e,) => e.amount === 300),).toBe(true,);
+  });
+
+  test("award rejects invalid amounts with 400", async () => {
+    const app = authedApp();
+    const res = await app.handle(
+      new Request("http://localhost/api/rpg/xp/award", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ actorId: "actor-xp", amount: -5, source: "quest", },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
   });
 
   test("computes level from XP", async () => {

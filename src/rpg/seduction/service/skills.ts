@@ -8,6 +8,7 @@ import type {
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
 import { uid, } from "../../../utils";
+import { LevelServiceError, } from "../../level/types";
 import { rowToSkill, } from "./helpers";
 import type { SeductionSkill, } from "./types";
 
@@ -96,6 +97,16 @@ export async function awardXp(
   name: string,
   amount: number,
 ): Promise<{ leveled: boolean; newLevel: number }> {
+  // BUG-addxp fix: reject before getSkill so invalid amounts leave no writes.
+  // Finite + non-negative only (fractions allowed — matches the skill-XP
+  // pipeline in skills/service/progression.ts, unlike character LevelService).
+  if (typeof amount !== "number" || !Number.isFinite(amount,) || amount < 0) {
+    throw new LevelServiceError(
+      `Invalid XP amount ${String(amount,)}: must be a finite, non-negative number`,
+      "invalid_amount",
+    );
+  }
+
   const skill = await getSkill(db, actorId, category, name,);
   const newXp = skill.xp + amount;
 
