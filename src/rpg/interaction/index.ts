@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-export { INTERACTION_COMMANDS, INTERACTION_SKILL_MATRIX, } from "./catalog";
+export { INTERACTION_COMMANDS, } from "./catalog";
 export type {
   InteractionCommandDefinition,
   InteractionRipple,

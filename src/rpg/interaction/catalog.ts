@@ -73,5 +73,3 @@ export const INTERACTION_COMMANDS: Record<string, InteractionCommandDefinition> 
     usage: "Usage: `/study <subject>`",
   },
 };
-
-export const INTERACTION_SKILL_MATRIX = INTERACTION_COMMANDS;
