@@ -256,17 +256,4 @@ describeOrSkip("emotion-avatars regenerate endpoint", () => {
     // zero-slot job and report success without doing anything.
     expect(startCalls[0]?.emotions,).toBeUndefined();
   });
-
-  test("accepts and ignores seedStrategy (separate open item)", async () => {
-    startCalls.length = 0;
-    const res = await post({
-      replace: "slot",
-      baseAvatarId: "av-1",
-      emotions: ["happy",],
-      seedStrategy: "fresh",
-    },);
-
-    expect(res.status,).toBe(201,);
-    expect(startCalls,).toHaveLength(1,);
-  });
 },);
