@@ -42,6 +42,19 @@ async function seedActor(name: string,): Promise<string> {
   return insertActors(db, name, { user_id: ownerId, actor_type: "character", },);
 }
 
+/** Opted-in world for legs whose gate denial is a real opt-out. */
+async function seedXpWorld(name: string,): Promise<string> {
+  return insertWorlds(db, ownerId, name, {
+    rpg_enabled: 1,
+    rpg_dice: 1,
+    rpg_checks: 1,
+    rpg_combat: 1,
+    rpg_xp: 1,
+    rpg_loot: 1,
+    rpg_quests: 1,
+  },);
+}
+
 async function ledgerFor(actorId: string,) {
   return db.selectFrom("xp_ledger",).selectAll().where("actor_id", "=", actorId,).execute();
 }
@@ -60,7 +73,7 @@ describe("awardQuestCompletionXp edges", () => {
     // (actor, source, reference_id) UNIQUE index: exactly one grant lands,
     // the loser replays (deduped), and the sheet is written once.
     const creator = await seedActor("Raced Creator",);
-    const worldId = await insertWorlds(db, ownerId, "Raced World",);
+    const worldId = await seedXpWorld("Raced World",);
     const questId = await insertQuests(db, worldId, creator, "Race Quest", "social", 1,);
     const quest = await db.selectFrom("quests",).selectAll().where("id", "=", questId,).executeTakeFirstOrThrow();
 
@@ -86,7 +99,7 @@ describe("awardQuestCompletionXp edges", () => {
     // never burns a dedupe key on a zero row.
     const creator = await seedActor("Capped Creator",);
     await insertCharacterStats(db, creator, 10, 10, 10, { level: 20, xp: 355_000, },);
-    const worldId = await insertWorlds(db, ownerId, "Capped World",);
+    const worldId = await seedXpWorld("Capped World",);
     const questId = await insertQuests(db, worldId, creator, "Final Quest", "social", 1, { category: "main", },);
     const quest = await db.selectFrom("quests",).selectAll().where("id", "=", questId,).executeTakeFirstOrThrow();
 
@@ -127,11 +140,14 @@ describe("applyDiscoveryXpLeg reference collisions", () => {
   test("the JSON-pair reference key cannot collide across worlds", async () => {
     // referenceId is JSON.stringify([worldId, locationId]) — an injective
     // encoding, so ("w:1", "boss") and ("w", "1:boss") land on distinct
-    // keys and each first discovery pays.
+    // keys and each first discovery pays. Discovery legs carry a real world
+    // id, so the test worlds need the rpg_xp opt-in.
     const explorer = await seedActor("Cartographer",);
+    const worldA = await seedXpWorld("Collision A",);
+    const worldB = await seedXpWorld("Collision B",);
 
-    await applyDiscoveryXpLeg(db, explorer, "w:1", "boss",);
-    await applyDiscoveryXpLeg(db, explorer, "w", "1:boss",);
+    await applyDiscoveryXpLeg(db, explorer, worldA, "boss",);
+    await applyDiscoveryXpLeg(db, explorer, worldB, "1:boss",);
 
     const rows = await ledgerFor(explorer,);
     expect(rows,).toHaveLength(2,);

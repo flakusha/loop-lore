@@ -14,6 +14,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema.js";
 import { getLogger, } from "../../logger";
 import { awardXpToActor, } from "../level/index.js";
+import { checkMechanicEnabled, RpgMechanic, } from "../service/world-gate.js";
 import { encodeReferencePair, xpForDiscovery, XpSource, } from "../xp/sources.js";
 
 /**
@@ -30,7 +31,20 @@ export async function applyDiscoveryXpLeg(
   worldId: string,
   locationId: string,
 ): Promise<void> {
+  const log = getLogger().child({ module: "world-discovery", },);
   try {
+    // Per-world rpg_xp opt-in (FEAT-gate-xp): the discovery tick always has
+    // the world, so a denial is a real opt-out — not a missing context.
+    const gate = await checkMechanicEnabled(db, worldId, RpgMechanic.Xp,);
+    if (!gate.allowed) {
+      log.debug(`Discovery XP skipped: world opted out`, {
+        worldId,
+        actorId,
+      },);
+
+      return;
+    }
+
     await awardXpToActor(db, {
       actorId,
       amount: xpForDiscovery(),
@@ -41,7 +55,7 @@ export async function applyDiscoveryXpLeg(
       description: `Discovered location ${locationId}`,
     },);
   } catch (cause) {
-    getLogger().child({ module: "world-discovery", },).warn(`Discovery XP skipped for ${actorId}:`, {
+    log.warn(`Discovery XP skipped for ${actorId}:`, {
       error: cause instanceof Error ? cause.message : String(cause,),
     },);
   }

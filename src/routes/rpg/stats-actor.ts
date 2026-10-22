@@ -15,7 +15,7 @@ import {
   getCharacterStats,
   updateCharacterStats,
 } from "../../rpg/service/character-stats.js";
-import { checkRpgEnabled, } from "../../rpg/service/world-gate.js";
+import { checkMechanicEnabled, checkRpgEnabled, RpgMechanic, } from "../../rpg/service/world-gate.js";
 import type { StatBlock, } from "../../rpg/stats.js";
 import { requireActorAccess, } from "../actor-auth.js";
 import { jsonCreated, jsonError, jsonResponse, notFoundResponse, } from "../http-utils.js";
@@ -136,26 +136,47 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userId = await requireActorAccess(ctx, database,);
           if (typeof userId !== "string") { return userId; }
           try {
-            const body = ctx.body as Record<string, number | undefined>;
+            const body = ctx.body as Record<string, number | string | undefined>;
             const existing = await getCharacterStats(deps, ctx.params.actorId,);
             if (!existing) {
               return notFoundResponse("Character stats not found — use POST to create",);
             }
 
+            // Per-world rpg_xp opt-in (FEAT-gate-xp): direct writes to the
+            // pipeline-owned level/xp/xpToNext fields need an opted-in world.
+            // The gate rides an explicit worldId body field (the stats row
+            // itself carries no world); without one the fields stay
+            // read-only and a 403 names the requirement.
+            const wantsXpFields = body.level !== undefined || body.xp !== undefined || body.xpToNext !== undefined;
+            if (wantsXpFields) {
+              const worldId = typeof body.worldId === "string" ? body.worldId : undefined;
+              if (!worldId) {
+                return jsonError("level/xp/xpToNext require an opted-in worldId", 403,);
+              }
+
+              const gate = await checkMechanicEnabled(database, worldId, RpgMechanic.Xp,);
+              if (!gate.allowed) {
+                return jsonError(gate.reason ?? "RPG XP not enabled for this world", 403,);
+              }
+            }
+
             const updated = await updateCharacterStats(deps, existing.id, {
-              hp: body.hp,
-              maxHp: body.maxHp,
-              tempHp: body.tempHp,
-              mp: body.mp,
-              maxMp: body.maxMp,
-              ac: body.ac,
-              speed: body.speed,
-              str: body.str,
-              dex: body.dex,
-              con: body.con,
-              int: body.int,
-              wis: body.wis,
-              cha: body.cha,
+              hp: body.hp as number | undefined,
+              maxHp: body.maxHp as number | undefined,
+              tempHp: body.tempHp as number | undefined,
+              mp: body.mp as number | undefined,
+              maxMp: body.maxMp as number | undefined,
+              ac: body.ac as number | undefined,
+              speed: body.speed as number | undefined,
+              str: body.str as number | undefined,
+              dex: body.dex as number | undefined,
+              con: body.con as number | undefined,
+              int: body.int as number | undefined,
+              wis: body.wis as number | undefined,
+              cha: body.cha as number | undefined,
+              level: body.level as number | undefined,
+              xp: body.xp as number | undefined,
+              xpToNext: body.xpToNext as number | undefined,
             },);
 
             if (!updated) {

@@ -10,6 +10,7 @@ import { rollDice, } from "../dice";
 import { AdvantageMode, } from "../dice/types";
 import { findMissingMaterials, } from "./materials";
 import { getAbilityModifier, parseInteractionModifiers, } from "./modifiers";
+import { awardSkillUsageXp, } from "./skill-usage-xp.js";
 import type {
   InteractionContext,
   InteractionResolution,
@@ -149,6 +150,18 @@ export async function resolveInteraction(
       state_changes: jsonStringifyOr(stateChanges,),
     },)
     .execute();
+
+  // Skill-usage XP (FEAT-skill-usage): the exercised skill pays its row + the
+  // character sheet. Best-effort — resolution already persisted above.
+  await awardSkillUsageXp(database, {
+    interactionId: id,
+    actorId: params.actorId,
+    worldId: context.worldId,
+    chatId: params.chatId,
+    skill: params.skill,
+    difficulty: params.difficulty,
+    success: outcome !== InteractionOutcome.Failure && outcome !== InteractionOutcome.CriticalFailure,
+  },);
 
   return {
     id,

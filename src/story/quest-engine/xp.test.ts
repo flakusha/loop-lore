@@ -37,7 +37,16 @@ async function seedActor(name: string,): Promise<string> {
 describe("awardQuestCompletionXp", () => {
   test("pays the creator through the quest pipeline, idempotent per quest", async () => {
     const creator = await seedActor("Quest Creator",);
-    const worldId = await insertWorlds(db, ownerId, "Quest World",);
+    const worldId = await insertWorlds(db, ownerId, "Quest World", {
+      rpg_enabled: 1,
+      rpg_dice: 1,
+      rpg_checks: 1,
+      rpg_combat: 1,
+      rpg_xp: 1,
+      rpg_loot: 1,
+      rpg_quests: 1,
+    },);
+
     const questId = await insertQuests(db, worldId, creator, "Slay the beast", "social", 1, { category: "main", },);
 
     const quest = await db.selectFrom("quests",).selectAll().where("id", "=", questId,).executeTakeFirstOrThrow();
@@ -61,13 +70,24 @@ describe("awardQuestCompletionXp", () => {
 describe("applyDiscoveryXpLeg", () => {
   test("pays the flat discovery award keyed to world:location", async () => {
     const explorer = await seedActor("Explorer",);
-    await applyDiscoveryXpLeg(db, explorer, "world-1", "loc-9",);
-    await applyDiscoveryXpLeg(db, explorer, "world-1", "loc-9",);
+    const worldId = await insertWorlds(db, ownerId, "Discovery World", {
+      rpg_enabled: 1,
+      rpg_dice: 1,
+      rpg_checks: 1,
+      rpg_combat: 1,
+      rpg_xp: 1,
+      rpg_loot: 1,
+      rpg_quests: 1,
+    },);
+
+    const location = `loc-${crypto.randomUUID()}`;
+    await applyDiscoveryXpLeg(db, explorer, worldId, location,);
+    await applyDiscoveryXpLeg(db, explorer, worldId, location,);
 
     const rows = await ledgerFor(explorer,);
     expect(rows,).toHaveLength(1,);
     expect(rows[0]!.source,).toBe("discovery",);
-    expect(rows[0]!.reference_id,).toBe(JSON.stringify(["world-1", "loc-9",],),);
+    expect(rows[0]!.reference_id,).toBe(JSON.stringify([worldId, location,],),);
     expect(rows[0]!.amount,).toBe(50,);
   });
 });
