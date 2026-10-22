@@ -2045,3 +2045,14 @@ export interface PollVotes {
   option_idx: number;
   created_at: Generated<string>;
 }
+
+// ── link_previews ────────────────────────────────────────────
+export interface LinkPreviews {
+  id: Generated<string>;
+  url_hash: string;
+  url: string;
+  title: string | null;
+  description: string | null;
+  image_url: string | null;
+  fetched_at: Generated<string>;
+}

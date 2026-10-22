@@ -5,6 +5,7 @@
 import { MessageListResponse, } from "../../validation/schemas/responses";
 import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { chatDraftMethods, } from "./chat-drafts";
+import { chatLinkPreviewMethods, } from "./chat-link-previews";
 import { chatPollMethods, } from "./chat-polls";
 import { chatReactionMethods, } from "./chat-reactions";
 import { chatSeenMethods, } from "./chat-seen";
@@ -27,6 +28,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   ...chatSeenMethods,
   ...chatReactionMethods,
   ...chatPollMethods,
+  ...chatLinkPreviewMethods,
   /**
    * @returns {Promise<void>}
    */

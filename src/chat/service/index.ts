@@ -216,6 +216,13 @@ export {
   type VotePollResult,
 } from "./polls";
 
+// ── Link previews (TASK-link-previews-unfurl) ────────────────
+export {
+  type LinkPreview,
+  unfurlLinkPreview,
+  type UnfurlResult,
+} from "./link-previews";
+
 // ── Shared schema + error/result types ────────────────────────
 export type {
   ChatSetupTemplate,

@@ -677,6 +677,15 @@ export const SCHEMA = new SchemaManifest()
     categories_json: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("link_previews", {
+    id: col("text", { primaryKey: true, },),
+    url_hash: col("text", { notNull: true, },),
+    url: col("text", { notNull: true, },),
+    title: col("text",),
+    description: col("text",),
+    image_url: col("text",),
+    fetched_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("log_entries", {
     id: col("text", { primaryKey: true, },),
     level: col("integer", { notNull: true, hasDefault: true, },),

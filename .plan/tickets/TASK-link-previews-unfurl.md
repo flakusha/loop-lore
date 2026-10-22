@@ -32,3 +32,23 @@ is music-specific and must stay so. Raw URLs in chat render bare.
 - Cache hit avoids refetch; private-IP URL refused.
 
 **Resolved:** 2026-10-23 registry-driven close: git issue 4eb00ea (registry tip: f1cccee30 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-LINK-PREVIEWS-UNFURL done)
+
+## Resolution
+
+- `src/db/migrations/072_link_previews.ts` — `link_previews` cache keyed by
+  sha-256 `url_hash`, 7-day TTL enforced at read time; artifacts regenerated
+  via `db:sync-types`/`db:sync-manifest`.
+- `src/chat/service/link-previews.ts` — `unfurlLinkPreview` (cache-first,
+  `safeFetch` with 3s timeout + 1MB cap), SSRF guard `isPrivateHost`
+  (loopback/private/link-local/CGNAT/.internal), music-domain exclusion,
+  `parseOpenGraph` (og:* + `<title>` fallback, control-char strip + length
+  caps; rendered client-side via x-text/:src only — never innerHTML).
+- `src/routes/link-previews.ts` — `GET /api/chats/:id/link-preview?url=…`
+  mounted in `v1/chats-surface.ts`.
+- Frontend: `src/frontend/alpine/chat-link-previews.ts` (URL detection,
+  deduped per-URL cache in `_linkPreviews`), card block in
+  `src/components/chat/message-list.html`.
+- `src/chat/music-links/` untouched; the generic path refuses music domains.
+- Tests: `src/chat/service/link-previews.test.ts` (10),
+  `src/routes/link-previews.test.ts` (3),
+  `src/frontend/alpine/chat-link-previews.test.ts` (5).
