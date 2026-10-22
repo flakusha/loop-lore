@@ -211,7 +211,9 @@ describe("INTENT_PATTERNS — amplification cap", () => {
     const elapsed = performance.now() - start;
     expect(match,).not.toBeNull();
     // Bounded capture: the named-location capture must be short.
-    expect(match![1]!.length,).toBeLessThanOrEqual(30,);
+    // Two-tier groups: [1] is the long punctuated branch, [2] the short
+    // end-of-string branch (only one is defined per match).
+    expect((match![1] ?? match![2])!.length,).toBeLessThanOrEqual(30,);
     expect(elapsed,).toBeLessThan(50,);
   });
 });

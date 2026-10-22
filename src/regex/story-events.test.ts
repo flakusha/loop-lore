@@ -31,6 +31,11 @@ describe("story-events regex", () => {
       expect(LOCATION_MOVEMENT.test("He enters the tavern.",),).toBe(true,);
     });
 
+    it("captures a long multi-word name when punctuation follows", () => {
+      const match = LOCATION_MOVEMENT.exec("Sam enters the Ancient Drowned Harbour of the Northern Reaches.",);
+      expect(match?.[1],).toBe("the Ancient Drowned Harbour of the Northern Reaches",);
+    });
+
     it("matches moves to", () => {
       expect(LOCATION_MOVEMENT.test("She moves to the forest.",),).toBe(true,);
     });
@@ -264,6 +269,11 @@ describe("story-events regex", () => {
 
     it("matches puts down", () => {
       expect(ITEM_DROP.test("He puts down the shield.",),).toBe(true,);
+    });
+
+    it("stops the capture at a newline", () => {
+      expect(ITEM_TAKE.exec("Sam takes the Sword\nHe leaves.",)?.[1],).toBe("Sword",);
+      expect(ITEM_DROP.exec("Sam drops the Torch\nHe walks on.",)?.[1],).toBe("Torch",);
     });
   });
 
