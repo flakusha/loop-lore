@@ -9,7 +9,8 @@
       "!**/.tmp",
       "!**/.hermes",
       "!**/docs/.vitepress",
-      "!**/plugins"
+      "!**/plugins",
+      "!**/tree"
     ]
   },
   "linter": {
