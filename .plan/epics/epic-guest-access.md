@@ -25,12 +25,13 @@ half-wired:
 - `UserRole` includes `guest` and `DEFAULT_PERMISSIONS.guest =
   ["chat.join", "character.view", "world.view"]` (`src/users/permissions.ts:79`)
   — but nothing ever produces a guest context.
-- `chats.visibility` (private/public/unlisted) exists but **no access check
-  reads it** (`src/chat/service/access.ts:115-160` grants admin/creator/
-  participant only).
+- `chats.visibility` (private/public/unlisted) existed but **no access check
+  read it** (`src/chat/service/access.ts` granted admin/creator/participant
+  only) — enforced since Phase 2.
 - Assets enforce visibility fully, yet `canAccessAsset`
-  (`src/assets/service/read.ts:223-246`) requires a non-null `actorId` for
-  public assets — anonymous fails by construction.
+  (`src/assets/service/read.ts`) required a non-null `actorId` for public
+  assets — anonymous failed by construction; the public branch is actor-less
+  since Phase 2.
 - Worlds already allow non-members to join `WorldVisibility.Public` worlds
   (`src/routes/chat-search/join.ts:53-55`) — the only public-content seam today.
 
@@ -234,11 +235,13 @@ read routes opt into the guest tier explicitly.
 
 - `checkChatAccess` (`src/chat/service/access.ts`) and `getMessageWithAccess`
   (`src/chat/service/read.ts`) read `chats.visibility`: `public` is readable by
-  any authenticated caller and by the guest tier; a null user id short-circuits
-  to `not_found` before the participant lookup. `unlisted` and `private` stay
-  participant/creator/admin-only — `unlisted` did **not** gain the id-reference
-  read the ticket sketched, because nothing in the read surface distinguishes
-  "came by id" from "came from a list".
+  any authenticated caller and by the guest tier. The guard order is admin/
+  creator → participant + moderation (a live ban/block denies a member of a
+  public chat) → the public branch → `not_found`, so the public branch cannot
+  bypass moderation and a guest never reaches the participant query.
+  `unlisted` and `private` stay participant/creator/admin-only — `unlisted` did
+  **not** gain the id-reference read the ticket sketched, because nothing in the
+  read surface distinguishes "came by id" from "came from a list".
 - Chat reads opt in per route (`extractAuth` instead of `requireUserId`) in
   `src/routes/chats/manage.ts`, `src/routes/messages/read.ts` and
   `src/routes/chats/list.ts`; mutations keep `requireUserId`. The public read
