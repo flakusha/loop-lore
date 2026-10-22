@@ -4,6 +4,7 @@
 import type { GenerationRoutingConfig, } from "../../../generation/routing/routing-config";
 import type {
   GenerationConfig,
+  GenerationFlowControl,
   GenerationProvidersConfig,
   ModelRoleAssignment,
   ProviderInstanceConfig,
@@ -13,12 +14,20 @@ export const GENERATION_PROVIDERS_DEFAULTS = {
   openaiCompatible: [] as ProviderInstanceConfig[],
 } satisfies GenerationProvidersConfig;
 
+export const GENERATION_FLOW_CONTROL_DEFAULTS = {
+  rateLimitPerUser: 30,
+  rateLimitWindowMs: 60_000,
+  maxConcurrentGlobal: 0,
+  maxConcurrentPerChat: 0,
+} satisfies GenerationFlowControl;
+
 export const GENERATION_DEFAULTS = {
   providers: GENERATION_PROVIDERS_DEFAULTS,
   defaultProvider: "",
   defaultModels: {} as Record<string, string>,
   modelRoles: {} as Record<string, ModelRoleAssignment>,
   chatDefaults: { outputStyle: null, },
+  flowControl: GENERATION_FLOW_CONTROL_DEFAULTS,
   // capability-match scores 0 for every unannotated candidate, so the default
   // leaves the pre-routing config order untouched.
   routing: { strategy: "capability-match", } satisfies GenerationRoutingConfig,

@@ -69,7 +69,7 @@ export async function handleGenerate({
   const cfg = _config ?? loadConfig();
   const input = body as GenerateRequest;
 
-  const rejected = await validateGenerateRequest({ input, database, userId, userRole, },);
+  const rejected = await validateGenerateRequest({ input, database, userId, userRole, config: cfg, },);
   if (rejected !== null) { return rejected; }
 
   // ── Resolve provider + model ──────────────────────────

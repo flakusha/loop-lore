@@ -31,12 +31,14 @@
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { setConfig, } from "../../admin/config";
 import { createBdiDispatch, } from "../../autonomy/dispatch/bdi-dispatch";
 import { createGmBeatDispatch, } from "../../autonomy/dispatch/gm-beat-dispatch";
 import { AutonomyScheduler, } from "../../autonomy/scheduler";
 import type { AutonomyDispatchContext, } from "../../autonomy/scheduler/types";
 import { GameMasterType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { GENERATION_PAUSED_KEY, } from "../../generation/global-hold";
 import { MovementPattern, } from "../../rpg/npc-navigation/service/types";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -343,6 +345,16 @@ describe("createGmBeatDispatch — gating", () => {
     const { createGm, } = gmFactory();
     const target = createGmBeatDispatch({ createGm: (chat,) => createGm({ id: chat.id, },), },);
     expect(await target.run(makeCtx(world.worldId, world.chatId,),),).toEqual({ skipped: "gm_paused", },);
+  });
+
+  test("global hold reports gm_generation_held and builds no GM", async () => {
+    const world = await makePatrolWorld("global-hold",);
+    await setConfig(db, GENERATION_PAUSED_KEY, "true", "test hold",);
+
+    const { createGm, calls, } = gmFactory();
+    const target = createGmBeatDispatch({ createGm: (chat,) => createGm({ id: chat.id, },), },);
+    expect(await target.run(makeCtx(world.worldId, world.chatId,),),).toEqual({ skipped: "gm_generation_held", },);
+    expect(calls(),).toBe(0,);
   });
 
   test("a story at max_turns reports gm_story_complete", async () => {
