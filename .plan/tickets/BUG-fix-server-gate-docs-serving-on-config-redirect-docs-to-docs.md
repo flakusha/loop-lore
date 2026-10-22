@@ -3,7 +3,7 @@
 
 # BUG: fix(server): gate docs serving on config, redirect /docs to /docs/
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** server-hardening
@@ -21,3 +21,5 @@ Sources: stream-a #12. Where: src/server/static-files.ts:handleDocsRequest (:126
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue fcf58ae (registry tip: 015522768 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-FIX-SERVER-GATE-DOCS-SERVING)

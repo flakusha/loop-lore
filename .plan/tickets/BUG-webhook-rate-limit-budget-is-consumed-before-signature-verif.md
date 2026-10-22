@@ -3,7 +3,7 @@
 
 # BUG: Webhook rate-limit budget is consumed before signature verification
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Tags:** security, integrations
@@ -21,3 +21,5 @@ src/routes/v1/integrations-surface.ts:147-155 consumes the per-adapter webhook b
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 9d640f6 (registry tip: aa1ae9068 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-WEBHOOK-RATE-LIMIT-BUDGET-IS)

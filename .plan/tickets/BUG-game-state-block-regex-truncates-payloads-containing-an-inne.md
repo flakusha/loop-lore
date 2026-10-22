@@ -3,7 +3,7 @@
 
 # BUG: GAME_STATE_BLOCK regex truncates payloads containing an inner fenced code block
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
@@ -30,3 +30,5 @@ Source: .tmp/glm-review/deep-regex-1015.md F-3 (gitignored; recorded here verbat
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 1071224 (registry tip: 2c7cc6f76 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-GAME-STATE-BLOCK-REGEX-TRUNC)

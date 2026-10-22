@@ -3,7 +3,7 @@
 
 # BUG: At-rest tier-none envelope short-circuit stores plaintext verbatim and fabricates wasEncrypted: true
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
@@ -32,3 +32,5 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-10 (gitignored; recorded her
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue f5f13b4 (registry tip: b607f5cd4 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-AT-REST-TIER-NONE-ENVELOPE-S)
