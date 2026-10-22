@@ -7,9 +7,10 @@
  * ceiling.
  */
 import { Elysia, t, } from "elysia";
+import { LevelServiceError, } from "../../rpg/level/types.js";
 import { type SkillCategory, SkillsService, } from "../../rpg/skills";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import {
@@ -134,6 +135,14 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
         const result = await svc().addXp(ctx.params.id, body.xpAmount,);
         return jsonResponse(result,);
       } catch (error) {
+        if (error instanceof LevelServiceError) {
+          return jsonError(error.message, 400,);
+        }
+
+        if (error instanceof Error && error.message === "Skill not found") {
+          return notFoundResponse("Skill",);
+        }
+
         log().error("Failed to add XP", error instanceof Error ? error : undefined,);
         return jsonError("Internal server error", 500,);
       }

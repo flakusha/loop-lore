@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /** Skill leveled-up growth_log audit (mirrors level-audit.ts one-row-per-level,
  * axis='skill', best-effort swallow on static-mode). */
 import type { Kysely, } from "kysely";
