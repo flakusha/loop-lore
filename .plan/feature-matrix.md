@@ -1678,7 +1678,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2659 | 997 | 45 | 904 | 32 | 0 | 681 |
+| (untagged) | 2659 | 998 | 45 | 903 | 32 | 0 | 681 |
 
 ## By epic × status
 
@@ -1789,7 +1789,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | epic-authoring-creation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-aux-enrichment-pipeline | 13 | 3 | 4 | 5 | 0 | 0 | 1 |
 | epic-avatar-alpha-vn-layering | 13 | 5 | 0 | 7 | 0 | 0 | 1 |
-| epic-avatar-regeneration-control | 7 | 1 | 0 | 6 | 0 | 0 | 0 |
+| epic-avatar-regeneration-control | 7 | 2 | 0 | 5 | 0 | 0 | 0 |
 | epic-battle-action-systems | 14 | 5 | 0 | 9 | 0 | 0 | 0 |
 | epic-battle-integration-gaps | 7 | 7 | 0 | 0 | 0 | 0 | 0 |
 | epic-battle-ui | 8 | 1 | 0 | 7 | 0 | 0 | 0 |
