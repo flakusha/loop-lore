@@ -824,6 +824,24 @@
     <button @click="runMessageAiAction(_contextMenu.messageId, 'summarize'); closeContextMenu()">
       📝 {{{t("chats.aiSummarize")}}}
     </button>
+    <button
+      @click="runMessageAiAction(_contextMenu.messageId, 'explain'); closeContextMenu()"
+      data-testid="context-menu-explain"
+    >
+      💡 {{{t("chats.aiExplain")}}}
+    </button>
+    <button
+      @click="runMessageAiAction(_contextMenu.messageId, 'action-items'); closeContextMenu()"
+      data-testid="context-menu-action-items"
+    >
+      ✅ {{{t("chats.aiActionItems")}}}
+    </button>
+    <button
+      @click="runMessageAiAction(_contextMenu.messageId, 'translate'); closeContextMenu()"
+      data-testid="context-menu-translate"
+    >
+      🌐 {{{t("chats.aiTranslate")}}}
+    </button>
     <button @click="generateImageFromMessage(_contextMenu.messageId); closeContextMenu()">
       🖼 {{{t("chats.generateImage")}}}
     </button>
