@@ -3,7 +3,7 @@
 
 # TASK: Composer primitive extraction
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-chat-composer-flows
@@ -40,3 +40,5 @@ The previous attempt landed `auto-resize.ts` on dev but lost `draft-store.ts`. T
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 6e8d3cd (registry tip: 4324cb136 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-COMPOSER-PRIMITIVE-EXTRACTI)

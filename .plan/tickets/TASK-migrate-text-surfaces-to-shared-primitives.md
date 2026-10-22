@@ -3,7 +3,7 @@
 
 # TASK: Migrate text surfaces to shared primitives
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-chat-composer-flows
@@ -73,3 +73,5 @@ The mobile composer was refactored onto shared primitives (auto-resize, draft st
 - [x] Character growth editor (`character-growth-editor.html`) — auto-resize + toolbar on `#arc-description`
 - [x] 12 Alpine factory files — added `autoResize` wrapper method delegating to shared util
 - [x] `auto-resize.ts` — registered `autoResize` on `globalThis` for bare-identifier use in plain modals
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 492c9ba (registry tip: f472ceace Konstantin Fedotov Auto-closed: appended .md marker marks TASK-MIGRATE-TEXT-SURFACES-TO-SH)

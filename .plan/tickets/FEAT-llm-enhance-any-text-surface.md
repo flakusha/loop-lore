@@ -3,7 +3,7 @@
 
 # FEAT: LLM enhance any text surface
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-chat-composer-flows
@@ -39,3 +39,5 @@ Cross-reference: `FEAT-llm-enhance-outside-the-chat-composer` (may merge later).
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue d441d46 (registry tip: 1164c1809 Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-LLM-ENHANCE-ANY-TEXT-SURFAC)

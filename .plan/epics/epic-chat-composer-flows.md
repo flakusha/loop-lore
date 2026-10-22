@@ -8,7 +8,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** High — messenger parity gap
 **Tags:** chat, messenger, forward, drafts, scheduled, reminders
 
@@ -58,3 +58,5 @@ vn-sprite-compositing) or the 25 existing TASK-chat-feature-* tickets.
 
 - Forward round-trips with original attribution, no cross-chat leak.
 - Draft survives reload; scheduled send fires within 1min window.
+
+**Resolved:** 2026-10-22 registry-driven close: git issue f0bd7e8 (registry tip: 86196ff0d Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-CHAT-COMPOSER-FLOWS done)
