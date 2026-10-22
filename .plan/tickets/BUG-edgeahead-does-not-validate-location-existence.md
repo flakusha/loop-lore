@@ -3,7 +3,7 @@
 
 # BUG: edgeAhead does not validate location existence
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ edgeAhead (src/rpg/world-discovery/trade.ts:152-157) parses the route and return
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 649e9eb (registry tip: 43162eb25 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-EDGEAHEAD-DOES-NOT-VALIDATE-)

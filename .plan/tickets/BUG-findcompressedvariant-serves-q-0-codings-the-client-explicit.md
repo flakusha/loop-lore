@@ -3,7 +3,7 @@
 
 # BUG: findCompressedVariant serves q=0 codings the client explicitly refused - regression introduced by the q-strip fix
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
@@ -30,3 +30,5 @@ Source: .tmp/glm-review/mechanical-sweep-1015.md section 8b, first row (gitignor
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue cf72ad0 (registry tip: 282c92761 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-FINDCOMPRESSEDVARIANT-SERVES)

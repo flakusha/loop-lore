@@ -3,7 +3,7 @@
 
 # BUG: mood last_mood_change fix is a no-op for all production callers
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -37,3 +37,5 @@ Caveats: data-semantics change to a timestamp column; no auth impact; no partial
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 1d65877 (registry tip: a0b8f00e1 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-MOOD-LAST-MOOD-CHANGE-FIX-IS)

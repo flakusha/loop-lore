@@ -956,7 +956,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve.md",
       "title": "At-rest tier-none envelope short-circuit stores plaintext verbatim and fabricates wasEncrypted: true",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/crypto/at-rest.ts"
       ],
@@ -3028,7 +3028,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-dead-code-guard-in-advancepartytravel.md",
       "title": "Dead-code guard in advancePartyTravel",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/world-travel/travel.ts"
       ],
@@ -3367,7 +3367,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-edgeahead-does-not-validate-location-existence.md",
       "title": "edgeAhead does not validate location existence",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/world-discovery/trade.ts"
       ],
@@ -3849,7 +3849,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit.md",
       "title": "findCompressedVariant serves q=0 codings the client explicitly refused - regression introduced by the q-strip fix",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/server/static-mime.ts"
       ],
@@ -4081,7 +4081,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs.md",
       "title": "fix(server): gate docs serving on config, redirect /docs to /docs/",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/server/static-files.ts"
       ],
@@ -4315,7 +4315,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-game-state-block-regex-truncates-payloads-containing-an-inne.md",
       "title": "GAME_STATE_BLOCK regex truncates payloads containing an inner fenced code block",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/game-state/service.ts",
         "src/regex/game-state.ts"
@@ -5274,7 +5274,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-inconsistent-db-handle-in-migration-ts-npc-states-write.md",
       "title": "Inconsistent DB handle in migration.ts npc_states write",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/world-travel/migration.ts"
       ],
@@ -6223,7 +6223,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call.md",
       "title": "mood last_mood_change fix is a no-op for all production callers",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/mood-service/update-mood.ts"
       ],
@@ -6522,7 +6522,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o.md",
       "title": "NPC migration with deleted destination leaves NPC stuck at origin",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/world-travel/migration.ts"
       ],
@@ -9361,7 +9361,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw.md",
       "title": "Webhook dedup is recorded before dispatch, so a handler throw makes provider retries silently swallowed",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/integrations/bridge.ts",
         "src/routes/v1/integrations-surface.ts"
@@ -9373,7 +9373,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif.md",
       "title": "Webhook rate-limit budget is consumed before signature verification",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/middleware/rate-limit.ts",
         "src/routes/v1/integrations-surface.ts"
@@ -22235,7 +22235,9 @@
       "path": ".plan/tickets/TASK-chat-variant-assistant.md",
       "title": "Chat Variant — Assistant Chat",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22244,7 +22246,9 @@
       "path": ".plan/tickets/TASK-chat-variant-assistant-group.md",
       "title": "Chat Variant — Assistant Group Chat",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22270,7 +22274,9 @@
       "path": ".plan/tickets/TASK-chat-variant-character.md",
       "title": "Chat Variant — Chat (with Character)",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22280,7 +22286,8 @@
       "title": "Chat Variant — Group Chat (Multi-Character)",
       "status": "done",
       "srcRefs": [
-        "src/components/chat/participant-mgmt.html"
+        "src/components/chat/participant-mgmt.html",
+        "src/routes/chats/create.coverage.test.ts"
       ],
       "related": []
     },
@@ -22290,7 +22297,9 @@
       "path": ".plan/tickets/TASK-chat-variant-llm-only.md",
       "title": "Chat Variant — LLM-Only Chat",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22299,7 +22308,9 @@
       "path": ".plan/tickets/TASK-chat-variant-llm-only-group.md",
       "title": "Chat Variant — LLM-Only Group Chat",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22308,7 +22319,9 @@
       "path": ".plan/tickets/TASK-chat-variant-llm-only-group-gm.md",
       "title": "Chat Variant — LLM-Only Group Chat with Admin / GM",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22317,7 +22330,9 @@
       "path": ".plan/tickets/TASK-chat-variant-rpg.md",
       "title": "Chat Variant — RPG Chat",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22326,7 +22341,9 @@
       "path": ".plan/tickets/TASK-chat-variant-rpg-group.md",
       "title": "Chat Variant — RPG Group Chat",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22335,7 +22352,9 @@
       "path": ".plan/tickets/TASK-chat-variant-user-1x1.md",
       "title": "Chat Variant — User 1×1 Chat",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22344,7 +22363,9 @@
       "path": ".plan/tickets/TASK-chat-variant-user-group.md",
       "title": "Chat Variant — User Group Chat",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -22353,7 +22374,9 @@
       "path": ".plan/tickets/TASK-chat-variant-user-group-admin.md",
       "title": "Chat Variant — User Group Chat with Admin / Moderator",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/routes/chats/create.coverage.test.ts"
+      ],
       "related": []
     },
     {
@@ -45959,10 +45982,18 @@
       "title": "Chat Variants Taxonomy",
       "status": "done",
       "srcRefs": [
-        "src/db/enums-core/chat.ts",
-        "src/db/migrations/parts/006_chat.ts",
+        "src/chat/service/crud/create.ts",
+        "src/chat/types/variants.ts",
+        "src/components/chat/participant-mgmt.html",
+        "src/db/enums-core/users.ts",
+        "src/db/migrations/001_init.ts",
+        "src/db/migrations/044_chat_purpose.ts",
         "src/db/schema-core.ts",
-        "src/frontend/alpine/chat-settings.ts"
+        "src/frontend/pages/new-chat/index.ts",
+        "src/frontend/pages/new-chat/submit.ts",
+        "src/routes/chats/create-variant.ts",
+        "src/routes/chats/create.ts",
+        "src/views/new-chat.html"
       ],
       "related": []
     },
@@ -56199,7 +56230,8 @@
         "FEAT-world-template-chat-lifecycle",
         "TASK-chat-locations-worlds-finalize-current-implementation",
         "TASK-memory-history-search-bind-message-chain-reconstructable-con",
-        "TASK-per-chat-auto-translation-layer"
+        "TASK-per-chat-auto-translation-layer",
+        "epic-chat-variants-taxonomy"
       ]
     },
     {
@@ -56736,6 +56768,7 @@
       "owners": [
         "TASK-chat-variant-behavioral-wiring",
         "TASK-vn-cast-server-producer",
+        "epic-chat-variants-taxonomy",
         "epic-worlds-extension"
       ]
     },
@@ -57430,7 +57463,8 @@
     {
       "path": "src/components/chat/participant-mgmt.html",
       "owners": [
-        "TASK-chat-variant-character-group"
+        "TASK-chat-variant-character-group",
+        "epic-chat-variants-taxonomy"
       ]
     },
     {
@@ -59711,8 +59745,7 @@
       "path": "src/db/enums-core/chat.ts",
       "owners": [
         "BUG-visualnovel-type-mismatch-across-api-db-layers",
-        "TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings",
-        "epic-chat-variants-taxonomy"
+        "TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings"
       ]
     },
     {
@@ -59817,6 +59850,7 @@
       "owners": [
         "FEAT-world-template-chat-lifecycle",
         "TASK-032",
+        "epic-chat-variants-taxonomy",
         "epic-guest-access",
         "epic-worlds-extension"
       ]
@@ -60148,6 +60182,7 @@
         "epic-character-world-setup",
         "epic-character-xp-leveling",
         "epic-chat-transfer-location",
+        "epic-chat-variants-taxonomy",
         "epic-crafting-professions",
         "epic-db-migration-compaction",
         "epic-editorial-workflow",
@@ -60520,6 +60555,12 @@
       ]
     },
     {
+      "path": "src/db/migrations/044_chat_purpose.ts",
+      "owners": [
+        "epic-chat-variants-taxonomy"
+      ]
+    },
+    {
       "path": "src/db/migrations/047_conversation_merge.ts",
       "owners": [
         "TASK-branch-merge-db-migration-039"
@@ -60871,8 +60912,7 @@
         "BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint",
         "BUG-tool-call-result-no-frontend-rendering",
         "TASK-chat-ask-type-fast-menu",
-        "epic-chat-rich-engagement",
-        "epic-chat-variants-taxonomy"
+        "epic-chat-rich-engagement"
       ]
     },
     {
@@ -63166,7 +63206,6 @@
         "TASK-epic11-admin-settings-reconciliation",
         "TASK-visual-novel-mode",
         "epic-chat-lifecycle-moderation",
-        "epic-chat-variants-taxonomy",
         "epic-hidden-carriage-context"
       ]
     },
@@ -65461,7 +65500,8 @@
       "path": "src/frontend/pages/new-chat/index.ts",
       "owners": [
         "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
-        "FEAT-world-template-chat-lifecycle"
+        "FEAT-world-template-chat-lifecycle",
+        "epic-chat-variants-taxonomy"
       ]
     },
     {
@@ -65476,7 +65516,8 @@
         "BUG-generate-route-authorizes-chatid-but-not-actorid",
         "BUG-new-chat-e2e-reads-chat-participants-once-before-the-best-ef",
         "BUG-new-chat-e2e-reads-the-create-response-body-after-navigation",
-        "FEAT-chat-template-config-lifecycle"
+        "FEAT-chat-template-config-lifecycle",
+        "epic-chat-variants-taxonomy"
       ]
     },
     {
@@ -73459,7 +73500,25 @@
     {
       "path": "src/routes/chats/create-variant.ts",
       "owners": [
-        "TASK-chat-variant-behavioral-wiring"
+        "TASK-chat-variant-behavioral-wiring",
+        "epic-chat-variants-taxonomy"
+      ]
+    },
+    {
+      "path": "src/routes/chats/create.coverage.test.ts",
+      "owners": [
+        "TASK-chat-variant-assistant",
+        "TASK-chat-variant-assistant-group",
+        "TASK-chat-variant-character",
+        "TASK-chat-variant-character-group",
+        "TASK-chat-variant-llm-only",
+        "TASK-chat-variant-llm-only-group",
+        "TASK-chat-variant-llm-only-group-gm",
+        "TASK-chat-variant-rpg",
+        "TASK-chat-variant-rpg-group",
+        "TASK-chat-variant-user-1x1",
+        "TASK-chat-variant-user-group",
+        "TASK-chat-variant-user-group-admin"
       ]
     },
     {
@@ -73474,7 +73533,8 @@
         "TASK-024",
         "TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r",
         "TASK-chat-variant-behavioral-wiring",
-        "TASK-typescript-7-migration-typecheck-failures"
+        "TASK-typescript-7-migration-typecheck-failures",
+        "epic-chat-variants-taxonomy"
       ]
     },
     {
@@ -82512,6 +82572,7 @@
         "FEAT-world-template-chat-lifecycle",
         "IDEA-chat-setup-templates",
         "TASK-i18n-template-strings",
+        "epic-chat-variants-taxonomy",
         "epic-config-templates"
       ]
     },
@@ -116728,6 +116789,16 @@
       "to": "src/routes/chats/split.ts"
     },
     {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
       "from": "TASK-chat-variant-behavioral-wiring",
       "kind": "produces",
       "to": "src/chat/service/types.ts"
@@ -116766,6 +116837,56 @@
       "from": "TASK-chat-variant-character-group",
       "kind": "produces",
       "to": "src/components/chat/participant-mgmt.html"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group-gm",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg-group",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-user-1x1",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-user-group-admin",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-user-group",
+      "kind": "produces",
+      "to": "src/routes/chats/create.coverage.test.ts"
     },
     {
       "from": "TASK-chat-visual-novel-mode",
@@ -141490,12 +141611,32 @@
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "produces",
-      "to": "src/db/enums-core/chat.ts"
+      "to": "src/chat/service/crud/create.ts"
     },
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "produces",
-      "to": "src/db/migrations/parts/006_chat.ts"
+      "to": "src/chat/types/variants.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "produces",
+      "to": "src/components/chat/participant-mgmt.html"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "produces",
+      "to": "src/db/enums-core/users.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "produces",
+      "to": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "produces",
+      "to": "src/db/migrations/044_chat_purpose.ts"
     },
     {
       "from": "epic-chat-variants-taxonomy",
@@ -141505,7 +141646,27 @@
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "produces",
-      "to": "src/frontend/alpine/chat-settings.ts"
+      "to": "src/frontend/pages/new-chat/index.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "produces",
+      "to": "src/frontend/pages/new-chat/submit.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "produces",
+      "to": "src/routes/chats/create-variant.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "produces",
+      "to": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "produces",
+      "to": "src/views/new-chat.html"
     },
     {
       "from": "epic-cli-tooling-optique",
@@ -157476,6 +157637,12 @@
     {
       "from": "BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys",
+      "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
       "via": "src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
     },
@@ -158119,7 +158286,7 @@
       "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
@@ -158659,6 +158826,12 @@
       "from": "BUG-activitypub-federation-does-not-leverage-the-blog-system-lem",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-activitypub-federation-does-not-leverage-the-blog-system-lem",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -172740,12 +172913,6 @@
     {
       "from": "BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint",
       "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/migrations/parts/006_chat.ts"
-    },
-    {
-      "from": "BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint",
-      "kind": "sibling",
       "to": "epic-encryption-workflow",
       "via": "src/crypto/chat-keys.ts"
     },
@@ -174738,12 +174905,6 @@
     {
       "from": "BUG-chat-settings-modal-invalid-mode",
       "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/frontend/alpine/chat-settings.ts"
-    },
-    {
-      "from": "BUG-chat-settings-modal-invalid-mode",
-      "kind": "sibling",
       "to": "epic-config-templates",
       "via": "src/components/chat/chat-settings-modal.html; src/validation/schemas.ts"
     },
@@ -174950,6 +175111,12 @@
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
       "via": "src/chat/service/split.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/routes/chats/create.ts"
     },
     {
       "from": "BUG-chat-swipe-index-race",
@@ -176053,6 +176220,12 @@
       "from": "BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -178417,6 +178590,12 @@
       "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -183410,6 +183589,12 @@
       "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/routes/messages/helpers.ts"
+    },
+    {
+      "from": "BUG-encryption-tier-not-enforced",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/service/crud/create.ts; src/routes/chats/create.ts"
     },
     {
       "from": "BUG-encryption-tier-not-enforced",
@@ -190818,6 +191003,12 @@
     {
       "from": "BUG-generate-route-authorizes-chatid-but-not-actorid",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/service/crud/create.ts; src/db/migrations/001_init.ts; src/frontend/pages/new-chat/submit.ts; src/routes/chats/create.ts"
+    },
+    {
+      "from": "BUG-generate-route-authorizes-chatid-but-not-actorid",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -193500,6 +193691,12 @@
     {
       "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
+      "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
       "via": "src/validation/db-schemas.ts"
     },
@@ -195876,6 +196073,12 @@
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -196495,6 +196698,12 @@
       "from": "BUG-inbound-federation-content-not-moderated-before-display",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-inbound-federation-content-not-moderated-before-display",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -198234,6 +198443,12 @@
     {
       "from": "BUG-locations-reparent-guard-silently-reverted-by-d572dddec",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-locations-reparent-guard-silently-reverted-by-d572dddec",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -198847,7 +199062,7 @@
       "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
@@ -199435,6 +199650,12 @@
       "from": "BUG-memory-embeddings-orphaned-on-actor-delete",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-memory-embeddings-orphaned-on-actor-delete",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -200611,6 +200832,12 @@
       "from": "BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -202774,9 +203001,21 @@
       "via": "src/frontend/pages/new-chat/submit.ts"
     },
     {
+      "from": "BUG-new-chat-e2e-reads-chat-participants-once-before-the-best-ef",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/frontend/pages/new-chat/submit.ts"
+    },
+    {
       "from": "BUG-new-chat-e2e-reads-the-create-response-body-after-navigation",
       "kind": "sibling",
       "to": "FEAT-chat-template-config-lifecycle",
+      "via": "src/frontend/pages/new-chat/submit.ts"
+    },
+    {
+      "from": "BUG-new-chat-e2e-reads-the-create-response-body-after-navigation",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/frontend/pages/new-chat/submit.ts"
     },
     {
@@ -202819,6 +203058,12 @@
       "from": "BUG-new-chat-vn-toggle-sends-visualnovel-but-backend-reads-rende",
       "kind": "sibling",
       "to": "TASK-per-chat-auto-translation-layer",
+      "via": "src/chat/service/crud/create.ts"
+    },
+    {
+      "from": "BUG-new-chat-vn-toggle-sends-visualnovel-but-backend-reads-rende",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/chat/service/crud/create.ts"
     },
     {
@@ -206244,6 +206489,12 @@
     {
       "from": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -207032,6 +207283,12 @@
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-plugin-tool-authorization-fails-open",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/service/crud/create.ts; src/db/migrations/001_init.ts"
     },
     {
       "from": "BUG-plugin-tool-authorization-fails-open",
@@ -208556,6 +208813,12 @@
       "kind": "sibling",
       "to": "TASK-user-saved-quick-replies-for-slash-commands",
       "via": "src/chat/service/crud/update.ts"
+    },
+    {
+      "from": "BUG-redundant-vn-state-stored-in-two-independent-locations",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/service/crud/create.ts"
     },
     {
       "from": "BUG-refund-contract-invites-over-admission-in-peek-record-flows-",
@@ -211782,12 +212045,6 @@
     {
       "from": "BUG-settings-save-omits-gmconfig-for-online-chats",
       "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/frontend/alpine/chat-settings.ts"
-    },
-    {
-      "from": "BUG-settings-save-omits-gmconfig-for-online-chats",
-      "kind": "sibling",
       "to": "epic-guest-access",
       "via": "src/chat/service/access.ts"
     },
@@ -212227,6 +212484,12 @@
       "from": "BUG-shadow-notes-table-missing-ttl-visibility-author-type-column",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-shadow-notes-table-missing-ttl-visibility-author-type-column",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -216456,6 +216719,12 @@
     {
       "from": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/frontend/pages/new-chat/index.ts"
+    },
+    {
+      "from": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/routes/views/layout.ts"
     },
@@ -216865,12 +217134,6 @@
       "from": "BUG-tool-call-result-no-frontend-rendering",
       "kind": "sibling",
       "to": "epic-chat-rich-engagement",
-      "via": "src/db/migrations/parts/006_chat.ts"
-    },
-    {
-      "from": "BUG-tool-call-result-no-frontend-rendering",
-      "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/parts/006_chat.ts"
     },
     {
@@ -217860,6 +218123,12 @@
     {
       "from": "BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva",
+      "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
       "via": "src/routes/messages/reply.ts"
     },
@@ -217946,6 +218215,12 @@
       "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/age-gate/controller.ts"
+    },
+    {
+      "from": "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/routes/chats/create.ts"
     },
     {
       "from": "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k",
@@ -218942,12 +219217,6 @@
       "kind": "sibling",
       "to": "epic-character-growth",
       "via": "src/validation/db-schemas.ts"
-    },
-    {
-      "from": "BUG-visualnovel-type-mismatch-across-api-db-layers",
-      "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/enums-core/chat.ts"
     },
     {
       "from": "BUG-visualnovel-type-mismatch-across-api-db-layers",
@@ -223368,6 +223637,12 @@
     {
       "from": "FEAT-065-template-system",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "FEAT-065-template-system",
+      "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
       "via": "src/generation/image-gen-route.ts"
     },
@@ -224953,6 +225228,12 @@
       "from": "FEAT-activitypub-federation",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "FEAT-activitypub-federation",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -227347,7 +227628,7 @@
       "from": "FEAT-chat-template-config-lifecycle",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/frontend/alpine/chat-settings.ts"
+      "via": "src/chat/service/crud/create.ts; src/frontend/pages/new-chat/submit.ts; src/views/new-chat.html"
     },
     {
       "from": "FEAT-chat-template-config-lifecycle",
@@ -228535,6 +228816,12 @@
       "from": "FEAT-disable-or-hide-characters-from-the-db",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "FEAT-disable-or-hide-characters-from-the-db",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -230251,6 +230538,12 @@
       "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -233058,6 +233351,12 @@
     {
       "from": "FEAT-memory-visualizer-knowledge-graph-over-asset-links",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "FEAT-memory-visualizer-knowledge-graph-over-asset-links",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -234828,6 +235127,12 @@
     {
       "from": "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/db/migrations/001_init.ts; src/rpg/crafting/process.ts"
     },
@@ -235596,6 +235901,12 @@
     {
       "from": "FEAT-world-template-chat-lifecycle",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/service/crud/create.ts; src/db/enums-core/users.ts; src/frontend/pages/new-chat/index.ts; src/routes/chats/create.ts; src/views/new-chat.html"
+    },
+    {
+      "from": "FEAT-world-template-chat-lifecycle",
+      "kind": "sibling",
       "to": "epic-config-templates",
       "via": "src/prompts/registry.ts; src/views/new-chat.html"
     },
@@ -235814,6 +236125,12 @@
       "kind": "sibling",
       "to": "epic-character-core-system",
       "via": "src/validation/schemas.ts"
+    },
+    {
+      "from": "IDEA-chat-setup-templates",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/views/new-chat.html"
     },
     {
       "from": "IDEA-chat-setup-templates",
@@ -236155,6 +236472,12 @@
       "from": "IDEA-cross-instance-conversation-threading-mention-inreplyto",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "IDEA-cross-instance-conversation-threading-mention-inreplyto",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -237336,6 +237659,12 @@
     {
       "from": "TASK-019-audit-columns",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-019-audit-columns",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -237949,6 +238278,12 @@
       "from": "TASK-019-enforce-state-machine-validators-at-write",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-019-enforce-state-machine-validators-at-write",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -238648,6 +238983,12 @@
       "via": "src/chat/service/party.ts"
     },
     {
+      "from": "TASK-024",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/routes/chats/create.ts"
+    },
+    {
       "from": "TASK-025",
       "kind": "sibling",
       "to": "TASK-029",
@@ -239090,6 +239431,12 @@
       "kind": "sibling",
       "to": "epic-auth-access",
       "via": "src/frontend/alpine/admin-users.ts"
+    },
+    {
+      "from": "TASK-032",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/enums-core/users.ts"
     },
     {
       "from": "TASK-032",
@@ -247740,6 +248087,12 @@
     {
       "from": "TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r",
+      "kind": "sibling",
       "to": "epic-frontend-age-gate",
       "via": "src/middleware/nsfw-gate/index.ts"
     },
@@ -252961,6 +253314,12 @@
       "from": "TASK-archival-workflow",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-archival-workflow",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -270318,12 +270677,6 @@
     {
       "from": "TASK-chat-ask-type-fast-menu",
       "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/migrations/parts/006_chat.ts"
-    },
-    {
-      "from": "TASK-chat-ask-type-fast-menu",
-      "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
       "via": "src/db/schema-manifest.ts"
     },
@@ -274224,6 +274577,12 @@
     {
       "from": "TASK-chat-locations-worlds-finalize-current-implementation",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/service/crud/create.ts"
+    },
+    {
+      "from": "TASK-chat-locations-worlds-finalize-current-implementation",
+      "kind": "sibling",
       "to": "epic-impersonation",
       "via": "src/routes/chats/extras.ts"
     },
@@ -275905,7 +276264,7 @@
       "from": "TASK-chat-transfer-location",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "TASK-chat-transfer-location",
@@ -276106,6 +276465,132 @@
       "via": "src/db/schema-core.ts"
     },
     {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-character-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-character",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group-gm",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-assistant-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-character-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-character",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group-gm",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-assistant",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
       "from": "TASK-chat-variant-behavioral-wiring",
       "kind": "sibling",
       "to": "TASK-group-chat-minors-from-2026-10-04-review",
@@ -276144,6 +276629,12 @@
     {
       "from": "TASK-chat-variant-behavioral-wiring",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/types/variants.ts; src/routes/chats/create-variant.ts; src/routes/chats/create.ts"
+    },
+    {
+      "from": "TASK-chat-variant-behavioral-wiring",
+      "kind": "sibling",
       "to": "epic-group-chat",
       "via": "src/generation/auto-gen/group-cascade.ts"
     },
@@ -276152,6 +276643,282 @@
       "kind": "sibling",
       "to": "epic-worlds-extension",
       "via": "src/chat/types/variants.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group-gm",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character-group",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/components/chat/participant-mgmt.html"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-character-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group-gm",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-character",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group-gm",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group-gm",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group-gm",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group-gm",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group-gm",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group-gm",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group-gm",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-llm-only-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-llm-only",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-rpg-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-1x1",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-rpg",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-user-1x1",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-user-1x1",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group",
+      "via": "src/routes/chats/create.coverage.test.ts"
+    },
+    {
+      "from": "TASK-chat-variant-user-group",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-user-group-admin",
+      "via": "src/routes/chats/create.coverage.test.ts"
     },
     {
       "from": "TASK-chat-visual-novel-mode",
@@ -280729,6 +281496,12 @@
       "from": "TASK-comic-page-composition-strategy",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-comic-page-composition-strategy",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -296970,12 +297743,6 @@
     {
       "from": "TASK-epic11-admin-settings-reconciliation",
       "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/frontend/alpine/chat-settings.ts"
-    },
-    {
-      "from": "TASK-epic11-admin-settings-reconciliation",
-      "kind": "sibling",
       "to": "epic-config-templates",
       "via": "src/components/chat/chat-settings-modal.html"
     },
@@ -307974,6 +308741,12 @@
     {
       "from": "TASK-i18n-template-strings",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/views/new-chat.html"
+    },
+    {
+      "from": "TASK-i18n-template-strings",
+      "kind": "sibling",
       "to": "epic-config-templates",
       "via": "src/views/new-chat.html"
     },
@@ -311784,6 +312557,12 @@
     {
       "from": "TASK-location-crud-tree-connections",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-location-crud-tree-connections",
+      "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -313994,6 +314773,12 @@
       "kind": "sibling",
       "to": "epic-chat-product-features",
       "via": "src/chat/service/carry-history.ts; src/memory/extraction.ts"
+    },
+    {
+      "from": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/service/crud/create.ts"
     },
     {
       "from": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
@@ -319692,6 +320477,12 @@
     {
       "from": "TASK-per-chat-auto-translation-layer",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/service/crud/create.ts"
+    },
+    {
+      "from": "TASK-per-chat-auto-translation-layer",
+      "kind": "sibling",
       "to": "epic-logging",
       "via": "src/logger/index.ts"
     },
@@ -319849,6 +320640,12 @@
       "from": "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -321738,6 +322535,12 @@
     {
       "from": "TASK-publication-artifact-schema",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-publication-artifact-schema",
+      "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
       "via": "src/db/schema-manifest.ts"
     },
@@ -323095,6 +323898,12 @@
       "from": "TASK-rag-decomposition-index-pipeline",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-rag-decomposition-index-pipeline",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -326827,6 +327636,12 @@
       "from": "TASK-review-thread-comment-model",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-review-thread-comment-model",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -331518,6 +332333,12 @@
     {
       "from": "TASK-typescript-7-migration-typecheck-failures",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "TASK-typescript-7-migration-typecheck-failures",
+      "kind": "sibling",
       "to": "epic-context-injection-correctness",
       "via": "src/chat/context-window.ts"
     },
@@ -331916,12 +332737,6 @@
       "kind": "sibling",
       "to": "epic-assistant-gm-flows",
       "via": "src/frontend/alpine/chat-settings/gm-config.ts"
-    },
-    {
-      "from": "TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings",
-      "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/enums-core/chat.ts"
     },
     {
       "from": "TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings",
@@ -332538,12 +333353,6 @@
     {
       "from": "TASK-visual-novel-mode",
       "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/frontend/alpine/chat-settings.ts"
-    },
-    {
-      "from": "TASK-visual-novel-mode",
-      "kind": "sibling",
       "to": "epic-config-templates",
       "via": "src/components/chat/chat-settings-modal.html"
     },
@@ -332708,6 +333517,12 @@
       "kind": "sibling",
       "to": "epic-chat-product-features",
       "via": "src/generation/auto-gen/resolve-known-names.ts"
+    },
+    {
+      "from": "TASK-vn-cast-server-producer",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/chat/types/variants.ts"
     },
     {
       "from": "TASK-vn-cast-server-producer",
@@ -334764,6 +335579,12 @@
     {
       "from": "TASK-world-simulation-discovery-and-trade-events",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "TASK-world-simulation-discovery-and-trade-events",
+      "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
       "via": "src/db/schema-manifest.ts"
     },
@@ -335521,7 +336342,7 @@
       "from": "epic-actors",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-actors",
@@ -336409,6 +337230,12 @@
       "from": "epic-archival-workflow",
       "kind": "sibling",
       "to": "epic-chat-transfer-location",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-archival-workflow",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
       "via": "src/db/migrations/001_init.ts"
     },
     {
@@ -337495,7 +338322,7 @@
       "from": "epic-battle-action-systems",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-battle-action-systems",
@@ -338089,7 +338916,7 @@
       "from": "epic-byok-api-keys",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-byok-api-keys",
@@ -338491,7 +339318,7 @@
       "from": "epic-character-core-system",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-character-core-system",
@@ -338959,7 +339786,7 @@
       "from": "epic-character-internal-traits",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-character-internal-traits",
@@ -339205,7 +340032,7 @@
       "from": "epic-character-npc-lore-access",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-character-npc-lore-access",
@@ -339390,6 +340217,12 @@
     {
       "from": "epic-character-spec",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-character-spec",
+      "kind": "sibling",
       "to": "epic-continuous-improvement",
       "via": "src/characters/validator.ts"
     },
@@ -339528,6 +340361,12 @@
     {
       "from": "epic-character-world-setup",
       "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-character-world-setup",
+      "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
       "via": "src/test-utils/insert-helpers.ts"
     },
@@ -339619,7 +340458,7 @@
       "from": "epic-character-xp-leveling",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-character-xp-leveling",
@@ -339877,7 +340716,7 @@
       "from": "epic-chat-lifecycle-moderation",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts; src/frontend/alpine/chat-settings.ts"
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
@@ -340210,16 +341049,10 @@
       "via": "src/chat/types/config.ts"
     },
     {
-      "from": "epic-chat-rich-engagement",
-      "kind": "sibling",
-      "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/migrations/parts/006_chat.ts"
-    },
-    {
       "from": "epic-chat-transfer-location",
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-chat-transfer-location",
@@ -340374,14 +341207,38 @@
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "sibling",
+      "to": "epic-config-templates",
+      "via": "src/views/new-chat.html"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
+      "to": "epic-crafting-professions",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
+      "to": "epic-db-migration-compaction",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
       "to": "epic-editorial-workflow",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "sibling",
       "to": "epic-emotion-avatar-message-binding",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
+      "to": "epic-enemies-monsters",
+      "via": "src/db/migrations/001_init.ts"
     },
     {
       "from": "epic-chat-variants-taxonomy",
@@ -340398,14 +341255,26 @@
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "sibling",
-      "to": "epic-hidden-carriage-context",
-      "via": "src/frontend/alpine/chat-settings.ts"
+      "to": "epic-guest-access",
+      "via": "src/db/enums-core/users.ts"
     },
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "sibling",
       "to": "epic-impersonation",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
+      "to": "epic-inventory-system",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
+      "to": "epic-inventory",
+      "via": "src/db/migrations/001_init.ts"
     },
     {
       "from": "epic-chat-variants-taxonomy",
@@ -340416,8 +341285,14 @@
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "sibling",
+      "to": "epic-locations",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
       "to": "epic-logging",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
     },
     {
       "from": "epic-chat-variants-taxonomy",
@@ -340470,8 +341345,20 @@
     {
       "from": "epic-chat-variants-taxonomy",
       "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
       "to": "epic-world-chat-channels-invites",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-chat-variants-taxonomy",
+      "kind": "sibling",
+      "to": "epic-worlds-extension",
+      "via": "src/chat/types/variants.ts; src/db/enums-core/users.ts"
     },
     {
       "from": "epic-cli-tooling-optique",

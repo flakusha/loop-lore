@@ -3,7 +3,7 @@
 
 # BUG: Inconsistent DB handle in migration.ts npc_states write
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ The npc_states update (src/rpg/world-travel/migration.ts:122) uses the raw db ha
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue dfcf59f (registry tip: f579a5ddf Konstantin Fedotov Auto-closed: appended .md marker marks BUG-INCONSISTENT-DB-HANDLE-IN-MI)

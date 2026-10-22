@@ -3,7 +3,7 @@
 
 # BUG: NPC migration with deleted destination leaves NPC stuck at origin
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ When a migration's destination_location_id is null (location deleted), the migra
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue e70009f (registry tip: 475bb2112 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-NPC-MIGRATION-WITH-DELETED-D)
