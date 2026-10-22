@@ -34,7 +34,9 @@ const BLOCKED_MIME_TYPES = new Set(["image/svg+xml",],);
  * @returns void
  */
 export function validateMimeType(mime: string,): string | null {
-  const lowered = mime.toLowerCase();
+  // Strip MIME parameters ("; charset=...") before matching: the trust
+  // boundary sees only the type/subtype, and a suffixed SVG is still SVG.
+  const lowered = mime.toLowerCase().split(";", 1,)[0]!.trim();
   if (BLOCKED_MIME_TYPES.has(lowered,)) {
     return `Unsupported file type: ${mime}`;
   }
