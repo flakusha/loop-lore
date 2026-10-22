@@ -63,7 +63,7 @@ export function countConsecutiveDupes(text,) {
  * `[branches] root`). Falls back to "dev" when the config is absent, so a
  * fixture repo without giwt.toml still has a base to try.
  */
-export function rootBranch() {
+function rootBranch() {
   try {
     const toml = Bun.TOML.parse(readFileSync(path.join(PROJECT_ROOT, "giwt.toml",), "utf8",),);
     return toml?.branches?.root ?? "dev";
@@ -86,7 +86,7 @@ function gitOut(args, cwd,) {
  * Returns null when no base can be derived (detached HEAD, no root branch,
  * no merge base); the scan then skips instead of failing.
  */
-export function deriveWeaveBase(cwd = PROJECT_ROOT,) {
+function deriveWeaveBase(cwd = PROJECT_ROOT,) {
   // A detached HEAD has no branch that could have been based on something.
   if (gitOut(["symbolic-ref", "-q", "HEAD",], cwd,) === null) { return null; }
   const root = rootBranch();
