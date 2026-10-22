@@ -1191,6 +1191,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
     }
   ],
   "src/assets/controller.ts": [

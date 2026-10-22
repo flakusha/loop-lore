@@ -81,11 +81,16 @@ describe("v1 API versioning", () => {
     expect((body.meta as Record<string, unknown>).api_version,).toBe("1",);
   });
 
-  test("GET /api/v1/chats without userId returns 401", async () => {
+  test("GET /api/v1/chats without userId returns 200 with no chats (no role, no public arm)", async () => {
     const app = createV1App(db, null,);
     const res = await app.handle(new Request("http://localhost/api/v1/chats",),);
-    // Auth guard should reject — userId is null
-    expect(res.status,).toBe(401,);
+    // No requireUserId on the list route since the guest tier (Phase 2): a
+    // null id with a null role matches no arm (the public arm needs the
+    // guest role), so this answers an empty list — not a 401. A real
+    // guest carries userRole `guest` and sees public chats.
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: unknown[] };
+    expect(body.data,).toEqual([],);
   });
 
   // A barrel that swallowed unknown /api/v1/* paths would let a typo'd or

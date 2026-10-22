@@ -47,7 +47,7 @@ Deviation from the original Change section: `visibility=unlisted` does **not** g
 
 Also: the public branch widened `getMessageWithAccess`, which `PUT /api/chats/:id/messages/:id/visibility` used as its only gate — a stranger could have hidden a message in a public chat. `src/routes/messages/update.ts` now adds the author-or-`admin.chat` ownership check that DELETE/PATCH already had.
 
-Tests: `src/chat/service/access.test.ts` (public read for guest and authenticated stranger, private/unlisted denied), `src/routes/chats/guest-visibility.test.ts` (new: guest lists only the public chat, public detail/messages readable, private and unlisted 404, authenticated stranger lists and reads public), `src/routes/messages/read.coverage.test.ts` (guest-open reads), `src/routes/messages/update.coverage.test.ts` (visibility write 403 for a non-author on a public chat).
+Tests: `src/chat/service/access.test.ts` (public read for guest and authenticated stranger, private/unlisted denied, banned/blocked member of a public chat still 403), `src/routes/chats/guest-visibility.test.ts` (new: guest lists only the public chat, public detail/messages readable, private and unlisted 404, authenticated stranger lists and reads public), `src/routes/chats/list.ts` public-arm gating (`userId !== null || can(userRole, "chat.join")` — null id with null role matches nothing), `src/routes/v1/v1-versioning.test.ts` (stale `401` pin updated: role-less null id answers an empty 200 list), `src/routes/messages/read.coverage.test.ts` (guest-open reads), `src/routes/messages/update.coverage.test.ts` (visibility write 403 for a non-author on a public chat).
 
 **Acceptance Criteria:**
 

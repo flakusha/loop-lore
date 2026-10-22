@@ -5,6 +5,7 @@ import { Elysia, t, } from "elysia";
 import { type Expression, type ExpressionBuilder, type SelectQueryBuilder, sql, type SqlBool, } from "kysely";
 import { ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 import { extractAuth, jsonPaginated, parsePagination, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
@@ -94,20 +95,26 @@ function orderChatList<T,>(
 /**
  * The access predicate both chat-list queries share: chats the viewer created
  * OR participates in, OR that are public. Public chats are enumerable by any
- * authenticated caller AND the synthetic guest tier (userId null on a
- * guest-enabled route); guests pass NULL and match only the public arm.
+ * authenticated caller AND the synthetic guest tier (userId null with the
+ * guest role on a guest-enabled route); guests pass NULL and match only the
+ * public arm. A null id with a null role (no derive ran) matches nothing.
  * Mirrors `visibleToViewer` in `src/routes/views/chats.ts`; without the
  * participant arm a chat you were invited to is reachable in htmx but missing
  * from this JSON list.
  * @param userId viewer whose chats are listed (null = guest tier)
+ * @param userRole viewer's role (gates the public arm for id-less callers)
  * @returns a `where()` callback for a `chats` query
  */
 function visibleToViewer(
   userId: string | null,
+  userRole: string | null,
 ): (eb: ExpressionBuilder<DB, "chats">,) => Expression<SqlBool> {
   return (eb,) =>
     eb.or([
-      eb("chats.visibility", "=", ChatVisibility.Public,),
+      // Public arm, guest-gated like checkChatAccess: an authenticated id, or
+      // the guest role. A null id with a null role (no derive ran, e.g. a
+      // bare test double) matches nothing — no account-less enumeration.
+      ...(userId !== null || can(userRole, "chat.join",) ? [eb("chats.visibility", "=", ChatVisibility.Public,),] : []),
       ...(userId === null
         ? []
         : [
@@ -137,7 +144,7 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
         `${prefix}/chats`,
         async (ctx: any,) => {
           // Guest-open list: guests (userId null) match only the public arm.
-          const { userId, } = extractAuth(ctx,);
+          const { userId, userRole, } = extractAuth(ctx,);
           const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
           const offset = (page - 1) * pageSize;
           const type = ctx.query.type as "direct" | "group" | undefined;
@@ -153,12 +160,12 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
           let countQuery = database
             .selectFrom("chats",)
             .select(database.fn.countAll<number>().as("total",),)
-            .where(visibleToViewer(userId,),);
+            .where(visibleToViewer(userId, userRole,),);
 
           let listQuery = database
             .selectFrom("chats",)
             .selectAll()
-            .where(visibleToViewer(userId,),);
+            .where(visibleToViewer(userId, userRole,),);
 
           if (type) {
             countQuery = countQuery.where("type", "=", type,);
