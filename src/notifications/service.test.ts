@@ -220,14 +220,29 @@ describe("NotificationService", () => {
   });
 
   test("stores a notification with unserializable data as null data", async () => {
+    // Own recipient: this test must not perturb the shared fixtures' counts
+    // (the file shares one db across its tests).
+    const ownUser = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: ownUser,
+        username: `u-${ownUser}`,
+        display_name: "U",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
     // The payload cannot be serialized - the row is still created and the
     // failure is logged instead of silently dropping the data.
     const svc = new NotificationService(db,);
     const circular: Record<string, unknown> = {};
     circular.self = circular;
-    await svc.create({ userId: userA, type: NotificationType.Mention, title: "circular", data: circular, },);
+    await svc.create({ userId: ownUser, type: NotificationType.Mention, title: "circular", data: circular, },);
 
-    const items = await svc.list(userA,);
+    const items = await svc.list(ownUser,);
     const row = items.find((item,) => item.title === "circular");
     expect(row,).toBeDefined();
     expect(row?.data,).toBeNull();
