@@ -50,7 +50,7 @@ export const editing = {
       );
 
       if (res.ok) {
-        (globalThis as any).showToast("success", t("toasts.templateSaved",),);
+        showToast("success", t("toasts.templateSaved",),);
         // Update local state
         if (this.selectedProfile.templates) {
           if (!this.selectedProfile.templates[detail]) {
@@ -65,10 +65,10 @@ export const editing = {
         await this.loadTemplates();
       } else {
         const err = await res.json();
-        (globalThis as any).showToast("error", err.error || t("toasts.failedSave",),);
+        showToast("error", err.error || t("toasts.failedSave",),);
       }
     } catch {
-      (globalThis as any).showToast("error", t("toasts.networkError",),);
+      showToast("error", t("toasts.networkError",),);
     } finally {
       this.savingTemplate = false;
     }
@@ -100,14 +100,14 @@ export const editing = {
       );
 
       if (res.ok) {
-        (globalThis as any).showToast("success", t("toasts.defaultsSaved",),);
+        showToast("success", t("toasts.defaultsSaved",),);
         await this.loadTemplates();
       } else {
         const err = await res.json();
-        (globalThis as any).showToast("error", err.error || t("toasts.failedSave",),);
+        showToast("error", err.error || t("toasts.failedSave",),);
       }
     } catch {
-      (globalThis as any).showToast("error", t("toasts.networkError",),);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 };
