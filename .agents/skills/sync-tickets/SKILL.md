@@ -42,6 +42,21 @@ bun run plan:sync   # expect "Index is in sync"
 
 ---
 
+## A closed git issue must be stamped on its ticket
+
+The registry auto-closes a ticket's git issue, and the ticket's `.md` then
+keeps saying `Not Started` until it is stamped. The check gate only REPORTS
+that drift, so stamp it as soon as the issue closes:
+
+```bash
+bun run plan:sync:fix   # rewrites **Status:** from the closed git issue
+```
+
+The index half (`index.json`) regenerates on the target branch after the
+merge: `giwt sync` in a linked worktree defers that write by design.
+
+---
+
 ## Compact Git Issue Format
 
 When creating new git issues for orphan files:
