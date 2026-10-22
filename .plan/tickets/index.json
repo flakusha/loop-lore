@@ -39590,7 +39590,7 @@
     "epic": "epic-guest-access",
     "tags": [],
     "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-GUEST-CHAT-PUBLIC-READS-VISIBILITY-AWARE-CHAT-ACCESS": {
     "hash": "747b486",
@@ -39603,7 +39603,7 @@
     "epic": "epic-guest-access",
     "tags": [],
     "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-GUEST-CONTEXT-SYNTHETIC-DERIVE-BRANCH-AUTH-GUESTACCESS-FLAG": {
     "hash": "f790146",
