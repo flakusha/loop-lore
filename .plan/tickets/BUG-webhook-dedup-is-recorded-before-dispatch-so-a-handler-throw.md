@@ -3,7 +3,7 @@
 
 # BUG: Webhook dedup is recorded before dispatch, so a handler throw makes provider retries silently swallowed
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Tags:** integrations
@@ -21,3 +21,5 @@ src/integrations/bridge.ts:196-198 records the dedup key (seen.set) BEFORE handl
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue ebafd77 (registry tip: a7ebdf96a Konstantin Fedotov Auto-closed: appended .md marker marks BUG-WEBHOOK-DEDUP-IS-RECORDED-BE)
