@@ -3,7 +3,7 @@
 
 # TASK: Guest asset public reads: open-public asset access
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-guest-access
@@ -37,3 +37,5 @@ canAccessAsset (src/assets/service/read.ts) requires a non-null actorId for publ
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 7b2b199 (registry tip: aa476013c Konstantin Fedotov Auto-closed: appended .md marker marks TASK-GUEST-ASSET-PUBLIC-READS-OP)

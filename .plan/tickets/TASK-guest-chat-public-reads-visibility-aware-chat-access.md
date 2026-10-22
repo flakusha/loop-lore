@@ -3,7 +3,7 @@
 
 # TASK: Guest chat public reads: visibility-aware chat access
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-guest-access
@@ -38,3 +38,5 @@ chats.visibility (private/public/unlisted) exists but checkChatAccess (src/chat/
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 747b486 (registry tip: 4d5d4a9c6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-GUEST-CHAT-PUBLIC-READS-VIS)
