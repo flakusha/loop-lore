@@ -65,17 +65,14 @@ function isolatedGitEnv() {
   for (const [key, value,] of Object.entries(process.env,)) {
     if (value === undefined) { continue; }
     // Prefix-match rather than an allowlist: the caller can set a GIT_ var
-    // this list never enumerates. `GIT_CONFIG_COUNT` + `GIT_CONFIG_KEY_n`
-    // inject config straight from the environment, so a hostile
-    // `core.hooksPath` or `commit.gpgsign` rides past the
-    // GIT_CONFIG_GLOBAL=/dev/null below and breaks the fixture commit for
-    // reasons unrelated to the gate. Mirrors giwt's own isolated-git env.
+    // this list never enumerates — `GIT_DIR`/`GIT_WORK_TREE` would redirect
+    // the fixture into the caller's repo. Mirrors giwt's own isolated-git
+    // env. Nothing here writes or redirects config: the fixture's author
+    // comes from a one-shot `-c include.path`, never from a `git config`
+    // write and never from an identity env var.
     if (key.startsWith("GIT_",)) { continue; }
     env[key] = value;
   }
-  env.GIT_CONFIG_GLOBAL = "/dev/null";
-  env.GIT_CONFIG_SYSTEM = "/dev/null";
-  env.GIT_CONFIG_NOSYSTEM = "1";
   return env;
 }
 
@@ -87,6 +84,19 @@ function spawnGit(dir, args,) {
     stderr: "pipe",
     env: isolatedGitEnv(),
   },);
+}
+
+/**
+ * Absolute path of the config that carries this repo's canonical commit
+ * identity, resolved with a read-only rev-parse. It is INCLUDED one-shot
+ * when the fixture commits, so the fixture author matches the repo's
+ * identity without any config write.
+ */
+function hostConfigPath() {
+  const repoRoot = join(import.meta.dir, "..", "..",);
+  const common = spawnGit(repoRoot, ["rev-parse", "--path-format=absolute", "--git-common-dir",],)
+    .stdout.toString().trim();
+  return join(common, "config",);
 }
 
 /** Run the gate against a throwaway repo, then remove it. */
@@ -109,11 +119,26 @@ function withRepo(fn,) {
     symlinkSync(join(repoRoot, "src", "cli",), join(dir, "src", "cli",), "dir",);
     symlinkSync(join(repoRoot, "node_modules",), join(dir, "node_modules",), "dir",);
     git(["init", "-q", ".",],);
-    git(["config", "user.email", "gate@example.com",],);
-    git(["config", "user.name", "gate",],);
     writeFileSync(join(dir, "tracked.ts",), "const base = 1;\n",);
     git(["add", "-A",],);
-    git(["commit", "-q", "-m", "base",],);
+    // The fixture commit needs an author. Agents must not write git config
+    // (`git config user.email …` persists for every later session) and must
+    // not inject identity through the environment, so the commit reads this
+    // repo's own identity through git's one-shot `-c include.path=…` and
+    // overrides the two NON-identity keys a host config could break it with:
+    // a signing prompt and a foreign hooks path. Nothing persists.
+    git([
+      "-c",
+      `include.path=${hostConfigPath()}`,
+      "-c",
+      "core.hooksPath=/dev/null",
+      "-c",
+      "commit.gpgsign=false",
+      "commit",
+      "-q",
+      "-m",
+      "base",
+    ],);
     fn(dir,);
   } finally {
     rmSync(dir, { recursive: true, force: true, },);
