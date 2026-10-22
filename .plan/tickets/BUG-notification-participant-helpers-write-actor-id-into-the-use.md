@@ -4,6 +4,7 @@
 # BUG: Notification participant helpers write actor_id into the users foreign key
 
 **Status:** Done
+**Status Note:** notification recipients are resolved to the owning user id. `participantActorIds` / `worldParticipantActorIds` now select `actors.user_id` and drop rows without a user; `notifyMention` resolves each mentioned actor through `resolveMentionUserId` (an AI character has no recipient and is skipped instead of aborting the fan-out) and returns the number of recipients actually notified.
 **Priority:** Medium
 **Effort:** Medium
 **Caveats:** authorization — the notification recipient is the actor's owning user id, never the actor id, since notifications.user_id references users(id); partial failure — a recipient whose insert fails is logged and skipped while the remaining recipients are still notified; idempotency — a mentioned AI character resolves to no recipient and is dropped from the fan-out, so the notified count is lower than the mention count and callers must not treat it as an error
