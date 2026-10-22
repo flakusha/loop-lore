@@ -25,8 +25,8 @@ describe("collectAssistantToolCalls", () => {
 
     const res = collectAssistantToolCalls(msgs,);
     expect(res.map((r,) => r.function.name),).toEqual(["f2", "f3", "f1",],);
-    expect(res[0].actorId,).toBe("m2",);
-    expect(res[0].actorName,).toBe("B",);
+    expect(res[0]?.actorId,).toBe("m2",);
+    expect(res[0]?.actorName,).toBe("B",);
   });
 
   test("skips null tool_calls", () => {
