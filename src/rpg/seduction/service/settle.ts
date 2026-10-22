@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
+import type { DB, } from "../../../db/schema";
 import type { Kysely, } from "kysely";
-import { MoodService, } from "../../../characters/services/mood-service";
+import type { SeductionSkill, } from "./types";
 import type { SeductionSkillCategory, } from "../../../db/enums";
 import { ContentIntensity, } from "../../../db/enums-character/nsfw";
-import type { DB, } from "../../../db/schema";
+import { MoodService, } from "../../../characters/services/mood-service";
+import { XpSource, } from "../../xp/sources";
+import { awardXp, } from "./skills";
+import { awardXpToActor, } from "../../level/index.js";
+import { checkMechanicEnabled, RpgMechanic, } from "../../service/world-gate.js";
 import { getLogger, } from "../../../logger";
 import { logXp, } from "../../service/xp";
-import { XpSource, } from "../../xp/sources";
 import { modifyArousal, } from "./arousal";
-import { awardXp, } from "./skills";
-import type { SeductionSkill, } from "./types";
 
 /**
  * Settle a resolved attempt: arousal, dual XP, and mood follow-through.
@@ -67,15 +68,43 @@ export async function settleAttempt(args: {
 
   // Award skill XP (category granularity) + shared-ledger XP (TASK-040).
   // Record the category skill first, then mirror to the shared ledger.
+  // Per-world rpg_xp opt-in (FEAT-gate-xp): seduction carries its own worldId,
+  // so a denial is a real opt-out. The pipeline call is best-effort like
+  // every reward leg; a LevelService rejection falls back to the raw ledger
+  // mirror so the seduction payout is never silently lost.
   if (relevantSkill) {
     await awardXp(db, actorId, skillCategory, relevantSkill.name, xpGained,);
-    await logXp({ database: db, }, {
-      actorId,
-      amount: xpGained,
-      source: XpSource.NsfwSeduction,
-      description: `Seduction ${success ? "success" : "failure"} (${skillCategory})`,
-      chatId: undefined,
-    },);
+    let pipelined = false;
+    if (worldId) {
+      const gate = await checkMechanicEnabled(db, worldId, RpgMechanic.Xp,);
+      if (gate.allowed) {
+        try {
+          await awardXpToActor(db, {
+            actorId,
+            amount: xpGained,
+            source: XpSource.NsfwSeduction,
+            description: `Seduction ${success ? "success" : "failure"} (${skillCategory})`,
+            chatId: undefined,
+          },);
+
+          pipelined = true;
+        } catch (cause) {
+          log.warn(`Seduction pipeline XP skipped for ${actorId}, falling back to ledger:`, {
+            error: cause instanceof Error ? cause.message : String(cause,),
+          },);
+        }
+      }
+    }
+
+    if (!pipelined) {
+      await logXp({ database: db, }, {
+        actorId,
+        amount: xpGained,
+        source: XpSource.NsfwSeduction,
+        description: `Seduction ${success ? "success" : "failure"} (${skillCategory})`,
+        chatId: undefined,
+      },);
+    }
   }
 
   // Mood follow-through (TASK-041): one source-tagged event on the target.

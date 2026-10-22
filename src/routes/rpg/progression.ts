@@ -23,6 +23,7 @@ import {
 } from "../../rpg/level";
 import { LevelServiceError, } from "../../rpg/level/types.js";
 import { getCharacterStats, } from "../../rpg/service/character-stats.js";
+import { checkMechanicEnabled, RpgMechanic, } from "../../rpg/service/world-gate";
 import { getXpHistory, } from "../../rpg/service/xp.js";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
@@ -139,9 +140,23 @@ export function progressionRoutes({ database, }: HandlerOpts, prefix = "/api",):
       // ── Award XP through the pipeline ─────────────────────
       .post(
         `${R}/:actorId/award`,
-        (ctx: RouteCtx & { body: { amount: number; source: string; description?: string; chatId?: string } },) =>
+        (
+          ctx: RouteCtx & {
+            body: { amount: number; source: string; description?: string; chatId?: string; worldId?: string };
+          },
+        ) =>
           withActor(ctx, async (actorId,) => {
             const body = ctx.body;
+            // Per-world rpg_xp opt-in (FEAT-gate-xp): explicit worldId + opt
+            // out rejects with 400 through the shared envelope. No worldId
+            // stays fail-open (world-less callers have no gate to consult).
+            if (body.worldId) {
+              const gate = await checkMechanicEnabled(database, body.worldId, RpgMechanic.Xp,);
+              if (!gate.allowed) {
+                return jsonError(gate.reason ?? "RPG XP not enabled for this world", 400,);
+              }
+            }
+
             return jsonResponse(
               await awardXpToActor(database, {
                 actorId,
@@ -161,6 +176,7 @@ export function progressionRoutes({ database, }: HandlerOpts, prefix = "/api",):
               source: t.String(),
               description: t.Optional(t.String(),),
               chatId: t.Optional(t.String(),),
+              worldId: t.Optional(t.String(),),
             },
           ),
         },

@@ -17,6 +17,7 @@ import type { DB, } from "../../db/schema.js";
 import { getLogger, } from "../../logger";
 import { awardXpToActor, } from "../../rpg/level/index.js";
 import { getCharacterStats, } from "../../rpg/service/character-stats.js";
+import { checkMechanicEnabled, RpgMechanic, } from "../../rpg/service/world-gate.js";
 import { xpForQuest, XpSource, } from "../../rpg/xp/sources.js";
 
 /** Minimal quest projection the XP leg needs. */
@@ -24,6 +25,7 @@ export interface QuestXpSource {
   id: string;
   name: string;
   creator_id: string;
+  world_id?: string | null;
   category?: string | null;
 }
 
@@ -40,6 +42,21 @@ export async function awardQuestCompletionXp(
   const log = getLogger().child({ module: "quest-engine", },);
   try {
     if (!quest.creator_id) { return; }
+
+    // Per-world rpg_xp opt-in (FEAT-gate-xp): quest rows always carry
+    // world_id, but the /quest command projection selects it explicitly — a
+    // missing value stays fail-open like the chat gate.
+    if (quest.world_id) {
+      const gate = await checkMechanicEnabled(db, quest.world_id, RpgMechanic.Xp,);
+      if (!gate.allowed) {
+        log.debug("Quest completion XP skipped: world opted out", {
+          questId: quest.id,
+          worldId: quest.world_id,
+        },);
+
+        return;
+      }
+    }
 
     // character_stats / xp_ledger carry no FK to actors: a dangling
     // creator_id (deleted or never-existing actor) would bootstrap a ghost

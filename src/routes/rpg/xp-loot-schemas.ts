@@ -39,6 +39,9 @@ export const AwardBody = t.Object({
   description: t.Optional(t.String(),),
   referenceId: t.Optional(t.String(),),
   chatId: t.Optional(t.String(),),
+  worldId: t.Optional(t.String(),),
+  currentLevel: t.Optional(t.Number(),),
+  currentXp: t.Optional(t.Number(),),
 },);
 
 export const LevelBody = t.Object({
