@@ -23,7 +23,9 @@ const failed: string[] = [];
 
 for (const file of files) {
   console.log(`Running ${file}...`,);
-  const child = Bun.spawn(["bun", "test", "--max-concurrency=1", file,], {
+  // process.execPath, not "bun": the gate runner invokes this script with a
+  // PATH that need not contain bun, and a by-name spawn died with ENOENT.
+  const child = Bun.spawn([process.execPath, "test", "--max-concurrency=1", file,], {
     cwd: root,
     env: {
       ...process.env,
