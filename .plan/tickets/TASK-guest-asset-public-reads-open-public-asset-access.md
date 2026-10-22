@@ -19,11 +19,11 @@ canAccessAsset (src/assets/service/read.ts) requires a non-null actorId for publ
 - canAccessAsset / visibleAssetFilter gain an open-public branch: visibility=public readable with userId=null (guest context).
 - Registered-public: any authenticated actorId can read public assets (existing behavior, now explicit).
 - Shared (asset_shares) and owner branches unchanged.
-- Raw/thumbnail bytes still served via the existing signed-URL path (src/assets/signed-url.ts).
+- Raw/thumbnail bytes still served via the existing signed-URL path (src/assets/signed-url.ts); minting a signed URL requires an authenticated caller (guests use the direct serve path).
 
 ## Acceptance
 
-- Guest can list and fetch public assets (metadata + signed-URL bytes).
+- Guest can list and fetch public assets (metadata + direct-serve bytes; the signed-URL mint route is authenticated-only — 401 for a guest).
 - Guest cannot fetch private/shared-only assets.
 - Registered user public-asset reads unchanged.
 - No actorId requirement leaks into the public branch.
@@ -34,8 +34,8 @@ canAccessAsset (src/assets/service/read.ts) requires a non-null actorId for publ
 
 - `src/assets/service/read.ts`: `canAccessAsset` takes `actorId: string | null` and grants `AssetVisibility.Public` to any caller, including the synthetic guest tier (null actor id). The owner, `asset_shares` and admin branches are unchanged and still require a real actor id. `visibleAssetFilter` (and its gallery sibling `visibleGalleryAssetFilter`) take `string | null`; a null actor id is folded to `""`, which never equals a real id, so a guest's filter is exactly "public assets".
 - Types widened to match: `src/search/types.ts` (`SearchScope` assets arm `userId: string | null`) and `src/search/convenience.ts` (`searchAssets`).
-- The read surface needed no guard change: `src/assets/controller.ts` already forwarded `(ctx as any).userId ?? null` on the collection, single-asset, transform, raw, download, thumb, compressed and signed-url-mint reads, and `src/assets/serve-handlers.ts` (`resolveAsset`/`resolveForServe`) already took `actorId: string | null`. Verified unchanged: `src/routes/views/gallery.ts` (`applyGalleryAssetFilters` already folds a null actor id to `""`), `src/search/providers/assets.ts` (passes `scope.userId` straight into `visibleAssetFilter`).
-- Raw/thumbnail bytes keep the existing signed-URL path (`src/assets/signed-url.ts`); a guest can mint a signed URL for a public asset because the mint route resolves through the same guard.
+- The read surface needed no guard change: `src/assets/controller.ts` already forwarded `(ctx as any).userId ?? null` on the collection, single-asset, transform, raw, download, thumb and compressed reads, and `src/assets/serve-handlers.ts` (`resolveAsset`/`resolveForServe`) already took `actorId: string | null`. Verified unchanged: `src/routes/views/gallery.ts` (`applyGalleryAssetFilters` already folds a null actor id to `""`), `src/search/providers/assets.ts` (passes `scope.userId` straight into `visibleAssetFilter`).
+- Raw/thumbnail bytes: a guest fetches public bytes through the direct serve path (`GET /api/assets/:id/raw|thumb|download|compressed`). The signed-URL **mint** route (`POST /api/assets/:id/signed-url/:action`) is authenticated-only (`requireUserId`, 401 for a guest): a minted token authorizes session-less fetching until expiry without re-checking visibility, so a guest-minted token would outlive a later flip to private. The signing format itself is unchanged (`src/assets/signed-url.ts`).
 
 Why one guard per shared function: the asset read surface has exactly two decision points (`canAccessAsset` for a single asset, `visibleAssetFilter` for a list). Both were widened; no route-level duplicate was added, so an asset read cannot pass one filter and be refused by the other.
 
@@ -45,7 +45,7 @@ Rejected alternative: seeding a shared/owner row for the guest tier. Rejected �
 
 Mutation routes are untouched: PATCH/PUT/DELETE/LINK/SHARE still call `requireUserId` and the owner/share checks.
 
-Tests: `src/assets/service/read.test.ts` (+4 — public asset readable with a null actor id, private and shared-only denied, list filter yields public-only for a null actor id, registered public reads unchanged). `bun test src/assets/service/read.test.ts` → 27 pass / 0 fail; `bunx tsc --noEmit` clean.
+Tests: `src/assets/service/read.test.ts` (+4 — public asset readable with a null actor id, private and shared-only denied, list filter yields public-only for a null actor id, registered public reads unchanged) and `src/assets/controller.routes.test.ts` (+1 — the signed-url mint route returns 401 for an unauthenticated caller). `bun test src/assets/service/read.test.ts` → 27 pass / 0 fail; `bunx tsc --noEmit` clean.
 
 **Acceptance Criteria:**
 

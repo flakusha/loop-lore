@@ -339,6 +339,12 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       // access check as serving; the token then authorizes session-less
       // fetching (e.g. <img src>) until expiry.
       .post(`${prefix}/assets/:id/signed-url/:action`, async (ctx,) => {
+        // Minting is authenticated-only: the token authorizes session-less
+        // fetching until expiry without re-checking visibility, so a
+        // guest-minted token would survive a later flip to private. Guests
+        // fetch public bytes through the direct serve path instead.
+        const authedId = requireUserId(ctx,);
+        if (typeof authedId !== "string") { return authedId; }
         const userId = (ctx as any).userId as string | null ?? null;
         const userRole = (ctx as any).userRole as string | null ?? null;
         const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);

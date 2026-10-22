@@ -134,8 +134,36 @@ export async function checkChatAccess(
     return { ok: true, };
   }
 
+  // Participant + moderation first: a live ban/block denies even members of
+  // a public chat (403). Outsiders fall through to the public branch below
+  // so they keep getting `not_found` (no ban-state oracle for non-members).
+  // Admins/creators bypassed above for moderation duties.
+  if (userId !== null) {
+    const participant = await database
+      .selectFrom("chat_participants",)
+      .select("actor_id",)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "=", userId,)
+      .executeTakeFirst();
+
+    if (participant) {
+      const block = await getModerationBlock(database, chatId, userId,);
+      if (block === "ban") {
+        return { ok: false, error: { code: "forbidden", message: "User is banned", }, };
+      }
+
+      if (block === "block") {
+        return { ok: false, error: { code: "forbidden", message: "User is blocked", }, };
+      }
+
+      return { ok: true, };
+    }
+  }
+
   // Public chats are readable by any authenticated caller AND the synthetic
-  // guest tier (userId null, role `guest`). Unlisted stays participant-only.
+  // guest tier (userId null with a role granting `chat.join`). Members were
+  // resolved above; anyone reaching this branch is a non-member stranger or
+  // guest, so no moderation state leaks. Unlisted stays participant-only.
   if (
     chat.visibility === ChatVisibility.Public &&
     (userId !== null || can(userRole, "chat.join",))
@@ -143,35 +171,7 @@ export async function checkChatAccess(
     return { ok: true, };
   }
 
-  if (userId === null) {
-    return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
-  }
-
-  const participant = await database
-    .selectFrom("chat_participants",)
-    .select("actor_id",)
-    .where("chat_id", "=", chatId,)
-    .where("actor_id", "=", userId,)
-    .executeTakeFirst();
-
-  if (!participant) {
-    return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
-  }
-
-  // Moderation enforcement (chat/moderation.ts): live ban/block rows deny
-  // even participants. Runs after the participation check so outsiders keep
-  // getting `not_found` (no ban-state oracle for non-members).
-  // Admins/creators bypassed above for moderation duties.
-  const block = await getModerationBlock(database, chatId, userId,);
-  if (block === "ban") {
-    return { ok: false, error: { code: "forbidden", message: "User is banned", }, };
-  }
-
-  if (block === "block") {
-    return { ok: false, error: { code: "forbidden", message: "User is blocked", }, };
-  }
-
-  return { ok: true, };
+  return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
 }
 
 /**
