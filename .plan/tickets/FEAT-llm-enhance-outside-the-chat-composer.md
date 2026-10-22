@@ -3,7 +3,7 @@
 
 # FEAT: LLM-enhance outside the chat composer
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-chat-composer-flows
@@ -38,3 +38,5 @@ The goal: make the action reusable (input element + string in, rewritten string 
 - [ ] The chat composer Improve/Analyze buttons continue to work without modification (no regression)
 - [ ] Each free-text surface listed in Context can be enhanced via the same action (wire one as a pilot, document the pattern for the rest)
 - [ ] Enhanced text replaces the surface value non-destructively; user can undo the last enhancement
+
+**Resolved:** 2026-10-22 registry-driven close: git issue bd93da5 (registry tip: d952d5f41 Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-LLM-ENHANCE-OUTSIDE-THE-CHA)
