@@ -73,13 +73,20 @@ export const NPC_REVELATION =
 export const ITEM_GIVE =
   /(?:gives?|hands?|offers?|passes?|trades?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?\s+(?:to\s+|for\s+)/i;
 
-/** Matches taking/picking up items: "takes the key", "picks up a scroll" */
+/** Matches taking/picking up items: "takes the key", "picks up a scroll".
+ *
+ * The capture is bounded ({1,30} chars) and ends at punctuation,
+ * end-of-input, or a clause boundary (and/then/from/to/...) so trailing
+ * narrative ("drops the Torch and walks on") is not swallowed into the
+ * item name. Same anchor/bound rationale as {@link LOCATION_MOVEMENT}. */
 export const ITEM_TAKE =
-  /(?:takes?|picks?\s+up|grabs?|collects?|acquires?|receives?|finds?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?/i;
+  /(?:takes?|picks?\s+up|grabs?|collects?|acquires?|receives?|finds?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z][A-Za-z\s]{0,29}?)[""']?(?:[,.;!?]|$|\s+(?:and|or|but|then|from|to|for|with|while|before|after|on|at|in|into)\b)/i;
 
-/** Matches dropping/leaving items: "drops the sword", "leaves behind a note" */
+/** Matches dropping/leaving items: "drops the sword", "leaves behind a note".
+ *
+ * Same capture/terminator rationale as {@link ITEM_TAKE}. */
 export const ITEM_DROP =
-  /(?:drops?|leaves?\s+behind|abandons?|puts?\s+down)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?/i;
+  /(?:drops?|leaves?\s+behind|abandons?|puts?\s+down)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z][A-Za-z\s]{0,29}?)[""']?(?:[,.;!?]|$|\s+(?:and|or|but|then|from|to|for|with|while|before|after|on|at|in|into)\b)/i;
 
 // ── Lore Update Patterns ──────────────────────────────────────
 

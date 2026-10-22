@@ -57,6 +57,19 @@ describe("validateMimeType", () => {
     expect(validateMimeType("IMAGE/SVG+XML",),).toBe("Unsupported file type: IMAGE/SVG+XML",);
   });
 
+  test("rejects SVG with MIME parameters (charset suffix is still SVG)", () => {
+    expect(validateMimeType("image/svg+xml;charset=utf-8",),).toBe(
+      "Unsupported file type: image/svg+xml;charset=utf-8",
+    );
+
+    expect(validateMimeType("IMAGE/SVG+XML; charset=UTF-8",),).toBe(
+      "Unsupported file type: IMAGE/SVG+XML; charset=UTF-8",
+    );
+
+    // Parameter-stripping must not admit unlisted types.
+    expect(validateMimeType("text/html; charset=utf-8",),).not.toBeNull();
+  });
+
   test("rejects disallowed families", () => {
     expect(validateMimeType("text/html",),).toBe("Unsupported file type: text/html",);
     expect(validateMimeType("application/zip",),).toBe("Unsupported file type: application/zip",);

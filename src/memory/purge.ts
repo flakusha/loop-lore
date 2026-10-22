@@ -215,9 +215,11 @@ export async function touchMemory(
   const now = new Date().toISOString();
   await db
     .updateTable("actor_memories",)
+    // ponytail: CASE keeps the shared clamp in the one writer both touches
+    // route through; a second function would drift again.
     .set((eb,) => ({
       last_accessed_at: now,
-      strength: eb("strength", "+", 0.1,),
+      strength: eb.case().when(eb("strength", ">", 0.9,),).then(1,).else(eb("strength", "+", 0.1,),).end(),
     }))
     .where("id", "=", memoryId,)
     .execute();
@@ -240,7 +242,7 @@ export async function touchMemories(
     .updateTable("actor_memories",)
     .set((eb,) => ({
       last_accessed_at: now,
-      strength: eb("strength", "+", 0.1,),
+      strength: eb.case().when(eb("strength", ">", 0.9,),).then(1,).else(eb("strength", "+", 0.1,),).end(),
     }))
     .where("id", "in", memoryIds,)
     .execute();

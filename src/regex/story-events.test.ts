@@ -230,6 +230,14 @@ describe("story-events regex", () => {
       expect(ITEM_TAKE.test("They find a hidden gem.",),).toBe(true,);
     });
 
+    it("captures the full name, stopping at clause boundaries", () => {
+      expect(ITEM_TAKE.exec("He takes the key from the table.",)?.[1],).toBe("key",);
+      expect(ITEM_TAKE.exec("They find a hidden gem.",)?.[1],).toBe("hidden gem",);
+      // A bare number is not an item name.
+      expect(ITEM_TAKE.test("Health drops to 5.",),).toBe(false,);
+      expect(ITEM_DROP.test("Health drops to 5.",),).toBe(false,);
+    });
+
     it("matches collects", () => {
       expect(ITEM_TAKE.test("He collects the bounty.",),).toBe(true,);
     });
@@ -239,6 +247,11 @@ describe("story-events regex", () => {
     it("matches drops", () => {
       const match = ITEM_DROP.exec("He drops the broken sword.",);
       expect(match,).not.toBeNull();
+    });
+
+    it("captures the full name, stopping at trailing narrative", () => {
+      expect(ITEM_DROP.exec("He drops the broken sword.",)?.[1],).toBe("broken sword",);
+      expect(ITEM_DROP.exec("Sam drops the Torch and walks on.",)?.[1],).toBe("Torch",);
     });
 
     it("matches leaves behind", () => {
