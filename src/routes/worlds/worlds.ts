@@ -137,7 +137,9 @@ export async function handleGetWorld(
   userId: string | null,
   userRole: string | null,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  // Read-only route: the synthetic guest tier (auth.guestAccess) may read
+  // PUBLIC worlds here — and only here.
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole, { allowGuest: true, },);
   if (worldErr) { return worldErr; }
   const world = await database.selectFrom("worlds",).selectAll().where("id", "=", worldId,).executeTakeFirst();
   return jsonResponse(world,);

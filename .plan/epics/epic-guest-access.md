@@ -8,7 +8,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** High — public reach / demo-ability gap
 **Tags:** auth, access, guest, public, visibility, read-only
 
@@ -168,13 +168,17 @@ outright until a guest-tier policy exists.
 
 ## Acceptance Criteria
 
-- [ ] With `auth.guestAccess=true`, an unauthenticated request derives a
+- [x] With `auth.guestAccess=true`, an unauthenticated request derives a
       guest context (`userRole=guest`, no user/session rows) and can reach
       read-mostly public routes; with the flag off, behavior is unchanged.
 - [ ] Guest can list and read `visibility=public` chats, public assets, and
-      public worlds without an account.
-- [ ] No mutation route is reachable as guest (401 via `requireUserId`).
-- [ ] Solo mode (`auth.required=false`, no flag) still yields the solo user
+      public worlds without an account. (Public worlds: partially —
+      `GET /api/worlds/:worldId` reads a PUBLIC world; listing, chats and
+      assets land in Phase 2/3.)
+- [x] No mutation route is reachable as guest: `requireUserId` denies the
+      null user id, and the `guest` role holds no write permission, so the
+      routes that guard by role alone deny it too.
+- [x] Solo mode (`auth.required=false`, no flag) still yields the solo user
       with `["*"]` perms — no fallthrough regression.
 - [ ] Registered-public tier: any authenticated user can read public
       chats/assets/worlds they are not a participant/owner of.
@@ -190,6 +194,25 @@ outright until a guest-tier policy exists.
 `auth.guestAccess` flag; derive branch; `requireUserId`-adjacent guard for
 read-mostly routes; unit tests (incl. solo-fallback guard).
 → `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md`
+
+**Shipped.** The derive branch, the config flag (`auth.guestAccess`, env
+`AUTH_GUEST_ACCESS`) and the guards are in. Two notes for the later phases:
+
+- The guest branch is reached only when `auth.required` is true, so the solo
+  fallback still wins in solo mode; a presented-but-invalid token still 401s.
+- The guest grant on world reads is **opt-in per read route**
+  (`requireWorldAccess(..., { allowGuest: true })`), not a widening of the
+  shared helper: several world routes authorize through `requireWorldAccess`
+  alone and are POST/PUT/DELETE. `GET /api/worlds/:worldId` (PUBLIC worlds)
+  is the first route to opt in — the rest of the read-only world surface
+  (Phase 3) follows the same pattern.
+- An account-less caller (anonymous or guest) has a client-supplied
+  `x-user-id` dropped in the auth derive, so a guest cannot borrow another
+  identity in the access log or the async lifecycle row.
+- The tier reuses the existing `guest` role of the RBAC matrix
+  (`chat.join`, `character.view`, `world.view` — no write permission), so no
+  permission was widened. `requireUserId` denies its null user id, and the
+  routes that guard by role alone deny the guest role too.
 
 ### Phase 2: Visibility enforcement (chats + assets)
 

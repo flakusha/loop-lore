@@ -131,7 +131,9 @@ async function verifyTokenContext(
  * Priority: try JWT (Bearer header > cookie) first. If valid, return
  * that user's context. If a token was presented but failed verification,
  * return 401 — solo fallback applies only when NO token was presented and
- * authConfig.required === false.
+ * authConfig.required === false. When no token was presented, auth is
+ * required, and authConfig.guestAccess is on, the caller derives the
+ * synthetic guest context (no user id, no session row) instead of a 401.
  * @param root0
  * @param root0.request
  * @param root0.database
@@ -179,6 +181,22 @@ export async function authenticate({
       context: createRequestContext({
         userId: soloUser.id,
         userRole: UserRole.Solo,
+        sessionId: null,
+      },),
+    };
+  }
+
+  // ── Guest tier: read-mostly context for unauthenticated visitors ──
+  // Reachable only when auth.required is true: the solo fallback above
+  // returns first, so a solo deployment never degrades into a guest one.
+  // The guest context carries no user id and no session id — no users row,
+  // no sessions row, re-derived per request. `requireUserId` keeps denying
+  // it, so every mutating route stays closed by construction.
+  if (authConfig.guestAccess === true) {
+    return {
+      context: createRequestContext({
+        userId: null,
+        userRole: UserRole.Guest,
         sessionId: null,
       },),
     };

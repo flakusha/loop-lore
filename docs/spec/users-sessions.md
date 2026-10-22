@@ -136,6 +136,7 @@ Env overrides:
 
 ```shell
 AUTH_REQUIRED=true                  # true=multi-user, false=demo/solo
+AUTH_GUEST_ACCESS=false             # true=visitors without an account get a read-mostly guest context
 AUTH_REGISTRATION_OPEN=true         # allow /api/auth/register (must be enforced)
 SESSION_TIMEOUT_HOURS=24            # idle session timeout
 SESSION_MAX_PER_USER=10             # max simultaneous sessions (not yet enforced)

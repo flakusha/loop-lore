@@ -390,6 +390,7 @@ ageGate:
 
 auth:
   required: false # true = remote multi-user, false = demo/solo
+  guestAccess: false # true = visitors without an account get a read-mostly guest context
   registrationOpen: true # allow new user registration
   sessionTimeoutHours: 24 # idle session timeout
   maxSessionsPerUser: 10 # max simultaneous sessions per user
@@ -418,6 +419,7 @@ Env vars override config file values (12-factor style). Mapping in
 | `TLS_KEY`                | `server.tls.key`           | string  |
 | `TLS_CERT`               | `server.tls.cert`          | string  |
 | `AUTH_REQUIRED`          | `auth.required`            | boolean |
+| `AUTH_GUEST_ACCESS`      | `auth.guestAccess`         | boolean |
 | `AUTH_REGISTRATION_OPEN` | `auth.registrationOpen`    | boolean |
 | `SESSION_TIMEOUT_HOURS`  | `auth.sessionTimeoutHours` | number  |
 | `SESSION_MAX_PER_USER`   | `auth.maxSessionsPerUser`  | number  |
