@@ -35,14 +35,18 @@ declare global {
 
   // ── App globals (set by HTML template via <script>) ─────────────────────
   var apiFetch: typeof import("./fe-fetch").feFetch;
+  var __USER_ID: string | undefined;
   var THEMES: Array<{ id: string; name: string }>;
   var __THEMES: Array<{ id: string; name: string }>;
   var chatState: Record<string, unknown>;
   var worldEditState: Record<string, unknown>;
 
   // ── UI functions ───────────────────────────────────────────────────────
-  var showToast: (type: string, message: string,) => void;
+  var keyManagement: (this: unknown, ...args: unknown[]) => unknown;
+  var locationExplorerState: (worldId: string,) => unknown;
+  var npcManagementState: () => unknown;
   var closeSidebar: () => void;
+  var settingsPage: () => unknown;
   var toggleSidebar: () => void;
   var applyTheme: (themeId: string,) => void;
 
@@ -50,6 +54,7 @@ declare global {
   var setLocale: (locale: string,) => void;
   var __: (key: string, params?: Record<string, string>,) => string;
   var __localeStrings: Record<string, unknown>;
+  var __escapeKeyListenerRegistered: boolean;
 
   // ── Persona (inline shape — defined in alpine/personas.ts) ────────────
   var personasPage: {

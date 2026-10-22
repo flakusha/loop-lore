@@ -71,48 +71,8 @@ const log = rootLog.child(
 ,)
 ;
 
-const getDOMPurify = () =>
-  (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string, config?: unknown,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
-
-const getDOMPurify = () => (globalThis as any).__DOMPurify as 
-{
- sanitize(html: string,): string 
-}
- | undefined
-;
+const log = rootLog.child({ module: "chat", },);
+const getDOMPurify = () => __DOMPurify as { sanitize(html: string, config?: unknown,): string } | undefined;
 
 const getDOMPurify = () => (globalThis as any).__DOMPurify as 
 {

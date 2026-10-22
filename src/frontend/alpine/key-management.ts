@@ -24,7 +24,7 @@ export interface ActorKeyMeta {
   expiresAt: string | null;
 }
 
-(globalThis as any).keyManagement = function() {
+keyManagement = function() {
   return {
     keys: [] as ActorKeyMeta[],
     loading: false,
