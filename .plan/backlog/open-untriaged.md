@@ -97,7 +97,11 @@ Two new epics with 27 tickets filed together on 2026-09-11. Tickets live on disk
   land opt-in gating first (safety-relevant).
 - **Coverage waivers + frontend batches** — `be72331` sub-floor waiver, `b4789c2` raise
   below-floor modules, `78c179f` alpine admin/npc/settings clusters, `55f201f` VN
-  pages/new-chat/quests/worlds. Suggested home: release-010 hardening.
+  pages/new-chat/quests/worlds. Suggested home: release-010 hardening. **Decision
+  (2026-10-22):** ~90% coverage is acceptable and no coverage baseline shift is
+  needed — the per-module floor (`scripts/check/coverage.mjs`) and the test-gap
+  baseline (`scripts/check/test-gaps-baseline.json`) stay as committed. These
+  tickets are quality-of-life lifts, not a gate to unblock.
 - **Item-generation discoverability** — `0d771c9` subcommand docs, `0f840fd`
   describe-preview-confirm UI, `b95bbff` review parity, `219124a` shared draft store.
   Suggested home: P2-C assistant tooling.

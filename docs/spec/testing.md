@@ -14,6 +14,7 @@ Finalize path (`giwt finalize <branch>`): 1) `bun run check --diff-base <target-
 ## Coverage goals & known gaps (directional, not pinned metrics)
 
 - Targets: core logic ≥90%, config/validation ≥80%, edge cases ≥70%, integration ≥60%.
+- Decision (2026-10-22): ~90% coverage is acceptable as-is. No coverage baseline shift is needed — the committed per-module floor (`scripts/check/coverage.mjs`, `scripts/check/coverage/waivers.mjs`) and the test-gap baseline (`scripts/check/test-gaps-baseline.json`) stay exactly as they are.
 - Well-covered: age-gate, steganography, config, content, crypto, db, generation core, logger, middleware, http-utils, story/game-master, transport, utils.
 - Pure-logic quick wins without tests: `src/utils/{get-type,safe-json}.ts`, `src/profanity/service.ts`, `src/db/state.ts`, `src/middleware/{admin-gate,rate-limit}.ts`, `src/transport/{errors,compression}.ts`, `src/story/quality-evaluator.ts` (505 L), `src/story/turn-strategies.ts`, story events extraction, `src/assistant/service.ts`, `src/content/hash-injection.ts`, `src/routes/router.ts`, `src/plugins/registry.ts`, `src/config/constants.ts`.
 - Needs DB/provider mocks: cancellation actions/tracker, image-gen + generation routes, assets/personas services+controllers, turn-manager, quest-engine, world-state, story events, `src/middleware/auth/`.

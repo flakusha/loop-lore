@@ -141,7 +141,7 @@
 - [ ] **Lore-consistency checker** (`FEAT-066`) — AI-powered consistency validation across character descriptions, world lore, and memory entries. |
 - [ ] **Memory access audit log** (`FEAT-075`) — who-pinned-what, decay timeline, source attribution — audit trail for memory operations. |
 - [ ] **API versioning** (`FEAT-035`–`FEAT-044`) — version prefix routing, response envelope version, legacy redirect, deprecation headers, OpenAPI generation, schema versioning table, migration reconciliation, content versioning framework, migration testing + docs. (deferred from P6 — API governance epic; wire when API consumers stabilize) |
-- [ ] **Unit test coverage** — 8 tickets from reconcile review:
+- [ ] **Unit test coverage** — 8 tickets from reconcile review (optional lifts: ~90% coverage is acceptable and no coverage baseline shift is needed, so none of these gate a landing):
   - `TEST-admin-seeddefaults-silent-duplicate-skip-untested` — seedDefaults idempotency
   - `TEST-characters-charx-roundtrip-untested` — charx extract→create round-trip
   - `TEST-gallery-frontend-utils-untested` — gallery chat-utils unit tests
