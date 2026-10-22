@@ -161,10 +161,7 @@ document.addEventListener("htmx:after:request", (e: Event,) => {
 },);
 
 document.addEventListener("asset:uploaded", () => {
-  try {
-    Alpine.store("ui",).showUploadModal = false;
-  } catch { /* store not ready */ }
-
+  document.querySelector("#upload-modal",)?.classList.remove("open",);
   showToast("success", t("toasts.assetUploaded",),);
   refreshHtmx("#asset-grid",);
 },);
@@ -172,10 +169,7 @@ document.addEventListener("asset:uploaded", () => {
 document.addEventListener(
   "asset:duplicate",
   ((e: CustomEvent,) => {
-    try {
-      Alpine.store("ui",).showUploadModal = false;
-    } catch { /* store not ready */ }
-
+    document.querySelector("#upload-modal",)?.classList.remove("open",);
     const filename = e.detail?.filename ?? t("gallery.assetFallback",);
     showToast("warning", t("toasts.assetAlreadyExists", { filename, },),);
     const grid = document.querySelector("#asset-grid",);
@@ -189,19 +183,13 @@ document.addEventListener("character:created", () => {
 },);
 
 document.addEventListener("character:imported", () => {
-  try {
-    Alpine.store("ui",).showImportForm = false;
-  } catch { /* store not ready */ }
-
+  document.querySelector("#import-modal",)?.classList.remove("open",);
   showToast("success", t("toasts.characterImported",),);
   refreshHtmx("#character-grid",);
 },);
 
 document.addEventListener("world:saved", () => {
-  try {
-    Alpine.store("ui",).showEditModal = false;
-  } catch { /* store not ready */ }
-
+  document.querySelector("#edit-world-modal",)?.classList.remove("open",);
   showToast("success", t("toasts.worldSaved",),);
   refreshHtmx("#world-detail",);
 },);
