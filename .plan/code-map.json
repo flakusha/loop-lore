@@ -7834,6 +7834,10 @@
   "src/characters/services/mood-service.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-041.md"
     }
   ],
@@ -15085,6 +15089,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-.md"
+    }
+  ],
+  "src/crypto/edge_cases.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve.md"
     }
   ],
   "src/crypto/hasher.ts": [
@@ -44585,6 +44595,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs.md"
     },
     {
       "kind": "ticket",

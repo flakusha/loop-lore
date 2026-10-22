@@ -958,7 +958,8 @@
       "title": "At-rest tier-none envelope short-circuit stores plaintext verbatim and fabricates wasEncrypted: true",
       "status": "done",
       "srcRefs": [
-        "src/crypto/at-rest.ts"
+        "src/crypto/at-rest.ts",
+        "src/crypto/edge_cases.test.ts"
       ],
       "related": []
     },
@@ -3030,6 +3031,7 @@
       "title": "Dead-code guard in advancePartyTravel",
       "status": "done",
       "srcRefs": [
+        "src/rpg/world-travel/travel.test.ts",
         "src/rpg/world-travel/travel.ts"
       ],
       "related": []
@@ -3369,6 +3371,7 @@
       "title": "edgeAhead does not validate location existence",
       "status": "done",
       "srcRefs": [
+        "src/rpg/world-discovery/trade.test.ts",
         "src/rpg/world-discovery/trade.ts"
       ],
       "related": []
@@ -4083,6 +4086,7 @@
       "title": "fix(server): gate docs serving on config, redirect /docs to /docs/",
       "status": "done",
       "srcRefs": [
+        "src/routes/views/layout.ts",
         "src/server/static-files.ts"
       ],
       "related": []
@@ -4318,6 +4322,7 @@
       "status": "done",
       "srcRefs": [
         "src/game-state/service.ts",
+        "src/regex/game-state.test.ts",
         "src/regex/game-state.ts"
       ],
       "related": []
@@ -5276,7 +5281,8 @@
       "title": "Inconsistent DB handle in migration.ts npc_states write",
       "status": "done",
       "srcRefs": [
-        "src/rpg/world-travel/migration.ts"
+        "src/rpg/world-travel/migration.ts",
+        "src/rpg/world-travel/types.ts"
       ],
       "related": []
     },
@@ -6225,6 +6231,7 @@
       "title": "mood last_mood_change fix is a no-op for all production callers",
       "status": "done",
       "srcRefs": [
+        "src/characters/services/mood-service.test.ts",
         "src/characters/services/mood-service/update-mood.ts"
       ],
       "related": []
@@ -6524,7 +6531,8 @@
       "title": "NPC migration with deleted destination leaves NPC stuck at origin",
       "status": "done",
       "srcRefs": [
-        "src/rpg/world-travel/migration.ts"
+        "src/rpg/world-travel/migration.ts",
+        "src/rpg/world-travel/travel.test.ts"
       ],
       "related": []
     },
@@ -55088,6 +55096,7 @@
     {
       "path": "src/characters/services/mood-service.test.ts",
       "owners": [
+        "BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call",
         "TASK-041"
       ]
     },
@@ -59230,6 +59239,12 @@
       "path": "src/crypto/e2e/wrap-sender-key.ts",
       "owners": [
         "TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-"
+      ]
+    },
+    {
+      "path": "src/crypto/edge_cases.test.ts",
+      "owners": [
+        "BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve"
       ]
     },
     {
@@ -71906,6 +71921,12 @@
       ]
     },
     {
+      "path": "src/regex/game-state.test.ts",
+      "owners": [
+        "BUG-game-state-block-regex-truncates-payloads-containing-an-inne"
+      ]
+    },
+    {
       "path": "src/regex/game-state.ts",
       "owners": [
         "BUG-game-state-block-regex-truncates-payloads-containing-an-inne",
@@ -76220,6 +76241,7 @@
     {
       "path": "src/routes/views/layout.ts",
       "owners": [
+        "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
         "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
         "BUG-raw-json-parse-outside-safe-json-3-sites",
         "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
@@ -79116,6 +79138,12 @@
       ]
     },
     {
+      "path": "src/rpg/world-discovery/trade.test.ts",
+      "owners": [
+        "BUG-edgeahead-does-not-validate-location-existence"
+      ]
+    },
+    {
       "path": "src/rpg/world-discovery/trade.ts",
       "owners": [
         "BUG-edgeahead-does-not-validate-location-existence",
@@ -79144,6 +79172,13 @@
       ]
     },
     {
+      "path": "src/rpg/world-travel/travel.test.ts",
+      "owners": [
+        "BUG-dead-code-guard-in-advancepartytravel",
+        "BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o"
+      ]
+    },
+    {
       "path": "src/rpg/world-travel/travel.ts",
       "owners": [
         "BUG-dead-code-guard-in-advancepartytravel",
@@ -79155,6 +79190,7 @@
     {
       "path": "src/rpg/world-travel/types.ts",
       "owners": [
+        "BUG-inconsistent-db-handle-in-migration-ts-npc-states-write",
         "epic-exploration-discovery"
       ]
     },
@@ -96059,6 +96095,11 @@
       "to": "src/crypto/at-rest.ts"
     },
     {
+      "from": "BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve",
+      "kind": "produces",
+      "to": "src/crypto/edge_cases.test.ts"
+    },
+    {
       "from": "BUG-audit-panel-details-not-expandable",
       "kind": "produces",
       "to": "src/components/chat/memory-panel.html"
@@ -98081,6 +98122,11 @@
     {
       "from": "BUG-dead-code-guard-in-advancepartytravel",
       "kind": "produces",
+      "to": "src/rpg/world-travel/travel.test.ts"
+    },
+    {
+      "from": "BUG-dead-code-guard-in-advancepartytravel",
+      "kind": "produces",
       "to": "src/rpg/world-travel/travel.ts"
     },
     {
@@ -98347,6 +98393,11 @@
       "from": "BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on",
       "kind": "produces",
       "to": "src/services/agency/story-points/mutations.ts"
+    },
+    {
+      "from": "BUG-edgeahead-does-not-validate-location-existence",
+      "kind": "produces",
+      "to": "src/rpg/world-discovery/trade.test.ts"
     },
     {
       "from": "BUG-edgeahead-does-not-validate-location-existence",
@@ -99051,6 +99102,11 @@
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
       "kind": "produces",
+      "to": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "produces",
       "to": "src/server/static-files.ts"
     },
     {
@@ -99262,6 +99318,11 @@
       "from": "BUG-game-state-block-regex-truncates-payloads-containing-an-inne",
       "kind": "produces",
       "to": "src/game-state/service.ts"
+    },
+    {
+      "from": "BUG-game-state-block-regex-truncates-payloads-containing-an-inne",
+      "kind": "produces",
+      "to": "src/regex/game-state.test.ts"
     },
     {
       "from": "BUG-game-state-block-regex-truncates-payloads-containing-an-inne",
@@ -100344,6 +100405,11 @@
       "to": "src/rpg/world-travel/migration.ts"
     },
     {
+      "from": "BUG-inconsistent-db-handle-in-migration-ts-npc-states-write",
+      "kind": "produces",
+      "to": "src/rpg/world-travel/types.ts"
+    },
+    {
       "from": "BUG-initdhratchetopts-theirinitialpub-declared-but-never-read",
       "kind": "produces",
       "to": "src/crypto/e2e/dh-ratchet.ts"
@@ -101096,6 +101162,11 @@
     {
       "from": "BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call",
       "kind": "produces",
+      "to": "src/characters/services/mood-service.test.ts"
+    },
+    {
+      "from": "BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call",
+      "kind": "produces",
       "to": "src/characters/services/mood-service/update-mood.ts"
     },
     {
@@ -101357,6 +101428,11 @@
       "from": "BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o",
       "kind": "produces",
       "to": "src/rpg/world-travel/migration.ts"
+    },
+    {
+      "from": "BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o",
+      "kind": "produces",
+      "to": "src/rpg/world-travel/travel.test.ts"
     },
     {
       "from": "BUG-npc-navigation-routes-all-stubbed",
@@ -179039,6 +179115,12 @@
     {
       "from": "BUG-dead-code-guard-in-advancepartytravel",
       "kind": "sibling",
+      "to": "BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o",
+      "via": "src/rpg/world-travel/travel.test.ts"
+    },
+    {
+      "from": "BUG-dead-code-guard-in-advancepartytravel",
+      "kind": "sibling",
       "to": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
       "via": "src/rpg/world-travel/travel.ts"
     },
@@ -188675,6 +188757,18 @@
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
       "kind": "sibling",
+      "to": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "BUG-raw-json-parse-outside-safe-json-3-sites",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
       "to": "BUG-size-strict-pre-existing-dev-drift",
       "via": "src/server/static-files.ts"
     },
@@ -188699,8 +188793,20 @@
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
       "kind": "sibling",
+      "to": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
       "to": "FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc",
       "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag",
+      "via": "src/routes/views/layout.ts"
     },
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
@@ -188718,7 +188824,19 @@
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
       "kind": "sibling",
       "to": "TASK-docs-ui-endpoint-linkage",
-      "via": "src/server/static-files.ts"
+      "via": "src/routes/views/layout.ts; src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "TASK-frontend-view-model-extraction",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "TASK-frontend-view-model-json-negotiation",
+      "via": "src/routes/views/layout.ts"
     },
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
@@ -188729,8 +188847,26 @@
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
       "kind": "sibling",
+      "to": "TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
       "to": "TASK-perf-server-no-cache-html-entry-points-stream-static-files-w",
       "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "TASK-server-side-i18n-middleware",
+      "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "TASK-template-preflight-production-resolver-gate",
+      "via": "src/routes/views/layout.ts"
     },
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
@@ -188742,7 +188878,13 @@
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
       "kind": "sibling",
       "to": "epic-docs-reconciliation",
-      "via": "src/server/static-files.ts"
+      "via": "src/routes/views/layout.ts; src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/routes/views/layout.ts"
     },
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
@@ -196788,7 +196930,7 @@
       "from": "BUG-inconsistent-db-handle-in-migration-ts-npc-states-write",
       "kind": "sibling",
       "to": "epic-exploration-discovery",
-      "via": "src/rpg/world-travel/migration.ts"
+      "via": "src/rpg/world-travel/migration.ts; src/rpg/world-travel/types.ts"
     },
     {
       "from": "BUG-initdhratchetopts-theirinitialpub-declared-but-never-read",
@@ -202861,6 +203003,12 @@
       "kind": "sibling",
       "to": "epic-character-growth",
       "via": "src/characters/services/relationships-service/write.ts"
+    },
+    {
+      "from": "BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call",
+      "kind": "sibling",
+      "to": "TASK-041",
+      "via": "src/characters/services/mood-service.test.ts"
     },
     {
       "from": "BUG-music-links-panel-sends-explicit-null-sectionid-causing-422-",
