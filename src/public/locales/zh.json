@@ -1180,7 +1180,17 @@
     "seenBy": "Seen by",
     "variantRpg": "RPG",
     "variantRpgGroup": "RPG Group",
-    "variantStandard": "Standard"
+    "variantStandard": "Standard",
+    "variantAssistant": "Assistant chat",
+    "variantAssistantGroup": "Assistant group chat",
+    "variantCharacter": "Character chat (1×1 RP)",
+    "variantCharacterGroup": "Multi-character group RP",
+    "variantLlmOnly": "LLM-only validation chat",
+    "variantLlmOnlyGroup": "LLM-only group sandbox",
+    "variantLlmOnlyGroupGm": "LLM group with GM (guided story)",
+    "variantUser1x1": "User chat (1×1)",
+    "variantUserGroup": "User group chat",
+    "variantUserGroupAdmin": "User group with admin"
   },
   "personas": {
     "title": "Personas",
@@ -1902,7 +1912,6 @@
   "planning": {
     "board": "Planning Board"
   },
-
   "ageGate": {
     "logo": "loop-lore",
     "heading": "Age Verification",

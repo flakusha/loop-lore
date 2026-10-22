@@ -18,7 +18,6 @@ import "./autonomy-panel";
 import "./blog";
 import "./character-extension-editor";
 import "./chat";
-import "./chat-creation/variants";
 import "./chat-outfit-switcher";
 import "./comfyui-builder";
 import "./command-buttons";
