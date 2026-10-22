@@ -74,6 +74,16 @@ Alpine.plugin(morph,);
 htmx.config.implicitInheritance = true;
 // Preserve htmx 2.x no-swap-on-error behavior.
 htmx.config.noSwap = [204, 304, "4xx", "5xx",] as any;
+// Guard htmx 4 internal null-detail crash: normalize null detail to {}.
+const __origHtmxTrigger = htmx.trigger.bind(htmx,);
+htmx.trigger = function(on, eventName, detail, bubbles,) {
+  if (detail == null) {
+    console.log("HTMX.TRIGGER null-detail:", eventName,);
+    detail = {};
+  }
+
+  return __origHtmxTrigger(on, eventName, detail, bubbles,);
+};
 
 // ── 5. Alpine magic: $t (i18n) ──────────────────────────────────
 Alpine.magic("t", (el: HTMLElement,) => {
