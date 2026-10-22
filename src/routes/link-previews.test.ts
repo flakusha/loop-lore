@@ -29,7 +29,7 @@ let realFetch: typeof fetch;
 
 /** */
 function mockFetch(): void {
-  globalThis.fetch = ((input: string | URL | Request,): Promise<Response> => {
+  globalThis.fetch = ((_input: string | URL | Request,): Promise<Response> => {
     return Promise.resolve(new Response(OG_HTML, { status: 200, },),);
   }) as unknown as typeof fetch;
 }
