@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
+**Caveats:** authorization — the notification recipient is the actor's owning user id, never the actor id, since notifications.user_id references users(id); partial failure — a recipient whose insert fails is logged and skipped while the remaining recipients are still notified; idempotency — a mentioned AI character resolves to no recipient and is dropped from the fan-out, so the notified count is lower than the mention count and callers must not treat it as an error
 
 **Summary:**
 
