@@ -5,6 +5,7 @@ import { $, } from "../dom";
 import {
   applyDirection,
   getSavedLocale,
+  type Locale,
   resolveKey,
   saveLocale,
   type TranslationMap,
@@ -23,7 +24,7 @@ globalThis.app = function() {
     currentLocale: getSavedLocale(),
     // Seed from server-injected translations so Alpine bindings resolve
     // immediately, without waiting for the async loadLocale() fetch.
-    localeStrings: ((globalThis as any).__localeStrings || {}) as TranslationMap,
+    localeStrings: (globalThis.__localeStrings ?? {}) as unknown as TranslationMap,
     pageTitle: "loop-lore",
 
     /**
@@ -41,8 +42,8 @@ globalThis.app = function() {
      */
     init() {
       initTelemetry();
-      const initCount = ((globalThis as any).__appInitCount ?? 0) + 1;
-      (globalThis as any).__appInitCount = initCount;
+      const initCount = (globalThis.__appInitCount ?? 0) + 1;
+      globalThis.__appInitCount = initCount;
       log.debug("init", { initCount, },);
 
       const savedTheme = localStorage.getItem("theme-preference",);
@@ -116,8 +117,8 @@ globalThis.app = function() {
         if (res.ok) {
           const strings = await res.json() as TranslationMap;
           this.localeStrings = strings;
-          globalThis.__localeStrings = strings as any;
-          applyDirection(locale as any,);
+          globalThis.__localeStrings = strings as unknown as Record<string, string>;
+          applyDirection(locale as Locale,);
         }
       } catch (error) {
         log.warn("Failed to load locale", { error: String(error,), },);
@@ -158,7 +159,7 @@ globalThis.app = function() {
      * @returns {void}
      */
     setLocale(localeId: string,) {
-      saveLocale(localeId as any,);
+      saveLocale(localeId as Locale,);
       this.currentLocale = localeId;
       this.loadLocale(localeId,);
     },

@@ -1,41 +1,39 @@
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { profiles, } from "./profiles";
 import type { ProfileDetail, } from "./types";
 
 import type { ApiFetchMock, } from "../../tests/test-types";
 
 const globalState = globalThis as unknown as {
-  apiFetch?: ApiFetchMock;
   showToast?: (type: string, message: string,) => void;
 };
 
-const originalFetch = globalState.apiFetch;
 const originalToast = globalState.showToast;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 let toasts: { type: string; message: string }[] = [];
 
+mock.module("../htmx", () => ({
+  apiFetch: (url: string, opts?: RequestInit,) => {
+    calls.push({ url, opts: opts ?? {}, },);
+    return handler(url, opts,);
+  },
+}),);
+
 beforeEach(() => {
   calls = [];
   toasts = [];
   handler = async () => Response.json({},);
-  // profiles.ts calls the ambient apiFetch/showToast globals.
-  globalState.apiFetch = (url, opts,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  };
-
   globalState.showToast = (type, message,) => {
     toasts.push({ type, message, },);
   };
 },);
 
 afterEach(() => {
-  globalState.apiFetch = originalFetch;
   globalState.showToast = originalToast;
+  calls = [];
 },);
 
-/** Minimal list payload accepted by AdminTemplateListResponse. */
 const listPayload = {
   profiles: [],
   defaultProfileId: "flux",
