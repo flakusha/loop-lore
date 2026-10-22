@@ -182,6 +182,9 @@ which reads `ts.SyntaxKind.Unknown` at `dist/checker.js:669`:
 ```js
 const createSkippedNodeKinds = () => new Set([
     ts.SyntaxKind.Unknown,
+    ts.SyntaxKind.EndOfFileToken,
+    // ... further trivia, literal and token kinds elided ...
+]);
 ```
 
 The upstream comment at `dist/checker.js:666` —
