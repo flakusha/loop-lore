@@ -3,7 +3,7 @@
 
 # FEAT: Integrate skill progression with LevelService as one guarded award pipeline
 
-**Status:** In Progress
+**Status:** in_progress
 **Status Note:** character XP (`xp_ledger` + `character_stats`) and skill-row XP (`SkillsService.addXp`, `src/rpg/skills/service/progression.ts:19`) share no award path on dev; work in branch `xp-level-pipeline`; verified 2026-10-23
 **Priority:** medium
 **Effort:** Medium
