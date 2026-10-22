@@ -252,14 +252,16 @@ describe("NotificationService", () => {
     // Two world participants: one whose user row is gone (its notification
     // insert fails the FK) and one healthy. The recipients are notified
     // independently, so the healthy one still gets its row and the first
-    // failure is surfaced to the caller. The ghost actor id sorts first so
-    // the recipient order cannot hide a sequential abort.
+    // failure is surfaced to the caller. The ghost actor id is the smallest
+    // possible uuid, so the recipient order (chat_participants is keyed by
+    // (chat_id, actor_id)) always puts the failing recipient first - a
+    // sequential implementation would abort before the healthy one.
     const local = await createTestDb();
     try {
       const worldId = uid();
       const ghostUser = uid();
       const healthyUser = uid();
-      const ghostActor = "00000000-0000-4000-a000-000000000000";
+      const ghostActor = "00000000-0000-4000-8000-000000000000";
       const healthyActor = uid();
       const chatId = uid();
 
