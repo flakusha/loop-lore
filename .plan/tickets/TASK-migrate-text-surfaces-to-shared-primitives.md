@@ -75,3 +75,49 @@ The mobile composer was refactored onto shared primitives (auto-resize, draft st
 - [x] `auto-resize.ts` — registered `autoResize` on `globalThis` for bare-identifier use in plain modals
 
 **Resolved:** 2026-10-22 registry-driven close: git issue 492c9ba (registry tip: f472ceace Konstantin Fedotov Auto-closed: appended .md marker marks TASK-MIGRATE-TEXT-SURFACES-TO-SH)
+
+## Resolution (2026-10-22, worktree chat-composer-flows)
+
+Batches A (chat surfaces) and B (view surfaces) landed as checked off above;
+every item was re-verified against dev tip 8b0d2770 in the closeout worktree
+(autoResize wiring and `{{> text-toolbar.html }}` includes confirmed per
+file).
+
+Batch C — closeout enumeration. `grep "<textarea|contenteditable"` across
+`src/components/`, `src/views/`, `src/partials/` in the worktree: zero
+`contenteditable` hits, 33 textarea sites. Five genuine stragglers inside the
+ticket's own Change list were still unwired; migrated following the
+established sibling pattern — stable id → autoResize + toolbar include beside
+the textarea in a flex row; `x-show`-gated inline editors → `@input`
+autoResize in the handler chain only (no `x-init`, so rows hidden at mount
+don't collapse to a 0px height); no toolbar without a stable id:
+
+| Surface | File | Wiring added |
+| --- | --- | --- |
+| New location description `#loc-desc` | `src/views/world-edit.html` | `@input` autoResize + toolbar |
+| Inline location edit (`editLocDesc`) | `src/views/world-edit.html` | `@input` autoResize |
+| New item description `#item-desc` | `src/views/world-edit.html` | `@input` autoResize + toolbar |
+| Inline item edit (`editItemDesc`) | `src/views/world-edit.html` | `@input` autoResize |
+| Wizard description `#wizard-description` | `src/partials/worlds/create-wizard.html` | `x-init` + `@input` autoResize + toolbar |
+
+Out of scope (enumerated, left unmigrated): the `text-toolbar.html` usage-doc
+example; the main composer (`input-area.html` — keeps its own controls and
+already runs the full wiring chain) and the mobile composer (single-line
+`<input>` by design, toolbar + draft already wired); the readonly preview at
+`chat-settings-modal.html:738`; and surfaces outside this ticket's Change
+list — `branch-merge-modal.html` merge-draft rows, `message-list.html` flag
+"other" box, `vn-templates-panel.html` JSON draft, `admin.html` (5 sites,
+admin console, 4 of them JSON), `config.html` JSON editor,
+`world-lore-panel.html` `#lore-content`, and
+`src/partials/characters/create-modal.html` (5 prose fields) — none appear in
+the Change list above; any of them would need their own ticket.
+
+Sections/traits/wardrobe panels confirmed textarea-free (inputs only).
+Draft persistence stays where batches A/B put it (composer and mobile
+composer own factories); the small form modals keep no drafts, matching the
+landed pattern.
+
+Verified 2026-10-22 in worktree chat-composer-flows: post-migration grep
+shows every ticket-listed textarea wired; scoped frontend gates (template
+preflight, innerHTML xss, i18n static keys + reconcile) and targeted tests
+run green on the closeout branch.

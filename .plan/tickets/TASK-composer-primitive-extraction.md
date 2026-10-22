@@ -42,3 +42,23 @@ The previous attempt landed `auto-resize.ts` on dev but lost `draft-store.ts`. T
 - [x] Documentation updated
 
 **Resolved:** 2026-10-22 registry-driven close: git issue 6e8d3cd (registry tip: 4324cb136 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-COMPOSER-PRIMITIVE-EXTRACTI)
+
+## Resolution (2026-10-22, worktree chat-composer-flows)
+
+Shipped: `src/frontend/alpine/auto-resize.ts` — `autoResize(el, maxPx = 200)`
+plus `globalThis.autoResize` registration so plain modals can call it as a
+bare identifier; `src/frontend/alpine/draft-store.ts` —
+`createKeyedDraftStore({ prefix, indexKey, maxChars, maxEntries, ttlMs,
+storage, now })` owning the MRU/LRU draft bodies (blank-removes,
+quota-swallow, corrupt-index → empty); `src/frontend/alpine/chat-drafts.ts`
+now delegates through `chatDraftStoreFor()` → `createKeyedDraftStore` while
+keeping its historical export surface, so its tests pass unmodified;
+`composer-pre-send/preview.ts` carries the shared-primitive header doc (no
+code change), deliberately not unified with `composer-pre-send/draft-codec.ts`.
+
+Verified 2026-10-22 in worktree chat-composer-flows (dev tip 8b0d2770):
+`auto-resize.ts`, `draft-store.ts:62` `createKeyedDraftStore`, and the
+`chat-drafts.ts` delegation are present; tests `auto-resize.test.ts` (px
+clamp), `draft-store.test.ts` (custom prefix, LRU eviction, TTL expiry,
+corrupt index), plus the unmodified `chat-drafts.test.ts` /
+`chat-messages.test.ts` suites.
