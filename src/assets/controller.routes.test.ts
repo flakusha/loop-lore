@@ -357,6 +357,21 @@ describe("POST /api/assets/:id/signed-url/:action", () => {
       await cleanup(fx,);
     }
   });
+
+  test("401 when unauthenticated — a guest cannot mint a token", async () => {
+    const fx = await seed();
+    try {
+      const res = await makeApp(fx.db, null, fx.uploadDir, (c,) => {
+        c.assets.signedUrlSecret = "test-hmac-secret-0123456789";
+      },).handle(
+        new Request(`http://localhost/api/assets/${fx.assetId}/signed-url/raw`, { method: "POST", },),
+      );
+
+      expect(res.status,).toBe(401,);
+    } finally {
+      await cleanup(fx,);
+    }
+  });
 });
 
 describe("asset links", () => {

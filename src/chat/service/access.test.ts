@@ -159,6 +159,30 @@ describe("checkChatAccess public visibility (guest tier)", () => {
     const result = await checkChatAccess(database, chatId, "u-stranger", "user",);
     expect(result.ok,).toBe(false,);
   });
+
+  it("denies a banned member on public chats (no public-branch bypass)", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-member", role: "member", },],
+      visibility: "public",
+    },);
+
+    await insertModerationActions(database, "ban", "u-member", "u-owner", "spam", "global",);
+    const result = await checkChatAccess(database, chatId, "u-member", null,);
+    expect(result,).toEqual({ ok: false, error: { code: "forbidden", message: "User is banned", }, },);
+  });
+
+  it("denies a chat-blocked member on public chats", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-member", role: "member", },],
+      visibility: "public",
+    },);
+
+    await insertModerationActions(database, "block", "u-member", "u-owner", "spam", "chat", { scope_id: chatId, },);
+    const result = await checkChatAccess(database, chatId, "u-member", null,);
+    expect(result,).toEqual({ ok: false, error: { code: "forbidden", message: "User is blocked", }, },);
+  });
 });
 
 describe("checkChatSettingsAccess (strict settings-mutation)", () => {
