@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
+**Caveats:** security — the catch block now drops the audit entry instead of writing it to stdout, so request identifiers and role context no longer reach an external log sink; observability — a permission denial is only recorded when the structured logger is available, so a boot-time denial before logger init leaves no trace beyond the returned error
 
 **Summary:**
 
