@@ -13,7 +13,16 @@ import { worldLocations, } from "./world-locations";
   return {
     worldId: "",
     activeTab: "general",
-    world: { name: "", description: "", lore: "", kind: "rpg", visibility: "private", },
+    world: {
+      name: "",
+      description: "",
+      lore: "",
+      kind: "rpg",
+      visibility: "private",
+      rpgEnabled: true,
+      rpgXp: true,
+      rpgSkills: true,
+    },
     tagsStr: "",
     loading: true,
     error: false,
@@ -44,6 +53,9 @@ import { worldLocations, } from "./world-locations";
           lore?: string;
           kind?: "rpg" | "chat";
           visibility?: "private" | "unlisted" | "public";
+          rpg_enabled?: number;
+          rpg_xp?: number;
+          rpg_skills?: number;
           settings?: string;
         }>(this.worldId, "",);
 
@@ -54,6 +66,9 @@ import { worldLocations, } from "./world-locations";
             lore: data.lore ?? "",
             kind: data.kind ?? "rpg",
             visibility: data.visibility ?? "private",
+            rpgEnabled: (data.rpg_enabled ?? 0) === 1,
+            rpgXp: (data.rpg_xp ?? 0) === 1,
+            rpgSkills: (data.rpg_skills ?? 0) === 1,
           };
 
           if (data.settings) {
