@@ -54,13 +54,11 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
     }
   });
 
-  it("talkativity is null or a number in [1,10]", () => {
+  it("talkativity is a number in [1,10]", () => {
     for (const v of CHAT_VARIANTS) {
       const t = VARIANT_DEFAULTS[v].talkativity;
-      if (t !== null) {
-        expect(t,).toBeGreaterThanOrEqual(1,);
-        expect(t,).toBeLessThanOrEqual(10,);
-      }
+      expect(t,).toBeGreaterThanOrEqual(1,);
+      expect(t,).toBeLessThanOrEqual(10,);
     }
   });
 
