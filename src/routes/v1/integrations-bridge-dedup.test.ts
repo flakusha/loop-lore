@@ -50,15 +50,19 @@ function sign(body: string,): string {
 /**
  * POST one delivery through the surface app.
  * @param app
+ * @param signature - the signature header value (defaults to a valid one)
  * @returns the raw response
  */
-function post(app: { handle(request: Request,): Promise<Response> },): Promise<Response> {
+function post(
+  app: { handle(request: Request,): Promise<Response> },
+  signature = sign(BODY,),
+): Promise<Response> {
   return app.handle(
     new Request(`http://localhost/api/v1/integrations/webhooks/${ADAPTER}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        [WEBHOOK_SIGNATURE_HEADER]: sign(BODY,),
+        [WEBHOOK_SIGNATURE_HEADER]: signature,
       },
       body: BODY,
     },),
@@ -119,6 +123,31 @@ describe("integrations webhook surface - real bridge dedup", () => {
     expect(second.status,).toBe(202,);
     const secondJson = (await second.json()) as { dispatched: boolean };
     expect(secondJson.dispatched,).toBe(false,);
+    expect(calls,).toBe(1,);
+  });
+
+  test("an unauthenticated delivery does not spend the verified delivery budget", async () => {
+    let calls = 0;
+    const bridge = createMessageBridge(createBridgeRegistry(),);
+    bridge.onMessage(() => {
+      calls++;
+    },);
+
+    // A single delivery fits the budget: only a junk POST that consumed it
+    // could starve the legitimate delivery below.
+    const limiter = createRateLimiter({ windowMs: 60_000, maxRequests: 1, },);
+    createdLimiters.push(limiter,);
+    const app = new Elysia().use(
+      integrationsSurface(registerOpts, { bridge, adapterSecrets: { [ADAPTER]: SECRET, }, limiter, },),
+    );
+
+    const junk = await post(app, "not-the-signature",);
+    expect(junk.status,).toBe(401,);
+
+    const delivery = await post(app,);
+    expect(delivery.status,).toBe(202,);
+    const json = (await delivery.json()) as { dispatched: boolean };
+    expect(json.dispatched,).toBe(true,);
     expect(calls,).toBe(1,);
   });
 });

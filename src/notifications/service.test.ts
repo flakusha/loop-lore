@@ -1,19 +1,21 @@
-import { beforeAll, describe, expect, test, } from "bun:test";
-import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import type { Kysely, } from "kysely";
+import { Database, } from "bun:sqlite";
+import { NotificationService, NotificationType, notifyGmAction, notifyMention, notifyQuestUpdate, } from "./service";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
-import { NotificationService, NotificationType, notifyGmAction, notifyMention, notifyQuestUpdate, } from "./service";
 
 describe("NotificationService", () => {
   let db: Kysely<DB>;
+  let sqlite: Database;
   const userA = uid();
   const userB = uid();
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
-    ({ db, } = await createTestDb());
+    ({ db, sqlite, } = await createTestDb());
     for (const id of [userA, userB,]) {
       await db
         .insertInto("users",)
@@ -209,6 +211,98 @@ describe("NotificationService", () => {
     await notifyQuestUpdate(db, { worldId: "w-muted", chatId: chatId, questName: "Q", },);
 
     expect(await svc.getUnreadCount(userD,),).toBe(0,);
+  });
+
+  test("notifyQuestUpdate notifies every recipient even when one insert fails", async () => {
+    // Two world participants: one whose user row is gone (the notification
+    // insert fails the FK) and one healthy. The recipients are notified
+    // independently, so the healthy one still gets its row and the first
+    // failure is surfaced to the caller.
+    const worldId = "w-parallel";
+    const ghostUser = uid();
+    const healthyUser = uid();
+    const ghostActor = uid();
+    const healthyActor = uid();
+    const chatId = uid();
+
+    for (const id of [ghostUser, healthyUser,]) {
+      await db
+        .insertInto("users",)
+        .values({
+          id,
+          username: `u-${id}`,
+          display_name: "U",
+          role: "solo",
+          status: "active",
+          settings: "{}",
+        },)
+        .execute();
+    }
+
+    await db
+      .insertInto("actors",)
+      .values([
+        {
+          id: ghostActor,
+          actor_type: "user",
+          display_name: "Ghost",
+          user_id: ghostUser,
+          owner_id: ghostUser,
+          agent_type: "none",
+          settings: "{}",
+          row_version: 0,
+          visibility: "private",
+          import_spec: "{}",
+        },
+        {
+          id: healthyActor,
+          actor_type: "user",
+          display_name: "Healthy",
+          user_id: healthyUser,
+          owner_id: healthyUser,
+          agent_type: "none",
+          settings: "{}",
+          row_version: 0,
+          visibility: "private",
+          import_spec: "{}",
+        },
+      ],)
+      .execute();
+
+    await db
+      .insertInto("worlds",)
+      .values({ id: worldId, owner_id: healthyUser, name: "Parallel World", },)
+      .execute();
+
+    await db
+      .insertInto("chats",)
+      .values({
+        id: chatId,
+        name: "Parallel World Chat",
+        type: "direct",
+        mode: "direct",
+        created_by: healthyUser,
+        world_id: worldId,
+      },)
+      .execute();
+
+    await db
+      .insertInto("chat_participants",)
+      .values([
+        { chat_id: chatId, actor_id: healthyActor, },
+        { chat_id: chatId, actor_id: ghostActor, },
+      ],)
+      .execute();
+
+    // Drop the ghost user with FK enforcement off: the actor keeps a
+    // dangling user_id, so the notification insert for it fails.
+    sqlite.run("PRAGMA foreign_keys = OFF",);
+    await db.deleteFrom("users",).where("id", "=", ghostUser,).execute();
+    sqlite.run("PRAGMA foreign_keys = ON",);
+
+    const svc = new NotificationService(db,);
+    await expect(notifyQuestUpdate(db, { worldId, questName: "Q", },),).rejects.toThrow();
+    expect(await svc.getUnreadCount(healthyUser,),).toBe(1,);
   });
 
   test("buildRecentEventsContext formats", async () => {
