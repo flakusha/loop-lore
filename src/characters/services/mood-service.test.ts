@@ -113,6 +113,57 @@ describe("MoodService", () => {
     });
   });
 
+  describe("updateMood last_mood_change", () => {
+    it("bumps last_mood_change only on an actual category change", async () => {
+      const { actorId, } = await createTestActors(db, "test-actor-mood-lastchange-001",);
+      await moodService.createMood({ actorId, },);
+
+      const created = await moodService.getMood(actorId,);
+      expect(created?.happiness,).toBe(50,);
+      expect(created?.currentMood,).toBe("neutral",);
+      const createdAt = created?.lastMoodChange;
+
+      // Same-category happiness nudge (still the neutral band): not a change.
+      await new Promise((resolve,) => setTimeout(resolve, 5,));
+      await moodService.updateMood(actorId, undefined, { happiness: 55, },);
+      const nudged = await moodService.getMood(actorId,);
+      expect(nudged?.happiness,).toBe(55,);
+      expect(nudged?.lastMoodChange,).toBe(createdAt,);
+
+      // Same-label rewrite — what every production caller does — is not a
+      // category change either.
+      await new Promise((resolve,) => setTimeout(resolve, 5,));
+      await moodService.updateMood(actorId, undefined, { happiness: 55, currentMood: "neutral", },);
+      const rewritten = await moodService.getMood(actorId,);
+      expect(rewritten?.lastMoodChange,).toBe(createdAt,);
+
+      // Category flip: the mood really changed, so the timestamp moves.
+      await new Promise((resolve,) => setTimeout(resolve, 5,));
+      await moodService.updateMood(actorId, undefined, { happiness: 85, currentMood: "ecstatic", },);
+      const flipped = await moodService.getMood(actorId,);
+      expect(flipped?.currentMood,).toBe("ecstatic",);
+      expect(flipped?.lastMoodChange,).not.toBe(createdAt,);
+    });
+
+    it("bumps last_mood_change when a happiness nudge crosses a band", async () => {
+      const { actorId, } = await createTestActors(db, "test-actor-mood-bandcross-001",);
+      await moodService.createMood({ actorId, },);
+
+      const created = await moodService.getMood(actorId,);
+      expect(created?.happiness,).toBe(50,);
+      expect(created?.currentMood,).toBe("neutral",);
+      const createdAt = created?.lastMoodChange;
+
+      // 50 -> 85 crosses neutral -> ecstatic. No currentMood is passed, so
+      // only the happiness band can be responsible for the bump.
+      await new Promise((resolve,) => setTimeout(resolve, 5,));
+      await moodService.updateMood(actorId, undefined, { happiness: 85, },);
+      const crossed = await moodService.getMood(actorId,);
+      expect(crossed?.happiness,).toBe(85,);
+      expect(crossed?.lastMoodChange,).not.toBe(createdAt,);
+    });
+  });
+
   describe("logEvent", () => {
     it("should log a mood event", async () => {
       const eventId = await moodService.logEvent({

@@ -71,6 +71,49 @@ describe("encryptAtRest", () => {
     expect(result.wasEncrypted,).toBeFalse();
   });
 
+  test("at-rest tier does not adopt the key id of an envelope-shaped payload", async () => {
+    const envelope = await compressThenEncrypt({
+      plaintext: "Already encrypted",
+      chatKey: testSmk,
+      keyId: testKeyId,
+    },);
+
+    const result = await encryptAtRest({
+      database: mockDb,
+      chatId: "chat-1",
+      plaintext: envelope,
+      encryptionLevel: "at-rest",
+    },);
+
+    // The at-rest tier does not encrypt: it stores the payload verbatim and
+    // must not claim a key id it does not own.
+    expect(result.storedContent,).toBe(envelope,);
+    expect(result.keyId,).toBeNull();
+    expect(result.wasEncrypted,).toBe(true,);
+  });
+
+  test("standard tier keeps an already-encrypted payload as-is (wasEncrypted stays true)", async () => {
+    // The standard tier is the only tier that encrypts, so it is the only
+    // one that may recognise an existing envelope. The short-circuit fires
+    // before the switch, so this needs no SMK.
+    const envelope = await compressThenEncrypt({
+      plaintext: "Already encrypted",
+      chatKey: testSmk,
+      keyId: testKeyId,
+    },);
+
+    const result = await encryptAtRest({
+      database: mockDb,
+      chatId: "chat-1",
+      plaintext: envelope,
+      encryptionLevel: "standard",
+    },);
+
+    expect(result.storedContent,).toBe(envelope,);
+    expect(result.keyId,).toBe(testKeyId,);
+    expect(result.wasEncrypted,).toBe(true,);
+  });
+
   test("at-rest tier stores the wire payload verbatim (server is a passthrough)", async () => {
     // Phase D: the server does not transform at-rest payloads — it
     // accepts whatever the caller submits (plaintext or client-pre-

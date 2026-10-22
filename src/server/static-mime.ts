@@ -55,8 +55,18 @@ export function findCompressedVariant(
   // RFC 9110 §12.5.3: each coding may carry `;q=` (or any `;token=`)
   // parameters — strip them so "gzip;q=0.5" still matches "gzip".
   for (const encoding of acceptEncoding.split(",",)) {
-    const token = encoding.split(";",)[0] ?? "";
-    encodings.add(token.trim().toLowerCase(),);
+    const [rawToken, ...params] = encoding.split(";",);
+    const token = (rawToken ?? "").trim().toLowerCase();
+    if (token === "") { continue; }
+    const refused = params.some((param,) => {
+      const [name, value,] = param.split("=",);
+      if (name?.trim().toLowerCase() !== "q") { return false; }
+      const q = Number.parseFloat(value?.trim() ?? "",);
+      return Number.isFinite(q,) && q === 0;
+    },);
+
+    if (refused) { continue; }
+    encodings.add(token,);
   }
 
   if (encodings.has("br",) && existsSync(`${filePath}.br`,)) {
