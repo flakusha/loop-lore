@@ -41,6 +41,9 @@ export interface WorldCreateWizardState {
   kind: string;
   style: string;
   visibility: string;
+  rpgEnabled: boolean;
+  rpgXp: boolean;
+  rpgSkills: boolean;
   timeOfDay: string;
   weather: string;
   locations: WizardLocation[];
@@ -91,6 +94,9 @@ export function buildWorldCreateWizard(): WorldCreateWizardState {
     kind: "rpg",
     style: "fantasy",
     visibility: "private",
+    rpgEnabled: true,
+    rpgXp: true,
+    rpgSkills: true,
     timeOfDay: "",
     weather: "",
     locations: [],
@@ -154,6 +160,9 @@ export function buildWorldCreateWizard(): WorldCreateWizardState {
             description: this.description,
             kind: this.kind,
             visibility: this.visibility,
+            rpgEnabled: this.kind === "rpg" && this.rpgEnabled,
+            rpgXp: this.kind === "rpg" && this.rpgEnabled && this.rpgXp,
+            rpgSkills: this.kind === "rpg" && this.rpgEnabled && this.rpgSkills,
           },),
         },);
 

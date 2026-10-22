@@ -744,7 +744,12 @@
     "wizardCreating": "생성 중…",
     "wizardCreate": "월드 생성",
     "wizardFailed": "월드를 생성하지 못했습니다",
-    "wizardNameRequired": "월드 이름이 필요합니다."
+    "wizardNameRequired": "월드 이름이 필요합니다.",
+    "wizardRpgEnabled": "Enable RPG mechanics",
+    "wizardRpgEnabledHint": "Master switch — per-mechanic flags inherit this unless overridden.",
+    "wizardRpgXp": "XP and leveling",
+    "wizardRpgSkills": "Skills",
+    "wizardRpgSkillsHint": "Gates skill-XP awards; off keeps the world playable without skill progression."
   },
   "gallery": {
     "title": "갤러리",
