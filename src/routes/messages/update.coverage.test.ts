@@ -341,6 +341,38 @@ describe("updateRoutes coverage", () => {
     expect(denied.status,).toBe(404,);
   });
 
+  // Regression guard for the Phase 2 public-read branch: the read guard
+  // admits any reader of a public chat, but PUT visibility is a write — a
+  // stranger must get 403 (and the row stays untouched), admins still pass.
+  test("visibility 403 for non-author on a public chat", async () => {
+    const publicChat = uid();
+    await insertChats(db, "Public Vis", owner, { id: publicChat, visibility: "public", } as never,);
+    const id = uid();
+    await insertMessages(db, publicChat, owner, MessageRole.User, "pub-vis", { id, } as never,);
+    const putVis = (appUser: string, appRole: string,) =>
+      makeApp(db, appUser, appRole,).handle(
+        new Request(`http://localhost/api/messages/${id}/visibility`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ visibility: "redacted", },),
+        },),
+      );
+
+    const denied = await putVis(stranger, "user",);
+    expect(denied.status,).toBe(403,);
+    const untouched = await db.selectFrom("messages",).select("visibility",).where("id", "=", id,).executeTakeFirst();
+    expect(untouched?.visibility,).toBe("visible",);
+    const adminOk = await makeApp(db, stranger, "admin",).handle(
+      new Request(`http://localhost/api/messages/${id}/visibility`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ visibility: "redacted", },),
+      },),
+    );
+
+    expect(adminOk.status,).toBe(200,);
+  });
+
   test("status update requires admin but succeeds for admin", async () => {
     const id = await seedMessage("status me",);
     const userApp = makeApp(db, owner, "user",);

@@ -5,6 +5,7 @@
  * Message read operations: access check, listing, variants.
  */
 import type { Kysely, } from "kysely";
+import { ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import type {
@@ -38,15 +39,28 @@ export async function getMessageWithAccess(
 
   const chat = await database
     .selectFrom("chats",)
-    .select("created_by",)
+    .select(["created_by", "visibility",],)
     .where("id", "=", message.chat_id,)
     .executeTakeFirst();
 
-  if (!chat || (!can(userRole, "admin.chat",) && chat.created_by !== userId)) {
+  if (!chat) {
     return { code: "not_found", message: "Message not found", };
   }
 
-  return message;
+  if (can(userRole, "admin.chat",) || chat.created_by === userId) {
+    return message;
+  }
+
+  // Public-chat branch mirrors checkChatAccess: guests (null userId, guest
+  // role via `chat.join`) and authed strangers may read single messages.
+  if (
+    chat.visibility === ChatVisibility.Public &&
+    (userId !== null || can(userRole, "chat.join",))
+  ) {
+    return message;
+  }
+
+  return { code: "not_found", message: "Message not found", };
 }
 
 /**

@@ -1280,6 +1280,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-image-edit-concept-inpaint-template.md"
     },
     {
@@ -1493,6 +1497,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
     },
     {
       "kind": "spec",
@@ -1879,6 +1887,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
     }
   ],
   "src/assets/service/read.ts": [
@@ -9551,6 +9563,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     }
   ],
   "src/chat/service/access.ts": [
@@ -10345,6 +10361,10 @@
       "source": ".plan/epics/epic-multilingual-carriage.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-guest-access.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     },
@@ -10355,6 +10375,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-carriage-table-migration-admin-read.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     },
     {
       "kind": "ticket",
@@ -40857,6 +40881,12 @@
       "source": ".plan/tickets/TASK-assistant-gm-handoff.md"
     }
   ],
+  "src/routes/chats/guest-visibility.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
+    }
+  ],
   "src/routes/chats/index.ts": [
     {
       "kind": "epic",
@@ -40877,12 +40907,20 @@
       "source": ".plan/epics/epic-archival-workflow.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-guest-access.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-characters-list-and-chats-list-bypass-parsepagination-valida.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-archival-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     }
   ],
   "src/routes/chats/location.ts": [
@@ -40892,6 +40930,10 @@
     }
   ],
   "src/routes/chats/manage.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-guest-access.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
@@ -40915,6 +40957,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-chat-rename-and-migrate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     },
     {
       "kind": "ticket",
@@ -43135,6 +43181,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     }
   ],
   "src/routes/messages/read.ts": [
@@ -43153,6 +43203,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-guest-access.md"
     },
     {
       "kind": "ticket",
@@ -43197,6 +43251,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-carriage-table-migration-admin-read.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     }
   ],
   "src/routes/messages/reply-encrypted.test.ts": [
@@ -43405,6 +43463,12 @@
       "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
     }
   ],
+  "src/routes/messages/update.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
+    }
+  ],
   "src/routes/messages/update.test.ts": [
     {
       "kind": "ticket",
@@ -43416,6 +43480,10 @@
     }
   ],
   "src/routes/messages/update.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-guest-access.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-any-chat-participant-can-hard-delete-any-message.md"
@@ -43443,6 +43511,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-message-soft-delete-lets-any-chat-member-hide-any-member-s-m.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     }
   ],
   "src/routes/metrics.ts": [
@@ -45569,6 +45641,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-filter-generated-derived-content.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
     },
     {
       "kind": "ticket",
@@ -50459,6 +50535,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
     }
   ],
   "src/search/encrypted-tokens-backfill.test.ts": [
@@ -50551,6 +50631,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-creative-studio.md"
+    }
+  ],
+  "src/search/providers/assets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
     }
   ],
   "src/search/providers/messages.test.ts": [
@@ -50656,6 +50742,10 @@
     }
   ],
   "src/search/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"

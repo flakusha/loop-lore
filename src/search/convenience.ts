@@ -113,7 +113,7 @@ export async function searchAssets(
   db: Kysely<DB>,
   q: string,
   opts: ConvenienceOpts & {
-    userId: string;
+    userId: string | null;
     userRole?: string | null;
     isAdmin?: boolean;
     visibility?: "public" | "private" | "shared";

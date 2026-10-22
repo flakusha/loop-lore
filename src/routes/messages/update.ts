@@ -198,6 +198,19 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         const msgResult = await getMessageWithAccess(database, id, userId, ctx.userRole as string | null,);
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
 
+        // Mutation gate: the read guard above admits any reader of a public
+        // chat, but hiding/redacting a message is a write — only the author
+        // (or a chat admin) may do it. Mirrors the DELETE/PATCH ownership
+        // check below so the public-read branch cannot hide foreign rows.
+        const message = msgResult as { actor_id?: string };
+        if (message.actor_id !== userId && !can(ctx.userRole as string | null, "admin.chat",)) {
+          return jsonError({
+            message: ctx.t?.("messages.cannotEditMessage",) ?? "Cannot edit this message",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          },);
+        }
+
         await database
           .updateTable("messages",)
           .set({

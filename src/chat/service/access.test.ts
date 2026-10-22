@@ -51,6 +51,7 @@ beforeEach(async () => {
 async function seedChatWithParticipants(opts: {
   creatorId: string;
   participants?: { userId: string; role: "owner" | "member" | "observer" | "guest" | "gm" }[];
+  visibility?: "private" | "public" | "unlisted";
 },): Promise<string> {
   await insertUsers(database, `u-${opts.creatorId}`, "User", { id: opts.creatorId, } as never,);
   await insertActors(database, opts.creatorId, {
@@ -74,6 +75,7 @@ async function seedChatWithParticipants(opts: {
     id: `chat-${opts.creatorId}`,
     type: "group",
     mode: "group",
+    visibility: opts.visibility ?? "private",
   } as never,);
 
   await insertChatParticipants(database, `chat-${opts.creatorId}`, opts.creatorId, {
@@ -117,6 +119,44 @@ describe("checkChatAccess (broad read/join)", () => {
   it("denies non-participant", async () => {
     const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
     const result = await checkChatAccess(database, chatId, "u-stranger", null,);
+    expect(result.ok,).toBe(false,);
+  });
+});
+
+describe("checkChatAccess public visibility (guest tier)", () => {
+  it("admits the synthetic guest (null userId, guest role) on public chats", async () => {
+    const chatId = await seedChatWithParticipants({ creatorId: "u-owner", visibility: "public", },);
+    const result = await checkChatAccess(database, chatId, null, "guest",);
+    expect(result.ok,).toBe(true,);
+  });
+
+  it("denies the synthetic guest on private chats", async () => {
+    const chatId = await seedChatWithParticipants({ creatorId: "u-owner", visibility: "private", },);
+    const result = await checkChatAccess(database, chatId, null, "guest",);
+    expect(result.ok,).toBe(false,);
+  });
+
+  it("denies the synthetic guest on unlisted chats", async () => {
+    const chatId = await seedChatWithParticipants({ creatorId: "u-owner", visibility: "unlisted", },);
+    const result = await checkChatAccess(database, chatId, null, "guest",);
+    expect(result.ok,).toBe(false,);
+  });
+
+  it("denies a null userId without the guest role even on public chats", async () => {
+    const chatId = await seedChatWithParticipants({ creatorId: "u-owner", visibility: "public", },);
+    const result = await checkChatAccess(database, chatId, null, null,);
+    expect(result.ok,).toBe(false,);
+  });
+
+  it("admits an authenticated stranger on public chats", async () => {
+    const chatId = await seedChatWithParticipants({ creatorId: "u-owner", visibility: "public", },);
+    const result = await checkChatAccess(database, chatId, "u-stranger", "user",);
+    expect(result.ok,).toBe(true,);
+  });
+
+  it("keeps unlisted participant-only for authenticated strangers", async () => {
+    const chatId = await seedChatWithParticipants({ creatorId: "u-owner", visibility: "unlisted", },);
+    const result = await checkChatAccess(database, chatId, "u-stranger", "user",);
     expect(result.ok,).toBe(false,);
   });
 });

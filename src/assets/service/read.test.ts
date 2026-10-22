@@ -331,6 +331,52 @@ describe("canAccessAsset", () => {
       rmSync(uploadDir, { recursive: true, force: true, },);
     }
   });
+
+  test("guest null actor reads a public asset", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
+    try {
+      const ownerId = await seedOwner(db, uploadDir,);
+      await insertAssets(db, ownerId, "pub2.png", "image/png", "image" as never, 8, "raw/pu/b2/pub2.png", {
+        id: "public-asset-2" as never,
+        visibility: "public" as never,
+      },);
+
+      expect(await canAccessAsset(db, "public-asset-2", null, "guest",),).toBe(true,);
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("guest null actor denied private asset", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
+    try {
+      await seedOwner(db, uploadDir,);
+      expect(await canAccessAsset(db, ASSET_ID, null, "guest",),).toBe(false,);
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("guest null actor denied shared-only asset", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
+    try {
+      const ownerId = await seedOwner(db, uploadDir,);
+      await insertAssets(db, ownerId, "shared3.png", "image/png", "image" as never, 8, "raw/s3/shared3.png", {
+        id: "shared3-asset" as never,
+        visibility: "shared" as never,
+      },);
+
+      expect(await canAccessAsset(db, "shared3-asset", null, "guest",),).toBe(false,);
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
 });
 
 describe("listAssets", () => {
@@ -464,6 +510,25 @@ describe("listAssets", () => {
       const page1 = await listAssets(db, { page: 1, pageSize: 2, actorId: ownerId, },);
       expect(page1.data.length,).toBeLessThanOrEqual(2,);
       expect(page1.total,).toBeGreaterThan(0,);
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("null actor lists only public assets", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
+    try {
+      const ownerId = await seedOwner(db, uploadDir,);
+      await insertAssets(db, ownerId, "pubx.png", "image/png", "image" as never, 8, "raw/pu/bx/pubx.png", {
+        id: "public-x-asset" as never,
+        visibility: "public" as never,
+      },);
+
+      const result = await listAssets(db, { actorId: null, },);
+      expect(result.data.some((a,) => a.id === "public-x-asset"),).toBe(true,);
+      expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(false,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);

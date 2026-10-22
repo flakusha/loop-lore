@@ -100,22 +100,25 @@ describe("readRoutes coverage", () => {
     await db.destroy();
   },);
 
-  test("401 across all read endpoints without userId", async () => {
+  // Guest-open reads (epic-guest-access Phase 2): unauthenticated callers no
+  // longer get a 401 here — read denials are uniform 404s so denied and
+  // missing are indistinguishable (same contract as the asset serve paths).
+  test("404 across all read endpoints without userId (private chat)", async () => {
     const app = makeApp(db, null, null,);
     const list = await app.handle(new Request(`http://localhost/api/chats/${chatId}/messages`,),);
-    expect(list.status,).toBe(401,);
+    expect(list.status,).toBe(404,);
     const get = await app.handle(new Request(`http://localhost/api/messages/${firstMessageId}`,),);
-    expect(get.status,).toBe(401,);
+    expect(get.status,).toBe(404,);
     const variants = await app.handle(
       new Request(`http://localhost/api/messages/${swipeA}/variants`,),
     );
 
-    expect(variants.status,).toBe(401,);
+    expect(variants.status,).toBe(404,);
     const select = await app.handle(
       new Request(`http://localhost/api/messages/${swipeA}/variant?variantIndex=0`,),
     );
 
-    expect(select.status,).toBe(401,);
+    expect(select.status,).toBe(404,);
   });
 
   test("list returns paginated messages with content", async () => {
