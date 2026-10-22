@@ -15,7 +15,8 @@ import { getLogger, } from "../../../logger";
 import { validateProviderUrl, } from "../../../utils/url-validation";
 import type { AvatarService, } from "../avatar-service";
 import { emitJobProgress, jobProgress, } from "./job-events";
-import { recordBatchFinish, recordBatchStart, } from "./job-records";
+import { findRecordedBaseSeed, recordBatchFinish, recordBatchStart, } from "./job-records";
+import { INVALID_SEED_MESSAGE, isValidSeed, randomBaseSeed, slotSeed, } from "./seed";
 import type { BatchGenerationJob, GenerateEmotionAvatarsOpts, } from "./types";
 
 /**
@@ -46,6 +47,8 @@ export interface GenerateEmotionAvatarOpts {
   mattingProvider?: MattingProvider;
   /** Outfit scope: the created avatar variant's outfit FK + prompt slot. */
   outfitId?: string;
+  /** Provider seed for this slot; omitted = provider-chosen noise. */
+  seed?: number;
 }
 
 /**
@@ -76,6 +79,31 @@ export async function deleteOutfitEmotionVariants(
     if (!sameScope) { continue; }
     await svc.avatarService.deleteAvatar(avatar.id,);
   }
+}
+
+/**
+ * Resolve the base seed a batch runs under: an explicit seed wins, then the
+ * last recorded base when the caller asks to reuse it, then a fresh random
+ * base.
+ * @param svc
+ * @param opts
+ * @returns The base seed the batch runs under.
+ */
+async function resolveBaseSeed(
+  svc: GenerationDispatchHandle,
+  opts: GenerateEmotionAvatarsOpts,
+): Promise<number> {
+  if (opts.seed !== undefined) {
+    if (!isValidSeed(opts.seed,)) { throw new Error(INVALID_SEED_MESSAGE,); }
+    return opts.seed;
+  }
+
+  if (opts.seedStrategy === "reuse") {
+    const recorded = await findRecordedBaseSeed(svc.db, opts.actorId, opts.outfitId,);
+    if (recorded !== undefined) { return recorded; }
+  }
+
+  return randomBaseSeed();
 }
 
 /**
@@ -112,6 +140,12 @@ export async function runBatchGeneration(
     throw new Error(`Invalid image provider URL: ${validated.error}`,);
   }
 
+  // Seed discipline: ONE base seed per batch, unless the caller pinned one
+  // or asked to reuse the last recorded base. Every slot derives its
+  // provider seed from the base, so the batch reproduces as a whole.
+  const baseSeed = await resolveBaseSeed(svc, opts,);
+  job.seed = baseSeed;
+
   job.status = "running";
   await recordBatchStart(svc.db, job, opts,);
 
@@ -141,6 +175,8 @@ export async function runBatchGeneration(
     }
 
     result.status = "generating";
+    // Slot seed = batch base + the emotion's stable ordinal.
+    result.seed = slotSeed(baseSeed, result.emotion,);
 
     try {
       const generated = await svc.generateEmotionAvatar({
@@ -155,6 +191,7 @@ export async function runBatchGeneration(
         avatarEmotions,
         mattingProvider: opts.mattingProvider,
         outfitId: opts.outfitId,
+        seed: result.seed,
       },);
 
       // Replace mode: drop prior variants for this exact (emotion, outfit)

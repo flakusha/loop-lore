@@ -209,6 +209,19 @@ describeOrSkip("character-emotion-avatars routes", () => {
     expect(res.status,).toBe(201,);
   });
 
+  test("POST start batch rejects a non-integer seed", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ baseAvatarId: "av-1", seed: "lucky", },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    expect((await res.json() as { error?: string }).error,).toContain("seed",);
+  });
+
   test("POST start batch creates a job", async () => {
     const res = await makeApp(db, "owner", "user",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotion-avatars`, {

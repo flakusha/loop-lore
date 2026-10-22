@@ -53,6 +53,8 @@ const OutfitGeneratePromptProps = {
   negative_prompt: t.Optional(t.String(),),
   /** Re-roll the (emotion, outfit) slots instead of appending. */
   replace: t.Optional(t.Boolean(),),
+  /** Explicit base seed for the batch; each emotion slot adds its stable ordinal. */
+  seed: t.Optional(t.Integer(),),
 };
 
 /** Body for outfit-scoped batch emotion-avatar generation. */

@@ -32,6 +32,7 @@ import {
   resolveEmotionPromptModifier as resolveEmotionPromptModifierDispatch,
 } from "./emotions";
 import { runBatchGeneration, } from "./generation";
+import type { GenerateEmotionAvatarOpts, } from "./generation";
 import {
   cancelJob as cancelJobDispatch,
   createJob,
@@ -207,17 +208,9 @@ export class EmotionAvatarService {
    * @param opts.avatarEmotions
    * @returns Generated avatar ID and linked asset ID
    */
-  private async generateEmotionAvatar(opts: {
-    actorId: string;
-    emotion: EmotionType;
-    sdConfig: import("../../../config/schema").ImageProviderConfig;
-    uploadDir: string;
-    promptPrefix?: string;
-    negativePrompt?: string;
-    baseAvatarId?: string;
-    fallbackMode?: "generation" | "none";
-    avatarEmotions?: Record<string, EmotionEntry>;
-  },): Promise<{ avatarId: string; assetId: string }> {
+  private async generateEmotionAvatar(
+    opts: GenerateEmotionAvatarOpts,
+  ): Promise<{ avatarId: string; assetId: string }> {
     return generateEmotionAvatarDispatch({
       db: this.db,
       avatarService: this.avatarService,

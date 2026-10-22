@@ -51,7 +51,7 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
     .post(`${prefix}/actors/:actorId/wardrobe/:itemId/emotion-avatars`, async (ctx: any,) => {
       const owned = await requireOwnedWardrobeItem(ctx, opts,);
       if (owned instanceof Response) { return owned; }
-      const { base_avatar_id, emotions, prompt_prefix, negative_prompt, replace, } = ctx.body;
+      const { base_avatar_id, emotions, prompt_prefix, negative_prompt, replace, seed, } = ctx.body;
       const invalid = (emotions as string[] | undefined)?.find((e: string,) => !isEmotion(e,));
       if (invalid) {
         return jsonError({ message: `Invalid emotion: ${invalid}`, status: HttpStatus.BadRequest, },);
@@ -63,6 +63,7 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
         promptPrefix: prompt_prefix,
         negativePrompt: negative_prompt,
         replace,
+        seed,
       },);
     }, {
       params: WardrobeItemParams,
@@ -80,7 +81,7 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
     .post(`${prefix}/actors/:actorId/wardrobe/:itemId/emotion-avatars/single`, async (ctx: any,) => {
       const owned = await requireOwnedWardrobeItem(ctx, opts,);
       if (owned instanceof Response) { return owned; }
-      const { base_avatar_id, emotion, prompt_prefix, negative_prompt, replace, } = ctx.body;
+      const { base_avatar_id, emotion, prompt_prefix, negative_prompt, replace, seed, } = ctx.body;
       if (!isEmotion(emotion,)) {
         return jsonError({ message: `Invalid emotion: ${emotion}`, status: HttpStatus.BadRequest, },);
       }
@@ -93,6 +94,7 @@ export function wardrobeAvatarRoutes(opts: HandlerOpts, prefix = "/api",) {
         promptPrefix: prompt_prefix,
         negativePrompt: negative_prompt,
         replace: replace ?? true,
+        seed,
       },);
     }, {
       params: WardrobeItemParams,
@@ -174,6 +176,8 @@ interface OutfitGenerationRequest {
   promptPrefix?: string | null;
   negativePrompt?: string | null;
   replace?: boolean | null;
+  /** Explicit base seed for the batch; omitted = a fresh random base. */
+  seed?: number;
 }
 
 /**
@@ -197,6 +201,7 @@ async function startGenerationJob(
       negativePrompt: req.negativePrompt ?? undefined,
       outfitId: owned.itemId,
       replace: req.replace ?? undefined,
+      seed: req.seed,
     },);
 
     return jsonCreated({ jobId, },);

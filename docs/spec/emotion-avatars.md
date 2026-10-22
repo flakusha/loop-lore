@@ -28,6 +28,7 @@ builds a prompt from a base avatar so a usable image is still produced.
 | `src/characters/services/emotion-avatar-service/job-events.ts` | In-process per-job progress pub/sub |
 | `src/routes/character-emotion-avatars-stream.ts` | SSE stream for per-variant job progress |
 | `src/characters/services/emotion-avatar-service/types.ts` | `BatchJobId`, `GenerateEmotionAvatarsOpts`, `BatchGenerationJob`, … |
+| `src/characters/services/emotion-avatar-service/seed.ts` | Base/slot seed derivation (see §8) |
 | `src/characters/services/emotion-avatar-fallback.ts` | Metadata extraction + fallback prompt |
 | `src/assistant/prompt/sections/emotion-avatar.ts` | Assistant prompt section injection |
 
@@ -138,3 +139,51 @@ server process. A restart loses every job: stream clients receive a 404 and
 polling clients see the job disappear. There is no persistence or replay — after
 a restart, clients must re-poll (and re-create) jobs rather than expect the old
 job IDs to resolve.
+
+## 8. Seed Discipline
+
+Every generation carries an explicit seed, so a run is reproducible and a later
+run can reproduce an earlier image.
+
+### Base seed & slot seeds
+
+- **Base seed** — the seed a batch runs under. It is resolved in this order:
+  1. the seed the caller supplied (`GenerateEmotionAvatarsOpts.seed`);
+  2. the seed recorded for the scope, when the caller asked to `reuse` it;
+  3. a fresh random base seed.
+- **Slot seeds** — one seed per emotion variant, derived from the base seed:
+  `slotSeed = baseSeed + EMOTION_ORDINAL[emotion]`. The ordinal is a stable
+  per-emotion offset, so a variant keeps its identity across runs and a
+  single-slot re-roll reproduces that slot alone.
+- **Range** — a base seed is an integer in `[0, 2_147_483_647 - maxOrdinal]`, so
+  `base + ordinal` stays inside the signed 32-bit range the providers expect. A
+  seed outside that range is rejected with 400: the actor-level batch endpoint
+  checks it up front, the other endpoints let the service reject it.
+
+`seed.ts` owns the derivation (`randomBaseSeed`, `slotSeed`, `isValidSeed`).
+
+### Persistence
+
+The base seed is stored in the job record's JSON payload (`generation_jobs.payload`,
+key `seed`) and the slot seeds in the job's result entries (key `seed`).
+`findRecordedBaseSeed` reads the newest matching record back, scoped by actor
+and by outfit when the run is outfit-scoped, so one actor's or outfit's seed
+never leaks into another's.
+
+### Overriding a run
+
+- `POST /api/actors/:actorId/emotion-avatars/regenerate` accepts `seed` (an
+  integer) and `seedStrategy`.
+- `seedStrategy: "reuse"` re-runs the batch under the recorded seed of the
+  scope verbatim — the reproduction case. Any other strategy (including
+  `"random"`) draws a fresh random base seed.
+- The actor-level batch endpoint and the wardrobe generation endpoints accept
+  an explicit `seed` as well.
+
+### Provider caveat
+
+The seed reaches the provider as its `seed` option. The `sdcpp` and `comfyui`
+engines forward it; the `openai` and `sdapi` engines ignore it and let the
+provider choose the noise. With those engines the recorded seed still pins the
+run's seed value, but it does not reproduce the same image.
+

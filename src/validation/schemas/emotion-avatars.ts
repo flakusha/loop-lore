@@ -16,13 +16,16 @@ import { t, } from "elysia";
  *
  * `replace: "slot"` re-points the emotion→avatar binding and cleans up the
  * old asset (single-slot re-roll semantics); `"append"` adds variants without
- * unbinding. `seedStrategy` is part of the endpoint contract but its
- * capture/override behavior is a separate open work item — accepted and
- * ignored for now.
+ * unbinding. `seedStrategy: "reuse"` re-runs the batch under the base seed
+ * recorded for the last generation in the same scope, which reproduces the
+ * previous image instead of drawing a new one; `seed` pins the base seed
+ * outright. Omitted seed and strategy = a fresh random base seed.
  */
 export const RegenerateEmotionAvatarsBody = t.Object({
   emotions: t.Optional(t.Array(t.String(),),),
   seedStrategy: t.Optional(t.String(),),
+  /** Explicit base seed for the batch; each emotion slot adds its stable ordinal. */
+  seed: t.Optional(t.Integer(),),
   replace: t.Union([t.Literal("slot",), t.Literal("append",),],),
   /** Base avatar to derive variants from; omitted = the actor's primary avatar. */
   baseAvatarId: t.Optional(t.String({ minLength: 1, },),),

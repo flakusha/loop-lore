@@ -10,6 +10,7 @@ import { createTestDb, } from "../../../test-utils/create-test-db";
 import { insertActors, } from "../../../test-utils/insert-helpers";
 import {
   createGenerationJobRecord,
+  findRecordedBaseSeed,
   getGenerationJobRecord,
   listGenerationJobRecords,
   recordBatchFinish,
@@ -149,6 +150,55 @@ describe("generation job records", () => {
       const record = await getGenerationJobRecord(db, "job-batch-2",);
       expect(record?.status,).toBe("cancelled",);
       expect(record?.completedAt,).toBeDefined();
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("findRecordedBaseSeed returns the newest recorded seed in the scope", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertActors(db, "Seed Actor", { id: "actor-seed-1", },);
+
+      // A record without a seed (written before seed capture) is skipped.
+      await createGenerationJobRecord(db, {
+        id: "job-seed-none",
+        kind: "emotion-avatar",
+        actorId: "actor-seed-1",
+        payload: { emotions: [], baseAvatarId: "av-x", },
+        startedAt: "2026-09-11T00:00:00.000Z",
+      },);
+
+      await createGenerationJobRecord(db, {
+        id: "job-seed-old",
+        kind: "emotion-avatar",
+        actorId: "actor-seed-1",
+        payload: { emotions: [], baseAvatarId: "av-x", seed: 111, },
+        startedAt: "2026-09-11T00:01:00.000Z",
+      },);
+
+      await createGenerationJobRecord(db, {
+        id: "job-seed-new",
+        kind: "emotion-avatar",
+        actorId: "actor-seed-1",
+        payload: { emotions: [], baseAvatarId: "av-x", seed: 222, },
+        startedAt: "2026-09-11T00:02:00.000Z",
+      },);
+
+      // Outfit-scoped record — a different scope, so it never leaks into the
+      // outfitless lookup.
+      await createGenerationJobRecord(db, {
+        id: "job-seed-outfit",
+        kind: "emotion-avatar",
+        actorId: "actor-seed-1",
+        payload: { emotions: [], baseAvatarId: "av-x", outfitId: "outfit-1", seed: 333, },
+        startedAt: "2026-09-11T00:03:00.000Z",
+      },);
+
+      expect(await findRecordedBaseSeed(db, "actor-seed-1",),).toBe(222,);
+      expect(await findRecordedBaseSeed(db, "actor-seed-1", "outfit-1",),).toBe(333,);
+      expect(await findRecordedBaseSeed(db, "actor-seed-1", "outfit-unknown",),).toBeUndefined();
+      expect(await findRecordedBaseSeed(db, "actor-seed-unknown",),).toBeUndefined();
     } finally {
       sqlite.close();
     }

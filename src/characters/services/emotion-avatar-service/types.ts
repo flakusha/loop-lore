@@ -36,6 +36,13 @@ export interface GenerateEmotionAvatarsOpts {
    * never touches angry-in-court-dress (outfit-scoped regen isolation).
    */
   replace?: boolean;
+  /**
+   * Explicit base seed for the batch. Omitted = a fresh random base, or the
+   * last recorded base when `seedStrategy` is "reuse".
+   */
+  seed?: number;
+  /** "reuse" re-runs the batch under the last recorded base seed. */
+  seedStrategy?: "reuse";
 }
 
 /** Status of a single emotion generation */
@@ -44,6 +51,8 @@ export interface EmotionGenerationResult {
   status: "pending" | "generating" | "completed" | "failed";
   avatarId?: string;
   assetId?: string;
+  /** Provider seed used for this slot (batch base + emotion ordinal). */
+  seed?: number;
   error?: string;
 }
 
@@ -54,6 +63,8 @@ export interface BatchGenerationJob {
   baseAvatarId: string;
   status: "pending" | "running" | "completed" | "failed" | "cancelled";
   results: EmotionGenerationResult[];
+  /** Base seed the batch ran under; set when the run starts. */
+  seed?: number;
   startedAt: string;
   completedAt?: string;
   error?: string;
