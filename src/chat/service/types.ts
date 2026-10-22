@@ -18,7 +18,7 @@ import type {
 
 /** */
 export interface ServiceError {
-  code: "not_found" | "forbidden" | "bad_request";
+  code: "not_found" | "forbidden" | "bad_request" | "conflict";
   message: string;
 }
 

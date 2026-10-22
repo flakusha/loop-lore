@@ -200,6 +200,22 @@ export {
 // ── Location events ───────────────────────────────────────────
 export { getLocationHistory, recordLocationChange, } from "./location-events";
 
+// ── Message polls (TASK-message-polls-votes) ─────────────────
+export {
+  closePoll,
+  type ClosePollResult,
+  createPoll,
+  type CreatePollResult,
+  getMessagePoll,
+  type GetPollResult,
+  listChatPolls,
+  type ListPollsResult,
+  type MessagePoll,
+  type PollTally,
+  votePoll,
+  type VotePollResult,
+} from "./polls";
+
 // ── Shared schema + error/result types ────────────────────────
 export type {
   ChatSetupTemplate,
