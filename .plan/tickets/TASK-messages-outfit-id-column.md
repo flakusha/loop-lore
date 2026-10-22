@@ -3,7 +3,7 @@
 
 # TASK: `messages.outfit_id` column
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-reactive-actor-appearance
@@ -64,6 +64,18 @@ resolver can consume.
 - [ ] No existing migration file is edited
 
 **Notes / Evidence:**
+
+- Implemented 2026-10-22 in worktree `outfit-messages-column` as migration
+  `070_messages_outfit_id` (070 was free at write time; ticket caveat named 065
+  from an older tree state). Green: `db:sync-types`, `db:sync-manifest`,
+  `schemas:check`, `typecheck`, migration/roundtrip/schema-sync tests (240
+  pass), write-path suites `src/chat/service` + `src/generation/auto-gen`
+  (528 pass), lint 0 errors (182 pre-existing warnings in untouched files).
+  Write sites persist null (Phase 2 hook fills the value); `insertMessages`
+  needed no edit — regenerated `outfit_id?: string | null` flows via restOpts.
+  Test: `src/db/070_messages_outfit_id.test.ts`.
+- Pre-existing drift fixed as gate fallout: `schemas:check` was stale on dev
+  (federation.workloadOffload not regenerated); ran `schemas:check:fix`.
 
 - Column precedent: `src/db/schema-core.ts:778`; manifest entry
   `src/db/schema-manifest.ts:2207`
