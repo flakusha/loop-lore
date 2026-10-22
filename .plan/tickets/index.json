@@ -3838,6 +3838,19 @@
     "title": "# BUG-export-progress-stream-test-status-assertion-is-flaky: Test asserted on terminal status immediately after startExport; hermetic mock required",
     "type": "BUG"
   },
+  "BUG-EXPORT-ROUTES-RE-RESOLVE-IDENTITY-AND-FALL-BACK-TO-SOLO": {
+    "hash": "9bac474",
+    "git_issue": "9bac474",
+    "extid": "BUG-EXPORT-ROUTES-RE-RESOLVE-IDENTITY-AND-FALL-BACK-TO-SOLO",
+    "type": "BUG",
+    "title": "Export routes re-resolve identity and fall back to solo",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-export-routes-re-resolve-identity-and-fall-back-to-solo.md",
+    "status": "done"
+  },
   "BUG-EXPORT-SSE-START-THROWS-CONTROLLER-IS-ALREADY-CLOSED-ON-CLIE": {
     "epic": "",
     "extid": "BUG-EXPORT-SSE-START-THROWS-CONTROLLER-IS-ALREADY-CLOSED-ON-CLIE",
@@ -7901,6 +7914,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-quest-engine-double-advances-from-stale-in-memory-progress-a.md",
     "status": "Not Started"
+  },
+  "BUG-QUEST-UPDATE-NOTIFICATIONS-IGNORE-THE-MUTED-WORLD-SCOPE": {
+    "hash": "e10d22e",
+    "git_issue": "e10d22e",
+    "extid": "BUG-QUEST-UPDATE-NOTIFICATIONS-IGNORE-THE-MUTED-WORLD-SCOPE",
+    "type": "BUG",
+    "title": "Quest update notifications ignore the muted world scope",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-quest-update-notifications-ignore-the-muted-world-scope.md",
+    "status": "done"
   },
   "BUG-RATE-LIMIT-IN-MEMORY-STORE-NEVER-EVICTS-IDLE-KEYS": {
     "epic": "",
