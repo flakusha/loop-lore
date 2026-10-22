@@ -125,6 +125,7 @@ export const envMap = (): EnvMap => {
   map.SERVER_PUBLIC_ORIGIN = "server.publicOrigin";
   map.MESH_PSK = "federation.meshPsk";
   map.AUTH_REQUIRED = "auth.required";
+  map.AUTH_GUEST_ACCESS = "auth.guestAccess";
   map.AUTH_REGISTRATION_OPEN = "auth.registrationOpen";
   map.SESSION_TIMEOUT_HOURS = "auth.sessionTimeoutHours";
   map.SESSION_MAX_PER_USER = "auth.maxSessionsPerUser";

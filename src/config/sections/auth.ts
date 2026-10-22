@@ -5,6 +5,7 @@
 
 export const AUTH_DEFAULTS = {
   required: false,
+  guestAccess: false,
   registrationOpen: true,
   sessionTimeoutHours: 24,
   maxSessionsPerUser: 10,
@@ -21,6 +22,14 @@ export const AUTH_DEFAULTS = {
 /** */
 export class AuthSection {
   required = AUTH_DEFAULTS.required;
+  /**
+   * Opt-in guest tier: an unauthenticated visitor derives a synthetic,
+   * read-mostly `guest` context (no account, no session) instead of a 401.
+   * Only consulted when `required` is true — solo mode always yields the
+   * solo user. Optional so config files written before the flag still
+   * validate (it is not part of the schema's `required` list).
+   */
+  guestAccess? = AUTH_DEFAULTS.guestAccess;
   registrationOpen = AUTH_DEFAULTS.registrationOpen;
   sessionTimeoutHours = AUTH_DEFAULTS.sessionTimeoutHours;
   maxSessionsPerUser = AUTH_DEFAULTS.maxSessionsPerUser;
@@ -51,6 +60,13 @@ export const authMeta = {
       type: "boolean",
       default: AUTH_DEFAULTS.required,
       description: "Require remote multi-user auth",
+    },
+    guestAccess: {
+      type: "boolean",
+      default: AUTH_DEFAULTS.guestAccess,
+      description: "Opt-in guest tier: unauthenticated visitors derive a read-mostly guest " +
+        "context (no account, no session row) instead of a 401. Requires auth.required = true; " +
+        "solo mode (auth.required = false) always yields the solo user.",
     },
     registrationOpen: {
       type: "boolean",

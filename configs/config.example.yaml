@@ -54,6 +54,7 @@ docs:
 
 auth:
   required: false # true = remote auth, false = solo/demo mode
+  guestAccess: false # true = visitors without an account get a read-mostly guest context
   registrationOpen: true
   sessionTimeoutHours: 24
   maxSessionsPerUser: 10

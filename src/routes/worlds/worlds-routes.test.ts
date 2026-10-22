@@ -428,3 +428,81 @@ describe("worldRoutes — list q filter", () => {
     expect(total,).toBe(0,);
   });
 });
+
+/**
+ * The guest tier (`auth.guestAccess`): an account-less visitor may read a
+ * PUBLIC world through the read-only detail route — and nothing else.
+ */
+describe("worldRoutes — guest tier read access", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+  let ownerId: string;
+
+  beforeAll(async () => {
+    ({ db, sqlite, } = await createTestDb());
+    ownerId = uid();
+    await insertUsers(db, "guest-owner", "Guest Owner", { id: ownerId, } as never,);
+    await insertActors(db, ownerId, {
+      id: ownerId,
+      actor_type: "user",
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "none",
+      settings: "{}",
+      row_version: 0,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await sqlite.close();
+  },);
+
+  async function createWorld(body: Record<string, unknown>,): Promise<string> {
+    const app = appWithAuth(db, ownerId, "user",);
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify(body,),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const { id, } = (await res.json()) as { id: string };
+    return id;
+  }
+
+  test("a guest reads a public world", async () => {
+    const id = await createWorld({ name: "Guest Public", visibility: "public", },);
+    const guest = appWithAuth(db, null, "guest",);
+    const res = await guest.handle(new Request(`${BASE}/api/worlds/${id}`,),);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("a guest cannot read a private world", async () => {
+    const id = await createWorld({ name: "Guest Private", visibility: "private", },);
+    const guest = appWithAuth(db, null, "guest",);
+    const res = await guest.handle(new Request(`${BASE}/api/worlds/${id}`,),);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("without the guest tier (no role) a public world stays invisible", async () => {
+    const id = await createWorld({ name: "Anon Public", visibility: "public", },);
+    const anon = appWithAuth(db, null, null,);
+    const res = await anon.handle(new Request(`${BASE}/api/worlds/${id}`,),);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("a guest cannot create a world", async () => {
+    const guest = appWithAuth(db, null, "guest",);
+    const res = await guest.handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Guest World", },),
+      },),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+});

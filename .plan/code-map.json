@@ -12794,6 +12794,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-integration-config-surface-schemas-example-toml-env-map.md"
     },
     {
@@ -13421,6 +13425,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
     },
     {
       "kind": "ticket",
@@ -20473,6 +20481,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
     },
     {
       "kind": "ticket",
@@ -33723,6 +33735,12 @@
       "source": "docs/spec/integrations-architecture.md"
     }
   ],
+  "src/middleware/auth/guest-access.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
+    }
+  ],
   "src/middleware/auth/solo-user.ts": [
     {
       "kind": "epic",
@@ -45174,6 +45192,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-licensing-publish-authorization-predicate.md"
     },
     {
@@ -45396,6 +45418,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
@@ -45419,6 +45445,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
     },
     {
       "kind": "ticket",

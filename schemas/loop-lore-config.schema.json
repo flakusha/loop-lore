@@ -297,6 +297,11 @@
           "default": false,
           "description": "Require remote multi-user auth"
         },
+        "guestAccess": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt-in guest tier: unauthenticated visitors derive a read-mostly guest context (no account, no session row) instead of a 401. Requires auth.required = true; solo mode (auth.required = false) always yields the solo user."
+        },
         "registrationOpen": {
           "type": "boolean",
           "default": true,

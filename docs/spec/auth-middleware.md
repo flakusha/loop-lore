@@ -8,6 +8,7 @@
 ## Implemented
 
 - Two-mode auth: remote multi-user (`config.auth.required = true`, JWT) and solo/demo mode (implicit solo user, lazily created/cached).
+- Optional guest tier (`config.auth.guestAccess = true`, multi-user mode only): a request with no token derives a synthetic `guest` context — no account, no session row, nothing persisted. It never replaces the solo fallback (solo mode always yields the solo user) and never downgrades a presented-but-invalid token (that stays a 401). `requireUserId()` keeps denying a guest, so every mutating route stays closed; only read routes that opt in (e.g. `GET /api/worlds/:worldId` for PUBLIC worlds) admit it. A client-supplied `x-user-id` is dropped for account-less callers, so a guest cannot borrow another identity.
 - Auth runs as an inline Elysia `.derive()` in `src/elysia-app.ts` **before** all routes/plugins — child plugins don't share derived values, so it cannot be a `.use()` plugin (`src/middleware/elysia-auth.ts` shim was deleted). Context gets `{ userId, userRole, sessionId, ...i18n }`.
 - `authenticate()` (`src/middleware/auth/authenticate.ts`): token from `Authorization: Bearer` → `ll_token` cookie; `verifyJwt()` (`src/auth/jwt.ts`) checks `sub`/`sid` against the `sessions` table. Legacy opaque-token fallback (`src/middleware/auth/token.ts`): `sha256(token)` → `sessions.secret_hash` for old sessions.
 - i18n always injected: `detectLocale` (cookie → Accept-Language) + `createI18nContext`.
