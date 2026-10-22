@@ -23,7 +23,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema.js";
 import type { Combatant, } from "../../../rpg/combat.js";
 import { awardXpToActor, } from "../../level/index.js";
-import { xpForEnemyDefeat, } from "../../xp/sources.js";
+import { xpForEnemyDefeat, XpSource, } from "../../xp/sources.js";
 import { log, } from "../log.js";
 
 /** Input for the victory XP leg. */
@@ -70,7 +70,7 @@ export async function applyVictoryXpLeg(
         await awardXpToActor(db, {
           actorId,
           amount,
-          source: "combat",
+          source: XpSource.Combat,
           referenceId: ctx.battleId,
           chatId: ctx.chatId,
           description: `Victory over ${fallen.map((f,) => f.name).join(", ",)}`,

@@ -4,6 +4,32 @@
 import { safeJsonStringify, } from "../../utils.js";
 import { xpForLevel, } from "./calculation.js";
 
+// ── XP Source vocabulary ───────────────────────────────
+
+/**
+ * Typed vocabulary for `xp_ledger.source`. The ledger column stays a
+ * free string (unknown sources keep working); producers use these members.
+ */
+export const XpSource = {
+  Combat: "combat",
+  Quest: "quest",
+  SkillChallenge: "skill_challenge",
+  Discovery: "discovery",
+  Travel: "travel",
+  NsfwEncounter: "nsfw_encounter",
+  NsfwSeduction: "nsfw_seduction",
+  SkillUsage: "skill_usage",
+  Manual: "manual",
+} as const;
+
+/** Known `xp_ledger.source` value (see {@link XpSource}). */
+export type XpSource = (typeof XpSource)[keyof typeof XpSource];
+
+/** Runtime guard for the {@link XpSource} vocabulary. */
+export function isXpSource(s: string,): s is XpSource {
+  return (Object.values(XpSource,) as string[]).includes(s,);
+}
+
 // ── XP Sources ───────────────────────────────────────────
 
 /** Minimum quest payout — a capped character still earns this per quest. */

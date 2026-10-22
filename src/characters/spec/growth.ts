@@ -61,6 +61,8 @@ export const GrowthEventType = {
   ArcStageProposed: "arc_stage_proposed",
   /** Story-driven skill acquisition (acquisition_source='story'). */
   SkillAcquired: "skill_acquired",
+  /** Skill level gain through use (axis='skill', one row per level gained). */
+  SkillLeveledUp: "skill_leveled_up",
   /** Trait drift on a social/world trait that integrity approved. */
   TraitDrifted: "trait_drifted",
   /** Relationship strength/type transition. */
@@ -69,6 +71,8 @@ export const GrowthEventType = {
   Observation: "observation",
   /** Organic activity-weighted ability drift on level-up (axis='stat'). */
   StatDrifted: "stat_drifted",
+  /** Character level gain (axis='stat', one row per level gained). */
+  LevelUp: "level_up",
 } as const;
 /** */
 export type GrowthEventType = (typeof GrowthEventType)[keyof typeof GrowthEventType];
