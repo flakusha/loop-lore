@@ -27,7 +27,7 @@
       hx-get="/partials/worlds/edit-modal?worldId={{worldId}}"
       hx-target="#modal-container"
       hx-swap="innerHTML"
-      hx-on::after-request="window.openModal('edit-world-modal')"
+      hx-on::after:swap="window.openModal('edit-world-modal')"
       data-testid="edit-world"
     >
       Edit
