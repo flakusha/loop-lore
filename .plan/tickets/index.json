@@ -1007,7 +1007,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-AUDIT-PANEL-DETAILS-NOT-EXPANDABLE": {
     "epic": "",
@@ -3204,7 +3204,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-dead-code-guard-in-advancepartytravel.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST": {
     "epic": "",
@@ -3610,7 +3610,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-edgeahead-does-not-validate-location-existence.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "epic": "epic-architecture",
@@ -4112,7 +4112,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-API-APPLY-GOVERNANCE-DEPRECATION-TO-THE-API-V1-LEGACY-FA": {
     "hash": "afe12b9",
@@ -4359,7 +4359,7 @@
     "epic": "server-hardening",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-SERVER-GATE-TRAFFIC-UNTIL-PLUGINS-SEEDS-ASSETS-ARE-READY": {
     "hash": "b08d8f3",
@@ -4607,7 +4607,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-game-state-block-regex-truncates-payloads-containing-an-inne.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GATES-CSV-EQUALS-FORM-IS-SILENTLY-IGNORED-ONLY-THE-SPACE-SEP": {
     "hash": "fcbfd8f",
@@ -5604,7 +5604,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-inconsistent-db-handle-in-migration-ts-npc-states-write.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-INDEX-JSON-RECORDS-EPIC-SOURCE-PATHS-UNDER-PLAN-TICKETS-FOR-": {
     "hash": "8e81ae2",
@@ -6670,7 +6670,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-MUSIC-LINKS-PANEL-SENDS-EXPLICIT-NULL-SECTIONID-CAUSING-422-": {
     "epic": "",
@@ -6995,7 +6995,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "epic": "",
@@ -10014,7 +10014,7 @@
       "integrations"
     ],
     "source": ".plan/tickets/BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-WEBHOOK-RATE-LIMIT-BUDGET-IS-CONSUMED-BEFORE-SIGNATURE-VERIF": {
     "hash": "9d640f6",
@@ -10030,7 +10030,7 @@
       "integrations"
     ],
     "source": ".plan/tickets/BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-WHITENOTE-UI-TYPES-REJECTED-422": {
     "epic": "",
@@ -27701,14 +27701,7 @@
     "priority": "medium",
     "source": ".plan/tickets/TASK-backlog-chat-variants-taxonomy.md",
     "status": "done",
-    "tags": [
-      "chat",
-      "taxonomy",
-      "chat-variants",
-      "rpg",
-      "group-chat",
-      "gm"
-    ],
+    "tags": [],
     "title": "backlog — schedule Chat Variants Taxonomy cluster (RPG / character-group / LLM-only-GM)",
     "type": "TASK"
   },
