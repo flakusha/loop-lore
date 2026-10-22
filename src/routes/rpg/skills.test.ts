@@ -162,6 +162,31 @@ describe("skills CRUD + progression (auth-gated)", () => {
     expect(body.newProficiency,).toBe("expert",);
   });
 
+  test("schema rejects negative skill XP, unknown skill 404s", async () => {
+    const app = authedApp();
+    const res = await app.handle(
+      new Request(`http://localhost/api/rpg/skills/${skillId}/xp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        // t.Number rejects NaN/Infinity at the schema layer; a negative
+        // integer passes the schema and reaches the LevelService-shaped guard.
+        body: JSON.stringify({ xpAmount: -5, },),
+      },),
+    );
+
+    expect(res.status,).toBe(422,);
+    const missing = await app.handle(
+      new Request(`http://localhost/api/rpg/skills/${uid()}/xp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ xpAmount: 10, },),
+      },),
+    );
+
+    // Unknown skill id survives schema validation and hits the service guard.
+    expect(missing.status,).toBe(404,);
+  });
+
   test("specialize skill", async () => {
     const app = authedApp();
     const res = await app.handle(
