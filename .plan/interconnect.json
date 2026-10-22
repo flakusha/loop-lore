@@ -29807,7 +29807,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-guest-asset-public-reads-open-public-asset-access.md",
       "title": "Guest asset public reads: open-public asset access",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assets/service/read.ts",
         "src/assets/signed-url.ts"
@@ -29819,7 +29819,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md",
       "title": "Guest chat public reads: visibility-aware chat access",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/access.ts"
       ],
