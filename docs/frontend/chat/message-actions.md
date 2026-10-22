@@ -89,6 +89,9 @@ Actions appear as a **flat button row** always visible below the content:
 | Analyze        | 🔍   | Image-attached messages | Vision model describes attached images           |
 | Attach asset   | 📎   | All messages            | Attach existing asset from gallery               |
 | Poll           | 📊   | All messages            | Create the message's poll (one per message); vote/close inline (TASK-message-polls-votes) |
+| Explain        | 💡   | Character messages      | LLM explains the message in simple terms (TASK-ai-message-utilities) |
+| Action items   | ✅   | Character messages      | LLM extracts concrete next steps (TASK-ai-message-utilities) |
+| Translate      | 🌐   | Character messages      | LLM translates to a chosen language; result copied to clipboard (TASK-ai-message-utilities) |
 
 ---
 
@@ -107,6 +110,9 @@ Actions appear as a **flat button row** always visible below the content:
 | React          | ✅       | ✅           | ✅            | ❌     |
 | Forward        | ✅       | ✅           | ✅            | ❌     |
 | Summarize      | ❌       | ✅           | ✅            | ❌     |
+| Explain        | ❌       | ✅           | ✅            | ❌     |
+| Action items   | ❌       | ✅           | ✅            | ❌     |
+| Translate      | ❌       | ✅           | ✅            | ❌     |
 | Generate image | ❌       | ✅           | ✅            | ❌     |
 | Narrate        | ❌       | ❌           | ✅            | ❌     |
 | Analyze        | ❌       | ❌           | ✅ (w/ image) | ❌     |

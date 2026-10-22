@@ -29,21 +29,34 @@ export type AiAction = typeof MessageAiActionBody.static["action"];
 
 const MAX_SOURCE_CHARS = 4000;
 
-const ACTION_PROMPTS: Record<AiAction, (text: string,) => string> = {
+/** Prompt builder signature for the shared prompt table. */
+type ActionPromptBuilder = (text: string, language?: string,) => string;
+
+/** Language prompt for translate; language validated by the route schema. */
+const translatePrompt = (text: string, language = "en",): string =>
+  `Translate the following chat message into ${language}. Output ONLY the translated text:\n\n${text}`;
+
+const ACTION_PROMPTS: Record<AiAction, ActionPromptBuilder> = {
   summarize: (text,) => `Summarize the key points of this chat message in 3 bullets or fewer:\n\n${text}`,
   "action-items": (text,) =>
     `List the action items or concrete next steps from this chat message. Reply "None" if there are none:\n\n${text}`,
   explain: (text,) => `Explain this chat message in simple terms for a non-expert:\n\n${text}`,
+  translate: translatePrompt,
 };
 
 /**
  * Build the auxiliary-model prompt for one action.
  * @param action
  * @param plaintext
+ * @param language Target language for translate (ignored otherwise)
  * @returns Prompt with the source capped to keep context small
  */
-export function buildAiActionPrompt(action: AiAction, plaintext: string,): string {
-  return ACTION_PROMPTS[action](plaintext.slice(0, MAX_SOURCE_CHARS,),);
+export function buildAiActionPrompt(
+  action: AiAction,
+  plaintext: string,
+  language?: string,
+): string {
+  return ACTION_PROMPTS[action](plaintext.slice(0, MAX_SOURCE_CHARS,), language,);
 }
 
 /**
@@ -72,11 +85,18 @@ export function aiActionRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         if (!loaded.ok) { return loaded.response; }
 
+        if (body.action === "translate" && !body.language) {
+          return jsonResponse(
+            { error: "language_required", message: "The translate action requires a target language.", },
+            422 as HttpStatusCode,
+          );
+        }
+
         const result = await callAux(
           "message-action",
           config,
           database,
-          [{ role: "user", content: buildAiActionPrompt(body.action, loaded.plaintext,), },],
+          [{ role: "user", content: buildAiActionPrompt(body.action, loaded.plaintext, body.language,), },],
           { userId: actorId, chatId, maxTokens: 300, },
         );
 
