@@ -2023,3 +2023,25 @@ export interface FederationPerformanceBudgets {
   tokens_per_minute: number | null;
   updated_at: string;
 }
+
+// ── message_polls ────────────────────────────────────────────
+export interface MessagePolls {
+  id: Generated<string>;
+  message_id: string;
+  question: string;
+  options: string;
+  multi: Generated<number>;
+  created_by: string;
+  closes_at: string | null;
+  closed_at: string | null;
+  created_at: Generated<string>;
+}
+
+// ── poll_votes ────────────────────────────────────────────
+export interface PollVotes {
+  id: Generated<string>;
+  poll_id: string;
+  user_id: string;
+  option_idx: number;
+  created_at: Generated<string>;
+}

@@ -14,6 +14,7 @@ import { chatSearchRoutes, } from "../chat-search";
 import { chatSectionsRoutes, } from "../chat-sections";
 import { chatsRoutes, } from "../chats";
 import { invitesRoutes, } from "../invites";
+import { messagePollRoutes, } from "../message-polls";
 import { messageReactionsRoutes, } from "../message-reactions";
 import { messageSearchRoutes, } from "../message-search";
 import { messageSeenRoutes, } from "../message-seen";
@@ -37,6 +38,7 @@ export function chatsSurface(opts: RegisterPluginsOpts,) {
     .use(messagesRoutes(handleOpts, prefix,),)
     .use(scheduledRoutes(handleOpts, prefix,),)
     .use(messageReactionsRoutes(handleOpts, prefix,),)
+    .use(messagePollRoutes({ database, }, prefix,),)
     .use(messageSearchRoutes(handleOpts, prefix,),)
     .use(messageSeenRoutes({ database, }, prefix,),)
     .use(musicLinksRoutes(handleOpts, prefix,),)

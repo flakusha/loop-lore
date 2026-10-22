@@ -5,6 +5,7 @@
 import { MessageListResponse, } from "../../validation/schemas/responses";
 import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { chatDraftMethods, } from "./chat-drafts";
+import { chatPollMethods, } from "./chat-polls";
 import { chatReactionMethods, } from "./chat-reactions";
 import { chatSeenMethods, } from "./chat-seen";
 import { chatSendMethods, } from "./chat-send";
@@ -25,6 +26,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   ...chatSendMethods,
   ...chatSeenMethods,
   ...chatReactionMethods,
+  ...chatPollMethods,
   /**
    * @returns {Promise<void>}
    */
@@ -70,6 +72,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     },);
 
     await this.loadAllReactions();
+    await this.loadChatPolls();
     await this.loadQuickEmojis();
     await this.loadAllSeen();
     this.startSeenPolling();

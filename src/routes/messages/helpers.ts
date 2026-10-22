@@ -47,6 +47,14 @@ export function serviceErrorToResponse(error: ServiceError,): Response {
       },);
     }
 
+    case "conflict": {
+      return jsonError({
+        message: error.message,
+        status: HttpStatus.Conflict,
+        code: ErrorCode.Conflict,
+      },);
+    }
+
     case "not_found":
     default: {
       return jsonError({

@@ -3695,3 +3695,23 @@ export const FederationPerformanceBudgetsSchema = t.Object({
   requests_per_minute: t.Optional(t.Number(),),
   tokens_per_minute: t.Optional(t.Number(),),
 },);
+
+// ── message_polls ────────────────────────────────────────────
+export const MessagePollsSchema = t.Object({
+  message_id: t.String(),
+  question: t.String(),
+  options: t.String(),
+  created_by: t.String(),
+  multi: t.Optional(t.Number(),),
+  closes_at: t.Optional(t.String(),),
+  closed_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── poll_votes ────────────────────────────────────────────
+export const PollVotesSchema = t.Object({
+  poll_id: t.String(),
+  user_id: t.String(),
+  option_idx: t.Number(),
+  created_at: t.Optional(t.String(),),
+},);
