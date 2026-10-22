@@ -92,28 +92,47 @@ export async function notifyMention(
   const chatName = chatResult.status === "fulfilled" ? chatResult.value?.name ?? "a chat" : "a chat";
   const svc = new NotificationService(db,);
   const log = getChildLogger("notifications",);
-  let notified = 0;
-  for (const actorId of opts.mentionedActorIds) {
-    if (actorId === opts.senderId) { continue; }
-    // The recipient is the actor's owning USER, never the actor id.
-    // See BUG-notification-participant-helpers-write-actor-id-into-the-use.
-    const userId = await resolveMentionUserId(db, actorId,);
-    if (!userId) { continue; }
-    try {
-      await svc.create({
-        userId,
+  // Resolve every recipient in parallel - each lookup is an independent query.
+  // The recipient is the actor's owning USER, never the actor id.
+  // See BUG-notification-participant-helpers-write-actor-id-into-the-use.
+  const resolved = await Promise.allSettled(
+    opts.mentionedActorIds
+      .filter((actorId,) => actorId !== opts.senderId)
+      .map(async (actorId,) => ({ userId: await resolveMentionUserId(db, actorId,), })),
+  );
+
+  const targets: { userId: string }[] = [];
+  for (const result of resolved) {
+    if (result.status === "rejected") { throw result.reason; }
+    if (result.value.userId) { targets.push({ userId: result.value.userId, },); }
+  }
+
+  // One failed recipient must not swallow the remaining mentions.
+  const results = await Promise.allSettled(
+    targets.map((target,) =>
+      svc.create({
+        userId: target.userId,
         type: NotificationType.Mention,
         title: `${senderName} mentioned you`,
         body: `in "${chatName}"`,
         link: `/chat/${opts.chatId}`,
         data: { messageId: opts.messageId, chatId: opts.chatId, },
-      },);
+      },)
+    ),
+  );
 
+  let notified = 0;
+  for (const [index, result,] of results.entries()) {
+    if (result.status === "fulfilled") {
       notified++;
-    } catch (err) {
-      // One failed recipient must not swallow the remaining mentions.
-      log?.warn("notifyMention: notification failed", { chatId: opts.chatId, userId, err, },);
+      continue;
     }
+
+    log?.warn("notifyMention: notification failed", {
+      chatId: opts.chatId,
+      userId: targets[index]!.userId,
+      err: result.reason,
+    },);
   }
 
   return notified;
@@ -167,16 +186,24 @@ export async function notifyQuestUpdate(
       ? await worldParticipantActorIds(db, opts.worldId,)
       : []);
 
-  for (const userId of userIds) {
-    await svc.create({
-      userId,
-      type: NotificationType.QuestUpdate,
-      title: `Quest updated: ${opts.questName}`,
-      link: opts.chatId ? `/chat/${opts.chatId}` : undefined,
-      // Pass the world so the recipient's world mute applies.
-      worldId: opts.worldId,
-      data: { worldId: opts.worldId, chatId: opts.chatId, },
-    },);
+  // Independent inserts - notify every recipient in parallel, then surface
+  // the first failure to the caller.
+  const results = await Promise.allSettled(
+    userIds.map((userId,) =>
+      svc.create({
+        userId,
+        type: NotificationType.QuestUpdate,
+        title: `Quest updated: ${opts.questName}`,
+        link: opts.chatId ? `/chat/${opts.chatId}` : undefined,
+        // Pass the world so the recipient's world mute applies.
+        worldId: opts.worldId,
+        data: { worldId: opts.worldId, chatId: opts.chatId, },
+      },)
+    ),
+  );
+
+  for (const result of results) {
+    if (result.status === "rejected") { throw result.reason; }
   }
 }
 
@@ -193,15 +220,23 @@ export async function notifyGmAction(
 ): Promise<void> {
   const svc = new NotificationService(db,);
   const userIds = await worldParticipantActorIds(db, opts.worldId,);
-  for (const userId of userIds) {
-    await svc.create({
-      userId,
-      type: NotificationType.GmAction,
-      title: "GM action",
-      body: opts.description,
-      worldId: opts.worldId,
-      data: { worldId: opts.worldId, },
-    },);
+  // Independent inserts - notify every recipient in parallel, then surface
+  // the first failure to the caller.
+  const results = await Promise.allSettled(
+    userIds.map((userId,) =>
+      svc.create({
+        userId,
+        type: NotificationType.GmAction,
+        title: "GM action",
+        body: opts.description,
+        worldId: opts.worldId,
+        data: { worldId: opts.worldId, },
+      },)
+    ),
+  );
+
+  for (const result of results) {
+    if (result.status === "rejected") { throw result.reason; }
   }
 }
 
