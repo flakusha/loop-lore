@@ -20,7 +20,7 @@ import { MOCK_FACTIONS, MOCK_KARMA, } from "./npc-faction-mock.js";
 import { MOCK_NPCS, MOCK_RELATIONSHIPS, STANDING_TIERS, } from "./npc-mock.js";
 
 // ── Component Registration ──────────────────────────────────
-(globalThis as any).npcManagementState = function() {
+npcManagementState = function() {
   return {
     ...npcDisplay,
 

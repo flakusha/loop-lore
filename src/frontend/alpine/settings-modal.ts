@@ -4,7 +4,7 @@
 import { autoResize as autoResizeImpl, } from "./auto-resize";
 import { jsonBody, } from "./json";
 
-(globalThis as any).settingsModal = function() {
+settingsModal = function() {
   return {
     open: false,
     tab: "theme",

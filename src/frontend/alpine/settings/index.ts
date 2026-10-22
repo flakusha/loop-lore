@@ -7,7 +7,7 @@ import { general, } from "./general";
 import { restartBanner, } from "./restart-banner";
 import type { LocaleInfoArray, SettingsState, } from "./types";
 
-(globalThis as any).settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
+settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
     activeTab: "general",
     displayName: "",

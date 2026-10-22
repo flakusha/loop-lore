@@ -109,7 +109,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
      * @returns {Promise<void>}
      */
     async loadNsfwConsent() {
-      const userId = (globalThis as any).__USER_ID as string | undefined;
+      const userId = __USER_ID as string | undefined;
       if (!userId) { return; }
       try {
         const res = await apiFetch(`/api/v1/nsfw/moderation/preferences/${encodeURIComponent(userId,)}`, {
