@@ -19,7 +19,7 @@
 **Acceptance Criteria:** one inbound federated event type scored as proactive candidate; quiet-hours window enforced; anti-spam backoff enforced per sender; in-app only with no fan-out; bun run check green.
 **Parents:** 03-X7 (concretizes its phase-1 slice: one inbound federated event type as a local notification).
 **X-map:** 03-X7 is covered by this ticket; do NOT file X7 separately.
-**Related:** Siblings TASK-c1-moderation-action-notices-with-actor-thumb, TASK-c2-bridged-turn-skip-propagation-bridge-only, TASK-c4-inbound-federated-content-verdict-notices.
+**Related:** Siblings TASK-c1-moderation-action-notices-with-actor-thumb, TASK-c2-bridged-turn-skip-propagation-bridge-only,
 
 **Context:**
 

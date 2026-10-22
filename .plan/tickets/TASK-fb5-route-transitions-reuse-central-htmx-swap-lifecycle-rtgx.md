@@ -18,7 +18,7 @@
 - Routing-driven swaps route through the shared AfterSwap plus initTree and OOB path; no ad-hoc swap duplicates remain in covered pages.
 - Route-level regression tests updated and passing.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 2, R02 candidate 2, 05-prioritization.md Next FB4/FB5, FB3 hub index (dependent).
+**Related:** candidate 2, R02 candidate 2, Next FB4/FB5, FB3 hub index (dependent).
 
 **Context:**
 

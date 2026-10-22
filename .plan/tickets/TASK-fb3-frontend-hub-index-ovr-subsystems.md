@@ -19,7 +19,7 @@
 - New nav strings have keys in all 10 locale files.
 - Browser or e2e touch covers the hub index links.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 1, R02 candidate 1, FB5 swap-lifecycle (dependency).
+**Related:** candidate 1, R02 candidate 1, FB5 swap-lifecycle (dependency).
 
 **Context:**
 

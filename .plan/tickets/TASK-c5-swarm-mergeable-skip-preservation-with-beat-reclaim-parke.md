@@ -19,7 +19,7 @@
 **Acceptance Criteria:** postponed -- no acceptance work until C1-engine/C2-clock decisions land; on revisit, kind plus beat_id payload fields preserve skip consumption across merges with GM-scheduler reclaim via 02-#9 hook.
 **Parents:** 02-#9 x 03-X5. 02x03 chain 3/3.
 **X-map:** 03-X5 inherits the same C1-engine/C2-clock block; do NOT file X5 separately.
-**Related:** Builds on TASK-c2-bridged-turn-skip-propagation-bridge-only plus 02-#9; siblings TASK-c1-moderation-action-notices-with-actor-thumb, TASK-c4-inbound-federated-content-verdict-notices.
+**Related:** Builds on TASK-c2-bridged-turn-skip-propagation-bridge-only plus 02-#9; siblings TASK-c1-moderation-action-notices-with-actor-thumb,
 
 **Context:**
 

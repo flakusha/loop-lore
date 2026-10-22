@@ -20,7 +20,6 @@
 **Assignee**:
 **Epic**: EPIC-38 (Output Control & Transforms)
 **Parent**: FEAT-065 (Prompt Library)
-**Related**: FEAT-084 (DALL-E 3), FEAT-085 (Stability AI), FEAT-086 (Replicate)
 
 ---
 

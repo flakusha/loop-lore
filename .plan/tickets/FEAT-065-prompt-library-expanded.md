@@ -17,7 +17,6 @@
 **Tags**: generation, prompts, templates
 **Assignee**:
 **Epic**: EPIC-38 (Output Control & Transforms) — _proposed split: new EPIC-Generation-Templates_
-**Related**: FEAT-084 (DALL-E 3), FEAT-085 (Stability AI), FEAT-086 (Replicate), FEAT-090 (OpenAI TTS+Whisper), FEAT-089 (ElevenLabs), FEAT-091 (Local TTS/STT)
 
 ---
 
