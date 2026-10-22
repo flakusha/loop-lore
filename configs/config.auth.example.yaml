@@ -4,6 +4,7 @@
 
 auth:
   required: false
+  guestAccess: false # true = visitors without an account get a read-mostly guest context
   registrationOpen: true
   sessionTimeoutHours: 24
   maxSessionsPerUser: 10

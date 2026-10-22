@@ -7,6 +7,18 @@ import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { forbidden, notFound, } from "../../validation/middleware";
 
+/** Options for {@link requireWorldAccess}. */
+export interface WorldAccessOpts {
+  /**
+   * Admit the synthetic guest tier (no account, role `guest`) for PUBLIC
+   * worlds. Only pass this on read-only routes: the guest tier holds no
+   * account, so a mutating route routed through it would write
+   * unauthenticated. With the flag off the guest tier never exists — the
+   * derive yields a null role — so the guest branch stays unreachable.
+   */
+  allowGuest?: boolean;
+}
+
 /**
  * Check world access; returns error Response if denied, null if OK.
  *
@@ -17,6 +29,7 @@ import { forbidden, notFound, } from "../../validation/middleware";
  * @param worldId
  * @param userId
  * @param userRole
+ * @param opts
  * @returns {Promise<Response | null>}
  */
 export async function requireWorldAccess(
@@ -24,6 +37,7 @@ export async function requireWorldAccess(
   worldId: string,
   userId: string | null,
   userRole: string | null,
+  opts?: WorldAccessOpts,
 ): Promise<Response | null> {
   const world = await database
     .selectFrom("worlds",)
@@ -33,7 +47,17 @@ export async function requireWorldAccess(
 
   if (!world) { return notFound("World not found",); }
   if (can(userRole, "admin.world",) || world.owner_id === userId) { return null; }
-  if (!userId) { return notFound("World not found",); }
+  if (!userId) {
+    // Guest tier: an account-less visitor on a guest-enabled READ route may
+    // read PUBLIC worlds — and nothing else. Unlisted/private worlds stay
+    // invisible, so a guest can never enumerate or write them.
+    if (opts?.allowGuest && can(userRole, "world.view",) && world.visibility === WorldVisibility.Public) {
+      return null;
+    }
+
+    return notFound("World not found",);
+  }
+
   // Public worlds are readable by any authenticated user.
   if (world.visibility === WorldVisibility.Public) { return null; }
   // Unlisted/private worlds: owner + world members (joined via invite) only.

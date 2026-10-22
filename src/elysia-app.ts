@@ -127,6 +127,11 @@ export function createApp(deps: AppDeps,): Elysia {
       // falls back to anonymous attribution for absent x-user-id.
       if (authResult.context.userId !== null) {
         request.headers.set("x-user-id", authResult.context.userId,);
+      } else {
+        // No account behind the request (anonymous, or the synthetic guest
+        // tier): drop a client-supplied x-user-id so it cannot spoof the
+        // identity attributed in the access log and the async lifecycle row.
+        request.headers.delete("x-user-id",);
       }
 
       return {
