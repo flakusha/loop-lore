@@ -56,7 +56,7 @@ bun run check && bun test src/
 #   registry; unknown names exit 2 and list available gates. `--gates`
 #   and `--skip-gates` are mutually exclusive. `giwt finalize`
 #   accepts `--gates` / `--skip-gates` and forwards them to Step 2.
-# - Advisory gates (ADVISORY_GATES in scripts/check/parallel/gates.mjs) RUN
+# - Advisory gates (ADVISORY_GATES in scripts/check/parallel/gate-table.mjs) RUN
 #   and REPORT like any other gate, but a failure does NOT fail the run.
 #   They are generated-artifact freshness checks that drift from concurrent
 #   dev-side merges and are reconciled post-merge anyway. The failure is
@@ -280,15 +280,52 @@ See `.agents/references/recommendations.md` — use these:
 ## Verification Gates (Required Before "Done")
 
 ```bash
-bun run check        # parallel gate runner (check-parallel.mjs): typecheck ×5, lint (ts/css/html/html-scripts/chaining), dprint, md lint, db schema gate, conflict markers, size, context-weight, i18n reconcile, jscpd ratchet, unit + e2e tests
-#                     # `jscpd ratchet` is ADVISORY (see ADVISORY_GATES in
-#                     # scripts/check/parallel/gates.mjs): it runs and reports like any
-#                     # other gate, but a clone count past scripts/check/jscpd-baseline.json
-#                     # shows as ADVISORY in the summary without failing the run
+bun run check        # parallel gate runner. The authoritative gate list is
+#                     # `checks` in scripts/check/parallel/gate-table.mjs; gate
+#                     # names are matched verbatim by --gates/--skip-gates.
+#                     # Blocking gates (failure fails the run):
+#                     #   typecheck - backend / - bun / - frontend / - coverage /
+#                     #     - coverage - frontend / - coverage - scripts / - scripts
+#                     #   lint - eslint, lint - native (clippy),
+#                     #     lint - egui (clippy)        (NOOP placeholder: SKIPPED
+#                     #                                  when cargo is absent)
+#                     #   format - dprint, format - native (rustfmt),
+#                     #     format - egui (rustfmt)     (NOOP placeholder)
+#                     #   test - egui                   (NOOP placeholder)
+#                     #   md - lint, mermaid - lint (mmdlint)
+#                     #   dead - code (knip), dead - code (src files)
+#                     #   wiring - check, fe-be - harmony, api - doc drift,
+#                     #   changelog - gate, db - schema gate, migrations - ordering,
+#                     #   conflict - markers, backlog - index, size - check,
+#                     #   size - strict, context - weight, no - shell - refs,
+#                     #   fuzz - generated tests, i18n - reconcile,
+#                     #   i18n - static keys, tests - coverage gaps (see below),
+#                     #   coverage - per-module line % (see Coverage gate below),
+#                     #   frontend - template preflight, frontend - innerHTML xss,
+#                     #   e2e - browser (baseline)
+#                     # Advisory gates (ADVISORY_GATES in
+#                     # scripts/check/parallel/gate-table.mjs) run and report like
+#                     # any other gate but a failure does NOT fail the run:
+#                     #   plan - validate, plan - ticket index (sync),
+#                     #   code-map - freshness, plan - matrix, jscpd ratchet,
+#                     #   branches - audit.
+#                     # They are generated-artifact/branch-topology freshness checks
+#                     # that drift from concurrent dev-side merges and are
+#                     # reconciled post-merge anyway (e.g. a clone count past
+#                     # scripts/check/jscpd-baseline.json shows as ADVISORY without
+#                     # failing the run).
 bun run check:report-ls  # aggregate check reports across all worktrees (flags stale)
 bun test src/        # unit tests
 E2E_SAFEGUARD=1 bun test tests/e2e/  # e2e (if affecting)
 ```
+
+`tests - coverage gaps` is a set-based ratchet over EXPORT coverage: a static
+scan lists which runtime exports no test file imports (matched by a real import
+edge, not an incidental token) and diffs the set against
+`scripts/check/test-gaps-baseline.json`. Shrinking the set is free; growing it
+requires `bun run test:gaps:update -- --accept-new-debt`. It measures uncovered
+exports, not lines — the per-module line floor in `scripts/check/coverage.mjs`
+(the `coverage - per-module line %` gate) stays the line-coverage measure.
 
 Each `bun run check` writes `.tmp/check-report.json` atomically with provenance
 (branch, gitHead, runId, mode). The pre-commit hook warns when the report is
