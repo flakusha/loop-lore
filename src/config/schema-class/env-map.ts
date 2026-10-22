@@ -164,8 +164,6 @@ export const envMap = (): EnvMap => {
   map.ENABLE_MODERATION_HOOKS = "hooks.enableModerationHooks";
   map.MODERATION_LLM_CLASSIFIER = "hooks.enableModerationLlmClassifier";
   map.LLM_DEFAULT_PROVIDER = "generation.defaultProvider";
-  map.LLM_RATE_LIMIT_PER_USER = "generation.flowControl.rateLimitPerUser";
-  map.LLM_RATE_LIMIT_WINDOW_MS = "generation.flowControl.rateLimitWindowMs";
   map.LLM_MAX_CONCURRENT_GLOBAL = "generation.flowControl.maxConcurrentGlobal";
   map.LLM_MAX_CONCURRENT_PER_CHAT = "generation.flowControl.maxConcurrentPerChat";
   map.LLM_TRANSLATOR_PROVIDER = "generation.modelRoles.translator.provider";
