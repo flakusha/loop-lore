@@ -24,6 +24,8 @@ export type { ChatMessageSearchState, } from "./message-search-state";
 export type {
   GenerationDetail,
   GroupedMessage,
+  LinkPreviewEntry,
+  LinkPreviewState,
   Message,
   MessageAttachment,
   MessagePoll,

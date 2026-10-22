@@ -13,6 +13,7 @@ import type { ChatMemoryState, } from "./memory-state";
 import type { ChatMergeState, } from "./merge-state";
 import type { MessageActionsState, } from "./message-actions-state";
 import type { ChatMessageSearchState, } from "./message-search-state";
+import type { LinkPreviewState, } from "./messages";
 import type { ChatMoodState, } from "./mood-state";
 import type { ChatMovementState, } from "./movement-state";
 import type { ChatMusicLinksState, } from "./music-links-state";
@@ -55,5 +56,6 @@ export interface ChatState
     ChatPromptTemplateState,
     GifPickerState,
     TurnSkipState,
-    MessageActionsState
+    MessageActionsState,
+    LinkPreviewState
 {}

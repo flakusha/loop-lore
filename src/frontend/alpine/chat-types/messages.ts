@@ -21,6 +21,22 @@ export interface MessageAttachment {
 /** A function call the assistant invoked during generation (mirrors GenerationToolCall). */
 export type { ToolCall, };
 
+/** Cached generic link preview for one URL (per active chat view). */
+export type LinkPreviewEntry =
+  | { state: "loading" }
+  | { state: "failed" }
+  | { state: "ready"; title: string | null; description: string | null; imageUrl: string | null };
+
+/** */
+export interface LinkPreviewState {
+  /** Cache keyed by the preview URL; template renders from this only. */
+  _linkPreviews: Record<string, LinkPreviewEntry>;
+  /** First non-music http(s) URL in the message, or null. */
+  linkPreviewUrlFor(msg: Message,): string | null;
+  /** Fetch (or reuse) the server unfurl for a URL. */
+  loadLinkPreview(url: string,): Promise<void>;
+}
+
 /** Viewer-scoped poll snapshot as returned by the poll API. */
 export interface MessagePoll {
   id: string;

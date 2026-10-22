@@ -235,4 +235,5 @@ export interface DB {
   federation_performance_budgets: import("./schema-core").FederationPerformanceBudgets;
   message_polls: import("./schema-core").MessagePolls;
   poll_votes: import("./schema-core").PollVotes;
+  link_previews: import("./schema-core").LinkPreviews;
 }
