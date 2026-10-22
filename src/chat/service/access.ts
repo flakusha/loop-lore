@@ -17,7 +17,7 @@
  * callers can drop in the appropriate variant without changing control flow.
  */
 import type { Kysely, } from "kysely";
-import { ChatParticipantRole, } from "../../db/enums";
+import { ChatParticipantRole, ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import type { ServiceError, } from "./types";
@@ -117,12 +117,12 @@ export async function getModerationBlock(
 export async function checkChatAccess(
   database: Kysely<DB>,
   chatId: string,
-  userId: string,
+  userId: string | null,
   userRole: string | null | undefined,
 ): Promise<{ ok: true } | { ok: false; error: ServiceError }> {
   const chat = await database
     .selectFrom("chats",)
-    .select("created_by",)
+    .select(["created_by", "visibility",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
@@ -132,6 +132,19 @@ export async function checkChatAccess(
 
   if (can(userRole, "admin.chat",) || chat.created_by === userId) {
     return { ok: true, };
+  }
+
+  // Public chats are readable by any authenticated caller AND the synthetic
+  // guest tier (userId null, role `guest`). Unlisted stays participant-only.
+  if (
+    chat.visibility === ChatVisibility.Public &&
+    (userId !== null || can(userRole, "chat.join",))
+  ) {
+    return { ok: true, };
+  }
+
+  if (userId === null) {
+    return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
   }
 
   const participant = await database
