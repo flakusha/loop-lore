@@ -156,6 +156,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   ctx.resultsEl = $<HTMLElement>("#participant-results",);
   ctx.selectedEl = $<HTMLElement>("#selected-participants",);
   ctx.chatType = $<HTMLSelectElement>("#chat-type",);
+  ctx.variantSelect = $<HTMLSelectElement>("#chat-variant",);
   ctx.form = $<HTMLFormElement>("#create-chat-form",);
 
   if (!ctx.searchInput || !ctx.resultsEl || !ctx.selectedEl || !ctx.chatType || !ctx.form) { return; }
@@ -176,19 +177,23 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
     if (modeSelect && this.checked) { modeSelect.value = "story"; }
   },);
 
-  // When RPG variants are selected, world picker becomes required.
-  const syncWorldRequired = () => {
-    if (ctx.worldSelect && ctx.variantSelect) {
+  // A variant chat is server-owned: the canonical triple replaces the form's
+  // type/mode, and the RPG variants additionally require a world.
+  const syncVariantControls = () => {
+    if (!ctx.variantSelect) { return; }
+    const isVariant = ctx.variantSelect.value !== "standard";
+    if (ctx.chatType) { ctx.chatType.disabled = isVariant; }
+    if (modeSelect) { modeSelect.disabled = isVariant; }
+    if (ctx.worldSelect) {
       ctx.worldSelect.required = WORLD_REQUIRED_VARIANTS.has(ctx.variantSelect.value,);
     }
   };
 
-  ctx.variantSelect?.addEventListener("change", syncWorldRequired,);
-  syncWorldRequired();
+  ctx.variantSelect?.addEventListener("change", syncVariantControls,);
+  syncVariantControls();
 
   ctx.impersonateGroup = $<HTMLElement>("#impersonate-group",);
   ctx.impersonateToggle = $<HTMLInputElement>("#impersonate-toggle",);
-  ctx.variantSelect = $<HTMLSelectElement>("#chat-variant",);
   ctx.memoryCarryGroup = $<HTMLElement>("#memory-carry-group",);
   ctx.memorySelectiveList = $<HTMLElement>("#memory-selective-list",);
   ctx.memoryCheckboxList = $<HTMLElement>("#memory-checkbox-list",);
