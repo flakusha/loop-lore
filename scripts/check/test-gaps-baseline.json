@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-22T06:04:35.372Z",
-  "count": 1486,
+  "generatedAt": "2026-10-22T07:03:20.718Z",
+  "count": 1485,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -562,7 +562,6 @@
     "src/frontend/alpine/chat/bootstrap.ts#chatState",
     "src/frontend/alpine/chat/inline-state.ts#chatInlineState",
     "src/frontend/alpine/chat/inline-state.ts#chatRpgQuestions",
-    "src/frontend/alpine/chat/lifecycle.ts#chatLifecycle",
     "src/frontend/alpine/chat/merge-reactive.ts#mergeReactiveSource",
     "src/frontend/alpine/comfyui-builder/chains.ts#builderListState",
     "src/frontend/alpine/comfyui-builder/form.ts#builderFormState",
