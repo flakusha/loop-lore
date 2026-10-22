@@ -249,8 +249,10 @@ describe("touchMemory", () => {
     },);
 
     await touchMemory(db, "mem-1",);
-    await touchMemory(db, "mem-1",);
     await touchMemories(db, ["mem-1",],);
+    await touchMemory(db, "mem-1",);
+
+    // 0.95 -> 1.0 (clamped) -> 1.0 -> 1.0: single + batch writers agree.
 
     const updated = await db
       .selectFrom("actor_memories",)
