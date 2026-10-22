@@ -38,7 +38,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _assistantMaxTokens: null as number | null,
   _actorModels: {} as Record<string, { model: string; provider: string }>,
   _chatParticipants: [] as { actor_id: string; name: string; display_name?: string }[],
-  _personas: [] as any[],
+  _personas: [] as { id: string; name?: string }[],
   _debugView: false,
   // VN mode settings
   _vnEnabled: false,

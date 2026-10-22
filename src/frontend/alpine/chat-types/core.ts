@@ -105,7 +105,7 @@ export interface ChatCoreState
   _groupPaused: boolean;
   _renameChatId: string;
   _renameChatName: string;
-  _personas: any[];
+  _personas: { id: string; name?: string }[];
   _selectedPersonaId: string | null;
   _ownershipModalOpen: boolean;
   _ownershipNewOwnerId: string;

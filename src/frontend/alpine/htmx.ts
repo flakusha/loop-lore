@@ -45,9 +45,11 @@ globalThis.apiFetch = apiFetch;
 // ── htmx event handlers ───────────────────────────────────
 
 document.addEventListener("htmx:config:request", (e: Event,) => {
-  const detail = (e as CustomEvent<{ ctx?: { request?: { headers: Record<string, string> } } }>)?.detail;
+  const detail = (e as CustomEvent<{ ctx?: { request?: { headers: Record<string, string> } }; path?: unknown }>)
+    ?.detail;
+
   const headers = detail?.ctx?.request?.headers;
-  apiLog.debug("htmx:config:request", { path: (detail as any)?.path, },);
+  apiLog.debug("htmx:config:request", { path: detail?.path, },);
   // Browser auth rides the HttpOnly `ll_token` cookie (same-origin, automatic)
   // — no Bearer fallback: `localStorage.session_token` has no writer.
   // CSRF double-submit: echo the (non-HttpOnly) csrf_token cookie value in
@@ -69,15 +71,16 @@ const PAGE_LOADERS = new Map<string, string>([["#create-chat-form", "loadNewChat
 function triggerPageLoaders(): void {
   for (const [sel, fn,] of PAGE_LOADERS) {
     if (document.querySelector(sel,)) {
-      (globalThis as any)[fn]?.();
+      (globalThis as unknown as Record<string, () => void>)[fn]?.();
     }
   }
 }
 
 document.addEventListener("htmx:after:init", (e: Event,) => {
-  const elt = ((e as any).target || (e as any).elt || (e as any)?.detail?.elt) as Element;
-  apiLog.debug("htmx:after:init", { tag: elt?.tagName, id: (elt as any)?.id, },);
-  if (elt && (globalThis as any).htmx && globalThis.Alpine) {
+  const evt = e as unknown as { target?: Element; elt?: Element; detail?: { elt?: Element } };
+  const elt = (evt.target || evt.elt || evt?.detail?.elt) as Element;
+  apiLog.debug("htmx:after:init", { tag: elt?.tagName, id: (elt as HTMLElement)?.id, },);
+  if (elt && globalThis.htmx && globalThis.Alpine) {
     htmx.process(elt as HTMLElement,);
     try {
       Alpine.initTree(elt as HTMLElement,);
