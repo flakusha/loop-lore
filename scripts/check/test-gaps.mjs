@@ -58,6 +58,7 @@
  */
 import { existsSync, readdirSync, readFileSync, renameSync, unlinkSync, writeFileSync, } from "node:fs";
 import path from "node:path";
+import ts from "typescript";
 import {
   flag,
   object,
@@ -194,6 +195,82 @@ function exportedNames(text,) {
   return names;
 }
 
+/**
+ * Type-only classification for one module, straight from the TypeScript AST.
+ *
+ * The compiler is the oracle for the two questions the regex scan cannot
+ * answer on its own:
+ *
+ * - Is the module pure type/definition surface? A module that declares
+ *   nothing but interfaces, type aliases and type-only imports/exports has
+ *   no runtime behaviour at all, so no runtime test can reach it and no gap
+ *   in it is actionable — it is excluded from the scan entirely.
+ * - Is this exported NAME a type? `export { type Foo }` publishes a type
+ *   that is erased at compile time. Charging it asks for a runtime test of a
+ *   type, which is a tautology.
+ *
+ * Conservative by construction: every statement kind that is not provably
+ * type-only counts as runtime, and a name that does not resolve to a local
+ * type counts as a runtime export. A module is skipped only when the
+ * compiler sees nothing but type declarations in it, so real code can never
+ * be skipped by accident.
+ */
+function classifyModule(abs, text,) {
+  const sf = ts.createSourceFile(abs, text, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS,);
+  const localTypes = new Set();
+  const typeImports = new Set();
+  const typeExports = new Set();
+  let hasRuntime = false;
+
+  for (const st of sf.statements) {
+    if (ts.isInterfaceDeclaration(st,) || ts.isTypeAliasDeclaration(st,)) {
+      localTypes.add(st.name.text,);
+    } else if (ts.isImportDeclaration(st,)) {
+      const clause = st.importClause;
+      if (clause === undefined) { hasRuntime = true; continue; }  // side-effect import
+      const nb = clause.namedBindings;
+      if (clause.isTypeOnly) {
+        if (nb && ts.isNamedImports(nb,)) {
+          for (const el of nb.elements) { typeImports.add(el.name.text,); }
+        }
+        continue;  // `import type …` loads nothing
+      }
+      if (nb && ts.isNamedImports(nb,)) {
+        for (const el of nb.elements) { if (el.isTypeOnly) { typeImports.add(el.name.text,); } }
+        const onlyTypes = nb.elements.every((el,) => el.isTypeOnly,);
+        if (!onlyTypes || clause.name !== undefined) { hasRuntime = true; }
+        continue;
+      }
+      hasRuntime = true;  // default import
+    }
+  }
+
+  for (const st of sf.statements) {
+    if (ts.isExportDeclaration(st,)) {
+      if (st.isTypeOnly) { continue; }  // `export type { … }` is erased
+      const clause = st.exportClause;
+      if (clause && ts.isNamedExports(clause,)) {
+        let anyValue = false;
+        for (const el of clause.elements) {
+          const exported = el.name.text;
+          const local = el.propertyName?.text ?? el.name.text;
+          if (el.isTypeOnly) { typeExports.add(exported,); continue; }
+          if (localTypes.has(local,) || typeImports.has(local,)) { typeExports.add(exported,); continue; }
+          anyValue = true;
+        }
+        if (anyValue) { hasRuntime = true; }
+        continue;
+      }
+      hasRuntime = true;  // `export * …` / `export * as ns …`
+      continue;
+    }
+    if (ts.isInterfaceDeclaration(st,) || ts.isTypeAliasDeclaration(st,) || ts.isImportDeclaration(st,)) { continue; }
+    hasRuntime = true;  // every other statement kind is runtime surface
+  }
+
+  return { typeExports, hasRuntime, };
+}
+
 /** Every identifier token in code. Membership testing IS whole-word matching. */
 function identifierSet(code,) {
   const found = new Set();
@@ -285,7 +362,14 @@ function collectGaps(files,) {
   for (const [id, code,] of stripped) {
     const rel = `${id}.ts`;
     if (id.endsWith(".test",) || SKIP_PATTERNS.some((re,) => re.test(rel,))) { continue; }
-    for (const name of exportedNames(code,)) {
+    const candidates = exportedNames(code,);
+    if (candidates.length === 0) { continue; }
+    const { typeExports, hasRuntime, } = classifyModule(path.join(PROJECT_ROOT, `${id}.ts`,), raw.get(id,),);
+    // A pure type/definition module holds no runtime behaviour: nothing in it
+    // can be reached by a runtime test, so it is not a test requirement.
+    if (!hasRuntime) { continue; }
+    for (const name of candidates) {
+      if (typeExports.has(name,)) { continue; }
       if (!coveredBy(id, name,)) { gaps.push(`${rel}#${name}`,); }
     }
   }
