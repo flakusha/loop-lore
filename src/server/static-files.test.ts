@@ -10,7 +10,7 @@
 // node:fs mock (same pattern as config/hot-reload.test.ts). The mock is
 // process-global in bun, so the suite is gated to the isolated gate.
 
-import { afterAll, afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { afterAll, beforeEach, expect, mock, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { dirname, join, } from "node:path";
@@ -102,19 +102,40 @@ describeOrSkip("walkDirectorySync", () => {
 },);
 
 describeOrSkip("handleDocsRequest", () => {
-  const originalDocsEnabled = process.env.DOCS_ENABLED;
-
-  afterEach(() => {
-    if (originalDocsEnabled === undefined) { delete process.env.DOCS_ENABLED; }
-    else { process.env.DOCS_ENABLED = originalDocsEnabled; }
-  },);
-
-  test("returns null when DOCS_ENABLED is false", () => {
-    process.env.DOCS_ENABLED = "false";
+  test("returns null when the resolved config disables docs", () => {
     const fx = getFixtures();
     writeFixture(fx.docs, "guide/index.html", "<html>guide</html>",);
     const [url, request,] = docsRequest("/docs/guide/",);
-    expect(handleDocsRequest(url, request, {},),).toBeNull();
+    expect(handleDocsRequest(url, request, { enabled: false, },),).toBeNull();
+  });
+
+  test("ignores DOCS_ENABLED and gates only on the resolved config", () => {
+    const fx = getFixtures();
+    writeFixture(fx.docs, "guide/index.html", "<html>guide</html>",);
+    const original = process.env.DOCS_ENABLED;
+    try {
+      // The env var says "off" but the resolved config says "on": the
+      // resolved config wins, so the docs are still served.
+      process.env.DOCS_ENABLED = "false";
+      const [url, request,] = docsRequest("/docs/guide/",);
+      const res = handleDocsRequest(url, request, { enabled: true, },);
+      expect(res?.status,).toBe(200,);
+
+      // And the mirror case: the env var says "on" but the resolved config
+      // says "off", so the request is refused.
+      process.env.DOCS_ENABLED = "true";
+      expect(handleDocsRequest(url, request, { enabled: false, },),).toBeNull();
+    } finally {
+      if (original === undefined) { delete process.env.DOCS_ENABLED; }
+      else { process.env.DOCS_ENABLED = original; }
+    }
+  });
+
+  test("redirects /docs to /docs/", () => {
+    const [url, request,] = docsRequest("/docs",);
+    const res = handleDocsRequest(url, request, {},);
+    expect(res?.status,).toBe(302,);
+    expect(res?.headers.get("location",),).toBe("/docs/",);
   });
 
   test("returns null for non-docs paths", () => {

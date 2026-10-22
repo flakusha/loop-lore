@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Caveats:** stale state — the docs gate now reads the resolved config (docs.enabled) while src/routes/views/layout.ts still reads process.env.DOCS_ENABLED directly, so a config-file-only change to docs.enabled can leave the sidebar link and the served docs disagreeing
 **Epic:** server-hardening
 
 **Summary:**
@@ -18,8 +19,6 @@ Sources: stream-a #12. Where: src/server/static-files.ts:handleDocsRequest (:126
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
-
-**Resolved:** 2026-10-22 registry-driven close: git issue fcf58ae (registry tip: 015522768 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-FIX-SERVER-GATE-DOCS-SERVING)
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

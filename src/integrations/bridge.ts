@@ -194,7 +194,15 @@ export function createMessageBridge(
       if (gateVerdict !== undefined && !gateVerdict.ok) { return false; }
 
       seen.set(key, nowMs + dedupTtlMs,);
-      handler?.(message,);
+      try {
+        handler?.(message,);
+      } catch (cause) {
+        // A handler failure must not burn the id: drop the dedup entry so
+        // the provider's redelivery dispatches the message again.
+        seen.delete(key,);
+        throw cause;
+      }
+
       health?.markSuccess(adapterName,);
       return true;
     },
