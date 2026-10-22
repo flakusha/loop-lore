@@ -57,7 +57,7 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
 - **Release blocker: A9** — tag `0.1.0` + push `dev`→`origin/dev` (both are human-only: agents never tag or push) — `open-inflight.md`.
 - **Core-finalization remainder** — C7 Phases 3–4 (party split/reunite + VN choice cards), G2 branching UI, `/api/sessions`, e2e auth/NSFW/users gaps — `open-inflight.md` § 2026-09-11 wave.
 - **Dead/unwired code** — transport module, music/SFX/Video stubs — `open-debt.md`.
-- **Coverage** — below-floor modules tracked by waiver tickets + frontend coverage batches — `open-untriaged.md`.
+- **Coverage** — below-floor modules tracked by waiver tickets + frontend coverage batches — `open-untriaged.md`. ~90% coverage is acceptable as-is (2026-10-22): no coverage baseline shift is needed.
 - **Triage** — chat-variants + chat-product-features clusters (27 tickets filed 2026-09-11) awaiting epic linkage — `open-untriaged.md`.
 - **Landed history** (mesh sharing, NSFW pipeline, coverage lifts, test isolation, audit clusters) lives in `open-closed.md`.
 
