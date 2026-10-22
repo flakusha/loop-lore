@@ -274,6 +274,8 @@ tests and are deliberately excluded.
 
 - **StrykerJS** — deferred, not rejected: it has a real official Bun runner, but a mutation score
   measured under a thin coverage baseline is noise, and each mutant costs a full test run.
+  (2026-10-22: ~90% coverage is the accepted level and no coverage baseline shift is planned,
+  so this deferral stands as written.)
 - **Schemathesis** — deferred: Python sidecar, needs a live server and a CI step; correct for
   intersystem API testing but disproportionate until route annotations and the OpenAPI spec stabilize.
 - **`json-schema-faker`** — rejected: emits valid data only, so it cannot probe a validator's reject
