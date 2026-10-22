@@ -91,15 +91,12 @@ document.addEventListener("htmx:after:init", (e: Event,) => {
 },);
 
 // Update document title from header title after navigation
-document.addEventListener("htmx:after:swap", (e: Event,) => {
-  const target = (e as CustomEvent<{ target: Element }>)?.detail?.target;
-  if (target) {
-    const header = document.querySelector<HTMLElement>("#header-slot .title",);
-    if (header) {
-      const title = header.textContent?.trim() || "";
-      if (title) {
-        document.title = `${title} — Loop Lore`;
-      }
+document.addEventListener("htmx:after:swap", () => {
+  const header = document.querySelector<HTMLElement>("#header-slot .title",);
+  if (header) {
+    const title = header.textContent?.trim() || "";
+    if (title) {
+      document.title = `${title} — Loop Lore`;
     }
   }
 },);
