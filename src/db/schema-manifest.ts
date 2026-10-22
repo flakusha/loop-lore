@@ -2783,6 +2783,10 @@ export const SCHEMA = new SchemaManifest()
     rules: col("text", { notNull: true, hasDefault: true, },),
     autonomy_config: col("text", { notNull: true, hasDefault: true, },),
     rpg_skills: col("integer", { notNull: true, hasDefault: true, },),
+    requires_stats: col("integer", { notNull: true, hasDefault: true, },),
+    stat_point_budget: col("integer", { notNull: true, hasDefault: true, },),
+    stat_min: col("integer", { notNull: true, hasDefault: true, },),
+    stat_max: col("integer", { notNull: true, hasDefault: true, },),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
   .table("model_capabilities", {
