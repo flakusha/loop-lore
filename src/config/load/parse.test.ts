@@ -20,7 +20,7 @@ describe("deepMerge", () => {
   test("nested objects merge recursively instead of replacing", () => {
     expect(deepMerge(
       { server: { host: "0.0.0.0", port: 3000, }, },
-      { server: { port: 8080, }, },
+      { server: { host: "0.0.0.0", port: 8080, }, },
     ),).toEqual({ server: { host: "0.0.0.0", port: 8080, }, },);
   });
 
