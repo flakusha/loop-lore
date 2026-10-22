@@ -3,7 +3,7 @@
 
 # FEAT: Skill usage XP: award skill and character XP when skills are exercised
 
-**Status:** In Progress
+**Status:** in_progress
 **Status Note:** no `addXp`/`SkillsService` caller in `src/rpg/interaction/` on dev; work in branch `xp-reward-sources`; verified 2026-10-23
 **Priority:** medium
 **Effort:** Medium
