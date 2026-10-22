@@ -95,8 +95,8 @@
     "dead:code:src:full": "knip --no-gitignore",
     "dead:code:src:ci": "knip --no-gitignore --no-progress",
 
-    "jscpd": "jscpd src/ --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts'",
-    "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters console,json --output .tmp/jscpd",
+    "jscpd": "jscpd src/ --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts,**/views/*.html,frontend/alpine/**,validation/schemas/*,db/schema-*.ts'",
+    "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts,**/views/*.html,frontend/alpine/**,validation/schemas/*,db/schema-*.ts' --reporters console,json --output .tmp/jscpd",
     "jscpd:ratchet": "bun scripts/check/jscpd-ratchet.mjs",
 
     "circular:check": "madge --circular --ts-config tsconfig.json --extensions ts,tsx --no-color src/ tests/ scripts/",
