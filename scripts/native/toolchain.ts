@@ -42,7 +42,7 @@ import { existsSync, readdirSync, } from "node:fs";
 import { homedir, } from "node:os";
 import { dirname, join, } from "node:path";
 import { provisionWasmStd, } from "./provision";
-import { REPO_ROOT, type RustcInstall, WASM_TARGET, } from "./shared";
+import { OVERLAY_ROOT, REPO_ROOT, type RustcInstall, WASM_TARGET, } from "./shared";
 
 /** A resolved wasm-capable toolchain, ready to hand to cargo. */
 export interface WasmToolchain {
@@ -149,6 +149,28 @@ function discoverInstalls(): RustcInstall[] {
   }
 
   return installs;
+}
+
+/**
+ * `true` when a wasm-capable rustc is reachable WITHOUT provisioning: a
+ * discovered install ships the wasm32 std, or the repo-local overlay is
+ * already populated. Provisioning downloads ~22MB from static.rust-lang.org,
+ * which a gating test must never do (see scripts/native/toolchain.test.ts).
+ * @returns true when no download is needed for a wasm-capable rustc
+ */
+export function hasWasmSource(): boolean {
+  if (discoverInstalls().some((install,) => hasWasmStd(install,))) { return true; }
+
+  for (const entry of readdirSafe(OVERLAY_ROOT,)) {
+    const wasmDir = join(OVERLAY_ROOT, entry, "sysroot", "lib", "rustlib", WASM_TARGET,);
+    try {
+      if (readdirSync(wasmDir, { recursive: true, },).length > 0) { return true; }
+    } catch {
+      continue;
+    }
+  }
+
+  return false;
 }
 
 /**
