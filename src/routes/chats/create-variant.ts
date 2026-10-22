@@ -7,6 +7,10 @@
  * A `variant` field pins the canonical `(type, mode, purpose)` triple from
  * `VARIANT_DEFAULTS`; any explicitly supplied component must agree with the
  * table, otherwise the request is rejected with a human-readable error.
+ *
+ * Only an *explicit* caller component is validated against the table. A chat
+ * setup template's mode is a preset default rather than a caller choice, so
+ * the variant wins over it instead of conflicting with it.
  */
 import {
   CHAT_VARIANTS,
@@ -20,14 +24,12 @@ import { ChatCreateBody, } from "../../validation/schemas";
  * @param rawBody - Raw body (distinguishes absent keys from defaults)
  * @param body - Validated body
  * @param hasExplicit - Whether a key was present in the raw body
- * @param templateMode - Mode inherited from a chat setup template
  * @returns Overrides to apply, or `error` when the variant/triple is invalid
  */
 export function resolveVariantOverrides(
   rawBody: Record<string, unknown>,
   body: typeof ChatCreateBody.static,
   hasExplicit: (key: string,) => boolean,
-  templateMode: string | undefined,
 ): {
   resolvedType?: string;
   resolvedMode?: string;
@@ -50,12 +52,8 @@ export function resolveVariantOverrides(
   // If the caller also supplies any of type/mode/purpose, they must match the
   // variant table; otherwise the variant default applies.
   const suppliedType = hasExplicit("type",) ? body.type : undefined;
-  const suppliedMode = hasExplicit("mode",) ? body.mode : templateMode;
+  const suppliedMode = hasExplicit("mode",) ? body.mode : undefined;
   const suppliedPurpose = hasExplicit("purpose",) ? (rawBody.purpose as string) : undefined;
-  const suppliedMaxTurns = hasExplicit("maxTurns",) ? body.maxTurns : undefined;
-  const suppliedAutoAdvance = hasExplicit("autoAdvance",) ? body.autoAdvance : undefined;
-  const suppliedTalkativity = hasExplicit("talkativity",) ? body.talkativity : undefined;
-  const suppliedPromptOverride = hasExplicit("promptOverride",) ? body.promptOverride : undefined;
   if (suppliedType !== undefined || suppliedMode !== undefined || suppliedPurpose !== undefined) {
     const err = validateVariantTriple(
       variant,
@@ -75,9 +73,14 @@ export function resolveVariantOverrides(
     resolvedGmConfig: !hasExplicit("gmConfig",) && def.gm_config !== null
       ? (def.gm_config as Record<string, unknown>)
       : undefined,
-    resolvedMaxTurns: suppliedMaxTurns ?? def.max_turns,
-    resolvedAutoAdvance: suppliedAutoAdvance ?? def.auto_advance,
-    resolvedTalkativity: suppliedTalkativity ?? def.talkativity,
-    resolvedPromptOverride: suppliedPromptOverride ?? def.prompt_override_default,
+    // An absent key falls back to the variant default; an explicit `null`
+    // means "no value" (e.g. no turn cap) and must survive the round trip,
+    // so presence — not nullishness — decides.
+    resolvedMaxTurns: hasExplicit("maxTurns",) ? (body.maxTurns ?? null) : def.max_turns,
+    resolvedAutoAdvance: hasExplicit("autoAdvance",) ? (body.autoAdvance ?? null) : def.auto_advance,
+    resolvedTalkativity: hasExplicit("talkativity",) ? (body.talkativity ?? null) : def.talkativity,
+    resolvedPromptOverride: hasExplicit("promptOverride",)
+      ? (body.promptOverride ?? null)
+      : def.prompt_override_default,
   };
 }

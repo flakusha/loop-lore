@@ -190,12 +190,9 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           // ── Variant validation: optional `variant` field that pins the
           // (type, mode, purpose) triple to the canonical taxonomy table.
-          const variantOverride = resolveVariantOverrides(
-            rawBody,
-            body,
-            hasExplicit,
-            template?.mode ?? undefined,
-          );
+          // The variant outranks the template's preset mode — only an explicit
+          // caller `mode`/`purpose` has to agree with the table.
+          const variantOverride = resolveVariantOverrides(rawBody, body, hasExplicit,);
 
           if (variantOverride.error) { return badRequest(variantOverride.error,); }
           const resolvedType = variantOverride.resolvedType;

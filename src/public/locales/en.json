@@ -1166,9 +1166,19 @@
     "ownerMessage": "Owner",
     "searchInChat": "Search in this chat...",
     "seenBy": "Seen by",
+    "variantAssistant": "Assistant chat",
+    "variantAssistantGroup": "Assistant group chat",
+    "variantCharacter": "Character chat (1×1 RP)",
+    "variantCharacterGroup": "Multi-character group RP",
+    "variantLlmOnly": "LLM-only validation chat",
+    "variantLlmOnlyGroup": "LLM-only group sandbox",
+    "variantLlmOnlyGroupGm": "LLM group with GM (guided story)",
     "variantRpg": "RPG",
     "variantRpgGroup": "RPG Group",
-    "variantStandard": "Standard"
+    "variantStandard": "Standard",
+    "variantUser1x1": "User chat (1×1)",
+    "variantUserGroup": "User group chat",
+    "variantUserGroupAdmin": "User group with admin"
   },
   "participants": {
     "title": "Participants",
