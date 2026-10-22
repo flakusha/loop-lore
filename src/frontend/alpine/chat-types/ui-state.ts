@@ -52,6 +52,11 @@ export interface ChatCoreUiState {
   closeMessagePoll(msgId: string,): Promise<void>;
   applyPoll(poll: MessagePoll,): void;
   _pollComposer: { messageId: string; question: string; optionsText: string; multi: boolean } | null;
+  _voiceRecording: boolean;
+  _voiceRecorder: MediaRecorder | null;
+  _voiceChunks: Blob[];
+  startVoiceRecording(): Promise<void>;
+  stopVoiceRecordingAndSend(): Promise<void>;
   loadQuickEmojis(): Promise<void>;
   _reactionPicker: { visible: boolean; messageId: string; x: number; y: number };
   _reactionActiveIndex: number;
