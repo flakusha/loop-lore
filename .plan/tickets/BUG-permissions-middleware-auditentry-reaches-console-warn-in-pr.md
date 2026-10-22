@@ -3,7 +3,7 @@
 
 # BUG: permissions middleware auditEntry reaches console.warn in production
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -44,3 +44,5 @@ The catch block is reachable when `getLogger()` itself throws — meaning
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue fea5a8b (registry tip: 986b6f2af Konstantin Fedotov Auto-closed: appended .md marker marks BUG-PERMISSIONS-MIDDLEWARE-AUDIT)

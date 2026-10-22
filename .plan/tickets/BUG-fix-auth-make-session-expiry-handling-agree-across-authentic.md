@@ -3,7 +3,7 @@
 
 # BUG: fix(auth): make session-expiry handling agree across authenticate() and token.ts (fail closed)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** auth-config-contracts
@@ -21,3 +21,5 @@ Sources: stream-c #6. Where: src/middleware/auth/authenticate.ts:87-96 (expiresM
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue ae8d5df (registry tip: 238ed3a2a Konstantin Fedotov Auto-closed: appended .md marker marks BUG-FIX-AUTH-MAKE-SESSION-EXPIRY)

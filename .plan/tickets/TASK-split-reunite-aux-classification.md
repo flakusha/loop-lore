@@ -12,6 +12,10 @@
 
 ## Goal
 
+**Context:** Aux LLM path for split/reunite branch specs, mirroring `classifyTransition`; separate from regex detection to keep verification/rollback surfaces distinct.
+
+**Acceptance Criteria:** See the acceptance criteria below.
+
 Use aux LLM to derive branch specs (locations + actor sets) and secondary chat id from user narration, then validate and execute split/reunite. Separate from regex detection (shipped) to keep verification/rollback surfaces distinct.
 
 ## Acceptance Criteria

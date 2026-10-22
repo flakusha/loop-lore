@@ -3,7 +3,7 @@
 
 # BUG: Notification participant helpers write actor_id into the users foreign key
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -30,3 +30,5 @@ Source: .tmp/longcat/review-misc-services.md M2.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue d807ef6 (registry tip: 1ee645c9e Konstantin Fedotov Auto-closed: appended .md marker marks BUG-NOTIFICATION-PARTICIPANT-HEL)
