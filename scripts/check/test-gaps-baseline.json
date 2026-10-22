@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-10-21T10:59:05.005Z",
-  "count": 1496,
+  "count": 1494,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -1257,7 +1257,6 @@
     "src/rpg/integration-registry/edges/social-crafting.ts#SOCIAL_CRAFTING_EDGES",
     "src/rpg/integration-registry/index.ts#integration",
     "src/rpg/interaction/catalog.ts#INTERACTION_COMMANDS",
-    "src/rpg/interaction/catalog.ts#INTERACTION_SKILL_MATRIX",
     "src/rpg/interaction/materials.ts#findMissingMaterials",
     "src/rpg/interaction/modifiers.ts#getAbilityModifier",
     "src/rpg/interaction/modifiers.ts#getInteractionAbility",
@@ -1457,7 +1456,6 @@
     "src/utils/safe-buffer/constants.ts#MAX_CURSOR_LEN",
     "src/utils/safe-buffer/constants.ts#MAX_KEY_LEN",
     "src/utils/safe-buffer/types.ts#unwrapGuard",
-    "src/validation/middleware.ts#validationErrorHandler",
     "src/validation/prompt-injection.ts#confirmInjectionWithLlm",
     "src/validation/schemas/admin.ts#ADMIN_ROLES",
     "src/validation/schemas/primitives.ts#ListResponse",

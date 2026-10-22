@@ -146,8 +146,3 @@ export function forbidden(message = "Forbidden",): Response {
 export function notFound(message = "Not found",): Response {
   return Response.json({ error: message, code: "NOT_FOUND", meta: { api_version: API_VERSION, }, }, { status: 404, },);
 }
-
-/**
- * Compatibility re-export — deprecated. Use `onValidationError` directly.
- */
-export const validationErrorHandler = onValidationError;
