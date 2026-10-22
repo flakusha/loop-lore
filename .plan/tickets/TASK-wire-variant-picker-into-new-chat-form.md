@@ -4,6 +4,8 @@
 # TASK: Wire variant picker into new-chat form
 
 **Status:** Done
+**Status Note:** Shipped 2026-10-22 — the new-chat form carries a picker with all twelve canonical variants, the choice is submitted as `variant` and the backend pins the triple from `VARIANT_DEFAULTS`, and the duplicate client-side taxonomy module was deleted in favour of the server table.
+**Scope:** Close epic-chat-variants-taxonomy: wire the 12-variant picker into new-chat, fix variant override null handling and template-mode precedence, seed talkativity on member participants, reconcile epic/ticket metadata
 **Priority:** medium
 **Effort:** Medium
 
