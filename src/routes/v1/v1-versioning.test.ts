@@ -11,6 +11,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
+import { insertActors, insertChatParticipants, insertChats, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { v1Routes, } from "./index";
 
@@ -60,6 +61,12 @@ describe("v1 API versioning", () => {
       status: "active",
       settings: "{}",
     },).execute();
+
+    await insertActors(db, "Test User", { id: userId as never, user_id: userId as never, owner_id: userId as never, },);
+    // A public chat exists, so the null-id pin below is non-vacuous: the
+    // empty list proves the gate, not an empty table.
+    const seededPublic = await insertChats(db, "Seeded Public", userId, { visibility: "public", },);
+    await insertChatParticipants(db, seededPublic, userId,);
   },);
 
   test("GET /api/v1/health returns 200 with meta.api_version", async () => {

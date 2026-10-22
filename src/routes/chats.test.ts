@@ -84,10 +84,15 @@ describe("chatsRoutes", () => {
 
   // ── Auth ─────────────────────────────────────────────────────
 
-  test("GET /api/chats returns 401 without userId", async () => {
+  test("GET /api/chats without userId returns 200 with no chats (no role, no public arm)", async () => {
     const app = createApp(db, null,);
     const res = await app.handle(new Request("http://localhost/api/chats",),);
-    expect(res.status,).toBe(401,);
+    // No requireUserId on the list route since the guest tier: a null id
+    // with no role matches no arm (the public arm needs the guest role), so
+    // this answers an empty list — not a 401. Mutations (POST below) keep 401.
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: unknown[] };
+    expect(body.data,).toEqual([],);
   });
 
   test("POST /api/chats returns 401 without userId", async () => {
