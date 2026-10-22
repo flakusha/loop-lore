@@ -11,6 +11,7 @@
 // process-global in bun, so the suite is gated to the isolated gate.
 
 import { afterAll, beforeEach, expect, mock, test, } from "bun:test";
+import { Elysia, } from "elysia";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { dirname, join, } from "node:path";
@@ -432,6 +433,57 @@ describeOrSkip("createNonApiHandler", () => {
     expect(res.status,).toBe(200,);
     expect(res.headers.get("content-encoding",),).toBe("br",);
     expect(await res.text(),).toBe("br-bytes",);
+  });
+},);
+
+describeOrSkip("createNonApiHandler - docs surface (route level)", () => {
+  /**
+   * Mount the non-API handler in a router so the request travels the real
+   * HTTP path (routing, redirect, body).
+   * @param docs - the resolved docs config
+   * @returns the mounted app
+   */
+  function mountDocsApp(docs: { enabled?: boolean; public?: string[] },) {
+    const handler = createNonApiHandler(docs,);
+    return new Elysia().all("/*", ({ request, },) => handler(request,),);
+  }
+
+  test("redirects /docs to /docs/ when the config enables docs", async () => {
+    const fx = getFixtures();
+    writeFixture(fx.docs, "index.html", "<html>Docs Root</html>",);
+    const app = mountDocsApp({ enabled: true, },);
+
+    const res = await app.handle(new Request("http://localhost/docs",),);
+    expect(res.status,).toBe(302,);
+    expect(res.headers.get("location",),).toBe("/docs/",);
+  });
+
+  test("serves the docs index when the config enables docs", async () => {
+    const fx = getFixtures();
+    writeFixture(fx.docs, "index.html", "<html>Docs Root</html>",);
+    const app = mountDocsApp({ enabled: true, },);
+
+    const res = await app.handle(new Request("http://localhost/docs/",),);
+    expect(res.status,).toBe(200,);
+    expect(await res.text(),).toContain("Docs Root",);
+  });
+
+  test("does not serve the docs when the resolved config disables them", async () => {
+    const fx = getFixtures();
+    writeFixture(fx.docs, "index.html", "<html>Docs Root</html>",);
+    const app = mountDocsApp({ enabled: false, },);
+
+    const res = await app.handle(new Request("http://localhost/docs/",),);
+    expect(res.status,).toBe(404,);
+    expect(await res.text(),).not.toContain("Docs Root",);
+  });
+
+  test("does not redirect /docs when the resolved config disables docs", async () => {
+    const app = mountDocsApp({ enabled: false, },);
+
+    const res = await app.handle(new Request("http://localhost/docs",),);
+    expect(res.status,).toBe(404,);
+    expect(res.headers.get("location",),).toBeNull();
   });
 },);
 
