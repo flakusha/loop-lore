@@ -16,6 +16,12 @@ import { feFetch, } from "./fe-fetch";
 
 export type { Locale, LocaleInfo, TranslationMap, };
 
+// Ambient locale preference shared with the Alpine translator
+// (src/frontend/alpine/i18n.ts) and chat-utils/time.ts.
+declare global {
+  var currentLocale: string | undefined;
+}
+
 /** All supported locales with metadata */
 export const LOCALE_REGISTRY: Record<Locale, LocaleInfo> = {
   en: { id: "en", name: "English", nativeName: "English", direction: "ltr", },
