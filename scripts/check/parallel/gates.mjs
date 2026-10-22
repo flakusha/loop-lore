@@ -12,6 +12,7 @@
 import { existsSync, readdirSync, } from "node:fs";
 // oxlint-disable-next-line import/no-nodejs-modules
 import path from "node:path";
+import { jscpdScanCommand, } from "../jscpd-scan.mjs";
 import {
   COVERAGE_DIR_RELATIVE,
   JSCPD_DIR_RELATIVE,
@@ -246,8 +247,12 @@ checks["e2e - browser (baseline)"] = e2eBrowserCommand();
  * — BUG-jscpd-ratchet-gate-silently-removed-without-ticket).
  */
 function jscpdGateCommand() {
-  const jscpdScan =
-    `bunx jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters json --output ${JSCPD_DIR_RELATIVE}`;
+  const jscpdScan = jscpdScanCommand({
+    minLines: 4,
+    minTokens: 30,
+    reporters: "json",
+    output: JSCPD_DIR_RELATIVE,
+  },);
   return `${jscpdScan} && bun run jscpd:ratchet --report ${JSCPD_REPORT_RELATIVE}`;
 }
 checks["jscpd ratchet"] = jscpdGateCommand();
