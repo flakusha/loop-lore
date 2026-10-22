@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-10-21T10:59:05.005Z",
-  "count": 1494,
+  "count": 1493,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -618,7 +618,6 @@
     "src/frontend/alpine/rpg-stats.ts#rpgStats",
     "src/frontend/alpine/settings/api.ts#api",
     "src/frontend/alpine/settings/chat.ts#chat",
-    "src/frontend/alpine/settings/general.ts#general",
     "src/frontend/alpine/settings/restart-banner.ts#restartBanner",
     "src/frontend/alpine/story-state/api.ts#fetchChatDetail",
     "src/frontend/alpine/story-state/api.ts#fetchLocationState",
