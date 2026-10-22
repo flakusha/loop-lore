@@ -92,7 +92,7 @@ export const StatsCreateBody = t.Object({
   speed: t.Optional(t.Number({ minimum: 0, },),),
 },);
 
-/** Update stats for an actor */
+/** Update stats for an actor (level/xp/xpToNext are pipeline-owned — use the XP award routes). */
 export const StatsUpdateBody = t.Object({
   hp: t.Optional(t.Number(),),
   maxHp: t.Optional(t.Number(),),
@@ -107,7 +107,4 @@ export const StatsUpdateBody = t.Object({
   int: t.Optional(t.Number(),),
   wis: t.Optional(t.Number(),),
   cha: t.Optional(t.Number(),),
-  level: t.Optional(t.Number(),),
-  xp: t.Optional(t.Number(),),
-  xpToNext: t.Optional(t.Number(),),
 },);

@@ -20,6 +20,7 @@ export {
 
 export {
   DISCOVERY_XP,
+  isXpSource,
   TRAVEL_LEG_XP,
   XP_BY_CR,
   xpForDiscovery,
@@ -27,6 +28,7 @@ export {
   xpForQuest,
   xpForSkillChallenge,
   xpForTravelLeg,
+  XpSource,
 } from "./sources.js";
 
 export {

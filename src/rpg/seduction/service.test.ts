@@ -178,18 +178,14 @@ describe("SeductionService", () => {
   // ── Edge cases ──────────────────────────────────────────────
 
   describe("Seduction Skills — edge cases", () => {
-    test("awardXp with negative XP throws (NOT NULL constraint)", async () => {
+    test("awardXp with negative XP rejects with invalid_amount", async () => {
       const db = await seedTestDb();
       const service = new SeductionService(db,);
 
       await service.getSkill("actor-1", "foreplay", "Kissing",);
-      // xp column has NOT NULL; negative XP works fine since it's just
-      // a number. Pin the observable behavior:
-      const result = await service.awardXp("actor-1", "foreplay", "Kissing", -10,);
-      // xp = 0 + (-10) = -10 → NOT NULL is fine; below threshold so
-      // no level up.
-      expect(result.leveled,).toBe(false,);
-      expect(result.newLevel,).toBe(1,);
+      await expect(
+        service.awardXp("actor-1", "foreplay", "Kissing", -10,),
+      ).rejects.toMatchObject({ code: "invalid_amount", name: "LevelServiceError", },);
     });
 
     test("awardXp with XP=0 leaves the skill untouched (still level 1)", async () => {
@@ -202,24 +198,24 @@ describe("SeductionService", () => {
       expect(result.newLevel,).toBe(1,);
     });
 
-    test("awardXp with NaN XP throws (NOT NULL constraint)", async () => {
+    test("awardXp with NaN XP rejects with invalid_amount", async () => {
       const db = await seedTestDb();
       const service = new SeductionService(db,);
 
       await service.getSkill("actor-1", "foreplay", "Kissing",);
       await expect(
         service.awardXp("actor-1", "foreplay", "Kissing", NaN,),
-      ).rejects.toThrow();
+      ).rejects.toMatchObject({ code: "invalid_amount", name: "LevelServiceError", },);
     });
 
-    test("awardXp with Infinity XP triggers level-up (Infinity > threshold)", async () => {
+    test("awardXp with Infinity XP rejects with invalid_amount", async () => {
       const db = await seedTestDb();
       const service = new SeductionService(db,);
 
       await service.getSkill("actor-1", "foreplay", "Kissing",);
-      const result = await service.awardXp("actor-1", "foreplay", "Kissing", Infinity,);
-      expect(result.leveled,).toBe(true,);
-      expect(result.newLevel,).toBeGreaterThanOrEqual(2,);
+      await expect(
+        service.awardXp("actor-1", "foreplay", "Kissing", Infinity,),
+      ).rejects.toMatchObject({ code: "invalid_amount", name: "LevelServiceError", },);
     });
   });
 
