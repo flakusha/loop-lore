@@ -15,6 +15,7 @@
  * Logs in as the seeded `e2euser` before navigating (auth.required=true).
  */
 
+import { CHAT_VARIANTS, VARIANT_DEFAULTS, } from "@/chat/types/variants";
 import type { Page, } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
@@ -159,6 +160,49 @@ describe("New chat advanced fields E2E", () => {
       expect(link?.persona_id, "persona should be linked to participant",).toBe(personaId,);
 
       await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 90_000,);
+
+  test("the variant picker offers every canonical variant and pins the chosen one on create", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
+    try {
+      await login(page,);
+      await gotoNewChat(page,);
+
+      const values = await page
+        .locator("[data-testid='chat-variant']",)
+        .evaluate((el,) => Array.from((el as HTMLSelectElement).options,).map((o,) => o.value));
+
+      expect([...values,].sort(),).toEqual(["standard", ...CHAT_VARIANTS,].sort(),);
+
+      const createReq = page.waitForRequest(
+        (req,) => req.url().includes("/api/v1/chats",) && req.method() === "POST",
+        { timeout: 15_000, },
+      );
+
+      const name = `Variant-Chat-${Date.now()}`;
+      await page.fill("[data-testid='chat-name-input']", name,);
+      await page.locator("[data-testid='chat-variant']",).selectOption("assistant",);
+      await page.click("[data-testid='create-chat-btn']",);
+
+      const body = (await createReq).postDataJSON() as { variant?: string };
+      expect(body.variant,).toBe("assistant",);
+
+      const row = await ctx.db
+        .selectFrom("chats",)
+        .select(["id", "type", "mode", "purpose",],)
+        .where("name", "=", name,)
+        .executeTakeFirst();
+
+      expect(row, `create should commit a chat row named ${name}`,).not.toBeNull();
+      expect(row!.type,).toBe(VARIANT_DEFAULTS.assistant.chat_type,);
+      expect(row!.mode,).toBe(VARIANT_DEFAULTS.assistant.chat_mode,);
+      expect(row!.purpose,).toBe(VARIANT_DEFAULTS.assistant.chat_purpose,);
     } finally {
       errors.assert();
       errors.detach();
