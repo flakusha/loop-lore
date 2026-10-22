@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** Shipped 2026-10-22 — the variant is selectable in the new-chat form and its full `VARIANT_DEFAULTS` column set is persisted on create, pinned by the per-variant matrix test in `src/routes/chats/create.coverage.test.ts`. The entry-point tab branching for this variant is deferred to the parent epic's open cross-cutting work.
 **Priority:** High
 **Effort:** Low
 **Type:** Feature Ticket
