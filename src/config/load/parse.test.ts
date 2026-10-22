@@ -29,7 +29,7 @@ describe("deepMerge", () => {
   });
 
   test("null override replaces the base value", () => {
-    expect(deepMerge({ a: 1, }, { a: null, },),).toEqual({ a: null, },);
+    expect(deepMerge({ a: 1 as number | null, }, { a: null, },),).toEqual({ a: null, },);
   });
 });
 
