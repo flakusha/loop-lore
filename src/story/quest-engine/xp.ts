@@ -17,7 +17,7 @@ import type { DB, } from "../../db/schema.js";
 import { getLogger, } from "../../logger";
 import { awardXpToActor, } from "../../rpg/level/index.js";
 import { getCharacterStats, } from "../../rpg/service/character-stats.js";
-import { xpForQuest, } from "../../rpg/xp/sources.js";
+import { xpForQuest, XpSource, } from "../../rpg/xp/sources.js";
 
 /** Minimal quest projection the XP leg needs. */
 export interface QuestXpSource {
@@ -69,7 +69,7 @@ export async function awardQuestCompletionXp(
     await awardXpToActor(db, {
       actorId: quest.creator_id,
       amount,
-      source: "quest",
+      source: XpSource.Quest,
       referenceId: quest.id,
       description: `Quest completed: ${quest.name}`,
     },);

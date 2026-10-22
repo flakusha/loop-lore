@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { XpSource, } from "../xp/sources.js";
 import { log, } from "./log.js";
 import type { RpgServiceDeps, } from "./types.js";
 
@@ -8,7 +9,7 @@ import type { RpgServiceDeps, } from "./types.js";
 export interface LogXpParams {
   actorId: string;
   amount: number;
-  source: string;
+  source: XpSource | (string & {});
   description?: string;
   referenceId?: string;
   chatId?: string;

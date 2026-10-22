@@ -8,6 +8,7 @@ import type { getLogger, } from "../../../logger";
 import { jsonStringifyOr, } from "../../../utils";
 import { IntimacyService, } from "../../intimacy/service";
 import { logXp, } from "../../service/xp";
+import { XpSource, } from "../../xp/sources";
 import type { EncounterOutcome, NsfwEncounter, } from "./types";
 
 /**
@@ -101,7 +102,7 @@ export async function applyXpLeg(db: Kysely<DB>, ctx: LegContext,): Promise<void
       await logXp({ database: db, }, {
         actorId: participant,
         amount: outcome.effects.satisfactionBonus,
-        source: "nsfw_encounter",
+        source: XpSource.NsfwEncounter,
         description: `Encounter ${outcome.type} (${encounter.encounterType})`,
       },);
     }

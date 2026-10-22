@@ -8,6 +8,7 @@ import { ContentIntensity, } from "../../../db/enums-character/nsfw";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
 import { logXp, } from "../../service/xp";
+import { XpSource, } from "../../xp/sources";
 import { modifyArousal, } from "./arousal";
 import { awardXp, } from "./skills";
 import type { SeductionSkill, } from "./types";
@@ -71,7 +72,7 @@ export async function settleAttempt(args: {
     await logXp({ database: db, }, {
       actorId,
       amount: xpGained,
-      source: "nsfw_seduction",
+      source: XpSource.NsfwSeduction,
       description: `Seduction ${success ? "success" : "failure"} (${skillCategory})`,
       chatId: undefined,
     },);

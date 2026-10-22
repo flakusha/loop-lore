@@ -123,10 +123,16 @@ export class SkillsService {
    * Add XP to a skill
    * @param skillId
    * @param xpAmount
+   * @param opts Optional ledger provenance (`chatId`, `description`).
    * @returns the new XP total and any levels the gain crossed
    */
-  async addXp(skillId: string, xpAmount: number,): Promise<XpGainResult> {
-    return addXpDispatch(this.db, skillId, xpAmount,);
+  // eslint-disable-next-line local/options-object-params -- 3rd param is optional provenance; positional (skillId, amount) is the pre-existing call shape.
+  async addXp(
+    skillId: string,
+    xpAmount: number,
+    opts?: { chatId?: string; description?: string },
+  ): Promise<XpGainResult> {
+    return addXpDispatch(this.db, skillId, xpAmount, opts,);
   }
 
   /**

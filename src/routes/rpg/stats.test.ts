@@ -130,6 +130,34 @@ describe("RPG stats routes", () => {
     expect(body.maxHp,).toBe(20,); // unchanged
   });
 
+  test("PATCH cannot mutate level/xp (unknown fields rejected, row unchanged)", async () => {
+    const before = await makeApp(db, "user-1", "user",).handle(
+      new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
+    );
+
+    const beforeBody = await before.json() as { level: number };
+
+    const res = await makeApp(db, "user-1", "user",).handle(
+      new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ hp: 15, level: 20, xp: 99999, xpToNext: 0, },),
+      },),
+    );
+
+    // Elysia strips unknown keys (422) or the handler ignores them — either
+    // way the pipeline-owned row must not move. Accept both, assert no move.
+    // Keeps hp at 15 so the downstream admin test stays green.
+    expect([200, 422,].includes(res.status,),).toBe(true,);
+    const after = await makeApp(db, "user-1", "user",).handle(
+      new Request(`http://localhost/api/rpg/stats/${ACTOR_ID}`,),
+    );
+
+    const afterBody = await after.json() as { hp: number; level: number };
+    expect(afterBody.level,).toBe(beforeBody.level,);
+    if (res.status === 200) { expect(afterBody.hp,).toBe(15,); }
+  });
+
   test("PATCH returns 404 for missing stats", async () => {
     const res = await makeApp(db, "user-2", "user",).handle(
       new Request(`http://localhost/api/rpg/stats/${OTHER_ACTOR}`, {

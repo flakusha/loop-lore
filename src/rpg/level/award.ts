@@ -19,6 +19,7 @@ import { awardXp, xpToNextLevel, } from "../xp/calculation.js";
 import { grantsAsi, hpOnLevelUp, } from "../xp/levelup.js";
 import { autoResolveIfAutonomous, stageLevelUpDecision, } from "./decisions.js";
 import { applyOrganicGrowth, } from "./growth.js";
+import { auditLevelUp, } from "./level-audit.js";
 import { parseHitDie, toResult, } from "./result.js";
 import {
   type AwardXpInput,
@@ -149,6 +150,11 @@ export async function applySheetBenefits(
     await stageLevelUpDecision(db, grant.actorId, grant.chatId,);
     await autoResolveIfAutonomous(db, grant.actorId,);
   }
+
+  // Level-up audit: one growth_log row per level gained. Best-effort —
+  // the audit helper swallows static-mode refusals and other failures so
+  // the award never throws for a logging write.
+  await auditLevelUp(db, grant.actorId, stats.level, newLevel,);
 
   const after = await readStats(db, grant.actorId,);
   return {

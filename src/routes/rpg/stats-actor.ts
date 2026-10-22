@@ -156,9 +156,6 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
               int: body.int,
               wis: body.wis,
               cha: body.cha,
-              level: body.level,
-              xp: body.xp,
-              xpToNext: body.xpToNext,
             },);
 
             if (!updated) {
@@ -176,7 +173,8 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
           body: StatsUpdateBody,
           detail: {
             summary: "Update character stats",
-            description: "Partial update of RPG stats for an actor. Returns 404 if no stats exist.",
+            description:
+              "Partial update of RPG stats for an actor (level/xp/xpToNext are pipeline-owned). Returns 404 if no stats exist.",
             tags: ["RPG", "Stats",],
           },
         },
