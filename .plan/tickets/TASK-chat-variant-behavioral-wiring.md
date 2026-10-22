@@ -3,7 +3,7 @@
 
 # TASK: Chat variant behavioral wiring
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -34,3 +34,5 @@ Grep-verified wiring gap — creation drops the auxiliary defaults:
 - [ ] Variant-seeded `talkativity` reaches participants (or a follow-up ticket is filed if participant seeding is out of scope — no silent drop).
 - [ ] Existing runtime behavior unchanged: `bun test src/generation/` (auto-gen cascade `max_turns`/`auto_advance` tests) and `src/chat/variants.test.ts` pass unmodified.
 - [ ] Creation-path test per variant asserts the persisted row matches `VARIANT_DEFAULTS` for the full column set, not just the triple.
+
+**Resolved:** 2026-10-22 registry-driven close: git issue d87cce3 (registry tip: 102d1a355 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-BEHAVIORAL-WIR)
