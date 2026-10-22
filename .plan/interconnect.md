@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3574
 - epics: 336
-- src paths owned: 4288
-- edges: produces 11027, consumes 398, sibling 31663, owns 1950, related 1166
+- src paths owned: 4291
+- edges: produces 11031, consumes 398, sibling 31663, owns 1950, related 1166
 
 ## Shared src hubs
 
@@ -1496,6 +1496,7 @@ output is byte-identical for identical inputs.
 | `src/routes/v1/governance.test.ts` | `BUG-governance-429-responses-missing-ratelimit-retry-after-heade`, `BUG-governance-429s-double-counted-in-telemetry`, `BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua` |
 | `src/routes/v1/governance.ts` | `BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua`, `FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard`, `TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m` |
 | `src/routes/v1/index.ts` | `BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa`, `BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not`, `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance`, `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und`, `BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua`, `BUG-test-e2e-env-default-mismatch`, `BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-`, `BUG-v1-route-chain-exceeds-ts-instantiation-depth`, `BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels`, `FEAT-035`, `FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal`, `TASK-integrations-inbound-webhook-ingestion-endpoint`, `epic-api-routes`, `epic-api-versioning`, `epic-assistant-step-planning`, `epic-character-core-system` |
+| `src/routes/v1/integrations-surface.test.ts` | `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif`, `FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal` |
 | `src/routes/v1/integrations-surface.ts` | `BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-`, `BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not`, `BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw`, `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif`, `FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal`, `TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny`, `TASK-integrations-inbound-webhook-ingestion-endpoint` |
 | `src/routes/v1/openapi.ts` | `FEAT-039`, `TASK-build-time-openapi-export-scripts-gen-openapi-ts-gen-api-doc`, `TASK-extend-fe-be-harmonization-gate-to-cover-external-non-htmx-a`, `TASK-frontend-client-contract-doc`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-experimental-egui-frontend` |
 | `src/routes/views.test.ts` | `TASK-docs-ui-endpoint-linkage`, `TASK-federation-admin-usage-dashboard-ui` |
@@ -4992,6 +4993,7 @@ output is byte-identical for identical inputs.
 | `BUG-federation-identity-mapping-to-local-users-undefined` | produces | `src/db/schema.ts` | - |
 | `BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o` | produces | `src/federation/fan-out.ts` | - |
 | `BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o` | produces | `src/federation/outbox.ts` | - |
+| `BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit` | produces | `src/server/static-mime.test.ts` | - |
 | `BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit` | produces | `src/server/static-mime.ts` | - |
 | `BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa` | produces | `src/routes/v1/index.ts` | - |
 | `BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa` | produces | `src/server/handler.ts` | - |
@@ -5035,6 +5037,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | produces | `src/server/start.ts` | - |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | produces | `src/server/start.ts` | - |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | produces | `src/routes/views/layout.ts` | - |
+| `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | produces | `src/server/static-files.test.ts` | - |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | produces | `src/server/static-files.ts` | - |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | produces | `src/server/start.ts` | - |
 | `BUG-fix-server-log-rejected-background-init-promises-with-module` | produces | `src/server/init-background-services.ts` | - |
@@ -6081,9 +6084,11 @@ output is byte-identical for identical inputs.
 | `BUG-vn-generate-choices-never-persists-to-vn-choices` | produces | `src/routes/vn-generate/choices.ts` | - |
 | `BUG-vn-mode-locked-once-chat-has-confirmed-messages` | produces | `src/chat/service/access.ts` | - |
 | `BUG-vn-mode-locked-once-chat-has-confirmed-messages` | produces | `src/chat/service/party.ts` | - |
+| `BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw` | produces | `src/integrations/bridge.test.ts` | - |
 | `BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw` | produces | `src/integrations/bridge.ts` | - |
 | `BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw` | produces | `src/routes/v1/integrations-surface.ts` | - |
 | `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif` | produces | `src/middleware/rate-limit.ts` | - |
+| `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif` | produces | `src/routes/v1/integrations-surface.test.ts` | - |
 | `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif` | produces | `src/routes/v1/integrations-surface.ts` | - |
 | `BUG-whitenote-ui-types-rejected-422` | produces | `src/components/chat/gm-panel.html` | - |
 | `BUG-whitenote-ui-types-rejected-422` | produces | `src/db/enums-gm.ts` | - |
@@ -26992,7 +26997,7 @@ output is byte-identical for identical inputs.
 | `BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw` | sibling | `TASK-integrations-inbound-webhook-ingestion-endpoint` | `src/routes/v1/integrations-surface.ts` |
 | `BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw` | sibling | `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b` | `src/integrations/bridge.ts` |
 | `BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw` | sibling | `epic-integrations-core` | `src/integrations/bridge.ts` |
-| `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif` | sibling | `FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal` | `src/routes/v1/integrations-surface.ts` |
+| `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif` | sibling | `FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal` | `src/routes/v1/integrations-surface.test.ts; src/routes/v1/integrations-surface.ts` |
 | `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif` | sibling | `TASK-federation-performance-quota-enforcement` | `src/middleware/rate-limit.ts` |
 | `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif` | sibling | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | `src/middleware/rate-limit.ts` |
 | `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif` | sibling | `TASK-inbound-webhook-ingestion-surface-hmac-verified-default-deny` | `src/routes/v1/integrations-surface.ts` |

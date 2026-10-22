@@ -3854,6 +3854,7 @@
       "title": "findCompressedVariant serves q=0 codings the client explicitly refused - regression introduced by the q-strip fix",
       "status": "done",
       "srcRefs": [
+        "src/server/static-mime.test.ts",
         "src/server/static-mime.ts"
       ],
       "related": []
@@ -4087,6 +4088,7 @@
       "status": "done",
       "srcRefs": [
         "src/routes/views/layout.ts",
+        "src/server/static-files.test.ts",
         "src/server/static-files.ts"
       ],
       "related": []
@@ -9371,6 +9373,7 @@
       "title": "Webhook dedup is recorded before dispatch, so a handler throw makes provider retries silently swallowed",
       "status": "done",
       "srcRefs": [
+        "src/integrations/bridge.test.ts",
         "src/integrations/bridge.ts",
         "src/routes/v1/integrations-surface.ts"
       ],
@@ -9384,6 +9387,7 @@
       "status": "done",
       "srcRefs": [
         "src/middleware/rate-limit.ts",
+        "src/routes/v1/integrations-surface.test.ts",
         "src/routes/v1/integrations-surface.ts"
       ],
       "related": []
@@ -68801,6 +68805,12 @@
       ]
     },
     {
+      "path": "src/integrations/bridge.test.ts",
+      "owners": [
+        "BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw"
+      ]
+    },
+    {
       "path": "src/integrations/bridge.ts",
       "owners": [
         "BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw",
@@ -76045,6 +76055,7 @@
     {
       "path": "src/routes/v1/integrations-surface.test.ts",
       "owners": [
+        "BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif",
         "FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal"
       ]
     },
@@ -79864,6 +79875,12 @@
       ]
     },
     {
+      "path": "src/server/static-files.test.ts",
+      "owners": [
+        "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs"
+      ]
+    },
+    {
       "path": "src/server/static-files.ts",
       "owners": [
         "BUG-dynamic-response-accept-encoding-negotiation-uses-substring-",
@@ -79881,6 +79898,12 @@
         "epic-cross-platform-portability",
         "epic-docs-reconciliation",
         "epic-http-protocol-features"
+      ]
+    },
+    {
+      "path": "src/server/static-mime.test.ts",
+      "owners": [
+        "BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit"
       ]
     },
     {
@@ -98892,6 +98915,11 @@
     {
       "from": "BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit",
       "kind": "produces",
+      "to": "src/server/static-mime.test.ts"
+    },
+    {
+      "from": "BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit",
+      "kind": "produces",
       "to": "src/server/static-mime.ts"
     },
     {
@@ -99103,6 +99131,11 @@
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
       "kind": "produces",
       "to": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "produces",
+      "to": "src/server/static-files.test.ts"
     },
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
@@ -104337,6 +104370,11 @@
     {
       "from": "BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw",
       "kind": "produces",
+      "to": "src/integrations/bridge.test.ts"
+    },
+    {
+      "from": "BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw",
+      "kind": "produces",
       "to": "src/integrations/bridge.ts"
     },
     {
@@ -104348,6 +104386,11 @@
       "from": "BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif",
       "kind": "produces",
       "to": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif",
+      "kind": "produces",
+      "to": "src/routes/v1/integrations-surface.test.ts"
     },
     {
       "from": "BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif",
@@ -219670,7 +219713,7 @@
       "from": "BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif",
       "kind": "sibling",
       "to": "FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal",
-      "via": "src/routes/v1/integrations-surface.ts"
+      "via": "src/routes/v1/integrations-surface.test.ts; src/routes/v1/integrations-surface.ts"
     },
     {
       "from": "BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif",

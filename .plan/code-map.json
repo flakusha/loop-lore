@@ -32023,6 +32023,12 @@
       "source": ".plan/tickets/TASK-bridge-daemon-adoption-matterbridge-slidge-mautrix-biboumi-e.md"
     }
   ],
+  "src/integrations/bridge.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw.md"
+    }
+  ],
   "src/integrations/bridge.ts": [
     {
       "kind": "epic",
@@ -44208,6 +44214,10 @@
   "src/routes/v1/integrations-surface.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal.md"
     }
   ],
@@ -50001,6 +50011,12 @@
       "source": "docs/spec/logging.md"
     }
   ],
+  "src/server/static-files.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs.md"
+    }
+  ],
   "src/server/static-files.ts": [
     {
       "kind": "epic",
@@ -50061,6 +50077,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-perf-server-no-cache-html-entry-points-stream-static-files-w.md"
+    }
+  ],
+  "src/server/static-mime.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit.md"
     }
   ],
   "src/server/static-mime.ts": [
