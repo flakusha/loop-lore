@@ -17,6 +17,7 @@ import { questionsRoutes, } from "./questions";
 import { replayabilityRoutes, } from "./replayability";
 import { skillsRoutes, } from "./skills";
 import { skillsProgressionRoutes, } from "./skills-progression";
+import { statAllocationRoutes, } from "./stat-allocation";
 import { statsRoutes, } from "./stats";
 import { statsActorRoutes, } from "./stats-actor";
 import type { HandlerOpts, } from "./types";
@@ -93,6 +94,7 @@ export function rpgRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(diceRoutes(opts, prefix,),)
       .use(statsRoutes(opts, prefix,),)
       .use(statsActorRoutes(opts, prefix,),)
+      .use(statAllocationRoutes(opts, prefix,),)
       .use(achievementsRoutes(opts, prefix,),)
       .use(achievementsPlayerRoutes(opts, prefix,),)
       .use(replayabilityRoutes(opts, prefix,),)

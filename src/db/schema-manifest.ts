@@ -1835,6 +1835,18 @@ export const SCHEMA = new SchemaManifest()
     acquisition_reason: col("text",),
     acquisition_source: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("character_stat_allocation", {
+    actor_id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    allocated_str: col("integer", { notNull: true, },),
+    allocated_dex: col("integer", { notNull: true, },),
+    allocated_con: col("integer", { notNull: true, },),
+    allocated_int: col("integer", { notNull: true, },),
+    allocated_wis: col("integer", { notNull: true, },),
+    allocated_cha: col("integer", { notNull: true, },),
+    allocated_at: col("text", { notNull: true, },),
+    allocated_by_user_id: col("text",),
+  },)
   .table("character_stats", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -1870,6 +1882,13 @@ export const SCHEMA = new SchemaManifest()
     combat_alignment: col("text", { notNull: true, hasDefault: true, },),
     pending_asi: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("character_trait_assignments", {
+    actor_id: col("text", { notNull: true, },),
+    trait_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    granted_at: col("text", { notNull: true, },),
+    granted_by_user_id: col("text",),
   },)
   .table("character_world_setup", {
     id: col("text", { primaryKey: true, },),
