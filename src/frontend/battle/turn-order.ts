@@ -37,8 +37,11 @@ export interface TurnOrderEntry {
 export function turnQueue(battle: BattleView,): TurnOrderEntry[] {
   const total = battle.combatants.length;
   const queue: TurnOrderEntry[] = [];
+  // Normalize an out-of-range turnIndex (e.g. negative from a malformed
+  // payload) so the modulo lookup always lands inside the roster.
+  const start = total > 0 ? ((battle.turnIndex % total) + total) % total : 0;
   for (let offset = 0; offset < total; offset++) {
-    const c = battle.combatants[(battle.turnIndex + offset) % total]!;
+    const c = battle.combatants[(start + offset) % total]!;
     queue.push({
       name: c.name,
       initiative: c.initiative,

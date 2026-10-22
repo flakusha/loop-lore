@@ -58,6 +58,13 @@ describe("turnQueue", () => {
   it("returns an empty queue for an empty roster", () => {
     expect(turnQueue(view({ combatants: [], },),),).toEqual([],);
   });
+
+  it("normalizes an out-of-range turnIndex instead of crashing", () => {
+    const negative = turnQueue(view({ turnIndex: -1, },),);
+    expect(negative.map((e,) => e.name),).toEqual(["Orc Grunt", "Alice",],);
+    const overflow = turnQueue(view({ turnIndex: 5, },),);
+    expect(overflow.map((e,) => e.name),).toEqual(["Orc Grunt", "Alice",],);
+  });
 });
 
 describe("renderTurnOrder", () => {

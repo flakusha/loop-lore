@@ -25292,6 +25292,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-battle-panel-health-bar-widget-turn-order-strip.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-health-bar.md"
     }
   ],
@@ -25349,6 +25353,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-status-effects.md"
+    }
+  ],
+  "src/frontend/battle/turn-order.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-battle-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-battle-panel-health-bar-widget-turn-order-strip.md"
     }
   ],
   "src/frontend/browser-compress.ts": [
@@ -39517,10 +39531,6 @@
       "source": ".plan/epics/epic-battle-integration-gaps.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
     },
@@ -39577,10 +39587,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-battle-integration-gaps.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-battle-ui.md"
     },
     {
       "kind": "spec",

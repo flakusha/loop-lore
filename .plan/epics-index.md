@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 333 epics
+**Total:** 336 epics
 
 ## Summary
 
@@ -56,7 +56,7 @@
 | In Progress | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
 | In Progress | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
 | In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
-| Not Started | Character XP, Leveling & Stat Progression in World | High | High | 0 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
+| In Progress | Character XP, Leveling & Stat Progression in World | High | High | 0 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
 | Done | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 0 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
 | Not Started | Chat Product Features | High | High | 0 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
@@ -64,6 +64,7 @@
 | Done | Chat Variants Taxonomy | High | Medium | 0 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
 | In Progress | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 0 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
 | Not Started | CI/CD Pipeline | Low | Medium | 0 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
+| Not Started | Classifier Template Packs | P2 | Medium | 0 | [epic-classifier-template-packs.md](/.plan/epics/epic-classifier-template-packs.md) |
 | Not Started | Client-Side Routing | Medium | Medium | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | In Progress | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
 | Not Started | ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup | High | High | 0 | [epic-comfyui-first-class-citizen.md](/.plan/epics/epic-comfyui-first-class-citizen.md) |
@@ -255,6 +256,7 @@
 | Not Started | Model Info Frontend (Cards, Tags, Filters) | Medium | Medium | 0/2 | [epic-model-info-frontend.md](/.plan/epics/epic-model-info-frontend.md) |
 | Not Started | Model Metadata Read (Headers, Hashing, Classification) | High | Large | 0/7 | [epic-model-metadata-read.md](/.plan/epics/epic-model-metadata-read.md) |
 | Not Started | Multi-Session Support | Medium | Med | 0 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
+| Not Started | Multilingual Carriage — Hidden Per-Message Language/Context Carriage | Medium | Medium | 0 | [epic-multilingual-carriage.md](/.plan/epics/epic-multilingual-carriage.md) |
 | Not Started | Narration / Actor Separation | High | Medium–Large | 0 | [epic-narration-actor-separation.md](/.plan/epics/epic-narration-actor-separation.md) |
 | Not Started | Narrative Publishing Workflows (Books & Comics) | medium | Large | 0 | [epic-narrative-publishing-workflows.md](/.plan/epics/epic-narrative-publishing-workflows.md) |
 | In Progress | Native/WASM Module Performance Benchmarks | High | High | 0 | [epic-native-module-benchmarks.md](/.plan/epics/epic-native-module-benchmarks.md) |
@@ -291,7 +293,7 @@
 | Not Started | RAG Evaluation & Observability | High (blocks shipping `epic-rag-assets-unified-storage-and-assistant-flows.md` B-R4 + B-R5 with confidence) | Medium | 0 | [epic-rag-evaluation-observability.md](/.plan/epics/epic-rag-evaluation-observability.md) |
 | Not Started | RAG Ingestion & Document Processing | High | High | 0 | [epic-rag-ingestion.md](/.plan/epics/epic-rag-ingestion.md) |
 | Not Started | RAG Retrieval & Context Injection | High | Medium | 0 | [epic-rag-retrieval.md](/.plan/epics/epic-rag-retrieval.md) |
-| Not Started | Reactive Actor Appearance | high | Large | 0 | [epic-reactive-actor-appearance.md](/.plan/epics/epic-reactive-actor-appearance.md) |
+| In Progress | Reactive Actor Appearance | high | Large | 0 | [epic-reactive-actor-appearance.md](/.plan/epics/epic-reactive-actor-appearance.md) |
 | Not Started | Realtime Transports | Medium | Medium | 0 | [epic-realtime-transports.md](/.plan/epics/epic-realtime-transports.md) |
 | Not Started | Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development | High | Very High | 0 | [epic-recursive-self-improvement.md](/.plan/epics/epic-recursive-self-improvement.md) |
 | Not Started | Reference-Conditioned Generation — Model Matrix, Templates, and Generic Graph Pattern | High | High | 0 | [epic-reference-conditioned-generation.md](/.plan/epics/epic-reference-conditioned-generation.md) |
@@ -306,6 +308,7 @@
 | Not Started | RPG Skills, Professions & Config Templates | High | High | 0 | [epic-skills-professions-config.md](/.plan/epics/epic-skills-professions-config.md) |
 | In Progress | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
 | Done | Runtime Integrity, Crash Recovery & Fail-Safes | medium | Medium | 0 | [epic-runtime-integrity-fail-safes.md](/.plan/epics/epic-runtime-integrity-fail-safes.md) |
+| Not Started | Runtime Memory State Hygiene | P2 | Medium | 0 | [epic-runtime-memory-state-hygiene.md](/.plan/epics/epic-runtime-memory-state-hygiene.md) |
 | Not Started | SAM3 / SAM3.1 Integration — Concept Segmentation for Generation | high | High | 0 | [epic-sam3-segmentation-integration.md](/.plan/epics/epic-sam3-segmentation-integration.md) |
 | Done | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Not Started | Security & Sandboxing — Epic | medium | Medium | 0 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
@@ -764,7 +767,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Character XP, Leveling & Stat Progression in World
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -839,6 +842,15 @@ Loop Lore has accumulated a constellation of chat-shaped product surfaces (assis
 - **Type:** epic
 - **Tags:** ci, testing, automation, deployment
 - **File:** `.plan/epics/epic-cicd-pipeline.md`
+
+### Classifier Template Packs
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Medium
+- **Type:** Feature Epic / Configuration
+- **Tags:** aux-pipeline, classification, templates, config
+- **File:** `.plan/epics/epic-classifier-template-packs.md`
 
 ### Client-Side Routing
 
@@ -2675,6 +2687,15 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Tags:** auth, security, backend
 - **File:** `.plan/epics/epic-multi-session.md`
 
+### Multilingual Carriage — Hidden Per-Message Language/Context Carriage
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** i18n, carriage, classification, prompt-injection, privacy
+- **File:** `.plan/epics/epic-multilingual-carriage.md`
+
 ### Narration / Actor Separation
 
 - **Status:** Not Started
@@ -3015,7 +3036,7 @@ The repo already has an i18n system, and it is the wrong tool for this job — o
 
 ### Reactive Actor Appearance
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** high
 - **Effort:** Large
 - **Type:** Feature Epic
@@ -3149,6 +3170,15 @@ Reference-based generation and editing — "change this, keep that" driven by on
 - **Type:** epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-runtime-integrity-fail-safes.md`
+
+### Runtime Memory State Hygiene
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Medium
+- **Type:** Feature Epic / Hardening
+- **Tags:** memory, eviction, runtime, observability, review-rules
+- **File:** `.plan/epics/epic-runtime-memory-state-hygiene.md`
 
 ### SAM3 / SAM3.1 Integration — Concept Segmentation for Generation
 
