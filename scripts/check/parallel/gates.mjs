@@ -259,14 +259,14 @@ checks["jscpd ratchet"] = jscpdGateCommand();
 
 /**
  * Weave-damage scan gate: consecutive-duplicate growth vs a pre-rebase base
- * ref. Opt-in via WEAVE_BASE — agents set it after a weave-driven rebase,
- * whose resolver can duplicate lines or silently drop blocks (drops leave
- * every static gate green; observed 2026-10-01 in tui/chat/index.test.ts).
- * NOOP_OK keeps normal runs unaffected.
+ * ref, whose resolver can duplicate lines or silently drop blocks (drops
+ * leave every static gate green; observed 2026-10-01 in tui/chat/index.test.ts).
+ *
+ * The scan DERIVES its base (the merge-base of HEAD and the root branch)
+ * when WEAVE_BASE is unset, so the gate runs on every branch instead of
+ * degrading to a no-op; WEAVE_BASE still overrides it.
  */
-checks["weave - damage scan"] = process.env.WEAVE_BASE
-  ? "bun run scripts/check/weave-damage.mjs"
-  : NOOP_OK;
+checks["weave - damage scan"] = "bun run scripts/check/weave-damage.mjs";
 
 // Local check-file-size is KEPT (see its header): giwt's copy exempts nothing
 // but test files and exits 1 on generated DB-type modules (verified EXIT=1).
