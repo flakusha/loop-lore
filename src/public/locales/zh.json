@@ -1195,7 +1195,15 @@
     "variantLlmOnlyGroupGm": "LLM group with GM (guided story)",
     "variantUser1x1": "User chat (1×1)",
     "variantUserGroup": "User group chat",
-    "variantUserGroupAdmin": "User group with admin"
+    "variantUserGroupAdmin": "User group with admin",
+    "createPoll": "Create poll",
+    "pollQuestion": "Poll question",
+    "pollOptionsHint": "One option per line",
+    "pollMulti": "Allow multiple choices",
+    "pollClose": "Close poll",
+    "pollClosed": "Closed",
+    "pollFailed": "Could not update the poll.",
+    "pollInvalidInput": "A poll needs a question and at least two options."
   },
   "personas": {
     "title": "Personas",

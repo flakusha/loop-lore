@@ -12,6 +12,7 @@ export type {
   GroupedMessage,
   Message,
   MessageAttachment,
+  MessagePoll,
   MovementEvent,
   WorldChannelChat,
 } from "./chat-types";

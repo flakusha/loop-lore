@@ -21,6 +21,20 @@ export interface MessageAttachment {
 /** A function call the assistant invoked during generation (mirrors GenerationToolCall). */
 export type { ToolCall, };
 
+/** Viewer-scoped poll snapshot as returned by the poll API. */
+export interface MessagePoll {
+  id: string;
+  messageId: string;
+  question: string;
+  options: string[];
+  multi: boolean;
+  closed: boolean;
+  closesAt: string | null;
+  createdBy: string;
+  tallies: { optionIdx: number; count: number }[];
+  viewerOptionIdxs: number[];
+}
+
 /** */
 export interface Message {
   id: string;
@@ -51,6 +65,8 @@ export interface Message {
   /** Server-resolved, outfit-aware avatar asset (message read path). */
   avatar_asset_id?: string;
   reactions?: { emoji: string; count: number; userReacted: boolean }[];
+  /** Poll attached to this message (loaded separately from the poll API). */
+  poll?: MessagePoll;
   pinned?: boolean;
   /** Chat section this message belongs to (multi-location sectioning). */
   section_id?: string | null;

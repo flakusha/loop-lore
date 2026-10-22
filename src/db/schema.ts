@@ -233,4 +233,6 @@ export interface DB {
   instance_storage_budgets: import("./schema-core").InstanceStorageBudgets;
   mesh_work_assignments: import("./schema-core").MeshWorkAssignments;
   federation_performance_budgets: import("./schema-core").FederationPerformanceBudgets;
+  message_polls: import("./schema-core").MessagePolls;
+  poll_votes: import("./schema-core").PollVotes;
 }

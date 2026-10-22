@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { MessagePoll, } from "./messages";
+
 /** Chat-page UI overlay, dialog, and reaction state. */
 export interface ChatCoreUiState {
   _hamburgerOpen: Record<string, boolean>;
@@ -42,6 +44,14 @@ export interface ChatCoreUiState {
   toggleReaction(msgId: string, emoji: string,): Promise<void>;
   loadMessageReactions(msgId: string,): Promise<void>;
   loadAllReactions(): Promise<void>;
+  loadChatPolls(): Promise<void>;
+  openPollComposer(msgId: string,): void;
+  closePollComposer(): void;
+  createMessagePoll(): Promise<void>;
+  votePollOption(msgId: string, optionIdx: number,): Promise<void>;
+  closeMessagePoll(msgId: string,): Promise<void>;
+  applyPoll(poll: MessagePoll,): void;
+  _pollComposer: { messageId: string; question: string; optionsText: string; multi: boolean } | null;
   loadQuickEmojis(): Promise<void>;
   _reactionPicker: { visible: boolean; messageId: string; x: number; y: number };
   _reactionActiveIndex: number;

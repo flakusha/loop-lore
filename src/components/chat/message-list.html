@@ -264,6 +264,75 @@
                 </template>
               </div>
             </template>
+            <!-- Poll: inline results + vote buttons (TASK-message-polls-votes) -->
+            <template x-if="msg.poll">
+              <div class="message-poll" data-testid="message-poll">
+                <div class="poll-question">
+                  <span x-text="msg.poll.question"></span>
+                  <template x-if="msg.poll.closed">
+                    <span class="poll-closed-badge" data-testid="poll-closed" x-text="t('chats.pollClosed')"></span>
+                  </template>
+                </div>
+                <template x-for="(option, oIdx) in msg.poll.options" :key="oIdx">
+                  <button
+                    class="poll-option"
+                    :class="{ 'poll-voted': msg.poll.viewerOptionIdxs.includes(oIdx), 'poll-closed': msg.poll.closed }"
+                    :disabled="msg.poll.closed"
+                    @click="votePollOption(msg.id, oIdx)"
+                    data-testid="poll-option"
+                  >
+                    <span class="poll-option-label" x-text="option"></span>
+                    <span
+                      class="poll-option-count"
+                      x-text="msg.poll.tallies.find(t => t.optionIdx === oIdx)?.count ?? 0"
+                      data-testid="poll-option-count"
+                    ></span>
+                  </button>
+                </template>
+                <template x-if="!msg.poll.closed">
+                  <button
+                    class="btn btn-ghost btn-sm poll-close-btn"
+                    @click="closeMessagePoll(msg.id)"
+                    data-testid="poll-close"
+                    x-text="t('chats.pollClose')"
+                  >
+                  </button>
+                </template>
+              </div>
+            </template>
+            <!-- Poll composer: create the poll attached to this message -->
+            <template x-if="_pollComposer && _pollComposer.messageId === msg.id">
+              <div class="poll-composer" data-testid="poll-composer">
+                <input
+                  class="form-input"
+                  x-model="_pollComposer.question"
+                  :placeholder="t('chats.pollQuestion')"
+                  data-testid="poll-question-input"
+                />
+                <textarea
+                  class="form-input"
+                  x-model="_pollComposer.optionsText"
+                  :placeholder="t('chats.pollOptionsHint')"
+                  rows="3"
+                  data-testid="poll-options-input"
+                ></textarea>
+                <label class="poll-multi">
+                  <input type="checkbox" x-model="_pollComposer.multi" data-testid="poll-multi" />
+                  <span x-text="t('chats.pollMulti')"></span>
+                </label>
+                <div class="edit-actions">
+                  <button class="btn btn-ghost btn-sm" @click="closePollComposer()" x-text="t('common.cancel')">
+                  </button>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    @click="createMessagePoll()"
+                    data-testid="poll-create"
+                    x-text="t('chats.createPoll')"
+                  >
+                  </button>
+                </div>
+              </div>
+            </template>
             <!-- Emoji reactions: chips + quick-picker trigger -->
             <div class="message-reactions" data-testid="reaction-bar">
               <template x-if="msg.reactions && msg.reactions.length > 0">
@@ -314,6 +383,15 @@
                 📋
               </button>
               <button class="btn-icon-action" @click="startEdit(msg.id)" x-bind:title="t('common.edit')">✏️</button>
+              <!-- Poll trigger: open the inline poll composer (TASK-message-polls-votes) -->
+              <button
+                class="btn-icon-action"
+                @click="openPollComposer(msg.id)"
+                x-bind:title="t('chats.createPoll')"
+                data-testid="poll-add"
+              >
+                📊
+              </button>
               <!-- Component-buttons AC1: per-message Improve (user-authored) + Attach -->
               <template x-if="msg.role === 'user'">
                 <button

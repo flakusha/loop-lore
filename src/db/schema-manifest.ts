@@ -822,6 +822,17 @@ export const SCHEMA = new SchemaManifest()
     released_at: col("text",),
     release_reason: col("text",),
   },)
+  .table("message_polls", {
+    id: col("text", { primaryKey: true, },),
+    message_id: col("text", { notNull: true, },),
+    question: col("text", { notNull: true, },),
+    options: col("text", { notNull: true, },),
+    multi: col("integer", { notNull: true, hasDefault: true, },),
+    created_by: col("text", { notNull: true, },),
+    closes_at: col("text",),
+    closed_at: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("message_reactions", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),
@@ -1033,6 +1044,13 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     completed_at: col("text",),
+  },)
+  .table("poll_votes", {
+    id: col("text", { primaryKey: true, },),
+    poll_id: col("text", { notNull: true, },),
+    user_id: col("text", { notNull: true, },),
+    option_idx: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("proactive_messaging_config", {
     id: col("text", { primaryKey: true, },),

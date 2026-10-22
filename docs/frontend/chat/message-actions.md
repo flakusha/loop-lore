@@ -88,6 +88,7 @@ Actions appear as a **flat button row** always visible below the content:
 | Narrate        | 📖   | Character messages      | Re-generates as descriptive narration            |
 | Analyze        | 🔍   | Image-attached messages | Vision model describes attached images           |
 | Attach asset   | 📎   | All messages            | Attach existing asset from gallery               |
+| Poll           | 📊   | All messages            | Create the message's poll (one per message); vote/close inline (TASK-message-polls-votes) |
 
 ---
 
@@ -219,6 +220,15 @@ the bubble:
 - Max 8 unique reactions per message
 
 ---
+
+## Polls (P2)
+
+The 📊 action opens an inline composer (question, one option per line,
+multi-choice toggle). One poll per message; votes render as inline option
+buttons with live tallies on the bubble — no full message-list re-render.
+Single-choice votes replace the voter's option; multi-choice votes add
+distinct options. Closing is server-enforced (poll creator, chat owner, or
+admin); closed polls reject votes with 409 and show a Closed badge.
 
 ## Reply Threading (P1)
 
