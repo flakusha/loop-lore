@@ -3618,6 +3618,19 @@
       "related": []
     },
     {
+      "id": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-export-routes-re-resolve-identity-and-fall-back-to-solo.md",
+      "title": "Export routes re-resolve identity and fall back to solo",
+      "status": "done",
+      "srcRefs": [
+        "src/middleware/auth/token.ts",
+        "src/routes/export-sse/start.ts",
+        "src/routes/export.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-export-sse-start-throws-controller-is-already-closed-on-clie.md",
@@ -7390,6 +7403,18 @@
       "status": "Not Started",
       "srcRefs": [
         "src/story/quest-engine/progress.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-quest-update-notifications-ignore-the-muted-world-scope.md",
+      "title": "Quest update notifications ignore the muted world scope",
+      "status": "done",
+      "srcRefs": [
+        "src/notifications/service/crud.ts",
+        "src/notifications/service/triggers.ts"
       ],
       "related": []
     },
@@ -29805,9 +29830,17 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md",
       "title": "Guest context: synthetic derive branch + auth.guestAccess flag",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
-        "src/middleware/auth/authenticate.ts"
+        "src/config/schema-class/env-map.ts",
+        "src/config/sections/auth.ts",
+        "src/elysia-app.ts",
+        "src/middleware/auth/authenticate.ts",
+        "src/middleware/auth/guest-access.test.ts",
+        "src/routes/worlds/access.ts",
+        "src/routes/worlds/worlds-routes.test.ts",
+        "src/routes/worlds/worlds.ts",
+        "src/users/permissions.ts"
       ],
       "related": []
     },
@@ -47634,7 +47667,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-guest-access.md",
       "title": "Guest Access — Unauthenticated Public Browsing (draft for new worktree)",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/assets/service/read.ts",
         "src/assets/signed-url.ts",
@@ -58069,6 +58102,7 @@
         "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
         "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
         "TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en",
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
         "TASK-integration-config-surface-schemas-example-toml-env-map",
         "TASK-outfit-change-aux-task-and-typebox-schema",
         "TASK-outfit-change-hook",
@@ -58386,6 +58420,7 @@
         "BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d",
         "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
         "TASK-adopt-bun-csrf-for-csrf-protection",
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
         "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char"
       ]
     },
@@ -61833,6 +61868,7 @@
         "TASK-fractal-locations-api-routes",
         "TASK-frontend-client-contract-doc",
         "TASK-gallery-fuzzy-search-pagination",
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
         "TASK-i18n-alpine-client",
         "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
         "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
@@ -69824,6 +69860,12 @@
       ]
     },
     {
+      "path": "src/middleware/auth/guest-access.test.ts",
+      "owners": [
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag"
+      ]
+    },
+    {
       "path": "src/middleware/auth/solo-user.ts",
       "owners": [
         "TASK-solo-user-cold-start-race-caches-phantom-uid",
@@ -69839,6 +69881,7 @@
     {
       "path": "src/middleware/auth/token.ts",
       "owners": [
+        "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
         "BUG-fix-auth-make-session-expiry-handling-agree-across-authentic",
         "BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec",
         "BUG-resolveuseridfromrequest-missing-user-status-check",
@@ -70355,6 +70398,7 @@
       "path": "src/notifications/service/crud.ts",
       "owners": [
         "BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr",
+        "BUG-quest-update-notifications-ignore-the-muted-world-scope",
         "TASK-notification-and-telemetry-service-nits",
         "epic-frontend-notifications"
       ]
@@ -70378,6 +70422,7 @@
       "path": "src/notifications/service/triggers.ts",
       "owners": [
         "BUG-notification-participant-helpers-write-actor-id-into-the-use",
+        "BUG-quest-update-notifications-ignore-the-muted-world-scope",
         "EPIC-2026-21",
         "TASK-ac9-notifyfactorchange-trigger-helper-ladder-ready-no-tables",
         "TASK-c1-moderation-action-notices-with-actor-thumb",
@@ -74040,6 +74085,7 @@
     {
       "path": "src/routes/export-sse/start.ts",
       "owners": [
+        "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
         "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
         "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
         "BUG-resolveuseridfromrequest-missing-user-status-check",
@@ -74063,6 +74109,7 @@
       "owners": [
         "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
         "BUG-community-share-missing-lorebook-export",
+        "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
         "BUG-resolveuseridfromrequest-missing-user-status-check",
         "FEAT-gdpr-user-data-rights",
         "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
@@ -76553,6 +76600,7 @@
       "owners": [
         "TASK-assistant-entity-access-schema",
         "TASK-assistant-entity-access-world-location-access",
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
         "TASK-licensing-publish-authorization-predicate",
         "TASK-licensing-publish-enforcement-point"
       ]
@@ -76695,6 +76743,7 @@
       "owners": [
         "BUG-world-lore-silently-stripped-on-create-and-update",
         "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
         "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s"
       ]
     },
@@ -76705,6 +76754,7 @@
         "TASK-assistant-entity-access-adaptation",
         "TASK-assistant-entity-access-adapter",
         "TASK-assistant-entity-access-world-location-access",
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
         "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
         "epic-assistant-entity-access"
       ]
@@ -81784,6 +81834,7 @@
         "BUG-nsfw-cards-ships-ungated-post-routes",
         "BUG-plugin-tool-authorization-fails-open",
         "TASK-032",
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
         "TASK-moderator-permission-gating-for-read-only-review-surface",
         "TASK-rbac-capability-matrix-not-enforced-25-of-30-caps-decorative",
         "TASK-reconcile-ts-import-extensions-user-seeding-session",
@@ -98728,6 +98779,21 @@
       "to": "src/frontend/alpine/export-progress"
     },
     {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "produces",
+      "to": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "produces",
+      "to": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "produces",
+      "to": "src/routes/export.ts"
+    },
+    {
       "from": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
       "kind": "produces",
       "to": "src/routes/export-sse/start.ts"
@@ -102316,6 +102382,16 @@
       "from": "BUG-quest-engine-double-advances-from-stale-in-memory-progress-a",
       "kind": "produces",
       "to": "src/story/quest-engine/progress.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "produces",
+      "to": "src/notifications/service/crud.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "produces",
+      "to": "src/notifications/service/triggers.ts"
     },
     {
       "from": "BUG-rate-limit-in-memory-store-never-evicts-idle-keys",
@@ -124515,7 +124591,47 @@
     {
       "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "kind": "produces",
+      "to": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "produces",
+      "to": "src/config/sections/auth.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "produces",
+      "to": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "produces",
       "to": "src/middleware/auth/authenticate.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "produces",
+      "to": "src/middleware/auth/guest-access.test.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "produces",
+      "to": "src/routes/worlds/access.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "produces",
+      "to": "src/routes/worlds/worlds-routes.test.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "produces",
+      "to": "src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "produces",
+      "to": "src/users/permissions.ts"
     },
     {
       "from": "TASK-guest-rate-limiting-audit-logging-for-guest-reads",
@@ -156946,6 +157062,12 @@
     {
       "from": "BUG-access-log-never-records-userid-handle-x-user-id-header-neve",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-access-log-never-records-userid-handle-x-user-id-header-neve",
+      "kind": "sibling",
       "to": "TASK-headers-additional-useful-response-headers",
       "via": "src/server/handler.ts"
     },
@@ -162508,6 +162630,12 @@
     {
       "from": "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
       "kind": "sibling",
+      "to": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "via": "src/routes/export.ts"
+    },
+    {
+      "from": "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
+      "kind": "sibling",
       "to": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
       "via": "src/assets/controller.ts"
     },
@@ -165994,6 +166122,12 @@
     {
       "from": "BUG-auto-rotation-config-drift",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "BUG-auto-rotation-config-drift",
+      "kind": "sibling",
       "to": "TASK-https-redirect-enforcement-for-plaintext-http",
       "via": "src/server/start.ts"
     },
@@ -167356,6 +167490,12 @@
     {
       "from": "BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s",
+      "kind": "sibling",
       "to": "TASK-harness-otel-replay",
       "via": "src/async/store.ts"
     },
@@ -168664,6 +168804,12 @@
     {
       "from": "BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain",
+      "kind": "sibling",
       "to": "TASK-guest-rate-limiting-audit-logging-for-guest-reads",
       "via": "src/routes/auth/shared.ts"
     },
@@ -169830,6 +169976,12 @@
       "kind": "sibling",
       "to": "TASK-harness-tool-sandbox",
       "via": "src/generation/generate-route/tool-execution.ts"
+    },
+    {
+      "from": "BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr",
+      "kind": "sibling",
+      "to": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "via": "src/notifications/service/crud.ts"
     },
     {
       "from": "BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr",
@@ -176584,6 +176736,12 @@
     {
       "from": "BUG-community-share-missing-lorebook-export",
       "kind": "sibling",
+      "to": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "via": "src/routes/export.ts"
+    },
+    {
+      "from": "BUG-community-share-missing-lorebook-export",
+      "kind": "sibling",
       "to": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
       "via": "src/routes/actor-lore-entries.ts"
     },
@@ -177467,6 +177625,12 @@
       "from": "BUG-coverage-mjs-counts-top-level-src-files-as-modules",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-coverage-mjs-counts-top-level-src-files-as-modules",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -180478,6 +180642,12 @@
     {
       "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
+      "kind": "sibling",
       "to": "TASK-image-backends-x-access-authz-parity-audit-across-image-surf",
       "via": "src/routes/views/gallery.ts"
     },
@@ -181121,6 +181291,12 @@
       "from": "BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -181901,7 +182077,7 @@
       "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
       "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
-      "via": "src/middleware/auth/authenticate.ts"
+      "via": "src/elysia-app.ts; src/middleware/auth/authenticate.ts"
     },
     {
       "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
@@ -183806,6 +183982,90 @@
       "via": "src/frontend/alpine/export-progress.ts"
     },
     {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "BUG-fix-auth-make-session-expiry-handling-agree-across-authentic",
+      "via": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec",
+      "via": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "BUG-resolveuseridfromrequest-missing-user-status-check",
+      "via": "src/middleware/auth/token.ts; src/routes/export-sse/start.ts; src/routes/export.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m",
+      "via": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "FEAT-gdpr-user-data-rights",
+      "via": "src/routes/export.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing",
+      "via": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
+      "via": "src/routes/export-sse/start.ts; src/routes/export.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "TASK-epic14-import-export-reconciliation",
+      "via": "src/routes/export.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "TASK-import-export-io",
+      "via": "src/routes/export.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "TASK-input-hardening-batch",
+      "via": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "epic-auth-channel-provisioning",
+      "via": "src/middleware/auth/token.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
+      "to": "epic-import-export-io",
+      "via": "src/routes/export.ts"
+    },
+    {
       "from": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
       "kind": "sibling",
       "to": "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
@@ -184391,6 +184651,12 @@
       "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -185566,6 +185832,12 @@
     {
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -185902,6 +186174,12 @@
     {
       "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/sections/auth.ts"
+    },
+    {
+      "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
+      "kind": "sibling",
       "to": "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char",
       "via": "src/config/sections/auth.ts"
     },
@@ -185976,6 +186254,12 @@
       "kind": "sibling",
       "to": "TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en",
       "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/schema-class/env-map.ts; src/config/sections/auth.ts"
     },
     {
       "from": "BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d",
@@ -186209,6 +186493,12 @@
       "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -186551,6 +186841,12 @@
       "from": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -187426,6 +187722,12 @@
     {
       "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -187853,6 +188155,12 @@
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -189341,6 +189649,12 @@
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -194441,7 +194755,7 @@
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
-      "via": "src/middleware/auth/authenticate.ts"
+      "via": "src/config/sections/auth.ts; src/middleware/auth/authenticate.ts"
     },
     {
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
@@ -195221,6 +195535,12 @@
       "from": "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -201298,6 +201618,12 @@
     {
       "from": "BUG-middleware-asyncstore-fail-dead-code",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-middleware-asyncstore-fail-dead-code",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -201665,6 +201991,12 @@
       "from": "BUG-middleware-idempotency-table-backend-unimplemented",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-middleware-idempotency-table-backend-unimplemented",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -202721,6 +203053,12 @@
       "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -204340,6 +204678,12 @@
     {
       "from": "BUG-notification-participant-helpers-write-actor-id-into-the-use",
       "kind": "sibling",
+      "to": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "via": "src/notifications/service/triggers.ts"
+    },
+    {
+      "from": "BUG-notification-participant-helpers-write-actor-id-into-the-use",
+      "kind": "sibling",
       "to": "EPIC-2026-21",
       "via": "src/notifications/service/triggers.ts"
     },
@@ -204654,6 +204998,12 @@
       "kind": "sibling",
       "to": "TASK-enforce-plugin-origin-at-request-time",
       "via": "src/plugins/loader.ts; src/plugins/types.ts"
+    },
+    {
+      "from": "BUG-nsfw-cards-ships-ungated-post-routes",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/users/permissions.ts"
     },
     {
       "from": "BUG-nsfw-cards-ships-ungated-post-routes",
@@ -207232,6 +207582,12 @@
     {
       "from": "BUG-plugin-tool-authorization-fails-open",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "BUG-plugin-tool-authorization-fails-open",
+      "kind": "sibling",
       "to": "TASK-harness-hook-contract",
       "via": "src/plugins/types.ts"
     },
@@ -208290,6 +208646,48 @@
       "kind": "sibling",
       "to": "TASK-055",
       "via": "src/story/quest-engine/progress.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "sibling",
+      "to": "EPIC-2026-21",
+      "via": "src/notifications/service/triggers.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "sibling",
+      "to": "TASK-ac9-notifyfactorchange-trigger-helper-ladder-ready-no-tables",
+      "via": "src/notifications/service/triggers.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "sibling",
+      "to": "TASK-c1-moderation-action-notices-with-actor-thumb",
+      "via": "src/notifications/service/triggers.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "sibling",
+      "to": "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
+      "via": "src/notifications/service/triggers.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "sibling",
+      "to": "TASK-fb8-login-success-and-failure-notification-logxntf",
+      "via": "src/notifications/service/triggers.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "sibling",
+      "to": "TASK-notification-and-telemetry-service-nits",
+      "via": "src/notifications/service/crud.ts"
+    },
+    {
+      "from": "BUG-quest-update-notifications-ignore-the-muted-world-scope",
+      "kind": "sibling",
+      "to": "epic-frontend-notifications",
+      "via": "src/notifications/service/crud.ts"
     },
     {
       "from": "BUG-rate-limit-in-memory-store-never-evicts-idle-keys",
@@ -209908,6 +210306,12 @@
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -211356,6 +211760,12 @@
       "kind": "sibling",
       "to": "TASK-fail-safe-execution-work-safety",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/schema-class/env-map.ts"
     },
     {
       "from": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
@@ -215476,6 +215886,12 @@
     {
       "from": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -219118,6 +219534,12 @@
     {
       "from": "BUG-version-resolver-middleware-built-not-wired",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-version-resolver-middleware-built-not-wired",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -220306,6 +220728,12 @@
     {
       "from": "BUG-world-lore-silently-stripped-on-create-and-update",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "BUG-world-lore-silently-stripped-on-create-and-update",
+      "kind": "sibling",
       "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
       "via": "src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts; src/validation/schemas/worlds.ts"
     },
@@ -221218,6 +221646,12 @@
     {
       "from": "FEAT-035",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-035",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -221519,6 +221953,12 @@
       "from": "FEAT-037",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-037",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -229606,6 +230046,12 @@
     {
       "from": "FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard",
+      "kind": "sibling",
       "to": "TASK-harness-stats-dashboard",
       "via": "src/routes/telemetry.ts"
     },
@@ -230598,6 +231044,12 @@
       "kind": "sibling",
       "to": "TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat",
       "via": "src/rpg/service/world-gate.ts"
+    },
+    {
+      "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/routes/worlds/worlds-routes.test.ts"
     },
     {
       "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
@@ -239566,6 +240018,12 @@
     {
       "from": "TASK-032",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "TASK-032",
+      "kind": "sibling",
       "to": "TASK-harness-frontend-consolidation",
       "via": "src/views/admin.html"
     },
@@ -245224,6 +245682,12 @@
     {
       "from": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -248914,6 +249378,12 @@
     {
       "from": "TASK-add-federation-to-the-config-domains-list-so-config-federati",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-add-federation-to-the-config-domains-list-so-config-federati",
+      "kind": "sibling",
       "to": "TASK-integration-config-surface-schemas-example-toml-env-map",
       "via": "src/config/schema-class/env-map.ts"
     },
@@ -249666,6 +250136,12 @@
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
       "via": "src/elysia-app.ts; src/validation/schemas.ts"
+    },
+    {
+      "from": "TASK-admin-assistant-tooling-allowlist",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-admin-assistant-tooling-allowlist",
@@ -251004,6 +251480,12 @@
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-csrf-for-csrf-protection",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/sections/auth.ts; src/elysia-app.ts"
     },
     {
       "from": "TASK-adopt-bun-csrf-for-csrf-protection",
@@ -252557,6 +253039,12 @@
       "from": "TASK-api-first-foundation",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-api-first-foundation",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -257656,6 +258144,12 @@
     {
       "from": "TASK-assistant-entity-access-adaptation",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adaptation",
+      "kind": "sibling",
       "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
       "via": "src/routes/worlds/worlds.ts"
     },
@@ -257742,6 +258236,12 @@
       "kind": "sibling",
       "to": "TASK-fractal-locations-api-routes",
       "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
@@ -258178,6 +258678,12 @@
     {
       "from": "TASK-assistant-entity-access-schema",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/routes/worlds/access.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-schema",
+      "kind": "sibling",
       "to": "TASK-licensing-publish-authorization-predicate",
       "via": "src/routes/worlds/access.ts"
     },
@@ -258204,6 +258710,12 @@
       "kind": "sibling",
       "to": "TASK-fractal-locations-api-routes",
       "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-world-location-access",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/routes/worlds/access.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-assistant-entity-access-world-location-access",
@@ -260266,6 +260778,12 @@
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-async-request-response-result-store-separate-table-offload",
+      "kind": "sibling",
       "to": "TASK-harness-db-tables",
       "via": "src/db/schema-"
     },
@@ -260933,6 +261451,12 @@
       "from": "TASK-async-store-complete-fail-lifecycle-hooks",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -270226,6 +270750,12 @@
     {
       "from": "TASK-character-rpg-stats",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-character-rpg-stats",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -275386,6 +275916,12 @@
     {
       "from": "TASK-chat-room-search-join",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-chat-room-search-join",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -278722,6 +279258,12 @@
     {
       "from": "TASK-comfyui-first-class-admin-workflows",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-admin-workflows",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -279462,6 +280004,12 @@
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
       "via": "src/assets/controller.ts; src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-workflow-library",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-comfyui-first-class-workflow-library",
@@ -284758,6 +285306,12 @@
     {
       "from": "TASK-config-examples-and-domain-file-support-for-uncovered-sectio",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-config-examples-and-domain-file-support-for-uncovered-sectio",
+      "kind": "sibling",
       "to": "TASK-integration-config-surface-schemas-example-toml-env-map",
       "via": "src/config/schema-class/env-map.ts"
     },
@@ -286006,6 +286560,12 @@
     {
       "from": "TASK-cors-middleware",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-cors-middleware",
+      "kind": "sibling",
       "to": "TASK-headers-additional-useful-response-headers",
       "via": "src/middleware/response-headers.ts; src/server/handler.ts"
     },
@@ -287045,6 +287605,12 @@
       "from": "TASK-creative-studio-search-api",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-creative-studio-search-api",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -290218,6 +290784,12 @@
     {
       "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
+      "kind": "sibling",
       "to": "TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3",
       "via": "src/transport/ws.ts"
     },
@@ -290531,6 +291103,12 @@
       "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
       "kind": "sibling",
       "to": "TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/config/schema-class/env-map.ts"
     },
     {
@@ -292420,6 +292998,12 @@
     {
       "from": "TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en",
+      "kind": "sibling",
       "to": "TASK-integration-config-surface-schemas-example-toml-env-map",
       "via": "src/config/schema-class/env-map.ts"
     },
@@ -293849,6 +294433,12 @@
       "from": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -299602,6 +300192,12 @@
     {
       "from": "TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-",
+      "kind": "sibling",
       "to": "TASK-headers-additional-useful-response-headers",
       "via": "src/routes/middleware/deprecation-headers.ts; src/server/handler.ts"
     },
@@ -302548,6 +303144,12 @@
     {
       "from": "TASK-fractal-locations-api-routes",
       "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-fractal-locations-api-routes",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -302909,6 +303511,12 @@
       "from": "TASK-frontend-client-contract-doc",
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-frontend-client-contract-doc",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts"
     },
     {
@@ -303942,6 +304550,12 @@
       "kind": "sibling",
       "to": "TASK-gallery-minimal-image-asset-viewer",
       "via": "src/frontend/pages/gallery.ts; src/partials/gallery/preview-modal.html; src/routes/views.ts"
+    },
+    {
+      "from": "TASK-gallery-fuzzy-search-pagination",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-gallery-fuzzy-search-pagination",
@@ -305596,8 +306210,260 @@
     {
       "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "kind": "sibling",
+      "to": "TASK-i18n-alpine-client",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-integration-config-surface-schemas-example-toml-env-map",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-licensing-publish-authorization-predicate",
+      "via": "src/routes/worlds/access.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-licensing-publish-enforcement-point",
+      "via": "src/routes/worlds/access.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-middleware-idempotency-wire-into-elysia",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-middleware-request-id-elysia-derive",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-moderator-permission-gating-for-read-only-review-surface",
+      "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-outfit-change-aux-task-and-typebox-schema",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-outfit-change-hook",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-rbac-capability-matrix-not-enforced-25-of-30-caps-decorative",
+      "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-reconcile-ts-import-extensions-user-seeding-session",
+      "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-agent-api-router-and-token-scope-",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-health-liveness-readiness-probes",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char",
+      "via": "src/config/sections/auth.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
+      "via": "src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-server-side-i18n-middleware",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-tui-enabled-config-flag-never-read",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-user-seeding-role-expansion",
+      "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-analytics-observability",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-api-versioning",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-architecture",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-assistant-creative-studio-workflows",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-battle-action-systems",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-blog-system",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-db-cold-storage-high-perf",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-e2e-integration-testing",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-effect-v4-adoption-evaluation",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-file-splitting",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-gallery-batch-operations",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
       "to": "epic-guest-access",
-      "via": "src/middleware/auth/authenticate.ts"
+      "via": "src/elysia-app.ts; src/middleware/auth/authenticate.ts; src/users/permissions.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-lora-discovery-application",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-middleware-request-lifecycle",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
+      "to": "epic-openapi-reference",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-guest-rate-limiting-audit-logging-for-guest-reads",

@@ -53358,6 +53358,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
     },
     {
