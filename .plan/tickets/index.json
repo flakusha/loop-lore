@@ -39616,7 +39616,7 @@
     "epic": "epic-guest-access",
     "tags": [],
     "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-GUEST-PUBLIC-FUNCTIONALITY-SURFACE-FEED-TEMPLATES-DOCS": {
     "hash": "c43700a",

@@ -3,7 +3,7 @@
 
 # TASK: Guest context: synthetic derive branch + auth.guestAccess flag
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-guest-access
@@ -39,3 +39,5 @@ Unauthenticated requests get 401 (auth.required=true) or the solo user with ["*"
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue f790146 (registry tip: 8ace39b44 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-GUEST-CONTEXT-SYNTHETIC-DER)
