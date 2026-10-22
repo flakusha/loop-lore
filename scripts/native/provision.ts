@@ -20,6 +20,7 @@ import {
   mkdirSync,
   readdirSync,
   readFileSync,
+  rmSync,
   symlinkSync,
   writeFileSync,
 } from "node:fs";
@@ -96,6 +97,9 @@ export function provisionWasmStd(install: RustcInstall, log?: (line: string,) =>
     );
 
     if (installed.status !== 0) {
+      // A half-installed overlay is worse than no overlay: the next call sees a
+      // populated wasm dir, skips the download and hands out a broken wrapper.
+      rmSync(sysroot, { recursive: true, force: true, },);
       throw new Error(`rust-std install.sh failed (status ${installed.status})`,);
     }
   }
