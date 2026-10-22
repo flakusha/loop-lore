@@ -9272,6 +9272,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-video-gen-route.md"
     }
   ],
@@ -15619,6 +15623,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-embeddings-orphaned-on-actor-delete.md"
+    }
+  ],
+  "src/db/070_messages_outfit_id.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
     }
   ],
   "src/db/__tests__/schema-roundtrip.test.ts": [
@@ -27383,6 +27393,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    }
+  ],
+  "src/generation/auto-gen": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
     }
   ],
   "src/generation/auto-gen-cascade.test.ts": [

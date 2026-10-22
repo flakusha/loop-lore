@@ -1678,7 +1678,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2659 | 993 | 45 | 904 | 32 | 0 | 685 |
+| (untagged) | 2659 | 994 | 45 | 904 | 32 | 0 | 684 |
 
 ## By epic × status
 
@@ -1910,7 +1910,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | epic-generation-flow-control | 6 | 2 | 0 | 4 | 0 | 0 | 0 |
 | epic-gm-shadow-notes | 10 | 4 | 0 | 0 | 0 | 0 | 6 |
 | epic-group-chat | 6 | 4 | 0 | 0 | 0 | 0 | 2 |
-| epic-guest-access | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
+| epic-guest-access | 6 | 1 | 0 | 0 | 0 | 0 | 5 |
 | epic-headless-alternative-frontends | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | epic-hidden-carriage-context | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-housing | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
