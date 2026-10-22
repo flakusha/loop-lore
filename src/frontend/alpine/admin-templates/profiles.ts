@@ -106,14 +106,14 @@ export const profiles = {
       },);
 
       if (res.ok) {
-        (globalThis as any).showToast("success", t("toasts.profileDeleted",),);
+        showToast("success", t("toasts.profileDeleted",),);
         await this.loadTemplates();
       } else {
         const err = await res.json();
-        (globalThis as any).showToast("error", err.error || t("toasts.failedDelete",),);
+        showToast("error", err.error || t("toasts.failedDelete",),);
       }
     } catch {
-      (globalThis as any).showToast("error", t("toasts.networkError",),);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 
@@ -145,7 +145,7 @@ export const profiles = {
       },);
 
       if (res.ok) {
-        (globalThis as any).showToast("success", t("toasts.profileCreated",),);
+        showToast("success", t("toasts.profileCreated",),);
         this.showCreateModal = false;
         this.newProfile = {
           id: "",
@@ -158,10 +158,10 @@ export const profiles = {
         await this.loadTemplates();
       } else {
         const err = await res.json();
-        (globalThis as any).showToast("error", err.error || t("toasts.failedCreate",),);
+        showToast("error", err.error || t("toasts.failedCreate",),);
       }
     } catch {
-      (globalThis as any).showToast("error", t("toasts.networkError",),);
+      showToast("error", t("toasts.networkError",),);
     }
   },
 };
