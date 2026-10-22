@@ -88,6 +88,26 @@
           </select>
           <div id="wizard-kind-hint" class="muted">{{{ t("worlds.kindHint") }}}</div>
         </div>
+        <div class="form-group" x-show="kind === 'rpg'">
+          <label class="form-label">
+            <input type="checkbox" x-model="rpgEnabled" data-testid="wizard-rpg-enabled" />
+            {{{ t("worlds.wizardRpgEnabled") }}}
+          </label>
+          <div class="muted">{{{ t("worlds.wizardRpgEnabledHint") }}}</div>
+        </div>
+        <div class="form-group" x-show="kind === 'rpg' && rpgEnabled">
+          <label class="form-label">
+            <input type="checkbox" x-model="rpgXp" data-testid="wizard-rpg-xp" />
+            {{{ t("worlds.wizardRpgXp") }}}
+          </label>
+        </div>
+        <div class="form-group" x-show="kind === 'rpg' && rpgEnabled">
+          <label class="form-label">
+            <input type="checkbox" x-model="rpgSkills" data-testid="wizard-rpg-skills" />
+            {{{ t("worlds.wizardRpgSkills") }}}
+          </label>
+          <div class="muted">{{{ t("worlds.wizardRpgSkillsHint") }}}</div>
+        </div>
         <div class="form-group">
           <label class="form-label" for="wizard-style">{{{ t("worlds.wizardStyleLabel") }}}</label>
           <select id="wizard-style" class="form-select" x-model="style">

@@ -163,6 +163,26 @@
                   </select>
                   <p class="form-hint">{{{t("worlds.visibilityHint")}}}</p>
                 </div>
+                <div class="form-group" x-show="world.kind === 'rpg'">
+                  <label class="form-label">
+                    <input type="checkbox" x-model="world.rpgEnabled" data-testid="edit-rpg-enabled" />
+                    {{{t("worlds.wizardRpgEnabled")}}}
+                  </label>
+                  <p class="form-hint">{{{t("worlds.wizardRpgEnabledHint")}}}</p>
+                </div>
+                <div class="form-group" x-show="world.kind === 'rpg' && world.rpgEnabled">
+                  <label class="form-label">
+                    <input type="checkbox" x-model="world.rpgXp" data-testid="edit-rpg-xp" />
+                    {{{t("worlds.wizardRpgXp")}}}
+                  </label>
+                </div>
+                <div class="form-group" x-show="world.kind === 'rpg' && world.rpgEnabled">
+                  <label class="form-label">
+                    <input type="checkbox" x-model="world.rpgSkills" data-testid="edit-rpg-skills" />
+                    {{{t("worlds.wizardRpgSkills")}}}
+                  </label>
+                  <p class="form-hint">{{{t("worlds.wizardRpgSkillsHint")}}}</p>
+                </div>
                 <div style="display: flex; gap: var(--space-3); justify-content: space-between; margin-top: var(--space-6)">
                   <button
                     type="button"

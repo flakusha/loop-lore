@@ -744,7 +744,12 @@
     "wizardCreating": "创建中…",
     "wizardCreate": "创建世界",
     "wizardFailed": "创建世界失败",
-    "wizardNameRequired": "必须填写世界名称。"
+    "wizardNameRequired": "必须填写世界名称。",
+    "wizardRpgEnabled": "Enable RPG mechanics",
+    "wizardRpgEnabledHint": "Master switch — per-mechanic flags inherit this unless overridden.",
+    "wizardRpgXp": "XP and leveling",
+    "wizardRpgSkills": "Skills",
+    "wizardRpgSkillsHint": "Gates skill-XP awards; off keeps the world playable without skill progression."
   },
   "gallery": {
     "title": "画廊",

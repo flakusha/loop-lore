@@ -155,6 +155,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
     rpg_xp: number;
     rpg_loot: number;
     rpg_quests: number;
+    rpg_skills: number;
   };
 
   /**
@@ -164,8 +165,8 @@ describe("worldRoutes — RPG opt-in flags", () => {
     const got = await app.handle(new Request(`${BASE}/api/worlds/${id}`,),);
     expect(got.status,).toBe(200,);
     const world = (await got.json()) as Flags;
-    const { rpg_enabled, rpg_dice, rpg_checks, rpg_combat, rpg_xp, rpg_loot, rpg_quests, } = world;
-    return { rpg_enabled, rpg_dice, rpg_checks, rpg_combat, rpg_xp, rpg_loot, rpg_quests, };
+    const { rpg_enabled, rpg_dice, rpg_checks, rpg_combat, rpg_xp, rpg_loot, rpg_quests, rpg_skills, } = world;
+    return { rpg_enabled, rpg_dice, rpg_checks, rpg_combat, rpg_xp, rpg_loot, rpg_quests, rpg_skills, };
   }
 
   test("create without flags leaves every mechanic off", async () => {
@@ -188,6 +189,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
       rpg_xp: 0,
       rpg_loot: 0,
       rpg_quests: 0,
+      rpg_skills: 0,
     },);
   });
 
@@ -211,7 +213,26 @@ describe("worldRoutes — RPG opt-in flags", () => {
       rpg_xp: 1,
       rpg_loot: 1,
       rpg_quests: 1,
+      rpg_skills: 1,
     },);
+  });
+
+  test("create with rpgSkills false opts skills out of an RPG world", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "No Skills", rpgEnabled: true, rpgSkills: false, },),
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    const { id, } = (await res.json()) as { id: string };
+    const flags = await readFlags(app, id,);
+    expect(flags.rpg_enabled,).toBe(1,);
+    expect(flags.rpg_xp,).toBe(1,);
+    expect(flags.rpg_skills,).toBe(0,);
   });
 
   test("update can enable RPG and opt one mechanic back out", async () => {
@@ -242,6 +263,7 @@ describe("worldRoutes — RPG opt-in flags", () => {
       rpg_xp: 1,
       rpg_loot: 1,
       rpg_quests: 1,
+      rpg_skills: 1,
     },);
   });
 
