@@ -744,7 +744,12 @@
     "wizardCreating": "Wird erstellt…",
     "wizardCreate": "Welt erstellen",
     "wizardFailed": "Welt konnte nicht erstellt werden",
-    "wizardNameRequired": "Ein Weltname ist erforderlich."
+    "wizardNameRequired": "Ein Weltname ist erforderlich.",
+    "wizardRpgEnabled": "Enable RPG mechanics",
+    "wizardRpgEnabledHint": "Master switch — per-mechanic flags inherit this unless overridden.",
+    "wizardRpgXp": "XP and leveling",
+    "wizardRpgSkills": "Skills",
+    "wizardRpgSkillsHint": "Gates skill-XP awards; off keeps the world playable without skill progression."
   },
   "gallery": {
     "title": "Galerie",

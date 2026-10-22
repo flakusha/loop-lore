@@ -744,7 +744,12 @@
     "wizardCreating": "作成中…",
     "wizardCreate": "ワールドを作成",
     "wizardFailed": "ワールドの作成に失敗しました",
-    "wizardNameRequired": "ワールド名は必須です。"
+    "wizardNameRequired": "ワールド名は必須です。",
+    "wizardRpgEnabled": "Enable RPG mechanics",
+    "wizardRpgEnabledHint": "Master switch — per-mechanic flags inherit this unless overridden.",
+    "wizardRpgXp": "XP and leveling",
+    "wizardRpgSkills": "Skills",
+    "wizardRpgSkillsHint": "Gates skill-XP awards; off keeps the world playable without skill progression."
   },
   "gallery": {
     "title": "ギャラリー",
