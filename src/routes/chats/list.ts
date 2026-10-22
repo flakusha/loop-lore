@@ -97,10 +97,13 @@ function orderChatList<T,>(
  * OR participates in, OR that are public. Public chats are enumerable by any
  * authenticated caller AND the synthetic guest tier (userId null with the
  * guest role on a guest-enabled route); guests pass NULL and match only the
- * public arm. A null id with a null role (no derive ran) matches nothing.
+ * public arm. A null id with a null role (no authenticated identity — e.g.
+ * the derive denied the request or a bare test double) matches nothing.
  * Mirrors `visibleToViewer` in `src/routes/views/chats.ts`; without the
  * participant arm a chat you were invited to is reachable in htmx but missing
- * from this JSON list.
+ * from this JSON list. (Naming-only parallel: the htmx twin in
+ * `src/routes/views/chats.ts` has no public arm and stays behind
+ * `requireUserId`, so it needs no gate here.)
  * @param userId viewer whose chats are listed (null = guest tier)
  * @param userRole viewer's role (gates the public arm for id-less callers)
  * @returns a `where()` callback for a `chats` query
