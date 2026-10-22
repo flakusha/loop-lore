@@ -87,10 +87,6 @@ export interface MattingConfig {
 
 /** Rate + concurrency regulation for generation endpoints. */
 export interface GenerationFlowControl {
-  /** Sliding-window budget per user (requests per `windowMs`). 0 = no limit. */
-  rateLimitPerUser?: number;
-  /** Sliding-window length in ms. */
-  rateLimitWindowMs?: number;
   /** Max simultaneous tracked generations server-wide. 0 = unbounded. */
   maxConcurrentGlobal?: number;
   /** Max simultaneous tracked generations per chat. 0 = unbounded. */

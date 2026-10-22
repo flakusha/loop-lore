@@ -15,7 +15,7 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { forbiddenResponse, jsonError, notFoundResponse, requireUserId, } from "../../routes/http-utils";
 import { storyStateIsPaused, } from "../auto-gen/cascade-pause-watcher";
-import { gateConcurrency, gateRateLimit, resolveFlowPolicy, } from "../flow-control";
+import { gateConcurrency, resolveFlowPolicy, } from "../flow-control";
 import { isGenerationHeld, } from "../global-hold";
 import type { GenerateRequest, } from "./types";
 
@@ -96,24 +96,18 @@ export async function validateGenerateRequest({
     return jsonError({ message: "Generation is paused by the operator - try again later", status: 409, },);
   }
 
-  // Flow regulation: per-user rate budget (429 + headers) and concurrency
-  // caps (409 with the contended scope). Reject-fast — no queueing. Runs
-  // after auth (outsiders keep the 403) and before the idempotency guard so
-  // a regulated request creates no attempt row and no in-memory entry.
-  // Concurrency first: a full house (409) outranks an exhausted budget
-  // (429) when both fire, so the message names the binding constraint.
+  // Flow regulation: concurrency caps (409 with the contended scope).
+  // Reject-fast — no queueing. Runs after auth (outsiders keep the 403)
+  // and before the idempotency guard so a regulated request creates no
+  // attempt row and no in-memory entry. Rate limiting is NOT here: the
+  // shared v1 governance guard caps generation at 20/min + burst 5 per
+  // user before this route runs, so a second limiter would double-consume
+  // the same request's budget.
   const policy = resolveFlowPolicy(config,);
   const contended = gateConcurrency(input.chatId, policy,);
   if (contended !== null) {
     const scope = contended === "global" ? "server is at capacity" : "chat is at capacity";
     return jsonError({ message: `Generation ${scope} - try again later`, status: 409, },);
-  }
-
-  const limited = gateRateLimit(authUserId, policy,);
-  if (limited !== null) {
-    const res = jsonError({ message: "Generation rate limit exceeded - try again later", status: 429, },);
-    for (const [name, value,] of Object.entries(limited.headers,)) { res.headers.set(name, value,); }
-    return res;
   }
 
   // `chatId` authorization does NOT cover `actorId`: the caller picks which
