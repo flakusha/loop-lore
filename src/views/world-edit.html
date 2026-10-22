@@ -229,13 +229,20 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="loc-desc">{{{t("worlds.description")}}}</label>
-                  <textarea
-                    class="form-input form-textarea"
-                    id="loc-desc"
-                    x-model="newLocDesc"
-                    rows="2"
-                    :placeholder="t('worlds.locationDescriptionPlaceholder')"
-                  ></textarea>
+                  <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+                    <textarea
+                      class="form-input form-textarea"
+                      id="loc-desc"
+                      x-model="newLocDesc"
+                      rows="2"
+                      style="flex: 1"
+                      :placeholder="t('worlds.locationDescriptionPlaceholder')"
+                      @input="autoResize($el)"
+                    ></textarea>
+                    <div x-data="textToolbar({ target: '#loc-desc' })">
+                      {{> text-toolbar.html }}
+                    </div>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="loc-parent">{{{t("worlds.parentLocation")}}}</label>
@@ -311,6 +318,7 @@
                           style="font-size: var(--fs-base-sm)"
                           x-model="editLocDesc"
                           :placeholder="t('worlds.description')"
+                          @input="autoResize($el)"
                         ></textarea>
                         <button
                           class="btn btn-primary btn-xs"
@@ -361,13 +369,20 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="item-desc">Description</label>
-                  <textarea
-                    class="form-input form-textarea"
-                    id="item-desc"
-                    x-model="newItemDesc"
-                    rows="2"
-                    placeholder="Short description"
-                  ></textarea>
+                  <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+                    <textarea
+                      class="form-input form-textarea"
+                      id="item-desc"
+                      x-model="newItemDesc"
+                      rows="2"
+                      style="flex: 1"
+                      placeholder="Short description"
+                      @input="autoResize($el)"
+                    ></textarea>
+                    <div x-data="textToolbar({ target: '#item-desc' })">
+                      {{> text-toolbar.html }}
+                    </div>
+                  </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
                   <div class="form-group">
@@ -453,6 +468,7 @@
                           style="font-size: var(--fs-base-sm)"
                           x-model="editItemDesc"
                           placeholder="Description"
+                          @input="autoResize($el)"
                         ></textarea>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
                           <select class="form-input" style="font-size: var(--fs-base-sm)" x-model="editItemCategory">
