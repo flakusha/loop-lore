@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -64,3 +64,5 @@ Admin/moderator identity itself is `chat_participants.role IN ('admin', 'moderat
 ## Open Questions
 
 - `gm_config` is currently used by rpg/gm flows (see `enums-core/chat.ts:23` "Per-mode rendering override stored inside gm_config"). Repurposing it as a moderation-scope bucket may collide with those flows. A dedicated `moderation_config` JSON column would be cleaner but is out of scope for this taxonomy-only epic; deferred to `epic-chat-lifecycle-moderation`.
+
+**Resolved:** 2026-10-22 registry-driven close: git issue b2d96bf (registry tip: 4f18c1b56 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-USER-GROUP-ADM)

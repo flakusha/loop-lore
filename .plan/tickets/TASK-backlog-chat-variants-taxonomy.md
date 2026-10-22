@@ -3,7 +3,7 @@
 
 # TASK: backlog — schedule Chat Variants Taxonomy cluster (RPG / character-group / LLM-only-GM)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Type:** Task
@@ -34,3 +34,5 @@
 git issue: TBD
 
 git issue: 409f599
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 409f599 (registry tip: 0b7c140a3 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-BACKLOG-CHAT-VARIANTS-TAXON)

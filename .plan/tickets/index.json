@@ -4177,7 +4177,7 @@
     "epic": "auth-config-contracts",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-auth-make-session-expiry-handling-agree-across-authentic.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-AUTH-WARN-WHEN-SESSIONTIMEOUTHOURS-AND-JWTEXPIRESIN-DIVE": {
     "hash": "094b3b5",
@@ -6917,7 +6917,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-notification-participant-helpers-write-actor-id-into-the-use.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-NOTIFICATION-PREFS-SILENTLY-SUCCEED-FOR-UNKNOWN-USERS-AND-LO": {
     "hash": "f8a923a",
@@ -7508,7 +7508,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-permissions-middleware-auditentry-reaches-console-warn-in-pr.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PERSISTBATTLE-LOST-UPDATE-RACE-READ-MODIFY-WRITE-WITHOUT-TRA": {
     "hash": "cf7fe39",
@@ -12196,7 +12196,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-chat-variants-taxonomy.md",
-    "status": "🟡 Design — taxonomy agreed; column mapping established; per-variant implementation open (see task list)",
+    "status": "done",
     "tags": [
       "chat",
       "taxonomy",
@@ -27700,7 +27700,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-backlog-chat-variants-taxonomy.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "taxonomy",
@@ -31233,7 +31233,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-assistant.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31251,7 +31251,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-assistant-group.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31278,7 +31278,7 @@
       "behavioral"
     ],
     "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "d87cce3"
   },
   "TASK-CHAT-VARIANT-CHARACTER": {
@@ -31289,7 +31289,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-character.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31308,7 +31308,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-character-group.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31329,7 +31329,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-chat-variant-llm-only.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31349,7 +31349,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-chat-variant-llm-only-group.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31369,7 +31369,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-chat-variant-llm-only-group-gm.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31388,7 +31388,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-rpg.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31408,7 +31408,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-rpg-group.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31429,7 +31429,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-user-1x1.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31448,7 +31448,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-user-group.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -31468,7 +31468,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-chat-variant-user-group-admin.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "chat",
       "variant",
@@ -44950,7 +44950,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-notification-and-telemetry-service-nits.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-NOTIFICATION-EXPANSION": {
     "epic": ":",
@@ -52560,7 +52560,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-solo-user-cold-start-race-caches-phantom-uid.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Solo-user cold-start race caches phantom uid",
     "type": "TASK"
@@ -56069,7 +56069,7 @@
     "epic": "",
     "extid": "TASK-WIRE-VARIANT-PICKER-INTO-NEW-CHAT-FORM",
     "git_issue": "8847e09",
-    "status": "Not Started",
+    "status": "done",
     "source": ".plan/tickets/TASK-wire-variant-picker-into-new-chat-form.md",
     "hash": "8847e09",
     "title": "Wire variant picker into new-chat form",

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -58,3 +58,5 @@ Auxiliary columns on `chats`:
 - `epic-assistant-gm-flows` — gm role resolution
 - `epic-narration-actor-separation` — narration routing
 - Sibling variants: `TASK-chat-variant-llm-only-group`, `TASK-chat-variant-character-group`, `TASK-chat-variant-rpg-group`
+
+**Resolved:** 2026-10-22 registry-driven close: git issue e5ce56b (registry tip: 508e64732 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-LLM-ONLY-GROUP)

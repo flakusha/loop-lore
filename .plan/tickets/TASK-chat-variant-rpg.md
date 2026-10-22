@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -64,3 +64,5 @@ World + location binding is via existing `chats.world_id` / `chats.location_id` 
 - `TASK-rpg-chat-questions` — OOC handling
 - `TASK-rpg-history-committing-chats-per-world` — per-world history commit
 - Sibling variants: `TASK-chat-variant-character`, `TASK-chat-variant-rpg-group`
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 1176051 (registry tip: 33633cce2 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-RPG done)

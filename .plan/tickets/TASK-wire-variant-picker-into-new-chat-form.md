@@ -3,7 +3,7 @@
 
 # TASK: Wire variant picker into new-chat form
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ The variantPicker Alpine slice exists as a standalone component but is not wired
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 8847e09 (registry tip: eef253732 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WIRE-VARIANT-PICKER-INTO-NE)

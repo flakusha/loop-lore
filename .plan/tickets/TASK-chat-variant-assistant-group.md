@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
@@ -59,3 +59,5 @@ The assistant role is recorded as a single `chat_participants` row with `role = 
 - `epic-group-chat` — group-chat foundations
 - `epic-message-seen-state` — read receipts
 - Sibling variants: `TASK-chat-variant-assistant`, `TASK-chat-variant-character-group`
+
+**Resolved:** 2026-10-22 registry-driven close: git issue ba29b7f (registry tip: 0a5a96f38 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHAT-VARIANT-ASSISTANT-GROU)
