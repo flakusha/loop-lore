@@ -13,7 +13,9 @@
 import { WorldEventType, } from "../../db/enums";
 import {
   COMBAT_PATTERNS,
-  ITEM_PATTERNS,
+  ITEM_DROP,
+  ITEM_GIVE,
+  ITEM_TAKE,
   LOCATION_PATTERNS,
   LORE_PATTERNS,
   NPC_PATTERNS,
@@ -29,7 +31,13 @@ const locationPatterns = LOCATION_PATTERNS;
 const timePatterns = TIME_PATTERNS;
 const combatPatterns = COMBAT_PATTERNS;
 const npcPatterns = NPC_PATTERNS;
-const itemPatterns = ITEM_PATTERNS;
+
+const itemTransfers: readonly [RegExp, boolean,][] = [
+  [ITEM_GIVE, true,],
+  [ITEM_TAKE, false,],
+  [ITEM_DROP, true,],
+];
+
 const lorePatterns = LORE_PATTERNS;
 
 // ── Time Advancement Patterns (see aliases above; kept as a section marker) ─
@@ -108,14 +116,15 @@ function detectLocationChange(
 ): WorldEvent | null {
   for (const pattern of locationPatterns) {
     const match = pattern.exec(content,);
-    if (match?.[1]) {
+    const name = match?.[1] ?? match?.[2];
+    if (name) {
       return {
         type: WorldEventType.LocationChange,
         actorId,
         locationId: currentLocationId ?? undefined,
         timestamp,
-        data: { toLocationName: match[1].trim(), fromLocationId: currentLocationId, reason: "narrative", },
-        description: `${actorId} moved to ${match[1].trim()}`,
+        data: { toLocationName: name.trim(), fromLocationId: currentLocationId, reason: "narrative", },
+        description: `${actorId} moved to ${name.trim()}`,
       };
     }
   }
@@ -207,11 +216,9 @@ function detectItemTransfers(
   timestamp: string,
 ): WorldEvent[] {
   const events: WorldEvent[] = [];
-  for (const pattern of itemPatterns) {
+  for (const [pattern, isSource,] of itemTransfers) {
     const match = pattern.exec(content,);
     if (match?.[1]) {
-      const direct = match[0].toLowerCase();
-      const isSource = /gives|hands|offers|passes|trades|drops|leaves|abandons|puts/.test(direct,);
       events.push({
         type: WorldEventType.ItemTransfer,
         actorId,
