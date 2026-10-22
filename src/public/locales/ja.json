@@ -1203,7 +1203,10 @@
     "pollClose": "Close poll",
     "pollClosed": "Closed",
     "pollFailed": "Could not update the poll.",
-    "pollInvalidInput": "A poll needs a question and at least two options."
+    "pollInvalidInput": "A poll needs a question and at least two options.",
+    "voiceUnsupported": "Voice recording is not supported in this browser.",
+    "voiceMicDenied": "Microphone access was denied.",
+    "voiceFailed": "Could not send the voice note."
   },
   "personas": {
     "title": "Personas",

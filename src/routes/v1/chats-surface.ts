@@ -23,6 +23,7 @@ import { messagesRoutes, } from "../messages";
 import { musicLinksRoutes, } from "../music-links";
 import { scheduledRoutes, } from "../scheduled";
 import { vnGenerateRoutes, } from "../vn-generate";
+import { voiceNoteRoutes, } from "../voice-notes";
 import { worldInvitesRoutes, } from "../world-invites";
 
 /**
@@ -52,5 +53,6 @@ export function chatsSurface(opts: RegisterPluginsOpts,) {
     .use(chatContextRoutes(handleOpts, prefix,),)
     .use(invitesRoutes(handleOpts, prefix,),)
     .use(worldInvitesRoutes(handleOpts, prefix,),)
-    .use(vnGenerateRoutes({ database, config, }, prefix,),);
+    .use(vnGenerateRoutes({ database, config, }, prefix,),)
+    .use(voiceNoteRoutes(handleOpts, prefix,),);
 }

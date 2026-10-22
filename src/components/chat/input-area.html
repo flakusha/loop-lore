@@ -342,6 +342,15 @@
       <button
         type="button"
         class="btn btn-ghost"
+        :title="_voiceRecording ? 'Stop and send voice note' : 'Record voice note'"
+        :disabled="!activeChat"
+        @click.prevent="_voiceRecording ? stopVoiceRecordingAndSend() : startVoiceRecording()"
+        :class="{ 'voice-recording': _voiceRecording }"
+        data-testid="voice-note-button"
+      >🎙️</button>
+      <button
+        type="button"
+        class="btn btn-ghost"
         title="Insert GIF"
         :disabled="!activeChat"
         @click.prevent="toggleGifPicker()"
