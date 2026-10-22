@@ -20,7 +20,7 @@ export type SearchMode = "exact" | "keyword" | "fuzzy" | "vector" | "hybrid";
 export type SearchScope =
   | { kind: "messages"; chatId?: string; userId: string; isAdmin?: boolean }
   | { kind: "memories"; actorId: string }
-  | { kind: "assets"; userId: string; visibility?: "public" | "private" | "shared"; isAdmin?: boolean }
+  | { kind: "assets"; userId: string | null; visibility?: "public" | "private" | "shared"; isAdmin?: boolean }
   | { kind: "characters"; userId: string }
   | { kind: "lore"; worldId?: string };
 

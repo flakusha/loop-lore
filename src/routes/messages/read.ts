@@ -13,7 +13,7 @@ import {
   MessagesQuery,
   MessageVariantQuery,
 } from "../../validation/schemas";
-import { HttpStatus, jsonError, jsonPaginated, jsonResponse, requireUserId, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, jsonPaginated, jsonResponse, } from "../http-utils";
 import {
   enrichAttachments,
   enrichMessageForList,
@@ -42,11 +42,11 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
     .get(
       `${prefix}/chats/:id/messages`,
       async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+        // Guest-open read: public chats admit the synthetic guest tier.
+        const { userId, userRole, } = extractAuth(ctx,);
         const { id: chatId, } = ctx.params as { id: string };
 
-        const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
+        const access = await checkChatAccess(database, chatId, userId, userRole,);
         if (!access.ok) { return notFound(ctx.t?.("messages.chatNotFound",) ?? "Chat not found",); }
 
         const query = ctx.query as { page?: number; pageSize?: number; parentId?: string };
@@ -105,15 +105,15 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
     .get(
       `${prefix}/messages/:id`,
       async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+        // Guest-open read (single message; public-chat branch inside).
+        const { userId, userRole, } = extractAuth(ctx,);
         const id = (ctx.params as { id: string }).id;
 
         const msgResult = await getMessageWithAccess(
           database,
           id,
           userId,
-          ctx.userRole as string | null,
+          userRole,
         );
 
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
@@ -148,15 +148,15 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
     .get(
       `${prefix}/messages/:id/variants`,
       async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+        // Guest-open read (variants resolve through the same public branch).
+        const { userId, userRole, } = extractAuth(ctx,);
         const id = (ctx.params as { id: string }).id;
 
         const msgResult = await getMessageWithAccess(
           database,
           id,
           userId,
-          ctx.userRole as string | null,
+          userRole,
         );
 
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
@@ -172,7 +172,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
             database,
             parentId,
             userId,
-            ctx.userRole as string | null,
+            userRole,
           );
 
           if (isServiceError(recheck,)) {
@@ -225,8 +225,8 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
     .get(
       `${prefix}/messages/:id/variant`,
       async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+        // Guest-open read (single-variant select; same public branch).
+        const { userId, userRole, } = extractAuth(ctx,);
         const id = (ctx.params as { id: string }).id;
         const { variantIndex, } = ctx.query as typeof MessageVariantQuery.static;
 
@@ -234,7 +234,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           database,
           id,
           userId,
-          ctx.userRole as string | null,
+          userRole,
         );
 
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }

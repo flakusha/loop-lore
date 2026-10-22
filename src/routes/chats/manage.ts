@@ -13,6 +13,7 @@ import {
 import { jsonParseOr, } from "../../utils";
 import { ChatIdParams, ChatMigrateBody, ChatRenameBody, ChatUpdateBody, } from "../../validation/schemas";
 import {
+  extractAuth,
   forbiddenResponse as forbidden,
   HttpStatus,
   type HttpStatusCode,
@@ -73,11 +74,10 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/chats/:id`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const userRole = ctx.userRole as string | null;
+          // Guest-open read: public chats admit the synthetic guest tier
+          // (userId null). Mutations below keep requireUserId.
+          const { userId, userRole, } = extractAuth(ctx,);
           const id = (ctx.params as { id: string }).id;
-
           const access = await checkChatAccess(database, id, userId, userRole,);
           if (!access.ok) { return notFound(access.error.message,); }
 
