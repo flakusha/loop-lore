@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3576
 - epics: 336
-- src paths owned: 4294
-- edges: produces 11064, consumes 398, sibling 31909, owns 1950, related 1166
+- src paths owned: 4296
+- edges: produces 11067, consumes 398, sibling 31911, owns 1950, related 1166
 
 ## Shared src hubs
 
@@ -345,7 +345,7 @@ output is byte-identical for identical inputs.
 | `src/chat/pruning/prune.ts` | `TASK-consolidate-duplicated-token-estimation`, `TASK-context-lossless-lossy-tiering` |
 | `src/chat/random-events.ts` | `BUG-bug-random-events-generator-is-dead-incomplete-phantom-param`, `BUG-chat-random-events-no-character-binding`, `TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro`, `TASK-chat-feature-context-memory-events`, `TASK-chat-lifecycle-moderation`, `TASK-local-random-event-generator`, `TASK-random-encounters-events`, `TASK-recon-test-coverage`, `TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts`, `epic-2d-sprite-world`, `epic-chat-lifecycle-moderation`, `epic-chat-product-features`, `epic-crafting-professions` |
 | `src/chat/response-length.ts` | `FEAT-chat-output-styling-resolver-stylesection-binding`, `TASK-recon-test-coverage`, `epic-chat-context-optimization` |
-| `src/chat/service` | `TASK-comparison-set-routes-crud-ownership-validation`, `TASK-video-gen-route` |
+| `src/chat/service` | `TASK-comparison-set-routes-crud-ownership-validation`, `TASK-messages-outfit-id-column`, `TASK-video-gen-route` |
 | `src/chat/service.ts` | `FEAT-chat-template-config-lifecycle`, `FEAT-message-swipe-replay-branch`, `TASK-chat-route-extraction`, `TASK-chat-transfer-location`, `TASK-e2e-state-contracts`, `TASK-emotion-avatar-message-binding`, `TASK-file-split-chat-service`, `TASK-file-split-routes`, `TASK-format-version-migration`, `TASK-message-seen-state-service-route`, `TASK-personas-impersonation-plan-docs-bookkeeping-sweep`, `TASK-recon-test-coverage`, `epic-archival-workflow`, `epic-config-templates`, `epic-crafting-professions`, `epic-file-splitting`, `epic-message-seen-state` |
 | `src/chat/service/access.test.ts` | `BUG-no-role-restriction-for-changing-chat-settings`, `TASK-chat-feature-moderation`, `TASK-chat-feature-ownership-transfer` |
 | `src/chat/service/access.ts` | `BUG-no-role-restriction-for-changing-chat-settings`, `BUG-settings-save-omits-gmconfig-for-online-chats`, `BUG-test-assertions-stale-gm-support-message`, `BUG-vn-mode-locked-once-chat-has-confirmed-messages`, `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation`, `TASK-expose-dek-export-and-import-over-the-federation-wire-routes`, `TASK-guest-chat-public-reads-visibility-aware-chat-access`, `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings`, `TASK-vn-choice-opt-in`, `epic-guest-access`, `epic-visual-novel-mode` |
@@ -10798,6 +10798,8 @@ output is byte-identical for identical inputs.
 | `TASK-message-seen-state-service-route` | produces | `src/routes/message-seen.ts` | - |
 | `TASK-messages-outfit-id-column` | produces | `src/characters/services/wardrobe/resolve.ts` | - |
 | `TASK-messages-outfit-id-column` | produces | `src/chat/service/write.ts` | - |
+| `TASK-messages-outfit-id-column` | produces | `src/chat/service` | - |
+| `TASK-messages-outfit-id-column` | produces | `src/db/070_messages_outfit_id.test.ts` | - |
 | `TASK-messages-outfit-id-column` | produces | `src/db/migrations/064_vn_choice_selections.ts` | - |
 | `TASK-messages-outfit-id-column` | produces | `src/db/schema-core.ts` | - |
 | `TASK-messages-outfit-id-column` | produces | `src/db/schema-manifest.ts` | - |
@@ -10805,6 +10807,7 @@ output is byte-identical for identical inputs.
 | `TASK-messages-outfit-id-column` | produces | `src/generation/auto-gen/content-hooks.ts` | - |
 | `TASK-messages-outfit-id-column` | produces | `src/generation/auto-gen/store-message.ts` | - |
 | `TASK-messages-outfit-id-column` | produces | `src/generation/auto-gen/story-store.ts` | - |
+| `TASK-messages-outfit-id-column` | produces | `src/generation/auto-gen` | - |
 | `TASK-messages-outfit-id-column` | produces | `src/test-utils/insert-helpers.ts` | - |
 | `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser` | produces | `src/elysia-app.ts` | - |
 | `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser` | produces | `src/middleware/permissions.ts` | - |
@@ -37793,6 +37796,7 @@ output is byte-identical for identical inputs.
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-image-backends-x-access-authz-parity-audit-across-image-surf` | `src/generation/image-gen-route.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-local-image-generation-queue` | `src/generation/image-gen-route.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-lora-discovery-application` | `src/generation/image-gen-route.ts` |
+| `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-messages-outfit-id-column` | `src/chat/service` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-model-comparison-reactions` | `src/routes/model-comparisons.ts` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-mood-shift-delta-tuning-word-boundary` | `src/utils` |
 | `TASK-comparison-set-routes-crud-ownership-validation` | sibling | `TASK-sd-cpp-provider` | `src/generation/image-engine/index.ts; src/generation/image-gen-route.ts` |
@@ -43179,6 +43183,7 @@ output is byte-identical for identical inputs.
 | `TASK-messages-outfit-id-column` | sibling | `TASK-resource-provision-schema` | `src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-test-chat-module` | `src/db/schema-core.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-timeline-id-world-timeline-events` | `src/db/schema-core.ts; src/db/schema-manifest.ts` |
+| `TASK-messages-outfit-id-column` | sibling | `TASK-video-gen-route` | `src/chat/service` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-vn-branching-choices` | `src/db/schema-manifest.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-wire-achievements-routes` | `src/test-utils/insert-helpers.ts` |
 | `TASK-messages-outfit-id-column` | sibling | `TASK-wire-combat-routes` | `src/test-utils/insert-helpers.ts` |

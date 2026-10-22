@@ -33646,14 +33646,17 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-messages-outfit-id-column.md",
       "title": "`messages.outfit_id` column",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/characters/services/wardrobe/resolve.ts",
+        "src/chat/service",
         "src/chat/service/write.ts",
+        "src/db/070_messages_outfit_id.test.ts",
         "src/db/migrations/064_vn_choice_selections.ts",
         "src/db/schema-core.ts",
         "src/db/schema-manifest.ts",
         "src/frontend/alpine/mood/avatars.ts",
+        "src/generation/auto-gen",
         "src/generation/auto-gen/content-hooks.ts",
         "src/generation/auto-gen/store-message.ts",
         "src/generation/auto-gen/story-store.ts",
@@ -56002,6 +56005,7 @@
       "path": "src/chat/service",
       "owners": [
         "TASK-comparison-set-routes-crud-ownership-validation",
+        "TASK-messages-outfit-id-column",
         "TASK-video-gen-route"
       ]
     },
@@ -59550,6 +59554,12 @@
       "path": "src/db/024_memory_embeddings_cascade_fk.test.ts",
       "owners": [
         "BUG-memory-embeddings-orphaned-on-actor-delete"
+      ]
+    },
+    {
+      "path": "src/db/070_messages_outfit_id.test.ts",
+      "owners": [
+        "TASK-messages-outfit-id-column"
       ]
     },
     {
@@ -66449,6 +66459,12 @@
       "owners": [
         "TASK-ambient-sound-system",
         "epic-ambient-music-sfx"
+      ]
+    },
+    {
+      "path": "src/generation/auto-gen",
+      "owners": [
+        "TASK-messages-outfit-id-column"
       ]
     },
     {
@@ -127976,6 +127992,16 @@
     {
       "from": "TASK-messages-outfit-id-column",
       "kind": "produces",
+      "to": "src/chat/service"
+    },
+    {
+      "from": "TASK-messages-outfit-id-column",
+      "kind": "produces",
+      "to": "src/db/070_messages_outfit_id.test.ts"
+    },
+    {
+      "from": "TASK-messages-outfit-id-column",
+      "kind": "produces",
       "to": "src/db/migrations/064_vn_choice_selections.ts"
     },
     {
@@ -128007,6 +128033,11 @@
       "from": "TASK-messages-outfit-id-column",
       "kind": "produces",
       "to": "src/generation/auto-gen/story-store.ts"
+    },
+    {
+      "from": "TASK-messages-outfit-id-column",
+      "kind": "produces",
+      "to": "src/generation/auto-gen"
     },
     {
       "from": "TASK-messages-outfit-id-column",
@@ -284280,6 +284311,12 @@
     {
       "from": "TASK-comparison-set-routes-crud-ownership-validation",
       "kind": "sibling",
+      "to": "TASK-messages-outfit-id-column",
+      "via": "src/chat/service"
+    },
+    {
+      "from": "TASK-comparison-set-routes-crud-ownership-validation",
+      "kind": "sibling",
       "to": "TASK-model-comparison-reactions",
       "via": "src/routes/model-comparisons.ts"
     },
@@ -316592,6 +316629,12 @@
       "kind": "sibling",
       "to": "TASK-timeline-id-world-timeline-events",
       "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-messages-outfit-id-column",
+      "kind": "sibling",
+      "to": "TASK-video-gen-route",
+      "via": "src/chat/service"
     },
     {
       "from": "TASK-messages-outfit-id-column",
