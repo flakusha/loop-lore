@@ -166,6 +166,7 @@ describe("Export identity E2E", () => {
 
     expect(res.status,).toBe(401,);
     expect(res.headers.get("content-type",),).not.toContain("text/event-stream",);
-    await res.body?.cancel();
+    // No stream, no archive, no row of the seeded user's data.
+    expect(await res.text(),).not.toContain("E2E Test Chat",);
   });
 });

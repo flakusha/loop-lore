@@ -295,10 +295,15 @@ describe("NotificationService", () => {
       .execute();
 
     // Drop the ghost user with FK enforcement off: the actor keeps a
-    // dangling user_id, so the notification insert for it fails.
-    sqlite.run("PRAGMA foreign_keys = OFF",);
-    await db.deleteFrom("users",).where("id", "=", ghostUser,).execute();
-    sqlite.run("PRAGMA foreign_keys = ON",);
+    // dangling user_id, so the notification insert for it fails. The pragma
+    // is restored even if the delete throws - the rest of the file depends on
+    // FK enforcement.
+    try {
+      sqlite.run("PRAGMA foreign_keys = OFF",);
+      await db.deleteFrom("users",).where("id", "=", ghostUser,).execute();
+    } finally {
+      sqlite.run("PRAGMA foreign_keys = ON",);
+    }
 
     const svc = new NotificationService(db,);
     await expect(notifyQuestUpdate(db, { worldId, questName: "Q", },),).rejects.toThrow();
