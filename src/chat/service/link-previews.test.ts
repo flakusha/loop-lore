@@ -89,6 +89,31 @@ describe("isPrivateHost (SSRF guard)", () => {
     expect(isPrivateHost("https://example.com/page",),).toBe(false,);
     expect(isPrivateHost("https://8.8.8.8/x",),).toBe(false,);
   });
+
+  it("fails closed on ipv4-mapped IPv6 literals", () => {
+    for (
+      const url of [
+        "http://[::ffff:127.0.0.1]/x",
+        "http://[::ffff:a9fe:a9fe]/x",
+        "http://[::FFFF:10.0.0.1]/x",
+      ]
+    ) {
+      expect(isPrivateHost(url,),).toBe(true,);
+    }
+  });
+
+  it("fails closed on non-dotted integer, hex, and octal host forms", () => {
+    for (
+      const url of [
+        "http://2130706433/x",
+        "http://0x7f000001/x",
+        "http://0177.0.0.1/x",
+        "http://127.0.0.01/x",
+      ]
+    ) {
+      expect(isPrivateHost(url,),).toBe(true,);
+    }
+  });
 });
 
 describe("validatePreviewUrl", () => {
