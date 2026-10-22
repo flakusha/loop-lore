@@ -105,17 +105,14 @@ async function readMovingParties(db: Kysely<DB>, worldId: string,): Promise<Conv
 
   const alive = new Set(locations.map((loc,) => loc.id),);
 
-  return rows.map((row,) => {
-    const next = edgeAhead(row.route, row.route_index,);
-    return {
-      id: row.id,
-      actorId: null,
-      source: "party",
-      from: row.current_location_id,
-      to: next && alive.has(next,) ? next : null,
-      routeIndex: row.route_index,
-    };
-  },);
+  return rows.map((row,) => ({
+    id: row.id,
+    actorId: null,
+    source: "party",
+    from: row.current_location_id,
+    to: edgeAhead(row.route, row.route_index, alive,),
+    routeIndex: row.route_index,
+  }));
 }
 
 /**
@@ -147,20 +144,29 @@ async function readMigrations(db: Kysely<DB>, worldId: string,): Promise<Convoy[
 }
 
 /**
- * The next location id on a stored route.
+ * The next location id on a stored route, if the world still has it.
  *
  * `route` is free-text JSON with no foreign key, exactly as `travel.ts`'s
  * `parseRoute` treats it: a row that will not parse is a data bug, and a
  * convoy whose head of route is unreadable still reports its position — it
  * just reports no destination rather than failing the whole world tick.
- * @param raw
- * @param routeIndex
+ *
+ * A route can also name a location the world has since deleted (a route is
+ * free text, so nothing stops it), and a convoy must never report a
+ * destination that does not exist. The liveness check lives HERE, so no
+ * caller can forget it.
+ * @param raw the stored route JSON
+ * @param routeIndex the convoy's position on that route
+ * @param alive the location ids this world still has
+ * @returns the next location id, or null when there is none to report
  */
-function edgeAhead(raw: string, routeIndex: number,): string | null {
+function edgeAhead(raw: string, routeIndex: number, alive: Set<string>,): string | null {
   const parsed: unknown = jsonParseOr(raw, null,);
   if (!Array.isArray(parsed,)) { return null; }
   const route = parsed.filter((id,): id is string => typeof id === "string");
-  return route[routeIndex + 1] ?? null;
+  const next = route[routeIndex + 1];
+  if (!next || !alive.has(next,)) { return null; }
+  return next;
 }
 
 /**

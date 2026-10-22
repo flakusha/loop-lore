@@ -37143,6 +37143,12 @@
       "source": ".plan/tickets/TASK-property-test-the-regex-action-parser-verb-and-target-extrac.md"
     }
   ],
+  "src/regex/game-state.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-game-state-block-regex-truncates-payloads-containing-an-inne.md"
+    }
+  ],
   "src/regex/game-state.ts": [
     {
       "kind": "ticket",
@@ -48745,6 +48751,12 @@
       "source": ".plan/tickets/TASK-emit-exploration-encounter-triggered-from-the-discovery-even.md"
     }
   ],
+  "src/rpg/world-discovery/trade.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-edgeahead-does-not-validate-location-existence.md"
+    }
+  ],
   "src/rpg/world-discovery/trade.ts": [
     {
       "kind": "epic",
@@ -48785,6 +48797,16 @@
       "source": ".plan/tickets/BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o.md"
     }
   ],
+  "src/rpg/world-travel/travel.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dead-code-guard-in-advancepartytravel.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o.md"
+    }
+  ],
   "src/rpg/world-travel/travel.ts": [
     {
       "kind": "epic",
@@ -48807,6 +48829,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-exploration-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-inconsistent-db-handle-in-migration-ts-npc-states-write.md"
     }
   ],
   "src/rpg/xp": [

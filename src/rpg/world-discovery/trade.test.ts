@@ -267,6 +267,26 @@ describe("runTradeTick — convoys in motion", () => {
     expect(JSON.parse((await readTradeEvents())[0]?.payload ?? "null",).to,).toBeNull();
   });
 
+  test("a route that names a location the world no longer has reports no destination", async () => {
+    await makeWorld();
+    // A route is free text with no foreign key, so it can name a location
+    // the world has since deleted.
+    await insertTravelParties(db, WORLD_ID, "Stale route", {
+      id: PARTY_A,
+      route: JSON.stringify([LOC_A, "loc-deleted",],),
+      route_index: 0,
+      current_location_id: LOC_A,
+      status: "traveling",
+    },);
+
+    // The convoy is still in motion, but there is no such location to
+    // report as its destination.
+    expect(await runTradeTick(db, WORLD_ID, 2,),).toEqual({ convoys: 1, events: 1, },);
+    const payload = JSON.parse((await readTradeEvents())[0]?.payload ?? "null",);
+    expect(payload.from,).toBe(LOC_A,);
+    expect(payload.to,).toBeNull();
+  });
+
   test("another world's convoys never appear in this world's log", async () => {
     await makeWorld();
     await insertTravelParties(db, OTHER_WORLD_ID, "Foreign", {
