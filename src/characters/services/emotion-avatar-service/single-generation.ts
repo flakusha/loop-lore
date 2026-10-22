@@ -27,6 +27,7 @@ import type { GenerateEmotionAvatarOpts, GenerationDispatchHandle, } from "./gen
  * @param opts.baseAvatarId
  * @param opts.fallbackMode
  * @param opts.avatarEmotions
+ * @param opts.seed - Provider seed for this slot; omitted = provider-chosen noise.
  * @returns void
  * @throws {Error}
  */
@@ -83,7 +84,7 @@ export async function generateEmotionAvatar(
     },);
   }
 
-  const outcome = await generateImages(opts.sdConfig, { prompt, n: 1, outputFormat: "png", },);
+  const outcome = await generateImages(opts.sdConfig, { prompt, n: 1, outputFormat: "png", seed: opts.seed, },);
 
   if (!outcome.ok) {
     throw new Error(outcome.error,);

@@ -143,6 +143,18 @@ describe("Wardrobe avatar routes — generation", () => {
     expect(res.status,).toBe(400,);
   });
 
+  test("a non-integer seed is rejected by the body schema", async () => {
+    const res = await makeApp(db, OWNER_USER,).handle(
+      post(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/emotion-avatars`, {
+        base_avatar_id: "avatar-1",
+        emotions: ["happy",],
+        seed: "lucky",
+      },),
+    );
+
+    expect(res.status,).toBe(422,);
+  });
+
   test("both generation routes require auth (401)", async () => {
     const batch = await makeApp(db,).handle(
       post(`/api/actors/${OWNER}/wardrobe/${OUTFIT}/emotion-avatars`, { base_avatar_id: "a", },),

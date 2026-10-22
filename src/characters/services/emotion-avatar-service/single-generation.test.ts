@@ -39,8 +39,8 @@ import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import type { AvatarService, } from "../avatar-service";
 import type { GenerationDispatchHandle, } from "./generation";
 
-/** Captured generateImages calls, so prompts can be asserted. */
-const calls: Array<{ prompt: string }> = [];
+/** Captured generateImages calls, so prompts and seeds can be asserted. */
+const calls: Array<{ prompt: string; seed?: number }> = [];
 /** Flipped by a test to make the provider report a failure. */
 let providerShouldFail = false;
 
@@ -48,8 +48,8 @@ let generateEmotionAvatar: typeof import("./single-generation").generateEmotionA
 
 if (ISOLATED) {
   mock.module("../../../generation/image-engine", () => ({
-    generateImages: async (_cfg: unknown, opts: { prompt: string },) => {
-      calls.push({ prompt: opts.prompt, },);
+    generateImages: async (_cfg: unknown, opts: { prompt: string; seed?: number },) => {
+      calls.push({ prompt: opts.prompt, seed: opts.seed, },);
       if (providerShouldFail) {
         return { ok: false, error: "provider exploded", status: 502, };
       }
@@ -192,6 +192,19 @@ describeOrSkip("generateEmotionAvatar", () => {
 
     // Descriptor lookup missed, so the slot collapses to nothing.
     expect(calls[0]?.prompt,).toBe(`an anchor, mod(${EmotionType.Happy})`,);
+  });
+
+  it("hands the slot seed to the image provider", async () => {
+    calls.length = 0;
+    await generateEmotionAvatar(makeSvc(), {
+      actorId,
+      emotion: EmotionType.Happy,
+      sdConfig: SD_CONFIG,
+      uploadDir,
+      seed: 1234,
+    },);
+
+    expect(calls[0]?.seed,).toBe(1234,);
   });
 
   it("throws the provider error and creates no avatar when generation fails", async () => {
