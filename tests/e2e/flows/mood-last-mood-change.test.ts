@@ -11,12 +11,18 @@
  *
  * Driven over HTTP through PUT /api/v1/actors/:actorId/mood; the row is read
  * back from the database.
+ *
+ * The session is minted directly (see helpers/session.ts): the login
+ * endpoint is rate limited per IP process-wide, so in a full-suite run the
+ * shared budget would be exhausted here.
  */
 
+import { UserRole, } from "@/db/enums";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedAll, } from "../helpers/seed";
 import { createTestServer, type TestServer, } from "../helpers/server";
+import { createTestSession, } from "../helpers/session";
 
 /** Sentinel written to last_mood_change so "did not move" is unambiguous. */
 const OLD_TIMESTAMP = "2000-01-01T00:00:00.000Z";
@@ -30,7 +36,7 @@ describe("Mood last_mood_change E2E", () => {
     await seedAll(server.db,);
     api = createClient(server.url,);
 
-    expect(await api.loginAs(SEED.user.username, SEED.user.password,),).toBe(true,);
+    api.setToken((await createTestSession(server.db, SEED.user.id, UserRole.User,)).token,);
 
     const created = await api.post(`/api/v1/actors/${SEED.character.id}/mood`, {
       happiness: 50,
