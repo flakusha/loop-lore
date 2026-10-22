@@ -63,7 +63,7 @@ function postChat(
 async function loadChat(db: Kysely<DB>, name: string,) {
   return await db
     .selectFrom("chats",)
-    .select(["type", "mode", "gm_config", "max_turns", "auto_advance", "prompt_override",],)
+    .select(["type", "mode", "purpose", "gm_config", "max_turns", "auto_advance", "prompt_override",],)
     .where("name", "=", name,)
     .executeTakeFirst();
 }
@@ -277,6 +277,45 @@ describe("chats/create — variant taxonomy wiring", () => {
     expect(res.status,).toBe(201,);
     const chat = await loadChat(db, "Variant beats template",);
     expect(chat?.mode,).toBe(VARIANT_DEFAULTS.rpg.chat_mode,);
+    await db.destroy();
+  });
+
+  test("every variant persists its full VARIANT_DEFAULTS column set", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    const app = makeApp(db, USER_ID,);
+
+    for (const [variant, def,] of Object.entries(VARIANT_DEFAULTS,)) {
+      const name = `Variant ${variant}`;
+      const res = await postChat(app, { name, variant, },);
+      expect(res.status,).toBe(201,);
+
+      const chat = await loadChat(db, name,);
+      expect(chat?.type,).toBe(def.chat_type,);
+      expect(chat?.mode,).toBe(def.chat_mode,);
+      expect(chat?.purpose,).toBe(def.chat_purpose,);
+      expect(chat?.max_turns,).toBe(def.max_turns,);
+      expect(chat?.auto_advance,).toBe(def.auto_advance,);
+      expect(chat?.prompt_override,).toBe(def.prompt_override_default,);
+      if (def.gm_config === null) {
+        expect(chat?.gm_config,).toBeNull();
+      } else {
+        expect(JSON.parse(chat!.gm_config!,),).toMatchObject(def.gm_config as object,);
+      }
+
+      const participants = await db
+        .selectFrom("chat_participants",)
+        .select(["talkativity",],)
+        .where(
+          "chat_id",
+          "=",
+          (await db.selectFrom("chats",).select("id",).where("name", "=", name,).executeTakeFirst())!.id,
+        )
+        .execute();
+
+      expect(participants.map((p,) => p.talkativity),).toEqual([def.talkativity,],);
+    }
+
     await db.destroy();
   });
 });
