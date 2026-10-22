@@ -64,7 +64,17 @@ export async function getOrCreateSoloUserForAuth(
           },)
           .execute();
       } catch {
-        /* race: another request may have created it — next lookup will find it */
+        // Race: a concurrent request inserted the same username first, so
+        // OUR id was never persisted. Caching it would make every later
+        // solo auth use a non-existent user until resetSoloUserCache().
+        const winner = await database
+          .selectFrom("users",)
+          .select(["id",],)
+          .where("username", "=", demoUsername,)
+          .executeTakeFirst();
+
+        if (!winner) { return null; }
+        soloId = winner.id;
       }
     }
   }

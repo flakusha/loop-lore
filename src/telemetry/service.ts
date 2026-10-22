@@ -75,12 +75,16 @@ export async function record(
     return r.ok ? r.value : "{}";
   })();
 
-  if (payload.length > TELEMETRY_EVENT_DATA_MAX_BYTES) {
+  // The cap is a BYTE budget: compare UTF-8 bytes, not UTF-16 code units,
+  // or a CJK payload passes the check while exceeding the budget it is meant
+  // to bound.
+  const payloadBytes = new TextEncoder().encode(payload,).length;
+  if (payloadBytes > TELEMETRY_EVENT_DATA_MAX_BYTES) {
     getLogger()
       .child({ module: "telemetry", },)
       .warn("Dropping telemetry event: payload exceeds byte cap", {
         eventType,
-        bytes: payload.length,
+        bytes: payloadBytes,
         cap: TELEMETRY_EVENT_DATA_MAX_BYTES,
       },);
 

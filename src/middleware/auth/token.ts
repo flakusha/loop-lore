@@ -10,6 +10,7 @@ import { loadConfig, } from "../../config/load";
 import type { AuthConfig, } from "../../config/schema/auth";
 import { UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getChildLogger, } from "../../logger/index";
 import { LL_TOKEN, } from "../../regex/cookies";
 import { parseExpiryMs, } from "../../utils/date";
 import { getOrCreateSoloUserForAuth, } from "./solo-user";
@@ -42,17 +43,19 @@ export function extractBearerToken(request: Request,): string | null {
 }
 
 /**
- * Resolve the acting user id from a request, falling back to the solo user.
+ * Resolve the acting user id from a request.
  *
  * Looks up the `ll_token` cookie, hashes it to a session `secret_hash`, and
- * returns the session's `user_id`. If no token is present or no session
- * matches, returns the solo/demo user's id.
+ * returns the session's `user_id`.
  *
  * Security: after resolving `session.user_id`, the user's row is queried to
- * check `users.status`. Disabled/Deactivated users fall through to the solo
- * fallback, mirroring `authenticate.ts#verifyTokenContext`. Without this
- * gate, a disabled user who still holds a valid session token could
- * impersonate themselves on the export routes. See
+ * check `users.status`. Disabled/Deactivated users are denied. A token that
+ * was PRESENTED but does not resolve to a usable user is a client error
+ * (null) - it is never downgraded to the solo identity, mirroring
+ * `authenticate.ts#verifyTokenContext`. The solo fallback applies only when
+ * no token was presented at all AND the deployment does not enforce auth.
+ * Without this, an expired or revoked session became the admin-equivalent
+ * solo user on the export routes. See
  * BUG-resolveuseridfromrequest-missing-user-status-check.
  *
  * @param request - Incoming request (reads the Cookie header)
@@ -99,8 +102,34 @@ export async function resolveUserIdFromRequest(
     }
   }
 
+  // A presented token that does not resolve to a usable user is a client
+  // error - never an invitation to fall back to the solo identity. The
+  // export routes turned this into an unauthenticated 200 + full export.
+  if (token) {
+    return null;
+  }
+
+  // No token at all: only a deployment that does not enforce auth may fall
+  // back to the solo (admin-equivalent) identity.
+  if (config.required) {
+    return null;
+  }
+
   const solo = await getOrCreateSoloUserForAuth(database, demoUsername,);
   return solo?.id ?? null;
+}
+
+/**
+ * True when a session row is still live.
+ *
+ * Fail closed: an unparseable or missing expiry is a corrupt row, never
+ * "never expires". Mirrors `authenticate.ts#verifyTokenContext`.
+ * @param expiresAt
+ * @param nowMs
+ */
+function isSessionLive(expiresAt: string | null, nowMs: number,): boolean {
+  const expiresMs = parseExpiryMs(expiresAt,);
+  return expiresMs !== null && expiresMs > nowMs;
 }
 
 /**
@@ -120,6 +149,7 @@ async function resolveUserIdFromSession(
   nowMs: number,
 ): Promise<string | null> {
   const secret = config.jwtSecret;
+  const log = getChildLogger("auth",);
   if (secret) {
     const result = await verifyJwt({ secret, token, },);
     if (result.valid) {
@@ -131,11 +161,12 @@ async function resolveUserIdFromSession(
           .where("id", "=", sid,)
           .executeTakeFirst();
 
-        if (
-          session &&
-          (session.expires_at === null || (parseExpiryMs(session.expires_at,) ?? -Infinity) > nowMs)
-        ) {
-          return session.user_id;
+        if (session) {
+          if (isSessionLive(session.expires_at, nowMs,)) {
+            return session.user_id;
+          }
+
+          log?.debug("JWT session expired or corrupt", { sid, },);
         }
       }
     }
@@ -149,8 +180,12 @@ async function resolveUserIdFromSession(
       .where("secret_hash", "=", tokenHash,)
       .executeTakeFirst();
 
-    if (session && (session.expires_at === null || (parseExpiryMs(session.expires_at,) ?? -Infinity) > nowMs)) {
-      return session.user_id;
+    if (session) {
+      if (isSessionLive(session.expires_at, nowMs,)) {
+        return session.user_id;
+      }
+
+      log?.debug("Legacy session expired or corrupt", { userId: session.user_id, },);
     }
   }
 

@@ -37,11 +37,13 @@ function resolveFlag(env: string | undefined, devDefault: boolean,): boolean {
  */
 export function loadTelemetryConfig(): TelemetryConfig {
   const master = resolveFlag(process.env.TELEMETRY_ENABLED, isDev,);
-  const events = resolveFlag(process.env.TELEMETRY_EVENTS_ENABLED, isDev,) || master;
+  // The master switch GATES the per-sink flags: TELEMETRY_ENABLED=0 must
+  // keep every sink off even when a sink flag says 1.
+  const events = resolveFlag(process.env.TELEMETRY_EVENTS_ENABLED, isDev,) && master;
   return {
     enabled: master,
     eventsEnabled: events,
-    frontendEnabled: resolveFlag(process.env.TELEMETRY_FRONTEND_ENABLED, isDev,) || master,
+    frontendEnabled: resolveFlag(process.env.TELEMETRY_FRONTEND_ENABLED, isDev,) && master,
     retentionDays: Number(process.env.TELEMETRY_RETENTION_DAYS,) || 90,
     playwrightEnabled: resolveFlag(process.env.TELEMETRY_PLAYWRIGHT_ENABLED, isDev,),
     // Opt-in: off unless explicitly enabled, even in dev. Also off when the
