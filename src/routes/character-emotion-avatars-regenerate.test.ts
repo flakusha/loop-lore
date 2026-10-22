@@ -24,6 +24,8 @@ interface StartCall {
   baseAvatarId: string;
   emotions?: string[];
   replace?: boolean;
+  seed?: number;
+  seedStrategy?: string;
 }
 
 const startCalls: StartCall[] = [];
@@ -174,6 +176,27 @@ describeOrSkip("emotion-avatars regenerate endpoint", () => {
     expect(res.status,).toBe(201,);
     expect(startCalls,).toHaveLength(1,);
     expect(startCalls[0]?.replace,).toBeUndefined();
+  });
+
+  test("delegates the explicit seed and the reuse strategy", async () => {
+    startCalls.length = 0;
+    const res = await post({
+      replace: "slot",
+      baseAvatarId: "av-1",
+      seed: 4242,
+      seedStrategy: "reuse",
+    },);
+
+    expect(res.status,).toBe(201,);
+    expect(startCalls[0],).toMatchObject({ seed: 4242, seedStrategy: "reuse", },);
+  });
+
+  test("an unknown seed strategy is not forwarded", async () => {
+    startCalls.length = 0;
+    const res = await post({ replace: "slot", baseAvatarId: "av-1", seedStrategy: "whatever", },);
+
+    expect(res.status,).toBe(201,);
+    expect(startCalls[0]?.seedStrategy,).toBeUndefined();
   });
 
   test("omitted emotions delegate the full batch", async () => {

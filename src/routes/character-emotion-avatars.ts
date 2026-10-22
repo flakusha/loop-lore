@@ -11,6 +11,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { AvatarService, } from "../characters/services/avatar-service";
 import { EmotionAvatarService, } from "../characters/services/emotion-avatar-service";
+import { INVALID_SEED_MESSAGE, isValidSeed, } from "../characters/services/emotion-avatar-service/seed";
 import { EmotionType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import {
@@ -40,6 +41,15 @@ import { validateEmotionsParam, } from "./character-emotions/emotion-request";
 
 interface HandlerOpts {
   database: Kysely<DB>;
+}
+
+/**
+ * Map the endpoint's seedStrategy string onto the service option.
+ * @param value - The raw request value.
+ * @returns "reuse" when the caller asked to reuse the recorded base seed.
+ */
+function seedStrategyOf(value: string | undefined,): "reuse" | undefined {
+  return value === "reuse" ? "reuse" : undefined;
 }
 
 /**
@@ -130,9 +140,14 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       const emotionsParam = body.emotions as string[] | undefined;
       const promptPrefix = body.promptPrefix as string | undefined;
       const negativePrompt = body.negativePrompt as string | undefined;
+      const seed = body.seed as number | undefined;
 
       if (!baseAvatarId) {
         return jsonError({ message: "baseAvatarId is required", status: HttpStatus.BadRequest, },);
+      }
+
+      if (seed !== undefined && !isValidSeed(seed,)) {
+        return jsonError({ message: INVALID_SEED_MESSAGE, status: HttpStatus.BadRequest, },);
       }
 
       // Validate emotions if provided
@@ -148,6 +163,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           emotions,
           promptPrefix,
           negativePrompt,
+          seed,
         },);
 
         return jsonCreated({ jobId, },);
@@ -164,8 +180,10 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
 
       const body = ctx.body as {
         emotions?: string[];
-        /** Accepted per the endpoint contract; seed capture/override is a separate open item. */
+        /** "reuse" re-runs the batch under the last recorded base seed. */
         seedStrategy?: string;
+        /** Explicit base seed for the batch; omitted = random or recorded. */
+        seed?: number;
         replace: "slot" | "append";
         baseAvatarId?: string;
       };
@@ -198,6 +216,8 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
             ? emotionsParam as EmotionType[]
             : undefined,
           replace: body.replace === "slot" ? true : undefined,
+          seed: body.seed,
+          seedStrategy: seedStrategyOf(body.seedStrategy,),
         },);
 
         return jsonCreated({ jobId, },);
