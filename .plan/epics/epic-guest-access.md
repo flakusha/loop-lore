@@ -80,7 +80,8 @@ is untouched: the derive distinguishes "no token + guestAccess" from
 - Browse `WorldVisibility.Public` worlds — read-only.
 - View chats with `visibility=public` — read-only; no join, no participation,
   no message writes (messages of a public chat are readable).
-- View assets with `visibility=public` via the existing signed-URL path.
+- View assets with `visibility=public` — metadata and the direct-serve bytes.
+  Minting a signed URL is authenticated-only.
 - Use read-only public functionality: public story feed (proposed
   `epic-public-feed`), public templates (`TASK-public-templates-routes`,
   done), docs.
@@ -246,9 +247,12 @@ read routes opt into the guest tier explicitly.
   author-or-admin ownership check DELETE/PATCH already had.
 - `canAccessAsset` / `visibleAssetFilter` (`src/assets/service/read.ts`) take a
   nullable actor id; the public branch no longer requires one, so a guest reads
-  public assets (metadata and signed-URL bytes) while private/shared-only
+  public assets (metadata and the direct-serve bytes) while private/shared-only
   assets stay closed. The asset read routes needed no change — they already
-  forwarded a nullable id.
+  forwarded a nullable id. The signed-URL **mint** route
+  (`POST /api/assets/:id/signed-url/:action`) is authenticated-only: a minted
+  token authorizes session-less fetching until expiry without re-checking
+  visibility, so a guest-minted token would outlive a later flip to private.
 
 ### Phase 3: Public worlds + public functionality
 

@@ -225,7 +225,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
       {
         params: MessageIdParams,
         body: MessageVisibilityUpdateBody,
-        response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
       },
     )
     .put(
