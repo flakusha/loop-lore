@@ -26,11 +26,12 @@ function createApp(db: Kysely<DB>,): Elysia {
 async function postExport(
   app: Elysia,
   body: Record<string, unknown> = {},
+  headers: Record<string, string> = {},
 ): Promise<Response> {
   return app.handle(
     new Request("http://localhost/api/export", {
       method: "POST",
-      headers: { "Content-Type": "application/json", },
+      headers: { "Content-Type": "application/json", ...headers, },
       body: JSON.stringify(body,),
     },),
   );
@@ -112,6 +113,21 @@ describe("exportRoutes", () => {
     const res = await postExport(app, { include: [], },);
     expect(res.status,).toBe(200,);
     expect(res.headers.get("Content-Type",),).toBe("application/zip",);
+  });
+
+  test("returns 401 when the request presents a token that does not resolve", async () => {
+    // A presented-but-invalid session must never be downgraded to the solo
+    // identity: the export would otherwise return every row to an expired
+    // session. See BUG-resolveuseridfromrequest-missing-user-status-check.
+    const app = createApp(db,);
+    const res = await postExport(app, { include: [], }, { Cookie: `ll_token=${uid()}`, },);
+    expect(res.status,).toBe(401,);
+  });
+
+  test("solo path still exports when no session token is presented", async () => {
+    const app = createApp(db,);
+    const res = await postExport(app, { include: [], },);
+    expect(res.status,).toBe(200,);
   });
 
   test("manifest.json has version, exported_by, row_version, and checksums", async () => {
