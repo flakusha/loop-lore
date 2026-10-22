@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import JSZip from "jszip";
 import type { Kysely, } from "kysely";
+import { loadConfig, } from "../config/load";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -13,10 +14,16 @@ import { exportRoutes, } from "./export";
 
 /**
  * @param db
+ * @param deriveUserId optional identity the global auth derive would have
+ *   resolved (elysia-app.ts) — the export route must prefer it.
  */
-function createApp(db: Kysely<DB>,): Elysia {
-  return new Elysia({ name: "test-export", },)
-    .use(exportRoutes({ database: db, },),);
+function createApp(db: Kysely<DB>, deriveUserId?: string,): Elysia {
+  const app = new Elysia({ name: "test-export", },);
+  if (deriveUserId) {
+    app.derive(() => ({ userId: deriveUserId, }));
+  }
+
+  return app.use(exportRoutes({ database: db, },),) as unknown as Elysia;
 }
 
 /**
@@ -128,6 +135,54 @@ describe("exportRoutes", () => {
     const app = createApp(db,);
     const res = await postExport(app, { include: [], },);
     expect(res.status,).toBe(200,);
+  });
+
+  test("prefers the identity the auth derive resolved over a re-resolved session", async () => {
+    // The global auth derive (elysia-app.ts) already resolved the acting
+    // identity. Re-resolving the request inside the route can bind the
+    // export to a different user id than the ownership guards compare
+    // against, so the derived identity has to win.
+    const deriveUserId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: deriveUserId,
+        username: `user-${deriveUserId}`,
+        display_name: "Derived User",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
+    const app = createApp(db, deriveUserId,);
+    const res = await postExport(app, { include: [], },);
+    expect(res.status,).toBe(200,);
+    const files = await parseZip(res,);
+    const manifest = readJson(files, "manifest.json",);
+    expect(manifest.exported_by,).toBe(deriveUserId,);
+  });
+
+  test("falls back to the configured demo username, not a hardcoded 'solo'", async () => {
+    // A dedicated database: the fallback identity only gets created when
+    // the deployment has no solo user yet, and it is named after the
+    // CONFIGURED demo username. The pre-fix route passed the literal
+    // "solo", so it exported a phantom account nobody owns.
+    const local = await createTestDb();
+    try {
+      const app = createApp(local.db,);
+      const res = await postExport(app, { include: [], },);
+      expect(res.status,).toBe(200,);
+      const solo = await local.db
+        .selectFrom("users",)
+        .select("username",)
+        .where("role", "=", "solo",)
+        .execute();
+
+      expect(solo.map((row,) => row.username),).toEqual([loadConfig().auth.demoUsername,],);
+    } finally {
+      await local.db.destroy();
+    }
   });
 
   test("manifest.json has version, exported_by, row_version, and checksums", async () => {
