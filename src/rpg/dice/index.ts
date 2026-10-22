@@ -20,3 +20,6 @@ export {
   parseDiceNotation,
   rollFromNotation,
 } from "./notation.js";
+
+export type { ResolvedRollContext, TraitRollContext, } from "./trait-roll.js";
+export { applyTraits, minimumRollValue, rollWithTraits, } from "./trait-roll.js";

@@ -1140,8 +1140,8 @@ export const WorldEventSteeringsSchema = t.Object({
 
 // ── worlds ────────────────────────────────────────────
 export const WorldsSchema = t.Object({
-  owner_id: t.String(),
   name: t.String(),
+  owner_id: t.String(),
   description: t.Optional(t.String(),),
   lore: t.Optional(t.String(),),
   publication_status: t.Optional(PublicationStatusSchema,),
@@ -1167,6 +1167,10 @@ export const WorldsSchema = t.Object({
   rules: t.Optional(t.String(),),
   autonomy_config: t.Optional(t.String(),),
   rpg_skills: t.Optional(t.Number(),),
+  requires_stats: t.Optional(t.Number(),),
+  stat_point_budget: t.Optional(t.Number(),),
+  stat_min: t.Optional(t.Number(),),
+  stat_max: t.Optional(t.Number(),),
 },);
 
 // ── activitypub_actor_keys ────────────────────────────────────────────
