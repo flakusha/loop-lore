@@ -11,6 +11,7 @@ import { selectNextGroupActor, } from "../../group-chat/turn-selector";
 import { getLogger, } from "../../logger";
 import type { Logger, } from "../../logger/types";
 import { isTelemetryEnabled, record as recordTelemetryEvent, } from "../../telemetry/service";
+import { isGenerationHeld, } from "../global-hold";
 import { storyStateIsPaused, watchChatPause, } from "./cascade-pause-watcher";
 import { createDefaultDeps, type GenDeps, } from "./deps";
 import { filterPassedActors, } from "./pass-filter";
@@ -150,6 +151,12 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
   // Check if paused
   if (storyStateIsPaused(chat.story_state,)) {
     log.debug("Chat paused, cascade stopped",);
+    return;
+  }
+
+  // Global hold: operator kill-switch stops unattended cascades too.
+  if (await isGenerationHeld(database,)) {
+    log.debug("Generation held globally, cascade stopped",);
     return;
   }
 

@@ -11,8 +11,12 @@
 
 import type { Kysely, } from "kysely";
 import { checkChatAccess, } from "../../chat/service";
+import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { forbiddenResponse, jsonError, notFoundResponse, requireUserId, } from "../../routes/http-utils";
+import { storyStateIsPaused, } from "../auto-gen/cascade-pause-watcher";
+import { gateConcurrency, gateRateLimit, resolveFlowPolicy, } from "../flow-control";
+import { isGenerationHeld, } from "../global-hold";
 import type { GenerateRequest, } from "./types";
 
 /** Inputs for {@link validateGenerateRequest}. */
@@ -21,6 +25,7 @@ interface ValidateOpts {
   database: Kysely<DB>;
   userId?: string;
   userRole?: string | null;
+  config?: Config;
 }
 
 /**
@@ -38,6 +43,7 @@ export async function validateGenerateRequest({
   database,
   userId,
   userRole,
+  config,
 }: ValidateOpts,): Promise<Response | null> {
   // ── Validate required fields ───────────────────────────
   // NOTE: `body as GenerateRequest` cast is unchecked for nested objects.
@@ -67,6 +73,48 @@ export async function validateGenerateRequest({
   if (typeof authUserId !== "string") { return authUserId; }
   const access = await checkChatAccess(database, input.chatId, authUserId, userRole,);
   if (!access.ok) { return forbiddenResponse(); }
+
+  // Per-chat hold: a paused chat refuses NEW generations. In-flight ones
+  // run to completion (the cascade watcher aborts its own depths; the
+  // primary route never starts new work). 409 + CONFLICT tells the UI
+  // to render a disabled state instead of a spinner.
+  const chatRow = await database
+    .selectFrom("chats",)
+    .select("story_state",)
+    .where("id", "=", input.chatId,)
+    .executeTakeFirst();
+
+  if (chatRow !== undefined && storyStateIsPaused(chatRow.story_state,)) {
+    return jsonError({ message: "Chat is paused - resume to generate", status: 409, },);
+  }
+
+  // Global hold: operator kill-switch for NEW generations. Read fresh from
+  // system_config so the flip takes effect without restart; in-flight
+  // generations are untouched. Checked after auth so outsiders keep the
+  // 403 (no hold-state oracle for non-members).
+  if (await isGenerationHeld(database,)) {
+    return jsonError({ message: "Generation is paused by the operator - try again later", status: 409, },);
+  }
+
+  // Flow regulation: per-user rate budget (429 + headers) and concurrency
+  // caps (409 with the contended scope). Reject-fast — no queueing. Runs
+  // after auth (outsiders keep the 403) and before the idempotency guard so
+  // a regulated request creates no attempt row and no in-memory entry.
+  // Concurrency first: a full house (409) outranks an exhausted budget
+  // (429) when both fire, so the message names the binding constraint.
+  const policy = resolveFlowPolicy(config,);
+  const contended = gateConcurrency(input.chatId, policy,);
+  if (contended !== null) {
+    const scope = contended === "global" ? "server is at capacity" : "chat is at capacity";
+    return jsonError({ message: `Generation ${scope} - try again later`, status: 409, },);
+  }
+
+  const limited = gateRateLimit(authUserId, policy,);
+  if (limited !== null) {
+    const res = jsonError({ message: "Generation rate limit exceeded - try again later", status: 429, },);
+    for (const [name, value,] of Object.entries(limited.headers,)) { res.headers.set(name, value,); }
+    return res;
+  }
 
   // `chatId` authorization does NOT cover `actorId`: the caller picks which
   // actor generates, so a participant of chat A could name any actor in the
