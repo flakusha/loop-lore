@@ -182,6 +182,7 @@ export class NotificationsManager {
   /**
    * @param chatId
    */
+  // ponytail: badge DOM reflects unseen counts; no Alpine store for per-chat unseen counts, kept.
   private renderBadge(chatId: string,): void {
     const host = document.querySelector<HTMLElement>(`[data-chat-id="${CSS.escape(chatId,)}"]`,);
     if (!host) { return; }
