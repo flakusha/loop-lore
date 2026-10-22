@@ -7,7 +7,7 @@
 **Status Note:** partially fixed upstream — dev already excluded the none tier from the envelope short-circuit; this change narrows the short-circuit to the standard tier (the only tier that encrypts), so the at-rest tier no longer adopts a foreign key_id. The key_id-ownership half of the original fix direction is NOT implemented — see Caveats.
 **Priority:** low
 **Effort:** Medium
-**Caveats:** security — the envelope short-circuit is limited to the standard tier, so an envelope-shaped payload at the at-rest or none tier is stored verbatim with keyId null instead of adopting a key_id that may belong to another chat; the key_id-ownership half of the original fix direction is out of scope — a standard-tier payload carrying another chat's key_id is still passed through unchanged, because the existing cross-chat passthrough contract (src/crypto/edge_cases.test.ts) pins that behaviour
+**Caveats:** security — the envelope short-circuit is limited to the standard tier, so an envelope-shaped payload at the at-rest or none tier is stored verbatim with keyId null instead of adopting a key_id that may belong to another chat; the key_id-ownership half of the original fix direction is out of scope — a standard-tier payload carrying another chat's key_id is still passed through unchanged, because the existing cross-chat passthrough contract (src/crypto/edge_cases.test.ts) pins that behaviour; scope — the wasEncrypted half of the title is resolved for the none tier only (it now reports wasEncrypted: false), while the at-rest tier still reports wasEncrypted: true — that is the documented wire-passthrough contract (src/crypto/at-rest.ts:108-118), not a leftover of the defect
 
 **Summary:**
 
