@@ -82,8 +82,9 @@ describe("getOrCreateSoloUserForAuth — actor creation", () => {
     // the demo user: one wins, the other loses the username UNIQUE race. The
     // loser must adopt the WINNER's id - caching the id it never persisted
     // would make every later solo auth use a phantom user.
+    const firstColdStart = getOrCreateSoloUserForAuth(db, "demo",);
     const [first, second,] = await Promise.all([
-      getOrCreateSoloUserForAuth(db, "demo",),
+      firstColdStart,
       getOrCreateSoloUserForAuth(db, "demo",),
     ],);
 
