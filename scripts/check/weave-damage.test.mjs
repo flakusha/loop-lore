@@ -54,6 +54,11 @@ test("no duplicates and degenerate input count zero", () => {
  * disabled. Otherwise a host `GIT_DIR`/`GIT_WORK_TREE` (plausible under the
  * finalize hooks) redirects the fixture into the caller's repo, and a global
  * `commit.gpgsign = true` can block the fixture commit on a signer prompt.
+ *
+ * The two symlinks (`node_modules`, `src/cli`) point into the SHARED repo
+ * and are used READ-ONLY: the fixture never writes through them, so
+ * concurrent runs of this file cannot race each other or the real tree.
+ * Every other resource is per-test and unique.
  */
 function isolatedGitEnv() {
   const env = {};

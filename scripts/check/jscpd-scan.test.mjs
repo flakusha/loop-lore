@@ -7,6 +7,13 @@
  * the gate's command carries the shared list, and the scripts cannot smuggle
  * a second list back in. A gate that measures a different scan than the one
  * that was fixed is exactly the defect this module exists to end.
+ *
+ * Resource contract — these tests own NOTHING: no temp directory, no port,
+ * no database, no global. They read `package.json` and the exported list,
+ * spawn no subprocess, and write no path (the `.tmp/x` output above is a
+ * string handed to the command builder, never created). They share no
+ * process-global state, so they pass in any order, alone, or concurrently
+ * with any other test file.
  */
 import { expect, test, } from "bun:test";
 import { readFileSync, } from "node:fs";
