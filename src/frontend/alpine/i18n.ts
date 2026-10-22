@@ -6,6 +6,14 @@
 import { interpolate, resolveKey, } from "../i18n";
 import type { TranslationMap, } from "../i18n";
 
+// Ambient globals shared with the server-injected layout script and the
+// vanilla frontend translator (src/frontend/i18n.ts reads the same catalog).
+declare global {
+  var __localeStrings: TranslationMap | undefined;
+
+  var __: ((key: string, fallback?: string,) => string) | undefined;
+}
+
 // Preserve server-injected translations (set by wrapWithLayout inline script).
 // Only initialize to empty if the server didn't inject any.
 globalThis.__localeStrings ??= {} as TranslationMap;
