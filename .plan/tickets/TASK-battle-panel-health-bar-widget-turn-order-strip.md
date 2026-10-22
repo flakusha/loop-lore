@@ -3,7 +3,7 @@
 
 # TASK: Battle panel health-bar widget + turn-order strip
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** battle-ui
@@ -29,10 +29,14 @@ Extract a reusable health-bar widget (src/frontend/battle/health-bar.ts) from th
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The roster previously carried inline HP markup, so the battle panel duplicated presentation logic instead of reusing a shared component. Per epic-battle-ui's shared-component table, a reusable health-bar widget was extracted and a turn-order strip added, derived client-side from the delivered turnIndex/initiative roster (serializeBattle payload) — no backend change. Both are wired in panel.ts/render.ts, styled in vn.css, and keyed in all 10 locale files via i18n:fix.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution (2026-10-23, worktree battle-ui-actions)
+
+Implemented in commit fa1deb092: health-bar.ts + turn-order.ts + render.ts/panel.ts wiring + vn.css + locale keys. Tests added: health-bar.test.ts (8) and turn-order.test.ts (8), plus a panel.test.ts overlay child-order pin (header, turn-order, roster, actions; strip omitted when inactive). Plan artifacts were regenerated; remaining gaps (status badges, battle log, flee) are documented in the epic's Unticketed Gaps with payload evidence.
