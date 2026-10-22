@@ -76,7 +76,7 @@ htmx.config.implicitInheritance = true;
 htmx.config.noSwap = [204, 304, "4xx", "5xx",] as any;
 // Guard htmx 4 internal null-detail crash: normalize null detail to {}.
 const __origHtmxTrigger = htmx.trigger.bind(htmx,);
-htmx.trigger = function(on, eventName, detail, bubbles,) {
+htmx.trigger = function(on: any, eventName: any, detail: any, bubbles: any,) {
   if (detail == null) {
     console.log("HTMX.TRIGGER null-detail:", eventName,);
     detail = {};
