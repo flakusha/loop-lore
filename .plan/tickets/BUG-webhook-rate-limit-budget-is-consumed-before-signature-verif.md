@@ -4,6 +4,7 @@
 # BUG: Webhook rate-limit budget is consumed before signature verification
 
 **Status:** Done
+**Status Note:** fixed on this branch — the per-adapter delivery budget is now consumed only after `signaturesMatch` succeeds, and unauthenticated attempts are metered on their own `webhook-unverified:<adapter>` bucket, so unauthenticated junk POSTs can no longer force every legitimate delivery into 429 (`src/routes/v1/integrations-surface.ts:147-192`). Regression test in src/routes/v1/integrations-surface.test.ts ("unauthenticated junk POSTs do not consume the signed delivery budget").
 **Priority:** medium
 **Effort:** Small
 **Caveats:** security — the verified-delivery budget is now spent only after the HMAC matches, so unauthenticated junk POSTs can no longer starve signed deliveries; the pre-verify flood protection moved onto its own per-adapter bucket (webhook-unverified:<adapter>), so junk still earns 429 without touching the delivery budget
