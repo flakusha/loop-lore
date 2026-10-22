@@ -7,7 +7,7 @@
  * DOM contract (label, acting chip with `aria-current`, per-chip text).
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
-import { installBattleDom, } from "../tests/battle-fake-dom";
+import { type FakeEl, installBattleDom, } from "../tests/battle-fake-dom";
 import { view, } from "../tests/battle-fake-mount";
 import { renderTurnOrder, turnQueue, } from "./turn-order";
 
@@ -62,7 +62,7 @@ describe("turnQueue", () => {
 
 describe("renderTurnOrder", () => {
   it("renders the i18n label and an acting-first chip per combatant", () => {
-    const el = renderTurnOrder(view({ turnIndex: 0, },),);
+    const el = renderTurnOrder(view({ turnIndex: 0, },),) as unknown as FakeEl;
     expect(el.className,).toBe("battle-turn-order",);
     expect(el.getAttribute("aria-label",),).toBe("Turn order",);
     expect(el.getAttribute("role",),).toBe("group",);
