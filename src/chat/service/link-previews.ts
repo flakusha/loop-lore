@@ -10,6 +10,13 @@
  * specialized. Security posture: http(s) only, private-IP/localhost
  * SSRF-guard, 3s timeout, 1MB response cap; stored strings are length-capped
  * and rendered client-side via x-text (never innerHTML).
+ *
+ * Known constraint (accepted): the host check is textual — `safeFetch` uses
+ * the OS resolver and does not pin the resolved IP, so a DNS-rebinding
+ * attack (public hostname that flips to a private A record between check
+ * and fetch) is not prevented here. Mitigating factors: one fetch per
+ * cache miss, 3s timeout, no credential forwarding, and the response body
+ * is parsed for meta tags only.
  */
 import type { Kysely, } from "kysely";
 import { createHash, } from "node:crypto";
@@ -74,18 +81,26 @@ export function isPrivateHost(rawUrl: string,): boolean {
 
   if (host === "localhost" || host.endsWith(".localhost",) || host.endsWith(".local",)) { return true; }
   if (host.endsWith(".internal",) || host === "metadata.google.internal") { return true; }
-  // IPv6 literal (brackets stripped by URL.hostname already for brackets —
-  // hostname keeps them; normalize).
+  // IPv6 literal: fail closed on ipv4-mapped forms — the embedded v4 may
+  // point at a private range and legitimate public sites do not serve
+  // `::ffff:` literals. Loopback/unspecified/ULA/link-local are private.
   const v6 = host.replace(/^\[/, "",).replace(/\]$/, "",);
   if (v6.includes(":",)) {
     const lowered = v6.toLowerCase();
+    if (lowered.startsWith("::ffff:",)) { return true; }
     return lowered === "::1" || lowered === "::" || lowered.startsWith("fc",) || lowered.startsWith("fd",) ||
       lowered.startsWith("fe8",) || lowered.startsWith("fe9",) || lowered.startsWith("fea",) ||
       lowered.startsWith("feb",);
   }
 
+  // Non-dotted integer hosts (`http://2130706433` = 127.0.0.1) and hex hosts
+  // (`0x7f000001`) resolve to loopback/private via the OS resolver — reject.
+  if (/^\d+$/.test(host,) || /^0[xX][0-9a-fA-F]+$/.test(host,)) { return true; }
+
   const v4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/,);
   if (v4) {
+    // Leading-zero labels are octal-ambiguous across resolvers — fail closed.
+    if (v4.slice(1,).some((part,) => part.length > 1 && part.startsWith("0",))) { return true; }
     const [a, b,] = [Number(v4[1],), Number(v4[2],),];
     if (a === 0 || a === 10 || a === 127) { return true; }
     if (a === 169 && b === 254) { return true; }
