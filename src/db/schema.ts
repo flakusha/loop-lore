@@ -236,4 +236,6 @@ export interface DB {
   message_polls: import("./schema-core").MessagePolls;
   poll_votes: import("./schema-core").PollVotes;
   link_previews: import("./schema-core").LinkPreviews;
+  character_stat_allocation: import("./schema-core").CharacterStatAllocation;
+  character_trait_assignments: import("./schema-core").CharacterTraitAssignments;
 }

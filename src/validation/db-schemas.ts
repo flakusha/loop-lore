@@ -3729,3 +3729,26 @@ export const LinkPreviewsSchema = t.Object({
   image_url: t.Optional(t.String(),),
   fetched_at: t.Optional(t.String(),),
 },);
+
+// ── character_stat_allocation ────────────────────────────────────────────
+export const CharacterStatAllocationSchema = t.Object({
+  world_id: t.String(),
+  allocated_str: t.Number(),
+  allocated_dex: t.Number(),
+  allocated_con: t.Number(),
+  allocated_int: t.Number(),
+  allocated_wis: t.Number(),
+  allocated_cha: t.Number(),
+  allocated_at: t.String(),
+  actor_id: t.Optional(t.String(),),
+  allocated_by_user_id: t.Optional(t.String(),),
+},);
+
+// ── character_trait_assignments ────────────────────────────────────────────
+export const CharacterTraitAssignmentsSchema = t.Object({
+  actor_id: t.String(),
+  trait_id: t.String(),
+  world_id: t.String(),
+  granted_at: t.String(),
+  granted_by_user_id: t.Optional(t.String(),),
+},);
