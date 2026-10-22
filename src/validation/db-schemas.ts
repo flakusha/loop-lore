@@ -1164,6 +1164,7 @@ export const WorldsSchema = t.Object({
   rpg_xp: t.Optional(t.Number(),),
   rpg_loot: t.Optional(t.Number(),),
   rpg_quests: t.Optional(t.Number(),),
+  rpg_skills: t.Optional(t.Number(),),
   rules: t.Optional(t.String(),),
   autonomy_config: t.Optional(t.String(),),
 },);

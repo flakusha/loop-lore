@@ -151,6 +151,7 @@ export interface Worlds extends AuditColumns {
   rpg_xp: Generated<number>;
   rpg_loot: Generated<number>;
   rpg_quests: Generated<number>;
+  rpg_skills: Generated<number>;
   rules: Generated<string>;
   autonomy_config: Generated<string>;
 }
