@@ -12078,7 +12078,7 @@
     "label": "epic",
     "priority": "High — messenger parity gap",
     "source": ".plan/tickets/epic-chat-composer-flows.md",
-    "status": "Proposed",
+    "status": "done",
     "tags": [
       "chat",
       "messenger",
@@ -20208,7 +20208,7 @@
       "composer"
     ],
     "source": ".plan/tickets/FEAT-llm-enhance-any-text-surface.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES": {
     "epic": "epic-assistant-gm-flows, epic-conversation-branching",
@@ -20227,7 +20227,7 @@
     "epic": "epic-chat-composer-flows",
     "extid": "FEAT-LLM-ENHANCE-OUTSIDE-THE-CHAT-COMPOSER",
     "git_issue": "bd93da5",
-    "status": "Not Started",
+    "status": "done",
     "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md",
     "hash": "bd93da5",
     "title": "LLM-enhance outside the chat composer",
@@ -32663,7 +32663,7 @@
       "composer"
     ],
     "source": ".plan/tickets/TASK-composer-primitive-extraction.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-CONDITION-DRIVEN-NPC-BEHAVIOR": {
     "epic": "",
@@ -44354,7 +44354,7 @@
       "migration"
     ],
     "source": ".plan/tickets/TASK-migrate-text-surfaces-to-shared-primitives.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-MIGRATE-THE-STRUCTURALLY-BLOCKED-ARGV-CALL-SITES-TO-SRC-CLI-": {
     "hash": "1784221",
@@ -52184,7 +52184,7 @@
       "ui"
     ],
     "source": ".plan/tickets/TASK-shared-text-surface-toolbar.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-SHOW-ASSETS-SCENES-WORLDS-ITEMS-TO-CHARACTER-VIA-CHAT-CONTEX": {
     "epic": "epic-context-injection-templates",
