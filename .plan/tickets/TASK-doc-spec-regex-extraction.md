@@ -13,7 +13,7 @@
 **Priority:** P3
 **Epic:** epic-docs-reconciliation
 **Tags:** docs, spec, regex
-**Related:** src/regex/*, README.md (Regex extraction row)
+**Related:** src/regex/*, (Regex extraction row)
 
 ## Summary
 

@@ -19,7 +19,7 @@
 - Last-standing rule honored: notification never goes only to the changed channel.
 - New trigger test file covers all four actions plus the last-standing rule.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 7, R02 candidate 7, TASK-AUTH-FACTORS-SCHEMA-AND-SERVICE-CORE-F1 (F9 wiring later).
+**Related:** candidate 7, R02 candidate 7, TASK-AUTH-FACTORS-SCHEMA-AND-SERVICE-CORE-F1 (F9 wiring later).
 
 **Context:**
 

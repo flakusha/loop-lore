@@ -11,7 +11,7 @@
 **Acceptance Criteria:** Config-driven backend live (rembg headless default / ComfyUI BiRefNet when enabled); matted derivative auto-produced after generation; cut-out served only when requested; VN sprite stage prefers it (no rectangular halo); owner re-matte route; license-safe model defaults pinned (Bria weights are CC-BY-NC); `bun run check` gates green.
 **Epic:** epic-avatar-alpha-vn-layering
 **Tags:** avatar, alpha, matting, background-removal, assets, comfyui, sd-cpp, onnx
-**Related:** `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md` (job scaffold landed; this ticket absorbs its remaining scope — close at bookkeeping), `TASK-alpha-aware-generation-requests-and-format-pick.md` (generation-time transparency), `TASK-assets-has-alpha-column-and-store-computation.md`, `TASK-decision-av4-matted-output-representation.md`, `matrix-emotion-avatar-assets.md`, `epic-comfyui-plugin.md`
+**Related:** `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md` (job scaffold landed; this ticket absorbs its remaining scope — close at bookkeeping), `TASK-alpha-aware-generation-requests-and-format-pick.md` (generation-time transparency), `TASK-assets-has-alpha-column-and-store-computation.md`, `TASK-decision-av4-matted-output-representation.md`, ``, `epic-comfyui-plugin.md`
 
 ## Summary
 
