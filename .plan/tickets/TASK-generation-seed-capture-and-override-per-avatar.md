@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-avatar-regeneration-control
@@ -22,3 +22,5 @@ Seed recorded at generation, reusable on re-roll. Part of epic Emotion Avatar Re
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue 62f51fd (registry tip: 1a4da294d Konstantin Fedotov Auto-closed: appended .md marker marks TASK-GENERATION-SEED-CAPTURE-AND)
