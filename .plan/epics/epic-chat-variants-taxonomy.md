@@ -7,7 +7,7 @@
 
 
 **Status:** Done
-**Status Note:** taxonomy agreed; column mapping established; per-variant implementation open (see task list)
+**Status Note:** Shipped 2026-10-22. The premise was stale in two directions: the canonical table and the server-side pinning already existed (`src/chat/types/variants.ts`, `src/routes/chats/create-variant.ts`), while the new-chat form exposed only two of the twelve variants — the real gap was reachability, not declaration. Landed: an explicit `null` override survives instead of silently falling back to the variant default, a template preset no longer overrides the chosen variant, the variant talkativity is seeded on every participant rather than the owner alone, the llm-only variants get a real validation prompt, and all twelve variants are selectable in the new-chat form — the duplicate client-side taxonomy is gone. Still open, deliberately: the four entry-point tabs (Characters / Assistant / Social / Sandbox) that the single picker replaces, and the one-time backfill of the triple onto chats that pre-date migration `044_chat_purpose.ts`, which stays as cross-cutting work in the backlog. No schema migration was needed or made.
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -50,9 +50,9 @@ The primary key for any chat is the `(chat_type, chat_mode, chat_purpose)` tripl
 |---|---------|-----------|-------------|-----------|-------------|-----------------|
 | 1 | assistant chat | null | 0 | null | 5 (default) | optional assistant persona override |
 | 2 | assistant group chat | null | 0 | null | 4 | optional |
-| 3 | user chat (1×1) | null | 0 | null | n/a (no LLM) | null |
-| 4 | user group chat | null | 0 | null | n/a | optional (summarizer) |
-| 5 | user group chat admin | null | 0 | `moderation` block | n/a | null |
+| 3 | user chat (1×1) | null | 0 | null | 5 (column default — no LLM) | null |
+| 4 | user group chat | null | 0 | null | 5 (column default — no LLM) | optional (summarizer) |
+| 5 | user group chat admin | null | 0 | `moderation` block | 5 (column default — no LLM) | null |
 | 6 | llm-only chat | set (validation budget) | 1 | `validation` block | 8 | required (test prompt) |
 | 7 | llm-only group chat | set | 1 | `validation` block | 7 | required |
 | 8 | llm-only group + gm | per gm | 0 (gm-driven) | `gm_profile` block | 6 | gm persona override |
@@ -76,38 +76,51 @@ Current chat creation (see `epic-chat-lifecycle-moderation` and existing fronten
 
 The Characters tab is the canonical entry point for variants 9–12; the Assistant tab is the entry point for variants 1–2; the Social/People tab is the entry point for variants 3–5; an internal "Sandbox" tab is the entry point for variants 6–8.
 
+> Shipped state: those four tabs do not exist yet — the new-chat form carries a
+> single picker offering all twelve variants. Splitting it per tab is the
+> deferred entry-point work below.
+
 ## Tasks
 
 ### Taxonomy (High Priority)
 
-- [ ] TASK-chat-variant-assistant — variant 1: assistant chat (direct / story / assistant)
-- [ ] TASK-chat-variant-assistant-group — variant 2: assistant group chat (group / story / assistant)
-- [ ] TASK-chat-variant-user-1x1 — variant 3: user 1×1 chat (direct / story / social, encrypted)
-- [ ] TASK-chat-variant-user-group — variant 4: user group chat (group / story / social)
-- [ ] TASK-chat-variant-user-group-admin — variant 5: user group chat with admin/moderator (group / story / social + gm_config.moderation)
-- [ ] TASK-chat-variant-llm-only — variant 6: llm-only validation chat (direct / battle / validation)
-- [ ] TASK-chat-variant-llm-only-group — variant 7: llm-only group validation chat (group / battle / validation)
-- [ ] TASK-chat-variant-llm-only-group-gm — variant 8: llm-only group with gm (group / story / guided)
-- [ ] TASK-chat-variant-character — variant 9: chat with character (direct / story / roleplay)
-- [ ] TASK-chat-variant-character-group — variant 10: multi-user + multi-character group (group / story / roleplay + gm_config.cast)
-- [ ] TASK-chat-variant-rpg — variant 11: rpg chat (direct / story / rpg + world/location binding)
-- [ ] TASK-chat-variant-rpg-group — variant 12: rpg group chat (group / battle / rpg + turn rules + world binding)
+- [x] TASK-chat-variant-assistant — variant 1: assistant chat (direct / story / assistant)
+- [x] TASK-chat-variant-assistant-group — variant 2: assistant group chat (group / story / assistant)
+- [x] TASK-chat-variant-user-1x1 — variant 3: user 1×1 chat (direct / story / social, encrypted)
+- [x] TASK-chat-variant-user-group — variant 4: user group chat (group / story / social)
+- [x] TASK-chat-variant-user-group-admin — variant 5: user group chat with admin/moderator (group / story / social + gm_config.moderation)
+- [x] TASK-chat-variant-llm-only — variant 6: llm-only validation chat (direct / battle / validation)
+- [x] TASK-chat-variant-llm-only-group — variant 7: llm-only group validation chat (group / battle / validation)
+- [x] TASK-chat-variant-llm-only-group-gm — variant 8: llm-only group with gm (group / story / guided)
+- [x] TASK-chat-variant-character — variant 9: chat with character (direct / story / roleplay)
+- [x] TASK-chat-variant-character-group — variant 10: multi-user + multi-character group (group / story / roleplay + gm_config.cast)
+- [x] TASK-chat-variant-rpg — variant 11: rpg chat (direct / story / rpg + world/location binding)
+- [x] TASK-chat-variant-rpg-group — variant 12: rpg group chat (group / battle / rpg + turn rules + world binding)
 
 ### Cross-cutting (Medium Priority — opened if/when needed)
 
-- [ ] Frontend variant picker (entry-point branches) — depends on Characters/Assistant/Social/Sandbox tabs
-- [ ] Create-chat payload validator per variant — guard at `routes/chats/create` level
-- [ ] Migration of legacy chats into the taxonomy — `(chat_type, chat_mode)` remap for chats predating the unified schema
+- [x] Frontend variant picker — all twelve variants are selectable in the new-chat form
+- [ ] Frontend variant picker entry-point branches — the Characters/Assistant/Social/Sandbox tabs the single picker currently replaces
+- [x] Create-chat payload validator per variant — `validateVariantTriple` guards `routes/chats/create`
+- [ ] Migration of legacy chats into the taxonomy — `(chat_type, chat_mode)` remap for chats predating migration `044_chat_purpose.ts`
 
-## Files (Target Surface — Read-Only List)
 
-These files already carry the columns this epic maps onto; this epic is documentation-only and **does not** edit them:
+## Files (Target Surface)
 
-- `src/db/migrations/parts/006_chat.ts` — `talkativity`, `gm_config`, `max_turns`, `auto_advance`, `prompt_override` on `chats`/`chat_participants`
-- `src/db/enums-core/chat.ts` — `ChatType`, `ChatMode` enums
+Columns this epic maps onto, and the files it changed. The epic is no longer
+documentation-only: the backend wiring predated it, but it was half-wired and
+the UI could not reach most of the table.
+
+- `src/db/migrations/001_init.ts` — `gm_config`, `max_turns`, `auto_advance`, `prompt_override` on `chats`
+- `src/db/migrations/044_chat_purpose.ts` — `purpose` on `chats`
+- `src/db/enums-core/users.ts` — `ChatType`, `ChatMode`, `ChatPurpose` enums
 - `src/db/schema-core.ts` — generated `Chats`, `ChatParticipants`, `ChatSetupTemplates` types
-- `src/components/chat/` — chat creation modal (entry-point branching lives here once implemented)
-- `src/frontend/alpine/chat-settings.ts` — settings panel (mode selector)
+- `src/chat/types/variants.ts` — the canonical `VARIANT_DEFAULTS` table
+- `src/routes/chats/create-variant.ts` — `resolveVariantOverrides`, the trust boundary
+- `src/routes/chats/create.ts` — variant pinning on create
+- `src/chat/service/crud/create.ts` — participant seeding (talkativity)
+- `src/frontend/pages/new-chat/index.ts`, `src/frontend/pages/new-chat/submit.ts`, `src/views/new-chat.html` — the variant picker
+- `src/components/chat/participant-mgmt.html` — per-participant talkativity control
 
 ## Linked Tasks
 
@@ -156,7 +169,7 @@ For pre-existing chats that pre-date the unified schema, a one-time backfill tas
 ## Open Questions
 
 1. **Variant 12 chat_mode = battle**: rationale is turn-arbitration parity with existing battle-mode orchestration. If `epic-rpg-wiring-phase3` ends up with a separate `rpg` mode in `ChatMode`, variant 12 should flip to that instead. Decision deferred until that epic lands.
-2. **`chat_purpose` enum shape**: this epic treats it as a free string (`assistant | roleplay | rpg | social | guided | validation`). `epic-chat-lifecycle-moderation` has hinted at `direct | group | story`. Need a single canonical enum. Filed under cross-cutting.
+2. **`chat_purpose` enum shape**: settled — `ChatPurpose` in `src/db/enums-core/users.ts` carries the six canonical strings (`assistant | roleplay | rpg | social | guided | validation`) plus the legacy `main | side | notes` trio that nothing reads. `chats.purpose` is a plain text column, so the enum is enforced in code by `validateVariantTriple` rather than by a DB check constraint.
 3. **Authority resolution**: "chat admin" unification across variants needs a small resolver (creator OR global admin OR owning gm). The resolver does not require a column — it derives from existing `chat_participants.role` + a per-chat `owner_user_id` — but no ticket currently owns it. Opened as cross-cutting.
 4. **Variant 8 (llm-only + gm) vs variant 12 (rpg group) overlap**: variant 8 has a gm but no world; variant 12 has a world but no required gm. Today the only differentiator is `chat_purpose`. If product wants both "world + gm" cleanly, an explicit `gm_required boolean` on `chats` would help — but adding that column is out of scope here and parked under `epic-rpg-wiring-phase3`.
 
