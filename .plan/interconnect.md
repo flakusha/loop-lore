@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3576
 - epics: 336
-- src paths owned: 4296
-- edges: produces 11067, consumes 398, sibling 31911, owns 1950, related 1166
+- src paths owned: 4300
+- edges: produces 11071, consumes 398, sibling 31911, owns 1950, related 1166
 
 ## Shared src hubs
 
@@ -10034,6 +10034,10 @@ output is byte-identical for identical inputs.
 | `TASK-generation-logit-bias-logprobs` | produces | `src/generation/providers/openai-compatible/http.ts` | - |
 | `TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos` | produces | `src/generation/generate-route/handler.ts` | - |
 | `TASK-generation-rate-limiting-and-concurrency-limits` | produces | `src/config/schema/generation.ts` | - |
+| `TASK-generation-seed-capture-and-override-per-avatar` | produces | `src/characters/services/emotion-avatar-service/seed.ts` | - |
+| `TASK-generation-seed-capture-and-override-per-avatar` | produces | `src/routes/character-emotion-avatars-regenerate.test.ts` | - |
+| `TASK-generation-seed-capture-and-override-per-avatar` | produces | `src/routes/character-emotion-avatars.test.ts` | - |
+| `TASK-generation-seed-capture-and-override-per-avatar` | produces | `src/routes/wardrobe-avatars.test.ts` | - |
 | `TASK-giwt-batch-command-for-run-finalize-check` | produces | `src/cli.ts` | - |
 | `TASK-giwt-batch-command-for-run-finalize-check` | produces | `src/commands/batch.ts` | - |
 | `TASK-giwt-batch-command-for-run-finalize-check` | produces | `src/commands/finalize/gates.ts` | - |

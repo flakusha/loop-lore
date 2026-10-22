@@ -13,7 +13,7 @@ import { beforeAll, expect, it, mock, } from "bun:test";
 import type { Kysely, } from "kysely";
 import * as realConfigLoad from "../../../config/load";
 import { createConfigSchema, } from "../../../config/schema-class";
-import { EmotionType, } from "../../../db/enums";
+import { EMOTION_ORDINAL, EmotionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import { insertActors, } from "../../../test-utils/insert-helpers";
@@ -163,6 +163,74 @@ describeOrSkip("runBatchGeneration", () => {
     const record = await getGenerationJobRecord(db, job.id,);
     expect(record?.status,).toBe("cancelled",);
     expect(job.completedAt,).toBeDefined();
+  });
+
+  it("pins an explicit base seed and derives a per-slot seed from it", async () => {
+    const seen: Array<{ emotion: EmotionType; seed?: number }> = [];
+    const svc = makeSvc(
+      db,
+      mock(async (opts,) => {
+        seen.push({ emotion: opts.emotion, seed: opts.seed, },);
+        return { avatarId: "av-1", assetId: "as-1", };
+      },),
+    );
+
+    const job = createJob({
+      id: "job-batch-seed" as BatchJobId,
+      actorId,
+      baseAvatarId: "avatar-base",
+      emotions: [EmotionType.Happy, EmotionType.Sad,],
+    },);
+
+    await runBatchGeneration(svc, job, { ...makeOpts(), seed: 4242, },);
+
+    const slotSeeds = [
+      4242 + EMOTION_ORDINAL[EmotionType.Happy],
+      4242 + EMOTION_ORDINAL[EmotionType.Sad],
+    ];
+
+    expect(seen.map((entry,) => entry.seed),).toEqual(slotSeeds,);
+    expect(job.seed,).toBe(4242,);
+
+    const record = await getGenerationJobRecord(db, job.id,);
+    expect(record?.payload.seed,).toBe(4242,);
+    expect(record?.results.map((result,) => result.seed),).toEqual(slotSeeds,);
+  });
+
+  it("reuses the recorded base seed when the caller asks for it", async () => {
+    const svc = makeSvc(db, mock(async () => ({ avatarId: "av-1", assetId: "as-1", })),);
+
+    const first = createJob({
+      id: "job-batch-seed-first" as BatchJobId,
+      actorId,
+      baseAvatarId: "avatar-base",
+      emotions: [EmotionType.Happy,],
+    },);
+
+    await runBatchGeneration(svc, first, { ...makeOpts(), seed: 777, },);
+
+    const second = createJob({
+      id: "job-batch-seed-reuse" as BatchJobId,
+      actorId,
+      baseAvatarId: "avatar-base",
+      emotions: [EmotionType.Happy,],
+    },);
+
+    await runBatchGeneration(svc, second, { ...makeOpts(), seedStrategy: "reuse", },);
+
+    expect(second.seed,).toBe(777,);
+  });
+
+  it("rejects an out-of-range explicit seed", async () => {
+    const svc = makeSvc(db, mock(async () => ({ avatarId: "av-1", assetId: "as-1", })),);
+    const job = createJob({
+      id: "job-batch-seed-bad" as BatchJobId,
+      actorId,
+      baseAvatarId: "avatar-base",
+      emotions: [EmotionType.Happy,],
+    },);
+
+    await expect(runBatchGeneration(svc, job, { ...makeOpts(), seed: -1, },),).rejects.toThrow(/seed/,);
   });
 
   // Last: re-registers the process-global config mock with no providers.

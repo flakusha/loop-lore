@@ -57,7 +57,7 @@
 | In Progress | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
 | In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
 | Not Started | Character XP, Leveling & Stat Progression in World | High | High | 0 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
-| In Progress | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
+| Done | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 0 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
 | Not Started | Chat Product Features | High | High | 0 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
 | Not Started | Chat Rich Engagement (draft for new worktree) | Medium — messenger/AI parity gap | Medium | 0 | [epic-chat-rich-engagement.md](/.plan/epics/epic-chat-rich-engagement.md) |
@@ -773,7 +773,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Chat Composer Flows (draft for new worktree)
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High — messenger parity gap
 - **Effort:** Medium
 - **Type:** epic

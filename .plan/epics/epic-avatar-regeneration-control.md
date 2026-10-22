@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** durable jobs, emotions-subset, outfit-scoped replace + single-slot re-roll shipped; dedicated actor-level regenerate route, seed capture, per-avatar UI re-roll pending
+**Status Note:** durable jobs, emotions-subset, outfit-scoped replace + single-slot re-roll shipped; dedicated actor-level regenerate route and seed capture shipped; per-avatar UI re-roll pending
 **Priority:** Medium
 **Effort:** Small
 **Type:** Feature Epic
@@ -88,9 +88,11 @@ landed (verified 2026-10-09):
       transactional, (emotion, outfit)-scoped isolation
 - [ ] Persistent job store (migration + regen schema artifacts) with
       in-memory cache; restart reconciliation for orphaned jobs
-- [ ] Seed capture/override per generation — providers already accept a seed
-      (`ImageGenOptions.seed?` threaded to sdcpp/comfyui); the emotion-avatar
-      path never sets or records one
+- [x] Seed capture/override per generation — one base seed per batch
+      (`seed.ts`), slot seeds derived as `base + EMOTION_ORDINAL[emotion]`, the
+      base seed persisted with the job (`generation_jobs.payload.seed`) and
+      readable back per actor/outfit scope; callers pin a seed or ask to reuse
+      the recorded one (`seedStrategy: "reuse"`)
       → `TASK-generation-seed-capture-and-override-per-avatar`
 - [ ] UI: per-avatar "re-roll" button on emotion grid + "regenerate all" +
       subset picker + job progress (SSE)

@@ -7727,6 +7727,16 @@
       "source": "docs/spec/emotion-avatars.md"
     }
   ],
+  "src/characters/services/emotion-avatar-service/seed.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
   "src/characters/services/emotion-avatar-service/single-generation.ts": [
     {
       "kind": "ticket",
@@ -39035,6 +39045,12 @@
       "source": ".plan/tickets/BUG-avatar-select-empty-throws-no-frontend-fallback.md"
     }
   ],
+  "src/routes/character-emotion-avatars-regenerate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md"
+    }
+  ],
   "src/routes/character-emotion-avatars-stream.ts": [
     {
       "kind": "ticket",
@@ -39043,6 +39059,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
+  "src/routes/character-emotion-avatars.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md"
     }
   ],
   "src/routes/character-emotion-avatars.ts": [
@@ -45003,6 +45025,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-wardrobe-avatar-variants.md"
+    }
+  ],
+  "src/routes/wardrobe-avatars.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md"
     }
   ],
   "src/routes/wardrobe-avatars.ts": [

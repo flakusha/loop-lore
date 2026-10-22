@@ -9,6 +9,9 @@ import type { DB, } from "../../../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
 import type { BatchGenerationJob, EmotionGenerationResult, GenerateEmotionAvatarsOpts, } from "./types";
 
+/** Job kind recorded for emotion-avatar batches. */
+const EMOTION_AVATAR_JOB_KIND = "emotion-avatar";
+
 /** Lifecycle status persisted per generation job. */
 export type GenerationJobStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
 
@@ -18,6 +21,8 @@ export interface GenerationJobPayload {
   baseAvatarId: string;
   /** Outfit scope of the batch; absent = outfitless (base) generation. */
   outfitId?: string;
+  /** Base seed the batch ran under; absent = recorded before seed capture. */
+  seed?: number;
 }
 
 /** A persisted generation job with parsed JSON columns. */
@@ -165,6 +170,34 @@ export async function listGenerationJobRecords(
 }
 
 /**
+ * Find the last recorded base seed for an actor's generation scope.
+ *
+ * The newest matching job record wins, so a "reuse" re-roll lands on the
+ * seed of the most recent generation in that scope. Records written before
+ * seed capture carry no seed and are skipped.
+ * @param database
+ * @param actorId
+ * @param outfitId - Outfit scope; omit for the outfitless (base) scope.
+ * @returns The recorded base seed, or undefined when the scope has none.
+ */
+export async function findRecordedBaseSeed(
+  database: Kysely<DB>,
+  actorId: string,
+  outfitId?: string,
+): Promise<number | undefined> {
+  const records = await listGenerationJobRecords(database, actorId,);
+
+  for (const record of records) {
+    if (record.kind !== EMOTION_AVATAR_JOB_KIND) { continue; }
+    if (record.payload.seed === undefined) { continue; }
+    if ((record.payload.outfitId ?? undefined) !== (outfitId ?? undefined)) { continue; }
+    return record.payload.seed;
+  }
+
+  return undefined;
+}
+
+/**
  * @param row
  * @returns The row with JSON columns parsed (fallbacks on corrupt JSON).
  */
@@ -197,12 +230,13 @@ export async function recordBatchStart(
 ): Promise<void> {
   await createGenerationJobRecord(database, {
     id: job.id,
-    kind: "emotion-avatar",
+    kind: EMOTION_AVATAR_JOB_KIND,
     actorId: opts.actorId,
     payload: {
       emotions: job.results.map((result,) => result.emotion),
       baseAvatarId: opts.baseAvatarId,
       ...(opts.outfitId ? { outfitId: opts.outfitId, } : {}),
+      ...(job.seed !== undefined ? { seed: job.seed, } : {}),
     },
     startedAt: job.startedAt,
   },);

@@ -12313,7 +12313,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-llm-enhance-any-text-surface.md",
       "title": "LLM enhance any text surface",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/text-enhance.ts",
         "src/generation/prompt-route.ts"
@@ -12334,7 +12334,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md",
       "title": "LLM-enhance outside the chat composer",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/actor-entities.ts",
         "src/frontend/alpine/chat-actions/prompt-improve.ts",
@@ -23565,7 +23565,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-composer-primitive-extraction.md",
       "title": "Composer primitive extraction",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/auto-resize.ts",
         "src/frontend/alpine/chat-drafts.ts",
@@ -29361,8 +29361,13 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md",
       "title": "Generation seed capture and override per avatar",
-      "status": "Not Started",
-      "srcRefs": [],
+      "status": "done",
+      "srcRefs": [
+        "src/characters/services/emotion-avatar-service/seed.ts",
+        "src/routes/character-emotion-avatars-regenerate.test.ts",
+        "src/routes/character-emotion-avatars.test.ts",
+        "src/routes/wardrobe-avatars.test.ts"
+      ],
       "related": []
     },
     {
@@ -33886,7 +33891,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-migrate-text-surfaces-to-shared-primitives.md",
       "title": "Migrate text surfaces to shared primitives",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/components/chat/message-list.html",
         "src/components/chat/mobile-composer.html",
@@ -40411,7 +40416,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-shared-text-surface-toolbar.md",
       "title": "Shared text-surface toolbar",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/components/text-toolbar.html",
         "src/frontend/alpine/index.ts",
@@ -45826,7 +45831,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-chat-composer-flows.md",
       "title": "Chat Composer Flows (draft for new worktree)",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/visibility.ts",
         "src/chat/service/write.ts",
@@ -55066,6 +55071,12 @@
       "owners": [
         "IDEA-idea-emotion-avatar-batch-progress-over-sse-per-variant-live",
         "epic-avatar-regeneration-control"
+      ]
+    },
+    {
+      "path": "src/characters/services/emotion-avatar-service/seed.ts",
+      "owners": [
+        "TASK-generation-seed-capture-and-override-per-avatar"
       ]
     },
     {
@@ -73078,9 +73089,21 @@
       ]
     },
     {
+      "path": "src/routes/character-emotion-avatars-regenerate.test.ts",
+      "owners": [
+        "TASK-generation-seed-capture-and-override-per-avatar"
+      ]
+    },
+    {
       "path": "src/routes/character-emotion-avatars-stream.ts",
       "owners": [
         "TASK-egui-sse-response-streaming-through-the-browser-bridge"
+      ]
+    },
+    {
+      "path": "src/routes/character-emotion-avatars.test.ts",
+      "owners": [
+        "TASK-generation-seed-capture-and-override-per-avatar"
       ]
     },
     {
@@ -76510,6 +76533,12 @@
       "path": "src/routes/wardrobe",
       "owners": [
         "epic-wardrobe-avatar-variants"
+      ]
+    },
+    {
+      "path": "src/routes/wardrobe-avatars.test.ts",
+      "owners": [
+        "TASK-generation-seed-capture-and-override-per-avatar"
       ]
     },
     {
@@ -124168,6 +124197,26 @@
       "from": "TASK-generation-rate-limiting-and-concurrency-limits",
       "kind": "produces",
       "to": "src/config/schema/generation.ts"
+    },
+    {
+      "from": "TASK-generation-seed-capture-and-override-per-avatar",
+      "kind": "produces",
+      "to": "src/characters/services/emotion-avatar-service/seed.ts"
+    },
+    {
+      "from": "TASK-generation-seed-capture-and-override-per-avatar",
+      "kind": "produces",
+      "to": "src/routes/character-emotion-avatars-regenerate.test.ts"
+    },
+    {
+      "from": "TASK-generation-seed-capture-and-override-per-avatar",
+      "kind": "produces",
+      "to": "src/routes/character-emotion-avatars.test.ts"
+    },
+    {
+      "from": "TASK-generation-seed-capture-and-override-per-avatar",
+      "kind": "produces",
+      "to": "src/routes/wardrobe-avatars.test.ts"
     },
     {
       "from": "TASK-giwt-batch-command-for-run-finalize-check",
