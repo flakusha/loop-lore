@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Medium
+**Caveats:** observability — a notification whose data cannot be serialized is still stored with data null and the failure is logged with its userId and type, so a dropped payload is never silent; partial failure — the byte cap now compares UTF-8 bytes rather than UTF-16 code units, so a CJK payload that previously passed the character limit is dropped whole and the dropped event is not retried; stale state — TELEMETRY_ENABLED=0 now gates the per-sink flags, so a deployment that relied on a per-sink flag alone to enable telemetry stops emitting until the master switch is on
 
 **Summary:**
 

@@ -11,6 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
+**Caveats:** data races — the losing insert is detected by the username UNIQUE constraint and the winner's row is re-read by username, so the cached id is always the persisted one; TOCTOU — the re-read is a separate statement after the failed insert, so if the winning row is deleted in between the helper returns null and caches nothing rather than a phantom id; stale state — the solo id is cached per database instance, so a user row deleted after caching stays cached until resetSoloUserCache() is called
 
 ## Summary
 

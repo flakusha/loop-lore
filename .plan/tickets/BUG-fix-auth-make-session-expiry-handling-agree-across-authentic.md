@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Medium
+**Caveats:** security — a presented-but-unresolvable token is now denied instead of downgraded to the admin-equivalent solo identity, so an expired or revoked session can no longer export the archive; stale state — session liveness is re-read per request, so a session revoked mid-request still completes that request; observability — a corrupt expiry is denied and logged at debug level only, so an unexplained 401 needs the debug log to diagnose
 **Epic:** auth-config-contracts
 
 **Summary:**
