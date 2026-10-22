@@ -16,6 +16,15 @@ import { describe, expect, test, } from "bun:test";
 const SCRIPT = `${import.meta.dir}/audit-branches.ts`;
 const ROOT = `${import.meta.dir}/..`;
 
+/**
+ * Every case spawns the script, which shells out to git over the REAL repo.
+ * With `--base master` on a repo where master and dev share no merge base,
+ * `git cherry`/`rev-list` walk the full history (~1s per branch), so the run
+ * takes ~6s — past bun's 5s default. The budget belongs to the environment,
+ * not to the contract under test, so it is stated explicitly.
+ */
+const CASE_TIMEOUT_MS = 60_000;
+
 function run(...args: string[]) {
   const proc = Bun.spawnSync(["bun", SCRIPT, ...args,], { cwd: ROOT, },);
   return {
@@ -26,14 +35,14 @@ function run(...args: string[]) {
 }
 
 describe("audit-branches CLI", () => {
-  test("no args: prints the report and exits 0", () => {
+  test("no args: prints the report and exits 0", { timeout: CASE_TIMEOUT_MS, }, () => {
     const result = run();
     expect(result.exitCode,).toBe(0,);
     expect(result.stdout,).toContain("Branches vs dev",);
     expect(result.stdout.length,).toBeGreaterThan(0,);
-  });
+  },);
 
-  test("--json emits a report array with verdicts", () => {
+  test("--json emits a report array with verdicts", { timeout: CASE_TIMEOUT_MS, }, () => {
     const result = run("--json",);
     expect(result.exitCode,).toBe(0,);
     const reports = JSON.parse(result.stdout,) as {
@@ -50,29 +59,29 @@ describe("audit-branches CLI", () => {
       expect(typeof r.ahead,).toBe("number",);
       expect(typeof r.novel,).toBe("number",);
     }
-  });
+  },);
 
-  test("--base accepts an alternative base ref", () => {
+  test("--base accepts an alternative base ref", { timeout: CASE_TIMEOUT_MS, }, () => {
     const result = run("--base", "master",);
     expect(result.exitCode,).toBe(0,);
     expect(result.stdout,).toContain("Branches vs master",);
-  });
+  },);
 
-  test("--base rejects a nonexistent ref", () => {
+  test("--base rejects a nonexistent ref", { timeout: CASE_TIMEOUT_MS, }, () => {
     const result = run("--base", "no-such-ref-xyz",);
     expect(result.exitCode,).toBe(1,);
     expect(result.stderr,).toContain("does not exist",);
-  });
+  },);
 
-  test("--help prints the brief and exits 0", () => {
+  test("--help prints the brief and exits 0", { timeout: CASE_TIMEOUT_MS, }, () => {
     const result = run("--help",);
     expect(result.exitCode,).toBe(0,);
     expect(result.stdout,).toContain("Classify local branches",);
-  });
+  },);
 
-  test("unknown flag is rejected with exit 1", () => {
+  test("unknown flag is rejected with exit 1", { timeout: CASE_TIMEOUT_MS, }, () => {
     const result = run("--no-such-flag",);
     expect(result.exitCode,).toBe(1,);
     expect(result.stderr,).toContain("--no-such-flag",);
-  });
+  },);
 });
