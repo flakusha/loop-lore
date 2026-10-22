@@ -6,6 +6,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
+**Caveats:** security — the verified-delivery budget is now spent only after the HMAC matches, so unauthenticated junk POSTs can no longer starve signed deliveries; the pre-verify flood protection moved onto its own per-adapter bucket (webhook-unverified:<adapter>), so junk still earns 429 without touching the delivery budget
 **Tags:** security, integrations
 
 **Summary:**
@@ -18,8 +19,6 @@ src/routes/v1/integrations-surface.ts:147-155 consumes the per-adapter webhook b
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
-
-**Resolved:** 2026-10-22 registry-driven close: git issue 9d640f6 (registry tip: aa1ae9068 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-WEBHOOK-RATE-LIMIT-BUDGET-IS)
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

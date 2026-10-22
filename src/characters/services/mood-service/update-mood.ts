@@ -9,6 +9,7 @@
 import { jsonStringifyOr, } from "../../../utils";
 import { withWorldId, } from "../shared-service-utils";
 import { getMood, } from "./get-mood";
+import { happinessToMood, } from "./happiness-to-mood";
 import type { MoodServiceContext, UpdateMoodOpts, } from "./types";
 
 /** Arguments for {@link updateMood}. */
@@ -47,12 +48,21 @@ export async function updateMood(
   };
 
   if (opts.happiness !== undefined) {
-    updateData.happiness = Math.max(0, Math.min(100, opts.happiness,),);
+    const happiness = Math.max(0, Math.min(100, opts.happiness,),);
+    updateData.happiness = happiness;
+    // A happiness tweak is a mood change only when it crosses a band
+    // boundary — an intra-band nudge leaves last_mood_change alone.
+    if (happinessToMood(happiness,) !== happinessToMood(existing.happiness,)) {
+      updateData.last_mood_change = now;
+    }
   }
 
   if (opts.currentMood !== undefined) {
     updateData.current_mood = opts.currentMood;
-    updateData.last_mood_change = now;
+    // Rewriting the same mood label is not a mood change.
+    if (opts.currentMood !== existing.currentMood) {
+      updateData.last_mood_change = now;
+    }
   }
 
   if (opts.moodStability !== undefined) {

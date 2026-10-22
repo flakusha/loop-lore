@@ -79,7 +79,12 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
     throw new TypeError(`encryptAtRest requires plaintext string, got ${typeof plaintext}`,);
   }
 
-  if (encryptionLevel !== "none" && isEncryptedPayload(plaintext,)) {
+  // Envelope short-circuit: only the tier that actually encrypts may treat an
+  // already-encrypted payload as encrypted. The `none` and `at-rest` tiers
+  // store the payload verbatim, so an envelope-shaped plaintext there must
+  // not fabricate `wasEncrypted` nor adopt a key_id that may belong to
+  // another chat.
+  if (encryptionLevel === "standard" && isEncryptedPayload(plaintext,)) {
     return { storedContent: plaintext, keyId: extractKeyIdFromPayload(plaintext,), wasEncrypted: true, };
   }
 

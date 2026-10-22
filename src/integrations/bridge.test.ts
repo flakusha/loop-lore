@@ -255,6 +255,28 @@ describe("MessageBridge inbound path", () => {
     expect(delivered,).toBe(1_100,);
     expect(bridge.receive("matrix", inbound("evt-0",),),).toBe(false,);
   });
+
+  test("a handler throw rolls back the dedup entry so a redelivery dispatches again", () => {
+    const received: AdapterMessage[] = [];
+    const registry = createBridgeRegistry();
+    registry.register(makeSendingAdapter("matrix", [],),);
+    const bridge = createMessageBridge(registry,);
+
+    let boom = true;
+    bridge.onMessage((message,) => {
+      received.push(message,);
+      if (boom) { throw new Error("handler down",); }
+    },);
+
+    // The handler throws: the id must NOT be burned.
+    expect(() => bridge.receive("matrix", inbound("evt-1",),)).toThrow("handler down",);
+    expect(received,).toHaveLength(1,);
+
+    // The provider redelivers the same id — it dispatches again.
+    boom = false;
+    expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(true,);
+    expect(received.map((message,) => message.id),).toEqual(["evt-1", "evt-1",],);
+  });
 });
 
 describe("MessageBridge health + rate-limit wiring", () => {

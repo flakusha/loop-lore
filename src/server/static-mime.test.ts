@@ -189,4 +189,24 @@ describe("findCompressedVariant", () => {
     const upper = cssPath.replace(/\.css$/, ".CSS",);
     expect(findCompressedVariant(upper, "br",),).toBeNull();
   });
+
+  test("skips a coding the client refused with q=0", () => {
+    // RFC 9110 §12.5.3: q=0 means "not acceptable" — the br sibling
+    // exists on disk but must not be served.
+    expect(findCompressedVariant(cssPath, "br;q=0, gzip",),).toEqual({
+      path: `${cssPath}.gz`,
+      encoding: "gzip",
+    },);
+
+    expect(findCompressedVariant(cssPath, "br;q=0",),).toBeNull();
+
+    // gzip;q=0 must not yield the gzip variant: it falls through to br.
+    expect(findCompressedVariant(cssPath, "gzip;q=0, br",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+
+    // gzip;q=0 alone yields no compressed variant at all.
+    expect(findCompressedVariant(cssPath, "gzip;q=0",),).toBeNull();
+  });
 });
