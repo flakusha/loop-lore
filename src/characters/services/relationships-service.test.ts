@@ -55,6 +55,27 @@ describe("RelationshipsService", () => {
         expect(error.message,).toContain("already exists",);
       }
     });
+
+    it("should create a relationship inside an ambient transaction", async () => {
+      await createTestActors(db, "test-actor-rel-nested",);
+      const targetId = "test-actor-rel-nested";
+
+      // The service must reuse the caller's transaction instead of opening a
+      // second one (Kysely throws) or querying through the outer handle
+      // (single-connection deadlock).
+      await db.transaction().execute(async (trx,) => {
+        const id = await RelationshipsService(trx,).createRelationship({
+          actorId: testActorId1,
+          targetActorId: targetId,
+          relationshipType: "ally",
+        },);
+
+        expect(id,).toBeDefined();
+      },);
+
+      const relationship = await relationshipsService.getRelationship(testActorId1, targetId,);
+      expect(relationship,).toBeDefined();
+    });
   });
 
   describe("getRelationship", () => {
