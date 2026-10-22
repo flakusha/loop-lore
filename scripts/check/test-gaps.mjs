@@ -227,45 +227,54 @@ function classifyModule(abs, text,) {
       localTypes.add(st.name.text,);
     } else if (ts.isImportDeclaration(st,)) {
       const clause = st.importClause;
-      if (clause === undefined) { hasRuntime = true; continue; }  // side-effect import
+      if (clause === undefined) {
+        hasRuntime = true;
+        continue;
+      } // side-effect import
       const nb = clause.namedBindings;
       if (clause.isTypeOnly) {
         if (nb && ts.isNamedImports(nb,)) {
           for (const el of nb.elements) { typeImports.add(el.name.text,); }
         }
-        continue;  // `import type …` loads nothing
+        continue; // `import type …` loads nothing
       }
       if (nb && ts.isNamedImports(nb,)) {
         for (const el of nb.elements) { if (el.isTypeOnly) { typeImports.add(el.name.text,); } }
-        const onlyTypes = nb.elements.every((el,) => el.isTypeOnly,);
+        const onlyTypes = nb.elements.every((el,) => el.isTypeOnly);
         if (!onlyTypes || clause.name !== undefined) { hasRuntime = true; }
         continue;
       }
-      hasRuntime = true;  // default import
+      hasRuntime = true; // default import
     }
   }
 
   for (const st of sf.statements) {
     if (ts.isExportDeclaration(st,)) {
-      if (st.isTypeOnly) { continue; }  // `export type { … }` is erased
+      if (st.isTypeOnly) { continue; } // `export type { … }` is erased
       const clause = st.exportClause;
       if (clause && ts.isNamedExports(clause,)) {
         let anyValue = false;
         for (const el of clause.elements) {
           const exported = el.name.text;
           const local = el.propertyName?.text ?? el.name.text;
-          if (el.isTypeOnly) { typeExports.add(exported,); continue; }
-          if (localTypes.has(local,) || typeImports.has(local,)) { typeExports.add(exported,); continue; }
+          if (el.isTypeOnly) {
+            typeExports.add(exported,);
+            continue;
+          }
+          if (localTypes.has(local,) || typeImports.has(local,)) {
+            typeExports.add(exported,);
+            continue;
+          }
           anyValue = true;
         }
         if (anyValue) { hasRuntime = true; }
         continue;
       }
-      hasRuntime = true;  // `export * …` / `export * as ns …`
+      hasRuntime = true; // `export * …` / `export * as ns …`
       continue;
     }
     if (ts.isInterfaceDeclaration(st,) || ts.isTypeAliasDeclaration(st,) || ts.isImportDeclaration(st,)) { continue; }
-    hasRuntime = true;  // every other statement kind is runtime surface
+    hasRuntime = true; // every other statement kind is runtime surface
   }
 
   return { typeExports, hasRuntime, };
