@@ -189,7 +189,11 @@ export async function advancePartyTravel(
     // occupancy behind for the next party in the loop.
     const mine = new Set(claims,);
     const step = walk(party, route, mine,);
-    if (step.edges === 0 && step.progress === party.travel_progress) { continue; }
+    // A step that advanced nothing is not billable. `steps_per_tick` is a
+    // REAL column, so a carry below the ULP of the stored progress rounds
+    // away and the party ends the tick exactly where it started: charging
+    // it would drain the world budget for distance never covered.
+    if (step.edges === 0 && step.progress <= party.travel_progress) { continue; }
 
     if (step.edges === 0 && party.travel_progress + party.steps_per_tick >= 1) {
       // A whole edge of distance was available and its destination is

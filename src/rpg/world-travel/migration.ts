@@ -20,7 +20,8 @@
  * writes, so the two subsystems contend for a location by id and the
  * winner is the same on every run. A migration whose destination is null
  * (the location was deleted) is completed silently rather than retried
- * forever: there is nothing left to arrive at.
+ * forever: there is nothing left to arrive at, and the hop ends with the
+ * NPC back at the origin it set out from.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
@@ -146,7 +147,22 @@ export async function migrateNpc(
     if (kind === "npc_arrive") {
       const destination = row.destination_location_id;
       if (!destination) {
-        // Destination was deleted — complete silently rather than retry forever
+        // The destination was deleted while the NPC was on the road: there is
+        // nothing left to arrive at, so the hop is closed out here rather
+        // than retried forever. The hop never landed, so the NPC ends the
+        // hop where the hop started — the origin is the last position this
+        // hop asserted, and writing it keeps the NPC at a location the world
+        // still has (its own row may carry no position at all, and the
+        // wander system may have carried it off the hop's track).
+        if (row.origin_location_id) {
+          await handle
+            .updateTable("npc_states",)
+            .set({ location_id: row.origin_location_id, },)
+            .where("actor_id", "=", row.actor_id,)
+            .where("world_id", "=", worldId,)
+            .execute();
+        }
+
         await markMigration(handle, row.id, stamp,);
 
         continue;

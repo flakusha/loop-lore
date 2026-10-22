@@ -47,6 +47,15 @@ describe("extractGameStateBlock", () => {
   it("returns empty string for an empty payload", () => {
     expect(extractGameStateBlock("```game-state\n```",),).toBe("",);
   });
+
+  it("does not early-close on a backtick fence inside the payload", () => {
+    // A game-state payload can carry a fenced code block inside a string
+    // value. The closer is anchored to a line start, so the fence inside the
+    // payload must not cut the capture short.
+    const payload = '{"a":"before ``` after","b":2}';
+    const content = `narration\n\`\`\`game-state\n${payload}\n\`\`\`\nmore`;
+    expect(extractGameStateBlock(content,),).toBe(payload,);
+  });
 });
 
 describe("extractGameStateBlocks", () => {
