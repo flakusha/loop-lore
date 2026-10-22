@@ -11,7 +11,7 @@
       hx-get="/partials/characters/import-modal"
       hx-target="#modal-container"
       hx-swap="innerHTML"
-      hx-on::after-request="window.openModal('import-modal')"
+      hx-on::after:swap="window.openModal('import-modal')"
       data-testid="import-character"
     >
       Import Card
@@ -21,7 +21,7 @@
       hx-get="/partials/characters/export-modal"
       hx-target="#modal-container"
       hx-swap="innerHTML"
-      hx-on::after-request="window.openModal('export-modal')"
+      hx-on::after:swap="window.openModal('export-modal')"
       data-testid="export-character"
     >
       Export All
@@ -31,7 +31,7 @@
       hx-get="/partials/characters/create-modal"
       hx-target="#modal-container"
       hx-swap="innerHTML"
-      hx-on::after-request="window.openModal('create-modal')"
+      hx-on::after:swap="window.openModal('create-modal')"
       data-testid="create-character"
     >
       + New

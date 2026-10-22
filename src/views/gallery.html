@@ -11,7 +11,7 @@
       hx-get="/partials/gallery/upload-modal"
       hx-target="#modal-container"
       hx-swap="innerHTML"
-      hx-on::after-request="window.openModal('upload-modal')"
+      hx-on::after:swap="window.openModal('upload-modal')"
       data-testid="upload-button"
     >
       + Upload
