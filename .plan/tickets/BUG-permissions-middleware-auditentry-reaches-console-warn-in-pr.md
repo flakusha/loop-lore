@@ -4,6 +4,7 @@
 # BUG: permissions middleware auditEntry reaches console.warn in production
 
 **Status:** Done
+**Status Note:** already fixed on dev - commit c845cd206 ("fix(middleware): drop audit entry instead of console.warn") removed the `console.warn("Permission denied", auditEntry)` fallback; the catch block now drops the audit entry.
 **Priority:** Medium
 **Effort:** Medium
 **Caveats:** security — the catch block now drops the audit entry instead of writing it to stdout, so request identifiers and role context no longer reach an external log sink; observability — a permission denial is only recorded when the structured logger is available, so a boot-time denial before logger init leaves no trace beyond the returned error
