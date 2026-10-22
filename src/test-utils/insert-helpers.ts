@@ -5965,3 +5965,45 @@ export async function insertFederationPerformanceBudgets(
   } as any,).execute();
   return id;
 }
+
+/** Insert a message_polls row. */
+export async function insertMessagePolls(
+  db: Db,
+  message_id: string,
+  question: string,
+  options: string,
+  created_by: string,
+  opts?: { id?: string; multi?: number; closes_at?: string | null; closed_at?: string | null; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("message_polls",).values({
+    id,
+    message_id,
+    question,
+    options,
+    created_by,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a poll_votes row. */
+export async function insertPollVotes(
+  db: Db,
+  poll_id: string,
+  user_id: string,
+  option_idx: number,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("poll_votes",).values({
+    id,
+    poll_id,
+    user_id,
+    option_idx,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

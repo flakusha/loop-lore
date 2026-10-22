@@ -26,6 +26,7 @@ export type {
   GroupedMessage,
   Message,
   MessageAttachment,
+  MessagePoll,
 } from "./messages";
 export type { ChatMoodState, } from "./mood-state";
 export type { ChatMovementState, MovementEvent, } from "./movement-state";
