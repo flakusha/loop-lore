@@ -119,4 +119,32 @@ describeOrSkip("messageTools.runMessageAiAction", () => {
     await messageTools.runMessageAiAction!.call(ctx as never, "m1", "explain",);
     expect(ctx.toasts[0]?.type,).toBe("info",);
   });
+
+  test("translate prompts for a language and includes it in the body", async () => {
+    const ctx = buildCtx();
+    const orig = globalThis.prompt;
+    (globalThis as Record<string, unknown>).prompt = () => "es";
+    handler = async () => Response.json({ action: "translate", result: "hola", },);
+    try {
+      await messageTools.runMessageAiAction!.call(ctx as never, "m1", "translate",);
+    } finally {
+      (globalThis as Record<string, unknown>).prompt = orig;
+    }
+
+    expect(JSON.parse(calls[0]?.opts.body as string,),).toEqual({ action: "translate", language: "es", },);
+    expect(ctx.toasts[0],).toMatchObject({ type: "info", message: "hola", },);
+  });
+
+  test("translate without a language is a local no-op", async () => {
+    const ctx = buildCtx();
+    const orig = globalThis.prompt;
+    (globalThis as Record<string, unknown>).prompt = () => null;
+    try {
+      await messageTools.runMessageAiAction!.call(ctx as never, "m1", "translate",);
+    } finally {
+      (globalThis as Record<string, unknown>).prompt = orig;
+    }
+
+    expect(calls,).toEqual([],);
+  });
 },);
