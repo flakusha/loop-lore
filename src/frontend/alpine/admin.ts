@@ -22,11 +22,12 @@ import { apiFetch, } from "./htmx";
 
 // Fallback: expose showTab on globalThis so Alpine expressions don't
 // throw ReferenceError when initTree fails silently on HTMX swaps.
-(globalThis as any).showTab = function(tab: string,) {
+const adminGlobals = globalThis as { showTab?: (tab: string,) => void; adminPage?: () => any };
+adminGlobals.showTab = function(tab: string,) {
   console.warn("[admin] showTab called outside Alpine scope — initTree may have failed", { tab, },);
 };
 
-(globalThis as any).adminPage = function() {
+adminGlobals.adminPage = function() {
   return {
     // ── Shared state ────────────────────────────────────
     activeTab: "overview",

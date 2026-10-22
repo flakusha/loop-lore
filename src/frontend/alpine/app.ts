@@ -99,7 +99,9 @@ globalThis.app = function() {
       const ui = Alpine.store("ui",);
       if (ui) {
         for (const key of Object.keys(ui,)) {
-          ui[key] = false;
+          if (typeof ui[key] === "boolean") {
+            ui[key] = false;
+          }
         }
       }
     },
@@ -117,7 +119,8 @@ globalThis.app = function() {
           globalThis.__localeStrings = strings as any;
           applyDirection(locale as any,);
         }
-      } catch {
+      } catch (error) {
+        log.warn("Failed to load locale", { error: String(error,), },);
         // fallback to key display
       }
     },
