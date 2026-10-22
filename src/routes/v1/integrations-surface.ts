@@ -27,7 +27,7 @@ import { resolveCredential, } from "../../integrations";
 import type { RateLimitConfig, RateLimiter, } from "../../middleware/rate-limit";
 import { createRateLimiter, rateLimitHeaders, } from "../../middleware/rate-limit";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
-import { HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
+import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 
 /** Signature header carrying the hex HMAC-SHA256 over the raw body. */
 export const WEBHOOK_SIGNATURE_HEADER = "x-loop-lore-signature";
@@ -275,9 +275,7 @@ export function integrationsSurface(
         if (!result.ok) { return toErrorResponse(result,); }
         return jsonResponse(
           { ok: true, dispatched: result.dispatched, },
-          // 202 Accepted — HttpStatus has no Accepted member yet (only
-          // 200/201/204), so the numeric literal is pinned explicitly.
-          202 as HttpStatusCode,
+          HttpStatus.Accepted,
         );
       },
       {

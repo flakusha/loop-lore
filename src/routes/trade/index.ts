@@ -25,7 +25,7 @@ import { TradeService, } from "../../services/trade";
 import { safeJsonStringify, } from "../../utils";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
-import { badRequestResponse, jsonResponse, } from "../http-utils";
+import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
 import { tradeHistoryRoutes, } from "./history";
 import { npcTradeRoutes, } from "./npc";
@@ -43,6 +43,24 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
   const opts = { database, svc, };
   return (
     new Elysia({ name: "trade", },)
+      // Registered BEFORE the routes: Elysia 1.4 scopes onError to routes
+      // registered after it, so a trailing .onError never sees this family's
+      // VALIDATION / NOT_FOUND errors (they fall through to the app-global
+      // handler instead).
+      .onError(({ code, error, set, },) => {
+        if (code === "NOT_FOUND") {
+          set.status = 404;
+          return notFoundResponse("Resource not found",);
+        }
+
+        if (code === "VALIDATION") {
+          set.status = 400;
+          const result = safeJsonStringify(error,);
+          const serialized = result.ok ? result.value : "Validation error";
+          const errorText = error instanceof Error ? error.message : (typeof error === "string" ? error : serialized);
+          return jsonError({ message: errorText, status: 400, },);
+        }
+      },)
       .get(`${prefix}/worlds/:worldId/trade/balance`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
@@ -113,19 +131,5 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
       .use(npcTradeRoutes(opts, prefix,),)
       .use(tradeHistoryRoutes(opts, prefix,),)
       .use(tradeOfferRoutes(opts, prefix,),)
-      .onError(({ code, error, set, },) => {
-        if (code === "NOT_FOUND") {
-          set.status = 404;
-          return { error: "Resource not found", };
-        }
-
-        if (code === "VALIDATION") {
-          set.status = 400;
-          const result = safeJsonStringify(error,);
-          const serialized = result.ok ? result.value : "Validation error";
-          const errorText = error instanceof Error ? error.message : (typeof error === "string" ? error : serialized);
-          return { error: errorText, };
-        }
-      },)
   ) as unknown as Elysia;
 }

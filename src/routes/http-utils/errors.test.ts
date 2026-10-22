@@ -10,7 +10,8 @@
  * the caller supplied it.
  */
 import { describe, expect, test, } from "bun:test";
-import { internalErrorResponse, } from "./errors";
+import { internalErrorResponse, jsonError, } from "./errors";
+import { HttpStatus, } from "./status";
 
 /** Body shape every error helper produces. */
 interface ErrorBody {
@@ -65,5 +66,18 @@ describe("internalErrorResponse", () => {
     // jsonError spreads `data` only when truthy — {} is truthy, so the key is
     // present; this pins the choice rather than leaving it incidental.
     expect(Object.hasOwn(body, "data",),).toBe(true,);
+  });
+});
+
+describe("jsonError status-code invariant", () => {
+  test("every 4xx/5xx HttpStatus member maps to a defined code with api_version meta", async () => {
+    const errorStatuses = Object.values(HttpStatus,).filter((s,) => s >= 400);
+    expect(errorStatuses.length,).toBeGreaterThan(0,);
+    for (const status of errorStatuses) {
+      const body = await jsonError({ message: "boom", status, },).json() as ErrorBody;
+      expect(typeof body.code,).toBe("string",);
+      expect(body.code.length,).toBeGreaterThan(0,);
+      expect(body.meta.api_version,).toBe("1",);
+    }
   });
 });

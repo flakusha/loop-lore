@@ -20,11 +20,15 @@ const STATUS_TO_CODE: Record<number, ErrorCode> = {
   [HttpStatus.Forbidden]: ErrorCode.Forbidden,
   [HttpStatus.NotFound]: ErrorCode.NotFound,
   [HttpStatus.Conflict]: ErrorCode.Conflict,
+  [HttpStatus.Gone]: ErrorCode.Gone,
   [HttpStatus.UnprocessableEntity]: ErrorCode.ValidationError,
   [HttpStatus.TooManyRequests]: ErrorCode.TooManyRequests,
   [HttpStatus.InternalServerError]: ErrorCode.ServerError,
   [HttpStatus.NotImplemented]: ErrorCode.NotImplemented,
+  [HttpStatus.BadGateway]: ErrorCode.BadGateway,
   [HttpStatus.ServiceUnavailable]: ErrorCode.ServiceUnavailable,
+  [HttpStatus.GatewayTimeout]: ErrorCode.GatewayTimeout,
+  [HttpStatus.InsufficientStorage]: ErrorCode.InsufficientStorage,
 };
 
 export function jsonError(message: string, status?: HttpStatusCode, code?: ErrorCode,): Response;
@@ -47,7 +51,7 @@ export function jsonError(
 
   const message = opts.t ? opts.t(opts.message,) : opts.message;
   const resolvedStatus = opts.status ?? (typeof messageOrOptions === "string" ? status : HttpStatus.BadRequest);
-  const resolvedCode = opts.code ?? STATUS_TO_CODE[resolvedStatus];
+  const resolvedCode = opts.code ?? STATUS_TO_CODE[resolvedStatus] ?? ErrorCode.ServerError;
   // `data` is spread rather than always present so an unset payload leaves the
   // serialized body byte-identical to before.
   const body = { error: message, code: resolvedCode, meta: API_META, ...(opts.data ? { data: opts.data, } : {}), };

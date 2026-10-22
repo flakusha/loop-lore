@@ -14,7 +14,7 @@ import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { extractAuth, jsonResponse, requireUserId, } from "./http-utils";
+import { badRequestResponse, extractAuth, jsonResponse, requireUserId, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -155,7 +155,7 @@ export function messageReactionsRoutes(opts: HandlerOpts, prefix = "/api",) {
           const { emoji, } = ctx.body as { emoji: string };
 
           if (!emoji || typeof emoji !== "string") {
-            return Response.json({ error: "emoji is required", }, { status: 400, },);
+            return badRequestResponse("emoji is required",);
           }
 
           const access = await resolveMessageAccess(database, messageId, userId, userRole,);

@@ -8,7 +8,7 @@
  */
 
 import { getLogger, } from "../logger";
-import { API_VERSION, ForbiddenError, NotFoundError, } from "../routes/http-utils";
+import { API_VERSION, ErrorCode, ForbiddenError, NotFoundError, } from "../routes/http-utils";
 
 /**
  * Elysia `onError` handler that standardises validation and service-layer error responses.
@@ -83,7 +83,7 @@ export function onValidationError(
     set.status = 400;
     return {
       error: err?.message ?? "Failed to parse request body",
-      code: "PARSE_ERROR",
+      code: ErrorCode.ParseError,
       meta: { api_version: API_VERSION, },
     };
   }
@@ -115,7 +115,7 @@ export function onValidationError(
   }
 
   set.status = 500;
-  return { error: "Internal server error", code: "SERVER_ERROR", };
+  return { error: "Internal server error", code: "SERVER_ERROR", meta: { api_version: API_VERSION, }, };
 }
 
 /**
