@@ -3,7 +3,7 @@
 
 # BUG: Dead-code guard in advancePartyTravel
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 
@@ -20,3 +20,5 @@ The condition at src/rpg/world-travel/travel.ts:192 (if step.edges === 0 && step
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-22 registry-driven close: git issue cbcacc6 (registry tip: 66fca2222 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-DEAD-CODE-GUARD-IN-ADVANCEPA)
