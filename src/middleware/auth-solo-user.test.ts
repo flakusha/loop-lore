@@ -76,4 +76,35 @@ describe("getOrCreateSoloUserForAuth — actor creation", () => {
 
     expect(actorCount?.n,).toBe(1,);
   });
+
+  test("never returns a solo id that was never persisted (concurrent cold start)", async () => {
+    // Two concurrent cold starts both miss the cache and both try to insert
+    // the demo user: one wins, the other loses the username UNIQUE race. The
+    // loser must adopt the WINNER's id - caching the id it never persisted
+    // would make every later solo auth use a phantom user.
+    const [first, second,] = await Promise.all([
+      getOrCreateSoloUserForAuth(db, "demo",),
+      getOrCreateSoloUserForAuth(db, "demo",),
+    ],);
+
+    expect(first,).not.toBeNull();
+    expect(second,).not.toBeNull();
+    expect(first!.id,).toBe(second!.id,);
+
+    const persisted = await db
+      .selectFrom("users",)
+      .select(["id",],)
+      .where("id", "=", first!.id,)
+      .executeTakeFirst();
+
+    expect(persisted,).toBeDefined();
+
+    const demoUsers = await db
+      .selectFrom("users",)
+      .select(["id",],)
+      .where("username", "=", "demo",)
+      .execute();
+
+    expect(demoUsers,).toHaveLength(1,);
+  });
 });

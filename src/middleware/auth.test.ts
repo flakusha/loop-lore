@@ -37,6 +37,12 @@ const LEGACY_ONLY_AUTH_CONFIG = {
   legacyOpaqueTokenFallback: true,
 } as const satisfies AuthConfig;
 
+/** Same shape with auth REQUIRED - the solo fallback must never fire. */
+const REQUIRED_AUTH_CONFIG = {
+  ...LEGACY_ONLY_AUTH_CONFIG,
+  required: true,
+} as const satisfies AuthConfig;
+
 /** Same shape with the legacy sha256(token) fallback OFF — mirrors the schema default. */
 const LEGACY_OFF_AUTH_CONFIG = {
   ...LEGACY_ONLY_AUTH_CONFIG,
@@ -196,14 +202,12 @@ describe("resolveUserIdFromRequest", () => {
     expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),).toBe(userId,);
   });
 
-  it("falls back to solo user when token has no matching session", async () => {
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-
+  it("denies (null) when a presented token has no matching session", async () => {
     const req = new Request("http://localhost", {
       headers: { Cookie: "ll_token=no-such-session", },
     },);
 
-    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),).toBe(solo?.id ?? null,);
+    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),).toBeNull();
   });
 
   it("falls back to solo user when no cookie is present", async () => {
@@ -211,7 +215,16 @@ describe("resolveUserIdFromRequest", () => {
 
     const req = new Request("http://localhost",);
 
-    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),).toBe(solo?.id ?? null,);
+    // No token at all: the solo fallback applies (auth is not required).
+    const resolved = await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,);
+    expect(resolved,).toBe(solo?.id ?? null,);
+  });
+
+  it("denies (null) when no cookie is present and auth is required", async () => {
+    const req = new Request("http://localhost",);
+
+    // The solo fallback only applies when auth is NOT required.
+    expect(await resolveUserIdFromRequest(req, db, "demo", REQUIRED_AUTH_CONFIG,),).toBeNull();
   });
 
   it("does NOT resolve via sha256 lookup when legacyOpaqueTokenFallback is off", async () => {
@@ -250,9 +263,9 @@ describe("resolveUserIdFromRequest", () => {
       headers: { Cookie: `ll_token=${token}`, },
     },);
 
-    // The fallback must NOT fire — falls through to solo user.
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_AUTH_CONFIG,),).toBe(solo?.id ?? null,);
+    // The fallback must NOT fire - the presented token does not resolve,
+    // so the resolver denies (null) instead of falling back to solo.
+    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_AUTH_CONFIG,),).toBeNull();
   });
 
   it("does NOT resolve via sha256 lookup when jwtSecret is empty even with legacy flag on — because jwt is checked first and falls through", async () => {
@@ -290,13 +303,12 @@ describe("resolveUserIdFromRequest", () => {
       headers: { Cookie: `ll_token=${token}`, },
     },);
 
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
     const resolved = await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_AUTH_CONFIG,);
     expect(resolved,).not.toBe(userId,);
-    expect(resolved,).toBe(solo?.id ?? null,);
+    expect(resolved,).toBeNull();
   });
 
-  it("falls back to solo when the resolved user is Disabled (BUG-resolveuseridfromrequest-missing-user-status-check)", async () => {
+  it("denies (null) when the resolved user is Disabled (BUG-resolveuseridfromrequest-missing-user-status-check)", async () => {
     const userId = uid();
     await db
       .insertInto("users",)
@@ -327,15 +339,13 @@ describe("resolveUserIdFromRequest", () => {
       headers: { Cookie: `ll_token=${token}`, },
     },);
 
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(solo?.id ?? null,).not.toBe(userId,); // sanity: test user is NOT the solo user
-    // Disabled user must NOT resolve — falls through to solo.
-    expect(
-      await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),
-    ).toBe(solo?.id ?? null,);
+    // Disabled user must NOT resolve - the presented token is denied.
+    const resolved = await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,);
+    expect(resolved,).not.toBe(userId,);
+    expect(resolved,).toBeNull();
   });
 
-  it("falls back to solo when the resolved user is Deactivated", async () => {
+  it("denies (null) when the resolved user is Deactivated", async () => {
     const userId = uid();
     await db
       .insertInto("users",)
@@ -366,11 +376,9 @@ describe("resolveUserIdFromRequest", () => {
       headers: { Cookie: `ll_token=${token}`, },
     },);
 
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(solo?.id ?? null,).not.toBe(userId,); // sanity
-    expect(
-      await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),
-    ).toBe(solo?.id ?? null,);
+    const resolved = await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,);
+    expect(resolved,).not.toBe(userId,);
+    expect(resolved,).toBeNull();
   });
 
   it("resolves an active user normally (status gate does not block active users)", async () => {
@@ -451,10 +459,8 @@ describe("resolveUserIdFromRequest", () => {
     },);
 
     // Contract: DI with legacyOpaqueTokenFallback=false suppresses the env-driven fallback.
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(solo?.id ?? null,).not.toBe(userId,); // sanity: test user is NOT the solo user
-    expect(
-      await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_AUTH_CONFIG,),
-    ).toBe(solo?.id ?? null,);
+    const resolved = await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_AUTH_CONFIG,);
+    expect(resolved,).not.toBe(userId,);
+    expect(resolved,).toBeNull();
   });
 });

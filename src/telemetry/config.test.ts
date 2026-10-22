@@ -44,10 +44,20 @@ describe("telemetry config — regexPrecision flag", () => {
   it("stays off when the events sink is off — nothing can flush the counters", () => {
     process.env[ENV_KEY] = "1";
     process.env[EVENTS_KEY] = "0";
-    // eventsEnabled is `EVENTS || master`, so the master switch must be off too.
+    // eventsEnabled is `EVENTS && master`, so the master switch must be off too.
     process.env[MASTER_KEY] = "0";
     const config = loadTelemetryConfig();
     expect(config.eventsEnabled,).toBe(false,);
     expect(config.regexPrecision,).toBe(false,);
+  });
+
+  it("keeps every sink off when the master switch is off", () => {
+    // TELEMETRY_ENABLED=0 must win over a per-sink flag of 1.
+    process.env[MASTER_KEY] = "0";
+    process.env[EVENTS_KEY] = "1";
+    const config = loadTelemetryConfig();
+    expect(config.enabled,).toBe(false,);
+    expect(config.eventsEnabled,).toBe(false,);
+    expect(config.frontendEnabled,).toBe(false,);
   });
 });

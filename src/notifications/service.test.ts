@@ -4,7 +4,7 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
-import { NotificationService, NotificationType, notifyMention, } from "./service";
+import { NotificationService, NotificationType, notifyMention, notifyQuestUpdate, } from "./service";
 
 describe("NotificationService", () => {
   let db: Kysely<DB>;
@@ -95,11 +95,141 @@ describe("NotificationService", () => {
     expect(await svc.getUnreadCount(userA,),).toBe(0,);
   });
 
+  test("notifyMention notifies the owning user of a mentioned actor", async () => {
+    // notifications.user_id REFERENCES users(id): the recipient is the
+    // actor's owning user, never the actor id. A mentioned AI character has
+    // no recipient and must not abort the fan-out for the other mentions.
+    const svc = new NotificationService(db,);
+    const userC = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userC,
+        username: `u-${userC}`,
+        display_name: "U",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
+    const actorC = uid();
+    const characterActor = uid();
+    await db
+      .insertInto("actors",)
+      .values([
+        {
+          id: actorC,
+          actor_type: "user",
+          display_name: "U",
+          user_id: userC,
+          owner_id: userC,
+          agent_type: "none",
+          settings: "{}",
+          row_version: 0,
+          visibility: "private",
+          import_spec: "{}",
+        },
+        {
+          id: characterActor,
+          actor_type: "character",
+          display_name: "Character",
+          user_id: null,
+          owner_id: userC,
+          agent_type: "none",
+          settings: "{}",
+          row_version: 0,
+          visibility: "private",
+          import_spec: "{}",
+        },
+      ],)
+      .execute();
+
+    await notifyMention(db, {
+      chatId: "c2",
+      senderId: userA,
+      mentionedActorIds: [characterActor, actorC,],
+      messageId: "m2",
+    },);
+
+    expect(await svc.getUnreadCount(userC,),).toBe(1,);
+  });
+
+  test("notifyQuestUpdate respects the recipient's world mute", async () => {
+    const svc = new NotificationService(db,);
+    const userD = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userD,
+        username: `u-${userD}`,
+        display_name: "U",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
+    const actorD = uid();
+    await db
+      .insertInto("actors",)
+      .values({
+        id: actorD,
+        actor_type: "user",
+        display_name: "U",
+        user_id: userD,
+        owner_id: userD,
+        agent_type: "none",
+        settings: "{}",
+        row_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    const chatId = uid();
+    await db
+      .insertInto("chats",)
+      .values({
+        id: chatId,
+        name: "Muted World Chat",
+        type: "direct",
+        mode: "direct",
+        created_by: userD,
+      },)
+      .execute();
+
+    await db
+      .insertInto("chat_participants",)
+      .values({ chat_id: chatId, actor_id: actorD, },)
+      .execute();
+
+    await svc.setPrefs(userD, { mutedWorlds: ["w-muted",], },);
+
+    await notifyQuestUpdate(db, { worldId: "w-muted", chatId: chatId, questName: "Q", },);
+
+    expect(await svc.getUnreadCount(userD,),).toBe(0,);
+  });
+
   test("buildRecentEventsContext formats", async () => {
     const svc = new NotificationService(db,);
     await svc.create({ userId: userA, type: NotificationType.Mention, title: "t1", link: "/chat/cx", },);
     const ctx = await svc.buildRecentEventsContext(userA, "/chat/cx",);
     expect(ctx,).toContain("[Recent Events]",);
     expect(ctx,).toContain("t1",);
+  });
+
+  test("stores a notification with unserializable data as null data", async () => {
+    // The payload cannot be serialized - the row is still created and the
+    // failure is logged instead of silently dropping the data.
+    const svc = new NotificationService(db,);
+    const circular: Record<string, unknown> = {};
+    circular.self = circular;
+    await svc.create({ userId: userA, type: NotificationType.Mention, title: "circular", data: circular, },);
+
+    const items = await svc.list(userA,);
+    const row = items.find((item,) => item.title === "circular");
+    expect(row,).toBeDefined();
+    expect(row?.data,).toBeNull();
   });
 });

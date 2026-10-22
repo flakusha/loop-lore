@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { NotificationStatus, } from "../../db/enums-core";
 import type { DB, } from "../../db/schema";
+import { getChildLogger, } from "../../logger";
 import { safeJsonStringify, uid, } from "../../utils";
 import { getPrefs, } from "./prefs";
 import type { NotificationInput, NotificationRecord, NotificationRow, } from "./types";
@@ -39,7 +41,17 @@ export async function createNotification(
   if (!prefs.enabled[input.type]) { return; }
   if (input.worldId && prefs.mutedWorlds.includes(input.worldId,)) { return; }
 
-  const data = input.data ? safeJsonStringify(input.data,) : null;
+  const encoded = input.data ? safeJsonStringify(input.data,) : null;
+  if (encoded && !encoded.ok) {
+    // Never drop the payload silently: the stored row would look like a
+    // notification with no data and nothing would point at the failure.
+    getChildLogger("notifications",)?.warn("Notification data could not be serialized", {
+      userId: input.userId,
+      type: input.type,
+      error: encoded.error.message,
+    },);
+  }
+
   await db
     .insertInto("notifications",)
     .values({
@@ -49,8 +61,8 @@ export async function createNotification(
       title: input.title,
       body: input.body ?? null,
       link: input.link ?? null,
-      read: "unread",
-      data: data?.ok ? data.value : null,
+      read: NotificationStatus.Unread,
+      data: encoded?.ok ? encoded.value : null,
       created_at: new Date().toISOString(),
     },)
     .execute();
@@ -69,7 +81,7 @@ export async function listNotifications(
   unreadOnly = false,
 ): Promise<NotificationRecord[]> {
   let query = db.selectFrom("notifications",).selectAll().where("user_id", "=", userId,);
-  if (unreadOnly) { query = query.where("read", "=", "unread",); }
+  if (unreadOnly) { query = query.where("read", "=", NotificationStatus.Unread,); }
   const rows = await query.orderBy("created_at", "desc",).limit(50,).execute();
   return Array.from(rows, (row,) => mapRow(row,),);
 }
@@ -85,7 +97,7 @@ export async function getUnreadCount(db: Kysely<DB>, userId: string,): Promise<n
     .selectFrom("notifications",)
     .select((eb,) => eb.fn.countAll<number>().as("count",))
     .where("user_id", "=", userId,)
-    .where("read", "=", "unread",)
+    .where("read", "=", NotificationStatus.Unread,)
     .executeTakeFirst();
 
   return row?.count ?? 0;
@@ -105,7 +117,7 @@ export async function markNotificationRead(
 ): Promise<void> {
   await db
     .updateTable("notifications",)
-    .set({ read: "read", },)
+    .set({ read: NotificationStatus.Read, },)
     .where("id", "=", id,)
     .where("user_id", "=", userId,)
     .execute();
@@ -123,9 +135,9 @@ export async function markAllNotificationsRead(
 ): Promise<void> {
   await db
     .updateTable("notifications",)
-    .set({ read: "read", },)
+    .set({ read: NotificationStatus.Read, },)
     .where("user_id", "=", userId,)
-    .where("read", "=", "unread",)
+    .where("read", "=", NotificationStatus.Unread,)
     .execute();
 }
 
