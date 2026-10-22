@@ -53,16 +53,18 @@ export async function addXp(
 
   const amount = Math.min(xpAmount === 0 ? 0 : xpAmount, Number.MAX_SAFE_INTEGER,);
 
-  const skill = await getSkill(db, skillId,);
-  if (!skill) { throw new Error("Skill not found",); }
-
   // Idempotent re-award via the shared ledger: the UNIQUE index on
   // (actor, source, reference) with reference = [skillId, amount] backs
   // this pre-check, and a concurrent winner resolves to a replay below.
+  // The skill row is read inside the transaction so a concurrent award
+  // cannot slip between the read and the write (lost update).
   const ledgerKey = encodeReferencePair(skillId, amount,);
 
   try {
     return await db.transaction().execute(async (trx,) => {
+      const skill = await getSkill(trx, skillId,);
+      if (!skill) { throw new Error("Skill not found",); }
+
       const prior = await trx
         .selectFrom("xp_ledger",)
         .select("id",)
@@ -176,7 +178,9 @@ async function applySkillGrant(trx: Kysely<DB>, grant: SkillGrant,): Promise<XpG
  * @param skillId
  */
 async function replayedSkillXp(trx: Kysely<DB>, skillId: string,): Promise<XpGainResult> {
-  const current = (await getSkill(trx, skillId,))!;
+  const current = await getSkill(trx, skillId,);
+  if (!current) { throw new Error("Skill not found",); }
+
   return {
     skillId,
     xpGained: 0,
