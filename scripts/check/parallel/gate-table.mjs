@@ -14,14 +14,13 @@ import { NOOP_OK, } from "./context.mjs";
 export const checks = {
   // Type checking
   "typecheck - backend": "bun run typecheck",
-  // Bun 1.4.3's built-in TS7 checker. Not a substitute for the tsgo gates — it
-  // cannot select a project, and the root tsconfig.json includes only src/**
-  // and tests/**, so it silently skips scripts/** (planted-error probe:
-  // `bun --check` exits 0, `typecheck - scripts` catches it). Its unique value
-  // is tests/**, which no other gate type-checks: tsconfig.backend.json is
-  // src/** minus src/frontend/**, tsconfig.frontend.json is src/frontend/**,
-  // tsconfig.scripts.json is scripts/**, and the two type-coverage gates run
-  // against the backend/frontend projects. ~1.1s, so it rides along in check:fast.
+  // Bun 1.4.3's built-in TS7 checker. Not a substitute for the tsgo gates —
+  // but it CAN select a project: `bun --check --tsconfig-override=<project>`
+  // covers tsconfig.backend.json, tsconfig.frontend.json, tsconfig.scripts.json.
+  // The bare `bun check` subcommand stays shadowed by this repo's `check`
+  // script, hence the `--check` flag form. Its unique value is tests/**,
+  // which no other gate type-checks (backend/frontend coverage gates run
+  // their own projects). ~1.1s, so it rides along in check:fast.
   "typecheck - bun": "bun run typecheck:bun",
   "typecheck - frontend": "bun run typecheck:frontend",
   "typecheck - coverage": "bun run typecheck:coverage",
