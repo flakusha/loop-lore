@@ -180,6 +180,23 @@ describe("New chat advanced fields E2E", () => {
 
       expect([...values,].sort(),).toEqual(["standard", ...CHAT_VARIANTS,].sort(),);
 
+      // A variant chat is server-owned: the form's type/mode are inert and the
+      // RPG variants require a world.
+      const variantSelect = page.locator("[data-testid='chat-variant']",);
+      const typeSelect = page.locator("[data-testid='chat-type-select']",);
+      const modeSelect = page.locator("[data-testid='chat-mode-select']",);
+      const worldSelect = page.locator("[data-testid='chat-world']",);
+
+      await variantSelect.selectOption("rpg",);
+      expect(await worldSelect.evaluate((el,) => (el as HTMLSelectElement).required),).toBe(true,);
+      expect(await typeSelect.evaluate((el,) => (el as HTMLSelectElement).disabled),).toBe(true,);
+      expect(await modeSelect.evaluate((el,) => (el as HTMLSelectElement).disabled),).toBe(true,);
+
+      await variantSelect.selectOption("standard",);
+      expect(await worldSelect.evaluate((el,) => (el as HTMLSelectElement).required),).toBe(false,);
+      expect(await typeSelect.evaluate((el,) => (el as HTMLSelectElement).disabled),).toBe(false,);
+      expect(await modeSelect.evaluate((el,) => (el as HTMLSelectElement).disabled),).toBe(false,);
+
       const createReq = page.waitForRequest(
         (req,) => req.url().includes("/api/v1/chats",) && req.method() === "POST",
         { timeout: 15_000, },
