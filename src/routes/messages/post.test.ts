@@ -290,12 +290,14 @@ describe("post.ts", () => {
       expect(mentions,).toHaveLength(0,);
     });
 
-    test("counts a notification failure against the persisted actor", async () => {
+    test("skips a mentioned participant that has no user account", async () => {
+      // A mentioned AI character has no notification recipient: the mention
+      // is persisted, but nothing is notified and nothing failed.
       const { chatId, messageId, } = await seedMentionFixture({ withLunaUser: false, },);
 
       const result = await persistMentions(db, chatId, owner, messageId, "hey @Luna",);
 
-      expect(result,).toEqual({ persisted: 1, notified: 0, failed: 1, },);
+      expect(result,).toEqual({ persisted: 1, notified: 0, failed: 0, },);
     });
   });
 });

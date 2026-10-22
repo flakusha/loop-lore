@@ -165,12 +165,15 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
     await db.destroy();
   },);
 
-  /** Assert the token is rejected and the resolver falls back to the solo user. */
-  async function expectSoloForToken(token: string,): Promise<void> {
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(solo?.id ?? null,).not.toBeNull();
+  /**
+   * Assert a PRESENTED token that does not resolve is denied.
+   *
+   * A token that was presented but failed to resolve is a client error
+   * (null) - it is never downgraded to the solo identity.
+   */
+  async function expectDeniedForToken(token: string,): Promise<void> {
     const resolved = await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", JWT_CONFIG,);
-    expect(resolved,).toBe(solo?.id ?? null,);
+    expect(resolved,).toBeNull();
   }
 
   it("resolves the session user for a valid JWT", async () => {
@@ -260,32 +263,28 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
     expect(resolved,).toBe(userId,);
   });
 
-  it("falls back to solo when the JWT-resolved user is Disabled", async () => {
+  it("denies (null) when the JWT-resolved user is Disabled", async () => {
     const userId = uid();
     await insertUser(db, userId, UserStatus.Disabled,);
     const sid = uid();
     await insertSession(db, sid, userId, "jwt:" + sid, futureExpiry(),);
     const token = await signJwt({ secret: JWT_SECRET, userId, role: "user", sessionId: sid, expiresInSeconds: 3600, },);
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(solo?.id ?? null,).not.toBe(userId,);
-    expect(await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", JWT_CONFIG,),).toBe(
-      solo?.id ?? null,
-    );
+    const resolved = await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", JWT_CONFIG,);
+    expect(resolved,).not.toBe(userId,);
+    expect(resolved,).toBeNull();
   });
 
-  it("falls back to solo when the JWT-resolved user is Deactivated", async () => {
+  it("denies (null) when the JWT-resolved user is Deactivated", async () => {
     const userId = uid();
     await insertUser(db, userId, UserStatus.Deactivated,);
     const sid = uid();
     await insertSession(db, sid, userId, "jwt:" + sid, futureExpiry(),);
     const token = await signJwt({ secret: JWT_SECRET, userId, role: "user", sessionId: sid, expiresInSeconds: 3600, },);
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", JWT_CONFIG,),).toBe(
-      solo?.id ?? null,
-    );
+    const resolved = await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", JWT_CONFIG,);
+    expect(resolved,).toBeNull();
   });
 
-  it("falls back to solo when the JWT session's user row is gone", async () => {
+  it("denies (null) when the JWT session's user row is gone", async () => {
     const sid = uid();
     // Insert the session with FK enforcement off: the referenced user does not exist.
     sqlite.run("PRAGMA foreign_keys = OFF",);
@@ -299,10 +298,8 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       expiresInSeconds: 3600,
     },);
 
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", JWT_CONFIG,),).toBe(
-      solo?.id ?? null,
-    );
+    const resolved = await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", JWT_CONFIG,);
+    expect(resolved,).toBeNull();
   });
 
   it("rejects an expired JWT (exp in the past)", async () => {
@@ -314,7 +311,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       expiresInSeconds: -3600,
     },);
 
-    await expectSoloForToken(token,);
+    await expectDeniedForToken(token,);
   });
 
   it("rejects a JWT whose exp equals the current time (boundary)", async () => {
@@ -326,7 +323,7 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       expiresInSeconds: 0,
     },);
 
-    await expectSoloForToken(token,);
+    await expectDeniedForToken(token,);
   });
 
   it("rejects a JWT signed with the wrong secret", async () => {
@@ -338,19 +335,19 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       expiresInSeconds: 3600,
     },);
 
-    await expectSoloForToken(token,);
+    await expectDeniedForToken(token,);
   });
 
   it("rejects a token without three dot-separated parts", async () => {
-    await expectSoloForToken("payload.sig",);
+    await expectDeniedForToken("payload.sig",);
   });
 
   it("rejects a token with four dot-separated parts", async () => {
-    await expectSoloForToken("a.b.c.d",);
+    await expectDeniedForToken("a.b.c.d",);
   });
 
   it("rejects a token with an invalid base64url signature", async () => {
-    await expectSoloForToken("aaa.bbb.!!!",);
+    await expectDeniedForToken("aaa.bbb.!!!",);
   });
 
   it("rejects a JWT missing the sid claim", async () => {
@@ -358,22 +355,22 @@ describe("resolveUserIdFromRequest — JWT session path", () => {
       JSON.stringify({ sub: "u", role: "user", exp: Math.floor(Date.now() / 1000,) + 3600, },),
     );
 
-    await expectSoloForToken(token,);
+    await expectDeniedForToken(token,);
   });
 
   it("rejects a JWT missing the exp claim", async () => {
     const token = await tokenWithPayload(JSON.stringify({ sub: "u", role: "user", sid: "s", },),);
-    await expectSoloForToken(token,);
+    await expectDeniedForToken(token,);
   });
 
   it("rejects a JWT with a non-JSON payload", async () => {
     const token = await tokenWithPayload("not-json!",);
-    await expectSoloForToken(token,);
+    await expectDeniedForToken(token,);
   });
 
   it("rejects a JWT with an array payload", async () => {
     const token = await tokenWithPayload("[1,2,3]",);
-    await expectSoloForToken(token,);
+    await expectDeniedForToken(token,);
   });
 });
 
@@ -390,24 +387,34 @@ describe("resolveUserIdFromRequest — legacy session edges", () => {
     await db.destroy();
   },);
 
-  it("falls back to solo when the session expiry is an unparseable date", async () => {
+  it("denies (null) when the session expiry is an unparseable date", async () => {
     const userId = uid();
     await insertUser(db, userId, UserStatus.Active,);
     const token = "legacy-token";
     await insertSession(db, "s1", userId, sha256Hex(token,), "not-a-date",);
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", LEGACY_ONLY_CONFIG,),)
-      .toBe(solo?.id ?? null,);
+    const resolved = await resolveUserIdFromRequest(
+      requestWithCookie(`ll_token=${token}`,),
+      db,
+      "demo",
+      LEGACY_ONLY_CONFIG,
+    );
+
+    expect(resolved,).toBeNull();
   });
 
-  it("falls back to solo when the session is expired", async () => {
+  it("denies (null) when the session is expired", async () => {
     const userId = uid();
     await insertUser(db, userId, UserStatus.Active,);
     const token = "expired-legacy-token";
     await insertSession(db, "s1", userId, sha256Hex(token,), pastExpiry(),);
-    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(await resolveUserIdFromRequest(requestWithCookie(`ll_token=${token}`,), db, "demo", LEGACY_ONLY_CONFIG,),)
-      .toBe(solo?.id ?? null,);
+    const resolved = await resolveUserIdFromRequest(
+      requestWithCookie(`ll_token=${token}`,),
+      db,
+      "demo",
+      LEGACY_ONLY_CONFIG,
+    );
+
+    expect(resolved,).toBeNull();
   });
 
   it("falls back to solo when the cookie header has no ll_token", async () => {

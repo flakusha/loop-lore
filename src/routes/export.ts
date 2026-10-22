@@ -40,7 +40,15 @@ export function exportRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
   return new Elysia({ name: "export", },).post(`${prefix}/export`, async (ctx: any,) => {
     const fullConfig = loadConfig();
     const { auth: authConfig, } = fullConfig;
-    const userId = await resolveUserIdFromRequest(ctx.request, database, "solo", authConfig,);
+    // Prefer the identity already resolved by the global auth derive
+    // (elysia-app.ts) so the export is owned by the same user the
+    // status/download ownership guards compare against. The resolver is
+    // only a fallback for direct test mounts, and it must use the
+    // CONFIGURED demo username - the hardcoded "solo" resolved a phantom
+    // user and exported an empty archive.
+    const userId = ctx.userId ??
+      await resolveUserIdFromRequest(ctx.request, database, authConfig.demoUsername, authConfig,);
+
     if (!userId) {
       return jsonError({
         message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",

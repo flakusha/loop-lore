@@ -70,10 +70,12 @@ export class NotificationService {
    */
   emit(input: NotificationInput,): void {
     void this.create(input,).catch((error,) => {
-      this.log.warn(
-        "Failed to create notification",
-        error instanceof Error ? { error: error.message, } : undefined,
-      );
+      // Correlate the failure back to the notification that failed.
+      this.log.warn("Failed to create notification", {
+        userId: input.userId,
+        type: input.type,
+        error: error instanceof Error ? error.message : String(error,),
+      },);
     },);
   }
 

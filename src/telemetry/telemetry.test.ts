@@ -7,6 +7,7 @@
  */
 import { describe, expect, it, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { TELEMETRY_EVENT_DATA_MAX_BYTES, } from "../validation/schemas/telemetry";
 import { getRetentionDays, hashId, isFrontendTelemetryEnabled, isTelemetryEnabled, record, } from "./service";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
@@ -67,6 +68,18 @@ describeReal("Telemetry Service", () => {
     sqlite.close();
     // The assertion is that this resolves — record() must swallow the insert error.
     await record(db, { eventType: "boom", data: {}, },);
+  });
+
+  it("drops a payload that exceeds the cap in UTF-8 bytes", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const cjk = String.fromCharCode(0x5b57,).repeat(Math.ceil(TELEMETRY_EVENT_DATA_MAX_BYTES / 3,) + 1,);
+    expect(cjk.length,).toBeLessThan(TELEMETRY_EVENT_DATA_MAX_BYTES,);
+
+    await record(db, { eventType: "cjk", data: { text: cjk, }, },);
+
+    const result = await db.selectFrom("telemetry_events",).selectAll().limit(1,).execute();
+    expect(result.length,).toBe(0,);
+    sqlite.close();
   });
 
   it("exposes enabled + retention getters", () => {

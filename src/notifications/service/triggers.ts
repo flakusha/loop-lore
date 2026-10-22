@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import { NotificationType, } from "../../db/enums-core";
 import type { DB, } from "../../db/schema";
+import { getChildLogger, } from "../../logger";
 import { NotificationService, } from "./service";
 
 /**
@@ -38,19 +39,50 @@ async function worldParticipantActorIds(db: Kysely<DB>, worldId: string,): Promi
 }
 
 /**
+ * Resolve the notification recipient for a mentioned actor.
+ *
+ * `notifications.user_id` REFERENCES `users(id)`, so an actor id is not a
+ * valid recipient: writing it violated the FK and aborted the whole
+ * mention fan-out. An AI character (actor row without a user) has no
+ * recipient and is skipped; a user actor resolves to its owning user id.
+ * Ids that are user ids without an actor row are accepted as-is.
+ *
+ * @param db
+ * @param actorId
+ * @returns {Promise<string | null>}
+ */
+async function resolveMentionUserId(db: Kysely<DB>, actorId: string,): Promise<string | null> {
+  const actor = await db
+    .selectFrom("actors",)
+    .select("user_id",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+
+  if (actor) { return actor.user_id ?? null; }
+
+  const user = await db
+    .selectFrom("users",)
+    .select("id",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+
+  return user?.id ?? null;
+}
+
+/**
  * @param db
  * @param opts
  * @param opts.chatId
  * @param opts.senderId
  * @param opts.mentionedActorIds
  * @param opts.messageId
- * @returns {Promise<void>}
+ * @returns {Promise<number>} how many recipients were actually notified
  */
 export async function notifyMention(
   db: Kysely<DB>,
   opts: { chatId: string; senderId: string; mentionedActorIds: string[]; messageId: string },
-): Promise<void> {
-  if (opts.mentionedActorIds.length === 0) { return; }
+): Promise<number> {
+  if (opts.mentionedActorIds.length === 0) { return 0; }
   const [chatResult, senderResult,] = await Promise.allSettled([
     db.selectFrom("chats",).select("name",).where("id", "=", opts.chatId,).executeTakeFirst(),
     db.selectFrom("actors",).select("display_name",).where("id", "=", opts.senderId,).executeTakeFirst(),
@@ -59,17 +91,32 @@ export async function notifyMention(
   const senderName = senderResult.status === "fulfilled" ? senderResult.value?.display_name ?? "Someone" : "Someone";
   const chatName = chatResult.status === "fulfilled" ? chatResult.value?.name ?? "a chat" : "a chat";
   const svc = new NotificationService(db,);
+  const log = getChildLogger("notifications",);
+  let notified = 0;
   for (const actorId of opts.mentionedActorIds) {
     if (actorId === opts.senderId) { continue; }
-    await svc.create({
-      userId: actorId,
-      type: NotificationType.Mention,
-      title: `${senderName} mentioned you`,
-      body: `in "${chatName}"`,
-      link: `/chat/${opts.chatId}`,
-      data: { messageId: opts.messageId, chatId: opts.chatId, },
-    },);
+    // The recipient is the actor's owning USER, never the actor id.
+    // See BUG-notification-participant-helpers-write-actor-id-into-the-use.
+    const userId = await resolveMentionUserId(db, actorId,);
+    if (!userId) { continue; }
+    try {
+      await svc.create({
+        userId,
+        type: NotificationType.Mention,
+        title: `${senderName} mentioned you`,
+        body: `in "${chatName}"`,
+        link: `/chat/${opts.chatId}`,
+        data: { messageId: opts.messageId, chatId: opts.chatId, },
+      },);
+
+      notified++;
+    } catch (err) {
+      // One failed recipient must not swallow the remaining mentions.
+      log?.warn("notifyMention: notification failed", { chatId: opts.chatId, userId, err, },);
+    }
   }
+
+  return notified;
 }
 
 /**
@@ -126,6 +173,8 @@ export async function notifyQuestUpdate(
       type: NotificationType.QuestUpdate,
       title: `Quest updated: ${opts.questName}`,
       link: opts.chatId ? `/chat/${opts.chatId}` : undefined,
+      // Pass the world so the recipient's world mute applies.
+      worldId: opts.worldId,
       data: { worldId: opts.worldId, chatId: opts.chatId, },
     },);
   }

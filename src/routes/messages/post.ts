@@ -218,14 +218,17 @@ export async function persistMentions(
   if (persistedActorIds.length === 0) { return result; }
 
   try {
-    await notifyMention(database, {
+    // Only the recipients that actually got a notification count as
+    // notified - a mentioned participant without a user account (an AI
+    // character) has no notification recipient.
+    const notified = await notifyMention(database, {
       chatId,
       senderId,
       mentionedActorIds: persistedActorIds,
       messageId,
     },);
 
-    result.notified = persistedActorIds.length;
+    result.notified = notified;
   } catch (err) {
     log().warn("persistMentions: notifyMention failed", { chatId, senderId, err, },);
     result.failed += persistedActorIds.length;
