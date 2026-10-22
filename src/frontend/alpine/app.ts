@@ -73,6 +73,7 @@ globalThis.app = function() {
     applyTheme(themeId: string,) {
       const themes = globalThis.__THEMES ?? [];
       if (!themeId || themes.every((t: { id: string },) => t.id !== themeId)) { return; }
+      // ponytail: stylesheet link disabled flags are DOM-level; kept.
       for (const t of themes) {
         const link = $<HTMLLinkElement>(`#theme-${t.id}`,);
         if (link) { link.disabled = t.id !== themeId; }
