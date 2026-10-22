@@ -9,13 +9,18 @@
  * world still gets the row. Driven over HTTP: the mute is set through
  * PATCH /api/v1/notifications/preferences and the update through
  * PUT /api/v1/quests/:id.
+ *
+ * The sessions are minted directly (see helpers/session.ts): the login
+ * endpoint is rate limited per IP process-wide, so in a full-suite run the
+ * shared budget would be exhausted here.
  */
 
-import { ChatMode, ChatType, NotificationType, } from "@/db/enums";
+import { ChatMode, ChatType, NotificationType, UserRole, } from "@/db/enums";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedAll, } from "../helpers/seed";
 import { createTestServer, type TestServer, } from "../helpers/server";
+import { createTestSession, } from "../helpers/session";
 
 /** Chat that carries the world's participants. */
 const WORLD_CHAT_ID = "a0000020-0000-4000-a000-000000000000";
@@ -82,6 +87,9 @@ describe("Quest update notification world mute E2E", () => {
 
     adminApi = createClient(server.url,);
     ownerApi = createClient(server.url,);
+
+    adminApi.setToken((await createTestSession(server.db, SEED.admin.id, UserRole.Admin,)).token,);
+    ownerApi.setToken((await createTestSession(server.db, SEED.user.id, UserRole.User,)).token,);
   },);
 
   afterAll(async () => {
@@ -90,7 +98,6 @@ describe("Quest update notification world mute E2E", () => {
 
   test("a quest update skips the recipient who muted the world", async () => {
     // The admin mutes the world over HTTP.
-    expect(await adminApi.loginAs(SEED.admin.username, SEED.admin.password,),).toBe(true,);
     const prefs = await adminApi.patch("/api/v1/notifications/preferences", {
       mutedWorlds: [SEED.world.id,],
     },);
@@ -98,7 +105,6 @@ describe("Quest update notification world mute E2E", () => {
     expect(prefs.status,).toBe(200,);
 
     // The world owner renames the quest -> every world participant is notified.
-    expect(await ownerApi.loginAs(SEED.user.username, SEED.user.password,),).toBe(true,);
     const updated = await ownerApi.put(`/api/v1/quests/${SEED.quest.id}`, {
       name: "Renamed by e2e",
     },);
@@ -126,14 +132,12 @@ describe("Quest update notification world mute E2E", () => {
       .values({ actor_id: SEED.character.id, world_id: SEED.world.id, health: 100, },)
       .execute();
 
-    expect(await adminApi.loginAs(SEED.admin.username, SEED.admin.password,),).toBe(true,);
     const prefs = await adminApi.patch("/api/v1/notifications/preferences", {
       mutedWorlds: [SEED.world.id,],
     },);
 
     expect(prefs.status,).toBe(200,);
 
-    expect(await ownerApi.loginAs(SEED.user.username, SEED.user.password,),).toBe(true,);
     const updated = await ownerApi.put(
       `/api/v1/worlds/${SEED.world.id}/npc-states/${SEED.character.id}`,
       { npc_id: SEED.character.id, state_key: "status", state_value: "resting", },
