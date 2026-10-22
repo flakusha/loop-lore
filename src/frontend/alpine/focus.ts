@@ -232,8 +232,8 @@ export function handleEscapeKey(): void {
 }
 
 // Auto-register escape key listener if not already done
-if (typeof window !== "undefined" && !__escapeKeyListenerRegistered) {
-  __escapeKeyListenerRegistered = true;
+if (typeof window !== "undefined" && !globalThis.__escapeKeyListenerRegistered) {
+  globalThis.__escapeKeyListenerRegistered = true;
   document.addEventListener("keydown", (e: KeyboardEvent,) => {
     if (e.key === "Escape") {
       handleEscapeKey();
