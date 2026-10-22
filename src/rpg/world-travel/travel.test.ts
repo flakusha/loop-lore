@@ -285,6 +285,26 @@ describe("advancePartyTravel — walking a route", () => {
     expect(ledger,).toBeUndefined();
   });
 
+  test("a step too small to change the stored carry is not charged", async () => {
+    await makeWorld();
+    // `steps_per_tick` is a REAL column, so a carry below the ULP of the
+    // stored progress rounds away: 0.5 + 1e-17 is 0.5 in IEEE-754, and the
+    // party ends the tick exactly where it started.
+    await seedParty(PARTY_ONE, { travelProgress: 0.5, stepsPerTick: 1e-17, },);
+
+    expect(await advancePartyTravel(db, WORLD_ID, 1, travelContext(),),).toEqual({
+      actions: [],
+      deferred: 0,
+      budgetExhausted: false,
+    },);
+
+    expect((await readParty(PARTY_ONE,)).travel_progress,).toBe(0.5,);
+
+    // The ledger was never opened: distance that was never covered is not
+    // billable, so a party that cannot move cannot drain the world budget.
+    expect(await readLedger(),).toBeNull();
+  });
+
   test("a party blocked until a later tick is not even considered before it", async () => {
     await makeWorld();
     await seedParty(PARTY_ONE, { blockedUntilTick: 5, },);
@@ -835,6 +855,54 @@ describe("migrateNpc — the relocation schedule", () => {
       .executeTakeFirst();
 
     expect(ledger,).toBeUndefined();
+  });
+
+  test("an arrival whose destination was deleted closes the hop out instead of retrying forever", async () => {
+    await makeWorld();
+    // The destination was deleted while the NPC was on the road — the
+    // column is `set null` on delete.
+    await seedMigration("mig-gone", {
+      status: "in_transit",
+      lastDepartTick: 0,
+      departTick: 0,
+      arriveTick: 5,
+      destination: null,
+    },);
+
+    // No action — there is nothing left to arrive at, so the schedule is
+    // closed out rather than left retrying a destination that no longer
+    // exists.
+    expect((await migrateNpc(db, WORLD_ID, 5, travelContext(),)).actions,).toEqual([],);
+    expect((await readMigration("mig-gone",)).status,).toBe("arrived",);
+
+    // The ledger was never opened: a hop that cannot land is not billable.
+    expect(await readLedger(),).toBeNull();
+  });
+
+  test("an arrival whose destination was deleted leaves the NPC at the hop's origin", async () => {
+    await makeWorld();
+    // The NPC's own row carries no position of its own.
+    await db
+      .updateTable("npc_states",)
+      .set({ location_id: null, },)
+      .where("actor_id", "=", NPC_ID,)
+      .where("world_id", "=", WORLD_ID,)
+      .execute();
+
+    await seedMigration("mig-gone", {
+      status: "in_transit",
+      lastDepartTick: 0,
+      departTick: 0,
+      arriveTick: 5,
+      destination: null,
+    },);
+
+    await migrateNpc(db, WORLD_ID, 5, travelContext(),);
+
+    // The hop never landed, but it still ends at a location the world has:
+    // the origin the hop set out from. An NPC with no position at all must
+    // not be left nowhere by a hop that ends.
+    expect(await readNpcLocation(),).toBe(LOC_A,);
   });
 
   test("an exhausted budget stops the migration tick before the departure", async () => {
