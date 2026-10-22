@@ -10,6 +10,7 @@ import { chatPollMethods, } from "./chat-polls";
 import { chatReactionMethods, } from "./chat-reactions";
 import { chatSeenMethods, } from "./chat-seen";
 import { chatSendMethods, } from "./chat-send";
+import { chatVoiceNoteMethods, } from "./chat-voice-notes";
 import { t, } from "./i18n";
 import { log as rootLog, } from "./logger";
 import type { ChatState, Message, } from "./types";
@@ -29,6 +30,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   ...chatReactionMethods,
   ...chatPollMethods,
   ...chatLinkPreviewMethods,
+  ...chatVoiceNoteMethods,
   /**
    * @returns {Promise<void>}
    */
