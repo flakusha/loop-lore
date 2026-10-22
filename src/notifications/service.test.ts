@@ -1,11 +1,11 @@
-import type { DB, } from "../db/schema";
-import type { Kysely, } from "kysely";
 import { Database, } from "bun:sqlite";
-import { NotificationService, NotificationType, notifyGmAction, notifyMention, notifyQuestUpdate, } from "./service";
 import { beforeAll, describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
+import { NotificationService, NotificationType, notifyGmAction, notifyMention, notifyQuestUpdate, } from "./service";
 
 describe("NotificationService", () => {
   let db: Kysely<DB>;
