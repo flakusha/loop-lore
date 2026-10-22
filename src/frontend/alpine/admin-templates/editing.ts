@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import type { AdminTemplates, EditingTemplate, } from "./types";
@@ -18,6 +19,7 @@ export const editing = {
    * @param {string} value
    * @returns {void}
    */
+  // eslint-disable-next-line local/options-object-params
   startEditTemplate(detail: string, mode: string, value: string,) {
     this.editingTemplate = { detail, mode, value, };
   },
@@ -38,7 +40,7 @@ export const editing = {
     this.savingTemplate = true;
     try {
       const { detail, mode, value, } = this.editingTemplate;
-      const res = await (globalThis as any).apiFetch(
+      const res = await apiFetch(
         `/api/v1/admin/templates/${this.selectedProfile.id}`,
         {
           method: "PUT",
@@ -82,7 +84,7 @@ export const editing = {
     if (!this.selectedProfile) { return; }
     try {
       const d = this.selectedProfile.defaults;
-      const res = await (globalThis as any).apiFetch(
+      const res = await apiFetch(
         `/api/v1/admin/templates/${this.selectedProfile.id}/defaults`,
         {
           method: "PUT",

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { AdminTemplateListResponse, } from "../../../validation/schemas/responses";
+import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import { log as rootLog, } from "../logger";
@@ -100,7 +101,7 @@ export const profiles = {
    */
   async deleteProfile(id: string,) {
     try {
-      const res = await (globalThis as any).apiFetch(`/api/v1/admin/templates/${id}`, {
+      const res = await apiFetch(`/api/v1/admin/templates/${id}`, {
         method: "DELETE",
       },);
 
@@ -131,7 +132,7 @@ export const profiles = {
         if (trimmed) { families.push(trimmed,); }
       }
 
-      const res = await (globalThis as any).apiFetch("/api/v1/admin/templates", {
+      const res = await apiFetch("/api/v1/admin/templates", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({
