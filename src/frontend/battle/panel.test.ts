@@ -152,7 +152,7 @@ describe("mountBattlePanel", () => {
     expect(hint.textContent,).toBe("No active battle. Start one with /battle start.",);
   });
 
-  it("renders header, roster and action bar for an active battle", () => {
+  it("renders header, turn order, roster and action bar for an active battle", () => {
     const { container, } = mountBattle(view(),);
     const overlay = container.children[0]!;
     expect(overlay.className,).toBe("battle-panel-content",);
@@ -160,11 +160,22 @@ describe("mountBattlePanel", () => {
     expect(overlay.getAttribute("aria-label",),).toBe("Battle controls",);
     expect(overlay.children.map((el,) => el.className),).toEqual([
       "battle-panel-header",
+      "battle-turn-order",
       "battle-roster",
       "battle-actions",
     ],);
 
     expect(overlay.children[0]!.innerHTML,).toContain("Round 2",);
+  });
+
+  it("omits the turn-order strip once the battle is no longer active", () => {
+    const { container, } = mountBattle(view({ status: "completed", },),);
+    const overlay = container.children[0]!;
+    expect(overlay.children.map((el,) => el.className),).toEqual([
+      "battle-panel-header",
+      "battle-roster",
+      "battle-actions",
+    ],);
   });
 
   it("marks the acting and dead roster states", () => {

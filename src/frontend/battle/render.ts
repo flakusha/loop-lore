@@ -16,9 +16,9 @@ import {
   type BattleItemView,
   type BattleView,
   escapeHtml,
-  hpPercent,
   SOCIAL_ACTIONS,
 } from "./commands.js";
+import { renderHealthBar, } from "./health-bar.js";
 
 /** */
 export interface BattleRenderCallbacks {
@@ -80,12 +80,12 @@ export function renderRoster(
     if (acting) { tile.setAttribute("aria-current", "true",); }
     tile.disabled = dead;
 
-    const pct = hpPercent(c.hp, c.maxHp,);
     tile.innerHTML = `
       <span class="battle-combatant-name">${escapeHtml(c.name,)}${acting ? " ➤" : ""}</span>
       <span class="battle-hp">${escapeHtml(String(Math.max(0, c.hp,),),)}/${escapeHtml(String(c.maxHp,),)}</span>
-      <span class="battle-hp-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" style="width:${pct}%"></span>
     `;
+
+    tile.append(renderHealthBar(c.hp, c.maxHp,),);
 
     tile.addEventListener("click", () => {
       if (dead) { return; }
