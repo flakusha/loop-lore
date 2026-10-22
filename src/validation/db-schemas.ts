@@ -3715,3 +3715,13 @@ export const PollVotesSchema = t.Object({
   option_idx: t.Number(),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── link_previews ────────────────────────────────────────────
+export const LinkPreviewsSchema = t.Object({
+  url_hash: t.String(),
+  url: t.String(),
+  title: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
+  image_url: t.Optional(t.String(),),
+  fetched_at: t.Optional(t.String(),),
+},);

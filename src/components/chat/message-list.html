@@ -333,6 +333,44 @@
                 </div>
               </div>
             </template>
+            <!-- Generic link preview: cached OpenGraph card (TASK-link-previews-unfurl) -->
+            <template x-if="msg.type !== 'music_link' && linkPreviewUrlFor(msg)">
+              <div
+                class="link-preview"
+                data-testid="link-preview"
+                x-effect="const u = linkPreviewUrlFor(msg); if (u) loadLinkPreview(u)"
+              >
+                <template x-if="_linkPreviews[linkPreviewUrlFor(msg)]?.state === 'ready'">
+                  <a
+                    class="link-preview-card"
+                    :href="linkPreviewUrlFor(msg)"
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                  >
+                    <template
+                      x-if="_linkPreviews[linkPreviewUrlFor(msg)]?.state === 'ready' && _linkPreviews[linkPreviewUrlFor(msg)]?.imageUrl"
+                    >
+                      <img
+                        class="link-preview-image"
+                        :src="_linkPreviews[linkPreviewUrlFor(msg)]?.imageUrl"
+                        loading="lazy"
+                        alt=""
+                      />
+                    </template>
+                    <span class="link-preview-body">
+                      <span
+                        class="link-preview-title"
+                        x-text="_linkPreviews[linkPreviewUrlFor(msg)]?.title || linkPreviewUrlFor(msg)"
+                      ></span>
+                      <span
+                        class="link-preview-desc"
+                        x-text="_linkPreviews[linkPreviewUrlFor(msg)]?.description || ''"
+                      ></span>
+                    </span>
+                  </a>
+                </template>
+              </div>
+            </template>
             <!-- Emoji reactions: chips + quick-picker trigger -->
             <div class="message-reactions" data-testid="reaction-bar">
               <template x-if="msg.reactions && msg.reactions.length > 0">

@@ -10,6 +10,8 @@ export type {
   GmParticipant,
   GmTurnPriority,
   GroupedMessage,
+  LinkPreviewEntry,
+  LinkPreviewState,
   Message,
   MessageAttachment,
   MessagePoll,
