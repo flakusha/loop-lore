@@ -7,7 +7,7 @@
  */
 import { randomUUID, } from "node:crypto";
 import { jsonStringifyOr, } from "../../../utils";
-import { guardNotExists, withWorldId, } from "../shared-service-utils";
+import { guardNotExists, withTransaction, withWorldId, } from "../shared-service-utils";
 import { getRelationship, } from "./read";
 import type {
   CreateRelationshipOpts,
@@ -44,8 +44,7 @@ export async function createRelationship(
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  const trx = thisL.db;
-  const _createRel = async () => {
+  await withTransaction(thisL.db, async (trx,) => {
     await trx
       .insertInto("character_relationships",)
       .values({
@@ -84,30 +83,7 @@ export async function createRelationship(
         },)
         .execute();
     }
-  };
-
-  let usedTransaction = false;
-  try {
-    if (typeof thisL.db.transaction === "function") {
-      await thisL.db.transaction().execute(async (t,) => {
-        await _createRel();
-        return t;
-      },);
-
-      usedTransaction = true;
-    }
-  } catch (err) {
-    if (err instanceof Error && err.message.includes("calling the transaction method for a Transaction",)) {
-      await _createRel();
-      usedTransaction = true;
-    } else {
-      throw err;
-    }
-  }
-
-  if (!usedTransaction) {
-    await _createRel();
-  }
+  },);
 
   return id;
 }
@@ -173,7 +149,7 @@ export async function updateRelationship(
     updateData.metadata = jsonStringifyOr(opts.metadata,);
   }
 
-  await thisL.db.transaction().execute(async (trx,) => {
+  await withTransaction(thisL.db, async (trx,) => {
     await withWorldId(
       trx.updateTable("character_relationships",)
         .set(updateData,)
@@ -229,7 +205,7 @@ export async function deleteRelationship(
     );
   }
 
-  await thisL.db.transaction().execute(async (trx,) => {
+  await withTransaction(thisL.db, async (trx,) => {
     await withWorldId(
       trx.deleteFrom("character_relationships",)
         .where("actor_id", "=", actorId,)

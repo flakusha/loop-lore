@@ -4,6 +4,36 @@
 // Shared helpers for character services (mood, relationships, traits).
 // Eliminates duplicate worldId query filtering and existence-check patterns.
 
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
+
+/**
+ * Run `fn` inside a transaction, reusing the ambient one when the handle is
+ * already a Transaction.
+ *
+ * Two failure modes this avoids:
+ * - `db.transaction()` on a Transaction throws ("calling the transaction
+ *   method for a Transaction is not supported") — so a service called from
+ *   inside a caller's transaction must NOT open a second one.
+ * - Running a query through the OUTER handle while a transaction is open
+ *   deadlocks: the SQLite driver is single-connection, so the outer query
+ *   waits for a connection the transaction already holds. Always query
+ *   through the handle passed to `fn`.
+ * @param db - The caller's handle (plain Kysely or an open Transaction)
+ * @param fn - Receives the handle to query with
+ * @returns The value returned by `fn`
+ */
+export async function withTransaction<T,>(
+  db: Kysely<DB>,
+  fn: (trx: Kysely<DB>,) => Promise<T>,
+): Promise<T> {
+  if (db.isTransaction) {
+    return fn(db,);
+  }
+
+  return db.transaction().execute(fn,);
+}
+
 /**
  * Apply worldId conditional filter to a Kysely query builder.
  * Handles the null-world (global) vs specific-world distinction.
