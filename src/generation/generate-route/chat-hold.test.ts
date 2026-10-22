@@ -117,31 +117,4 @@ describe("validateGenerateRequest - per-chat hold", () => {
 
     expect(rejected,).toBeNull();
   });
-
-  test("DENIES with 429 + headers past the per-user budget", async () => {
-    const config = {
-      generation: { flowControl: { rateLimitPerUser: 1, rateLimitWindowMs: 60_000, }, },
-    } as never;
-
-    const first = await validateGenerateRequest({
-      input: makeInput({ chatId: "chat-live", },),
-      database: testDb,
-      userId: USER,
-      config,
-    },);
-
-    expect(first,).toBeNull();
-
-    const second = await validateGenerateRequest({
-      input: makeInput({ chatId: "chat-live", },),
-      database: testDb,
-      userId: USER,
-      config,
-    },);
-
-    expect(second,).not.toBeNull();
-    expect(second!.status,).toBe(429,);
-    expect(second!.headers.get("Retry-After",),).not.toBeNull();
-    expect(second!.headers.get("X-RateLimit-Remaining",),).toBe("0",);
-  });
 });

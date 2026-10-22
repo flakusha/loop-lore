@@ -23,10 +23,8 @@ export const generationMeta = {
     },
     flowControl: {
       type: "object",
-      description: "Rate + concurrency regulation for generation endpoints (0 = unbounded)",
+      description: "Concurrency regulation for generation endpoints (0 = unbounded)",
       properties: {
-        rateLimitPerUser: { type: "number", description: "Sliding-window budget per user", },
-        rateLimitWindowMs: { type: "number", description: "Sliding-window length in ms", },
         maxConcurrentGlobal: { type: "number", description: "Max simultaneous tracked generations server-wide", },
         maxConcurrentPerChat: { type: "number", description: "Max simultaneous tracked generations per chat", },
       },

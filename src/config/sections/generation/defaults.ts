@@ -15,8 +15,6 @@ export const GENERATION_PROVIDERS_DEFAULTS = {
 } satisfies GenerationProvidersConfig;
 
 export const GENERATION_FLOW_CONTROL_DEFAULTS = {
-  rateLimitPerUser: 30,
-  rateLimitWindowMs: 60_000,
   maxConcurrentGlobal: 0,
   maxConcurrentPerChat: 0,
 } satisfies GenerationFlowControl;
