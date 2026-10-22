@@ -19,7 +19,7 @@
 - Strings localized in all 10 locale files.
 - Tests cover success notice and failure alert paths.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 4, R02 candidate 4.
+**Related:** candidate 4, R02 candidate 4.
 
 **Context:**
 

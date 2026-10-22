@@ -16,7 +16,7 @@
 **Epic:** epic-nsfw-moderation-priority
 **Tags:** nsfw, gate, audit, privacy, log-entries, pii
 **Source:** OpenAgent admin/moderation direct-DB listing review (2026-08-23)
-**Related:** `BUG-nsfw-gate-not-logged.md` (same hook, different defect — `logNsfwEvent` is never invoked), `TASK-nsfw-gate-moderation-events.md` (governing ticket), `BUG-admin-audit-selectAll-schema-mismatch-empty.md` (same `log_entries` surface), `BUG-nsfw-moderation-delete-destroys-audit-log.md` (audit-trust family)
+**Related:** `` (same hook, different defect — `logNsfwEvent` is never invoked), `TASK-nsfw-gate-moderation-events.md` (governing ticket), `BUG-admin-audit-selectAll-schema-mismatch-empty.md` (same `log_entries` surface), `BUG-nsfw-moderation-delete-destroys-audit-log.md` (audit-trust family)
 
 ## Summary
 

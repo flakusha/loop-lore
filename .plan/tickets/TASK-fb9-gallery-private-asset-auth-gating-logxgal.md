@@ -19,7 +19,7 @@
 - Authenticated cross-user access to another users private assets is denied.
 - Route-level regression tests cover anonymous, owner, and cross-user cases.
 - bun run check green.
-**Related:** 05-prioritization.md Now, R05 F2 and F4, BUG-gallery-grid-exposes-other-users-private-assets (prior fix, distinct).
+**Related:** Now, R05 F2 and F4, BUG-gallery-grid-exposes-other-users-private-assets (prior fix, distinct).
 
 **Context:**
 

@@ -15,7 +15,7 @@
 **Epic:** epic-content-hashing-distributed-integrity
 **Issue:** TBD (assign on creation)
 **Related:**
-- `src/middleware/request-id.ts` (worktree: `feat-middleware-request-lifecycle`)
+- `src/middleware/request-id.ts` (worktree)
 - `src/middleware/idempotency.ts` (worktree)
 - `src/db/migrations/016_asset_encryption.ts` (`assets.content_hash` added in `up()` but dropped in `down()` — broken half-implementation)
 - `src/db/migrations/026_rpg_mechanics.ts` (`character_stats.data_version` — working precedent)

@@ -20,7 +20,7 @@
 **Parents:** 02 candidates n/a standalone; 03-X6 (user-visible edge of the X6 moderation pipeline).
 **Differs:** from 02-#5 FB12 (remote-initiated, not admin-initiated).
 **X-map:** 03-X6 is covered by this ticket; do NOT file X6 separately.
-**Related:** FB9 gallery gates (B10 read-only consultation). Siblings TASK-c1-moderation-action-notices-with-actor-thumb (admin-initiated counterpart) and TASK-c2-bridged-turn-skip-propagation-bridge-only.
+**Related:** FB9 gallery gates (B10 read-only consultation). Siblings TASK-c1-moderation-action-notices-with-actor-thumb (admin-initiated counterpart) and
 
 **Context:**
 

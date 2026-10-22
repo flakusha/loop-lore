@@ -18,7 +18,7 @@
 - Every shared component is marked eager or lazy at the code-split boundary with the map reviewed.
 - Bundle size does not regress vs the size-strict ceiling.
 - bun run check green.
-**Related:** 02-extract-features.md candidate 3, R02 candidate 3, TASK-size-strict-debt.
+**Related:** candidate 3, R02 candidate 3,
 
 **Context:**
 

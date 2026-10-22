@@ -13,7 +13,7 @@
 **Priority:** P3
 **Epic:** epic-docs-reconciliation
 **Tags:** docs, spec, profanity
-**Related:** src/profanity/service.ts, README.md (Profanity filter row)
+**Related:** src/profanity/service.ts, (Profanity filter row)
 
 ## Summary
 
