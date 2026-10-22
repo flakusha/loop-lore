@@ -22,7 +22,7 @@ import type { AdminWorkflows, WorkflowDetail, WorkflowForm, } from "./types";
  * @param value - Parsed JSON value
  * @returns Indented JSON, or an empty string when the value cannot be printed
  */
-function pretty(value: unknown,): string {
+export function pretty(value: unknown,): string {
   const result = safeJsonStringify(value, 2,);
   return result.ok ? result.value : "";
 }
@@ -32,7 +32,7 @@ function pretty(value: unknown,): string {
  * @param row - Detail-endpoint row
  * @returns Editor state prefilled from the stored payload
  */
-function formFromRow(row: NonNullable<WorkflowDetail>,): WorkflowForm {
+export function formFromRow(row: NonNullable<WorkflowDetail>,): WorkflowForm {
   const payload = row.payload;
   return {
     id: row.id,
@@ -61,7 +61,7 @@ function formFromRow(row: NonNullable<WorkflowDetail>,): WorkflowForm {
  * @param parsed.loraSlots - Declared LoRA slots, omitted when unset
  * @returns The create/update request body
  */
-function requestBody(
+export function requestBody(
   form: WorkflowForm,
   parsed: { graph: object; parameters: unknown; loraSlots: unknown },
 ): Record<string, unknown> {
@@ -87,7 +87,7 @@ function requestBody(
  * @param errors - Collected client-side errors
  * @returns The parsed graph, or null after pushing the reason onto `errors`
  */
-function parseGraphField(text: string, errors: string[],): object | null {
+export function parseGraphField(text: string, errors: string[],): object | null {
   if (!text.trim()) {
     errors.push("Graph is required",);
     return null;
@@ -115,7 +115,7 @@ function parseGraphField(text: string, errors: string[],): object | null {
  * @param errors - Collected client-side errors
  * @returns The parsed array, or undefined after pushing the reason
  */
-function readJsonArrayField(text: string, label: string, errors: string[],): unknown[] | undefined {
+export function readJsonArrayField(text: string, label: string, errors: string[],): unknown[] | undefined {
   const value = readJsonField(text, label, errors,);
   if (value === undefined) { return undefined; }
   if (!Array.isArray(value,)) {
