@@ -110,7 +110,7 @@ document.addEventListener("htmx:response:error", (e: Event,) => {
       const body = jsonParseOr<Record<string, unknown>>(xhr.responseText, {},);
       if (body?.error) { msg = body.error as string; }
     } catch {
-      /* not JSON */
+      apiLog.warn("htmx:response:error body not JSON",);
     }
 
     document.dispatchEvent(new CustomEvent("show-toast", { detail: { type: "error", message: msg, }, },),);
@@ -128,7 +128,7 @@ document.addEventListener("htmx:response:error", (e: Event,) => {
         const body = jsonParseOr<Record<string, unknown>>(text, {},);
         if (body?.error) { msg = body.error as string; }
       } catch {
-        /* not JSON */
+        apiLog.warn("htmx:response:error body not JSON",);
       }
 
       document.dispatchEvent(new CustomEvent("show-toast", { detail: { type: "error", message: msg, }, },),);
@@ -149,9 +149,9 @@ document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
 
 // ── hx-on::after-request replacements (success events) ──────
 document.addEventListener("htmx:after:request", (e: Event,) => {
-  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
-  if (!detail.successful) { return; }
-  const successEvent = detail.elt.dataset.hxSuccessEvent;
+  const detail = (e as CustomEvent<{ successful?: boolean; elt?: HTMLElement }>)?.detail;
+  if (!detail?.successful) { return; }
+  const successEvent = detail.elt?.dataset?.hxSuccessEvent;
   if (successEvent) {
     document.dispatchEvent(new CustomEvent(successEvent,),);
   }
