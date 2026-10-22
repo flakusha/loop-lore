@@ -168,6 +168,7 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       visibility: MessageVisibility.Visible,
       swipe_index: swipeIndex,
       emotion: dominantEmotion,
+      outfit_id: null,
     },)
     .execute();
 

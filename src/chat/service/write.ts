@@ -146,6 +146,7 @@ export async function regenerateMessageVariant(
     content_format: message.content_format,
     content_encoding: message.content_encoding,
     emotion: message.emotion,
+    outfit_id: message.outfit_id,
     status: MessageStatus.Sending,
     visibility: MessageVisibility.Visible,
     swipe_index: swipeIndex,
