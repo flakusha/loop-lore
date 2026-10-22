@@ -9725,6 +9725,10 @@
   ],
   "src/chat/service/crud/create.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     },
@@ -10878,6 +10882,10 @@
   "src/chat/types/variants.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-worlds-extension.md"
     },
     {
@@ -11884,6 +11892,10 @@
     }
   ],
   "src/components/chat/participant-mgmt.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-variant-character-group.md"
@@ -16093,10 +16105,6 @@
   ],
   "src/db/enums-core/chat.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
     },
@@ -16308,6 +16316,10 @@
     }
   ],
   "src/db/enums-core/users.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-guest-access.md"
@@ -17096,6 +17108,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-crafting-professions.md"
     },
     {
@@ -17747,6 +17763,12 @@
       "source": ".plan/tickets/TASK-blog-unit-scheduled-serialization.md"
     }
   ],
+  "src/db/migrations/044_chat_purpose.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    }
+  ],
   "src/db/migrations/047_conversation_merge.ts": [
     {
       "kind": "ticket",
@@ -18311,10 +18333,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-rich-engagement.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
     },
     {
       "kind": "ticket",
@@ -22520,10 +22538,6 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-hidden-carriage-context.md"
     },
     {
@@ -26023,6 +26037,10 @@
   ],
   "src/frontend/pages/new-chat/index.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
@@ -26038,6 +26056,10 @@
     }
   ],
   "src/frontend/pages/new-chat/submit.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-generate-route-authorizes-chatid-but-not-actorid.md"
@@ -39797,11 +39819,69 @@
   ],
   "src/routes/chats/create-variant.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-variant-behavioral-wiring.md"
     }
   ],
+  "src/routes/chats/create.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-assistant-group.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-assistant.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-character-group.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-character.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-llm-only-group-gm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-llm-only-group.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-llm-only.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-rpg-group.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-rpg.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-user-1x1.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-user-group-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-variant-user-group.md"
+    }
+  ],
   "src/routes/chats/create.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
@@ -54774,6 +54854,10 @@
     }
   ],
   "src/views/new-chat.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-variants-taxonomy.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
