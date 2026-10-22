@@ -92,6 +92,10 @@ declare global {
   var filterBar: any;
   var personasPage: any;
   var settingsModal: any;
+  var keyManagement: any;
+  var locationExplorerState: any;
+  var npcManagementState: any;
+  var __escapeKeyListenerRegistered: any;
   var settingsPage: any;
   var configMenu: any;
   var modelManager: () => ModelManagerState;

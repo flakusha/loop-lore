@@ -52,7 +52,7 @@ const safeParseList = (raw: string,): string[] => {
   return Array.isArray(v,) ? v as string[] : [];
 };
 
-(globalThis as any).locationExplorerState = function(worldId: string,) {
+locationExplorerState = function(worldId: string,) {
   return {
     ...locationExplorerControls,
     worldId,

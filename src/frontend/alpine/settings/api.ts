@@ -57,7 +57,7 @@ export function api(): Partial<SettingsState> & ThisType<SettingsState> {
     async persistSettings(payload: Record<string, unknown>,) {
       try {
         if (payload.theme) {
-          const themes = (globalThis as any).__THEMES ?? [];
+          const themes = __THEMES ?? [];
           if (themes.every((t: any,) => t.id !== payload.theme)) { return; }
           for (const t of themes) {
             const link = document.querySelector(`#theme-${t.id}`,) as HTMLLinkElement | null;

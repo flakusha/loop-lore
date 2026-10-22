@@ -12,8 +12,7 @@ import type { ChatState, } from "./types";
 import { parseOr, } from "./validation";
 
 const log = rootLog.child({ module: "chat", },);
-const getDOMPurify = () =>
-  (globalThis as any).__DOMPurify as { sanitize(html: string, config?: unknown,): string } | undefined;
+const getDOMPurify = () => __DOMPurify as { sanitize(html: string, config?: unknown,): string } | undefined;
 
 export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
   /**
