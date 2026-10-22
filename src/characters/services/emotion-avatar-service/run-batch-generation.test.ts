@@ -21,6 +21,7 @@ import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import type { GenerationDispatchHandle, } from "./generation";
 import { getGenerationJobRecord, } from "./job-records";
 import { createJob, } from "./job-store";
+import { isValidSeed, } from "./seed";
 import type { BatchJobId, GenerateEmotionAvatarsOpts, } from "./types";
 
 const FAKE_SD = {
@@ -219,6 +220,44 @@ describeOrSkip("runBatchGeneration", () => {
     await runBatchGeneration(svc, second, { ...makeOpts(), seedStrategy: "reuse", },);
 
     expect(second.seed,).toBe(777,);
+  });
+
+  it("reuse without a recorded seed falls back to a random base", async () => {
+    const svc = makeSvc(db, mock(async () => ({ avatarId: "av-1", assetId: "as-1", })),);
+    const job = createJob({
+      id: "job-batch-seed-no-record" as BatchJobId,
+      actorId,
+      baseAvatarId: "avatar-base",
+      emotions: [EmotionType.Happy,],
+    },);
+
+    // An outfit scope with no prior job: reuse has nothing to reproduce, so
+    // the batch must still run under a valid random base.
+    await runBatchGeneration(svc, job, {
+      ...makeOpts(),
+      outfitId: "outfit-without-record",
+      seedStrategy: "reuse",
+    },);
+
+    expect(isValidSeed(job.seed,),).toBe(true,);
+  });
+
+  it("an explicit seed wins over the reuse strategy", async () => {
+    const svc = makeSvc(db, mock(async () => ({ avatarId: "av-1", assetId: "as-1", })),);
+    const job = createJob({
+      id: "job-batch-seed-explicit-wins" as BatchJobId,
+      actorId,
+      baseAvatarId: "avatar-base",
+      emotions: [EmotionType.Happy,],
+    },);
+
+    await runBatchGeneration(svc, job, {
+      ...makeOpts(),
+      seed: 31337,
+      seedStrategy: "reuse",
+    },);
+
+    expect(job.seed,).toBe(31337,);
   });
 
   it("rejects an out-of-range explicit seed", async () => {
