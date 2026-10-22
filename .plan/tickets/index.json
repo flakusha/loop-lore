@@ -39082,7 +39082,7 @@
     "label": "task",
     "priority": "low",
     "source": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Generation seed capture and override per avatar",
     "type": "TASK"
