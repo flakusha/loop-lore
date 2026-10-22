@@ -108,22 +108,24 @@ export async function isAssetEncrypted(
  */
 export function visibleAssetFilter(
   eb: ExpressionBuilder<DB, "assets">,
-  actorId: string,
+  actorId: string | null,
   tablePrefix = "",
 ) {
+  // Null/empty actorId yields public-only: "" never equals a real id.
+  const id = actorId ?? "";
   const visibilityColumn: "visibility" | "assets.visibility" = tablePrefix === "" ? "visibility" : "assets.visibility";
   const ownerColumn: "owner_id" | "assets.owner_id" = tablePrefix === "" ? "owner_id" : "assets.owner_id";
   const idColumn: "id" | "assets.id" = tablePrefix === "" ? "id" : "assets.id";
   return eb.or([
     eb(visibilityColumn, "=", AssetVisibility.Public,),
-    eb(ownerColumn, "=", actorId,),
+    eb(ownerColumn, "=", id,),
     eb.and([
       eb(visibilityColumn, "=", AssetVisibility.Shared,),
       eb.exists(
         eb.selectFrom("asset_shares",)
           .select("asset_shares.id",)
           .whereRef("asset_shares.asset_id", "=", idColumn,)
-          .where("asset_shares.shared_with_id", "=", actorId,),
+          .where("asset_shares.shared_with_id", "=", id,),
       ),
     ],),
   ],);
@@ -138,7 +140,7 @@ export function visibleAssetFilter(
  * @param actorId
  * @returns void
  */
-export function visibleGalleryAssetFilter(eb: ExpressionBuilder<DB, "assets">, actorId: string,) {
+export function visibleGalleryAssetFilter(eb: ExpressionBuilder<DB, "assets">, actorId: string | null,) {
   return eb.or([
     visibleAssetFilter(eb, actorId, "",),
     eb.exists(
@@ -256,7 +258,8 @@ export async function listAssets(
 
 /**
  * Check if an actor can access an asset.
- * Owner always yes. Admin always yes. Public asset → any auth user.
+ * Owner always yes. Admin always yes. Public asset → anyone (open public,
+ * incl. null-actor guests).
  * Shared asset → check asset_shares. Private → owner only.
  * @param database
  * @param assetId
@@ -275,7 +278,9 @@ export async function canAccessAsset(
   const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
   if (!asset) { return false; }
   if (actorId && asset.owner_id === actorId) { return true; }
-  if (actorId && asset.visibility === AssetVisibility.Public) { return true; }
+  // Open public: anyone — including logged-out / synthetic-guest callers
+  // with a null actorId — may read public assets.
+  if (asset.visibility === AssetVisibility.Public) { return true; }
   if (actorId && asset.visibility === AssetVisibility.Shared) {
     const share = await database
       .selectFrom("asset_shares",)

@@ -79,7 +79,7 @@ is untouched: the derive distinguishes "no token + guestAccess" from
 
 - Browse `WorldVisibility.Public` worlds — read-only.
 - View chats with `visibility=public` — read-only; no join, no participation,
-  no messages.
+  no message writes (messages of a public chat are readable).
 - View assets with `visibility=public` via the existing signed-URL path.
 - Use read-only public functionality: public story feed (proposed
   `epic-public-feed`), public templates (`TASK-public-templates-routes`,
@@ -158,10 +158,10 @@ outright until a guest-tier policy exists.
 - `src/users/permissions.ts:79` — existing `guest` permission row.
 - `src/db/enums-core/users.ts` — `UserRole` incl. `guest`;
   `ChatVisibility` private/public/unlisted.
-- `src/chat/service/access.ts:115-160` — `checkChatAccess` (no visibility
-  read today).
+- `src/chat/service/access.ts:115-160` — `checkChatAccess` (reads `chats.visibility`
+  since Phase 2).
 - `src/assets/service/read.ts:89-110,223-246` — `visibleAssetFilter` /
-  `canAccessAsset` (actorId requirement blocks anonymous).
+  `canAccessAsset` (the public branch is actor-less since Phase 2).
 - `src/assets/signed-url.ts` — existing anonymous data path to reuse.
 - `src/routes/chat-search/join.ts:53-55` — public-world join precedent.
 - `src/middleware/auth/solo-user.ts` — synthetic-user precedent.
@@ -172,20 +172,28 @@ outright until a guest-tier policy exists.
       guest context (`userRole=guest`, no user/session rows) and can reach
       read-mostly public routes; with the flag off, behavior is unchanged.
 - [ ] Guest can list and read `visibility=public` chats, public assets, and
-      public worlds without an account. (Public worlds: partially —
-      `GET /api/worlds/:worldId` reads a PUBLIC world; listing, chats and
-      assets land in Phase 2/3.)
+      public worlds without an account. (Chats and assets: Phase 2 shipped —
+      `GET /api/chats` lists public chats only, `GET /api/chats/:id` and the
+      message reads admit a guest on a public chat, and a guest reads
+      `visibility=public` assets. Public worlds: partially —
+      `GET /api/worlds/:worldId` reads a PUBLIC world; world listing lands in
+      Phase 3.)
 - [x] No mutation route is reachable as guest: `requireUserId` denies the
       null user id, and the `guest` role holds no write permission, so the
       routes that guard by role alone deny it too.
 - [x] Solo mode (`auth.required=false`, no flag) still yields the solo user
       with `["*"]` perms — no fallthrough regression.
-- [ ] Registered-public tier: any authenticated user can read public
-      chats/assets/worlds they are not a participant/owner of.
+- [x] Registered-public tier: any authenticated user can read public
+      chats/assets/worlds they are not a participant/owner of. (Chats and
+      assets: Phase 2 — the `public` branch of `checkChatAccess` and
+      `canAccessAsset` admits any authenticated caller. Public worlds: reading a
+      PUBLIC world was already open to any authenticated user.)
 - [ ] NSFW gate still denies guest; guest reads are per-IP rate limited and
       audit-logged.
 - [ ] Unit tests for the derive branch, both visibility tiers, and the
-      solo-fallback guard; e2e smoke for a guest public-chat read.
+      solo-fallback guard; e2e smoke for a guest public-chat read. (Unit tests
+      for the derive branch, the solo-fallback guard and both visibility tiers
+      are in; the e2e smoke is Phase 4.)
 
 ## Implementation Phases
 
@@ -219,6 +227,28 @@ read-mostly routes; unit tests (incl. solo-fallback guard).
 `checkChatAccess` / `canAccessAsset` / `visibleAssetFilter` gain
 registered-public and open-public branches; public chat listing for guests.
 → `TASK-guest-chat-public-reads-visibility-aware-chat-access.md`, `TASK-guest-asset-public-reads-open-public-asset-access.md`
+
+**Shipped.** The visibility column is now enforced by the shared guards, and the
+read routes opt into the guest tier explicitly.
+
+- `checkChatAccess` (`src/chat/service/access.ts`) and `getMessageWithAccess`
+  (`src/chat/service/read.ts`) read `chats.visibility`: `public` is readable by
+  any authenticated caller and by the guest tier; a null user id short-circuits
+  to `not_found` before the participant lookup. `unlisted` and `private` stay
+  participant/creator/admin-only — `unlisted` did **not** gain the id-reference
+  read the ticket sketched, because nothing in the read surface distinguishes
+  "came by id" from "came from a list".
+- Chat reads opt in per route (`extractAuth` instead of `requireUserId`) in
+  `src/routes/chats/manage.ts`, `src/routes/messages/read.ts` and
+  `src/routes/chats/list.ts`; mutations keep `requireUserId`. The public read
+  branch widened `getMessageWithAccess`, which the message-visibility write
+  route used as its only gate — `src/routes/messages/update.ts` now carries the
+  author-or-admin ownership check DELETE/PATCH already had.
+- `canAccessAsset` / `visibleAssetFilter` (`src/assets/service/read.ts`) take a
+  nullable actor id; the public branch no longer requires one, so a guest reads
+  public assets (metadata and signed-URL bytes) while private/shared-only
+  assets stay closed. The asset read routes needed no change — they already
+  forwarded a nullable id.
 
 ### Phase 3: Public worlds + public functionality
 
