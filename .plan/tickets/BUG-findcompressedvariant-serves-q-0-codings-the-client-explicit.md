@@ -4,6 +4,7 @@
 # BUG: findCompressedVariant serves q=0 codings the client explicitly refused - regression introduced by the q-strip fix
 
 **Status:** Done
+**Status Note:** fixed on this branch — `findCompressedVariant` now parses each coding's `;` parameters instead of discarding them, and drops a coding whose `q` parameter is 0 (`src/server/static-mime.ts:55-68`), so `Accept-Encoding: br;q=0` is no longer served the br sibling it explicitly refused. Regression test in src/server/static-mime.test.ts ("skips a coding the client refused with q=0").
 **Priority:** low
 **Effort:** Medium
 **Caveats:** security — a coding the client refused with q=0 is no longer served; the response falls back to the next acceptable coding, or to no compressed variant at all

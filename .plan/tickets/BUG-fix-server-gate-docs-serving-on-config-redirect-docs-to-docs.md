@@ -4,6 +4,7 @@
 # BUG: fix(server): gate docs serving on config, redirect /docs to /docs/
 
 **Status:** Done
+**Status Note:** fixed on this branch — `handleDocsRequest` gates on the resolved config (`docs.enabled === false` → not served) instead of reading `process.env.DOCS_ENABLED` directly, and `GET /docs` now answers 302 → `/docs/` instead of falling through to a misleading static 404 (`src/server/static-files.ts:120-140`). Regression tests in src/server/static-files.test.ts ("ignores DOCS_ENABLED and gates only on the resolved config", "redirects /docs to /docs/").
 **Priority:** low
 **Effort:** Medium
 **Caveats:** stale state — the docs gate now reads the resolved config (docs.enabled) while src/routes/views/layout.ts still reads process.env.DOCS_ENABLED directly, so a config-file-only change to docs.enabled can leave the sidebar link and the served docs disagreeing
