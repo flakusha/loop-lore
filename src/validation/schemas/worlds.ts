@@ -27,6 +27,7 @@ export const WorldCreateBody = t.Object({
   rpgXp: t.Optional(Flag,),
   rpgLoot: t.Optional(Flag,),
   rpgQuests: t.Optional(Flag,),
+  rpgSkills: t.Optional(Flag,),
 },);
 
 export const WorldUpdateBody = t.Object({
@@ -42,6 +43,7 @@ export const WorldUpdateBody = t.Object({
   rpgXp: t.Optional(Flag,),
   rpgLoot: t.Optional(Flag,),
   rpgQuests: t.Optional(Flag,),
+  rpgSkills: t.Optional(Flag,),
   // Autonomy pacing override blob (TASK-autonomy-config-surface). A JSON
   // object, a raw JSON string, or null to clear the world layer.
   autonomyConfig: t.Optional(t.Union([t.Record(t.String(), t.Unknown(),), t.String(), t.Null(),],),),

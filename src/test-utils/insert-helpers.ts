@@ -963,6 +963,7 @@ export async function insertWorlds(
     rpg_xp?: number;
     rpg_loot?: number;
     rpg_quests?: number;
+    rpg_skills?: number;
     rules?: string;
     autonomy_config?: string;
   },

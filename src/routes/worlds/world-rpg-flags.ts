@@ -5,7 +5,8 @@
  * RPG opt-in flag helpers for the world create/update handlers.
  *
  * Worlds carry one master switch (`rpg_enabled`) plus one flag per mechanic
- * (`rpg_dice`, `rpg_checks`, `rpg_combat`, `rpg_xp`, `rpg_loot`, `rpg_quests`).
+ * (`rpg_dice`, `rpg_checks`, `rpg_combat`, `rpg_xp`, `rpg_loot`, `rpg_quests`,
+ * `rpg_skills`).
  * The chat-command gates in `src/rpg/service/world-gate.ts` enforce the
  * per-mechanic flags; these helpers keep the stored columns consistent with
  * what the API caller asked for.
@@ -27,6 +28,7 @@ export interface RpgCreateFlags {
   rpg_xp: 0 | 1;
   rpg_loot: 0 | 1;
   rpg_quests: 0 | 1;
+  rpg_skills: 0 | 1;
 }
 
 /**
@@ -47,6 +49,7 @@ export function rpgCreateFlags(body: Record<string, unknown>,): RpgCreateFlags {
     rpg_xp: toRpgFlag(body.rpgXp,) ?? rpgEnabled,
     rpg_loot: toRpgFlag(body.rpgLoot,) ?? rpgEnabled,
     rpg_quests: toRpgFlag(body.rpgQuests,) ?? rpgEnabled,
+    rpg_skills: toRpgFlag(body.rpgSkills,) ?? rpgEnabled,
   };
 }
 
@@ -69,6 +72,7 @@ export function applyRpgUpdates(body: Record<string, unknown>, updates: Record<s
     updates.rpg_xp = rpgEnabled;
     updates.rpg_loot = rpgEnabled;
     updates.rpg_quests = rpgEnabled;
+    updates.rpg_skills = rpgEnabled;
   }
 
   const dice = toRpgFlag(body.rpgDice,);
@@ -83,10 +87,12 @@ export function applyRpgUpdates(body: Record<string, unknown>, updates: Record<s
   if (loot != null) { updates.rpg_loot = loot; }
   const quests = toRpgFlag(body.rpgQuests,);
   if (quests != null) { updates.rpg_quests = quests; }
+  const skills = toRpgFlag(body.rpgSkills,);
+  if (skills != null) { updates.rpg_skills = skills; }
   // Master = OR(mechanics) parity (rpgMasterMechanics in world-gate.ts):
   // a bare per-mechanic opt-in on a world whose master was not addressed
   // arms the master so stored state never drifts to off:on. An explicit
   // rpgEnabled in the body always wins.
-  const anyMechanicOn = [dice, checks, combat, xp, loot, quests,].some((v,) => v === 1);
+  const anyMechanicOn = [dice, checks, combat, xp, loot, quests, skills,].some((v,) => v === 1);
   if (rpgEnabled == null && anyMechanicOn) { updates.rpg_enabled = 1; }
 }

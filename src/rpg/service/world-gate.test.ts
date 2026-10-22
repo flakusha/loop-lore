@@ -38,17 +38,35 @@ describe("world-gate mechanics config", () => {
       rpg_xp: 1,
       rpg_loot: 1,
       rpg_quests: 1,
+      rpg_skills: 1,
     },).execute();
 
     const config = await getMechanicsConfig(db, worldId,);
-    expect(config,).toEqual({ dice: true, checks: true, combat: true, xp: true, loot: true, quests: true, },);
+
+    expect(config,).toEqual({
+      dice: true,
+      checks: true,
+      combat: true,
+      xp: true,
+      loot: true,
+      quests: true,
+      skills: true,
+    },);
   });
 
   test("non-RPG worlds disable every mechanic", async () => {
     const worldId = crypto.randomUUID();
     await db.insertInto("worlds",).values({ id: worldId, name: "Off", owner_id: userId, rpg_enabled: 0, },).execute();
     const config = await getMechanicsConfig(db, worldId,);
-    expect(config,).toEqual({ dice: false, checks: false, combat: false, xp: false, loot: false, quests: false, },);
+    expect(config,).toEqual({
+      dice: false,
+      checks: false,
+      combat: false,
+      xp: false,
+      loot: false,
+      quests: false,
+      skills: false,
+    },);
   });
 
   test("one mechanic can opt out while the rest stay on", async () => {
@@ -64,6 +82,7 @@ describe("world-gate mechanics config", () => {
       rpg_xp: 1,
       rpg_loot: 1,
       rpg_quests: 1,
+      rpg_skills: 1,
     },).execute();
 
     await db.updateTable("worlds",).set({ rpg_dice: 0, },).where("id", "=", worldId,).execute();
@@ -107,6 +126,7 @@ describe("world-gate mechanics config", () => {
       rpg_xp: 1,
       rpg_loot: 1,
       rpg_quests: 1,
+      rpg_skills: 1,
     },).execute();
 
     expect(await checkCommandMechanic(db, worldId, RpgMechanic.Dice,),).toBeNull();
@@ -126,5 +146,29 @@ describe("world-gate mechanics config", () => {
     },).execute();
 
     await expect(getMechanicsConfig(db, worldId,),).rejects.toThrow("Invalid composite state: off:on",);
+  });
+
+  test("skills mechanic gates independently of the other axes", async () => {
+    const worldId = crypto.randomUUID();
+    await db.insertInto("worlds",).values({
+      id: worldId,
+      name: "SkillsGated",
+      owner_id: userId,
+      rpg_enabled: 1,
+      rpg_dice: 1,
+      rpg_checks: 1,
+      rpg_combat: 1,
+      rpg_xp: 1,
+      rpg_loot: 1,
+      rpg_quests: 1,
+      rpg_skills: 0,
+    },).execute();
+
+    expect(await checkMechanicEnabled(db, worldId, RpgMechanic.Skills,),).toEqual({
+      allowed: false,
+      reason: "RPG skills mechanics are not enabled for this world",
+    },);
+
+    expect(await checkMechanicEnabled(db, worldId, RpgMechanic.Xp,),).toEqual({ allowed: true, },);
   });
 });
