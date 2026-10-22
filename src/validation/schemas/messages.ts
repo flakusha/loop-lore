@@ -45,7 +45,13 @@ export const MessageAiActionBody = t.Object({
     t.Literal("summarize",),
     t.Literal("action-items",),
     t.Literal("explain",),
+    t.Literal("translate",),
   ],),
+  /**
+   * BCP-47 target language for the `translate` action (e.g. "es",
+   * "pt-BR"). Required only for translate; ignored otherwise.
+   */
+  language: t.Optional(t.String({ minLength: 2, maxLength: 35, },),),
 },);
 
 export const MessageVisibilityUpdateBody = t.Object({

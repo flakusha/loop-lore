@@ -125,7 +125,7 @@ describe("aiActionRoutes", () => {
     expect([403, 404,],).toContain(res.status,);
   });
 
-  test("rejects an unknown action", async () => {
+  test("rejects translate without a target language", async () => {
     const app = actionApp(db, ownerId, "user",);
     const res = await appHandle(
       app,
@@ -133,6 +133,20 @@ describe("aiActionRoutes", () => {
     );
 
     expect(res.status,).toBe(422,);
+    const body = (await res.json()) as { error: string };
+    expect(body.error,).toBe("language_required",);
+  });
+
+  test("translate with a language reaches the aux seam (503 unconfigured)", async () => {
+    const app = actionApp(db, ownerId, "user",);
+    const res = await appHandle(
+      app,
+      post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "translate", language: "es", },),
+    );
+
+    expect(res.status,).toBe(503,);
+    const body = (await res.json()) as { error: string };
+    expect(body.error,).toBe("ai_unavailable",);
   });
 
   test("returns 503 when no auxiliary model is configured", async () => {
@@ -154,6 +168,8 @@ describe("buildAiActionPrompt", () => {
     expect(buildAiActionPrompt("summarize", "dragon hoard",),).toContain("key points",);
     expect(buildAiActionPrompt("action-items", "fix the gate",),).toContain("action items",);
     expect(buildAiActionPrompt("explain", "quantum gate",),).toContain("simple terms",);
+    expect(buildAiActionPrompt("translate", "hola", "es",),).toContain("into es",);
+    expect(buildAiActionPrompt("translate", "hola", "es",),).toContain("hola",);
   });
 
   test("caps long sources", async () => {

@@ -1206,7 +1206,11 @@
     "pollInvalidInput": "A poll needs a question and at least two options.",
     "voiceUnsupported": "Voice recording is not supported in this browser.",
     "voiceMicDenied": "Microphone access was denied.",
-    "voiceFailed": "Could not send the voice note."
+    "voiceFailed": "Could not send the voice note.",
+    "aiExplain": "Explain simply",
+    "aiActionItems": "Extract action items",
+    "aiTranslate": "Translate…",
+    "aiTranslatePrompt": "Translate into which language?"
   },
   "personas": {
     "title": "Personas",

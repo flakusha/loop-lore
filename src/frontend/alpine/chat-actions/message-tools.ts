@@ -10,7 +10,7 @@ import type { ChatState, } from "../types";
 
 const log = rootLog.child({ module: "chat-actions", },);
 
-export type MessageAiAction = "summarize" | "action-items" | "explain";
+export type MessageAiAction = "summarize" | "action-items" | "explain" | "translate";
 
 export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
   /**
@@ -59,23 +59,32 @@ export const messageTools: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * @param {string} msgId
    * @param {MessageAiAction} action
+   * @param {string} [language] Target language for translate
    * @returns {Promise<void>}
    */
-  async runMessageAiAction(msgId: string, action: MessageAiAction,) {
-    log.info("runMessageAiAction", { messageId: msgId, action, },);
+  async runMessageAiAction(msgId: string, action: MessageAiAction, language?: string,) {
+    log.info("runMessageAiAction", { messageId: msgId, action, language, },);
     if (!requireActiveChat(this,)) { return; }
+    if (action === "translate") {
+      const guessed = navigator.language?.split("-",)[0] || "en";
+      language = prompt(t("chats.aiTranslatePrompt",), guessed,)?.trim();
+      if (!language) { return; }
+    }
+
     try {
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}/messages/${msgId}/ai-action`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ action, },),
+        body: jsonBody(language ? { action, language, } : { action, },),
       },);
 
       if (res.ok) {
         const body = await res.json() as { result?: string };
+        const result = (body.result ?? "").slice(0, 300,);
+        await navigator.clipboard?.writeText(body.result ?? "",).catch(() => undefined);
         this.$dispatch?.("show-toast", {
           type: "info",
-          message: (body.result ?? "").slice(0, 300,) || t("toasts.aiActionEmpty",),
+          message: result || t("toasts.aiActionEmpty",),
         },);
       } else if (res.status === 503) {
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.aiActionUnavailable",), },);
