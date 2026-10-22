@@ -104,6 +104,7 @@ export const WORLD_OVERLAY_FIELDS = [
   "rpgXp",
   "rpgLoot",
   "rpgQuests",
+  "rpgSkills",
 ] as const;
 
 /**

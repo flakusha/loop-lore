@@ -61,6 +61,7 @@ export interface MechanicsConfig {
   xp: boolean;
   loot: boolean;
   quests: boolean;
+  skills: boolean;
 }
 
 /** Mechanics selectable via `checkMechanicEnabled` (fixed set). */
@@ -71,6 +72,7 @@ export const RpgMechanic = {
   Xp: "xp",
   Loot: "loot",
   Quests: "quests",
+  Skills: "skills",
 } as const;
 
 /** One RPG mechanic by name (see `RpgMechanic`). */
@@ -119,7 +121,7 @@ export async function getMechanicsConfig(
 ): Promise<MechanicsConfig | null> {
   const world = await database
     .selectFrom("worlds",)
-    .select(["rpg_enabled", "rpg_dice", "rpg_checks", "rpg_combat", "rpg_xp", "rpg_loot", "rpg_quests",],)
+    .select(["rpg_enabled", "rpg_dice", "rpg_checks", "rpg_combat", "rpg_xp", "rpg_loot", "rpg_quests", "rpg_skills",],)
     .where("id", "=", worldId,)
     .executeTakeFirst();
 
@@ -131,6 +133,7 @@ export async function getMechanicsConfig(
     xp: Boolean(world.rpg_xp,),
     loot: Boolean(world.rpg_loot,),
     quests: Boolean(world.rpg_quests,),
+    skills: Boolean(world.rpg_skills,),
   };
 
   // Master = OR(mechanics): a mechanic armed while `rpg_enabled` is off
