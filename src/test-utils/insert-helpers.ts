@@ -6007,3 +6007,27 @@ export async function insertPollVotes(
   } as any,).execute();
   return id;
 }
+
+/** Insert a link_previews row. */
+export async function insertLinkPreviews(
+  db: Db,
+  url_hash: string,
+  url: string,
+  opts?: {
+    id?: string;
+    title?: string | null;
+    description?: string | null;
+    image_url?: string | null;
+    fetched_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("link_previews",).values({
+    id,
+    url_hash,
+    url,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
