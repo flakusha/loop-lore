@@ -159,6 +159,7 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
             visibility: MessageVisibility.Visible,
             swipe_index: candidate,
             emotion: dominantEmotion ?? null,
+            outfit_id: null,
             thinking: thinking ?? null,
           },)
           .execute();

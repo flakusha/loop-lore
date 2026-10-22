@@ -814,6 +814,7 @@ export interface Messages {
   content_version: Generated<number>;
   record_hash: Generated<string>;
   merge_id: string | null;
+  outfit_id: string | null;
 }
 
 // ── music_links ────────────────────────────────────────────

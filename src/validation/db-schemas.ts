@@ -1954,6 +1954,7 @@ export const MessagesSchema = t.Object({
   content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   merge_id: t.Optional(t.String(),),
+  outfit_id: t.Optional(t.String(),),
 },);
 
 // ── music_links ────────────────────────────────────────────
