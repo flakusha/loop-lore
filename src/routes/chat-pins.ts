@@ -14,7 +14,7 @@ import { uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 
-import { requireUserId, } from "./http-utils";
+import { forbiddenResponse, requireUserId, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -165,7 +165,7 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
           const isAdmin = can(ctx.userRole as string | null, "admin.chat",);
 
           if (!isPinner && !isOwner && !isAdmin) {
-            return Response.json({ error: "Not authorized to unpin", }, { status: 403, },);
+            return forbiddenResponse("Not authorized to unpin",);
           }
 
           const deleted = await database.deleteFrom("chat_pins",).where("id", "=", pinId,).executeTakeFirst();
