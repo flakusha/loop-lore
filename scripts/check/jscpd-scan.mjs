@@ -24,8 +24,8 @@
  * The gate builds its command string from the same exports, so gate and
  * scripts measure one scan.
  */
-import { integer, object, option, optional, runScript, string, withDefault, } from "../../src/cli/parser";
 import path from "node:path";
+import { integer, object, option, optional, runScript, string, withDefault, } from "../../src/cli/parser";
 
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 
@@ -55,25 +55,25 @@ export const JSCPD_IGNORE = [
  *   the scan's flags
  * @returns {string[]} the arguments for the jscpd binary
  */
-export function jscpdScanArgs({ minLines, minTokens, reporters, output, }) {
+export function jscpdScanArgs({ minLines, minTokens, reporters, output, },) {
   const args = [
     "jscpd",
     "src/",
     "--min-lines",
-    String(minLines),
+    String(minLines,),
     "--min-tokens",
-    String(minTokens),
+    String(minTokens,),
     "--ignore",
-    JSCPD_IGNORE.join(","),
+    JSCPD_IGNORE.join(",",),
   ];
-  if (reporters) { args.push("--reporters", reporters); }
-  if (output) { args.push("--output", output); }
+  if (reporters) { args.push("--reporters", reporters,); }
+  if (output) { args.push("--output", output,); }
   return args;
 }
 
 /** Quote a shell argument that carries a comma or a space. */
-function shellQuote(arg) {
-  return /[,\s'"]/.test(arg) ? `'${arg.replaceAll("'", "'\\''",)}'` : arg;
+function shellQuote(arg,) {
+  return /[,\s'"]/.test(arg,) ? `'${arg.replaceAll("'", "'\\''",)}'` : arg;
 }
 
 /**
@@ -85,8 +85,8 @@ function shellQuote(arg) {
  *   the scan's flags
  * @returns {string} the shell command
  */
-export function jscpdScanCommand(opts) {
-  return `bunx ${jscpdScanArgs(opts).map(shellQuote).join(" ")}`;
+export function jscpdScanCommand(opts,) {
+  return `bunx ${jscpdScanArgs(opts,).map(shellQuote,).join(" ",)}`;
 }
 
 function parseArgs() {
@@ -111,10 +111,10 @@ function parseArgs() {
 // against the importer's argv.
 if (import.meta.main) {
   const opts = parseArgs();
-  const proc = Bun.spawnSync(["bunx", ...jscpdScanArgs(opts),], {
+  const proc = Bun.spawnSync(["bunx", ...jscpdScanArgs(opts,),], {
     cwd: PROJECT_ROOT,
     stdout: "inherit",
     stderr: "inherit",
   },);
-  process.exit(proc.exitCode);
+  process.exit(proc.exitCode,);
 }

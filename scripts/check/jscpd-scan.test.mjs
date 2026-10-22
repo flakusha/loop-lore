@@ -27,21 +27,21 @@ test("the shared list keeps the widened entries", () => {
 
 test("the gate's command carries the shared ignore list", () => {
   const command = checks["jscpd ratchet"] ?? "";
-  expect(command,).toContain(JSCPD_IGNORE.join(","),);
+  expect(command,).toContain(JSCPD_IGNORE.join(",",),);
   for (const entry of WIDENED) {
     expect(command,).toContain(entry,);
   }
 });
 
 test("the CLI arguments carry the same list as the command string", () => {
-  const args = jscpdScanArgs({ minLines: 4, minTokens: 30, reporters: "json", output: ".tmp/x", });
-  expect(args,).toContain(JSCPD_IGNORE.join(","),);
-  expect(jscpdScanCommand({ minLines: 4, minTokens: 30, reporters: "json", output: ".tmp/x", }),)
-    .toContain(JSCPD_IGNORE.join(","),);
+  const args = jscpdScanArgs({ minLines: 4, minTokens: 30, reporters: "json", output: ".tmp/x", },);
+  expect(args,).toContain(JSCPD_IGNORE.join(",",),);
+  expect(jscpdScanCommand({ minLines: 4, minTokens: 30, reporters: "json", output: ".tmp/x", },),)
+    .toContain(JSCPD_IGNORE.join(",",),);
 });
 
 test("the package.json scripts call the shared scan and carry no ignore list of their own", () => {
-  const pkg = JSON.parse(readFileSync(path.join(REPO_ROOT, "package.json"), "utf8",),);
+  const pkg = JSON.parse(readFileSync(path.join(REPO_ROOT, "package.json",), "utf8",),);
   for (const name of ["jscpd", "jscpd:full",]) {
     const script = pkg.scripts[name] ?? "";
     expect(script, name,).toContain("scripts/check/jscpd-scan.mjs",);
