@@ -66,7 +66,8 @@ export interface VariantDefaults {
   max_turns: number | null;
   auto_advance: 0 | 1;
   gm_config: GmConfig;
-  talkativity: number | null;
+  /** Every variant defines one; `chat_participants.talkativity` is NOT NULL. */
+  talkativity: number;
   prompt_override_default: string | null;
 }
 
