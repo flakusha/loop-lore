@@ -154,6 +154,10 @@ export interface Worlds extends AuditColumns {
   rules: Generated<string>;
   autonomy_config: Generated<string>;
   rpg_skills: Generated<number>;
+  requires_stats: Generated<number>;
+  stat_point_budget: Generated<number>;
+  stat_min: Generated<number>;
+  stat_max: Generated<number>;
 }
 
 // ── actor_lore_entries ────────────────────────────────────────────
