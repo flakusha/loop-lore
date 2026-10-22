@@ -3,7 +3,7 @@
 
 # FEAT: Gate XP and skill XP awards behind the per-world rpg_xp opt-in
 
-**Status:** In Progress
+**Status:** in_progress
 **Status Note:** `RpgMechanic.Xp` (`src/rpg/service/world-gate.ts:71`) has zero production callers on dev — gate unenforced; work in branch `xp-reward-sources`; verified 2026-10-23
 **Priority:** high
 **Effort:** Medium
