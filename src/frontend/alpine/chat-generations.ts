@@ -72,7 +72,7 @@ const log = rootLog.child(
 ;
 
 const log = rootLog.child({ module: "chat", },);
-const getDOMPurify = () => __DOMPurify as { sanitize(html: string, config?: unknown,): string } | undefined;
+const getDOMPurify = () => globalThis.__DOMPurify as { sanitize(html: string, config?: unknown,): string } | undefined;
 
 const getDOMPurify = () => (globalThis as any).__DOMPurify as 
 {
