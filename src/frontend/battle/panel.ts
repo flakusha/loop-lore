@@ -37,6 +37,7 @@ import {
   renderItems,
   renderRoster,
 } from "./render.js";
+import { renderTurnOrder, } from "./turn-order.js";
 
 export {
   type BattleActionKind,
@@ -169,8 +170,13 @@ function render(): void {
     },
   };
 
+  overlay.append(renderHeader(deps.battle,),);
+  // The turn-order strip is only meaningful while the battle is running.
+  if (deps.battle.status === "active") {
+    overlay.append(renderTurnOrder(deps.battle,),);
+  }
+
   overlay.append(
-    renderHeader(deps.battle,),
     renderRoster(deps.battle, deps.selectedTargetId, callbacks,),
     renderActions(deps.battle, deps.itemsOpen, deps.selectedTargetId, callbacks,),
   );

@@ -1925,5 +1925,9 @@
     "errorUnderage": "You must be at least {age} years old to use this service.",
     "errorInvalidDate": "Please enter a valid date (YYYY-MM-DD)",
     "errorGeneric": "Server error. Please try again later."
+  },
+  "battle": {
+    "turnOrder": "Turn order",
+    "health": "Health"
   }
 }
