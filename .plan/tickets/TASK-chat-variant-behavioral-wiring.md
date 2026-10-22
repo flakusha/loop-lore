@@ -4,6 +4,8 @@
 # TASK: Chat variant behavioral wiring
 
 **Status:** Done
+**Status Note:** Shipped 2026-10-22 — the variant now pins and persists its full `VARIANT_DEFAULTS` column set on create (`purpose`, `max_turns`, `auto_advance`, `prompt_override`, participant `talkativity`), an explicit `null` survives instead of silently falling back to the variant default, a template preset mode never conflicts with the variant, and a per-variant matrix test asserts the persisted row against the table. The ticket's caveat that `chats` has no `purpose` column is stale — migration `044_chat_purpose.ts` added it.
+**Scope:** Close epic-chat-variants-taxonomy: wire the 12-variant picker into new-chat, fix variant override null handling and template-mode precedence, seed talkativity on member participants, reconcile epic/ticket metadata
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Ticket
