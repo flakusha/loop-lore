@@ -20,7 +20,7 @@ import type { Page, } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { AUTH_NOISE_ALLOWLIST, trackPageErrors, } from "../../helpers/htmx-alpine";
-import { SEED, seedUsers, } from "../../helpers/seed";
+import { SEED, seedUsers, seedWorld, } from "../../helpers/seed";
 
 type TestPage = Page;
 
@@ -30,6 +30,9 @@ describe("New chat advanced fields E2E", () => {
   beforeAll(async () => {
     ctx = await createBrowserTest({ auth: { required: true, }, },);
     await seedUsers(ctx.db,);
+    // The world picker is filled from the user's own worlds - the RPG variant
+    // test needs one to bind the chat to.
+    await seedWorld(ctx.db,);
   }, 90_000,);
 
   afterAll(async () => {
@@ -220,6 +223,58 @@ describe("New chat advanced fields E2E", () => {
       expect(row!.type,).toBe(VARIANT_DEFAULTS.assistant.chat_type,);
       expect(row!.mode,).toBe(VARIANT_DEFAULTS.assistant.chat_mode,);
       expect(row!.purpose,).toBe(VARIANT_DEFAULTS.assistant.chat_purpose,);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 90_000,);
+
+  test("an RPG variant chat is bound to the world the user picked", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
+    try {
+      await login(page,);
+      await gotoNewChat(page,);
+
+      const variantSelect = page.locator("[data-testid='chat-variant']",);
+      const worldSelect = page.locator("[data-testid='chat-world']",);
+
+      // The world picker is filled from the user's own worlds.
+      await worldSelect
+        .locator(`option[value="${SEED.world.id}"]`,)
+        .waitFor({ state: "attached", timeout: 15_000, },);
+
+      await variantSelect.selectOption("rpg",);
+      await worldSelect.selectOption(SEED.world.id,);
+
+      const name = `RPG-Variant-Chat-${Date.now()}`;
+      await page.fill("[data-testid='chat-name-input']", name,);
+
+      const createReq = page.waitForRequest(
+        (req,) => req.url().includes("/api/v1/chats",) && req.method() === "POST",
+        { timeout: 15_000, },
+      );
+
+      await page.click("[data-testid='create-chat-btn']",);
+
+      // The world is the one field the variant does NOT own: it must survive
+      // the payload even though the variant pins type/mode/purpose.
+      const body = (await createReq).postDataJSON() as { variant?: string; worldId?: string };
+      expect(body.variant,).toBe("rpg",);
+      expect(body.worldId,).toBe(SEED.world.id,);
+
+      const row = await ctx.db
+        .selectFrom("chats",)
+        .select(["id", "type", "mode", "purpose", "world_id",],)
+        .where("name", "=", name,)
+        .executeTakeFirst();
+
+      expect(row, `create should commit a chat row named ${name}`,).not.toBeNull();
+      expect(row!.world_id,).toBe(SEED.world.id,);
+      expect(row!.type,).toBe(VARIANT_DEFAULTS.rpg.chat_type,);
+      expect(row!.mode,).toBe(VARIANT_DEFAULTS.rpg.chat_mode,);
+      expect(row!.purpose,).toBe(VARIANT_DEFAULTS.rpg.chat_purpose,);
     } finally {
       errors.assert();
       errors.detach();
