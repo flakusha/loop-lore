@@ -3,7 +3,7 @@
 
 # BUG: Workflow library img2img row has no parameters
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Small
 **Epic:** epic-reactive-actor-appearance
@@ -142,3 +142,5 @@ against a path that used to work, not merely a missing feature.
 - Where the repair procedure is published: `giwt plan sync-docs` regenerates `docs/plan-gen/` from `.plan/` on every docs build (`package.json:156-157`; the mirror loop is `node_modules/giwt/src/commands/plan/sync-docs.ts:78-88`)
 - The admin write routes' own generated specs: TypeBox bodies at `src/routes/admin-comfyui-workflows/create.ts:115` and `src/routes/admin-comfyui-workflows/update.ts:119`
 - The API-reference drift gate that stays green because the path set is unchanged: `scripts/check/api-doc-drift.mjs` (documented-vs-spec comparison at `:119-133`, ratchet at `:146-149`), registered as a blocking gate at `scripts/check/parallel/gate-table.mjs:133`
+
+**Resolved:** 2026-10-23 registry-driven close: git issue c4f2d57 (registry tip: e94b07e32 Konstantin Fedotov Duplicate: closed in favour of the filed ticket 15c0f40 (merged to dev )
