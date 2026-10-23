@@ -42,11 +42,10 @@ export async function classifyIntent(
       { role: "user" as const, content: userMessage.slice(0, 500,), },
     ];
 
-    // Shared AUX policy: 2s timeout, 0.0 temperature, 100 max tokens, BYO key
+    // Shared AUX policy via the task registry: 2s timeout, 0.0 temperature,
+    // 100 max tokens, BYO key.
     const response = await callAux("intent", config, db, messages, {
       userId,
-      temperature: 0,
-      maxTokens: 100,
     },);
 
     if (!response) { return null; }
