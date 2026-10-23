@@ -86,14 +86,16 @@ export const AUX_CLASSIFICATION_TASKS: Readonly<Record<AuxTaskName, Classificati
     purpose: "nsfw",
     labels: ["sfw", "nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw_extreme",],
     preferClassifier: true,
-    call: { maxTokens: 50, },
+    // Deterministic rating verdicts; small verdict JSON.
+    call: { temperature: 0, maxTokens: 50, },
   },),
   moderation: defineClassificationTask({
     task: "moderation",
     purpose: "moderation",
     labels: ["severe", "moderate", "clean",],
     preferClassifier: true,
-    call: { maxTokens: 50, },
+    // Deterministic severity verdicts; small verdict JSON.
+    call: { temperature: 0, maxTokens: 50, },
   },),
   "gm-tool": defineClassificationTask({
     task: "gm-tool",

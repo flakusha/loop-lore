@@ -109,8 +109,11 @@ describe("detectModerationWithLlm", () => {
     expect(task,).toBe("moderation",);
     expect(messages[0]!.content,).toContain("content moderation classifier",);
     expect(messages[1]!.content,).toBe("some hostile message",);
-    expect(opts?.temperature,).toBe(0,);
-    expect(opts?.maxTokens,).toBe(50,);
+    // Sampling shape is registry-driven now: the call site threads only
+    // context; callAux applies the task's call overrides (temp 0, 50 tokens)
+    // — a selected pack would add its params here.
+    expect(opts?.temperature,).toBeUndefined();
+    expect(opts?.maxTokens,).toBeUndefined();
   });
 
   test("truncates user content to 500 chars", async () => {

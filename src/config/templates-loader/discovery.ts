@@ -111,6 +111,54 @@ export function findWorkflowFiles(cwd: string,): string[] {
   return found;
 }
 
+// ── Classifier Directory Discovery ──────────────────────────
+//
+// Classifier template packs are multi-file: every
+// `configs/templates/classifiers/*.yaml` (or *.yml) file contributes one or
+// more packs keyed by id, mirroring the workflows domain. `*.example.*`
+// files are documentation-only and never load.
+
+/** Classifier file extensions (YAML only — packs have no TOML shape). */
+const CLASSIFIER_EXTENSIONS = [".yaml", ".yml",] as const;
+
+/**
+ * Find classifier template-pack files across search directories.
+ * Returns every matching file (defaults + overrides); callers merge in order.
+ * `*.example.*` files are docs-only and excluded.
+ * @param cwd - Working directory to search from
+ * @returns void
+ */
+export function findClassifierFiles(cwd: string,): string[] {
+  const mainRoot = findMainRepoRoot(cwd,);
+  const searchDirs = [
+    path.join(cwd, "configs", "templates", "classifiers",),
+    path.join(cwd, "templates", "classifiers",),
+  ];
+
+  if (mainRoot && mainRoot !== cwd) {
+    searchDirs.push(
+      path.join(mainRoot, "configs", "templates", "classifiers",),
+      path.join(mainRoot, "templates", "classifiers",),
+    );
+  }
+
+  const found: string[] = [];
+  const seen: Record<string, true> = {};
+  for (const dir of searchDirs) {
+    if (!existsSync(dir,) || !statSync(dir,).isDirectory()) { continue; }
+    for (const name of readdirSync(dir,).sort()) {
+      if (!CLASSIFIER_EXTENSIONS.some((ext,) => name.endsWith(ext,))) { continue; }
+      if (name.includes(".example.",)) { continue; } // docs-only, never live
+      const fullPath = path.join(dir, name,);
+      if (seen[fullPath]) { continue; }
+      seen[fullPath] = true;
+      found.push(fullPath,);
+    }
+  }
+
+  return found;
+}
+
 // ── Parsing ─────────────────────────────────────────────────
 
 /**

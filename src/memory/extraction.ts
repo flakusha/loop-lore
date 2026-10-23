@@ -9,10 +9,10 @@
  */
 import type { Kysely, } from "kysely";
 import { callAux, } from "../aux-pipeline";
+import { resolveClassifierPrompt, } from "../aux-pipeline/class-template-resolver";
 import type { DB, } from "../db";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
-import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, } from "../utils";
 import { resolveReviewStatus, storeMemories, } from "./extraction-store";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
@@ -43,16 +43,25 @@ export async function extractMemories(
   contextParts.push(`Assistant: ${aiContent}`,);
   const conversationContext = contextParts.join("\n",);
 
-  const prompt = `${resolveSystemPrompt(config.templates.llm, "memory",)}\n\nConversation:\n${conversationContext}`;
-  const messages: GenerationMessage[] = [{ role: "user", content: prompt, },];
+  // Pack template > systemPrompts.memory override > code default.
+  const { prompt, params, } = await resolveClassifierPrompt({
+    config,
+    db,
+    task: "memory",
+    chatId,
+  },);
+
+  const fullPrompt = `${prompt}\n\nConversation:\n${conversationContext}`;
+  const messages: GenerationMessage[] = [{ role: "user", content: fullPrompt, },];
 
   try {
-    // Shared AUX policy via the task registry: 2s timeout, BYO key, and the
-    // 200-token cap (extraction returns a JSON array, larger than the
-    // single-field classifiers).
+    // Shared AUX policy via the task registry (2s timeout, BYO key, and the
+    // 200-token cap — extraction returns a JSON array, larger than the
+    // single-field classifiers); pack params win when selected.
     const response = await callAux("memory", config, db, messages, {
       userId,
       chatId,
+      ...params,
     },);
 
     if (!response) {

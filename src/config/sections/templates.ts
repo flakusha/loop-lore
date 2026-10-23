@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 280
+// size-allow: 290
 // Defines types and defaults for the config-driven template system.
 import type {
   DetailLevel,
   SdGenMode,
 } from "../../generation/prompt-templates";
+import type { ClassifiersTemplateConfig, } from "./templates-classifiers";
 import type { WorkflowTemplateConfig, } from "./templates-workflow";
 
 // ── Merge Strategy ──────────────────────────────────────────
@@ -161,6 +162,12 @@ export interface ImageEditTemplateConfig {
 }
 
 export {
+  type ClassifiersTemplateConfig,
+  type ClassTemplateConfig,
+  type ClassTemplateParams,
+  type ClassTemplateWhen,
+} from "./templates-classifiers";
+export {
   type AssistantWorkflowConfig,
   ENTITY_QUALITY_GATES,
   type EntityQualityGate,
@@ -181,6 +188,8 @@ export interface TemplatesConfig {
   imageEdit: ImageEditTemplateConfig;
   character: CharacterTemplateConfig;
   workflows: WorkflowTemplateConfig;
+  /** User-supplied classifier template packs (classifiers/*.yaml). */
+  classifiers: ClassifiersTemplateConfig;
 }
 
 // ── Character Template Config ───────────────────────────────
@@ -264,5 +273,9 @@ export const TEMPLATES_DEFAULTS: TemplatesConfig = {
     merge: DEFAULT_MERGE,
     workflows: {},
     entityTypes: {},
+  },
+  classifiers: {
+    merge: DEFAULT_MERGE,
+    classifiers: {},
   },
 };
