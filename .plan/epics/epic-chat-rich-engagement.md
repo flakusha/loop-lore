@@ -16,8 +16,13 @@
 
 Polls, link unfurl, and voice notes all grep-clean (zero implementation).
 AI message utilities (summarize/translate/explain) are spec'd P2 in
-`docs/frontend/chat/message-actions.md` but translate never calls the LLM
-(BUG-assistant-improve-translate-rewrite-never-call-llm). No overlap with
+`docs/frontend/chat/message-actions.md`; translate is LLM-first wired
+(BUG-assistant-improve-translate-rewrite-never-call-llm is **Done** —
+verified 2026-09-07: all three translate/rewrite commands resolve the
+provider + injectable `complete` seam, local heuristics are a documented
+fallback only), and the chat-first persisted consumer is planned under
+epic-output-control-transforms (FEAT-message-translations-chat-first).
+No overlap with
 active worktrees or existing TASK-chat-feature-* (closest is
 TASK-chat-feature-chat-artifacts / scene-art-generation — media creation,
 not message engagement).

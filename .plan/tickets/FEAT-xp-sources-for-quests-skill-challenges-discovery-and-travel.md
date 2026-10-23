@@ -4,6 +4,7 @@
 # FEAT: XP sources for quests, skill challenges, discovery, and travel
 
 **Status:** Done
+// hint: Structural and logic conflict. Both design and behavior differ.
 **Status Note:** quest/discovery/travel legs shipped on dev — `src/story/quest-engine/xp.ts:36`, `src/rpg/world-discovery/xp-leg.ts:34`, `src/rpg/world-travel/migration.ts:57`; skill-challenge leg (`xpForSkillChallenge`, `src/rpg/xp/sources.ts:104`) has no production caller — follow-up pending; verified 2026-10-23
 **Priority:** high
 **Effort:** Medium
