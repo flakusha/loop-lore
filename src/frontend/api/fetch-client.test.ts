@@ -108,7 +108,8 @@ describe("fetchClient", () => {
 
   test("non-JSON body throws a generic Error carrying status", async () => {
     stubFetch(new Response("nope", { status: 500, },),);
-    const err = await fetchClient("/api/x",).catch((e,) => e as Error & { status: number });
+    const res = await fetchClient("/api/x",).catch((e,) => e);
+    const err = res as Error & { status: number };
     expect(err,).toBeInstanceOf(Error,);
     expect(err.message,).toBe("HTTP 500",);
     expect(err.status,).toBe(500,);
