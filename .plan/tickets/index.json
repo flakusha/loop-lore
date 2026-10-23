@@ -5487,6 +5487,19 @@
     "source": ".plan/tickets/BUG-image-audio-providers-have-no-byo-key-or-failover.md",
     "status": "Not Started"
   },
+  "BUG-IMAGE-EDIT-COMFYUI-PROVIDER-NEVER-UPLOADS-INPUT-IMAGE": {
+    "hash": "992e37c",
+    "git_issue": "992e37c",
+    "extid": "BUG-IMAGE-EDIT-COMFYUI-PROVIDER-NEVER-UPLOADS-INPUT-IMAGE",
+    "type": "BUG",
+    "title": "Image-edit ComfyUI provider never uploads input_image",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [],
+    "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md",
+    "status": "Not Started"
+  },
   "BUG-IMAGE-EDIT-DERIVATIVE-LINK-FILES-AN-ASSET-ID-UNDER-ENTITY-TY": {
     "hash": "cfa6d6a",
     "git_issue": "cfa6d6a",
@@ -10096,6 +10109,19 @@
     "tags": [],
     "title": "workflow confirm session treats optional steps as required",
     "type": "BUG"
+  },
+  "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-UNRESOLVED-PLACEHOLDERS": {
+    "hash": "15c0f40",
+    "git_issue": "15c0f40",
+    "extid": "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-UNRESOLVED-PLACEHOLDERS",
+    "type": "BUG",
+    "title": "Workflow library img2img row has unresolved placeholders",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-comfyui-plugin",
+    "tags": [],
+    "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-unresolved-placeholders.md",
+    "status": "Not Started"
   },
   "BUG-WORKTREE-COMMAND-SCRIPTS-SPAWN-GIT-WITH-NO-ISOLATED-ENV": {
     "hash": "90793fc",
@@ -15277,6 +15303,24 @@
     ],
     "title": "Multi-Session Support",
     "type": "EPIC"
+  },
+  "EPIC-MULTILINGUAL-CARRIAGE": {
+    "hash": "pending",
+    "extid": "EPIC-MULTILINGUAL-CARRIAGE",
+    "type": "EPIC",
+    "title": "Multilingual Carriage — Hidden Per-Message Language/Context Carriage",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [
+      "i18n",
+      "carriage",
+      "classification",
+      "prompt-injection",
+      "privacy"
+    ],
+    "source": ".plan/tickets/epic-multilingual-carriage.md",
+    "status": "Not Started"
   },
   "EPIC-MULTIMODAL-ASSET-REUSE": {
     "epic": "",
@@ -27634,6 +27678,19 @@
     "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md",
     "status": "Not Started"
   },
+  "TASK-AVATAR-RENDER-TARGET-DISCRIMINATOR": {
+    "hash": "0964e76",
+    "git_issue": "0964e76",
+    "extid": "TASK-AVATAR-RENDER-TARGET-DISCRIMINATOR",
+    "type": "TASK",
+    "title": "Avatar render target discriminator",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-render-target-discriminator.md",
+    "status": "Not Started"
+  },
   "TASK-AVATAR-TEMPLATE-EXAMPLE-DOCUMENTS-OUTFITS-DEFAULT-OUTFIT-THA": {
     "hash": "8f9f351",
     "git_issue": "8f9f351",
@@ -30371,7 +30428,7 @@
     "epic": "epic-reactive-actor-appearance",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-CHAT-BACKGROUNDS-LOCATION-SYNC": {
     "epic": "",
@@ -40292,6 +40349,19 @@
     "title": "Health Bar Component",
     "type": "TASK"
   },
+  "TASK-HELD-ITEM-AXIS-DATA-MODEL": {
+    "hash": "811713e",
+    "git_issue": "811713e",
+    "extid": "TASK-HELD-ITEM-AXIS-DATA-MODEL",
+    "type": "TASK",
+    "title": "Held item axis data model",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-held-item-axis-data-model.md",
+    "status": "Not Started"
+  },
   "TASK-HELD-ITEM-WHOLE-OUTFIT-VARIANT-AXIS": {
     "hash": "ccce847",
     "git_issue": "ccce847",
@@ -41811,6 +41881,19 @@
     ],
     "title": "Item Provisioning Dashboard (World-Level Allocation View)",
     "type": "TASK"
+  },
+  "TASK-ITEM-SIDE-OUTFIT-CHANGE-TRIGGER": {
+    "hash": "0039f2b",
+    "git_issue": "0039f2b",
+    "extid": "TASK-ITEM-SIDE-OUTFIT-CHANGE-TRIGGER",
+    "type": "TASK",
+    "title": "Item-side outfit change trigger",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md",
+    "status": "Not Started"
   },
   "TASK-ITEM-SPEC-PARAMETERS": {
     "epic": "epic-rpg-mechanics",
@@ -44012,6 +44095,78 @@
     "title": "Message Archiving",
     "type": "TASK"
   },
+  "TASK-MESSAGE-CARRIAGE-BACKFILL-PRIVACY": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGE-CARRIAGE-BACKFILL-PRIVACY",
+    "type": "TASK",
+    "title": "Message carriage backfill + privacy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-multilingual-carriage",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-carriage-backfill-privacy.md",
+    "status": "Not Started"
+  },
+  "TASK-MESSAGE-CARRIAGE-CLASSIFICATION-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGE-CARRIAGE-CLASSIFICATION-INTEGRATION",
+    "type": "TASK",
+    "title": "Message carriage classification integration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-multilingual-carriage",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-carriage-classification-integration.md",
+    "status": "Not Started"
+  },
+  "TASK-MESSAGE-CARRIAGE-FILL-PATH-DETECTION": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGE-CARRIAGE-FILL-PATH-DETECTION",
+    "type": "TASK",
+    "title": "Message carriage fill path + detection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-multilingual-carriage",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-carriage-fill-path-detection.md",
+    "status": "Not Started"
+  },
+  "TASK-MESSAGE-CARRIAGE-PROMPT-INJECTION-SECTION": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGE-CARRIAGE-PROMPT-INJECTION-SECTION",
+    "type": "TASK",
+    "title": "Message carriage prompt injection section",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-multilingual-carriage",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-carriage-prompt-injection-section.md",
+    "status": "Not Started"
+  },
+  "TASK-MESSAGE-CARRIAGE-TABLE-MIGRATION-ADMIN-READ": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGE-CARRIAGE-TABLE-MIGRATION-ADMIN-READ",
+    "type": "TASK",
+    "title": "Message carriage table migration + admin read path",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-multilingual-carriage",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-carriage-table-migration-admin-read.md",
+    "status": "Not Started"
+  },
+  "TASK-MESSAGE-CARRIAGE-TRANSLATOR-TICKET-CLOSEOUT": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGE-CARRIAGE-TRANSLATOR-TICKET-CLOSEOUT",
+    "type": "TASK",
+    "title": "Message carriage translator-ticket closeout",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-multilingual-carriage",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-carriage-translator-ticket-closeout.md",
+    "status": "Not Started"
+  },
   "TASK-MESSAGE-POLLS-VOTES": {
     "epic": "epic-chat-rich-engagement.md (proposed)",
     "extid": "TASK-MESSAGE-POLLS-VOTES",
@@ -44189,7 +44344,7 @@
     "epic": "epic-reactive-actor-appearance",
     "tags": [],
     "source": ".plan/tickets/TASK-messages-outfit-id-column.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER": {
     "epic": "epic-middleware-request-lifecycle",
