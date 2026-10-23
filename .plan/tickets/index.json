@@ -12280,6 +12280,23 @@
     "title": "CI/CD Pipeline",
     "type": "EPIC"
   },
+  "EPIC-CLASSIFIER-TEMPLATE-PACKS": {
+    "hash": "pending",
+    "extid": "EPIC-CLASSIFIER-TEMPLATE-PACKS",
+    "type": "EPIC",
+    "title": "Classifier Template Packs",
+    "label": "epic",
+    "priority": "P2",
+    "epic": "",
+    "tags": [
+      "aux-pipeline",
+      "classification",
+      "templates",
+      "config"
+    ],
+    "source": ".plan/tickets/epic-classifier-template-packs.md",
+    "status": "Not Started"
+  },
   "EPIC-CLI-TOOLING-OPTIQUE": {
     "epic": "",
     "extid": "EPIC-CLI-TOOLING-OPTIQUE",
@@ -18818,6 +18835,19 @@
     "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md",
     "status": "done"
   },
+  "FEAT-AUX-CLASSIFICATION-TEMPLATE-REGISTRY": {
+    "hash": "0ed7e78",
+    "git_issue": "0ed7e78",
+    "extid": "FEAT-AUX-CLASSIFICATION-TEMPLATE-REGISTRY",
+    "type": "FEAT",
+    "title": "aux classification template registry",
+    "label": "feat",
+    "priority": "high",
+    "epic": "classifier-template-packs",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-aux-classification-template-registry.md",
+    "status": "Not Started"
+  },
   "FEAT-AVATAR-EXPRESSION-SYSTEM": {
     "epic": "epic-character-core-system",
     "extid": "FEAT-AVATAR-EXPRESSION-SYSTEM",
@@ -19184,6 +19214,19 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-classifier-role-fallback-policy-in-callaux.md",
     "status": "done"
+  },
+  "FEAT-CLASSIFIER-TEMPLATE-PACKS-USER-CONFIG": {
+    "hash": "b5f1fc9",
+    "git_issue": "b5f1fc9",
+    "extid": "FEAT-CLASSIFIER-TEMPLATE-PACKS-USER-CONFIG",
+    "type": "FEAT",
+    "title": "classifier template packs user config",
+    "label": "feat",
+    "priority": "high",
+    "epic": "classifier-template-packs",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-classifier-template-packs-user-config.md",
+    "status": "Not Started"
   },
   "FEAT-CO-AUTHORING-PRESENCE-LIVE-CURSORS-TYPING-INDICATORS": {
     "epic": "proposed:epic-co-authoring",
@@ -20167,6 +20210,19 @@
     "title": "Item System Extensions",
     "type": "FEAT"
   },
+  "FEAT-LANGUAGE-SELECTION-THREE-LEVEL": {
+    "hash": "d5524af",
+    "git_issue": "d5524af",
+    "extid": "FEAT-LANGUAGE-SELECTION-THREE-LEVEL",
+    "type": "FEAT",
+    "title": "language selection three-level",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-language-selection-three-level.md",
+    "status": "Not Started"
+  },
   "FEAT-LEVEL-UP-DECISION-INTERFACE-FOR-AUTONOMOUS-LLM-ACTORS-WITH-A": {
     "hash": "e64d7f7",
     "git_issue": "e64d7f7",
@@ -20446,6 +20502,19 @@
     "title": "Message Swipe & Replay Branch (Regenerate / Retry Generation)",
     "type": "FEAT"
   },
+  "FEAT-MESSAGE-TRANSLATIONS-CHAT-FIRST": {
+    "hash": "9fb4f99",
+    "git_issue": "9fb4f99",
+    "extid": "FEAT-MESSAGE-TRANSLATIONS-CHAT-FIRST",
+    "type": "FEAT",
+    "title": "message translations chat-first",
+    "label": "feat",
+    "priority": "high",
+    "epic": "output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-message-translations-chat-first.md",
+    "status": "Not Started"
+  },
   "FEAT-MESSAGING-BRIDGE-EXTENSIONS": {
     "epic": "",
     "extid": "FEAT-MESSAGING-BRIDGE-EXTENSIONS",
@@ -20539,6 +20608,19 @@
       "dedup"
     ],
     "source": ".plan/tickets/FEAT-model-hash-blake3-and-sha256-with-cross-model-dedup.md",
+    "status": "Not Started"
+  },
+  "FEAT-MODEL-NATIVE-LOCALE-CONFIG": {
+    "hash": "0d54dbb",
+    "git_issue": "0d54dbb",
+    "extid": "FEAT-MODEL-NATIVE-LOCALE-CONFIG",
+    "type": "FEAT",
+    "title": "model native locale config",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-model-native-locale-config.md",
     "status": "Not Started"
   },
   "FEAT-MODEL-PREVIEW-IMAGE-SERVING-WITH-TRAVERSAL-GUARDS": {
