@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 345
+// size-allow: 490
 
 // ── Character-scoped emotion avatar batch generation panel.
 // Drives:
@@ -11,6 +11,7 @@
 //   GET    /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId/stream (SSE)
 //   POST   /api/v1/actors/:actorId/emotion-avatars/jobs/:jobId/cancel
 // Pairs with `src/components/character/emotion-avatars-panel.html`.
+import { EmotionType, } from "../../db/enums-character/avatar";
 import type {
   ActorEmotionAvatarsState,
   EmotionAvatarJob,
@@ -32,6 +33,29 @@ const log = rootLog.child({ module: "actor-emotion-avatars", },);
 
 const emptySelection = (): string[] => [];
 
+/** Every emotion type the backend can generate, in canonical order. */
+const ALL_EMOTIONS: string[] = Object.values(EmotionType,);
+
+/** The avatar rows of the actor-avatar endpoint (only the fields used here). */
+interface ActorAvatar {
+  id: string;
+  assetId: string;
+  label: string;
+  /** Outfit variant dimension; null/undefined = a base (outfitless) variant. */
+  outfitId?: string | null;
+  tags?: Record<string, string | undefined>;
+}
+
+/** The seed fields shared by the batch and the regenerate request. */
+function seedFields(
+  seed: number | null,
+  reuseSeed: boolean,
+): { seed?: number; seedStrategy?: "reuse" } {
+  if (reuseSeed) { return { seedStrategy: "reuse", }; }
+  if (seed === null || seed === undefined || !Number.isFinite(seed,)) { return {}; }
+  return { seed, };
+}
+
 export const actorEmotionAvatars: ActorEmotionAvatarsState = {
   _eaActorId: null,
   jobs: [],
@@ -41,6 +65,11 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
   selectedEmotions: emptySelection(),
   promptPrefix: "",
   negativePrompt: "",
+  seed: null,
+  reuseSeed: false,
+  variants: [],
+  /** Every emotion type the backend can generate. */
+  emotionTypes: ALL_EMOTIONS,
   busy: false,
   message: "",
   error: "",
@@ -60,6 +89,9 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
     this.selectedEmotions = emptySelection();
     this.promptPrefix = "";
     this.negativePrompt = "";
+    this.seed = null;
+    this.reuseSeed = false;
+    this.variants = [];
     this.busy = false;
     this.message = "";
     this.error = "";
@@ -130,6 +162,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
           emotions: this.selectedEmotions,
           promptPrefix: this.promptPrefix || undefined,
           negativePrompt: this.negativePrompt || undefined,
+          ...seedFields(this.seed, this.reuseSeed,),
         },),
       },);
 
@@ -143,11 +176,86 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
       }
 
       this.message = t("status.emotionAvatarsStarted",);
-      await this.listJobs();
+      await this.refresh();
       this.startPolling();
       return true;
     } catch (error) {
       log.error("Failed to start emotion avatar generation", error instanceof Error ? error : undefined, {},);
+      this.error = t("status.emotionAvatarsStartFailed",);
+      return false;
+    } finally {
+      this.busy = false;
+    }
+  },
+
+  async loadVariants() {
+    const actorId = this._eaActorId;
+    if (!actorId) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/avatars`, {},);
+      if (!res.ok) { return; }
+      const body = await res.json() as ActorAvatar[];
+      // Only the base (outfitless) emotion slots are re-rollable here; the
+      // outfit-scoped slots belong to the wardrobe panel.
+      this.variants = (Array.isArray(body,) ? body : [])
+        .filter((avatar,) => !avatar.outfitId && avatar.tags?.emotion)
+        .map((avatar,) => ({
+          id: avatar.id,
+          assetId: avatar.assetId,
+          label: avatar.label,
+          emotion: avatar.tags?.emotion ?? "",
+        }));
+    } catch (error) {
+      log.error(
+        "Failed to load emotion avatar variants",
+        error instanceof Error ? error : undefined,
+        {},
+      );
+    }
+  },
+
+  async refresh() {
+    await this.listJobs();
+    await this.loadVariants();
+  },
+
+  async regenerate(emotions?: string[],) {
+    const actorId = this._eaActorId;
+    if (!actorId || this.busy) { return false; }
+    this.busy = true;
+    this.error = "";
+    this.message = "";
+    try {
+      const res = await apiFetch(`/api/v1/actors/${actorId}/emotion-avatars/regenerate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({
+          ...(emotions && emotions.length > 0 ? { emotions, } : {}),
+          replace: "slot",
+          ...seedFields(this.seed, this.reuseSeed,),
+        },),
+      },);
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({} as Record<string, unknown>)) as {
+          message?: string;
+        };
+
+        this.error = body.message ?? t("status.emotionAvatarsStartFailed",);
+        return false;
+      }
+
+      this.message = t("status.emotionAvatarsStarted",);
+      await this.refresh();
+      this.startPolling();
+      return true;
+    } catch (error) {
+      log.error(
+        "Failed to regenerate emotion avatars",
+        error instanceof Error ? error : undefined,
+        {},
+      );
+
       this.error = t("status.emotionAvatarsStartFailed",);
       return false;
     } finally {
@@ -177,7 +285,7 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
 
       await this.refreshJob(jobId,);
       this.stopPolling();
-      await this.listJobs();
+      await this.refresh();
       this.startPolling();
     } catch (error) {
       log.error("Failed to cancel emotion avatar job", error instanceof Error ? error : undefined, {},);
@@ -223,7 +331,11 @@ export const actorEmotionAvatars: ActorEmotionAvatarsState = {
 
       for (const job of active) { await this.refreshJob(job.id,); }
       const stillActive = this.jobs.some(this.isJobActive,);
-      if (!stillActive) { this.stopPolling(); }
+      if (!stillActive) {
+        this.stopPolling();
+        // The finished job re-pointed the emotion bindings: reload the grid.
+        await this.loadVariants();
+      }
     };
 
     this._pollInterval = setInterval(() => {
@@ -343,6 +455,10 @@ export function actorEmotionAvatarsFactory(actorId: string,): ActorEmotionAvatar
   state.selectedEmotions = emptySelection();
   state.promptPrefix = "";
   state.negativePrompt = "";
+  state.seed = null;
+  state.reuseSeed = false;
+  state.variants = [];
+  state.emotionTypes = ALL_EMOTIONS;
   state.busy = false;
   state.message = "";
   state.error = "";
@@ -350,7 +466,7 @@ export function actorEmotionAvatarsFactory(actorId: string,): ActorEmotionAvatar
   state._pollInterval = null;
   state._eaStreams = new Map();
   state.setActorId(actorId,);
-  void state.listJobs();
+  void state.refresh();
   state.startPolling();
   return state;
 }

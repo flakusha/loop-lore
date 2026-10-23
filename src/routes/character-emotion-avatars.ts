@@ -141,6 +141,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
       const promptPrefix = body.promptPrefix as string | undefined;
       const negativePrompt = body.negativePrompt as string | undefined;
       const seed = body.seed as number | undefined;
+      const seedStrategy = seedStrategyOf(body.seedStrategy as string | undefined,);
 
       if (!baseAvatarId) {
         return jsonError({ message: "baseAvatarId is required", status: HttpStatus.BadRequest, },);
@@ -164,6 +165,7 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
           promptPrefix,
           negativePrompt,
           seed,
+          seedStrategy,
         },);
 
         return jsonCreated({ jobId, },);

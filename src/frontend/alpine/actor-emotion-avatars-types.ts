@@ -12,6 +12,15 @@ export interface JobProgress {
   status: JobStatus;
 }
 
+/** One emotion-avatar variant of an actor (a base/outfitless emotion slot). */
+export interface EmotionAvatarVariant {
+  id: string;
+  assetId: string;
+  label: string;
+  /** The variant's emotion tag (`tags.emotion`); empty when the avatar is untagged. */
+  emotion: string;
+}
+
 /** A single batch-generation job. */
 export interface EmotionAvatarJob {
   id: string;
@@ -38,6 +47,14 @@ export interface ActorEmotionAvatarsState {
   selectedEmotions: string[];
   promptPrefix: string;
   negativePrompt: string;
+  /** Explicit base seed for the next batch; null = the server picks one. */
+  seed: number | null;
+  /** Re-run under the base seed recorded for this actor's last generation. */
+  reuseSeed: boolean;
+  /** The actor's base (outfitless) emotion variants. */
+  variants: EmotionAvatarVariant[];
+  /** Every emotion type the backend can generate. */
+  emotionTypes: string[];
   busy: boolean;
   message: string;
   error: string;
@@ -50,6 +67,12 @@ export interface ActorEmotionAvatarsState {
   _eaStreams: Map<string, EventSource>;
   setActorId(actorId: string,): void;
   listJobs(): Promise<void>;
+  /** Refresh the panel's server state: the job list and the emotion variants. */
+  refresh(): Promise<void>;
+  /** Load the actor's base emotion variants (the per-emotion re-roll source). */
+  loadVariants(): Promise<void>;
+  /** Re-roll emotion slots; `replace: "slot"` re-points the emotion binding. */
+  regenerate(emotions?: string[],): Promise<boolean>;
   /** Toggle a single emotion in the `selectedEmotions` set. */
   toggleEmotion(emotion: string,): void;
   /** Start a new batch job. Returns true on POST success. */

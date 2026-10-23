@@ -7,7 +7,7 @@
 
 
 **Status:** In Progress
-**Status Note:** durable jobs, emotions-subset, outfit-scoped replace + single-slot re-roll shipped; dedicated actor-level regenerate route and seed capture shipped; per-avatar UI re-roll pending
+**Status Note:** durable jobs, emotions-subset, outfit-scoped replace + single-slot re-roll shipped; dedicated actor-level regenerate route and seed capture shipped; per-avatar UI re-roll shipped (regenerate all / selected / per-variant, seed pin + reuse)
 **Priority:** Medium
 **Effort:** Small
 **Type:** Feature Epic
@@ -94,8 +94,9 @@ landed (verified 2026-10-09):
       readable back per actor/outfit scope; callers pin a seed or ask to reuse
       the recorded one (`seedStrategy: "reuse"`)
       → `TASK-generation-seed-capture-and-override-per-avatar`
-- [ ] UI: per-avatar "re-roll" button on emotion grid + "regenerate all" +
+- [x] UI: per-avatar "re-roll" button on emotion grid + "regenerate all" +
       subset picker + job progress (SSE)
+      → `TASK-regen-ui-re-roll-and-regenerate-all-controls`
 - [ ] Tests: subset regen, replace-atomicity (old variant never unbound-mid-
       flight), restart-durable job status, route authz (actor + wardrobe-item
       ownership)

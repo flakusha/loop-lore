@@ -83,7 +83,10 @@ export class EmotionAvatarService {
    */
   async startBatchGeneration(opts: GenerateEmotionAvatarsOpts,): Promise<BatchJobId> {
     const jobId = randomUUID() as BatchJobId;
-    const emotions = opts.emotions ?? DEFAULT_EMOTIONS;
+    // An empty list means "no subset" (the caller sends the full default
+    // set), not "generate nothing" — an empty batch would report completed
+    // without producing a single avatar.
+    const emotions = opts.emotions?.length ? opts.emotions : DEFAULT_EMOTIONS;
 
     // Verify base avatar exists
     const baseAvatar = await this.avatarService.getAvatar(opts.baseAvatarId,);
