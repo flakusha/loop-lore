@@ -1240,6 +1240,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md"
     },
     {
@@ -1297,6 +1301,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md"
     }
   ],
   "src/assets/controller/files.ts": [
@@ -1441,6 +1449,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md"
     }
   ],
   "src/assets/model-preview.ts": [
@@ -1500,6 +1512,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme.md"
     },
     {
@@ -1522,7 +1542,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-download-format-conversion-webp-png-jpg.md"
     },
     {
       "kind": "ticket",
@@ -1656,6 +1684,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
     },
     {
@@ -1665,6 +1697,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-download-format-conversion-webp-png-jpg.md"
     },
     {
       "kind": "ticket",
@@ -1703,6 +1739,10 @@
       "source": ".plan/tickets/TASK-reference-set-entity.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/crypto.md"
     }
@@ -1715,6 +1755,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
     },
     {
       "kind": "ticket",
@@ -1749,6 +1793,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-markdown-derive-other-formats.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md"
     }
   ],
   "src/assets/service/file-system.test.ts": [
@@ -1793,6 +1841,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md"
     }
   ],
   "src/assets/service/links.test.ts": [
@@ -2000,7 +2052,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-b1-rendition-pipeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-download-format-conversion-webp-png-jpg.md"
     },
     {
       "kind": "ticket",
@@ -2013,6 +2073,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-thumbnail-generation-256px-webp-at-upload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md"
     }
   ],
   "src/assets/service/transforms.ts": [
@@ -2122,6 +2186,10 @@
   "src/assets/variant-path.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme.md"
     },
     {
@@ -2131,6 +2199,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-c1-moderation-action-notices-with-actor-thumb.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md"
     }
   ],
   "src/assistant": [
@@ -16339,6 +16411,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-download-format-conversion-webp-png-jpg.md"
     },
     {
       "kind": "ticket",
