@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 334 epics
+**Total:** 335 epics
 
 ## Summary
 
@@ -256,6 +256,7 @@
 | Not Started | Model Info Frontend (Cards, Tags, Filters) | Medium | Medium | 0/2 | [epic-model-info-frontend.md](/.plan/epics/epic-model-info-frontend.md) |
 | Not Started | Model Metadata Read (Headers, Hashing, Classification) | High | Large | 0/7 | [epic-model-metadata-read.md](/.plan/epics/epic-model-metadata-read.md) |
 | Not Started | Multi-Session Support | Medium | Med | 0 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
+| Not Started | Multilingual Carriage — Hidden Per-Message Language/Context Carriage | Medium | Medium | 0 | [epic-multilingual-carriage.md](/.plan/epics/epic-multilingual-carriage.md) |
 | Not Started | Narration / Actor Separation | High | Medium–Large | 0 | [epic-narration-actor-separation.md](/.plan/epics/epic-narration-actor-separation.md) |
 | Not Started | Narrative Publishing Workflows (Books & Comics) | medium | Large | 0 | [epic-narrative-publishing-workflows.md](/.plan/epics/epic-narrative-publishing-workflows.md) |
 | In Progress | Native/WASM Module Performance Benchmarks | High | High | 0 | [epic-native-module-benchmarks.md](/.plan/epics/epic-native-module-benchmarks.md) |
@@ -292,7 +293,7 @@
 | Not Started | RAG Evaluation & Observability | High (blocks shipping `epic-rag-assets-unified-storage-and-assistant-flows.md` B-R4 + B-R5 with confidence) | Medium | 0 | [epic-rag-evaluation-observability.md](/.plan/epics/epic-rag-evaluation-observability.md) |
 | Not Started | RAG Ingestion & Document Processing | High | High | 0 | [epic-rag-ingestion.md](/.plan/epics/epic-rag-ingestion.md) |
 | Not Started | RAG Retrieval & Context Injection | High | Medium | 0 | [epic-rag-retrieval.md](/.plan/epics/epic-rag-retrieval.md) |
-| Not Started | Reactive Actor Appearance | high | Large | 0 | [epic-reactive-actor-appearance.md](/.plan/epics/epic-reactive-actor-appearance.md) |
+| In Progress | Reactive Actor Appearance | high | Large | 0 | [epic-reactive-actor-appearance.md](/.plan/epics/epic-reactive-actor-appearance.md) |
 | Not Started | Realtime Transports | Medium | Medium | 0 | [epic-realtime-transports.md](/.plan/epics/epic-realtime-transports.md) |
 | Not Started | Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development | High | Very High | 0 | [epic-recursive-self-improvement.md](/.plan/epics/epic-recursive-self-improvement.md) |
 | Not Started | Reference-Conditioned Generation — Model Matrix, Templates, and Generic Graph Pattern | High | High | 0 | [epic-reference-conditioned-generation.md](/.plan/epics/epic-reference-conditioned-generation.md) |
@@ -660,8 +661,6 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Current State Assessment
 
-### Current State Assessment
-
 ### Benchmark CI & Performance Regression Detection
 
 - **Status:** In Progress
@@ -842,7 +841,6 @@ Loop Lore has accumulated a constellation of chat-shaped product surfaces (assis
 - **Type:** epic
 - **Tags:** ci, testing, automation, deployment
 - **File:** `.plan/epics/epic-cicd-pipeline.md`
-
 
 ### Classifier Template Packs
 
@@ -2688,6 +2686,15 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Tags:** auth, security, backend
 - **File:** `.plan/epics/epic-multi-session.md`
 
+### Multilingual Carriage — Hidden Per-Message Language/Context Carriage
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** i18n, carriage, classification, prompt-injection, privacy
+- **File:** `.plan/epics/epic-multilingual-carriage.md`
+
 ### Narration / Actor Separation
 
 - **Status:** Not Started
@@ -2763,8 +2770,6 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Type:** Feature Epic
 - **Tags:** nsfw, integration, housing, weather, social, disease, cross-system
 - **File:** `.plan/epics/epic-nsfw-integration-gaps.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -3030,7 +3035,7 @@ The repo already has an i18n system, and it is the wrong tool for this job — o
 
 ### Reactive Actor Appearance
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** high
 - **Effort:** Large
 - **Type:** Feature Epic
@@ -3231,8 +3236,6 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 - **Type:** Feature Epic
 - **Tags:** schemas, reputation, consent, nsfw, shared, cross-system
 - **File:** `.plan/epics/epic-shared-schemas.md`
-
-### Current State Assessment
 
 ### Current State Assessment
 
@@ -3544,3 +3547,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+

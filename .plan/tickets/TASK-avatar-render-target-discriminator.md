@@ -1,59 +1,110 @@
-<!-- SPDX-License-Identifier: Apache-2.0-->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors-->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: Avatar render target discriminator
+# TASK: Avatar render-target discriminator (bust portrait vs full-body portrait vs VN sprite)
 
 **Status:** Not Started
-**Priority:** high
+**Priority:** medium
 **Effort:** Medium
 **Epic:** epic-reactive-actor-appearance
-**Caveats:** TOCTOU: none — resolution is read-time over committed rows. Security: none — the discriminator is server-set. Authorization: the variant must belong to the actor being resolved. Parallelism: none. Lock/unlock lifecycle: none. Partial failure: a missing full-body variant degrades to the bust asset, never to an empty frame. Rollback: dropping the tag member reverts to the current single-target behaviour with no migration to undo. Stale state: a variant whose asset was deleted is a ladder miss, not an error. Data races: none. Idempotency: resolution is deterministic and repeatable. Observability: the resolved render target is visible on the resolution result.
+**Tags:** avatar
+**Caveats:** TOCTOU: an avatar row's tag can change between selection and render — the render reads the asset id it was given and never re-resolves, so a mid-flight edit degrades to the fallback rather than rendering a mismatched asset. Security: none new; no endpoint is added by the discriminator itself. Authorization: a render target never widens which actors' assets a caller may see — the existing actor-scoped avatar queries are unchanged. Parallelism: two concurrent renders of the same actor must pick the same asset — the target filter is deterministic. Lock/unlock lifecycle: none. Partial failure: a missing target asset must degrade to the documented fallback, never throw and never blank the portrait. Rollback: removing the tag member makes the target unroutable, exactly as the framing precedent does — no schema change is involved. Stale state: an avatar tagged with a target that no longer has any asset must degrade, not error. Data races: none beyond deterministic selection. Idempotency: pure — the same actor plus the same requested target always resolves to the same asset. Observability: log the requested target and the chosen fallback rung when a degradation happens, so a missing-target bug is visible rather than silent.
 
 **Summary:**
 
-Distinguish the bust portrait from the full-body VN sprite as a variant dimension of the same (outfit, emotion) key, so one wardrobe entry can resolve to a portrait for chat and a full-body asset for VN. Nothing distinguishes the two today: asset_transforms.context='sprite' is a crop of one asset and the sprite stage renders one flat image per character.
+The chat surface renders a bust portrait and the VN surface renders a full-body
+sprite of the same actor, and nothing in the data model distinguishes them. This
+ticket adds one discriminator that says which render target an asset serves,
+with a deterministic fallback when the requested target has no asset.
 
 **Context:**
 
-Nothing distinguishes a bust portrait from a full-body VN sprite as a **variant
-of the same (outfit, emotion) key**:
+1. **No portrait-vs-full-body distinction exists.** `character_avatars` links an
+   actor to an asset with `label`, `is_primary`, `sort_order`, JSON `tags` and
+   `outfit_id` — `src/db/schema-character.ts:88-100` (`tags` at `:94`,
+   `outfit_id` at `:99`). There is no render-target column and no
+   render-target tag member: `AvatarTagType` is declared at
+   `src/db/enums-character/avatar.ts:5-12` with `emotion`, `mood`, `action`,
+   `location`, `time`, `outfit` — no target axis.
 
-- `character_avatars` links actor→asset with `label`, JSON `tags` and
-  `outfit_id` (`src/db/schema-character.ts:88-100`); the base portrait is the
-  single `actors.avatar_asset_id` (`src/db/schema-core.ts:413`).
-- `asset_transforms.context` ∈ `default|sprite|gallery` is a transform of ONE
-  source asset, not a per-character variant row
-  (`src/db/schema-core.ts:252-256`).
-- The sprite layer pipeline does not exist: `src/frontend/vn/sprite-stage.ts:187-204`
-  builds ONE `<img>` per cast member, `:151-166` assigns a flat integer z-order
-  per CHARACTER, and `public/css/vn.css:992-1039` uses `order:` only (dim =
-  filter/opacity). Alpha is asset-level matting only — so a cloak-over-tunic
-  wardrobe cannot be composited; it must be a whole-outfit variant.
+2. **The base portrait is a single column.** `actors.avatar_asset_id` is one
+   nullable asset id at `src/db/schema-core.ts:413`; it is resolved into a
+   synthetic base avatar at
+   `src/characters/services/avatar-service/selection.ts:30-52`.
 
-This is the "portrait vs full body (VN)" axis, planned nowhere.
+3. **`asset_transforms.context` is NOT a per-character variant row.** It is a
+   TRANSFORM of ONE source asset: the interface is
+   `src/db/schema-core.ts:252-256` (`asset_id` at `:254`, `context` at `:255`),
+   and the enum is `TransformContext` at `src/db/enums-content.ts:53-62`
+   (`default | avatar_circle | chat_bubble | card | gallery | sprite`) — a
+   render CONTEXT for a transform, not a subject-framing or target class on a
+   character's avatar.
 
-Precedent to follow: the epic's framing discriminator
-(`TASK-avatar-framing-tag-member`) is a JSON `AvatarTagType` member — zero
-migration, because `character_avatars.tags` is already a JSON column
-(`src/db/schema-character.ts:94`). The epic's own rule is **JSON tag first,
-authoritative column later** (`TASK-avatar-framing-column-migration-future.md`
-is the deliberate follow-up).
+4. **The VN surface renders one flat `<img>` per cast member.**
+   `buildStageElement` at `src/frontend/vn/sprite-stage.ts:187-204` creates one
+   portrait element holding a single image
+   (`src/frontend/vn/portrait-manager.ts:79-86`).
 
-Open design choice (record the decision in the epic): a new tag member, a new
-column, or a distinct asset-relation row. The epic's precedent argues for the
-tag; a column is a duplicate convention and a relation row is a new table for
-one axis.
+5. **Two surfaces consume the same asset id with no discriminator between
+   them.** The chat message bubble renders a single `<img class="avatar">`
+   from the message's `avatar_asset_id` at
+   `src/components/chat/message-list.html:117-126`; the VN stage renders the
+   same actor's roster asset (`src/frontend/vn/sprite-stage.ts:200-201`).
+   Nothing records which of the two an asset was authored for.
+
+6. **The epic's framing discriminator is a DIFFERENT axis.** Framing answers
+   "how is the subject framed within a shot"; the render target answers
+   "which surface is this asset drawn on". The epic's rule for a new
+   discriminator is JSON tag member FIRST, authoritative column LATER — see
+   `.plan/epics/epic-reactive-actor-appearance.md:151-153` (phase 3): "Zero
+   migration — `character_avatars.tags` is already a JSON column... A real
+   column stays a **future task**."
+
+7. **The epic's precedent for deferring the authoritative column.** The
+   framing column is filed as a deliberately-deferred future task at
+   `.plan/epics/epic-reactive-actor-appearance.md:277-280`
+   (`TASK-avatar-framing-column-migration-future.md`).
+
+8. **The wardrobe ladder's rung order must not change.** (outfit, emotion) ->
+   (outfit, neutral) -> (default outfit, emotion) -> (base/outfitless,
+   emotion) -> base portrait, at
+   `src/characters/services/wardrobe/selection-ladder.ts:9-17`.
 
 **Acceptance Criteria:**
 
-- [ ] One wardrobe outfit resolves to a bust asset in chat and to a full-body
-      asset in VN.
-- [ ] The discriminator is recorded on the avatar row (a JSON tag member, per
-      the epic's precedent).
-- [ ] The selection ladder stays deterministic: a render-target request never
-      reorders the rungs, it only filters within the resolved slot.
-- [ ] A missing variant for the requested target degrades to the other target,
-      never to an empty render.
-- [ ] The chosen representation is recorded in
-      `epic-reactive-actor-appearance.md`.
-- [ ] Tests passing; `bun run typecheck` and `bun run lint` clean.
+- [ ] AC1: The render target is derivable per asset/avatar WITHOUT introducing a second competing convention: the mechanism is named (a JSON tag member on `character_avatars.tags`, matching the epic's framing rule) and its owner is named — the axis lives alongside `AvatarTagType` (`src/db/enums-character/avatar.ts:5-12`) and is scored by the existing tag loop in `src/characters/services/avatar-service/selection.ts:225-232`.
+- [ ] AC2: Selection can request a specific render target and degrades DETERMINISTICALLY when that target has no asset — the documented fallback order (target match -> targetless/any-target variant -> base portrait) is written down in the module and pinned by a test.
+- [ ] AC3: The chat surface and the VN surface each request their own target, and an actor with only a bust portrait STILL RENDERS on the VN surface (it falls back to the bust asset) — never a blank portrait.
+- [ ] AC4: No authoritative column is added now: the discriminator ships as a JSON tag member only, and the authoritative-column work stays ONE clearly separated future task, matching the epic's framing precedent (`.plan/epics/epic-reactive-actor-appearance.md:277-280`).
+- [ ] AC5: The fallback order and the missing-target degradation are unit-pinned: a test asserts the exact chosen asset for (a) an exact target hit, (b) a target miss falling to a targetless variant, and (c) a target miss with no variant at all falling to the base portrait.
+- [ ] AC6: The documentation states WHERE the discriminator is read (the avatar selection context, alongside `emotion`/`outfit`) and that the wardrobe ladder's rung order (outfit, emotion) is unchanged (`src/characters/services/wardrobe/selection-ladder.ts:9-17`).
+- [ ] AC7: The discriminator is distinct from the framing axis: a test asserts an asset carrying both values resolves by the target rule without either axis shadowing the other, and the framing axis remains owned by `TASK-avatar-framing-tag-member.md`.
+
+**Notes / Evidence:**
+
+- No portrait/full-body distinction: `src/db/schema-character.ts:88-100`
+  (`tags` at `:94`, `outfit_id` at `:99`); the tag enum
+  `src/db/enums-character/avatar.ts:5-12`
+- The single base portrait column: `src/db/schema-core.ts:413`; its resolution
+  `src/characters/services/avatar-service/selection.ts:30-52`
+- `asset_transforms` is a transform of ONE source asset:
+  `src/db/schema-core.ts:252-256`; the context enum
+  `src/db/enums-content.ts:53-62`
+- The VN surface, one flat `<img>` per cast member:
+  `src/frontend/vn/sprite-stage.ts:187-204`; the single image
+  `src/frontend/vn/portrait-manager.ts:79-86`
+- The chat surface's single `<img class="avatar">`:
+  `src/components/chat/message-list.html:117-126`; the VN surface's roster
+  asset `src/frontend/vn/sprite-stage.ts:200-201`
+- The epic's rule (JSON tag member first, authoritative column later):
+  `.plan/epics/epic-reactive-actor-appearance.md:151-153`
+- The epic's deferral precedent:
+  `.plan/epics/epic-reactive-actor-appearance.md:277-280`
+  (`TASK-avatar-framing-column-migration-future.md`)
+- The companion framing-axis ticket (a different axis):
+  `TASK-avatar-framing-tag-member.md`
+- The existing tag-scoring loop a new member plugs into:
+  `src/characters/services/avatar-service/selection.ts:225-232`;
+  the tag lists at `:15` and `:18`
+- The wardrobe ladder whose rung order is unchanged:
+  `src/characters/services/wardrobe/selection-ladder.ts:9-17`

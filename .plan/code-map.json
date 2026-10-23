@@ -1236,6 +1236,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
     },
     {
@@ -1897,6 +1901,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     },
     {
       "kind": "ticket",
@@ -7574,6 +7582,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-render-target-discriminator.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-domain-residual-defects.md"
     },
     {
@@ -8087,12 +8099,6 @@
       "source": ".plan/tickets/TASK-outfit-change-multi-actor-name-resolution.md"
     }
   ],
-  "src/characters/services/wardrobe/change-gate.test.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    }
-  ],
   "src/characters/services/wardrobe/change-gate.ts": [
     {
       "kind": "epic",
@@ -8145,6 +8151,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
     }
   ],
   "src/characters/services/wardrobe/resolve.ts": [
@@ -8162,6 +8172,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
     }
   ],
@@ -8172,17 +8190,29 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-render-target-discriminator.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-avatar-resolver-outfit-aware.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
     }
   ],
   "src/characters/services/wardrobe/types.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
     },
     {
       "kind": "ticket",
@@ -10637,6 +10667,10 @@
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     },
@@ -11187,6 +11221,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-giwt-ledger-export.md"
+    }
+  ],
+  "src/commands/plan/sync-docs.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
     }
   ],
   "src/commands/rebase.ts": [
@@ -11959,6 +11999,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-avatar-framing-tag-member.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-render-target-discriminator.md"
     },
     {
       "kind": "ticket",
@@ -14429,6 +14473,16 @@
       "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
     }
   ],
+  "src/cron/dag/engine.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    }
+  ],
   "src/cron/jobs.test.ts": [
     {
       "kind": "ticket",
@@ -15787,10 +15841,6 @@
   ],
   "src/db/070_messages_outfit_id.test.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
     }
@@ -15979,6 +16029,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-avatar-pose-via-action-tag.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-render-target-discriminator.md"
     },
     {
       "kind": "ticket",
@@ -16182,6 +16236,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-render-target-discriminator.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
     },
     {
@@ -16375,10 +16433,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comic-page-composition-strategy.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
     },
     {
       "kind": "ticket",
@@ -16672,6 +16726,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-map-battle-equipment.md"
     },
     {
@@ -16905,6 +16963,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     },
     {
       "kind": "ticket",
@@ -17880,6 +17942,10 @@
   "src/db/migrations/031_wardrobe.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
     }
   ],
@@ -18115,6 +18181,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
+    }
+  ],
+  "src/db/migrations/070_messages_outfit_id.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
     }
   ],
   "src/db/migrations/076_drop_chats_visual_novel.ts": [
@@ -18367,6 +18447,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-db-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
     },
     {
       "kind": "ticket",
@@ -19152,6 +19236,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-art-quality-gates.md"
     },
     {
@@ -19411,6 +19499,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
     },
     {
       "kind": "ticket",
@@ -20574,6 +20666,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-asyncstore-fail-dead-code.md"
     },
     {
@@ -21494,6 +21590,10 @@
     }
   ],
   "src/frontend": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio.md"
@@ -23319,6 +23419,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-builder-track-a-alpine-preset-chain-form.md"
+    }
+  ],
+  "src/frontend/alpine/comfyui-builder/form.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
     }
   ],
   "src/frontend/alpine/comfyui-builder/types.ts": [
@@ -26906,6 +27016,14 @@
   "src/frontend/vn/portrait-manager.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-render-target-discriminator.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     },
     {
@@ -27079,10 +27197,6 @@
       "source": ".plan/epics/epic-narrative-publishing-workflows.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
     },
@@ -27105,6 +27219,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ground-up-scene-generation-with-background.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
     },
     {
       "kind": "ticket",
@@ -28407,6 +28525,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-regex-transform-runs-at-store-time-not-render-time.md"
+    }
+  ],
+  "src/generation/builder/chain-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    }
+  ],
+  "src/generation/builder/run-job.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     }
   ],
   "src/generation/cancellation-actions.test.ts": [
@@ -29931,6 +30061,10 @@
   ],
   "src/generation/matting/comfy-provider.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     },
@@ -29997,6 +30131,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-derived-map-origin-links.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
     },
     {
       "kind": "ticket",
@@ -30403,10 +30541,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
     },
     {
       "kind": "epic",
@@ -31049,6 +31183,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
     }
   ],
   "src/generation/template-types.ts": [
@@ -31213,23 +31351,65 @@
   ],
   "src/generation/workflow-library/hydrate.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-unresolved-placeholders.md"
     }
   ],
   "src/generation/workflow-library/row.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-unresolved-placeholders.md"
     }
   ],
+  "src/generation/workflow-library/seed-hydrate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    }
+  ],
   "src/generation/workflow-library/seed.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-unresolved-placeholders.md"
     }
   ],
   "src/generation/workflow-library/validate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md"
@@ -31293,6 +31473,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
     },
     {
       "kind": "ticket",
@@ -31766,6 +31950,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-new-test-files-for-cross-file-process-collisions-befor.md"
     },
     {
@@ -31840,6 +32028,10 @@
   "src/image-edit/providers/sd-server-provider/ops.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-provider-and-template-capabilities-disagree.md"
     },
     {
@@ -31880,7 +32072,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-run-crashes-on-missing-params-and-the-template-re.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
     },
     {
       "kind": "ticket",
@@ -31966,6 +32166,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-image-edit-concept-inpaint-template.md"
     },
     {
@@ -32010,6 +32214,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-background.md"
     },
     {
@@ -32039,6 +32247,10 @@
   ],
   "src/image-edit/templates/builtin/_helpers.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     },
@@ -32051,6 +32263,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-derived-map-generation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     }
   ],
   "src/image-edit/templates/builtin/img2img.ts": [
@@ -32064,6 +32280,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md"
     }
   ],
@@ -32071,6 +32291,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     },
     {
       "kind": "ticket",
@@ -32124,6 +32348,10 @@
   "src/image-edit/templates/builtin/upscale.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-provider-and-template-capabilities-disagree.md"
     }
   ],
@@ -32131,6 +32359,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     },
     {
       "kind": "ticket",
@@ -36812,6 +37044,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     },
     {
@@ -38062,6 +38298,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-inventory-frontend.md"
     },
     {
@@ -38215,6 +38455,56 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-disable-or-hide-characters-from-the-db.md"
+    }
+  ],
+  "src/routes/admin-comfyui-workflows/create.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    }
+  ],
+  "src/routes/admin-comfyui-workflows/list.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    }
+  ],
+  "src/routes/admin-comfyui-workflows/payload.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    }
+  ],
+  "src/routes/admin-comfyui-workflows/remove.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    }
+  ],
+  "src/routes/admin-comfyui-workflows/rows.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    }
+  ],
+  "src/routes/admin-comfyui-workflows/shared.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    }
+  ],
+  "src/routes/admin-comfyui-workflows/update.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
     }
   ],
   "src/routes/admin-nsfw.test.ts": [
@@ -44492,6 +44782,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-client-contract-doc.md"
     },
     {
@@ -44731,6 +45025,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     },
     {
       "kind": "ticket",
@@ -46457,6 +46755,10 @@
       "source": ".plan/epics/epic-crafting-professions.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
@@ -46475,6 +46777,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-uses-shared-sync-connection-causing-database-is-loc.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
     },
     {
       "kind": "ticket",
@@ -48583,12 +48889,20 @@
   ],
   "src/rpg/service/battles/items.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-usebattleitem-consumes-inventory-and-persists-battle-outside.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
     },
     {
       "kind": "ticket",
@@ -50030,6 +50344,10 @@
   "src/search/providers/messages.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-019-users-encryption-secret.md"
     }
   ],
@@ -50283,6 +50601,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-mjs-reconciliation.md"
+    }
+  ],
+  "src/server/boot-seed.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
     }
   ],
   "src/server/handler.ts": [
@@ -50881,10 +51205,6 @@
       "source": ".plan/epics/epic-inventory.md"
     },
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-equip-binds-outfit-write-side.md"
     },
@@ -50895,6 +51215,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-held-item-whole-outfit-variant-axis.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
     }
   ],
   "src/services/actor-items/transfer.ts": [
@@ -50907,8 +51231,16 @@
       "source": ".plan/epics/epic-inventory.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-items-crud-ownership.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-held-item-axis-data-model.md"
     },
     {
       "kind": "ticket",
@@ -52466,6 +52798,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-test-failures.md"
     }
   ],
@@ -52615,6 +52955,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bun-test-isolate-silently-skips-every-describeorskip-suite.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     }
   ],
   "src/test-utils/mock-provider.ts": [
@@ -54783,6 +55127,12 @@
       "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
+  "src/validation/schemas/comfyui-builder.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    }
+  ],
   "src/validation/schemas/emotion-avatars.ts": [
     {
       "kind": "epic",
@@ -54812,6 +55162,10 @@
     }
   ],
   "src/validation/schemas/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merges-routes-and-typebox-schemas.md"
