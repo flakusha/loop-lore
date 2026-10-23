@@ -130,4 +130,4 @@ the item-side initiator that routes through the existing change-gate seam.
 - The per-message snapshot column: `src/db/schema-core.ts:817`;
   `src/db/migrations/070_messages_outfit_id.ts:12-17`
 
-**Resolved:** 2026-10-23 registry-driven close: git issue 0039f2b (registry tip: 021f1f0c6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ITEM-SIDE-OUTFIT-CHANGE-TRI)
+**Resolved:** 2026-10-23 - implemented on dev as 3e5ec9512 (feat: item-side outfit change trigger (unequip/transfer/row-delete)): new initiator `OutfitChangeInitiator.Item` plus `triggerItemOutfitChange` seam wired into equip/unequip/transfer/crafting/battles; 222 tests pass, typecheck clean.
