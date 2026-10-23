@@ -9514,7 +9514,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md",
       "title": "Workflow library img2img row has no parameters",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/commands/plan/sync-docs.ts",
         "src/cron/dag/engine.test.ts",
