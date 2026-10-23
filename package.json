@@ -57,7 +57,7 @@
     "test:e2e:browser": "E2E_SAFEGUARD=1 bun run scripts/run-browser-tests.ts",
     "test:e2e:smoke": "E2E_SAFEGUARD=1 bun test ./tests/e2e/flows/browser/smoke.browser.ts",
     "test:all": "bun run build:frontend && E2E_SAFEGUARD=1 bun test && E2E_SAFEGUARD=1 bun run test:e2e:browser",
-    "test:coverage": "E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS:-4} tests/e2e/ src/ --coverage --isolate --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage",
+    "test:coverage": "E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS:-4} tests/e2e/ src/ plugins/ --coverage --isolate --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage",
     "test:gaps": "bun run scripts/check/test-gaps.mjs",
     "test:gaps:update": "bun run scripts/check/test-gaps.mjs --write-baseline",
 
