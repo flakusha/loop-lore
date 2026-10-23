@@ -39,3 +39,5 @@ become REQUIRED at the chat-content entry point — enforced by the call site's
 type, not by inverting this condition. Inverting `content.chatId !== undefined`
 would break the deliberate non-chat blob path exercised by
 `src/federation/sharing.test.ts:555` and `src/federation/clearance.test.ts:177`.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 142027d (registry tip: 2599037e1 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-FAN-OUT-CONTENT-CLEARANCE-GA)
