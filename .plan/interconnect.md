@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3613
-- epics: 345
+- tickets: 3621
+- epics: 346
 - src paths owned: 4368
-- edges: produces 11344, consumes 402, sibling 33478, owns 2637, related 1191
+- edges: produces 11371, consumes 402, sibling 33727, owns 2644, related 1191
 
 ## Shared src hubs
 
@@ -59,39 +59,39 @@ output is byte-identical for identical inputs.
 | `src/app/register-plugins.ts` | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it`, `BUG-bug-async-result-store-track-never-called-request-results-pi`, `BUG-dual-vn-choices-route-registration-shadows-guarded-route`, `BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop`, `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und`, `BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori`, `BUG-register-plugins-150-references-undefined-chatsectionsroutes`, `BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m`, `FEAT-memory-visualizer-knowledge-graph-over-asset-links`, `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-crafting-stations-execution`, `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag`, `TASK-lora-discovery-application`, `TASK-middleware-global-idempotency-replay-for-re-fired-requests`, `TASK-middleware-idempotency-wire-into-elysia`, `TASK-middleware-in-progress-status-endpoint-for-long-running-requ`, `TASK-skills-routes`, `TASK-story-points-prototype`, `epic-agency-story-points`, `epic-character-growth`, `epic-db-cold-storage-high-perf`, `epic-e2e-integration-testing`, `epic-effect-v4-adoption-evaluation`, `epic-file-splitting` |
 | `src/assets/alpha-detect.ts` | `TASK-assets-has-alpha-column-and-store-computation`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `epic-avatar-alpha-vn-layering` |
 | `src/assets/controller.routes.test.ts` | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par`, `TASK-assistant-entity-access-asset-access`, `TASK-guest-asset-public-reads-open-public-asset-access` |
-| `src/assets/controller.ts` | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return`, `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su`, `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-`, `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades`, `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par`, `BUG-assets-delete-fk-constraint-fails`, `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-`, `FEAT-background`, `TASK-comfyui-first-class-admin-workflows`, `TASK-comfyui-first-class-workflow-library`, `TASK-dedup-top-jscpd-clone-clusters`, `TASK-egui-gallery-surface-grid-filters-thumbnails-upload`, `TASK-encryption-asset-encryption`, `TASK-gallery-fuzzy-search-pagination`, `TASK-guest-asset-public-reads-open-public-asset-access`, `TASK-image-edit-concept-inpaint-template`, `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep`, `TASK-review-thread-target-vocabulary`, `epic-aux-enrichment-pipeline`, `epic-comfyui-first-class-citizen`, `epic-frontend-gallery` |
+| `src/assets/controller.ts` | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return`, `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su`, `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-`, `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades`, `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par`, `BUG-assets-delete-fk-constraint-fails`, `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte`, `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-`, `FEAT-background`, `TASK-comfyui-first-class-admin-workflows`, `TASK-comfyui-first-class-workflow-library`, `TASK-dedup-top-jscpd-clone-clusters`, `TASK-egui-gallery-surface-grid-filters-thumbnails-upload`, `TASK-encryption-asset-encryption`, `TASK-gallery-fuzzy-search-pagination`, `TASK-guest-asset-public-reads-open-public-asset-access`, `TASK-image-edit-concept-inpaint-template`, `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep`, `TASK-review-thread-target-vocabulary`, `TASK-webp-as-a-first-class-stored-asset-format`, `epic-aux-enrichment-pipeline`, `epic-comfyui-first-class-citizen`, `epic-frontend-gallery` |
 | `src/assets/controller/handlers.ts` | `BUG-asset-link-share-handlers-and-gallery-grid-param-lack-valida`, `BUG-assets-delete-fk-constraint-fails`, `BUG-size-strict-pre-existing-dev-drift` |
 | `src/assets/controller/serve.ts` | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte`, `BUG-size-strict-pre-existing-dev-drift` |
 | `src/assets/controller/signed-url.ts` | `BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f`, `TASK-signed-urls-for-asset-downloads` |
 | `src/assets/matting-routes.ts` | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-derived-map-origin-links`, `epic-avatar-alpha-vn-layering`, `epic-derived-map-generation` |
 | `src/assets/metadata.test.ts` | `BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22`, `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes`, `BUG-asset-webp-vp8x-dimension-truncation` |
-| `src/assets/metadata.ts` | `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes`, `BUG-asset-webp-vp8x-dimension-truncation`, `BUG-size-strict-pre-existing-dev-drift`, `TASK-asset-b1-rendition-pipeline`, `TASK-assets-has-alpha-column-and-store-computation`, `TASK-comparison-cell-detail-metadata`, `TASK-multimodal-asset-reuse`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `epic-technical-comparison-charts` |
+| `src/assets/metadata.ts` | `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes`, `BUG-asset-webp-vp8x-dimension-truncation`, `BUG-size-strict-pre-existing-dev-drift`, `TASK-asset-b1-rendition-pipeline`, `TASK-assets-has-alpha-column-and-store-computation`, `TASK-comparison-cell-detail-metadata`, `TASK-multimodal-asset-reuse`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `TASK-webp-as-a-first-class-stored-asset-format`, `epic-technical-comparison-charts` |
 | `src/assets/model-preview.ts` | `TASK-3d-gltf-assets`, `TASK-asset-3d-models` |
 | `src/assets/model-validator.ts` | `TASK-3d-gltf-assets`, `TASK-asset-3d-models` |
 | `src/assets/serve-file.ts` | `BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-`, `TASK-publication-export-formats`, `TASK-vector-gen-svg-serve-safety` |
 | `src/assets/serve-handlers.coverage.test.ts` | `BUG-test-async-store-offload-dir-fixed-path-race`, `TASK-async-store-tests-per-test-tmpdir` |
-| `src/assets/serve-handlers.ts` | `BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-guest-asset-public-reads-open-public-asset-access` |
-| `src/assets/serve-raw.ts` | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-frontend-and-http-utils-type-safety-batch`, `TASK-thumbnail-generation-256px-webp-at-upload`, `epic-encryption-workflow` |
+| `src/assets/serve-handlers.ts` | `BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-`, `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte`, `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-guest-asset-public-reads-open-public-asset-access` |
+| `src/assets/serve-raw.ts` | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-asset-download-format-conversion-webp-png-jpg`, `TASK-frontend-and-http-utils-type-safety-batch`, `TASK-thumbnail-generation-256px-webp-at-upload`, `epic-encryption-workflow` |
 | `src/assets/service` | `TASK-video-gen-route`, `epic-comfyui-plugin` |
 | `src/assets/service.ts` | `FEAT-seed-default-characters-avatar`, `TASK-character-avatar-gallery-binding`, `TASK-character-multi-avatar`, `TASK-config-gallery-attachment-idempotent`, `TASK-emotions-avatar-edit-model`, `TASK-encryption-asset-encryption`, `TASK-encryption-asset-encryption-update`, `TASK-world-location-encryption`, `epic-file-splitting` |
 | `src/assets/service/alpha-status.ts` | `FEAT-background`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` |
 | `src/assets/service/create-dedup-race.test.ts` | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return`, `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` |
-| `src/assets/service/create.ts` | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-`, `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return`, `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with`, `BUG-emotion-avatar-fallback-metadata-incomplete`, `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `TASK-asset-b1-blake3-content-store`, `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files`, `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-`, `TASK-assets-has-alpha-column-and-store-computation`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-comparison-fan-out-engine`, `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps`, `TASK-middleware-content-assets-gallery-hashing-validation`, `TASK-middleware-fe-be-db-record-content-hashing`, `TASK-publication-artifact-schema`, `TASK-reference-set-entity`, `epic-2d-sprite-world`, `epic-content-hashing-distributed-integrity`, `epic-encryption-workflow`, `epic-narrative-publishing-workflows` |
-| `src/assets/service/delete.ts` | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact`, `BUG-assets-delete-fk-constraint-fails`, `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty`, `FEAT-background`, `TASK-asset-b1-blake3-content-store`, `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-`, `TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play`, `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` |
-| `src/assets/service/detect.ts` | `TASK-markdown-derive-other-formats`, `epic-narrative-publishing-workflows` |
+| `src/assets/service/create.ts` | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-`, `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return`, `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with`, `BUG-emotion-avatar-fallback-metadata-incomplete`, `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext`, `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `TASK-asset-b1-blake3-content-store`, `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files`, `TASK-asset-download-format-conversion-webp-png-jpg`, `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-`, `TASK-assets-has-alpha-column-and-store-computation`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-comparison-fan-out-engine`, `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps`, `TASK-middleware-content-assets-gallery-hashing-validation`, `TASK-middleware-fe-be-db-record-content-hashing`, `TASK-publication-artifact-schema`, `TASK-reference-set-entity`, `TASK-webp-as-a-first-class-stored-asset-format`, `epic-2d-sprite-world`, `epic-content-hashing-distributed-integrity`, `epic-encryption-workflow`, `epic-narrative-publishing-workflows` |
+| `src/assets/service/delete.ts` | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact`, `BUG-assets-delete-fk-constraint-fails`, `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext`, `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty`, `FEAT-background`, `TASK-asset-b1-blake3-content-store`, `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-`, `TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play`, `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` |
+| `src/assets/service/detect.ts` | `TASK-markdown-derive-other-formats`, `TASK-webp-as-a-first-class-stored-asset-format`, `epic-narrative-publishing-workflows` |
 | `src/assets/service/file-system.test.ts` | `TASK-cross-platform-filesystem-path-guard`, `TASK-federation-storage-quota-accounting`, `epic-configs-path-resolution`, `epic-cross-platform-portability` |
-| `src/assets/service/file-system.ts` | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-`, `TASK-asset-b1-blake3-content-store`, `TASK-cross-platform-filesystem-path-guard`, `TASK-cross-platform-portability`, `epic-configs-path-resolution`, `epic-cross-platform-portability` |
+| `src/assets/service/file-system.ts` | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-`, `TASK-asset-b1-blake3-content-store`, `TASK-cross-platform-filesystem-path-guard`, `TASK-cross-platform-portability`, `TASK-webp-as-a-first-class-stored-asset-format`, `epic-configs-path-resolution`, `epic-cross-platform-portability` |
 | `src/assets/service/links.ts` | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-comparison-cell-detail-metadata`, `TASK-comparison-gallery-comparison-set-integration`, `TASK-comparison-set-variant-data-model`, `TASK-item-asset-avatar-display-in-inventory-trading-and-provision`, `TASK-publication-artifact-schema`, `TASK-reference-set-entity`, `epic-narrative-publishing-workflows`, `epic-technical-comparison-charts` |
-| `src/assets/service/persist-generated.ts` | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `TASK-asset-provenance-ledger-for-generated-assets`, `TASK-comparison-fan-out-engine`, `TASK-vector-gen-animated-raster`, `TASK-vector-gen-llm-svg-pipeline`, `epic-technical-comparison-charts`, `epic-vector-graphics-generation` |
+| `src/assets/service/persist-generated.ts` | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `TASK-asset-provenance-ledger-for-generated-assets`, `TASK-avatar-dogfood-assistant-generation`, `TASK-comparison-fan-out-engine`, `TASK-vector-gen-animated-raster`, `TASK-vector-gen-llm-svg-pipeline`, `epic-avatar-dogfood`, `epic-technical-comparison-charts`, `epic-vector-graphics-generation` |
 | `src/assets/service/read.test.ts` | `TASK-guest-asset-public-reads-open-public-asset-access`, `epic-encryption-workflow` |
 | `src/assets/service/read.ts` | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact`, `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-`, `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-`, `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-listassets-treats-shared-visibility-as-world-readable`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-comparison-comparability-validation`, `TASK-guest-asset-public-reads-open-public-asset-access`, `epic-encryption-workflow`, `epic-guest-access` |
 | `src/assets/service/sanitize-svg.ts` | `TASK-comparison-chart-export-png-svg-csv`, `TASK-vector-gen-svg-serve-safety`, `epic-technical-comparison-charts` |
 | `src/assets/service/tag-propositions.ts` | `TASK-gallery-user-tagging-propositions`, `TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta`, `epic-asset-platform-capabilities` |
-| `src/assets/service/thumbnail.ts` | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `TASK-asset-b1-rendition-pipeline`, `TASK-preview-dispatch-for-non-image-asset-types`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `TASK-thumbnail-generation-256px-webp-at-upload` |
+| `src/assets/service/thumbnail.ts` | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext`, `TASK-asset-b1-rendition-pipeline`, `TASK-asset-download-format-conversion-webp-png-jpg`, `TASK-preview-dispatch-for-non-image-asset-types`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `TASK-thumbnail-generation-256px-webp-at-upload`, `TASK-webp-as-a-first-class-stored-asset-format`, `epic-avatar-dogfood` |
 | `src/assets/service/transforms.ts` | `BUG-assets-delete-fk-constraint-fails`, `epic-asset-transform-metadata` |
 | `src/assets/service/validate.ts` | `TASK-comparison-chart-export-png-svg-csv`, `TASK-licensing-asset-license-columns-migration`, `TASK-licensing-publish-enforcement-point`, `TASK-markdown-derive-other-formats`, `TASK-vector-gen-animated-raster`, `TASK-vector-gen-llm-svg-pipeline`, `epic-narrative-publishing-workflows`, `epic-technical-comparison-charts`, `epic-vector-graphics-generation` |
 | `src/assets/signed-url.ts` | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `FEAT-background`, `TASK-frontend-and-http-utils-type-safety-batch`, `TASK-guest-asset-public-reads-open-public-asset-access`, `TASK-publication-export-formats`, `TASK-publication-viewer-read-mode`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-guest-access`, `epic-implementation`, `epic-logging` |
-| `src/assets/variant-path.ts` | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-asset-b1-rendition-pipeline`, `TASK-c1-moderation-action-notices-with-actor-thumb` |
+| `src/assets/variant-path.ts` | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-asset-b1-rendition-pipeline`, `TASK-c1-moderation-action-notices-with-actor-thumb`, `TASK-webp-as-a-first-class-stored-asset-format` |
 | `src/assistant` | `TASK-harness-eval-harness`, `TASK-harness-tool-sandbox`, `TASK-odysseus-manage-tool-parity-evaluation`, `TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex`, `epic-platform-research` |
 | `src/assistant/adapter/access.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-schema` |
 | `src/assistant/adapter/adapt.ts` | `TASK-assistant-entity-access-adaptation`, `TASK-assistant-entity-access-schema` |
@@ -278,8 +278,8 @@ output is byte-identical for identical inputs.
 | `src/characters/resolver.ts` | `TASK-character-multi-personality`, `TASK-character-personality-integrity`, `TASK-character-world-data-separation`, `TASK-mood-core` |
 | `src/characters/seed.test.ts` | `FEAT-seed-default-characters-avatar`, `FEAT-seed-default-characters-identity` |
 | `src/characters/seed.ts` | `FEAT-character-spec-inclusion-race-origin-culture`, `FEAT-seed-default-characters-avatar`, `FEAT-seed-default-characters-identity`, `TASK-character-template-seeding`, `epic-character-core-system` |
-| `src/characters/seed/avatar.ts` | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat`, `TASK-character-domain-residual-defects`, `TASK-npc-character-edit-stack-parity` |
-| `src/characters/seed/templates.ts` | `BUG-character-seed-dedupes-on-display-name`, `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat`, `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `FEAT-expand-character-templates-to-canonical-fields`, `FEAT-seed-character-loadouts-into-the-wardrobe-bridge`, `TASK-char-template-full-model-coverage`, `TASK-character-config-skills-professions`, `TASK-item-config-templates`, `TASK-lorebook-template-seeding`, `TASK-scenario-system-authoring`, `epic-skills-professions-config` |
+| `src/characters/seed/avatar.ts` | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat`, `TASK-character-domain-residual-defects`, `TASK-npc-character-edit-stack-parity`, `epic-avatar-dogfood` |
+| `src/characters/seed/templates.ts` | `BUG-character-seed-dedupes-on-display-name`, `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat`, `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `FEAT-expand-character-templates-to-canonical-fields`, `FEAT-seed-character-loadouts-into-the-wardrobe-bridge`, `TASK-char-template-full-model-coverage`, `TASK-character-config-skills-professions`, `TASK-item-config-templates`, `TASK-lorebook-template-seeding`, `TASK-scenario-system-authoring`, `epic-avatar-dogfood`, `epic-skills-professions-config` |
 | `src/characters/service/approval.ts` | `FEAT-disable-or-hide-characters-from-the-db`, `epic-character-spec` |
 | `src/characters/services/avatar-service.ts` | `FEAT-seed-default-characters-avatar`, `TASK-aux-emotion-avatar`, `TASK-character-avatar-gallery-binding`, `TASK-emotion-avatar-message-binding` |
 | `src/characters/services/avatar-service/config.ts` | `BUG-avatar-select-fallback-chain-unwired`, `TASK-avatar-framing-tag-member`, `TASK-avatar-pose-via-action-tag` |
@@ -494,7 +494,7 @@ output is byte-identical for identical inputs.
 | `src/config/sections/autonomy.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `epic-research-agency-decision` |
 | `src/config/sections/byo-key.ts` | `TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations`, `epic-byok-api-keys` |
 | `src/config/sections/characters.ts` | `FEAT-seed-default-characters-avatar`, `FEAT-seed-default-characters-identity`, `TASK-character-template-seeding`, `epic-character-core-system` |
-| `src/config/sections/characters/defaults.ts` | `BUG-character-seed-dedupes-on-display-name`, `BUG-config-schema-emitter-missing-top-level-sections`, `TASK-character-config-skills-professions`, `epic-skills-professions-config` |
+| `src/config/sections/characters/defaults.ts` | `BUG-character-seed-dedupes-on-display-name`, `BUG-config-schema-emitter-missing-top-level-sections`, `TASK-avatar-dogfood-promote-defaults`, `TASK-character-config-skills-professions`, `epic-avatar-dogfood`, `epic-skills-professions-config` |
 | `src/config/sections/characters/types.ts` | `BUG-config-schema-emitter-missing-top-level-sections`, `FEAT-expand-character-templates-to-canonical-fields`, `TASK-char-template-full-model-coverage`, `TASK-character-config-skills-professions`, `TASK-lorebook-template-seeding`, `TASK-scenario-system-authoring`, `epic-skills-professions-config` |
 | `src/config/sections/cron.ts` | `TASK-cron-registry-core`, `epic-cron-scheduler` |
 | `src/config/sections/database.ts` | `TASK-allow-data-dir-to-be-overridden-by-env-var`, `TASK-data-integrity-phase1`, `epic-data-integrity-acid`, `epic-data-integrity-phase1`, `epic-multi-instance-reconciliation` |
@@ -573,7 +573,7 @@ output is byte-identical for identical inputs.
 | `src/db/enums-character/content.ts` | `TASK-030`, `TASK-licensing-asset-license-columns-migration` |
 | `src/db/enums-character/nsfw.ts` | `TASK-033`, `TASK-034`, `TASK-035`, `TASK-036`, `TASK-037`, `TASK-038`, `TASK-039`, `TASK-040`, `TASK-041`, `TASK-042`, `TASK-043`, `TASK-add-heatphase-state-machine-for-character-heat-cycle-current`, `TASK-add-missing-rpg-module-barrels`, `TASK-add-nsfwencounterstatus-state-machine-for-nsfw-encounters-st`, `TASK-nsfw-encounter-system`, `TASK-nsfw-fantasy-kink`, `TASK-nsfw-intimacy-system`, `TASK-nsfw-location-environment`, `TASK-nsfw-pheromones-chemistry`, `TASK-nsfw-seduction-desire`, `TASK-nsfw-skills-experience`, `TASK-nsfw-species-mechanics`, `TASK-specify-content-warnings-write-the-frontend-contract`, `epic-nsfw-game-mechanics`, `epic-nsfw-integration-gaps` |
 | `src/db/enums-config.ts` | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-logging-telemetry` |
-| `src/db/enums-content.ts` | `FEAT-background`, `TASK-assets-has-alpha-column-and-store-computation`, `TASK-avatar-framing-column-migration-future`, `TASK-avatar-framing-tag-member`, `TASK-avatar-render-target-discriminator`, `TASK-character-avatar-gallery-binding`, `TASK-comparison-cell-detail-metadata`, `TASK-comparison-gallery-comparison-set-integration`, `TASK-comparison-workflow-template-and-command`, `TASK-item-asset-avatar-display-in-inventory-trading-and-provision`, `TASK-publication-artifact-schema`, `TASK-reference-set-entity`, `TASK-review-thread-target-vocabulary`, `TASK-vector-gen-gallery-asset-support`, `TASK-video-gen-route`, `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images`, `epic-3d-generation`, `epic-audio-video-sound`, `epic-editorial-workflow`, `epic-narrative-publishing-workflows`, `epic-technical-comparison-charts`, `epic-tts-foundation`, `epic-vector-graphics-generation`, `epic-video-generation` |
+| `src/db/enums-content.ts` | `FEAT-background`, `TASK-asset-download-format-conversion-webp-png-jpg`, `TASK-assets-has-alpha-column-and-store-computation`, `TASK-avatar-framing-column-migration-future`, `TASK-avatar-framing-tag-member`, `TASK-avatar-render-target-discriminator`, `TASK-character-avatar-gallery-binding`, `TASK-comparison-cell-detail-metadata`, `TASK-comparison-gallery-comparison-set-integration`, `TASK-comparison-workflow-template-and-command`, `TASK-item-asset-avatar-display-in-inventory-trading-and-provision`, `TASK-publication-artifact-schema`, `TASK-reference-set-entity`, `TASK-review-thread-target-vocabulary`, `TASK-vector-gen-gallery-asset-support`, `TASK-video-gen-route`, `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images`, `epic-3d-generation`, `epic-audio-video-sound`, `epic-editorial-workflow`, `epic-narrative-publishing-workflows`, `epic-technical-comparison-charts`, `epic-tts-foundation`, `epic-vector-graphics-generation`, `epic-video-generation` |
 | `src/db/enums-core/chat.ts` | `BUG-visualnovel-type-mismatch-across-api-db-layers`, `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings` |
 | `src/db/enums-core/flags.ts` | `BUG-bug-message-seen-post-accepts-arbitrary-state-string-enum-ne`, `BUG-encryption-tier-not-enforced`, `BUG-private-tier-no-true-e2e`, `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-`, `TASK-admin-assistant-tooling-allowlist`, `TASK-book-unit-editor-review-surface`, `TASK-comic-page-composition-strategy`, `TASK-markdown-canonical-intermediate-contract`, `TASK-message-seen-state-schema`, `TASK-moderation-privacy-first-foundation`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-outfit-narrative-extractor-regex-prefilter`, `TASK-publication-artifact-schema`, `TASK-publication-translation-batch-cron`, `TASK-rag-decomposition-index-pipeline`, `TASK-unify-item-types`, `epic-crypto`, `epic-inventory`, `epic-item-systems-unification`, `epic-message-seen-state`, `epic-narrative-publishing-workflows`, `epic-output-control-transforms`, `epic-publication-i18n`, `epic-rag-assets-unified-storage-and-assistant-flows` |
 | `src/db/enums-core/messages.ts` | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `BUG-tool-call-result-no-frontend-rendering`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-adopt-state-machine-framework-in-runtime-status-writes`, `TASK-gate-shadow-notes-status-x-visibility-composite`, `TASK-markdown-canonical-intermediate-contract`, `TASK-property-test-the-status-machines-and-composite-validators`, `TASK-sc-scene-starved-narrator-absent-coverage-signal-scene-cover`, `TASK-sc2-narrator-mode-kind-stamp`, `epic-narrative-publishing-workflows` |
@@ -1807,7 +1807,7 @@ output is byte-identical for identical inputs.
 | `src/telemetry/service.ts` | `BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids`, `BUG-telemetry-errors-leaks-raw-event-data`, `BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids`, `FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha`, `TASK-harness-cache-budgets`, `TASK-harness-stats-dashboard`, `TASK-notification-and-telemetry-service-nits`, `TASK-scheduler-load-soak-bench-queued-llm-traffic` |
 | `src/test-utils/create-test-db.ts` | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-fix-test-failures` |
 | `src/test-utils/factories.ts` | `TASK-test-factories`, `epic-testing-qa` |
-| `src/test-utils/insert-helpers.ts` | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys`, `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o`, `FEAT-character-world-setup`, `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel`, `TASK-actors-child-tables-crud`, `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-consolidate-quest-engines`, `TASK-coverage-waivers-for-3-modules-below-80-floor`, `TASK-e2ee-receiver-wiring`, `TASK-federation-peer-registry-workload-columns`, `TASK-message-seen-state-schema`, `TASK-messages-outfit-id-column`, `TASK-middleware-migration-compaction-data-version-hash`, `TASK-reconcile-achievement-unlock-sources`, `TASK-resource-provision-schema`, `TASK-wire-achievements-routes`, `TASK-wire-combat-routes`, `TASK-wire-npc-navigation-routes`, `TASK-wire-quests-routes`, `TASK-wire-replayability-routes`, `TASK-wire-skills-routes`, `TASK-wire-world-location-traits-routes`, `TASK-wire-xp-loot-routes`, `TASK-world-requires-stats-flag-and-point-budget-config`, `epic-byok-api-keys`, `epic-character-growth`, `epic-character-world-setup`, `epic-comfyui-first-class-citizen`, `epic-crafting-professions` |
+| `src/test-utils/insert-helpers.ts` | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys`, `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o`, `FEAT-character-world-setup`, `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel`, `TASK-actors-child-tables-crud`, `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-avatar-dogfood-assistant-generation`, `TASK-consolidate-quest-engines`, `TASK-coverage-waivers-for-3-modules-below-80-floor`, `TASK-e2ee-receiver-wiring`, `TASK-federation-peer-registry-workload-columns`, `TASK-message-seen-state-schema`, `TASK-messages-outfit-id-column`, `TASK-middleware-migration-compaction-data-version-hash`, `TASK-reconcile-achievement-unlock-sources`, `TASK-resource-provision-schema`, `TASK-wire-achievements-routes`, `TASK-wire-combat-routes`, `TASK-wire-npc-navigation-routes`, `TASK-wire-quests-routes`, `TASK-wire-replayability-routes`, `TASK-wire-skills-routes`, `TASK-wire-world-location-traits-routes`, `TASK-wire-xp-loot-routes`, `TASK-world-requires-stats-flag-and-point-budget-config`, `epic-byok-api-keys`, `epic-character-growth`, `epic-character-world-setup`, `epic-comfyui-first-class-citizen`, `epic-crafting-professions` |
 | `src/test-utils/isolate-only.ts` | `BUG-bun-test-isolate-silently-skips-every-describeorskip-suite`, `BUG-image-edit-comfyui-provider-never-uploads-input-image` |
 | `src/test-utils/mock-provider.ts` | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server`, `TASK-scheduler-load-soak-bench-queued-llm-traffic`, `epic-e2e-integration-testing` |
 | `src/test-utils/schema-arbitrary.ts` | `TASK-property-test-the-db-schemas-insert-read-round-trip`, `TASK-property-test-the-status-machines-and-composite-validators`, `epic-fuzzing-infrastructure` |
@@ -2500,6 +2500,7 @@ output is byte-identical for identical inputs.
 | `epic-asset-platform-capabilities` | owns | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | - |
 | `epic-asset-platform-capabilities` | owns | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | - |
 | `epic-asset-platform-capabilities` | owns | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | - |
+| `epic-asset-platform-capabilities` | owns | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | - |
 | `epic-asset-platform-capabilities` | owns | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | - |
 | `epic-asset-platform-capabilities` | owns | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | - |
 | `epic-asset-platform-capabilities` | owns | `BUG-runtime-asset-compression-is-structurally-dead-needscompress` | - |
@@ -2507,6 +2508,7 @@ output is byte-identical for identical inputs.
 | `epic-asset-platform-capabilities` | owns | `TASK-asset-attribution-chain` | - |
 | `epic-asset-platform-capabilities` | owns | `TASK-asset-b1-blake3-content-store` | - |
 | `epic-asset-platform-capabilities` | owns | `TASK-asset-b1-rendition-pipeline` | - |
+| `epic-asset-platform-capabilities` | owns | `TASK-asset-download-format-conversion-webp-png-jpg` | - |
 | `epic-asset-platform-capabilities` | owns | `TASK-asset-platform-b1-content-foundation` | - |
 | `epic-asset-platform-capabilities` | owns | `TASK-asset-platform-b2-chat-upload-ux-patterns` | - |
 | `epic-asset-platform-capabilities` | owns | `TASK-asset-platform-b3-lifecycle-governance` | - |
@@ -2523,6 +2525,7 @@ output is byte-identical for identical inputs.
 | `epic-asset-platform-capabilities` | owns | `TASK-keep-vs-regenerate-grading-and-dedup-verdict-at-image-persis` | - |
 | `epic-asset-platform-capabilities` | owns | `TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta` | - |
 | `epic-asset-platform-capabilities` | owns | `TASK-preview-dispatch-for-non-image-asset-types` | - |
+| `epic-asset-platform-capabilities` | owns | `TASK-webp-as-a-first-class-stored-asset-format` | - |
 | `epic-asset-transform-metadata` | owns | `BUG-character-avatar-put-delete-idor-by-bare-avatarid` | - |
 | `epic-asset-transform-metadata` | owns | `TASK-alpine-cropper-component-and-integrations` | - |
 | `epic-asset-transform-metadata` | owns | `TASK-asset-transforms-migration-and-transformcontext-enum` | - |
@@ -2700,6 +2703,10 @@ output is byte-identical for identical inputs.
 | `epic-avatar-alpha-vn-layering` | owns | `TASK-vn-multi-character-sprite-ordering-and-positioning` | - |
 | `epic-avatar-alpha-vn-layering` | owns | `TASK-vn-sprite-center-face-anchor-setup-and-detection-for-generat` | - |
 | `epic-avatar-alpha-vn-layering` | owns | `TASK-vn-sprite-layer-compositing` | - |
+| `epic-avatar-dogfood` | owns | `TASK-avatar-dogfood-assistant-generation` | - |
+| `epic-avatar-dogfood` | owns | `TASK-avatar-dogfood-e2e-verify` | - |
+| `epic-avatar-dogfood` | owns | `TASK-avatar-dogfood-promote-defaults` | - |
+| `epic-avatar-dogfood` | owns | `TASK-avatar-dogfood-webp-export` | - |
 | `epic-avatar-regeneration-control` | owns | `BUG-rate-limit-misses-post-emotion-avatars-single` | - |
 | `epic-avatar-regeneration-control` | owns | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | - |
 | `epic-avatar-regeneration-control` | owns | `TASK-generation-seed-capture-and-override-per-avatar` | - |
@@ -5672,8 +5679,16 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | produces | `src/generation/hooks/emotion-hook.ts` | - |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | produces | `src/generation/hooks/mood-hook.ts` | - |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | produces | `src/generation/hooks/nsfw-hook.ts` | - |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/controller.ts` | - |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/controller/serve-policy.routes.test.ts` | - |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/controller/serve.ts` | - |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/serve-handlers.ts` | - |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/serve-raw.ts` | - |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | produces | `src/assets/serve-handlers.ts` | - |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | produces | `src/assets/service/create.ts` | - |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | produces | `src/assets/service/delete.ts` | - |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | produces | `src/assets/service/thumbnail.ts` | - |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | produces | `src/assets/variant-path.ts` | - |
 | `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en` | produces | `src/crypto/at-rest.ts` | - |
 | `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en` | produces | `src/crypto/pipeline.test.ts` | - |
 | `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en` | produces | `src/crypto/pipeline.ts` | - |
@@ -8323,6 +8338,10 @@ output is byte-identical for identical inputs.
 | `TASK-asset-b1-rendition-pipeline` | produces | `src/db/schema-content.ts` | - |
 | `TASK-asset-context-inclusion-budget-policy` | produces | `src/assistant/prompt-budget.ts` | - |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | produces | `src/assets/service/create.ts` | - |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | produces | `src/assets/serve-raw.ts` | - |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | produces | `src/assets/service/create.ts` | - |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | produces | `src/assets/service/thumbnail.ts` | - |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | produces | `src/db/enums-content.ts` | - |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | produces | `src/assets/service/create.ts` | - |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | produces | `src/assets/service/delete.ts` | - |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | produces | `src/characters/services/emotion-avatar-service/job-records.ts` | - |
@@ -8736,6 +8755,9 @@ output is byte-identical for identical inputs.
 | `TASK-aux-scene-context` | produces | `src/aux-pipeline/tasks/scene-context.ts` | - |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | produces | `src/frontend/alpine/actor-emotion-avatars.ts` | - |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | produces | `src/frontend/alpine/mood/avatars.ts` | - |
+| `TASK-avatar-dogfood-assistant-generation` | produces | `src/assets/service/persist-generated.ts` | - |
+| `TASK-avatar-dogfood-assistant-generation` | produces | `src/test-utils/insert-helpers.ts` | - |
+| `TASK-avatar-dogfood-promote-defaults` | produces | `src/config/sections/characters/defaults.ts` | - |
 | `TASK-avatar-framing-column-migration-future` | produces | `src/characters/services/avatar-service/selection.ts` | - |
 | `TASK-avatar-framing-column-migration-future` | produces | `src/db/enums-content.ts` | - |
 | `TASK-avatar-framing-column-migration-future` | produces | `src/db/migrations/064_vn_choice_selections.ts` | - |
@@ -13526,6 +13548,13 @@ output is byte-identical for identical inputs.
 | `TASK-wardrobe-story-gm-integration-outfit-change-events` | produces | `src/assistant/prompt/sections/emotion-avatar.ts` | - |
 | `TASK-weather-conditions-vitals-bridge` | produces | `src/rpg/combat/conditions.ts` | - |
 | `TASK-weather-conditions-vitals-bridge` | produces | `src/rpg/service/character-stats.ts` | - |
+| `TASK-webp-as-a-first-class-stored-asset-format` | produces | `src/assets/controller.ts` | - |
+| `TASK-webp-as-a-first-class-stored-asset-format` | produces | `src/assets/metadata.ts` | - |
+| `TASK-webp-as-a-first-class-stored-asset-format` | produces | `src/assets/service/create.ts` | - |
+| `TASK-webp-as-a-first-class-stored-asset-format` | produces | `src/assets/service/detect.ts` | - |
+| `TASK-webp-as-a-first-class-stored-asset-format` | produces | `src/assets/service/file-system.ts` | - |
+| `TASK-webp-as-a-first-class-stored-asset-format` | produces | `src/assets/service/thumbnail.ts` | - |
+| `TASK-webp-as-a-first-class-stored-asset-format` | produces | `src/assets/variant-path.ts` | - |
 | `TASK-widen-import-export-io-for-publications` | produces | `src/chat/export/formats.ts` | - |
 | `TASK-widen-import-export-io-for-publications` | produces | `src/components/modals/settings.html` | - |
 | `TASK-widen-import-export-io-for-publications` | produces | `src/routes/chat-export.ts` | - |
@@ -14083,6 +14112,11 @@ output is byte-identical for identical inputs.
 | `epic-aux-enrichment-pipeline` | produces | `src/routes/admin/aux-telemetry.test.ts` | - |
 | `epic-avatar-alpha-vn-layering` | produces | `src/assets/alpha-detect.ts` | - |
 | `epic-avatar-alpha-vn-layering` | produces | `src/assets/matting-routes.ts` | - |
+| `epic-avatar-dogfood` | produces | `src/assets/service/persist-generated.ts` | - |
+| `epic-avatar-dogfood` | produces | `src/assets/service/thumbnail.ts` | - |
+| `epic-avatar-dogfood` | produces | `src/characters/seed/avatar.ts` | - |
+| `epic-avatar-dogfood` | produces | `src/characters/seed/templates.ts` | - |
+| `epic-avatar-dogfood` | produces | `src/config/sections/characters/defaults.ts` | - |
 | `epic-avatar-regeneration-control` | produces | `src/characters/services/emotion-avatar-service/job-store.ts` | - |
 | `epic-avatar-regeneration-control` | produces | `src/routes/character-emotion-avatars.ts` | - |
 | `epic-avatar-regeneration-control` | produces | `src/routes/wardrobe-avatars.ts` | - |
@@ -17717,6 +17751,7 @@ output is byte-identical for identical inputs.
 | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` | sibling | `TASK-archival-workflow` | `src/db/migrations/001_init.ts` |
 | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` | sibling | `TASK-assistant-scenario-source` | `src/validation/db-schemas.ts` |
 | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts` |
+| `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/test-utils/insert-helpers.ts` |
 | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` | sibling | `TASK-chat-ask-type-fast-menu` | `src/db/schema-manifest.ts` |
 | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` | sibling | `TASK-chat-transfer-location` | `src/db/migrations/001_init.ts; src/db/schema-manifest.ts` |
 | `BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys` | sibling | `TASK-comic-page-composition-strategy` | `src/db/migrations/001_init.ts; src/db/schema-manifest.ts` |
@@ -18506,12 +18541,14 @@ output is byte-identical for identical inputs.
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | `src/image-edit/providers/comfyui-owner.test.ts; src/image-edit/providers/comfyui-provider.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | `src/assets/service/create.ts; src/db/migrations/030_assets_content_hash_unique.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `BUG-emotion-avatar-fallback-metadata-incomplete` | `src/assets/service/create.ts` |
+| `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/image-edit/providers/comfyui-owner.test.ts; src/image-edit/providers/comfyui-provider.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `BUG-image-edit-provider-and-template-capabilities-disagree` | `src/image-edit/providers/comfyui-provider.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `BUG-sd-server-image-providers-discard-the-generated-image-and-ab` | `src/image-edit/providers/comfyui-provider.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-asset-b1-blake3-content-store` | `src/assets/service/create.ts; src/assets/service/file-system.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | `src/assets/service/create.ts` |
+| `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-audit-new-test-files-for-cross-file-process-collisions-befor` | `src/image-edit/providers/comfyui-owner.test.ts` |
@@ -18528,6 +18565,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts` |
+| `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts; src/assets/service/file-system.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `epic-comfyui-plugin` | `src/image-edit/providers/comfyui-provider.ts` |
 | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-` | sibling | `epic-configs-path-resolution` | `src/assets/service/file-system.ts` |
@@ -18544,6 +18582,8 @@ output is byte-identical for identical inputs.
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/controller.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | `src/assets/service/create-dedup-race.test.ts; src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `BUG-emotion-avatar-fallback-metadata-incomplete` | `src/assets/service/create.ts` |
+| `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts` |
+| `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/controller.ts; src/assets/service/create.ts` |
@@ -18551,6 +18591,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `FEAT-background` | `src/assets/controller.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-asset-b1-blake3-content-store` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | `src/assets/service/create.ts` |
+| `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/assets/controller.ts` |
@@ -18570,6 +18611,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
+| `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts; src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
@@ -18581,6 +18623,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/service/delete.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | `src/assets/service/read.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | `src/assets/service/read.ts` |
+| `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/service/delete.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/service/read.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | `src/assets/service/delete.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-listassets-treats-shared-visibility-as-world-readable` | `src/assets/service/read.ts` |
@@ -18602,6 +18645,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | `src/assets/controller.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/controller.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `BUG-community-share-missing-lorebook-export` | `src/routes/export.ts` |
+| `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo` | `src/routes/export.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts` |
@@ -18623,6 +18667,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `TASK-import-export-io` | `src/routes/export.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | `src/assets/controller.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
+| `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
 | `BUG-asset-link-share-json-routes-500-body-already-used-elysia-su` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
@@ -18633,6 +18678,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | `src/assets/service/read.ts; src/routes/http-utils/errors.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | `src/assets/service/read.ts` |
+| `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso` | `src/routes/http-utils/errors.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts; src/assets/service/read.ts` |
@@ -18654,6 +18700,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/routes/http-utils/errors.ts` |
+| `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `epic-encryption-workflow` | `src/assets/service/read.ts` |
@@ -18662,6 +18709,8 @@ output is byte-identical for identical inputs.
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/controller.ts` |
+| `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts; src/assets/serve-raw.ts` |
+| `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/service/thumbnail.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/controller.ts` |
@@ -18669,6 +18718,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `FEAT-background` | `src/assets/controller.ts; src/assets/signed-url.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-asset-b1-rendition-pipeline` | `src/assets/service/thumbnail.ts` |
+| `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/serve-raw.ts; src/assets/service/thumbnail.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-comfyui-first-class-workflow-library` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-dedup-top-jscpd-clone-clusters` | `src/assets/controller.ts` |
@@ -18686,7 +18736,9 @@ output is byte-identical for identical inputs.
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/assets/signed-url.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-thumbnail-generation-256px-webp-at-upload` | `src/assets/serve-raw.ts; src/assets/service/thumbnail.ts` |
+| `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts; src/assets/service/thumbnail.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
+| `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `epic-avatar-dogfood` | `src/assets/service/thumbnail.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `epic-encryption-workflow` | `src/assets/serve-raw.ts` |
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
@@ -18695,6 +18747,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log` | sibling | `epic-logging` | `src/assets/signed-url.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/controller.ts` |
+| `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/controller.ts` |
@@ -18710,6 +18763,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `TASK-image-edit-concept-inpaint-template` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
+| `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
 | `BUG-asset-upload-chat-key-derivation-failure-silently-downgrades` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
@@ -18730,6 +18784,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes` | sibling | `TASK-comparison-cell-detail-metadata` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes` | sibling | `TASK-multimodal-asset-reuse` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/metadata.ts` |
+| `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-metadata-vp8l-vp8x-off-bytes` | sibling | `epic-technical-comparison-charts` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `BUG-size-strict-pre-existing-dev-drift` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `TASK-asset-b1-rendition-pipeline` | `src/assets/metadata.ts` |
@@ -18737,6 +18792,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `TASK-comparison-cell-detail-metadata` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `TASK-multimodal-asset-reuse` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/metadata.ts` |
+| `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/metadata.ts` |
 | `BUG-asset-webp-vp8x-dimension-truncation` | sibling | `epic-technical-comparison-charts` | `src/assets/metadata.ts` |
 | `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `TASK-code-quality` | `src/logger/index.ts` |
 | `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `TASK-per-chat-auto-translation-layer` | `src/logger/index.ts` |
@@ -18744,6 +18800,7 @@ output is byte-identical for identical inputs.
 | `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `TASK-split-logger-god-module` | `src/logger/index.ts` |
 | `BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con` | sibling | `epic-logging` | `src/logger/index.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/controller.ts` |
+| `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/controller.ts` |
@@ -18767,11 +18824,14 @@ output is byte-identical for identical inputs.
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/links.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `TASK-reference-set-entity` | `src/assets/service/links.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
+| `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/links.ts` |
 | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par` | sibling | `epic-technical-comparison-charts` | `src/assets/service/links.ts` |
+| `BUG-assets-delete-fk-constraint-fails` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts` |
+| `BUG-assets-delete-fk-constraint-fails` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/service/delete.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | `src/assets/service/delete.ts` |
@@ -18793,10 +18853,13 @@ output is byte-identical for identical inputs.
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | `src/assets/controller.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/assets/service/delete.ts` |
+| `BUG-assets-delete-fk-constraint-fails` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `epic-asset-transform-metadata` | `src/assets/service/transforms.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
 | `BUG-assets-delete-fk-constraint-fails` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
+| `BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/serve-handlers.ts` |
+| `BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/serve-handlers.ts` |
 | `BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-` | sibling | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | `src/assets/serve-handlers.ts` |
 | `BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-` | sibling | `TASK-guest-asset-public-reads-open-public-asset-access` | `src/assets/serve-handlers.ts` |
 | `BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-` | sibling | `TASK-publication-export-formats` | `src/assets/serve-file.ts` |
@@ -20091,6 +20154,7 @@ output is byte-identical for identical inputs.
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `FEAT-seed-character-loadouts-into-the-wardrobe-bridge` | `src/characters/seed/templates.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `FEAT-world-template-chat-lifecycle` | `src/chat/service/templates.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `TASK-adopt-bun-yaml-to-replace-js-yaml` | `src/chat/service/templates.ts` |
+| `BUG-character-seed-dedupes-on-display-name` | sibling | `TASK-avatar-dogfood-promote-defaults` | `src/config/sections/characters/defaults.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `TASK-char-template-full-model-coverage` | `src/characters/seed/templates.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `TASK-character-config-skills-professions` | `src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `TASK-chat-feature-settings-templates-compat-matrix` | `src/chat/service/templates.ts` |
@@ -20099,6 +20163,7 @@ output is byte-identical for identical inputs.
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` | `src/chat/service/templates.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `TASK-scenario-system-authoring` | `src/characters/seed/templates.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `TASK-user-seeding-role-expansion` | `src/seeding/characters.ts` |
+| `BUG-character-seed-dedupes-on-display-name` | sibling | `epic-avatar-dogfood` | `src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `epic-character-core-system` | `src/server/init-background-services.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `epic-chat-product-features` | `src/chat/service/templates.ts` |
 | `BUG-character-seed-dedupes-on-display-name` | sibling | `epic-context-injection-templates` | `src/chat/service/templates.ts` |
@@ -20148,6 +20213,7 @@ output is byte-identical for identical inputs.
 | `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o` | sibling | `TASK-actors-child-tables-crud` | `src/test-utils/insert-helpers.ts` |
 | `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o` | sibling | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | `src/test-utils/insert-helpers.ts` |
 | `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/test-utils/insert-helpers.ts` |
+| `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/test-utils/insert-helpers.ts` |
 | `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o` | sibling | `TASK-character-avatar-gallery-binding` | `src/frontend/pages/characters.ts` |
 | `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o` | sibling | `TASK-consolidate-quest-engines` | `src/test-utils/insert-helpers.ts` |
 | `BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o` | sibling | `TASK-coverage-waivers-for-3-modules-below-80-floor` | `src/test-utils/insert-helpers.ts` |
@@ -20989,6 +21055,7 @@ output is byte-identical for identical inputs.
 | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | sibling | `epic-actors` | `src/db/migrations/001_init.ts` |
 | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | sibling | `epic-archival-workflow` | `src/db/migrations/001_init.ts` |
 | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | sibling | `epic-audio-video-sound` | `src/generation/image-gen-route.ts` |
+| `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | sibling | `epic-avatar-dogfood` | `src/characters/seed/avatar.ts; src/characters/seed/templates.ts` |
 | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | sibling | `epic-battle-action-systems` | `src/db/migrations/001_init.ts` |
 | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | sibling | `epic-byok-api-keys` | `src/db/migrations/001_init.ts; src/generation/image-gen-route.ts` |
 | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | sibling | `epic-character-core-system` | `src/db/migrations/001_init.ts` |
@@ -21068,6 +21135,7 @@ output is byte-identical for identical inputs.
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `FEAT-expand-character-templates-to-canonical-fields` | `src/config/sections/characters/types.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-add-federation-to-the-config-domains-list-so-config-federati` | `src/config/schema-class/index.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-allow-data-dir-to-be-overridden-by-env-var` | `src/config/schema-class/json-schema/index.ts` |
+| `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-avatar-dogfood-promote-defaults` | `src/config/sections/characters/defaults.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-char-template-full-model-coverage` | `src/config/sections/characters/types.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-character-config-skills-professions` | `src/config/sections/characters/defaults.ts; src/config/sections/characters/types.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | `src/config/generate-schema.ts; src/config/schema-class/index.ts` |
@@ -21075,6 +21143,7 @@ output is byte-identical for identical inputs.
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-item-config-templates` | `src/config/schema/config.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-lorebook-template-seeding` | `src/config/sections/characters/types.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `TASK-scenario-system-authoring` | `src/config/sections/characters/types.ts` |
+| `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `epic-avatar-dogfood` | `src/config/sections/characters/defaults.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `epic-logging-telemetry` | `src/config/generate-schema.ts` |
 | `BUG-config-schema-emitter-missing-top-level-sections` | sibling | `epic-skills-professions-config` | `src/config/sections/characters/defaults.ts; src/config/sections/characters/types.ts` |
 | `BUG-consent-state-not-persisted-in-memory-only` | sibling | `BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user-n` | `src/middleware/nsfw-gate/consent.ts` |
@@ -21321,6 +21390,7 @@ output is byte-identical for identical inputs.
 | `BUG-create-test-db-custom-dialect-can-bypass-settestdatabase` | sibling | `epic-visual-novel-mode` | `src/db/schema-manifest.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `BUG-duplicate-migration-numeric-prefix-021` | `src/db/migrations/README.md` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `BUG-emotion-avatar-fallback-metadata-incomplete` | `src/assets/service/create.ts` |
+| `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/service/create.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `BUG-generate-route-authorizes-chatid-but-not-actorid` | `src/db/migrations/001_init.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just` | `src/db/migrations/001_init.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | `src/db/migrations/001_init.ts` |
@@ -21354,6 +21424,7 @@ output is byte-identical for identical inputs.
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-archival-workflow` | `src/db/migrations/001_init.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-asset-b1-blake3-content-store` | `src/assets/service/create.ts; src/db/migration-roundtrip.test.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | `src/assets/service/create.ts` |
+| `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/create.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-asset-provenance-ledger-for-generated-assets` | `src/db/migration-roundtrip.test.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
@@ -21393,6 +21464,7 @@ output is byte-identical for identical inputs.
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts; src/db/migration-roundtrip.test.ts; src/db/migrations/README.md` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-review-thread-comment-model` | `src/db/migrations/001_init.ts; src/db/migrations/README.md` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-review-thread-target-vocabulary` | `src/db/migrations/README.md` |
+| `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `TASK-world-simulation-discovery-and-trade-events` | `src/db/migrations/001_init.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | sibling | `epic-actors` | `src/db/migrations/001_init.ts` |
@@ -22019,6 +22091,7 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | sibling | `TASK-frontend-char-emotion-types-and-prompt-modifier` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | sibling | `TASK-input-validation-battle-schema-less-post-emotion-avatars-par` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | sibling | `epic-avatar-regeneration-control` | `src/routes/character-emotion-avatars.ts` |
+| `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/service/create.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `BUG-memory-audit-log-action-column-typed-string-not-union` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/service/create.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | `src/db/schema-core.ts` |
@@ -22040,6 +22113,7 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-asset-b1-blake3-content-store` | `src/assets/service/create.ts; src/db/schema-content.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-asset-b1-rendition-pipeline` | `src/db/schema-content.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | `src/assets/service/create.ts` |
+| `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/create.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-asset-provenance-ledger-for-generated-assets` | `src/db/schema-content.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
@@ -22098,6 +22172,7 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-test-chat-module` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-timeline-id-world-timeline-events` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/characters/services/emotion-avatar-service/generation.ts` |
+| `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `TASK-world-requires-stats-flag-and-point-budget-config` | `src/db/schema-core.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `BUG-emotion-avatar-fallback-metadata-incomplete` | sibling | `epic-actors` | `src/db/schema-core.ts` |
@@ -22191,7 +22266,62 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `epic-chat-lifecycle-moderation` | `src/generation/hooks/nsfw-hook.ts` |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `epic-emotion-avatar-message-binding` | `src/generation/hooks/emotion-hook.ts` |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `epic-federation-offload-quotas` | `src/aux-pipeline/runner.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/serve-handlers.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | `src/assets/serve-handlers.ts; src/assets/serve-raw.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-size-strict-pre-existing-dev-drift` | `src/assets/controller/serve.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `FEAT-background` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/serve-raw.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-comfyui-first-class-workflow-library` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-dedup-top-jscpd-clone-clusters` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-encryption-asset-encryption` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-frontend-and-http-utils-type-safety-batch` | `src/assets/serve-raw.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-gallery-fuzzy-search-pagination` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-guest-asset-public-reads-open-public-asset-access` | `src/assets/controller.ts; src/assets/serve-handlers.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-image-edit-concept-inpaint-template` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-thumbnail-generation-256px-webp-at-upload` | `src/assets/serve-raw.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-encryption-workflow` | `src/assets/serve-raw.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | `src/assets/service/delete.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | `src/assets/serve-handlers.ts; src/assets/variant-path.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `FEAT-background` | `src/assets/service/delete.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-asset-b1-blake3-content-store` | `src/assets/service/create.ts; src/assets/service/delete.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-asset-b1-rendition-pipeline` | `src/assets/service/thumbnail.ts; src/assets/variant-path.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/create.ts; src/assets/service/thumbnail.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts; src/assets/service/delete.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-c1-moderation-action-notices-with-actor-thumb` | `src/assets/variant-path.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-comic-storyboard-panel-generation-workflow` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-comparison-fan-out-engine` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play` | `src/assets/service/delete.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-guest-asset-public-reads-open-public-asset-access` | `src/assets/serve-handlers.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-middleware-content-assets-gallery-hashing-validation` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-preview-dispatch-for-non-image-asset-types` | `src/assets/service/thumbnail.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/service/thumbnail.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-thumbnail-generation-256px-webp-at-upload` | `src/assets/service/thumbnail.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/assets/service/delete.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts; src/assets/service/thumbnail.ts; src/assets/variant-path.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `epic-avatar-dogfood` | `src/assets/service/thumbnail.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `epic-content-hashing-distributed-integrity` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `epic-encryption-workflow` | `src/assets/service/create.ts` |
+| `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/create.ts` |
 | `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en` | sibling | `BUG-encryption-tier-not-enforced` | `src/crypto/at-rest.ts; src/routes/messages/post.ts` |
 | `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en` | sibling | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just` | `src/routes/messages/update.ts` |
 | `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en` | sibling | `BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export` | `src/routes/messages/post.ts` |
@@ -22927,6 +23057,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | sibling | `TASK-recursive-self-improvement-health-liveness-readiness-probes` | `src/elysia-app.ts` |
 | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
+| `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | sibling | `epic-analytics-observability` | `src/elysia-app.ts` |
 | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | sibling | `epic-api-routes` | `src/routes/v1/index.ts` |
@@ -24402,6 +24533,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/db/index.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/routes/v1/openapi.ts` |
+| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-ambient-music-sfx` | `src/generation/providers/comfyui.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-analytics-observability` | `src/elysia-app.ts` |
@@ -25794,9 +25926,11 @@ output is byte-identical for identical inputs.
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `FEAT-seed-character-loadouts-into-the-wardrobe-bridge` | `src/characters/seed/templates.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-asset-b1-blake3-content-store` | `src/assets/service/create.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | `src/assets/service/create.ts` |
+| `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/create.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-asset-provenance-ledger-for-generated-assets` | `src/assets/service/persist-generated.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
+| `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/assets/service/persist-generated.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-char-template-full-model-coverage` | `src/characters/seed/templates.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-character-config-skills-professions` | `src/characters/seed/templates.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/assets/controller.ts` |
@@ -25837,9 +25971,11 @@ output is byte-identical for identical inputs.
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-vector-gen-llm-svg-pipeline` | `src/assets/service/persist-generated.ts; src/generation/image-gen-route.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-video-gen-route` | `src/generation/image-gen-route.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/generation/matting/service.ts` |
+| `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts; src/assets/service/create.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `epic-audio-video-sound` | `src/generation/image-gen-route.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
+| `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `epic-avatar-dogfood` | `src/assets/service/persist-generated.ts; src/characters/seed/templates.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `epic-byok-api-keys` | `src/generation/image-gen-route.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts; src/generation/image-gen-route.ts` |
 | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | sibling | `epic-comfyui-plugin` | `src/generation/image-gen-route.ts` |
@@ -25893,6 +26029,7 @@ output is byte-identical for identical inputs.
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-3d-gltf-assets` | `src/routes/assets.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r` | `src/routes/assets.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-asset-b1-rendition-pipeline` | `src/assets/variant-path.ts` |
+| `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/serve-raw.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-assistant-creative-studio-workflow-gallery-batch` | `src/routes/assets.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-c1-moderation-action-notices-with-actor-thumb` | `src/assets/variant-path.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-chat-feature-encryption-key-rotation` | `src/crypto/key-rotation/re-encrypt.ts` |
@@ -25905,6 +26042,7 @@ output is byte-identical for identical inputs.
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-multi-concept-segmentation-masks` | `src/generation/matting/service.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-thumbnail-generation-256px-webp-at-upload` | `src/assets/serve-raw.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/generation/matting/service.ts` |
+| `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/variant-path.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `epic-assistant-creative-studio-workflows` | `src/routes/assets.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `epic-avatar-alpha-vn-layering` | `src/assets/matting-routes.ts` |
 | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | sibling | `epic-chat-product-features` | `src/crypto/key-rotation/re-encrypt.ts` |
@@ -26943,6 +27081,7 @@ output is byte-identical for identical inputs.
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/db/index.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
+| `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `epic-analytics-observability` | `src/elysia-app.ts` |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | sibling | `epic-api-versioning` | `src/elysia-app.ts` |
@@ -27587,6 +27726,7 @@ output is byte-identical for identical inputs.
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-vector-gen-animated-raster` | `src/generation/providers/registry.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-vector-gen-llm-svg-pipeline` | `src/generation/providers/registry.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/characters/services/emotion-avatar-service/generation.ts` |
+| `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/metadata.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/generation/generate-route/stream-to-client.ts; src/generation/providers/registry.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc` | `src/routes/messages/post.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-world-simulation-npc-navigation-tick-driver` | `src/rpg/npc-navigation/service/processing.ts` |
@@ -29760,6 +29900,7 @@ output is byte-identical for identical inputs.
 | `FEAT-background` | sibling | `TASK-ambient-sound-system` | `src/generation/providers/comfyui.ts` |
 | `FEAT-background` | sibling | `TASK-appearance-edit-vs-generation-strategy-selector` | `src/characters/services/emotion-avatar-service/generation.ts` |
 | `FEAT-background` | sibling | `TASK-asset-b1-blake3-content-store` | `src/assets/service/delete.ts` |
+| `FEAT-background` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/db/enums-content.ts` |
 | `FEAT-background` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/delete.ts` |
 | `FEAT-background` | sibling | `TASK-avatar-framing-column-migration-future` | `src/db/enums-content.ts` |
 | `FEAT-background` | sibling | `TASK-avatar-framing-tag-member` | `src/db/enums-content.ts` |
@@ -29826,6 +29967,7 @@ output is byte-identical for identical inputs.
 | `FEAT-background` | sibling | `TASK-video-gen-route` | `src/db/enums-content.ts` |
 | `FEAT-background` | sibling | `TASK-vn-cast-server-producer` | `src/frontend/vn/sprite-stage.ts` |
 | `FEAT-background` | sibling | `TASK-vn-character-sprite-roster-per-chat` | `src/frontend/vn/sprite-stage.ts` |
+| `FEAT-background` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `FEAT-background` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/generation/providers/registry.ts` |
 | `FEAT-background` | sibling | `epic-3d-generation` | `src/db/enums-content.ts` |
 | `FEAT-background` | sibling | `epic-ambient-music-sfx` | `src/generation/providers/comfyui.ts` |
@@ -29899,6 +30041,7 @@ output is byte-identical for identical inputs.
 | `FEAT-character-world-setup` | sibling | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | `src/test-utils/insert-helpers.ts` |
 | `FEAT-character-world-setup` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/test-utils/insert-helpers.ts` |
 | `FEAT-character-world-setup` | sibling | `TASK-aux-mood-classification` | `src/db/schema-character.ts` |
+| `FEAT-character-world-setup` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/test-utils/insert-helpers.ts` |
 | `FEAT-character-world-setup` | sibling | `TASK-avatar-framing-column-migration-future` | `src/db/schema-character.ts` |
 | `FEAT-character-world-setup` | sibling | `TASK-avatar-framing-tag-member` | `src/db/schema-character.ts` |
 | `FEAT-character-world-setup` | sibling | `TASK-avatar-render-target-discriminator` | `src/db/schema-character.ts` |
@@ -30467,6 +30610,7 @@ output is byte-identical for identical inputs.
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-world-requires-stats-flag-and-point-budget-config` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-actors` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-assistant-creative-studio-workflows` | `src/config/sections/templates.ts` |
+| `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-avatar-dogfood` | `src/characters/seed/templates.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-battle-action-systems` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-battle-integration-gaps` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `epic-byok-api-keys` | `src/db/schema-core.ts` |
@@ -31398,6 +31542,7 @@ output is byte-identical for identical inputs.
 | `FEAT-seed-character-loadouts-into-the-wardrobe-bridge` | sibling | `TASK-item-config-templates` | `src/characters/seed/templates.ts` |
 | `FEAT-seed-character-loadouts-into-the-wardrobe-bridge` | sibling | `TASK-lorebook-template-seeding` | `src/characters/seed/templates.ts` |
 | `FEAT-seed-character-loadouts-into-the-wardrobe-bridge` | sibling | `TASK-scenario-system-authoring` | `src/characters/seed/templates.ts` |
+| `FEAT-seed-character-loadouts-into-the-wardrobe-bridge` | sibling | `epic-avatar-dogfood` | `src/characters/seed/templates.ts` |
 | `FEAT-seed-character-loadouts-into-the-wardrobe-bridge` | sibling | `epic-skills-professions-config` | `src/characters/seed/templates.ts` |
 | `FEAT-seed-default-characters-avatar` | sibling | `TASK-aux-emotion-avatar` | `src/characters/services/avatar-service.ts` |
 | `FEAT-seed-default-characters-avatar` | sibling | `TASK-character-multi-avatar` | `src/assets/service.ts` |
@@ -33331,6 +33476,7 @@ output is byte-identical for identical inputs.
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-asymmetric-key-pairs` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/test-utils/insert-helpers.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-autonomy-rate-governor-for-llm-actors` | `src/db/schema-core.ts` |
+| `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/test-utils/insert-helpers.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-avatar-render-target-discriminator` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-character-creator-prerogative` | `src/db/schema-core.ts` |
 | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | sibling | `TASK-character-multi-avatar` | `src/db/schema-core.ts` |
@@ -33596,6 +33742,7 @@ output is byte-identical for identical inputs.
 | `TASK-actors-api-routes` | sibling | `epic-shared-schemas` | `src/validation/schemas.ts` |
 | `TASK-actors-child-tables-crud` | sibling | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | `src/test-utils/insert-helpers.ts` |
 | `TASK-actors-child-tables-crud` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/test-utils/insert-helpers.ts` |
+| `TASK-actors-child-tables-crud` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/test-utils/insert-helpers.ts` |
 | `TASK-actors-child-tables-crud` | sibling | `TASK-consolidate-quest-engines` | `src/test-utils/insert-helpers.ts` |
 | `TASK-actors-child-tables-crud` | sibling | `TASK-coverage-waivers-for-3-modules-below-80-floor` | `src/test-utils/insert-helpers.ts` |
 | `TASK-actors-child-tables-crud` | sibling | `TASK-e2ee-receiver-wiring` | `src/test-utils/insert-helpers.ts` |
@@ -34493,6 +34640,7 @@ output is byte-identical for identical inputs.
 | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | sibling | `TASK-assistant-entity-access-character-item-inventory` | `src/db/schema.ts` |
 | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | sibling | `TASK-assistant-scenario-source` | `src/db/schema.ts; src/validation/db-schemas.ts` |
 | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts` |
+| `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/test-utils/insert-helpers.ts` |
 | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | sibling | `TASK-chat-ask-type-fast-menu` | `src/db/schema-manifest.ts` |
 | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | sibling | `TASK-chat-backgrounds-location-sync` | `src/db/schema.ts` |
 | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | sibling | `TASK-chat-transfer-location` | `src/db/schema-manifest.ts` |
@@ -34592,6 +34740,7 @@ output is byte-identical for identical inputs.
 | `TASK-asset-3d-models` | sibling | `epic-transport-expansion` | `src/db/enums.ts` |
 | `TASK-asset-3d-models` | sibling | `epic-world-chat-channels-invites` | `src/db/enums.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | `src/assets/service/create.ts` |
+| `TASK-asset-b1-blake3-content-store` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/create.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts; src/assets/service/delete.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `TASK-asset-provenance-ledger-for-generated-assets` | `src/db/migration-roundtrip.test.ts; src/db/schema-content.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
@@ -34627,6 +34776,7 @@ output is byte-identical for identical inputs.
 | `TASK-asset-b1-blake3-content-store` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts; src/db/migration-roundtrip.test.ts; src/db/schema-content.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `TASK-review-thread-target-vocabulary` | `src/db/schema-content.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/assets/service/delete.ts` |
+| `TASK-asset-b1-blake3-content-store` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts; src/assets/service/file-system.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `epic-configs-path-resolution` | `src/assets/service/file-system.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `epic-content-hashing-distributed-integrity` | `src/assets/service/create.ts` |
@@ -34636,6 +34786,7 @@ output is byte-identical for identical inputs.
 | `TASK-asset-b1-blake3-content-store` | sibling | `epic-federation-offload-quotas` | `src/db/schema-content.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/create.ts; src/db/schema-content.ts` |
 | `TASK-asset-b1-blake3-content-store` | sibling | `epic-reactive-actor-appearance` | `src/db/schema-content.ts` |
+| `TASK-asset-b1-rendition-pipeline` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/thumbnail.ts` |
 | `TASK-asset-b1-rendition-pipeline` | sibling | `TASK-asset-provenance-ledger-for-generated-assets` | `src/db/schema-content.ts` |
 | `TASK-asset-b1-rendition-pipeline` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/metadata.ts` |
 | `TASK-asset-b1-rendition-pipeline` | sibling | `TASK-avatar-framing-column-migration-future` | `src/db/schema-content.ts` |
@@ -34657,6 +34808,8 @@ output is byte-identical for identical inputs.
 | `TASK-asset-b1-rendition-pipeline` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/metadata.ts; src/assets/service/thumbnail.ts` |
 | `TASK-asset-b1-rendition-pipeline` | sibling | `TASK-review-thread-target-vocabulary` | `src/db/schema-content.ts` |
 | `TASK-asset-b1-rendition-pipeline` | sibling | `TASK-thumbnail-generation-256px-webp-at-upload` | `src/assets/service/thumbnail.ts` |
+| `TASK-asset-b1-rendition-pipeline` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/metadata.ts; src/assets/service/thumbnail.ts; src/assets/variant-path.ts` |
+| `TASK-asset-b1-rendition-pipeline` | sibling | `epic-avatar-dogfood` | `src/assets/service/thumbnail.ts` |
 | `TASK-asset-b1-rendition-pipeline` | sibling | `epic-derived-map-generation` | `src/db/schema-content.ts` |
 | `TASK-asset-b1-rendition-pipeline` | sibling | `epic-federation-offload-quotas` | `src/db/schema-content.ts` |
 | `TASK-asset-b1-rendition-pipeline` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-content.ts` |
@@ -34668,6 +34821,7 @@ output is byte-identical for identical inputs.
 | `TASK-asset-context-inclusion-budget-policy` | sibling | `epic-context-injection-correctness` | `src/assistant/prompt-budget.ts` |
 | `TASK-asset-context-inclusion-budget-policy` | sibling | `epic-context-injection-templates` | `src/assistant/prompt-budget.ts` |
 | `TASK-asset-context-inclusion-budget-policy` | sibling | `epic-harness-integration` | `src/assistant/prompt-budget.ts` |
+| `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `TASK-comic-storyboard-panel-generation-workflow` | `src/assets/service/create.ts` |
@@ -34677,10 +34831,49 @@ output is byte-identical for identical inputs.
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts` |
+| `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `epic-content-hashing-distributed-integrity` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `epic-encryption-workflow` | `src/assets/service/create.ts` |
 | `TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts; src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-avatar-framing-column-migration-future` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-avatar-framing-tag-member` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-avatar-render-target-discriminator` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-character-avatar-gallery-binding` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-comic-storyboard-panel-generation-workflow` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-comparison-cell-detail-metadata` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-comparison-fan-out-engine` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-comparison-gallery-comparison-set-integration` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-comparison-workflow-template-and-command` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-frontend-and-http-utils-type-safety-batch` | `src/assets/serve-raw.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-item-asset-avatar-display-in-inventory-trading-and-provision` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-middleware-content-assets-gallery-hashing-validation` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-preview-dispatch-for-non-image-asset-types` | `src/assets/service/thumbnail.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts; src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts; src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/service/thumbnail.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-review-thread-target-vocabulary` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-thumbnail-generation-256px-webp-at-upload` | `src/assets/serve-raw.ts; src/assets/service/thumbnail.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-vector-gen-gallery-asset-support` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-video-gen-route` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts; src/assets/service/thumbnail.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-3d-generation` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-audio-video-sound` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-avatar-dogfood` | `src/assets/service/thumbnail.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-content-hashing-distributed-integrity` | `src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-editorial-workflow` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-encryption-workflow` | `src/assets/serve-raw.ts; src/assets/service/create.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/create.ts; src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-technical-comparison-charts` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-tts-foundation` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-vector-graphics-generation` | `src/db/enums-content.ts` |
+| `TASK-asset-download-format-conversion-webp-png-jpg` | sibling | `epic-video-generation` | `src/db/enums-content.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `TASK-assets-has-alpha-column-and-store-computation` | `src/assets/service/create.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `TASK-comic-storyboard-panel-generation-workflow` | `src/assets/service/create.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `TASK-comparison-fan-out-engine` | `src/assets/service/create.ts` |
@@ -34691,10 +34884,12 @@ output is byte-identical for identical inputs.
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/assets/service/delete.ts` |
+| `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `epic-content-hashing-distributed-integrity` | `src/assets/service/create.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `epic-encryption-workflow` | `src/assets/service/create.ts` |
 | `TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/create.ts` |
+| `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/assets/service/persist-generated.ts` |
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `TASK-avatar-framing-column-migration-future` | `src/db/schema-content.ts` |
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `TASK-avatar-framing-tag-member` | `src/db/schema-content.ts` |
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `TASK-blog-publish-unit-to-post-bridge` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
@@ -34726,6 +34921,7 @@ output is byte-identical for identical inputs.
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | `src/db/migrations.test.ts` |
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `TASK-vector-gen-animated-raster` | `src/assets/service/persist-generated.ts` |
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `TASK-vector-gen-llm-svg-pipeline` | `src/assets/service/persist-generated.ts` |
+| `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `epic-avatar-dogfood` | `src/assets/service/persist-generated.ts` |
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `epic-derived-map-generation` | `src/db/schema-content.ts` |
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `epic-federation-offload-quotas` | `src/db/schema-content.ts` |
 | `TASK-asset-provenance-ledger-for-generated-assets` | sibling | `epic-fractal-locations` | `src/db/migrations.test.ts` |
@@ -34754,6 +34950,7 @@ output is byte-identical for identical inputs.
 | `TASK-assets-has-alpha-column-and-store-computation` | sibling | `TASK-vector-gen-gallery-asset-support` | `src/db/enums-content.ts` |
 | `TASK-assets-has-alpha-column-and-store-computation` | sibling | `TASK-video-gen-route` | `src/db/enums-content.ts` |
 | `TASK-assets-has-alpha-column-and-store-computation` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/db/enums-content.ts` |
+| `TASK-assets-has-alpha-column-and-store-computation` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/metadata.ts; src/assets/service/create.ts` |
 | `TASK-assets-has-alpha-column-and-store-computation` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `TASK-assets-has-alpha-column-and-store-computation` | sibling | `epic-3d-generation` | `src/db/enums-content.ts` |
 | `TASK-assets-has-alpha-column-and-store-computation` | sibling | `epic-audio-video-sound` | `src/db/enums-content.ts` |
@@ -35720,6 +35917,7 @@ output is byte-identical for identical inputs.
 | `TASK-asymmetric-key-pairs` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-async-store-complete-fail-lifecycle-hooks` | `src/async/store.ts; src/elysia-app.ts; src/routes/messages/reply.ts; src/server/handler.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-async-store-retention-cap` | `src/async/offload.ts; src/async/store.ts` |
+| `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-avatar-dogfood-assistant-generation` | `src/test-utils/insert-helpers.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | `src/server/start.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-character-rpg-stats` | `src/elysia-app.ts` |
 | `TASK-async-request-response-result-store-separate-table-offload` | sibling | `TASK-chat-ask-type-fast-menu` | `src/db/schema-manifest.ts` |
@@ -36346,6 +36544,38 @@ output is byte-identical for identical inputs.
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `TEST-emotion-hook-to-avatarForMessage-integration` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `epic-emotion-avatar-message-binding` | `src/frontend/alpine/mood/avatars.ts` |
 | `TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin` | sibling | `epic-reactive-actor-appearance` | `src/frontend/alpine/mood/avatars.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-comparison-fan-out-engine` | `src/assets/service/persist-generated.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-consolidate-quest-engines` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-coverage-waivers-for-3-modules-below-80-floor` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-e2ee-receiver-wiring` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-federation-peer-registry-workload-columns` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-message-seen-state-schema` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-messages-outfit-id-column` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-reconcile-achievement-unlock-sources` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-resource-provision-schema` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-vector-gen-animated-raster` | `src/assets/service/persist-generated.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-vector-gen-llm-svg-pipeline` | `src/assets/service/persist-generated.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-wire-achievements-routes` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-wire-combat-routes` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-wire-npc-navigation-routes` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-wire-quests-routes` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-wire-replayability-routes` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-wire-skills-routes` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-wire-world-location-traits-routes` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-wire-xp-loot-routes` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `TASK-world-requires-stats-flag-and-point-budget-config` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `epic-avatar-dogfood` | `src/assets/service/persist-generated.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `epic-byok-api-keys` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `epic-character-growth` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `epic-character-world-setup` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `epic-comfyui-first-class-citizen` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `epic-crafting-professions` | `src/test-utils/insert-helpers.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `epic-technical-comparison-charts` | `src/assets/service/persist-generated.ts` |
+| `TASK-avatar-dogfood-assistant-generation` | sibling | `epic-vector-graphics-generation` | `src/assets/service/persist-generated.ts` |
+| `TASK-avatar-dogfood-promote-defaults` | sibling | `TASK-character-config-skills-professions` | `src/config/sections/characters/defaults.ts` |
+| `TASK-avatar-dogfood-promote-defaults` | sibling | `epic-avatar-dogfood` | `src/config/sections/characters/defaults.ts` |
+| `TASK-avatar-dogfood-promote-defaults` | sibling | `epic-skills-professions-config` | `src/config/sections/characters/defaults.ts` |
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-avatar-framing-tag-member` | `src/characters/services/avatar-service/selection.ts; src/db/enums-content.ts; src/db/schema-character.ts; src/db/schema-content.ts; src/routes/wardrobe-avatars.ts` |
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-avatar-pose-via-action-tag` | `src/characters/services/avatar-service/selection.ts` |
 | `TASK-avatar-framing-column-migration-future` | sibling | `TASK-avatar-render-target-discriminator` | `src/characters/services/avatar-service/selection.ts; src/db/enums-content.ts; src/db/schema-character.ts` |
@@ -37133,6 +37363,7 @@ output is byte-identical for identical inputs.
 | `TASK-c1-moderation-action-notices-with-actor-thumb` | sibling | `TASK-moderation-privacy-first-foundation` | `src/chat/moderation.ts` |
 | `TASK-c1-moderation-action-notices-with-actor-thumb` | sibling | `TASK-recon-test-coverage` | `src/chat/moderation.ts` |
 | `TASK-c1-moderation-action-notices-with-actor-thumb` | sibling | `TASK-user-block-ban-shadow` | `src/chat/moderation.ts` |
+| `TASK-c1-moderation-action-notices-with-actor-thumb` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/variant-path.ts` |
 | `TASK-c1-moderation-action-notices-with-actor-thumb` | sibling | `epic-chat-lifecycle-moderation` | `src/chat/moderation.ts` |
 | `TASK-c1-moderation-action-notices-with-actor-thumb` | sibling | `epic-chat-product-features` | `src/chat/moderation.ts` |
 | `TASK-c2-bridged-turn-skip-propagation-bridge-only` | sibling | `TASK-chat-feature-turn-talkativity-skip` | `src/chat/service/crud/turn-skip.ts` |
@@ -37244,6 +37475,7 @@ output is byte-identical for identical inputs.
 | `TASK-char-template-full-model-coverage` | sibling | `TASK-shared-character-domain-models` | `src/characters/spec/character.ts` |
 | `TASK-char-template-full-model-coverage` | sibling | `TASK-skill-check-slash-commands` | `src/characters/spec/character.ts` |
 | `TASK-char-template-full-model-coverage` | sibling | `TASK-wire-plugin-bundles-to-richer-character-extensions` | `src/characters/spec/character.ts` |
+| `TASK-char-template-full-model-coverage` | sibling | `epic-avatar-dogfood` | `src/characters/seed/templates.ts` |
 | `TASK-char-template-full-model-coverage` | sibling | `epic-character-growth` | `src/characters/spec/character.ts` |
 | `TASK-char-template-full-model-coverage` | sibling | `epic-character-internal-traits` | `src/characters/spec/character.ts` |
 | `TASK-char-template-full-model-coverage` | sibling | `epic-character-spec` | `src/characters/spec/character.ts` |
@@ -37320,6 +37552,7 @@ output is byte-identical for identical inputs.
 | `TASK-character-config-skills-professions` | sibling | `TASK-item-config-templates` | `src/characters/seed/templates.ts` |
 | `TASK-character-config-skills-professions` | sibling | `TASK-lorebook-template-seeding` | `src/characters/seed/templates.ts; src/config/sections/characters/types.ts` |
 | `TASK-character-config-skills-professions` | sibling | `TASK-scenario-system-authoring` | `src/characters/seed/templates.ts; src/config/sections/characters/types.ts` |
+| `TASK-character-config-skills-professions` | sibling | `epic-avatar-dogfood` | `src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts` |
 | `TASK-character-config-skills-professions` | sibling | `epic-skills-professions-config` | `src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts; src/config/sections/characters/types.ts` |
 | `TASK-character-creator-prerogative` | sibling | `TASK-character-multi-avatar` | `src/db/schema-core.ts; src/views/character-editor.html` |
 | `TASK-character-creator-prerogative` | sibling | `TASK-character-personality-integrity` | `src/characters/core.ts; src/characters/parser.ts; src/db/schema-core.ts; src/routes/characters.ts` |
@@ -37392,6 +37625,7 @@ output is byte-identical for identical inputs.
 | `TASK-character-domain-residual-defects` | sibling | `TASK-faction-leaders-and-cadre-generation` | `src/characters` |
 | `TASK-character-domain-residual-defects` | sibling | `TASK-npc-character-edit-stack-parity` | `src/characters/seed/avatar.ts` |
 | `TASK-character-domain-residual-defects` | sibling | `TEST-avatar-selection-fallback-empty-coverage` | `src/characters/services/avatar-service/selection.ts` |
+| `TASK-character-domain-residual-defects` | sibling | `epic-avatar-dogfood` | `src/characters/seed/avatar.ts` |
 | `TASK-character-domain-residual-defects` | sibling | `epic-character-world-setup` | `src/characters/world-setup/crud.ts` |
 | `TASK-character-domain-residual-defects` | sibling | `epic-reactive-actor-appearance` | `src/characters/services/avatar-service/selection.ts` |
 | `TASK-character-domain-residual-defects` | sibling | `epic-research-agency-affordance` | `src/characters/exporters/character-systems.ts` |
@@ -39073,6 +39307,7 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-talkativity-influence-response-verbosity` | `src/config/sections/templates.ts` |
+| `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-workflow-engine-schema-loader-template-types-workflow-discov` | `src/config/sections/templates.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `epic-analytics-observability` | `src/elysia-app.ts` |
@@ -39196,6 +39431,7 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-test-chat-module` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-timeline-id-world-timeline-events` | `src/db/schema-core.ts` |
+| `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `TASK-world-requires-stats-flag-and-point-budget-config` | `src/db/schema-core.ts` |
 | `TASK-comfyui-first-class-workflow-library` | sibling | `epic-actors` | `src/db/schema-core.ts` |
@@ -39631,6 +39867,7 @@ output is byte-identical for identical inputs.
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts; src/assets/service/links.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts; src/assets/service/links.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards-` | `src/regex/intent.ts` |
+| `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-wire-intent-output-to-workflow-runner-startworkflow` | `src/assistant/workflow-runner.ts; src/regex/intent.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-workflow-dag-engine-task-dependencies` | `src/assistant/workflow-runner.ts` |
 | `TASK-comic-storyboard-panel-generation-workflow` | sibling | `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui` | `src/assistant/workflow-runner.ts` |
@@ -39698,6 +39935,7 @@ output is byte-identical for identical inputs.
 | `TASK-comparison-cell-detail-metadata` | sibling | `TASK-vector-gen-gallery-asset-support` | `src/db/enums-content.ts` |
 | `TASK-comparison-cell-detail-metadata` | sibling | `TASK-video-gen-route` | `src/db/enums-content.ts` |
 | `TASK-comparison-cell-detail-metadata` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/db/enums-content.ts` |
+| `TASK-comparison-cell-detail-metadata` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/metadata.ts` |
 | `TASK-comparison-cell-detail-metadata` | sibling | `epic-3d-generation` | `src/db/enums-content.ts` |
 | `TASK-comparison-cell-detail-metadata` | sibling | `epic-ambient-music-sfx` | `src/generation/providers/comfyui.ts` |
 | `TASK-comparison-cell-detail-metadata` | sibling | `epic-audio-video-sound` | `src/db/enums-content.ts; src/generation/providers/comfyui.ts` |
@@ -39760,6 +39998,7 @@ output is byte-identical for identical inputs.
 | `TASK-comparison-fan-out-engine` | sibling | `TASK-vector-gen-animated-raster` | `src/assets/service/persist-generated.ts; src/generation/image-engine/index.ts; src/generation/image-gen-route.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `TASK-vector-gen-llm-svg-pipeline` | `src/assets/service/persist-generated.ts; src/generation/image-engine/index.ts; src/generation/image-gen-route.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `TASK-video-gen-route` | `src/generation/image-gen-route.ts` |
+| `TASK-comparison-fan-out-engine` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `TASK-wire-intent-output-to-workflow-runner-startworkflow` | `src/assistant/workflow-runner.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `TASK-workflow-dag-engine-task-dependencies` | `src/assistant/workflow-runner.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui` | `src/assistant/workflow-runner.ts` |
@@ -39769,6 +40008,7 @@ output is byte-identical for identical inputs.
 | `TASK-comparison-fan-out-engine` | sibling | `epic-assistant-generation-extensions` | `src/generation/providers/comfyui.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `epic-assistant-step-planning` | `src/assistant/workflow-runner.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `epic-audio-video-sound` | `src/generation/image-gen-route.ts; src/generation/providers/comfyui.ts` |
+| `TASK-comparison-fan-out-engine` | sibling | `epic-avatar-dogfood` | `src/assets/service/persist-generated.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `epic-byok-api-keys` | `src/config/schema/sd-provider.ts; src/generation/image-engine/index.ts; src/generation/image-gen-route.ts; src/generation/providers/comfyui.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `epic-comfyui-first-class-citizen` | `src/config/schema/sd-provider.ts; src/generation/image-gen-route.ts; src/generation/providers/comfyui.ts` |
 | `TASK-comparison-fan-out-engine` | sibling | `epic-comfyui-lifecycle` | `src/generation/image-engine/index.ts; src/generation/providers/comfyui.ts` |
@@ -40609,6 +40849,7 @@ output is byte-identical for identical inputs.
 | `TASK-cross-model-comparison-run-data-side` | sibling | `epic-technical-comparison-charts` | `src/comparisons/fan-out.ts` |
 | `TASK-cross-platform-filesystem-path-guard` | sibling | `TASK-cross-platform-portability` | `src/assets/service/file-system.ts` |
 | `TASK-cross-platform-filesystem-path-guard` | sibling | `TASK-federation-storage-quota-accounting` | `src/assets/service/file-system.test.ts` |
+| `TASK-cross-platform-filesystem-path-guard` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/file-system.ts` |
 | `TASK-cross-platform-filesystem-path-guard` | sibling | `epic-configs-path-resolution` | `src/assets/service/file-system.test.ts; src/assets/service/file-system.ts` |
 | `TASK-cross-platform-filesystem-path-guard` | sibling | `epic-cross-platform-portability` | `src/assets/service/file-system.test.ts; src/assets/service/file-system.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-cross-platform-single-binary` | `src/server/index.ts; src/server/static-files.ts` |
@@ -40637,6 +40878,7 @@ output is byte-identical for identical inputs.
 | `TASK-cross-platform-portability` | sibling | `TASK-swarm-supervisor` | `src/server/start.ts; src/services/server-external-manager/lifecycle.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-tls-cipher-suite-hardening-and-secure-defaults` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-tls-configuration-audit-and-startup-validation` | `src/config/cert.ts` |
+| `TASK-cross-platform-portability` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/file-system.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-wire-fswatcher-onreload-callback-in-server-startup` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `epic-architecture` | `src/config/cert.ts` |
 | `TASK-cross-platform-portability` | sibling | `epic-certificate-and-tls-management` | `src/config/cert.ts; src/server/start.ts` |
@@ -40777,6 +41019,7 @@ output is byte-identical for identical inputs.
 | `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/assets/service/create.ts` |
 | `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts` |
 | `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts` |
+| `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | sibling | `epic-chat-product-features` | `src/crypto/asset-encryption.ts` |
 | `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps` | sibling | `epic-content-hashing-distributed-integrity` | `src/assets/service/create.ts` |
@@ -40906,6 +41149,7 @@ output is byte-identical for identical inputs.
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `TASK-services-actor-items-ts-vs-services-actor-items-name-collisi` | `src/actors/actor-items.ts` |
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `TASK-tui-models-overlay` | `src/views/admin.html` |
+| `TASK-dedup-top-jscpd-clone-clusters` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/generation/generate-route/non-stream.ts` |
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `WIRE-nsfw-audit-page-missing-inline-authz` | `src/routes/views/plugin-pages.ts` |
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
@@ -41755,6 +41999,7 @@ output is byte-identical for identical inputs.
 | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | sibling | `TASK-user-prompt-gallery-frontend-page` | `src/views/gallery.html` |
 | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | sibling | `TASK-vector-gen-gallery-asset-support` | `src/frontend/alpine/chat-utils/gallery.ts` |
+| `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | sibling | `TEST-gallery-frontend-utils-untested` | `src/frontend/alpine/chat-utils/gallery.ts` |
 | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | sibling | `epic-assistant-creative-studio-workflows` | `src/frontend/alpine/chat-utils/gallery.ts` |
 | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
@@ -42107,6 +42352,7 @@ output is byte-identical for identical inputs.
 | `TASK-encryption-asset-encryption` | sibling | `TASK-reference-set-alt-text-consistency` | `src/db/schema-content.ts` |
 | `TASK-encryption-asset-encryption` | sibling | `TASK-reference-set-entity` | `src/db/schema-content.ts` |
 | `TASK-encryption-asset-encryption` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts; src/db/schema-content.ts` |
+| `TASK-encryption-asset-encryption` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-encryption-asset-encryption` | sibling | `TASK-world-location-encryption` | `src/assets/service.ts` |
 | `TASK-encryption-asset-encryption` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `TASK-encryption-asset-encryption` | sibling | `epic-byok-api-keys` | `src/crypto/index.ts` |
@@ -43390,6 +43636,7 @@ output is byte-identical for identical inputs.
 | `TASK-gallery-fuzzy-search-pagination` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
 | `TASK-gallery-fuzzy-search-pagination` | sibling | `TASK-signed-urls-for-asset-downloads` | `src/frontend/pages/gallery.ts` |
 | `TASK-gallery-fuzzy-search-pagination` | sibling | `TASK-wardrobe-routes-validation-crud-outfit-override-endpoints` | `src/validation/schemas.ts` |
+| `TASK-gallery-fuzzy-search-pagination` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-gallery-fuzzy-search-pagination` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `TASK-gallery-fuzzy-search-pagination` | sibling | `epic-analytics-observability` | `src/elysia-app.ts` |
 | `TASK-gallery-fuzzy-search-pagination` | sibling | `epic-api-versioning` | `src/elysia-app.ts` |
@@ -43649,6 +43896,7 @@ output is byte-identical for identical inputs.
 | `TASK-guest-asset-public-reads-open-public-asset-access` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `TASK-guest-asset-public-reads-open-public-asset-access` | sibling | `TASK-search-service-unified` | `src/search/types.ts` |
 | `TASK-guest-asset-public-reads-open-public-asset-access` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/assets/signed-url.ts` |
+| `TASK-guest-asset-public-reads-open-public-asset-access` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-guest-asset-public-reads-open-public-asset-access` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `TASK-guest-asset-public-reads-open-public-asset-access` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
 | `TASK-guest-asset-public-reads-open-public-asset-access` | sibling | `epic-derived-map-generation` | `src/routes/views/gallery.ts` |
@@ -44409,6 +44657,7 @@ output is byte-identical for identical inputs.
 | `TASK-image-edit-concept-inpaint-template` | sibling | `TASK-multi-concept-segmentation-masks` | `src/image-edit/types.ts` |
 | `TASK-image-edit-concept-inpaint-template` | sibling | `TASK-multi-reference-conditioning-request-model` | `src/image-edit/run-authz.ts; src/image-edit/types.ts` |
 | `TASK-image-edit-concept-inpaint-template` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
+| `TASK-image-edit-concept-inpaint-template` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-image-edit-concept-inpaint-template` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `TASK-image-edit-concept-inpaint-template` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts; src/image-edit/types.ts` |
 | `TASK-image-edit-concept-inpaint-template` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
@@ -44664,6 +44913,7 @@ output is byte-identical for identical inputs.
 | `TASK-item-config-templates` | sibling | `TASK-swarm-supervisor` | `src/server/start.ts` |
 | `TASK-item-config-templates` | sibling | `TASK-tls-cipher-suite-hardening-and-secure-defaults` | `src/server/start.ts` |
 | `TASK-item-config-templates` | sibling | `TASK-wire-fswatcher-onreload-callback-in-server-startup` | `src/server/start.ts` |
+| `TASK-item-config-templates` | sibling | `epic-avatar-dogfood` | `src/characters/seed/templates.ts` |
 | `TASK-item-config-templates` | sibling | `epic-certificate-and-tls-management` | `src/server/start.ts` |
 | `TASK-item-config-templates` | sibling | `epic-cron-scheduler` | `src/server/start.ts` |
 | `TASK-item-config-templates` | sibling | `epic-cross-platform-portability` | `src/server/start.ts` |
@@ -45176,6 +45426,7 @@ output is byte-identical for identical inputs.
 | `TASK-lorebook-template-seeding` | sibling | `TASK-reconcile-ts-import-extensions-user-seeding-session` | `src/config/schema/seeding.ts` |
 | `TASK-lorebook-template-seeding` | sibling | `TASK-scenario-system-authoring` | `src/characters/seed/templates.ts; src/config/sections/characters/types.ts; src/seeding/worlds.ts` |
 | `TASK-lorebook-template-seeding` | sibling | `TASK-user-seeding-role-expansion` | `src/seeding/worlds.ts` |
+| `TASK-lorebook-template-seeding` | sibling | `epic-avatar-dogfood` | `src/characters/seed/templates.ts` |
 | `TASK-lorebook-template-seeding` | sibling | `epic-skills-professions-config` | `src/characters/seed/templates.ts; src/config/sections/characters/types.ts` |
 | `TASK-lorebook-unified-search-index` | sibling | `TASK-search-rag-coverage-bridge` | `src/types/search.ts` |
 | `TASK-make-the-federation-config-panel-editable-in-the-config-ui` | sibling | `epic-federation-offload-quotas` | `src/config/schema/federation.ts` |
@@ -45270,6 +45521,7 @@ output is byte-identical for identical inputs.
 | `TASK-markdown-derive-other-formats` | sibling | `TASK-unify-item-types` | `src/db/enums-story/items.ts` |
 | `TASK-markdown-derive-other-formats` | sibling | `TASK-vector-gen-animated-raster` | `src/assets/service/validate.ts` |
 | `TASK-markdown-derive-other-formats` | sibling | `TASK-vector-gen-llm-svg-pipeline` | `src/assets/service/validate.ts` |
+| `TASK-markdown-derive-other-formats` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/detect.ts` |
 | `TASK-markdown-derive-other-formats` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/generation/auto-gen/deps.ts` |
 | `TASK-markdown-derive-other-formats` | sibling | `epic-editorial-workflow` | `src/db/enums-story/items.ts` |
 | `TASK-markdown-derive-other-formats` | sibling | `epic-item-system-extensions` | `src/db/enums-story/items.ts` |
@@ -45375,6 +45627,7 @@ output is byte-identical for identical inputs.
 | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | sibling | `TASK-memory-promotion-pipeline` | `src/memory/extraction.ts` |
 | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | sibling | `TASK-runtime-migration-staleness-guard` | `src/db/migrate.ts` |
+| `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | sibling | `epic-architecture` | `src/db/migrate.ts` |
 | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts; src/memory/extraction-store.ts; src/memory/extraction.ts` |
 | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | sibling | `epic-chat-product-features` | `src/memory/extraction.ts; src/turning/turn-manager/state.ts` |
@@ -45727,6 +45980,7 @@ output is byte-identical for identical inputs.
 | `TASK-middleware-content-assets-gallery-hashing-validation` | sibling | `TASK-middleware-in-progress-status-endpoint-for-long-running-requ` | `src/routes/requests/status.ts` |
 | `TASK-middleware-content-assets-gallery-hashing-validation` | sibling | `TASK-publication-artifact-schema` | `src/assets/service/create.ts` |
 | `TASK-middleware-content-assets-gallery-hashing-validation` | sibling | `TASK-reference-set-entity` | `src/assets/service/create.ts` |
+| `TASK-middleware-content-assets-gallery-hashing-validation` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-middleware-content-assets-gallery-hashing-validation` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `TASK-middleware-content-assets-gallery-hashing-validation` | sibling | `epic-content-hashing-distributed-integrity` | `src/assets/service/create.ts; src/content/validate.ts` |
 | `TASK-middleware-content-assets-gallery-hashing-validation` | sibling | `epic-encryption-workflow` | `src/assets/service/create.ts` |
@@ -45757,6 +46011,7 @@ output is byte-identical for identical inputs.
 | `TASK-middleware-fe-be-db-record-content-hashing` | sibling | `TASK-tui` | `src/frontend/fe-fetch.ts` |
 | `TASK-middleware-fe-be-db-record-content-hashing` | sibling | `TASK-turn-send-gate` | `src/routes/messages/create.ts` |
 | `TASK-middleware-fe-be-db-record-content-hashing` | sibling | `TASK-unify-401-guard-helpers` | `src/frontend/fe-fetch.ts` |
+| `TASK-middleware-fe-be-db-record-content-hashing` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-middleware-fe-be-db-record-content-hashing` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `TASK-middleware-fe-be-db-record-content-hashing` | sibling | `epic-architecture` | `src/db/schema-` |
 | `TASK-middleware-fe-be-db-record-content-hashing` | sibling | `epic-auth-access` | `src/frontend/fe-fetch.ts` |
@@ -46105,6 +46360,7 @@ output is byte-identical for identical inputs.
 | `TASK-multimodal-asset-reuse` | sibling | `TASK-reference-capability-probe-runtime` | `src/generation/providers/comfyui.ts` |
 | `TASK-multimodal-asset-reuse` | sibling | `TASK-reference-set-multi-image-upload` | `src/generation/providers/comfyui.ts` |
 | `TASK-multimodal-asset-reuse` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/metadata.ts` |
+| `TASK-multimodal-asset-reuse` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/metadata.ts` |
 | `TASK-multimodal-asset-reuse` | sibling | `epic-ambient-music-sfx` | `src/generation/providers/comfyui.ts` |
 | `TASK-multimodal-asset-reuse` | sibling | `epic-assistant-generation-extensions` | `src/generation/providers/comfyui.ts` |
 | `TASK-multimodal-asset-reuse` | sibling | `epic-audio-video-sound` | `src/generation/providers/comfyui.ts` |
@@ -46139,6 +46395,7 @@ output is byte-identical for identical inputs.
 | `TASK-npc-bdi-planning` | sibling | `TASK-story-auto-drive-scheduler` | `src/services/agency/bdi-nightly.ts` |
 | `TASK-npc-bdi-planning` | sibling | `epic-agency-story-points` | `src/services/agency/bdi-nightly.ts` |
 | `TASK-npc-bdi-planning` | sibling | `epic-research-agency-decision` | `src/services/agency/bdi-nightly.ts` |
+| `TASK-npc-character-edit-stack-parity` | sibling | `epic-avatar-dogfood` | `src/characters/seed/avatar.ts` |
 | `TASK-npc-chat-buffer` | sibling | `TASK-npc-planning-loop` | `src/services/agency/bdi-nightly.ts` |
 | `TASK-npc-chat-buffer` | sibling | `TASK-story-auto-drive-scheduler` | `src/services/agency/bdi-nightly.ts` |
 | `TASK-npc-chat-buffer` | sibling | `epic-agency-story-points` | `src/services/agency/bdi-nightly.ts` |
@@ -46596,6 +46853,8 @@ output is byte-identical for identical inputs.
 | `TASK-precompiled-templates-injection` | sibling | `epic-entity-generation-workflows` | `src/assistant/commands/create.ts` |
 | `TASK-preview-dispatch-for-non-image-asset-types` | sibling | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | `src/assets/service/thumbnail.ts` |
 | `TASK-preview-dispatch-for-non-image-asset-types` | sibling | `TASK-thumbnail-generation-256px-webp-at-upload` | `src/assets/service/thumbnail.ts` |
+| `TASK-preview-dispatch-for-non-image-asset-types` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/thumbnail.ts` |
+| `TASK-preview-dispatch-for-non-image-asset-types` | sibling | `epic-avatar-dogfood` | `src/assets/service/thumbnail.ts` |
 | `TASK-proactive-messaging` | sibling | `TASK-profanity-filter-hot-reload-per-chat-sensitivity` | `src/routes/messages/create.ts` |
 | `TASK-proactive-messaging` | sibling | `TASK-tui-slash-command-completion` | `src/routes/messages/create.ts` |
 | `TASK-proactive-messaging` | sibling | `TASK-turn-send-gate` | `src/routes/messages/create.ts` |
@@ -46807,6 +47066,7 @@ output is byte-identical for identical inputs.
 | `TASK-publication-artifact-schema` | sibling | `TASK-video-gen-route` | `src/db/enums-content.ts` |
 | `TASK-publication-artifact-schema` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/db/enums-content.ts` |
 | `TASK-publication-artifact-schema` | sibling | `TASK-vn-branching-choices` | `src/db/schema-manifest.ts` |
+| `TASK-publication-artifact-schema` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-publication-artifact-schema` | sibling | `TASK-world-location-encryption` | `src/db/schema.ts` |
 | `TASK-publication-artifact-schema` | sibling | `TASK-world-requires-stats-flag-and-point-budget-config` | `src/db/schema-manifest.ts; src/db/schema.ts` |
 | `TASK-publication-artifact-schema` | sibling | `TASK-world-simulation-discovery-and-trade-events` | `src/db/migrations/001_init.ts; src/db/schema-manifest.ts; src/db/schema-story.ts` |
@@ -47474,6 +47734,7 @@ output is byte-identical for identical inputs.
 | `TASK-reference-set-entity` | sibling | `TASK-vector-gen-gallery-asset-support` | `src/db/enums-content.ts` |
 | `TASK-reference-set-entity` | sibling | `TASK-video-gen-route` | `src/db/enums-content.ts` |
 | `TASK-reference-set-entity` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/db/enums-content.ts` |
+| `TASK-reference-set-entity` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/create.ts` |
 | `TASK-reference-set-entity` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
 | `TASK-reference-set-entity` | sibling | `epic-3d-generation` | `src/db/enums-content.ts` |
 | `TASK-reference-set-entity` | sibling | `epic-audio-video-sound` | `src/db/enums-content.ts` |
@@ -47550,7 +47811,9 @@ output is byte-identical for identical inputs.
 | `TASK-replace-concurrency-limiter-core-with-effect-semaphore` | sibling | `epic-llm-queue` | `src/llm/concurrency-limiter.ts` |
 | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | sibling | `TASK-thumbnail-generation-256px-webp-at-upload` | `src/assets/service/thumbnail.ts` |
 | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/assets/service/alpha-status.ts` |
+| `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/metadata.ts; src/assets/service/thumbnail.ts` |
 | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | sibling | `epic-avatar-alpha-vn-layering` | `src/assets/alpha-detect.ts` |
+| `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | sibling | `epic-avatar-dogfood` | `src/assets/service/thumbnail.ts` |
 | `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-` | sibling | `epic-technical-comparison-charts` | `src/assets/metadata.ts` |
 | `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/server/start.ts` |
 | `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota` | sibling | `TASK-size-strict-debt` | `src/server/start.ts` |
@@ -47708,6 +47971,7 @@ output is byte-identical for identical inputs.
 | `TASK-review-thread-target-vocabulary` | sibling | `TASK-vector-gen-gallery-asset-support` | `src/db/enums-content.ts` |
 | `TASK-review-thread-target-vocabulary` | sibling | `TASK-video-gen-route` | `src/db/enums-content.ts` |
 | `TASK-review-thread-target-vocabulary` | sibling | `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images` | `src/db/enums-content.ts` |
+| `TASK-review-thread-target-vocabulary` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `TASK-review-thread-target-vocabulary` | sibling | `epic-3d-generation` | `src/db/enums-content.ts` |
 | `TASK-review-thread-target-vocabulary` | sibling | `epic-architecture` | `src/db/enums-` |
 | `TASK-review-thread-target-vocabulary` | sibling | `epic-audio-video-sound` | `src/db/enums-content.ts` |
@@ -47878,6 +48142,7 @@ output is byte-identical for identical inputs.
 | `TASK-scenario-system-authoring` | sibling | `TASK-world-template-full-model-coverage` | `src/seeding/worlds.ts` |
 | `TASK-scenario-system-authoring` | sibling | `epic-assistant-creative-studio-workflows` | `src/assistant/scenario-source.ts` |
 | `TASK-scenario-system-authoring` | sibling | `epic-assistant-generation-extensions` | `src/assistant/scenario-source.ts` |
+| `TASK-scenario-system-authoring` | sibling | `epic-avatar-dogfood` | `src/characters/seed/templates.ts` |
 | `TASK-scenario-system-authoring` | sibling | `epic-blog-system` | `src/assistant/scenario-source.ts` |
 | `TASK-scenario-system-authoring` | sibling | `epic-skills-professions-config` | `src/characters/seed/templates.ts; src/config/sections/characters/types.ts` |
 | `TASK-scene-aware-music-generation-ambient-music-sfx-epic-phase-2` | sibling | `epic-ambient-music-sfx` | `src/generation/audio-prompt-profiles.ts; src/generation/audio-prompt-templates.ts` |
@@ -48287,6 +48552,8 @@ output is byte-identical for identical inputs.
 | `TASK-thinking-tag-context-prune` | sibling | `epic-frontend-settings` | `src/views/settings.html` |
 | `TASK-thinking-tag-context-prune` | sibling | `epic-terminal-ui` | `src/views/settings.html` |
 | `TASK-thinking-tag-context-prune` | sibling | `epic-visual-novel-mode` | `src/views/chat.html` |
+| `TASK-thumbnail-generation-256px-webp-at-upload` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/service/thumbnail.ts` |
+| `TASK-thumbnail-generation-256px-webp-at-upload` | sibling | `epic-avatar-dogfood` | `src/assets/service/thumbnail.ts` |
 | `TASK-thumbnail-generation-256px-webp-at-upload` | sibling | `epic-encryption-workflow` | `src/assets/serve-raw.ts` |
 | `TASK-timeline-id-world-timeline-events` | sibling | `TASK-unify-item-types` | `src/db/migrations/parts/003_worlds.ts` |
 | `TASK-timeline-id-world-timeline-events` | sibling | `TASK-user-block-ban-shadow` | `src/db/schema.ts` |
@@ -48568,6 +48835,7 @@ output is byte-identical for identical inputs.
 | `TASK-vector-gen-animated-raster` | sibling | `TASK-video-gen-route` | `src/generation/image-gen-route.ts` |
 | `TASK-vector-gen-animated-raster` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/generation/providers/registry.ts` |
 | `TASK-vector-gen-animated-raster` | sibling | `epic-audio-video-sound` | `src/generation/image-gen-route.ts` |
+| `TASK-vector-gen-animated-raster` | sibling | `epic-avatar-dogfood` | `src/assets/service/persist-generated.ts` |
 | `TASK-vector-gen-animated-raster` | sibling | `epic-byok-api-keys` | `src/generation/image-engine/index.ts; src/generation/image-gen-route.ts; src/generation/providers/registry.ts` |
 | `TASK-vector-gen-animated-raster` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/image-gen-route.ts` |
 | `TASK-vector-gen-animated-raster` | sibling | `epic-comfyui-lifecycle` | `src/generation/image-engine/index.ts` |
@@ -48602,6 +48870,7 @@ output is byte-identical for identical inputs.
 | `TASK-vector-gen-llm-svg-pipeline` | sibling | `TASK-video-gen-route` | `src/generation/image-gen-route.ts` |
 | `TASK-vector-gen-llm-svg-pipeline` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/generation/providers/registry.ts` |
 | `TASK-vector-gen-llm-svg-pipeline` | sibling | `epic-audio-video-sound` | `src/generation/image-gen-route.ts` |
+| `TASK-vector-gen-llm-svg-pipeline` | sibling | `epic-avatar-dogfood` | `src/assets/service/persist-generated.ts` |
 | `TASK-vector-gen-llm-svg-pipeline` | sibling | `epic-byok-api-keys` | `src/generation/image-engine/index.ts; src/generation/image-gen-route.ts; src/generation/providers/registry.ts` |
 | `TASK-vector-gen-llm-svg-pipeline` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/image-gen-route.ts` |
 | `TASK-vector-gen-llm-svg-pipeline` | sibling | `epic-comfyui-lifecycle` | `src/generation/image-engine/index.ts` |
@@ -48734,6 +49003,17 @@ output is byte-identical for identical inputs.
 | `TASK-weather-conditions-vitals-bridge` | sibling | `epic-character-core-system` | `src/rpg/service/character-stats.ts` |
 | `TASK-weather-conditions-vitals-bridge` | sibling | `epic-character-world-integration` | `src/rpg/service/character-stats.ts` |
 | `TASK-weather-conditions-vitals-bridge` | sibling | `epic-character-xp-leveling` | `src/rpg/service/character-stats.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-2d-sprite-world` | `src/assets/service/create.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-avatar-dogfood` | `src/assets/service/thumbnail.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-configs-path-resolution` | `src/assets/service/file-system.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-content-hashing-distributed-integrity` | `src/assets/service/create.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-cross-platform-portability` | `src/assets/service/file-system.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-encryption-workflow` | `src/assets/service/create.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-narrative-publishing-workflows` | `src/assets/service/create.ts; src/assets/service/detect.ts` |
+| `TASK-webp-as-a-first-class-stored-asset-format` | sibling | `epic-technical-comparison-charts` | `src/assets/metadata.ts` |
 | `TASK-widen-import-export-io-for-publications` | sibling | `epic-frontend-settings` | `src/components/modals/settings.html` |
 | `TASK-widen-import-export-io-for-publications` | sibling | `epic-logic-reconciliation` | `src/routes/chat-export.ts` |
 | `TASK-widen-import-export-io-for-publications` | sibling | `epic-narrative-publishing-workflows` | `src/chat/export/formats.ts; src/components/modals/settings.html; src/routes/chat-export/format.ts; src/routes/import/handle.ts` |
@@ -49491,6 +49771,9 @@ output is byte-identical for identical inputs.
 | `epic-aux-enrichment-pipeline` | sibling | `epic-reactive-actor-appearance` | `src/assistant/intent.ts; src/aux-pipeline/types.ts` |
 | `epic-aux-enrichment-pipeline` | sibling | `epic-world-chat-channels-invites` | `src/generation/auto-gen.ts` |
 | `epic-avatar-alpha-vn-layering` | sibling | `epic-derived-map-generation` | `src/assets/matting-routes.ts` |
+| `epic-avatar-dogfood` | sibling | `epic-skills-professions-config` | `src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts` |
+| `epic-avatar-dogfood` | sibling | `epic-technical-comparison-charts` | `src/assets/service/persist-generated.ts` |
+| `epic-avatar-dogfood` | sibling | `epic-vector-graphics-generation` | `src/assets/service/persist-generated.ts` |
 | `epic-avatar-regeneration-control` | sibling | `epic-reactive-actor-appearance` | `src/validation/schemas/emotion-avatars.ts` |
 | `epic-battle-action-systems` | sibling | `epic-battle-integration-gaps` | `src/battle/item-mapping.ts; src/battle/items-integration.ts; src/db/schema-battle.ts; src/db/schema-core.ts; src/frontend/battle/commands.ts; src/routes/battle.ts; src/routes/battle/equipment.ts; src/routes/battle/npc.ts; src/routes/battle/resolution.ts; src/routes/battle/social.ts; src/routes/battle/weather.ts; src/routes/v1/actors-surface.ts` |
 | `epic-battle-action-systems` | sibling | `epic-battle-ui` | `src/frontend/alpine/chat-actions/battle.ts; src/frontend/alpine/chat-battle.ts; src/frontend/battle/commands.ts; src/frontend/battle/panel.ts` |

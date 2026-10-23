@@ -3533,8 +3533,26 @@
       "title": "encrypted asset thumb/compressed preview serves raw ciphertext",
       "status": "done",
       "srcRefs": [
+        "src/assets/controller.ts",
         "src/assets/controller/serve-policy.routes.test.ts",
-        "src/assets/controller/serve.ts"
+        "src/assets/controller/serve.ts",
+        "src/assets/serve-handlers.ts",
+        "src/assets/serve-raw.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md",
+      "title": "Encrypted asset thumbnail is stored and served in plaintext",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/serve-handlers.ts",
+        "src/assets/service/create.ts",
+        "src/assets/service/delete.ts",
+        "src/assets/service/thumbnail.ts",
+        "src/assets/variant-path.ts"
       ],
       "related": []
     },
@@ -11683,6 +11701,15 @@
       "related": []
     },
     {
+      "id": "FEAT-classifier-tag-vocabulary-admin-ui",
+      "kind": "ticket",
+      "path": ".plan/tickets/FEAT-classifier-tag-vocabulary-admin-ui.md",
+      "title": "classifier tag vocabulary admin UI",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "FEAT-classifier-template-packs-user-config",
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-classifier-template-packs-user-config.md",
@@ -12190,7 +12217,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md",
       "title": "Gate XP and skill XP awards behind the per-world rpg_xp opt-in",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assistant/commands/attack.ts",
         "src/db/migrations/001_init.ts",
@@ -13320,7 +13347,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md",
       "title": "Skill usage XP: award skill and character XP when skills are exercised",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assistant/commands/interaction.ts",
         "src/db/migrations/001_init.ts",
@@ -17841,6 +17868,20 @@
       "related": []
     },
     {
+      "id": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-asset-download-format-conversion-webp-png-jpg.md",
+      "title": "Asset download format conversion (webp/png/jpg)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/serve-raw.ts",
+        "src/assets/service/create.ts",
+        "src/assets/service/thumbnail.ts",
+        "src/db/enums-content.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-.md",
@@ -19437,6 +19478,47 @@
       "related": [
         "TASK-persistent-regen-job-store-migration"
       ]
+    },
+    {
+      "id": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md",
+      "title": "Avatar Dogfood — Assistant Generation Wiring",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/service/persist-generated.ts",
+        "src/test-utils/insert-helpers.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-avatar-dogfood-e2e-verify",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-avatar-dogfood-e2e-verify.md",
+      "title": "Avatar Dogfood — E2E Verification",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-avatar-dogfood-promote-defaults",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-avatar-dogfood-promote-defaults.md",
+      "title": "Avatar Dogfood — Promote to Defaults",
+      "status": "in_progress",
+      "srcRefs": [
+        "src/config/sections/characters/defaults.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-avatar-dogfood-webp-export",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-avatar-dogfood-webp-export.md",
+      "title": "Avatar Dogfood — WebP Masters + Export Op",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "TASK-avatar-framing-column-migration-future",
@@ -44083,6 +44165,23 @@
       "related": []
     },
     {
+      "id": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md",
+      "title": "WebP as a first-class stored asset format",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/controller.ts",
+        "src/assets/metadata.ts",
+        "src/assets/service/create.ts",
+        "src/assets/service/detect.ts",
+        "src/assets/service/file-system.ts",
+        "src/assets/service/thumbnail.ts",
+        "src/assets/variant-path.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-widen-import-export-io-for-publications",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-widen-import-export-io-for-publications.md",
@@ -45942,6 +46041,21 @@
       "srcRefs": [
         "src/assets/alpha-detect.ts",
         "src/assets/matting-routes.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "epic-avatar-dogfood",
+      "kind": "epic",
+      "path": ".plan/epics/epic-avatar-dogfood.md",
+      "title": "Avatar Dogfood Defaults",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/service/persist-generated.ts",
+        "src/assets/service/thumbnail.ts",
+        "src/characters/seed/avatar.ts",
+        "src/characters/seed/templates.ts",
+        "src/config/sections/characters/defaults.ts"
       ],
       "related": []
     },
@@ -52071,6 +52185,7 @@
         "BUG-asset-upload-chat-key-derivation-failure-silently-downgrades",
         "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
         "BUG-assets-delete-fk-constraint-fails",
+        "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
         "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
         "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
@@ -52086,6 +52201,7 @@
         "TASK-image-edit-concept-inpaint-template",
         "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
         "TASK-review-thread-target-vocabulary",
+        "TASK-webp-as-a-first-class-stored-asset-format",
         "epic-aux-enrichment-pipeline",
         "epic-comfyui-first-class-citizen",
         "epic-frontend-gallery"
@@ -52177,6 +52293,7 @@
         "TASK-comparison-cell-detail-metadata",
         "TASK-multimodal-asset-reuse",
         "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+        "TASK-webp-as-a-first-class-stored-asset-format",
         "epic-technical-comparison-charts"
       ]
     },
@@ -52219,6 +52336,8 @@
       "path": "src/assets/serve-handlers.ts",
       "owners": [
         "BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-",
+        "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+        "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
         "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
         "TASK-guest-asset-public-reads-open-public-asset-access"
       ]
@@ -52227,7 +52346,9 @@
       "path": "src/assets/serve-raw.ts",
       "owners": [
         "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
+        "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
         "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
+        "TASK-asset-download-format-conversion-webp-png-jpg",
         "TASK-frontend-and-http-utils-type-safety-batch",
         "TASK-thumbnail-generation-256px-webp-at-upload",
         "epic-encryption-workflow"
@@ -52288,9 +52409,11 @@
         "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
         "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
         "BUG-emotion-avatar-fallback-metadata-incomplete",
+        "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
         "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
         "TASK-asset-b1-blake3-content-store",
         "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
+        "TASK-asset-download-format-conversion-webp-png-jpg",
         "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
         "TASK-assets-has-alpha-column-and-store-computation",
         "TASK-comic-storyboard-panel-generation-workflow",
@@ -52300,6 +52423,7 @@
         "TASK-middleware-fe-be-db-record-content-hashing",
         "TASK-publication-artifact-schema",
         "TASK-reference-set-entity",
+        "TASK-webp-as-a-first-class-stored-asset-format",
         "epic-2d-sprite-world",
         "epic-content-hashing-distributed-integrity",
         "epic-encryption-workflow",
@@ -52311,6 +52435,7 @@
       "owners": [
         "BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact",
         "BUG-assets-delete-fk-constraint-fails",
+        "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
         "BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty",
         "FEAT-background",
         "TASK-asset-b1-blake3-content-store",
@@ -52323,6 +52448,7 @@
       "path": "src/assets/service/detect.ts",
       "owners": [
         "TASK-markdown-derive-other-formats",
+        "TASK-webp-as-a-first-class-stored-asset-format",
         "epic-narrative-publishing-workflows"
       ]
     },
@@ -52342,6 +52468,7 @@
         "TASK-asset-b1-blake3-content-store",
         "TASK-cross-platform-filesystem-path-guard",
         "TASK-cross-platform-portability",
+        "TASK-webp-as-a-first-class-stored-asset-format",
         "epic-configs-path-resolution",
         "epic-cross-platform-portability"
       ]
@@ -52378,9 +52505,11 @@
       "owners": [
         "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
         "TASK-asset-provenance-ledger-for-generated-assets",
+        "TASK-avatar-dogfood-assistant-generation",
         "TASK-comparison-fan-out-engine",
         "TASK-vector-gen-animated-raster",
         "TASK-vector-gen-llm-svg-pipeline",
+        "epic-avatar-dogfood",
         "epic-technical-comparison-charts",
         "epic-vector-graphics-generation"
       ]
@@ -52446,10 +52575,14 @@
       "path": "src/assets/service/thumbnail.ts",
       "owners": [
         "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
+        "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
         "TASK-asset-b1-rendition-pipeline",
+        "TASK-asset-download-format-conversion-webp-png-jpg",
         "TASK-preview-dispatch-for-non-image-asset-types",
         "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
-        "TASK-thumbnail-generation-256px-webp-at-upload"
+        "TASK-thumbnail-generation-256px-webp-at-upload",
+        "TASK-webp-as-a-first-class-stored-asset-format",
+        "epic-avatar-dogfood"
       ]
     },
     {
@@ -52497,9 +52630,11 @@
     {
       "path": "src/assets/variant-path.ts",
       "owners": [
+        "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
         "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
         "TASK-asset-b1-rendition-pipeline",
-        "TASK-c1-moderation-action-notices-with-actor-thumb"
+        "TASK-c1-moderation-action-notices-with-actor-thumb",
+        "TASK-webp-as-a-first-class-stored-asset-format"
       ]
     },
     {
@@ -55677,7 +55812,8 @@
       "owners": [
         "BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat",
         "TASK-character-domain-residual-defects",
-        "TASK-npc-character-edit-stack-parity"
+        "TASK-npc-character-edit-stack-parity",
+        "epic-avatar-dogfood"
       ]
     },
     {
@@ -55693,6 +55829,7 @@
         "TASK-item-config-templates",
         "TASK-lorebook-template-seeding",
         "TASK-scenario-system-authoring",
+        "epic-avatar-dogfood",
         "epic-skills-professions-config"
       ]
     },
@@ -59362,7 +59499,9 @@
       "owners": [
         "BUG-character-seed-dedupes-on-display-name",
         "BUG-config-schema-emitter-missing-top-level-sections",
+        "TASK-avatar-dogfood-promote-defaults",
         "TASK-character-config-skills-professions",
+        "epic-avatar-dogfood",
         "epic-skills-professions-config"
       ]
     },
@@ -60646,6 +60785,7 @@
       "path": "src/db/enums-content.ts",
       "owners": [
         "FEAT-background",
+        "TASK-asset-download-format-conversion-webp-png-jpg",
         "TASK-assets-has-alpha-column-and-store-computation",
         "TASK-avatar-framing-column-migration-future",
         "TASK-avatar-framing-tag-member",
@@ -82506,6 +82646,7 @@
         "TASK-actors-child-tables-crud",
         "TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return",
         "TASK-async-request-response-result-store-separate-table-offload",
+        "TASK-avatar-dogfood-assistant-generation",
         "TASK-consolidate-quest-engines",
         "TASK-coverage-waivers-for-3-modules-below-80-floor",
         "TASK-e2ee-receiver-wiring",
@@ -87695,6 +87836,11 @@
     {
       "from": "epic-asset-platform-capabilities",
       "kind": "owns",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
       "to": "BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty"
     },
     {
@@ -87726,6 +87872,11 @@
       "from": "epic-asset-platform-capabilities",
       "kind": "owns",
       "to": "TASK-asset-b1-rendition-pipeline"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg"
     },
     {
       "from": "epic-asset-platform-capabilities",
@@ -87806,6 +87957,11 @@
       "from": "epic-asset-platform-capabilities",
       "kind": "owns",
       "to": "TASK-preview-dispatch-for-non-image-asset-types"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format"
     },
     {
       "from": "epic-asset-transform-metadata",
@@ -88691,6 +88847,26 @@
       "from": "epic-avatar-alpha-vn-layering",
       "kind": "owns",
       "to": "TASK-vn-sprite-layer-compositing"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "owns",
+      "to": "TASK-avatar-dogfood-assistant-generation"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "owns",
+      "to": "TASK-avatar-dogfood-e2e-verify"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "owns",
+      "to": "TASK-avatar-dogfood-promote-defaults"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "owns",
+      "to": "TASK-avatar-dogfood-webp-export"
     },
     {
       "from": "epic-avatar-regeneration-control",
@@ -103555,12 +103731,52 @@
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "produces",
+      "to": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "produces",
       "to": "src/assets/controller/serve-policy.routes.test.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "produces",
       "to": "src/assets/controller/serve.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "produces",
+      "to": "src/assets/serve-handlers.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "produces",
+      "to": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "produces",
+      "to": "src/assets/serve-handlers.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "produces",
+      "to": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "produces",
+      "to": "src/assets/service/delete.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "produces",
+      "to": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "produces",
+      "to": "src/assets/variant-path.ts"
     },
     {
       "from": "BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en",
@@ -116808,6 +117024,26 @@
       "to": "src/assets/service/create.ts"
     },
     {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "produces",
+      "to": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "produces",
+      "to": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "produces",
+      "to": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "produces",
+      "to": "src/db/enums-content.ts"
+    },
+    {
       "from": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
       "kind": "produces",
       "to": "src/assets/service/create.ts"
@@ -118871,6 +119107,21 @@
       "from": "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
       "kind": "produces",
       "to": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "produces",
+      "to": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "produces",
+      "to": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-promote-defaults",
+      "kind": "produces",
+      "to": "src/config/sections/characters/defaults.ts"
     },
     {
       "from": "TASK-avatar-framing-column-migration-future",
@@ -142823,6 +143074,41 @@
       "to": "src/rpg/service/character-stats.ts"
     },
     {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "produces",
+      "to": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "produces",
+      "to": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "produces",
+      "to": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "produces",
+      "to": "src/assets/service/detect.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "produces",
+      "to": "src/assets/service/file-system.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "produces",
+      "to": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "produces",
+      "to": "src/assets/variant-path.ts"
+    },
+    {
       "from": "TASK-widen-import-export-io-for-publications",
       "kind": "produces",
       "to": "src/chat/export/formats.ts"
@@ -145606,6 +145892,31 @@
       "from": "epic-avatar-alpha-vn-layering",
       "kind": "produces",
       "to": "src/assets/matting-routes.ts"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "produces",
+      "to": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "produces",
+      "to": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "produces",
+      "to": "src/characters/seed/avatar.ts"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "produces",
+      "to": "src/characters/seed/templates.ts"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "produces",
+      "to": "src/config/sections/characters/defaults.ts"
     },
     {
       "from": "epic-avatar-regeneration-control",
@@ -163993,6 +164304,12 @@
     {
       "from": "BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys",
       "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys",
+      "kind": "sibling",
       "to": "TASK-chat-ask-type-fast-menu",
       "via": "src/db/schema-manifest.ts"
     },
@@ -168727,6 +169044,12 @@
     {
       "from": "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
+      "kind": "sibling",
       "to": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "via": "src/image-edit/providers/comfyui-owner.test.ts; src/image-edit/providers/comfyui-provider.ts"
     },
@@ -168758,6 +169081,12 @@
       "from": "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
       "kind": "sibling",
       "to": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
+      "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
       "via": "src/assets/service/create.ts"
     },
     {
@@ -168859,6 +169188,12 @@
     {
       "from": "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts; src/assets/service/file-system.ts"
+    },
+    {
+      "from": "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -168955,6 +169290,18 @@
     {
       "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
+      "kind": "sibling",
       "to": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
       "via": "src/assets/controller.ts"
     },
@@ -168992,6 +169339,12 @@
       "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
       "kind": "sibling",
       "to": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
+      "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
       "via": "src/assets/service/create.ts"
     },
     {
@@ -169111,6 +169464,12 @@
     {
       "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts; src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -169173,6 +169532,12 @@
       "kind": "sibling",
       "to": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
       "via": "src/assets/service/read.ts"
+    },
+    {
+      "from": "BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/service/delete.ts"
     },
     {
       "from": "BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact",
@@ -169303,6 +169668,12 @@
     {
       "from": "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
+      "kind": "sibling",
       "to": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
       "via": "src/routes/export.ts"
     },
@@ -169429,6 +169800,12 @@
     {
       "from": "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
+      "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/assets/controller.ts"
     },
@@ -169485,6 +169862,12 @@
       "kind": "sibling",
       "to": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
       "via": "src/assets/service/read.ts"
+    },
+    {
+      "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
@@ -169615,6 +169998,12 @@
     {
       "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
+      "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/assets/controller.ts"
     },
@@ -169663,6 +170052,18 @@
     {
       "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/controller.ts; src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
+      "kind": "sibling",
       "to": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
       "via": "src/assets/controller.ts"
     },
@@ -169701,6 +170102,12 @@
       "kind": "sibling",
       "to": "TASK-asset-b1-rendition-pipeline",
       "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
+      "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/assets/serve-raw.ts; src/assets/service/thumbnail.ts"
     },
     {
       "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
@@ -169807,8 +170214,20 @@
     {
       "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts; src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
+      "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/thumbnail.ts"
     },
     {
       "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
@@ -169856,6 +170275,12 @@
       "from": "BUG-asset-upload-chat-key-derivation-failure-silently-downgrades",
       "kind": "sibling",
       "to": "BUG-assets-delete-fk-constraint-fails",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-upload-chat-key-derivation-failure-silently-downgrades",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "via": "src/assets/controller.ts"
     },
     {
@@ -169946,6 +170371,12 @@
       "from": "BUG-asset-upload-chat-key-derivation-failure-silently-downgrades",
       "kind": "sibling",
       "to": "TASK-review-thread-target-vocabulary",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-upload-chat-key-derivation-failure-silently-downgrades",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts"
     },
     {
@@ -170071,6 +170502,12 @@
     {
       "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-metadata-vp8l-vp8x-off-bytes",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assets/metadata.ts"
     },
@@ -170113,6 +170550,12 @@
     {
       "from": "BUG-asset-webp-vp8x-dimension-truncation",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "BUG-asset-webp-vp8x-dimension-truncation",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assets/metadata.ts"
     },
@@ -170150,6 +170593,12 @@
       "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
       "kind": "sibling",
       "to": "BUG-assets-delete-fk-constraint-fails",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "via": "src/assets/controller.ts"
     },
     {
@@ -170293,6 +170742,12 @@
     {
       "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
+      "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/assets/controller.ts"
     },
@@ -170319,6 +170774,18 @@
       "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assets/service/links.ts"
+    },
+    {
+      "from": "BUG-assets-delete-fk-constraint-fails",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-assets-delete-fk-constraint-fails",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/service/delete.ts"
     },
     {
       "from": "BUG-assets-delete-fk-constraint-fails",
@@ -170449,6 +170916,12 @@
     {
       "from": "BUG-assets-delete-fk-constraint-fails",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-assets-delete-fk-constraint-fails",
+      "kind": "sibling",
       "to": "epic-asset-transform-metadata",
       "via": "src/assets/service/transforms.ts"
     },
@@ -170469,6 +170942,18 @@
       "kind": "sibling",
       "to": "epic-frontend-gallery",
       "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/serve-handlers.ts"
+    },
+    {
+      "from": "BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-",
+      "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/serve-handlers.ts"
     },
     {
       "from": "BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-",
@@ -178237,6 +178722,12 @@
     {
       "from": "BUG-character-seed-dedupes-on-display-name",
       "kind": "sibling",
+      "to": "TASK-avatar-dogfood-promote-defaults",
+      "via": "src/config/sections/characters/defaults.ts"
+    },
+    {
+      "from": "BUG-character-seed-dedupes-on-display-name",
+      "kind": "sibling",
       "to": "TASK-char-template-full-model-coverage",
       "via": "src/characters/seed/templates.ts"
     },
@@ -178281,6 +178772,12 @@
       "kind": "sibling",
       "to": "TASK-user-seeding-role-expansion",
       "via": "src/seeding/characters.ts"
+    },
+    {
+      "from": "BUG-character-seed-dedupes-on-display-name",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts"
     },
     {
       "from": "BUG-character-seed-dedupes-on-display-name",
@@ -178574,6 +179071,12 @@
       "from": "BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o",
       "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o",
+      "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
       "via": "src/test-utils/insert-helpers.ts"
     },
     {
@@ -183625,6 +184128,12 @@
     {
       "from": "BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat",
       "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/avatar.ts; src/characters/seed/templates.ts"
+    },
+    {
+      "from": "BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat",
+      "kind": "sibling",
       "to": "epic-battle-action-systems",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -184099,6 +184608,12 @@
     {
       "from": "BUG-config-schema-emitter-missing-top-level-sections",
       "kind": "sibling",
+      "to": "TASK-avatar-dogfood-promote-defaults",
+      "via": "src/config/sections/characters/defaults.ts"
+    },
+    {
+      "from": "BUG-config-schema-emitter-missing-top-level-sections",
+      "kind": "sibling",
       "to": "TASK-char-template-full-model-coverage",
       "via": "src/config/sections/characters/types.ts"
     },
@@ -184137,6 +184652,12 @@
       "kind": "sibling",
       "to": "TASK-scenario-system-authoring",
       "via": "src/config/sections/characters/types.ts"
+    },
+    {
+      "from": "BUG-config-schema-emitter-missing-top-level-sections",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/config/sections/characters/defaults.ts"
     },
     {
       "from": "BUG-config-schema-emitter-missing-top-level-sections",
@@ -185617,6 +186138,12 @@
     {
       "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
+      "kind": "sibling",
       "to": "BUG-generate-route-authorizes-chatid-but-not-actorid",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -185810,6 +186337,12 @@
       "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
       "kind": "sibling",
       "to": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
+      "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
       "via": "src/assets/service/create.ts"
     },
     {
@@ -186045,6 +186578,12 @@
       "kind": "sibling",
       "to": "TASK-review-thread-target-vocabulary",
       "via": "src/db/migrations/README.md"
+    },
+    {
+      "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
     },
     {
       "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
@@ -189805,6 +190344,12 @@
     {
       "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
+      "kind": "sibling",
       "to": "BUG-memory-audit-log-action-column-typed-string-not-union",
       "via": "src/db/schema-core.ts"
     },
@@ -189926,6 +190471,12 @@
       "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
       "kind": "sibling",
       "to": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
+      "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
       "via": "src/assets/service/create.ts"
     },
     {
@@ -190275,6 +190826,12 @@
       "kind": "sibling",
       "to": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "via": "src/characters/services/emotion-avatar-service/generation.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
     },
     {
       "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
@@ -190837,8 +191394,338 @@
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "via": "src/assets/serve-handlers.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
+      "via": "src/assets/serve-handlers.ts; src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
       "to": "BUG-size-strict-pre-existing-dev-drift",
       "via": "src/assets/controller/serve.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "FEAT-background",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-comfyui-first-class-admin-workflows",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-comfyui-first-class-workflow-library",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-dedup-top-jscpd-clone-clusters",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-encryption-asset-encryption",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-frontend-and-http-utils-type-safety-batch",
+      "via": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-guest-asset-public-reads-open-public-asset-access",
+      "via": "src/assets/controller.ts; src/assets/serve-handlers.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-image-edit-concept-inpaint-template",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-review-thread-target-vocabulary",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-thumbnail-generation-256px-webp-at-upload",
+      "via": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "epic-aux-enrichment-pipeline",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "epic-comfyui-first-class-citizen",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "epic-frontend-gallery",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty",
+      "via": "src/assets/service/delete.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
+      "via": "src/assets/serve-handlers.ts; src/assets/variant-path.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "FEAT-background",
+      "via": "src/assets/service/delete.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-asset-b1-blake3-content-store",
+      "via": "src/assets/service/create.ts; src/assets/service/delete.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-asset-b1-rendition-pipeline",
+      "via": "src/assets/service/thumbnail.ts; src/assets/variant-path.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/assets/service/create.ts; src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
+      "via": "src/assets/service/create.ts; src/assets/service/delete.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-assets-has-alpha-column-and-store-computation",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-c1-moderation-action-notices-with-actor-thumb",
+      "via": "src/assets/variant-path.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-comic-storyboard-panel-generation-workflow",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-comparison-fan-out-engine",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-data-level-integrity-checksums-and-re-readable-logical-dumps",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play",
+      "via": "src/assets/service/delete.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-guest-asset-public-reads-open-public-asset-access",
+      "via": "src/assets/serve-handlers.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-middleware-content-assets-gallery-hashing-validation",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-middleware-fe-be-db-record-content-hashing",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-preview-dispatch-for-non-image-asset-types",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-publication-artifact-schema",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-reference-set-entity",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-thumbnail-generation-256px-webp-at-upload",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
+      "via": "src/assets/service/delete.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts; src/assets/service/thumbnail.ts; src/assets/variant-path.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "epic-2d-sprite-world",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "epic-content-hashing-distributed-integrity",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/assets/service/create.ts"
     },
     {
       "from": "BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en",
@@ -195249,6 +196136,12 @@
       "kind": "sibling",
       "to": "TASK-server-side-i18n-middleware",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
@@ -204103,6 +204996,12 @@
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
       "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
       "via": "src/elysia-app.ts"
     },
@@ -212455,6 +213354,12 @@
     {
       "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
       "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "kind": "sibling",
       "to": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
       "via": "src/assets/service/create.ts"
     },
@@ -212469,6 +213374,12 @@
       "kind": "sibling",
       "to": "TASK-assets-has-alpha-column-and-store-computation",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/assets/service/persist-generated.ts"
     },
     {
       "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
@@ -212713,6 +213624,12 @@
     {
       "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts; src/assets/service/create.ts"
+    },
+    {
+      "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -212727,6 +213644,12 @@
       "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/persist-generated.ts; src/characters/seed/templates.ts"
     },
     {
       "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
@@ -213049,6 +213972,12 @@
     {
       "from": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
       "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
+      "kind": "sibling",
       "to": "TASK-assistant-creative-studio-workflow-gallery-batch",
       "via": "src/routes/assets.ts"
     },
@@ -213117,6 +214046,12 @@
       "kind": "sibling",
       "to": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "via": "src/generation/matting/service.ts"
+    },
+    {
+      "from": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/variant-path.ts"
     },
     {
       "from": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
@@ -219349,6 +220284,12 @@
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "sibling",
       "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
       "via": "src/elysia-app.ts"
     },
@@ -223209,6 +224150,12 @@
       "kind": "sibling",
       "to": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "via": "src/characters/services/emotion-avatar-service/generation.ts"
+    },
+    {
+      "from": "BUG-size-strict-pre-existing-dev-drift",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "BUG-size-strict-pre-existing-dev-drift",
@@ -236251,6 +237198,12 @@
     {
       "from": "FEAT-background",
       "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "FEAT-background",
+      "kind": "sibling",
       "to": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
       "via": "src/assets/service/delete.ts"
     },
@@ -236643,6 +237596,12 @@
       "kind": "sibling",
       "to": "TASK-vn-character-sprite-roster-per-chat",
       "via": "src/frontend/vn/sprite-stage.ts"
+    },
+    {
+      "from": "FEAT-background",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "FEAT-background",
@@ -237081,6 +238040,12 @@
       "kind": "sibling",
       "to": "TASK-aux-mood-classification",
       "via": "src/db/schema-character.ts"
+    },
+    {
+      "from": "FEAT-character-world-setup",
+      "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/test-utils/insert-helpers.ts"
     },
     {
       "from": "FEAT-character-world-setup",
@@ -240489,6 +241454,12 @@
       "kind": "sibling",
       "to": "epic-assistant-creative-studio-workflows",
       "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "FEAT-expand-character-templates-to-canonical-fields",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/templates.ts"
     },
     {
       "from": "FEAT-expand-character-templates-to-canonical-fields",
@@ -246074,6 +247045,12 @@
       "from": "FEAT-seed-character-loadouts-into-the-wardrobe-bridge",
       "kind": "sibling",
       "to": "TASK-scenario-system-authoring",
+      "via": "src/characters/seed/templates.ts"
+    },
+    {
+      "from": "FEAT-seed-character-loadouts-into-the-wardrobe-bridge",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
       "via": "src/characters/seed/templates.ts"
     },
     {
@@ -257677,6 +258654,12 @@
     {
       "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
       "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
+      "kind": "sibling",
       "to": "TASK-avatar-render-target-discriminator",
       "via": "src/db/schema-core.ts"
     },
@@ -259262,6 +260245,12 @@
       "from": "TASK-actors-child-tables-crud",
       "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-actors-child-tables-crud",
+      "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
       "via": "src/test-utils/insert-helpers.ts"
     },
     {
@@ -264649,6 +265638,12 @@
     {
       "from": "TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return",
       "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return",
+      "kind": "sibling",
       "to": "TASK-chat-ask-type-fast-menu",
       "via": "src/db/schema-manifest.ts"
     },
@@ -265243,6 +266238,12 @@
     {
       "from": "TASK-asset-b1-blake3-content-store",
       "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-b1-blake3-content-store",
+      "kind": "sibling",
       "to": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
       "via": "src/assets/service/create.ts; src/assets/service/delete.ts"
     },
@@ -265453,6 +266454,12 @@
     {
       "from": "TASK-asset-b1-blake3-content-store",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts; src/assets/service/file-system.ts"
+    },
+    {
+      "from": "TASK-asset-b1-blake3-content-store",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -265503,6 +266510,12 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/db/schema-content.ts"
+    },
+    {
+      "from": "TASK-asset-b1-rendition-pipeline",
+      "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/assets/service/thumbnail.ts"
     },
     {
       "from": "TASK-asset-b1-rendition-pipeline",
@@ -265633,6 +266646,18 @@
     {
       "from": "TASK-asset-b1-rendition-pipeline",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts; src/assets/service/thumbnail.ts; src/assets/variant-path.ts"
+    },
+    {
+      "from": "TASK-asset-b1-rendition-pipeline",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-asset-b1-rendition-pipeline",
+      "kind": "sibling",
       "to": "epic-derived-map-generation",
       "via": "src/db/schema-content.ts"
     },
@@ -265699,6 +266724,12 @@
     {
       "from": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
       "kind": "sibling",
+      "to": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
+      "kind": "sibling",
       "to": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
       "via": "src/assets/service/create.ts"
     },
@@ -265753,6 +266784,12 @@
     {
       "from": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -265773,6 +266810,234 @@
       "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-assets-has-alpha-column-and-store-computation",
+      "via": "src/assets/service/create.ts; src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-avatar-framing-column-migration-future",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-avatar-framing-tag-member",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-avatar-render-target-discriminator",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-character-avatar-gallery-binding",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-comic-storyboard-panel-generation-workflow",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-comparison-cell-detail-metadata",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-comparison-fan-out-engine",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-comparison-gallery-comparison-set-integration",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-comparison-workflow-template-and-command",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-data-level-integrity-checksums-and-re-readable-logical-dumps",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-frontend-and-http-utils-type-safety-batch",
+      "via": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-middleware-content-assets-gallery-hashing-validation",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-middleware-fe-be-db-record-content-hashing",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-preview-dispatch-for-non-image-asset-types",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-publication-artifact-schema",
+      "via": "src/assets/service/create.ts; src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-reference-set-entity",
+      "via": "src/assets/service/create.ts; src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-review-thread-target-vocabulary",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-thumbnail-generation-256px-webp-at-upload",
+      "via": "src/assets/serve-raw.ts; src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-gallery-asset-support",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-video-gen-route",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts; src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-2d-sprite-world",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-3d-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-audio-video-sound",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-content-hashing-distributed-integrity",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-editorial-workflow",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/assets/serve-raw.ts; src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/assets/service/create.ts; src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-tts-foundation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-asset-download-format-conversion-webp-png-jpg",
+      "kind": "sibling",
+      "to": "epic-video-generation",
+      "via": "src/db/enums-content.ts"
     },
     {
       "from": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
@@ -265837,6 +267102,12 @@
     {
       "from": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -265857,6 +267128,12 @@
       "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
       "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-asset-provenance-ledger-for-generated-assets",
+      "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/assets/service/persist-generated.ts"
     },
     {
       "from": "TASK-asset-provenance-ledger-for-generated-assets",
@@ -266047,6 +267324,12 @@
     {
       "from": "TASK-asset-provenance-ledger-for-generated-assets",
       "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-asset-provenance-ledger-for-generated-assets",
+      "kind": "sibling",
       "to": "epic-derived-map-generation",
       "via": "src/db/schema-content.ts"
     },
@@ -266211,6 +267494,12 @@
       "kind": "sibling",
       "to": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-assets-has-alpha-column-and-store-computation",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts; src/assets/service/create.ts"
     },
     {
       "from": "TASK-assets-has-alpha-column-and-store-computation",
@@ -272011,6 +273300,12 @@
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
       "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-async-request-response-result-store-separate-table-offload",
+      "kind": "sibling",
       "to": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
       "via": "src/server/start.ts"
     },
@@ -275763,6 +277058,198 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/frontend/alpine/mood/avatars.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-comparison-fan-out-engine",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-consolidate-quest-engines",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-coverage-waivers-for-3-modules-below-80-floor",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-e2ee-receiver-wiring",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-message-seen-state-schema",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-messages-outfit-id-column",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-middleware-migration-compaction-data-version-hash",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-reconcile-achievement-unlock-sources",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-resource-provision-schema",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-animated-raster",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-llm-svg-pipeline",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-wire-achievements-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-wire-combat-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-wire-npc-navigation-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-wire-quests-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-wire-replayability-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-wire-skills-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-wire-world-location-traits-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-wire-xp-loot-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "TASK-world-requires-stats-flag-and-point-budget-config",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "epic-character-growth",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "epic-character-world-setup",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "epic-comfyui-first-class-citizen",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "epic-crafting-professions",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-promote-defaults",
+      "kind": "sibling",
+      "to": "TASK-character-config-skills-professions",
+      "via": "src/config/sections/characters/defaults.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-promote-defaults",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/config/sections/characters/defaults.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-promote-defaults",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/config/sections/characters/defaults.ts"
     },
     {
       "from": "TASK-avatar-framing-column-migration-future",
@@ -280489,6 +281976,12 @@
     {
       "from": "TASK-c1-moderation-action-notices-with-actor-thumb",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/variant-path.ts"
+    },
+    {
+      "from": "TASK-c1-moderation-action-notices-with-actor-thumb",
+      "kind": "sibling",
       "to": "epic-chat-lifecycle-moderation",
       "via": "src/chat/moderation.ts"
     },
@@ -281155,6 +282648,12 @@
     {
       "from": "TASK-char-template-full-model-coverage",
       "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/templates.ts"
+    },
+    {
+      "from": "TASK-char-template-full-model-coverage",
+      "kind": "sibling",
       "to": "epic-character-growth",
       "via": "src/characters/spec/character.ts"
     },
@@ -281611,6 +283110,12 @@
     {
       "from": "TASK-character-config-skills-professions",
       "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts"
+    },
+    {
+      "from": "TASK-character-config-skills-professions",
+      "kind": "sibling",
       "to": "epic-skills-professions-config",
       "via": "src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts; src/config/sections/characters/types.ts"
     },
@@ -282039,6 +283544,12 @@
       "kind": "sibling",
       "to": "TEST-avatar-selection-fallback-empty-coverage",
       "via": "src/characters/services/avatar-service/selection.ts"
+    },
+    {
+      "from": "TASK-character-domain-residual-defects",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/avatar.ts"
     },
     {
       "from": "TASK-character-domain-residual-defects",
@@ -292129,6 +293640,12 @@
     {
       "from": "TASK-comfyui-first-class-admin-workflows",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-admin-workflows",
+      "kind": "sibling",
       "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
       "via": "src/elysia-app.ts"
     },
@@ -292863,6 +294380,12 @@
       "kind": "sibling",
       "to": "TASK-timeline-id-world-timeline-events",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-workflow-library",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-comfyui-first-class-workflow-library",
@@ -295477,6 +297000,12 @@
     {
       "from": "TASK-comic-storyboard-panel-generation-workflow",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-comic-storyboard-panel-generation-workflow",
+      "kind": "sibling",
       "to": "TASK-wire-intent-output-to-workflow-runner-startworkflow",
       "via": "src/assistant/workflow-runner.ts; src/regex/intent.ts"
     },
@@ -295879,6 +297408,12 @@
     {
       "from": "TASK-comparison-cell-detail-metadata",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-comparison-cell-detail-metadata",
+      "kind": "sibling",
       "to": "epic-3d-generation",
       "via": "src/db/enums-content.ts"
     },
@@ -296251,6 +297786,12 @@
     {
       "from": "TASK-comparison-fan-out-engine",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-comparison-fan-out-engine",
+      "kind": "sibling",
       "to": "TASK-wire-intent-output-to-workflow-runner-startworkflow",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -296301,6 +297842,12 @@
       "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/generation/image-gen-route.ts; src/generation/providers/comfyui.ts"
+    },
+    {
+      "from": "TASK-comparison-fan-out-engine",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/persist-generated.ts"
     },
     {
       "from": "TASK-comparison-fan-out-engine",
@@ -301345,6 +302892,12 @@
     {
       "from": "TASK-cross-platform-filesystem-path-guard",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/file-system.ts"
+    },
+    {
+      "from": "TASK-cross-platform-filesystem-path-guard",
+      "kind": "sibling",
       "to": "epic-configs-path-resolution",
       "via": "src/assets/service/file-system.test.ts; src/assets/service/file-system.ts"
     },
@@ -301509,6 +303062,12 @@
       "kind": "sibling",
       "to": "TASK-tls-configuration-audit-and-startup-validation",
       "via": "src/config/cert.ts"
+    },
+    {
+      "from": "TASK-cross-platform-portability",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/file-system.ts"
     },
     {
       "from": "TASK-cross-platform-portability",
@@ -302353,6 +303912,12 @@
     {
       "from": "TASK-data-level-integrity-checksums-and-re-readable-logical-dumps",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-data-level-integrity-checksums-and-re-readable-logical-dumps",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -303123,6 +304688,12 @@
       "kind": "sibling",
       "to": "TASK-tui-models-overlay",
       "via": "src/views/admin.html"
+    },
+    {
+      "from": "TASK-dedup-top-jscpd-clone-clusters",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-dedup-top-jscpd-clone-clusters",
@@ -308221,6 +309792,12 @@
     {
       "from": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
+      "kind": "sibling",
       "to": "TEST-gallery-frontend-utils-untested",
       "via": "src/frontend/alpine/chat-utils/gallery.ts"
     },
@@ -310329,6 +311906,12 @@
       "kind": "sibling",
       "to": "TASK-review-thread-target-vocabulary",
       "via": "src/assets/controller.ts; src/db/schema-content.ts"
+    },
+    {
+      "from": "TASK-encryption-asset-encryption",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-encryption-asset-encryption",
@@ -318031,6 +319614,12 @@
     {
       "from": "TASK-gallery-fuzzy-search-pagination",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-gallery-fuzzy-search-pagination",
+      "kind": "sibling",
       "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
       "via": "src/elysia-app.ts"
     },
@@ -319581,6 +321170,12 @@
       "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
       "via": "src/assets/signed-url.ts"
+    },
+    {
+      "from": "TASK-guest-asset-public-reads-open-public-asset-access",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-guest-asset-public-reads-open-public-asset-access",
@@ -324145,6 +325740,12 @@
     {
       "from": "TASK-image-edit-concept-inpaint-template",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-image-edit-concept-inpaint-template",
+      "kind": "sibling",
       "to": "epic-aux-enrichment-pipeline",
       "via": "src/assets/controller.ts"
     },
@@ -325671,6 +327272,12 @@
       "kind": "sibling",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-item-config-templates",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/templates.ts"
     },
     {
       "from": "TASK-item-config-templates",
@@ -328747,6 +330354,12 @@
     {
       "from": "TASK-lorebook-template-seeding",
       "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/templates.ts"
+    },
+    {
+      "from": "TASK-lorebook-template-seeding",
+      "kind": "sibling",
       "to": "epic-skills-professions-config",
       "via": "src/characters/seed/templates.ts; src/config/sections/characters/types.ts"
     },
@@ -329307,6 +330920,12 @@
       "kind": "sibling",
       "to": "TASK-vector-gen-llm-svg-pipeline",
       "via": "src/assets/service/validate.ts"
+    },
+    {
+      "from": "TASK-markdown-derive-other-formats",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/detect.ts"
     },
     {
       "from": "TASK-markdown-derive-other-formats",
@@ -329937,6 +331556,12 @@
       "kind": "sibling",
       "to": "TASK-runtime-migration-staleness-guard",
       "via": "src/db/migrate.ts"
+    },
+    {
+      "from": "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
@@ -332053,6 +333678,12 @@
     {
       "from": "TASK-middleware-content-assets-gallery-hashing-validation",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-middleware-content-assets-gallery-hashing-validation",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -332229,6 +333860,12 @@
       "kind": "sibling",
       "to": "TASK-unify-401-guard-helpers",
       "via": "src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "TASK-middleware-fe-be-db-record-content-hashing",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
     },
     {
       "from": "TASK-middleware-fe-be-db-record-content-hashing",
@@ -334321,6 +335958,12 @@
     {
       "from": "TASK-multimodal-asset-reuse",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts"
+    },
+    {
+      "from": "TASK-multimodal-asset-reuse",
+      "kind": "sibling",
       "to": "epic-ambient-music-sfx",
       "via": "src/generation/providers/comfyui.ts"
     },
@@ -334521,6 +336164,12 @@
       "kind": "sibling",
       "to": "epic-research-agency-decision",
       "via": "src/services/agency/bdi-nightly.ts"
+    },
+    {
+      "from": "TASK-npc-character-edit-stack-parity",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/avatar.ts"
     },
     {
       "from": "TASK-npc-chat-buffer",
@@ -337265,6 +338914,18 @@
       "via": "src/assets/service/thumbnail.ts"
     },
     {
+      "from": "TASK-preview-dispatch-for-non-image-asset-types",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-preview-dispatch-for-non-image-asset-types",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
       "from": "TASK-proactive-messaging",
       "kind": "sibling",
       "to": "TASK-profanity-filter-hot-reload-per-chat-sensitivity",
@@ -338529,6 +340190,12 @@
       "kind": "sibling",
       "to": "TASK-vn-branching-choices",
       "via": "src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-publication-artifact-schema",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
     },
     {
       "from": "TASK-publication-artifact-schema",
@@ -342535,6 +344202,12 @@
     {
       "from": "TASK-reference-set-entity",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-reference-set-entity",
+      "kind": "sibling",
       "to": "epic-2d-sprite-world",
       "via": "src/assets/service/create.ts"
     },
@@ -342991,8 +344664,20 @@
     {
       "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/metadata.ts; src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "kind": "sibling",
       "to": "epic-avatar-alpha-vn-layering",
       "via": "src/assets/alpha-detect.ts"
+    },
+    {
+      "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/thumbnail.ts"
     },
     {
       "from": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-",
@@ -343935,6 +345620,12 @@
       "kind": "sibling",
       "to": "TASK-vn-alpha-extraction-matting-job-for-opaque-character-images",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "TASK-review-thread-target-vocabulary",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-review-thread-target-vocabulary",
@@ -344955,6 +346646,12 @@
       "kind": "sibling",
       "to": "epic-assistant-generation-extensions",
       "via": "src/assistant/scenario-source.ts"
+    },
+    {
+      "from": "TASK-scenario-system-authoring",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/characters/seed/templates.ts"
     },
     {
       "from": "TASK-scenario-system-authoring",
@@ -347413,6 +349110,18 @@
     {
       "from": "TASK-thumbnail-generation-256px-webp-at-upload",
       "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-thumbnail-generation-256px-webp-at-upload",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-thumbnail-generation-256px-webp-at-upload",
+      "kind": "sibling",
       "to": "epic-encryption-workflow",
       "via": "src/assets/serve-raw.ts"
     },
@@ -349099,6 +350808,12 @@
     {
       "from": "TASK-vector-gen-animated-raster",
       "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "TASK-vector-gen-animated-raster",
+      "kind": "sibling",
       "to": "epic-byok-api-keys",
       "via": "src/generation/image-engine/index.ts; src/generation/image-gen-route.ts; src/generation/providers/registry.ts"
     },
@@ -349299,6 +351014,12 @@
       "kind": "sibling",
       "to": "epic-audio-video-sound",
       "via": "src/generation/image-gen-route.ts"
+    },
+    {
+      "from": "TASK-vector-gen-llm-svg-pipeline",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/persist-generated.ts"
     },
     {
       "from": "TASK-vector-gen-llm-svg-pipeline",
@@ -350091,6 +351812,72 @@
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
       "via": "src/rpg/service/character-stats.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-2d-sprite-world",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-aux-enrichment-pipeline",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/thumbnail.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-comfyui-first-class-citizen",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-configs-path-resolution",
+      "via": "src/assets/service/file-system.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-content-hashing-distributed-integrity",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-cross-platform-portability",
+      "via": "src/assets/service/file-system.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/assets/service/create.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-frontend-gallery",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/assets/service/create.ts; src/assets/service/detect.ts"
+    },
+    {
+      "from": "TASK-webp-as-a-first-class-stored-asset-format",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/metadata.ts"
     },
     {
       "from": "TASK-widen-import-export-io-for-publications",
@@ -354633,6 +356420,24 @@
       "kind": "sibling",
       "to": "epic-derived-map-generation",
       "via": "src/assets/matting-routes.ts"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/characters/seed/templates.ts; src/config/sections/characters/defaults.ts"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "epic-avatar-dogfood",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/assets/service/persist-generated.ts"
     },
     {
       "from": "epic-avatar-regeneration-control",
