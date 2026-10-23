@@ -3,7 +3,7 @@
 
 # TASK: Chat avatar resolver outfit-aware (fix the dead read path)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-reactive-actor-appearance
@@ -69,15 +69,19 @@ base portrait. On a miss, only outfitless variants remain eligible
 
 **Acceptance Criteria:**
 
-- [ ] AC1: Given a message whose actor has an active outfit for the chat — resolved as chat override > location rule > equipped loadout > character default outfit — the rendered avatar_asset_id is the (outfit, emotion) variant. With no override and no location rule, the actor's default outfit applies.
-- [ ] AC2: Changing the chat-scene outfit override visibly changes the avatar rendered for subsequent messages in that chat.
-- [ ] AC3: Ladder order matches `src/characters/services/wardrobe/selection-ladder.ts:9-17` exactly, pinned by unit tests covering each rung and each miss.
-- [ ] AC4: Given an actor with NO resolvable outfit — no chat override, no location rule, no default outfit — the message renders identically to today: avatar_asset_id is left absent and the client's emotion-only walk owns the render.
-- [ ] AC5: A message naming an outfit with no matching variant degrades to the outfitless / base rung — it never throws and never renders another outfit's variants.
-- [ ] AC6: `avatarForMessage`'s message parameter carries the outfit input, or the asset id arrives pre-resolved — either way the flat exact → neutral → first walk is no longer the whole resolver.
-- [ ] AC7: The existing pinned behaviour at `src/frontend/alpine/mood.test.ts:64-77` (purity — the resolver does not mutate `_currentEmotionAvatar`) still passes.
-- [ ] AC8: An outfit_id naming a deleted outfit is a ladder miss, not an error: resolution degrades down the chain and never throws.
-- [ ] AC9: Pending TASK-messages-outfit-id-column: once messages.outfit_id lands, per-message outfit takes precedence over the chat-scoped context, and resolveMessageAvatar is the single seam for that change.
+- [x] AC1: Given a message whose actor has an active outfit for the chat — resolved as chat override > location rule > equipped loadout > character default outfit — the rendered avatar_asset_id is the (outfit, emotion) variant. With no override and no location rule, the actor's default outfit applies.
+- [x] AC2: Changing the chat-scene outfit override visibly changes the avatar rendered for subsequent messages in that chat.
+- [x] AC3: Ladder order matches `src/characters/services/wardrobe/selection-ladder.ts:9-17` exactly, pinned by unit tests covering each rung and each miss.
+- [x] AC4: Given an actor with NO resolvable outfit — no chat override, no location rule, no default outfit — the message renders identically to today: avatar_asset_id is left absent and the client's emotion-only walk owns the render.
+- [x] AC5: A message naming an outfit with no matching variant degrades to the outfitless / base rung — it never throws and never renders another outfit's variants.
+- [x] AC6: `avatarForMessage`'s message parameter carries the outfit input, or the asset id arrives pre-resolved — either way the flat exact → neutral → first walk is no longer the whole resolver.
+- [x] AC7: The existing pinned behaviour at `src/frontend/alpine/mood.test.ts:64-77` (purity — the resolver does not mutate `_currentEmotionAvatar`) still passes.
+- [x] AC8: An outfit_id naming a deleted outfit is a ladder miss, not an error: resolution degrades down the chain and never throws.
+- [x] AC9: `resolveMessageAvatar` is the single seam for the per-message outfit
+      (`src/characters/services/wardrobe/message-avatar.ts`). The column landed as
+      migration `070`; the epic's **fill-at-write-time** decision (2026-10-23)
+      makes the per-message value take precedence over the chat-scoped context
+      once the phase-2 writer fills it.
 
 **Notes / Evidence:**
 
@@ -104,3 +108,12 @@ base portrait. On a miss, only outfitless variants remain eligible
 - The wardrobe ladder is delegated wholesale to `selectAvatar`, so ordering cannot drift from the selection ladder.
 - A per-message outfit can change the rendered avatar for actors with a non-null `default_outfit` (rung 3) where the base portrait rendered before — intentional, and it belongs in release notes.
 - Not covered: no browser-level E2E for the header-switcher → DOM path.
+
+**Resolved:** 2026-10-23 — the resolver shipped server-side: the message read
+path calls `attachMessageAvatars`
+(`src/characters/services/wardrobe/message-avatar.ts:112-187`) from
+`src/routes/messages/read.ts:79-87`, resolving the outfit through
+`resolveOutfit` and delegating the ladder wholesale to `selectAvatar`
+(`:152-171`), annotating each row with `msg.avatar_asset_id` (`:174`). The call
+is wrapped in try/catch, so a wardrobe fault can never cost the reader their
+page. The epic's defects 1 and 2 are marked resolved accordingly.
