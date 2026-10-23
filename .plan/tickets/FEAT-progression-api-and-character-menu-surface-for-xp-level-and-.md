@@ -3,9 +3,11 @@
 
 # FEAT: Progression API and character menu surface for XP, level, and stats in world
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** REST routes shipped on dev — `POST /api/rpg/progression/:actorId/award` :141, `/asi` :170, `/level-up` :199 in `src/routes/rpg/progression.ts`; blocked on sibling F2 character-menu/panel buttons (tree `xp-progression-surface`, unlanded); verified 2026-10-23
 **Priority:** high
 **Effort:** Medium
+**Caveats:** observability — the routes are live but undiscoverable in-world until the panel buttons land; no frontend consumer on dev
 **Epic:** character-xp-leveling
 **Related:** .plan/tickets/TASK-wire-xp-loot-routes.md (mounted the xp-loot route surface this extends), .plan/tickets/FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md (exposes the level-up/allocate resolution actions), .plan/epics/epic-character-world-integration.md (character/impersonation panel in world scenes reads the stat block this surfaces)
 

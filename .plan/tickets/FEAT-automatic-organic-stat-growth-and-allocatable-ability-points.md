@@ -4,8 +4,10 @@
 # FEAT: Automatic organic stat growth and allocatable ability points on level-up
 
 **Status:** Done
+**Status Note:** shipped on dev — `applyOrganicGrowth` at `src/rpg/level/growth.ts:75`, `allocateAsi` at `src/rpg/level/asi.ts:66`; verified 2026-10-23
 **Priority:** high
 **Effort:** Large
+**Caveats:** data races — concurrent awards serialize on the `character_stats` row via the service transaction; rollback — reverting the LevelService leaves `xp_ledger` rows without matching stat updates
 **Epic:** character-xp-leveling
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (its ASI bookkeeping feeds the pending-point budget here), .plan/epics/epic-character-growth.md (growth_log reuse for organic stat drift audit), .plan/epics/epic-character-core-system.md (owns the character_stats schema this writes)
 
