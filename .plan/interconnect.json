@@ -47968,7 +47968,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-admin.md",
       "title": "Admin Panel & Dashboard",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/admin-users.ts",
         "src/frontend/alpine/admin.ts",
@@ -47994,7 +47994,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-age-gate.md",
       "title": "Age Gate & Content Warnings",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/age-gate/controller.ts",
         "src/age-gate/service.ts",
@@ -48017,7 +48017,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-backend-integration.md",
       "title": "Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/rpg-stats.ts",
         "src/frontend/fe-fetch.ts"
@@ -48115,7 +48115,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-gallery.md",
       "title": "Frontend Gallery & Media Viewer",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/components/chat/gallery-sidebar.html",
@@ -48144,7 +48144,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-html-dedup-htmx-reuse.md",
       "title": "Frontend HTML Deduplication & HTMX AJAX Reuse",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/components/loading-state.html",
         "src/frontend/alpine/htmx-header.ts",
@@ -48217,7 +48217,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-settings.md",
       "title": "Settings & Preferences UI",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/components/modals/settings.html",
         "src/routes/v1/base-surface.ts",
@@ -48425,7 +48425,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-housing.md",
       "title": "Housing System",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/db/schema-housing.ts",
         "src/routes/housing.ts"
@@ -48468,7 +48468,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-i18n.md",
       "title": "Internationalization (i18n)",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -48569,7 +48569,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-import-export-io.md",
       "title": "# Epic 14: Import/Export & Data Portability",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/characters/charx.ts",
         "src/characters/errors.ts",
@@ -48947,7 +48947,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-lora-discovery-application.md",
       "title": "LoRA Discovery & Application",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/generation/image-gen-route.ts",
@@ -49118,7 +49118,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-mesh-federation-content-sharing.md",
       "title": "Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -49153,7 +49153,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-middleware-request-lifecycle.md",
       "title": "Middleware — Request Lifecycle, Idempotency & Async Results",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/async/offload.ts",
         "src/async/store.ts",
@@ -49451,7 +49451,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-npc-navigation.md",
       "title": "NPC Navigation",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -49549,7 +49549,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-openapi-reference.md",
       "title": "OpenAPI-Driven API Reference",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/validation/schemas.ts"
@@ -50185,7 +50185,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-replayability.md",
       "title": "Replayability",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -50574,7 +50574,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-skills.md",
       "title": "Skills",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/routes/rpg/index.ts"
       ],
@@ -50987,7 +50987,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-wardrobe-avatar-variants.md",
       "title": "Wardrobe / Loadout Avatar Variants",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assistant/prompt-outfit.ts",
         "src/assistant/prompt/sections/emotion-avatar.ts",
@@ -51039,7 +51039,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-world-chat-channels-invites.md",
       "title": "World Chat Channels & Invite-Driven Membership",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assistant/prompt/sections/group-participants.ts",
         "src/assistant/prompt/sections/group-talkativity.test.ts",
