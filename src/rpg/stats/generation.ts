@@ -2,25 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { rollDie, } from "../dice";
-import {
-  type AbilityName,
-  ALL_ABILITIES,
-  type StatBlock,
-} from "./types.js";
+import { type AbilityName, ALL_ABILITIES, type StatBlock, statCost, } from "./types.js";
 
 // ── Stat generation methods ──────────────────────────────
-
-/** Point-buy costs: stat value → cost in points */
-const POINT_BUY_COST: Record<number, number> = {
-  8: 0,
-  9: 1,
-  10: 2,
-  11: 3,
-  12: 4,
-  13: 5,
-  14: 7,
-  15: 9,
-};
 
 /**
  * Standard point-buy stat generation (27 points).
@@ -40,12 +24,7 @@ export function pointBuy(allocation: Record<AbilityName, number>,): StatBlock | 
       return null;
     }
 
-    const cost = POINT_BUY_COST[statValue];
-    if (cost === undefined) {
-      return null;
-    }
-
-    totalCost += cost;
+    totalCost += statCost(statValue,);
     stats[ability] = statValue;
   }
 

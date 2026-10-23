@@ -114,6 +114,7 @@ declare global {
   var actorSystemsFactory: (actorId: string,) => unknown;
   var actorTraitsFactory: (actorId: string,) => unknown;
   var actorWardrobeFactory: (actorId: string,) => unknown;
+  var statAllocationFactory: (actorId: string, worldId: string,) => unknown;
   var vnTemplateManagerFactory: (worldId: string,) => unknown;
   var actorWardrobe: unknown;
   var outfitSwitcher: () => unknown;
