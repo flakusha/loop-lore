@@ -27,7 +27,9 @@ import { AssetType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
+import { isEncryptedAsset, } from "./encryption";
 import { handleServeCompressed, } from "./serve-handlers";
+import { handleServeRaw, } from "./serve-raw";
 import { createAsset, deleteAsset, } from "./service";
 
 const KEY_ID = "test-chat-key-id";
@@ -218,5 +220,45 @@ describe("encrypted asset previews", () => {
     } finally {
       await cleanup(fx,);
     }
+  });
+
+  describe("isEncryptedAsset", () => {
+    test("public asset is not encrypted", () => {
+      expect(isEncryptedAsset({ encryption_tier: "public", encrypted_key_id: null, },),).toBe(false,);
+    });
+
+    test("non-public with key is encrypted", () => {
+      expect(isEncryptedAsset({ encryption_tier: "standard", encrypted_key_id: KEY_ID, },),).toBe(true,);
+    });
+
+    test("non-public without key is not encrypted", () => {
+      expect(isEncryptedAsset({ encryption_tier: "standard", encrypted_key_id: null, },),).toBe(false,);
+    });
+
+    test("public with key is not encrypted", () => {
+      expect(isEncryptedAsset({ encryption_tier: "public", encrypted_key_id: KEY_ID, },),).toBe(false,);
+    });
+  });
+
+  describe("handleServeRaw encrypted asset", () => {
+    test("requires chat context for encrypted asset", async () => {
+      const fx = await seed();
+      try {
+        const assetId = await addAsset({ fx, encrypted: true, filename: "secret-raw.png", },);
+
+        const res = await handleServeRaw({
+          database: fx.db,
+          assetId,
+          uploadDir: fx.uploadDir,
+          actorId: fx.ownerId,
+          actorRole: "user",
+        },);
+
+        expect(res.status,).toBe(400,);
+        expect(await res.text(),).toBe("Encrypted asset requires chat context",);
+      } finally {
+        await cleanup(fx,);
+      }
+    });
   });
 });
