@@ -7,6 +7,7 @@ import { adminAnalytics, } from "./admin-analytics";
 import { adminApprovals, } from "./admin-approvals";
 import { adminAudit, } from "./admin-audit";
 import { adminChats, } from "./admin-chats";
+import { adminClassifierVocab, } from "./admin-classifier-vocab";
 import { adminFederation, } from "./admin-federation";
 import { adminHarness, } from "./admin-harness";
 import { adminModels, } from "./admin-models";
@@ -69,6 +70,7 @@ adminGlobals.adminPage = function() {
     ...adminReview,
     ...adminApprovals,
     ...adminSystem,
+    ...adminClassifierVocab,
     ...adminTemplates,
     ...adminWorkflows,
     ...adminAnalytics,
@@ -168,6 +170,7 @@ adminGlobals.adminPage = function() {
         case "system": {
           this.loadSystemConfig();
           this.loadNsfwConfig();
+          this.loadClassifierVocab();
           break;
         }
 

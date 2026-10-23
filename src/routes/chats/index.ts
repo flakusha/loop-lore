@@ -7,6 +7,7 @@ import { annotationRoutes, } from "./annotations";
 import { autoTranslateRoutes, } from "./auto-translate";
 import { batchRoutes, } from "./batch";
 import { chatBranchRoutes, } from "./branches";
+import { classifierTagRoutes, } from "./classifier-tags";
 import { createRoutes, } from "./create";
 import { entitySuggestionRoutes, } from "./entity-suggestions";
 import { extrasRoutes, } from "./extras";
@@ -63,5 +64,6 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(extrasRoutes(opts, prefix,),)
       .use(generateEntityRoutes(opts, prefix,),)
       .use(entitySuggestionRoutes(opts, prefix,),)
+      .use(classifierTagRoutes(opts, prefix,),)
   );
 }

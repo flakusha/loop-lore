@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { OutputStylePreset, } from "../../chat/output-style";
+import { classifierTagsActions, } from "./chat-settings/classifier-tags";
 import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
 import { presentationGmConfig, } from "./chat-settings/gm-config-presentation";
 import { ownershipActions, } from "./chat-settings/ownership";
@@ -19,6 +20,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   ...ownershipActions,
   ...personaActions,
   ...vnQaActions,
+  ...classifierTagsActions,
   _chatSettingsName: "",
   _chatSettingsMode: "story",
   _chatSettingsTurnStrategy: "round_robin",
@@ -119,6 +121,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this.loadActorModels(config,);
     await this.loadPromptTemplate();
     this.loadQuickReplies();
+    await this.loadClassifierTags();
     Alpine.store("ui",).showChatSettings = true;
   },
 

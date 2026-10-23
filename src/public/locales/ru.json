@@ -125,7 +125,12 @@
     "stop": "Stop",
     "caption": "Caption:",
     "playingAs": "Playing as",
-    "ownerMessage": "Authored by chat owner"
+    "ownerMessage": "Authored by chat owner",
+    "classifierTags": {
+      "title": "Теги классификатора",
+      "description": "Выберите, какие отобранные теги классификатора активны в этом чате.",
+      "save": "Сохранить теги"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -483,6 +488,21 @@
       "concurrency": "Макс. параллельность",
       "rpm": "Запросов/мин",
       "advisoryTokens": "Рекоменд. токенов/мин"
+    },
+    "classifierVocab": {
+      "title": "Словарь тегов классификатора",
+      "description": "Управляйте словарём тегов, доступным классификатору. Теги должны быть непустыми, уникальными и не длиннее 64 символов (не более 200 тегов).",
+      "empty": "Тегов пока нет — добавьте первый ниже.",
+      "placeholder": "Новый тег…",
+      "add": "Добавить",
+      "rename": "Переименовать",
+      "remove": "Удалить",
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "errorEmpty": "Теги не могут быть пустыми.",
+      "errorTooLong": "Теги должны быть не длиннее 64 символов.",
+      "errorDuplicate": "Дублирующийся тег: {tag}",
+      "errorTooMany": "Разрешено не более 200 тегов."
     }
   },
   "errors": {
@@ -1570,7 +1590,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "Словарь сохранён",
+    "classifierTagsSaved": "Теги классификатора сохранены",
+    "classifierTagsSaveFailed": "Не удалось сохранить теги классификатора"
   },
   "status": {
     "characterResponding": "Персонаж отвечает...",

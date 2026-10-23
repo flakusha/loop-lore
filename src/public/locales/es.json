@@ -125,7 +125,12 @@
     "stop": "Stop",
     "caption": "Caption:",
     "playingAs": "Playing as",
-    "ownerMessage": "Authored by chat owner"
+    "ownerMessage": "Authored by chat owner",
+    "classifierTags": {
+      "title": "Etiquetas del clasificador",
+      "description": "Elige qué etiquetas curadas del clasificador están activas en este chat.",
+      "save": "Guardar etiquetas"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -483,6 +488,21 @@
       "concurrency": "Concurrencia máx.",
       "rpm": "Peticiones/min",
       "advisoryTokens": "Tokens/min orientativos"
+    },
+    "classifierVocab": {
+      "title": "Vocabulario de etiquetas del clasificador",
+      "description": "Administra el vocabulario de etiquetas disponible para el clasificador. Las etiquetas no pueden estar vacías, deben ser únicas y de 64 caracteres como máximo (200 etiquetas máximo).",
+      "empty": "Aún no hay etiquetas: añade la primera abajo.",
+      "placeholder": "Nueva etiqueta…",
+      "add": "Añadir",
+      "rename": "Renombrar",
+      "remove": "Eliminar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "errorEmpty": "Las etiquetas no pueden estar vacías.",
+      "errorTooLong": "Las etiquetas deben tener 64 caracteres como máximo.",
+      "errorDuplicate": "Etiqueta duplicada: {tag}",
+      "errorTooMany": "Se permiten 200 etiquetas como máximo."
     }
   },
   "errors": {
@@ -1570,7 +1590,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "Vocabulario guardado",
+    "classifierTagsSaved": "Etiquetas del clasificador guardadas",
+    "classifierTagsSaveFailed": "Error al guardar las etiquetas del clasificador"
   },
   "status": {
     "characterResponding": "El personaje está respondiendo...",
