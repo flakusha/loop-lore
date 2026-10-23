@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** epic-external-tooling-build.md
+**Epic:** epic-external-tooling-build
 **Caveats:** CMake caches every `option()` result and does not reset a variable on a re-configure that omits it, so a shared build tree yields a successful build with the wrong backend and no visible error. Separately, stable-diffusion.cpp's `CMakeLists.txt:281-297` sets `BUILD_SHARED_LIBS OFF` with no `CACHE` keyword — a **normal directory-scope variable** that shadows an explicit `-DBUILD_SHARED_LIBS=ON` — which per-variant directories do *not* fix; that is handled by always passing the shared-vs-static flags explicitly. A prefix that has been installed into repeatedly accumulates stale versioned libraries — the existing `llama.cpp/build-vk/lib64/` holds `libggml-vulkan.so.0.15.3` alongside the current one — so artifact discovery must use the unversioned symlink.
 
 **Summary:** Key build trees by project × accelerator × architecture, make the install root a flag, and create PATH symlinks in one merged module.

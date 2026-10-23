@@ -12,7 +12,8 @@
 **Status Note:** in-chat asset preview + linkage side panel shipped in dev: `src/components/chat/gallery-sidebar.html` + `media-preview-modal.html` (toggle `showGallery`), `src/frontend/alpine/chat-utils/gallery.ts` (`openAssetPreview`/`loadGalleryAssets`/`getMediaStyle`), message attachments via `pendingAssets`→`sendMessage` (chat-send.ts + chat-editing.ts), upload→chat entity linkage (`entity_type=chat`). Git issue `fef7e3b` closed 2026-08-19.
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-asset-support-expansion
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-asset-support-expansion" preserved 2026-10-23; no epic file exists.
 **Worktree:** `in-chat-asset-preview-panel` (base dev `59b69851`)
 
 ## Summary

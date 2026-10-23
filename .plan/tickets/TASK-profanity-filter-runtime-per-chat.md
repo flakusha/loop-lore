@@ -9,7 +9,8 @@
 **Summary:** Profanity Filter (Runtime, Per-Chat)
 **Context:** Epic epic-profanity-filter; tags profanity, moderation.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** epic-profanity-filter
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-profanity-filter" preserved 2026-10-23; no epic file exists.
 **Tags:** profanity, moderation
 
 ## Summary

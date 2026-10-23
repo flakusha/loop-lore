@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** model-metadata-read
+**Epic:** epic-model-metadata-read
 **Tags:** models, hashing, dedup
 
 **Summary:**

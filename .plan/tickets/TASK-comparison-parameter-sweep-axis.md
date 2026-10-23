@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-technical-comparison-charts`
+**Epic:** epic-technical-comparison-charts
 **Related:** `TASK-comparison-set-routes-crud-ownership-validation.md`, `TASK-comparison-fan-out-engine.md`, `TASK-comparison-metric-collection-and-charts.md`, `epic-model-family-presets.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

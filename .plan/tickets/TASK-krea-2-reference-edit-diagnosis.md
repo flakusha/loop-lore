@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-krea-2-reference-edit-template.md`, `TASK-reference-capability-probe-runtime.md`, `epic-comfyui-plugin.md`, `epic-model-family-presets.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

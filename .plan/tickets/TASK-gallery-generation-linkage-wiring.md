@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-frontend-gallery
 
 ## Summary
 

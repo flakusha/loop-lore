@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** derived-map-generation
+**Epic:** epic-derived-map-generation
 **Tags:** comfyui, depth, workflow-templates
 **Depends on:** `TASK-comfyui-workflow-parameterization`, `TASK-comfyui-node-id-allocation`
 **Related:** TASK-derived-map-origin-links.md, epic-3d-generation.md

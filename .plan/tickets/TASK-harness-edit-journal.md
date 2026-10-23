@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `epic-harness-integration`
+**Epic:** epic-harness-integration
 **Depends on:** `TASK-harness-lean-ctx-tools`
 **Related:** TASK-harness-exec-log.md, TASK-harness-edit-rollback.md, TASK-harness-otel-replay.md
 

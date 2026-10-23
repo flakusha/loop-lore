@@ -6,7 +6,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Large
-**Epic:** `epic-terminal-ui`
+**Epic:** epic-terminal-ui
 **Tags:** tui, admin, models
 **Summary:** Full-screen overlay for model-role assignment and provider health, so an operator over ssh can see which model each role actually resolved to and reassign it.
 **Context:** The `admin.system` routes (`src/routes/admin/model-roles.ts`, `src/routes/admin/providers.ts`) already expose every role's resolved `provider`/`model` plus the `source` that decided it (`db` \| `config` \| `default`, `src/admin/model-roles.ts:34-39`). That `source` is the diagnostic an operator wants over ssh — "why isn't this using the model I set" — and nothing in the TUI surfaces it. Reuse-first: the overlay is built from the same blessed `box` + `list` + `text` shape as `chat-picker.ts`, the HTTP layer uses its own `setFetch` seam rather than `mock.module`, and the keybinding sits in the existing F-block in `src/tui/app.ts`. No new widget library, no second screen framework, no new server route.

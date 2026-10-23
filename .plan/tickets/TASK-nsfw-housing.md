@@ -9,6 +9,7 @@
 
 
 **Epic:** epic-housing
+**Related:** TASK-nsfw-housing-integration (duplicate pair)
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

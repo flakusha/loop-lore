@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task (RAG external)
 **Tags:** rag, internet-search, search-providers, captcha, fallback, quarantine, deep-research
-**Epic:** epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`, `TASK-rag-search-robots-quota.md`)
+**Epic:** epic-rag-context-sources
 
 ## Summary
 

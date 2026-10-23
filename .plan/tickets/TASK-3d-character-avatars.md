@@ -13,6 +13,7 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** High
+**Epic:** epic-3d-generation
 **Related:** TASK-emotions-avatar-edit-model
 
 ## Summary

@@ -7,7 +7,7 @@
 **Status Note:** `harness.call_completed` is computed directly in `exec-recorder.ts:76`, NOT via `telemetry/record()`; the stats rollup reads the JSONL window and works without the event. Remaining: `record()`-path event types, per-model analytics rollup, `ResourceManager.inFlight` export.
 **Priority:** high
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Harness telemetry as new `telemetry_events` types (no new tables) + per-model rollups + one Analytics sub-block; export ResourceManager.inFlight into MetricsCollector.
 **Context:** Three wired layers: `telemetry/service.ts` + `telemetry_events` table (6-type ingest union — no `tool.*` event despite the header comment), `api-governance/telemetry/collector.ts` (500-sample ring) → `GET /api/v1/metrics` vs process-only `GET /metrics`, AUX telemetry route; dashboard `admin.html` Analytics/Health tabs + Alpine loaders. Gaps: inFlight in-memory only, models endpoint groups by event_type (no per-model tokens/latency), no gripe event type.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

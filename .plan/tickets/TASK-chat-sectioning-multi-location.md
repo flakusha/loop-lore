@@ -12,6 +12,7 @@
 **Status Note:** Needed
 **Priority:** Medium
 **Effort:** High
+**Epic:** epic-chat-transfer-location
 **Related:** TASK-chat-backgrounds-location-sync, TASK-chat-transfer-location, TASK-travel-party-migration, TASK-transition-aux-llm-fallback
 
 ## Summary

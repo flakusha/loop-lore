@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** model-info-frontend
+**Epic:** epic-model-info-frontend
 **Tags:** frontend, models, search
 
 **Summary:**

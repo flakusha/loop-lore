@@ -9,7 +9,8 @@
 **Summary:** Co-authoring Presence (live cursors, typing indicators)
 **Context:** Epic proposed:epic-co-authoring; tags multiplayer, collab.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-co-authoring
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-co-authoring" preserved 2026-10-23; no epic file exists.
 **Tags:** multiplayer, collab
 
 ## Summary

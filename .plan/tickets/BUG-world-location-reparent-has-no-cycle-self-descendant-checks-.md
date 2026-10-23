@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** critical
 **Effort:** Medium
+**Epic:** epic-world-locations
 
 **Summary:**
 

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `epic-technical-comparison-charts`
+**Epic:** epic-technical-comparison-charts
 **Related:** `TASK-comparison-grid-frontend.md`, `TASK-comparison-parameter-sweep-axis.md`, `TASK-comparison-metric-collection-and-charts.md`, `TASK-comparison-two-cell-diff-modes.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

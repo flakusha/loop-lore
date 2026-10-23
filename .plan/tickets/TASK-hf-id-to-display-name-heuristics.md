@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
-**Epic:** model-metadata-read
+**Epic:** epic-model-metadata-read
 **Tags:** models, metadata
 
 **Summary:**

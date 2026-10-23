@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium (post-Gate C, with parent epic)
 **Effort:** Medium
-**Epic:** `epic-assistant-creative-studio-workflows` (§7.7)
+**Epic:** epic-assistant-creative-studio-workflows
 **Depends on:** `epic-assistant-creative-studio-workflows` (runner/loader),
 `epic-creative-studio.md` (gallery UI surface),
 existing asset routes (`/api/assets/:id/...`)

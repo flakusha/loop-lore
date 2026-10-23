@@ -9,7 +9,8 @@
 **Summary:** Auth Middleware Implementation
 **Context:** Epic proposed:epic-auth-middleware; tags auth, middleware.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-auth-middleware
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-auth-middleware" preserved 2026-10-23; no epic file exists.
 **Tags:** auth, middleware
 
 ## Summary

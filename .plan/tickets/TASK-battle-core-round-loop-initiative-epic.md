@@ -9,7 +9,8 @@
 **Summary:** Battle Core Round-Loop / Initiative Epic
 **Context:** Epic proposed:epic-battle-core; tags battle, initiative.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-battle-core
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-battle-core" preserved 2026-10-23; no epic file exists.
 **Tags:** battle, initiative
 
 ## Summary

@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-wardrobe-avatar-variants
 
 **Summary:**
 

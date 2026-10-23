@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-comfyui-lifecycle.md
+**Epic:** epic-comfyui-lifecycle
 **Caveats:** portability, host-specific-paths, config-contract-drift, docs-accuracy, user-owned-provisioning, partial-failure, upstream-divergence
 **Related:** TASK-comfyui-first-class-llama-swap-recipe-standalone-vs-proxy-ma.md, TASK-llama-swap-sample-config-finalization-unblocks-rotation-poli.md, TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds.md, BUG-llama-swap-autostart-registers-no-llm-provider.md
 **Tags:** comfyui, llama-swap, config, docs, portability

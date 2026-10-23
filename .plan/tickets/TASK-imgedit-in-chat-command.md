@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** assistant-generation-extensions
+**Epic:** epic-assistant-generation-extensions
 **Related:** `epic-comfyui-plugin.md`, `epic-reference-conditioned-generation.md` (img2img/edit workflow owners)
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-harness-integration`
+**Epic:** epic-harness-integration
 **Related:** docs/meta/research/harness-hook-schema-absorption.md, TASK-harness-canonical-usage.md, TASK-harness-scoped-fallback-chain.md
 
 **Summary:**

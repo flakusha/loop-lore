@@ -8,7 +8,7 @@
 **Priority:** high
 **Effort:** Large
 **Caveats:** stale state — a decision staged before the F1 wiring lands has no chat surface to resolve it; autonomous mode (`autoResolveIfAutonomous`) is the only unblocked resolution path
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Related:** .plan/epics/epic-actor-autonomy-story-drive.md (decision/turn machinery the staged level-up resolves through), .plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md (pending ASI budget this decision spends)
 
 **Summary:**

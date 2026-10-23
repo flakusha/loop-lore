@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-testing-qa.md (see also epic-prompt-improvement.md)
+**Epic:** epic-core-testing-frameworks
 **Status:** Not Started
 **Priority:** High
 

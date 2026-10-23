@@ -13,7 +13,7 @@
 **Effort:** High
 **Type:** Feature Task / Coordination
 **Tags:** characters, config, templates, seeding, schema
-**Epic:** epic-character-core-system (config-templates sub-area)
+**Epic:** epic-character-core-system
 **Related:** TASK-character-template-seeding, TASK-character-rpg-stats,
 TASK-character-config-skills-professions, TASK-character-internal-traits,
 TASK-character-voice-profile, TASK-proactive-messaging, TASK-memory-character-integration

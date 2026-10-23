@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
+**Epic:** epic-openwebui-parity
 **Tags:** generation, streaming, tools
 **Summary:** When the generation loop encounters tool calls, each tool result must be enqueued into `StreamBuffer` as a `response.content_part.added` event immediately after the `response.function_call_arguments.done` event that triggered it. The ReadableStream controller drains the buffer with standard backpressure. Round counter increments per batch, not per call.
 

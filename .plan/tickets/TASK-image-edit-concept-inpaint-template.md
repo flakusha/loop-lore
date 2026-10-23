@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** sam3-segmentation-integration
+**Epic:** epic-sam3-segmentation-integration
 **Tags:** image-edit, comfyui
 **Depends on:** `TASK-comfyui-sam3-concept-mask-template`, `TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per`
 **Related:** BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md, BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md, epic-assistant-generation-extensions.md (§ /image edit)

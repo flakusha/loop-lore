@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Additive ledger v2 entry (`kind/prev/deps/gate`) + finalize slot-claim protocol with PID-liveness stale-reap. No distributed consensus, no CRDT — manual order via ledger + CONCERNS docs.
 **Context:** Ledger today (`scripts/worktree/utils/ledger.ts:1-234`) is `{v,ts,pid,cmd,branch,msg}`, 50-record ring, CLI-scope only. Finalize lock (`finalize.ts`) already does O_CREAT|O_EXCL + `kill -0` stale-reap + ≤50 retries; history is linear stash-merge-pop onto dev.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

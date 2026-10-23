@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Large
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** `runtime` field on PluginManifest (default bun) + `RuntimeAdapter` switch in `loadSinglePlugin`; node via worker threads, py via subprocess+JSON-RPC. Manifest + origin-capability gate are reuse; adapters are new.
 **Context:** Plugin system (`plugins/loader.ts`, `registry.ts`, `types.ts`, `registry-policy.ts`): startup-only dynamic `import()` from `plugins/{core,community,local}/`, 6-capability taxonomy gated per origin, no hot-reload/IPC. Only non-test `bun:` import is `bun:ffi`; server/adapter surface is Bun-only (`BunAdapter`, `bun:ffi` dlopen, `Bun.spawnSync`, `Bun.file`, `import.meta.dir`). Core ships 5 plugins, community 2.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

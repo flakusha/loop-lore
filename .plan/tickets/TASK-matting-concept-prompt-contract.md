@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** sam3-segmentation-integration
+**Epic:** epic-sam3-segmentation-integration
 **Tags:** matting, segmentation
 **Depends on:** —
 **Blocks:** `TASK-comfyui-sam3-concept-mask-template`, `TASK-sam3-direct-provider-via-meta-model-api`, `TASK-sam3-concept-cutout-wiring-sprites-avatar-matting-vn-alpha`, `TASK-sam3-mask-cache-and-reuse`

@@ -13,7 +13,7 @@
 **Effort:** Low
 **Type:** Feature Task
 **Tags:** search, quota, cost, rate-limit, per-user, per-chat
-**Epic:** epic-assistant-entity-access.md (extends quota engine), epic-rag-context-sources
+**Epic:** epic-assistant-entity-access, epic-rag-context-sources
 
 ## Summary
 

@@ -11,7 +11,7 @@
 
 **Priority:** High
 **Status:** Not Started
-**Epic:** epic-audio-video-sound (Phase 5)
+**Epic:** epic-audio-video-sound
 
 ## Description
 

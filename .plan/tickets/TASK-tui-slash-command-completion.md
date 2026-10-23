@@ -6,7 +6,7 @@
 **Status:** Done
 **Priority:** high
 **Effort:** medium
-**Epic:** `epic-terminal-ui`
+**Epic:** epic-terminal-ui
 **Tags:** tui, chat, commands
 **Summary:** Surface the assistant's slash-command registry in the TUI input box — completion hint, Tab cycling, Enter commit — instead of sending `/help` as ordinary prose.
 **Context:** ~40 commands are dispatched during message creation (`src/routes/messages/create.ts`) and `GET /api/v1/commands` serves the live registry (`src/routes/commands/index.ts`), but the TUI showed none of it: typing `/` went out as message content with no completion and no discovery. Reuse-first: the `setFetch` seam already exists in `src/tui/chat/api.ts`, the `{ok:true,data} | {ok:false,error}` union mirrors `src/tui/chat-picker.ts`, and the hint renders as one `blessed.text` line inside the chat box the widget already owns — no palette screen, no second framework.

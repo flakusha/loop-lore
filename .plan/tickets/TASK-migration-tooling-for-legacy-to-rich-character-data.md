@@ -10,6 +10,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-character-core-system
 
 ## Summary
 

@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Task
 **Tags:** e2e, sd.cpp, comfyui, stable-diffusion, fixtures, metadata, opt-in
-**Epic:** epic-e2e-integration-testing.md (Pillar 3 — real-server tier)
+**Epic:** epic-e2e-integration-testing
 **Related:** TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md, FEAT-comfyui-plugin-workflow-templates.md, TASK-generation-mock-scenario-provider.md, TASK-generation-cassette-replay.md, epic-comfyui-plugin.md
 
 ## Summary

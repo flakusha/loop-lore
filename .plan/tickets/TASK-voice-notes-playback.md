@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-chat-rich-engagement.md (proposed)
+**Epic:** epic-chat-rich-engagement
 **Type:** Feature | **Priority:** Low | **Effort:** M
 
 ## Problem

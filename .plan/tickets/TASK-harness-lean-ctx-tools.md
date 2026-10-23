@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** One MCP client wrapper hanging lean-ctx tools off the plugin registry; all file/patch work through `ctx_patch`-shaped anchored ops; token saving via .rtk filters + purpose-keyed compress.
 **Context:** No MCP at runtime (no `@modelcontextprotocol` dep, no MCPClient, no `ctx_*` in `src/`). Tool pattern is the plugin registry: `ToolDefinition` + `ToolExecutionContext` + `ToolResult` (`plugins/types.ts`), `registry.ts`, `tool-executor.ts` (30s race), `gatePluginToolsByRole`, `executeToolCalls()` (`generate-route/tool-execution.ts`) with sanitize + encrypted persist. Edit/patch today is scattered direct DB/file writes; `.rtk/filters.toml` is example-only.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

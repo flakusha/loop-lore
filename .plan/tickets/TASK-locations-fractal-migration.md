@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** High
 **Epic:** epic-fractal-locations
+**Duplicate of:** TASK-fractal-locations-migration-013-locations-fractal-ts (kept — git-issue parity; status mirrored 2026-10-23)
 **Tags:** locations, schema, migration, transport, tree
 
 **Summary:** Append-only Kysely migration extending locations with kind/mobility_mode/path/coord_*/current_route_id/travel_progress; creates travel_routes, travel_route_stops, actor_locations tables and five SQLite triggers (cycle, depth ≤ 12, cross-world reject, path-set on insert, path-rewrite on parent update).

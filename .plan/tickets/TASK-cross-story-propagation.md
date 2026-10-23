@@ -11,7 +11,7 @@
 
 **Status:** Not Started
 **Priority:** P1 — High
-**Epic:** `epic-timeline-system.md`
+**Epic:** epic-timeline-system
 **Type:** Feature
 
 ## What

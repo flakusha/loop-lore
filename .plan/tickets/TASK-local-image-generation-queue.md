@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-llm-queue.md (see also epic-generation-flow-control.md)
+**Epic:** epic-llm-queue
 **Status:** Not Started
 **Priority:** Medium
 

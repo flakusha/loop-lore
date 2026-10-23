@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-fractal-locations
+**Duplicate of:** TASK-travel-routes-schema-and-crud (kept — git-issue parity; status mirrored 2026-10-23)
 **Tags:** routes, travel, transport, crud, validation
 
 **Summary:** Service layer for travel_routes + travel_route_stops with stop CRUD, world-scoping, and validation (minStops=2, endpoint kinds, loop match). Full details in TASK-travel-routes-schema-and-crud.md.

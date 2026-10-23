@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Low–Med
-**Epic:** Epic 36 (Chat Lifecycle & Moderation)
+**Epic:** epic-chat-lifecycle-moderation
 **Tags:** chat, context, tokens, ux
 **Spec:** docs/frontend/chat/search-and-filter.md
 **Git Issue:** FEAT-069

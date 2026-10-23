@@ -7,7 +7,7 @@
 **Scope:** Document /api/v1/openapi/json as the client contract and add a spec-drift check
 **Priority:** medium
 **Effort:** Small
-**Epic:** `epic-experimental-egui-frontend`
+**Epic:** epic-experimental-egui-frontend
 **Tags:** api, openapi, docs, client-contract
 **Related:** `.plan/epics/epic-experimental-egui-frontend.md`, `.plan/epics/epic-api-first-foundation.md`, `.plan/epics/epic-headless-alternative-frontends.md`, `.plan/tickets/TASK-tui-api-contract-smoke-tests.md`, `.plan/epics/epic-shared-client-sdk.md`
 **Summary:** Write `docs/frontend/client-contract.md` naming `GET /api/v1/openapi/json` as the client contract, and add a check that fails when the served spec no longer generates a compiling client.

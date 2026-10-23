@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** avatar-regeneration-control
+**Epic:** epic-avatar-regeneration-control
 **Related:** `epic-emotion-avatar-message-binding.md`
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 

@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-chat-context-optimization
 
 ## Summary
 

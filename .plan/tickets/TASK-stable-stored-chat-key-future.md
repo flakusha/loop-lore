@@ -11,7 +11,8 @@
 **Status:** Not Started
 **Priority:** High (escalated — see BUG-chat-key-history-loss-join-leave)
 **Effort:** Medium
-**Epic:** epic-encryption-foundation
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-encryption-foundation" preserved 2026-10-23; no epic file exists.
 
 ## Summary
 

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** llama-swap
+**Epic:** epic-llama-swap
 **Tags:** models, sse, observability
 
 **Summary:**

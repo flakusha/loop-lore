@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Research Task
 **Tags:** research, lorebook, scenario, notes, assets, gallery
-**Epic:** epic-creative-studio (research sub-area)
+**Epic:** epic-creative-studio
 **Related:** .tmp/creative-content-systems-gap-analysis.md, TASK-lorebook-template-seeding,
 TASK-scenario-system-authoring, TASK-asset-templates, TASK-gallery-editor-structured-ui,
 TASK-gm-shadow-notes

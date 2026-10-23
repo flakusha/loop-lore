@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 **Type:** Task
 **Summary:** Add a pure `retainSpillDir({ maxBytes, maxAgeDays })` helper to `src/async/spill.ts` and wire it into the offload daemon.
 **Context:** `OFFLOAD_DIR` has no delete path; only `runOffloadPass` Phase 3 unlinks files when their parent row is `expired`, so orphans and fixtures accumulate (`.tmp/async-store/` = 279 files / 18 MB, oldest 2026-09-10).

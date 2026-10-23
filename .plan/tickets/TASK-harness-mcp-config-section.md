@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** `epic-harness-integration`
+**Epic:** epic-harness-integration
 **Depends on:** `TASK-harness-mcp-client-wrapper`
 **Related:** docs/meta/research/harness-mcp-wiring.md
 

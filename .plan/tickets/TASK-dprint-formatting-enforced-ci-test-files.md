@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
-**Epic:** review-dev-2026-08-26-late-merges
+**Epic:** epic-review-dev-2026-08-26-late-merges
 
 ## Summary
 

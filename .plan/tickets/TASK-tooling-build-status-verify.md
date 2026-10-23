@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-external-tooling-build.md
+**Epic:** epic-external-tooling-build
 **Caveats:** `status` must probe the actual install tree rather than assume `bin/` + `lib64/`, because a relocated prefix or staging tree may differ. A prefix installed into repeatedly accumulates stale versioned libraries alongside the current one, so discovery must use the unversioned symlink. Nothing here may be worded as "verified working" — no accelerator build was executed during the audit that produced this spec, including on the user's own hardware.
 
 **Summary:** Report which variants are installed, at which ref, with which flags — and never claim a binary was tested.

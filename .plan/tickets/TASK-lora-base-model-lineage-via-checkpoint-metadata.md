@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** lora-discovery-application
+**Epic:** epic-lora-discovery-application
 **Tags:** lora, metadata, lineage
 
 **Summary:**

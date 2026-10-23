@@ -13,7 +13,8 @@
 **Effort:** Large
 **Type:** TASK
 **Tags:** 3d, avatar, webgl, threejs, vrm
-**Epic:** Epic 26 (Avatar & Expression)
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "Epic 26 (Avatar & Expression)" preserved 2026-10-23; no epic file exists.
 **Parent:** TASK-3d-view-modes (umbrella)
 
 ## Summary

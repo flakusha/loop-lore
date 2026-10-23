@@ -8,7 +8,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** partial failure — skill-row and character XP stay disjoint until the fan-in ticket lands, so exercising a skill currently grants neither
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Tags:** rpg, xp, skills
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (character-XP grants persist through this service), .plan/tickets/BUG-addxp-accepts-negative-xp-producing-nan-level-stored-in-db.md (prerequisite — validate XP input before wiring new awarders)
 

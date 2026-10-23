@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** large
-**Epic:** epic-content-hashing-distributed-integrity (cross-cuts with `epic-database-backup-recovery`, `epic-multi-instance-reconciliation`, `epic-federation-swarm-sync`)
+**Epic:** epic-content-hashing-distributed-integrity, epic-multi-instance-reconciliation, epic-federation-swarm-sync, epic-database-backup-recovery
 **Issue:** TBD
 **Related:**
 - `TASK-middleware-migration-compaction-data-version-hash.md` (provides `data_version` + `record_hash` columns + index)

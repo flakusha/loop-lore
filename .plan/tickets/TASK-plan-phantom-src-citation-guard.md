@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 **Related:** TASK-plan-ticket-status-backfill.md
 
 ## Summary

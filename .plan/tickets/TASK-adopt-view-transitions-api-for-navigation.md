@@ -12,6 +12,7 @@
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-frontend-overview
+**Related:** TASK-adopt-view-transitions-api-for-page-navigation (likely-distinct duplicate candidate)
 
 ## Summary
 

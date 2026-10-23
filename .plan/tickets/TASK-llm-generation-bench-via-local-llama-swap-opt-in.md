@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 
 **Summary:** Opt-in bench in `tests/benchmarks/` measuring real LLM round-trip latency (p50/p95/p99), token rate, and model-rotation cost against the local llama-swap + llama-server binaries already present on the dev host. Default-off behind `LL_BENCH_LLM=1` with graceful skip when binaries or models are missing. Standalone latency numbers land first (no scheduler attribution); queue-wait attribution is layered on after the wire ticket lands.
 

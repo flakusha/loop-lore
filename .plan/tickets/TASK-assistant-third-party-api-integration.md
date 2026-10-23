@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High (post-Gate C)
 **Effort:** Medium
-**Epic:** `epic-assistant-creative-studio-workflows`
+**Epic:** epic-assistant-creative-studio-workflows
 **Depends on:** `TASK-assistant-creative-studio-workflows.md` (workflow runner, model family presets)
 
 ## Summary

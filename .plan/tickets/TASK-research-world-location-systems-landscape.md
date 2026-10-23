@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Research Task
 **Tags:** research, worlds, locations, geography, world-building
-**Epic:** epic-world-locations (research sub-area)
+**Epic:** epic-world-locations
 **Related:** .tmp/world-location-template-gap-analysis.md, TASK-world-template-full-model-coverage
 
 ## Summary

@@ -13,7 +13,7 @@
 **Effort:** High
 **Type:** Feature Task / Coordination
 **Tags:** worlds, locations, config, templates, seeding, schema
-**Epic:** epic-world-locations (config-templates sub-area)
+**Epic:** epic-world-locations
 **Related:** FEAT-worlds-extension, TASK-worlds-extension, TASK-world-location-encryption,
 TASK-wire-world-location-traits-routes, TASK-world-editor-structured-ui,
 TASK-location-editor-structured-ui

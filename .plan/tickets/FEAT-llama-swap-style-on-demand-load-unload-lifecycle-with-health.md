@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
-**Epic:** llama-swap
+**Epic:** epic-llama-swap
 **Tags:** models, lifecycle, llama-swap
 
 **Summary:**

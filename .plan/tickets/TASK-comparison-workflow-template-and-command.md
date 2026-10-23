@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-technical-comparison-charts`
+**Epic:** epic-technical-comparison-charts
 **Related:** `TASK-comparison-fan-out-engine.md`, `TASK-comparison-set-routes-crud-ownership-validation.md`, `TASK-workflow-engine-schema-loader-template-types-workflow-discov.md`, `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md`, `epic-assistant-creative-studio-workflows.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

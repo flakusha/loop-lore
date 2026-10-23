@@ -12,7 +12,7 @@
 **Status Note:** already on dev, 2026-09-05
 **Priority:** critical
 **Effort:** Large
-**Epic:** epic-auth-permissions
+**Epic:** epic-auth-access
 
 ## Summary
 

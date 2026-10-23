@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-blog-system.md`
+**Epic:** epic-blog-system
 **Related:** `TASK-blog-rss-atom-sitemap.md`, `TASK-blog-unit-scheduled-serialization.md`, `TASK-markdown-canonical-intermediate-contract.md`, `epic-narrative-publishing-workflows.md`, `src/db/schema-blog.ts`, `src/rpg/blog/service/types.ts`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `epic-lora-discovery-application.md`, `TASK-lora-discovery-application.md`, `TASK-comfyui-first-class-lora-stacks.md`, `TASK-sidecar-de-hardcoding-cross-platform-installer.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

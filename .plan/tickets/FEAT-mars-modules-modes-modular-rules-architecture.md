@@ -9,7 +9,8 @@
 **Summary:** MARS Modules/Modes Modular Rules Architecture
 **Context:** Epic proposed:epic-modular-rules; tags rpg, mars, modular.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-modular-rules
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-modular-rules" preserved 2026-10-23; no epic file exists.
 **Tags:** rpg, mars, modular
 
 ## Summary

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-external-tooling-build.md
+**Epic:** epic-external-tooling-build
 **Caveats:** `make linux-amd64` depends on the `ui` target, which runs `npm install` and `npm run build` in `ui/` — a Node toolchain plus a network fetch that the user may not have. The Makefile stamps the version from `git describe` and appends `+` to the commit hash when the tree is dirty (`Makefile:6-12`), so building from a dirty tree bakes a permanent `+` marker into the binary. `git describe` also under-reports: `v265` exists in the checkout but is not an ancestor of HEAD.
 
 **Summary:** Give llama-swap its own build path via `go build` with explicit version stamping and an explicit web-UI decision.

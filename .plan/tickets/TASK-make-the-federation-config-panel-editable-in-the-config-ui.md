@@ -6,7 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-local-multi-instance-federation
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-local-multi-instance-federation" preserved 2026-10-23; no epic file exists.
 
 **Summary:** Map the `federation` section into `EDITABLE_KEY_MAP` so its config inputs render enabled instead of disabled.
 

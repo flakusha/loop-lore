@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** sam3-segmentation-integration
+**Epic:** epic-sam3-segmentation-integration
 **Tags:** comfyui, workflow-templates
 **Depends on:** `TASK-sam3-feasibility-probe-meta-model-api-vs-comfyui-custom-node`, `TASK-matting-concept-prompt-contract`, `TASK-comfyui-workflow-parameterization`, `TASK-comfyui-node-id-allocation`
 **Related:** TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md, TASK-comfyui-template-parameter-validation.md, TASK-comfyui-node-discovery.md

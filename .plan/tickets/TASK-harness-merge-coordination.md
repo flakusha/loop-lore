@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Formalize the `.tmp/concerns-*/CONCERNS.md` merge-ordering protocol: header/footer contract + finalize MUST-read rule + ledger line.
 **Context:** Precedents: `.tmp/concerns-finalization/CONCERNS.md` (migration prefix collisions, generated-file collisions, source overlap) and `.tmp/concerns-branch-review/CONCERNS.md` (reparenting, MAX_MERGE_NODES truncation, fork-desync). Headers record scope/branches/dev-HEAD; footers record resolved concerns + fix commit.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

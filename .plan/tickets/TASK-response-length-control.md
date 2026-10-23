@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** Low
 **Effort:** Low
-**Epic:** Epic 51 (Output Control & Transforms)
+**Epic:** epic-output-control-transforms
 **Tags:** chat, generation, ux, llm
 **Source:** FEAT-071 (git issue)
 **Design:** `chat-mode-reconciliation.md` (planned, not yet written) — this task is part of the three-axis chat mode design (ChatType + ChatMode + ResponseStyle)

@@ -9,8 +9,10 @@
 
 
 **Status:** Not Started
+**Related:** TASK-adopt-view-transitions-api-for-navigation (likely-distinct duplicate candidate)
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-platform-api-adoption
 
 ## Summary
 

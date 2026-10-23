@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** server-hardening
+**Epic:** epic-server-lifecycle-hardening
 
 **Summary:**
 

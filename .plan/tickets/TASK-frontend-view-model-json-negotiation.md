@@ -7,7 +7,7 @@
 **Scope:** Extract a pure view-model seam from one htmx view route and expose it as JSON
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-experimental-egui-frontend`
+**Epic:** epic-experimental-egui-frontend
 **Tags:** frontend, api, content-negotiation, client-contract
 **Related:** `.plan/epics/epic-experimental-egui-frontend.md`, `.plan/tickets/TASK-frontend-view-model-extraction.md`, `.plan/tickets/FEAT-frontend-mode-config-accept-header-content-negotiation-cors.md`, `.plan/tickets/TASK-cors-middleware.md`, `.plan/epics/epic-api-first-foundation.md`
 **Summary:** Extend the view-handler dispatch from two modes (htmx fragment vs full page) to three, returning the extracted view-model as JSON when the caller sends `Accept: application/json`.

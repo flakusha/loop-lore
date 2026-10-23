@@ -12,7 +12,7 @@
 **Severity:** Medium
 **Priority:** Medium
 **Type:** TASK
-**Epic:** epic-testing-infrastructure, epic-tooling-check-gates
+**Epic:** epic-continuous-improvement
 **Effort:** Medium
 **Files:** `src/test-utils/*`, all test files that touch `actor_memories` / `messages` / `chats`
 

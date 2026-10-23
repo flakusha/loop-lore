@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** large
-**Epic:** epic-content-hashing-distributed-integrity (cross-cuts with `epic-db-content-versioning`)
+**Epic:** epic-content-hashing-distributed-integrity
 **Issue:** TBD
 **Related:**
 - `src/db/migrations/` (67 migrations on dev; the half-broken 016 + the new 067 are precedents)

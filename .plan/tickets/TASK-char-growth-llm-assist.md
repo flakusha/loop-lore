@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Medium
+**Epic:** epic-character-growth
 
 ## Summary
 

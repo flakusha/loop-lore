@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `epic-comfyui-plugin.md`, `TASK-comfyui-first-class-mount-image-edit-routes-verify-asset-per.md`, `TASK-comfyui-template-parameter-validation.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

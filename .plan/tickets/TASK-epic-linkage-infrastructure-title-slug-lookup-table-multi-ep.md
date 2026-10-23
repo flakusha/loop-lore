@@ -6,6 +6,7 @@
 **Status:** In Progress
 **Priority:** high
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 **Tags:** epic-linkage, infrastructure, plan-hygiene
 
 **Summary:**

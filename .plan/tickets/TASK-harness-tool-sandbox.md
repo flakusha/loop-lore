@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Very High
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Production isolation for plugin/assistant tool execution (worker/vm/subprocess + timeouts + capability-scoped ctx). A hostile or buggy community-plugin tool can today crash or exfiltrate from the server process.
 **Context:** Tools execute in-process with zero isolation (`worker_threads|Worker(|vm.run|child_process|Bun.spawn|spawnSync|execFile` zero hits across `src/plugins` + `src/assistant` + `src/generation/tools`; only `Bun.spawnSync` in `src/config/cert.ts` for openssl). Test isolation (`test-utils/isolate-only.ts`, `--isolate` partitioning) is test-only. hermes Footprint Ladder + session-scoped toolsets + `check_fn` gating is the policy shape; `executePluginTool` 30s race is the timeout precedent.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

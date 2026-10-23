@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-fractal-locations
+**Related:** TASK-travel-routes-schema-crud (duplicate pair)
 **Tags:** routes, travel, transport, crud, validation
 
 **Summary:** Service layer for travel_routes + travel_route_stops: create/list/update/delete + ordered stop list with dwell per stop. World-scoped; stops in same world. Validates minStops=2, endpoint kinds ∈ {Transit, Region}, loop match. Result-typed errors.

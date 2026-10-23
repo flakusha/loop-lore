@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** plugin-system
+**Epic:** epic-mechanics-governance
 
 **Summary:**
 

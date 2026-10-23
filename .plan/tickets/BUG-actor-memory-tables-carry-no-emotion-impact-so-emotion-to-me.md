@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** memory-knowledge-systems
+**Epic:** epic-memory-knowledge-systems
 
 **Summary:**
 

@@ -9,7 +9,8 @@
 **Summary:** Human-in-the-Loop Approval Gates
 **Context:** Epic proposed:epic-approval-gates; tags approval, governance.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-approval-gates
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-approval-gates" preserved 2026-10-23; no epic file exists.
 **Tags:** approval, governance
 
 ## Summary

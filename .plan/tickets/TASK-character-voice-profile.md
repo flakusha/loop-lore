@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-character-internal-traits (D10)
+**Epic:** epic-character-internal-traits
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

@@ -7,7 +7,7 @@
 **Scope:** Extract a pure view-model seam from one htmx view route and expose it as JSON
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-experimental-egui-frontend`
+**Epic:** epic-experimental-egui-frontend
 **Tags:** frontend, refactor, api, client-contract
 **Related:** `.plan/epics/epic-experimental-egui-frontend.md`, `.plan/epics/epic-headless-alternative-frontends.md`, `.plan/epics/epic-api-first-foundation.md`, `docs/meta/research/egui-frontend-adoption.md`, `docs/meta/code-practices-improvements/07-alternative-frontend-support.md`
 **Summary:** Pull the query + projection out of the HTML-building view handlers into pure `build*ViewModel()` modules, so the same data that feeds a template is available to any client.

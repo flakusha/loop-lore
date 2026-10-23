@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-federation-swarm-sync
 
 ## Summary
 

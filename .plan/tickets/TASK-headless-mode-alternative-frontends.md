@@ -12,6 +12,7 @@
 **Priority:** low
 **Effort:** Large
 **Epic:** epic-headless-alternative-frontends
+**Duplicate of:** TASK-headless-alternative-frontends (kept — git-issue parity; status mirrored 2026-10-23)
 
 ## Summary
 

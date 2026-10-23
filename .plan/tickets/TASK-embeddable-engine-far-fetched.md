@@ -11,7 +11,8 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Very High
-**Epic:** epic-embeddable-engine
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-embeddable-engine" preserved 2026-10-23; no epic file exists.
 
 ## Summary
 

@@ -13,6 +13,7 @@
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-transport-expansion
+**Duplicate of:** TASK-transport-expansion (kept — git-issue parity; status mirrored 2026-10-23)
 
 ## Summary
 

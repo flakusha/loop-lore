@@ -11,7 +11,7 @@
 **Status:** In Progress
 **Priority:** High
 **Effort:** Medium
-**Epic:** epic-testing
+**Epic:** epic-core-testing-frameworks
 
 ## Summary
 

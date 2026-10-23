@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-krea-2-reference-edit-template.md`, `TASK-krea-2-reference-edit-diagnosis.md`, `TASK-reference-capability-matrix-data-model.md`, `epic-model-family-presets.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

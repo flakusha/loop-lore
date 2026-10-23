@@ -12,6 +12,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-openapi-reference
+**Duplicate of:** TASK-openapi-driven-api-reference (kept — git-issue parity; status mirrored 2026-10-23)
 
 ## Summary
 

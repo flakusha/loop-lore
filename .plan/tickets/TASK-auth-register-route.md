@@ -11,7 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-auth
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-auth" preserved 2026-10-23; no epic file exists.
 
 ## Summary
 

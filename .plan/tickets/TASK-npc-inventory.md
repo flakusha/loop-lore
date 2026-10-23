@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** NPC/Actor System, Economy & Trading
+**Epic:** epic-economy-trading, epic-actor-autonomy-story-drive
 **Priority:** Medium
 **Effort:** High
 **Status:** Not Started

@@ -16,6 +16,7 @@
 **Labels**:
 **Assignee**:
 **Epic:** epic-nsfw-integration-gaps
+**Duplicate of:** TASK-nsfw-housing (kept — git-issue parity; status mirrored 2026-10-23)
 **Related**:
 
 ## Summary

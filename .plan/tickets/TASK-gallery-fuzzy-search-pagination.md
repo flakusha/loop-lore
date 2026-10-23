@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** gallery, fuzzy, search, pagination, relevance, backend-sort, frontend
-**Epic:** epic-frontend-gallery.md (Phase 3 Polish)
+**Epic:** epic-frontend-gallery
 
 ## Summary
 

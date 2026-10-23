@@ -9,7 +9,7 @@
 **Priority:** high
 **Effort:** Large
 **Caveats:** data races — concurrent awards serialize on the `character_stats` row via the service transaction; rollback — reverting the LevelService leaves `xp_ledger` rows without matching stat updates
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (its ASI bookkeeping feeds the pending-point budget here), .plan/epics/epic-character-growth.md (growth_log reuse for organic stat drift audit), .plan/epics/epic-character-core-system.md (owns the character_stats schema this writes)
 
 **Summary:**

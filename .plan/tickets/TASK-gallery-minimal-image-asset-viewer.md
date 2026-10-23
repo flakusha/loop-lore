@@ -12,7 +12,8 @@
 **Status Note:** images, audio, and video all supported in gallery grid + preview modal
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-asset-support-expansion
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-asset-support-expansion" preserved 2026-10-23; no epic file exists.
 
 ## Summary
 

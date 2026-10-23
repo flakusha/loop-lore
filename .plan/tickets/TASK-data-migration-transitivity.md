@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** Data Integrity & ACID Guarantees
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "Data Integrity & ACID Guarantees" preserved 2026-10-23; no epic file exists.
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

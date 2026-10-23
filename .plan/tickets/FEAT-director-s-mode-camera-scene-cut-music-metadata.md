@@ -9,7 +9,8 @@
 **Summary:** Director's Mode (Camera/Scene-cut/Music Metadata)
 **Context:** Epic proposed:epic-directors-mode; tags director, narrative.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-directors-mode
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-directors-mode" preserved 2026-10-23; no epic file exists.
 **Tags:** director, narrative
 
 ## Summary

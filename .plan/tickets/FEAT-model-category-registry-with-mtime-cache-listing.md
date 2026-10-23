@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
-**Epic:** local-model-file-discovery
+**Epic:** epic-local-model-file-discovery
 **Tags:** models, discovery, scanning
 
 **Summary:**

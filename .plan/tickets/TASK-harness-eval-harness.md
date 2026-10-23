@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Pass/fail agent-task suites with ground truth so every assistant/workflow change ships measured. Ranked gap #1: without it multi-agent work scales blind.
 **Context:** `tests/benchmarks/` is crypto-only (`blake3.bench.ts` + `zstd.bench.ts`); agent-eval grep (eval harness|ground truth|task benchmark|agent score over tests/scripts/src/assistant) is zero hits. opencode `stats/` Firehose+Athena is the closest dashboard pattern; SWE-bench `instance/model/config/trial_results` is the log shape (live/recursive here, not static dataset).
 **Acceptance Criteria:** See ## Acceptance Criteria below.

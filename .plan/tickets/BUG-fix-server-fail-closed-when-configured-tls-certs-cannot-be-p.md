@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** server-hardening
+**Epic:** epic-certificate-and-tls-management
 
 **Summary:**
 

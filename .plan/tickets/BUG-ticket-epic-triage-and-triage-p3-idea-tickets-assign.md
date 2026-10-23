@@ -6,6 +6,7 @@
 **Status:** Blocked
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-tooling-improvement
 
 **Summary:** Two unmerged branches assign incompatible planning metadata to the same NPC-to-NPC social-simulation entity. They cannot both land without one silently rewriting the other. This ticket records the contradiction and the reconciliation options; it does **not** choose between them.
 **Acceptance Criteria:** Framing chosen by a human; `.plan/epics/epic-npc-bdi-autonomy.md` resolves to exactly one version; the contested ticket carries exactly one Status value and one deliberate epic-binding decision; indexes agree; the losing branch reduced so merging it changes nothing contested. Enumerated under the Acceptance Criteria heading below.

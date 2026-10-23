@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `epic-model-family-presets.md`, `epic-comfyui-plugin.md`, `TASK-reference-capability-probe-runtime.md`, `TASK-multi-reference-conditioning-request-model.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

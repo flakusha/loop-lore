@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-fractal-locations
+**Related:** TASK-locations-tree-integrity-service (duplicate pair)
 **Tags:** locations, tree, validation, recursive-cte, service
 
 **Summary:** Service layer over the new locations table providing recursive helpers (getAncestors, getDescendants, getPath, getDepth, getRoot, getSubtreeSize, isAncestor) via SQLite recursive CTE; wraps trigger guards. Full details in TASK-locations-tree-integrity-service.md.

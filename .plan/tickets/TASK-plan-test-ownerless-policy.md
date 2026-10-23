@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Small
+**Epic:** (none — hygiene/self-contained)
 **Related:** TASK-plan-phantom-src-citation-guard.md
 
 ## Summary
