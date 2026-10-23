@@ -216,4 +216,173 @@ describeOrSkip("rpgStats.resolveLevelUpAuto", () => {
     expect(ctx.rpgAsiBusy,).toBe(false,);
     expect(ctx.rpgStats,).toEqual(spendStats(),);
   });
+
+  test("no-op without a resolved actor id", async () => {
+    const ctx = buildCtx({ _rpgActorId: null, },);
+    await rpgStats.resolveLevelUpAuto!.call(ctx,);
+    expect(fetchCalls,).toHaveLength(0,);
+  });
+
+  test("no-op while another spend is in flight", async () => {
+    const ctx = buildCtx({ _rpgActorId: "actor-1", rpgAsiBusy: true, },);
+    await rpgStats.resolveLevelUpAuto!.call(ctx,);
+    expect(fetchCalls,).toHaveLength(0,);
+  });
+},);
+
+describeOrSkip("rpgStats.loadRpgStats fallbacks", () => {
+  test("clears stats when no chat is active", async () => {
+    const ctx = buildCtx({ activeChat: null, rpgStats: spendStats(), },);
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.rpgStats,).toBeNull();
+    expect(fetchCalls,).toHaveLength(0,);
+  });
+
+  test("clears stats when the chat lookup fails", async () => {
+    fetchHandler = () => new Response("nope", { status: 500, },);
+    const ctx = buildCtx({ rpgStats: spendStats(), },);
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.rpgStats,).toBeNull();
+  });
+
+  test("clears stats when the chat has no character", async () => {
+    fetchHandler = () => Response.json({ id: "chat-1", }, { status: 200, },);
+    const ctx = buildCtx({ rpgStats: spendStats(), },);
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.rpgStats,).toBeNull();
+  });
+
+  test("falls back to defaults when stats are unavailable", async () => {
+    fetchHandler = (url,) => {
+      if (url === "/api/v1/chats/chat-1") {
+        return Response.json({ character_id: "actor-1", }, { status: 200, },);
+      }
+
+      return new Response("nope", { status: 404, },);
+    };
+
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.rpgStats?.level,).toBe(1,);
+    expect(ctx.rpgStats?.hp,).toBe(12,);
+    expect(ctx.rpgStats?.maxHp,).toBe(12,);
+    expect(ctx.rpgStats?.mp,).toBe(8,);
+    expect(ctx.rpgStats?.maxMp,).toBe(8,);
+    expect(ctx.rpgStats?.ac,).toBe(12,);
+    expect(ctx.rpgStats?.initiative,).toBe(0,);
+    expect(ctx.rpgStats?.xp,).toBe(0,);
+    expect(ctx.rpgStats?.xpToNext,).toBe(100,);
+    expect(ctx.rpgStats?.pendingAsi,).toBe(0,);
+    expect(ctx.rpgStats?.str,).toBe(10,);
+    expect(ctx.rpgStats?.cha,).toBe(10,);
+    expect(ctx.statusEffects,).toEqual([],);
+    expect(ctx.equipment,).toHaveLength(8,);
+  });
+
+  test("falls back to defaults when the request throws", async () => {
+    fetchHandler = () => {
+      throw new Error("offline",);
+    };
+
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.rpgStats?.level,).toBe(1,);
+    expect(ctx.statusEffects,).toEqual([],);
+    expect(ctx.equipment,).toHaveLength(8,);
+  });
+},);
+
+describeOrSkip("rpgStats payload mapping", () => {
+  test("maps missing numeric fields to defaults and derives initiative", async () => {
+    mockLoad({ level: 7, speed: 16, },);
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.rpgStats?.level,).toBe(7,);
+    expect(ctx.rpgStats?.initiative,).toBe(3,);
+    expect(ctx.rpgStats?.hp,).toBe(0,);
+    expect(ctx.rpgStats?.maxHp,).toBe(0,);
+    expect(ctx.rpgStats?.mp,).toBe(0,);
+    expect(ctx.rpgStats?.maxMp,).toBe(0,);
+    expect(ctx.rpgStats?.ac,).toBe(10,);
+    expect(ctx.rpgStats?.xp,).toBe(0,);
+    expect(ctx.rpgStats?.xpToNext,).toBe(100,);
+    expect(ctx.rpgStats?.dex,).toBe(10,);
+  });
+
+  test("initiative is zero when speed is missing", async () => {
+    mockLoad({ level: 2, },);
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.rpgStats?.initiative,).toBe(0,);
+  });
+
+  test("parses conditions into status effects", async () => {
+    mockLoad({
+      conditions: JSON.stringify([
+        { name: "Poisoned", source: "snake", duration_rounds: 3, },
+        { name: "Blessed", duration_rounds: 5, },
+      ],),
+      activeEffects: "[]",
+    },);
+
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.statusEffects,).toHaveLength(2,);
+    expect(ctx.statusEffects[0]?.id,).toBe("poisoned",);
+    expect(ctx.statusEffects[0]?.name,).toBe("Poisoned",);
+    expect(ctx.statusEffects[0]?.description,).toBe("Source: snake",);
+    expect(ctx.statusEffects[0]?.duration,).toBe(3,);
+    expect(ctx.statusEffects[0]?.modifier,).toEqual({},);
+    expect(ctx.statusEffects[1]?.id,).toBe("blessed",);
+    expect(ctx.statusEffects[1]?.description,).toBe("",);
+    expect(ctx.statusEffects[1]?.duration,).toBe(5,);
+  });
+
+  test("ignores malformed conditions and active effects", async () => {
+    mockLoad({ conditions: "not json", activeEffects: "{{{", },);
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.statusEffects,).toEqual([],);
+    expect(ctx.equipment,).toHaveLength(8,);
+  });
+
+  test("keeps default equipment slots for buff and debuff effects", async () => {
+    mockLoad({
+      conditions: "[]",
+      activeEffects: JSON.stringify([
+        { name: "Haste", type: "buff", },
+        { name: "Slow", type: "debuff", },
+      ],),
+    },);
+
+    const ctx = buildCtx();
+    await rpgStats.loadRpgStats!.call(ctx,);
+    expect(ctx.equipment,).toHaveLength(8,);
+    expect(ctx.equipment.every((slot,) => slot.itemId === null),).toBe(true,);
+  });
+},);
+
+describeOrSkip("rpgStats modifiers", () => {
+  test("getModifier floors the D&D modifier", () => {
+    expect(rpgStats.getModifier!(10,),).toBe(0,);
+    expect(rpgStats.getModifier!(11,),).toBe(0,);
+    expect(rpgStats.getModifier!(12,),).toBe(1,);
+    expect(rpgStats.getModifier!(3,),).toBe(-4,);
+  });
+
+  test("effectiveStat sums every modifier of every effect", () => {
+    expect(rpgStats.effectiveStat!(10, [],),).toBe(10,);
+    expect(
+      rpgStats.effectiveStat!(10, [
+        { id: "a", name: "A", description: "", duration: -1, modifier: { str: 2, dex: -1, }, },
+        { id: "b", name: "B", description: "", duration: 1, modifier: { con: 3, }, },
+      ],),
+    ).toBe(14,);
+
+    expect(
+      rpgStats.effectiveStat!(10, [
+        { id: "a", name: "A", description: "", duration: -1, modifier: {}, },
+      ],),
+    ).toBe(10,);
+  });
 },);
