@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 071_message_polls (TASK-message-polls-votes)
+ * 072_message_polls (TASK-message-polls-votes)
  *
  * Native in-chat polls attached to a message, one poll per message.
  * `options` is a JSON string array (option order is the vote index);
