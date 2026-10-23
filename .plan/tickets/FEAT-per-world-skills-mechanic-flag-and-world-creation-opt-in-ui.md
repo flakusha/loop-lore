@@ -3,7 +3,7 @@
 
 # FEAT: Per-world skills mechanic flag and world-creation opt-in UI
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** no `rpg_skills` in `schema-story.ts`/`world-gate.ts`/`world-rpg-flags.ts` on dev; flag + world-creation/edit UI exist only in branch `xp-progression-surface` (unlanded); verified 2026-10-23
 **Priority:** medium
 **Effort:** Medium
@@ -25,3 +25,5 @@ The per-world mechanic set is fixed at six axes with no skills entry: `Mechanics
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 430dd89 (registry tip: 4f5061a7e Konstantin Fedotov Close issue)
