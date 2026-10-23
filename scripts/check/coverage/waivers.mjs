@@ -51,11 +51,6 @@ export const WAIVERS = {
     floor: 75,
     reason: "DOM-bound UI (htmx listeners, panels, modals); Playwright DOM-coverage pending; 79% currently",
   },
-  "frontend:src/frontend/alpine/shortcuts.ts": {
-    floor: 30,
-    reason:
-      "DOM-bound global keydown listener (document.addEventListener) is unreachable from bun:test without a DOM (bun provides document but no KeyboardEvent constructor — verified empirically); export surface (DEFAULT_KEYMAP, getKeymap, isKeyboardNavEnabled, dispatchKeynavAction, registerKeynavHandler, dispatchKeynavActionToHandlers) is fully unit-tested (14 tests); 36 measured under diff-files (~23.5 project-wide); TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
-  },
   "frontend:src/frontend/pages/characters.ts": {
     floor: 10,
     reason:
@@ -121,19 +116,6 @@ export const WAIVERS = {
     floor: 77,
     reason: "Rust cdylib fast-path exercised by benchmarks (zstd/blake3); unit tests cover Bun fallback + ABI guards",
   },
-  // Gate pass: src/characters/ is large (3968 lines) and contains
-  // world-setup + character-bundle pipelines whose happy paths live in
-  // e2e and whose error branches dominate the uncovered count.
-  // Per-file waivers (narrower than module floors): use "<mod>:<file>"
-  // keys to floor one file individually. Required when bun's coverage
-  // tool cannot track lines inside async function bodies — the test
-  // exercises the branch but bun does not count the hit. Owning ticket
-  // recorded in the entry below.
-  "chat:src/chat/service/ownership.ts": {
-    floor: 60,
-    reason:
-      "bun coverage cannot track lines inside async function bodies; tests exercise every branch but bun undercounts (refactor extracted helpers + flattened returns, hit 70.5% before split); TASK-coverage-waiver-chat-ownership-async-body-limit",
-  },
   // Gate pass: the tool-call round loop and the telemetry/memory
   // void-reject callbacks are exercisable only through mock.module doubles,
   // whose suites are deliberately skipped in the shared-process check gate
@@ -158,16 +140,6 @@ export const WAIVERS = {
     reason:
       "document.addEventListener wiring needs live DOM + htmx runtime; scoped bun run loads module without firing handlers (30.3 measured); Playwright DOM-coverage pending; BUG-frontend-dead-csrf-bearer-header-machinery",
   },
-  // Gate pass: fe-fetch.ts body is getCsrfToken DOM reads
-  // (document.querySelector/document.cookie) + safeFetch delegation +
-  // 401-redirect wiring. Scoped run covers the delegation path (64.3
-  // measured) but not the DOM-token branches; the CSRF-bearer batch
-  // deleted the dead localStorage branch, shrinking the denominator.
-  "frontend:src/frontend/fe-fetch.ts": {
-    floor: 60,
-    reason:
-      "getCsrfToken DOM branches + 401-redirect wiring need live document/location; delegation path covered (64.3 measured); Playwright DOM-coverage pending; BUG-frontend-dead-csrf-bearer-header-machinery",
-  },
   // Gate pass: serve-raw.ts was carved out of serve-handlers.ts to keep
   // that file under the per-module size-strict (345-line) gate. The
   // encrypted-asset decryption branch (success path) requires a real
@@ -182,35 +154,6 @@ export const WAIVERS = {
     floor: 71,
     reason:
       "split out of serve-handlers.ts for size-strict; encrypted-decrypt success path needs real SMK + chat key (29 lines); 400 path covered; TASK-thumbnail-generation-256px-webp-at-upload",
-  },
-  // Gate pass: pii-safety.ts is a new module (prior session). Secret-resolution
-  // functions are exercised via pii-redaction.ts integration tests, but the
-  // full resolution tree (dev/staging/production branches) is not reachable in
-  // the isolated check-gate unit runner without loadConfig wiring.
-  "config:src/config/load/pii-safety.ts": {
-    floor: 5,
-    reason:
-      "new module; secret-resolution exercised via pii-redaction.ts integration tests; production-config path not reachable in isolated check-gate runner",
-  },
-  // Gate pass: the jsdoc-throws-gaps doc sweep added required @throws lines to
-  // three rpg modules whose unit coverage was already below the 80% floor; the
-  // diff-files mode floors each touched file individually, exposing the
-  // pre-existing gap. Conservative floors at measured-minus-margin; owning
-  // ticket: .plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md
-  "rpg:src/rpg/service/battles/social.ts": {
-    floor: 57,
-    reason:
-      "battle-social interaction branches untested; 57.7 measured under diff-files; TASK-raise-rpg-battle-social-skills-progression-and-replayability",
-  },
-  "rpg:src/rpg/skills/service/progression.ts": {
-    floor: 67,
-    reason:
-      "skills progression curve paths untested; 67.6 measured under diff-files; TASK-raise-rpg-battle-social-skills-progression-and-replayability",
-  },
-  "rpg:src/rpg/replayability/service/playthrough.ts": {
-    floor: 61,
-    reason:
-      "playthrough state machine branches untested; 61.2 measured under diff-files; TASK-raise-rpg-battle-social-skills-progression-and-replayability",
   },
   // Gate pass: the safe-json barrel sweep touched two route handlers whose
   // coverage lives in the browser e2e suite, not unit tests; diff-files mode
@@ -227,20 +170,17 @@ export const WAIVERS = {
     reason:
       "comparisons-export route exercised by browser e2e, not unit; 66.9 measured under diff-files; TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-",
   },
-  // Gate pass: the JSDoc-contract branch (fix-jsdoc-contracts) touched these
-  // seven files with COMMENT-ONLY edits, which still pulls them into the
+  // Gate pass: the JSDoc-contract branch (fix-jsdoc-contracts) touched seven
+  // files with COMMENT-ONLY edits, which still pulls them into the
   // diff-scoped coverage gate: SCOPED_DIFF_SRC_FILES filters by path shape and
   // never asks whether the diff changed code (the same blind spot WS-8 fixed
   // on the size gate). Every percentage below is unchanged on dev; lcov does
   // not count comment lines. These are pre-existing coverage debt, not a
-  // regression. Owning ticket (the real work — raise these modules and delete
-  // each waiver as it recovers):
+  // regression. Five of the seven have since recovered above the floor and
+  // their waivers were deleted; the two below are what still remains. Owning
+  // ticket (the real work — raise these modules and delete each waiver as it
+  // recovers):
   // .plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md
-  "routes:src/routes/http-utils/redirect.ts": {
-    floor: 50,
-    reason:
-      "pre-existing debt surfaced by JSDoc-only documentation; 50.0 measured under diff-files (identical on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
-  },
   "services:src/services/server-external-manager/index.ts": {
     floor: 45,
     reason:
@@ -250,25 +190,5 @@ export const WAIVERS = {
     floor: 63,
     reason:
       "pre-existing debt surfaced by JSDoc-only documentation; 63.8 measured under diff-files (unchanged on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
-  },
-  "story:src/story/world-state/index.ts": {
-    floor: 66,
-    reason:
-      "pre-existing debt surfaced by JSDoc-only documentation; 66.7 measured under diff-files (below floor on dev too); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
-  },
-  "routes:src/routes/views/static-partials.ts": {
-    floor: 68,
-    reason:
-      "pre-existing debt surfaced by JSDoc-only documentation; 68.4 measured under diff-files (identical on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
-  },
-  "transport:src/transport/compression.ts": {
-    floor: 76,
-    reason:
-      "pre-existing debt surfaced by JSDoc-only documentation; 76.7 measured under diff-files (identical on dev); TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
-  },
-  "rpg:src/rpg/replayability/service/index.ts": {
-    floor: 78,
-    reason:
-      "pre-existing debt surfaced by JSDoc-only documentation; 78.1 measured under diff-files (32 hits, same as dev); sibling playthrough.ts is waived above for the same reason; TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
   },
 };

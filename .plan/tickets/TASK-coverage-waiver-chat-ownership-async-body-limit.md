@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Small
 **Epic:** (none — hygiene/self-contained)
@@ -22,3 +22,18 @@
 - [ ] Diff-scoped coverage gate (`coverage - per-module line %` with `--diff-base dev`) passes green
 - [ ] `bun test ./src/chat/service/ownership.test.ts` passes 15/16 (1 skip pre-existing)
 - [ ] Removal plan documented in waiver entry comment (upgrade path: bun coverage supports async-body tracking)
+
+## Coverage evidence (waiver deleted 2026-10-23)
+
+The per-file waiver `chat:src/chat/service/ownership.ts` (floor 60) was deleted
+from `scripts/check/coverage/waivers.mjs`. Measured on dev (branch
+`cov-waiver-salvage`):
+
+- file: src/chat/service/ownership.ts
+- module scope: src/chat (every test under the top-level module)
+- LF=148, LH=140 -> 94.6%
+- floor that applies after deletion: 80 (no `chat` module waiver)
+- verdict: PASS
+
+The bun async-body tracking limit this ticket was filed against no longer caps
+the file below the floor.

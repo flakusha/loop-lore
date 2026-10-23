@@ -3,7 +3,7 @@
 
 # TASK: Waive seven diff-scoped coverage floors surfaced by JSDoc-only documentation
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Large
 **Epic:** (none — hygiene/self-contained)
@@ -35,3 +35,24 @@ SEPARATE PROPOSAL, deliberately NOT done in the documentation branch: gate --dif
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Coverage evidence (2026-10-23)
+
+Five of the seven per-file waivers were deleted from
+`scripts/check/coverage/waivers.mjs`; the two that still measure below their
+floor are kept. Measured on dev (branch `cov-waiver-salvage`), each file in
+its top-level module scope.
+
+| file | module scope | LF | LH | % | floor after deletion | verdict |
+| --- | --- | --- | --- | --- | --- | --- |
+| src/routes/http-utils/redirect.ts | src/routes | 2 | 2 | 100.0 | 80 | PASS — waiver deleted |
+| src/story/world-state/index.ts | src/story | 40 | 40 | 100.0 | 80 | PASS — waiver deleted |
+| src/routes/views/static-partials.ts | src/routes | 21 | 20 | 95.2 | 80 | PASS — waiver deleted |
+| src/transport/compression.ts | src/transport | 78 | 77 | 98.7 | 80 | PASS — waiver deleted |
+| src/rpg/replayability/service/index.ts | src/rpg | 34 | 34 | 100.0 | 80 | PASS — waiver deleted |
+| src/services/server-external-manager/index.ts | src/services | 60 | 27 | 45.0 | 78 | FAIL — waiver kept (floor 45) |
+| src/routes/views/view-serving.ts | src/routes | 106 | 67 | 63.2 | 80 | FAIL — waiver kept (floor 63) |
+
+The ticket stays open: server-external-manager/index.ts (45.0%) and
+view-serving.ts (63.2%) are still below their floors and still need real test
+work.

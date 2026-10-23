@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-age-gate
@@ -62,3 +62,19 @@ is wired. The same pattern already applies to src/frontend/alpine/htmx.ts
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Coverage evidence (waiver deleted 2026-10-23)
+
+The per-file waiver `frontend:src/frontend/alpine/shortcuts.ts` (floor 30) was
+deleted from `scripts/check/coverage/waivers.mjs`. Measured on dev (branch
+`cov-waiver-salvage`):
+
+- file: src/frontend/alpine/shortcuts.ts
+- module scope: src/frontend (every test under the top-level module)
+- LF=112, LH=111 -> 99.1%
+- floor that applies after deletion: 75 (the `frontend` module waiver)
+- verdict: PASS
+
+The DOM-bound gap this ticket was filed against is covered by the src/frontend
+unit suite (src/frontend/alpine/shortcuts-listener.test.ts), so the file no
+longer needs a per-file floor.
