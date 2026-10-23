@@ -217,8 +217,10 @@ describeReal("Assets E2E", () => {
     expect(serveRes.status,).toBe(200,);
     expect(await serveRes.text(),).toBe("signed bytes",);
 
-    // Tampered token is rejected fail-closed.
-    const tampered = mintRes.data!.url.replace(/sig=./, "sig=X",);
+    // Tampered token is rejected fail-closed. The whole sig value is
+    // replaced: flipping a single character is a no-op when the signature
+    // already starts with the replacement character (~1.5% of runs).
+    const tampered = mintRes.data!.url.replace(/&sig=[^&]*/, "&sig=tampered",);
     const badRes = await fetch(`${server.url}${tampered}`,);
     expect(badRes.status,).toBe(403,);
 
