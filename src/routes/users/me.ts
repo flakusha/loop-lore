@@ -10,6 +10,7 @@
  */
 import { Elysia, t, } from "elysia";
 import { validateAge, } from "../../age-gate/service";
+import { isLocale, } from "../../i18n/locale-registry";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, UserProfileUpdateBody, } from "../../validation/schemas";
@@ -109,6 +110,20 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           if (typeof userId !== "string") { return userId; }
 
           const body = (ctx as any).body as Record<string, unknown>;
+          // FEAT-language-selection-three-level: the content-locale preference
+          // is validated against LOCALE_REGISTRY at the boundary — unknown
+          // codes are a 400 before the settings merge, not a silent store.
+          if (
+            body.contentLocale !== undefined &&
+            body.contentLocale !== null &&
+            (typeof body.contentLocale !== "string" || !isLocale(body.contentLocale,))
+          ) {
+            return jsonError({
+              message: `Unknown contentLocale: "${String(body.contentLocale,)}".`,
+              status: HttpStatus.BadRequest,
+            },);
+          }
+
           const user = await opts.database
             .selectFrom("users",)
             .select(["id", "settings",],)
