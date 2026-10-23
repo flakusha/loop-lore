@@ -14,6 +14,7 @@
  * everything else → accessory.
  */
 import type { Kysely, Transaction, } from "kysely";
+import { triggerItemOutfitChange, } from "../characters/services/wardrobe/item-trigger";
 import { EquipState, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, } from "../utils";
@@ -32,6 +33,7 @@ import {
 } from "./actor-items/errors";
 import { transferItems, } from "./actor-items/transfer";
 import type { TransferResult, } from "./actor-items/transfer";
+import type { ActorCaps, ContextState, } from "./affordance/lookup";
 export {
   ENCUMBRANCE,
   EQUIP_SLOTS,
@@ -156,8 +158,8 @@ export class ActorItemsService {
     actorId: string,
     itemId: string,
     opts?: {
-      actorCaps?: import("./affordance/lookup").ActorCaps;
-      context?: import("./affordance/lookup").ContextState;
+      actorCaps?: ActorCaps;
+      context?: ContextState;
     },
   ): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
@@ -188,11 +190,17 @@ export class ActorItemsService {
 
     if (conflict) { throw new SlotConflictError(slot,); }
 
+    const wasEquipped = item.equipped === EquipState.Equipped;
+
     await this.db
       .updateTable("actor_items",)
       .set({ equipped: EquipState.Equipped, },)
       .where("id", "=", itemId,)
       .execute();
+
+    if (!wasEquipped) {
+      await triggerItemOutfitChange(this.db, actorId, itemId,);
+    }
 
     return { ok: true, itemId, };
   }
@@ -207,11 +215,17 @@ export class ActorItemsService {
   async unequip(actorId: string, itemId: string,): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
     if (!item) { throw new ItemNotFoundError(itemId,); }
+    if (item.equipped === EquipState.Unequipped) {
+      return { ok: true, itemId, };
+    }
+
     await this.db
       .updateTable("actor_items",)
       .set({ equipped: EquipState.Unequipped, },)
       .where("id", "=", itemId,)
       .execute();
+
+    await triggerItemOutfitChange(this.db, actorId, itemId,);
 
     return { ok: true, itemId, };
   }
