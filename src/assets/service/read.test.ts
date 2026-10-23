@@ -14,7 +14,7 @@ import { join, } from "node:path";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
-import { canAccessAsset, getAsset, getAssetData, isAssetEncrypted, listAssets, } from "./read";
+import { canAccessAsset, getAsset, getAssetData, getOwnedAsset, isAssetEncrypted, listAssets, } from "./read";
 
 const ASSET_ID = "d1a2b3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 const ASSET_PATH = `raw/${ASSET_ID.slice(0, 2,)}/${ASSET_ID.slice(2, 4,)}/${ASSET_ID}.png`;
@@ -67,6 +67,38 @@ describe("getAsset", () => {
       expect(await getAsset(db, "ghost",),).toBeNull();
     } finally {
       sqlite.close();
+    }
+  });
+});
+
+describe("getOwnedAsset", () => {
+  test("returns the asset when the caller owns it", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
+    try {
+      const ownerId = await seedOwner(db, uploadDir,);
+      const asset = await getOwnedAsset(db, ASSET_ID, ownerId,);
+      expect(asset?.id,).toBe(ASSET_ID,);
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("returns null for an asset owned by someone else, and for a missing one", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
+    try {
+      await seedOwner(db, uploadDir,);
+      const strangerId = await makeUser(db, OTHER, "Read Other",);
+
+      // The two answers must not differ: an asset id is not authorization, and
+      // a differing answer would be an existence oracle on guessed ids.
+      expect(await getOwnedAsset(db, ASSET_ID, strangerId,),).toBeNull();
+      expect(await getOwnedAsset(db, "ghost", strangerId,),).toBeNull();
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
     }
   });
 });

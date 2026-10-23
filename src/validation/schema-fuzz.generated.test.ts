@@ -73,6 +73,7 @@ import * as validation_chat from "@/validation/schemas/chat";
 import * as validation_comfyuiBuilder from "@/validation/schemas/comfyui-builder";
 import * as validation_emotionAvatars from "@/validation/schemas/emotion-avatars";
 import * as validation_entities from "@/validation/schemas/entities";
+import * as validation_imageEdit from "@/validation/schemas/image-edit";
 import * as validation_invites from "@/validation/schemas/invites";
 import * as validation_lore from "@/validation/schemas/lore";
 import * as validation_messages from "@/validation/schemas/messages";
@@ -1359,6 +1360,12 @@ describe("idParams", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_worldLocationTraitsSchemas.idParams,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_worldLocationTraitsSchemas.idParams,));
+});
+
+describe("ImageEditRunBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_imageEdit.ImageEditRunBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_imageEdit.ImageEditRunBody,));
 });
 
 describe("InitCombatantBody", () => {
@@ -2679,4 +2686,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 424 schemas discovered across 510 module(s).
+// 425 schemas discovered across 511 module(s).

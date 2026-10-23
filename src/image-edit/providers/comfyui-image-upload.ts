@@ -5,19 +5,25 @@
  * ComfyUI input-image upload for image-edit runs.
  *
  * A ComfyUI `LoadImage` node takes the name of a file in ComfyUI's OWN input
- * directory, not a path on this machine. The image-edit request carries a
- * local path (or a data URI), so the provider uploads the bytes first and
- * substitutes the stored name. Uploading is a ComfyUI-protocol concern, so
- * it belongs to the provider rather than the route: the route only knows
- * where the image lives locally.
+ * directory, not bytes. An `image`-typed parameter carries the ASSET ID of an
+ * image the caller owns: the provider resolves the id to bytes — owner check
+ * first, chat key when the asset is encrypted — and uploads them before the
+ * workflow is built.
+ *
+ * The parameter is never a path on this machine. It only ever reaches the
+ * database as a bound query parameter, and the file that is read is the one
+ * the asset row points at, so a caller cannot make the server open a file of
+ * their choosing.
  *
  * The upload happens BEFORE the workflow is submitted. A failed upload aborts
  * the run, so ComfyUI never receives a filename it has no bytes for.
  */
-import { readFile, } from "node:fs/promises";
+import type { Kysely, } from "kysely";
 import { basename, extname, } from "node:path";
+import { getAssetData, getOwnedAsset, } from "../../assets/service";
+import { type ChatKey, deriveChatKeyForChat, getSmk, } from "../../crypto";
+import type { DB, } from "../../db/schema";
 import type { ComfyUIClient, } from "../../generation/providers/comfyui";
-import { mustFromBase64, } from "../../utils/safe-buffer";
 import type { WorkflowTemplate, } from "../types";
 
 /** Options for {@link uploadImageParams}. */
@@ -26,28 +32,26 @@ export interface UploadImageParamsOptions {
   client: ComfyUIClient;
   /** Template whose `image` parameters need a ComfyUI-side name. */
   template: WorkflowTemplate;
-  /** Run parameters, mutated in place: local paths become stored names. */
+  /** Run parameters, mutated in place: asset ids become stored names. */
   params: Record<string, unknown>;
+  /** Database the asset ids are resolved against. */
+  database: Kysely<DB>;
+  /** Directory the asset files live in. */
+  uploadDir: string;
+  /** The authenticated caller — only their own assets resolve. */
+  ownerId: string;
+  /** Chat whose key decrypts an encrypted input asset. */
+  chatId?: string;
 }
 
-/** A base64 image data URI. */
-const DATA_URI_RE = /^data:image\/[a-z0-9.+-]+;base64,([A-Za-z0-9+/=]+)$/i;
-
-/**
- * Whether a value names a file on this machine.
- *
- * A bare name (`photo.png`, `sub/photo.png`) is a file in ComfyUI's input
- * directory and must pass through untouched. Only an absolute or explicitly
- * relative path is read locally.
- * @param value - Parameter value
- * @returns {boolean}
- */
-function isLocalPath(value: string,): boolean {
-  return value.startsWith("/",) ||
-    value.startsWith("./",) ||
-    value.startsWith("../",) ||
-    /^[A-Za-z]:[\\/]/.test(value,);
-}
+/** The file extension ComfyUI's loader expects for a mime type. */
+const MIME_EXTENSIONS: Record<string, string> = {
+  "image/png": ".png",
+  "image/jpeg": ".jpg",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+  "image/bmp": ".bmp",
+};
 
 /**
  * A name no other upload can collide with.
@@ -65,51 +69,92 @@ function uniqueName(filename: string,): string {
   return `${stem}-${Date.now()}-${Math.random().toString(36,).slice(2, 8,)}${ext}`;
 }
 
-/**
- * Read the bytes of a local image parameter.
- * @param value - A local path or a base64 data URI
- * @returns {Promise<{ buffer: Buffer; filename: string } | null>} Null when the value is not a local image
- * @throws {Error} When a local path cannot be read or a data URI cannot be decoded
- */
-async function readLocalImage(
-  value: string,
-): Promise<{ buffer: Buffer; filename: string } | null> {
-  const dataUri = DATA_URI_RE.exec(value,);
-  if (dataUri) {
-    return { buffer: mustFromBase64(dataUri[1]!,), filename: "input-image.png", };
-  }
-
-  if (!isLocalPath(value,)) { return null; }
-
-  try {
-    return { buffer: await readFile(value,), filename: basename(value,), };
-  } catch (error) {
-    throw new Error(`ComfyUI input image not readable: ${value} (${String(error,)})`,);
-  }
+/** What the provider needs to read one owned asset. */
+interface OwnedAssetSource {
+  database: Kysely<DB>;
+  uploadDir: string;
+  ownerId: string;
+  chatId?: string;
+  assetId: string;
+  /** The parameter the id came from — named in every failure. */
+  parameterName: string;
 }
 
 /**
- * Upload every `image` parameter of the template and replace the local value
- * with the name ComfyUI stored it under.
+ * The bytes of an asset the caller owns, decrypted when it is chat-encrypted.
  *
- * A parameter that is not a local image is left alone: it already names a
- * file in ComfyUI's input directory.
- * @param options - Client, template and the run parameters
+ * "Missing" and "not yours" fail the same way: an asset id is not
+ * authorization, and a differing answer would be an existence oracle on ids
+ * the caller guessed.
+ * @param source - the asset id and the context it is resolved in
+ * @returns {Promise<{ buffer: Buffer; mimeType: string }>} the asset bytes
+ * @throws {Error} When the asset is missing, owned by someone else, encrypted without a usable chat key, or has no readable file
+ */
+async function readOwnedAssetBytes(
+  source: OwnedAssetSource,
+): Promise<{ buffer: Buffer; mimeType: string }> {
+  const { database, uploadDir, ownerId, chatId, assetId, parameterName, } = source;
+
+  const asset = await getOwnedAsset(database, assetId, ownerId,);
+  if (!asset) {
+    throw new Error(`Image parameter "${parameterName}": image asset not found or not owned by the caller`,);
+  }
+
+  let chatKey: ChatKey | undefined;
+  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
+    const smk = getSmk();
+    // Without a chat key the bytes stay encrypted. getAssetData says so
+    // ("Chat key required to decrypt encrypted asset") rather than handing
+    // ComfyUI ciphertext.
+    if (smk && chatId) { chatKey = await deriveChatKeyForChat(database, chatId, smk,); }
+  }
+
+  let buffer: Buffer | null;
+  try {
+    buffer = await getAssetData(database, assetId, uploadDir, chatKey,);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error,);
+    throw new Error(`Image parameter "${parameterName}": ${message}`,);
+  }
+
+  if (!buffer) { throw new Error(`Image parameter "${parameterName}": image asset has no readable file`,); }
+
+  return { buffer, mimeType: asset.mime_type, };
+}
+
+/**
+ * Upload every `image` parameter of the template and replace the asset id
+ * with the name ComfyUI stored the bytes under.
+ *
+ * Every parameter is uploaded BEFORE any workflow is built, so a template
+ * with two images uploads both or submits nothing.
+ * @param options - Client, template, run parameters and the asset context
  * @returns {Promise<void>}
- * @throws {Error} When a local image cannot be read or the upload fails
+ * @throws {Error} When the asset cannot be resolved or the upload fails
  */
 export async function uploadImageParams(options: UploadImageParamsOptions,): Promise<void> {
-  const { client, template, params, } = options;
+  const { client, template, params, database, uploadDir, ownerId, chatId, } = options;
 
   for (const parameter of template.parameters) {
     if (parameter.type !== "image") { continue; }
 
-    const value = params[parameter.name];
-    if (typeof value !== "string" || value === "") { continue; }
+    const assetId = params[parameter.name];
+    if (typeof assetId !== "string" || assetId === "") { continue; }
 
-    const local = await readLocalImage(value,);
-    if (!local) { continue; }
+    const bytes = await readOwnedAssetBytes({
+      database,
+      uploadDir,
+      ownerId,
+      chatId,
+      assetId,
+      parameterName: parameter.name,
+    },);
 
-    params[parameter.name] = await client.uploadImage(local.buffer, uniqueName(local.filename,),);
+    const extension = MIME_EXTENSIONS[bytes.mimeType.toLowerCase()] ?? ".png";
+    try {
+      params[parameter.name] = await client.uploadImage(bytes.buffer, uniqueName(`image-edit${extension}`,),);
+    } catch (error) {
+      throw new Error(`ComfyUI upload of image parameter "${parameter.name}" failed: ${String(error,)}`,);
+    }
   }
 }

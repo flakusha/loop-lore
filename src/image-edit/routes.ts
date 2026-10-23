@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 260
 
 /**
  * Image Edit API Routes — ComfyUI + sd-server unified endpoints
@@ -14,7 +15,15 @@
 
 import { getDatabase, } from "../db";
 import { ensureWorkflowRegistry, } from "../generation/workflow-library";
-import { HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
+import { API_META, ErrorCode, HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
+import {
+  imageEditBodyFields,
+  ImageEditRunBody,
+  type ImageEditRunBodyT,
+  invalidImageParams,
+  missingRequiredParams,
+  validateImageEditBody,
+} from "../validation/schemas";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
 import { SDServerEditProvider, } from "./providers/sd-server-provider";
 import { authorizeRunLinkage, } from "./run-authz";
@@ -70,22 +79,45 @@ function getProvider(backend: ImageEditBackend,): ImageEditProvider {
  * @param opts.database
  * @param opts.userId
  * @param opts.userRole
+ * @param parsedBody - the body the HTTP boundary already parsed
  * @returns JSON envelope with results, or 401/403/4xx on gate failure.
  */
-export async function handleRun(request: Request, opts?: HandleRunAuth,): Promise<Response> {
-  const body = await parseBody<ImageEditRequest>(request,);
-  if (body instanceof Response) { return body; }
+export async function handleRun(
+  request: Request,
+  opts?: HandleRunAuth,
+  parsedBody?: unknown,
+): Promise<Response> {
+  const raw = parsedBody ?? (await parseBody<unknown>(request,));
+  if (raw instanceof Response) { return raw; }
 
-  const gate = await authorizeRunLinkage(body, opts ?? {},);
+  // The gate comes first: an unauthenticated caller is told so whether or not
+  // the body is well formed, exactly as before the shared schema existed.
+  const gate = await authorizeRunLinkage(
+    raw as Pick<ImageEditRequest, "chatId" | "messageId">,
+    opts ?? {},
+  );
+
   if (gate) { return gate; }
 
-  if (!body.template_id) {
-    return jsonError({ message: "Missing required field: template_id", status: HttpStatus.BadRequest, },);
+  // The shared schema is the boundary for every entry point: the HTTP route
+  // validates the body against it, and so does this handler for the chain-run
+  // executor, which calls `handleRun` directly.
+  const validation = validateImageEditBody(raw,);
+  if (!validation.ok) {
+    const fields = validation.fields.filter((field,) => field !== "body");
+    const message = fields.length > 0 ? `Invalid request body: ${fields.join(", ",)}` : "Invalid request body";
+    return jsonError({ message, status: HttpStatus.BadRequest, },);
   }
 
-  if (!body.backend) {
-    return jsonError({ message: "Missing required field: backend", status: HttpStatus.BadRequest, },);
-  }
+  const params = validation.value.params ?? {};
+  const body: ImageEditRequest = {
+    template_id: validation.value.template_id,
+    // The provider rejects an unknown backend, exactly as it always has.
+    backend: validation.value.backend as ImageEditBackend,
+    params,
+    chatId: validation.value.chatId,
+    messageId: validation.value.messageId,
+  };
 
   const db = opts?.database ?? getDatabase();
   await ensureWorkflowRegistry(db,).catch(() => 0);
@@ -103,16 +135,20 @@ export async function handleRun(request: Request, opts?: HandleRunAuth,): Promis
 
   const provider = getProvider(body.backend,);
 
-  // Check required parameters
-  const params = body.params ?? {};
-  const missing: string[] = [];
-  for (const p of template.parameters) {
-    if (p.required && params[p.name] === undefined) { missing.push(p.name,); }
-  }
-
+  // The required-parameter and image-parameter checks live in the shared
+  // schema module, so this route and the chain path cannot drift apart.
+  const missing = missingRequiredParams(template, params,);
   if (missing.length > 0) {
     return jsonError({
       message: `Missing required parameters: ${missing.join(", ",)}`,
+      status: HttpStatus.BadRequest,
+    },);
+  }
+
+  const invalidImages = invalidImageParams(template, params,);
+  if (invalidImages.length > 0) {
+    return jsonError({
+      message: `Invalid image parameters: ${invalidImages.join(", ",)}`,
       status: HttpStatus.BadRequest,
     },);
   }
@@ -240,6 +276,18 @@ export function imageEditRoutes(opts: { database: Kysely<DB> }, prefix = "/api",
   }
 
   return new Elysia({ name: "image-edit", },)
+    // A body the shared schema rejects is a bad request, not a server error:
+    // the run route has always answered 400 for a body it cannot use, and the
+    // chain-run executor answers the same way for the same body.
+    .onError((ctx,) => {
+      if (ctx.code !== "VALIDATION" && ctx.code !== "PARSE") { return undefined; }
+
+      ctx.set.status = HttpStatus.BadRequest;
+      const value = (ctx as { body?: unknown }).body ?? (ctx.error as { value?: unknown }).value;
+      const fields = imageEditBodyFields(value,).filter((field,) => field !== "body");
+      const message = fields.length > 0 ? `Invalid request body: ${fields.join(", ",)}` : "Invalid request body";
+      return { error: message, code: ErrorCode.BadRequest, meta: API_META, };
+    },)
     .get(`${prefix}/image-edit/templates`, async ({ request, },) => {
       // DB-backed workflows are hydrated on first use, not at boot, so tests
       // and e2e (which never run start.ts) see the same list the server does.
@@ -256,6 +304,6 @@ export function imageEditRoutes(opts: { database: Kysely<DB> }, prefix = "/api",
         database: opts.database,
         userId: auth.userId ?? undefined,
         userRole: auth.userRole ?? null,
-      },);
-    },);
+      }, ctx.body as ImageEditRunBodyT,);
+    }, { body: ImageEditRunBody, },);
 }

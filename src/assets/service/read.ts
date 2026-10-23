@@ -26,6 +26,27 @@ export async function getAsset(database: Kysely<DB>, assetId: string,): Promise<
 }
 
 /**
+ * Get a single asset, but only when the caller owns it.
+ *
+ * "Missing" and "not yours" both come back as `null`, so the caller cannot
+ * tell the two apart: an asset id is not authorization, and a differing
+ * answer would be an existence oracle on ids the caller guessed.
+ * @param database
+ * @param assetId
+ * @param ownerId - the authenticated caller
+ * @returns {Promise<AssetRecord | null>} The asset, or null when it is missing or owned by someone else
+ */
+export async function getOwnedAsset(
+  database: Kysely<DB>,
+  assetId: string,
+  ownerId: string,
+): Promise<AssetRecord | null> {
+  const asset = await getAsset(database, assetId,);
+  if (!asset || asset.owner_id !== ownerId) { return null; }
+  return asset;
+}
+
+/**
  * Get decrypted asset data. If asset is encrypted, decrypts using provided chat key.
  * If asset is not encrypted, returns raw file data.
  * @param database - Database connection
