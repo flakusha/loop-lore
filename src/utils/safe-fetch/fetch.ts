@@ -119,6 +119,7 @@ export async function safeFetch<T = unknown,>(
     auth,
     handle401 = true,
     onAuthError,
+    redirect,
     ...fetchOptions
   } = options;
 
@@ -151,6 +152,7 @@ export async function safeFetch<T = unknown,>(
       body: serializedBody,
       signal: combinedSignal,
       headers,
+      ...(redirect === undefined ? {} : { redirect, }),
     },);
 
     // Handle 401 — mirrors feFetch's redirect behavior

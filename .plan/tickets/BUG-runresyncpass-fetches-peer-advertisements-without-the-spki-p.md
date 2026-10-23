@@ -3,7 +3,7 @@
 
 # BUG: runResyncPass fetches peer advertisements without the SPKI pin gate
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-federation-offload-quotas

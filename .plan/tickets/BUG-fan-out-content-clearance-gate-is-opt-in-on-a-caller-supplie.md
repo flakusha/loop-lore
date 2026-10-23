@@ -3,7 +3,7 @@
 
 # BUG: Fan-out content-clearance gate is opt-in on a caller-supplied chatId
 
-**Status:** Wontfix
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Tags:** security, federation
