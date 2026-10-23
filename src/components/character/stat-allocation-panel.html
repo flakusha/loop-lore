@@ -11,11 +11,6 @@
   class="stat-allocation-panel"
 >
   <h3>Stat Allocation</h3>
-  <p class="form-hint">
-    World-scoped point-buy (<span x-text="budget"></span> pts,
-    <span x-text="statMin"></span>–<span x-text="statMax"></span>) for
-    <code>requires_stats</code> worlds. Enter the world ID, then save.
-  </p>
   <label>World ID <input
       type="text"
       x-model="_saWorldId"
@@ -23,31 +18,46 @@
       placeholder="world id"
     /></label>
 
-  <p>Budget remaining: <strong x-text="budgetRemaining()"></strong> / <span x-text="budget"></span></p>
-  <p x-show="loading">Loading…</p>
-  <p x-show="error" x-text="error" class="stat-allocation-error"></p>
-  <p x-show="message" x-text="message" class="stat-allocation-message"></p>
+  <template x-if="!configLoaded">
+    <p class="form-hint">Enter the world ID above to load its point-buy bounds.</p>
+  </template>
 
-  <template x-for="ability in ['str', 'dex', 'con', 'int', 'wis', 'cha']" :key="ability">
-    <div class="stat-row">
-      <label>
-        <span x-text="ability.toUpperCase()"></span>
-        <button type="button" @click="nudge(ability, -1)">−</button>
-        <input type="number" :min="statMin" :max="statMax" x-model.number="stats[ability]" />
-        <button type="button" @click="nudge(ability, 1)">+</button>
-        <span>mod <span x-text="modifier(ability) >= 0 ? '+' + modifier(ability) : modifier(ability)"></span></span>
-      </label>
+  <template x-if="configLoaded">
+    <div>
+      <p class="form-hint">
+        World-scoped point-buy (<span x-text="budget"></span> pts,
+        <span x-text="statMin"></span>–<span x-text="statMax"></span>) for
+        <code>requires_stats</code> worlds.
+      </p>
+
+      <p>Budget remaining: <strong x-text="budgetRemaining()"></strong> / <span x-text="budget"></span></p>
+
+      <template x-for="ability in ['str', 'dex', 'con', 'int', 'wis', 'cha']" :key="ability">
+        <div class="stat-row">
+          <label>
+            <span x-text="ability.toUpperCase()"></span>
+            <button type="button" @click="nudge(ability, -1)">−</button>
+            <input type="number" :min="statMin" :max="statMax" x-model.number="stats[ability]" />
+            <button type="button" @click="nudge(ability, 1)">+</button>
+            <span>mod <span x-text="modifier(ability) >= 0 ? '+' + modifier(ability) : modifier(ability)"></span></span>
+          </label>
+        </div>
+      </template>
+
+      <h4>Gameplay Traits</h4>
+      <template x-for="trait in catalog" :key="trait.id">
+        <label>
+          <input type="checkbox" :checked="selectedTraits.includes(trait.id)" @change="toggleTrait(trait.id)" />
+          <span x-text="trait.label"></span>
+          <small x-text="trait.scope"></small>
+        </label>
+      </template>
+
+      <button type="button" :disabled="saving" @click="save()">Save allocation</button>
     </div>
   </template>
 
-  <h4>Gameplay Traits</h4>
-  <template x-for="trait in catalog" :key="trait.id">
-    <label>
-      <input type="checkbox" :checked="selectedTraits.includes(trait.id)" @change="toggleTrait(trait.id)" />
-      <span x-text="trait.label"></span>
-      <small x-text="trait.scope"></small>
-    </label>
-  </template>
-
-  <button type="button" :disabled="saving" @click="save()">Save allocation</button>
+  <p x-show="loading">Loading…</p>
+  <p x-show="error" x-text="error" class="stat-allocation-error"></p>
+  <p x-show="message" x-text="message" class="stat-allocation-message"></p>
 </div>
