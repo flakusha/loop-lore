@@ -13,6 +13,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { FantasyCategory, } from "../../../db/enums-character/nsfw.js";
 import type { DB, } from "../../../db/schema.js";
+import { getLogger, } from "../../../logger/index.js";
 import { createTestDb, } from "../../../test-utils/create-test-db.js";
 import {
   insertActors,
@@ -21,9 +22,13 @@ import {
   insertCharacterFantasies,
   insertCharacterMood,
   insertCharacterSeductionSkills,
+  insertUsers,
+  insertWorlds,
 } from "../../../test-utils/insert-helpers.js";
 import { uid, } from "../../../utils.js";
 import { attemptSeduction, } from "./attempt.js";
+import { settleAttempt, } from "./settle.js";
+import { getSkill, } from "./skills.js";
 import type { SeductionResult, } from "./types.js";
 
 let db: Kysely<DB>;
@@ -552,5 +557,46 @@ describe("attemptSeduction", () => {
     },);
 
     expect(result.dc,).toBe(50,);
+  });
+
+  test("opted-out world falls back to the raw ledger mirror", async () => {
+    const { actorId, targetId, } = await makePair();
+    await insertCharacterSeductionSkills(
+      db,
+      actorId,
+      "communication",
+      "Small Talk",
+      NOW,
+      NOW,
+      { level: 1, xp: 0, xp_to_next: 1000, },
+    );
+
+    const worldOwner = await insertUsers(db, `noxp-${actorId}`, "No XP Owner",);
+    const worldId = await insertWorlds(db, worldOwner, "No XP World", {
+      rpg_enabled: 1,
+      rpg_xp: 0,
+    },);
+
+    await settleAttempt({
+      db,
+      log: getLogger(),
+      actorId,
+      targetId,
+      skillCategory: "communication",
+      worldId,
+      relevantSkill: await getSkill(db, actorId, "communication", "Small Talk",),
+      success: true,
+      arousalDelta: 0,
+      xpGained: 25,
+    },);
+
+    const ledger = await db.selectFrom("xp_ledger",)
+      .where("actor_id", "=", actorId,)
+      .where("source", "=", "nsfw_seduction",)
+      .selectAll()
+      .execute();
+
+    expect(ledger,).toHaveLength(1,);
+    expect(ledger[0]!.amount,).toBe(25,);
   });
 });

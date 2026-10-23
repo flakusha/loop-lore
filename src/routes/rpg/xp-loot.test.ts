@@ -237,6 +237,48 @@ describe("XP & loot (auth-gated)", () => {
     expect(typeof body.id,).toBe("string",);
   });
 
+  test("rejects awards to worlds that opted out of XP", async () => {
+    const gatedWorld = uid();
+    await insertWorlds(db, userId, "No XP World", {
+      id: gatedWorld,
+      rpg_enabled: 1,
+      rpg_xp: 0,
+    } as never,);
+
+    const app = authedApp();
+    const res = await app.handle(
+      new Request("http://localhost/api/rpg/xp/award", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          actorId: "actor-xp",
+          amount: 300,
+          source: "quest",
+          worldId: gatedWorld,
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
+
+  test("rejects invalid XP amounts with a 400", async () => {
+    const app = authedApp();
+    const res = await app.handle(
+      new Request("http://localhost/api/rpg/xp/award", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          actorId: "actor-xp",
+          amount: -5,
+          source: "quest",
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
   test("rejects unauthenticated request", async () => {
     const app = new Elysia()
       .derive({ as: "scoped", }, () => ({ userId: null, userRole: null, }),)
