@@ -9,7 +9,8 @@
 **Summary:** Admin Analytics Dashboard
 **Context:** Epic proposed:epic-admin-analytics; tags admin, analytics.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-admin-analytics
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-admin-analytics" preserved 2026-10-23; no epic file exists.
 **Tags:** admin, analytics
 
 ## Summary

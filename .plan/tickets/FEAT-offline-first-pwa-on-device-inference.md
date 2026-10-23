@@ -9,7 +9,8 @@
 **Summary:** Offline-first PWA + On-device Inference
 **Context:** Epic proposed:epic-offline-pwa; tags pwa, offline.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-offline-pwa
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-offline-pwa" preserved 2026-10-23; no epic file exists.
 **Tags:** pwa, offline
 
 ## Summary

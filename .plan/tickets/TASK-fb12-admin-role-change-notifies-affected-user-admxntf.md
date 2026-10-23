@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-frontend-notifications
 
 **Summary:**
 

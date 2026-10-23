@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High (post-Gate C, with parent epic)
 **Effort:** Medium
-**Epic:** `epic-assistant-creative-studio-workflows` (§7.6)
+**Epic:** epic-assistant-creative-studio-workflows
 **Target entity epic:** `epic-npcs.md`
 **Depends on:** `epic-assistant-creative-studio-workflows` (runner/loader),
 `epic-npcs.md` (NPC data model), `epic-faction-reputation.md` (allegiance)

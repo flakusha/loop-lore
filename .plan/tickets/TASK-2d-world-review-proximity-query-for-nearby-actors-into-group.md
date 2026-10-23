@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-actors
 **Summary:** Radius/zone proximity lookup for nearby actors + group chats.
 **Context:** FEAT click-to-move; joinable filters exact location only.
 **Acceptance Criteria:** Nearby actors listed with one-tap join.

@@ -12,7 +12,8 @@
 **Status Note:** (2026-08-16) — mechanism shipped in `in-chat-asset-preview` worktree
 **Priority:** Medium
 **Effort:** Small
-**Epic:** epic-asset-support-expansion
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-asset-support-expansion" preserved 2026-10-23; no epic file exists.
 
 ## Summary
 

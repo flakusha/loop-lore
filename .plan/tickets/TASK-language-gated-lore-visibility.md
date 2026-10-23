@@ -10,6 +10,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small–Medium
+**Epic:** epic-lore-knowledge
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

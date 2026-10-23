@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** (none — hygiene/self-contained)
 
 **Summary:** `src/async/spill.ts` gained its per-process namespace (per `BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-` and `BUG-test-async-store-offload-dir-fixed-path-race`) on `dev` only. `feat-chat-finishers` does not contain that work and cannot revert it, but a weave-driven rebase of that branch — which `giwt rebase` performs routinely, and which the repo ledger records as in-flight — auto-resolves `src/async/spill.ts` and can silently DROP code. The `weave - damage scan` gate catches the duplication half only, and its own docstring states the drop half has no cheap mechanical signal. So this failure mode is currently caught by nothing.
 

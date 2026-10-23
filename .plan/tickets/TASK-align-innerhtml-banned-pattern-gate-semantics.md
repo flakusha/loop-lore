@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
+**Epic:** (none — hygiene/self-contained)
 
 ## Summary
 

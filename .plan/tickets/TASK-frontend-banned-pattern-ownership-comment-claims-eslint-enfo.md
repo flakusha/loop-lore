@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** (none — hygiene/self-contained)
 **Tags:** frontend, eslint, gates, documentation
 **Summary:** Fix a stale ownership comment in `eslint.config.mjs` that misstates which component enforces frontend banned patterns.
 **Context:** `eslint.config.mjs:322-324` states: "Banned-pattern enforcement on frontend is owned by ESLint (not a separate script). Warn-level so `check` stays green while surfacing debt; promote to 'error' after the existing occurrences are cleaned up."

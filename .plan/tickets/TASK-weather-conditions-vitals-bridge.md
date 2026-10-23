@@ -10,6 +10,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
+**Epic:** epic-weather-environment
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

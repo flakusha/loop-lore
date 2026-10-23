@@ -17,7 +17,7 @@ Filename = `TYPE-<kebab-case-title>.md` (created by
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** (optional, e.g. epic-plugin-system)
+**Epic:** (none — hygiene/self-contained)
 **Related:** (optional, linked tickets)
 
 ## Summary

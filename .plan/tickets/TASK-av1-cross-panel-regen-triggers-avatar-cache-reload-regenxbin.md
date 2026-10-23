@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
+**Epic:** epic-avatar-regeneration-control
 
 **Summary:**
 

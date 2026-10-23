@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** auth-config-contracts
+**Epic:** epic-auth-config-contracts
 
 **Summary:**
 

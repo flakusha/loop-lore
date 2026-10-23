@@ -12,7 +12,8 @@
 **Priority:** Medium
 **Status:** Done
 **Status Note:** closed via git issue
-**Epic:** epic-memory-systems-three-tier
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-memory-systems-three-tier" preserved 2026-10-23; no epic file exists.
 **Tags:** memory, distillation, dreams, recall, consolidation
 
 ## Description

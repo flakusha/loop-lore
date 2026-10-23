@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** derived-map-generation
+**Epic:** epic-derived-map-generation
 **Tags:** assets, provenance, links
 **Related:** BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty.md, epic-asset-platform-capabilities.md, TASK-matting-concept-prompt-contract.md
 

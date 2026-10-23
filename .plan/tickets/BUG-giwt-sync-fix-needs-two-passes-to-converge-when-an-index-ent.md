@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-tooling-improvement
 **Tags:** giwt, tooling, sync-index
 
 **Summary:**

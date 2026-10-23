@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-harness-integration`
+**Epic:** epic-harness-integration
 **Depends on:** `TASK-harness-edit-journal`, `TASK-harness-lean-ctx-tools`
 **Related:** TASK-harness-tool-sandbox.md, TASK-harness-exec-log.md, epic-recursive-self-improvement.md
 

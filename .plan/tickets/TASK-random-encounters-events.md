@@ -11,7 +11,8 @@
 
 **Priority:** Medium
 **Status:** Not Started
-**Epic:** epic-world-event-system
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-world-event-system" preserved 2026-10-23; no epic file exists.
 **Tags:** random, encounter, event, generation, ambient, dynamic
 
 ## Description

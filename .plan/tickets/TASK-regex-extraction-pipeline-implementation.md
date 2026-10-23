@@ -9,7 +9,8 @@
 **Summary:** Regex Extraction Pipeline Implementation
 **Context:** Epic proposed:epic-regex-extraction; tags regex, extraction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-regex-extraction
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-regex-extraction" preserved 2026-10-23; no epic file exists.
 **Tags:** regex, extraction
 
 ## Summary

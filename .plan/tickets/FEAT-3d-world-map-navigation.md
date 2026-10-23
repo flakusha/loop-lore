@@ -9,7 +9,8 @@
 **Summary:** 3D World-map Navigation
 **Context:** Epic proposed:epic-3d-world-map; tags 3d, world.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-3d-world-map
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-3d-world-map" preserved 2026-10-23; no epic file exists.
 **Tags:** 3d, world
 
 ## Summary

@@ -6,7 +6,7 @@
 **Status:** Blocked
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-sidecar-de-hardcoding-cross-platform-installer.md`, `TASK-external-comfyui-plugin-repo-integration-contract.md`, `TASK-sidecar-hardcoded-literals-configurable-defaults.md`, `TASK-sidecar-reveal-cross-platform.md`, `epic-reference-conditioned-generation.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

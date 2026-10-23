@@ -11,7 +11,7 @@
 
 **Status:** Not Started
 **Priority:** P1 — High
-**Epic:** `epic-memory-propagation.md`
+**Epic:** epic-memory-propagation
 **Type:** Feature
 
 ## What

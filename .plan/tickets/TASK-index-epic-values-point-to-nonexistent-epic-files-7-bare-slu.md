@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
+**Epic:** (none — hygiene/self-contained)
 **Tags:** epic-linkage, plan-hygiene
 
 **Summary:**

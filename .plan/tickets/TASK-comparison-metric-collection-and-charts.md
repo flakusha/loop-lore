@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-technical-comparison-charts`
+**Epic:** epic-technical-comparison-charts
 **Related:** `TASK-comparison-fan-out-engine.md`, `TASK-comparison-parameter-sweep-axis.md`, `TASK-comparison-chart-export-png-svg-csv.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

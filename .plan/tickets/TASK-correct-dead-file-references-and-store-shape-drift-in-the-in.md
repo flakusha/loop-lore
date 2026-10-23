@@ -6,7 +6,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-local-multi-instance-federation
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-local-multi-instance-federation" preserved 2026-10-23; no epic file exists.
 
 **Summary:** Correct `docs/spec/federation-instance-switcher.md` — it points at two files that do not exist and describes an Alpine store shape the registry does not support.
 

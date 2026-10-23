@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
+**Epic:** (none — hygiene/self-contained)
 **Tags:** plan-hygiene, index, false-diff
 
 **Summary:**

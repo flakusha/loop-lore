@@ -7,7 +7,7 @@
 **Status Note:** `renderIntegrationMermaid` (`src/rpg/integration-registry/mermaid.ts`) is the player-state integration graph, NOT the git-branch / location-tree / memory-provenance panels this ticket requires. Actual remaining scope is smaller than drafted: those three panels do not exist yet.
 **Priority:** low
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Branch/location/memory/timeline viz as mermaid panels inside existing views (zero new deps); game-canvas overlays before any new canvas; cytoscape only on proven need.
 **Context:** Rendered: `game-canvas.html` + `frontend/alpine/game-canvas/` (only true canvas: grid + tokens + diffs from `game_states` via `GET /api/v1/chats/:id/game-state`); `frontend/vn/` scene renderer; `world-timeline-bar.ts` (linear list); `chat.html`/`story-view.html` shells; `world-edit.html` explore tab (list-based). Graph-ready data: `LocationTreeService.tree()` (already tree JSON), `chat/service/branches.ts` + `walkMessagePath` (git-like DAG), `world-timeline.ts` ledger, `history-search.ts` memory→message edges. Deps installed: `mermaid@12` (devDep, no runtime import — promote first), marked/dompurify/alpine/htmx; deliberately absent: d3/cytoscape/three.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -9,7 +9,8 @@
 **Summary:** Prompt/Lorebook Marketplace (Community-shared)
 **Context:** Epic proposed:epic-marketplace; tags marketplace, community.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-marketplace
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-marketplace" preserved 2026-10-23; no epic file exists.
 **Tags:** marketplace, community
 
 ## Summary

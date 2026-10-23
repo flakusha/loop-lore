@@ -13,7 +13,7 @@
 **Priority:** High
 **Tags:** config, modularization, domain-separation
 **Assignee:**
-**Epic:** EPIC-2026-39 (Config File Separation)
+**Epic:** epic-config-file-separation
 
 ## Description
 

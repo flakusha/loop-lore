@@ -6,7 +6,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Small
-**Epic:** `epic-terminal-ui`
+**Epic:** epic-terminal-ui
 **Tags:** tui, docs
 **Summary:** Correct `docs/spec/terminal-ui.md` drift — stale endpoint claims, undocumented harness overlay, broken epic link, and file layout that no longer matches the tree.
 **Context:** `docs/spec/terminal-ui.md:19` still claims `/api/assets` and `/api/assistant` integration. The code calls `/api/v1/assets` (`src/tui/asset-view.ts:228-230`) and `/api/v1/chats/:id/messages` (`src/tui/chat/api.ts:59,123`); `/api/assistant` is called nowhere under `src/tui/`. The `src/tui/harness/` overlay and `/api/v1/harness/runs` exist in code but are absent from the spec. Docs-only: no code changes.

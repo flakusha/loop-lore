@@ -10,6 +10,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
+**Epic:** (none — hygiene/self-contained)
 **Tags:** worktree, migration
 
 ## Context

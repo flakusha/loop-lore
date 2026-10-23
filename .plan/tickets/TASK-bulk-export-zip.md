@@ -12,7 +12,7 @@
 **Status Note:** to v2\
 **Priority:** Medium\
 **Effort:** Medium\
-**Epic:** epic-import-export-io\
+**Epic:** epic-import-export-io
 **Linked Tickets:** TASK-import-export-io.md
 
 ## Summary

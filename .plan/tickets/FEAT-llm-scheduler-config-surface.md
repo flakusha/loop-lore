@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 **Summary:** Adds a `[generation.scheduler]` config block carrying per-provider slot caps, priority bands, windowed budgets, and the llama-swap config path — the knobs every other ticket in the epic reads. Without it, the scheduler's constants are hardcoded and the "calibration knob" is missing.
 **Context:** `GenerationConfig` (`src/config/schema/generation.ts:88-123`) has no scheduling block today. The only existing concurrency knob is `transport.limits.maxConcurrentStreams`, which is HTTP/2 stream framing, not request admission — do not extend it for this.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

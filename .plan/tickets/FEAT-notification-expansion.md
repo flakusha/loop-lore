@@ -11,7 +11,8 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-notification-expansion
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-notification-expansion" preserved 2026-10-23; no epic file exists.
 
 ## Summary
 

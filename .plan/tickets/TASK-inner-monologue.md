@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** P6+ (Deferred)
 **Effort:** High
+**Epic:** (none — hygiene/self-contained)
 **Created:** 2026-08-14
 **Source:** Platform research deep-dive (Convai)
 

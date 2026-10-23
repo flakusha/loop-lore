@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-cicd-pipeline
 **Tags:** check-gates, e2e
 
 **Summary:**

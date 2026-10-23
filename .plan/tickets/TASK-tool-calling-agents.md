@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-external-creative-tool-bridge
 **Created:** 2026-08-14
 **Source:** Platform research deep-dive (Convai, SillyTavern)
 

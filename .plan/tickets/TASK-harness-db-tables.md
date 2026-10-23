@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** JSONL → git+db cross-search in two iterations: Transport impl first, then `harness_runs`/`harness_calls` migration + `harness` MemoryScope wired into recall/injection.
 **Context:** DB is Bun SQLite + Kysely, WAL+FK, 169 tables (`schema.ts` barrel, `schema-manifest.ts` SToT). Reuse: `logger/transports/file.ts` (JSONL append + rotation) + `Transport{write,flush}` + queue; `request_results`/`telemetry_events` column shapes; `memory/embeddings.ts` (`storeEmbedding`, `semanticRecall`) + `injection/decide.ts|select.ts` + `audit.ts`; `history-search.ts` chain reconstruction.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

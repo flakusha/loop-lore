@@ -9,6 +9,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
+**Epic:** epic-tooling-improvement
 **Type:** Bug
 **Summary:** `BUG-test-e2e-env-default-mismatch.md` (git issue `f511378`) was closed citing commit `7a0f508c93`, which is not a valid git object in this repository. No gate or tool validates that a commit sha cited at closure actually resolves. Nothing prevents this from recurring on every future close.
 

@@ -10,7 +10,8 @@
 **Summary:** Thumbnail Generation (256px WebP at upload)
 **Context:** Epic proposed:epic-asset-thumbnail; tags assets, thumbnails.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-asset-thumbnail
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-asset-thumbnail" preserved 2026-10-23; no epic file exists.
 **Tags:** assets, thumbnails
 
 ## Summary

@@ -9,7 +9,7 @@
 **Priority:** high
 **Effort:** Medium
 **Caveats:** idempotency — repeat awards are separate `xp_ledger` rows (no dedupe key); partial failure — `awardXpToActor` throws on invalid amounts (NaN/negative/Infinity) so callers must guard
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Related:** .plan/tickets/FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md (first consumer — grants via this service), .plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md (extends the level-up bookkeeping with ASI allocation)
 
 **Summary:**

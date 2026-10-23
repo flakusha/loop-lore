@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-comfyui-plugin`
+**Epic:** epic-comfyui-plugin
 **Related:** `epic-comfyui-first-class-citizen.md`, `epic-reference-conditioned-generation.md`, `epic-assistant-generation-extensions.md`, `epic-assistant-creative-studio-workflows.md`, `TASK-comfyui-node-discovery-template-autofilter.md`, `TASK-comfyui-ws-client-id-progress-reference-generation.md`, `TASK-minimax-h3-stills-reference-template.md`, `TASK-multi-reference-conditioning-request-model.md`, `TASK-illustrated-book-reference-pass.md`, `src/generation/providers/comfyui.ts`, `src/image-edit/template-registry.ts`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

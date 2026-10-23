@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 **Related:** .plan/backlog/open-untriaged.md (advisory orphans)
 
 ## Summary

@@ -9,7 +9,8 @@
 **Summary:** Cross-device E2E Sync
 **Context:** Epic proposed:epic-cross-device-sync; tags sync, e2e.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-cross-device-sync
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-cross-device-sync" preserved 2026-10-23; no epic file exists.
 **Tags:** sync, e2e
 
 ## Summary

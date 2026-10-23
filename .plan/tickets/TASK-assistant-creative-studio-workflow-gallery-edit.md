@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High (post-Gate C, with parent epic)
 **Effort:** Large
-**Epic:** `epic-assistant-creative-studio-workflows` (§7.8)
+**Epic:** epic-assistant-creative-studio-workflows
 **Depends on:** `epic-assistant-creative-studio-workflows` (runner/loader),
 existing `src/image-edit/` subsystem (already implemented),
 `epic-comfyui-plugin.md` (ComfyUI dispatch target),

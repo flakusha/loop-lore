@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Distributed spans per generation feeding an admin Traces tab + seed/temperature logging for bit-for-bit run replay. Multi-step agent runs are undebuggable black boxes without spans; flaky-behavior triage is impossible without replay.
 **Context:** Observability is in-process counters (`api-governance/telemetry/collector.ts`) + an `x-trace` header convention; `opentelemetry|tracestate` zero hits in `src/` + `package.json`. Replay exists only for async-result delivery (`async/store.ts` idempotency) and turn-skip dedup — `seed` grep over generation/llm/assistant finds only DB-fixture seeding in tests. opencode `core/src/observability/otlp.ts` is the layer shape.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

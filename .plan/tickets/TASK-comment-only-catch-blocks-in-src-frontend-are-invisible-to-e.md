@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 **Tags:** frontend, eslint, error-handling, cleanup
 **Summary:** Convert 105 comment-only `catch` blocks in `src/frontend/` so ESLint's `no-empty` can actually police them.
 **Context:** ESLint's `no-empty` is ACTIVE for the frontend: declared `"no-empty": "error"` at `eslint.config.mjs:122` inside `tsRules`, which the frontend block spreads via `...tsRules` at `eslint.config.mjs:307`. But `no-empty` cannot report a block that contains a comment, so it is structurally blind to the shape this codebase actually uses.

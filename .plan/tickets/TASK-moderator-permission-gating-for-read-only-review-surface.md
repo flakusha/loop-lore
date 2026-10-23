@@ -4,6 +4,7 @@
 # TASK: Moderator permission gating for read-only review surface
 
 **Effort:** Medium
+**Epic:** epic-auth-access
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)

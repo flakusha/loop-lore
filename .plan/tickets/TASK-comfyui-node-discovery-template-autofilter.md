@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-comfyui-node-discovery.md`, `TASK-comfyui-template-registry.md`, `TASK-reference-capability-probe-runtime.md`, `TASK-minimax-h3-stills-reference-template.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

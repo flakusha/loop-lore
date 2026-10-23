@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-comfyui-graph-builder-ts-port.md`, `TASK-lora-audit-standalone.md`, `TASK-minimax-h3-stills-reference-template.md`, `epic-cross-platform-portability.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

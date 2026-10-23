@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** Critical
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 
 **Summary:**
 

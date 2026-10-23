@@ -6,6 +6,7 @@
 **Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 **Tags:** plan, cleanup, documentation
 **Upstream:** giwt/FEAT-plan-links-derive-and-validate-producers-consumers-siblings
 

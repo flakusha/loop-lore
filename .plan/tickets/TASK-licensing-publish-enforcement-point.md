@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-licensing.md`
+**Epic:** epic-licensing
 **Related:** `TASK-licensing-asset-license-columns-migration.md`, `TASK-licensing-publish-authorization-predicate.md`, `TASK-fanout-chatid-default-deny.md`, `epic-narrative-publishing-workflows.md`, `src/federation/clearance.ts`, `src/nsfw/capability-gate.ts`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

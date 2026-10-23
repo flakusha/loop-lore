@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Generation-response cache + per-user/chat spend tracking + fleet ceiling. Direct cost control: agent fleets pay N× for repeated prompts with no ceiling today.
 **Context:** No response cache exists (`dedupe|responseCache|promptCache|cacheKey` hits are idempotency keys, LoRA TTL, memory-write dedup only). Trimming (`prompt-budget.ts:61 dropOverBudgetSections`) + scheduling (`llm/` PriorityQueue) exist but no spend tracking (`compare.ts:33` hardcodes `COST_PER_1K_TOKENS = 0.002`; agency ledger is game points, not money). hermes `CanonicalUsage` + sub-cent labels is the usage shape.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -7,7 +7,7 @@
 **Status Note:** `task-signal.ts` + `router.ts` shipped and production-wired at `src/generation/providers/registry.ts:223-244`; `router.test.ts` covers four ACs. Remaining: dedicated `task-signal.test.ts` and a coverage-floor readout before calling the ticket done.
 **Priority:** high
 **Effort:** Large
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Route each LLM request to the best model by explicit task signal, not config order. New `src/generation/routing/` policy layer on top of the scheduler; scheduler machinery stays in `epic-llm-request-scheduler.md`.
 **Context:** Failover today is provider-ordered with no task discrimination (`providers/registry.ts:181-208 buildFailoverList`, `call-with-failover.ts:29-67`). `resolveModelRole` (`admin/model-roles.ts:53-100`) is a static 4-slot resolver. All 11 `AuxTaskName` types share one Auxiliary model with a 2000ms timeout (`aux-pipeline/runner.ts:51-149`).
 **Acceptance Criteria:** See ## Acceptance Criteria below.

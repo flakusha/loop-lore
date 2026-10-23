@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** NSFW Game Mechanics, Social Interaction
+**Epic:** epic-nsfw-game-mechanics, epic-social-interaction
+**Related:** TASK-nsfw-social-integration (duplicate pair)
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

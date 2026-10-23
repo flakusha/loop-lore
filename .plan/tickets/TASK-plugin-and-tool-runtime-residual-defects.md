@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
+**Epic:** epic-provider-plugin-ecosystem
 
 **Summary:**
 
