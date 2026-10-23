@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3606
 - epics: 339
-- src paths owned: 4344
-- edges: produces 11298, consumes 401, sibling 33316, owns 1958, related 1175
+- src paths owned: 4346
+- edges: produces 11301, consumes 401, sibling 33319, owns 1958, related 1175
 
 ## Shared src hubs
 
@@ -1182,7 +1182,7 @@ output is byte-identical for identical inputs.
 | `src/nsfw/seduction-prerequisites.ts` | `TASK-nsfw-wire-seduction-encounter-preconditions`, `epic-faction-reputation` |
 | `src/nsfw/social-integration.ts` | `TASK-042`, `epic-faction-reputation`, `epic-mini-games-design`, `epic-nsfw-integration-gaps`, `epic-shared-schemas` |
 | `src/nsfw/telemetry-id-hashes.ts` | `BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f`, `TASK-harness-stats-dashboard` |
-| `src/partials/characters/create-modal.html` | `BUG-actortype-persona-422-on-valid-ui-input`, `BUG-character-create-silently-drops-personality-scenario-welcome`, `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` |
+| `src/partials/characters/create-modal.html` | `BUG-actortype-persona-422-on-valid-ui-input`, `BUG-character-create-silently-drops-personality-scenario-welcome`, `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x`, `TASK-migrate-text-surfaces-to-shared-primitives` |
 | `src/partials/characters/detail-modal.html` | `BUG-2025-001-missing-data-id-start-chat-button`, `TASK-character-avatar-gallery-binding`, `TASK-growth-epic-reconciliation` |
 | `src/partials/characters/export-modal.html` | `BUG-character-export-broken-export-modal-missing-data-character-`, `TASK-char-editor-import-export-ui`, `epic-import-export-io` |
 | `src/partials/characters/import-modal.html` | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x`, `TASK-char-editor-import-export-ui`, `epic-import-export-io` |
@@ -6616,6 +6616,7 @@ output is byte-identical for identical inputs.
 | `FEAT-llama-swap-rotation-exclusion-policy` | produces | `src/services/server-external-manager/probes.ts` | - |
 | `FEAT-llama-swap-rotation-exclusion-policy` | produces | `src/services/server-external-manager/start-llama.ts` | - |
 | `FEAT-llama-swap-style-on-demand-load-unload-lifecycle-with-health` | produces | `src/services/sd-discovery.ts` | - |
+| `FEAT-llm-enhance-any-text-surface` | produces | `src/frontend/alpine/text-enhance.test.ts` | - |
 | `FEAT-llm-enhance-any-text-surface` | produces | `src/frontend/alpine/text-enhance.ts` | - |
 | `FEAT-llm-enhance-any-text-surface` | produces | `src/generation/prompt-route.ts` | - |
 | `FEAT-llm-enhance-outside-the-chat-composer` | produces | `src/frontend/alpine/actor-entities.ts` | - |
@@ -11119,6 +11120,8 @@ output is byte-identical for identical inputs.
 | `TASK-migrate-safe-fetch-retry-loop-to-effect-schedule` | produces | `src/utils/safe-fetch/retry.ts` | - |
 | `TASK-migrate-text-surfaces-to-shared-primitives` | produces | `src/components/chat/message-list.html` | - |
 | `TASK-migrate-text-surfaces-to-shared-primitives` | produces | `src/components/chat/mobile-composer.html` | - |
+| `TASK-migrate-text-surfaces-to-shared-primitives` | produces | `src/partials/characters/create-modal.html` | - |
+| `TASK-migrate-text-surfaces-to-shared-primitives` | produces | `src/partials/worlds/create-wizard.html` | - |
 | `TASK-migrate-text-surfaces-to-shared-primitives` | produces | `src/views/world-edit.html` | - |
 | `TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-` | produces | `src/cli/parser.ts` | - |
 | `TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-` | produces | `src/cli/parser` | - |
@@ -17355,6 +17358,7 @@ output is byte-identical for identical inputs.
 | `BUG-actortype-persona-422-on-valid-ui-input` | sibling | `TASK-memory-history-search-bind-message-chain-reconstructable-con` | `src/validation/db-schemas.ts` |
 | `BUG-actortype-persona-422-on-valid-ui-input` | sibling | `TASK-message-seen-state-schema` | `src/validation/db-schemas.ts` |
 | `BUG-actortype-persona-422-on-valid-ui-input` | sibling | `TASK-middleware-migration-compaction-data-version-hash` | `src/validation/db-schemas.ts` |
+| `BUG-actortype-persona-422-on-valid-ui-input` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/partials/characters/create-modal.html` |
 | `BUG-actortype-persona-422-on-valid-ui-input` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/validation/db-schemas.ts` |
 | `BUG-actortype-persona-422-on-valid-ui-input` | sibling | `TASK-nsfw-rating-enforcement` | `src/validation/schemas/primitives.ts` |
 | `BUG-actortype-persona-422-on-valid-ui-input` | sibling | `TASK-persona-lifecycle-contract` | `src/personas/controller.ts` |
@@ -19269,6 +19273,7 @@ output is byte-identical for identical inputs.
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d` | `src/validation/schemas/actors.ts` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `TASK-affordance-lookup-table` | `src/validation/schemas/actors.ts` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `TASK-growth-epic-reconciliation` | `src/validation/schemas/actors.ts` |
+| `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/partials/characters/create-modal.html` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `TASK-nsfw-rating-enforcement` | `src/routes/characters/create.ts; src/validation/schemas/actors.ts` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `WIRE-characters-create-avatar-linking-missing` | `src/routes/characters/create.ts` |
 | `BUG-character-create-silently-drops-personality-scenario-welcome` | sibling | `WIRE-impersonate-command-palette-no-actionpayload-dispatch` | `src/routes/characters/create.ts` |
@@ -23428,6 +23433,7 @@ output is byte-identical for identical inputs.
 | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | sibling | `TASK-html-dedup-audit` | `src/frontend/alpine/htmx.ts` |
 | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | sibling | `TASK-html-dedup-shared-partials` | `src/frontend/alpine/htmx.ts` |
 | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | sibling | `TASK-htmx-ajax-request-helper` | `src/frontend/alpine/htmx.ts` |
+| `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/partials/characters/create-modal.html` |
 | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | sibling | `epic-federation-offload-quotas` | `src/frontend/alpine/htmx.ts` |
 | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | sibling | `epic-frontend-components` | `src/frontend/alpine/htmx.ts` |
 | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | sibling | `epic-frontend-html-dedup-htmx-reuse` | `src/frontend/alpine/htmx.ts` |
