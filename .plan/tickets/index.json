@@ -2618,6 +2618,19 @@
     "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md",
     "status": "Not Started"
   },
+  "BUG-CHAT-SSE-SHARES-GENERATION-RATE-BUCKET": {
+    "hash": "22882b8",
+    "git_issue": "22882b8",
+    "extid": "BUG-CHAT-SSE-SHARES-GENERATION-RATE-BUCKET",
+    "type": "BUG",
+    "title": "Chat SSE shares generation rate bucket",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-sse-shares-generation-rate-bucket.md",
+    "status": "Not Started"
+  },
   "BUG-CHAT-SWIPE-INDEX-RACE": {
     "epic": "",
     "extid": "BUG-CHAT-SWIPE-INDEX-RACE",
@@ -3611,6 +3624,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-edgeahead-does-not-validate-location-existence.md",
     "status": "done"
+  },
+  "BUG-EGUI-SENT-MESSAGE-ECHO-EMPTY": {
+    "hash": "b5b3751",
+    "git_issue": "b5b3751",
+    "extid": "BUG-EGUI-SENT-MESSAGE-ECHO-EMPTY",
+    "type": "BUG",
+    "title": "egui sent-message echo empty",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-egui-sent-message-echo-empty.md",
+    "status": "Not Started"
   },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "epic": "epic-architecture",
@@ -5553,6 +5579,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-image-edit-suite-releases-its-dead-port-before-probing-it-to.md",
     "status": "done"
+  },
+  "BUG-IMAGE-GEN-OPENS-DEAD-LLM-SSE": {
+    "hash": "04edc5f",
+    "git_issue": "04edc5f",
+    "extid": "BUG-IMAGE-GEN-OPENS-DEAD-LLM-SSE",
+    "type": "BUG",
+    "title": "Image-gen opens dead LLM SSE",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-image-gen-opens-dead-llm-sse.md",
+    "status": "Not Started"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "epic": "",
@@ -9649,6 +9688,19 @@
     "title": "tui/app.ts never threads a session token into ChatWidget — auth header never sent",
     "type": "BUG"
   },
+  "BUG-TUI-BLIND-TO-LLM-ASSISTANT-TURNS": {
+    "hash": "8c29a33",
+    "git_issue": "8c29a33",
+    "extid": "BUG-TUI-BLIND-TO-LLM-ASSISTANT-TURNS",
+    "type": "BUG",
+    "title": "TUI blind to LLM assistant turns",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tui-blind-to-llm-assistant-turns.md",
+    "status": "Not Started"
+  },
   "BUG-TUI-EGUI-FIXES-HOLD-LANDING-PAGE-1-ONLY-CLIENT-GALLERY-HAS-M": {
     "hash": "8a7a393",
     "git_issue": "8a7a393",
@@ -10041,6 +10093,19 @@
     "tags": [],
     "title": "VN mode locked once chat has confirmed messages",
     "type": "BUG"
+  },
+  "BUG-WEB-UI-NEVER-SETS-DB-IDEMPOTENCYKEY": {
+    "hash": "edd643b",
+    "git_issue": "edd643b",
+    "extid": "BUG-WEB-UI-NEVER-SETS-DB-IDEMPOTENCYKEY",
+    "type": "BUG",
+    "title": "Web UI never sets DB idempotencyKey",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-web-ui-never-sets-db-idempotencykey.md",
+    "status": "Not Started"
   },
   "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW": {
     "hash": "ebafd77",
