@@ -3,7 +3,8 @@
 
 # TASK: Headless CLI — assets + characters (`lolo assets|characters --json`)
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** Implemented in bin/lolo.ts + src/cli/headless.ts with bun tests in bin/lolo.headless.test.ts (14 passing). Verified live against createTestServer: assets upload/link (incl. duplicate:true re-upload path per ticket), characters create + card import round-trip with --avatar on the created actor.
 **Summary:** Non-interactive `lolo assets` and `lolo characters` subcommands with `--json` output (both **planned-new**).
 **Context:** Gap 1 lead slice, part B. Builds on the dispatch + auth + `--json` plumbing from `TASK-headless-cli-chat-generate.md`.
 **Acceptance Criteria:** `lolo assets upload|link`, `lolo characters create|import` (all **planned-new**) work against solo-mode server with JSON output.
