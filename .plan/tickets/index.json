@@ -28270,7 +28270,7 @@
     "epic": "(none — hygiene/self-contained)",
     "tags": [],
     "source": ".plan/tickets/TASK-batch-epic-attachment-triage.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-BATTLE-ACTION-SELECTOR": {
     "epic": "epic-battle-ui",

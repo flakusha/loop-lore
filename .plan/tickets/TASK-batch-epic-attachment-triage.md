@@ -3,7 +3,7 @@
 
 # TASK: batch epic-attachment triage
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** (none — hygiene/self-contained)
@@ -43,3 +43,5 @@ see it for method) found, recomputed at audit time:
       epic file, or an explicit "(none — hygiene/self-contained)" justification
 - [ ] Epic fields use bare slugs only
 - [ ] `bun run plan:validate` green on the linkage/status gates
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 57986c3 (registry tip: 0de0c2fd4 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-BATCH-EPIC-ATTACHMENT-TRIAG)
