@@ -59,6 +59,8 @@ export interface ModelCapabilityEntry {
   lastSeen: string;
   userOverride: boolean;
   notes: string | null;
+  /** Admin-authored native locale (rescan-protected). */
+  nativeLocale: string | null;
 }
 
 /** A flat, deduplicated fine-tune candidate row (provider × model). */
