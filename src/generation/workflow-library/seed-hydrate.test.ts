@@ -16,11 +16,14 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { DB, } from "../../db/schema";
 import { TemplateRegistry, } from "../../image-edit/template-registry";
+import { builtinTemplates, } from "../../image-edit/templates/builtin";
 import type { TemplateParameter, TemplateParamType, } from "../../image-edit/types";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
+import { jsonStringifyOr, } from "../../utils";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
+import { collectPlaceholders, } from "../workflow-substitutor";
 import {
   ensureWorkflowRegistry,
   hydrateWorkflowRegistry,
@@ -123,6 +126,71 @@ describe("seedWorkflowLibrary", () => {
     expect(outcome.skipped,).toEqual([],);
     await fresh.db.destroy();
     fresh.sqlite.close();
+  });
+});
+
+describe("seeded workflow parameters", () => {
+  it("declares the parameters the seeded graph's body needs", async () => {
+    const payload = rowToPayload(await workflowRowById("img2img",),);
+    expect(payload,).not.toBeNull();
+
+    const placeholders = [...collectPlaceholders(payload!.body,),].toSorted();
+    expect(payload!.parameters.map((parameter,) => parameter.name).toSorted(),).toEqual(placeholders,);
+  });
+
+  it("matches the builtin template's parameters - the two cannot drift", async () => {
+    for (const id of ["img2img", "txt2img",]) {
+      const payload = rowToPayload(await workflowRowById(id,),)!;
+      const builtin = builtinTemplates.find((template,) => template.id === id)!;
+      const placeholders = collectPlaceholders(payload.body,);
+
+      // The builtin declares more than the seeded graph can use (a LoRA slot
+      // is a node chain the static graph does not have), so the comparison is
+      // over the parameters the body actually has a placeholder for.
+      const expected = builtin.parameters.filter((parameter,) => placeholders.has(parameter.name,));
+      expect(payload.parameters,).toEqual(expected,);
+    }
+  });
+
+  it("builds the seeded img2img workflow instead of throwing on unresolved placeholders", async () => {
+    const payload = rowToPayload(await workflowRowById("img2img",),)!;
+
+    const graph = buildWorkflowGraph(payload, { prompt: "a cat", input_image: "cat.png", seed: 1, },);
+
+    expect(inputsOf(graph, "LoadImage",)["image"],).toBe("cat.png",);
+    expect(inputsOf(graph, "CLIPTextEncode",)["text"],).toBe("a cat",);
+  });
+
+  it("repairs a row that was seeded before the parameters were derived", async () => {
+    const graph = await Bun.file(join(SHIPPED_DIR, "txt2img.json",),).json() as Record<string, unknown>;
+    await db
+      .updateTable("prompt_templates",)
+      .set({ payload: jsonStringifyOr({ body: graph, category: "txt2img", parameters: [], requiredNodes: [], },), },)
+      .where("id", "=", "txt2img",)
+      .execute();
+
+    const outcome = await seedWorkflowLibrary(db, SHIPPED_DIR,);
+
+    expect(outcome.repaired,).toContain("txt2img",);
+    const repaired = rowToPayload(await workflowRowById("txt2img",),)!;
+    expect(repaired.parameters.length,).toBeGreaterThan(0,);
+  });
+
+  it("leaves a row the operator edited alone", async () => {
+    const row = await workflowRowById("txt2img",);
+    const payload = rowToPayload(row,)!;
+    const edited = { ...payload, parameters: [param("prompt", "string", true,),], };
+    await db
+      .updateTable("prompt_templates",)
+      .set({ payload: jsonStringifyOr(edited,), },)
+      .where("id", "=", "txt2img",)
+      .execute();
+
+    const outcome = await seedWorkflowLibrary(db, SHIPPED_DIR,);
+
+    expect(outcome.repaired,).not.toContain("txt2img",);
+    const kept = rowToPayload(await workflowRowById("txt2img",),)!;
+    expect(kept.parameters,).toEqual(edited.parameters,);
   });
 });
 
