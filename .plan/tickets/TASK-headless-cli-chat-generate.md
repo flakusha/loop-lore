@@ -3,7 +3,8 @@
 
 # TASK: Headless CLI — chat + generate (`lolo chat|generate --json`)
 
-**Status:** Not Started
+**Status:** Done
+**Resolution:** Implemented in bin/lolo.ts + src/cli/headless.ts with bun tests in bin/lolo.headless.test.ts (14 passing). Verified 9/9 live round-trip commands against createTestServer: chat create/send/history, generate (non-streaming pin), characters create/import, assets upload/link, chat send with attachment.
 **Summary:** Non-interactive `lolo chat` and `lolo generate` subcommands with `--json` output (both **planned-new**).
 **Context:** Gap 1 lead slice. `bin/lolo.ts` parses only `-h`; `src/tui/` already shows the HTTP pattern (Bearer `[tui].sessionToken`, `LOOP_LORE_API_BASE_URL`).
 **Acceptance Criteria:** `lolo chat send --json`, `lolo generate --json` (both **planned-new**) work against solo-mode server; machine-parseable JSON output.
