@@ -177,6 +177,51 @@ describe("XP & loot (auth-gated)", () => {
     expect(Array.isArray(body.drops,),).toBe(true,);
   });
 
+  test("persists generated loot to the world", async () => {
+    const app = authedApp();
+    const gen = await app.handle(
+      new Request("http://localhost/api/rpg/loot/generate", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          entries: [{
+            name: "Iron Sword",
+            description: "A sturdy blade",
+            type: "weapon",
+            rarity: "common",
+            weight: 10,
+            minQuantity: 1,
+            maxQuantity: 1,
+            minLevel: 1,
+            goldValue: 10,
+            metadata: {},
+          },],
+          level: 3,
+          dropCount: 1,
+        },),
+      },),
+    );
+
+    expect(gen.status,).toBe(200,);
+    const generated = await json<{ drops: unknown[]; totalGoldValue: number; hasRareDrop: boolean }>(gen,);
+
+    const res = await app.handle(
+      new Request("http://localhost/api/rpg/loot/persist", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          result: { ...generated, worldItemIds: [], },
+          worldId,
+          actorId: "actor-xp",
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await json<{ worldItemIds: string[] }>(res,);
+    expect(body.worldItemIds.length,).toBeGreaterThanOrEqual(1,);
+  });
+
   test("creates a loot table", async () => {
     const app = authedApp();
     const res = await app.handle(
