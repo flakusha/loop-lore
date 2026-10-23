@@ -78,3 +78,47 @@ This supersedes the earlier "23 contiguous epochs" (private-function wrapper) dr
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E4] Document migration authorship conventions: up/down pairing expectations + cross-version compatibility policy
+
+## Final-form scope additions + edit-window grounding (2026-10-23)
+
+The ratification of the pre-release edit window (owner-ratified
+2026-10-23: "remove legacy approach support and regenerate db
+completely"; grounding facts summarized in this section) folds the
+following into the final-form requirements. Existing file-count
+references above
+are stale (the v0 collapse already superseded them — the chain is 70
+files ending `070_messages_outfit_id.ts`) and are left as-is pending the
+reconciliation this epic's start requires.
+
+- [ ] `message_translations` final form per
+      `FEAT-message-translations-chat-first.md`: UNIQUE
+      `(message_id, locale)`, encryption columns mirroring `messages`
+      (`key_id`, `content_encoding`, `e2e_payload`, `e2e_session_id`,
+      `e2e_sender_eph_pub_jwk`, `e2e_chain_index`, `content_plaintext`),
+      optional `status`/`source_lang`
+- [ ] `model_capabilities.native_locale` (nullable TEXT) final-form
+      column per `FEAT-model-native-locale-config.md`
+- [ ] Removing legacy `chats.story_state.autoTranslateLang` needs **no
+      migration** — it is a JSON key inside the `chats.story_state` TEXT
+      column; removal is app-level, stale keys simply stop being read
+
+Edit-window grounding (2026-10-23, verified facts):
+
+- Kysely migration identity is **filename-based with no checksum**
+  (`kysely_migration` keyed by name; `assertMigrationsNotStale` trips
+  only on delete/rename) — content edits to applied files diverge
+  silently, which is why edits must be paired with full regeneration
+  (`db:reinit`: archive + migrate + seed chain) while the window is
+  open.
+- **Zero git tags and no deployed DB anywhere** — no released binaries
+  (release artifacts only on tag push; `0.1.0` deliberately untagged),
+  no upgrade docs, no evidence of any DB outside developer checkouts.
+- Everything materializes from the migration files: boot
+  (`start.ts` runMigrations + seed), unit + roundtrip suites, e2e, and
+  the text-parsing generators — no schema copy can drift.
+- **Precedent**: the v0 collapse already replaced 23 forward migrations
+  and 20 `parts/` modules with a single atomic `001_init.ts` under the
+  same no-release conditions.
+- The window is bounded by the **first signed tag**; after that,
+  append-only applies verbatim and `assertMigrationsNotStale` remains
+  the tripwire.
