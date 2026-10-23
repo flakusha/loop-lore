@@ -6,6 +6,7 @@
  *
  * GET /api/rpg/stat-allocation/:actorId — read allocation (404 if none)
  * PUT /api/rpg/stat-allocation/:actorId — validate + upsert allocation
+ * GET /api/rpg/stat-config?worldId=… — world point-buy bounds + cost table (404 unknown world)
  */
 
 import { Elysia, t, } from "elysia";
@@ -13,9 +14,11 @@ import {
   AllocationValidationError,
   getStatAllocation,
   putStatAllocation,
+  readWorldConfig,
 } from "../../rpg/service/stat-allocation.js";
+import { POINT_BUY_COST, } from "../../rpg/stats/types.js";
 import { requireActorAccess, } from "../actor-auth.js";
-import { jsonError, jsonResponse, notFoundResponse, } from "../http-utils.js";
+import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils.js";
 import { log, } from "./log.js";
 import { type HandlerOpts, StatBlockSchema, } from "./types.js";
 
@@ -26,6 +29,13 @@ interface AllocationCtx {
   userId?: string | null;
   userRole?: string | null;
   t?: (key: string, ...args: unknown[]) => string;
+}
+
+/** Elysia context for the world-config route. */
+interface ConfigCtx {
+  query?: { worldId?: string };
+  userId?: string | null;
+  userRole?: string | null;
 }
 
 const StatAllocationBody = t.Object({
@@ -45,6 +55,31 @@ export function statAllocationRoutes(opts: HandlerOpts, prefix = "/api",) {
   const deps = { database, };
 
   return new Elysia({ name: "rpg-stat-allocation", },)
+    .get(
+      `${prefix}/rpg/stat-config`,
+      async (ctx: ConfigCtx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") {
+          return userId;
+        }
+
+        const worldId = ctx.query?.worldId ?? "";
+        const config = await readWorldConfig(deps, worldId,);
+        if (!config) {
+          return notFoundResponse("World not found",);
+        }
+
+        return jsonResponse({ ...config, pointBuyCost: POINT_BUY_COST, },);
+      },
+      {
+        query: t.Object({ worldId: t.Optional(t.String(),), },),
+        detail: {
+          summary: "Get stat config",
+          description: "World point-buy bounds + cost table for the allocation picker. 404 unknown world.",
+          tags: ["RPG", "Stats",],
+        },
+      },
+    )
     .get(
       `${prefix}/rpg/stat-allocation/:actorId`,
       async (ctx: AllocationCtx,) => {

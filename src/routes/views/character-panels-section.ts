@@ -48,6 +48,9 @@ export function panelsSection(
             <section x-data="actorWardrobeFactory(actorId)" data-testid="character-wardrobe" style="margin-top:var(--space-4)">${
     loadBody("wardrobe-panel.html",)
   }</section>
+            <section x-data="{ actorId, worldId: '' }" data-testid="character-stat-allocation" style="margin-top:var(--space-4)">${
+    loadBody("stat-allocation-panel.html",)
+  }</section>
           </div>
         </details>`;
 }

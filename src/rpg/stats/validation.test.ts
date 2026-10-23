@@ -22,6 +22,23 @@ describe("validateStatBlock", () => {
   });
 });
 
+describe("statCost", () => {
+  test("matches the table inside 8-15", async () => {
+    const { POINT_BUY_COST, statCost, } = await import("./types");
+    for (const [stat, cost,] of Object.entries(POINT_BUY_COST,)) {
+      expect(statCost(Number(stat,),),).toBe(cost,);
+    }
+  });
+
+  test("below-floor is free, above-ceiling caps at table max", async () => {
+    const { statCost, } = await import("./types");
+    expect(statCost(6,),).toBe(0,);
+    expect(statCost(1,),).toBe(0,);
+    expect(statCost(16,),).toBe(9,);
+    expect(statCost(30,),).toBe(9,);
+  });
+});
+
 describe("defaultStatBlock", () => {
   test("is all tens and valid", () => {
     const block = defaultStatBlock();

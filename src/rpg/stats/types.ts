@@ -36,6 +36,47 @@ export const ALL_ABILITIES: AbilityName[] = [
   "cha",
 ];
 
+/** Point-buy cost table: stat value → cost in points (single source of truth) */
+export const POINT_BUY_COST: Record<number, number> = {
+  8: 0,
+  9: 1,
+  10: 2,
+  11: 3,
+  12: 4,
+  13: 5,
+  14: 7,
+  15: 9,
+};
+
+/**
+ * Cost of a stat value under the point-buy table, extended to arbitrary bounds.
+ * Below the table floor the stat is free (0); above the ceiling it costs the
+ * table max — so custom world bounds (stat_min < 8, stat_max > 15) price
+ * sensibly instead of rejecting in-range values as "no cost".
+ * @param value
+ */
+export function statCost(value: number,): number {
+  const costs = Object.entries(POINT_BUY_COST,)
+    .map(([stat, cost,],) => [Number(stat,), cost,] as const)
+    .sort(([a,], [b,],) => a - b);
+
+  const floor = costs[0];
+  const ceiling = costs[costs.length - 1];
+  if (!floor || !ceiling) {
+    return 0;
+  }
+
+  if (value <= floor[0]) {
+    return 0;
+  }
+
+  if (value >= ceiling[0]) {
+    return ceiling[1];
+  }
+
+  return POINT_BUY_COST[value] ?? 0;
+}
+
 /** Complete stat block for a character */
 export interface StatBlock {
   str: number;
