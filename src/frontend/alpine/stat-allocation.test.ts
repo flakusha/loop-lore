@@ -20,8 +20,8 @@ if (ISOLATED) {
 
 const baseCtx = (): StatAllocationState => {
   const state = Object.create(statAllocation,) as StatAllocationState;
-  state._saActorId = null;
-  state._saWorldId = "";
+  state.saActorId = null;
+  state.saWorldId = "";
   state.stats = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, };
   state.statMin = 8;
   state.statMax = 15;
@@ -46,8 +46,8 @@ describeOrSkip("statAllocation.setBinding", () => {
   test("binds and resets draft state", () => {
     const ctx = baseCtx();
     ctx.setBinding("actor-1", "world-1",);
-    expect(ctx._saActorId,).toBe("actor-1",);
-    expect(ctx._saWorldId,).toBe("world-1",);
+    expect(ctx.saActorId,).toBe("actor-1",);
+    expect(ctx.saWorldId,).toBe("world-1",);
     expect(ctx.selectedTraits,).toEqual([],);
   });
 },);
@@ -162,7 +162,7 @@ describeOrSkip("statAllocation.save", () => {
 describeOrSkip("statAllocationFactory", () => {
   test("binds actor + world", () => {
     const state = statAllocationFactory("actor-9", "world-9",);
-    expect(state._saActorId,).toBe("actor-9",);
-    expect(state._saWorldId,).toBe("world-9",);
+    expect(state.saActorId,).toBe("actor-9",);
+    expect(state.saWorldId,).toBe("world-9",);
   });
 },);

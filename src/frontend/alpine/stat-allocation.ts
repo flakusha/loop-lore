@@ -41,8 +41,8 @@ export interface StatConfigRead {
 }
 
 export interface StatAllocationState {
-  _saActorId: string | null;
-  _saWorldId: string;
+  saActorId: string | null;
+  saWorldId: string;
   stats: StatBlock;
   statMin: number | null;
   statMax: number | null;
@@ -72,8 +72,8 @@ const log = rootLog.child({ module: "stat-allocation", },);
 const defaultStats = (): StatBlock => ({ str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, });
 
 export const statAllocation: StatAllocationState = {
-  _saActorId: null,
-  _saWorldId: "",
+  saActorId: null,
+  saWorldId: "",
   stats: defaultStats(),
   statMin: null,
   statMax: null,
@@ -88,12 +88,12 @@ export const statAllocation: StatAllocationState = {
   message: "",
 
   setBinding(actorId: string, worldId: string,) {
-    if (this._saActorId === actorId && this._saWorldId === worldId) {
+    if (this.saActorId === actorId && this.saWorldId === worldId) {
       return;
     }
 
-    this._saActorId = actorId;
-    this._saWorldId = worldId;
+    this.saActorId = actorId;
+    this.saWorldId = worldId;
     this.stats = defaultStats();
     this.selectedTraits = [];
     this.error = "";
@@ -162,8 +162,8 @@ export const statAllocation: StatAllocationState = {
   },
 
   async load() {
-    const actorId = this._saActorId;
-    const worldId = this._saWorldId;
+    const actorId = this.saActorId;
+    const worldId = this.saWorldId;
     if (!actorId || !worldId) {
       return;
     }
@@ -216,8 +216,8 @@ export const statAllocation: StatAllocationState = {
   },
 
   async save() {
-    const actorId = this._saActorId;
-    const worldId = this._saWorldId;
+    const actorId = this.saActorId;
+    const worldId = this.saWorldId;
     if (!actorId || !worldId) {
       return;
     }
@@ -258,8 +258,8 @@ export const statAllocation: StatAllocationState = {
  */
 export function statAllocationFactory(actorId: string, worldId: string,): StatAllocationState {
   const state = Object.create(statAllocation,) as StatAllocationState;
-  state._saActorId = null;
-  state._saWorldId = "";
+  state.saActorId = null;
+  state.saWorldId = "";
   state.stats = defaultStats();
   state.statMin = null;
   state.statMax = null;
