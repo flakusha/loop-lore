@@ -4,6 +4,11 @@
 /**
  * Tests for the classifier template-pack domain: load-time validators,
  * merge strategies, and discovery (including `*.example.*` exclusion).
+ *
+ * Resource contract: discovery/load tests build their own mkdtemp directory
+ * per test under tmpdir(), removed in a finally block, and pass that root to
+ * the loader (never the repo cwd); validation/merge tests are pure; no ports,
+ * no DB, no global stubs (emitWarning is captured and restored inline).
  */
 import { describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
