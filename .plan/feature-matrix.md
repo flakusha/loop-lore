@@ -1678,7 +1678,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2659 | 998 | 45 | 903 | 32 | 0 | 681 |
+| (untagged) | 2659 | 1004 | 45 | 903 | 32 | 0 | 675 |
 
 ## By epic × status
 
@@ -1800,7 +1800,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | epic-byok-local-models | 4 | 2 | 0 | 2 | 0 | 0 | 0 |
 | EPIC-byok-local-models | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-certificate-and-tls-management | 9 | 1 | 0 | 8 | 0 | 0 | 0 |
-| epic-character-core-system | 67 | 16 | 0 | 44 | 0 | 0 | 7 |
+| epic-character-core-system | 67 | 20 | 0 | 44 | 0 | 0 | 3 |
 | epic-character-core-system (config-templates sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-character-core-system (research sub-area) | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-character-growth | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
@@ -1884,7 +1884,7 @@ Total tickets: **3889** — untagged: **2659** — unbound to epic: **1547**
 | epic-external-creative-tool-bridge | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | epic-external-tooling-build.md | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
 | epic-faction-reputation | 6 | 2 | 0 | 1 | 0 | 0 | 3 |
-| epic-fe-be-harmonization | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| epic-fe-be-harmonization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-federation-offload-quotas | 14 | 13 | 0 | 0 | 0 | 0 | 1 |
 | epic-federation-swarm-sync | 11 | 6 | 0 | 1 | 0 | 0 | 4 |
 | epic-file-splitting | 4 | 1 | 0 | 3 | 0 | 0 | 0 |

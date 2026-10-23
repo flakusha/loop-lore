@@ -3969,7 +3969,7 @@
     "epic": "epic-fe-be-harmonization",
     "tags": [],
     "source": ".plan/tickets/BUG-fe-be-harmonization-gate-is-blocking-contradicting-its-own-a.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FE-BE-HARMONIZATION-SCRIPT-VIOLATES-ITS-OWN-NO-CONSOLE-ACCEP": {
     "hash": "a5f1d91",
@@ -3982,7 +3982,7 @@
     "epic": "epic-fe-be-harmonization",
     "tags": [],
     "source": ".plan/tickets/BUG-fe-be-harmonization-script-violates-its-own-no-console-accep.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FE-BE-HARMONY-CHECKER-BLIND-TO-ELYSIA-APP-DIRECT-ROUTES-FACT": {
     "epic": "",
@@ -30147,7 +30147,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-character-stat-allocation-backend-api-and-db-integration.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Character Stat Allocation Backend API And DB Integration",
     "type": "TASK"
@@ -30186,7 +30186,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Character Stat Modifiers And Trait Application Engine",
     "type": "TASK"
@@ -30229,7 +30229,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-character-trait-catalog-for-gameplay-mechanics.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Character Trait Catalog For Gameplay Mechanics",
     "type": "TASK"
@@ -56457,7 +56457,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "World Requires Stats Flag And Point Budget Config",
     "type": "TASK"
