@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** `epic-memory-knowledge-systems.md` (FEA-2026-056)
+**Epic:** memory-knowledge-systems (FEA-2026-056)
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

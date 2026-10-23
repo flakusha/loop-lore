@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 335 epics
+**Total:** 336 epics
 
 ## Summary
 
@@ -308,6 +308,7 @@
 | Not Started | RPG Skills, Professions & Config Templates | High | High | 0 | [epic-skills-professions-config.md](/.plan/epics/epic-skills-professions-config.md) |
 | In Progress | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
 | Done | Runtime Integrity, Crash Recovery & Fail-Safes | medium | Medium | 0 | [epic-runtime-integrity-fail-safes.md](/.plan/epics/epic-runtime-integrity-fail-safes.md) |
+| Not Started | Runtime Memory State Hygiene | P2 | Medium | 0 | [epic-runtime-memory-state-hygiene.md](/.plan/epics/epic-runtime-memory-state-hygiene.md) |
 | Not Started | SAM3 / SAM3.1 Integration — Concept Segmentation for Generation | high | High | 0 | [epic-sam3-segmentation-integration.md](/.plan/epics/epic-sam3-segmentation-integration.md) |
 | Done | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Not Started | Security & Sandboxing — Epic | medium | Medium | 0 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
@@ -3169,6 +3170,15 @@ Reference-based generation and editing — "change this, keep that" driven by on
 - **Type:** epic
 - **Tags:** (none)
 - **File:** `.plan/epics/epic-runtime-integrity-fail-safes.md`
+
+### Runtime Memory State Hygiene
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Medium
+- **Type:** Feature Epic / Hardening
+- **Tags:** memory, eviction, runtime, observability, review-rules
+- **File:** `.plan/epics/epic-runtime-memory-state-hygiene.md`
 
 ### SAM3 / SAM3.1 Integration — Concept Segmentation for Generation
 

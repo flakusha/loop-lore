@@ -34,6 +34,8 @@ Make player agency **measurable** so designers can tune consequential asymmetry,
 1. **`TASK-agency-quality-metrics`** — `agency_mode` column + per-dimension counters + admin surface. P1. 1-2 days.
 2. **`TASK-agency-coordination-priority`** — autonomy scheduler defers one tick on pending player intent. P1. 1 day.
 
+3. **`TASK-test-debt-coordination-priority-queue-cap-regression-test`** — regression test for the queue cap introduced by the coordination-priority fix. P2.
+
 ## Out of Scope
 
 - Player-facing agency score UI (admin-only first; surface to players only after designers validate the metric).

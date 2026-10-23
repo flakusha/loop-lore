@@ -2441,6 +2441,12 @@
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     }
   ],
+  "src/assistant/commands/branch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-server-side-branch-command.md"
+    }
+  ],
   "src/assistant/commands/capabilities.ts": [
     {
       "kind": "ticket",
@@ -2689,6 +2695,12 @@
       "source": ".plan/tickets/TASK-sd-cpp-provider.md"
     }
   ],
+  "src/assistant/commands/imgedit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-imgedit-in-chat-command.md"
+    }
+  ],
   "src/assistant/commands/impersonate.ts": [
     {
       "kind": "epic",
@@ -2761,6 +2773,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-batch-rag-asset.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-server-side-branch-command.md"
     },
     {
       "kind": "ticket",
@@ -2849,6 +2865,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    }
+  ],
+  "src/assistant/commands/poll.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-poll-command-for-group-chat.md"
     }
   ],
   "src/assistant/commands/quest.ts": [
@@ -2948,6 +2970,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-document-dual-assistant-role-gates.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-fast-action-prompt-pipeline.md"
     },
     {
@@ -2965,6 +2991,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
+    }
+  ],
+  "src/assistant/commands/reroll-emotion.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reroll-emotion-command.md"
     }
   ],
   "src/assistant/commands/review.ts": [
@@ -3043,6 +3075,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-summarize-format-tldr-bullets-detailed-gradation.md"
+    }
+  ],
+  "src/assistant/commands/timeline.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-in-chat-command.md"
     }
   ],
   "src/assistant/commands/translate.test.ts": [
@@ -3225,6 +3263,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-and-group-chat-correctness-defects.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-document-dual-assistant-role-gates.md"
     }
   ],
   "src/assistant/guard/judge.test.ts": [
@@ -8810,6 +8852,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx.md"
     },
     {
@@ -9685,6 +9731,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-server-side-branch-command.md"
     },
     {
       "kind": "ticket",
@@ -17195,6 +17245,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-sequential-finalize-and-renumber-policy.md"
     }
   ],
   "src/db/migrations.test.ts": [
@@ -18471,6 +18525,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-sequential-finalize-and-renumber-policy.md"
     },
     {
       "kind": "ticket",
@@ -19865,6 +19923,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-sequential-finalize-and-renumber-policy.md"
     },
     {
       "kind": "ticket",
@@ -22963,6 +23025,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-experimental-egui-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-server-side-branch-command.md"
     },
     {
       "kind": "ticket",
@@ -28167,6 +28233,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-group-chat-minors-from-2026-10-04-review.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-poll-command-for-group-chat.md"
     }
   ],
   "src/generation/auto-gen/handle-generation-error.ts": [
@@ -32156,6 +32226,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-imgedit-in-chat-command.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-narrative-extractor-regex-prefilter.md"
     }
   ],
@@ -32589,6 +32663,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-integrations-core.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-runtime-memory-state-hygiene.md"
     },
     {
       "kind": "ticket",
@@ -42578,6 +42656,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-document-dual-assistant-role-gates.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-frontend-consolidation.md"
     },
     {
@@ -42687,6 +42769,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-server-side-branch-command.md"
     },
     {
       "kind": "ticket",
@@ -54767,6 +54853,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-sequential-finalize-and-renumber-policy.md"
     },
     {
       "kind": "ticket",
