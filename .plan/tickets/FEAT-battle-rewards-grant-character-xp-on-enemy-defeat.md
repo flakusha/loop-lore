@@ -4,8 +4,10 @@
 # FEAT: Battle rewards: grant character XP on enemy defeat
 
 **Status:** Done
+**Status Note:** shipped on dev — battle victory leg at `src/rpg/service/battles/rewards.ts:70` (source `combat` :73); verified 2026-10-23
 **Priority:** high
 **Effort:** Medium
+**Caveats:** partial failure — reward failure never fails battle resolution (best-effort try/catch); observability — one `xp_ledger` row per surviving participant
 **Epic:** character-xp-leveling
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (grants persist through this service), .plan/epics/epic-battle-action-systems.md (owns battle resolution — this adds only the character-XP grant leg)
 
