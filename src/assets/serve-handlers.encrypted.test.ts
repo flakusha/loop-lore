@@ -22,7 +22,10 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import sharp, {} from "sharp";
+import { generateActorKey, } from "../crypto/actor-keys";
 import type { ChatKey, } from "../crypto/chat-keys";
+import { deriveChatKeyForChat, } from "../crypto/chat-keys";
+import { getSmk, initSmk, } from "../crypto/smk";
 import { AssetType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -257,6 +260,82 @@ describe("encrypted asset previews", () => {
         expect(res.status,).toBe(400,);
         expect(await res.text(),).toBe("Encrypted asset requires chat context",);
       } finally {
+        await cleanup(fx,);
+      }
+    });
+  });
+
+  describe("handleServeRaw encrypted asset success", () => {
+    test("decrypts and serves original bytes", async () => {
+      const fx = await seed();
+      await initSmk({
+        serverEncryptionKey: "a".repeat(64,),
+        required: false,
+        compressThreshold: 128,
+        compressAlgorithm: "gzip",
+      },);
+
+      try {
+        const smk = getSmk();
+        if (!smk) { throw new Error("SMK not loaded",); }
+
+        const actorA = "actor-raw-a";
+        const actorB = "actor-raw-b";
+        await fx.db.insertInto("actors",).values({ id: actorA, actor_type: "user", display_name: "Actor A", },)
+          .execute();
+
+        await fx.db.insertInto("actors",).values({ id: actorB, actor_type: "user", display_name: "Actor B", },)
+          .execute();
+
+        await generateActorKey({ database: fx.db, actorId: actorA, smk, name: "primary", },);
+        await generateActorKey({ database: fx.db, actorId: actorB, smk, name: "primary", },);
+
+        const chatId = "chat-raw-decrypt";
+        await fx.db.insertInto("chats",).values({ id: chatId, name: chatId, type: "direct", created_by: fx.ownerId, },)
+          .execute();
+
+        await fx.db
+          .insertInto("chat_participants",)
+          .values([
+            { chat_id: chatId, actor_id: actorA, role_in_chat: "member", },
+            { chat_id: chatId, actor_id: actorB, role_in_chat: "member", },
+          ],)
+          .execute();
+
+        const chatKey = await deriveChatKeyForChat(fx.db, chatId, smk,);
+
+        const buffer = await makeRealPng(16, 12,);
+        const { asset, } = await createAsset({
+          database: fx.db,
+          input: {
+            ownerId: fx.ownerId,
+            filename: "dec.png",
+            mimeType: "image/png",
+            assetType: AssetType.Image,
+            sizeBytes: buffer.length,
+            buffer,
+            encryptionTier: "standard",
+            chatKey,
+            keyId: chatKey.keyId,
+            pipelineConfig: PIPELINE_CONFIG,
+          },
+          uploadDir: fx.uploadDir,
+        },);
+
+        const res = await handleServeRaw({
+          database: fx.db,
+          assetId: asset.id,
+          uploadDir: fx.uploadDir,
+          actorId: fx.ownerId,
+          actorRole: "user",
+          chatId,
+        },);
+
+        expect(res.status,).toBe(200,);
+        const body = Buffer.from(await res.arrayBuffer(),);
+        expect(body.equals(buffer,),).toBe(true,);
+      } finally {
+        await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip", },);
         await cleanup(fx,);
       }
     });
