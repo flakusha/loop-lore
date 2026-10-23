@@ -127,17 +127,18 @@
         </small>
       </div>
       <div class="form-group">
-        <label class="form-label" for="settings-auto-translate">Auto-translate target</label>
+        <label class="form-label" for="settings-content-language">Content language</label>
         <input
           class="form-input"
           type="text"
-          id="settings-auto-translate"
-          x-model="_chatAutoTranslateLang"
+          id="settings-content-language"
+          x-model="_chatContentLanguage"
           placeholder="e.g. es (blank = off)"
-          data-testid="settings-auto-translate"
+          data-testid="settings-content-language"
         />
         <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
-          Opt this chat into automatic translation. Clear to turn it off.
+          Language the LLM is directed to respond in AND the translation anchor for this chat (en es fr de ja ko zh pt
+          ru ar). Clear to turn it off.
         </small>
       </div>
       <div class="form-group">

@@ -245,7 +245,8 @@
     "storageUsage": "Storage used",
     "stored": "stored",
     "localInference": "Browser-side inference (opt-in)",
-    "templates": "Templates"
+    "templates": "Templates",
+    "contentLanguage": "콘텐츠 언어"
   },
   "admin": {
     "title": "Administration",
@@ -1266,7 +1267,10 @@
     "cannotEditMessage": "Cannot edit this message",
     "onlyUserEditable": "Only user messages can be edited",
     "messageNotFound": "Message not found",
-    "chatNotFound": "Chat not found"
+    "chatNotFound": "Chat not found",
+    "translate": "번역",
+    "translateFailed": "번역 실패",
+    "translateSkipped": "번역할 내용이 없습니다"
   },
   "story": {
     "world": "World",
