@@ -3,7 +3,7 @@
 
 # BUG: SPKI pin gate is not enforced across HTTP redirects
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-federation-offload-quotas
