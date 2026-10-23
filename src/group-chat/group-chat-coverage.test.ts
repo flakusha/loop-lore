@@ -14,6 +14,7 @@ import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { ActorType, AgentType, ChatType, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
@@ -32,6 +33,8 @@ import {
   stripLeadingMention,
 } from "./mention-parser";
 import { checkPaused, fetchImpersonatedActorIds, } from "./turn-selector";
+
+createLogger({ level: "error", },);
 
 describe("mention parsing boundaries", () => {
   test("parseMentions records exact offsets for overlapping adjacent tokens", () => {
