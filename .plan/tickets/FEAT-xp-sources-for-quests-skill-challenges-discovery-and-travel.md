@@ -3,7 +3,7 @@
 
 # FEAT: XP sources for quests, skill challenges, discovery, and travel
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** character-xp-leveling
@@ -22,3 +22,5 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 0d94df3 (registry tip: 2e1851f0b Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-XP-SOURCES-FOR-QUESTS-SKILL)

@@ -32,3 +32,5 @@ Per-avatar re-roll on emotion grid + regenerate-all + progress (job store backed
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue ff8f765 (registry tip: 4da2f4695 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # FEAT: LevelService: apply awarded XP to character_stats and level-up benefits
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** character-xp-leveling
@@ -22,3 +22,5 @@ Central LevelService: given an actor, read/ensure `character_stats`, compute `aw
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 319ce79 (registry tip: 07ebd71d9 Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-LEVELSERVICE-APPLY-AWARDED-)
