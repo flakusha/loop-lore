@@ -32,7 +32,8 @@ function stubRoutes(routes: Record<string, { status: number; body: unknown }>,) 
       const urlStr = String(url,);
       const headers = new Headers(init?.headers,);
       let body: unknown = null;
-      body = init?.body ? safeJsonParse(String(init.body,),).value ?? "non-json" : null;
+      const parsed = init?.body ? safeJsonParse(String(init.body,),) : null;
+      body = parsed ? (parsed.ok ? parsed.value ?? "non-json" : "non-json") : null;
       calls.push({ url: urlStr, method: init?.method ?? "GET", auth: headers.get("authorization",), body, },);
       const path = new URL(urlStr,).pathname;
       const route = routes[path] ??
@@ -54,7 +55,7 @@ function stubSse(frame: string,) {
       new Response(frame, {
         status: 200,
         headers: { "Content-Type": "text/event-stream", },
-      },)) as typeof fetch,
+      },)) as unknown as typeof fetch,
   );
 }
 
