@@ -14,9 +14,11 @@
  *                           Defaults to http://localhost:3000.
  *
  * Shortcuts:
+ *   F1          Chat picker
  *   F2          Toggle asset sidebar
  *   F3          Toggle harness panel
  *   F5          Reload / re-render the TUI
+ *   F6          Models overlay
  *   Ctrl+L      Clear the screen
  *   Esc / q     Quit
  */
@@ -31,9 +33,11 @@ Options:
   -h, --help    Show this help text and exit
 
 Shortcuts:
+  F1            Chat picker
   F2            Toggle asset sidebar
   F3            Toggle harness panel
   F5            Reload / re-render
+  F6            Models overlay
   Ctrl+L        Clear screen
   Esc / q       Quit
 

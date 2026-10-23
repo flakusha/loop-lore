@@ -84,7 +84,7 @@ describeOrSkip("dispatchCommandAction", () => {
       expect(body,).toEqual({ prompt: "a cat", chatId: "chat-1", },);
     });
 
-    test("connects SSE on 200 success", async () => {
+    test("does NOT arm the LLM SSE on 200 (image POST writes no generation buffer)", async () => {
       mockFetch(200,);
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
@@ -94,7 +94,7 @@ describeOrSkip("dispatchCommandAction", () => {
         "chat-1",
       );
 
-      expect(ctx.sseChatIds,).toEqual(["chat-1",],);
+      expect(ctx.sseChatIds,).toEqual([],);
       expect(ctx.toasts,).toEqual([{ type: "info", message: "Image generation started", },],);
     });
 
@@ -184,7 +184,7 @@ describeOrSkip("dispatchCommandAction", () => {
       expect(body,).toEqual({ chatId: "chat-1", assetIds: ["a1", "a2",], },);
     });
 
-    test("connects SSE on success", async () => {
+    test("does NOT arm the LLM SSE on success (caption POST writes no generation buffer)", async () => {
       mockFetch(200,);
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
@@ -194,7 +194,7 @@ describeOrSkip("dispatchCommandAction", () => {
         "chat-1",
       );
 
-      expect(ctx.sseChatIds,).toEqual(["chat-1",],);
+      expect(ctx.sseChatIds,).toEqual([],);
       expect(ctx.toasts[0]?.message,).toContain("Captioning started",);
     });
 

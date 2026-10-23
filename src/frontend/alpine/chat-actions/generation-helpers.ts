@@ -34,6 +34,7 @@ export async function dispatchGenerationAction(
   body: Record<string, unknown>,
   label: string,
   chatId: string,
+  opts: { stream?: boolean } = {},
 ) {
   const prompt = (body.prompt as string) ?? "";
   if (!prompt && !body.assetIds) {
@@ -54,7 +55,12 @@ export async function dispatchGenerationAction(
 
     if (res.ok) {
       ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.actionStarted", { action: label, },), },);
-      ctx.connectGenerationSSE(chatId,);
+      // Image/caption POSTs never write the generation buffer — arming the
+      // LLM stream here ends in a terminal "No active generation". Only
+      // text-generation callers pass { stream: true }.
+      if (opts.stream === true) {
+        ctx.connectGenerationSSE(chatId,);
+      }
     } else if (res.status === 501) {
       ctx.$dispatch?.("show-toast", {
         type: "info",

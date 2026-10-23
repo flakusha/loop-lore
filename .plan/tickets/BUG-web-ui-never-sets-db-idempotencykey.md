@@ -3,10 +3,12 @@
 
 # BUG: Web UI never sets DB idempotencyKey
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-middleware-request-lifecycle
+
+**Resolution:** `chat-send.ts` — one `crypto.randomUUID()` per send, shared by header (`idempotencyKey` string) + body (`body.idempotencyKey`); header 10s cache and DB unique index now coalesce the same turn. Server already accepted body key (`create.ts:76`).
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Summary:**
@@ -18,6 +20,7 @@ Web UI mints a fresh UUID per call (fe-fetch.ts:55-56) for the header cache only
 (fill in before starting: why this change, constraints, alternatives considered.)
 
 **Acceptance Criteria:**
+- [ ] Implementation complete
 
 - [ ] Implementation complete
 - [ ] Tests passing

@@ -78,13 +78,17 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
     // Add user message
     host.addMessage({ id: data.id, role: "user", content: text, },);
 
-    // Add assistant auto-reply if present
+    // Add assistant auto-reply if present. With an LLM configured the server
+    // returns 201 without it (reply arrives over SSE, which the TUI lacks) —
+    // refresh the transcript so the reply appears without a manual F5.
     if (data.assistantMessage) {
       host.addMessage({
         id: data.assistantMessage.id,
         role: "assistant",
         content: data.assistantMessage.content,
       },);
+    } else {
+      await loadMessages(host,);
     }
   } catch (error) {
     host.hideTyping();
