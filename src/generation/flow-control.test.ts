@@ -15,6 +15,7 @@
  * v1 governance guard (`generationPolicy`), not this module.
  */
 import { afterEach, describe, expect, test, } from "bun:test";
+import { GENERATION_FLOW_CONTROL_DEFAULTS, } from "../config/sections/generation/defaults";
 import { activeGenerations, chatToAttempt, } from "./cancellation-tracker/state";
 import {
   FLOW_CONTROL_DEFAULTS,
@@ -87,5 +88,9 @@ describe("resolveFlowPolicy", () => {
 
   test("missing config reads defaults", () => {
     expect(resolveFlowPolicy(undefined,),).toEqual(FLOW_CONTROL_DEFAULTS,);
+  });
+
+  test("runtime defaults match config defaults", () => {
+    expect(FLOW_CONTROL_DEFAULTS,).toEqual(GENERATION_FLOW_CONTROL_DEFAULTS,);
   });
 });
