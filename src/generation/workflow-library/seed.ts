@@ -15,6 +15,13 @@
  * and a delete-propagating seed would make a git branch switch destructive.
  * Neither is acceptable, so neither is implemented.
  *
+ * ONE exception: a row that declares NO parameters while its body still
+ * carries `{{placeholders}}` can never be built — `buildWorkflowGraph`
+ * rejects it. The seed derives the parameters the body needs and writes them
+ * back, which repairs the rows seeded before the parameters were derived.
+ * An edited row is untouched: once it declares its own parameters, it is no
+ * longer the broken shape.
+ *
  * Filenames stay ids, so `configs/workflows/txt2img.json` imports as
  * `txt2img` and the existing loader's names remain valid.
  */
@@ -27,6 +34,7 @@ import { getLogger, } from "../../logger";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { WorkflowPayload, } from "../template-types";
 import { isValidWorkflow, } from "../workflow-loader/workflow-validation";
+import { deriveParameters, repairParameters, } from "./seed-parameters";
 import { CATEGORIES, validateWorkflowPayload, } from "./validate";
 
 const DEFAULT_DIR = "configs/workflows";
@@ -51,6 +59,8 @@ function categoryFor(id: string,): ImageEditCategory {
 /** What the seed did, for logging and for the boot caller. */
 export interface SeedOutcome {
   imported: string[];
+  /** Rows whose missing parameters were derived and written back. */
+  repaired: string[];
   skipped: { id: string; reason: string }[];
 }
 
@@ -79,7 +89,7 @@ export function resetSeedOwnerForTests(): void {
 }
 
 async function resolveOwner(database: Kysely<DB>,): Promise<string | null> {
-  if (ownerId !== null) { return ownerId === "" ? null : ownerId; }
+  if (ownerId !== null) { return ownerId; }
   const owner = await database
     .selectFrom("users",)
     .select("id",)
@@ -87,19 +97,26 @@ async function resolveOwner(database: Kysely<DB>,): Promise<string | null> {
     .orderBy("created_at", "asc",)
     .executeTakeFirst();
 
-  ownerId = owner?.id ?? "";
-  return ownerId === "" ? null : ownerId;
+  // A miss is not cached: on a fresh install the seed runs before the first
+  // user exists, and caching the miss made every later seed call skip too,
+  // so the workflows never landed even once the operator's account did.
+  if (!owner) { return null; }
+  ownerId = owner.id;
+  return ownerId;
 }
 
 /**
  * Read one workflow file into a storable payload, or explain why not.
  *
- * Seeded files are bare API-format graphs; the category/parameters/
- * requiredNodes metadata is library metadata the operator edits in the UI.
+ * Seeded files are bare API-format graphs; the category and requiredNodes
+ * metadata is library metadata the operator edits in the UI, while the
+ * parameters are derived from the graph's own placeholders.
  * @param path - File to read
+ * @param id - Workflow id (the file's basename)
  */
 async function readPayload(
   path: string,
+  id: string,
 ): Promise<{ ok: true; payload: WorkflowPayload } | { ok: false; reason: string }> {
   const text = await readFile(path, "utf8",);
   const graph = jsonParseOr<unknown>(text, undefined,);
@@ -115,7 +132,7 @@ async function readPayload(
       // Guessing txt2img unconditionally mislabelled img2img, and
       // `sd-server-provider` dispatches on this value.
       category: categoryFor(basename(path, ".json",),),
-      parameters: [],
+      parameters: deriveParameters(id, graph as WorkflowPayload["body"],),
       requiredNodes: [],
     },
   };
@@ -135,7 +152,7 @@ export async function seedWorkflowLibrary(
   dir: string = DEFAULT_DIR,
 ): Promise<SeedOutcome> {
   const log = getLogger().child({ module: "workflow-library-seed", },);
-  const outcome: SeedOutcome = { imported: [], skipped: [], };
+  const outcome: SeedOutcome = { imported: [], repaired: [], skipped: [], };
 
   let entries: string[];
   try {
@@ -157,17 +174,28 @@ export async function seedWorkflowLibrary(
 
     const existing = await database
       .selectFrom("prompt_templates",)
-      .select("id",)
+      .select(["id", "payload",],)
       .where("id", "=", id,)
       .executeTakeFirst();
 
     if (existing) {
-      // Already in the library — the DB wins, always. Not an error.
+      // Already in the library — the DB wins, always. Not an error, unless
+      // the row still has the broken shape the seed used to write: no
+      // declared parameters while its body carries placeholders. That row can
+      // never be built, so the missing parameters are derived and written
+      // back. A row the operator edited declares its own parameters and is
+      // left alone.
+      if (await repairParameters(database, existing, id,)) {
+        outcome.repaired.push(id,);
+        log.info("repaired workflow parameters", { id, },);
+        continue;
+      }
+
       outcome.skipped.push({ id, reason: "already in library", },);
       continue;
     }
 
-    const read = await readPayload(join(dir, entry,),);
+    const read = await readPayload(join(dir, entry,), id,);
     if (!read.ok) {
       log.warn("skipping workflow file", { id, reason: read.reason, },);
       outcome.skipped.push({ id, reason: read.reason, },);
