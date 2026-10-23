@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3606
+- tickets: 3607
 - epics: 344
-- src paths owned: 4346
-- edges: produces 11301, consumes 402, sibling 33318, owns 2631, related 1187
+- src paths owned: 4347
+- edges: produces 11302, consumes 402, sibling 33317, owns 2631, related 1187
 
 ## Shared src hubs
 
@@ -821,10 +821,11 @@ output is byte-identical for identical inputs.
 | `src/frontend/battle/battle-screen.ts` | `TASK-battle-frontend-integration`, `TASK-battle-screen`, `epic-battle-ui` |
 | `src/frontend/battle/battle-state.ts` | `TASK-battle-frontend-integration`, `TASK-battle-state-display`, `epic-battle-ui` |
 | `src/frontend/battle/commands.ts` | `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-battle-ui` |
-| `src/frontend/battle/health-bar.ts` | `TASK-battle-frontend-integration`, `TASK-health-bar`, `epic-battle-ui` |
+| `src/frontend/battle/health-bar.ts` | `TASK-battle-frontend-integration`, `TASK-battle-panel-health-bar-widget-turn-order-strip`, `TASK-health-bar`, `epic-battle-ui` |
 | `src/frontend/battle/panel.ts` | `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-`, `epic-battle-action-systems`, `epic-battle-ui` |
 | `src/frontend/battle/skill-check.ts` | `TASK-battle-frontend-integration`, `epic-battle-ui` |
 | `src/frontend/battle/status-effects.ts` | `TASK-battle-frontend-integration`, `TASK-status-effects`, `epic-battle-ui` |
+| `src/frontend/battle/turn-order.ts` | `TASK-battle-panel-health-bar-widget-turn-order-strip`, `epic-battle-ui` |
 | `src/frontend/browser-compress.ts` | `BUG-browser-zstd-decompress-uses-fixed-16x-output-capacity-high-`, `TASK-encryption-browser-pre-encrypt` |
 | `src/frontend/browser-crypto.ts` | `TASK-crypto-library-research`, `TASK-encryption-browser-pre-encrypt`, `TASK-non-standard-browser-crypto-research`, `epic-auth-access`, `epic-frontend-encryption`, `epic-non-standard-browser-crypto` |
 | `src/frontend/browser.ts` | `FEAT-encryption-foundation-aes-256-gcm`, `TASK-asymmetric-key-pairs`, `TASK-browser-side-randomuuidv7-for-time-sortable-ids`, `TASK-crypto-library-research`, `TASK-e2e-state-contracts`, `TASK-e2ee-receiver-wiring`, `TASK-encryption-browser-pre-encrypt`, `epic-architecture`, `epic-non-standard-browser-crypto` |
@@ -1314,10 +1315,10 @@ output is byte-identical for identical inputs.
 | `src/routes/auth/session.ts` | `BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive`, `BUG-logout-deletes-session-without-signature-or-ownership-check`, `TASK-auth-session-hardening-batch-from-2026-10-04-review`, `TASK-fb12-admin-role-change-notifies-affected-user-admxntf`, `TASK-sessions-api-routes`, `epic-frontend-login` |
 | `src/routes/auth/shared.ts` | `BUG-auth-rate-limiter-tests-seed-per-ip-buckets-via-getclientip-`, `BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain`, `BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing`, `BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally`, `BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl`, `BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-`, `BUG-rate-limiter-module-singletons-shared-across-test-files-caus`, `BUG-register-rate-limiter-consumes-on-username-collision-retries`, `TASK-adopt-bun-csrf-for-csrf-protection`, `TASK-auth-session-hardening-batch-from-2026-10-04-review`, `TASK-guest-rate-limiting-audit-logging-for-guest-reads`, `TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d`, `TASK-rate-limit-coverage-expansion`, `epic-frontend-login`, `epic-guest-access` |
 | `src/routes/battle.ts` | `TASK-battle-encounter-template-system`, `TASK-battle-frontend-integration`, `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-file-splitting` |
-| `src/routes/battle/equipment.ts` | `BUG-battle-equipment-loot-no-auth-guard`, `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-`, `TASK-map-battle-equipment`, `TASK-persist-loot-drops`, `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-battle-ui` |
+| `src/routes/battle/equipment.ts` | `BUG-battle-equipment-loot-no-auth-guard`, `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-`, `TASK-map-battle-equipment`, `TASK-persist-loot-drops`, `epic-battle-action-systems`, `epic-battle-integration-gaps` |
 | `src/routes/battle/npc.ts` | `epic-battle-action-systems`, `epic-battle-integration-gaps` |
 | `src/routes/battle/resolution.ts` | `epic-battle-action-systems`, `epic-battle-integration-gaps` |
-| `src/routes/battle/social.ts` | `epic-battle-action-systems`, `epic-battle-integration-gaps`, `epic-battle-ui` |
+| `src/routes/battle/social.ts` | `epic-battle-action-systems`, `epic-battle-integration-gaps` |
 | `src/routes/battle/weather.ts` | `epic-battle-action-systems`, `epic-battle-integration-gaps` |
 | `src/routes/blog/comments.ts` | `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem`, `BUG-blog-comments-post-accepts-non-public-posts-existence-oracle`, `TASK-hoist-inline-route-response-schemas-to-exported-consts`, `TASK-review-thread-comment-model`, `epic-blog-system`, `epic-editorial-workflow` |
 | `src/routes/blog/follows.ts` | `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem`, `BUG-blog-followers-list-no-auth-reveals-follower-ids`, `TASK-hoist-inline-route-response-schemas-to-exported-consts` |
@@ -8799,6 +8800,8 @@ output is byte-identical for identical inputs.
 | `TASK-battle-frontend-integration` | produces | `src/rpg/combat.ts` | - |
 | `TASK-battle-log` | produces | `src/frontend/battle/battle-log-entry.ts` | - |
 | `TASK-battle-log` | produces | `src/frontend/battle/battle-log.ts` | - |
+| `TASK-battle-panel-health-bar-widget-turn-order-strip` | produces | `src/frontend/battle/health-bar.ts` | - |
+| `TASK-battle-panel-health-bar-widget-turn-order-strip` | produces | `src/frontend/battle/turn-order.ts` | - |
 | `TASK-battle-screen` | produces | `src/frontend/battle/battle-layout.ts` | - |
 | `TASK-battle-screen` | produces | `src/frontend/battle/battle-screen.ts` | - |
 | `TASK-battle-state-display` | produces | `src/frontend/alpine/battle-state.ts` | - |
@@ -14090,8 +14093,7 @@ output is byte-identical for identical inputs.
 | `epic-battle-ui` | produces | `src/frontend/battle/render.ts` | - |
 | `epic-battle-ui` | produces | `src/frontend/battle/skill-check.ts` | - |
 | `epic-battle-ui` | produces | `src/frontend/battle/status-effects.ts` | - |
-| `epic-battle-ui` | produces | `src/routes/battle/equipment.ts` | - |
-| `epic-battle-ui` | produces | `src/routes/battle/social.ts` | - |
+| `epic-battle-ui` | produces | `src/frontend/battle/turn-order.ts` | - |
 | `epic-blog-system` | produces | `src/assistant/scenario-source.ts` | - |
 | `epic-blog-system` | produces | `src/blog/comments.ts` | - |
 | `epic-blog-system` | produces | `src/blog/creative.ts` | - |
@@ -19275,7 +19277,6 @@ output is byte-identical for identical inputs.
 | `BUG-battle-equipment-loot-no-auth-guard` | sibling | `TASK-refactor-extract-scopebyuserid-middleware` | `src/middleware/scope-by-user.ts` |
 | `BUG-battle-equipment-loot-no-auth-guard` | sibling | `epic-battle-action-systems` | `src/routes/battle/equipment.ts` |
 | `BUG-battle-equipment-loot-no-auth-guard` | sibling | `epic-battle-integration-gaps` | `src/routes/battle/equipment.ts` |
-| `BUG-battle-equipment-loot-no-auth-guard` | sibling | `epic-battle-ui` | `src/routes/battle/equipment.ts` |
 | `BUG-battle-equipment-loot-no-auth-guard` | sibling | `epic-crafting-professions` | `src/routes/rpg/crafting-station-instances.ts` |
 | `BUG-battle-resolution-missing-empty-input-adapter` | sibling | `BUG-frontend-handlers-swallow-api-errors-silently-with-no-user-f` | `src/frontend/vn/choice-cards.ts` |
 | `BUG-battle-resolution-missing-empty-input-adapter` | sibling | `BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels` | `src/frontend/vn/choice-cards.ts` |
@@ -36507,6 +36508,7 @@ output is byte-identical for identical inputs.
 | `TASK-battle-encounter-template-system` | sibling | `epic-battle-integration-gaps` | `src/routes/battle.ts` |
 | `TASK-battle-encounter-template-system` | sibling | `epic-file-splitting` | `src/routes/battle.ts` |
 | `TASK-battle-frontend-integration` | sibling | `TASK-battle-log` | `src/frontend/battle/battle-log.ts` |
+| `TASK-battle-frontend-integration` | sibling | `TASK-battle-panel-health-bar-widget-turn-order-strip` | `src/frontend/battle/health-bar.ts` |
 | `TASK-battle-frontend-integration` | sibling | `TASK-battle-screen` | `src/frontend/battle/battle-screen.ts` |
 | `TASK-battle-frontend-integration` | sibling | `TASK-battle-state-display` | `src/frontend/battle/battle-state.ts` |
 | `TASK-battle-frontend-integration` | sibling | `TASK-health-bar` | `src/frontend/battle/health-bar.ts` |
@@ -36521,6 +36523,8 @@ output is byte-identical for identical inputs.
 | `TASK-battle-frontend-integration` | sibling | `epic-file-splitting` | `src/routes/battle.ts` |
 | `TASK-battle-frontend-integration` | sibling | `epic-rpg-mechanics` | `src/rpg/combat.ts` |
 | `TASK-battle-log` | sibling | `epic-battle-ui` | `src/frontend/battle/battle-log.ts` |
+| `TASK-battle-panel-health-bar-widget-turn-order-strip` | sibling | `TASK-health-bar` | `src/frontend/battle/health-bar.ts` |
+| `TASK-battle-panel-health-bar-widget-turn-order-strip` | sibling | `epic-battle-ui` | `src/frontend/battle/health-bar.ts; src/frontend/battle/turn-order.ts` |
 | `TASK-battle-screen` | sibling | `epic-battle-ui` | `src/frontend/battle/battle-screen.ts` |
 | `TASK-battle-state-display` | sibling | `epic-battle-ui` | `src/frontend/battle/battle-state.ts` |
 | `TASK-battle-template-actions` | sibling | `epic-battle-action-systems` | `src/battle/actions.ts; src/battle/modes.ts` |
@@ -40184,7 +40188,6 @@ output is byte-identical for identical inputs.
 | `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-` | sibling | `TASK-persist-loot-drops` | `src/routes/battle/equipment.ts` |
 | `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-` | sibling | `epic-battle-action-systems` | `src/routes/battle/equipment.ts` |
 | `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-` | sibling | `epic-battle-integration-gaps` | `src/routes/battle/equipment.ts` |
-| `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-` | sibling | `epic-battle-ui` | `src/routes/battle/equipment.ts` |
 | `TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-` | sibling | `epic-technical-comparison-charts` | `src/routes/comparisons-export.ts` |
 | `TASK-coverage-gate-true-multi-worker-fanout-investigation` | sibling | `TASK-federation-peer-registry-workload-columns` | `src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts` |
 | `TASK-coverage-gate-true-multi-worker-fanout-investigation` | sibling | `TASK-fractal-locations-invariants-tests` | `src/db/migrations.test.ts` |
@@ -44992,7 +44995,6 @@ output is byte-identical for identical inputs.
 | `TASK-map-battle-equipment` | sibling | `TASK-unify-item-types` | `src/battle/items-integration.ts; src/db/enums-story/items.ts` |
 | `TASK-map-battle-equipment` | sibling | `epic-battle-action-systems` | `src/battle/items-integration.ts; src/routes/battle/equipment.ts` |
 | `TASK-map-battle-equipment` | sibling | `epic-battle-integration-gaps` | `src/battle/items-integration.ts; src/routes/battle/equipment.ts` |
-| `TASK-map-battle-equipment` | sibling | `epic-battle-ui` | `src/routes/battle/equipment.ts` |
 | `TASK-map-battle-equipment` | sibling | `epic-editorial-workflow` | `src/db/enums-story/items.ts` |
 | `TASK-map-battle-equipment` | sibling | `epic-item-system-extensions` | `src/battle/items-integration.ts; src/db/enums-story/items.ts` |
 | `TASK-map-battle-equipment` | sibling | `epic-item-systems-unification` | `src/battle/items-integration.ts; src/db/enums-story/items.ts` |
@@ -46320,7 +46322,6 @@ output is byte-identical for identical inputs.
 | `TASK-persist-loot-drops` | sibling | `TASK-unify-item-types` | `src/battle/items-integration.ts; src/rpg/loot/types.ts` |
 | `TASK-persist-loot-drops` | sibling | `epic-battle-action-systems` | `src/battle/items-integration.ts; src/routes/battle/equipment.ts` |
 | `TASK-persist-loot-drops` | sibling | `epic-battle-integration-gaps` | `src/battle/items-integration.ts; src/routes/battle/equipment.ts` |
-| `TASK-persist-loot-drops` | sibling | `epic-battle-ui` | `src/routes/battle/equipment.ts` |
 | `TASK-persist-loot-drops` | sibling | `epic-item-system-extensions` | `src/battle/items-integration.ts` |
 | `TASK-persist-loot-drops` | sibling | `epic-item-systems-unification` | `src/battle/items-integration.ts` |
 | `TASK-persist-loot-drops` | sibling | `epic-items` | `src/battle/items-integration.ts` |
@@ -49276,7 +49277,7 @@ output is byte-identical for identical inputs.
 | `epic-avatar-alpha-vn-layering` | sibling | `epic-derived-map-generation` | `src/assets/matting-routes.ts` |
 | `epic-avatar-regeneration-control` | sibling | `epic-reactive-actor-appearance` | `src/validation/schemas/emotion-avatars.ts` |
 | `epic-battle-action-systems` | sibling | `epic-battle-integration-gaps` | `src/battle/item-mapping.ts; src/battle/items-integration.ts; src/db/schema-battle.ts; src/db/schema-core.ts; src/frontend/battle/commands.ts; src/routes/battle.ts; src/routes/battle/equipment.ts; src/routes/battle/npc.ts; src/routes/battle/resolution.ts; src/routes/battle/social.ts; src/routes/battle/weather.ts; src/routes/v1/actors-surface.ts` |
-| `epic-battle-action-systems` | sibling | `epic-battle-ui` | `src/frontend/alpine/chat-actions/battle.ts; src/frontend/alpine/chat-battle.ts; src/frontend/battle/commands.ts; src/frontend/battle/panel.ts; src/routes/battle/equipment.ts; src/routes/battle/social.ts` |
+| `epic-battle-action-systems` | sibling | `epic-battle-ui` | `src/frontend/alpine/chat-actions/battle.ts; src/frontend/alpine/chat-battle.ts; src/frontend/battle/commands.ts; src/frontend/battle/panel.ts` |
 | `epic-battle-action-systems` | sibling | `epic-blog-system` | `src/elysia-app.ts` |
 | `epic-battle-action-systems` | sibling | `epic-byok-api-keys` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-battle-action-systems` | sibling | `epic-character-core-system` | `src/db/migrations/001_init.ts; src/db/schema-core.ts; src/routes/v1/actors-surface.ts` |
@@ -49332,7 +49333,7 @@ output is byte-identical for identical inputs.
 | `epic-battle-action-systems` | sibling | `epic-skills-professions-config` | `src/db/schema-core.ts` |
 | `epic-battle-action-systems` | sibling | `epic-technical-comparison-charts` | `src/db/migrations/001_init.ts` |
 | `epic-battle-action-systems` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
-| `epic-battle-integration-gaps` | sibling | `epic-battle-ui` | `src/frontend/battle/commands.ts; src/routes/battle/equipment.ts; src/routes/battle/social.ts` |
+| `epic-battle-integration-gaps` | sibling | `epic-battle-ui` | `src/frontend/battle/commands.ts` |
 | `epic-battle-integration-gaps` | sibling | `epic-byok-api-keys` | `src/db/schema-core.ts` |
 | `epic-battle-integration-gaps` | sibling | `epic-character-core-system` | `src/db/schema-core.ts; src/routes/v1/actors-surface.ts` |
 | `epic-battle-integration-gaps` | sibling | `epic-character-internal-traits` | `src/db/schema-core.ts; src/routes/v1/actors-surface.ts` |

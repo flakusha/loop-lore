@@ -19859,6 +19859,18 @@
       "related": []
     },
     {
+      "id": "TASK-battle-panel-health-bar-widget-turn-order-strip",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-battle-panel-health-bar-widget-turn-order-strip.md",
+      "title": "Battle panel health-bar widget + turn-order strip",
+      "status": "done",
+      "srcRefs": [
+        "src/frontend/battle/health-bar.ts",
+        "src/frontend/battle/turn-order.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-battle-resolution-integration",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-battle-resolution-integration.md",
@@ -32069,7 +32081,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-item-side-outfit-change-trigger.md",
       "title": "Item-side outfit change trigger (unequip/transfer swaps the portrait)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/wardrobe/bindings.ts",
         "src/characters/services/wardrobe/change-gate.ts",
@@ -45927,8 +45939,7 @@
         "src/frontend/battle/render.ts",
         "src/frontend/battle/skill-check.ts",
         "src/frontend/battle/status-effects.ts",
-        "src/routes/battle/equipment.ts",
-        "src/routes/battle/social.ts"
+        "src/frontend/battle/turn-order.ts"
       ],
       "related": []
     },
@@ -65596,6 +65607,7 @@
       "path": "src/frontend/battle/health-bar.ts",
       "owners": [
         "TASK-battle-frontend-integration",
+        "TASK-battle-panel-health-bar-widget-turn-order-strip",
         "TASK-health-bar",
         "epic-battle-ui"
       ]
@@ -65638,6 +65650,13 @@
       "owners": [
         "TASK-battle-frontend-integration",
         "TASK-status-effects",
+        "epic-battle-ui"
+      ]
+    },
+    {
+      "path": "src/frontend/battle/turn-order.ts",
+      "owners": [
+        "TASK-battle-panel-health-bar-widget-turn-order-strip",
         "epic-battle-ui"
       ]
     },
@@ -73899,8 +73918,7 @@
         "TASK-map-battle-equipment",
         "TASK-persist-loot-drops",
         "epic-battle-action-systems",
-        "epic-battle-integration-gaps",
-        "epic-battle-ui"
+        "epic-battle-integration-gaps"
       ]
     },
     {
@@ -73933,8 +73951,7 @@
       "path": "src/routes/battle/social.ts",
       "owners": [
         "epic-battle-action-systems",
-        "epic-battle-integration-gaps",
-        "epic-battle-ui"
+        "epic-battle-integration-gaps"
       ]
     },
     {
@@ -118943,6 +118960,16 @@
       "to": "src/frontend/battle/battle-log.ts"
     },
     {
+      "from": "TASK-battle-panel-health-bar-widget-turn-order-strip",
+      "kind": "produces",
+      "to": "src/frontend/battle/health-bar.ts"
+    },
+    {
+      "from": "TASK-battle-panel-health-bar-widget-turn-order-strip",
+      "kind": "produces",
+      "to": "src/frontend/battle/turn-order.ts"
+    },
+    {
       "from": "TASK-battle-screen",
       "kind": "produces",
       "to": "src/frontend/battle/battle-layout.ts"
@@ -145400,12 +145427,7 @@
     {
       "from": "epic-battle-ui",
       "kind": "produces",
-      "to": "src/routes/battle/equipment.ts"
-    },
-    {
-      "from": "epic-battle-ui",
-      "kind": "produces",
-      "to": "src/routes/battle/social.ts"
+      "to": "src/frontend/battle/turn-order.ts"
     },
     {
       "from": "epic-blog-system",
@@ -173151,12 +173173,6 @@
       "from": "BUG-battle-equipment-loot-no-auth-guard",
       "kind": "sibling",
       "to": "epic-battle-integration-gaps",
-      "via": "src/routes/battle/equipment.ts"
-    },
-    {
-      "from": "BUG-battle-equipment-loot-no-auth-guard",
-      "kind": "sibling",
-      "to": "epic-battle-ui",
       "via": "src/routes/battle/equipment.ts"
     },
     {
@@ -276548,6 +276564,12 @@
     {
       "from": "TASK-battle-frontend-integration",
       "kind": "sibling",
+      "to": "TASK-battle-panel-health-bar-widget-turn-order-strip",
+      "via": "src/frontend/battle/health-bar.ts"
+    },
+    {
+      "from": "TASK-battle-frontend-integration",
+      "kind": "sibling",
       "to": "TASK-battle-screen",
       "via": "src/frontend/battle/battle-screen.ts"
     },
@@ -276628,6 +276650,18 @@
       "kind": "sibling",
       "to": "epic-battle-ui",
       "via": "src/frontend/battle/battle-log.ts"
+    },
+    {
+      "from": "TASK-battle-panel-health-bar-widget-turn-order-strip",
+      "kind": "sibling",
+      "to": "TASK-health-bar",
+      "via": "src/frontend/battle/health-bar.ts"
+    },
+    {
+      "from": "TASK-battle-panel-health-bar-widget-turn-order-strip",
+      "kind": "sibling",
+      "to": "epic-battle-ui",
+      "via": "src/frontend/battle/health-bar.ts; src/frontend/battle/turn-order.ts"
     },
     {
       "from": "TASK-battle-screen",
@@ -298605,12 +298639,6 @@
       "from": "TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-",
       "kind": "sibling",
       "to": "epic-battle-integration-gaps",
-      "via": "src/routes/battle/equipment.ts"
-    },
-    {
-      "from": "TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-",
-      "kind": "sibling",
-      "to": "epic-battle-ui",
       "via": "src/routes/battle/equipment.ts"
     },
     {
@@ -327458,12 +327486,6 @@
     {
       "from": "TASK-map-battle-equipment",
       "kind": "sibling",
-      "to": "epic-battle-ui",
-      "via": "src/routes/battle/equipment.ts"
-    },
-    {
-      "from": "TASK-map-battle-equipment",
-      "kind": "sibling",
       "to": "epic-editorial-workflow",
       "via": "src/db/enums-story/items.ts"
     },
@@ -335422,12 +335444,6 @@
       "kind": "sibling",
       "to": "epic-battle-integration-gaps",
       "via": "src/battle/items-integration.ts; src/routes/battle/equipment.ts"
-    },
-    {
-      "from": "TASK-persist-loot-drops",
-      "kind": "sibling",
-      "to": "epic-battle-ui",
-      "via": "src/routes/battle/equipment.ts"
     },
     {
       "from": "TASK-persist-loot-drops",
@@ -353163,7 +353179,7 @@
       "from": "epic-battle-action-systems",
       "kind": "sibling",
       "to": "epic-battle-ui",
-      "via": "src/frontend/alpine/chat-actions/battle.ts; src/frontend/alpine/chat-battle.ts; src/frontend/battle/commands.ts; src/frontend/battle/panel.ts; src/routes/battle/equipment.ts; src/routes/battle/social.ts"
+      "via": "src/frontend/alpine/chat-actions/battle.ts; src/frontend/alpine/chat-battle.ts; src/frontend/battle/commands.ts; src/frontend/battle/panel.ts"
     },
     {
       "from": "epic-battle-action-systems",
@@ -353499,7 +353515,7 @@
       "from": "epic-battle-integration-gaps",
       "kind": "sibling",
       "to": "epic-battle-ui",
-      "via": "src/frontend/battle/commands.ts; src/routes/battle/equipment.ts; src/routes/battle/social.ts"
+      "via": "src/frontend/battle/commands.ts"
     },
     {
       "from": "epic-battle-integration-gaps",
