@@ -9,21 +9,28 @@
 
 
 **Status:** Done
+**Status Note:** Reopened 2026-10-23 — the fix described below is **not in the tree**. The guard was added in `398651b4d` (`src/assets/controller/serve.ts`) and silently dropped when `ff0e518c6` (2026-09-11) deleted that file and re-implemented the handlers inline in `src/assets/controller.ts`; `6b7e5bcc5` then moved them to `src/assets/serve-handlers.ts`. `grep "Encrypted asset preview requires the raw endpoint" src/` returns no matches, and a runtime probe confirms `GET /api/v1/assets/:id/thumb` on a `chat`-tier asset returns 200 with plaintext WebP and no chat context. The plaintext-thumbnail dimension of the defect is tracked by `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md`; this ticket owns the serve-path guard.
 **Priority:** medium
 **Effort:** Medium
 
 ## Resolution
 
-Fixed in `fix-batch-vn-assets-fe` (commit pending): `src/assets/controller/serve.ts` `handleServeCompressed` now returns explicit `400 "Encrypted asset preview requires the raw endpoint"` when `asset.encryption_tier !== "public" && asset.encrypted_key_id` — before the compressed-path/fallback logic. Encrypted assets can never be served as a compressed/thumb variant (the on-disk variant is pre-compressed ciphertext; decrypting requires raw ciphertext + chat key + re-encode, out of scope per plan A4). Raw `/raw` + `/download` endpoints keep their existing decrypt path.
+Never landed. An earlier attempt (`fix-batch-vn-assets-fe`, not merged into this tree) added the guard in `src/assets/controller/serve.ts`: `handleServeCompressed` would return an explicit `400 "Encrypted asset preview requires the raw endpoint"` when `asset.encryption_tier !== "public" && asset.encrypted_key_id` — before the compressed-path/fallback logic. That file was deleted by a later refactor and the guard was not carried over, so neither the guard nor its route test (`src/assets/controller/serve-policy.routes.test.ts`) exists in the tree today.
 
-Test: `src/assets/controller/serve-policy.routes.test.ts` — "encrypted asset compressed variant: 400 (never raw ciphertext)" (asserts 400 + message) and "public asset compressed variant: serves webp when variant exists" (asserts 200 + `image/webp` + exact bytes). 15/15 pass in worktree, typecheck EXIT=0, dprint clean.
+The intended behaviour still stands: an encrypted asset must never be served as a compressed/thumb variant. The on-disk variant is pre-compressed ciphertext; decrypting it would need raw ciphertext + chat key + re-encode, which is out of scope per plan A4. Raw `/raw` + `/download` endpoints keep their existing decrypt path.
 
 ## Summary
 
-src/assets/controller/serve.ts:188-225 handleServeCompressed has no decryption branch; missing variant falls back to serveFile(storage_path) -> encrypted tier 'standard' (upload.ts:69-87) renders broken images; signed-url-routes.ts:112-128 never reads chatId; raw/download routes do decrypt via chatId+deriveChatKeyForChat (serve.ts:139-164,268-293). Fix: decryption path or explicit 4xx for encrypted previews.
+handleServeCompressed has no decryption branch; a missing variant falls back to serveFile(storage_path), so an encrypted asset renders a broken image. The signed-url route never reads chatId; the raw/download routes do decrypt via chatId+deriveChatKeyForChat. Fix: decryption path or explicit 4xx for encrypted previews.
+
+(The original report cited file-and-line locations in `src/assets/controller/serve.ts`, `upload.ts` and `signed-url-routes.ts`. Those paths were deleted by later refactors; the live equivalents are `src/assets/serve-handlers.ts`, `src/assets/controller.ts` and `src/assets/serve-raw.ts`.)
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] `GET /api/v1/assets/:id/thumb` and `GET /api/v1/assets/:id/compressed` on a non-public asset return an explicit 4xx, never raw bytes and never the plaintext thumbnail.
+- [ ] A public-tier asset still serves its compressed/thumb variant with the expected `Content-Type` and bytes.
+- [ ] The guard lives in the live handler module, and no file it depends on is deleted by a later refactor without the guard moving with it.
+- [ ] Tests cover the encrypted and public cases.
+- [ ] The plaintext-thumbnail leak on disk is tracked separately by `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md`.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue ede86bb (registry tip: a4a4ed518 Konstantin Fedotov Auto-closed: ticket BUG-ENCRYPTED-ASSET-THUMB-COMPRESSED-PREVIEW-SERVES)
