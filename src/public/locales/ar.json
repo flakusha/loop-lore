@@ -125,7 +125,12 @@
     "stop": "Stop",
     "caption": "Caption:",
     "playingAs": "Playing as",
-    "ownerMessage": "Authored by chat owner"
+    "ownerMessage": "Authored by chat owner",
+    "classifierTags": {
+      "title": "وسوم المصنف",
+      "description": "اختر وسوم المصنف المنسّقة النشطة لهذه المحادثة.",
+      "save": "حفظ الوسوم"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -483,6 +488,21 @@
       "concurrency": "أقصى تزامن",
       "rpm": "طلبات/دقيقة",
       "advisoryTokens": "رموز إرشادية/دقيقة"
+    },
+    "classifierVocab": {
+      "title": "مفردات وسوم المصنف",
+      "description": "أدر مفردات الوسوم المتاحة للمصنف. يجب ألا تكون الوسوم فارغة، وأن تكون فريدة، وبحد أقصى 64 حرفًا (200 وسم كحد أقصى).",
+      "empty": "لا توجد وسوم بعد — أضف أول وسم أدناه.",
+      "placeholder": "وسم جديد…",
+      "add": "إضافة",
+      "rename": "إعادة تسمية",
+      "remove": "إزالة",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "errorEmpty": "يجب ألا تكون الوسوم فارغة.",
+      "errorTooLong": "يجب ألا تتجاوز الوسوم 64 حرفًا.",
+      "errorDuplicate": "وسم مكرر: {tag}",
+      "errorTooMany": "يُسمح بـ 200 وسم كحد أقصى."
     }
   },
   "errors": {
@@ -1570,7 +1590,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "تم حفظ المفردات",
+    "classifierTagsSaved": "تم حفظ وسوم المصنف",
+    "classifierTagsSaveFailed": "فشل حفظ وسوم المصنف"
   },
   "status": {
     "characterResponding": "الشخصية ترد...",

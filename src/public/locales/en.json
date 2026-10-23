@@ -143,7 +143,12 @@
     "original": "Original",
     "stop": "Stop",
     "caption": "Caption:",
-    "playingAs": "Playing as"
+    "playingAs": "Playing as",
+    "classifierTags": {
+      "title": "Classifier Tags",
+      "description": "Choose which curated classifier tags are active for this chat.",
+      "save": "Save Tags"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -501,6 +506,21 @@
       "concurrency": "Max concurrency",
       "rpm": "Requests/min",
       "advisoryTokens": "Advisory tokens/min"
+    },
+    "classifierVocab": {
+      "title": "Classifier Tag Vocabulary",
+      "description": "Curate the tag vocabulary available to the classifier. Tags must be non-empty, unique, and at most 64 characters (200 tags max).",
+      "empty": "No tags yet — add the first one below.",
+      "placeholder": "New tag…",
+      "add": "Add",
+      "rename": "Rename",
+      "remove": "Remove",
+      "save": "Save",
+      "cancel": "Cancel",
+      "errorEmpty": "Tags must be non-empty.",
+      "errorTooLong": "Tags must be at most {max} characters.",
+      "errorDuplicate": "Duplicate tag: {tag}",
+      "errorTooMany": "At most {max} tags are allowed."
     }
   },
   "errors": {
@@ -1615,7 +1635,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "Vocabulary saved",
+    "classifierTagsSaved": "Classifier tags saved",
+    "classifierTagsSaveFailed": "Failed to save classifier tags"
   },
   "wizard": {
     "previewTitle": "Create {type} — Preview",

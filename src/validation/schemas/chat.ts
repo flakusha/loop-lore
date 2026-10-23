@@ -166,6 +166,15 @@ export const ChatIdParams = t.Object({
   id: Id,
 },);
 
+/**
+ * Body for `PUT /api/chats/:id/classifier-tags` — replace the chat's active
+ * classifier tag subset. Vocabulary membership is enforced by the route
+ * against the curated `classifier_tag_vocabulary` system-config value.
+ */
+export const ClassifierTagsUpdateBody = t.Object({
+  tags: t.Array(t.String({ minLength: 1, maxLength: 64, },), { maxItems: 200, },),
+},);
+
 export const ChatRenameBody = t.Object({
   name: Name,
   name_source: t.Optional(t.String(),),

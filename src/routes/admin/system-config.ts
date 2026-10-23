@@ -12,8 +12,14 @@ import {
   SECRET_KEY_PATTERN,
   setConfig,
 } from "../../admin/config";
+import {
+  CLASSIFIER_TAG_VOCABULARY_KEY,
+  validateTagVocabulary,
+  writeTagVocabulary,
+} from "../../aux-pipeline/class-tag-vocab";
 import { HOT_APPLY_PATHS, } from "../../config/hot-apply";
 import { jsonSchema, } from "../../config/schema-class";
+import { safeJsonParse, } from "../../utils";
 import {
   AdminSystemConfigBody,
   AdminSystemConfigImportBody,
@@ -132,6 +138,20 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         async (ctx: any,) => {
           return withPermissionAuth(ctx, "admin.system", async () => {
             const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
+
+            // The classifier tag vocabulary is a structured config value: it
+            // must parse as a validated JSON string[] before it can persist.
+            if (key === CLASSIFIER_TAG_VOCABULARY_KEY) {
+              const parsed = safeJsonParse<unknown>(value,);
+              const validated = validateTagVocabulary(parsed.ok ? parsed.value : null,);
+              if (!validated.ok) {
+                return jsonError(validated.error, HttpStatus.BadRequest, "VALIDATION_ERROR" as never,);
+              }
+
+              await writeTagVocabulary(opts.database, validated.tags,);
+              return jsonResponse({ ok: true, requires_restart: false, },);
+            }
+
             const requiresRestart = await setConfig(opts.database, key, value, description,);
             return jsonResponse({ ok: true, requires_restart: requiresRestart, },);
           },);

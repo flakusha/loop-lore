@@ -1058,6 +1058,11 @@ describe("checkPrerequisitesBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.checkPrerequisitesBody,));
 });
 
+describe("ClassifierTagsUpdateBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_chat.ClassifierTagsUpdateBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ClassifierTagsUpdateBody,));
+});
 describe("CombatantSchema", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_combatSchemas.CombatantSchema,));
 

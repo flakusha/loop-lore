@@ -22,6 +22,7 @@ import {
   ChatParticipantUpdateBody,
   ChatRenameBody,
   ChatUpdateBody,
+  ClassifierTagsUpdateBody,
 } from "./chat";
 
 /**
@@ -347,6 +348,29 @@ describe("ChatImpersonateBody", () => {
 
   test("rejects an empty string impersonateActorId", () => {
     expect(Value.Check(ChatImpersonateBody, body({ impersonateActorId: "" },),),).toBe(false,);
+  });
+});
+
+describe("ClassifierTagsUpdateBody — per-chat classifier tag subset", () => {
+  test("accepts a list of non-empty tags within the caps", () => {
+    expect(Value.Check(ClassifierTagsUpdateBody, body({ tags: ["tavern", "dungeon",], },),),).toBe(true,);
+  });
+
+  test("rejects an empty tag", () => {
+    expect(Value.Check(ClassifierTagsUpdateBody, body({ tags: [""], },),),).toBe(false,);
+  });
+
+  test("rejects a tag above 64 characters", () => {
+    expect(Value.Check(ClassifierTagsUpdateBody, body({ tags: ["x".repeat(65,)], },),),).toBe(false,);
+  });
+
+  test("rejects more than 200 tags", () => {
+    const many = Array.from({ length: 201, }, (_, i,) => `t${i}`,);
+    expect(Value.Check(ClassifierTagsUpdateBody, body({ tags: many, },),),).toBe(false,);
+  });
+
+  test("rejects a non-array tags field", () => {
+    expect(Value.Check(ClassifierTagsUpdateBody, body({ tags: "tavern", },),),).toBe(false,);
   });
 });
 },);
