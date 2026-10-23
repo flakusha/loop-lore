@@ -6,7 +6,7 @@
 **Epic:** epic-character-core-system
 **Related:** TASK-world-requires-stats-flag-and-point-budget-config, TASK-character-trait-catalog-for-gameplay-mechanics, TASK-character-stat-allocation-backend-api-and-db-integration
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -24,3 +24,5 @@ Modal `src/frontend/modals/stat-allocation.html` (htmx partial + Alpine `x-data`
 
 
 git issue: d87d9f0
+
+**Resolved:** 2026-10-23 registry-driven close: git issue d87d9f0 (registry tip: 3e0059d02 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHARACTER-STAT-ALLOCATION-F)
