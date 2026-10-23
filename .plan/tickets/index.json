@@ -19422,6 +19422,19 @@
     "source": ".plan/tickets/FEAT-classifier-role-fallback-policy-in-callaux.md",
     "status": "done"
   },
+  "FEAT-CLASSIFIER-TAG-VOCABULARY-ADMIN-UI": {
+    "hash": "6efe8c5",
+    "git_issue": "6efe8c5",
+    "extid": "FEAT-CLASSIFIER-TAG-VOCABULARY-ADMIN-UI",
+    "type": "FEAT",
+    "title": "classifier tag vocabulary admin UI",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "classifier-template-packs",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-classifier-tag-vocabulary-admin-ui.md",
+    "status": "Not Started"
+  },
   "FEAT-CLASSIFIER-TEMPLATE-PACKS-USER-CONFIG": {
     "hash": "b5f1fc9",
     "git_issue": "b5f1fc9",
