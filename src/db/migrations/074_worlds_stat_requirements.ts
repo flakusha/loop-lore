@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 071_worlds_stat_requirements
+ * 074_worlds_stat_requirements
  *
  * Add stat-block requirement columns to worlds. Nullable-free with
  * defaults so existing rows stay back-compatible: requires_stats = 0
