@@ -20,6 +20,8 @@ import type { DB, } from "../db/schema";
  * @param override.supportsVision - Vision support override.
  * @param override.supportsThinking - Thinking support override.
  * @param override.notes - Notes override.
+ * @param override.nativeLocale - Native-locale override (validated with
+ *   isLocale by the route boundary before reaching here).
  * @returns True if the model was found and updated.
  */
 export async function setModelOverride(
@@ -33,6 +35,7 @@ export async function setModelOverride(
     supportsVision?: boolean | null;
     supportsThinking?: boolean | null;
     notes?: string | null;
+    nativeLocale?: string | null;
   },
 ): Promise<boolean> {
   const existing = await db
@@ -56,6 +59,7 @@ export async function setModelOverride(
   if (override.supportsVision !== undefined) { updates.supports_vision = override.supportsVision ? 1 : 0; }
   if (override.supportsThinking !== undefined) { updates.supports_thinking = override.supportsThinking ? 1 : 0; }
   if (override.notes !== undefined) { updates.notes = override.notes; }
+  if (override.nativeLocale !== undefined) { updates.native_locale = override.nativeLocale; }
 
   await db
     .updateTable("model_capabilities",)
@@ -78,9 +82,16 @@ export async function clearModelOverride(
   providerId: string,
   modelId: string,
 ): Promise<boolean> {
+  // native_locale is also reset: it sits outside every auto-upsert set, so
+  // without an explicit clear an admin value would survive the revert to
+  // auto-detected values forever.
   const result = await db
     .updateTable("model_capabilities",)
-    .set({ user_override: 0, updated_at: new Date().toISOString(), },)
+    .set({
+      user_override: 0,
+      native_locale: null,
+      updated_at: new Date().toISOString(),
+    },)
     .where("provider_id", "=", providerId,)
     .where("model_id", "=", modelId,)
     .execute();

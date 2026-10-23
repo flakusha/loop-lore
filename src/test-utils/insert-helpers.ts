@@ -237,6 +237,7 @@ export async function insertModelCapabilities(
     owned_by?: string | null;
     user_override?: number;
     notes?: string | null;
+    native_locale?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

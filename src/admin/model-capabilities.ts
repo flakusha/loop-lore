@@ -25,6 +25,11 @@ const STALE_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000;
 /**
  * Upsert model capabilities from provider-reported ModelInfo.
  * Only updates auto-detected fields — preserves user overrides.
+ *
+ * RESCAN PROTECTION (FEAT-model-native-locale-config): `native_locale` is
+ * deliberately absent from BOTH update sets below and from the insert
+ * values — an admin-authored locale must survive every `scanAllProviders`
+ * rescan (same pattern that protects user-override rows).
  * @param db - Database instance.
  * @param providerId - Provider identifier.
  * @param models - List of model info objects.
@@ -140,6 +145,7 @@ export async function resolveModelCapabilities(
     lastSeen: row.last_seen,
     userOverride: row.user_override === 1,
     notes: row.notes,
+    nativeLocale: row.native_locale,
   };
 }
 
@@ -175,6 +181,7 @@ export async function listModelCapabilities(
     lastSeen: row.last_seen,
     userOverride: row.user_override === 1,
     notes: row.notes,
+    nativeLocale: row.native_locale,
   }),);
 }
 

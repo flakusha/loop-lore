@@ -785,6 +785,7 @@ export const ModelCapabilitiesSchema = t.Object({
   owned_by: t.Optional(t.String(),),
   user_override: t.Optional(t.Number(),),
   notes: t.Optional(t.String(),),
+  native_locale: t.Optional(t.String(),),
 },);
 
 // ── model_comparisons ────────────────────────────────────────────

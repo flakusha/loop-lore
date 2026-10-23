@@ -133,6 +133,7 @@ export interface ModelCapabilities {
   last_seen: string;
   created_at: string;
   updated_at: string;
+  native_locale: string | null;
 }
 
 // ── model_role_overrides ────────────────────────────────────────────
