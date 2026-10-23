@@ -84,12 +84,12 @@ describe("resolveDisplayLocale precedence", () => {
     },),).toBe("es",);
   });
 
-  test("unknown codes at a rung are skipped, not fatal", () => {
+  test("malformed codes at a rung are skipped, not fatal", () => {
     expect(resolveDisplayLocale({
       messageLocale: "klingon",
       chatGmConfig: null,
       chatStoryState: null,
-      userSettings: JSON.stringify({ contentLocale: "xx", },),
+      userSettings: JSON.stringify({ contentLocale: "xx!", },),
       uiLocale: "de",
     },),).toBe("de",);
 
@@ -102,9 +102,30 @@ describe("resolveDisplayLocale precedence", () => {
     },),).toBeNull();
   });
 
+  test("well-formed non-catalog codes win at the translation rungs", () => {
+    expect(resolveDisplayLocale({
+      messageLocale: "tlh",
+      chatGmConfig: null,
+      chatStoryState: null,
+      userSettings: null,
+      uiLocale: "de",
+    },),).toBe("tlh",);
+
+    expect(resolveDisplayLocale({
+      messageLocale: null,
+      chatGmConfig: null,
+      chatStoryState: null,
+      userSettings: JSON.stringify({ contentLocale: "xx", },),
+      uiLocale: "de",
+    },),).toBe("xx",);
+  });
+
   test("readUserContentLocale ignores unknown codes", () => {
     expect(readUserContentLocale(JSON.stringify({ contentLocale: "ja", },),),).toBe("ja",);
     expect(readUserContentLocale(JSON.stringify({ contentLocale: "nope", },),),).toBeNull();
+    // Well-formed tags outside the 10-entry UI registry are accepted and
+    // returned in canonical case.
+    expect(readUserContentLocale(JSON.stringify({ contentLocale: "en-us", },),),).toBe("en-US",);
   });
 });
 
