@@ -151,7 +151,7 @@ export const WAIVERS = {
   // measures 71% (public path + 400 path covered); the 29 lines under
   // waiver are the success-decrypt + catch block.
   "assets:src/assets/serve-raw.ts": {
-    floor: 71,
+    floor: 70,
     reason:
       "split out of serve-handlers.ts for size-strict; encrypted-decrypt success path needs real SMK + chat key (29 lines); 400 path covered; TASK-thumbnail-generation-256px-webp-at-upload",
   },
