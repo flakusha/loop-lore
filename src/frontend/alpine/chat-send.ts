@@ -166,7 +166,12 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
 
     this.$nextTick?.(() => this.scrollToBottom());
 
+    // One key per send, shared by header + body: the server's header cache
+    // (10s window) and the DB unique index (migration 045) then coalesce the
+    // same logical turn instead of minting independent keys per layer.
+    const idempotencyKey = crypto.randomUUID();
     const body = await buildSendBody(this, text, msgs, pendingAssets,);
+    body.idempotencyKey = idempotencyKey;
 
     this.isGenerating = true;
     try {
@@ -176,7 +181,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: jsonBody(body,),
-          idempotencyKey: true,
+          idempotencyKey,
         } as Parameters<typeof apiFetch>[1],
       );
 

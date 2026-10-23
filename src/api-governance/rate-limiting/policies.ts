@@ -61,6 +61,14 @@ export type RouteMatch = "prefix" | "suffix";
  */
 export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: RouteMatch,]> = [
   ["/api/v1/auth", authPolicy,],
+  // BUG-chat-sse-shares-generation-rate-bucket: the chat generation stream
+  // GET /api/v1/generation/stream/:chatId is a read on an open SSE, not a
+  // billable generation call. First-match wins, so this exception MUST stay
+  // above the /api/v1/generation prefix — otherwise the prefix claims the
+  // stream and ~5 turns/reconnects per minute exhaust the 20/min burst-5
+  // LLM/image budget. Prefix (not suffix): the path carries a trailing
+  // chatId, so endsWith can never match. Other generation/* stays generation.
+  ["/api/v1/generation/stream", chatPolicy,],
   ["/api/v1/generation", generationPolicy,],
   ["/api/v1/chats", chatPolicy,],
   // BUG-seen-poller-starves-shared-default-rate-limit-bucket: the seen
