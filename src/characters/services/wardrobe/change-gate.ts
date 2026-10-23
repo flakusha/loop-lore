@@ -22,6 +22,8 @@ export const OutfitChangeInitiator = {
   Npc: "npc",
   /** Location/world-rule binding (bypasses the gate). */
   WorldRule: "world_rule",
+  /** Item-subsystem transition (unequip/transfer/delete) — routes through the gate. */
+  Item: "item",
 } as const;
 /** One of {@link OutfitChangeInitiator}. */
 export type OutfitChangeInitiator = (typeof OutfitChangeInitiator)[keyof typeof OutfitChangeInitiator];
