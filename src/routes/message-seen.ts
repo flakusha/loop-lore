@@ -138,7 +138,7 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
           const effectiveState = state ?? "seen";
           const now = seenAtFor(effectiveState,);
 
-          // Atomic upsert backed by migration 072's unique index on
+          // Atomic upsert backed by migration 001's unique index on
           // (message_id, actor_id). Replaces the previous select-then-insert
           // sequence that raced on concurrent POSTs for the same row.
           //
