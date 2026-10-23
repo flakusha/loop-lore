@@ -47,6 +47,10 @@ export interface FanOutContent {
    * network attempt. Chat content must always set this.
    */
   chatId?: string;
+  /** Explicit chat-derived marker (default-deny applies even without chatId). */
+  chatDerived?: boolean;
+  /** Content kind discriminator; `"chat"` marks chat-derived content. */
+  kind?: "chat" | "blob";
 }
 
 /** One target that did not receive the content. */
@@ -164,10 +168,21 @@ export async function fanOutContent(
   const fit = await selectTargetsWithCapacity(database, candidates, probe.size,);
   const settled = await Promise.allSettled(fit.targets.map(async (target,) => {
     // Content-clearance gate: per-chat consent is checked per target BEFORE
-    // any reservation or push (default-deny; issue 41f4f83).
-    if (content.chatId !== undefined) {
+    // any reservation or push (default-deny). Chat-derived content MUST carry
+    // a chatId (or be explicitly marked chat-derived); otherwise it is denied.
+    const isChatDerived = content.chatId !== undefined ||
+      content.chatDerived === true ||
+      content.kind === "chat" ||
+      content.contentType === "chat";
+
+    if (isChatDerived) {
+      const chatId = content.chatId;
+      if (chatId === undefined) {
+        throw new Error("content clearance denied: chat-missing",);
+      }
+
       try {
-        await authorizeChatExport(database, { chatId: content.chatId, peerOrigin: target, },);
+        await authorizeChatExport(database, { chatId, peerOrigin: target, },);
       } catch (error) {
         const reason = error instanceof ChatClearanceError ? error.reason : "gate-error";
         throw new Error(`content clearance denied: ${reason}`, { cause: error, },);
@@ -193,24 +208,40 @@ export async function fanOutContent(
         cipher,
       },);
 
+      // TOCTOU close: re-check consent immediately before push; a revoke in
+      // the reserve->push window must not export once.
+      if (isChatDerived && content.chatId !== undefined) {
+        try {
+          await authorizeChatExport(database, { chatId: content.chatId, peerOrigin: target, },);
+        } catch (error) {
+          const reason = error instanceof ChatClearanceError ? error.reason : "gate-error";
+          throw new Error(`content clearance denied: ${reason}`, { cause: error, },);
+        }
+      }
+
       const verdict = await pushEnvelope(post, target, envelope, granted.reservationId,);
       await markOutboxDone(database, target, content.id,);
       return { target, verdict, };
     } catch (error) {
+      const isClearanceDenial = error instanceof Error && error.message.includes("content clearance denied",);
       // Queue a retry for ANY failure after the clearance gate — reserve,
       // seal, or push. Use the probe envelope when sealing failed (the
       // drain re-seals on every attempt anyway). The clearance-denied path
       // above is NOT queued: a consent denial is not retryable.
+
       const retryEnvelope = envelope ?? probe;
-      try {
-        await queueOutboxRetry(database, {
-          targetOrigin: target,
-          contentId: content.id,
-          envelope: retryEnvelope,
-          chatId: content.chatId,
-        },);
-      } catch {
-        // Outbox queueing failed — the original error is more important
+
+      if (!isClearanceDenial) {
+        try {
+          await queueOutboxRetry(database, {
+            targetOrigin: target,
+            contentId: content.id,
+            envelope: retryEnvelope,
+            chatId: content.chatId,
+          },);
+        } catch {
+          // Outbox queueing failed — the original error is more important
+        }
       }
 
       throw error;

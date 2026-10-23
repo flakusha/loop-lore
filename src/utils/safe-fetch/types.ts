@@ -37,9 +37,15 @@ export interface FetchAuth {
 }
 
 /** Options for safeFetch */
-export interface SafeFetchOptions extends Omit<RequestInit, "body" | "signal"> {
+export interface SafeFetchOptions extends Omit<RequestInit, "body" | "signal" | "redirect"> {
   /** Request body — will be safely JSON-stringified */
   body?: unknown;
+  /**
+   * Redirect policy. "manual" hands the 3xx response back to the caller
+   * without following it; "error" fails the request when the server answers
+   * with a redirect. Omitted keeps the runtime default (follow).
+   */
+  redirect?: "follow" | "manual" | "error";
   /** Timeout in milliseconds (default: 30_000) */
   timeout?: number;
   /** Maximum response body size in bytes (default: 10_485_760 = 10MB) */
