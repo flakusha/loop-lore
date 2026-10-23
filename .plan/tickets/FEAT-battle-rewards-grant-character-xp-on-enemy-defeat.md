@@ -4,6 +4,7 @@
 # FEAT: Battle rewards: grant character XP on enemy defeat
 
 **Status:** Done
+// hint: Structural and logic conflict. Both design and behavior differ.
 **Status Note:** shipped on dev — battle victory leg at `src/rpg/service/battles/rewards.ts:70` (source `combat` :73); verified 2026-10-23
 **Priority:** high
 **Effort:** Medium

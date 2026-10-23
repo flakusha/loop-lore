@@ -31,7 +31,8 @@ publication translator without rewriting it.
 Content translation today exists only at **message granularity**:
 `src/assistant/commands/translate.ts` (`runTranslate`, `buildTranslateDeps`,
 `shouldSkipTranslation`), `src/chat/auto-translate.ts`, and the
-`message_translations` table (`src/db/schema-core.ts:738`). One chat message at a
+`message_translations` table (`src/db/schema-core.ts` — unwired until the
+chat-first consumer lands, see the ground-state table below). One chat message at a
 time, one target language per chat, no cross-unit consistency, no vocabulary
 control.
 
@@ -40,7 +41,7 @@ control.
 | Component | Status | Location |
 | --------- | ------ | -------- |
 | UI string loader / locale catalog | ✅ Shipped, UI-scoped | `src/i18n/`, `src/routes/i18n.ts` — 818 keys × 10 locales; **not** a content translator |
-| Message-level translation | ✅ Shipped | `src/assistant/commands/translate.ts`, `src/chat/auto-translate.ts`, `message_translations` (`src/db/schema-core.ts:738`) |
+| Message-level translation | ⚠️ Shipped, **unwired store** | `src/assistant/commands/translate.ts`, `src/chat/auto-translate.ts`, `message_translations` (`src/db/schema-core.ts` `MessageTranslations`) — the table exists but has **no production readers/writers** yet; it stays unwired until the chat-first consumer (`FEAT-message-translations-chat-first`, epic-output-control-transforms) lands |
 | Glossary / term base | ❌ Absent | `grep -rniE '\b(glossary&#124;term[ ._-]?base&#124;translation memory&#124;tmx)\b' src/` → 0 matches |
 | Name preservation ("do not translate") | ❌ Absent | `grep -rniE 'do[ ._-]?not[ ._-]?translate' src/` → 0 matches |
 | Per-unit translation store | ❌ Absent | No `publication_translations` table; no per-unit `locale` column in `src/db/schema-*.ts` |
@@ -52,7 +53,7 @@ control.
 | Piece | Reuses | Ticket |
 | ----- | ------ | ------ |
 | Per-publication glossary table (pinned proper nouns, character names, coined terms) | `PinnedState` (`src/db/enums-core/flags.ts:8`) vocabulary; publication tables from `TASK-publication-artifact-schema.md` | `TASK-publication-glossary-term-base.md` |
-| Per-unit, per-locale translation rows | `message_translations` (`src/db/schema-core.ts:738`) as the shape to copy | `TASK-publication-unit-translation-store.md` |
+| Per-unit, per-locale translation rows | `message_translations` (`src/db/schema-core.ts`) as the shape to copy | `TASK-publication-unit-translation-store.md` |
 | Translation service with name preservation | `buildTranslateDeps` / `runTranslate` deps pattern (`src/assistant/commands/translate.ts`), `src/generation/providers/registry.ts` | `TASK-unit-translation-service.md` |
 | Batch pass over units | `defineJob` + `CronJobDef` (`src/cron/types.ts:18-29`, `src/cron/registry.ts`); catalog in `src/cron/jobs.ts` | `TASK-publication-translation-batch-cron.md` |
 | Reader that selects a locale | `LOCALE_REGISTRY` (`src/i18n/locale-registry.ts`); viewer shell from `TASK-publication-viewer-read-mode.md` | `TASK-publication-reader-locale-selector.md` |
