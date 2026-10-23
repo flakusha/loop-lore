@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Priority:** High
 **Effort:** Medium
 **Type:** Infrastructure Epic
@@ -128,3 +129,5 @@ app.use("*", (c, next,) => {
 
 - Redis preferred for high-throughput deployments; SQLite as the zero-dependency default
 - Burst handling via token bucket on top of steady-state sliding window
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 0e59522 (registry tip: 6373b431c Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-API-RATE-LIMITING done)

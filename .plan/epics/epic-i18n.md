@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Priority:** High
 **Effort:** Large
 **Type:** Feature Epic
@@ -107,3 +108,5 @@ Wire the settings locale switcher to actually re-render the UI.
 - [x] Settings locale switcher re-renders UI without page reload
 - [ ] `bun run check` passes (4 pre-existing failures unrelated to i18n)
 - [x] Existing tests still pass (all 37 i18n tests pass; 19 pre-existing unit failures unrelated)
+
+**Resolved:** 2026-10-23 registry-driven close: git issue c1bb124 (registry tip: 661db72cb Konstantin Fedotov Auto-closed: ticket EPIC-I18N marked done in index.json)

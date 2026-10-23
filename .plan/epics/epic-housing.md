@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Priority:** Medium
 **Effort:** Very High
 **Type:** Feature Epic
@@ -120,3 +121,5 @@ See `TASK-housing-frontend.md`. Dedicated housing interface:
 - `epic-housing-base-building.md` — Full base-building system design
 - `epic-frontend-backend-integration.md` — General frontend wiring index
 - `epic-nsfw-ui.md` — NSFW UI (housing NOT owned here)
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 5c7f4bb (registry tip: 6a67b2758 Konstantin Fedotov Close issue)

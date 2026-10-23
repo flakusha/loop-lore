@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** Confirmed Done 2026-10-23 — worktree delta (91c3da2a0, 36de8ddd7, 7f0ed0ecd) is interconnect/plan-artifact regeneration and epic closeout, not scope work.
 **Priority:** High — messenger parity gap
 **Tags:** chat, messenger, forward, drafts, scheduled, reminders
 

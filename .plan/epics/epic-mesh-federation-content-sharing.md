@@ -3,7 +3,8 @@
 
 # EPIC: Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Priority:** medium
 **Effort:** Very High
 **Type:** Architecture / Feature Epic

@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Implementation Landed (2026-09-25) — chat-level confirm dialog open
 **Priority:** Medium
 **Effort:** Medium
