@@ -37,6 +37,6 @@ Resolution: the banner/counts/success lines were folded into a single summary li
 ## Verification
 
 - `bun run scripts/check-fe-be-harmonization.ts`: no output, exit 0.
-- Probe: temporary `feFetch("/api/__harmony_probe_missing_route")` → `fe-be - harmony: 1 blocking finding(s), 428 advisory (469 FE calls / 903 BE routes / 172 schemas)` + the finding + `... +408 more advisory (see <report>)`, exit 1; probe deleted.
+- Probe: temporary `feFetch("/api/__harmony_probe_missing_route")` in `src/frontend/` → one summary line, one blocking finding at `file:line`, the advisory preview, the truncation pointer at the report path, exit 1; probe deleted (working tree clean afterwards).
 
 **Resolved:** 2026-10-23 registry-driven close: git issue a5f1d91 (registry tip: 6ebb0e90f Konstantin Fedotov Close issue)

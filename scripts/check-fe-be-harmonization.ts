@@ -8,15 +8,15 @@
  * Joins frontend API calls against Elysia routes + TypeBox schemas.
  * BLOCKING (`"fe-be - harmony"` in `scripts/check/parallel/gate-table.mjs`):
  * FE call with no BE route, method mismatch, unknown body/query key, and a
- * body literal missing a required key. The gate reports zero blocking
- * findings on dev (468 FE calls / 903 BE routes), so the "advisory while
- * triage is open" caveat no longer holds: factory-built (createEntityRoutes)
- * and guarded/group-mounted paths do not surface as FE-no-BE drift today.
+ * body literal missing a required key. The gate reports no blocking findings
+ * on dev, so the "advisory while triage is open" caveat no longer holds:
+ * factory-built (createEntityRoutes) and guarded/group-mounted paths do not
+ * surface as FE-no-BE drift today.
  * Revisit if a refactor makes them. BE-no-FE stays advisory — a route may
  * serve the TUI, curl, or a partner.
  *
  * Output contract: findings only, plus one summary line adjacent to them; a
- * clean run prints nothing (the check report's pass row carries the verdict).
+ * clean run prints nothing and exits 0.
  *
  * Run: `bun run scripts/check-fe-be-harmonization.ts`
  */
