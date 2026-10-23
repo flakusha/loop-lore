@@ -6,7 +6,7 @@
 **Epic:** epic-character-core-system
 **Related:** TASK-world-requires-stats-flag-and-point-budget-config, TASK-character-trait-catalog-for-gameplay-mechanics, TASK-character-stat-modifiers-and-trait-application-engine, TASK-character-stat-allocation-frontend-modal-and-edit-integration
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -22,3 +22,4 @@ Once the world declares a stat requirement and the catalog defines valid traits,
 
 Migration adds: (1) `character_stat_allocation(actor_id PK FK→actors, world_id FK→worlds, allocated_str/dex/con/int/wis/cha integer NOT NULL, allocated_at, allocated_by_user_id nullable)`; (2) `character_trait_assignments(actor_id FK, trait_id text, world_id FK, granted_at, granted_by_user_id nullable, PRIMARY KEY (actor_id, trait_id, world_id))` with trait_id verified against catalog at write-time. New `src/routes/character-stat-allocation.ts` mounted in `elysia-app.ts` exposes `GET /api/actors/:actorId/stat-allocation` (404 absent) and `PUT /api/actors/:actorId/stat-allocation` body `{ worldId, stats: StatBlock, traitIds: string[] }` validating against worlds `requires_stats / stat_point_budget / stat_min / stat_max` and `assertTraitIds`; 422 on budget overflow, out-of-range stat, unknown trait, wrong-scope trait; 200 on success. `POST/PUT /api/actors` and `PUT /api/actors/:id` reject (422) when the active world requires stats and no allocation row exists. Regenerate downstream artifacts (`bun run db:sync-types && bun run db:sync-manifest`). Validation uses Elysia `t` (TypeBox).
 
+**Resolved:** 2026-10-23 registry-driven close: git issue ff1f00c (registry tip: 46b6423bd Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHARACTER-STAT-ALLOCATION-B)
