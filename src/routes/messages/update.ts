@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { deleteMessageTranslations, } from "../../chat/message-translations";
 import { checkChatAccess, getMessageWithAccess, } from "../../chat/service";
 import {
   encryptMessageContent,
@@ -160,17 +161,26 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           storedKeyId = enc.keyId;
         }
 
-        await database
-          .updateTable("messages",)
-          .set({
-            content: storedContent,
-            key_id: storedKeyId,
-            content_plaintext: storedPlaintext,
-            content_encoding: contentEncoding as ContentEncoding,
-            edited_at: new Date().toISOString(),
-          },)
-          .where("id", "=", id,)
-          .execute();
+        // Stale invalidation: an edit makes every cached translation of the
+        // old content wrong. Rows are additive caches (retranslation is lazy),
+        // so they are hard-deleted in the SAME transaction as the content
+        // update — a failed edit leaves them untouched, a succeeded edit never
+        // leaves stale rows behind.
+        await database.transaction().execute(async (trx,) => {
+          await trx
+            .updateTable("messages",)
+            .set({
+              content: storedContent,
+              key_id: storedKeyId,
+              content_plaintext: storedPlaintext,
+              content_encoding: contentEncoding as ContentEncoding,
+              edited_at: new Date().toISOString(),
+            },)
+            .where("id", "=", id,)
+            .execute();
+
+          await deleteMessageTranslations(trx, id,);
+        },);
 
         log().info("Message edited", { messageId: id, userId, },);
         return jsonResponse({ id, content: storedContent, edited_at: true, },);
