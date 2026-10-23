@@ -43,6 +43,7 @@ export type Permission =
   | "admin.settings"
   | "admin.users"
   | "admin.system"
+  | "admin.model-locale"
   | "admin.character"
   | "admin.chat"
   | "admin.world"
@@ -55,7 +56,10 @@ export type Permission =
 /** Default permission set per role. Wildcards allowed ("*" = all, "chat.*" = namespace). */
 export const DEFAULT_PERMISSIONS: Record<UserRole, readonly string[]> = {
   admin: ["*",],
-  moderator: ["chat.*", "character.view", "world.view", "moderation.*", "user.view", "user.ban",],
+  // admin.model-locale: model-capabilities native-locale edits (the panel
+  // PATCH /api/admin/model-capabilities/:provider/:model). Admin/solo/tester
+  // hold "*" and inherit it.
+  moderator: ["chat.*", "character.view", "world.view", "moderation.*", "user.view", "user.ban", "admin.model-locale",],
   user: [
     "chat.create",
     "chat.join",

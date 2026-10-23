@@ -20,12 +20,18 @@
  * Content language is NEVER auto-detected — `shouldSkipTranslation`
  * remains the only content inspector (skip-only).
  *
+ * Known bottom-rung case (accepted, 2026-10-23): the rule-based reply path
+ * (`src/routes/messages/reply.ts`) passes NO provider identity into the
+ * eager trigger, so chain 2 bottoms out at chat `contentLanguage` → `en`
+ * there — `native_locale`/provider `locale` are invisible on that path.
+ *
  * @module chat/translation-target
  */
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
+import { normalizeBcp47Tag, } from "../i18n/bcp47";
 import { isLocale, } from "../i18n/locale-registry";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
 import { normalizeTargetLang, resolveTargetLang, } from "./auto-translate";
@@ -101,7 +107,9 @@ export function setChatContentLanguage(
 }
 
 /**
- * Read a validated catalog locale out of `users.settings.contentLocale`.
+ * Read a well-formed BCP-47 locale (canonicalized) out of
+ * `users.settings.contentLocale`. Free-form tags are accepted — the
+ * 10-entry UI registry is authoritative only for UI-locale concerns.
  * @param userSettings - raw `users.settings` value
  * @returns {string | null}
  */
@@ -109,7 +117,7 @@ export function readUserContentLocale(userSettings: string | null | undefined,):
   if (!userSettings) { return null; }
   const parsed = safeJsonParse<Record<string, unknown>>(userSettings,);
   const raw = parsed.ok ? parsed.value["contentLocale"] : undefined;
-  return typeof raw === "string" && isLocale(raw,) ? raw : null;
+  return typeof raw === "string" ? normalizeBcp47Tag(raw,) : null;
 }
 
 /**
@@ -120,8 +128,10 @@ export function readUserContentLocale(userSettings: string | null | undefined,):
  * @returns {string | null}
  */
 export function resolveDisplayLocale(inputs: DisplayLocaleInputs,): string | null {
+  // Translation rungs accept any well-formed BCP-47 tag (canonicalized);
+  // only the UI-locale rung is gated on the 10-entry registry.
   const message = inputs.messageLocale
-    ? normalizeTargetLang(inputs.messageLocale,)
+    ? normalizeBcp47Tag(inputs.messageLocale,)
     : null;
 
   if (message) { return message; }
@@ -171,7 +181,7 @@ export function readProviderLocale(config: Config, providerName: string,): strin
   );
 
   const locale = match?.locale;
-  return locale !== undefined && isLocale(locale,) ? locale : null;
+  return typeof locale === "string" ? normalizeBcp47Tag(locale,) : null;
 }
 
 /**
@@ -191,7 +201,13 @@ export async function resolveEffectiveNativeLocale(inputs: NativeLocaleInputs,):
       .where("model_id", "=", inputs.model,)
       .executeTakeFirst();
 
-    if (row?.native_locale && isLocale(row.native_locale,)) { return row.native_locale; }
+    // Canonicalize: well-formed free-form tags are honored (models speak
+    // more than the 10 UI-registry languages); malformed values drop the
+    // rung and the chain falls through.
+    if (row?.native_locale) {
+      const canonical = normalizeBcp47Tag(row.native_locale,);
+      if (canonical) { return canonical; }
+    }
   } catch {
     // Discovery gap: no capabilities row / DB hiccup → fall through the chain.
   }

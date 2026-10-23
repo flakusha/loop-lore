@@ -122,6 +122,22 @@ describe("message translation routes", () => {
     expect(res.status,).toBe(400,);
   });
 
+  test("POST with a well-formed non-catalog locale is accepted (not a 400)", async () => {
+    const res = await makeApp(fixture.db, ownerId,).handle(
+      new Request(`http://localhost/api/messages/${messageId}/translations`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ locale: "tlh", },),
+      },),
+    );
+
+    // Boundary accepts any well-formed BCP-47 tag; the outcome (stored row or
+    // heuristic skip) is a 200 body, never a validation rejection.
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { locale?: string; skipped?: boolean };
+    expect(body.locale === "tlh" || body.skipped === true,).toBe(true,);
+  });
+
   test("POST translates on demand and re-POST is idempotent; GET serves the variant", async () => {
     const app = makeApp(fixture.db, ownerId,);
     const post = (locale: string,): Promise<Response> =>

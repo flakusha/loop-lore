@@ -4,7 +4,8 @@
 /**
  * Tests for admin model-capabilities routes — capability gate around the
  * model_capabilities registry (list / resolve / patch override / delete
- * override). Auth: requireUserId → admin.system can().
+ * override). Auth: requireUserId → can(); GET/DELETE stay admin.system,
+ * PATCH locale edits use the moderator-held admin.model-locale.
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -101,6 +102,66 @@ describe("admin model-capabilities — auth gate", () => {
   test("GET list: moderator role is rejected", async () => {
     const app = makeApp(db, "moderator",);
     const res = await app.handle(new Request("http://localhost/api/admin/model-capabilities",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("PATCH override: moderator holds admin.model-locale and may set a native locale", async () => {
+    await seedCapability(db, "openai", "gpt-4o",);
+    const app = makeApp(db, "moderator",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/model-capabilities/openai/gpt-4o", {
+        method: "PATCH",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ nativeLocale: "EN-us", },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    // Free-form BCP-47 is accepted and stored in canonical case.
+    const row = await db.selectFrom("model_capabilities",)
+      .select("native_locale",)
+      .where("provider_id", "=", "openai",)
+      .where("model_id", "=", "gpt-4o",)
+      .executeTakeFirst();
+
+    expect(row?.native_locale,).toBe("en-US",);
+  });
+
+  test("PATCH override: plain user role is rejected (no admin.model-locale)", async () => {
+    await seedCapability(db, "openai", "gpt-4o",);
+    const app = makeApp(db, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/model-capabilities/openai/gpt-4o", {
+        method: "PATCH",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ nativeLocale: "en", },),
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
+  });
+
+  test("PATCH override: malformed nativeLocale is a 400", async () => {
+    await seedCapability(db, "openai", "gpt-4o",);
+    const app = makeApp(db, "moderator",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/model-capabilities/openai/gpt-4o", {
+        method: "PATCH",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ nativeLocale: "klingon!", },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("DELETE override keeps the admin gate: moderator is rejected", async () => {
+    await seedCapability(db, "openai", "gpt-4o",);
+    const app = makeApp(db, "moderator",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/model-capabilities/openai/gpt-4o", { method: "DELETE", },),
+    );
+
     expect(res.status,).toBe(403,);
   });
 });
