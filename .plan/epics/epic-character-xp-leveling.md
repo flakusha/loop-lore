@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** Core pipeline shipped on dev (LevelService + 5 award legs + ASI/decisions + progression REST API); pending surface: skill-challenge leg, skill fan-in/usage XP, per-world xp/skills gates, chat ASI wiring, panel buttons (verified 2026-10-23)
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -31,24 +31,33 @@ Make XP and leveling a live, in-world mechanic. Directive scope:
   with an affinity/algorithm-based auto-leveling mode (highest-usage governing
   ability, combat-alignment weighting) so autonomous play is never blocked.
 
-## Current State (verified 2026-10-11)
+## Current State (verified 2026-10-23)
 
-The math exists; the wiring does not.
+The math is wired: `LevelService.awardXpToActor` persists XP to `character_stats`, applies level-up benefits, and is called by 5 production legs. Remaining work is surface, not pipeline: skill-challenge XP leg, skill-row fan-in/usage XP, per-world xp/skills gates, chat ASI answer wiring, panel buttons.
 
 | Surface | Status | Where |
 | --- | --- | --- |
-| XP math (thresholds, award, level-from-XP) | Exists, unwired | `src/rpg/xp/calculation.ts` (`awardXp` :72, `levelFromXp` :52, `canLevelUp` :38, `xpToNextLevel` :24), `src/rpg/xp/constants.ts` (`XP_BY_LEVEL` :5, `MAX_LEVEL` :29, `ASI_LEVELS` [4,8,12,16,19] :55), `src/rpg/xp/sources.ts` (`XP_BY_CR` :9, `xpForEnemyDefeat` :43, `xpForQuest` :59, `xpForSkillChallenge` :80), `src/rpg/xp/levelup.ts` (`hpOnLevelUp` :15, `grantsAsi` :33, `asiRemaining` :42) |
+| XP math (thresholds, award, level-from-XP) | Shipped, wired | `src/rpg/xp/calculation.ts` (`awardXp` :72, `levelFromXp` :52, `canLevelUp` :38, `xpToNextLevel` :24), `src/rpg/xp/constants.ts` (`XP_BY_LEVEL` :5, `MAX_LEVEL` :29, `ASI_LEVELS` [4,8,12,16,19] :55), `src/rpg/xp/sources.ts` (`XP_BY_CR` :9, `xpForEnemyDefeat` :43, `xpForQuest` :59, `xpForSkillChallenge` :104), `src/rpg/xp/levelup.ts` (`hpOnLevelUp` :15, `grantsAsi` :33, `asiRemaining` :42) |
 | XP ledger table | Shipped | `xp_ledger` — `src/db/schema-core.ts:996` (id, actor_id, amount, source, description, reference_id, chat_id, created_at; migration `src/db/migrations/001_init.ts:2902-2960`) |
 | Ledger service | Shipped | `logXp` / `getXpHistory` — `src/rpg/service/xp.ts:22,52` |
-| Manual XP REST routes | Shipped | `src/routes/rpg/xp-loot.ts:47-156` — `POST /api/rpg/xp/award`, `GET /api/rpg/xp/history`, `POST /api/rpg/xp/level`, `POST /api/rpg/xp/next`; award requires caller-supplied `currentLevel`/`currentXp` and never touches `character_stats` |
-| Character progression state | Shipped (frozen) | `character_stats` — `src/db/schema-core.ts:488` (level, hp/max_hp, str/dex/con/int/wis/cha, hit_dice, xp, xp_to_next, combat_alignment); written once at creation via `src/rpg/service/character-stats.ts:45`; nothing updates level/xp afterwards |
+| LevelService (character-XP pipeline) | Shipped | `awardXpToActor` — `src/rpg/level/service.ts:49` (persists level/xp/xp_to_next to `character_stats`, applies `hpOnLevelUp`/`grantsAsi` via `src/rpg/level/award.ts:117-119`, writes `xp_ledger` audit row, stages level-up decisions) |
+| Organic stat growth | Shipped | `applyOrganicGrowth` — `src/rpg/level/growth.ts:75` (activity-weighted, capped at `ORGANIC_GROWTH_CAP` :30) |
+| ASI allocation + pending budget | Shipped | `allocateAsi` — `src/rpg/level/asi.ts:66`; staged/applied via `stageLevelUpDecision` / `resolveLevelUpDecision` — `src/rpg/level/decisions.ts:98,141` |
+| Autonomous level-up decisions / affinity auto-leveling | Shipped (service) | `autoAllocateAsi` — `src/rpg/level/decisions.ts:60`, `autoResolveIfAutonomous` — `src/rpg/level/decisions.ts:166`; chat `asi:` answer wiring pending (sibling F1 workstream) |
+| Progression REST API | Shipped (service routes) | `src/routes/rpg/progression.ts` — `POST /api/rpg/progression/:actorId/award` :141, `/asi` :170, `/level-up` :199; character-menu/panel buttons pending (sibling F2 workstream) |
+| Combat character XP | Shipped | battle victory leg calls `awardXpToActor` — `src/rpg/service/battles/rewards.ts:70` (source `combat` :73), driven from `src/rpg/service/battles/actions.ts:93` |
+| Quest completion XP | Shipped | `awardQuestCompletionXp` — `src/story/quest-engine/xp.ts:36` calls `awardXpToActor` :69 (source `quest` :72) |
+| Discovery XP | Shipped | `src/rpg/world-discovery/xp-leg.ts:34` calls `awardXpToActor` (source `discovery` :37) |
+| Travel XP | Shipped | `src/rpg/world-travel/migration.ts:57` calls `awardXpToActor` (source `travel` :60) |
+| Legacy awarders (pre-pipeline) | Shipped | `src/rpg/seduction/service/settle.ts:69-78` (source `nsfw_seduction`), `src/rpg/encounters/service/participant-legs.ts:100-112` (source `nsfw_encounter`); achievement `experience` reward type is an intentional no-op — `src/rpg/achievements/service/reward-apply.ts:36` wires only `story_points` |
+| Skill-challenge XP | Pending | `xpForSkillChallenge` — `src/rpg/xp/sources.ts:104` has no production caller (math + tests only: `src/rpg/xp/sources.test.ts:58`, `src/rpg/xp.test.ts:150`) |
+| Skill usage XP (skill + character XP on exercise) | Pending | `SkillsService.addXp` — `src/rpg/skills/service/progression.ts:19` reachable only via manual route `POST /api/rpg/skills/:id/xp` (`src/routes/rpg/skills-progression.ts:134`); no `addXp`/`SkillsService` caller in `src/rpg/interaction/` |
+| Skill fan-in into character_stats | Pending | character XP (`xp_ledger` + `character_stats`) and skill-row XP (`character_skills` via `SkillsService.addXp`) share no award path; no world-gated fan-out exists on dev |
+| Per-world rpg_xp gate | Pending | `RpgMechanic.Xp` (`src/rpg/service/world-gate.ts:71`) has zero production callers; `rpg_xp` is persisted and read into the config (`:61,131`) but never enforced at any award site |
+| Per-world rpg_skills flag + world UI | Pending on dev | no `rpg_skills` in `schema-story.ts`/`world-gate.ts`/`world-rpg-flags.ts` on dev; flag + world-creation/edit UI exist only in the sibling F2 workstream branch |
+| Manual XP REST routes | Shipped | `src/routes/rpg/xp-loot.ts:47-156` — `POST /api/rpg/xp/award`, `GET /api/rpg/xp/history`, `POST /api/rpg/xp/level`, `POST /api/rpg/xp/next` |
+| Character progression state | Shipped (live) | `character_stats` — `src/db/schema-core.ts:488`; level/xp/xp_to_next now updated by LevelService on every award (frozen-at-creation era ended) |
 | Skill XP (per-skill rows) | Shipped | `character_skills` — `src/db/schema-core.ts:466`; `addXp`/`specializeSkill` — `src/rpg/skills/service/progression.ts:19,81` (shared `SkillsService` path) |
-| Production XP awarders | NSFW/encounter only | `src/rpg/seduction/service/settle.ts:69-78` (source `nsfw_seduction`, consolation XP on failure), `src/rpg/encounters/service/participant-legs.ts:100-112` (source `nsfw_encounter`); achievement `experience` reward type is an intentional no-op — `src/rpg/achievements/service/reward-apply.ts:36` wires only `story_points` |
-| Combat character XP | Not Started | `xpForEnemyDefeat`/`XP_BY_CR` have zero production callers; battle resolution (`src/battle/resolution-integration/`) grants nothing |
-| Quest / skill-challenge / discovery / travel XP | Not Started | `xpForQuest`, `xpForSkillChallenge` unwired; `src/rpg/world-travel/` and `src/rpg/world-discovery/` contain no XP calls |
-| Organic stat growth | Not Started | `str..cha` immutable after creation |
-| Allocatable stat/level points | Not Started | no pending-ASI tracking, no allocation endpoint, no character/impersonation menu surface |
-| Autonomous level-up decisions / affinity auto-leveling | Not Started | — |
 
 Known hazards pinned by tests: skill `awardXp` accepts negative/NaN/Infinity XP
 (`src/rpg/seduction/service.test.ts:181-223`;
@@ -95,26 +104,24 @@ Two-way connections beyond the boundaries above:
 
 ## Unticketed Gaps
 
-- `logXp` never updates `character_stats` level/xp/xp_to_next — the ledger and
-  the character sheet are disconnected stores today.
-- No level-up application anywhere: `hpOnLevelUp`/`grantsAsi`/`asiRemaining`
-  have no production callers.
-- Battle resolution awards no character XP despite `xpForEnemyDefeat` existing.
+- RESOLVED (was: `logXp` never updates `character_stats`): LevelService now persists level/xp/xp_to_next on every award — `src/rpg/level/service.ts:49` via `src/rpg/level/award.ts:117-119`.
+- RESOLVED (was: no level-up application): `hpOnLevelUp`/`grantsAsi` applied in the award loop (`src/rpg/level/award.ts:117-119`); ASI budget staged/applied via `src/rpg/level/decisions.ts:98,141`.
+- RESOLVED (was: battle resolution awards no character XP): victory leg grants via `awardXpToActor` — `src/rpg/service/battles/rewards.ts:70` (source `combat` :73).
 - `xp_ledger.source` is a free string with no vocabulary and no idempotency key
   (contrast `quest_reward_ledger.ledger_key`, `src/rpg/loot/persist.ts:95-123`).
 
 ## Tasks
 
-- [ ] LevelService: apply awarded XP to `character_stats` and level-up benefits — `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md` (Not Started)
-- [ ] Battle rewards: grant character XP on enemy defeat — `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md` (Not Started)
-- [ ] XP sources for quests, skill challenges, discovery, and travel — `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md` (Not Started)
-- [ ] Automatic organic stat growth and allocatable ability points on level-up — `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md` (Not Started)
-- [ ] Level-up decision interface for autonomous LLM actors with affinity auto-allocation — `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md` (Not Started)
-- [ ] Progression API and character menu surface for XP, level, and stats in world — `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md` (Not Started)
-- [ ] Skill usage XP: award skill and character XP when skills are exercised — `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md` (Not Started)
-- [ ] Integrate skill progression with LevelService as one guarded award pipeline — `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md` (Not Started)
-- [ ] Gate XP and skill XP awards behind the per-world rpg_xp opt-in — `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md` (Not Started)
-- [ ] Per-world skills mechanic flag and world-creation opt-in UI — `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md` (Not Started)
+- [x] LevelService: apply awarded XP to `character_stats` and level-up benefits — `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md` (Done — shipped on dev: `src/rpg/level/service.ts:49`)
+- [x] Battle rewards: grant character XP on enemy defeat — `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md` (Done — shipped on dev: `src/rpg/service/battles/rewards.ts:70`)
+- [x] XP sources for quests, skill challenges, discovery, and travel — `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md` (Done — quest/discovery/travel legs shipped on dev: `src/story/quest-engine/xp.ts:36`, `src/rpg/world-discovery/xp-leg.ts:34`, `src/rpg/world-travel/migration.ts:57`; skill-challenge leg split out as pending follow-up)
+- [x] Automatic organic stat growth and allocatable ability points on level-up — `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md` (Done — shipped on dev: `src/rpg/level/growth.ts:75`, `src/rpg/level/asi.ts:66`)
+- [ ] Level-up decision interface for autonomous LLM actors with affinity auto-allocation — `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md` (In Progress — service shipped on dev: `src/rpg/level/decisions.ts:60,98,141,166`; blocked on sibling F1 chat `asi:` answer wiring, unlanded)
+- [ ] Progression API and character menu surface for XP, level, and stats in world — `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md` (In Progress — REST routes shipped on dev: `src/routes/rpg/progression.ts:141,170,199`; blocked on sibling F2 panel buttons, unlanded)
+- [ ] Skill usage XP: award skill and character XP when skills are exercised — `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md` (In Progress — work in branch `xp-reward-sources`)
+- [ ] Integrate skill progression with LevelService as one guarded award pipeline — `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md` (In Progress — work in branch `xp-level-pipeline`)
+- [ ] Gate XP and skill XP awards behind the per-world rpg_xp opt-in — `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md` (In Progress — work in branch `xp-reward-sources`; `RpgMechanic.Xp` has zero production callers on dev)
+- [ ] Per-world skills mechanic flag and world-creation opt-in UI — `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md` (In Progress — work in branch `xp-progression-surface`; no `rpg_skills` on dev)
 
 
 git issue: 3b5fc7b

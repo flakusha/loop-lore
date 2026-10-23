@@ -3,9 +3,11 @@
 
 # FEAT: Integrate skill progression with LevelService as one guarded award pipeline
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** character XP (`xp_ledger` + `character_stats`) and skill-row XP (`SkillsService.addXp`, `src/rpg/skills/service/progression.ts:19`) share no award path on dev; work in branch `xp-level-pipeline`; verified 2026-10-23
 **Priority:** medium
 **Effort:** Medium
+**Caveats:** data races — the fan-in must serialize the two stores in one transaction or a crash between them leaves the stores disagreeing
 **Epic:** character-xp-leveling
 **Tags:** rpg, xp, skills
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (the character-XP pipeline this extends), .plan/tickets/TASK-rpg-skill-points-on-level-up.md (skill-point currency reconciliation)

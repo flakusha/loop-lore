@@ -4,8 +4,10 @@
 # FEAT: XP sources for quests, skill challenges, discovery, and travel
 
 **Status:** Done
+**Status Note:** quest/discovery/travel legs shipped on dev — `src/story/quest-engine/xp.ts:36`, `src/rpg/world-discovery/xp-leg.ts:34`, `src/rpg/world-travel/migration.ts:57`; skill-challenge leg (`xpForSkillChallenge`, `src/rpg/xp/sources.ts:104`) has no production caller — follow-up pending; verified 2026-10-23
 **Priority:** high
 **Effort:** Medium
+**Caveats:** idempotency — grants are keyed per reference_id where the leg supports it; skill-challenge awards have no production path, so that source string is currently unused
 **Epic:** character-xp-leveling
 **Related:** .plan/epics/epic-quests-encounters.md (owns quest completion events this hooks), .plan/epics/epic-exploration-discovery.md (owns discovery/travel completion events this hooks), .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (grants persist through this service)
 
