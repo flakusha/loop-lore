@@ -2832,6 +2832,7 @@ export const SCHEMA = new SchemaManifest()
     last_seen: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    native_locale: col("text",),
   },)
   .table("model_comparison_runs", {
     id: col("text", { primaryKey: true, },),

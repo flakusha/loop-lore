@@ -8,6 +8,7 @@ import {
   resolveModelCapabilities,
   setModelOverride,
 } from "../../admin/model-capabilities";
+import { isLocale, } from "../../i18n/locale-registry";
 import { ErrorResponse, } from "../../validation/schemas";
 import {
   ErrorCode,
@@ -79,6 +80,23 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
         const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
 
+        // FEAT-model-native-locale-config: unknown locale codes are rejected
+        // at the boundary (isLocale) — never stored silently.
+        const patchBody = ctx.body as {
+          nativeLocale?: string | null;
+        };
+
+        if (
+          patchBody.nativeLocale != null &&
+          (typeof patchBody.nativeLocale !== "string" || !isLocale(patchBody.nativeLocale,))
+        ) {
+          return jsonError({
+            message: `Unknown nativeLocale: "${String(patchBody.nativeLocale,)}".`,
+            status: HttpStatus.BadRequest,
+            code: ErrorCode.BadRequest,
+          },);
+        }
+
         const ok = await setModelOverride(
           opts.database,
           ctx.params.provider,
@@ -90,6 +108,7 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
             supportsVision: ctx.body.supportsVision ?? undefined,
             supportsThinking: ctx.body.supportsThinking ?? undefined,
             notes: ctx.body.notes ?? undefined,
+            nativeLocale: patchBody.nativeLocale ?? undefined,
           },
         );
 
@@ -116,6 +135,7 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
           supportsVision: t.Optional(t.Union([t.Boolean(), t.Null(),],),),
           supportsThinking: t.Optional(t.Union([t.Boolean(), t.Null(),],),),
           notes: t.Optional(t.Union([t.String(), t.Null(),],),),
+          nativeLocale: t.Optional(t.Union([t.String(), t.Null(),],),),
         },),
         response: {
           200: t.Object({ capabilities: t.Any(), },),
