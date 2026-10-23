@@ -3,7 +3,7 @@
 
 # BUG: Workflow library img2img row has unresolved placeholders
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-comfyui-plugin
@@ -42,3 +42,5 @@ body. (A follow-up may revisit the collision rule.)
       drift (a test pins the equality).
 - [ ] An already-seeded database is repaired by the documented re-seed path.
 - [ ] Tests passing; `bun run typecheck` and `bun run lint` clean.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 15c0f40 (registry tip: ad673e8f7 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW)
