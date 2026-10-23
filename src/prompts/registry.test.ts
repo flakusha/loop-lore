@@ -1,4 +1,7 @@
 // src/prompts/registry.test.ts — Tests for the LLM text template registry
+//
+// Resource contract: fully in-memory and parallel-safe — no DB, no files,
+// no ports, no mutated module state or global stubs.
 
 import { describe, expect, test, } from "bun:test";
 import type { LlmTemplateConfig, } from "../config/sections/templates";
