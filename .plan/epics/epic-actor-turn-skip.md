@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Core shipped + GM absence contract landed (2026-09-25 → 2026-09-26) — event, route, cascade filter, composer UI, gate interlock, GM prompt contract (`src/assistant/prompt/sections/turn-skip-absence.ts`), cascade slot release telemetry (`cascade.slot.released`), beat-budget telemetry (`cascade.beat.consumed`), dedup telemetry (`cascade.dedup.skip`) all on dev
 **Priority:** Medium
 **Effort:** Small–Medium
@@ -125,3 +126,5 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 | UI — 'Skip turn' composer | `TASK-turn-skip-composer-ui.md` | yes | closed (landed 2026-09-25) |
 
 All 5 referenced tickets are filed on disk (verified 2026-09-25). The 2026-09-23 gap-audit was stale — this table supersedes it. The parallel duplicate-name tickets from the prior rename cycle (the event-and-persistence and cascade-integration variants; git issues 1e5e60b, c44f6c1) were consolidated into the canonical tickets above on 2026-09-25 — thin copies deleted, duplicate issues closed.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue eedc367 (registry tip: 337262c4f Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-ACTOR-TURN-SKIP done)

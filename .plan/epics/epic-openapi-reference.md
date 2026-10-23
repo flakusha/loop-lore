@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** merged epic-openapi-reference branch
 **Priority:** P1-High
 **Effort:** Medium
@@ -142,3 +143,5 @@ Two approaches for spec→VitePress markdown:
 ## Linked Tasks
 
 - TASK-openapi-reference.md
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 2e86802 (registry tip: 413e4d594 Konstantin Fedotov Auto-closed: ticket EPIC-OPENAPI-REFERENCE marked done in index.json)

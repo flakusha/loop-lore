@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** analysis complete, tickets scoped
 **Priority:** High
 **Effort:** Medium
@@ -215,3 +216,5 @@ linked to this epic:
       personas, notifications, nsfw-moderation, character-edit, world-detail, VN scene,
       battle, chat reactions/pins/sections, group-chat, story, i18n/export/error/responsive)
       + weak-spot hardening. Extends TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 0ca71f1 (registry tip: 5004f7a2c Konstantin Fedotov Auto-closed: ticket EPIC-E2E-INTEGRATION-TESTING marked done in index.j)

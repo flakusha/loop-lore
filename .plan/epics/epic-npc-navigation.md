@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Code+tests+schema done (migration 001/p07); UNWIRED
 **Priority:** High
 **Effort:** High
@@ -91,3 +92,5 @@ backed by `npc_states` + `location_states`, migration 001/p07) is code-complete 
 ZERO external importers. Resolution: mount it under `/api/rpg/npc-navigation`
 (move/pathfind/state) via the WIRED-7 mount pattern — tracked by
 `TASK-wire-npc-navigation-routes`.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 6bc8f5c (registry tip: aab9bfee3 Konstantin Fedotov Auto-closed: ticket EPIC-NPC-NAVIGATION marked done in index.json)

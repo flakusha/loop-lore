@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Core Complete — lifecycle/context/transitions shipped (chat-lifecycle merge `cd833142` + moderation hardening `658f5469`); discovery + moderation remainder open (see task list)
 **Priority:** High
 **Effort:** High
@@ -408,3 +409,5 @@ _Source: chat functionality audit (loop-lore), 2026-08-25._
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E12] /api/moderation/report endpoint, configurable auto-mod rules, mod dashboard tab
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 5156f22 (registry tip: 70be7a103 Konstantin Fedotov Auto-closed: ticket EPIC-CHAT-LIFECYCLE-MODERATION marked done in index)

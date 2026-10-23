@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Priority:** High
 **Effort:** High
 **Type:** Foundation Epic
@@ -107,3 +108,4 @@ The `actors` table is the unified participant model — every entity that sends 
 
 4-bucket grouping per the 2026-09-23 recommendation (option 2); each bucket carries self-contained acceptance tests and tracks the existing source layout (schema-core / schema-story / import / routes). The former `TASK-actors.md` 1-line stub is superseded by these four.
 
+**Resolved:** 2026-10-23 registry-driven close: git issue 043696c (registry tip: 1dd9c9548 Konstantin Fedotov Auto-closed: appended .md marker marks EPIC-ACTORS done)

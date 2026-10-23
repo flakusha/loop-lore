@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups
 **Priority:** Medium
 **Effort:** Large
@@ -139,3 +140,5 @@ The defects listed in "Reopened — review findings" were all fixed in worktree 
 - `BUG-middleware-requestid-dual-write-last-wins.md` — fixed: HTTP lifecycle owns the terminal `complete`; async generation only writes `progress`/`fail` when the row is not already `complete`.
 
 Backend `tsc` is clean and the middleware/idempotency/async tests pass. Epic marked complete again.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 696e348 (registry tip: 6e1ff9f42 Konstantin Fedotov Auto-closed: ticket EPIC-MIDDLEWARE-REQUEST-LIFECYCLE marked done in in)

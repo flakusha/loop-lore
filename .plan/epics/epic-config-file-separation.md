@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -86,3 +87,5 @@ configs/
 - `src/config/load.ts` — config loading
 - `src/config/schema.ts` — schema generation
 - `schemas/` — schema output directory
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 287626f (registry tip: 7894352c9 Konstantin Fedotov Auto-closed: ticket EPIC-CONFIG-FILE-SEPARATION marked done in index.js)

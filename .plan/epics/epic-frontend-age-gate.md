@@ -9,7 +9,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Reconciled 2026-10-19. This file previously read `Not Started` with TBD Scope and Tickets placeholders, papering over a subsystem that had already shipped end to end. Settled by reading the shipped files rather than by inference; `0fa6e8618` closed the last gap, the screen. The backend predates this branch and is credited, not claimed by this epic. The `Content Warnings` half of this title has no implementation and no spec anywhere — content gating belongs to the NSFW gate subsystem, which this epic depends on rather than builds — so treat it as historical naming, not an outstanding deliverable.
 **Priority:** Medium
 

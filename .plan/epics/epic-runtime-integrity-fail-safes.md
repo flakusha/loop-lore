@@ -3,7 +3,8 @@
 
 # EPIC: Runtime Integrity, Crash Recovery & Fail-Safes
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic
