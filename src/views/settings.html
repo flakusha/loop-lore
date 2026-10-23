@@ -192,6 +192,31 @@
                 </option>
               </template>
             </select>
+            <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+              Interface language (UI strings only).
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="content-locale-select">{{{t("settings.contentLanguage")}}}</label>
+            <select
+              class="form-select"
+              id="content-locale-select"
+              data-testid="content-locale-select"
+              x-model="contentLocale"
+              @change="onContentLocaleChange()"
+              x-bind:aria-label="t('settings.contentLanguage')"
+            >
+              <option value="">—</option>
+              <template x-for="loc in locales" :key="loc.id">
+                <option :value="loc.id" :data-lang="loc.direction" :selected="loc.id === contentLocale">
+                  <span x-text="loc.name"></span> (<span x-text="loc.nativeName"></span>)
+                </option>
+              </template>
+            </select>
+            <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+              Preferred language for chat/message content and translations. Separate from the interface language above.
+            </small>
           </div>
         </div>
       </div>

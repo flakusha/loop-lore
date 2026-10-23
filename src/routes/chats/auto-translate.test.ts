@@ -15,6 +15,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { autoTranslateText, buildTranslateDeps, resolveTargetLang, } from "../../chat/auto-translate";
+import { readChatContentLanguage, } from "../../chat/translation-target";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
 import { ChatParticipantRole, } from "../../db/enums";
@@ -117,8 +118,13 @@ describe("autoTranslateRoutes", () => {
     expect(res.status,).toBe(200,);
     const json = await res.json() as { data: { targetLang: string | null } };
     expect(json.data.targetLang,).toBe("es",);
-    const row = await db.selectFrom("chats",).select("story_state",).where("id", "=", CHAT_ID,).executeTakeFirst();
-    expect(resolveTargetLang(row?.story_state ?? null,),).toBe("es",);
+    // Alias contract: the unified gm_config.contentLanguage key is written
+    // and the legacy story_state fallback is cleared so it never disagrees.
+    const row = await db.selectFrom("chats",).select(["gm_config", "story_state",],).where("id", "=", CHAT_ID,)
+      .executeTakeFirst();
+
+    expect(readChatContentLanguage(row?.gm_config ?? null, row?.story_state ?? null,),).toBe("es",);
+    expect(resolveTargetLang(row?.story_state ?? null,),).toBeNull();
   });
 
   test("PATCH with an unknown code is a 400", async () => {

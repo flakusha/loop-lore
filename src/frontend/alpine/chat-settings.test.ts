@@ -241,7 +241,9 @@ describe("chatSettings.openChatSettings", () => {
     expect(host._chatSettingsThinkingVisibility,).toBe("collapsed",);
     expect(host._chatOnline,).toBe(true,);
     expect(host._customInstructions,).toBe("keep it short",);
-    expect(host._chatAutoTranslateLang,).toBe("de",);
+    // Legacy story_state key is the read-through fallback for the unified
+    // gm_config.contentLanguage field.
+    expect(host._chatContentLanguage,).toBe("de",);
 
     // GM fields
     expect(host._gmType,).toBe("hybrid",);
@@ -283,7 +285,7 @@ describe("chatSettings.openChatSettings", () => {
     expect(host._chatSettingsThinkingVisibility,).toBe("hidden",);
     expect(host._chatOnline,).toBe(false,);
     expect(host._customInstructions,).toBe("",);
-    expect(host._chatAutoTranslateLang,).toBe("",);
+    expect(host._chatContentLanguage,).toBe("",);
     expect(host._gmType,).toBe("llm",);
     expect(host._gmModel,).toBe("",);
     expect(host._assistantTemperature,).toBeNull();
@@ -389,19 +391,19 @@ describe("chatSettings.saveChatSettings", () => {
     expect(gm.vnLayout,).toBe("overlay",);
   });
 
-  test("clears the auto-translate target when no language is set", async () => {
+  test("clears the content language when no language is set", async () => {
     const host = saveHost();
     host._chatSettingsName = "New name";
-    host._chatAutoTranslateLang = "";
+    host._chatContentLanguage = "";
     await methods.saveChatSettings.call(host,);
     const translate = calls.find((c,) => c.url.includes("/auto-translate",));
     expect(translate?.method,).toBe("DELETE",);
   });
 
-  test("sets the auto-translate target when a language is set", async () => {
+  test("sets the content language when a language is set", async () => {
     const host = saveHost();
     host._chatSettingsName = "New name";
-    host._chatAutoTranslateLang = " fr ";
+    host._chatContentLanguage = " fr ";
     await methods.saveChatSettings.call(host,);
     const translate = calls.find((c,) => c.url.includes("/auto-translate",));
     expect(translate?.method,).toBe("PATCH",);

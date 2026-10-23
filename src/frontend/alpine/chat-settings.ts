@@ -66,7 +66,9 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _carriageEnabled: false,
   // Two-tier custom instructions — story tier (TASK-two-tier-custom-instructions)
   _customInstructions: "",
-  _chatAutoTranslateLang: "",
+  // Chat content language (FEAT-language-selection-three-level) — the single
+  // per-chat key (gm_config.contentLanguage, read-through autoTranslateLang).
+  _chatContentLanguage: "",
   toggleDebugView() {
     this._debugView = !this._debugView;
   },
@@ -116,8 +118,11 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._carriageEnabled = fields.carriageEnabled;
     this._customInstructions = chat?.custom_instructions ?? "";
     const storyState = chat?.story_state ? jsonParseOr<Record<string, unknown>>(chat.story_state, {},) : {};
-    const autoLang = storyState.autoTranslateLang;
-    this._chatAutoTranslateLang = typeof autoLang === "string" ? autoLang : "";
+    // Single chat content-language field; legacy story_state key is the
+    // read-through fallback for chats written before the unified key.
+    const contentLang = typeof config.contentLanguage === "string" ? config.contentLanguage : "";
+    const autoLang = typeof storyState.autoTranslateLang === "string" ? storyState.autoTranslateLang : "";
+    this._chatContentLanguage = contentLang || autoLang;
     this.loadActorModels(config,);
     await this.loadPromptTemplate();
     this.loadQuickReplies();
@@ -225,7 +230,10 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
 
-      const targetLang = this._chatAutoTranslateLang.trim();
+      // DEPRECATED alias contract: the endpoint writes the unified
+      // gm_config.contentLanguage key (and clears the legacy story_state
+      // fallback) server-side.
+      const targetLang = this._chatContentLanguage.trim();
       const translateRes = targetLang
         ? await apiFetch(`/api/v1/chats/${this.activeChat}/auto-translate`, {
           method: "PATCH",

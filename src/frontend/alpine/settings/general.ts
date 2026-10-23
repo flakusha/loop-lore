@@ -79,6 +79,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
             "birthDate",
             "theme",
             "locale",
+            "contentLocale",
             "provider",
             "apiEndpoint",
             "model",
@@ -184,6 +185,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
         birthDate: this.birthDate,
         theme: this.theme,
         locale: this.locale,
+        contentLocale: this.contentLocale,
       },);
     },
 
@@ -198,6 +200,16 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
 
       document.cookie = `ll_locale=${this.locale}; path=/; SameSite=Lax; max-age=31536000`;
       globalThis.location.reload();
+    },
+
+    /**
+     * Handle a content-locale switch: persists users.settings.contentLocale
+     * only — the UI-locale cookie is deliberately untouched (separate
+     * concern; FEAT-language-selection-three-level).
+     * @returns {Promise<void>}
+     */
+    async onContentLocaleChange() {
+      await this.persistSettings({ contentLocale: this.contentLocale, },);
     },
 
     /**
