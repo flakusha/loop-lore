@@ -22,6 +22,7 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers.js";
 import { answerQuestion, } from "../questions/index.js";
+import { applyLevelUpAnswer, } from "../questions/level-up.js";
 import {
   autoAllocateAsi,
   autoResolveIfAutonomous,
@@ -191,6 +192,18 @@ describe("resolveLevelUpDecision", () => {
     const actor = await seedActor("No Opinion",);
     const resolution = await resolveLevelUpDecision(db, actor,);
     expect(resolution.spends,).toHaveLength(2,);
+  });
+});
+
+describe("applyLevelUpAnswer", () => {
+  test("unknown option leaves the budget pending", async () => {
+    const actor = await seedActor("LevelUp Unknown",);
+    const effectsApplied: string[] = [];
+    const messageParts: string[] = [];
+    await applyLevelUpAnswer(db, "q-unknown", actor, "asi:bogus", effectsApplied, messageParts,);
+    expect(effectsApplied,).toHaveLength(0,);
+    expect(messageParts,).toHaveLength(0,);
+    expect((await rowOf(actor,)).pending_asi,).toBe(2,);
   });
 });
 
