@@ -20,29 +20,36 @@
  * id (owner check first, chat key when the asset is encrypted) and uploads
  * the bytes; a caller-supplied path is never read.
  */
-import { type Static, Type, } from "@sinclair/typebox";
+import { t, } from "elysia";
+import type { Static, } from "@sinclair/typebox";
 import { Value, } from "@sinclair/typebox/value";
 
 /** Run request body. */
-export const ImageEditRunBody = Type.Object({
-  template_id: Type.String({ minLength: 1, maxLength: 200, description: "Id of the workflow template to run.", },),
-  backend: Type.String({
+export const ImageEditRunBody = t.Object({
+  template_id: t.String({ minLength: 1, maxLength: 200, description: "Id of the workflow template to run.", },),
+  backend: t.String({
     minLength: 1,
     maxLength: 32,
     description: "Backend that executes the template — `comfyui` or `sd-server`.",
   },),
-  params: Type.Optional(
-    Type.Record(
-      Type.String(),
-      Type.Unknown(),
+  params: t.Optional(
+    t.Record(
+      t.String(),
+      t.Unknown(),
       {
         description:
           "Template parameters. A parameter whose template type is `image` carries the asset id of an image the caller owns — not bytes and not a path — on the ComfyUI backend; the provider resolves the id and uploads the image to ComfyUI itself. The sd-server backend takes a base64 payload instead.",
       },
     ),
   ),
-  chatId: Type.Optional(Type.String({ maxLength: 64, },),),
-  messageId: Type.Optional(Type.String({ maxLength: 64, },),),
+  chatId: t.Optional(t.String({
+    maxLength: 64,
+    description: "Chat the run belongs to. An encrypted image is decrypted with this chat's key.",
+  },),),
+  messageId: t.Optional(t.String({
+    maxLength: 64,
+    description: "Message the run is attached to, when the caller links it to one.",
+  },),),
 },);
 
 /** The run body, as the schema types it. */
