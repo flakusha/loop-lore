@@ -11369,6 +11369,12 @@
       "source": ".plan/tickets/TASK-actor-availability-frontend.md"
     }
   ],
+  "src/components/character/emotion-avatars-panel.html": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
   "src/components/character/entities-panel.html": [
     {
       "kind": "ticket",

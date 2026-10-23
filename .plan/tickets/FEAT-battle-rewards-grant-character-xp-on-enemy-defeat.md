@@ -3,7 +3,7 @@
 
 # FEAT: Battle rewards: grant character XP on enemy defeat
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** character-xp-leveling
@@ -22,3 +22,5 @@ Nothing in `src/battle/` or `src/rpg/combat/` awards character XP today — `xpF
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue c284d3d (registry tip: 58554aeeb Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-BATTLE-REWARDS-GRANT-CHARAC)

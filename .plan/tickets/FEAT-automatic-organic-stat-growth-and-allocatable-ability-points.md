@@ -3,7 +3,7 @@
 
 # FEAT: Automatic organic stat growth and allocatable ability points on level-up
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Epic:** character-xp-leveling
@@ -22,3 +22,5 @@ There is no path from XP to ability scores: `character_stats.str..cha` are set o
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue f58bb71 (registry tip: 3203ea9e1 Konstantin Fedotov Auto-closed: appended .md marker marks FEAT-AUTOMATIC-ORGANIC-STAT-GROW)
