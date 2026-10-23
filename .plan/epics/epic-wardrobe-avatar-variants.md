@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** shipped 2026-10-01 — schema, selection ladder v2, outfit-scoped generation, routes, manager UI, story/GM hooks; loadout bridge flag is read-side, default off
 **Status Note:** Done (registry-driven close 2026-10-09 — git issue 2cf55b8 closed with the .md done-marker appended)
