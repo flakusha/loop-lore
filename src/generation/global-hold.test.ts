@@ -99,6 +99,16 @@ describe("isGenerationHeld", () => {
     await setConfig(testDb, GENERATION_PAUSED_KEY, "false", "test hold",);
     await expect(isGenerationHeld(testDb,),).resolves.toBe(false,);
   });
+
+  test("fail-opens when the KV read throws", async () => {
+    const broken = {
+      selectFrom: () => {
+        throw new Error("db down",);
+      },
+    } as unknown as Kysely<DB>;
+
+    await expect(isGenerationHeld(broken,),).resolves.toBe(false,);
+  });
 });
 
 describe("validateGenerateRequest - global hold", () => {
