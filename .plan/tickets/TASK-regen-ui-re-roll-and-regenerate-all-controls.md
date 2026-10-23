@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Emotion-avatar re-roll + regenerate-all UI controls
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-avatar-regeneration-control
