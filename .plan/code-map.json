@@ -1908,6 +1908,10 @@
   "src/assets/service/persist-generated.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-avatar-dogfood.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-technical-comparison-charts.md"
     },
     {
@@ -1921,6 +1925,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asset-provenance-ledger-for-generated-assets.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md"
     },
     {
       "kind": "ticket",
@@ -2046,6 +2054,10 @@
     }
   ],
   "src/assets/service/thumbnail.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-avatar-dogfood.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-silent-catch-blocks-swallow-failures-with-no-log.md"
@@ -7515,6 +7527,10 @@
   ],
   "src/characters/seed/avatar.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-avatar-dogfood.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
     },
@@ -7528,6 +7544,10 @@
     }
   ],
   "src/characters/seed/templates.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-avatar-dogfood.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-skills-professions-config.md"
@@ -13842,6 +13862,10 @@
   "src/config/sections/characters/defaults.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-avatar-dogfood.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-skills-professions-config.md"
     },
     {
@@ -13851,6 +13875,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-dogfood-promote-defaults.md"
     },
     {
       "kind": "ticket",
@@ -53261,6 +53289,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md"
     },
     {
       "kind": "ticket",
