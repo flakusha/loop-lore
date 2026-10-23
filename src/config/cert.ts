@@ -5,8 +5,9 @@
  * Self-signed TLS certificate generation.
  *
  * On first run (or when cert files are missing), generates ephemeral
- * development certificates using OpenSSL. Falls back gracefully if
- * OpenSSL is not available — HTTP-only operation continues.
+ * development certificates using OpenSSL. Returns null when the
+ * certificates cannot be provisioned — the caller decides whether to
+ * continue without HTTPS.
  *
  * Certificates are valid for 365 days and stored at the configured paths.
  */
@@ -84,7 +85,7 @@ export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
     : "Install OpenSSL or configure certs manually.";
 
   getTlsLog().warn(`Failed to generate certificate. ${platformHint}`,);
-  getTlsLog().warn("Falling back to HTTP only.",);
+  getTlsLog().warn("TLS certificates unavailable — HTTPS cannot be served.",);
 
   return null;
 }

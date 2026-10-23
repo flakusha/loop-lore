@@ -28,6 +28,10 @@ let currentConfig: Record<string, unknown> = {
 
 const processOnCalls: [string, (...args: unknown[]) => void,][] = [];
 
+// Gate for the plugin loader: a test can hold `loadAllPlugins` open to observe
+// the boot window (traffic must stay gated until the plugins are loaded).
+let pluginGate: Promise<void> | undefined;
+
 // ── Module mocks (everything except "bun") ──────────────────
 
 if (ISOLATED) {
@@ -78,7 +82,13 @@ if (ISOLATED) {
     updateRuntimeNsfwConfig: () => {},
   }),);
 
-  mock.module("../plugins", () => ({ loadAllPlugins: async () => {}, unloadAllPlugins: async () => {}, }),);
+  mock.module("../plugins", () => ({
+    loadAllPlugins: async () => {
+      if (pluginGate) { await pluginGate; }
+    },
+    unloadAllPlugins: async () => {},
+  }),);
+
   mock.module("../seeding", () => ({
     applyEnvironmentOverrides: (cfg: unknown,) => cfg,
     seedConfiguredContent: async () => {},
@@ -97,7 +107,10 @@ if (ISOLATED) {
   mock.module("./boot-seed", () => ({ seedDynamicContent: async () => {}, }),);
   mock.module("./handler", () => ({ createRequestHandler: () => fakeHandler, handleApiRequest: fakeHandler, }),);
   mock.module("./init-asset-compression", () => ({ initAssetCompression: async () => {}, }),);
-  mock.module("./init-background-services", () => ({ initBackgroundServices: async () => {}, }),);
+  mock.module("./init-background-services", () => ({
+    initBackgroundServices: async () => ({ stop: () => {}, }),
+  }),);
+
   mock.module("./static-files", () => ({ createNonApiHandler: () => fakeHandler, }),);
 
   // Dynamic imports inside start()
@@ -138,6 +151,16 @@ async function fetchWithRetry(url: string, retries = 20,): Promise<Response> {
   throw new Error(`server did not start at ${url}`,);
 }
 
+/** Wait until `condition` holds — the shutdown path runs several async steps. */
+async function waitFor(condition: () => boolean,): Promise<void> {
+  for (let i = 0; i < 100; i++) {
+    if (condition()) { return; }
+    await new Promise((resolve,) => setTimeout(resolve, 10,));
+  }
+
+  throw new Error("condition not met",);
+}
+
 // ── process.on capture ───────────────────────────────────────
 
 const originalOn = process.on.bind(process,);
@@ -175,5 +198,77 @@ describeOrSkip("start", () => {
     expect(events,).toContain("exit",);
     expect(events,).toContain("uncaughtException",);
     expect(events,).toContain("unhandledRejection",);
+  });
+
+  test("gates traffic with 503 until the plugins are loaded", async () => {
+    const port = findFreePort();
+    currentConfig = { ...currentConfig, server: { port, host: "127.0.0.1", tls: undefined, }, };
+    let release: () => void = () => {};
+    pluginGate = new Promise<void>((resolve,) => {
+      release = resolve;
+    },);
+
+    const started = start();
+    try {
+      // The listener is up but the boot work is not done → traffic is refused.
+      const booting = await fetchWithRetry(`http://127.0.0.1:${port}/`,);
+      expect(booting.status,).toBe(503,);
+
+      release();
+      pluginGate = undefined;
+      await started;
+
+      const ready = await fetchWithRetry(`http://127.0.0.1:${port}/`,);
+      expect(ready.status,).toBe(200,);
+      expect(await ready.text(),).toBe("ok",);
+    } finally {
+      pluginGate = undefined;
+      release();
+      await started.catch(() => {},);
+    }
+  });
+
+  test("fails closed when the configured TLS certs cannot be provisioned", async () => {
+    const port = findFreePort();
+    currentConfig = {
+      ...currentConfig,
+      server: {
+        port,
+        host: "127.0.0.1",
+        tls: { key: "/tmp/loop-lore-test/key.pem", cert: "/tmp/loop-lore-test/cert.pem", },
+      },
+    };
+
+    await expect(start(),).rejects.toThrow(/TLS certificates could not be provisioned/,);
+  });
+
+  test("exits non-zero on a crash-path shutdown and zero on a signal shutdown", async () => {
+    const port = findFreePort();
+    currentConfig = { ...currentConfig, server: { port, host: "127.0.0.1", tls: undefined, }, };
+    await start();
+
+    const exitCodes: number[] = [];
+    const originalExit = process.exit;
+    const stubExit = (code?: number,): void => {
+      exitCodes.push(code ?? 0,);
+    };
+
+    process.exit = stubExit as unknown as typeof process.exit;
+
+    try {
+      const crash = processOnCalls.find(([event,],) => event === "uncaughtException");
+      expect(crash,).toBeDefined();
+      crash?.[1](new Error("boom",),);
+      await waitFor(() => exitCodes.length > 0);
+      expect(exitCodes.at(-1,),).toBe(1,);
+
+      const terminate = processOnCalls.find(([event,],) => event === "SIGTERM");
+      expect(terminate,).toBeDefined();
+      terminate?.[1]();
+      await waitFor(() => exitCodes.length > 1);
+      expect(exitCodes.at(-1,),).toBe(0,);
+    } finally {
+      process.exit = originalExit;
+    }
   });
 },);

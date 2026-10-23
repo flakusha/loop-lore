@@ -102,7 +102,7 @@ On violation: `429 Too Many Requests` with `ErrorCode.TOO_MANY_REQUESTS`.
 
 ## HTTPS Support
 
-- Local HTTPS via self-signed cert (auto-generated on first run via OpenSSL, falls back gracefully)
+- Local HTTPS via self-signed cert (auto-generated on first run via OpenSSL; when the certs cannot be provisioned the server fails closed instead of serving plaintext)
 - Remote HTTPS via reverse proxy (recommended) or bun's TLS options
 - Config: `TLS_KEY` / `SERVER_TLS_KEY`, `TLS_CERT` / `SERVER_TLS_CERT` env vars or `server.tls.key`/`server.tls.cert` in config file
 - Auto-generation runs when cert files are missing and OpenSSL is available

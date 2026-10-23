@@ -6,32 +6,46 @@
 // (llama.cpp / llama-swap / sd.cpp). The server manager and logger are
 // fakes; the character seed runs against a real in-memory database.
 
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { Config, } from "../config/schema";
 import { createConfigSchema, } from "../config/schema-class";
+import type { Db, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getProvider, listProviders, } from "../generation";
 import { unregisterProvider, } from "../generation/providers/registry";
 import type { Logger, } from "../logger/types";
+import {
+  getRegexTelemetrySnapshot,
+  recordRegexCall,
+  resetRegexTelemetry,
+  setRegexTelemetryEnabled,
+} from "../regex/telemetry";
 import type { ServerExternalManager, } from "../services/server-external-manager";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { initBackgroundServices, } from "./init-background-services";
+
+/** Drain pending promise microtasks (the flush awaits the telemetry sink). */
+async function flushMicrotasks(): Promise<void> {
+  for (let i = 0; i < 16; i++) { await Promise.resolve(); }
+}
 
 // ── Fakes ────────────────────────────────────────────────────
 
 interface LogCall {
   level: string;
   message: unknown;
+  /** Extra args (error, meta) the log call carried. */
+  args: unknown[];
 }
 
 function makeLogger(): { logger: Logger; calls: LogCall[] } {
   const calls: LogCall[] = [];
-  const rec = (level: string,) => (message: unknown,): void => {
-    calls.push({ level, message, },);
+  const rec = (level: string,) => (message: unknown, ...args: unknown[]): void => {
+    calls.push({ level, message, args, },);
   };
 
   const logger = {
@@ -60,11 +74,13 @@ function makeManager(behavior: {
   llamaCpp?: { port: number; pid: number } | null;
   llamaSwap?: { port: number; pid: number } | null;
   sdCpp?: { port: number; pid: number } | null;
+  llamaCppError?: Error;
 },): { manager: ServerExternalManager; calls: ManagerCalls } {
   const calls: ManagerCalls = { llamaCpp: [], llamaSwap: [], sdCpp: [], };
   const manager = {
     startLlamaCpp: async (cfg: unknown,) => {
       calls.llamaCpp.push(cfg,);
+      if (behavior.llamaCppError) { throw behavior.llamaCppError; }
       return behavior.llamaCpp ?? null;
     },
     startLlamaSwap: async (cfg: unknown,) => {
@@ -183,6 +199,67 @@ describe("initBackgroundServices", () => {
     expect(calls.some((c,) => c.level === "info" && String(c.message,).includes("character templates seeded",)),).toBe(
       false,
     );
+  });
+
+  test("logs a rejected background-init promise with the job name and the error", async () => {
+    const { logger, calls, } = makeLogger();
+    const { manager, } = makeManager({ llamaCppError: new Error("llama boom",), },);
+    const config = makeConfig({
+      charactersEnabled: false,
+      autoStart: { llamaCpp: { enabled: true, modelPath: "/models/m.gguf", port: 9011, }, },
+    },);
+
+    await initBackgroundServices(db, config, logger, manager,);
+
+    const failure = calls.find((c,) => c.level === "error" && String(c.message,).includes("background init failed",));
+    expect(failure,).toBeDefined();
+    expect(failure?.args?.[1],).toEqual({ module: "server", job: "llama.cpp", },);
+    expect(failure?.args?.[0],).toMatchObject({ message: expect.stringContaining("llama boom",), },);
+  });
+
+  test("stop() clears the regex telemetry flush timer", async () => {
+    const { logger, } = makeLogger();
+    const { manager, } = makeManager({},);
+    const previousPrecision = process.env.TELEMETRY_REGEX_PRECISION;
+    process.env.TELEMETRY_REGEX_PRECISION = "1";
+    vi.useFakeTimers();
+    try {
+      // Fake telemetry sink: the flush has to resolve without real I/O so the
+      // counter reset is observable in microtasks.
+      const fakeDb = {
+        insertInto: () => ({ values: () => ({ execute: async () => undefined, }), }),
+      } as unknown as Db;
+
+      const handle = await initBackgroundServices(
+        fakeDb,
+        makeConfig({ charactersEnabled: false, autoStart: undefined, },),
+        logger,
+        manager,
+      );
+
+      resetRegexTelemetry();
+      recordRegexCall("test:pattern", true,);
+      vi.advanceTimersByTime(60_000,);
+      await flushMicrotasks();
+      // The flush ran: the counters were written and reset.
+      expect(getRegexTelemetrySnapshot(),).toHaveLength(0,);
+
+      handle.stop();
+      recordRegexCall("test:pattern", true,);
+      vi.advanceTimersByTime(60_000,);
+      await flushMicrotasks();
+      // The timer is gone: the counters survive, i.e. no flush happened.
+      expect(getRegexTelemetrySnapshot(),).toHaveLength(1,);
+    } finally {
+      vi.useRealTimers();
+      setRegexTelemetryEnabled(false,);
+      resetRegexTelemetry();
+      if (previousPrecision === undefined) {
+        delete process.env.TELEMETRY_REGEX_PRECISION;
+      } else {
+        process.env.TELEMETRY_REGEX_PRECISION = previousPrecision;
+      }
+    }
   });
 
   test("auto-starts llama.cpp and registers the provider under its alias", async () => {

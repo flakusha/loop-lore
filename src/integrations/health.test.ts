@@ -168,4 +168,27 @@ describe("AdapterRateLimiter", () => {
       expect(limiter.consume("irc", "irc", "#chan",).ok,).toBe(true,);
     }
   });
+
+  test("evicts the least-recently-used bucket once the tracked-bucket cap is exceeded", () => {
+    const clock = makeClock();
+    const limiter = createAdapterRateLimiter({
+      protocols: { email: { capacity: 1, refillMs: 60_000, }, },
+      now: clock.now,
+      maxBuckets: 3,
+    },);
+
+    // "old" burns its budget; two more senders arrive, then a third one
+    // pushes the map past the cap.
+    expect(limiter.consume("email", "email", "old",).ok,).toBe(true,);
+    expect(limiter.consume("email", "email", "old",).ok,).toBe(false,);
+    expect(limiter.consume("email", "email", "mid",).ok,).toBe(true,);
+    expect(limiter.consume("email", "email", "new",).ok,).toBe(true,);
+    expect(limiter.consume("email", "email", "extra",).ok,).toBe(true,);
+
+    // "old" was the least-recently-used bucket → it was dropped, so its
+    // exhausted budget is gone and the sender starts over.
+    expect(limiter.consume("email", "email", "old",).ok,).toBe(true,);
+    // A bucket that survived the eviction keeps its exhausted budget.
+    expect(limiter.consume("email", "email", "new",).ok,).toBe(false,);
+  });
 });
