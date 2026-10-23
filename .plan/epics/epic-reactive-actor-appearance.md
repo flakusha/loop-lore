@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 **Status:** In Progress
-**Status Note:** drafted 2026-10-18 (planning branch `character-outfit-wardrobe`) as the **successor** to `epic-wardrobe-avatar-variants.md`, incorporating four user decisions (identity drift accepted + strategy selector; framing discriminator as a JSON tag member; wardrobe Non-Goals deliberately reopened; multi-actor attribution built now). Amended 2026-10-23: stale citations corrected (7), phase-1 read path confirmed shipped (defects 1 + 2 resolved), `messages.outfit_id` **fill-at-write-time** decision recorded, 3 new work items + 2 BUG tickets filed.
+**Status Note:** drafted 2026-10-18 (planning branch `character-outfit-wardrobe`) as the **successor** to `epic-wardrobe-avatar-variants.md`, incorporating four user decisions (identity drift accepted + strategy selector; framing discriminator as a JSON tag member; wardrobe Non-Goals deliberately reopened; multi-actor attribution built now).
+2026-10-23 refresh: an audit re-verified every citation in this epic against dev `c0309d37b`. Defects 1 and 2 are RESOLVED (see Motivation) and the P0 outfit-aware resolution shipped server-side. The `messages.outfit_id` column exists (migration 070) but is inert — every production writer still inserts null — so this epic now DECIDES TO FILL it rather than drop it: the stored per-message snapshot wins over the live resolve. Two blocking product bugs were found and filed as tickets (workflow-library img2img seed; image-edit ComfyUI upload), and five new tickets were added (three feature, two bug).
 **Priority:** high
 **Effort:** Large
 **Type:** Feature Epic
@@ -15,8 +16,9 @@
 ## Summary
 
 The wardrobe backbone shipped (`epic-wardrobe-avatar-variants.md`, `Status: Done`,
-closed 2026-10-09) but its read path is **dead**: nothing in the chat render path
-resolves an outfit, and nothing infers appearance from prose. This epic makes an
+closed 2026-10-09) but its read path is **live**: the message read route resolves
+each row's avatar server-side through the single wardrobe ladder owner, so what is
+still missing is prose-driven inference, not resolution. This epic makes an
 actor's rendered appearance a function of what the assistant just narrated —
 emotion, outfit, pose, framing, held item — and, where a new variant must be
 **drawn**, adds the identity machinery (`seed`, `negativePrompt`, an img2img
@@ -28,23 +30,31 @@ stays `Done` and untouched. This file deliberately reopens two of its Non-Goals
 
 ## Motivation
 
-Seven defects exist today, independent of any new feature:
+Seven defects were recorded on 2026-10-18. Defects 1 and 2 are RESOLVED in dev as of 2026-10-23 (resolution noted inline below); the rest are open.
 
-1. **RESOLVED (2026-10-23) — the outfit axis reaches render.** The defect was
-   that `avatarForMessage` (`src/frontend/alpine/mood/avatars.ts:155-168`) took
-   a message shaped `{ role?, emotion? }` and that `selectAvatar`
-   (`src/characters/services/avatar-service/selection.ts:138-153`) had no
-   frontend caller. Resolution now happens **server-side at read time**:
-   `src/routes/messages/read.ts:79-87` calls `attachMessageAvatars`
-   (`src/characters/services/wardrobe/message-avatar.ts:112-187`), which
-   resolves the outfit through `resolveOutfit` and delegates the ladder
-   wholesale to `selectAvatar` (`:152-171`), annotating the row with
-   `msg.avatar_asset_id` (`:174`). The call is wrapped in try/catch, so a
-   wardrobe fault can never cost the reader their page.
-2. **RESOLVED (2026-10-23) — the chat-header outfit switcher is no longer inert.**
-   The override it writes (`src/frontend/alpine/chat-outfit-switcher.ts:109-118`)
-   is read by that same server-side resolver, so a switch changes the rendered
-   avatar.
+1. **The outfit axis never reaches render.** `avatarForMessage`
+   (`src/frontend/alpine/mood/avatars.ts:155-168`) takes a message shaped
+   `{ role?, emotion? }` — no outfit input exists in the signature. The ladder
+   runs only inside `selectAvatar`
+   (`src/characters/services/avatar-service/selection.ts:138-153`), and grep for
+   `selectAvatar` across `src/frontend` returns nothing.
+   **RESOLVED 2026-10-23** — the message read route resolves each row's avatar
+   server-side (`src/routes/messages/read.ts:79-87` calls `attachMessageAvatars`,
+   imported at `:5`), which resolves the outfit through `resolveOutfit` and the
+   single ladder owner `selectAvatar`, and annotates the row with
+   `msg.avatar_asset_id` (`src/characters/services/wardrobe/message-avatar.ts:152-174`);
+   the client consumes it first in `avatarForMessage`
+   (`src/frontend/alpine/mood/avatars.ts:160-174`). The old claim "grep for
+   `selectAvatar` across `src/frontend` returns nothing" is superseded by the
+   server-side resolution.
+2. **The chat-header outfit switcher writes into the void.**
+   `src/frontend/alpine/chat-outfit-switcher.ts:109-118` PUTs an override that
+   `src/characters/services/wardrobe/resolve.ts:160-189` can read, but nothing
+   joins resolution to render.
+   **RESOLVED 2026-10-23** — the chat-header override now reaches the render,
+   because resolution happens server-side on the same ladder that reads the
+   override (`src/characters/services/wardrobe/resolve.ts:178-206` runs chat
+   override > location rule > equipped loadout > default).
 3. **Nothing infers appearance from prose.** Outfit resolves from *state* only —
    chat override > location rule > equipped loadout > default
    (`src/characters/services/wardrobe/resolve.ts:164-188`). The predecessor's
@@ -62,33 +72,41 @@ Seven defects exist today, independent of any new feature:
    (`src/characters/services/emotion-avatar-fallback.ts:78-91`) — so a batch
    writes eight anchors that all say "Emotion avatar: ...".
 6. **No framing discriminator, no pose axis.** `character_avatars` carries
-   `label`, `is_primary`, `sort_order`, `tags` (JSON) and `outfit_id`
-   (`src/db/schema-character.ts:89-100`); the `assets` table carries
-   `width`/`height` plus `alt_text`, `mime_type`, `alpha_status`,
-   `content_hash`, `size_bytes` and `duration_secs`
-   (`src/db/schema-content.ts:37-59`). Neither has geometry, pose, anchor or
-   layer fields — the operative point stands, "nothing else intrinsic" did not.
-   `AvatarTagType.Action` is declared and scored
-   (`src/db/enums-character/avatar.ts:8`, `selection.ts:241-243`) but has no
-   production producer.
+   `tags` (JSON), `outfit_id`, plus `label`, `is_primary` and `sort_order`
+   (`src/db/schema-character.ts:88-100`) — none of which discriminates a render
+   target; the `assets` table has `width`/`height` and also `alt_text`,
+   `mime_type`, `alpha_status`, `content_hash` and `duration_secs`
+   (`src/db/schema-content.ts:37-59`). `AvatarTagType.Action` is declared and
+   scored (`src/db/enums-character/avatar.ts:8`,
+   `selection.ts:241-243`) but has no production producer.
 7. **The VN cast path is inert.** `msg.cast` and `emotionVariants` have no
    server-side producer; `msgToScene` falls back to a single-speaker cast
    (`src/frontend/vn/scene-renderer/render.ts:53-55`), and `applyStageDirectives`
    handles only `enter`/`exit` — the derived `swap` arm is dropped
    (`src/frontend/vn/stage-directives.ts:72-77`).
 
-Defects 1–3 are invisible to the user; 4–7 make any reactive *drawing* produce
+Defect 3 is invisible to the user; 4–7 make any reactive *drawing* produce
 a different person in a different body.
 
 ## Current State
 
 - **Per-message appearance precedent works end to end.** `messages.emotion`
-  (`src/db/schema-core.ts:778`) is written at
+  (`src/db/schema-core.ts:784`) is written at
   `src/generation/auto-gen/store-message.ts:161` and
   `src/generation/auto-gen/story-store.ts:170`, and read by `avatarForMessage`.
-  `messages.outfit_id` mirrors it exactly — the column and migration `070`
-  shipped; the two write sites persist `null` until the phase-2 chain fills
-  them (decision below).
+  `messages.outfit_id` does **not** mirror it: the migration exists
+  (`070_messages_outfit_id.ts`, nullable text column at
+  `src/db/schema-core.ts:817`), but every production writer still inserts null
+  (`src/generation/auto-gen/store-message.ts:162`,
+  `src/generation/auto-gen/story-store.ts:171`;
+  `src/chat/service/write.ts:149` is a pass-through), so the column is **INERT**.
+  Meanwhile the read path resolves the outfit **LIVE** at read time
+  (`src/characters/services/wardrobe/message-avatar.ts:152-157`). Consequence: a
+  message renders with the outfit that is current NOW, so a later outfit change
+  retroactively repaints earlier messages. **Decision: FILL the column, do not
+  drop it** — this epic's acceptance criteria require a per-message snapshot and
+  the column's own migration header promises a Phase-2 writer; the read path
+  prefers the stored snapshot and falls back to the live resolve when it is null.
 - **The change-gate seam is live with exactly one production caller.**
   `requestOutfitChange` (`src/characters/services/wardrobe/change-gate.ts:71-79`)
   from `src/routes/wardrobe-overrides.ts:100-106`.
@@ -108,23 +126,29 @@ a different person in a different body.
   `POST /api/v1/image-edit/run` (`src/image-edit/routes.ts:64-74`), with an
   `img2img` template (`src/image-edit/templates/builtin/img2img.ts`) — but it is
   not reachable from `generateImages` and shares none of the emotion-avatar job
-  plumbing. Its ComfyUI provider never uploads the referenced image
-  (`src/image-edit/providers/comfyui-provider.ts:145-149`; the only uploader in
-  the tree is the matting path,
-  `src/generation/providers/comfyui.ts:351-353`).
-- **No sprite layer pipeline exists.** `src/frontend/vn/sprite-stage.ts:187-204`
-  builds ONE `<img>` per cast member and `:151-166` assigns a flat integer
-  z-order per CHARACTER; `public/css/vn.css:992-1039` uses `order:` only (dim =
-  filter/opacity). Alpha is asset-level matting only — a cloak-over-tunic
-  wardrobe cannot be composited, it must be a whole-outfit variant.
-- **Next free migration number is 071** — `070_messages_outfit_id.ts` already
-  exists (phase 1's column shipped; see the decision below).
+  plumbing.
+- **Next free migration number is 071** — highest present is
+  `src/db/migrations/070_messages_outfit_id.ts`.
 - **Inpaint requires a hand-uploaded mask**
   (`src/image-edit/templates/builtin/inpaint.ts:39-46`); a repo-wide grep for
   mask-derivation terms across `src/` returns one unrelated test string
   (`src/tui/harness/display.test.ts:165`). SAM3 is `Not Started`
   (`.plan/epics/epic-sam3-segmentation-integration.md:8`) with its own ComfyUI
   prerequisites open (`:50-55`).
+- **Two blocking defects found by the 2026-10-23 audit.** (a) The seeded
+  workflow-library row for `configs/workflows/img2img.json` declares
+  `parameters: []` (`src/generation/workflow-library/seed.ts:118`) while the
+  body holds eight placeholders, and the library row wins the id collision over
+  the built-in template (`src/generation/workflow-library/hydrate.ts:41-45`), so
+  `buildWorkflowGraph` throws on unresolved placeholders
+  (`src/generation/workflow-library/row.ts:93-99`). (b) The image-edit ComfyUI
+  provider never uploads the referenced input image — `input_image` travels as a
+  plain string into a `LoadImage` node
+  (`src/image-edit/providers/comfyui-provider.ts:145-149`,
+  `src/image-edit/templates/builtin/_helpers.ts:143-156`); an uploader exists
+  (`src/generation/providers/comfyui-upload.ts:21-48`) but the only call site of
+  it in the tree is the matting path
+  (`src/generation/matting/comfy-provider.ts:111-114`).
 
 ## Architecture
 
@@ -134,20 +158,18 @@ direction.
 
 ### Phase 1 — make the shipped read path live
 
-- **`messages.outfit_id`** — migration `070` shipped (the column is nullable and
-  stays nullable; `null` = "no outfit was ever inferred for this message"); the
-  write side lands with the phase-2 chain. Cheapest architectural decision in
-  the feature: it makes appearance rendering read-side and symmetric with
-  emotion.
-  **Decision (2026-10-23): fill at write time.** The writers
-  (`src/generation/auto-gen/store-message.ts:162`,
-  `src/generation/auto-gen/story-store.ts:171`) persist the outfit resolved when
-  the message was produced, so a later outfit change no longer repaints earlier
-  messages. The alternative — dropping the column and keeping the live resolve —
-  was rejected: it makes message history mutable by design.
+- **`messages.outfit_id`** — migration `070` already exists; the remaining work
+  is the write beside every existing `emotion` write plus read-side precedence
+  (the stored snapshot wins, the live resolve is the fallback). Cheapest
+  architectural decision in the feature: it makes
+  appearance rendering read-side and symmetric with emotion.
 - **Outfit-aware avatar resolution** — give `avatarForMessage` an outfit input,
   or resolve server-side via `selectAvatar`. One ladder, one owner of the
   ordering. **P0: without it every other item here is invisible.**
+  **DONE in dev 2026-10-23** — resolved server-side via `selectAvatar` in the
+  message read path (`src/routes/messages/read.ts:79-87`,
+  `src/characters/services/wardrobe/message-avatar.ts:152-174`); one ladder, one
+  owner.
 - **VN cast producer** — emit `msg.cast` and per-member `emotionVariants` from
   the server so multi-sprite staging and `resolveSpriteUrl` stop being dead
   code.
@@ -167,15 +189,14 @@ direction.
   `initDefaultHooks` **and** in the `enabledEventTypes` construction at
   `src/generation/auto-gen/content-hooks.ts:189-193`, or the `eventTypes`
   filter (`registry.ts:54-58`) silently skips it whenever targeting is on.
-  Requires a **sixth** `config.hooks.enableOutfitHooks` flag — `config.hooks`
-  already has `enableMoodHooks`, `enableEmotionHooks`, `enableNsfwHooks`,
-  `enableModerationHooks` and the optional `enableModerationLlmClassifier`
-  (`src/config/schema/hooks.ts:9-17`, defaults at
-  `src/config/schema-class/hooks.ts:7-13`). The flag must also be threaded
-  through the hardcoded fallback `HooksConfig` literal at
-  `src/generation/auto-gen/content-hooks.ts:182-187`, or it is silently dropped.
-  Must be exception-safe: the story/GM path fails the turn closed on a hook
-  throw (`src/generation/auto-gen/story-store.ts:129-137`).
+  Requires a sixth `config.hooks.enableOutfitHooks` flag
+  (`src/config/schema/hooks.ts:8-17`, defaults at
+  `src/config/schema-class/hooks.ts:7-13`) — the existing hooks schema declares
+  five. The hardcoded fallback `HooksConfig` literal at
+  `src/generation/auto-gen/content-hooks.ts:182-187` must carry the flag too,
+  not only the schema default. Must be exception-safe: the story/GM
+  path fails the turn closed on a hook throw
+  (`src/generation/auto-gen/story-store.ts:129-137`).
 
 ### Phase 3 — the reopened axes
 
@@ -197,6 +218,17 @@ direction.
   (`src/characters/services/wardrobe/bindings.ts:21-62`). Completes the slot
   left open by the predecessor's deferred work item
   (`epic-wardrobe-avatar-variants.md:101-104`).
+- **Item-side outfit-change trigger** — unequip/transfer of a wardrobe-bound item
+  routes through `requestOutfitChange` with an initiator that does not bypass the
+  gate (`npc` AND `world_rule` bypass it,
+  `src/characters/services/wardrobe/change-gate.ts:75-77`); the observable
+  events are the equip-state flip, the transfer, and the row DELETE —
+  `actor_items` rows are deleted at three sites
+  (`src/services/actor-items/transfer.ts:74`,
+  `src/rpg/crafting/process.ts:149`,
+  `src/rpg/service/battles/items.ts:239`), and deleting an equipped row leaves
+  the wardrobe binding dangling, so the trigger must cover the delete path too
+  -> `TASK-item-side-outfit-change-trigger.md`.
 
 ### Phase 4 — identity and the edit/generation strategy selector
 
@@ -232,20 +264,14 @@ direction.
 
 ## Work Items
 
-- [x] **Chat avatar resolver outfit-aware (P0)** — resolved **server-side** via
-      `selectAvatar`: `src/routes/messages/read.ts:79-87` calls
-      `attachMessageAvatars`
-      (`src/characters/services/wardrobe/message-avatar.ts:112-187`), which
-      resolves the outfit through `resolveOutfit` and delegates the ladder
-      wholesale to `selectAvatar` (`:152-171`). One ladder, one owner of the
-      ordering
-      → `TASK-chat-avatar-resolver-outfit-aware.md`
-- [x] **`messages.outfit_id` column** — migration `070_messages_outfit_id`
-      shipped (nullable text, no FK; `src/db/schema-core.ts:817`), with the schema
-      artifacts regenerated and a migration test
-      (`src/db/070_messages_outfit_id.test.ts`). The **write side** belongs to the
-      phase-2 chain (the writers persist the resolved outfit at write time —
-      decision above), not to this item
+- [x] **Chat avatar resolver outfit-aware (P0)** — give `avatarForMessage`
+      (`src/frontend/alpine/mood/avatars.ts:155-168`) an outfit input, or resolve
+      server-side via `selectAvatar`. One ladder, one owner of the ordering
+      → `TASK-chat-avatar-resolver-outfit-aware.md` - implemented 2026-10-23
+      (server-side resolution in the message read path); ticket closure pending
+- [ ] **`messages.outfit_id` column** — migration `070` (exists; the writes are
+      the remaining work) plus a write beside each
+      of the two production `messages.emotion` writes
       → `TASK-messages-outfit-id-column.md`
 - [ ] **Outfit narrative extractor — regex prefilter** — new
       `src/regex/outfit-events.ts`, narrative-shaped groups modelled on
@@ -271,11 +297,9 @@ direction.
       reply only
       → `TASK-outfit-change-hook.md`
 - [ ] **Change-gate initiator mapping** — extracted narration routes with
-      `initiator: "gm"`; the gate bypasses `npc` **and** `world_rule`
-      unconditionally (`src/characters/services/wardrobe/change-gate.ts:75-77`,
-      initiator enum `:24`, doc `:9-11`, blessed by
-      `src/characters/services/wardrobe/change-gate.test.ts:65-74`) — the item
-      must forbid BOTH, not `npc` alone
+      `initiator: "gm"`; `npc` AND `world_rule` bypass the gate unconditionally
+      (`src/characters/services/wardrobe/change-gate.ts:75-77`) and the existing
+      tests bless the wrong choice
       → `TASK-outfit-change-gate-initiator-mapping.md`
 - [ ] **Framing discriminator as an `AvatarTagType` member** — JSON tag, zero
       migration, with a ladder rung and a resolution input
@@ -283,12 +307,9 @@ direction.
 - [ ] **Pose axis via `AvatarTagType.Action`** — reuse the declared, scored,
       producer-less `action` axis rather than adding a seventh member
       → `TASK-avatar-pose-via-action-tag.md`
-- [ ] **`swap` directive arm + typed payload** — implement the branch
-      `applyStageDirectives` drops (`src/frontend/vn/stage-directives.ts:72-77`).
-      The payload is already `{ kind: "swap"; characterId: string; emotion: string }`
-      (`:25-28`) and `SceneCastView.emotion` is a plain `string` (`:34`): the
-      canonical `EmotionType` enum is imported nowhere under `src/frontend/vn/`,
-      so the widening target is the **enum typing**, not another field
+- [ ] **`swap` directive arm + widened payload** — implement the branch
+      `applyStageDirectives` drops (`src/frontend/vn/stage-directives.ts:72-77`)
+      and widen the directive beyond `emotion` (`:28`)
       → `TASK-stage-directives-swap-arm.md`
 - [ ] **VN cast server producer** — emit `msg.cast` and `emotionVariants`;
       today they have no producer and `msgToScene` synthesizes a single speaker
@@ -303,14 +324,7 @@ direction.
       to `ImageGenOptions` (`src/generation/image-engine/types.ts:6-25`), upload
       via the existing `uploadImageToComfy`
       (`src/generation/providers/comfyui-upload.ts:21-48`), bind it to the
-      existing `configs/workflows/img2img.json:25-31`. Two independent defects
-      block the rung and are filed as BUG tickets:
-      `BUG-workflow-library-img2img-row-has-unresolved-placeholders.md` (the
-      seeded row declares `parameters: []` while its body keeps `{{input_image}}`
-      → `buildWorkflowGraph` throws) and
-      `BUG-image-edit-comfyui-provider-never-uploads-input-image.md` (the
-      image-edit ComfyUI provider passes `input_image` as a plain string, so
-      ComfyUI receives a filename it never got)
+      existing `configs/workflows/img2img.json:25-31`
       → `TASK-img2img-init-image-plumbing.md`
 - [ ] **Edit-vs-generation strategy selector** — explicit config-level strategy,
       edit-preferred with generation fallback, safe to ship before the edit rung
@@ -329,23 +343,23 @@ direction.
       `character_avatars.framing` superseding the JSON tag; deliberately
       deferred, not now
       → `TASK-avatar-framing-column-migration-future.md`
-- [ ] **Item-side outfit change trigger** — an unequip, a transfer-away, or a
-      consumed item row emits an outfit-change request through
-      `requestOutfitChange` (initiator `gm`), so the rendered avatar drops the
-      held-item variant while the wardrobe item stays in the inventory. The
-      phase-2 chain is narration-driven; this is the item-subsystem event source
+- [ ] **Item-side outfit change trigger** — unequip/transfer of a bound item
+      routes through the change gate with a non-bypassing initiator
       → `TASK-item-side-outfit-change-trigger.md`
-- [ ] **Held item axis data model** — a first-class held representation (equip
-      slot `held` or an explicit held flag) so `slotForCategory`
-      (`src/services/actor-items/equip.ts:22-46`) stops collapsing a torch, a book
-      and a ring into `accessory`; defines the interaction with the wardrobe
-      binding row
+- [ ] **Held-item axis data model** — an explicit held slot and an explicit
+      category-to-slot taxonomy (today every non-weapon/armor category collapses
+      into `accessory`)
       → `TASK-held-item-axis-data-model.md`
-- [ ] **Avatar render-target discriminator** — bust portrait vs full-body VN
-      sprite as a variant dimension of the same (outfit, emotion) key, so one
-      wardrobe entry can resolve to a portrait in chat and a full body in VN; the
-      representation follows the epic's JSON-tag-first precedent
+- [ ] **Avatar render-target discriminator** — bust portrait vs full-body
+      portrait vs VN sprite, JSON tag member first
       → `TASK-avatar-render-target-discriminator.md`
+- [ ] **Workflow-library img2img row has no parameters (prerequisite)** — the
+      seeded row declares `parameters: []` while the body holds eight
+      placeholders, so the graph cannot be built
+      → `BUG-workflow-library-img2img-row-has-no-parameters.md`
+- [ ] **Image-edit ComfyUI provider never uploads input_image (prerequisite)** —
+      the provider submits a LoadImage node for a file it never uploaded
+      → `BUG-image-edit-comfyui-provider-never-uploads-input-image.md`
 
 ## Non-Goals
 
@@ -381,15 +395,14 @@ Non-Goals are reopened by this successor epic, on the user's explicit decision
 
 ### This epic's own non-goals
 
-- **No extraction from the user prompt.** `detectAvatarChangeIntent` was removed
-  from the auto-gen prompt path for exactly this reason
-  (`src/generation/auto-gen/prepare-generation.ts:13-17`: it "ran on the user's
-  input and biased the LLM toward the user's mood ... the avatar should reflect
-  the assistant's reply, not the user's prompt"). The symbol itself **still
-  exists** at `src/assistant/intent.ts:21-34` — but as a **user-message keyword
-  matcher** (its parameter is the user's message text), so it is not reusable for
-  the assistant-reply extraction this epic needs. Re-attaching it to the auto-gen
-  path re-litigates a settled decision.
+- **No extraction from the user prompt.** `detectAvatarChangeIntent` still exists
+  (`src/assistant/intent.ts:21-34`), but it is a USER-message keyword matcher
+  (its parameter is documented as "User message text"), so it is not reusable
+  for assistant-reply extraction. It was dropped from the generation path for
+  exactly this reason (`src/generation/auto-gen/prepare-generation.ts:13-17`:
+  it "ran on the user's input and biased the LLM toward the user's mood ... the
+  avatar should reflect the assistant's reply, not the user's prompt"). Re-attaching
+  it re-litigates a settled decision.
 - **Display modes cannot yet show character interactions.** Accepted as a
   documented limitation. VN mode and other display modes render one actor per
   scene; `msgToScene` synthesizes a single-speaker cast
@@ -423,7 +436,11 @@ Non-Goals are reopened by this successor epic, on the user's explicit decision
   ladder: (outfit, emotion) → (outfit, neutral) → (default, emotion) → base
   (`src/characters/services/wardrobe/selection-ladder.ts:9-17`)
 - An extracted change is reviewed by the change gate, never bypassed; a test
-  asserts extracted narration routes with `initiator: "gm"`, not `"npc"`
+  asserts extracted narration routes with `initiator: "gm"`, not `"npc"` or
+  `"world_rule"` — neither `npc` nor `world_rule` may bypass the gate
+- A later outfit change does not retroactively repaint earlier messages - the
+  stored `messages.outfit_id` snapshot wins over the live resolve, and a null
+  snapshot falls back to the live resolve
 - In a multi-actor chat, an extracted change is attributed to the **named**
   actor, not the speaker; an unresolvable name is rejected, not guessed
 - A hook throw on the story/GM path does not lose the turn
