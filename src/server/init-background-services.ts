@@ -10,6 +10,12 @@ import { flushRegexTelemetry, } from "../regex/telemetry-flush";
 import type { ServerExternalManager, } from "../services/server-external-manager";
 import { loadTelemetryConfig, } from "../telemetry/config";
 
+/** Handle for the background services started by {@link initBackgroundServices}. */
+export interface BackgroundServicesHandle {
+  /** Clear background timers so no flush writes land after teardown. */
+  stop(): void;
+}
+
 /**
  * Run non-blocking background initialization: character-template seeding and
  * auto-start of external AI servers (llama.cpp, llama-swap, sd.cpp).
@@ -20,20 +26,21 @@ import { loadTelemetryConfig, } from "../telemetry/config";
  * @param config
  * @param logger
  * @param serverManager
- * @returns {Promise<void>}
+ * @returns {Promise<BackgroundServicesHandle>} handle that clears the background timers.
  */
 export async function initBackgroundServices(
   database: Db,
   config: Config,
   logger: Logger,
   serverManager: ServerExternalManager,
-): Promise<void> {
-  const initPromises: Promise<void>[] = [];
+): Promise<BackgroundServicesHandle> {
+  const initJobs: { name: string; promise: Promise<void> }[] = [];
 
   // Seed character templates from config (idempotent)
   if (config.characters.enabled) {
-    initPromises.push(
-      (async () => {
+    initJobs.push({
+      name: "character-templates",
+      promise: (async () => {
         const { seedCharacterTemplates, mergeCharacterTemplates, } = await import("../characters/seed");
         const { CHARACTERS_DEFAULTS, } = await import("../config/sections/characters");
 
@@ -59,7 +66,7 @@ export async function initBackgroundServices(
           logger.warn("character template seeding had errors", { module: "server", errors: result.errors, },);
         }
       })(),
-    );
+    },);
   }
 
   // Auto-start external AI servers (llama.cpp, sd.cpp) in background
@@ -68,8 +75,9 @@ export async function initBackgroundServices(
     const llamaCppCfg = autoStart?.llamaCpp;
     if (llamaCppCfg?.enabled) {
       logger.info("auto-starting llama.cpp", { module: "server", port: llamaCppCfg.port, },);
-      initPromises.push(
-        (async () => {
+      initJobs.push({
+        name: "llama.cpp",
+        promise: (async () => {
           const instance = await serverManager.startLlamaCpp(llamaCppCfg,);
           if (instance) {
             const name = llamaCppCfg.alias || "llama";
@@ -94,7 +102,7 @@ export async function initBackgroundServices(
             config.generation.defaultModels[name] ??= name;
           }
         })(),
-      );
+      },);
     }
 
     const llamaSwapCfg = autoStart?.llamaSwap;
@@ -104,8 +112,9 @@ export async function initBackgroundServices(
         configPath: llamaSwapCfg.configPath,
       },);
 
-      initPromises.push(
-        (async () => {
+      initJobs.push({
+        name: "llama-swap",
+        promise: (async () => {
           const instance = await serverManager.startLlamaSwap({ configPath: llamaSwapCfg.configPath, },);
           if (instance) {
             logger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`,);
@@ -113,29 +122,31 @@ export async function initBackgroundServices(
             logger.warn("llama-swap auto-start failed or skipped", { module: "server", },);
           }
         })(),
-      );
+      },);
     }
 
     const sdCppCfg = autoStart?.sdCpp;
     if (sdCppCfg?.enabled) {
       logger.info("auto-starting sd-cpp", { module: "server", port: sdCppCfg.port, },);
-      initPromises.push(
-        (async () => {
+      initJobs.push({
+        name: "sd.cpp",
+        promise: (async () => {
           const instance = await serverManager.startSdCpp(sdCppCfg,);
           if (!instance) {
             logger.warn("sd-cpp auto-start failed or skipped", { module: "server", },);
           }
         })(),
-      );
+      },);
     }
   } else {
     logger.debug("autoStart not configured — skipping external server launch", { module: "server", },);
   }
 
   // Opt-in regex precision counters (TELEMETRY_REGEX_PRECISION=1)
+  let flushTimer: ReturnType<typeof setInterval> | undefined;
   if (loadTelemetryConfig().regexPrecision) {
     setRegexTelemetryEnabled(true,);
-    const flushTimer = setInterval(() => {
+    flushTimer = setInterval(() => {
       void flushRegexTelemetry(database,).catch((error: unknown,) => {
         logger.warn("regex telemetry flush failed", { module: "server", error: String(error,), },);
       },);
@@ -145,5 +156,22 @@ export async function initBackgroundServices(
   }
 
   // Resolve all background init before proceeding to rest
-  await Promise.allSettled(initPromises,);
+  const results = await Promise.allSettled(initJobs.map((job,) => job.promise),);
+  results.forEach((result, index,) => {
+    if (result.status !== "rejected") { return; }
+    const job = initJobs[index];
+    logger.error(
+      "background init failed",
+      result.reason instanceof Error ? result.reason : new Error(String(result.reason,),),
+      { module: "server", job: job?.name ?? "unknown", },
+    );
+  },);
+
+  return {
+    stop() {
+      if (flushTimer === undefined) { return; }
+      clearInterval(flushTimer,);
+      flushTimer = undefined;
+    },
+  };
 }

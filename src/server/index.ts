@@ -10,5 +10,8 @@ export { start, } from "./start";
 // Bun equivalent of `require.main === module`
 const isMainModule = typeof Bun !== "undefined" && (Bun as { main?: string }).main === import.meta.path;
 if (isMainModule) {
-  await start();
+  start().catch((error: unknown,) => {
+    process.stderr.write(`[server] startup failed: ${String(error,)}\n`,);
+    process.exit(1,);
+  },);
 }
