@@ -44,9 +44,10 @@ export interface StatAllocationState {
   _saActorId: string | null;
   _saWorldId: string;
   stats: StatBlock;
-  statMin: number;
-  statMax: number;
-  budget: number;
+  statMin: number | null;
+  statMax: number | null;
+  budget: number | null;
+  configLoaded: boolean;
   pointBuyCost: Record<number, number>;
   catalog: CatalogTrait[];
   selectedTraits: string[];
@@ -74,9 +75,10 @@ export const statAllocation: StatAllocationState = {
   _saActorId: null,
   _saWorldId: "",
   stats: defaultStats(),
-  statMin: 8,
-  statMax: 15,
-  budget: 27,
+  statMin: null,
+  statMax: null,
+  budget: null,
+  configLoaded: false,
   pointBuyCost: {},
   catalog: [],
   selectedTraits: [],
@@ -113,6 +115,13 @@ export const statAllocation: StatAllocationState = {
     this.statMax = config.statMax;
     this.budget = config.statPointBudget;
     this.pointBuyCost = { ...config.pointBuyCost, };
+    this.configLoaded = true;
+    const clamped = { ...this.stats, };
+    for (const ability of ALL_ABILITIES) {
+      clamped[ability] = Math.min(config.statMax, Math.max(config.statMin, clamped[ability],),);
+    }
+
+    this.stats = clamped;
   },
 
   async loadCatalog(worldId: string,) {
@@ -135,8 +144,10 @@ export const statAllocation: StatAllocationState = {
     if (res.ok) {
       const alloc = (await res.json()) as StatAllocationRead;
       const clamped = { ...alloc.stats, };
-      for (const ability of ALL_ABILITIES) {
-        clamped[ability] = Math.min(this.statMax, Math.max(this.statMin, clamped[ability],),);
+      if (this.statMin !== null && this.statMax !== null) {
+        for (const ability of ALL_ABILITIES) {
+          clamped[ability] = Math.min(this.statMax, Math.max(this.statMin, clamped[ability],),);
+        }
       }
 
       this.stats = clamped;
@@ -172,6 +183,10 @@ export const statAllocation: StatAllocationState = {
   },
 
   budgetRemaining() {
+    if (this.budget === null) {
+      return 0;
+    }
+
     const spent = ALL_ABILITIES.reduce((sum, ability,) => {
       const value = this.stats[ability];
       const served = this.pointBuyCost[value];
@@ -186,6 +201,10 @@ export const statAllocation: StatAllocationState = {
   },
 
   nudge(ability: AbilityName, delta: number,) {
+    if (this.statMin === null || this.statMax === null) {
+      return;
+    }
+
     const next = Math.min(this.statMax, Math.max(this.statMin, this.stats[ability] + delta,),);
     this.stats = { ...this.stats, [ability]: next, };
   },
@@ -242,6 +261,10 @@ export function statAllocationFactory(actorId: string, worldId: string,): StatAl
   state._saActorId = null;
   state._saWorldId = "";
   state.stats = defaultStats();
+  state.statMin = null;
+  state.statMax = null;
+  state.budget = null;
+  state.configLoaded = false;
   state.selectedTraits = [];
   state.pointBuyCost = {};
   state.catalog = [];
