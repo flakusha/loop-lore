@@ -9,13 +9,16 @@
  */
 
 import { apiFetch, } from "./htmx.js";
-import { jsonParseOr, } from "./json.js";
+import { jsonBody, jsonParseOr, } from "./json.js";
 import type { ChatState, EquipmentSlot, StatusEffect, } from "./types.js";
 
 export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
   rpgStats: null,
   statusEffects: [],
   equipment: [],
+  _rpgActorId: null as string | null,
+  rpgAsiBusy: false as boolean,
+  rpgAsiError: null as string | null,
 
   /**
    * @returns {Promise<void>}
@@ -44,6 +47,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
 
       // Fetch RPG stats for this actor
       const statsRes = await apiFetch(`/api/v1/rpg/stats/${actorId}`,);
+      this._rpgActorId = actorId;
       if (statsRes.ok) {
         const data = await statsRes.json();
         this.rpgStats = {
@@ -56,6 +60,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
           initiative: data.speed ? Math.floor((data.speed - 10) / 2,) : 0,
           xp: data.xp ?? 0,
           xpToNext: data.xpToNext ?? 100,
+          pendingAsi: data.pendingAsi ?? 0,
           str: data.str ?? 10,
           dex: data.dex ?? 10,
           con: data.con ?? 10,
@@ -67,6 +72,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
         // Parse conditions and effects from JSON strings
         this.statusEffects = parseConditions(data.conditions,);
         this.equipment = parseEquipmentSlots(data.activeEffects,);
+      } else {
         // No stats / non-200 — use defaults
         this.rpgStats = defaultRpgStats();
         this.statusEffects = [];
@@ -76,6 +82,57 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
       this.rpgStats = defaultRpgStats();
       this.statusEffects = [];
       this.equipment = defaultEquipmentSlots();
+    }
+  },
+
+  /**
+   * Spend 2 pending ASI points on one ability via
+   * POST /api/v1/rpg/progression/:actorId/asi ({ability, points:2}),
+   * then reload stats. Failures surface on rpgAsiError.
+   * @param ability
+   */
+  async allocateAsi(ability: string,) {
+    const actorId = this._rpgActorId;
+    if (!actorId || this.rpgAsiBusy) { return; }
+    this.rpgAsiBusy = true;
+    this.rpgAsiError = null;
+    try {
+      await apiFetch(`/api/v1/rpg/progression/${actorId}/asi`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ ability, points: 2, },),
+      },);
+
+      await this.loadRpgStats();
+    } catch {
+      this.rpgAsiError = "Failed to allocate ability points";
+    } finally {
+      this.rpgAsiBusy = false;
+    }
+  },
+
+  /**
+   * Auto-resolve the pending budget via POST
+   * /api/v1/rpg/progression/:actorId/level-up ({kind:"auto"}),
+   * then reload stats. Failures surface on rpgAsiError.
+   */
+  async resolveLevelUpAuto() {
+    const actorId = this._rpgActorId;
+    if (!actorId || this.rpgAsiBusy) { return; }
+    this.rpgAsiBusy = true;
+    this.rpgAsiError = null;
+    try {
+      await apiFetch(`/api/v1/rpg/progression/${actorId}/level-up`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ kind: "auto", },),
+      },);
+
+      await this.loadRpgStats();
+    } catch {
+      this.rpgAsiError = "Failed to resolve level-up";
+    } finally {
+      this.rpgAsiBusy = false;
     }
   },
 
@@ -117,6 +174,7 @@ function defaultRpgStats() {
     initiative: 0,
     xp: 0,
     xpToNext: 100,
+    pendingAsi: 0,
     str: 10,
     dex: 10,
     con: 10,
