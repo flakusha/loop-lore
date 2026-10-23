@@ -4,6 +4,7 @@
 // size-allow: 389
 
 import type { Kysely, Selectable, } from "kysely";
+import { triggerItemOutfitChange, } from "../../characters/services/wardrobe/item-trigger";
 import { CraftingAttemptStatus, DiscoveryMethod, EquipState, } from "../../db/enums";
 import type { ItemCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -146,6 +147,7 @@ async function consumeRecipeMaterials(
 
     const rem = ai.quantity - mat.quantity;
     if (rem === 0) {
+      await triggerItemOutfitChange(trx, actorId, ai.id,);
       await trx.deleteFrom("actor_items",).where("id", "=", ai.id,).execute();
     } else {
       await trx.updateTable("actor_items",).set({ quantity: rem, },)
