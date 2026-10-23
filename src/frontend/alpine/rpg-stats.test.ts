@@ -156,6 +156,25 @@ describeOrSkip("rpgStats.allocateAsi", () => {
     expect(ctx.rpgStats,).toEqual(spendStats(),);
   });
 
+  test("HTTP 400 surfaces the server message without reloading", async () => {
+    fetchHandler = () => Response.json({ error: "No pending ASI to allocate", }, { status: 400, },);
+
+    const ctx = buildCtx({ _rpgActorId: "actor-1", rpgStats: spendStats(), },);
+    await rpgStats.allocateAsi!.call(ctx, "str",);
+    expect(ctx.rpgAsiError,).toBe("No pending ASI to allocate",);
+    expect(ctx.rpgAsiBusy,).toBe(false,);
+    expect(ctx.rpgStats,).toEqual(spendStats(),);
+  });
+
+  test("HTTP 400 with an empty body falls back to the default message", async () => {
+    fetchHandler = () => new Response("", { status: 400, },);
+
+    const ctx = buildCtx({ _rpgActorId: "actor-1", rpgStats: spendStats(), },);
+    await rpgStats.allocateAsi!.call(ctx, "str",);
+    expect(ctx.rpgAsiError,).toBe("Failed to allocate ability points",);
+    expect(ctx.rpgStats,).toEqual(spendStats(),);
+  });
+
   test("no-op without a resolved actor id", async () => {
     const ctx = buildCtx({ _rpgActorId: null, },);
     await rpgStats.allocateAsi!.call(ctx, "str",);
@@ -184,6 +203,16 @@ describeOrSkip("rpgStats.resolveLevelUpAuto", () => {
     const ctx = buildCtx({ _rpgActorId: "actor-1", rpgStats: spendStats(), },);
     await rpgStats.resolveLevelUpAuto!.call(ctx,);
     expect(ctx.rpgAsiError,).toBe("Failed to resolve level-up",);
+    expect(ctx.rpgAsiBusy,).toBe(false,);
+    expect(ctx.rpgStats,).toEqual(spendStats(),);
+  });
+
+  test("HTTP 400 surfaces the server message without reloading", async () => {
+    fetchHandler = () => Response.json({ error: "No pending level-up to resolve", }, { status: 400, },);
+
+    const ctx = buildCtx({ _rpgActorId: "actor-1", rpgStats: spendStats(), },);
+    await rpgStats.resolveLevelUpAuto!.call(ctx,);
+    expect(ctx.rpgAsiError,).toBe("No pending level-up to resolve",);
     expect(ctx.rpgAsiBusy,).toBe(false,);
     expect(ctx.rpgStats,).toEqual(spendStats(),);
   });

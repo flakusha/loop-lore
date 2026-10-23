@@ -97,11 +97,16 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
     this.rpgAsiBusy = true;
     this.rpgAsiError = null;
     try {
-      await apiFetch(`/api/v1/rpg/progression/${actorId}/asi`, {
+      const res = await apiFetch(`/api/v1/rpg/progression/${actorId}/asi`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ ability, points: 2, },),
       },);
+
+      if (!res.ok) {
+        this.rpgAsiError = await readAsiError(res, "Failed to allocate ability points",);
+        return;
+      }
 
       await this.loadRpgStats();
     } catch {
@@ -122,11 +127,16 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
     this.rpgAsiBusy = true;
     this.rpgAsiError = null;
     try {
-      await apiFetch(`/api/v1/rpg/progression/${actorId}/level-up`, {
+      const res = await apiFetch(`/api/v1/rpg/progression/${actorId}/level-up`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
         body: jsonBody({ kind: "auto", },),
       },);
+
+      if (!res.ok) {
+        this.rpgAsiError = await readAsiError(res, "Failed to resolve level-up",);
+        return;
+      }
 
       await this.loadRpgStats();
     } catch {
@@ -196,6 +206,18 @@ function defaultEquipmentSlots(): EquipmentSlot[] {
     { slot: "shield", itemId: null, },
     { slot: "accessory", itemId: null, },
   ];
+}
+
+/**
+ * Read the server error message from a non-ok progression response.
+ * Falls back when the body is empty or unparseable.
+ * @param res
+ * @param fallback
+ */
+async function readAsiError(res: Response, fallback: string,): Promise<string> {
+  const text = await res.text().catch(() => "");
+  const body = jsonParseOr(text, null,) as { error?: unknown } | null;
+  return typeof body?.error === "string" && body.error ? body.error : fallback;
 }
 
 /**
