@@ -173,19 +173,36 @@ export async function touchPeer(
 export async function runResyncPass(
   database: Kysely<DB>,
   opts: {
-    trustByOrigin?: Record<string, { caBundle?: string } | undefined>;
+    trustByOrigin?: Record<string, { caBundle?: string; spkiPins?: string[] } | undefined>;
     fetchImpl?: PeerFetch;
+    pinVerifier?: (origin: string, pins: readonly string[],) => Promise<boolean>;
   } = {},
 ): Promise<ResyncSummary> {
   const fetchImpl = opts.fetchImpl ?? fetchPeerAdvertisement;
+  // Canonicalize trust config keys (mirrors GossipService) so non-canonical
+  // origins still resolve their caBundle/spkiPins.
+  const trustByOrigin = new Map<string, { caBundle?: string; spkiPins?: string[] } | undefined>();
+  for (const [raw, trust,] of Object.entries(opts.trustByOrigin ?? {},)) {
+    const canonical = canonicalOrigin(raw,);
+    if (canonical !== null) { trustByOrigin.set(canonical, trust,); }
+  }
+
   const trusted = await listPeers(database, "trusted",);
   let alive = 0;
   await Promise.allSettled(trusted.map(async (peer,) => {
+    const originKey = canonicalOrigin(peer.origin,) ?? peer.origin;
+    const trust = trustByOrigin.get(originKey,) ?? opts.trustByOrigin?.[peer.origin];
+    // SPKI pin gate: refuse to fetch peers whose pin fails verification.
+    if (trust?.spkiPins && trust.spkiPins.length > 0 && opts.pinVerifier !== undefined) {
+      const pinned = await opts.pinVerifier(originKey, trust.spkiPins,);
+      if (!pinned) { return; }
+    }
+
     let res;
     try {
       res = await fetchImpl(
         `${peer.origin}/api/instance-state`,
-        opts.trustByOrigin?.[peer.origin],
+        trust,
       );
     } catch {
       return;

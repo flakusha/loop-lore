@@ -49,6 +49,7 @@ export async function fetchPeerAdvertisement(
     timeout: timeoutMs,
     parseJson: true,
     handle401: false,
+    redirect: trust?.spkiPins && trust.spkiPins.length > 0 ? "error" : undefined,
     tls: trust?.caBundle ? { ca: [trust.caBundle,], } : undefined,
   },);
 
@@ -113,6 +114,7 @@ export async function postPeerJson(
       timeout: timeoutMs,
       parseJson: true,
       handle401: false,
+      redirect: trust?.spkiPins && trust.spkiPins.length > 0 ? "error" : undefined,
       tls: trust?.caBundle ? { ca: [trust.caBundle,], } : undefined,
     },);
   } catch {
