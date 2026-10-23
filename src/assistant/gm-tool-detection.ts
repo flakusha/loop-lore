@@ -18,10 +18,10 @@
  */
 import type { Kysely, } from "kysely";
 import { callAux, } from "../aux-pipeline";
+import { resolveClassifierPrompt, } from "../aux-pipeline/class-template-resolver";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { resolveSystemPrompt, } from "../prompts";
 import { clampUnit, jsonParseOr, } from "../utils";
 
 /** GM tool names the detector may resolve to. */
@@ -108,16 +108,24 @@ export async function detectGmTool(
   userId?: string,
   chatId?: string,
 ): Promise<GmToolDetection | null> {
+  // Pack template > systemPrompts.gmTool override > code default.
+  const { prompt, params, } = await resolveClassifierPrompt({
+    config,
+    db,
+    task: "gm-tool",
+    chatId,
+  },);
+
   const messages: { role: "system" | "user"; content: string }[] = [
-    { role: "system" as const, content: resolveSystemPrompt(config.templates.llm, "gmTool",), },
+    { role: "system" as const, content: prompt, },
     { role: "user" as const, content: content.slice(0, 500,), },
   ];
 
-  // Shared AUX policy via the task registry: 2s timeout, 0.0 temperature,
-  // 100 max tokens, BYO key.
+  // Shared AUX policy via the task registry; pack params win when selected.
   const response = await callAux("gm-tool", config, db, messages, {
     userId,
     chatId,
+    ...params,
   },);
 
   if (!response) { return null; }

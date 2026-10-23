@@ -131,7 +131,7 @@ registerCommand("rag-ask", async (args, ctx,): Promise<CommandResult> => {
   const messages = [
     {
       role: "system" as const,
-      content: `${resolveSystemPrompt(config.templates.llm, "ragAsk",)}\n\nContext:\n${context}`,
+      content: `${resolveSystemPrompt(config.templates?.llm, "ragAsk",)}\n\nContext:\n${context}`,
     },
     { role: "user" as const, content: query, },
   ];

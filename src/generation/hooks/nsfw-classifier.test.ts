@@ -202,15 +202,18 @@ describe("detectNsfwWithLlm", () => {
     expect(aux.mock.calls[0]![3]![0]!.content,).toBe("CUSTOM NSFW PROMPT",);
   });
 
-  test("passes the AUX contract (task, temperature, maxTokens, user/chat)", async () => {
+  test("passes the AUX contract (task, context, user/chat)", async () => {
     const aux = makeAux(async () => auxReply("nsfw_intense",));
     await detectNsfwWithLlm("questionable content", makeCtx(), aux,);
     expect(aux.mock.calls,).toHaveLength(1,);
     const [task, , , messages, opts,] = aux.mock.calls[0]!;
     expect(task,).toBe("nsfw",);
     expect(messages[1]!.content,).toBe("questionable content",);
-    expect(opts?.temperature,).toBe(0,);
-    expect(opts?.maxTokens,).toBe(50,);
+    // Sampling shape is registry-driven now: the call site threads only
+    // context; callAux applies the task's call overrides (temp 0, 50 tokens)
+    // — a selected pack would add its params here.
+    expect(opts?.temperature,).toBeUndefined();
+    expect(opts?.maxTokens,).toBeUndefined();
     expect(opts?.userId,).toBe("user-1",);
     expect(opts?.chatId,).toBe("chat-1",);
   });

@@ -26,6 +26,9 @@ export const REQUIRES_RESTART_KEYS: Readonly<Record<string, true>> = {
   // generation defaults — re-bind provider/model registry
   default_provider: true,
   default_model: true,
+  // classifier template packs load once at config load; the fs watcher only
+  // covers top-level config.<domain>.* files, so pack edits need a restart
+  "templates.classifiers": true,
   // seeded backend bindings (see src/admin/config.ts seedDefaults)
   registration_open: true,
   session_timeout_hours: true,

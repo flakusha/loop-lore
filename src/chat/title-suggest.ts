@@ -54,7 +54,7 @@ export async function suggestChatTitle(args: {
   const fallback = deriveChatTitleFallback(args.firstMessage,);
   try {
     const messages: GenerationMessage[] = [
-      { role: "system", content: resolveSystemPrompt(args.config.templates.llm, "chatTitle",), },
+      { role: "system", content: resolveSystemPrompt(args.config.templates?.llm, "chatTitle",), },
       { role: "user", content: args.firstMessage, },
     ];
 
