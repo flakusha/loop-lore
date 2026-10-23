@@ -3756,6 +3756,22 @@
     "title": "encrypted asset thumb/compressed preview serves raw ciphertext",
     "type": "BUG"
   },
+  "BUG-ENCRYPTED-ASSET-THUMBNAIL-IS-STORED-AND-SERVED-IN-PLAINTEXT": {
+    "hash": "312e077",
+    "git_issue": "312e077",
+    "extid": "BUG-ENCRYPTED-ASSET-THUMBNAIL-IS-STORED-AND-SERVED-IN-PLAINTEXT",
+    "type": "BUG",
+    "title": "Encrypted asset thumbnail is stored and served in plaintext",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [
+      "assets",
+      "security"
+    ],
+    "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md",
+    "status": "Not Started"
+  },
   "BUG-ENCRYPTED-PAYLOAD-SNIFFING-MISCLASSIFIES-USER-JSON-AS-PRE-EN": {
     "epic": "",
     "extid": "BUG-ENCRYPTED-PAYLOAD-SNIFFING-MISCLASSIFIES-USER-JSON-AS-PRE-EN",
@@ -26276,6 +26292,21 @@
     "tags": [],
     "title": "Asset dedup TOCTOU creates duplicate rows and orphan files",
     "type": "TASK"
+  },
+  "TASK-ASSET-DOWNLOAD-FORMAT-CONVERSION-WEBP-PNG-JPG": {
+    "hash": "5ff6992",
+    "git_issue": "5ff6992",
+    "extid": "TASK-ASSET-DOWNLOAD-FORMAT-CONVERSION-WEBP-PNG-JPG",
+    "type": "TASK",
+    "title": "Asset download format conversion (webp/png/jpg)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-asset-download-format-conversion-webp-png-jpg.md",
+    "status": "Not Started"
   },
   "TASK-ASSET-EMOTION-JOB-HYGIENE-ORPHANED-THUMBNAILS-STUCK-RUNNING-": {
     "epic": "epic-multimodal-asset-reuse",
@@ -56402,6 +56433,21 @@
     "tags": [],
     "title": "Weather & Environmental Effects",
     "type": "TASK"
+  },
+  "TASK-WEBP-AS-A-FIRST-CLASS-STORED-ASSET-FORMAT": {
+    "hash": "5fc5dab",
+    "git_issue": "5fc5dab",
+    "extid": "TASK-WEBP-AS-A-FIRST-CLASS-STORED-ASSET-FORMAT",
+    "type": "TASK",
+    "title": "WebP as a first-class stored asset format",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-asset-platform-capabilities",
+    "tags": [
+      "assets"
+    ],
+    "source": ".plan/tickets/TASK-webp-as-a-first-class-stored-asset-format.md",
+    "status": "Not Started"
   },
   "TASK-WIDEN-IMPORT-EXPORT-IO-FOR-PUBLICATIONS": {
     "hash": "1ca3d84",
