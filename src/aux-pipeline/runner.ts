@@ -25,6 +25,7 @@ import { getSchedulerManager, } from "../generation/scheduler";
 import { PriorityLevel, } from "../llm";
 import { getLogger, } from "../logger";
 import { isTelemetryEnabled, record, } from "../telemetry/service";
+import { AUX_CLASSIFICATION_TASKS, } from "./template-registry";
 import type { AuxCallOptions, AuxCallResult, AuxTaskName, } from "./types";
 
 const DEFAULT_TIMEOUT_MS = 2000;
@@ -40,22 +41,12 @@ function getLog() {
   return getLogger().child({ module: "aux-pipeline", },);
 }
 
-/** Tasks that prefer a configured classifier model, falling back to auxiliary. */
-const CLASSIFIER_TASKS: Partial<Record<AuxTaskName, true>> = {
-  intent: true,
-  "injection-check": true,
-  transition: true,
-  "message-action": true,
-  "gm-tool": true,
-  moderation: true,
-  nsfw: true,
-};
-
 /**
  * Resolve the model role for an AUX call.
  *
- * Explicit opts.role wins. Otherwise classifier-preferring tasks try the
- * classifier role (only when actually configured), falling back to auxiliary.
+ * Explicit opts.role wins. Otherwise classifier-preferring tasks (per the
+ * task registry's `preferClassifier`) try the classifier role (only when
+ * actually configured), falling back to auxiliary.
  * @param task - Name of the calling task
  * @param explicitRole - Caller-provided role, if any
  * @param config - Application config
@@ -72,7 +63,7 @@ async function resolveAuxRole(
     return await resolveModelRole(explicitRole, config, db,);
   }
 
-  if (CLASSIFIER_TASKS[task]) {
+  if (AUX_CLASSIFICATION_TASKS[task].preferClassifier) {
     try {
       const classifier = await resolveModelRole(ModelRole.Classifier, config, db,);
       if (classifier && classifier.source !== "default") {
@@ -95,7 +86,7 @@ async function resolveAuxRole(
  * @param config - Application config
  * @param db - Kysely instance
  * @param messages - Conversation messages for the auxiliary model
- * @param opts - Per-call options (role, timeout, temperature, maxTokens, userId, chatId)
+ * @param opts - Per-call options (role, timeout, temperature, maxTokens, userId, chatId, taskId)
  * @returns Result on success, or null on any failure (timeout, no role, parse, provider error)
  */
 export async function callAux(
@@ -107,12 +98,18 @@ export async function callAux(
 ): Promise<AuxCallResult | null> {
   const {
     role,
-    timeoutMs = DEFAULT_TIMEOUT_MS,
-    temperature = DEFAULT_TEMPERATURE,
-    maxTokens = DEFAULT_MAX_TOKENS,
     userId,
     chatId,
+    taskId,
   } = opts;
+
+  // Registry call overrides sit between explicit opts and the global defaults,
+  // so a task pins its own sampling shape once (single source) while a caller
+  // can still override per call.
+  const taskCall = AUX_CLASSIFICATION_TASKS[task].call;
+  const timeoutMs = opts.timeoutMs ?? taskCall.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const temperature = opts.temperature ?? taskCall.temperature ?? DEFAULT_TEMPERATURE;
+  const maxTokens = opts.maxTokens ?? taskCall.maxTokens ?? DEFAULT_MAX_TOKENS;
 
   // Resolve the model role → provider/model; graceful failure => null (BUG-1 fix)
   let auxRole: ResolvedModelRole | null;
@@ -186,6 +183,7 @@ export async function callAux(
           messages,
           apiKey,
           params: { temperature, maxTokens, },
+          auxTask: taskId ?? task,
         },),
     },);
 

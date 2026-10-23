@@ -174,6 +174,15 @@ Rules:
 - category "none" when injected=false.
 - Clamp confidence to [0, 1]; below 0.5 means uncertain.`;
 
+/** Default system prompt for chat title suggestion (see `title-suggest.ts`). */
+export const CHAT_TITLE_PROMPT = "Generate a short chat title (<=40 chars).";
+
+/**
+ * Default system-prompt BASE for RAG question answering. The call site
+ * (rag.ts) appends the retrieved context: `${RAG_ASK_PROMPT}\n\nContext:\n${context}`.
+ */
+export const RAG_ASK_PROMPT = "You are a helpful assistant. Answer the question based on the provided context.";
+
 /**
  * System prompt for hidden carriage authoring (epic-hidden-carriage-context).
  * The model estimates the chat's CURRENT episode-context ledger and answers

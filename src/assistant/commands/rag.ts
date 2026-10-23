@@ -11,6 +11,7 @@
 import type { Kysely, } from "kysely";
 import { callAux, } from "../../aux-pipeline";
 import type { DB, } from "../../db/schema";
+import { resolveSystemPrompt, } from "../../prompts";
 import { requireWorldAccess, } from "../../routes/worlds/access";
 import { type CommandResult, registerCommand, } from "./registry";
 
@@ -126,11 +127,11 @@ registerCommand("rag-ask", async (args, ctx,): Promise<CommandResult> => {
   }
 
   const context = hits.map((h,) => `[${h.source}] ${h.name}: ${h.content}`).join("\n\n",);
+  // ragAsk resolves the answer base; the retrieved context is appended here.
   const messages = [
     {
       role: "system" as const,
-      content:
-        `You are a helpful assistant. Answer the question based on the provided context.\n\nContext:\n${context}`,
+      content: `${resolveSystemPrompt(config.templates.llm, "ragAsk",)}\n\nContext:\n${context}`,
     },
     { role: "user" as const, content: query, },
   ];
@@ -138,7 +139,6 @@ registerCommand("rag-ask", async (args, ctx,): Promise<CommandResult> => {
   const result = await callAux("rag-ask", config, db, messages, {
     userId: ctx.userId,
     chatId: ctx.chatId,
-    maxTokens: 500,
   },);
 
   if (!result) {

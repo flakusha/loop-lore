@@ -14,6 +14,7 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
+import { resolveSystemPrompt, } from "../prompts";
 
 const FALLBACK_TITLE = "New chat";
 const FALLBACK_MAX = 40;
@@ -53,13 +54,11 @@ export async function suggestChatTitle(args: {
   const fallback = deriveChatTitleFallback(args.firstMessage,);
   try {
     const messages: GenerationMessage[] = [
-      { role: "system", content: "Generate a short chat title (<=40 chars).", },
+      { role: "system", content: resolveSystemPrompt(args.config.templates.llm, "chatTitle",), },
       { role: "user", content: args.firstMessage, },
     ];
 
     const result = await callAux("chat-title", args.config, args.db, messages, {
-      maxTokens: 20,
-      timeoutMs: 2000,
       userId: args.userId,
       chatId: args.chatId,
     },);

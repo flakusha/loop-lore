@@ -97,11 +97,13 @@ export class MockLLMProvider implements LLMProvider {
 
   /**
    * Resolve the content for a request: exact-input reply → task reply → null.
-   * @param req - generate request (task inferred from the system prompt)
+   * The task comes from the request's explicit `auxTask` id (stamped by
+   * `callAux`); prompt-shape sniffing is only the fallback.
+   * @param req - generate request
    * @returns Scripted content, or null when nothing is scripted for the request
    */
   private resolveScriptedContent(req: GenerateRequest,): string | null {
-    const task = detectAuxTask(req.messages,);
+    const task = req.auxTask ?? detectAuxTask(req.messages,);
     if (!task) { return null; }
     const userText = [...req.messages,].reverse().find((m,) => m.role === "user")?.content ?? "";
     return this.inputReplies.get(`${task}\u0000${userText}`,) ?? this.taskReplies.get(task,) ?? null;

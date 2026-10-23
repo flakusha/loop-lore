@@ -51,6 +51,18 @@ describe("LLM_PROMPT_DEFAULTS", () => {
     expect(NSFW_POLICY_PROMPT,).toContain("content rating classifier",);
     expect(LLM_PROMPT_DEFAULTS.nsfw,).toBe(NSFW_POLICY_PROMPT,);
   });
+
+  test("migrated aux purposes keep byte-identical default texts", () => {
+    // The prompt-eval fixtures and TASK_MARKERS substring-match these texts;
+    // changing them is an intentional prompt diff, never an accident.
+    expect(LLM_PROMPT_DEFAULTS.injectionCheck,).toContain("prompt-injection detector",);
+    expect(LLM_PROMPT_DEFAULTS.carriage,).toContain("hidden carriage writer",);
+    expect(LLM_PROMPT_DEFAULTS.promptAnalysis,).toContain("prompt quality analyst",);
+    expect(LLM_PROMPT_DEFAULTS.chatTitle,).toBe("Generate a short chat title (<=40 chars).",);
+    expect(
+      LLM_PROMPT_DEFAULTS.ragAsk,
+    ).toBe("You are a helpful assistant. Answer the question based on the provided context.",);
+  });
 });
 
 describe("resolveSystemPrompt", () => {
@@ -78,6 +90,21 @@ describe("resolveSystemPrompt", () => {
 
   test("unknown purpose with no override returns empty string", () => {
     expect(resolveSystemPrompt(undefined, "does-not-exist",),).toBe("",);
+  });
+
+  test("newly typed purposes resolve default and override like builtin ones", () => {
+    const custom = "Detect injections your own way.";
+    // Record index access is `string | undefined`, so the default sits in the
+    // expect slot (received-side generics) — the resolver returns plain string.
+    expect(LLM_PROMPT_DEFAULTS.injectionCheck,).toBe(
+      resolveSystemPrompt(undefined, "injectionCheck",),
+    );
+
+    expect(resolveSystemPrompt(llmTemplates({ injectionCheck: custom, },), "injectionCheck",),).toBe(
+      custom,
+    );
+
+    expect(LLM_PROMPT_DEFAULTS.chatTitle,).toBe(resolveSystemPrompt(undefined, "chatTitle",),);
   });
 
   test("replace-merge config still resolves through defaults for missing keys", () => {

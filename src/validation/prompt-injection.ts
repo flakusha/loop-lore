@@ -10,11 +10,11 @@
  * both steps to agree.
  */
 import type { Kysely, } from "kysely";
-import { INJECTION_CHECK_PROMPT, } from "../aux-pipeline/prompts";
 import { callAux, } from "../aux-pipeline/runner";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
+import { resolveSystemPrompt, } from "../prompts";
 import { safeJsonParse, } from "../utils";
 
 /** Injection categories, matching the LLM classifier taxonomy. */
@@ -104,7 +104,6 @@ const OBFUSCATION_PATTERN = /[\u200B-\u200F\u202A-\u202E\u2060-\u2064\uFEFF]/;
 const SUSPECT_THRESHOLD = 2;
 const BLOCK_SCORE_THRESHOLD = 5;
 const BLOCK_LLM_CONFIDENCE = 0.8;
-const INJECTION_TIMEOUT_MS = 2000;
 
 const MAX_INJECTION_INPUT_CHARS = 4000;
 
@@ -156,10 +155,9 @@ export async function confirmInjectionWithLlm(
   options: { config: Config; db: Kysely<DB>; userId?: string; chatId?: string },
 ): Promise<{ injected: boolean; confidence: number; category: InjectionCategory | "none" } | null> {
   const result = await callAux("injection-check", options.config, options.db, [
-    { role: "system", content: INJECTION_CHECK_PROMPT, },
+    { role: "system", content: resolveSystemPrompt(options.config.templates.llm, "injectionCheck",), },
     { role: "user", content: text.slice(0, MAX_INJECTION_INPUT_CHARS,), },
   ], {
-    timeoutMs: INJECTION_TIMEOUT_MS,
     userId: options.userId,
     chatId: options.chatId,
   },);
