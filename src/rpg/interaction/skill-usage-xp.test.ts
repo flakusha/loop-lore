@@ -22,6 +22,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../test-utils/insert-helpers.js";
+import { encodeReferencePair, XpSource, } from "../xp/sources.js";
 import { resolveInteraction, } from "./service.js";
 import { awardSkillUsageXp, difficultyForDc, } from "./skill-usage-xp.js";
 
@@ -104,10 +105,12 @@ describe("awardSkillUsageXp", () => {
     expect(skill.xp,).toBe(50,);
 
     const rows = await ledgerFor(actorId,);
-    expect(rows,).toHaveLength(1,);
-    expect(rows[0]!.source,).toBe("skill_use",);
-    expect(rows[0]!.reference_id,).toBe(interactionId,);
-    expect(rows[0]!.amount,).toBe(50,);
+    expect(rows,).toHaveLength(2,);
+    const bySource = new Map(rows.map((r,) => [r.source, r,] as const),);
+    expect(bySource.get(XpSource.SkillUsage,)?.amount,).toBe(50,);
+    expect(bySource.get(XpSource.SkillUsage,)?.reference_id,).toBe(encodeReferencePair(skillId, 50,),);
+    expect(bySource.get("skill_use",)?.reference_id,).toBe(interactionId,);
+    expect(bySource.get("skill_use",)?.amount,).toBe(50,);
     const stats = await db.selectFrom("character_stats",).selectAll().where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
 
@@ -195,8 +198,13 @@ describe("awardSkillUsageXp", () => {
     await awardSkillUsageXp(db, input,);
     await awardSkillUsageXp(db, input,);
 
+    // The sheet half dedupes on (actor, skill_use, interaction-id); the
+    // skill-row half keys on [skillId, amount], so a retry re-applies the row
+    // half while the sheet half stays single-applied.
     const rows = await ledgerFor(actorId,);
-    expect(rows,).toHaveLength(1,);
+    const sheetRows = rows.filter((r,) => r.source === "skill_use");
+    expect(sheetRows,).toHaveLength(1,);
+    expect(sheetRows[0]!.reference_id,).toBe(interactionId,);
     const stats = await db.selectFrom("character_stats",).selectAll().where("actor_id", "=", actorId,)
       .executeTakeFirstOrThrow();
 
@@ -263,8 +271,8 @@ describe("awardSkillUsageXp", () => {
 
     expect(skill.xp,).toBeGreaterThan(0,);
     const rows = await ledgerFor(actorId,);
-    expect(rows,).toHaveLength(1,);
-    expect(rows[0]!.source,).toBe("skill_use",);
-    expect(rows[0]!.reference_id,).toBe(resolution.id,);
+    const sheetRows = rows.filter((r,) => r.source === "skill_use");
+    expect(sheetRows,).toHaveLength(1,);
+    expect(sheetRows[0]!.reference_id,).toBe(resolution.id,);
   });
 });
