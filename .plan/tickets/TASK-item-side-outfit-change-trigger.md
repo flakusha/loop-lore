@@ -3,7 +3,7 @@
 
 # TASK: Item-side outfit change trigger (unequip/transfer swaps the portrait)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-reactive-actor-appearance
@@ -129,3 +129,5 @@ the item-side initiator that routes through the existing change-gate seam.
   variant rungs `src/characters/services/wardrobe/selection-ladder.ts:9-17`
 - The per-message snapshot column: `src/db/schema-core.ts:817`;
   `src/db/migrations/070_messages_outfit_id.ts:12-17`
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 0039f2b (registry tip: 021f1f0c6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ITEM-SIDE-OUTFIT-CHANGE-TRI)

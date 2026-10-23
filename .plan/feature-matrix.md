@@ -1023,7 +1023,7 @@ Total tickets: **3923** — untagged: **2684** — unbound to epic: **1550**
 | orchestration | 2 | 1 | 0 | 0 | 1 | 0 | 0 |
 | organization | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | origin | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
-| outfit | 5 | 1 | 0 | 1 | 0 | 0 | 3 |
+| outfit | 5 | 2 | 0 | 1 | 0 | 0 | 2 |
 | overlay | 3 | 2 | 1 | 0 | 0 | 0 | 0 |
 | overlays | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | override | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -2010,7 +2010,7 @@ Total tickets: **3923** — untagged: **2684** — unbound to epic: **1550**
 | epic-rag-extract-link | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | epic-rag-ui | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-rarity-extensions | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-reactive-actor-appearance | 22 | 4 | 0 | 0 | 0 | 0 | 18 |
+| epic-reactive-actor-appearance | 22 | 5 | 0 | 0 | 0 | 0 | 17 |
 | epic-recursive-self-improvement | 27 | 0 | 0 | 0 | 0 | 0 | 27 |
 | epic-reference-conditioned-generation | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | epic-relationships | 3 | 1 | 1 | 1 | 0 | 0 | 0 |
