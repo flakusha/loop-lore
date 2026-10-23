@@ -3,7 +3,7 @@
 
 # FEAT: Level-up decision interface for autonomous LLM actors with affinity auto-allocation
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** service shipped on dev — `autoAllocateAsi`/`stageLevelUpDecision`/`resolveLevelUpDecision`/`autoResolveIfAutonomous` at `src/rpg/level/decisions.ts:60,98,141,166`; blocked on sibling F1 chat `asi:` answer wiring (tree `xp-levelup-answer-wire`, unlanded); verified 2026-10-23
 **Priority:** high
 **Effort:** Large
@@ -24,3 +24,5 @@ A level-up decision surface for autonomous actors: when an actor crosses an XP t
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue e64d7f7 (registry tip: 867c4e33f Konstantin Fedotov Close issue)
