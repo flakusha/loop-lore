@@ -7,8 +7,8 @@
  */
 
 import type { callAux, } from "../../aux-pipeline";
+import { resolveClassifierPrompt, } from "../../aux-pipeline/class-template-resolver";
 import { getLogger, } from "../../logger";
-import { resolveSystemPrompt, } from "../../prompts";
 import { jsonParseOr, } from "../../utils";
 import type { HookContext, } from "./types";
 
@@ -60,10 +60,18 @@ export async function detectNsfwWithLlm(
   callAuxFn: typeof callAux,
 ): Promise<NsfwLevel> {
   try {
+    // Pack template > systemPrompts.nsfw override > code default.
+    const { prompt, params, } = await resolveClassifierPrompt({
+      config: context.config,
+      db: context.db,
+      task: "nsfw",
+      chatId: context.chatId,
+    },);
+
     const messages = [
       {
         role: "system" as const,
-        content: resolveSystemPrompt(context.config.templates.llm, "nsfw",),
+        content: prompt,
       },
       { role: "user" as const, content: content.slice(0, 500,), },
     ];
@@ -71,6 +79,7 @@ export async function detectNsfwWithLlm(
     const response = await callAuxFn("nsfw", context.config, context.db, messages, {
       userId: context.userId,
       chatId: context.chatId,
+      ...params,
     },);
 
     if (!response) { return "none"; }

@@ -59,7 +59,7 @@ export async function classifyTransitionMessage(
     await requireActorExists(db, userId,);
   }
 
-  return classifyTransition(content, recentMessages, config, db, userId,);
+  return classifyTransition(content, recentMessages, config, db, userId, ownership?.chatId,);
 }
 
 // ─── Transition Creation ───────────────────────────────────────

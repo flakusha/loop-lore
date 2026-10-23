@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+#
+# configs/templates/classifiers/pacing.example.yaml — REFERENCE EXAMPLE.
+#
+# `*.example.*` files are documentation-only: the loader skips them, so this
+# pack never ships as live config. Copy it to `pacing.yaml` (or any other
+# name) in this directory to activate it.
+#
+# Selection contract (epic-classifier-template-packs):
+# - `serves` names the aux decision points this template can answer.
+# - `tags` must ALL appear among the chat-active ∪ actor-trait query tags,
+#   and every query tag is validated against the admin-curated vocabulary
+#   (system_config key `classifier_tag_vocabulary`, JSON string[]).
+# - `when` guards are structured facts (chatMode: direct|group|story|battle).
+# - Highest `priority` wins among matching packs; no match falls through to
+#   the `systemPrompts.<purpose>` override / code default.
+# - `params` overrides the task registry's sampling shape for the aux call.
+merge: extend
+
+classifiers:
+  scene-pacing:
+    id: scene-pacing
+    name: Scene pacing director
+    description: Decide whether the next turn should fast-forward time instead of playing out.
+    serves: [intent]
+    tags: [pacing, fastforward]
+    when:
+      chatMode: [story, group]
+    priority: 10
+    params: { temperature: 0.0, maxTokens: 100, timeoutMs: 2000 }
+    labels: [advance, hold]
+    template: |
+      You are a pacing director for a roleplay chat. Given the recent exchange,
+      decide whether to advance time. Reply with ONLY a JSON object:
+      {"intent": "greeting|question|command|roleplay|narrative", "advance": true|false, "confidence": 0.0-1.0}
+      - advance=true when the scene has no open player choices.
+      - confidence < 0.5 means uncertain; callers should hold.

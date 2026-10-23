@@ -17,10 +17,10 @@
  */
 import type { Kysely, } from "kysely";
 import { callAux, } from "../aux-pipeline";
+import { resolveClassifierPrompt, } from "../aux-pipeline/class-template-resolver";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { resolveSystemPrompt, } from "../prompts";
 import {
   CONTEXT_CUT,
   MOVEMENT_VERBS,
@@ -99,10 +99,19 @@ async function classifyWithAuxLlm(
   config: Config,
   db: Kysely<DB>,
   userId?: string,
+  chatId?: string,
 ): Promise<Omit<TransitionClassification, "source"> | null> {
+  // Pack template > systemPrompts.transition override > code default.
+  const { prompt, params, } = await resolveClassifierPrompt({
+    config,
+    db,
+    task: "transition",
+    chatId,
+  },);
+
   // Build minimal context: system + recent messages + current message
   const messages: { role: "system" | "user"; content: string }[] = [
-    { role: "system" as const, content: resolveSystemPrompt(config.templates.llm, "transition",), },
+    { role: "system" as const, content: prompt, },
   ];
 
   for (const m of recentMessages) {
@@ -111,10 +120,10 @@ async function classifyWithAuxLlm(
 
   messages.push({ role: "user" as const, content, },);
 
-  // Shared AUX policy via the task registry: 2s timeout, 0.0 temperature,
-  // 100 max tokens, BYO key.
+  // Shared AUX policy via the task registry; pack params win when selected.
   const response = await callAux("transition", config, db, messages, {
     userId,
+    ...params,
   },);
 
   if (!response) {
@@ -151,6 +160,7 @@ async function classifyWithAuxLlm(
  * @param config - Application config
  * @param db - Kysely instance
  * @param userId - User ID for BYO apiKey resolution (optional)
+ * @param chatId - Chat ID; enables classifier-pack tag selection (optional)
  * @returns Transition classification
  */
 export async function classifyTransition(
@@ -159,6 +169,7 @@ export async function classifyTransition(
   config: Config,
   db: Kysely<DB>,
   userId?: string,
+  chatId?: string,
 ): Promise<TransitionClassification> {
   // Step 1: Regex check (instant, zero cost)
   const regexResult = classifyWithRegex(content,);
@@ -168,7 +179,7 @@ export async function classifyTransition(
 
   // Step 2: AUX LLM fallback (fast, low cost)
   try {
-    const auxResult = await classifyWithAuxLlm(content, recentMessages, config, db, userId,);
+    const auxResult = await classifyWithAuxLlm(content, recentMessages, config, db, userId, chatId,);
     if (auxResult) {
       return { ...auxResult, source: "aux-llm", };
     }

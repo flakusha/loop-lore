@@ -155,7 +155,7 @@ export async function confirmInjectionWithLlm(
   options: { config: Config; db: Kysely<DB>; userId?: string; chatId?: string },
 ): Promise<{ injected: boolean; confidence: number; category: InjectionCategory | "none" } | null> {
   const result = await callAux("injection-check", options.config, options.db, [
-    { role: "system", content: resolveSystemPrompt(options.config.templates.llm, "injectionCheck",), },
+    { role: "system", content: resolveSystemPrompt(options.config.templates?.llm, "injectionCheck",), },
     { role: "user", content: text.slice(0, MAX_INJECTION_INPUT_CHARS,), },
   ], {
     userId: options.userId,
