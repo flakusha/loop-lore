@@ -25820,7 +25820,7 @@
     "label": "task",
     "priority": "Medium | **Effort:** S",
     "source": ".plan/tickets/TASK-ai-message-utilities.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "AI message utilities (translate/summarize/explain)",
     "type": "TASK"
@@ -42597,7 +42597,7 @@
     "label": "task",
     "priority": "Medium | **Effort:** S",
     "source": ".plan/tickets/TASK-link-previews-unfurl.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Link previews (unfurl)",
     "type": "TASK"
@@ -44513,7 +44513,7 @@
     "label": "task",
     "priority": "Medium | **Effort:** M",
     "source": ".plan/tickets/TASK-message-polls-votes.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Message polls / votes",
     "type": "TASK"
@@ -56081,7 +56081,7 @@
     "label": "task",
     "priority": "Low | **Effort:** M",
     "source": ".plan/tickets/TASK-voice-notes-playback.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Voice notes playback",
     "type": "TASK"

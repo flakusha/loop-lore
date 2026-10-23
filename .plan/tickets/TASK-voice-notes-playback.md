@@ -3,7 +3,7 @@
 
 # TASK: Voice notes playback
 
-**Status:** Not Started
+**Status:** Done
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
@@ -45,3 +45,5 @@ tests. NOT done: MediaRecorder capture + upload — no binary upload
 endpoint exists anywhere in the app, so recording needs an app-wide
 upload route first (follow-up); no server-side duration/mime validation
 yet for the same reason.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 22e0581 (registry tip: 92b5bb5c6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-VOICE-NOTES-PLAYBACK done)
