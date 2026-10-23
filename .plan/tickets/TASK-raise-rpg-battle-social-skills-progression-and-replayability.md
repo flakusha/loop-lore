@@ -3,7 +3,7 @@
 
 # TASK: Raise rpg battle-social, skills-progression and replayability-playthrough coverage to the 80 percent floor
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-replayability
@@ -21,3 +21,14 @@ The diff-scoped coverage gate (diff-files mode) floors each diff-touched src fil
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Coverage evidence (waivers deleted 2026-10-23)
+
+All three per-file waivers were deleted from `scripts/check/coverage/waivers.mjs`.
+Measured on dev (branch `cov-waiver-salvage`), each file in its top-level
+module scope (src/rpg — every test under the top-level module). Floor that
+applies after deletion: 80 (no `rpg` module waiver).
+
+- src/rpg/service/battles/social.ts — LF=122, LH=122 -> 100.0% — PASS
+- src/rpg/skills/service/progression.ts — LF=135, LH=134 -> 99.3% — PASS
+- src/rpg/replayability/service/playthrough.ts — LF=132, LH=132 -> 100.0% — PASS

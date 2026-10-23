@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Low
 **Effort:** Small
 **Epic:** epic-testing-qa
@@ -22,3 +22,23 @@ The SSE streaming fix (safe-fetch `stream` option) threads a `stream?: boolean` 
 - [ ] Per-file waivers in `scripts/check/coverage.mjs` (`frontend:src/frontend/htmx.ts`, `frontend:src/frontend/fe-fetch.ts`)
 - [ ] Diff-file coverage gate green
 - [ ] Documentation updated
+
+## Coverage evidence (2026-10-23)
+
+- file: src/frontend/fe-fetch.ts
+  - module scope: src/frontend (every test under the top-level module)
+  - LF=61, LH=61 -> 100.0%
+  - floor after deletion: 75 (the `frontend` module waiver) — PASS
+  - the per-file waiver `frontend:src/frontend/fe-fetch.ts` (floor 60) was
+    deleted from `scripts/check/coverage/waivers.mjs`.
+
+- file: src/frontend/alpine/htmx.ts
+  - module scope: src/frontend (every test under the top-level module)
+  - LF=142, LH=123 -> 86.6%
+  - floor after deletion would be: 75 (the `frontend` module waiver) — PASS
+  - the per-file waiver `frontend:src/frontend/alpine/htmx.ts` (floor 30) is
+    KEPT by this change (out of its scope), but its recorded reason
+    ("30.3 measured") is stale and it cites a Done ticket, so the next
+    waiver-hygiene pass should delete it.
+
+The ticket stays open: one of the two per-file waivers it owns is still live.
