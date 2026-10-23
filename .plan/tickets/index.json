@@ -13718,7 +13718,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-admin.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "(none)"
     ],
@@ -13733,7 +13733,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-age-gate.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "frontend",
       "security",
@@ -13750,7 +13750,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/EPIC-FRONTEND-BACKEND-INTEGRATION.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "frontend",
       "integration",
@@ -13886,7 +13886,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-gallery.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "gallery",
       "media",
@@ -13922,7 +13922,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-html-dedup-htmx-reuse.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "frontend",
       "htmx",
@@ -14033,7 +14033,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-settings.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "(none)"
     ],
@@ -14270,7 +14270,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/EPIC-HOUSING.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "housing",
       "base-building",
@@ -14334,7 +14334,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-i18n.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "i18n",
       "localization",
@@ -14472,7 +14472,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-import-export-io.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "import",
       "export",
@@ -14890,7 +14890,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-lora-discovery-application.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "lora",
       "stable-diffusion",
@@ -15146,7 +15146,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/epic-mesh-federation-content-sharing.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "mesh",
       "federation",
@@ -15206,7 +15206,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-middleware-request-lifecycle.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "(none)"
     ],
@@ -15606,7 +15606,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-npc-navigation.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "npc",
       "navigation",
@@ -15759,7 +15759,7 @@
     "label": "epic",
     "priority": "P1-High",
     "source": ".plan/tickets/epic-openapi-reference.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "api",
       "openapi",
@@ -16521,7 +16521,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-replayability.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "replayability",
       "branching",
@@ -17000,7 +17000,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-skills.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "skills",
       "abilities",
@@ -17528,7 +17528,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-wardrobe-avatar-variants.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "avatar",
       "wardrobe",
@@ -17588,7 +17588,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-world-chat-channels-invites.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "worlds",
       "chat",
