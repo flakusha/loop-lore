@@ -6,7 +6,7 @@
 **Epic:** epic-character-core-system
 **Related:** TASK-character-trait-catalog-for-gameplay-mechanics, TASK-character-stat-allocation-backend-api-and-db-integration
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -22,3 +22,4 @@ The catalog and the DB-bound allocations only matter if dice, combat, and saves 
 
 Add `applyTraits(stats: StatBlockWithModifiers, traits: AppliedTrait[], context?: {kind: "attack"|"save"|"check", ability?: AbilityName, skill?: SkillName}) -> ResolvedRollContext`. The function composes base ability modifier, skill proficiency (`src/rpg/skills/`), and trait effects into `{ abilityMod, skillMod, rollFloor, proficiencyApplied, sourceTraits }`. Floor semantics: `roll_floor` raises the minimum success value for the named context; `minimumRollValue(context, traits, baseFloor)` lifts low rolls. Stack rule: two `roll_floor` traits in the same context take the higher floor. `rollWithTraits(dice, ability, traits)` lives in `src/rpg/dice/trait-roll.ts`. All consumer signatures stay additive.
 
+**Resolved:** 2026-10-23 registry-driven close: git issue a123a26 (registry tip: d3e764df0 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHARACTER-STAT-MODIFIERS-AN)
