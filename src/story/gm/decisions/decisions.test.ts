@@ -14,12 +14,25 @@ import type { Kysely, } from "kysely";
 import { GameMasterType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
-import type { StoryContext, } from "../../types";
-import { hardcodedDecision, } from "./hardcoded";
-import { humanDecision, } from "./human";
+import type { GameMasterDecision, StoryContext, } from "../../types";
+import { hardcodedDecision as hardcodedDecisionImpl, } from "./hardcoded";
+import { humanDecision as humanDecisionImpl, } from "./human";
 import { hybridDecision, } from "./hybrid";
 import { GM_DECISIONS, } from "./registry";
 import type { GmDecisionDeps, } from "./types";
+
+// The strategy contract permits a promise; these two strategies are synchronous.
+const hardcodedDecision = hardcodedDecisionImpl as unknown as (
+  deps: GmDecisionDeps,
+  context: StoryContext,
+  actorId: string,
+) => GameMasterDecision;
+
+const humanDecision = humanDecisionImpl as unknown as (
+  deps: GmDecisionDeps,
+  context: StoryContext,
+  actorId: string,
+) => GameMasterDecision;
 
 // ── fixtures ─────────────────────────────────────────────────
 
@@ -107,8 +120,12 @@ describe("hardcodedDecision", () => {
                 worldItemId: "w1",
                 itemId: "i1",
                 name: "Iron Sword",
+                description: "A plain iron sword.",
+                category: "weapon",
+                rarity: "common",
                 quantity: 2,
                 properties: { effects: [], },
+                value: 10,
                 weight: 1,
                 visibility: "visible",
               },
@@ -116,8 +133,12 @@ describe("hardcodedDecision", () => {
                 worldItemId: "w2",
                 itemId: "i2",
                 name: "Torch",
+                description: "A pitch torch.",
+                category: "misc",
+                rarity: "common",
                 quantity: 1,
                 properties: { effects: [], },
+                value: 1,
                 weight: 1,
                 visibility: "visible",
               },
