@@ -106,6 +106,13 @@ export class TUIApp {
     this.chat = new ChatWidget(this.screen, {
       sessionToken,
       sendTimeoutMs,
+      // After /image or /upload the chat has new assets server-side — the
+      // sidebar only loads on chat switch, so reload it here to keep the
+      // acceptance flow (generate -> sidebar -> attach) actually reachable.
+      onAssetsRefresh: () => {
+        void this.assets.loadAssets();
+      },
+      linkAsset: (assetId,) => this.assets.attachAsset(assetId,),
       // The overlays are built after the chat; the closure runs at keypress
       // time, when all of them exist. Without this the screen-level Tab would
       // pull focus into the chat input underneath an open overlay.
