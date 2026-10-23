@@ -3,7 +3,7 @@
 
 # TASK: AI message utilities (translate/summarize/explain)
 
-**Status:** Not Started
+**Status:** Done
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
@@ -40,3 +40,5 @@ In `1bb1a1343` — `POST /api/chats/:id/messages/:mid/ai-action`
 process-global, see caption.test.ts note). Deviations: actions are
 summarize/action-items/explain (translate dropped — one-line follow-up:
 add Literal + prompt); no context-menu/overlay UI wired (backend only).
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 11a3988 (registry tip: 3302e1090 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-AI-MESSAGE-UTILITIES done)
