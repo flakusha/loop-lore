@@ -1287,6 +1287,17 @@
                             x-ref="capNotes"
                           />
                         </div>
+                        <div>
+                          <label style="font-size: 11px; color: var(--text-secondary)"
+                          >Native Locale (en es fr de ja ko zh pt ru ar)</label>
+                          <input
+                            class="form-input"
+                            style="font-size: 12px; padding: 3px 6px"
+                            type="text"
+                            :placeholder="cap.nativeLocale ?? 'auto'"
+                            x-ref="nativeLocale"
+                          />
+                        </div>
                       </div>
                       <div style="margin-top: var(--space-2)">
                         <button
@@ -1295,6 +1306,7 @@
                             contextWindow: $refs.ctxWindow.value ? Number($refs.ctxWindow.value) : null,
                             maxOutput: $refs.maxOutput.value ? Number($refs.maxOutput.value) : null,
                             notes: $refs.capNotes.value || null,
+                            nativeLocale: $refs.nativeLocale.value || null,
                           })"
                         >
                           Save Override
