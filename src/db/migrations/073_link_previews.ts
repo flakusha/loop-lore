@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 072_link_previews (TASK-link-previews-unfurl)
+ * 073_link_previews (TASK-link-previews-unfurl)
  *
  * Cache for OpenGraph unfurls of generic (non-music) links shared in chat.
  * `url_hash` (sha-256 hex of the normalized URL) is the lookup key so the
