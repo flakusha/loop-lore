@@ -6,6 +6,7 @@
   class="chat-area"
   id="message-list"
   x-ref="messageList"
+  x-data="messageTranslate()"
   data-testid="message-list"
   @scroll="trackCurrentSection()"
   :class="{ 'section-transfer-fx': _transferFx }"
@@ -205,6 +206,18 @@
             </template>
             <template x-if="editingMessageId !== msg.id && msg.content_type !== 'tool_result'">
               <div class="content" x-html="renderMarkdown(msg.content)"></div>
+            </template>
+            <!--
+              Per-message translation variant (FEAT-language-selection-three-level):
+              rendered beneath the original, which always stays visible.
+            -->
+            <template x-if="editingMessageId !== msg.id && translationFor(msg.id)">
+              <div class="content translation-variant" data-testid="translation-variant">
+                <small style="color: var(--text-secondary)">
+                  🌐 <span x-text="translationFor(msg.id)?.locale"></span>
+                </small>
+                <div x-html="renderMarkdown(translationFor(msg.id)?.content ?? '')"></div>
+              </div>
             </template>
             <template x-if="editingMessageId === msg.id">
               <div class="edit-area">
@@ -456,6 +469,16 @@
                 x-bind:title="t('chats.rememberThis')"
               >
                 🧠
+              </button>
+              <button
+                class="btn-icon-action"
+                @click="translateMessage(msg.id)"
+                :disabled="_mtBusy === msg.id"
+                x-bind:title="t('messages.translate')"
+                :aria-label="t('messages.translate')"
+                data-testid="translate-message"
+              >
+                🌐
               </button>
               <template x-if="msg.role === 'assistant'">
                 <button class="btn-icon-action" x-bind:title="t('chats.regenerate')" @click="regenerateVariant(msg.id)">

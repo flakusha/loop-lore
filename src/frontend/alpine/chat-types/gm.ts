@@ -37,6 +37,8 @@ export interface GmParticipant {
 
 /** */
 export interface GmConfig {
+  /** Single chat content-language key (FEAT-language-selection-three-level). */
+  contentLanguage?: string;
   /** Assistant's role in this chat: off, helper, gm, or moderator */
   assistantRole?: "off" | "helper" | "gm" | "moderator";
   /** Visual novel mode (image-heavy, sequential panel display) — legacy boolean, superseded by `renderingOverride` (tri-state). Read by the chat-settings modal for legacy chats; new writes go through `renderingOverride`. */

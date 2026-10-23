@@ -245,7 +245,8 @@
     "storageUsage": "Storage used",
     "stored": "stored",
     "localInference": "Browser-side inference (opt-in)",
-    "templates": "Templates"
+    "templates": "Templates",
+    "contentLanguage": "Inhaltssprache"
   },
   "admin": {
     "title": "Administration",
@@ -1266,7 +1267,10 @@
     "cannotEditMessage": "Cannot edit this message",
     "onlyUserEditable": "Only user messages can be edited",
     "messageNotFound": "Message not found",
-    "chatNotFound": "Chat not found"
+    "chatNotFound": "Chat not found",
+    "translate": "Übersetzen",
+    "translateFailed": "Übersetzung fehlgeschlagen",
+    "translateSkipped": "Nichts zu übersetzen"
   },
   "story": {
     "world": "World",

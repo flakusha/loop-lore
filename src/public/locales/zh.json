@@ -245,7 +245,8 @@
     "storageUsage": "Storage used",
     "stored": "stored",
     "localInference": "Browser-side inference (opt-in)",
-    "templates": "Templates"
+    "templates": "Templates",
+    "contentLanguage": "内容语言"
   },
   "admin": {
     "title": "Administration",
@@ -1266,7 +1267,10 @@
     "cannotEditMessage": "Cannot edit this message",
     "onlyUserEditable": "Only user messages can be edited",
     "messageNotFound": "Message not found",
-    "chatNotFound": "Chat not found"
+    "chatNotFound": "Chat not found",
+    "translate": "翻译",
+    "translateFailed": "翻译失败",
+    "translateSkipped": "没有需要翻译的内容"
   },
   "story": {
     "world": "World",

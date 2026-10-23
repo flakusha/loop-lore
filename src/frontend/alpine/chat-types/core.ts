@@ -134,8 +134,8 @@ export interface ChatCoreState
   _carriageEnabled: boolean;
   /** Story tier of the two-tier custom instructions ("" = unset). */
   _customInstructions: string;
-  /** Auto-translate target lang code ("" = off). */
-  _chatAutoTranslateLang: string;
+  /** Chat content language (gm_config.contentLanguage; "" = off). */
+  _chatContentLanguage: string;
   _quickReplies: QuickReplyButton[];
   _quickRepliesDirty: boolean;
   _startupFiredChat: string | null;

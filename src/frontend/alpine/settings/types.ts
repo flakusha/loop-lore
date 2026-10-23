@@ -28,6 +28,8 @@ export interface SettingsState {
   birthDate: string;
   theme: string;
   locale: string;
+  /** Preferred content/translation language (users.settings.contentLocale; "" = unset). */
+  contentLocale: string;
   locales: LocaleInfoArray;
   enterToSend: boolean;
   autoScroll: boolean;
@@ -60,6 +62,7 @@ export interface SettingsState {
   nsfwRestrictionText(): string;
   saveGeneral(): Promise<void>;
   onLocaleChange(): Promise<void>;
+  onContentLocaleChange(): Promise<void>;
   exportAllData(): Promise<void>;
   onConfirmDeleteInput(): void;
   deleteAllData(): Promise<void>;
