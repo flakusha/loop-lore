@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 072_character_stat_allocation
+ * 075_character_stat_allocation
  *
  * Persist allocated stat blocks and assigned gameplay traits per actor.
  * trait_id is app-validated against the frozen catalog (no FK).
