@@ -43,6 +43,21 @@ export function listProviderInstances(config: Config,): ProviderInstance[] {
     instances.push({ name: ollamaNative.name, allowUserApiKey: ollamaNative.allowUserApiKey !== false, },);
   }
 
+  const deepl = providers?.deepl;
+  if (deepl) {
+    instances.push({ name: deepl.name, allowUserApiKey: deepl.allowUserApiKey !== false, },);
+  }
+
+  const libretranslate = providers?.libretranslate;
+  if (libretranslate) {
+    instances.push({ name: libretranslate.name, allowUserApiKey: libretranslate.allowUserApiKey !== false, },);
+  }
+
+  const googleTranslate = providers?.googleTranslate;
+  if (googleTranslate) {
+    instances.push({ name: googleTranslate.name, allowUserApiKey: googleTranslate.allowUserApiKey !== false, },);
+  }
+
   return instances;
 }
 

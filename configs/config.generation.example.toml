@@ -9,3 +9,8 @@ defaultModels = {} # { openaiCompatible = "gpt-4" }
 openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
 # anthropic = { name = "anthropic", label = "Anthropic", apiKey = "sk-ant-...", model = "claude-3-5-sonnet-latest", timeout = 30000, retries = 3, allowUserApiKey = true }
 # sd = [] # stable diffusion providers
+# Dedicated translation providers (model = default TARGET language; usable
+# as the `generation.modelRoles.translator` provider):
+# deepl = { name = "deepl", label = "DeepL", authKey = "your-key:fx", freeTier = true, model = "en-us", timeout = 30000, retries = 3, allowUserApiKey = true }
+# libretranslate = { name = "libretranslate", label = "LibreTranslate", baseUrl = "https://libretranslate.example.com", apiKey = "optional", model = "en", timeout = 30000, retries = 3, allowUserApiKey = false }
+# googleTranslate = { name = "google-translate", label = "Google Translate", apiKey = "AIza...", model = "en", timeout = 30000, retries = 3, allowUserApiKey = true }

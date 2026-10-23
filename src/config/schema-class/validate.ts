@@ -42,6 +42,42 @@ export const validate = (config: Config,): void => {
     throw new Error("generation.providers.ollamaNative requires model",);
   }
 
+  if (config.generation.providers.deepl && !config.generation.providers.deepl.authKey) {
+    throw new Error("generation.providers.deepl requires authKey",);
+  }
+
+  if (config.generation.providers.deepl && !config.generation.providers.deepl.model) {
+    throw new Error("generation.providers.deepl requires model (default target language)",);
+  }
+
+  if (
+    config.generation.providers.libretranslate &&
+    !config.generation.providers.libretranslate.baseUrl
+  ) {
+    throw new Error("generation.providers.libretranslate requires baseUrl",);
+  }
+
+  if (
+    config.generation.providers.libretranslate &&
+    !config.generation.providers.libretranslate.model
+  ) {
+    throw new Error("generation.providers.libretranslate requires model (default target language)",);
+  }
+
+  if (
+    config.generation.providers.googleTranslate &&
+    !config.generation.providers.googleTranslate.apiKey
+  ) {
+    throw new Error("generation.providers.googleTranslate requires apiKey",);
+  }
+
+  if (
+    config.generation.providers.googleTranslate &&
+    !config.generation.providers.googleTranslate.model
+  ) {
+    throw new Error("generation.providers.googleTranslate requires model (default target language)",);
+  }
+
   if (
     config.headers.xFrameOptions !== null &&
     !["DENY", "SAMEORIGIN",].includes(config.headers.xFrameOptions,)

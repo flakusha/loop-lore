@@ -15,7 +15,15 @@ import type { HarnessCallContext, } from "./harness-context";
 /** */
 export interface ProviderCapabilities {
   /** Provider type identifier used in config + DB */
-  type: "openai-compatible" | "anthropic" | "ollama" | "sd-cpp" | "bedrock";
+  type:
+    | "openai-compatible"
+    | "anthropic"
+    | "ollama"
+    | "sd-cpp"
+    | "bedrock"
+    | "deepl"
+    | "libretranslate"
+    | "google-translate";
   /** Human-readable label */
   label: string;
   /** Text generation supported */

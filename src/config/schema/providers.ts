@@ -115,6 +115,80 @@ export interface GenerationProvidersConfig {
   bedrock?: BedrockProviderConfig;
   /** Audio generation providers (ComfyUI); empty means local synthesis only */
   audio?: AudioProviderConfig[];
+  /** DeepL translation API provider (POST /v2/translate) */
+  deepl?: DeepLProviderConfig;
+  /** LibreTranslate translation API provider (POST /translate) */
+  libretranslate?: LibreTranslateProviderConfig;
+  /** Google Cloud Translation v2 provider (translate/v2 endpoint) */
+  googleTranslate?: GoogleTranslateProviderConfig;
+}
+
+/**
+ * DeepL translation API provider. The `model` field carries the DEFAULT
+ * TARGET language (DeepL has no model concept) — e.g. "en-us" or "de";
+ * per-request `model` overrides it in the complete() shim.
+ */
+export interface DeepLProviderConfig {
+  /** Unique provider instance name (referenced in registry) */
+  name: string;
+  /** Human-readable label for UI */
+  label: string;
+  /** DeepL authentication key (sent as the `DeepL-Auth-Key` header) */
+  authKey: string;
+  /** true → free endpoint (api-free.deepl.com); false → pro (api.deepl.com) */
+  freeTier: boolean;
+  /** Default target language code (e.g. "en-us", "de") — the shim's "model" */
+  model: string;
+  /** Connection timeout in ms */
+  timeout: number;
+  /** Max retries for transient failures */
+  retries: number;
+  /** Allow user API key override for this provider */
+  allowUserApiKey: boolean;
+}
+
+/**
+ * LibreTranslate translation API provider. The `model` field carries the
+ * DEFAULT TARGET language (LibreTranslate has no model concept).
+ */
+export interface LibreTranslateProviderConfig {
+  /** Unique provider instance name (referenced in registry) */
+  name: string;
+  /** Human-readable label for UI */
+  label: string;
+  /** Base URL of the LibreTranslate instance (e.g. https://libretranslate.com) */
+  baseUrl: string;
+  /** API key (optional — many instances run without one) */
+  apiKey?: string;
+  /** Default target language code (e.g. "en", "pt") — the shim's "model" */
+  model: string;
+  /** Connection timeout in ms */
+  timeout: number;
+  /** Max retries for transient failures */
+  retries: number;
+  /** Allow user API key override for this provider */
+  allowUserApiKey: boolean;
+}
+
+/**
+ * Google Cloud Translation v2 provider. The `model` field carries the
+ * DEFAULT TARGET language (the v2 API has no model concept).
+ */
+export interface GoogleTranslateProviderConfig {
+  /** Unique provider instance name (referenced in registry) */
+  name: string;
+  /** Human-readable label for UI */
+  label: string;
+  /** Google Cloud API key with the Translation API enabled */
+  apiKey: string;
+  /** Default target language code (e.g. "en", "zh-CN") — the shim's "model" */
+  model: string;
+  /** Connection timeout in ms */
+  timeout: number;
+  /** Max retries for transient failures */
+  retries: number;
+  /** Allow user API key override for this provider */
+  allowUserApiKey: boolean;
 }
 
 /** */
