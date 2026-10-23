@@ -5495,10 +5495,12 @@
     "title": "Image-edit ComfyUI provider never uploads input_image",
     "label": "bug",
     "priority": "high",
-    "epic": "epic-comfyui-plugin",
-    "tags": [],
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [
+      "comfyui"
+    ],
     "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-IMAGE-EDIT-DERIVATIVE-LINK-FILES-AN-ASSET-ID-UNDER-ENTITY-TY": {
     "hash": "cfa6d6a",
@@ -10110,6 +10112,20 @@
     "title": "workflow confirm session treats optional steps as required",
     "type": "BUG"
   },
+  "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-NO-PARAMETERS": {
+    "hash": "pending",
+    "extid": "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-NO-PARAMETERS",
+    "type": "BUG",
+    "title": "Workflow library img2img row has no parameters",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-reactive-actor-appearance",
+    "tags": [
+      "workflow"
+    ],
+    "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md",
+    "status": "Not Started"
+  },
   "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-UNRESOLVED-PLACEHOLDERS": {
     "hash": "15c0f40",
     "git_issue": "15c0f40",
@@ -10121,7 +10137,7 @@
     "epic": "epic-comfyui-plugin",
     "tags": [],
     "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-unresolved-placeholders.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-WORKTREE-COMMAND-SCRIPTS-SPAWN-GIT-WITH-NO-ISOLATED-ENV": {
     "hash": "90793fc",
@@ -27769,7 +27785,9 @@
     "label": "task",
     "priority": "high",
     "epic": "epic-reactive-actor-appearance",
-    "tags": [],
+    "tags": [
+      "avatar"
+    ],
     "source": ".plan/tickets/TASK-avatar-render-target-discriminator.md",
     "status": "Not Started"
   },
@@ -40440,7 +40458,9 @@
     "label": "task",
     "priority": "high",
     "epic": "epic-reactive-actor-appearance",
-    "tags": [],
+    "tags": [
+      "outfit"
+    ],
     "source": ".plan/tickets/TASK-held-item-axis-data-model.md",
     "status": "Not Started"
   },
@@ -41973,7 +41993,9 @@
     "label": "task",
     "priority": "high",
     "epic": "epic-reactive-actor-appearance",
-    "tags": [],
+    "tags": [
+      "outfit"
+    ],
     "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md",
     "status": "Not Started"
   },
