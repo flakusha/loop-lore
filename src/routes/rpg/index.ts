@@ -20,6 +20,7 @@ import { skillsProgressionRoutes, } from "./skills-progression";
 import { statAllocationRoutes, } from "./stat-allocation";
 import { statsRoutes, } from "./stats";
 import { statsActorRoutes, } from "./stats-actor";
+import { traitCatalogRoutes, } from "./trait-catalog";
 import type { HandlerOpts, } from "./types";
 import { worldLocationTraitsRoutes, } from "./world-location-traits";
 import { xpLootRoutes, } from "./xp-loot";
@@ -95,6 +96,7 @@ export function rpgRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(statsRoutes(opts, prefix,),)
       .use(statsActorRoutes(opts, prefix,),)
       .use(statAllocationRoutes(opts, prefix,),)
+      .use(traitCatalogRoutes(opts, prefix,),)
       .use(achievementsRoutes(opts, prefix,),)
       .use(achievementsPlayerRoutes(opts, prefix,),)
       .use(replayabilityRoutes(opts, prefix,),)
