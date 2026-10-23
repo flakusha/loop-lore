@@ -18772,7 +18772,7 @@
     "epic": "character-xp-leveling",
     "tags": [],
     "source": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-AVATAR-EXPRESSION-SYSTEM": {
     "epic": "epic-character-core-system",
@@ -18836,7 +18836,7 @@
     "epic": "character-xp-leveling",
     "tags": [],
     "source": ".plan/tickets/FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-BLADES-IN-THE-DARK-POSITION-EFFECT-CLOCKS": {
     "epic": "epic-resolution-system",
@@ -20147,7 +20147,7 @@
     "epic": "character-xp-leveling",
     "tags": [],
     "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-LIVENESS-READINESS-ENDPOINTS-OPT-IN-CONFIG": {
     "epic": "epic-api-telemetry",
@@ -21636,7 +21636,7 @@
     "epic": "character-xp-leveling",
     "tags": [],
     "source": ".plan/tickets/FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FIX-ADD-JITTER-TO-THE-FINALIZE-LOCK-RETRY-BACKOFF": {
     "hash": "a2c4b9b",
@@ -49772,7 +49772,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-regen-ui-re-roll-and-regenerate-all-controls.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Regen UI re-roll and regenerate-all controls",
     "type": "TASK"
