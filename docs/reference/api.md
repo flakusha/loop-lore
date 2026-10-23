@@ -5,7 +5,14 @@
 
 ## Authentication
 
-Bearer tokens in `Authorization: Bearer [REDACTED:Authorization header] header. Token is UUID v4. Server stores SHA-256 hash in `sessions` table. See `docs/spec/auth-middleware.md`.
+Web-first cookie auth. Login/register/demo-login `POST` with
+`Content-Type: application/x-www-form-urlencoded` (`username`, `password`
+fields — JSON bodies are rejected with 4xx). On success the server creates
+a session row, sets an `ll_token` HttpOnly cookie, and returns
+`HX-Redirect: /views/chat`. Failures return an inline
+`<p class="error-msg">` HTML swap for htmx callers (`HX-Request: true`),
+or a `{ error, code }` JSON envelope when the caller sends
+`Accept: application/json`. See `docs/spec/auth-middleware.md`.
 
 ## Base URL
 
@@ -21,23 +28,23 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ### Login
 
-`POST /api/v1/auth/login` — body: `{ username, password }` — returns `{ token, user }`
+`POST /api/v1/auth/login` — form-encoded `username` + `password` — sets `ll_token` cookie + `HX-Redirect: /views/chat` on success (401/403/429 error swap or JSON envelope on failure)
 
 ### Demo Login
 
-`POST /api/v1/demo-login` — returns `{ token, user }` (demo mode only)
+`POST /api/v1/demo-login` — no credentials (demo mode only; rate-limited) — sets `ll_token` cookie + `HX-Redirect: /views/chat`
 
 ### Register
 
-`POST /api/v1/auth/register` — body: `{ username, password, displayName }` — returns `{ token, user }`
+`POST /api/v1/auth/register` — form-encoded `username` + `password` (username 3–32 chars, password ≥6 chars; `display_name` defaults to username; gated on `auth.registrationOpen`; 3 attempts/hour/IP) — sets `ll_token` cookie + `HX-Redirect` (409 on duplicate username, 422 on bad fields)
 
 ### Logout
 
-`POST /api/v1/auth/logout` — 204 No Content
+`POST /api/v1/auth/logout` — deletes the caller's session row, expires the `ll_token` cookie — 200 with empty body
 
 ### Me
 
-`GET /api/v1/auth/me` — returns `{ id, username, displayName, role }`
+`GET /api/v1/auth/me` — session-cookie auth only (no Bearer tokens) — returns `{ id, username, display_name, role, created_at, last_seen_at }` (401 when unauthenticated)
 
 ## Users
 
@@ -70,6 +77,31 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 `PUT /api/v1/users/:id/settings` — admin only
 
 ## Chats
+
+
+### List
+
+`GET /api/v1/chats` — paginated user's chats
+
+
+### Create
+
+`POST /api/v1/chats` — body: `{ name, type, mode, participantIds, worldId }` — returns `{ id }` 201
+
+
+### Get
+
+`GET /api/v1/chats/:id` — chat object with participants
+
+
+### Update
+
+`PUT /api/v1/chats/:id` — body: `{ name, mode }`
+
+
+### Delete
+
+`DELETE /api/v1/chats/:id` — 204
 
 ### List
 
@@ -205,6 +237,11 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ## Messages
 
+
+### List
+
+`GET /api/v1/chats/:id/messages` — query: `page`, `pageSize` (max 200), `parentId`
+
 ### List
 
 `GET /api/v1/chats/:id/messages` — query: `page`, `pageSize` (max 200), `parentId`
@@ -212,6 +249,21 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 ### Send
 
 `POST /api/v1/chats/:id/messages` — body: `{ content, role, contentType, parentId, idempotencyKey }` — returns `{ id }` 201
+
+
+### Get
+
+`GET /api/v1/messages/:id` — single message
+
+
+### Update
+
+`PATCH /api/v1/messages/:id` — body: `{ content }`
+
+
+### Delete
+
+`DELETE /api/v1/messages/:id` — 204
 
 ### Get
 
@@ -271,6 +323,31 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ## Characters / Actors
 
+
+### List
+
+`GET /api/v1/actors` — paginated list
+
+
+### Create
+
+`POST /api/v1/actors` — body: `{ displayName, actorType, agentType, description, systemPrompt }` — returns `{ id }` 201
+
+
+### Get
+
+`GET /api/v1/actors/:actorId` — actor object
+
+
+### Update
+
+`PUT /api/v1/actors/:actorId` — body: updated fields
+
+
+### Delete
+
+`DELETE /api/v1/actors/:actorId` — 204
+
 ### List
 
 `GET /api/v1/actors` — paginated list
@@ -294,6 +371,11 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 ### Get Card
 
 `GET /api/v1/actors/:actorId/card` — character card (V2/V3 format)
+
+
+### Export
+
+`GET /api/v1/actors/:actorId/export` — export character data
 
 ### Export
 
@@ -373,6 +455,31 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ## Worlds
 
+
+### List
+
+`GET /api/v1/worlds` — paginated list
+
+
+### Create
+
+`POST /api/v1/worlds` — body: `{ name, description, locationCount, kind, visibility }` — returns `{ id }` 201
+
+
+### Get
+
+`GET /api/v1/worlds/:worldId`
+
+
+### Update
+
+`PUT /api/v1/worlds/:worldId`
+
+
+### Delete
+
+`DELETE /api/v1/worlds/:worldId` — deletes world + all locations, states, quests, items — 204
+
 ### List
 
 `GET /api/v1/worlds` — paginated list
@@ -426,6 +533,31 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 `POST /api/v1/worlds/:worldId/trade/execute` — body: `{ buyerActorId, sellerActorId, buyerItems, sellerItems, price }` — each item line is `{ worldItemId, quantity }`
 
 ## World Locations
+
+
+### List
+
+`GET /api/v1/worlds/:worldId/locations`
+
+
+### Create
+
+`POST /api/v1/worlds/:worldId/locations` — body: `{ name, description, connections, parentLocationId }` — connection IDs validated against same world
+
+
+### Get
+
+`GET /api/v1/worlds/:worldId/locations/:locId`
+
+
+### Update
+
+`PUT /api/v1/worlds/:worldId/locations/:locId`
+
+
+### Delete
+
+`DELETE /api/v1/worlds/:worldId/locations/:locId` — 204
 
 ### List
 
@@ -487,6 +619,21 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ## Sessions
 
+
+### List
+
+`GET /api/v1/sessions` — list active sessions
+
+
+### Get
+
+`GET /api/v1/sessions/:id` — get session details
+
+
+### Delete
+
+`DELETE /api/v1/sessions/:id` — revoke session, 204
+
 ### List
 
 `GET /api/v1/sessions` — list active sessions
@@ -500,6 +647,21 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 `DELETE /api/v1/sessions/:id` — revoke session, 204
 
 ## API Keys
+
+
+### List
+
+`GET /api/v1/user-api-keys` — list user API keys
+
+
+### Create
+
+`POST /api/v1/user-api-keys` — body: `{ name, api_key }` — `name` is the provider name
+
+
+### Delete
+
+`DELETE /api/v1/user-api-keys/:provider` — 204
 
 ### List
 
@@ -595,6 +757,8 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 ## Export
 
+## Export
+
 ### Export Data
 
 `POST /api/v1/export` — body: `{ include?, format?, chat_ids? }` — returns the ZIP synchronously; `include` defaults to `["characters", "chats"]`, `format` to `"json"`
@@ -616,6 +780,11 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 `PATCH /api/v1/i18n/locale` — body: `{ locale }` — switch active locale
 
 ## Plugins
+
+
+### List
+
+`GET /api/v1/plugins` — list installed plugins
 
 ### List
 
