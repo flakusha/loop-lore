@@ -210,7 +210,11 @@ describe("handleSend", () => {
   });
 
   it("omits Authorization when sessionToken is undefined", async () => {
-    stubFetchJson(200, { id: "msg-1", },);
+    stubFetchJsonSequence(200, [
+      { id: "msg-1", },
+      { data: [{ id: "msg-1", role: "user", content: "hello", },], },
+    ],);
+
     const host = makeHost({ sessionToken: undefined, },);
     await handleSend(host, "hello",);
     const captured = getCaptured();
@@ -219,10 +223,31 @@ describe("handleSend", () => {
   });
 
   it("adds only the user message when the response has no assistantMessage", async () => {
-    stubFetchJson(200, { id: "msg-1", },);
+    stubFetchJsonSequence(200, [
+      { id: "msg-1", },
+      { data: [{ id: "msg-1", role: "user", content: "hi", },], },
+    ],);
+
     const host = makeHost({ sessionToken: "tok", },);
     await handleSend(host, "hi",);
     expect(host.addedMessages,).toEqual([{ id: "msg-1", role: "user", content: "hi", },],);
+  });
+
+  it("refreshes the transcript when the LLM path omits assistantMessage", async () => {
+    stubFetchJsonSequence(200, [
+      { id: "msg-1", },
+      {
+        data: [
+          { id: "msg-1", role: "user", content: "hi", },
+          { id: "msg-2", role: "assistant", content: "streamed reply", },
+        ],
+      },
+    ],);
+
+    const host = makeHost({ sessionToken: "tok", },);
+    await handleSend(host, "hi",);
+    expect(host.rendered,).toHaveLength(1,);
+    expect(host.rendered[0]!.map((m,) => m.content),).toEqual(["hi", "streamed reply",],);
   });
 
   it("routes a 4xx response to showError and resets isSending", async () => {
