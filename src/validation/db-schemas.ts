@@ -1140,8 +1140,8 @@ export const WorldEventSteeringsSchema = t.Object({
 
 // ── worlds ────────────────────────────────────────────
 export const WorldsSchema = t.Object({
-  name: t.String(),
   owner_id: t.String(),
+  name: t.String(),
   description: t.Optional(t.String(),),
   lore: t.Optional(t.String(),),
   publication_status: t.Optional(PublicationStatusSchema,),

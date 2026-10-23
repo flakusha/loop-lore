@@ -33,3 +33,5 @@ Modal `src/frontend/modals/stat-allocation.html` (htmx partial + Alpine `x-data`
 
 
 git issue: d87d9f0
+
+**Resolved:** 2026-10-23 registry-driven close: git issue d87d9f0 (registry tip: 3e0059d02 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHARACTER-STAT-ALLOCATION-F)
