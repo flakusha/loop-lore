@@ -25,6 +25,11 @@ export const CODE_TO_STATUS: Record<ErrorCode, HttpStatusCode> = {
   [ErrorCode.Conflict]: HttpStatus.Conflict,
   [ErrorCode.NotImplemented]: HttpStatus.NotImplemented,
   [ErrorCode.ServiceUnavailable]: HttpStatus.ServiceUnavailable,
+  [ErrorCode.ParseError]: HttpStatus.BadRequest,
+  [ErrorCode.Gone]: HttpStatus.Gone,
+  [ErrorCode.BadGateway]: HttpStatus.BadGateway,
+  [ErrorCode.GatewayTimeout]: HttpStatus.GatewayTimeout,
+  [ErrorCode.InsufficientStorage]: HttpStatus.InsufficientStorage,
   [ErrorCode.QuotaExceeded]: HttpStatus.TooManyRequests,
   [ErrorCode.StorageUnavailable]: HttpStatus.ServiceUnavailable,
 };
