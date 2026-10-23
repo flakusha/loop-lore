@@ -135,6 +135,11 @@ of selection order.
 | Concurrent confirms | Guarded `status='draft'` UPDATE (rowcount 1) inside the confirm transaction; concurrent confirm → HTTP 409 conflict. |
 | Down-migration | Loss-tolerant: confirmed merges keep their message rows and synthetic branch rows; drafts and provenance links drop. |
 
+### Bind Tickets (2026-10-23 attachment batch)
+
+- `TASK-assistant-server-side-branch-command.md` — server-side /branch via forkBranch (open)
+- `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md` — split-classifier tests + hot-path aux call scope (open, re-filed here)
+
 ## Acceptance Criteria
 
 - [ ] Branch navigation queries work on existing `messages.parent_id`

@@ -6,7 +6,8 @@
 **Status:** Blocked
 **Priority:** critical
 **Effort:** Medium
-**Epic:** epic-reactive-actor-appearance
+**Epic:** reactive-actor-appearance
+**Epic Note:** kept here 2026-10-23 — `epic-reactive-actor-appearance.md:302-314` binds this ticket as its Phase-4 prerequisite work item; `epic-reference-conditioned-generation.md` targets reference-edit model workflows (a different scope), so no re-file.
 **Caveats:** **Blocked on `epic-comfyui-plugin` open prerequisites** — do not start until those land. Security: the init image is an asset uploaded to the ComfyUI host at `/upload/image`; it must be the actor's own base avatar, never an arbitrary path, and the stored filename must not be caller-controlled. Authorization: the referenced asset must belong to the actor. Partial failure: an upload failure must fail the generation, not silently fall back to txt2img without recording that it did. Rollback: the field is optional; omitting it restores today's behaviour exactly. Stale state: a deleted base asset must fail cleanly. Idempotency: the same asset uploaded with the same filename overwrites (the upload helper sets `overwrite: "true"`) — deterministic. Observability: log whether the edit rung ran. Resource: uploaded images accumulate in the ComfyUI input directory; nothing prunes them.
 
 **Summary:**

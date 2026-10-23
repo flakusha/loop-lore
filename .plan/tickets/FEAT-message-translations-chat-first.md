@@ -6,13 +6,13 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** output-control-transforms
+**Epic:** multilingual-carriage
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Summary:**
 
 Wire the migrated-but-unread `message_translations` table into a chat-first
-message-translation consumer under `epic-output-control-transforms`.
+message-translation consumer under `epic-multilingual-carriage`.
 Backend: schema delivered via the **DB Migration Compaction (Path B)**
 final form (`epic-db-migration-compaction.md`) — `message_translations`
 created in final form carrying `UNIQUE (message_id, locale)` for

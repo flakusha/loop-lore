@@ -8,6 +8,17 @@
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
+**Scope extension 2026-10-23 (plan/epic audit + assistant integration review):**
+
+- `feat-classifier-template-packs` worktree: 0 commits ahead of dev (empty-diff,
+  same class as g2-timeline-branching-ui) — remove or record why it exists.
+- `fix/img2img-workflow-and-input-image-upload`: stale-absorbed — tip is NOT an
+  ancestor of dev (`git merge-base --is-ancestor` rc=1); only ticket-status lines
+  diverge. Finalizing merges nothing of value — remove or re-ticket.
+- Four ledger ghosts with no branch, worktree, or ticket (record intent or drop
+  from the shared ledger): `actor-memory-emotion-impact`, `chat-branch-regex-detect`,
+  `coordination-priority-eviction-fix`, `plan-classifier-packs-translator`.
+
 **Summary:**
 
 Both worktrees are parked at dev HEAD 709cee00 with 0 commits ahead and empty diffs vs dev (inventory.md + features section 2 NO-OP). No timeline-branching commits exist on any local branch. Either remove the worktrees/branches or record why they are kept.

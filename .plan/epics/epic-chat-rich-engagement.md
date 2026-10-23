@@ -42,6 +42,8 @@ not message engagement).
 
 ## Tickets
 
+- `TASK-poll-command-for-group-chat.md` — /poll slash surface for group polls once 071_message_polls lands (open, 2026-10-23 attachment batch)
+
 - TASK-message-polls-votes.md
 - TASK-link-previews-unfurl.md
 - TASK-voice-notes-playback.md

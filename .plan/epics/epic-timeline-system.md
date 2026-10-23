@@ -32,6 +32,11 @@ Extends the time scale system (epic-time-scale.md) to manage branching world tim
   - Leverage existing `promoteEventToLore` (implemented) with timeline-aware scoping
   - Timeline-specific lore entries via `audience_scope.timeline_id`
 
+### Bind Tickets (2026-10-23 attachment batch)
+
+- `TASK-timeline-branching-ui.md` — fixed-flow world-detail UI (open)
+- `TASK-timeline-in-chat-command.md` — /timeline list/fork/switch in-chat complement (open)
+
 ## Acceptance Criteria
 
 - [ ] Timeline branching UI in `docs/frontend/worlds.md` (world detail page) — OPEN
