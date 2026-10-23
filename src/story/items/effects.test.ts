@@ -16,8 +16,12 @@ function instance(effects: unknown,): ItemInstance {
     worldItemId: "wi-1",
     itemId: "item-1",
     name: "Iron Sword",
+    description: "A plain iron sword.",
+    category: "weapon",
+    rarity: "common",
     quantity: 1,
     properties: { effects, },
+    value: 10,
     weight: 1,
     visibility: "visible",
   } as ItemInstance;
