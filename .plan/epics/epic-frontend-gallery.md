@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done
 **Priority:** Medium

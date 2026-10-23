@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Code+tests+schema done (migration 036); wired — `skillsRoutes` + `skillsProgressionRoutes` mounted from `src/routes/rpg/index.ts` (routes + schemas + tests)
 **Priority:** High

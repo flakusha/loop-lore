@@ -9,7 +9,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** `src/views/settings.html` ships tabs general, chat, api, notifications, data, keys and models, mounted via `settingsRoutes` from `src/routes/v1/base-surface.ts`
 **Priority:** Medium
