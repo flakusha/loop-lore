@@ -53,7 +53,7 @@ describe("addXp", () => {
     const id = await seedSkill({ xp: 40, level: 1, },);
 
     await expect(addXp(db, id, -1,),).rejects.toThrow(
-      "XP amount must be a finite non-negative number, got -1",
+      "Invalid XP amount -1: must be a finite, non-negative integer number",
     );
 
     const after = await getSkill(db, id,);
@@ -65,15 +65,15 @@ describe("addXp", () => {
     const id = await seedSkill({},);
 
     await expect(addXp(db, id, Number.NaN,),).rejects.toThrow(
-      "XP amount must be a finite non-negative number, got NaN",
+      "Invalid XP amount NaN: must be a finite, non-negative integer number",
     );
 
     await expect(addXp(db, id, Number.POSITIVE_INFINITY,),).rejects.toThrow(
-      "XP amount must be a finite non-negative number, got Infinity",
+      "Invalid XP amount Infinity: must be a finite, non-negative integer number",
     );
 
     await expect(addXp(db, id, Number.NEGATIVE_INFINITY,),).rejects.toThrow(
-      "XP amount must be a finite non-negative number, got -Infinity",
+      "Invalid XP amount -Infinity: must be a finite, non-negative integer number",
     );
 
     expect((await getSkill(db, id,))!.xp,).toBe(0,);
