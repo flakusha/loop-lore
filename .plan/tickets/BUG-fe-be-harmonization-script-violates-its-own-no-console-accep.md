@@ -44,6 +44,7 @@ Resolution: the banner/counts/success lines were folded into a single summary li
 - [ ] Documentation updated
 
 **Resolved:** 2026-10-23 registry-driven close: git issue a5f1d91 (registry tip: 6ebb0e90f Konstantin Fedotov Close issue)
+
 ## Verification
 
 - `bun run scripts/check-fe-be-harmonization.ts`: no output, exit 0.
