@@ -5218,7 +5218,6 @@
         "src/generation/providers/comfyui.ts",
         "src/generation/workflow-library/row.ts",
         "src/generation/workflow-library/validate.ts",
-        "src/image-edit/providers/comfyui-image-upload.ts",
         "src/image-edit/providers/comfyui-owner.test.ts",
         "src/image-edit/providers/comfyui-provider.ts",
         "src/image-edit/providers/sd-server-provider/ops.ts",
@@ -5239,7 +5238,6 @@
         "src/test-utils/create-test-db.ts",
         "src/test-utils/isolate-only.ts",
         "src/validation/schemas/comfyui-builder.ts",
-        "src/validation/schemas/image-edit.ts",
         "src/validation/schemas/index.ts"
       ],
       "related": []
@@ -12297,29 +12295,6 @@
       "related": []
     },
     {
-      "id": "FEAT-image-prompt-template-packs",
-      "kind": "ticket",
-      "path": ".plan/tickets/FEAT-image-prompt-template-packs.md",
-      "title": "Image prompt template packs",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": [
-        "FEAT-image-template-variables-with-variance-expansion",
-        "TASK-resolve-dormant-emotionentry-prompt-field"
-      ]
-    },
-    {
-      "id": "FEAT-image-template-variables-with-variance-expansion",
-      "kind": "ticket",
-      "path": ".plan/tickets/FEAT-image-template-variables-with-variance-expansion.md",
-      "title": "Image template variables with variance expansion",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": [
-        "FEAT-image-prompt-template-packs"
-      ]
-    },
-    {
       "id": "FEAT-immersive-scene-view-first-third-person-ambient-audio",
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-immersive-scene-view-first-third-person-ambient-audio.md",
@@ -12432,15 +12407,6 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-item-system-extensions.md",
       "title": "Item System Extensions",
-      "status": "Not Started",
-      "srcRefs": [],
-      "related": []
-    },
-    {
-      "id": "FEAT-krea-2-model-profile-corrections",
-      "kind": "ticket",
-      "path": ".plan/tickets/FEAT-krea-2-model-profile-corrections.md",
-      "title": "Krea 2 model profile corrections",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -13055,15 +13021,6 @@
       "srcRefs": [
         "src/routes/marketplace.ts"
       ],
-      "related": []
-    },
-    {
-      "id": "FEAT-prompt-template-search-and-tags",
-      "kind": "ticket",
-      "path": ".plan/tickets/FEAT-prompt-template-search-and-tags.md",
-      "title": "Prompt template search and tags",
-      "status": "Not Started",
-      "srcRefs": [],
       "related": []
     },
     {
@@ -19704,7 +19661,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-batch-epic-attachment-triage.md",
       "title": "batch epic-attachment triage",
-      "status": "done",
+      "status": "Not Started",
       "srcRefs": [],
       "related": []
     },
@@ -25372,17 +25329,6 @@
       "title": "Dead rejectBodyImpersonation guard never fires — Elysia TypeBox parser strips performedBy before beforeHandle",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
-    },
-    {
-      "id": "TASK-decide-llm-image-prompt-writer-fate",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-decide-llm-image-prompt-writer-fate.md",
-      "title": "Decide LLM image prompt writer fate",
-      "status": "Not Started",
-      "srcRefs": [
-        "src/prompts/purposes.ts"
-      ],
       "related": []
     },
     {
@@ -32492,7 +32438,16 @@
       "path": ".plan/tickets/TASK-link-previews-unfurl.md",
       "title": "Link previews (unfurl)",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/chat/service/link-previews.test.ts",
+        "src/chat/service/link-previews.ts",
+        "src/components/chat/message-list.html",
+        "src/db/migrations/072_link_previews.ts",
+        "src/frontend/alpine/chat-link-previews.test.ts",
+        "src/frontend/alpine/chat-link-previews.ts",
+        "src/routes/link-previews.test.ts",
+        "src/routes/link-previews.ts"
+      ],
       "related": []
     },
     {
@@ -34040,7 +33995,16 @@
       "path": ".plan/tickets/TASK-message-polls-votes.md",
       "title": "Message polls / votes",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/chat/service/polls.test.ts",
+        "src/chat/service/polls.ts",
+        "src/components/chat/message-list.html",
+        "src/db/migrations/071_message_polls.ts",
+        "src/frontend/alpine/chat-polls.test.ts",
+        "src/frontend/alpine/chat-polls.ts",
+        "src/routes/message-polls.test.ts",
+        "src/routes/message-polls.ts"
+      ],
       "related": []
     },
     {
@@ -39389,19 +39353,6 @@
       "related": []
     },
     {
-      "id": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "ticket",
-      "path": ".plan/tickets/TASK-resolve-dormant-emotionentry-prompt-field.md",
-      "title": "Resolve dormant EmotionEntry prompt field",
-      "status": "Not Started",
-      "srcRefs": [
-        "src/config/sections/templates.ts"
-      ],
-      "related": [
-        "FEAT-image-prompt-template-packs"
-      ]
-    },
-    {
       "id": "TASK-resolve-message-content-unit-test-all-encodings",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-resolve-message-content-unit-test-all-encodings.md",
@@ -43884,7 +43835,13 @@
       "path": ".plan/tickets/TASK-voice-notes-playback.md",
       "title": "Voice notes playback",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/components/chat/input-area.html",
+        "src/frontend/alpine/chat-voice-notes.ts",
+        "src/routes/v1/chats-surface.ts",
+        "src/routes/voice-notes.test.ts",
+        "src/routes/voice-notes.ts"
+      ],
       "related": []
     },
     {
@@ -45240,7 +45197,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-achievements.md",
       "title": "Achievements",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/db/schema-achievements.ts",
         "src/frontend/achievements.html",
@@ -45256,7 +45213,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-actor-autonomy-story-drive.md",
       "title": "Actor Autonomy & Story Auto-Drive",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/autonomy/governor/index.test.ts",
         "src/autonomy/governor/index.ts",
@@ -45281,7 +45238,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-actor-turn-skip.md",
       "title": "Actor Turn Skip ('Continue' Without Breaking the Story)",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assistant/prompt/sections/turn-skip-absence.ts",
         "src/generation/auto-gen/pass-filter.ts",
@@ -45301,7 +45258,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-actors.md",
       "title": "Actors & Entity System",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/db/migrations/001_init.ts",
         "src/db/schema-core.ts",
@@ -45449,7 +45406,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-api-rate-limiting.md",
       "title": "API Rate Limiting",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/api-governance/rate-limiting/algorithms.ts",
         "src/api-governance/rate-limiting/limiter.ts",
@@ -45572,7 +45529,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-archival-workflow.md",
       "title": "Archival Workflow",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/chat/service.ts",
         "src/chat/service/crud/archive.test.ts",
@@ -46486,7 +46443,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-chat-lifecycle-moderation.md",
       "title": "Chat Lifecycle, Transitions & Moderation",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/admin/model-roles.ts",
         "src/assistant/prompt-assembler.ts",
@@ -46885,7 +46842,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-config-file-separation.md",
       "title": "Config File Separation",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/config/load.ts",
         "src/config/schema.ts"
@@ -46897,7 +46854,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-config-templates.md",
       "title": "Configurable Template System",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assistant/intent.ts",
         "src/assistant/prompt/sections/emotion-avatar.test.ts",
@@ -47412,7 +47369,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-distributed-compute-sharing.md",
       "title": "Distributed Computing & Sharing (Contributor Compute Network)",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/generation/providers/comfyui.ts",
         "src/generation/providers/registry.ts"
@@ -47449,7 +47406,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-e2e-integration-testing.md",
       "title": "E2E & Integration Testing Reliability",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/app/register-plugins.ts",
         "src/elysia-app.ts",
@@ -47878,7 +47835,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-federation-swarm-sync.md",
       "title": "Federation, Swarm Sync & Decentralized Comms",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/group-chat/turn-selector.ts"
       ],
@@ -47889,7 +47846,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-file-splitting.md",
       "title": "File Splitting & God-Module Refactor",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/app/register-plugins.ts",
         "src/assets/service.ts",
@@ -47950,7 +47907,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-admin.md",
       "title": "Admin Panel & Dashboard",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/admin-users.ts",
         "src/frontend/alpine/admin.ts",
@@ -47976,7 +47933,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-age-gate.md",
       "title": "Age Gate & Content Warnings",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/age-gate/controller.ts",
         "src/age-gate/service.ts",
@@ -47999,7 +47956,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-backend-integration.md",
       "title": "Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/rpg-stats.ts",
         "src/frontend/fe-fetch.ts"
@@ -48097,7 +48054,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-gallery.md",
       "title": "Frontend Gallery & Media Viewer",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/components/chat/gallery-sidebar.html",
@@ -48126,7 +48083,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-html-dedup-htmx-reuse.md",
       "title": "Frontend HTML Deduplication & HTMX AJAX Reuse",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/components/loading-state.html",
         "src/frontend/alpine/htmx-header.ts",
@@ -48199,7 +48156,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-settings.md",
       "title": "Settings & Preferences UI",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/components/modals/settings.html",
         "src/routes/v1/base-surface.ts",
@@ -48407,7 +48364,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-housing.md",
       "title": "Housing System",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/db/schema-housing.ts",
         "src/routes/housing.ts"
@@ -48450,7 +48407,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-i18n.md",
       "title": "Internationalization (i18n)",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -48542,7 +48499,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-import-export-io.md",
       "title": "# Epic 14: Import/Export & Data Portability",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/characters/charx.ts",
         "src/characters/errors.ts",
@@ -48920,7 +48877,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-lora-discovery-application.md",
       "title": "LoRA Discovery & Application",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/generation/image-gen-route.ts",
@@ -49091,7 +49048,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-mesh-federation-content-sharing.md",
       "title": "Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -49126,7 +49083,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-middleware-request-lifecycle.md",
       "title": "Middleware — Request Lifecycle, Idempotency & Async Results",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/async/offload.ts",
         "src/async/store.ts",
@@ -49424,7 +49381,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-npc-navigation.md",
       "title": "NPC Navigation",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -49522,7 +49479,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-openapi-reference.md",
       "title": "OpenAPI-Driven API Reference",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/validation/schemas.ts"
@@ -50043,12 +50000,14 @@
         "src/generation/hooks/registry.ts",
         "src/generation/image-engine/comfyui.ts",
         "src/generation/image-engine/types.ts",
+        "src/generation/matting/comfy-provider.ts",
         "src/generation/providers/comfyui-upload.ts",
-        "src/generation/workflow-library/seed-parameters.ts",
+        "src/generation/workflow-library/hydrate.ts",
+        "src/generation/workflow-library/row.ts",
         "src/generation/workflow-library/seed.ts",
-        "src/image-edit/providers/comfyui-image-upload.ts",
         "src/image-edit/providers/comfyui-provider.ts",
         "src/image-edit/routes.ts",
+        "src/image-edit/templates/builtin/_helpers.ts",
         "src/image-edit/templates/builtin/img2img.ts",
         "src/image-edit/templates/builtin/inpaint.ts",
         "src/regex/image-edit.ts",
@@ -50064,7 +50023,6 @@
         "src/services/actor-items/transfer.ts",
         "src/tui/harness/display.test.ts",
         "src/validation/schemas/emotion-avatars.ts",
-        "src/validation/schemas/image-edit.ts",
         "src/validation/schemas/wardrobe.ts"
       ],
       "related": []
@@ -50158,7 +50116,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-replayability.md",
       "title": "Replayability",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -50547,7 +50505,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-skills.md",
       "title": "Skills",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/routes/rpg/index.ts"
       ],
@@ -50960,7 +50918,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-wardrobe-avatar-variants.md",
       "title": "Wardrobe / Loadout Avatar Variants",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assistant/prompt-outfit.ts",
         "src/assistant/prompt/sections/emotion-avatar.ts",
@@ -51012,7 +50970,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-world-chat-channels-invites.md",
       "title": "World Chat Channels & Invite-Driven Membership",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/assistant/prompt/sections/group-participants.ts",
         "src/assistant/prompt/sections/group-talkativity.test.ts",
@@ -57179,6 +57137,18 @@
       ]
     },
     {
+      "path": "src/chat/service/link-previews.test.ts",
+      "owners": [
+        "TASK-link-previews-unfurl"
+      ]
+    },
+    {
+      "path": "src/chat/service/link-previews.ts",
+      "owners": [
+        "TASK-link-previews-unfurl"
+      ]
+    },
+    {
       "path": "src/chat/service/location-events.ts",
       "owners": [
         "FEAT-chat-transfer-location-change",
@@ -57267,6 +57237,18 @@
         "TASK-world-simulation-timeline-driven-travel-patrol",
         "epic-chat-product-features",
         "epic-chat-transfer-location"
+      ]
+    },
+    {
+      "path": "src/chat/service/polls.test.ts",
+      "owners": [
+        "TASK-message-polls-votes"
+      ]
+    },
+    {
+      "path": "src/chat/service/polls.ts",
+      "owners": [
+        "TASK-message-polls-votes"
       ]
     },
     {
@@ -58252,6 +58234,7 @@
         "TASK-assistant-slash-command-typed-token-autocomplete",
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-prompt-improve-composer-ui",
+        "TASK-voice-notes-playback",
         "WIRE-frontend-mobile-sticky-bottom-composer",
         "epic-frontend-chat-commands",
         "epic-frontend-components",
@@ -58311,6 +58294,8 @@
         "TASK-emotion-avatar-message-binding",
         "TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing",
         "TASK-frontend-story-mode-ui",
+        "TASK-link-previews-unfurl",
+        "TASK-message-polls-votes",
         "TASK-message-reactions-in-out-context",
         "TASK-migrate-text-surfaces-to-shared-primitives",
         "TASK-msg-forward-across-chats",
@@ -59494,7 +59479,6 @@
         "TASK-comfyui-first-class-admin-workflows",
         "TASK-outfit-change-hook",
         "TASK-prompt-template-registry",
-        "TASK-resolve-dormant-emotionentry-prompt-field",
         "TASK-talkativity-influence-response-verbosity",
         "TASK-workflow-engine-schema-loader-template-types-workflow-discov",
         "epic-assistant-creative-studio-workflows",
@@ -61601,6 +61585,18 @@
         "TASK-held-item-axis-data-model",
         "TASK-item-side-outfit-change-trigger",
         "epic-reactive-actor-appearance"
+      ]
+    },
+    {
+      "path": "src/db/migrations/071_message_polls.ts",
+      "owners": [
+        "TASK-message-polls-votes"
+      ]
+    },
+    {
+      "path": "src/db/migrations/072_link_previews.ts",
+      "owners": [
+        "TASK-link-previews-unfurl"
       ]
     },
     {
@@ -64030,6 +64026,18 @@
       ]
     },
     {
+      "path": "src/frontend/alpine/chat-link-previews.test.ts",
+      "owners": [
+        "TASK-link-previews-unfurl"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/chat-link-previews.ts",
+      "owners": [
+        "TASK-link-previews-unfurl"
+      ]
+    },
+    {
       "path": "src/frontend/alpine/chat-location.ts",
       "owners": [
         "TASK-chat-location-frontend"
@@ -64073,6 +64081,18 @@
       "path": "src/frontend/alpine/chat-pins.ts",
       "owners": [
         "TASK-chat-pins-frontend"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/chat-polls.test.ts",
+      "owners": [
+        "TASK-message-polls-votes"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/chat-polls.ts",
+      "owners": [
+        "TASK-message-polls-votes"
       ]
     },
     {
@@ -64384,6 +64404,12 @@
       "owners": [
         "BUG-buildstyleprompt-result-returned-but-never-consumed",
         "BUG-frontend-regeneratevariant-does-not-pass-style-to-api"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/chat-voice-notes.ts",
+      "owners": [
+        "TASK-voice-notes-playback"
       ]
     },
     {
@@ -68526,7 +68552,8 @@
       "path": "src/generation/matting/comfy-provider.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "TASK-img2img-init-image-plumbing"
+        "TASK-img2img-init-image-plumbing",
+        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -69204,7 +69231,8 @@
       "path": "src/generation/workflow-library/hydrate.ts",
       "owners": [
         "BUG-workflow-library-img2img-row-has-no-parameters",
-        "BUG-workflow-library-img2img-row-has-unresolved-placeholders"
+        "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
+        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -69212,19 +69240,14 @@
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
         "BUG-workflow-library-img2img-row-has-no-parameters",
-        "BUG-workflow-library-img2img-row-has-unresolved-placeholders"
+        "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
+        "epic-reactive-actor-appearance"
       ]
     },
     {
       "path": "src/generation/workflow-library/seed-hydrate.test.ts",
       "owners": [
         "BUG-workflow-library-img2img-row-has-no-parameters"
-      ]
-    },
-    {
-      "path": "src/generation/workflow-library/seed-parameters.ts",
-      "owners": [
-        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -69544,13 +69567,6 @@
       ]
     },
     {
-      "path": "src/image-edit/providers/comfyui-image-upload.ts",
-      "owners": [
-        "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "epic-reactive-actor-appearance"
-      ]
-    },
-    {
       "path": "src/image-edit/providers/comfyui-owner.test.ts",
       "owners": [
         "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
@@ -69681,7 +69697,8 @@
       "path": "src/image-edit/templates/builtin/_helpers.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "TASK-comfyui-template-parameter-validation"
+        "TASK-comfyui-template-parameter-validation",
+        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -72302,7 +72319,6 @@
       "owners": [
         "FEAT-065",
         "FEAT-aux-classification-template-registry",
-        "TASK-decide-llm-image-prompt-writer-fate",
         "TASK-harness-context-templates",
         "TASK-prompt-template-registry",
         "TASK-vn-dynamic-generation",
@@ -75626,6 +75642,18 @@
       ]
     },
     {
+      "path": "src/routes/link-previews.test.ts",
+      "owners": [
+        "TASK-link-previews-unfurl"
+      ]
+    },
+    {
+      "path": "src/routes/link-previews.ts",
+      "owners": [
+        "TASK-link-previews-unfurl"
+      ]
+    },
+    {
       "path": "src/routes/liveness.ts",
       "owners": [
         "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h"
@@ -75679,6 +75707,18 @@
         "BUG-private-tier-no-true-e2e",
         "TASK-encryption-key-management-ui",
         "epic-encryption-workflow"
+      ]
+    },
+    {
+      "path": "src/routes/message-polls.test.ts",
+      "owners": [
+        "TASK-message-polls-votes"
+      ]
+    },
+    {
+      "path": "src/routes/message-polls.ts",
+      "owners": [
+        "TASK-message-polls-votes"
       ]
     },
     {
@@ -77165,6 +77205,7 @@
     {
       "path": "src/routes/v1/chats-surface.ts",
       "owners": [
+        "TASK-voice-notes-playback",
         "epic-frontend-emoji-reactions",
         "epic-visual-novel-mode"
       ]
@@ -77613,6 +77654,18 @@
       "path": "src/routes/vn-questions.ts",
       "owners": [
         "TASK-vn-qa-mode"
+      ]
+    },
+    {
+      "path": "src/routes/voice-notes.test.ts",
+      "owners": [
+        "TASK-voice-notes-playback"
+      ]
+    },
+    {
+      "path": "src/routes/voice-notes.ts",
+      "owners": [
+        "TASK-voice-notes-playback"
       ]
     },
     {
@@ -83558,13 +83611,6 @@
         "BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d",
         "TASK-harness-context-priority-tiers",
         "epic-harness-integration"
-      ]
-    },
-    {
-      "path": "src/validation/schemas/image-edit.ts",
-      "owners": [
-        "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -105126,11 +105172,6 @@
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "produces",
-      "to": "src/image-edit/providers/comfyui-image-upload.ts"
-    },
-    {
-      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-      "kind": "produces",
       "to": "src/image-edit/providers/comfyui-owner.test.ts"
     },
     {
@@ -105227,11 +105268,6 @@
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "produces",
       "to": "src/validation/schemas/comfyui-builder.ts"
-    },
-    {
-      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-      "kind": "produces",
-      "to": "src/validation/schemas/image-edit.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -124724,11 +124760,6 @@
       "to": "src/validation/schemas/primitives.ts"
     },
     {
-      "from": "TASK-decide-llm-image-prompt-writer-fate",
-      "kind": "produces",
-      "to": "src/prompts/purposes.ts"
-    },
-    {
       "from": "TASK-dedup-top-jscpd-clone-clusters",
       "kind": "produces",
       "to": "src/actors/actor-items.ts"
@@ -132169,6 +132200,46 @@
       "to": "src/story/world-state/context.ts"
     },
     {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "produces",
+      "to": "src/chat/service/link-previews.test.ts"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "produces",
+      "to": "src/chat/service/link-previews.ts"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "produces",
+      "to": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "produces",
+      "to": "src/db/migrations/072_link_previews.ts"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-link-previews.test.ts"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-link-previews.ts"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "produces",
+      "to": "src/routes/link-previews.test.ts"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "produces",
+      "to": "src/routes/link-previews.ts"
+    },
+    {
       "from": "TASK-listener-leak-checker-exempt-top-level-module-registrations-",
       "kind": "produces",
       "to": "src/alpine/htmx.ts"
@@ -133427,6 +133498,46 @@
       "from": "TASK-message-carriage-translator-ticket-closeout",
       "kind": "produces",
       "to": "src/generation/translator-role.ts"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "produces",
+      "to": "src/chat/service/polls.test.ts"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "produces",
+      "to": "src/chat/service/polls.ts"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "produces",
+      "to": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "produces",
+      "to": "src/db/migrations/071_message_polls.ts"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-polls.test.ts"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-polls.ts"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "produces",
+      "to": "src/routes/message-polls.test.ts"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "produces",
+      "to": "src/routes/message-polls.ts"
     },
     {
       "from": "TASK-message-reactions-in-out-context",
@@ -138344,11 +138455,6 @@
       "to": "src/chat/random-events.ts"
     },
     {
-      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "produces",
-      "to": "src/config/sections/templates.ts"
-    },
-    {
       "from": "TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que",
       "kind": "produces",
       "to": "src/generation/auto-gen/story-mode.ts"
@@ -142387,6 +142493,31 @@
       "from": "TASK-vn-template-actions",
       "kind": "produces",
       "to": "src/frontend/vn/typewriter.ts"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "produces",
+      "to": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-voice-notes.ts"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "produces",
+      "to": "src/routes/v1/chats-surface.ts"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "produces",
+      "to": "src/routes/voice-notes.test.ts"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "produces",
+      "to": "src/routes/voice-notes.ts"
     },
     {
       "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
@@ -154251,22 +154382,27 @@
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
+      "to": "src/generation/matting/comfy-provider.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "produces",
       "to": "src/generation/providers/comfyui-upload.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
-      "to": "src/generation/workflow-library/seed-parameters.ts"
+      "to": "src/generation/workflow-library/hydrate.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "produces",
+      "to": "src/generation/workflow-library/row.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/generation/workflow-library/seed.ts"
-    },
-    {
-      "from": "epic-reactive-actor-appearance",
-      "kind": "produces",
-      "to": "src/image-edit/providers/comfyui-image-upload.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -154277,6 +154413,11 @@
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/image-edit/routes.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "produces",
+      "to": "src/image-edit/templates/builtin/_helpers.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -154352,11 +154493,6 @@
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/validation/schemas/emotion-avatars.ts"
-    },
-    {
-      "from": "epic-reactive-actor-appearance",
-      "kind": "produces",
-      "to": "src/validation/schemas/image-edit.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -157077,21 +157213,6 @@
       "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
       "kind": "related",
       "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s"
-    },
-    {
-      "from": "FEAT-image-prompt-template-packs",
-      "kind": "related",
-      "to": "FEAT-image-template-variables-with-variance-expansion"
-    },
-    {
-      "from": "FEAT-image-prompt-template-packs",
-      "kind": "related",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field"
-    },
-    {
-      "from": "FEAT-image-template-variables-with-variance-expansion",
-      "kind": "related",
-      "to": "FEAT-image-prompt-template-packs"
     },
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
@@ -161022,11 +161143,6 @@
       "from": "TASK-resolution-family-decision",
       "kind": "related",
       "to": "epic-rpg-mechanics"
-    },
-    {
-      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "related",
-      "to": "FEAT-image-prompt-template-packs"
     },
     {
       "from": "TASK-resource-provision-browser-backup",
@@ -177906,12 +178022,6 @@
       "from": "BUG-character-template-validator-rejects-every-legal-content-rat",
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "BUG-character-template-validator-rejects-every-legal-content-rat",
-      "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
       "via": "src/config/sections/templates.ts"
     },
     {
@@ -203736,7 +203846,7 @@
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/providers/comfyui-upload.ts; src/image-edit/providers/comfyui-image-upload.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts; src/validation/schemas/image-edit.ts"
+      "via": "src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/generation/workflow-library/row.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -229320,7 +229430,7 @@
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
+      "via": "src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
     },
     {
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
@@ -229338,7 +229448,7 @@
       "from": "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/workflow-library/seed.ts"
+      "via": "src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts"
     },
     {
       "from": "BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m",
@@ -229793,6 +229903,18 @@
     {
       "from": "BUG-xss-in-music-embed-fallback-rendering",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "BUG-xss-in-music-embed-fallback-rendering",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "BUG-xss-in-music-embed-fallback-rendering",
+      "kind": "sibling",
       "to": "TASK-message-reactions-in-out-context",
       "via": "src/components/chat/message-list.html"
     },
@@ -230089,6 +230211,12 @@
       "kind": "sibling",
       "to": "TASK-unit-translation-service",
       "via": "src/assistant/commands/translate.ts"
+    },
+    {
+      "from": "EPIC-2026-23",
+      "kind": "sibling",
+      "to": "TASK-voice-notes-playback",
+      "via": "src/components/chat/input-area.html"
     },
     {
       "from": "EPIC-2026-23",
@@ -233297,12 +233425,6 @@
     {
       "from": "FEAT-065",
       "kind": "sibling",
-      "to": "TASK-decide-llm-image-prompt-writer-fate",
-      "via": "src/prompts/purposes.ts"
-    },
-    {
-      "from": "FEAT-065",
-      "kind": "sibling",
       "to": "TASK-harness-context-templates",
       "via": "src/prompts/purposes.ts"
     },
@@ -233329,12 +233451,6 @@
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
       "via": "src/config/sections/templates.ts; src/prompts/purposes.ts; src/prompts/registry.ts"
-    },
-    {
-      "from": "FEAT-065",
-      "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "via": "src/config/sections/templates.ts"
     },
     {
       "from": "FEAT-065",
@@ -235447,12 +235563,6 @@
       "kind": "sibling",
       "to": "TASK-cleanup-banned-types-console-logging-magic-strings",
       "via": "src/prompts/registry.ts"
-    },
-    {
-      "from": "FEAT-aux-classification-template-registry",
-      "kind": "sibling",
-      "to": "TASK-decide-llm-image-prompt-writer-fate",
-      "via": "src/prompts/purposes.ts"
     },
     {
       "from": "FEAT-aux-classification-template-registry",
@@ -238781,6 +238891,18 @@
     {
       "from": "FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect",
+      "kind": "sibling",
       "to": "TASK-message-reactions-in-out-context",
       "via": "src/components/chat/message-list.html"
     },
@@ -239713,12 +239835,6 @@
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
       "via": "src/db/schema-core.ts"
-    },
-    {
-      "from": "FEAT-expand-character-templates-to-canonical-fields",
-      "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "via": "src/config/sections/templates.ts"
     },
     {
       "from": "FEAT-expand-character-templates-to-canonical-fields",
@@ -246090,6 +246206,18 @@
       "from": "FEAT-style-picker-ui-for-smart-regen",
       "kind": "sibling",
       "to": "TASK-frontend-story-mode-ui",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "FEAT-style-picker-ui-for-smart-regen",
+      "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "FEAT-style-picker-ui-for-smart-regen",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
       "via": "src/components/chat/message-list.html"
     },
     {
@@ -268355,12 +268483,6 @@
     {
       "from": "TASK-assistant-creative-studio-workflows",
       "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-assistant-creative-studio-workflows",
-      "kind": "sibling",
       "to": "TASK-scenario-system-authoring",
       "via": "src/assistant/scenario-source.ts"
     },
@@ -269399,12 +269521,6 @@
     {
       "from": "TASK-assistant-nsfw-api-prefiltering",
       "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-assistant-nsfw-api-prefiltering",
-      "kind": "sibling",
       "to": "TASK-talkativity-influence-response-verbosity",
       "via": "src/config/sections/templates.ts"
     },
@@ -270103,6 +270219,12 @@
       "kind": "sibling",
       "to": "TASK-slash-commands-chat-group-assistant",
       "via": "src/assistant/commands/registry.ts; src/frontend/alpine/chat-send.ts"
+    },
+    {
+      "from": "TASK-assistant-slash-command-typed-token-autocomplete",
+      "kind": "sibling",
+      "to": "TASK-voice-notes-playback",
+      "via": "src/components/chat/input-area.html"
     },
     {
       "from": "TASK-assistant-slash-command-typed-token-autocomplete",
@@ -273911,6 +274033,18 @@
     {
       "from": "TASK-aux-emotion-avatar",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-aux-emotion-avatar",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-aux-emotion-avatar",
+      "kind": "sibling",
       "to": "TASK-message-reactions-in-out-context",
       "via": "src/components/chat/message-list.html"
     },
@@ -275435,6 +275569,18 @@
     {
       "from": "TASK-avatar-framing-tag-member",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-avatar-framing-tag-member",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-avatar-framing-tag-member",
+      "kind": "sibling",
       "to": "TASK-message-reactions-in-out-context",
       "via": "src/components/chat/message-list.html"
     },
@@ -275921,6 +276067,12 @@
     {
       "from": "TASK-avatar-render-target-discriminator",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-avatar-render-target-discriminator",
+      "kind": "sibling",
       "to": "TASK-markdown-canonical-intermediate-contract",
       "via": "src/db/schema-core.ts"
     },
@@ -275929,6 +276081,12 @@
       "kind": "sibling",
       "to": "TASK-message-carriage-table-migration-admin-read",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-avatar-render-target-discriminator",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
     },
     {
       "from": "TASK-avatar-render-target-discriminator",
@@ -276342,12 +276500,6 @@
       "from": "TASK-avatar-template-example-documents-outfits-default-outfit-tha",
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-avatar-template-example-documents-outfits-default-outfit-tha",
-      "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
       "via": "src/config/sections/templates.ts"
     },
     {
@@ -284561,6 +284713,18 @@
     {
       "from": "TASK-chat-external-music-linking",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-chat-external-music-linking",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-chat-external-music-linking",
+      "kind": "sibling",
       "to": "TASK-message-reactions-in-out-context",
       "via": "src/components/chat/message-list.html"
     },
@@ -284801,6 +284965,12 @@
     {
       "from": "TASK-chat-feature-component-buttons",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-chat-feature-component-buttons",
+      "kind": "sibling",
       "to": "TASK-location-explorer",
       "via": "src/public/css/app.css"
     },
@@ -284809,6 +284979,12 @@
       "kind": "sibling",
       "to": "TASK-matrix-auth-adapter-auth-approval-scope-decide-per-adapter-i",
       "via": "src/group-chat/mention-parser.ts"
+    },
+    {
+      "from": "TASK-chat-feature-component-buttons",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
     },
     {
       "from": "TASK-chat-feature-component-buttons",
@@ -291233,12 +291409,6 @@
     {
       "from": "TASK-comfyui-first-class-admin-workflows",
       "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-comfyui-first-class-admin-workflows",
-      "kind": "sibling",
       "to": "TASK-restart-required-indicator-on-system-config-changes",
       "via": "src/frontend/alpine/admin-system.ts"
     },
@@ -293010,7 +293180,7 @@
       "from": "TASK-comfyui-template-parameter-validation",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts"
+      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts"
     },
     {
       "from": "TASK-comfyui-template-parameter-validation",
@@ -302055,36 +302225,6 @@
       "via": "src/validation/schemas/primitives.ts"
     },
     {
-      "from": "TASK-decide-llm-image-prompt-writer-fate",
-      "kind": "sibling",
-      "to": "TASK-harness-context-templates",
-      "via": "src/prompts/purposes.ts"
-    },
-    {
-      "from": "TASK-decide-llm-image-prompt-writer-fate",
-      "kind": "sibling",
-      "to": "TASK-prompt-template-registry",
-      "via": "src/prompts/purposes.ts"
-    },
-    {
-      "from": "TASK-decide-llm-image-prompt-writer-fate",
-      "kind": "sibling",
-      "to": "TASK-vn-dynamic-generation",
-      "via": "src/prompts/purposes.ts"
-    },
-    {
-      "from": "TASK-decide-llm-image-prompt-writer-fate",
-      "kind": "sibling",
-      "to": "epic-classifier-template-packs",
-      "via": "src/prompts/purposes.ts"
-    },
-    {
-      "from": "TASK-decide-llm-image-prompt-writer-fate",
-      "kind": "sibling",
-      "to": "epic-config-templates",
-      "via": "src/prompts/purposes.ts"
-    },
-    {
       "from": "TASK-dedup-top-jscpd-clone-clusters",
       "kind": "sibling",
       "to": "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
@@ -303671,8 +303811,20 @@
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "kind": "sibling",
       "to": "TASK-location-explorer",
       "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
     },
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
@@ -303775,6 +303927,12 @@
       "kind": "sibling",
       "to": "TASK-vn-qa-mode",
       "via": "src/public/css/vn.css"
+    },
+    {
+      "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "kind": "sibling",
+      "to": "TASK-voice-notes-playback",
+      "via": "src/components/chat/input-area.html"
     },
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
@@ -307607,6 +307765,12 @@
     {
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-emotion-avatar-message-binding",
+      "kind": "sibling",
       "to": "TASK-markdown-canonical-intermediate-contract",
       "via": "src/db/schema-core.ts"
     },
@@ -307615,6 +307779,12 @@
       "kind": "sibling",
       "to": "TASK-message-carriage-table-migration-admin-read",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-message-binding",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
     },
     {
       "from": "TASK-emotion-avatar-message-binding",
@@ -316139,6 +316309,18 @@
     {
       "from": "TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing",
       "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing",
+      "kind": "sibling",
       "to": "TASK-message-reactions-in-out-context",
       "via": "src/components/chat/message-list.html"
     },
@@ -316279,6 +316461,18 @@
       "kind": "sibling",
       "to": "epic-inventory-system",
       "via": "src/routes/story-items/instances.ts"
+    },
+    {
+      "from": "TASK-frontend-story-mode-ui",
+      "kind": "sibling",
+      "to": "TASK-link-previews-unfurl",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-frontend-story-mode-ui",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
     },
     {
       "from": "TASK-frontend-story-mode-ui",
@@ -323292,7 +323486,7 @@
       "from": "TASK-img2img-init-image-plumbing",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
+      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
     },
     {
       "from": "TASK-img2img-init-image-plumbing",
@@ -325795,6 +325989,42 @@
       "kind": "sibling",
       "to": "epic-project-spaces-pm-integration",
       "via": "src/db/schema-story.ts"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "sibling",
+      "to": "TASK-message-reactions-in-out-context",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "sibling",
+      "to": "TASK-migrate-text-surfaces-to-shared-primitives",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "sibling",
+      "to": "TASK-msg-forward-across-chats",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "sibling",
+      "to": "epic-emotion-avatar-message-binding",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-link-previews-unfurl",
+      "kind": "sibling",
+      "to": "epic-frontend-emoji-reactions",
+      "via": "src/components/chat/message-list.html"
     },
     {
       "from": "TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds",
@@ -329677,6 +329907,36 @@
       "kind": "sibling",
       "to": "epic-output-control-transforms",
       "via": "src/generation/translator-role.ts"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "sibling",
+      "to": "TASK-message-reactions-in-out-context",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "sibling",
+      "to": "TASK-migrate-text-surfaces-to-shared-primitives",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "sibling",
+      "to": "TASK-msg-forward-across-chats",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "sibling",
+      "to": "epic-emotion-avatar-message-binding",
+      "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-message-polls-votes",
+      "kind": "sibling",
+      "to": "epic-frontend-emoji-reactions",
+      "via": "src/components/chat/message-list.html"
     },
     {
       "from": "TASK-message-reactions-in-out-context",
@@ -334775,12 +335035,6 @@
     {
       "from": "TASK-outfit-change-hook",
       "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-outfit-change-hook",
-      "kind": "sibling",
       "to": "TASK-runtime-integrity-watchdog-crash-recovery",
       "via": "src/server/start.ts"
     },
@@ -336455,6 +336709,12 @@
     {
       "from": "TASK-prompt-improve-composer-ui",
       "kind": "sibling",
+      "to": "TASK-voice-notes-playback",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-prompt-improve-composer-ui",
+      "kind": "sibling",
       "to": "WIRE-frontend-mobile-sticky-bottom-composer",
       "via": "src/components/chat/input-area.html"
     },
@@ -336799,12 +337059,6 @@
       "kind": "sibling",
       "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
       "via": "src/config/schema.ts"
-    },
-    {
-      "from": "TASK-prompt-template-registry",
-      "kind": "sibling",
-      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "via": "src/config/sections/templates.ts"
     },
     {
       "from": "TASK-prompt-template-registry",
@@ -342085,42 +342339,6 @@
       "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/chat/random-events.ts"
-    },
-    {
-      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "sibling",
-      "to": "TASK-talkativity-influence-response-verbosity",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "sibling",
-      "to": "TASK-workflow-engine-schema-loader-template-types-workflow-discov",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "sibling",
-      "to": "epic-assistant-creative-studio-workflows",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "sibling",
-      "to": "epic-config-templates",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "sibling",
-      "to": "epic-context-injection-templates",
-      "via": "src/config/sections/templates.ts"
-    },
-    {
-      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
-      "kind": "sibling",
-      "to": "epic-workflow-engine",
-      "via": "src/config/sections/templates.ts"
     },
     {
       "from": "TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que",
@@ -348787,6 +349005,36 @@
       "kind": "sibling",
       "to": "epic-visual-novel-mode",
       "via": "src/frontend/vn/templates/apply.ts"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "sibling",
+      "to": "WIRE-frontend-mobile-sticky-bottom-composer",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "sibling",
+      "to": "epic-frontend-chat-commands",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "sibling",
+      "to": "epic-frontend-components",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "sibling",
+      "to": "epic-frontend-emoji-reactions",
+      "via": "src/components/chat/input-area.html; src/routes/v1/chats-surface.ts"
+    },
+    {
+      "from": "TASK-voice-notes-playback",
+      "kind": "sibling",
+      "to": "epic-visual-novel-mode",
+      "via": "src/routes/v1/chats-surface.ts"
     },
     {
       "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",

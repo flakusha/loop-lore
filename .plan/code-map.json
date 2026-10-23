@@ -10117,6 +10117,18 @@
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
     }
   ],
+  "src/chat/service/link-previews.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-link-previews-unfurl.md"
+    }
+  ],
+  "src/chat/service/link-previews.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-link-previews-unfurl.md"
+    }
+  ],
   "src/chat/service/location-events.ts": [
     {
       "kind": "epic",
@@ -10313,6 +10325,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-simulation-timeline-driven-travel-patrol.md"
+    }
+  ],
+  "src/chat/service/polls.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-polls-votes.md"
+    }
+  ],
+  "src/chat/service/polls.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-polls-votes.md"
     }
   ],
   "src/chat/service/read.ts": [
@@ -11970,6 +11994,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-voice-notes-playback.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
@@ -12081,6 +12109,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-link-previews-unfurl.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-polls-votes.md"
     },
     {
       "kind": "ticket",
@@ -18259,6 +18295,18 @@
       "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
     }
   ],
+  "src/db/migrations/071_message_polls.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-polls-votes.md"
+    }
+  ],
+  "src/db/migrations/072_link_previews.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-link-previews-unfurl.md"
+    }
+  ],
   "src/db/migrations/076_drop_chats_visual_novel.ts": [
     {
       "kind": "ticket",
@@ -22743,6 +22791,18 @@
       "source": ".plan/tickets/TASK-scheduled-messages-reminders.md"
     }
   ],
+  "src/frontend/alpine/chat-link-previews.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-link-previews-unfurl.md"
+    }
+  ],
+  "src/frontend/alpine/chat-link-previews.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-link-previews-unfurl.md"
+    }
+  ],
   "src/frontend/alpine/chat-location.ts": [
     {
       "kind": "ticket",
@@ -22817,6 +22877,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-pins-frontend.md"
+    }
+  ],
+  "src/frontend/alpine/chat-polls.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-polls-votes.md"
+    }
+  ],
+  "src/frontend/alpine/chat-polls.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-polls-votes.md"
     }
   ],
   "src/frontend/alpine/chat-proactive.test.ts": [
@@ -23333,6 +23405,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-regeneratevariant-does-not-pass-style-to-api.md"
+    }
+  ],
+  "src/frontend/alpine/chat-voice-notes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-voice-notes-playback.md"
     }
   ],
   "src/frontend/alpine/chat.ts": [
@@ -42245,6 +42323,18 @@
       "source": ".plan/tickets/TASK-encryption-architecture-clarification.md"
     }
   ],
+  "src/routes/link-previews.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-link-previews-unfurl.md"
+    }
+  ],
+  "src/routes/link-previews.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-link-previews-unfurl.md"
+    }
+  ],
   "src/routes/liveness.ts": [
     {
       "kind": "ticket",
@@ -42337,6 +42427,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/crypto.md"
+    }
+  ],
+  "src/routes/message-polls.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-polls-votes.md"
+    }
+  ],
+  "src/routes/message-polls.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-polls-votes.md"
     }
   ],
   "src/routes/message-reactions.ts": [
@@ -44947,6 +45049,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-voice-notes-playback.md"
     }
   ],
   "src/routes/v1/content-surface.ts": [
@@ -45833,6 +45939,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+  "src/routes/voice-notes.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-voice-notes-playback.md"
+    }
+  ],
+  "src/routes/voice-notes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-voice-notes-playback.md"
     }
   ],
   "src/routes/wardrobe": [
