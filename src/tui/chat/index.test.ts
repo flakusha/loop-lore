@@ -631,7 +631,7 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
   it("handleSend delegates to the api dispatcher with widget and text", async () => {
     const chat = buildWidget();
     await chat.handleSend("hello",);
-    expect(handleSendMock,).toHaveBeenCalledWith(chat, "hello",);
+    expect(handleSendMock,).toHaveBeenCalledWith(chat, "hello", undefined,);
   });
 
   it("loadMessages delegates to the api dispatcher with widget", async () => {
