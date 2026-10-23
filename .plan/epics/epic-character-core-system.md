@@ -628,7 +628,8 @@ When generating dialogue or behavior, the prompt includes:
 
 # Feature: Character Template Seeding
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** verified 2026-10-09 — seeding runs at startup from `src/server/init-background-services.ts:37-52` (`mergeCharacterTemplates` + `seedCharacterTemplates`); the flat paths this block used to cite (`sections/characters.ts`, `templates-loader.ts`, `seed.ts`, `server.ts`) never existed in that shape and are corrected in the Files split below. The ticket file `.plan/tickets/TASK-character-template-seeding.md` still reads Not Started.
 **Epic:** 46 (Creative Studio) — related
 **Files:** see the Files split at the end of this section

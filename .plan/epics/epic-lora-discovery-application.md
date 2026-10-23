@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** , Phase 2 Partial
 **Priority:** High
 **Effort:** Medium
@@ -189,3 +190,5 @@ async function discoverSdCppLoras(baseUrl: string,): Promise<LoRAModel[]> {
 | Unit        | ComfyUI workflow modification       | `src/generation/lora/comfyui.test.ts`     |
 | Integration | Discover LoRAs from running backend | `tests/integration/lora-discover.test.ts` |
 | E2E         | Generate image with LoRA applied    | `tests/e2e/flows/lora-gen.test.ts`        |
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 165a6a3 (registry tip: e460250cc Konstantin Fedotov Auto-closed: ticket EPIC-LORA-DISCOVERY-APPLICATION marked done in inde)

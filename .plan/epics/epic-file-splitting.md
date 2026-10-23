@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** core size-strict debt closed; `src/server/start.ts` remains documented follow-on
 **Priority:** High
 **Effort:** Very High
@@ -269,3 +270,5 @@ For `chat/service.ts`, `routes/*.ts`, `generation/auto-gen.ts`, etc.:
 4. **Run checks in worktree.** `bun run typecheck`, `bun test`, `bunx eslint`, `bun run dead:code`.
 5. **Do NOT modify tests** to force green.
 6. Do NOT touch `node_modules`, `bun.lock`, `package.json`, `bunfig.toml`.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue e52555d (registry tip: 07d67966f Konstantin Fedotov Auto-closed: ticket EPIC-FILE-SPLITTING marked done in index.json)

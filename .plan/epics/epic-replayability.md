@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Code+tests+schema done (migration 035); UNWIRED
 **Priority:** Medium
 **Effort:** Medium
@@ -87,3 +88,5 @@ external importers — mount it under `/api/rpg/replayability` via `TASK-wire-re
 `secrets_found` 2 ways; make `player_achievements` the source of truth — tracked by
 `TASK-reconcile-achievement-unlock-sources` (runs AFTER the achievements + replayability routes
 are wired).
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 4aa052b (registry tip: 514425102 Konstantin Fedotov Auto-closed: ticket EPIC-REPLAYABILITY marked done in index.json)

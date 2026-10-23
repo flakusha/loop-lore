@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Routes wired under `/api/v1/rpg/achievements` (`achievementsRoutes` + `achievementsPlayerRoutes` via `rpgRoutes` in `src/routes/rpg/index.ts`, mounted from `src/routes/v1/actors-surface.ts`); epic metadata reconciled 2026-10-02. Most tasks and acceptance criteria remain unchecked — unlock condition engine, notification, trophy case, secret reveal, social sharing, admin panel
 **Priority:** Medium
 **Effort:** Medium

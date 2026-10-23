@@ -7,7 +7,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History
 **Priority:** Medium
 **Effort:** Medium
@@ -144,3 +145,5 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 | Event | Direction | Purpose |
 | ----- | --------- | ------- |
 | Audit log entries | emits | Admin/user actions (logging epic) |
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 1f79672 (registry tip: 4e5d69fe0 Konstantin Fedotov Auto-closed: ticket EPIC-FRONTEND-ADMIN marked done in index.json)
