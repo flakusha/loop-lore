@@ -3,7 +3,7 @@
 
 # BUG: FE-BE harmonization gate is blocking, contradicting its own advisory acceptance criterion
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-fe-be-harmonization
@@ -31,3 +31,5 @@ Scope: reconcile the two, do not change what the script detects.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 3db1677 (registry tip: fd7e537ac Konstantin Fedotov Close issue)

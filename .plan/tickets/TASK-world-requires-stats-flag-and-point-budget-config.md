@@ -6,7 +6,7 @@
 **Epic:** epic-character-core-system
 **Related:** TASK-character-trait-catalog-for-gameplay-mechanics, TASK-character-stat-allocation-backend-api-and-db-integration
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -24,3 +24,4 @@ Add columns: `requires_stats` (integer 0/1, default 0 — gates the new characte
 - [ ] Roundtrip migration green; column types surfaced in `src/db/column-types.ts`
 - [ ] Regenerated downstream artifacts pass `schemas:check`; existing world tests pass
 
+**Resolved:** 2026-10-23 registry-driven close: git issue 17a8bf4 (registry tip: 389de3b69 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORLD-REQUIRES-STATS-FLAG-A)

@@ -6,7 +6,7 @@
 **Epic:** epic-character-core-system
 **Related:** TASK-character-stat-modifiers-and-trait-application-engine, TASK-character-stat-allocation-backend-api-and-db-integration
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -25,3 +25,5 @@ Define a typed, world-bounded catalog of gameplay-impact traits in `src/rpg/trai
 - [ ] `assertTraitIds` throws on unknown id; `getTraitsForWorld` honors `worldIdScope`
 - [ ] Effects discriminated union is fully typed end-to-end (no `any`)
 - [ ] Tests cover every effect kind + scope filtering + unknown-id rejection
+
+**Resolved:** 2026-10-23 registry-driven close: git issue f322b26 (registry tip: 31ea7923c Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHARACTER-TRAIT-CATALOG-FOR)

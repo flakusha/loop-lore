@@ -3,7 +3,7 @@
 
 # BUG: FE-BE harmonization script violates its own no-console acceptance criterion
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-fe-be-harmonization
@@ -33,3 +33,5 @@ Note: `console.*` is an enforced anti-pattern in `.agents/references/banned-patt
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue a5f1d91 (registry tip: 6ebb0e90f Konstantin Fedotov Close issue)
