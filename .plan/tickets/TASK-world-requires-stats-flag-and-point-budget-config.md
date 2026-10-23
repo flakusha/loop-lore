@@ -19,9 +19,9 @@ Extend the `worlds` table with RPG-config columns so a world can declare stat-bl
 Add columns: `requires_stats` (integer 0/1, default 0 — gates the new character edit modal flow), `stat_point_budget` (integer, default 27 — point-buy budget per the existing `src/rpg/stats/types.ts` point-buy model), `stat_min` (integer, default 8), `stat_max` (integer, default 15). Coexists with the existing `rpg_enabled` flag (`src/db/migrations/parts/003_worlds.ts:187`): `requires_stats` implies `rpg_enabled` but does not replace it. Forward migration adds the columns; existing rows get defaults so back-compat is preserved. Regenerate the downstream artifacts (`src/db/schema.ts`, `src/db/schema-core.ts`, `src/db/schema-manifest.ts`, `src/test-utils/insert-helpers.ts`, `src/validation/db-schemas.ts`) via `bun run db:sync-types && bun run db:sync-manifest`. Column types surfaced in `src/db/column-types.ts`.
 **Acceptance Criteria:**
 
-- [ ] Migration adds the four columns with sensible defaults; existing rows back-compat preserved
-- [ ] `SELECT` against `worlds` returns the new columns
-- [ ] Roundtrip migration green; column types surfaced in `src/db/column-types.ts`
-- [ ] Regenerated downstream artifacts pass `schemas:check`; existing world tests pass
+- [x] Migration adds the four columns with sensible defaults; existing rows back-compat preserved
+- [x] `SELECT` against `worlds` returns the new columns
+- [x] Roundtrip migration green; integer columns need no enum override in `src/db/column-types.ts`
+- [x] Regenerated downstream artifacts pass `schemas:check`; existing world tests pass
 
 **Resolved:** 2026-10-23 registry-driven close: git issue 17a8bf4 (registry tip: 389de3b69 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-WORLD-REQUIRES-STATS-FLAG-A)

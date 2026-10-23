@@ -20,10 +20,16 @@ Define a typed, world-bounded catalog of gameplay-impact traits in `src/rpg/trai
 
 **Acceptance Criteria:**
 
+// hint: Logic changed on both sides. Requires understanding intent of each change.
 - [ ] `src/rpg/traits/catalog.ts` exports `TRAIT_CATALOG`, `getTraitsForWorld`, `assertTraitIds`
 - [ ] Catalog frozen (`Object.freeze`); at least 8 seed traits across all effect kinds
 - [ ] `assertTraitIds` throws on unknown id; `getTraitsForWorld` honors `worldIdScope`
 - [ ] Effects discriminated union is fully typed end-to-end (no `any`)
 - [ ] Tests cover every effect kind + scope filtering + unknown-id rejection
+- [x] `src/rpg/traits/catalog.ts` exports `TRAIT_CATALOG`, `getTraitsForWorld`, `assertTraitIds`
+- [x] Catalog frozen (`Object.freeze`); at least 8 seed traits across all effect kinds
+- [x] `assertTraitIds` throws on unknown id; `getTraitsForWorld` honors `worldIdScope`
+- [x] Effects discriminated union is fully typed end-to-end (no `any`)
+- [x] Tests cover every effect kind + scope filtering + unknown-id rejection
 
 **Resolved:** 2026-10-23 registry-driven close: git issue f322b26 (registry tip: 31ea7923c Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CHARACTER-TRAIT-CATALOG-FOR)
