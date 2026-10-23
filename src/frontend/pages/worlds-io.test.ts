@@ -105,12 +105,12 @@ async function loadWorldsIo(): Promise<void> {
 
 async function importWorld(): Promise<(event: Event,) => Promise<void>> {
   await loadWorldsIo();
-  return (globalThis as unknown as Record<string, (event: Event,) => Promise<void>>).importWorld;
+  return (globalThis as unknown as Record<string, (event: Event,) => Promise<void>>).importWorld!;
 }
 
 async function exportWorld(): Promise<(worldId: string,) => void> {
   await loadWorldsIo();
-  return (globalThis as unknown as Record<string, (worldId: string,) => void>).exportWorld;
+  return (globalThis as unknown as Record<string, (worldId: string,) => void>).exportWorld!;
 }
 
 beforeEach(() => {
