@@ -135,20 +135,26 @@ a different person in a different body.
   (`src/tui/harness/display.test.ts:165`). SAM3 is `Not Started`
   (`.plan/epics/epic-sam3-segmentation-integration.md:8`) with its own ComfyUI
   prerequisites open (`:50-55`).
-- **Two blocking defects found by the 2026-10-23 audit.** (a) The seeded
-  workflow-library row for `configs/workflows/img2img.json` declares
-  `parameters: []` (`src/generation/workflow-library/seed.ts:118`) while the
-  body holds eight placeholders, and the library row wins the id collision over
-  the built-in template (`src/generation/workflow-library/hydrate.ts:41-45`), so
-  `buildWorkflowGraph` throws on unresolved placeholders
-  (`src/generation/workflow-library/row.ts:93-99`). (b) The image-edit ComfyUI
-  provider never uploads the referenced input image — `input_image` travels as a
-  plain string into a `LoadImage` node
-  (`src/image-edit/providers/comfyui-provider.ts:145-149`,
-  `src/image-edit/templates/builtin/_helpers.ts:143-156`); an uploader exists
-  (`src/generation/providers/comfyui-upload.ts:21-48`) but the only call site of
-  it in the tree is the matting path
-  (`src/generation/matting/comfy-provider.ts:111-114`).
+- **The two blocking defects found by the 2026-10-23 audit are RESOLVED.**
+  (a) The seeded workflow-library row for `configs/workflows/img2img.json`
+  declared `parameters: []` while its body held eight placeholders, so
+  `buildWorkflowGraph` threw on unresolved placeholders. The seed now derives
+  the parameters from the graph's own placeholders and repairs a row that was
+  seeded without them (`src/generation/workflow-library/seed-parameters.ts`,
+  wired at `src/generation/workflow-library/seed.ts:135`); the seed also
+  stopped caching a missing owner, which made every later seed call skip.
+  (b) The image-edit ComfyUI provider never uploaded the referenced input
+  image — `input_image` travelled as a plain string into a `LoadImage` node.
+  It now uploads every `image`-typed parameter before the workflow is built and
+  substitutes the name ComfyUI stored it under
+  (`src/image-edit/providers/comfyui-image-upload.ts`, called at
+  `src/image-edit/providers/comfyui-provider.ts:170`). The parameter carries the
+  ASSET ID of an image the caller owns: the provider checks the owner, decrypts
+  with the chat key when the asset is encrypted, and reads the bytes through
+  the asset row — a path on this machine is never read. The run body is now
+  validated against one shared schema
+  (`src/validation/schemas/image-edit.ts`), so the HTTP route and the
+  chain-run path agree and the served OpenAPI document carries the contract.
 
 ## Architecture
 

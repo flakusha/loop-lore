@@ -62,6 +62,7 @@ import {
   detectAssetType,
   getAssetLinks,
   getAssetShares,
+  getOwnedAsset,
   linkAsset,
   listAssets,
   resolveAssetTransform,
@@ -120,16 +121,11 @@ export async function requireAssetOwner(
   assetId: string,
   userId: string,
 ): Promise<AssetRecord | Response> {
-  const asset = await database
-    .selectFrom("assets",)
-    .selectAll()
-    .where("id", "=", assetId,)
-    .executeTakeFirst();
-
   // "Missing" and "not yours" must be indistinguishable, or the differing
   // message is itself an existence oracle on arbitrary asset ids. Same shape
   // both ways, matching the guard in routes/asset-tags/helpers.ts.
-  if (!asset || asset.owner_id !== userId) { return notOwnerResponse("Asset",); }
+  const asset = await getOwnedAsset(database, assetId, userId,);
+  if (!asset) { return notOwnerResponse("Asset",); }
   return asset;
 }
 
