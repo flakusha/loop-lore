@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { MessageAiAction, } from "../chat-actions/message-tools";
 import type { DraftStore, } from "../chat-drafts";
 import type { AlpineMagicThis, GalleryAsset, QuickReplyButton, } from "../types";
 import type { ChatCoreChatListActions, } from "./chat-list-actions";
@@ -212,7 +211,11 @@ export interface ChatCoreState
   generateImageFromMessage(msgId: string,): Promise<void>;
   captionMessage(msgId: string,): Promise<void>;
   forwardMessage(msgId: string,): Promise<void>;
-  runMessageAiAction(msgId: string, action: MessageAiAction, language?: string,): Promise<void>;
+  runMessageAiAction(
+    msgId: string,
+    action: "summarize" | "action-items" | "explain" | "translate",
+    language?: string,
+  ): Promise<void>;
   statsLine(msg: {
     model_id?: string;
     provider?: string;
