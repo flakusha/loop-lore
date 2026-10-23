@@ -3985,7 +3985,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FE-BE-CHARACTER-GROWTH-ARC-CONFIRM-REJECT-DECLARE-UNSATISFIA": {
     "epic": "",
@@ -8528,7 +8528,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-RUNTIME-ASSET-COMPRESSION-IS-STRUCTURALLY-DEAD-NEEDSCOMPRESS": {
     "hash": "c3e0217",
@@ -8964,7 +8964,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-spki-pin-gate-is-not-enforced-across-http-redirects.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SQLITE-FK-PRAGMA-NO-OP-IN-MIGRATION-047-REBUILD": {
     "epic": "",
@@ -30705,7 +30705,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Character Stat Allocation Frontend Modal And Edit Integration",
     "type": "TASK"
@@ -30718,7 +30718,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Character Stat Allocation Integration Tests E2E",
     "type": "TASK"
