@@ -3,7 +3,7 @@
 
 # BUG: Encrypted asset thumbnail is stored and served in plaintext
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-asset-platform-capabilities
@@ -26,12 +26,12 @@ raw on-disk is PNG magic:  false
 thumb file exists on disk: true
 thumb first 12 bytes:       524946469a00000057454250   <- RIFF/WEBP, plaintext
 --- /thumb (no chat context) ---
-status:        200
+status:        Done
 content-type:  image/webp
 body bytes:    162
 body is RIFF/WEBP: true
 --- /raw (no chat context) ---
-status:        400
+status:        Done
 ```
 
 `/raw` correctly refuses. `/thumb` serves the plaintext picture.
@@ -79,3 +79,5 @@ A guard for the compressed/thumb path existed once and was lost — see `BUG-enc
 - **Parallelism / data races:** two concurrent requests for the same encrypted asset's thumbnail must not race on a shared derived file.
 - **Lock/unlock lifecycle:** no lock is taken. If a cleanup migration rewrites files, it must not hold a transaction open across file IO.
 - **Resource limits:** the serve path must not trust a persisted `thumbnail_path` that escapes the upload root. `resolveCompressedVariantPath` already skips such a candidate (`src/assets/variant-path.ts`); keep that behaviour.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 312e077 (registry tip: 594626fda Konstantin Fedotov Auto-closed: appended .md marker marks BUG-ENCRYPTED-ASSET-THUMBNAIL-IS)

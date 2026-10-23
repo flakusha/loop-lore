@@ -3770,7 +3770,7 @@
       "security"
     ],
     "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ENCRYPTED-PAYLOAD-SNIFFING-MISCLASSIFIES-USER-JSON-AS-PRE-EN": {
     "epic": "",

@@ -117,7 +117,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | asset | 7 | 1 | 0 | 6 | 0 | 0 | 0 |
 | asset-persistence | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | asset-search | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| assets | 41 | 7 | 2 | 6 | 3 | 0 | 23 |
+| assets | 41 | 8 | 2 | 6 | 3 | 0 | 22 |
 | assistant | 57 | 6 | 5 | 20 | 3 | 0 | 23 |
 | assistant-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | assistant-flows | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1353,7 +1353,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | seasons | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | secrets | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| security | 41 | 7 | 3 | 8 | 0 | 0 | 23 |
+| security | 41 | 8 | 3 | 8 | 0 | 0 | 22 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 11 | 1 | 0 | 8 | 0 | 0 | 2 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -1729,7 +1729,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-api-versioning | 7 | 6 | 0 | 0 | 0 | 0 | 1 |
 | epic-architecture | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-archival-workflow | 7 | 6 | 0 | 1 | 0 | 0 | 0 |
-| epic-asset-platform-capabilities | 30 | 6 | 0 | 12 | 0 | 0 | 12 |
+| epic-asset-platform-capabilities | 30 | 7 | 0 | 12 | 0 | 0 | 11 |
 | epic-asset-transform-metadata | 11 | 0 | 0 | 9 | 0 | 0 | 2 |
 | epic-assistant-creative-studio-workflows | 12 | 2 | 0 | 0 | 10 | 0 | 0 |
 | epic-assistant-entity-access | 16 | 0 | 0 | 16 | 0 | 0 | 0 |

@@ -24436,8 +24436,9 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md",
       "title": "coverage waiver for chat/service/ownership.ts (bun async-body tracking limit)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/chat",
         "src/chat/service/ownership.test.ts",
         "src/chat/service/ownership.ts"
       ],
@@ -24448,9 +24449,11 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md",
       "title": "Coverage waiver: frontend/alpine/shortcuts.ts at 36% under check gate",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/frontend",
         "src/frontend/alpine/htmx.ts",
+        "src/frontend/alpine/shortcuts-listener.test.ts",
         "src/frontend/alpine/shortcuts.ts",
         "src/frontend/fe-fetch.ts"
       ],
@@ -24461,8 +24464,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md",
       "title": "Coverage waiver: frontend fe-fetch + htmx below 75% floor (stream signature-only diff)",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
+        "src/frontend",
+        "src/frontend/alpine/htmx.ts",
         "src/frontend/fe-fetch.ts",
         "src/frontend/htmx.ts",
         "src/utils/safe-fetch/fetch.ts"
@@ -38076,8 +38081,9 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md",
       "title": "Raise rpg battle-social, skills-progression and replayability-playthrough coverage to the 80 percent floor",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/rpg",
         "src/rpg/replayability/service/playthrough.ts",
         "src/rpg/service/battles/social.ts",
         "src/rpg/skills/service/progression.ts"
@@ -44018,14 +44024,19 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md",
       "title": "Waive seven diff-scoped coverage floors surfaced by JSDoc-only documentation",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
+        "src/routes",
         "src/routes/http-utils/redirect.ts",
         "src/routes/views/static-partials.ts",
         "src/routes/views/view-serving.ts",
+        "src/rpg",
         "src/rpg/replayability/service/index.ts",
+        "src/services",
         "src/services/server-external-manager/index.ts",
+        "src/story",
         "src/story/world-state/index.ts",
+        "src/transport",
         "src/transport/compression.ts"
       ],
       "related": []
@@ -56586,6 +56597,7 @@
     {
       "path": "src/chat",
       "owners": [
+        "TASK-coverage-waiver-chat-ownership-async-body-limit",
         "TASK-recon-test-coverage",
         "TASK-reconciliation-plan",
         "TASK-recursive-self-improvement-evaluator-reliability-drift-detec",
@@ -63474,6 +63486,8 @@
         "TASK-chat-avatar-resolver-outfit-aware",
         "TASK-chat-composer-gif-picker",
         "TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e",
+        "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+        "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
         "TASK-coverage-waivers-for-3-modules-below-80-floor",
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-equipment-stat-preview",
@@ -64993,6 +65007,7 @@
         "TASK-codemod-fetch-json-safe-utils",
         "TASK-cors-middleware",
         "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+        "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
         "TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx",
         "TASK-federation-admin-usage-dashboard-ui",
         "TASK-html-dedup-audit",
@@ -65454,6 +65469,7 @@
     {
       "path": "src/frontend/alpine/shortcuts-listener.test.ts",
       "owners": [
+        "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
         "TASK-plugin-hot-reload-with-real-module-cache-busting"
       ]
     },
@@ -73493,6 +73509,7 @@
         "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-nodeinfo-well-known-discovery-endpoints",
+        "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
         "epic-faction-reputation"
       ]
     },
@@ -78245,7 +78262,9 @@
       "path": "src/rpg",
       "owners": [
         "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
+        "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
         "TASK-resolution-family-decision",
+        "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
         "epic-resolution-system"
       ]
     },
@@ -81604,6 +81623,7 @@
         "TASK-odysseus-manage-tool-parity-evaluation",
         "TASK-recon-test-coverage",
         "TASK-reconciliation-plan",
+        "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
         "epic-platform-research"
       ]
     },
@@ -82080,6 +82100,7 @@
     {
       "path": "src/story",
       "owners": [
+        "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
         "epic-rpg-patterns"
       ]
     },
@@ -82762,6 +82783,7 @@
     {
       "path": "src/transport",
       "owners": [
+        "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
         "TASK-workflow-progress-events-over-transport"
       ]
     },
@@ -124515,9 +124537,19 @@
       "to": "src/chat/service/ownership.ts"
     },
     {
+      "from": "TASK-coverage-waiver-chat-ownership-async-body-limit",
+      "kind": "produces",
+      "to": "src/chat"
+    },
+    {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "produces",
       "to": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "produces",
+      "to": "src/frontend/alpine/shortcuts-listener.test.ts"
     },
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
@@ -124530,6 +124562,16 @@
       "to": "src/frontend/fe-fetch.ts"
     },
     {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "produces",
+      "to": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "produces",
+      "to": "src/frontend/alpine/htmx.ts"
+    },
+    {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "kind": "produces",
       "to": "src/frontend/fe-fetch.ts"
@@ -124538,6 +124580,11 @@
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "kind": "produces",
       "to": "src/frontend/htmx.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "produces",
+      "to": "src/frontend"
     },
     {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
@@ -137815,6 +137862,11 @@
       "to": "src/rpg/skills/service/progression.ts"
     },
     {
+      "from": "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
+      "kind": "produces",
+      "to": "src/rpg"
+    },
+    {
       "from": "TASK-random-encounters-events",
       "kind": "produces",
       "to": "src/chat/random-events.ts"
@@ -143102,7 +143154,17 @@
     {
       "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
       "kind": "produces",
+      "to": "src/routes"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "produces",
       "to": "src/rpg/replayability/service/index.ts"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "produces",
+      "to": "src/rpg"
     },
     {
       "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
@@ -143112,12 +143174,27 @@
     {
       "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
       "kind": "produces",
+      "to": "src/services"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "produces",
       "to": "src/story/world-state/index.ts"
     },
     {
       "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
       "kind": "produces",
+      "to": "src/story"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "produces",
       "to": "src/transport/compression.ts"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "produces",
+      "to": "src/transport"
     },
     {
       "from": "TASK-wardrobe-routes-validation-crud-outfit-override-endpoints",
@@ -167418,6 +167495,18 @@
     {
       "from": "BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio",
       "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio",
+      "kind": "sibling",
       "to": "TASK-coverage-waivers-for-3-modules-below-80-floor",
       "via": "src/frontend"
     },
@@ -168283,6 +168372,12 @@
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
       "to": "TASK-nodeinfo-well-known-discovery-endpoints",
+      "via": "src/routes"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
       "via": "src/routes"
     },
     {
@@ -177619,7 +177714,13 @@
       "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
       "kind": "sibling",
       "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
-      "via": "src/frontend/alpine/htmx.ts"
+      "via": "src/frontend; src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "via": "src/frontend; src/frontend/alpine/htmx.ts"
     },
     {
       "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
@@ -177740,6 +177841,12 @@
       "kind": "sibling",
       "to": "TASK-skills-frontend",
       "via": "src/frontend"
+    },
+    {
+      "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/routes; src/services"
     },
     {
       "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
@@ -182647,6 +182754,18 @@
       "from": "BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null",
       "kind": "sibling",
       "to": "TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "via": "src/frontend"
     },
     {
@@ -193434,6 +193553,12 @@
     {
       "from": "BUG-federation-authorization-who-may-publish-an-actor-undefined",
       "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/routes"
+    },
+    {
+      "from": "BUG-federation-authorization-who-may-publish-an-actor-undefined",
+      "kind": "sibling",
       "to": "TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-",
       "via": "src/cron/jobs.ts; src/federation/fan-out.ts"
     },
@@ -198685,13 +198810,13 @@
       "from": "BUG-frontend-dead-csrf-bearer-header-machinery",
       "kind": "sibling",
       "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
-      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
+      "via": "src/frontend; src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "BUG-frontend-dead-csrf-bearer-header-machinery",
       "kind": "sibling",
       "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend; src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "BUG-frontend-dead-csrf-bearer-header-machinery",
@@ -204187,6 +204312,12 @@
       "from": "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
       "kind": "sibling",
       "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "via": "src/frontend/alpine/htmx.ts"
     },
     {
@@ -227790,6 +227921,18 @@
     {
       "from": "BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th",
       "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "via": "src/frontend"
+    },
+    {
+      "from": "BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th",
+      "kind": "sibling",
       "to": "TASK-coverage-waivers-for-3-modules-below-80-floor",
       "via": "src/frontend"
     },
@@ -228637,7 +228780,7 @@
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
       "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
@@ -280578,6 +280721,12 @@
     {
       "from": "TASK-book-unit-editor-review-surface",
       "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-book-unit-editor-review-surface",
+      "kind": "sibling",
       "to": "TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn",
       "via": "src/routes/views/plugin-dynamic.ts"
     },
@@ -286074,6 +286223,18 @@
     {
       "from": "TASK-chat-avatar-resolver-outfit-aware",
       "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-chat-avatar-resolver-outfit-aware",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-chat-avatar-resolver-outfit-aware",
+      "kind": "sibling",
       "to": "TASK-coverage-waivers-for-3-modules-below-80-floor",
       "via": "src/frontend"
     },
@@ -286591,6 +286752,18 @@
       "from": "TASK-chat-composer-gif-picker",
       "kind": "sibling",
       "to": "TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-chat-composer-gif-picker",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-chat-composer-gif-picker",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "via": "src/frontend"
     },
     {
@@ -292896,6 +293069,12 @@
     {
       "from": "TASK-codemod-fetch-json-safe-utils",
       "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-codemod-fetch-json-safe-utils",
+      "kind": "sibling",
       "to": "TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx",
       "via": "src/frontend/alpine/htmx.ts"
     },
@@ -297504,6 +297683,18 @@
     {
       "from": "TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e",
       "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e",
+      "kind": "sibling",
       "to": "TASK-coverage-waivers-for-3-modules-below-80-floor",
       "via": "src/frontend"
     },
@@ -301267,7 +301458,7 @@
       "from": "TASK-cors-middleware",
       "kind": "sibling",
       "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "TASK-cors-middleware",
@@ -301686,6 +301877,30 @@
     {
       "from": "TASK-coverage-waiver-chat-ownership-async-body-limit",
       "kind": "sibling",
+      "to": "TASK-recon-test-coverage",
+      "via": "src/chat"
+    },
+    {
+      "from": "TASK-coverage-waiver-chat-ownership-async-body-limit",
+      "kind": "sibling",
+      "to": "TASK-reconciliation-plan",
+      "via": "src/chat"
+    },
+    {
+      "from": "TASK-coverage-waiver-chat-ownership-async-body-limit",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-evaluator-reliability-drift-detec",
+      "via": "src/chat"
+    },
+    {
+      "from": "TASK-coverage-waiver-chat-ownership-async-body-limit",
+      "kind": "sibling",
+      "to": "epic-chat-context-optimization",
+      "via": "src/chat"
+    },
+    {
+      "from": "TASK-coverage-waiver-chat-ownership-async-body-limit",
+      "kind": "sibling",
       "to": "epic-effect-v4-adoption-evaluation",
       "via": "src/chat/service/ownership.ts"
     },
@@ -301693,13 +301908,31 @@
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
       "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend; src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "TASK-coverage-waivers-for-3-modules-below-80-floor",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "via": "src/frontend"
     },
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
       "to": "TASK-e2e-auth-flows",
       "via": "src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "TASK-equipment-stat-preview",
+      "via": "src/frontend"
     },
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
@@ -301734,6 +301967,12 @@
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
+      "to": "TASK-item-provisioning-dashboard",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
       "to": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
       "via": "src/frontend/fe-fetch.ts"
     },
@@ -301746,6 +301985,36 @@
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
+      "to": "TASK-npc-inventory-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "TASK-plugin-hot-reload-with-real-module-cache-busting",
+      "via": "src/frontend/alpine/shortcuts-listener.test.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "TASK-professions-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "TASK-skills-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
       "to": "TASK-tui",
       "via": "src/frontend/fe-fetch.ts"
     },
@@ -301754,6 +302023,12 @@
       "kind": "sibling",
       "to": "TASK-unify-401-guard-helpers",
       "via": "src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "TASK-world-item-instance-npc",
+      "via": "src/frontend"
     },
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
@@ -301804,6 +302079,24 @@
       "via": "src/frontend/alpine/htmx.ts"
     },
     {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-coverage-waivers-for-3-modules-below-80-floor",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "via": "src/frontend"
+    },
+    {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "kind": "sibling",
       "to": "TASK-e2e-auth-flows",
@@ -301812,8 +302105,44 @@
     {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "kind": "sibling",
+      "to": "TASK-equipment-stat-preview",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
       "to": "TASK-federation-admin-usage-dashboard-ui",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-html-dedup-audit",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-html-dedup-shared-partials",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-htmx-ajax-request-helper",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-item-provisioning-dashboard",
+      "via": "src/frontend"
     },
     {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
@@ -301830,6 +302159,30 @@
     {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "kind": "sibling",
+      "to": "TASK-npc-inventory-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-professions-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "TASK-skills-frontend",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
       "to": "TASK-tui",
       "via": "src/frontend/fe-fetch.ts"
     },
@@ -301842,6 +302195,12 @@
     {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "kind": "sibling",
+      "to": "TASK-world-item-instance-npc",
+      "via": "src/frontend"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
       "to": "epic-auth-access",
       "via": "src/frontend/fe-fetch.ts"
     },
@@ -301849,13 +302208,31 @@
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "kind": "sibling",
       "to": "epic-federation-offload-quotas",
-      "via": "src/frontend/fe-fetch.ts"
+      "via": "src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts"
     },
     {
       "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
       "kind": "sibling",
       "to": "epic-frontend-backend-integration",
       "via": "src/frontend/fe-fetch.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "epic-frontend-components",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "epic-frontend-html-dedup-htmx-reuse",
+      "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/frontend"
     },
     {
       "from": "TASK-coverage-waiver-locations-at-78-under-check-gate",
@@ -305437,7 +305814,7 @@
       "from": "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
       "kind": "sibling",
       "to": "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
-      "via": "src/rpg/service/battles/social.ts"
+      "via": "src/rpg; src/rpg/service/battles/social.ts"
     },
     {
       "from": "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
@@ -305498,6 +305875,12 @@
       "kind": "sibling",
       "to": "TASK-src-rpg-nit-1-4-barrel-organization-implementations",
       "via": "src/rpg/index.ts"
+    },
+    {
+      "from": "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/rpg"
     },
     {
       "from": "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
@@ -305863,7 +306246,7 @@
       "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
       "kind": "sibling",
       "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
-      "via": "src/transport/compression.ts"
+      "via": "src/routes; src/transport/compression.ts"
     },
     {
       "from": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
@@ -306626,6 +307009,12 @@
       "kind": "sibling",
       "to": "TASK-vn-qa-mode",
       "via": "src/public/css/vn.css"
+    },
+    {
+      "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/routes"
     },
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
@@ -313999,6 +314388,12 @@
       "from": "TASK-equipment-market-demand-feedback",
       "kind": "sibling",
       "to": "TASK-reconciliation-plan",
+      "via": "src/services"
+    },
+    {
+      "from": "TASK-equipment-market-demand-feedback",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
       "via": "src/services"
     },
     {
@@ -336444,6 +336839,12 @@
     {
       "from": "TASK-nodeinfo-well-known-discovery-endpoints",
       "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/routes"
+    },
+    {
+      "from": "TASK-nodeinfo-well-known-discovery-endpoints",
+      "kind": "sibling",
       "to": "epic-faction-reputation",
       "via": "src/routes"
     },
@@ -337646,6 +338047,12 @@
       "kind": "sibling",
       "to": "TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex",
       "via": "src/assistant"
+    },
+    {
+      "from": "TASK-odysseus-manage-tool-parity-evaluation",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/services"
     },
     {
       "from": "TASK-odysseus-manage-tool-parity-evaluation",
@@ -342528,8 +342935,20 @@
     {
       "from": "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
       "kind": "sibling",
+      "to": "TASK-resolution-family-decision",
+      "via": "src/rpg"
+    },
+    {
+      "from": "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
+      "kind": "sibling",
       "to": "TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr",
       "via": "src/rpg/skills/service/progression.ts"
+    },
+    {
+      "from": "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/rpg"
     },
     {
       "from": "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
@@ -342542,6 +342961,12 @@
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
       "via": "src/rpg/skills/service/progression.ts"
+    },
+    {
+      "from": "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
+      "kind": "sibling",
+      "to": "epic-resolution-system",
+      "via": "src/rpg"
     },
     {
       "from": "TASK-random-encounters-events",
@@ -342888,6 +343313,12 @@
     {
       "from": "TASK-recon-test-coverage",
       "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/services"
+    },
+    {
+      "from": "TASK-recon-test-coverage",
+      "kind": "sibling",
       "to": "TASK-wire-auto-rename",
       "via": "src/chat/auto-rename.ts"
     },
@@ -343166,6 +343597,12 @@
       "kind": "sibling",
       "to": "TASK-recursive-self-improvement-evaluator-reliability-drift-detec",
       "via": "src/chat"
+    },
+    {
+      "from": "TASK-reconciliation-plan",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/services"
     },
     {
       "from": "TASK-reconciliation-plan",
@@ -345314,6 +345751,12 @@
       "kind": "sibling",
       "to": "TASK-rpg-mechanics",
       "via": "src/rpg/dice.ts"
+    },
+    {
+      "from": "TASK-resolution-family-decision",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/rpg"
     },
     {
       "from": "TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts",
@@ -352082,6 +352525,36 @@
       "kind": "sibling",
       "to": "epic-visual-novel-mode",
       "via": "src/frontend/vn/templates/apply.ts"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "sibling",
+      "to": "TASK-workflow-progress-events-over-transport",
+      "via": "src/transport"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "sibling",
+      "to": "epic-faction-reputation",
+      "via": "src/routes"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "sibling",
+      "to": "epic-platform-research",
+      "via": "src/services"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "sibling",
+      "to": "epic-resolution-system",
+      "via": "src/rpg"
+    },
+    {
+      "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "kind": "sibling",
+      "to": "epic-rpg-patterns",
+      "via": "src/story"
     },
     {
       "from": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
