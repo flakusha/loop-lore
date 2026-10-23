@@ -242,6 +242,9 @@ export class AssetView {
         {
           method: "POST",
           auth: this.sessionToken ? { sessionToken: this.sessionToken, } : undefined,
+          // No `label`: the server writes `label: "generated"` for its own
+          // image-gen output (`image-gen-route.ts`) — a manual attach is not
+          // a generation, and stamping it as one would corrupt that signal.
           body: { entityType: "chat", entityId: this.chatId, },
           handle401: false,
         },

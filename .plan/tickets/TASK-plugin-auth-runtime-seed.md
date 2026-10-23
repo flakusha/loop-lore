@@ -3,7 +3,7 @@
 
 # TASK: Plugin auth surface + runtime seed endpoint
 
-**Status:** Done (partial: Part B shipped, Part A deferred with reason — see Resolution)
+**Status:** Done
 **Summary:** Gate plugin routes for multi-user + add runtime re-seed endpoint (`POST /api/v1/seed`, **planned-new**).
 **Context:** Gaps 4–5. 7 shipped plugins declare no auth (`src/plugins/loader.ts`); seeding is boot-only (`src/seeding/*`, `src/characters/seed/*`).
 **Acceptance Criteria:** Plugin routes gated in non-solo mode; runtime seed endpoint (**planned-new**) re-seeds without restart.

@@ -53,6 +53,8 @@ export class ChatWidget implements ChatHost {
   sessionToken: string | undefined;
   sendTimeoutMs: number;
   private onChatChange?: (chatId: string,) => void;
+  private onAssetsRefresh: () => void;
+  private linkAsset?: (assetId: string,) => Promise<boolean>;
   private isOverlayOpen: () => boolean;
 
   /**
@@ -67,6 +69,11 @@ export class ChatWidget implements ChatHost {
     this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
     this.sendTimeoutMs = options.sendTimeoutMs ?? TUI_DEFAULTS.sendTimeoutMs;
     this.onChatChange = options.onChatChange;
+    this.onAssetsRefresh = options.onAssetsRefresh ?? ((): void => {
+      /* no sidebar wired: refresh is a host responsibility */
+    });
+
+    this.linkAsset = options.linkAsset;
     this.isOverlayOpen = options.isOverlayOpen ?? (() => false);
     // Main container box
     this.box = blessed.box({
@@ -408,6 +415,18 @@ export class ChatWidget implements ChatHost {
   }
 
   /**
+   * Link a freshly uploaded asset to the active chat.
+   * @param assetId - the uploaded asset's id
+   * @returns `true` when the link was created
+   */
+  private async linkUploadedAsset(assetId: string,): Promise<boolean> {
+    // Absent when the widget is built bare (unit tests, or a host without
+    // a sidebar) — the caller reports the id and skips the link step.
+    if (this.linkAsset == null) { return false; }
+    return this.linkAsset(assetId,);
+  }
+
+  /**
    * `/image` submit flow: generate, then report the asset in-transcript.
    * @param prompt - the image prompt
    */
@@ -421,11 +440,14 @@ export class ChatWidget implements ChatHost {
         return;
       }
 
+      // The server linked the output to the chat on persist — pull it into
+      // the sidebar now so the asset is actually there, not just promised.
+      this.onAssetsRefresh();
       const names = result.assets.map((a,) => a.filename).join(", ",);
       this.addMessage({
         id: crypto.randomUUID(),
         role: "system",
-        content: `Image ready: ${names || "(no assets returned)"} — see F2 assets sidebar.`,
+        content: `Image ready: ${names || "(no assets returned)"} — Enter in the F2 assets sidebar attaches it.`,
       },);
     } catch (error) {
       this.hideTyping();
@@ -434,7 +456,7 @@ export class ChatWidget implements ChatHost {
   }
 
   /**
-   * `/upload` submit flow: upload, then report the asset id in-transcript.
+   * `/upload` submit flow: upload, link to the chat, report in-transcript.
    * @param filePath - local path to upload
    */
   private async uploadFlow(filePath: string,): Promise<void> {
@@ -447,10 +469,18 @@ export class ChatWidget implements ChatHost {
         return;
       }
 
+      // Uploads create unlinked assets, invisible to the chat-scoped
+      // sidebar. Linking here keeps upload-to-attach one step; failures
+      // surface inline and keep the unlinked id recoverable from the
+      // transcript line.
+      const linked = await this.linkUploadedAsset(result.assetId,);
+      this.onAssetsRefresh();
       this.addMessage({
         id: crypto.randomUUID(),
         role: "system",
-        content: `Uploaded ${result.assetId} — Enter in the F2 sidebar attaches it to this chat.`,
+        content: linked
+          ? `Uploaded ${result.assetId} — Enter in the F2 sidebar attaches it to this chat.`
+          : `Uploaded ${result.assetId} but linking to this chat failed — attach it from the Web UI.`,
       },);
     } catch (error) {
       this.hideTyping();

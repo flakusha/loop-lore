@@ -159,6 +159,12 @@ describe("AssetView — attachAsset", () => {
     expect(calls,).toHaveLength(2,);
     expect(calls[0]?.url,).toBe("http://localhost:3000/api/v1/assets/asset-9/links",);
     expect(calls[0]?.options.auth,).toEqual({ sessionToken: "tok-1", },);
+    // Unlabelled: the `generated` label is the server's own image-gen
+    // signal — a manual attach must not stamp it.
+    expect(calls[0]?.options.body as Record<string, unknown>,).toEqual({
+      entityType: "chat",
+      entityId: "chat-1",
+    },);
   });
 
   it("returns false without calling the client when no chat is bound", async () => {

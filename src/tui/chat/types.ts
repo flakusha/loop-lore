@@ -15,6 +15,13 @@ export interface ChatMessage {
 export interface ChatWidgetOptions {
   sessionToken?: string;
   onChatChange?: (chatId: string,) => void;
+  /** Fired after a successful `/image` or `/upload` flow so the host can
+   * reload the asset sidebar — the widget holds no sidebar reference. */
+  onAssetsRefresh?: () => void;
+  /** Link an uploaded asset to the active chat. Wired by the host to the
+   * sidebar's `attachAsset`; absent in tests that build the widget bare,
+   * where the upload flow reports the id and skips the link step. */
+  linkAsset?: (assetId: string,) => Promise<boolean>;
   /** Overrides the send-message timeout; defaults to `TUI_DEFAULTS.sendTimeoutMs`. */
   sendTimeoutMs?: number;
   /**
