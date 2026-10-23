@@ -614,7 +614,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | fe-be-db | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | feature | 15 | 2 | 0 | 13 | 0 | 0 | 0 |
 | feature-flags | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| federation | 24 | 2 | 1 | 1 | 1 | 0 | 19 |
+| federation | 24 | 5 | 1 | 1 | 1 | 0 | 16 |
 | feed | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | feeds | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | ffi | 3 | 0 | 2 | 1 | 0 | 0 | 0 |
@@ -1353,7 +1353,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | seasons | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | secrets | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| security | 41 | 8 | 3 | 8 | 0 | 0 | 22 |
+| security | 41 | 11 | 3 | 8 | 0 | 0 | 19 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 11 | 1 | 0 | 8 | 0 | 0 | 2 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -1688,7 +1688,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2696 | 1027 | 45 | 898 | 32 | 0 | 694 |
+| (untagged) | 2696 | 1029 | 45 | 898 | 32 | 0 | 692 |
 
 ## By epic × status
 
@@ -1758,7 +1758,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-byok-local-models | 8 | 2 | 0 | 3 | 0 | 0 | 3 |
 | EPIC-byok-local-models | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-certificate-and-tls-management | 10 | 2 | 0 | 8 | 0 | 0 | 0 |
-| epic-character-core-system | 74 | 20 | 0 | 46 | 0 | 0 | 8 |
+| epic-character-core-system | 74 | 22 | 0 | 46 | 0 | 0 | 6 |
 | epic-character-growth | 5 | 1 | 0 | 2 | 0 | 0 | 2 |
 | epic-character-internal-traits | 14 | 5 | 0 | 8 | 0 | 0 | 1 |
 | epic-character-multi-personality | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
@@ -1836,7 +1836,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-external-tooling-build | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
 | epic-faction-reputation | 7 | 2 | 0 | 1 | 0 | 0 | 4 |
 | epic-fe-be-harmonization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| epic-federation-offload-quotas | 20 | 13 | 0 | 1 | 0 | 0 | 6 |
+| epic-federation-offload-quotas | 20 | 15 | 0 | 1 | 0 | 0 | 4 |
 | epic-federation-swarm-sync | 15 | 6 | 0 | 4 | 0 | 0 | 5 |
 | epic-file-splitting | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | epic-fractal-locations | 13 | 0 | 0 | 0 | 0 | 0 | 13 |
@@ -2016,7 +2016,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 0 | 0 | 1 | 0 | 0 | 5 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 990 | 629 | 46 | 33 | 43 | 0 | 239 |
+| (unbound) | 990 | 630 | 46 | 33 | 43 | 0 | 238 |
 
 ## Ticket detail
 

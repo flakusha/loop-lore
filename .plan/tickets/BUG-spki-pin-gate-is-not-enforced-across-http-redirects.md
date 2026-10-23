@@ -22,3 +22,5 @@ fetchPeerAdvertisement (src/federation/peer-fetch.ts:45-50) passes only timeout/
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue bc4950c (registry tip: 7c68e4049 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-SPKI-PIN-GATE-IS-NOT-ENFORCE)

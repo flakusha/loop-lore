@@ -1244,10 +1244,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md"
     },
     {
@@ -1344,10 +1340,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
@@ -1387,10 +1379,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
     }
   ],
   "src/assets/matting-routes.ts": [
@@ -1517,12 +1505,6 @@
       "source": ".plan/tickets/TASK-async-store-tests-per-test-tmpdir.md"
     }
   ],
-  "src/assets/serve-handlers.encrypted.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
-    }
-  ],
   "src/assets/serve-handlers.ts": [
     {
       "kind": "ticket",
@@ -1561,10 +1543,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
     },
     {
       "kind": "ticket",
@@ -2007,10 +1985,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md"
     },
     {
       "kind": "ticket",
