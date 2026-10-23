@@ -20,8 +20,8 @@ import type { DB, } from "../../db/schema";
 import { safeJsonStringify, uid, } from "../../utils";
 import { toDate, } from "../../utils/date";
 import { getRpgLog, parseJsonField, } from "../shared/rpg-service-utils";
-import { type AbilityName, ALL_ABILITIES, } from "../stats/types.js";
 import { applyQuestionEffects, } from "./effects";
+import { applyLevelUpAnswer, } from "./level-up";
 import type {
   AnswerQuestionPayload,
   AnswerQuestionResult,
@@ -249,39 +249,7 @@ export async function answerQuestion(
   );
 
   if (row.type === RpgQuestionType.LevelUp && resolved.selectedOptionId !== null) {
-    const { resolveLevelUpDecision, } = await import("../level/decisions.js");
-    const optionId = resolved.selectedOptionId;
-    const ability = optionId.startsWith("asi:",) && optionId.endsWith("+2",)
-      ? optionId.slice("asi:".length, -"+2".length,)
-      : null;
-
-    if (optionId === "asi:auto") {
-      const resolution = await resolveLevelUpDecision(db, answeredBy,);
-      for (const spend of resolution.spends) {
-        effectsApplied.push(`asi:${spend.ability}+${String(spend.granted,)}`,);
-        messageParts.push(
-          `+${String(spend.granted,)} ${spend.ability.toUpperCase()} allocated (${
-            String(resolution.remaining,)
-          } pending)`,
-        );
-      }
-    } else if (ability !== null && (ALL_ABILITIES as readonly string[]).includes(ability,)) {
-      const resolution = await resolveLevelUpDecision(db, answeredBy, {
-        kind: "asi",
-        ability: ability as AbilityName,
-        points: 2,
-      },);
-
-      const spend = resolution.spends[0];
-      if (spend) {
-        effectsApplied.push(`asi:${spend.ability}+${String(spend.granted,)}`,);
-        messageParts.push(
-          `+${String(spend.granted,)} ${spend.ability.toUpperCase()} allocated (${String(spend.remaining,)} pending)`,
-        );
-      }
-    } else {
-      getLog().warn("Level-up answer ignored: unknown ASI option", { questionId, optionId, },);
-    }
+    await applyLevelUpAnswer(db, questionId, answeredBy, resolved.selectedOptionId, effectsApplied, messageParts,);
   }
 
   const content = ["Answer recorded: " + resolved.display, ...messageParts,].join(" — ",);
