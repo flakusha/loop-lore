@@ -16,8 +16,9 @@ import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, } from "../../test-utils/insert-helpers";
-import { encodeReferencePair, } from "../xp/sources";
+import { encodeReferencePair, isXpSource, } from "../xp/sources";
 import { SkillCategory, SkillsService, } from "./service";
+import { auditSkillLevelUp, } from "./service/skill-audit";
 
 describe("SkillsService skill-XP fan-in", () => {
   let db: Kysely<DB>;
@@ -124,6 +125,22 @@ describe("SkillsService skill-XP fan-in", () => {
     expect(after!.xp,).toBe(50,);
     expect(after!.level,).toBe(2,);
     expect(await ledgerRows(skill.id, 50,),).toHaveLength(1,);
+
+    await service.deleteSkill(skill.id,);
+  });
+
+  it("names the skill_usage source from the shared vocabulary", async () => {
+    expect(isXpSource("skill_usage",),).toBe(true,);
+  });
+
+  it("auditSkillLevelUp writes no rows when no level is gained", async () => {
+    const skill = await service.createSkill({ actorId, name: "FanIn Audit Noop", category: SkillCategory.Combat, },);
+
+    await db.transaction().execute(async (trx,) => {
+      await auditSkillLevelUp(trx, actorId, skill.id, 2, 2, skill.name,);
+    },);
+
+    expect(await skillAuditRows(skill.id,),).toHaveLength(0,);
 
     await service.deleteSkill(skill.id,);
   });

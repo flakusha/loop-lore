@@ -2,6 +2,7 @@ import { describe, expect, it, } from "bun:test";
 import {
   DISCOVERY_XP,
   encodeReferencePair,
+  isXpSource,
   QUEST_XP_MINIMUM,
   TRAVEL_LEG_XP,
   XP_BY_CR,
@@ -10,6 +11,7 @@ import {
   xpForQuest,
   xpForSkillChallenge,
   xpForTravelLeg,
+  XpSource,
 } from "./sources";
 
 describe("xp/sources (real logic)", () => {
@@ -67,6 +69,17 @@ describe("flat awards", () => {
   it("discovery and travel legs pay their flat constants", () => {
     expect(xpForDiscovery(),).toBe(DISCOVERY_XP,);
     expect(xpForTravelLeg(),).toBe(TRAVEL_LEG_XP,);
+  });
+});
+
+describe("XpSource vocabulary", () => {
+  it("accepts every member and rejects unknown sources", () => {
+    for (const value of Object.values(XpSource,)) {
+      expect(isXpSource(value,),).toBe(true,);
+    }
+
+    expect(isXpSource("quest",),).toBe(true,);
+    expect(isXpSource("nope",),).toBe(false,);
   });
 });
 
