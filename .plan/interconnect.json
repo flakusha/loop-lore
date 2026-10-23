@@ -21164,7 +21164,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-character-stat-allocation-backend-api-and-db-integration.md",
       "title": "Character Stat Allocation Backend API And DB Integration",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/character-stat-allocation.ts",
         "src/routes/characters.ts"
@@ -21213,7 +21213,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md",
       "title": "Character Stat Modifiers And Trait Application Engine",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/dice/trait-roll.ts",
         "src/rpg/stats/modifiers.ts",
@@ -21253,7 +21253,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-character-trait-catalog-for-gameplay-mechanics.md",
       "title": "Character Trait Catalog For Gameplay Mechanics",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/traits/catalog.ts"
       ],
@@ -44082,7 +44082,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-world-requires-stats-flag-and-point-budget-config.md",
       "title": "World Requires Stats Flag And Point Budget Config",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/column-types.ts",
         "src/db/migrations/parts/003_worlds.ts",
