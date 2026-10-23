@@ -54,9 +54,14 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * rebinds the export but cannot reach an already-built instance — and keying the
    * cache on baseUrl is no better, since it still serves a stale instance when the
    * config is unchanged but the client class is swapped.
+   *
+   * `protected` so a test can hand the provider a stub client: the ComfyUI
+   * protocol is reached through the network, and two test files that both stub
+   * `globalThis.fetch` overwrite each other when the suite runs them in
+   * parallel.
    * @param config
    */
-  private getClient(config?: Config,): ComfyUIClient {
+  protected getClient(config?: Config,): ComfyUIClient {
     const sdConfig = pickSdProvider((config ?? loadConfig()).generation.providers.sd, "edit",);
 
     return new ComfyUIClient({
