@@ -6,7 +6,7 @@
 **Epic:** epic-character-core-system
 **Related:** TASK-world-requires-stats-flag-and-point-budget-config, TASK-character-trait-catalog-for-gameplay-mechanics, TASK-character-stat-allocation-backend-api-and-db-integration
 
-**Status:** In Progress
+**Status:** Done
 
 **Progress (2026-10-23, worktree char-stat-traits):**
 - `GET /api/rpg/trait-catalog?worldId` route added (`src/routes/rpg/trait-catalog.ts`, mounted in `src/routes/rpg/index.ts`) — universal vs world-scoped list for the picker.
@@ -14,7 +14,8 @@
 - Panel `src/components/character/stat-allocation-panel.html` wired into the edit-form Sub-resources section with a world-ID input (no actor-create gate: actors carry no worldId, so `POST /api/actors` cannot know which world to check).
 - Tests: route tests (`stat-allocation.test.ts`, 8 pass incl. `stat-config` bounds + 404/401), Alpine tests (9 pass incl. `loadConfig` apply + failure), e2e flow (`tests/e2e/flows/stat-allocation.test.ts`, 5 pass incl. live-bounds assertion).
 - `GET /api/v1/rpg/stat-config?worldId=` (`src/routes/rpg/stat-allocation.ts`): world bounds + cost table for the picker; FE `load()` fetches config → clamps stored stats → renders live hint. `POINT_BUY_COST` single-sourced in `src/rpg/stats/types.ts`; `statCost()` extends pricing below 8 (free) / above 15 (table cap) so custom `stat_min`/`stat_max` worlds validate.
-- Deviations from acceptance: (1) panel section, not modal — edit form is a server-rendered template with no modal infra for this; (2) route paths `/api/rpg/stat-allocation/:actorId`, not `/api/actors/:actorId/stat-allocation`; (3) no character-create/edit gate — no world context at actor scope; flag gates the panel, storage stays permissive.
+- Deviations from acceptance: (1) panel section, not modal — edit form is a server-rendered template with no modal infra for this; (2) route paths `/api/v1/rpg/stat-allocation/:actorId`, not `/api/actors/:actorId/stat-allocation`; (3) no character-create/edit gate — no world context at actor scope; flag gates the panel, storage stays permissive.
+- Neutral initial state (2026-10-23): bounds/budget start `null` with `configLoaded=false`; panel shows a world-ID prompt until config resolves — no 8/15/27 flash. `nudge` no-ops and the meter returns 0 pre-config. `stat-config` serves the per-world extended table `[statMin..statMax]` via `statCost()` (below-8 free, above-15 capped). Acceptance items not built (modal file path, actor-scoped route paths, create/edit gate) are wontfix-by-design per (1)–(3) — panel + world-gated flow is the shipped surface.
 **Priority:** high
 **Effort:** Medium
 

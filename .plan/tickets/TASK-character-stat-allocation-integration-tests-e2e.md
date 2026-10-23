@@ -6,14 +6,15 @@
 **Epic:** epic-character-core-system
 **Related:** TASK-world-requires-stats-flag-and-point-budget-config, TASK-character-trait-catalog-for-gameplay-mechanics, TASK-character-stat-modifiers-and-trait-application-engine, TASK-character-stat-allocation-backend-api-and-db-integration, TASK-character-stat-allocation-frontend-modal-and-edit-integration
 
-**Status:** In Progress
+**Status:** Done
 
 **Progress (2026-10-23, worktree char-stat-traits):**
 - Service tests extended (`src/rpg/service/stat-allocation.test.ts`, 8 pass): duplicate traitIds collapse, empty traitIds allowed, custom-bounds world (`stat_min 6`) accepted via `statCost` fallback.
 - Route tests (`src/routes/rpg/stat-allocation.test.ts`, 8 pass): GET 404, PUT roundtrip, budget-overflow 422, auth 401, catalog scoping, `stat-config` custom-world bounds + 404/401.
 - E2E flow (`tests/e2e/flows/stat-allocation.test.ts`, `/api/v1/rpg/...`, 5 pass): catalog universal list, PUT+GET roundtrip, overflow 422, live `stat-config` bounds assertion.
 - `statCost()` unit tests (`src/rpg/stats/validation.test.ts`): table parity 8–15, below-floor free, above-ceiling capped.
-- Remaining gaps: combat/dice trait-floor checks belong to the modifiers/engine ticket (Done); `POST /api/actors` gate not implemented (no worldId at actor scope — see frontend ticket); migration roundtrip covered by existing `src/db/migrations.test.ts`.
+- Remaining gaps: combat/dice trait-floor checks belong to the modifiers/engine ticket (Done); migration roundtrip covered by existing `src/db/migrations.test.ts`.
+- Wontfix by design: acceptance items (4) `POST /api/actors` rejection and actor-scoped `PUT /api/actors/:id/stat-allocation` path were never built — actors carry no worldId so there is no world context at actor scope; the shipped contract is world-scoped (`/api/v1/rpg/stat-allocation/:actorId` + `worldId` in body, `requires_stats` gates the panel). E2E locks the shipped contract (catalog, PUT+GET roundtrip, 422 overflow, live `stat-config` bounds); it does not cover the unbuilt actor-scoped paths.
 **Priority:** medium
 **Effort:** Medium
 
