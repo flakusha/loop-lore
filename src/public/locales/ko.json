@@ -125,7 +125,12 @@
     "stop": "Stop",
     "caption": "Caption:",
     "playingAs": "Playing as",
-    "ownerMessage": "Authored by chat owner"
+    "ownerMessage": "Authored by chat owner",
+    "classifierTags": {
+      "title": "분류 태그",
+      "description": "이 채팅에서 활성화할 분류 태그를 선택합니다.",
+      "save": "태그 저장"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -483,6 +488,21 @@
       "concurrency": "최대 동시성",
       "rpm": "요청/분",
       "advisoryTokens": "참고 토큰/분"
+    },
+    "classifierVocab": {
+      "title": "분류 탭 어휘",
+      "description": "분류기에 사용할 탭 어휘를 관리합니다. 탭은 비어 있으면 안 되고, 고유해야 하며, 최대 64자(최대 200개)여야 합니다.",
+      "empty": "아직 탭이 없습니다. 아래에서 첫 탭을 추가하세요.",
+      "placeholder": "새 탭…",
+      "add": "추가",
+      "rename": "이름 바꾸기",
+      "remove": "제거",
+      "save": "저장",
+      "cancel": "취소",
+      "errorEmpty": "탭은 비어 있을 수 없습니다.",
+      "errorTooLong": "탭은 최대 64자여야 합니다.",
+      "errorDuplicate": "중복된 탭: {tag}",
+      "errorTooMany": "최대 200개의 탭만 허용됩니다."
     }
   },
   "errors": {
@@ -1570,7 +1590,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "어휘가 저장되었습니다",
+    "classifierTagsSaved": "분류 태그가 저장되었습니다",
+    "classifierTagsSaveFailed": "분류 태그 저장 실패"
   },
   "status": {
     "characterResponding": "캐릭터가 응답 중...",

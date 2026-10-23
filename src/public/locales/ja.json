@@ -125,7 +125,12 @@
     "stop": "Stop",
     "caption": "Caption:",
     "playingAs": "Playing as",
-    "ownerMessage": "Authored by chat owner"
+    "ownerMessage": "Authored by chat owner",
+    "classifierTags": {
+      "title": "分類タグ",
+      "description": "このチャットで有効にする分類タグを選択します。",
+      "save": "タグを保存"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -483,6 +488,21 @@
       "concurrency": "最大同時実行数",
       "rpm": "リクエスト/分",
       "advisoryTokens": "参考トークン/分"
+    },
+    "classifierVocab": {
+      "title": "分類タグ語彙",
+      "description": "分類器で使えるタグ語彙を管理します。タグは空でなく、一意で、64文字以内（最大200タグ）である必要があります。",
+      "empty": "タグがありません。下から最初のタグを追加してください。",
+      "placeholder": "新しいタグ…",
+      "add": "追加",
+      "rename": "名前変更",
+      "remove": "削除",
+      "save": "保存",
+      "cancel": "キャンセル",
+      "errorEmpty": "タグは空にできません。",
+      "errorTooLong": "タグは64文字以内にしてください。",
+      "errorDuplicate": "重複したタグ: {tag}",
+      "errorTooMany": "タグは最大200個までです。"
     }
   },
   "errors": {
@@ -1570,7 +1590,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "語彙を保存しました",
+    "classifierTagsSaved": "分類タグを保存しました",
+    "classifierTagsSaveFailed": "分類タグの保存に失敗しました"
   },
   "status": {
     "characterResponding": "キャラクターが応答中...",

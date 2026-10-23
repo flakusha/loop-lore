@@ -153,6 +153,13 @@ export interface ChatCoreState
   fireStartupQuickReplies(): Promise<void>;
   fireAutoQuickReplies(trigger: "user" | "ai",): Promise<void>;
   saveQuickReplies(): Promise<void>;
+  /** Classifier tag subset picker (chat-settings/classifier-tags.ts). */
+  _classifierVocabulary: string[];
+  _classifierActive: string[];
+  _classifierDirty: boolean;
+  loadClassifierTags(): Promise<void>;
+  toggleClassifierTag(tag: string,): void;
+  saveClassifierTags(): Promise<void>;
   // Proactive messaging scheduler (chat-proactive.ts) — polls for due messages.
   /** Guard: a selectChat() run is in flight — ignore overlapping calls. */
   _selectingChat: boolean;

@@ -125,7 +125,12 @@
     "stop": "Stop",
     "caption": "Caption:",
     "playingAs": "Playing as",
-    "ownerMessage": "Authored by chat owner"
+    "ownerMessage": "Authored by chat owner",
+    "classifierTags": {
+      "title": "Klassifikator-Tags",
+      "description": "Wählen Sie, welche kuratierten Klassifikator-Tags für diesen Chat aktiv sind.",
+      "save": "Tags speichern"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -483,6 +488,21 @@
       "concurrency": "Max. Parallelität",
       "rpm": "Anfragen/Min.",
       "advisoryTokens": "Beratende Token/Min."
+    },
+    "classifierVocab": {
+      "title": "Klassifikator-Tag-Vokabular",
+      "description": "Verwalten Sie das für den Klassifikator verfügbare Tag-Vokabular. Tags dürfen nicht leer sein, müssen eindeutig und höchstens 64 Zeichen lang sein (maximal 200 Tags).",
+      "empty": "Noch keine Tags – fügen Sie unten den ersten hinzu.",
+      "placeholder": "Neues Tag…",
+      "add": "Hinzufügen",
+      "rename": "Umbenennen",
+      "remove": "Entfernen",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "errorEmpty": "Tags dürfen nicht leer sein.",
+      "errorTooLong": "Tags dürfen höchstens 64 Zeichen lang sein.",
+      "errorDuplicate": "Doppeltes Tag: {tag}",
+      "errorTooMany": "Höchstens 200 Tags sind erlaubt."
     }
   },
   "errors": {
@@ -1570,7 +1590,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "Vokabular gespeichert",
+    "classifierTagsSaved": "Klassifikator-Tags gespeichert",
+    "classifierTagsSaveFailed": "Klassifikator-Tags konnten nicht gespeichert werden"
   },
   "status": {
     "characterResponding": "Charakter antwortet...",
