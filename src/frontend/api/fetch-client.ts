@@ -104,19 +104,21 @@ export async function readApiError(res: Response,): Promise<ApiError> {
   throw fallback;
 }
 
+type FetchTransport = (input: string | URL | Request, init?: RequestInit,) => Promise<Response>;
+
 /**
  * Transport seam for tests: module-local fetch handle. Production keeps the
  * native global; tests swap in a stub via `setFetchTransport` (same pattern
  * as peer-work-client's `transport` option).
  */
-let transport: typeof fetch = globalThis.fetch;
+let transport: FetchTransport = globalThis.fetch;
 
 /**
  * Override the fetch implementation (tests only).
  * @param impl replacement fetch
  * @returns void
  */
-export function setFetchTransport(impl: typeof fetch,): void {
+export function setFetchTransport(impl: FetchTransport,): void {
   transport = impl;
 }
 
