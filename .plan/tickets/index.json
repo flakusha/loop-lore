@@ -4388,7 +4388,7 @@
     "epic": "epic-server-lifecycle-hardening",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-SERVER-FAIL-CLOSED-WHEN-CONFIGURED-TLS-CERTS-CANNOT-BE-P": {
     "hash": "6525fcd",
@@ -4401,7 +4401,7 @@
     "epic": "epic-certificate-and-tls-management",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-SERVER-GATE-DOCS-SERVING-ON-CONFIG-REDIRECT-DOCS-TO-DOCS": {
     "hash": "fcf58ae",
@@ -4427,7 +4427,7 @@
     "epic": "epic-server-lifecycle-hardening",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-SERVER-LOG-REJECTED-BACKGROUND-INIT-PROMISES-WITH-MODULE": {
     "hash": "8b894a7",
@@ -4440,7 +4440,7 @@
     "epic": "epic-server-lifecycle-hardening",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-server-log-rejected-background-init-promises-with-module.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-SERVER-TRACK-AND-CLEAR-THE-REGEX-TELEMETRY-FLUSH-TIMER-O": {
     "hash": "6a8d9e6",
@@ -4453,7 +4453,7 @@
     "epic": "epic-server-lifecycle-hardening",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-WORKTREE-ASSERT-GPG-UNLOCKED-ON-EVERY-SIGNING-PATH-SURFA": {
     "epic": "",
@@ -7578,7 +7578,7 @@
       "integrations"
     ],
     "source": ".plan/tickets/BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PERMISSIONS-MIDDLEWARE-AUDITENTRY-REACHES-CONSOLE-WARN-IN-PR": {
     "hash": "fea5a8b",
