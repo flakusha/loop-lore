@@ -14130,6 +14130,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-resolve-dormant-emotionentry-prompt-field.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-talkativity-influence-response-verbosity.md"
     },
     {
@@ -36917,6 +36921,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-decide-llm-image-prompt-writer-fate.md"
     },
     {
       "kind": "ticket",

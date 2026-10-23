@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3607
+- tickets: 3613
 - epics: 344
-- src paths owned: 4347
-- edges: produces 11302, consumes 402, sibling 33317, owns 2631, related 1187
+- src paths owned: 4350
+- edges: produces 11305, consumes 402, sibling 33339, owns 2631, related 1191
 
 ## Shared src hubs
 
@@ -507,7 +507,7 @@ output is byte-identical for identical inputs.
 | `src/config/sections/nsfw.ts` | `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-prompt-template-registry` |
 | `src/config/sections/server.ts` | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-`, `TASK-add-a-two-instance-local-federation-dev-harness-and-runbook`, `TASK-allow-data-dir-to-be-overridden-by-env-var`, `TASK-federation-interconnect-peer-config`, `TASK-observability-config-section`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `epic-certificate-and-tls-management`, `epic-local-process-swarm` |
 | `src/config/sections/templates-workflow.ts` | `TASK-book-outline-generation-workflow`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-comparison-fan-out-engine`, `TASK-comparison-workflow-template-and-command`, `TASK-publication-art-quality-gates`, `epic-assistant-creative-studio-workflows`, `epic-narrative-publishing-workflows`, `epic-technical-comparison-charts` |
-| `src/config/sections/templates.ts` | `BUG-character-template-validator-rejects-every-legal-content-rat`, `FEAT-065`, `FEAT-expand-character-templates-to-canonical-fields`, `TASK-assistant-creative-studio-workflows`, `TASK-assistant-nsfw-api-prefiltering`, `TASK-avatar-template-example-documents-outfits-default-outfit-tha`, `TASK-comfyui-first-class-admin-workflows`, `TASK-outfit-change-hook`, `TASK-prompt-template-registry`, `TASK-talkativity-influence-response-verbosity`, `TASK-workflow-engine-schema-loader-template-types-workflow-discov`, `epic-assistant-creative-studio-workflows`, `epic-config-templates`, `epic-context-injection-templates`, `epic-workflow-engine` |
+| `src/config/sections/templates.ts` | `BUG-character-template-validator-rejects-every-legal-content-rat`, `FEAT-065`, `FEAT-expand-character-templates-to-canonical-fields`, `TASK-assistant-creative-studio-workflows`, `TASK-assistant-nsfw-api-prefiltering`, `TASK-avatar-template-example-documents-outfits-default-outfit-tha`, `TASK-comfyui-first-class-admin-workflows`, `TASK-outfit-change-hook`, `TASK-prompt-template-registry`, `TASK-resolve-dormant-emotionentry-prompt-field`, `TASK-talkativity-influence-response-verbosity`, `TASK-workflow-engine-schema-loader-template-types-workflow-discov`, `epic-assistant-creative-studio-workflows`, `epic-config-templates`, `epic-context-injection-templates`, `epic-workflow-engine` |
 | `src/config/sections/tui.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-`, `TASK-tui-enabled-config-flag-never-read`, `epic-terminal-ui` |
 | `src/config/template-expansion/run.ts` | `BUG-tui-app-getlogger-throws-when-running-standalone`, `TASK-validate-expansion-config-at-load-time` |
 | `src/config/templates-loader.test.ts` | `TASK-gate-validate-configs-example-files-against-their-schemas`, `TASK-prompt-template-registry`, `epic-config-templates` |
@@ -992,7 +992,7 @@ output is byte-identical for identical inputs.
 | `src/generation/lora/types.ts` | `TASK-lora-discovery-application`, `epic-lora-discovery-application` |
 | `src/generation/lora/validation.ts` | `TASK-lora-audit-standalone`, `TASK-lora-discovery-application`, `epic-lora-discovery-application` |
 | `src/generation/matting/auto-matte.ts` | `TASK-sam3-concept-cutout-wiring-sprites-avatar-matting-vn-alpha`, `epic-sam3-segmentation-integration` |
-| `src/generation/matting/comfy-provider.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-img2img-init-image-plumbing`, `epic-reactive-actor-appearance` |
+| `src/generation/matting/comfy-provider.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-img2img-init-image-plumbing` |
 | `src/generation/matting/factory.ts` | `TASK-sam3-direct-provider-via-meta-model-api`, `TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste`, `epic-sam3-segmentation-integration` |
 | `src/generation/matting/providers.ts` | `TASK-sam3-direct-provider-via-meta-model-api`, `epic-sam3-segmentation-integration` |
 | `src/generation/matting/service.ts` | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty`, `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-comfyui-pbr-texture-set-generation`, `TASK-derived-map-origin-links`, `TASK-held-item-axis-data-model`, `TASK-multi-concept-segmentation-masks`, `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images`, `epic-derived-map-generation` |
@@ -1033,8 +1033,8 @@ output is byte-identical for identical inputs.
 | `src/generation/video-` | `FEAT-065-sub-video`, `TASK-video-gen-route` |
 | `src/generation/video-gen-route.ts` | `FEAT-065-prompt-library-expanded`, `FEAT-065-sub-video`, `TASK-video-gen-route` |
 | `src/generation/video-prompt-templates.ts` | `FEAT-065-sub-video`, `FEAT-065-template-system`, `TASK-video-template-schema` |
-| `src/generation/workflow-library/hydrate.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders`, `epic-reactive-actor-appearance` |
-| `src/generation/workflow-library/row.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders`, `epic-reactive-actor-appearance` |
+| `src/generation/workflow-library/hydrate.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders` |
+| `src/generation/workflow-library/row.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders` |
 | `src/generation/workflow-library/seed.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders`, `epic-reactive-actor-appearance` |
 | `src/generation/workflow-library/validate.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-external-comfyui-plugin-repo-integration-contract` |
 | `src/generation/workflow-loader/loader.ts` | `TASK-comfyui-first-class-workflow-library`, `epic-comfyui-first-class-citizen`, `epic-comfyui-plugin`, `epic-configs-path-resolution` |
@@ -1054,6 +1054,7 @@ output is byte-identical for identical inputs.
 | `src/i18n/plurals.ts` | `TASK-010-plurals`, `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `epic-publication-i18n` |
 | `src/i18n/translator.ts` | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin`, `TASK-010`, `TASK-010-plurals`, `epic-frontend-internationalization`, `epic-publication-i18n` |
 | `src/image-edit` | `TASK-assistant-creative-studio-workflow-gallery-edit`, `TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag`, `TASK-recon-test-coverage`, `TASK-reconciliation-plan`, `epic-assistant-creative-studio-workflows`, `epic-docs-reconciliation` |
+| `src/image-edit/providers/comfyui-image-upload.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `epic-reactive-actor-appearance` |
 | `src/image-edit/providers/comfyui-owner.test.ts` | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-`, `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-audit-new-test-files-for-cross-file-process-collisions-befor`, `TASK-image-edit-run-authz-error-shape-regression` |
 | `src/image-edit/providers/comfyui-provider.ts` | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-`, `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-image-edit-provider-and-template-capabilities-disagree`, `BUG-sd-server-image-providers-discard-the-generated-image-and-ab`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-comfyui-ws-progress-streaming`, `TASK-krea-2-reference-edit-template`, `epic-comfyui-plugin`, `epic-reactive-actor-appearance` |
 | `src/image-edit/providers/sd-server-provider/index.ts` | `BUG-image-edit-provider-and-template-capabilities-disagree`, `epic-derived-map-generation` |
@@ -1062,7 +1063,7 @@ output is byte-identical for identical inputs.
 | `src/image-edit/routes.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-image-edit-run-crashes-on-missing-params-and-the-template-re`, `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-assistant-command-execution-intent-detection`, `TASK-assistant-creative-studio-workflow-gallery-edit`, `TASK-audit-new-test-files-for-cross-file-process-collisions-befor`, `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va`, `TASK-comfyui-depth-map-generation-template`, `TASK-comfyui-first-class-admin-workflows`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-comfyui-sam3-concept-mask-template`, `TASK-comfyui-sampler-scheduler-discovery`, `TASK-comfyui-template-parameter-validation`, `TASK-comfyui-workflow-parameterization`, `TASK-comfyui-ws-progress-streaming`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-external-comfyui-plugin-repo-integration-contract`, `TASK-illustrated-book-reference-pass`, `TASK-image-edit-depth-conditioned-editing`, `TASK-image-edit-run-authz-error-shape-regression`, `TASK-img2img-init-image-plumbing`, `TASK-imgedit-in-chat-command`, `TASK-outfit-narrative-extractor-regex-prefilter`, `epic-comfyui-first-class-citizen`, `epic-comfyui-plugin`, `epic-reactive-actor-appearance`, `epic-reference-conditioned-generation` |
 | `src/image-edit/run-authz.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-image-edit-concept-inpaint-template`, `TASK-image-edit-depth-conditioned-editing`, `TASK-image-edit-run-authz-error-shape-regression`, `TASK-multi-reference-conditioning-request-model`, `epic-sam3-segmentation-integration` |
 | `src/image-edit/template-registry.ts` | `BUG-image-edit-run-crashes-on-missing-params-and-the-template-re`, `BUG-workflow-library-img2img-row-has-no-parameters`, `FEAT-background`, `TASK-comfyui-first-class-admin-workflows`, `TASK-comfyui-first-class-workflow-library`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-external-comfyui-plugin-repo-integration-contract`, `TASK-krea-2-reference-edit-template`, `TASK-reference-capability-matrix-data-model`, `epic-comfyui-plugin`, `epic-config-templates`, `epic-reference-conditioned-generation`, `epic-worlds-extension` |
-| `src/image-edit/templates/builtin/_helpers.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-comfyui-template-parameter-validation`, `epic-reactive-actor-appearance` |
+| `src/image-edit/templates/builtin/_helpers.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-comfyui-template-parameter-validation` |
 | `src/image-edit/templates/builtin/controlnet.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `epic-derived-map-generation` |
 | `src/image-edit/templates/builtin/img2img.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-img2img-init-image-plumbing`, `epic-reactive-actor-appearance` |
 | `src/image-edit/templates/builtin/inpaint.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-image-edit-provider-and-template-capabilities-disagree`, `TASK-ground-up-scene-generation-with-background`, `TASK-held-item-whole-outfit-variant-axis`, `epic-reactive-actor-appearance` |
@@ -1220,7 +1221,7 @@ output is byte-identical for identical inputs.
 | `src/plugins/types.ts` | `BUG-nsfw-cards-ships-ungated-post-routes`, `BUG-plugin-route-registry-lacks-ownership-enforcement-idor`, `BUG-plugin-tool-authorization-fails-open`, `TASK-046`, `TASK-047`, `TASK-048`, `TASK-enforce-plugin-origin-at-request-time`, `TASK-harness-hook-contract`, `TASK-harness-lean-ctx-tools`, `TASK-harness-plugin-runtime`, `TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge`, `TASK-plugin-host-contract-for-third-party-integration-plugins`, `TASK-plugin-management-api`, `TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag`, `epic-external-creative-tool-bridge`, `epic-mini-games`, `epic-plugin-extension-points` |
 | `src/profanity/service.ts` | `TASK-chat-feature-moderation`, `TASK-doc-spec-profanity-filter`, `TASK-profanity-filter-hot-reload-per-chat-sensitivity`, `TASK-profanity-filter-runtime-per-chat`, `TEST-profanity-containsprofanity-edge-cases-untested`, `epic-chat-product-features` |
 | `src/prompt-improve/service.ts` | `FEAT-aux-classification-template-registry`, `TASK-assistant-analyze-slash-command-over-prompt-analysis-service`, `epic-assistant-generation-extensions`, `epic-classifier-template-packs` |
-| `src/prompts/purposes.ts` | `FEAT-065`, `FEAT-aux-classification-template-registry`, `TASK-harness-context-templates`, `TASK-prompt-template-registry`, `TASK-vn-dynamic-generation`, `epic-classifier-template-packs`, `epic-config-templates` |
+| `src/prompts/purposes.ts` | `FEAT-065`, `FEAT-aux-classification-template-registry`, `TASK-decide-llm-image-prompt-writer-fate`, `TASK-harness-context-templates`, `TASK-prompt-template-registry`, `TASK-vn-dynamic-generation`, `epic-classifier-template-packs`, `epic-config-templates` |
 | `src/prompts/registry.test.ts` | `TASK-prompt-template-registry`, `epic-config-templates` |
 | `src/prompts/registry.ts` | `BUG-aux-pipeline-prompt-reexport-asymmetry`, `FEAT-065`, `FEAT-065-template-system`, `FEAT-aux-classification-template-registry`, `FEAT-world-template-chat-lifecycle`, `TASK-cleanup-banned-types-console-logging-magic-strings`, `TASK-llm-markdown-document-prompts`, `TASK-prompt-library`, `TASK-prompt-template-registry`, `TASK-template-unified-variable-engine`, `epic-assistant-gm-flows`, `epic-classifier-template-packs`, `epic-config-templates`, `epic-context-injection-templates` |
 | `src/prompts/task-clarification.ts` | `FEAT-task-clarification-injection-template-for-chat-assistant-gen`, `TASK-author-task-clarification-prompt-templates-per-task-type`, `epic-task-management-integration` |
@@ -1883,6 +1884,7 @@ output is byte-identical for identical inputs.
 | `src/validation/schemas/chat.ts` | `BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve`, `BUG-settings-save-omits-gmconfig-for-online-chats`, `BUG-visualnovel-type-mismatch-across-api-db-layers`, `FEAT-world-template-chat-lifecycle`, `TASK-bound-linked-travel-prompts`, `TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min`, `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings`, `WIRE-extras-impersonateactorid-schema-validation` |
 | `src/validation/schemas/emotion-avatars.ts` | `TASK-identity-lock-seed-negative-prompt-and-anchor`, `epic-avatar-regeneration-control`, `epic-reactive-actor-appearance` |
 | `src/validation/schemas/entities.ts` | `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d`, `TASK-harness-context-priority-tiers`, `epic-harness-integration` |
+| `src/validation/schemas/image-edit.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `epic-reactive-actor-appearance` |
 | `src/validation/schemas/index.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-branch-merges-routes-and-typebox-schemas`, `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` |
 | `src/validation/schemas/primitives.ts` | `BUG-actortype-persona-422-on-valid-ui-input`, `TASK-audit-t-unionenum-schema-fields-absent-value-silently-defaul`, `TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn`, `TASK-harmonize-quest-type-taxonomy`, `TASK-nsfw-rating-enforcement`, `epic-quests-encounters` |
 | `src/validation/schemas/responses` | `TASK-federation-admin-usage-dashboard-ui`, `epic-federation-offload-quotas` |
@@ -6016,6 +6018,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/generation/providers/comfyui.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/generation/workflow-library/row.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/generation/workflow-library/validate.ts` | - |
+| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/image-edit/providers/comfyui-image-upload.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/image-edit/providers/comfyui-owner.test.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/image-edit/providers/comfyui-provider.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/image-edit/providers/sd-server-provider/ops.ts` | - |
@@ -6036,6 +6039,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/test-utils/create-test-db.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/test-utils/isolate-only.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/validation/schemas/comfyui-builder.ts` | - |
+| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/validation/schemas/image-edit.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/validation/schemas/index.ts` | - |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | produces | `src/assets/service/delete.ts` | - |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | produces | `src/generation/image-edit-service/apply.ts` | - |
@@ -9934,6 +9938,7 @@ output is byte-identical for identical inputs.
 | `TASK-dbrt-validation-gaps` | produces | `src/db/database.test.ts` | - |
 | `TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn` | produces | `src/routes/views/plugin-dynamic.ts` | - |
 | `TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn` | produces | `src/validation/schemas/primitives.ts` | - |
+| `TASK-decide-llm-image-prompt-writer-fate` | produces | `src/prompts/purposes.ts` | - |
 | `TASK-dedup-top-jscpd-clone-clusters` | produces | `src/actors/actor-items.ts` | - |
 | `TASK-dedup-top-jscpd-clone-clusters` | produces | `src/assets/controller.ts` | - |
 | `TASK-dedup-top-jscpd-clone-clusters` | produces | `src/frontend/alpine/logger.ts` | - |
@@ -12657,6 +12662,7 @@ output is byte-identical for identical inputs.
 | `TASK-resolution-family-decision` | produces | `src/rpg/dice.ts` | - |
 | `TASK-resolution-family-decision` | produces | `src/rpg` | - |
 | `TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts` | produces | `src/chat/random-events.ts` | - |
+| `TASK-resolve-dormant-emotionentry-prompt-field` | produces | `src/config/sections/templates.ts` | - |
 | `TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que` | produces | `src/generation/auto-gen/story-mode.ts` | - |
 | `TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que` | produces | `src/routes/rpg/combat.test.ts` | - |
 | `TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que` | produces | `src/rpg/quests/service.test.ts` | - |
@@ -15837,14 +15843,12 @@ output is byte-identical for identical inputs.
 | `epic-reactive-actor-appearance` | produces | `src/generation/hooks/registry.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/generation/image-engine/comfyui.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/generation/image-engine/types.ts` | - |
-| `epic-reactive-actor-appearance` | produces | `src/generation/matting/comfy-provider.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/generation/providers/comfyui-upload.ts` | - |
-| `epic-reactive-actor-appearance` | produces | `src/generation/workflow-library/hydrate.ts` | - |
-| `epic-reactive-actor-appearance` | produces | `src/generation/workflow-library/row.ts` | - |
+| `epic-reactive-actor-appearance` | produces | `src/generation/workflow-library/seed-parameters.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/generation/workflow-library/seed.ts` | - |
+| `epic-reactive-actor-appearance` | produces | `src/image-edit/providers/comfyui-image-upload.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/image-edit/providers/comfyui-provider.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/image-edit/routes.ts` | - |
-| `epic-reactive-actor-appearance` | produces | `src/image-edit/templates/builtin/_helpers.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/image-edit/templates/builtin/img2img.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/image-edit/templates/builtin/inpaint.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/regex/image-edit.ts` | - |
@@ -15860,6 +15864,7 @@ output is byte-identical for identical inputs.
 | `epic-reactive-actor-appearance` | produces | `src/services/actor-items/transfer.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/tui/harness/display.test.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/validation/schemas/emotion-avatars.ts` | - |
+| `epic-reactive-actor-appearance` | produces | `src/validation/schemas/image-edit.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/validation/schemas/wardrobe.ts` | - |
 | `epic-recursive-self-improvement` | produces | `src/admin/config-keys.ts` | - |
 | `epic-recursive-self-improvement` | produces | `src/admin/config.ts` | - |
@@ -16404,6 +16409,9 @@ output is byte-identical for identical inputs.
 | `FEAT-creative-process-commit-gating` | related | `FEAT-lore-structured-generation-via-assistant` | - |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | related | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | - |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | related | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | - |
+| `FEAT-image-prompt-template-packs` | related | `FEAT-image-template-variables-with-variance-expansion` | - |
+| `FEAT-image-prompt-template-packs` | related | `TASK-resolve-dormant-emotionentry-prompt-field` | - |
+| `FEAT-image-template-variables-with-variance-expansion` | related | `FEAT-image-prompt-template-packs` | - |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | related | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | - |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | related | `TASK-rpg-skill-points-on-level-up` | - |
 | `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a` | related | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | - |
@@ -17190,6 +17198,7 @@ output is byte-identical for identical inputs.
 | `TASK-resolution-family-decision` | related | `epic-battle-action-systems` | - |
 | `TASK-resolution-family-decision` | related | `epic-resolution-system` | - |
 | `TASK-resolution-family-decision` | related | `epic-rpg-mechanics` | - |
+| `TASK-resolve-dormant-emotionentry-prompt-field` | related | `FEAT-image-prompt-template-packs` | - |
 | `TASK-resource-provision-browser-backup` | related | `TASK-resource-provision-schema` | - |
 | `TASK-resource-provision-credential-store` | related | `TASK-resource-provision-schema` | - |
 | `TASK-resource-provision-e2e` | related | `TASK-resource-provision-tests` | - |
@@ -20046,6 +20055,7 @@ output is byte-identical for identical inputs.
 | `BUG-character-template-validator-rejects-every-legal-content-rat` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/config/sections/templates.ts` |
 | `BUG-character-template-validator-rejects-every-legal-content-rat` | sibling | `TASK-outfit-change-hook` | `src/config/sections/templates.ts` |
 | `BUG-character-template-validator-rejects-every-legal-content-rat` | sibling | `TASK-prompt-template-registry` | `src/config/sections/templates.ts` |
+| `BUG-character-template-validator-rejects-every-legal-content-rat` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `BUG-character-template-validator-rejects-every-legal-content-rat` | sibling | `TASK-talkativity-influence-response-verbosity` | `src/config/sections/templates.ts` |
 | `BUG-character-template-validator-rejects-every-legal-content-rat` | sibling | `TASK-workflow-engine-schema-loader-template-types-workflow-discov` | `src/config/sections/templates.ts` |
 | `BUG-character-template-validator-rejects-every-legal-content-rat` | sibling | `epic-assistant-creative-studio-workflows` | `src/config/sections/templates.ts` |
@@ -24349,7 +24359,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-platform-integrations` | `src/generation/providers/comfyui.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-provider-plugin-ecosystem` | `src/generation/providers/comfyui.ts` |
-| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-reactive-actor-appearance` | `src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/generation/workflow-library/row.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts` |
+| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-reactive-actor-appearance` | `src/generation/providers/comfyui-upload.ts; src/image-edit/providers/comfyui-image-upload.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts; src/validation/schemas/image-edit.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-reference-conditioned-generation` | `src/generation/providers/comfyui.ts; src/image-edit/routes.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-runtime-integrity-fail-safes` | `src/db/index.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-sam3-segmentation-integration` | `src/image-edit/run-authz.ts` |
@@ -28613,10 +28623,10 @@ output is byte-identical for identical inputs.
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/template-service/crud.ts; src/generation/workflow-substitutor.ts; src/image-edit/routes.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-comfyui-plugin` | `src/image-edit/routes.ts; src/image-edit/template-registry.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-config-templates` | `src/image-edit/template-registry.ts` |
-| `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts` |
+| `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-reference-conditioned-generation` | `src/image-edit/routes.ts; src/image-edit/template-registry.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-worlds-extension` | `src/image-edit/template-registry.ts` |
-| `BUG-workflow-library-img2img-row-has-unresolved-placeholders` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts` |
+| `BUG-workflow-library-img2img-row-has-unresolved-placeholders` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/seed.ts` |
 | `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m` | sibling | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | `src/middleware/auth/token.ts` |
 | `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m` | sibling | `TASK-input-hardening-batch` | `src/middleware/auth/token.ts` |
 | `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m` | sibling | `epic-auth-channel-provisioning` | `src/middleware/auth/token.ts` |
@@ -29276,11 +29286,13 @@ output is byte-identical for identical inputs.
 | `FEAT-065` | sibling | `TASK-avatar-template-example-documents-outfits-default-outfit-tha` | `src/config/sections/templates.ts` |
 | `FEAT-065` | sibling | `TASK-cleanup-banned-types-console-logging-magic-strings` | `src/prompts/registry.ts` |
 | `FEAT-065` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/config/sections/templates.ts` |
+| `FEAT-065` | sibling | `TASK-decide-llm-image-prompt-writer-fate` | `src/prompts/purposes.ts` |
 | `FEAT-065` | sibling | `TASK-harness-context-templates` | `src/prompts/purposes.ts` |
 | `FEAT-065` | sibling | `TASK-llm-markdown-document-prompts` | `src/prompts/registry.ts` |
 | `FEAT-065` | sibling | `TASK-outfit-change-hook` | `src/config/sections/templates.ts` |
 | `FEAT-065` | sibling | `TASK-prompt-library` | `src/prompts/registry.ts` |
 | `FEAT-065` | sibling | `TASK-prompt-template-registry` | `src/config/sections/templates.ts; src/prompts/purposes.ts; src/prompts/registry.ts` |
+| `FEAT-065` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `FEAT-065` | sibling | `TASK-talkativity-influence-response-verbosity` | `src/config/sections/templates.ts` |
 | `FEAT-065` | sibling | `TASK-template-unified-variable-engine` | `src/prompts/registry.ts` |
 | `FEAT-065` | sibling | `TASK-vn-dynamic-generation` | `src/prompts/purposes.ts` |
@@ -29633,6 +29645,7 @@ output is byte-identical for identical inputs.
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-aux-memory-extraction` | `src/aux-pipeline/prompts.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-aux-mood-classification` | `src/aux-pipeline/prompts.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-cleanup-banned-types-console-logging-magic-strings` | `src/prompts/registry.ts` |
+| `FEAT-aux-classification-template-registry` | sibling | `TASK-decide-llm-image-prompt-writer-fate` | `src/prompts/purposes.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-golden-corpus-and-scoring-ratchet-for-prompt-injection-signa` | `src/validation/prompt-injection.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-harness-context-templates` | `src/prompts/purposes.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-llm-markdown-document-prompts` | `src/prompts/registry.ts` |
@@ -30343,6 +30356,7 @@ output is byte-identical for identical inputs.
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-prompt-template-registry` | `src/config/sections/templates.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
+| `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-scenario-system-authoring` | `src/characters/seed/templates.ts; src/config/sections/characters/types.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-shared-character-domain-models` | `src/characters/spec/character.ts` |
 | `FEAT-expand-character-templates-to-canonical-fields` | sibling | `TASK-size-allow-waivers-characters-update-ts-and-chat-bootstrap-t` | `src/routes/characters/update.ts` |
@@ -35115,6 +35129,7 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-creative-studio-workflows` | sibling | `TASK-outfit-change-hook` | `src/config/sections/templates.ts` |
 | `TASK-assistant-creative-studio-workflows` | sibling | `TASK-prompt-template-registry` | `src/config/sections/templates.ts; src/config/templates-loader.ts` |
 | `TASK-assistant-creative-studio-workflows` | sibling | `TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards-` | `src/regex/intent.ts` |
+| `TASK-assistant-creative-studio-workflows` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `TASK-assistant-creative-studio-workflows` | sibling | `TASK-scenario-system-authoring` | `src/assistant/scenario-source.ts` |
 | `TASK-assistant-creative-studio-workflows` | sibling | `TASK-sd-cpp-provider` | `src/assistant/commands/image.ts` |
 | `TASK-assistant-creative-studio-workflows` | sibling | `TASK-talkativity-influence-response-verbosity` | `src/config/sections/templates.ts` |
@@ -35288,6 +35303,7 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-nsfw-api-prefiltering` | sibling | `TASK-illustrated-book-reference-pass` | `src/assistant/workflow-runner.ts` |
 | `TASK-assistant-nsfw-api-prefiltering` | sibling | `TASK-outfit-change-hook` | `src/config/sections/templates.ts` |
 | `TASK-assistant-nsfw-api-prefiltering` | sibling | `TASK-prompt-template-registry` | `src/config/sections/templates.ts` |
+| `TASK-assistant-nsfw-api-prefiltering` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `TASK-assistant-nsfw-api-prefiltering` | sibling | `TASK-talkativity-influence-response-verbosity` | `src/config/sections/templates.ts` |
 | `TASK-assistant-nsfw-api-prefiltering` | sibling | `TASK-video-gen-route` | `src/assistant/workflow-runner.test.ts` |
 | `TASK-assistant-nsfw-api-prefiltering` | sibling | `TASK-video-provider-minimax-h3` | `src/assistant/workflow-runner.test.ts` |
@@ -36445,6 +36461,7 @@ output is byte-identical for identical inputs.
 | `TASK-avatar-template-example-documents-outfits-default-outfit-tha` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/config/sections/templates.ts` |
 | `TASK-avatar-template-example-documents-outfits-default-outfit-tha` | sibling | `TASK-outfit-change-hook` | `src/config/sections/templates.ts` |
 | `TASK-avatar-template-example-documents-outfits-default-outfit-tha` | sibling | `TASK-prompt-template-registry` | `src/config/sections/templates.ts` |
+| `TASK-avatar-template-example-documents-outfits-default-outfit-tha` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `TASK-avatar-template-example-documents-outfits-default-outfit-tha` | sibling | `TASK-talkativity-influence-response-verbosity` | `src/config/sections/templates.ts` |
 | `TASK-avatar-template-example-documents-outfits-default-outfit-tha` | sibling | `TASK-workflow-engine-schema-loader-template-types-workflow-discov` | `src/config/sections/templates.ts` |
 | `TASK-avatar-template-example-documents-outfits-default-outfit-tha` | sibling | `epic-assistant-creative-studio-workflows` | `src/config/sections/templates.ts` |
@@ -38925,6 +38942,7 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-recursive-self-improvement-agent-api-router-and-token-scope-` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-recursive-self-improvement-health-liveness-readiness-probes` | `src/elysia-app.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-reference-capability-matrix-data-model` | `src/image-edit/template-registry.ts` |
+| `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/frontend/alpine/admin-system.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
 | `TASK-comfyui-first-class-admin-workflows` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
@@ -39220,7 +39238,7 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-template-parameter-validation` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/lora/routes/validate.ts; src/generation/workflow-substitutor.ts; src/image-edit/routes.ts; src/image-edit/types.ts; src/utils/clamp.ts` |
 | `TASK-comfyui-template-parameter-validation` | sibling | `epic-comfyui-plugin` | `src/generation/image-engine/comfyui.ts; src/image-edit/routes.ts` |
 | `TASK-comfyui-template-parameter-validation` | sibling | `epic-effect-v4-adoption-evaluation` | `src/generation/image-engine/types.ts` |
-| `TASK-comfyui-template-parameter-validation` | sibling | `epic-reactive-actor-appearance` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts` |
+| `TASK-comfyui-template-parameter-validation` | sibling | `epic-reactive-actor-appearance` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts` |
 | `TASK-comfyui-template-parameter-validation` | sibling | `epic-reference-conditioned-generation` | `src/generation/image-engine/comfyui.ts; src/image-edit/routes.ts` |
 | `TASK-comfyui-template-registry` | sibling | `TASK-comfyui-ws-client-id-progress-reference-generation` | `src/generation/providers/comfyui.ts` |
 | `TASK-comfyui-template-registry` | sibling | `TASK-comfyui-ws-progress-streaming` | `src/generation/providers/comfyui.ts` |
@@ -40728,6 +40746,11 @@ output is byte-identical for identical inputs.
 | `TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn` | sibling | `TASK-publication-viewer-read-mode` | `src/routes/views/plugin-dynamic.ts` |
 | `TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn` | sibling | `epic-experimental-egui-frontend` | `src/routes/views/plugin-dynamic.ts` |
 | `TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn` | sibling | `epic-quests-encounters` | `src/validation/schemas/primitives.ts` |
+| `TASK-decide-llm-image-prompt-writer-fate` | sibling | `TASK-harness-context-templates` | `src/prompts/purposes.ts` |
+| `TASK-decide-llm-image-prompt-writer-fate` | sibling | `TASK-prompt-template-registry` | `src/prompts/purposes.ts` |
+| `TASK-decide-llm-image-prompt-writer-fate` | sibling | `TASK-vn-dynamic-generation` | `src/prompts/purposes.ts` |
+| `TASK-decide-llm-image-prompt-writer-fate` | sibling | `epic-classifier-template-packs` | `src/prompts/purposes.ts` |
+| `TASK-decide-llm-image-prompt-writer-fate` | sibling | `epic-config-templates` | `src/prompts/purposes.ts` |
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | `src/views/admin.html` |
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/views/admin.html` |
 | `TASK-dedup-top-jscpd-clone-clusters` | sibling | `TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p` | `src/generation/providers/anthropic/http.ts` |
@@ -44262,7 +44285,7 @@ output is byte-identical for identical inputs.
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-external-creative-tool-bridge` | `src/generation/providers/comfyui.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-platform-integrations` | `src/generation/providers/comfyui.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-provider-plugin-ecosystem` | `src/generation/providers/comfyui.ts` |
-| `TASK-img2img-init-image-plumbing` | sibling | `epic-reactive-actor-appearance` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts` |
+| `TASK-img2img-init-image-plumbing` | sibling | `epic-reactive-actor-appearance` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-reference-conditioned-generation` | `src/generation/image-engine/comfyui.ts; src/generation/providers/comfyui.ts; src/image-edit/routes.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-technical-comparison-charts` | `src/generation/providers/comfyui.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-video-generation` | `src/generation/providers/comfyui.ts` |
@@ -46176,6 +46199,7 @@ output is byte-identical for identical inputs.
 | `TASK-outfit-change-hook` | sibling | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | `src/config/schema-class/env-map.ts` |
 | `TASK-outfit-change-hook` | sibling | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn` | `src/server/start.ts` |
 | `TASK-outfit-change-hook` | sibling | `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota` | `src/server/start.ts` |
+| `TASK-outfit-change-hook` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `TASK-outfit-change-hook` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/server/start.ts` |
 | `TASK-outfit-change-hook` | sibling | `TASK-size-strict-debt` | `src/server/start.ts` |
 | `TASK-outfit-change-hook` | sibling | `TASK-sni-multi-certificate-serving-for-multiple-domains` | `src/server/start.ts` |
@@ -46513,6 +46537,7 @@ output is byte-identical for identical inputs.
 | `TASK-prompt-template-registry` | sibling | `TASK-recursive-self-improvement-deep-analysis-logging-and-telemet` | `src/config/schema.ts` |
 | `TASK-prompt-template-registry` | sibling | `TASK-recursive-self-improvement-evaluator-reliability-drift-detec` | `src/config/schema.ts` |
 | `TASK-prompt-template-registry` | sibling | `TASK-recursive-self-improvement-sidecar-python-provider-for-custo` | `src/config/schema.ts` |
+| `TASK-prompt-template-registry` | sibling | `TASK-resolve-dormant-emotionentry-prompt-field` | `src/config/sections/templates.ts` |
 | `TASK-prompt-template-registry` | sibling | `TASK-split-config-schema` | `src/config/schema.ts` |
 | `TASK-prompt-template-registry` | sibling | `TASK-talkativity-influence-response-verbosity` | `src/config/sections/templates.ts` |
 | `TASK-prompt-template-registry` | sibling | `TASK-template-unified-variable-engine` | `src/prompts/registry.ts` |
@@ -47393,6 +47418,12 @@ output is byte-identical for identical inputs.
 | `TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts` | sibling | `epic-chat-lifecycle-moderation` | `src/chat/random-events.ts` |
 | `TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts` | sibling | `epic-chat-product-features` | `src/chat/random-events.ts` |
 | `TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts` | sibling | `epic-crafting-professions` | `src/chat/random-events.ts` |
+| `TASK-resolve-dormant-emotionentry-prompt-field` | sibling | `TASK-talkativity-influence-response-verbosity` | `src/config/sections/templates.ts` |
+| `TASK-resolve-dormant-emotionentry-prompt-field` | sibling | `TASK-workflow-engine-schema-loader-template-types-workflow-discov` | `src/config/sections/templates.ts` |
+| `TASK-resolve-dormant-emotionentry-prompt-field` | sibling | `epic-assistant-creative-studio-workflows` | `src/config/sections/templates.ts` |
+| `TASK-resolve-dormant-emotionentry-prompt-field` | sibling | `epic-config-templates` | `src/config/sections/templates.ts` |
+| `TASK-resolve-dormant-emotionentry-prompt-field` | sibling | `epic-context-injection-templates` | `src/config/sections/templates.ts` |
+| `TASK-resolve-dormant-emotionentry-prompt-field` | sibling | `epic-workflow-engine` | `src/config/sections/templates.ts` |
 | `TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que` | sibling | `TASK-route-plugin-calls-through-the-shared-provider-path` | `src/generation/auto-gen/story-mode.ts` |
 | `TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que` | sibling | `TASK-story-gm-generation-never-nsfw-gated-content-safety-bypass` | `src/generation/auto-gen/story-mode.ts` |
 | `TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que` | sibling | `epic-assistant-gm-flows` | `src/generation/auto-gen/story-mode.ts` |

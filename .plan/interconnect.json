@@ -5218,6 +5218,7 @@
         "src/generation/providers/comfyui.ts",
         "src/generation/workflow-library/row.ts",
         "src/generation/workflow-library/validate.ts",
+        "src/image-edit/providers/comfyui-image-upload.ts",
         "src/image-edit/providers/comfyui-owner.test.ts",
         "src/image-edit/providers/comfyui-provider.ts",
         "src/image-edit/providers/sd-server-provider/ops.ts",
@@ -5238,6 +5239,7 @@
         "src/test-utils/create-test-db.ts",
         "src/test-utils/isolate-only.ts",
         "src/validation/schemas/comfyui-builder.ts",
+        "src/validation/schemas/image-edit.ts",
         "src/validation/schemas/index.ts"
       ],
       "related": []
@@ -12295,6 +12297,29 @@
       "related": []
     },
     {
+      "id": "FEAT-image-prompt-template-packs",
+      "kind": "ticket",
+      "path": ".plan/tickets/FEAT-image-prompt-template-packs.md",
+      "title": "Image prompt template packs",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": [
+        "FEAT-image-template-variables-with-variance-expansion",
+        "TASK-resolve-dormant-emotionentry-prompt-field"
+      ]
+    },
+    {
+      "id": "FEAT-image-template-variables-with-variance-expansion",
+      "kind": "ticket",
+      "path": ".plan/tickets/FEAT-image-template-variables-with-variance-expansion.md",
+      "title": "Image template variables with variance expansion",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": [
+        "FEAT-image-prompt-template-packs"
+      ]
+    },
+    {
       "id": "FEAT-immersive-scene-view-first-third-person-ambient-audio",
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-immersive-scene-view-first-third-person-ambient-audio.md",
@@ -12407,6 +12432,15 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-item-system-extensions.md",
       "title": "Item System Extensions",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "FEAT-krea-2-model-profile-corrections",
+      "kind": "ticket",
+      "path": ".plan/tickets/FEAT-krea-2-model-profile-corrections.md",
+      "title": "Krea 2 model profile corrections",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -13021,6 +13055,15 @@
       "srcRefs": [
         "src/routes/marketplace.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "FEAT-prompt-template-search-and-tags",
+      "kind": "ticket",
+      "path": ".plan/tickets/FEAT-prompt-template-search-and-tags.md",
+      "title": "Prompt template search and tags",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -17451,7 +17494,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-ai-message-utilities.md",
       "title": "AI message utilities (translate/summarize/explain)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/messages/ai-action.ts"
       ],
@@ -25332,6 +25375,17 @@
       "related": []
     },
     {
+      "id": "TASK-decide-llm-image-prompt-writer-fate",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-decide-llm-image-prompt-writer-fate.md",
+      "title": "Decide LLM image prompt writer fate",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/prompts/purposes.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-decision-av10-album-message-kind-axis",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-decision-av10-album-message-kind-axis.md",
@@ -32437,7 +32491,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-link-previews-unfurl.md",
       "title": "Link previews (unfurl)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -33985,7 +34039,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-message-polls-votes.md",
       "title": "Message polls / votes",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -39335,6 +39389,19 @@
       "related": []
     },
     {
+      "id": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-resolve-dormant-emotionentry-prompt-field.md",
+      "title": "Resolve dormant EmotionEntry prompt field",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/config/sections/templates.ts"
+      ],
+      "related": [
+        "FEAT-image-prompt-template-packs"
+      ]
+    },
+    {
       "id": "TASK-resolve-message-content-unit-test-all-encodings",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-resolve-message-content-unit-test-all-encodings.md",
@@ -43816,7 +43883,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-voice-notes-playback.md",
       "title": "Voice notes playback",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -49976,14 +50043,12 @@
         "src/generation/hooks/registry.ts",
         "src/generation/image-engine/comfyui.ts",
         "src/generation/image-engine/types.ts",
-        "src/generation/matting/comfy-provider.ts",
         "src/generation/providers/comfyui-upload.ts",
-        "src/generation/workflow-library/hydrate.ts",
-        "src/generation/workflow-library/row.ts",
+        "src/generation/workflow-library/seed-parameters.ts",
         "src/generation/workflow-library/seed.ts",
+        "src/image-edit/providers/comfyui-image-upload.ts",
         "src/image-edit/providers/comfyui-provider.ts",
         "src/image-edit/routes.ts",
-        "src/image-edit/templates/builtin/_helpers.ts",
         "src/image-edit/templates/builtin/img2img.ts",
         "src/image-edit/templates/builtin/inpaint.ts",
         "src/regex/image-edit.ts",
@@ -49999,6 +50064,7 @@
         "src/services/actor-items/transfer.ts",
         "src/tui/harness/display.test.ts",
         "src/validation/schemas/emotion-avatars.ts",
+        "src/validation/schemas/image-edit.ts",
         "src/validation/schemas/wardrobe.ts"
       ],
       "related": []
@@ -59428,6 +59494,7 @@
         "TASK-comfyui-first-class-admin-workflows",
         "TASK-outfit-change-hook",
         "TASK-prompt-template-registry",
+        "TASK-resolve-dormant-emotionentry-prompt-field",
         "TASK-talkativity-influence-response-verbosity",
         "TASK-workflow-engine-schema-loader-template-types-workflow-discov",
         "epic-assistant-creative-studio-workflows",
@@ -68459,8 +68526,7 @@
       "path": "src/generation/matting/comfy-provider.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "TASK-img2img-init-image-plumbing",
-        "epic-reactive-actor-appearance"
+        "TASK-img2img-init-image-plumbing"
       ]
     },
     {
@@ -69138,8 +69204,7 @@
       "path": "src/generation/workflow-library/hydrate.ts",
       "owners": [
         "BUG-workflow-library-img2img-row-has-no-parameters",
-        "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
-        "epic-reactive-actor-appearance"
+        "BUG-workflow-library-img2img-row-has-unresolved-placeholders"
       ]
     },
     {
@@ -69147,14 +69212,19 @@
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
         "BUG-workflow-library-img2img-row-has-no-parameters",
-        "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
-        "epic-reactive-actor-appearance"
+        "BUG-workflow-library-img2img-row-has-unresolved-placeholders"
       ]
     },
     {
       "path": "src/generation/workflow-library/seed-hydrate.test.ts",
       "owners": [
         "BUG-workflow-library-img2img-row-has-no-parameters"
+      ]
+    },
+    {
+      "path": "src/generation/workflow-library/seed-parameters.ts",
+      "owners": [
+        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -69474,6 +69544,13 @@
       ]
     },
     {
+      "path": "src/image-edit/providers/comfyui-image-upload.ts",
+      "owners": [
+        "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+        "epic-reactive-actor-appearance"
+      ]
+    },
+    {
       "path": "src/image-edit/providers/comfyui-owner.test.ts",
       "owners": [
         "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
@@ -69604,8 +69681,7 @@
       "path": "src/image-edit/templates/builtin/_helpers.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "TASK-comfyui-template-parameter-validation",
-        "epic-reactive-actor-appearance"
+        "TASK-comfyui-template-parameter-validation"
       ]
     },
     {
@@ -72226,6 +72302,7 @@
       "owners": [
         "FEAT-065",
         "FEAT-aux-classification-template-registry",
+        "TASK-decide-llm-image-prompt-writer-fate",
         "TASK-harness-context-templates",
         "TASK-prompt-template-registry",
         "TASK-vn-dynamic-generation",
@@ -83481,6 +83558,13 @@
         "BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d",
         "TASK-harness-context-priority-tiers",
         "epic-harness-integration"
+      ]
+    },
+    {
+      "path": "src/validation/schemas/image-edit.ts",
+      "owners": [
+        "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -105042,6 +105126,11 @@
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "produces",
+      "to": "src/image-edit/providers/comfyui-image-upload.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "produces",
       "to": "src/image-edit/providers/comfyui-owner.test.ts"
     },
     {
@@ -105138,6 +105227,11 @@
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "produces",
       "to": "src/validation/schemas/comfyui-builder.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "produces",
+      "to": "src/validation/schemas/image-edit.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -124630,6 +124724,11 @@
       "to": "src/validation/schemas/primitives.ts"
     },
     {
+      "from": "TASK-decide-llm-image-prompt-writer-fate",
+      "kind": "produces",
+      "to": "src/prompts/purposes.ts"
+    },
+    {
       "from": "TASK-dedup-top-jscpd-clone-clusters",
       "kind": "produces",
       "to": "src/actors/actor-items.ts"
@@ -138243,6 +138342,11 @@
       "from": "TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts",
       "kind": "produces",
       "to": "src/chat/random-events.ts"
+    },
+    {
+      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "produces",
+      "to": "src/config/sections/templates.ts"
     },
     {
       "from": "TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que",
@@ -154147,27 +154251,22 @@
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
-      "to": "src/generation/matting/comfy-provider.ts"
-    },
-    {
-      "from": "epic-reactive-actor-appearance",
-      "kind": "produces",
       "to": "src/generation/providers/comfyui-upload.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
-      "to": "src/generation/workflow-library/hydrate.ts"
-    },
-    {
-      "from": "epic-reactive-actor-appearance",
-      "kind": "produces",
-      "to": "src/generation/workflow-library/row.ts"
+      "to": "src/generation/workflow-library/seed-parameters.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/generation/workflow-library/seed.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "produces",
+      "to": "src/image-edit/providers/comfyui-image-upload.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -154178,11 +154277,6 @@
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/image-edit/routes.ts"
-    },
-    {
-      "from": "epic-reactive-actor-appearance",
-      "kind": "produces",
-      "to": "src/image-edit/templates/builtin/_helpers.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -154258,6 +154352,11 @@
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/validation/schemas/emotion-avatars.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "produces",
+      "to": "src/validation/schemas/image-edit.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -156978,6 +157077,21 @@
       "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
       "kind": "related",
       "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s"
+    },
+    {
+      "from": "FEAT-image-prompt-template-packs",
+      "kind": "related",
+      "to": "FEAT-image-template-variables-with-variance-expansion"
+    },
+    {
+      "from": "FEAT-image-prompt-template-packs",
+      "kind": "related",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field"
+    },
+    {
+      "from": "FEAT-image-template-variables-with-variance-expansion",
+      "kind": "related",
+      "to": "FEAT-image-prompt-template-packs"
     },
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
@@ -160908,6 +161022,11 @@
       "from": "TASK-resolution-family-decision",
       "kind": "related",
       "to": "epic-rpg-mechanics"
+    },
+    {
+      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "related",
+      "to": "FEAT-image-prompt-template-packs"
     },
     {
       "from": "TASK-resource-provision-browser-backup",
@@ -177787,6 +177906,12 @@
       "from": "BUG-character-template-validator-rejects-every-legal-content-rat",
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "BUG-character-template-validator-rejects-every-legal-content-rat",
+      "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
       "via": "src/config/sections/templates.ts"
     },
     {
@@ -203611,7 +203736,7 @@
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/generation/workflow-library/row.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts"
+      "via": "src/generation/providers/comfyui-upload.ts; src/image-edit/providers/comfyui-image-upload.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts; src/validation/schemas/image-edit.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -229195,7 +229320,7 @@
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
+      "via": "src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
     },
     {
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
@@ -229213,7 +229338,7 @@
       "from": "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts"
+      "via": "src/generation/workflow-library/seed.ts"
     },
     {
       "from": "BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m",
@@ -233172,6 +233297,12 @@
     {
       "from": "FEAT-065",
       "kind": "sibling",
+      "to": "TASK-decide-llm-image-prompt-writer-fate",
+      "via": "src/prompts/purposes.ts"
+    },
+    {
+      "from": "FEAT-065",
+      "kind": "sibling",
       "to": "TASK-harness-context-templates",
       "via": "src/prompts/purposes.ts"
     },
@@ -233198,6 +233329,12 @@
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
       "via": "src/config/sections/templates.ts; src/prompts/purposes.ts; src/prompts/registry.ts"
+    },
+    {
+      "from": "FEAT-065",
+      "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "via": "src/config/sections/templates.ts"
     },
     {
       "from": "FEAT-065",
@@ -235310,6 +235447,12 @@
       "kind": "sibling",
       "to": "TASK-cleanup-banned-types-console-logging-magic-strings",
       "via": "src/prompts/registry.ts"
+    },
+    {
+      "from": "FEAT-aux-classification-template-registry",
+      "kind": "sibling",
+      "to": "TASK-decide-llm-image-prompt-writer-fate",
+      "via": "src/prompts/purposes.ts"
     },
     {
       "from": "FEAT-aux-classification-template-registry",
@@ -239570,6 +239713,12 @@
       "kind": "sibling",
       "to": "TASK-publication-unit-translation-store",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-expand-character-templates-to-canonical-fields",
+      "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "via": "src/config/sections/templates.ts"
     },
     {
       "from": "FEAT-expand-character-templates-to-canonical-fields",
@@ -268206,6 +268355,12 @@
     {
       "from": "TASK-assistant-creative-studio-workflows",
       "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-assistant-creative-studio-workflows",
+      "kind": "sibling",
       "to": "TASK-scenario-system-authoring",
       "via": "src/assistant/scenario-source.ts"
     },
@@ -269239,6 +269394,12 @@
       "from": "TASK-assistant-nsfw-api-prefiltering",
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-assistant-nsfw-api-prefiltering",
+      "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
       "via": "src/config/sections/templates.ts"
     },
     {
@@ -276181,6 +276342,12 @@
       "from": "TASK-avatar-template-example-documents-outfits-default-outfit-tha",
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-avatar-template-example-documents-outfits-default-outfit-tha",
+      "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
       "via": "src/config/sections/templates.ts"
     },
     {
@@ -291066,6 +291233,12 @@
     {
       "from": "TASK-comfyui-first-class-admin-workflows",
       "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-admin-workflows",
+      "kind": "sibling",
       "to": "TASK-restart-required-indicator-on-system-config-changes",
       "via": "src/frontend/alpine/admin-system.ts"
     },
@@ -292837,7 +293010,7 @@
       "from": "TASK-comfyui-template-parameter-validation",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts"
+      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts"
     },
     {
       "from": "TASK-comfyui-template-parameter-validation",
@@ -301880,6 +302053,36 @@
       "kind": "sibling",
       "to": "epic-quests-encounters",
       "via": "src/validation/schemas/primitives.ts"
+    },
+    {
+      "from": "TASK-decide-llm-image-prompt-writer-fate",
+      "kind": "sibling",
+      "to": "TASK-harness-context-templates",
+      "via": "src/prompts/purposes.ts"
+    },
+    {
+      "from": "TASK-decide-llm-image-prompt-writer-fate",
+      "kind": "sibling",
+      "to": "TASK-prompt-template-registry",
+      "via": "src/prompts/purposes.ts"
+    },
+    {
+      "from": "TASK-decide-llm-image-prompt-writer-fate",
+      "kind": "sibling",
+      "to": "TASK-vn-dynamic-generation",
+      "via": "src/prompts/purposes.ts"
+    },
+    {
+      "from": "TASK-decide-llm-image-prompt-writer-fate",
+      "kind": "sibling",
+      "to": "epic-classifier-template-packs",
+      "via": "src/prompts/purposes.ts"
+    },
+    {
+      "from": "TASK-decide-llm-image-prompt-writer-fate",
+      "kind": "sibling",
+      "to": "epic-config-templates",
+      "via": "src/prompts/purposes.ts"
     },
     {
       "from": "TASK-dedup-top-jscpd-clone-clusters",
@@ -323089,7 +323292,7 @@
       "from": "TASK-img2img-init-image-plumbing",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
+      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
     },
     {
       "from": "TASK-img2img-init-image-plumbing",
@@ -334572,6 +334775,12 @@
     {
       "from": "TASK-outfit-change-hook",
       "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-outfit-change-hook",
+      "kind": "sibling",
       "to": "TASK-runtime-integrity-watchdog-crash-recovery",
       "via": "src/server/start.ts"
     },
@@ -336590,6 +336799,12 @@
       "kind": "sibling",
       "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
       "via": "src/config/schema.ts"
+    },
+    {
+      "from": "TASK-prompt-template-registry",
+      "kind": "sibling",
+      "to": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "via": "src/config/sections/templates.ts"
     },
     {
       "from": "TASK-prompt-template-registry",
@@ -341870,6 +342085,42 @@
       "kind": "sibling",
       "to": "epic-crafting-professions",
       "via": "src/chat/random-events.ts"
+    },
+    {
+      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "sibling",
+      "to": "TASK-talkativity-influence-response-verbosity",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "sibling",
+      "to": "TASK-workflow-engine-schema-loader-template-types-workflow-discov",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "sibling",
+      "to": "epic-assistant-creative-studio-workflows",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "sibling",
+      "to": "epic-config-templates",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "sibling",
+      "to": "epic-context-injection-templates",
+      "via": "src/config/sections/templates.ts"
+    },
+    {
+      "from": "TASK-resolve-dormant-emotionentry-prompt-field",
+      "kind": "sibling",
+      "to": "epic-workflow-engine",
+      "via": "src/config/sections/templates.ts"
     },
     {
       "from": "TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que",
