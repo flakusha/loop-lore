@@ -18,6 +18,7 @@ import { modelRolesRoutes, } from "./model-roles";
 import { providersRoutes, } from "./providers";
 import { reviewStatsRoutes, } from "./review-stats";
 import { sdStatusRoutes, } from "./sd-status";
+import { seedRoutes, } from "./seed";
 import { statsRoutes, } from "./stats";
 import { systemConfigRoutes, } from "./system-config";
 import { usersRoutes, } from "./users";
@@ -67,6 +68,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(cronRoutes(opts, prefix,),)
       .use(auditRoutes(opts, prefix,),)
       .use(dangerZoneRoutes(opts, prefix,),)
+      .use(seedRoutes(opts, prefix,),)
       .use(keyRotationRoutes(opts, prefix,),)
       .use(auxTelemetryRoutes(opts, prefix,),)
       .use(federationAdminRoutes(opts, prefix,),)
