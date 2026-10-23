@@ -49,6 +49,17 @@ export class ComfyUIEditProvider implements ImageEditProvider {
 
   private installedNodes: Set<string> | null = null;
 
+  /** Where the referenced input assets live. Defaults to the configured upload dir. */
+  readonly #uploadDir: string | undefined;
+
+  /**
+   * @param options - Provider wiring
+   * @param options.uploadDir - Directory the input assets live in; the config default when omitted
+   */
+  constructor(options: { uploadDir?: string } = {},) {
+    this.#uploadDir = options.uploadDir;
+  }
+
   /**
    * Deliberately not memoized: a cached client is immune to `mock.module`, which
    * rebinds the export but cannot reach an already-built instance — and keying the
@@ -141,6 +152,8 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     // One `loadConfig()` for both the client and the upload dir below.
     const config = loadConfig();
     const client = this.getClient(config,);
+    const database = getDatabase();
+    const uploadDir = this.#uploadDir ?? config.assets.uploadDir;
 
     onProgress?.({ status: "pending", message: "Building workflow...", },);
 
@@ -151,10 +164,18 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     }
 
     // A LoadImage node takes the name of a file in ComfyUI's OWN input
-    // directory, so a local image has to be uploaded before the workflow is
+    // directory, so the image bytes have to be uploaded before the workflow is
     // built. The upload happens BEFORE the submission: a failed upload must
     // abort the run instead of queueing a filename ComfyUI has no bytes for.
-    await uploadImageParams({ client, template, params, },);
+    await uploadImageParams({
+      client,
+      template,
+      params,
+      database,
+      uploadDir,
+      ownerId: opts.ownerId,
+      chatId: request.chatId,
+    },);
 
     const workflow = template.build(params,);
 
@@ -168,8 +189,6 @@ export class ComfyUIEditProvider implements ImageEditProvider {
 
     onProgress?.({ status: "running", progress: 0.9, message: "Downloading images...", },);
 
-    const database = getDatabase();
-    const uploadDir = config.assets.uploadDir;
     const results: ImageEditResult[] = [];
 
     for (const filename of filenames) {
