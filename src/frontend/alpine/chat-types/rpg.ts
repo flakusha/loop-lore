@@ -23,6 +23,7 @@ export interface RpgStats extends RpgStatBlock {
   initiative: number;
   xp: number;
   xpToNext: number;
+  pendingAsi: number;
 }
 
 /** */
