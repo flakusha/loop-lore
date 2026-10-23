@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-23T13:58:15.221Z",
-  "count": 1423,
+  "generatedAt": "2026-10-23T14:13:53.386Z",
+  "count": 1426,
   "gaps": [
     "src/admin/config-keys.ts#PER_CHAT_OVERRIDABLE_KEYS",
     "src/admin/config-keys.ts#REQUIRES_RESTART_KEYS",
@@ -593,6 +593,7 @@
     "src/frontend/alpine/settings/api.ts#api",
     "src/frontend/alpine/settings/chat.ts#chat",
     "src/frontend/alpine/settings/restart-banner.ts#restartBanner",
+    "src/frontend/alpine/stat-allocation.ts#ALL_ABILITIES",
     "src/frontend/alpine/story-state/api.ts#fetchChatDetail",
     "src/frontend/alpine/story-state/api.ts#fetchLocationState",
     "src/frontend/alpine/story-state/api.ts#fetchNpcsAt",
@@ -1266,6 +1267,8 @@
     "src/rpg/seduction/service/helpers.ts#rowToDesireProfile",
     "src/rpg/seduction/service/helpers.ts#rowToSkill",
     "src/rpg/service/battles/persistence.ts#requireActiveBattle",
+    "src/rpg/service/stat-allocation.ts#readWorldConfig",
+    "src/rpg/service/stat-allocation.ts#validateAllocation",
     "src/rpg/service/world-gate.ts#RpgFlagState",
     "src/rpg/service/world-gate.ts#rpgMasterMechanics",
     "src/rpg/skills/service/crud.ts#getSkillsByCategory",
