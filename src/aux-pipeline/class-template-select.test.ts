@@ -5,13 +5,17 @@
  * Tests for classifier template-pack selection (priority, tags, when-guards,
  * fall-through, layer provenance, vocabulary validation) and the consumer
  * resolver (pack > override > default, back-compat with no packs).
+ *
+ * Resource contract: the resolver tests use one fresh in-memory DB per test,
+ * collected into `fixtures` and destroyed in afterEach; everything else is
+ * pure in-memory config objects; no files, no ports, no global stubs.
  */
-import { beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeAll, describe, expect, test, } from "bun:test";
 import type { Config, } from "../config/schema";
 import type { ClassTemplateConfig, LlmTemplateConfig, } from "../config/sections/templates";
 import { createLogger, } from "../logger";
 import { LLM_PROMPT_DEFAULTS, } from "../prompts/registry";
-import { createTestDb, } from "../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import {
   CLASSIFIER_TAG_VOCABULARY_KEY,
   CLASSIFIER_TAGS_ACTIVE_PREFIX,
@@ -159,8 +163,19 @@ describe("selectClassTemplate", () => {
 });
 
 describe("resolveClassifierPrompt", () => {
+  // Fresh in-memory DB per test, destroyed in afterEach so no handle leaks.
+  const fixtures: TestDb[] = [];
+
+  afterEach(async () => {
+    while (fixtures.length > 0) {
+      await destroyTestDb(fixtures.pop()!,);
+    }
+  },);
+
   test("no packs configured → exactly the purpose default (back-compat)", async () => {
-    const { db, } = await createTestDb();
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
     const config = makeConfig(DEFAULT_LLM, {},);
     const result = await resolveClassifierPrompt({ config, db, task: "intent", },);
     expect(LLM_PROMPT_DEFAULTS.intent,).toBe(result.prompt,);
@@ -169,7 +184,9 @@ describe("resolveClassifierPrompt", () => {
   });
 
   test("pack wins over the purpose default and surfaces its params", async () => {
-    const { db, } = await createTestDb();
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
     await db
       .insertInto("system_config",)
       .values({
