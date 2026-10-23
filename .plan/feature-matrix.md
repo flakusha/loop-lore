@@ -1687,7 +1687,7 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2685 | 1014 | 44 | 903 | 32 | 0 | 692 |
+| (untagged) | 2685 | 1015 | 44 | 903 | 32 | 0 | 691 |
 
 ## By epic × status
 
@@ -1695,7 +1695,7 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | : | 58 | 27 | 0 | 31 | 0 | 0 | 0 |
 | (if applicable) | 40 | 37 | 0 | 3 | 0 | 0 | 0 |
-| (none — hygiene/self-contained) | 103 | 0 | 2 | 41 | 0 | 0 | 60 |
+| (none — hygiene/self-contained) | 103 | 1 | 2 | 41 | 0 | 0 | 59 |
 | (none — proposed epic never materialized) | 81 | 49 | 0 | 14 | 6 | 0 | 12 |
 | (none) | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | `epic-memory-knowledge-systems.md` | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
