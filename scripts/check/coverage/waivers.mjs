@@ -97,10 +97,14 @@ export const WAIVERS = {
   },
   // Gate pass: src/plugins/ is the plugin loader/registry; runtime-only
   // resolution exercised via app boot and integration tests.
+  // The bundled plugin engines under plugins/ are now covered by their own
+  // *.test.ts (the coverage run executes plugins/ alongside src/), which
+  // lifted the aggregate from ~46% to ~75%. The remainder is the plugins'
+  // own route/plugin adapters, which only the e2e flow exercises.
   "plugins": {
     floor: 65,
     reason:
-      "src/plugins/* lifted to 100% in test-coverage worktree (loader + registry + helpers); aggregate includes bundled plugins/core/* and plugins/community/* runtime modules covered by e2e",
+      "src/plugins/* (loader + registry + helpers) at ~100% and the bundled plugins/* engines now covered by their own *.test.ts in the coverage run; ~75% measured (card-battle draws are randomized, so the last point moves between runs); the rest is plugin route/plugin adapters reachable only via e2e",
   },
   // Gate pass: src/image-edit/ mixes ts/matting with native (Rust)
   // helpers. Native helpers are not exercised by unit tests; covered by
