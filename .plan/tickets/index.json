@@ -11835,6 +11835,24 @@
     "title": "Avatar Alpha Channel + VN Layering",
     "type": "EPIC"
   },
+  "EPIC-AVATAR-DOGFOOD": {
+    "hash": "pending",
+    "extid": "EPIC-AVATAR-DOGFOOD",
+    "type": "EPIC",
+    "title": "Avatar Dogfood Defaults",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "avatar",
+      "generation",
+      "seeding",
+      "assets",
+      "dogfood"
+    ],
+    "source": ".plan/tickets/epic-avatar-dogfood.md",
+    "status": "Not Started"
+  },
   "EPIC-AVATAR-REGENERATION-CONTROL": {
     "epic": "",
     "extid": "EPIC-AVATAR-REGENERATION-CONTROL",
@@ -28035,6 +28053,54 @@
     "epic": "epic-avatar-regeneration-control",
     "tags": [],
     "source": ".plan/tickets/TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin.md",
+    "status": "Not Started"
+  },
+  "TASK-AVATAR-DOGFOOD-ASSISTANT-GENERATION": {
+    "hash": "pending",
+    "extid": "TASK-AVATAR-DOGFOOD-ASSISTANT-GENERATION",
+    "type": "TASK",
+    "title": "Avatar Dogfood — Assistant Generation Wiring",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-avatar-dogfood",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md",
+    "status": "Not Started"
+  },
+  "TASK-AVATAR-DOGFOOD-E2E-VERIFY": {
+    "hash": "pending",
+    "extid": "TASK-AVATAR-DOGFOOD-E2E-VERIFY",
+    "type": "TASK",
+    "title": "Avatar Dogfood — E2E Verification",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-avatar-dogfood",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-dogfood-e2e-verify.md",
+    "status": "Not Started"
+  },
+  "TASK-AVATAR-DOGFOOD-PROMOTE-DEFAULTS": {
+    "hash": "pending",
+    "extid": "TASK-AVATAR-DOGFOOD-PROMOTE-DEFAULTS",
+    "type": "TASK",
+    "title": "Avatar Dogfood — Promote to Defaults",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-avatar-dogfood",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-dogfood-promote-defaults.md",
+    "status": "in_progress"
+  },
+  "TASK-AVATAR-DOGFOOD-WEBP-EXPORT": {
+    "hash": "pending",
+    "extid": "TASK-AVATAR-DOGFOOD-WEBP-EXPORT",
+    "type": "TASK",
+    "title": "Avatar Dogfood — WebP Masters + Export Op",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-avatar-dogfood",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatar-dogfood-webp-export.md",
     "status": "Not Started"
   },
   "TASK-AVATAR-FRAMING-COLUMN-MIGRATION-FUTURE": {

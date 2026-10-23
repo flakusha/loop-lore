@@ -8,6 +8,7 @@
 **Effort:** Medium
 **Type:** Feature Epic
 **Tags:** avatar, generation, seeding, assets, dogfood
+**Overview:** (see sections below)
 
 ## Summary
 
