@@ -265,9 +265,12 @@ describe("migration numbering is sequential from 001", () => {
     // `feat-fed-storage-quota` branch of the federation-offload epic, and 068
     // (performance quota budgets) is numbered past it so no two branches
     // collide. 065 (peer workload columns) and 067 (workload assignments) have
-    // landed, so they are no longer holes. Only numbers listed here may be
-    // absent; any other gap still fails below.
-    const PARKED = [58, 66,];
+    // landed, so they are no longer holes. 071 and 072 are parked on parallel
+    // unmerged branches (`char-stat-traits`, `chat-rich-engagement`,
+    // `xp-progression-surface`); the message-translations migrations were
+    // renumbered to 073/074 to avoid colliding with those claims. Only numbers
+    // listed here may be absent; any other gap still fails below.
+    const PARKED = [58, 66, 71, 72,];
     const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
     const expected = Array.from(
       { length: prefixes.length + parkedMissing.length, },
