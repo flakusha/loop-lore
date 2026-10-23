@@ -20334,7 +20334,7 @@
     "epic": "character-xp-leveling",
     "tags": [],
     "source": ".plan/tickets/FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-LEVELSERVICE-APPLY-AWARDED-XP-TO-CHARACTER-STATS-AND-LEVEL-U": {
     "hash": "319ce79",
@@ -28447,6 +28447,21 @@
     "tags": [],
     "title": "Battle Npc Integration",
     "type": "TASK"
+  },
+  "TASK-BATTLE-PANEL-HEALTH-BAR-WIDGET-TURN-ORDER-STRIP": {
+    "hash": "4840fb5",
+    "git_issue": "4840fb5",
+    "extid": "TASK-BATTLE-PANEL-HEALTH-BAR-WIDGET-TURN-ORDER-STRIP",
+    "type": "TASK",
+    "title": "Battle panel health-bar widget + turn-order strip",
+    "label": "task",
+    "priority": "high",
+    "epic": "battle-ui",
+    "tags": [
+      "battle-ui"
+    ],
+    "source": ".plan/tickets/TASK-battle-panel-health-bar-widget-turn-order-strip.md",
+    "status": "done"
   },
   "TASK-BATTLE-RESOLUTION-INTEGRATION": {
     "epic": "epic-battle-integration-gaps",
