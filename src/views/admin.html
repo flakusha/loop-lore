@@ -1610,6 +1610,91 @@
                 <button class="btn btn-primary btn-xs" @click="saveNsfwConfig()">Save NSFW Policy</button>
               </div>
             </div>
+            <!-- Classifier Tag Vocabulary (FEAT-classifier-tag-vocabulary-admin-ui) -->
+            <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
+                {{{t("admin.classifierVocab.title")}}}
+              </h3>
+              <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-2)">
+                {{{t("admin.classifierVocab.description")}}}
+              </div>
+              <div
+                style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)"
+                data-testid="classifier-vocab-card"
+              >
+                <div x-show="classifierVocab.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+                  {{{t("admin.classifierVocab.empty")}}}
+                </div>
+                <template x-for="(tag, idx) in classifierVocab" :key="tag">
+                  <div style="display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-2)">
+                    <template x-if="classifierVocabEditIdx === idx">
+                      <div style="display: flex; gap: var(--space-2); align-items: center; flex: 1">
+                        <input
+                          class="form-input"
+                          style="font-size: 13px; max-width: 280px"
+                          x-model="classifierVocabEditValue"
+                          maxlength="64"
+                          @keydown.enter.prevent="commitRenameClassifierTag()"
+                          @keydown.escape="cancelRenameClassifierTag()"
+                          :data-testid="'classifier-vocab-rename-input-' + idx"
+                        />
+                        <button class="btn btn-primary btn-xs" @click="commitRenameClassifierTag()">
+                          {{{t("admin.classifierVocab.save")}}}
+                        </button>
+                        <button class="btn btn-secondary btn-xs" @click="cancelRenameClassifierTag()">
+                          {{{t("admin.classifierVocab.cancel")}}}
+                        </button>
+                      </div>
+                    </template>
+                    <template x-if="classifierVocabEditIdx !== idx">
+                      <div style="display: flex; gap: var(--space-2); align-items: center; flex: 1">
+                        <code style="font-size: 13px" x-text="tag"></code>
+                      </div>
+                    </template>
+                    <button
+                      class="btn btn-secondary btn-xs"
+                      @click="startRenameClassifierTag(idx)"
+                      :data-testid="'classifier-vocab-rename-' + idx"
+                    >
+                      {{{t("admin.classifierVocab.rename")}}}
+                    </button>
+                    <button
+                      class="btn btn-danger btn-xs"
+                      @click="removeClassifierTag(idx)"
+                      :data-testid="'classifier-vocab-remove-' + idx"
+                    >
+                      {{{t("admin.classifierVocab.remove")}}}
+                    </button>
+                  </div>
+                </template>
+                <div style="display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-3)">
+                  <input
+                    class="form-input"
+                    style="font-size: 13px; max-width: 280px"
+                    x-model="classifierVocabInput"
+                    maxlength="64"
+                    :placeholder="t('admin.classifierVocab.placeholder')"
+                    @keydown.enter.prevent="addClassifierTag()"
+                    data-testid="classifier-vocab-input"
+                  />
+                  <button
+                    class="btn btn-primary btn-xs"
+                    @click="addClassifierTag()"
+                    :disabled="classifierVocabBusy"
+                    data-testid="classifier-vocab-add"
+                  >
+                    {{{t("admin.classifierVocab.add")}}}
+                  </button>
+                </div>
+                <div
+                  x-show="classifierVocabError"
+                  x-text="classifierVocabError"
+                  style="color: var(--color-danger, #dc3545); font-size: 12px; margin-top: var(--space-2)"
+                  data-testid="classifier-vocab-error"
+                >
+                </div>
+              </div>
+            </div>
             <!-- Danger Zone Section -->
             <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
               <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3); color: var(--color-danger, #dc3545)">

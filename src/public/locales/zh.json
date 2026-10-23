@@ -125,7 +125,12 @@
     "stop": "Stop",
     "caption": "Caption:",
     "playingAs": "Playing as",
-    "ownerMessage": "Authored by chat owner"
+    "ownerMessage": "Authored by chat owner",
+    "classifierTags": {
+      "title": "分类标签",
+      "description": "选择此聊天启用哪些精选分类标签。",
+      "save": "保存标签"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -483,6 +488,21 @@
       "concurrency": "最大并发",
       "rpm": "请求/分钟",
       "advisoryTokens": "参考令牌/分钟"
+    },
+    "classifierVocab": {
+      "title": "分类标签词表",
+      "description": "管理分类器可用的标签词表。标签不能为空、必须唯一且不超过 64 个字符（最多 200 个标签）。",
+      "empty": "暂无标签——请在下方添加第一个。",
+      "placeholder": "新标签…",
+      "add": "添加",
+      "rename": "重命名",
+      "remove": "移除",
+      "save": "保存",
+      "cancel": "取消",
+      "errorEmpty": "标签不能为空。",
+      "errorTooLong": "标签最多 64 个字符。",
+      "errorDuplicate": "重复标签：{tag}",
+      "errorTooMany": "最多允许 200 个标签。"
     }
   },
   "errors": {
@@ -1570,7 +1590,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "词表已保存",
+    "classifierTagsSaved": "分类标签已保存",
+    "classifierTagsSaveFailed": "保存分类标签失败"
   },
   "status": {
     "characterResponding": "角色正在回复……",

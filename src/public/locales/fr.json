@@ -125,7 +125,12 @@
     "stop": "Stop",
     "caption": "Caption:",
     "playingAs": "Playing as",
-    "ownerMessage": "Authored by chat owner"
+    "ownerMessage": "Authored by chat owner",
+    "classifierTags": {
+      "title": "Étiquettes du classificateur",
+      "description": "Choisissez les étiquettes du classificateur actives pour cette conversation.",
+      "save": "Enregistrer les étiquettes"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -483,6 +488,21 @@
       "concurrency": "Concurrence max.",
       "rpm": "Requêtes/min",
       "advisoryTokens": "Jetons/min indicatifs"
+    },
+    "classifierVocab": {
+      "title": "Vocabulaire d'étiquettes du classificateur",
+      "description": "Gérez le vocabulaire d'étiquettes disponible pour le classificateur. Les étiquettes doivent être non vides, uniques et d'au plus 64 caractères (200 étiquettes max).",
+      "empty": "Aucune étiquette — ajoutez la première ci-dessous.",
+      "placeholder": "Nouvelle étiquette…",
+      "add": "Ajouter",
+      "rename": "Renommer",
+      "remove": "Supprimer",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "errorEmpty": "Les étiquettes doivent être non vides.",
+      "errorTooLong": "Les étiquettes doivent contenir au plus 64 caractères.",
+      "errorDuplicate": "Étiquette en doublon : {tag}",
+      "errorTooMany": "Au plus 200 étiquettes sont autorisées."
     }
   },
   "errors": {
@@ -1570,7 +1590,10 @@
     "gmGuidanceApplied": "GM guidance applied",
     "messageNoContentForImage": "Message has no content for image",
     "networkErrorCreatingQuest": "Network error creating quest",
-    "networkErrorDuringRetry": "Network error during retry"
+    "networkErrorDuringRetry": "Network error during retry",
+    "classifierVocabSaved": "Vocabulaire enregistré",
+    "classifierTagsSaved": "Étiquettes du classificateur enregistrées",
+    "classifierTagsSaveFailed": "Échec de l'enregistrement des étiquettes du classificateur"
   },
   "status": {
     "characterResponding": "Le personnage répond...",
