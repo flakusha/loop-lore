@@ -6,6 +6,7 @@
 // Every LLM provider implements LLMProvider. Register via registry.
 // See .plan/epics/epic-provider-plugin-ecosystem.md for architecture.
 
+import type { AuxTaskName, } from "../../aux-pipeline/types";
 import type { GenerationMessage, } from "../gen-types-options";
 import type { HarnessCallContext, } from "./harness-context";
 
@@ -107,6 +108,14 @@ export interface GenerateRequest {
   };
   /** Abort signal for cancellation */
   signal?: AbortSignal;
+  /**
+   * AUX pipeline task id, threaded explicitly past the provider boundary so
+   * mock/e2e providers can route scripted replies without sniffing prompt
+   * text (`detectAuxTask` is the fallback). Local metadata only — never
+   * serialized to a provider (bodies are built from explicit fields).
+   * Undefined for non-aux dispatch sites.
+   */
+  auxTask?: AuxTaskName;
   /**
    * Harness exec-log context. Local metadata only — never serialized to a
    * provider. Carried here because both generate-route paths spread

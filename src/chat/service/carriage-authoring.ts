@@ -11,12 +11,12 @@
  * NOTHING (never partial state) and only surfaces a dev-visible warning.
  */
 import type { Kysely, } from "kysely";
-import { CARRIAGE_AUTHORING_PROMPT, } from "../../aux-pipeline/prompts";
 import { callAux, } from "../../aux-pipeline/runner";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { GenerationMessage, } from "../../generation/gen-types-options";
 import { getLogger, } from "../../logger";
+import { resolveSystemPrompt, } from "../../prompts";
 import { safeJsonParse, } from "../../utils";
 import { healCarriage, type HealingCancelReason, } from "../../utils/structured-output";
 import type { GmConfig, } from "../types/config";
@@ -75,16 +75,13 @@ export async function authorCarriage(
   contextParts.push(`Latest turn:\n${turnParts.join("\n",)}`,);
 
   const messages: GenerationMessage[] = [
-    { role: "system", content: CARRIAGE_AUTHORING_PROMPT, },
+    { role: "system", content: resolveSystemPrompt(opts.config.templates.llm, "carriage",), },
     { role: "user", content: contextParts.join("",), },
   ];
 
   const response = await callAux("carriage", opts.config, db, messages, {
     userId: opts.userId,
     chatId: opts.chatId,
-    // TOML ledger stays small; deterministic estimate.
-    maxTokens: 800,
-    temperature: 0,
   },);
 
   if (!response) {

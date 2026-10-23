@@ -111,11 +111,10 @@ async function classifyWithAuxLlm(
 
   messages.push({ role: "user" as const, content, },);
 
-  // Shared AUX policy: 2s timeout, 0.0 temperature, 100 max tokens, BYO key
+  // Shared AUX policy via the task registry: 2s timeout, 0.0 temperature,
+  // 100 max tokens, BYO key.
   const response = await callAux("transition", config, db, messages, {
     userId,
-    temperature: 0,
-    maxTokens: 100,
   },);
 
   if (!response) {

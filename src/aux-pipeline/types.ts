@@ -39,6 +39,12 @@ export interface AuxCallOptions {
   userId?: string;
   /** Chat ID for telemetry context. */
   chatId?: string;
+  /**
+   * Explicit task id threaded past the provider boundary (mock/e2e detection).
+   * Optional: `callAux` defaults it to its positional `task` argument, so a
+   * caller only sets this to assert a different detection identity.
+   */
+  taskId?: AuxTaskName;
 }
 
 /** Result of a successful AUX call. */

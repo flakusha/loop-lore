@@ -18,4 +18,12 @@ export {
   TRANSITION_CLASSIFIER_PROMPT,
 } from "./prompts";
 export { callAux, } from "./runner";
+export {
+  AUX_CLASSIFICATION_TASKS,
+  defineClassificationTask,
+} from "./template-registry";
+export type {
+  ClassificationCallOverrides,
+  ClassificationTaskDef,
+} from "./template-registry";
 export type { AuxCallOptions, AuxCallResult, AuxTaskName, } from "./types";

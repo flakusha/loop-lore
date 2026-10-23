@@ -16,14 +16,13 @@ import { callAux, } from "../aux-pipeline/runner";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
+import { resolveSystemPrompt, } from "../prompts";
 import {
-  PROMPT_ANALYSIS_PROMPT,
   PROMPT_IMPROVE_PARAMS,
   type PromptImproveLevel,
   promptImproveSystemPrompt,
 } from "./prompts";
 
-const AUX_TIMEOUT_MS = 15_000;
 const MAX_IMPROVE_INPUT_CHARS = 8000;
 
 /** Options for {@link improvePrompt} and {@link analyzePrompt}. */
@@ -88,7 +87,6 @@ export async function improvePrompt(options: PromptImproveOptions,): Promise<Pro
   ], {
     temperature: params.temperature,
     maxTokens: params.maxTokens,
-    timeoutMs: AUX_TIMEOUT_MS,
     userId,
     chatId,
   },);
@@ -132,9 +130,9 @@ export async function analyzePrompt(
   const trimmed = text.trim();
   if (!trimmed) { return null; }
   const result = await callAux("prompt-analysis", config, db, [
-    { role: "system", content: PROMPT_ANALYSIS_PROMPT, },
+    { role: "system", content: resolveSystemPrompt(config.templates.llm, "promptAnalysis",), },
     { role: "user", content: trimmed.slice(0, MAX_IMPROVE_INPUT_CHARS,), },
-  ], { timeoutMs: AUX_TIMEOUT_MS, userId, chatId, },);
+  ], { userId, chatId, },);
 
   if (!result) { return null; }
   return parseAnalysis(result.content,);

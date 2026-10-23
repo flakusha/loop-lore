@@ -32,6 +32,11 @@ export const PROMPT_PURPOSES = [
   "memory", // aux classifiers
   "gmTool", // aux classifier
   "moderation", // aux classifier
+  "injectionCheck", // aux classifier (prompt-injection confirm)
+  "carriage", // aux generation (hidden carriage authoring)
+  "promptAnalysis", // aux classifier (prompt quality analysis)
+  "chatTitle", // aux generation (chat title suggestion)
+  "ragAsk", // aux generation (RAG question answering)
 ] as const;
 
 /** Union of the known, typed prompt purposes. */

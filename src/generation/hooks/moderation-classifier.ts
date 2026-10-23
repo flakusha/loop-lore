@@ -88,8 +88,6 @@ export async function detectModerationWithLlm(
     const response = await callAuxFn("moderation", context.config, context.db, messages, {
       userId: context.userId,
       chatId: context.chatId,
-      temperature: 0,
-      maxTokens: 50,
     },);
 
     if (!response) { return null; }
