@@ -71,6 +71,12 @@ function coverageCommand() {
     // and would discover the heavy tests otherwise. `tests/e2e/` and
     // `src/**/*.test.ts` are both flattened here.
     const srcTests = filterPaths(walkTestFiles(PROJECT_ROOT, "src",),);
+    // plugins/** carries the bundled plugin engines' own *.test.ts. They sit
+    // OUTSIDE src/, so the src/ walk above never found them and the coverage
+    // run measured the plugin engines at ~4% — the tests existed but were
+    // never executed. They are in-process unit tests (no subprocess), so they
+    // belong inside the --coverage invocation, unlike scripts/** below.
+    const pluginTests = filterPaths(walkTestFiles(PROJECT_ROOT, "plugins",),);
     // scripts/** carries colocated *.test.ts (coverage.mjs, the parallel
     // runner's config/context, src-refs, migration-parser, among others).
     // They previously ran only under bare `bun test`, never under any gate —
@@ -89,12 +95,12 @@ function coverageCommand() {
     // The scoped branch below keeps excluding non-src trees for the same
     // reason: a scoped lcov holds only what the scoped tests loaded.
     const scriptTests = filterPaths(walkTestFiles(PROJECT_ROOT, "scripts",),);
-    if (srcTests.length === 0 && scriptTests.length === 0) { return NOOP_OK; }
+    if (srcTests.length === 0 && pluginTests.length === 0 && scriptTests.length === 0) { return NOOP_OK; }
     const scriptsRun = scriptTests.length > 0
       ? `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${scriptTests.join(" ",)} --isolate && `
       : "";
     return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${
-      ["tests/e2e/", ...srcTests,].join(" ",)
+      ["tests/e2e/", ...srcTests, ...pluginTests,].join(" ",)
     } --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && ${scriptsRun}bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
