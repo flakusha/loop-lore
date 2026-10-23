@@ -132,7 +132,9 @@ describe("stat allocation routes", () => {
     expect(body.statPointBudget,).toBe(20,);
     expect(body.statMin,).toBe(6,);
     expect(body.statMax,).toBe(14,);
-    expect(body.pointBuyCost["15"],).toBe(9,);
+    expect(body.pointBuyCost["6"],).toBe(0,);
+    expect(body.pointBuyCost["14"],).toBe(7,);
+    expect(body.pointBuyCost["15"],).toBeUndefined();
   });
 
   test("GET stat-config 404s unknown world, 401s unauthenticated", async () => {

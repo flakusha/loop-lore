@@ -16,7 +16,7 @@ import {
   putStatAllocation,
   readWorldConfig,
 } from "../../rpg/service/stat-allocation.js";
-import { POINT_BUY_COST, } from "../../rpg/stats/types.js";
+import { statCost, } from "../../rpg/stats/types.js";
 import { requireActorAccess, } from "../actor-auth.js";
 import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils.js";
 import { log, } from "./log.js";
@@ -69,7 +69,12 @@ export function statAllocationRoutes(opts: HandlerOpts, prefix = "/api",) {
           return notFoundResponse("World not found",);
         }
 
-        return jsonResponse({ ...config, pointBuyCost: POINT_BUY_COST, },);
+        const pointBuyCost: Record<number, number> = {};
+        for (let value = config.statMin; value <= config.statMax; value += 1) {
+          pointBuyCost[value] = statCost(value,);
+        }
+
+        return jsonResponse({ ...config, pointBuyCost, },);
       },
       {
         query: t.Object({ worldId: t.Optional(t.String(),), },),
