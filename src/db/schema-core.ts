@@ -2016,6 +2016,25 @@ export interface Chats extends AuditColumns {
   purpose: string | null;
   timeline_id: Generated<string>;
 }
+
+// ── message_translations ────────────────────────────────────────────
+export interface MessageTranslations {
+  id: Generated<string>;
+  message_id: string;
+  locale: string;
+  content: string;
+  provider: string | null;
+  created_at: string;
+  updated_at: string | null;
+  key_id: string | null;
+  content_encoding: Generated<string>;
+  e2e_payload: string | null;
+  e2e_session_id: string | null;
+  e2e_sender_eph_pub_jwk: string | null;
+  e2e_chain_index: number | null;
+  content_plaintext: string | null;
+}
+
 // ── actors ────────────────────────────────────────────
 export interface Actors {
   id: Generated<string>;
@@ -2311,17 +2330,6 @@ export interface ChatPins {
   pinned_by: string;
   pinned_at: Generated<string>;
   created_at: string | null;
-  updated_at: string | null;
-}
-
-// ── message_translations ────────────────────────────────────────────
-export interface MessageTranslations {
-  id: Generated<string>;
-  message_id: string;
-  locale: string;
-  content: string;
-  provider: string | null;
-  created_at: string;
   updated_at: string | null;
 }
 

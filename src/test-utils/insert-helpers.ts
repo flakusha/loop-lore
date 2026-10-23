@@ -2404,7 +2404,18 @@ export async function insertMessageTranslations(
   locale: string,
   content: string,
   created_at: string,
-  opts?: { id?: string; provider?: string | null; updated_at?: string | null },
+  opts?: {
+    id?: string;
+    provider?: string | null;
+    updated_at?: string | null;
+    key_id?: string | null;
+    content_encoding?: string;
+    e2e_payload?: string | null;
+    e2e_session_id?: string | null;
+    e2e_sender_eph_pub_jwk?: string | null;
+    e2e_chain_index?: number | null;
+    content_plaintext?: string | null;
+  },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
