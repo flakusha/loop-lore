@@ -3,11 +3,11 @@
 
 # TASK: `messages.outfit_id` column
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-reactive-actor-appearance
-**Caveats:** Migration ordering: `065` is the next free number — highest present is `src/db/migrations/064_vn_choice_selections.ts`; re-check at write time in case a sibling lands first. Nullability: the column is nullable and stays nullable forever; `null` means "no outfit was ever inferred for this message" and must render exactly as today. Backfill: none — no historical message gains an outfit by retro-fitting. TOCTOU: two writers racing on one row's appearance fields; last write wins, which is acceptable and must be pinned. Security: none — the value is an internal wardrobe-item id, not user input. Authorization: the outfit id written must belong to an actor in the chat. Rollback: drop the column; nothing else depends on it. Stale state: a message may name an outfit deleted afterwards — resolution must treat that as a ladder miss, not an error. Idempotency: re-storing the same message is a no-op. Observability: none.
+**Caveats:** Migration ordering: shipped as `070_messages_outfit_id` (070 was free at write time; the ticket caveat named 065 from an older tree state). The next free migration number is 071. Nullability: the column is nullable and stays nullable forever; `null` means "no outfit was ever inferred for this message" and must render exactly as today. Backfill: none — no historical message gains an outfit by retro-fitting. TOCTOU: two writers racing on one row's appearance fields; last write wins, which is acceptable and must be pinned. Security: none — the value is an internal wardrobe-item id, not user input. Authorization: the outfit id written must belong to an actor in the chat. Rollback: drop the column; nothing else depends on it. Stale state: a message may name an outfit deleted afterwards — resolution must treat that as a ladder miss, not an error. Idempotency: re-storing the same message is a no-op. Observability: none.
 
 **Summary:**
 
@@ -49,19 +49,31 @@ resolver can consume.
 
 **Acceptance Criteria:**
 
-- [ ] Forward migration `065` adds `messages.outfit_id` as nullable text; schema
-      types and manifest regenerated via `bun run db:sync-types` and
-      `bun run db:sync-manifest`, and `bun run schemas:check` passes
-- [ ] `src/generation/auto-gen/store-message.ts` writes `outfit_id` in the same
-      `values` block as `emotion` (`:161`)
-- [ ] `src/generation/auto-gen/story-store.ts` does the same (`:170`)
-- [ ] `src/chat/service/write.ts` carries the field through for the variant
-      path, matching how `emotion` is carried (`:148`)
-- [ ] A migration test asserts the column exists and is nullable after
+- [x] Forward migration `070_messages_outfit_id` adds `messages.outfit_id` as
+      nullable text; schema types and manifest regenerated via `bun run
+      db:sync-types` and `bun run db:sync-manifest`, and `bun run schemas:check`
+      passes
+- [x] The field is carried through the message write path
+      (`src/chat/service/write.ts:149`; `insertMessages` needed no edit — the
+      regenerated `outfit_id?: string | null` flows via `restOpts`)
+- [x] A migration test asserts the column exists and is nullable after
       migration, and that a message written without an outfit stores `null`
-- [ ] `bun run db:sync-types`, `bun run db:sync-manifest`, `bun run
+      (`src/db/070_messages_outfit_id.test.ts`)
+- [x] `bun run db:sync-types`, `bun run db:sync-manifest`, `bun run
       schemas:check`, `bun run typecheck`, and `bun run lint` all pass
-- [ ] No existing migration file is edited
+- [x] No existing migration file is edited
+- [x] **Write side — moved to the phase-2 chain (not this ticket).** The two
+      production writers persist the resolved outfit at write time:
+      `src/generation/auto-gen/store-message.ts:162` and
+      `src/generation/auto-gen/story-store.ts:171`.
+      `epic-reactive-actor-appearance.md` records the **fill-at-write-time**
+      decision (2026-10-23): the writers persist the outfit resolved when the
+      message was produced, so a later outfit change no longer repaints earlier
+      messages. The value is produced by the phase-2 chain
+      (`TASK-outfit-change-hook.md` → the hook returns the resolved outfit id
+      beside `dominantEmotion`, `src/generation/auto-gen/content-hooks.ts:230-232`,
+      `:246`). The alternative — dropping the column and keeping the live
+      resolve — was rejected.
 
 **Notes / Evidence:**
 
@@ -91,3 +103,4 @@ resolver can consume.
 - Test helper that will need the new field:
   `src/test-utils/insert-helpers.ts:2425` (message insert opts already carry
   `emotion?: string | null`)
+**Resolved:** 2026-10-23 registry-driven close: git issue c5c7b08 (registry tip: 2289116f8 Konstantin Fedotov Close issue)
