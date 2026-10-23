@@ -3,7 +3,7 @@
 
 // src/config/load/env.ts — Environment variable application
 
-import { isLocale, } from "../../i18n/locale-registry";
+import { isWellFormedBcp47, } from "../../i18n/bcp47";
 import type { Config, ProviderInstanceConfig, } from "../schema";
 import { coerceValue, getTypeOfPath, setByPath, } from "./parse";
 
@@ -80,7 +80,7 @@ const ENABLED_VALUES = new Set(["true", "1", "on", "yes",],);
 /**
  * Create a default provider instance from LLM_PROVIDER_* env vars
  * @param config
- * @throws {Error} when LLM_PROVIDER_LOCALE is not a known LOCALE_REGISTRY code
+ * @throws {Error} when LLM_PROVIDER_LOCALE is not a well-formed BCP-47 tag
  * @returns void
  */
 export function applyProviderEnvVars(config: Config,): void {
@@ -93,12 +93,13 @@ export function applyProviderEnvVars(config: Config,): void {
   const allowUserKey = process.env.LLM_PROVIDER_ALLOW_USER_KEY?.trim().toLowerCase();
 
   // FEAT-model-native-locale-config: an operator-declared native locale must
-  // be a known LOCALE_REGISTRY code; a typo fails config load (loader throw
-  // convention) instead of silently degrading translation targets.
+  // be a well-formed BCP-47 tag (free-form — models speak more than the 10
+  // UI-registry languages); a malformed value fails config load (loader
+  // throw convention) instead of silently degrading translation targets.
   const locale = process.env.LLM_PROVIDER_LOCALE;
-  if (locale !== undefined && !isLocale(locale,)) {
+  if (locale !== undefined && !isWellFormedBcp47(locale,)) {
     throw new Error(
-      `LLM_PROVIDER_LOCALE: unknown locale "${locale}". Supported: en, es, fr, de, ja, ko, zh, pt, ru, ar`,
+      `LLM_PROVIDER_LOCALE: malformed locale "${locale}". Expected a BCP-47 tag like "en" or "en-US"`,
     );
   }
 

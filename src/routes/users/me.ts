@@ -10,7 +10,7 @@
  */
 import { Elysia, t, } from "elysia";
 import { validateAge, } from "../../age-gate/service";
-import { isLocale, } from "../../i18n/locale-registry";
+import { isWellFormedBcp47, } from "../../i18n/bcp47";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, UserProfileUpdateBody, } from "../../validation/schemas";
@@ -111,15 +111,16 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
 
           const body = (ctx as any).body as Record<string, unknown>;
           // FEAT-language-selection-three-level: the content-locale preference
-          // is validated against LOCALE_REGISTRY at the boundary — unknown
-          // codes are a 400 before the settings merge, not a silent store.
+          // is validated for BCP-47 well-formedness at the boundary — free-form
+          // tags (any language, not just the 10 UI-registry codes) are
+          // accepted; malformed values are a 400 before the settings merge.
           if (
             body.contentLocale !== undefined &&
             body.contentLocale !== null &&
-            (typeof body.contentLocale !== "string" || !isLocale(body.contentLocale,))
+            (typeof body.contentLocale !== "string" || !isWellFormedBcp47(body.contentLocale,))
           ) {
             return jsonError({
-              message: `Unknown contentLocale: "${String(body.contentLocale,)}".`,
+              message: `Malformed contentLocale: "${String(body.contentLocale,)}".`,
               status: HttpStatus.BadRequest,
             },);
           }

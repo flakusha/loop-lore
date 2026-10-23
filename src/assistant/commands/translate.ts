@@ -13,6 +13,7 @@
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { resolveTranslatorRole, } from "../../generation/translator-role";
+import { isWellFormedBcp47, normalizeBcp47Tag, } from "../../i18n/bcp47";
 import { getLogger, } from "../../logger";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
@@ -65,15 +66,16 @@ export async function runTranslate(
   if (toIndex !== -1 && toIndex + 1 < args.length) {
     text = args.slice(0, toIndex,).join(" ",);
     targetLang = (args[toIndex + 1] ?? "").toLowerCase();
-  } else if (LANGUAGES[(args[0] ?? "").toLowerCase()]) {
-    // Parse: /translate <lang> <text>
-    targetLang = (args[0] ?? "").toLowerCase();
+  } else if (LANGUAGES[(args[0] ?? "").toLowerCase()] || isWellFormedBcp47(args[0] ?? "",)) {
+    // Parse: /translate <lang> <text> — catalog codes AND free-form BCP-47
+    // tags (translation locales are not limited to the 10 catalog codes).
+    targetLang = normalizeBcp47Tag(args[0] ?? "",) ?? (args[0] ?? "").toLowerCase();
     text = args.slice(1,).join(" ",);
   } else {
     // Last arg might be a language code
     const last = args[args.length - 1] ?? "";
-    if (LANGUAGES[last.toLowerCase()]) {
-      targetLang = last.toLowerCase();
+    if (LANGUAGES[last.toLowerCase()] || isWellFormedBcp47(last,)) {
+      targetLang = normalizeBcp47Tag(last,) ?? last.toLowerCase();
       text = args.slice(0, -1,).join(" ",);
     } else {
       return {

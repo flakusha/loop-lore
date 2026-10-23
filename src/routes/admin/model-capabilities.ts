@@ -8,7 +8,7 @@ import {
   resolveModelCapabilities,
   setModelOverride,
 } from "../../admin/model-capabilities";
-import { isLocale, } from "../../i18n/locale-registry";
+import { normalizeBcp47Tag, } from "../../i18n/bcp47";
 import { ErrorResponse, } from "../../validation/schemas";
 import {
   ErrorCode,
@@ -77,24 +77,42 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       },)
       // ── Set user override ──────────────────────────────────
       .patch(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+        // FEAT-model-native-locale-config (owner, 2026-10-23): locale edits
+        // are moderator-writable — `admin.model-locale` is held by moderator
+        // + admin (wildcard); GET/DELETE keep the admin.system gate.
+        const userId = requirePermissionUserId(ctx, "admin.model-locale",);
         if (typeof userId !== "string") { return userId; }
 
-        // FEAT-model-native-locale-config: unknown locale codes are rejected
-        // at the boundary (isLocale) — never stored silently.
+        // FEAT-model-native-locale-config: malformed locale tags are rejected
+        // at the boundary (pragmatic BCP-47 well-formedness); well-formed
+        // tags outside the 10-entry UI registry are accepted and stored in
+        // canonical case — never silently degraded.
         const patchBody = ctx.body as {
           nativeLocale?: string | null;
         };
 
-        if (
-          patchBody.nativeLocale != null &&
-          (typeof patchBody.nativeLocale !== "string" || !isLocale(patchBody.nativeLocale,))
-        ) {
-          return jsonError({
-            message: `Unknown nativeLocale: "${String(patchBody.nativeLocale,)}".`,
-            status: HttpStatus.BadRequest,
-            code: ErrorCode.BadRequest,
-          },);
+        let nativeLocale: string | null | undefined;
+        if (patchBody.nativeLocale != null) {
+          if (typeof patchBody.nativeLocale !== "string") {
+            return jsonError({
+              message: `Malformed nativeLocale: "${String(patchBody.nativeLocale,)}".`,
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.BadRequest,
+            },);
+          }
+
+          const canonical = normalizeBcp47Tag(patchBody.nativeLocale,);
+          if (canonical === null) {
+            return jsonError({
+              message: `Malformed nativeLocale: "${patchBody.nativeLocale}".`,
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.BadRequest,
+            },);
+          }
+
+          nativeLocale = canonical;
+        } else {
+          nativeLocale = patchBody.nativeLocale ?? undefined;
         }
 
         const ok = await setModelOverride(
@@ -108,7 +126,7 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
             supportsVision: ctx.body.supportsVision ?? undefined,
             supportsThinking: ctx.body.supportsThinking ?? undefined,
             notes: ctx.body.notes ?? undefined,
-            nativeLocale: patchBody.nativeLocale ?? undefined,
+            nativeLocale,
           },
         );
 

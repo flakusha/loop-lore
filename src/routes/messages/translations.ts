@@ -13,9 +13,9 @@
  * through the same path as message content.
  */
 import { Elysia, t, } from "elysia";
-import { normalizeTargetLang, } from "../../chat/auto-translate";
 import { translateMessageToLocale, } from "../../chat/message-translations";
 import { getMessageWithAccess, } from "../../chat/service";
+import { normalizeBcp47Tag, } from "../../i18n/bcp47";
 import {
   ErrorResponse,
   MessageIdParams,
@@ -113,11 +113,13 @@ export function translationRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
         const message = msgResult;
 
+        // Canonicalize the lookup so `en-us` finds a row stored as `en-US`.
+        const canonicalLocale = normalizeBcp47Tag(locale,) ?? locale;
         const row = await database
           .selectFrom("message_translations",)
           .selectAll()
           .where("message_id", "=", id,)
-          .where("locale", "=", locale,)
+          .where("locale", "=", canonicalLocale,)
           .executeTakeFirst();
 
         // 404 (not 403-leak): an existing message without that variant is a
@@ -162,9 +164,11 @@ export function translationRoutes(opts: HandlerOpts, prefix = "/api",) {
         const id = (ctx.params as { id: string }).id;
         const body = ctx.body as typeof MessageTranslationBody.static;
 
-        // Unknown codes are a 400 BEFORE any provider call.
-        if (normalizeTargetLang(body.locale,) === null) {
-          return badRequestResponse(`Unknown locale: "${body.locale}".`,);
+        // Malformed tags are a 400 BEFORE any provider call; well-formed
+        // tags outside the 10-entry UI registry are accepted (free-form
+        // translation locales).
+        if (normalizeBcp47Tag(body.locale,) === null) {
+          return badRequestResponse(`Malformed locale: "${body.locale}".`,);
         }
 
         const msgResult = await getMessageWithAccess(database, id, userId, ctx.userRole as string | null,);
