@@ -8,6 +8,7 @@ import { attachRoutes, } from "./attach";
 import { createRoutes, } from "./create";
 import { forwardRoutes, } from "./forward";
 import { readRoutes, } from "./read";
+import { translationRoutes, } from "./translations";
 import type { HandlerOpts, } from "./types";
 import { updateRoutes, } from "./update";
 
@@ -27,5 +28,6 @@ export function messagesRoutes(opts: HandlerOpts, prefix = "/api",) {
     .use(forwardRoutes(opts, prefix,),)
     .use(aiActionRoutes(opts, prefix,),)
     .use(archivingRoutes(opts, prefix,),)
-    .use(attachRoutes(opts, prefix,),);
+    .use(attachRoutes(opts, prefix,),)
+    .use(translationRoutes(opts, prefix,),);
 }
