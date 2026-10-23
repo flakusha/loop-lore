@@ -3,7 +3,7 @@
 
 # TASK: Link previews (unfurl)
 
-**Status:** Not Started
+**Status:** Done
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
@@ -30,3 +30,5 @@ is music-specific and must stay so. Raw URLs in chat render bare.
 
 - URL message renders title/desc card; malicious HTML neutralized.
 - Cache hit avoids refetch; private-IP URL refused.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 4eb00ea (registry tip: f1cccee30 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-LINK-PREVIEWS-UNFURL done)
