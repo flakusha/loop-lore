@@ -2753,9 +2753,9 @@ export const SCHEMA = new SchemaManifest()
     rpg_xp: col("integer", { notNull: true, hasDefault: true, },),
     rpg_loot: col("integer", { notNull: true, hasDefault: true, },),
     rpg_quests: col("integer", { notNull: true, hasDefault: true, },),
-    rpg_skills: col("integer", { notNull: true, hasDefault: true, },),
     rules: col("text", { notNull: true, hasDefault: true, },),
     autonomy_config: col("text", { notNull: true, hasDefault: true, },),
+    rpg_skills: col("integer", { notNull: true, hasDefault: true, },),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
   .table("model_capabilities", {

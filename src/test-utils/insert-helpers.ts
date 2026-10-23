@@ -963,9 +963,9 @@ export async function insertWorlds(
     rpg_xp?: number;
     rpg_loot?: number;
     rpg_quests?: number;
-    rpg_skills?: number;
     rules?: string;
     autonomy_config?: string;
+    rpg_skills?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
