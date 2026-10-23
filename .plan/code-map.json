@@ -10362,11 +10362,11 @@
   "src/chat/service/read.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-multilingual-carriage.md"
+      "source": ".plan/epics/epic-guest-access.md"
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-guest-access.md"
+      "source": ".plan/epics/epic-multilingual-carriage.md"
     },
     {
       "kind": "ticket",
@@ -10378,11 +10378,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-message-carriage-table-migration-admin-read.md"
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
+      "source": ".plan/tickets/TASK-message-carriage-table-migration-admin-read.md"
     },
     {
       "kind": "ticket",
@@ -43202,15 +43202,15 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-guest-access.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-multilingual-carriage.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-guest-access.md"
     },
     {
       "kind": "ticket",
@@ -43250,15 +43250,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-side-outfit-change-trigger.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-carriage-table-migration-admin-read.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     }
   ],
   "src/routes/messages/reply-encrypted.test.ts": [
@@ -45347,6 +45347,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    }
+  ],
+  "src/routes/v1/v1-versioning.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-chat-public-reads-visibility-aware-chat-access.md"
     }
   ],
   "src/routes/views.test.ts": [
