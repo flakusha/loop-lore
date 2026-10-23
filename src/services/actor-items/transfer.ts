@@ -9,6 +9,7 @@
  * and stacks onto (or creates) the target row, all inside a transaction.
  */
 import type { Kysely, Transaction, } from "kysely";
+import { triggerItemOutfitChange, } from "../../characters/services/wardrobe/item-trigger";
 import { EquipState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import {
@@ -71,6 +72,7 @@ export async function transferItems(
 
     const remaining = source.quantity - quantity;
     if (remaining === 0) {
+      await triggerItemOutfitChange(txDb, fromActorId, itemId,);
       await txDb.deleteFrom("actor_items",).where("id", "=", itemId,).execute();
     } else {
       await txDb

@@ -11,6 +11,7 @@
  * tolerant so a malformed `actor_items.metadata` never breaks the panel.
  */
 
+import { triggerItemOutfitChange, } from "../../../characters/services/wardrobe/item-trigger";
 import { ItemCategory, } from "../../../db/enums";
 import {
   ActionType,
@@ -235,6 +236,14 @@ async function consumeInventoryUnit(
   current: number,
 ): Promise<number> {
   if (current <= 1) {
+    const owner = await deps.database
+      .selectFrom("actor_items",)
+      .select("actor_id",)
+      .where("id", "=", itemId,)
+      .executeTakeFirst();
+
+    if (owner?.actor_id) { await triggerItemOutfitChange(deps.database, owner.actor_id, itemId,); }
+
     const result = await deps.database
       .deleteFrom("actor_items",)
       .where("id", "=", itemId,)
