@@ -29,6 +29,13 @@ import { initAssetCompression, } from "./init-asset-compression";
 import { initBackgroundServices, } from "./init-background-services";
 import { createNonApiHandler, } from "./static-files";
 
+/** Exit code for a clean, signal-triggered shutdown. */
+const CLEAN_EXIT_CODE = 0;
+/** Exit code for a crash-path shutdown (uncaughtException/unhandledRejection):
+ * a supervisor must see a non-zero code so the crash is not reported as a
+ * clean stop. */
+const CRASH_EXIT_CODE = 1;
+
 /**
  * Bootstrap the Loop Lore HTTP/HTTPS server: init subsystems, seed the DB,
  * pre-compress static assets, load plugins, and wire graceful shutdown.
@@ -114,6 +121,20 @@ export async function start() {
   // Applied to EVERY outgoing response via createRequestHandler.
   const handleRequest = createRequestHandler(app, config, logger, database,);
 
+  // ── Readiness gate ─────────────────────────────────────────
+  // The listener opens before plugins/seeds/assets are loaded, so early
+  // traffic would hit unloaded routes or unserved assets. Every request
+  // gets 503 until the boot work below finishes, so a readiness probe can
+  // tell "booting" from "broken".
+  let ready = false;
+  const handleGatedRequest = async (request: Request,): Promise<Response> => {
+    if (!ready) {
+      return new Response("Server is starting", { status: 503, headers: { "Retry-After": "1", }, },);
+    }
+
+    return handleRequest(request,);
+  };
+
   await runMigrations(database,); // ensure DB schema ready before serving
   await runDataMigrations(database,); // row-level, after schema is final, before seeding
   await seedDefaultActors(database, config,);
@@ -122,27 +143,37 @@ export async function start() {
   await seedConfiguredContent(database, effectiveSeeding, config.auth.required,);
   await seedDynamicContent(database,); // after user seeding: rows need a real owner_id
 
+  // ── TLS certificates (fail closed) ─────────────────────────
+  // Provisioned before any listener starts: when TLS is configured and the
+  // certificates cannot be provisioned we fail closed instead of silently
+  // downgrading to plaintext.
+  const tlsFiles = config.server.tls ? ensureTlsCerts(config.server.tls,) : null;
+  if (config.server.tls && !tlsFiles) {
+    serverLogger.fatal(
+      "TLS is configured but the certificates could not be provisioned — refusing to serve plaintext",
+      new Error("TLS certificate provisioning failed",),
+      { module: "server", tls: config.server.tls, },
+    );
+
+    throw new Error("TLS certificates could not be provisioned — refusing to start without HTTPS",);
+  }
+
   // ── Start HTTP server ──────────────────────────────────────
-  const httpServer = serve({ port: config.server.port, hostname: config.server.host, fetch: handleRequest, },);
+  const httpServer = serve({ port: config.server.port, hostname: config.server.host, fetch: handleGatedRequest, },);
   serverLogger.info(`HTTP  → http://localhost:${config.server.port}`,);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
   let httpsServer: ReturnType<typeof serve> | undefined;
-  if (config.server.tls) {
-    const tlsFiles = ensureTlsCerts(config.server.tls,);
-    if (tlsFiles) {
-      const httpsPort = config.server.port + 443;
-      httpsServer = serve({
-        port: httpsPort,
-        hostname: config.server.host,
-        tls: { key: Bun.file(tlsFiles.key,), cert: Bun.file(tlsFiles.cert,), },
-        fetch: handleRequest,
-      },);
+  if (tlsFiles) {
+    const httpsPort = config.server.port + 443;
+    httpsServer = serve({
+      port: httpsPort,
+      hostname: config.server.host,
+      tls: { key: Bun.file(tlsFiles.key,), cert: Bun.file(tlsFiles.cert,), },
+      fetch: handleGatedRequest,
+    },);
 
-      serverLogger.info(`HTTPS → https://localhost:${httpsPort}`,);
-    } else {
-      serverLogger.warn("HTTPS unavailable — serving HTTP only",);
-    }
+    serverLogger.info(`HTTPS → https://localhost:${httpsPort}`,);
   }
 
   serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`,);
@@ -192,7 +223,7 @@ export async function start() {
   // createApp). No direct call here.
 
   // ── Background init (character templates + external AI servers) ──
-  await initBackgroundServices(database, config, serverLogger, serverManager,);
+  const backgroundServices = await initBackgroundServices(database, config, serverLogger, serverManager,);
 
   // ── Load all plugins (core → community → local) ──────
   // `authRequired` lets the loader warn when a plugin's `requiresAuth` /
@@ -203,6 +234,9 @@ export async function start() {
   // ── Pre-compress static assets + hash-inject HTML ──────
   await initAssetCompression(logger,);
 
+  // Plugins, seeds and assets are ready — open the traffic gate.
+  ready = true;
+
   // ── Start liveliness probes for managed servers ──────────
   serverManager.startLivenessProbes();
 
@@ -212,8 +246,9 @@ export async function start() {
   },);
 
   // ── Graceful shutdown ────────────────────────────────────
-  const shutdown = async (_signal: string,) => {
+  const shutdown = async ({ exitCode, }: { exitCode: number },): Promise<void> => {
     (domainConfigWatcher as { __close?: () => void } | undefined)?.__close?.();
+    backgroundServices.stop();
     getScheduler()?.stop();
     await flushActiveStore();
     await serverManager.stopAll();
@@ -229,27 +264,27 @@ export async function start() {
 
     await flushed;
     clearTimeout(timer,);
-    process.exit(0,);
+    process.exit(exitCode,);
   };
 
   /** Run the graceful shutdown, guaranteeing a rejected shutdown step (a
    *  stuck store flush or plugin unload) still exits the process instead of
    *  surfacing an unhandled rejection from inside the signal / fatal-error
-   * @param signal
+   * @param opts
    *  handlers below. */
-  function runShutdown(signal: string,): void {
-    shutdown(signal,).catch((err,) => {
+  function runShutdown({ signal, exitCode, }: { signal: string; exitCode: number },): void {
+    shutdown({ exitCode, },).catch((err,) => {
       process.stderr.write(`[shutdown] ${signal} failed: ${String(err,)}\n`,);
       process.exit(1,);
     },);
   }
 
-  process.on("SIGTERM", () => runShutdown("SIGTERM",),);
-  process.on("SIGINT", () => runShutdown("SIGINT",),);
+  process.on("SIGTERM", () => runShutdown({ signal: "SIGTERM", exitCode: CLEAN_EXIT_CODE, },),);
+  process.on("SIGINT", () => runShutdown({ signal: "SIGINT", exitCode: CLEAN_EXIT_CODE, },),);
   // SIGHUP is unsupported on Windows — registering a handler there throws at
   // boot. Windows never delivers SIGHUP, so omitting the handler is safe.
   if (process.platform !== "win32") {
-    process.on("SIGHUP", () => runShutdown("SIGHUP",),);
+    process.on("SIGHUP", () => runShutdown({ signal: "SIGHUP", exitCode: CLEAN_EXIT_CODE, },),);
   }
 
   process.on("uncaughtException", (err,) => {
@@ -261,7 +296,7 @@ export async function start() {
       /* last resort */
     }
 
-    runShutdown("uncaughtException",);
+    runShutdown({ signal: "uncaughtException", exitCode: CRASH_EXIT_CODE, },);
   },);
 
   process.on("unhandledRejection", (reason,) => {
@@ -272,6 +307,6 @@ export async function start() {
       /* last resort */
     }
 
-    runShutdown("unhandledRejection",);
+    runShutdown({ signal: "unhandledRejection", exitCode: CRASH_EXIT_CODE, },);
   },);
 }
