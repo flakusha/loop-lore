@@ -26,6 +26,7 @@ const baseCtx = (): StatAllocationState => {
   state.statMin = 8;
   state.statMax = 15;
   state.budget = 27;
+  state.configLoaded = true;
   state.pointBuyCost = { 8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9, };
   state.catalog = [];
   state.selectedTraits = [];
@@ -113,6 +114,20 @@ describeOrSkip("statAllocation.loadConfig", () => {
     expect(ctx.statMin,).toBe(6,);
     expect(ctx.statMax,).toBe(14,);
     expect(ctx.pointBuyCost[14],).toBe(9,);
+    expect(ctx.configLoaded,).toBe(true,);
+  });
+
+  test("starts unconfigured and ignores nudges until loaded", async () => {
+    const ctx = Object.create(statAllocation,) as StatAllocationState;
+    ctx.statMin = null;
+    ctx.statMax = null;
+    ctx.budget = null;
+    ctx.configLoaded = false;
+    ctx.stats = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, };
+
+    expect(ctx.budgetRemaining(),).toBe(0,);
+    ctx.nudge("str", 1,);
+    expect(ctx.stats.str,).toBe(10,);
   });
 
   test("surfaces config load failure", async () => {
