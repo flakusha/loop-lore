@@ -11,6 +11,7 @@ import type { ChatKey, } from "../../crypto/chat-keys";
 import { ActorType, ActorVisibility, AssetLinkEntity, AssetVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
+import { isEncryptedAsset, } from "../encryption";
 import { getAssetFilePath, } from "./file-system";
 import type { AssetRecord, } from "./types";
 
@@ -71,7 +72,7 @@ export async function getAssetData(
   const fileData = readFileSync(filePath,);
 
   // If asset is encrypted, decrypt it (per-asset HKDF subkey derives from chatKey + assetId)
-  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
+  if (isEncryptedAsset(asset,)) {
     if (!chatKey) {
       throw new Error("Chat key required to decrypt encrypted asset",);
     }

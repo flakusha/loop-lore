@@ -102,6 +102,22 @@ export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAsset
     },);
   }
 
+  // The thumbnail is a second file of the same asset; leaving it behind
+  // orphans a derivative on disk (and, for an encrypted asset, a plaintext
+  // copy of the image). Same warn-on-failure contract as the raw unlink: a
+  // failed unlink must not fail the delete.
+  if (asset.thumbnail_path) {
+    try {
+      deleteFile(uploadDir, asset.thumbnail_path,);
+    } catch (error: unknown) {
+      getLog()?.warn("asset thumbnail unlink failed after row deletion", {
+        assetId,
+        thumbnailPath: asset.thumbnail_path,
+        error: error instanceof Error ? error.message : String(error,),
+      },);
+    }
+  }
+
   // Delete derivatives after the raw record is gone (recursive, depth-bounded
   // by the link structure: derivatives never link to other derivatives).
   for (const derivative of derivatives) {

@@ -13,7 +13,9 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
+import { getChildLogger, } from "../logger";
 import { forbiddenResponse, notFoundResponse, } from "../routes/http-utils";
+import { isEncryptedAsset, } from "./encryption";
 import { serveFile, } from "./serve-file";
 import { canAccessAsset, getAsset, getAssetFilePath, } from "./service";
 import type { AssetRecord, } from "./service";
@@ -49,6 +51,14 @@ export interface ServeCompressedOpts {
 
 interface ResolvedAsset {
   asset: AssetRecord;
+}
+
+/**
+ * Lazily resolve the module logger (null before logger init).
+ * @returns the cached child logger, or null outside test/logger contexts
+ */
+function getLog() {
+  return getChildLogger("assets/serve-handlers",);
 }
 
 /**
@@ -190,6 +200,16 @@ export async function handleServeCompressed({
   },);
 
   if (resolved instanceof Response) { return resolved; }
+
+  // Encrypted assets are refused on the preview path. The variant on disk is
+  // either a plaintext thumbnail or ciphertext, and this endpoint never
+  // receives a chat id, so it can neither decrypt nor safely expose either.
+  // `/raw` is the encrypted-aware endpoint. The guard sits AFTER the access
+  // check, so it cannot become an existence oracle for unauthorized callers.
+  if (isEncryptedAsset(resolved.asset,)) {
+    getLog()?.warn("encrypted asset preview refused", { assetId, variant, },);
+    return new Response("Encrypted asset preview requires the raw endpoint", { status: 400, },);
+  }
 
   const fullPath = resolveCompressedVariantPath({
     uploadDir,

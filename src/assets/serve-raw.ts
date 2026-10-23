@@ -14,6 +14,7 @@ import { IMMUTABLE_CACHE_MAX_AGE, } from "../config/constants";
 import { deriveChatKeyForChat, getSmk, } from "../crypto";
 import { getChildLogger, } from "../logger";
 import { notFoundResponse, } from "../routes/http-utils";
+import { isEncryptedAsset, } from "./encryption";
 import { serveFile, } from "./serve-file";
 import { resolveForServe, type ServeRawOpts, } from "./serve-handlers";
 import { getAssetData, getAssetFilePath, } from "./service";
@@ -60,7 +61,7 @@ export async function handleServeRaw({
 
   const { asset, } = resolved;
 
-  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
+  if (isEncryptedAsset(asset,)) {
     try {
       const smk = getSmk();
       if (!smk || !chatId) {
@@ -132,7 +133,7 @@ export async function handleDownload({
   const { asset, } = resolved;
   const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_",);
 
-  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
+  if (isEncryptedAsset(asset,)) {
     try {
       const smk = getSmk();
       if (!smk || !chatId) {
