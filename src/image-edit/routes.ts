@@ -305,5 +305,11 @@ export function imageEditRoutes(opts: { database: Kysely<DB> }, prefix = "/api",
         userId: auth.userId ?? undefined,
         userRole: auth.userRole ?? null,
       }, ctx.body as ImageEditRunBodyT,);
-    }, { body: ImageEditRunBody, },);
+    }, {
+      body: ImageEditRunBody,
+      // The summary and the tag are what the generated OpenAPI document
+      // publishes for this route; without them the served reference carries a
+      // bare path and a body schema nobody can place.
+      detail: { summary: "Run a workflow template", tags: ["Image Edit",], },
+    },);
 }
