@@ -21,6 +21,7 @@ import {
   insertChats,
   insertUsers,
 } from "../../test-utils/insert-helpers.js";
+import { answerQuestion, } from "../questions/index.js";
 import {
   autoAllocateAsi,
   autoResolveIfAutonomous,
@@ -190,5 +191,28 @@ describe("resolveLevelUpDecision", () => {
     const actor = await seedActor("No Opinion",);
     const resolution = await resolveLevelUpDecision(db, actor,);
     expect(resolution.spends,).toHaveLength(2,);
+  });
+});
+
+describe("answerQuestion level_up wiring", () => {
+  test("stage → answer asi:str+2 spends the budget and marks answered", async () => {
+    const actor = await seedActor("Answer Str",);
+    const questionId = await stageLevelUpDecision(db, actor, chatId,);
+    const answered = await answerQuestion(db, questionId!, { optionId: "asi:str+2", }, actor,);
+    expect(answered.status,).toBe("answered",);
+    expect(answered.selectedOptionId,).toBe("asi:str+2",);
+    expect(answered.effectsApplied,).toContain("asi:str+2",);
+    const stats = await rowOf(actor,);
+    expect(stats.pending_asi,).toBe(0,);
+    expect(stats.str,).toBe(12,);
+  });
+
+  test("stage → answer asi:auto spends the whole budget via affinity", async () => {
+    const actor = await seedActor("Answer Auto",);
+    const questionId = await stageLevelUpDecision(db, actor, chatId,);
+    const answered = await answerQuestion(db, questionId!, { optionId: "asi:auto", }, actor,);
+    expect(answered.status,).toBe("answered",);
+    expect((await rowOf(actor,)).pending_asi,).toBe(0,);
+    expect(answered.effectsApplied.length,).toBeGreaterThan(0,);
   });
 });
