@@ -1687,7 +1687,7 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2685 | 1015 | 44 | 903 | 32 | 0 | 691 |
+| (untagged) | 2685 | 1019 | 44 | 899 | 32 | 0 | 691 |
 
 ## By epic × status
 
@@ -1771,7 +1771,7 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | epic-chat-lifecycle-moderation, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-privacy | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
 | epic-chat-product-features | 36 | 10 | 0 | 23 | 0 | 0 | 3 |
-| epic-chat-rich-engagement | 6 | 1 | 0 | 4 | 0 | 0 | 1 |
+| epic-chat-rich-engagement | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
 | epic-chat-transfer-location | 12 | 3 | 2 | 5 | 1 | 0 | 1 |
 | epic-chat-variants-taxonomy | 13 | 13 | 0 | 0 | 0 | 0 | 0 |
 | epic-cicd-pipeline | 9 | 0 | 0 | 1 | 0 | 0 | 8 |

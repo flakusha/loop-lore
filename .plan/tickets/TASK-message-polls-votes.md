@@ -3,7 +3,7 @@
 
 # TASK: Message polls / votes
 
-**Status:** Not Started
+**Status:** Done
 **Summary:** (none captured)
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
@@ -31,3 +31,5 @@ false positives). Group + RPG party decisions currently happen in prose.
 
 - Single/multi vote round-trips; double-vote dedups; closed → 409.
 - RPG party-vote can reuse poll_id (no second voting system).
+
+**Resolved:** 2026-10-23 registry-driven close: git issue f5b705b (registry tip: 0326479c0 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-MESSAGE-POLLS-VOTES done)
