@@ -3,7 +3,7 @@
 
 # FEAT: Progression API and character menu surface for XP, level, and stats in world
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** REST routes shipped on dev — `POST /api/rpg/progression/:actorId/award` :141, `/asi` :170, `/level-up` :199 in `src/routes/rpg/progression.ts`; blocked on sibling F2 character-menu/panel buttons (tree `xp-progression-surface`, unlanded); verified 2026-10-23
 **Priority:** high
 **Effort:** Medium
@@ -24,3 +24,5 @@ Expose progression state in world context: current level, xp, xp_to_next, pendin
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue a300746 (registry tip: a7814a064 Konstantin Fedotov Close issue)

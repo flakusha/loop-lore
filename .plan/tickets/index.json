@@ -20290,7 +20290,7 @@
       "skills"
     ],
     "source": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-INVENTORY-MANAGEMENT-UI": {
     "epic": "epic-inventory-ui",
@@ -21040,7 +21040,7 @@
       "world-opt-in"
     ],
     "source": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-PLOT-AUTOPILOT-AI-PROPOSES-NEXT-PLOT-BEATS": {
     "epic": "(none — proposed epic never materialized)",
@@ -21111,7 +21111,7 @@
     "epic": "epic-character-xp-leveling",
     "tags": [],
     "source": ".plan/tickets/FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-PROMPT-LOREBOOK-MARKETPLACE-COMMUNITY-SHARED": {
     "epic": "(none — proposed epic never materialized)",

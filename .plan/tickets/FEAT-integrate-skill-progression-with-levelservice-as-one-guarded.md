@@ -3,7 +3,7 @@
 
 # FEAT: Integrate skill progression with LevelService as one guarded award pipeline
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** character XP (`xp_ledger` + `character_stats`) and skill-row XP (`SkillsService.addXp`, `src/rpg/skills/service/progression.ts:19`) share no award path on dev; work in branch `xp-level-pipeline`; verified 2026-10-23
 **Priority:** medium
 **Effort:** Medium
@@ -25,3 +25,5 @@ Character XP and skill-row XP are disjoint stores with no shared award path or w
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 89fef2a (registry tip: 93d01ea7d Konstantin Fedotov Close issue)
