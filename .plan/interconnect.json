@@ -2494,6 +2494,15 @@
       ]
     },
     {
+      "id": "BUG-chat-sse-shares-generation-rate-bucket",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-chat-sse-shares-generation-rate-bucket.md",
+      "title": "Chat SSE shares generation rate bucket",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "BUG-chat-swipe-index-race",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-chat-swipe-index-race.md",
@@ -3377,6 +3386,17 @@
       "srcRefs": [
         "src/rpg/world-discovery/trade.test.ts",
         "src/rpg/world-discovery/trade.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-egui-sent-message-echo-empty",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-egui-sent-message-echo-empty.md",
+      "title": "egui sent-message echo empty",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/api.rs"
       ],
       "related": []
     },
@@ -5273,6 +5293,15 @@
       "srcRefs": [
         "src/image-edit/routes.coverage.test.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "BUG-image-gen-opens-dead-llm-sse",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-image-gen-opens-dead-llm-sse.md",
+      "title": "Image-gen opens dead LLM SSE",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -9087,6 +9116,18 @@
       "related": []
     },
     {
+      "id": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-tui-blind-to-llm-assistant-turns.md",
+      "title": "TUI blind to LLM assistant turns",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/tui/app-keys.ts",
+        "src/tui/chat/api.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md",
@@ -9442,6 +9483,15 @@
         "src/chat/service/access.ts",
         "src/chat/service/party.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "BUG-web-ui-never-sets-db-idempotencykey",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-web-ui-never-sets-db-idempotencykey.md",
+      "title": "Web UI never sets DB idempotencyKey",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -51706,6 +51756,7 @@
     {
       "path": "src/api.rs",
       "owners": [
+        "BUG-egui-sent-message-echo-empty",
         "TASK-egui-gallery-surface-grid-filters-thumbnails-upload"
       ]
     },
@@ -82380,6 +82431,7 @@
       "path": "src/tui/app-keys.ts",
       "owners": [
         "BUG-tui-app-getlogger-throws-when-running-standalone",
+        "BUG-tui-blind-to-llm-assistant-turns",
         "TASK-tui-fire-and-forget-void-without-catch"
       ]
     },
@@ -82467,6 +82519,7 @@
       "path": "src/tui/chat/api.ts",
       "owners": [
         "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+        "BUG-tui-blind-to-llm-assistant-turns",
         "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
         "BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-",
         "TASK-tui",
@@ -99548,6 +99601,11 @@
       "to": "src/rpg/world-discovery/trade.ts"
     },
     {
+      "from": "BUG-egui-sent-message-echo-empty",
+      "kind": "produces",
+      "to": "src/api.rs"
+    },
+    {
       "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
       "kind": "produces",
       "to": "src/elysia-app.ts"
@@ -105381,6 +105439,16 @@
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "produces",
       "to": "src/tui/chat/types.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "produces",
+      "to": "src/tui/app-keys.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "produces",
+      "to": "src/tui/chat/api.ts"
     },
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
@@ -184836,6 +184904,12 @@
       "via": "src/rpg/world-discovery/trade.ts"
     },
     {
+      "from": "BUG-egui-sent-message-echo-empty",
+      "kind": "sibling",
+      "to": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
+      "via": "src/api.rs"
+    },
+    {
       "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
       "kind": "sibling",
       "to": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
@@ -222704,6 +222778,12 @@
     {
       "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
       "kind": "sibling",
+      "to": "BUG-tui-blind-to-llm-assistant-turns",
+      "via": "src/tui/app-keys.ts"
+    },
+    {
+      "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
+      "kind": "sibling",
       "to": "TASK-adopt-bun-color-for-tui-colors",
       "via": "src/tui/asset-view.ts"
     },
@@ -222838,6 +222918,12 @@
       "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/tui/app.ts; src/tui/asset-view.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
+      "to": "BUG-tui-blind-to-llm-assistant-turns",
+      "via": "src/tui/chat/api.ts"
     },
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
@@ -223120,6 +223206,84 @@
       "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/config/schema/tui.ts; src/config/sections/tui.ts; src/tui/app.ts; src/tui/chat/api.ts; src/tui/chat/index.ts; src/tui/chat/types.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui-api-contract-smoke-tests",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui-chat-picker",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui-dedupe-api-base",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui-fire-and-forget-void-without-catch",
+      "via": "src/tui/app-keys.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui-slash-command-completion",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui-spec-sync",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-update-terminal-ui-spec-to-actual-file-layout",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "epic-harness-integration",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "epic-terminal-ui",
+      "via": "src/tui/chat/api.ts"
     },
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",

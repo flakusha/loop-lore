@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3601
+- tickets: 3606
 - epics: 339
 - src paths owned: 4344
-- edges: produces 11295, consumes 401, sibling 33300, owns 1958, related 1175
+- edges: produces 11298, consumes 401, sibling 33316, owns 1958, related 1175
 
 ## Shared src hubs
 
@@ -54,6 +54,7 @@ output is byte-identical for identical inputs.
 | `src/api-governance/rate-limiting/store.ts` | `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-`, `BUG-rate-limit-in-memory-store-never-evicts-idle-keys`, `epic-api-rate-limiting` |
 | `src/api-governance/telemetry/collector.ts` | `BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa`, `FEAT-feat-rate-limit-per-route-rate-limit-analytics-dashboard`, `TASK-harness-otel-replay`, `TASK-rate-limiting-telemetry`, `epic-api-telemetry` |
 | `src/api-governance/telemetry/tracing.ts` | `TASK-rate-limiting-telemetry`, `epic-api-telemetry` |
+| `src/api.rs` | `BUG-egui-sent-message-echo-empty`, `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` |
 | `src/app.rs` | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m`, `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` |
 | `src/app/register-plugins.ts` | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it`, `BUG-bug-async-result-store-track-never-called-request-results-pi`, `BUG-dual-vn-choices-route-registration-shadows-guarded-route`, `BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop`, `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und`, `BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori`, `BUG-register-plugins-150-references-undefined-chatsectionsroutes`, `BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m`, `FEAT-memory-visualizer-knowledge-graph-over-asset-links`, `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-crafting-stations-execution`, `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag`, `TASK-lora-discovery-application`, `TASK-middleware-global-idempotency-replay-for-re-fired-requests`, `TASK-middleware-idempotency-wire-into-elysia`, `TASK-middleware-in-progress-status-endpoint-for-long-running-requ`, `TASK-skills-routes`, `TASK-story-points-prototype`, `epic-agency-story-points`, `epic-character-growth`, `epic-db-cold-storage-high-perf`, `epic-e2e-integration-testing`, `epic-effect-v4-adoption-evaluation`, `epic-file-splitting` |
 | `src/assets/alpha-detect.ts` | `TASK-assets-has-alpha-column-and-store-computation`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `epic-avatar-alpha-vn-layering` |
@@ -1818,7 +1819,7 @@ output is byte-identical for identical inputs.
 | `src/transport/upgrade.ts` | `BUG-upgrade-connection-metadata-state-lost`, `TASK-057`, `TASK-058`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `epic-transport-expansion` |
 | `src/transport/webtransport.ts` | `epic-embeddable-backend`, `epic-embeddable-engine-game-frontend`, `epic-game-frontend-scenes` |
 | `src/transport/ws.ts` | `BUG-wshandler-flushpending-rebuf-uses-stale-queue-slice-off-by-one`, `BUG-wshandler-send-queues-messages-while-disconnected-but-never-`, `TASK-059`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-federation-peer-workload-wire-endpoints`, `TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3`, `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un`, `epic-embeddable-backend`, `epic-embeddable-engine-game-frontend`, `epic-federation-offload-quotas`, `epic-game-frontend-scenes`, `epic-transport-expansion` |
-| `src/tui/app-keys.ts` | `BUG-tui-app-getlogger-throws-when-running-standalone`, `TASK-tui-fire-and-forget-void-without-catch` |
+| `src/tui/app-keys.ts` | `BUG-tui-app-getlogger-throws-when-running-standalone`, `BUG-tui-blind-to-llm-assistant-turns`, `TASK-tui-fire-and-forget-void-without-catch` |
 | `src/tui/app.test.ts` | `TASK-tui-enabled-config-flag-never-read`, `TASK-tui-shell-testability`, `epic-terminal-ui` |
 | `src/tui/app.ts` | `BUG-assetview-loads-assets-without-auth`, `BUG-tui-app-getlogger-throws-when-running-standalone`, `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `TASK-harness-frontend-consolidation`, `TASK-harness-topic-tui-surface`, `TASK-tui-chat-picker`, `TASK-tui-dedupe-api-base`, `TASK-tui-enabled-config-flag-never-read`, `TASK-tui-fire-and-forget-void-without-catch`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-tui-models-overlay`, `TASK-tui-shell-testability`, `epic-cli-tooling-optique`, `epic-terminal-ui` |
 | `src/tui/asset-view.test.ts` | `BUG-assetview-loads-assets-without-auth`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene` |
@@ -1826,7 +1827,7 @@ output is byte-identical for identical inputs.
 | `src/tui/chat-picker.ts` | `TASK-tui-fire-and-forget-void-without-catch`, `TASK-tui-models-overlay`, `TASK-tui-slash-command-completion`, `epic-terminal-ui` |
 | `src/tui/chat.ts` | `TASK-rigged-model-buffer-render`, `TASK-update-terminal-ui-spec-to-actual-file-layout` |
 | `src/tui/chat/api.test.ts` | `TASK-tui`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene` |
-| `src/tui/chat/api.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m`, `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-`, `TASK-tui`, `TASK-tui-api-contract-smoke-tests`, `TASK-tui-chat-picker`, `TASK-tui-dedupe-api-base`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-tui-slash-command-completion`, `TASK-tui-spec-sync`, `TASK-update-terminal-ui-spec-to-actual-file-layout`, `epic-harness-integration`, `epic-terminal-ui` |
+| `src/tui/chat/api.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `BUG-tui-blind-to-llm-assistant-turns`, `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m`, `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-`, `TASK-tui`, `TASK-tui-api-contract-smoke-tests`, `TASK-tui-chat-picker`, `TASK-tui-dedupe-api-base`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-tui-slash-command-completion`, `TASK-tui-spec-sync`, `TASK-update-terminal-ui-spec-to-actual-file-layout`, `epic-harness-integration`, `epic-terminal-ui` |
 | `src/tui/chat/display.test.ts` | `TASK-adopt-bun-stringwidth-for-tui`, `TASK-tui`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene` |
 | `src/tui/chat/display.ts` | `TASK-adopt-bun-color-for-tui-colors`, `TASK-adopt-bun-stringwidth-for-tui`, `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene`, `TASK-update-terminal-ui-spec-to-actual-file-layout`, `epic-terminal-ui` |
 | `src/tui/chat/index.test.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate`, `TASK-tui-shell-testability` |
@@ -4947,6 +4948,7 @@ output is byte-identical for identical inputs.
 | `BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on` | produces | `src/services/agency/story-points/mutations.ts` | - |
 | `BUG-edgeahead-does-not-validate-location-existence` | produces | `src/rpg/world-discovery/trade.test.ts` | - |
 | `BUG-edgeahead-does-not-validate-location-existence` | produces | `src/rpg/world-discovery/trade.ts` | - |
+| `BUG-egui-sent-message-echo-empty` | produces | `src/api.rs` | - |
 | `BUG-elysia-auth-ts-dead-shim-duplicate-logic` | produces | `src/elysia-app.ts` | - |
 | `BUG-elysia-auth-ts-dead-shim-duplicate-logic` | produces | `src/middleware/auth.test.ts` | - |
 | `BUG-elysia-auth-ts-dead-shim-duplicate-logic` | produces | `src/middleware/auth/authenticate.ts` | - |
@@ -6114,6 +6116,8 @@ output is byte-identical for identical inputs.
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | produces | `src/tui/chat/index.test.ts` | - |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | produces | `src/tui/chat/index.ts` | - |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | produces | `src/tui/chat/types.ts` | - |
+| `BUG-tui-blind-to-llm-assistant-turns` | produces | `src/tui/app-keys.ts` | - |
+| `BUG-tui-blind-to-llm-assistant-turns` | produces | `src/tui/chat/api.ts` | - |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | produces | `src/app.rs` | - |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | produces | `src/build/egui-artifact.ts` | - |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | produces | `src/tui/chat/api.ts` | - |
@@ -21129,6 +21133,7 @@ output is byte-identical for identical inputs.
 | `BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on` | sibling | `TASK-story-points-prototype` | `src/services/agency/story-points.test.ts` |
 | `BUG-earnstorypoints-lost-update-race-and-raw-unique-violation-on` | sibling | `epic-agency-story-points` | `src/services/agency/story-points.test.ts` |
 | `BUG-edgeahead-does-not-validate-location-existence` | sibling | `epic-exploration-discovery` | `src/rpg/world-discovery/trade.ts` |
+| `BUG-egui-sent-message-echo-empty` | sibling | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | `src/api.rs` |
 | `BUG-elysia-auth-ts-dead-shim-duplicate-logic` | sibling | `BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact` | `src/elysia-app.ts` |
 | `BUG-elysia-auth-ts-dead-shim-duplicate-logic` | sibling | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | `src/elysia-app.ts` |
 | `BUG-elysia-auth-ts-dead-shim-duplicate-logic` | sibling | `BUG-fix-auth-make-session-expiry-handling-agree-across-authentic` | `src/middleware/auth/authenticate.ts` |
@@ -27440,6 +27445,7 @@ output is byte-identical for identical inputs.
 | `BUG-tryparseyaml-rejects-any-document-containing-a-brace` | sibling | `epic-character-spec` | `src/characters/parser.ts` |
 | `BUG-tryparseyaml-rejects-any-document-containing-a-brace` | sibling | `epic-import-export-io` | `src/characters/parser.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | `src/config/load/load.ts; src/tui/app.ts` |
+| `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `BUG-tui-blind-to-llm-assistant-turns` | `src/tui/app-keys.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `TASK-adopt-bun-color-for-tui-colors` | `src/tui/asset-view.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `TASK-delete-unreferenced-platform-service-util-modules-dead-barre` | `src/tui/app.ts; src/tui/asset-view.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `TASK-frontend-and-http-utils-type-safety-batch` | `src/config/load/load.ts` |
@@ -27463,6 +27469,7 @@ output is byte-identical for identical inputs.
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `epic-effect-v4-adoption-evaluation` | `src/logger` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `epic-harness-integration` | `src/tui/asset-view.ts` |
 | `BUG-tui-app-getlogger-throws-when-running-standalone` | sibling | `epic-terminal-ui` | `src/tui/app.ts; src/tui/asset-view.ts` |
+| `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `BUG-tui-blind-to-llm-assistant-turns` | `src/tui/chat/api.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | `src/tui/chat/api.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | `src/config/sections/tui.ts; src/tui/chat/api.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `BUG-tui-showerror-desyncs-itemcount-from-messagelist-length` | `src/tui/chat/index.ts` |
@@ -27510,6 +27517,19 @@ output is byte-identical for identical inputs.
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `epic-frontend-html-dedup-htmx-reuse` | `src/frontend/alpine/htmx.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `epic-harness-integration` | `src/tui/chat/api.ts` |
 | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | sibling | `epic-terminal-ui` | `src/config/schema/tui.ts; src/config/sections/tui.ts; src/tui/app.ts; src/tui/chat/api.ts; src/tui/chat/index.ts; src/tui/chat/types.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-tui-api-contract-smoke-tests` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-tui-chat-picker` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-tui-dedupe-api-base` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-tui-fire-and-forget-void-without-catch` | `src/tui/app-keys.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-tui-slash-command-completion` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-tui-spec-sync` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-tui` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `TASK-update-terminal-ui-spec-to-actual-file-layout` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `epic-harness-integration` | `src/tui/chat/api.ts` |
+| `BUG-tui-blind-to-llm-assistant-turns` | sibling | `epic-terminal-ui` | `src/tui/chat/api.ts` |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | `src/tui/chat/api.ts` |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | `src/app.rs` |
 | `BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m` | sibling | `TASK-tui-api-contract-smoke-tests` | `src/tui/chat/api.ts` |
