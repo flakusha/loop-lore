@@ -9,6 +9,7 @@ import { encryptAssetBlob, } from "../../crypto/asset-encryption";
 import { AssetVisibility, StorageBackend, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
+import { isEncryptedAsset, } from "../encryption";
 import { extractImageMetadata, } from "../metadata";
 import { initialAlphaStatus, } from "./alpha-status";
 import { deleteFile, storeFile, } from "./file-system";
@@ -108,8 +109,14 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   // Generate 256px WebP thumbnail for image assets. Best-effort: a sharp
   // decode/encode failure leaves thumbnail_path null, and the serve path
   // falls back to the raw bytes (no request breakage).
+  //
+  // An encrypted asset gets NO thumbnail: the thumbnail is rendered from the
+  // plaintext image and written unencrypted, so a thumbnail on disk would be
+  // a plaintext derivative of a secret image. The serve path refuses previews
+  // for encrypted assets anyway, so skipping the file costs nothing.
   let thumbnailPath: string | null = null;
-  if (input.mimeType.startsWith("image/",)) {
+  const encrypted = isEncryptedAsset({ encryption_tier: encryptionTier, encrypted_key_id: encryptedKeyId, },);
+  if (input.mimeType.startsWith("image/",) && !encrypted) {
     thumbnailPath = await writeThumbnail(uploadDir, id, input.buffer,);
   }
 
