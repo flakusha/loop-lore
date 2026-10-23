@@ -393,6 +393,9 @@ export default [
   {
     files: [
       "src/generation/providers/anthropic/http.ts",
+      "src/generation/providers/deepl/http.ts",
+      "src/generation/providers/google-translate/http.ts",
+      "src/generation/providers/libretranslate/http.ts",
       "src/generation/providers/ollama-native/http.ts",
       "src/generation/providers/openai-compatible/http.ts",
       "src/generation/lora/discovery-http.ts",
