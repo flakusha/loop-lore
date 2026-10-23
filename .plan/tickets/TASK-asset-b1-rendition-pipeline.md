@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
-**Epic:** `epic-asset-platform-capabilities` (Batch B1)
+**Epic:** epic-asset-platform-capabilities
 **Related:** `TASK-asset-b1-blake3-content-store.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

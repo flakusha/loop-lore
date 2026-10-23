@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Small
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 
 **Summary:** Finalize the user-prepared llama-swap sample config against the Part-1 contract in `FEAT-llama-swap-rotation-exclusion-policy` (model set, per-model footprint, reload semantics), then promote it to a tested fixture input for the rotation parser. Until this lands, the rotation/exclusion parser has no target shape. Prerequisite input — not a scheduler build ticket.
 

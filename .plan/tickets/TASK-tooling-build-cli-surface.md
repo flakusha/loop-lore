@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-external-tooling-build.md
+**Epic:** epic-external-tooling-build
 **Caveats:** `src/cli/parser.ts` re-exports only a specific set of Optique combinators (`argument`, `flag`, `multiple`, `object`, `option`, `optional`, `withDefault`, plus `choice`, `integer`, `string` value parsers) — anything else must be added there first, not imported directly from `@optique/core`. `runScript` exits the process on a parse error or on `--help`, so a script using it cannot be asserted in-process; tests must spawn it as a child, as `scripts/check-changelog.test.ts` already documents.
 
 **Summary:** Wire the build subcommands and every flag through the repo's existing Optique parser, with `--dry-run` and no invented API.

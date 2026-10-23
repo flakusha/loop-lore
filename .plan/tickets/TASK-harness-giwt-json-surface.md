@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** One command usable identically by human (pretty) and agent (`--output json`): thread the flag through read-only issue commands, add `giwt conflicts`, `giwt prs diff/checkout`, `#extid` shorthand. giwt/gh/git do the work; repo adds only formatting.
 **Context:** `index.ts extractOutputFlags` parses `--output simple|pretty|json|jsonl|toml` and `output.ts log()` honors it, but sampled read payloads (`show.ts`, `prs.ts`) go via `console.log` bypassing the envelope. merge/rebase/finalize fail with bare resolve-in-path messages; marker listings exist only ad-hoc (`finalize.ts checkDevMergeable` ls-files --unmerged, `abort.ts` diff-filter=U).
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** (none — hygiene/self-contained)
 **Tags:** security, checker, false-positive
 
 **Summary:**

@@ -9,6 +9,7 @@
 
 
 **Epic:** epic-disease-poison
+**Related:** TASK-nsfw-disease-integration (duplicate pair)
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

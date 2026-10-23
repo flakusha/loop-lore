@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-stills-lifecycle-queue-progress-client.md`, `TASK-minimax-h3-stills-reference-template.md`, `TASK-comfyui-node-id-allocation.md`, `epic-comfyui-first-class-citizen.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

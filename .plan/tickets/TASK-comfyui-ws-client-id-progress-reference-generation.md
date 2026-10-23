@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `epic-comfyui-plugin.md`, `TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md`, `TASK-2026-openwebui-comfyui-websocket-progress.md`, `TASK-comfyui-ws-progress-streaming.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

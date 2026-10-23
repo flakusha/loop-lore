@@ -12,7 +12,8 @@
 **Status Note:** closed via git issue
 **Priority:** medium
 **Effort:** Large
-**Epic:** epic-encryption-foundation
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-encryption-foundation" preserved 2026-10-23; no epic file exists.
 
 ## Summary
 

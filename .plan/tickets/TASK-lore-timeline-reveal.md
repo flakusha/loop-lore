@@ -11,7 +11,7 @@
 
 **Status:** Not Started
 **Priority:** High
-**Epic:** `epic-lore-knowledge.md`
+**Epic:** epic-lore-knowledge
 **Type:** Migration
 
 ## What

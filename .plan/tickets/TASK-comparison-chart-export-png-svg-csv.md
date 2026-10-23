@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
-**Epic:** `epic-technical-comparison-charts`
+**Epic:** epic-technical-comparison-charts
 **Related:** `TASK-comparison-metric-collection-and-charts.md`, `TASK-comparison-grid-frontend.md`, `TASK-vector-gen-svg-serve-safety.md`, `TASK-svg-upload-leads-to-stored-xss.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

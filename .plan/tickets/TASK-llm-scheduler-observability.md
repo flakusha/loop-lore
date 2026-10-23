@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 **Summary:** Emits scheduler state onto the existing telemetry surface — queue depth, wait time, admission decisions, and llama-swap rotation events — so a scheduling change is diagnosable from telemetry rather than from a stopwatch.
 **Context:** Without this, every later ticket in the epic lands unobservable. A scheduler that reorders traffic is precisely the kind of change that produces "the app feels slow" reports with no signal to explain them.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

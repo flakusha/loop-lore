@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
-**Epic:** `epic-technical-comparison-charts`
+**Epic:** epic-technical-comparison-charts
 **Related:** `TASK-comparison-set-variant-data-model.md`, `TASK-comparison-set-routes-crud-ownership-validation.md`, `TASK-comparison-seed-parameter-lock-and-rerun.md`, `TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

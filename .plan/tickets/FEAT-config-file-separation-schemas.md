@@ -13,7 +13,7 @@
 **Priority:** High
 **Tags:** config, schemas, validation
 **Assignee:**
-**Epic:** EPIC-2026-39 (Config File Separation)
+**Epic:** epic-config-file-separation
 
 ## Description
 

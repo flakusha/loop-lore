@@ -12,6 +12,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Epic:** epic-enemies-monsters
+**Related:** TASK-enemies-monsters-systems (duplicate pair)
 
 ## Summary
 

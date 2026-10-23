@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** Research Task
 **Tags:** research, characters, personality, companion, memory
-**Epic:** epic-character-core-system (research sub-area)
+**Epic:** epic-character-core-system
 **Related:** .tmp/character-template-gap-analysis.md, TASK-char-template-full-model-coverage
 
 ## Summary

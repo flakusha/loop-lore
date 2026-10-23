@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-2d-sprite-world
 **Summary:** Enforce zone adjacency on movement via validated connections graph.
 **Context:** epic-2d-sprite-world decision 1; getLocationConnections is placeholder.
 **Acceptance Criteria:** Movement + procgen read the connections graph.

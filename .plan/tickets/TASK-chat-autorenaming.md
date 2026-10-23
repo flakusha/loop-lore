@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** Low
 **Effort:** Low
-**Epic:** Epic 36 (Chat Lifecycle)
+**Epic:** epic-chat-lifecycle-moderation
 **Tags:** chat, rename, llm, ux
 **Spec:** `docs/frontend/chat/overview.md` (Chat Data Model)
 

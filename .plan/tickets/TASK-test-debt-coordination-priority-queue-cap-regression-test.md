@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** research-agency-quality
+**Epic:** epic-research-agency-quality
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Summary:**

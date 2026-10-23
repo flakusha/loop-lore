@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** achievements
+**Epic:** epic-rpg-content-systems
 **Tags:** achievements, db-types, enum-consolidation, recovery
 
 **Summary:** Revival ticket for the achievement enum code that was dropped from stash@{2} during the 2026-09-26 stash cleanup. The original patch (reverted in commit a5e333bb0 "revert(achievements): revert AchievementCategory + AchievementTier") added a 6-value duplicate enum to src/db/enums-story/rpg.ts that collided with the 8-value service-layer enum in src/rpg/achievements/service/types.ts.

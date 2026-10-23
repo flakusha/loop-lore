@@ -9,7 +9,8 @@
 **Summary:** Full Moderation System (Review Queue, Reports, Mod Role)
 **Context:** Epic proposed:epic-admin-moderation; tags moderation, admin.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-admin-moderation
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-admin-moderation" preserved 2026-10-23; no epic file exists.
 **Tags:** moderation, admin
 
 ## Summary

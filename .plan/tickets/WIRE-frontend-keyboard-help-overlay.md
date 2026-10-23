@@ -11,7 +11,8 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Small
-**Epic:** `epic-frontend-keynav-mobile`
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "`epic-frontend-keynav-mobile`" preserved 2026-10-23; no epic file exists.
 **Depends on:** `WIRE-frontend-keyboard-navigation-global-keymap.md`
 
 ## Summary

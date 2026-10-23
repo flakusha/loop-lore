@@ -6,7 +6,8 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-local-multi-instance-federation
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-local-multi-instance-federation" preserved 2026-10-23; no epic file exists.
 
 **Summary:** Call `fanOutContent` after a chat message persists so the mesh actually has a sender.
 

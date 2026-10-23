@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** byok-local-models
+**Epic:** epic-byok-local-models
 **Tags:** frontend, gguf, byok
 
 **Summary:**

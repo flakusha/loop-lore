@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** character-spec
+**Epic:** epic-character-spec
 
 **Summary:**
 

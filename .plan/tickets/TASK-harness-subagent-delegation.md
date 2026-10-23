@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** `delegate_task({goal|tasks[]})` with list/steer/stop, background + no-poll discipline, per-task schemas, depth-derived roles + budgets — layered ABOVE TurnManager/turn-selector, never a parallel scheduler.
 **Context:** No subagent spawn/delegate/reap infra exists. Reuse: `workflow-session-store.ts` + `src/async/store.ts` (persistence), `tool-executor.ts` + event bus (execution), `pluginAgentRoleSection` (role prompt). Shapes: hermes `delegate_tool` (groups, steer-queue merge, credential lease, leaf-vs-orchestrator depth, max_concurrent_children, interrupt propagation) + opencode `tool/task.ts` (tasks[] batch, resumable task_id, `<task state><summary><result>` XML envelope).
 **Acceptance Criteria:** See ## Acceptance Criteria below.

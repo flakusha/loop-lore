@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** actors
+**Epic:** epic-actors
 
 **Summary:**
 

@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Scope extension 2026-10-23 (plan/epic audit + assistant integration review):**

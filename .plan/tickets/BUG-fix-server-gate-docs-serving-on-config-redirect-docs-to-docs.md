@@ -8,7 +8,7 @@
 **Priority:** low
 **Effort:** Medium
 **Caveats:** stale state — the docs gate now reads the resolved config (docs.enabled) while src/routes/views/layout.ts still reads process.env.DOCS_ENABLED directly, so a config-file-only change to docs.enabled can leave the sidebar link and the served docs disagreeing
-**Epic:** server-hardening
+**Epic:** epic-server-lifecycle-hardening
 
 **Summary:**
 

@@ -12,7 +12,7 @@
 **Status Note:** closed via git issue
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-memory-systems
+**Epic:** epic-memory-profiling-budgets
 
 **Summary:**
 Memory selection UI: mid-chat panel, pinning, context window integration. From `epic-memory-systems.md`.

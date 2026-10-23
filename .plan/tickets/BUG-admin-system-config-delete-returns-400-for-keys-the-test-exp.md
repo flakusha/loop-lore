@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-frontend-admin
 **Issue:** d69dc94
 
 **Summary:**

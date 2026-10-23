@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-rpg-mechanics
 
 **Summary:** (see ## Summary below)
 **Context:** (see ## Summary — same block)

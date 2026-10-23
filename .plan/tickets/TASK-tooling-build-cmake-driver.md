@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-external-tooling-build.md
+**Epic:** epic-external-tooling-build
 **Caveats:** `--config Release` is only meaningful for multi-config generators; it is harmless for single-config ones but duplicating `CMAKE_BUILD_TYPE` and `--config` is redundant, so set the build type once via `CMAKE_BUILD_TYPE`. CUDA and HIP configure steps invoke compiler probes that are unrunnable on this host, so any test around those cells asserts the emitted argv only.
 
 **Summary:** Drive cmake configure, build, and install through Bun's `$`, with per-variant build trees and a memory-bounded default parallelism.

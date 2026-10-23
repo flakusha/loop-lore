@@ -12,6 +12,7 @@
 **Status Note:** plain-run failures eliminated 2026-09-08; coverage-mode + gate-env verification pending
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-testing-qa
 
 ## Summary
 

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** sam3-segmentation-integration
+**Epic:** epic-sam3-segmentation-integration
 **Tags:** sprite-pipeline, avatar, vn
 **Depends on:** `TASK-matting-concept-prompt-contract` + one path (`TASK-comfyui-sam3-concept-mask-template` or `TASK-sam3-direct-provider-via-meta-model-api`)
 **Related:** TASK-matting-fallback-aux-pipeline-job.md, TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md, TASK-comfyui-first-class-sprite-pipeline-avatar-matting-workflows.md, epic-avatar-regeneration-control.md, epic-2d-sprite-world.md, epic-avatar-alpha-vn-layering.md

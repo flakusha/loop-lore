@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** model-metadata-read
+**Epic:** epic-model-metadata-read
 **Tags:** models, classification
 
 **Summary:**

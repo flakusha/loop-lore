@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small-Medium
-**Epic:** `epic-assistant-generation-extensions` (Phase 1)
+**Epic:** epic-assistant-generation-extensions
 **Related:** `TASK-assistant-generation-extensions.md`, `epic-llama-swap.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

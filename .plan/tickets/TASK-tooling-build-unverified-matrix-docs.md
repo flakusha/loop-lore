@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small
-**Epic:** epic-external-tooling-build.md
+**Epic:** epic-external-tooling-build
 **Caveats:** CI exercise is a weak signal, not proof — CI compiles far more than it runs, so a broken flag can still pass a compile-only job. CUDA, ROCm, and SYCL have no arm64 job in either project, so those arch cells have no upstream support at all. Lower-confidence cells (musa, openvino, hexagon, zdnn, virtgpu, et, cann) are declared but never referenced by any workflow. A prefix that has been installed into repeatedly holds stale versioned libraries, so any documented artifact-discovery instruction must use the unversioned symlink.
 
 **Summary:** Publish the accelerator × architecture matrix with per-cell provenance, CI evidence, and an explicit UNVERIFIED label on everything not executed.

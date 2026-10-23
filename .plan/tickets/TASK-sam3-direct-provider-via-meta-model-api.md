@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** sam3-segmentation-integration
+**Epic:** epic-sam3-segmentation-integration
 **Tags:** segmentation, provider-registry
 **Depends on:** `TASK-sam3-feasibility-probe-meta-model-api-vs-comfyui-custom-node`, `TASK-matting-concept-prompt-contract`
 **Related:** epic-byok-api-keys.md, epic-byok-local-models.md (local-weights boundary), TASK-sam3-mask-cache-and-reuse.md

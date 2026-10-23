@@ -8,7 +8,7 @@
 **Priority:** high
 **Effort:** Medium
 **Caveats:** authorization — every award site (routes, legs, seduction/encounter awarders) grants regardless of `worlds.rpg_xp` until this lands
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Tags:** rpg, xp, world-opt-in
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (the award API this guards), src/rpg/service/world-gate.ts (the gate being enforced), .plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md (per-mechanic opt-in config origin)
 

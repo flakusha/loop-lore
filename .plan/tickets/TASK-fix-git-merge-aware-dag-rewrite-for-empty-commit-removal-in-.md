@@ -20,6 +20,7 @@
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
+**Epic:** (none — hygiene/self-contained)
 **Tags:** git, tooling, history
 
 ## Problem Statement

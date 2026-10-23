@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-blog-system.md`
+**Epic:** epic-blog-system
 **Related:** `TASK-blog-publish-unit-to-post-bridge.md`, `TASK-blog-unit-scheduled-serialization.md`, `src/routes/blog/index.ts`, `src/routes/v1/content-surface.ts`, `src/db/schema-blog.ts`, `src/rpg/blog/service/posts.ts`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** api-rate-limiting
+**Epic:** epic-api-rate-limiting
 **Related:** `epic-runtime-memory-state-hygiene.md` (cross-cutting unbounded-state class), `BUG-rate-limit-in-memory-store-never-evicts-idle-keys.md` (Done sibling)
 **Tags:** integrations
 
