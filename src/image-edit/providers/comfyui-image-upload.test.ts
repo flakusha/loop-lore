@@ -11,6 +11,18 @@
  * asset id, and the provider resolves it through the ownership check. A path
  * on this machine is never read — the parameter is caller-controlled, so
  * reading it would hand any caller the bytes of any file the server can read.
+ *
+ * Resource contract — what this file owns, and what it hands back:
+ * - a private temp directory (`mkdtempSync`, one per file) that holds the
+ *   seeded asset bytes; removed in `afterAll`.
+ * - a private in-memory database (`createTestDb`), installed as the
+ *   process-global test database for this file only and cleared again in
+ *   `afterAll`, so a failed test cannot leave it behind for the next file.
+ * - an injected ComfyUI client, not a `globalThis.fetch` stub: another test
+ *   file in this directory stubs the global too, and under a parallel run the
+ *   two stubs overwrite each other.
+ * - the `uploads`/`submitted` recorders are file-local and reset at the start
+ *   of every test that reads them, so no test depends on the order it ran in.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
