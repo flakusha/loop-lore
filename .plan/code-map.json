@@ -998,6 +998,10 @@
   "src/api.rs": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-egui-sent-message-echo-empty.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
     }
   ],
@@ -53506,6 +53510,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-blind-to-llm-assistant-turns.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
     }
   ],
@@ -53713,6 +53721,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-blind-to-llm-assistant-turns.md"
     },
     {
       "kind": "ticket",
