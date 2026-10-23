@@ -91,6 +91,8 @@ export const MessagesQuery = t.Object({
   page: t.Optional(t.Numeric({ minimum: 1, default: 1, },),),
   pageSize: t.Optional(t.Numeric({ minimum: 1, maximum: 200, default: 20, },),),
   parentId: t.Optional(t.String(),),
+  /** Opt-in read-time translation negotiation (locale or "auto"). */
+  translateLocale: t.Optional(t.String({ minLength: 1, maxLength: 35, },),),
 },);
 
 export const MessageSearchQuery = t.Object({

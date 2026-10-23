@@ -25,6 +25,12 @@ import {
 import { resolveMessageContentForRender, } from "./render-message-content";
 import type { HandlerOpts, } from "./types";
 
+import { detectLocale, } from "../../middleware/i18n";
+import { attachMessageTranslations, resolveAutoDisplayLocale, } from "./list-translations";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * @param opts
  * @param prefix
@@ -49,7 +55,13 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         const access = await checkChatAccess(database, chatId, userId, userRole,);
         if (!access.ok) { return notFound(ctx.t?.("messages.chatNotFound",) ?? "Chat not found",); }
 
-        const query = ctx.query as { page?: number; pageSize?: number; parentId?: string };
+        const query = ctx.query as {
+          page?: number;
+          pageSize?: number;
+          parentId?: string;
+          translateLocale?: string;
+        };
+
         const page = query.page ?? 1;
         const pageSize = query.pageSize ?? 20;
 
@@ -84,6 +96,33 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
             error instanceof Error ? error : undefined,
             { chatId, },
           );
+        }
+
+        // Read-time translation negotiation (FEAT-language-selection-three-level):
+        // opt-in `?translateLocale=<locale|auto>` attaches the matching
+        // message_translations row per message (ONE inArray select). Default
+        // payloads (no param) are unchanged, and a negotiation failure never
+        // costs the reader their message page.
+        if (query.translateLocale) {
+          try {
+            const target = query.translateLocale === "auto"
+              ? await resolveAutoDisplayLocale(database, {
+                chatId,
+                userId,
+                uiLocale: detectLocale(ctx.request,),
+              },)
+              : query.translateLocale;
+
+            if (target) {
+              await attachMessageTranslations(database, enriched, target,);
+            }
+          } catch (error) {
+            getChildLogger("routes.messages.read",)?.error(
+              "Failed to attach message translations",
+              error instanceof Error ? error : undefined,
+              { chatId, },
+            );
+          }
         }
 
         return jsonPaginated({ data: enriched, total, page, pageSize, },);
