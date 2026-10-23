@@ -12,10 +12,14 @@
 -->
 <div
   x-data="actorWardrobeFactory(actorId,)"
-  x-init="setActorId(actorId,); load()"
+  x-init="setActorId(actorId,)"
   class="wardrobe-panel"
 >
-  <h3>Wardrobe</h3>
+  <!--
+    The mount tag (and its x-init) is stripped when the panel is inlined
+    into the character page, so the load trigger lives on this heading.
+  -->
+  <h3 x-init="load()">Wardrobe</h3>
 
   <button type="button" :disabled="loading" @click="load()">Refresh</button>
   <p x-show="loading">Loading…</p>

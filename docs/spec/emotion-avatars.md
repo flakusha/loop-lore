@@ -177,8 +177,8 @@ never leaks into another's.
 - `seedStrategy: "reuse"` re-runs the batch under the recorded seed of the
   scope verbatim — the reproduction case. Any other strategy (including
   `"random"`) draws a fresh random base seed.
-- The actor-level batch endpoint and the wardrobe generation endpoints accept
-  an explicit `seed` as well.
+- The actor-level batch endpoint accepts an explicit `seed` and a `seedStrategy`
+  as well; the wardrobe generation endpoints accept an explicit `seed`.
 
 ### Provider caveat
 
@@ -186,4 +186,37 @@ The seed reaches the provider as its `seed` option. The `sdcpp` and `comfyui`
 engines forward it; the `openai` and `sdapi` engines ignore it and let the
 provider choose the noise. With those engines the recorded seed still pins the
 run's seed value, but it does not reproduce the same image.
+
+## 9. Panel UI
+
+The character edit page's "Sub-resources" section carries the emotion-avatar
+panel (`src/components/character/emotion-avatars-panel.html`, driven by the
+`actorEmotionAvatarsFactory` Alpine plugin). It exposes:
+
+- **Base avatar id** — the avatar the variants derive from.
+- **Emotion picker** — every emotion type (`EmotionType`), not a hard-coded
+  subset. The selection is the batch subset and the scope of "Regenerate
+  selected"; an empty selection cannot start a run.
+- **Prompt prefix / negative prompt** — optional prompt fragments.
+- **Base seed** — an optional explicit base seed plus a "reuse the seed
+  recorded for this actor" toggle. Reuse wins over the seed field (the field
+  is disabled while reuse is on): reuse reproduces the recorded run, an explicit
+  seed pins a new one, neither draws a random base.
+- **Start batch generation** — a fresh batch; its variants are appended.
+- **Regenerate all** — re-rolls every base (outfitless) emotion slot
+  (`replace: "slot"`): the emotion→avatar binding is re-pointed and the old
+  asset is cleaned up.
+- **Regenerate selected** — the same, restricted to the picked emotions.
+- **Current emotion avatars** — the actor's base emotion variants with a
+  per-variant "Re-roll" button (one emotion, `replace: "slot"`).
+
+Outfit-scoped slots are not re-rollable from this panel: they belong to the
+wardrobe panel (`POST /actors/:actorId/wardrobe/:itemId/emotion-avatars/single`).
+
+Every run reports progress in the panel's job table (SSE stream, polling
+fallback), and the variant grid reloads when a job reaches a terminal state.
+
+An empty `emotions` list means "no subset" everywhere: the service falls back
+to the default emotion set instead of running a zero-slot batch that would
+report `completed` without producing an avatar.
 
