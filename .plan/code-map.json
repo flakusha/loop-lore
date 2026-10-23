@@ -12464,10 +12464,6 @@
   "src/components/text-toolbar.html": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-shared-text-surface-toolbar.md"
     }
   ],
@@ -24823,10 +24819,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-enhance-any-text-surface.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md"
     }
   ],
   "src/frontend/alpine/text-enhance.ts": [
@@ -24837,10 +24829,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-enhance-any-text-surface.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-llm-enhance-outside-the-chat-composer.md"
     }
   ],
   "src/frontend/alpine/text-toolbar.ts": [
