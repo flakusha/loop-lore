@@ -24,6 +24,8 @@ export interface ModelCapabilityRow {
   owned_by: string | null;
   user_override: number; // 0/1 boolean
   notes: string | null;
+  /** Admin-authored native locale (rescan-protected — never auto-updated). */
+  native_locale: string | null;
   last_seen: string;
   created_at: string;
   updated_at: string;
@@ -45,4 +47,6 @@ export interface ResolvedModelCapabilities {
   lastSeen: string;
   userOverride: boolean;
   notes: string | null;
+  /** Effective native locale override (null = not set by an admin). */
+  nativeLocale: string | null;
 }

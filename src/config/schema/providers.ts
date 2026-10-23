@@ -35,6 +35,8 @@ export interface ProviderInstanceConfig {
   allowUserApiKey: boolean;
   /** Extra headers sent with every request */
   headers?: Record<string, string>;
+  /** Operator-declared native locale of this provider's models (LOCALE_REGISTRY code) */
+  locale?: string;
   /** Known models (name → limits) */
   models: Record<string, ModelLimits>;
 }
@@ -135,6 +137,8 @@ export interface BedrockProviderConfig {
   retries: number;
   /** Whether user API keys can override */
   allowUserApiKey: boolean;
+  /** Operator-declared native locale of these models (LOCALE_REGISTRY code) */
+  locale?: string;
   /** Known models (name → limits) */
   models: Record<string, ModelLimits>;
 }

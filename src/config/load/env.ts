@@ -3,6 +3,7 @@
 
 // src/config/load/env.ts — Environment variable application
 
+import { isLocale, } from "../../i18n/locale-registry";
 import type { Config, ProviderInstanceConfig, } from "../schema";
 import { coerceValue, getTypeOfPath, setByPath, } from "./parse";
 
@@ -79,6 +80,7 @@ const ENABLED_VALUES = new Set(["true", "1", "on", "yes",],);
 /**
  * Create a default provider instance from LLM_PROVIDER_* env vars
  * @param config
+ * @throws {Error} when LLM_PROVIDER_LOCALE is not a known LOCALE_REGISTRY code
  * @returns void
  */
 export function applyProviderEnvVars(config: Config,): void {
@@ -89,6 +91,16 @@ export function applyProviderEnvVars(config: Config,): void {
   // denies, so a typo fails closed rather than silently admitting a user's
   // credential to the provider.
   const allowUserKey = process.env.LLM_PROVIDER_ALLOW_USER_KEY?.trim().toLowerCase();
+
+  // FEAT-model-native-locale-config: an operator-declared native locale must
+  // be a known LOCALE_REGISTRY code; a typo fails config load (loader throw
+  // convention) instead of silently degrading translation targets.
+  const locale = process.env.LLM_PROVIDER_LOCALE;
+  if (locale !== undefined && !isLocale(locale,)) {
+    throw new Error(
+      `LLM_PROVIDER_LOCALE: unknown locale "${locale}". Supported: en, es, fr, de, ja, ko, zh, pt, ru, ar`,
+    );
+  }
 
   const provider: ProviderInstanceConfig = {
     name: process.env.LLM_PROVIDER_NAME ?? "default",
@@ -103,6 +115,7 @@ export function applyProviderEnvVars(config: Config,): void {
       ? 3
       : Number(process.env.LLM_PROVIDER_RETRIES,),
     allowUserApiKey: allowUserKey === undefined ? true : ENABLED_VALUES.has(allowUserKey,),
+    locale,
     models: {},
   };
 
