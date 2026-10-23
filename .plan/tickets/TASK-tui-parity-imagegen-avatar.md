@@ -3,7 +3,7 @@
 
 # TASK: TUI parity — image-gen + avatar attach
 
-**Status:** Not Started
+**Status:** Done
 **Summary:** Nearest-value TUI parity: image generation action + asset attach/upload in the TUI.
 **Context:** Gap 2. TUI (`src/tui/`) is chat-blocking-POST + read-only asset sidebar; Web UI already has `POST /api/v1/generation/image` and asset link/upload flows.
 **Acceptance Criteria:** TUI can trigger image-gen and attach/upload an avatar without leaving the terminal.
@@ -30,3 +30,9 @@ TUI has no image/caption generation calls, asset sidebar is GET-only (`src/tui/a
 ## Non-goals
 
 - TUI streaming chat (blocking POST stays), characters/worlds surfaces, full Web UI parity.
+
+## Resolution
+
+Implemented. `generateImage` / `uploadAsset` in `src/tui/chat/api.ts` (+ `handleSend` optional `attachments`), `AssetView.attachAsset` + Enter-to-attach, `/image` + `/upload` submit interception with in-transcript result lines, thin widget delegates. Flow per acceptance: `/image <prompt>` generates (server links output to the chat) -> F2 sidebar shows it -> Enter attaches -> `handleSend(text, [{ assetId }])` sends with attachment. Tests: new `src/tui/chat/imagegen.test.ts` (9 tests) + 3 `attachAsset` tests; 52 pass across the 5 touched files, full admin suite green (268 pass). One pre-existing failure in `send-timeout.test.ts` ("passes the host's sendTimeoutMs") reproduces at HEAD — the stub omits `assistantMessage`, so `handleSend` takes its documented `loadMessages` refresh path (2 calls, not 1); left untouched as out of scope.
+
+Remaining TUI gaps as Not Started follow-ups (no code, per ticket): characters/worlds surfaces, blocking chat POST (streaming), admin limited to harness + model-roles. No local file picker: `/upload <path>` takes a typed path instead (blessed prompt widget deferred).

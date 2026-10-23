@@ -33,14 +33,24 @@ export function setFetch(fn: typeof _realFetch,): void {
   _fetch = fn;
 }
 
+/** Attachment descriptor for a message send, mirroring `MessageCreateBody`. */
+export interface MessageAttachment {
+  assetId: string;
+}
+
 /**
  * Send message via POST /api/chats/:id/messages.
  * Shows typing indicator, adds user message + assistant auto-reply.
  * @param host
  * @param text
+ * @param attachments - optional asset ids the sent message carries
  * @returns {Promise<void>}
  */
-export async function handleSend(host: ChatHost, text: string,): Promise<void> {
+export async function handleSend(
+  host: ChatHost,
+  text: string,
+  attachments?: MessageAttachment[],
+): Promise<void> {
   if (!host.chatId) {
     host.showError("No active chat. Create or select a chat first.",);
     return;
@@ -52,7 +62,11 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
   host.showTyping();
 
   try {
-    const bodyResult = safeJsonStringify({ content: text, role: "user", },);
+    const payload = attachments?.length
+      ? { content: text, role: "user", attachments, }
+      : { content: text, role: "user", };
+
+    const bodyResult = safeJsonStringify(payload,);
     const result = await _fetch<{
       id: string;
       assistantMessage?: { id: string; content: string };
@@ -208,5 +222,139 @@ export async function loadCommands(
     return { ok: true, data: result.data.data ?? [], };
   } catch (error: unknown) {
     return { ok: false, error: error instanceof Error ? error.message : String(error,), };
+  }
+}
+
+/**
+ * One generated image, as `handleImageGeneration` shapes it
+ * (`src/generation/image-gen-route.ts` answers `{ data: assets }`).
+ */
+export interface GeneratedAsset {
+  id: string;
+  url: string;
+  filename: string;
+  mimeType: string;
+}
+
+/** Result of an image-generation call. */
+export type ImageGenResult =
+  | { ok: true; assets: GeneratedAsset[] }
+  | { ok: false; error: string };
+
+/** Result of an asset-upload call. */
+export type UploadResult =
+  | { ok: true; assetId: string }
+  | { ok: false; error: string };
+
+/**
+ * Generate an image via POST /api/v1/generation/image.
+ *
+ * The `chatId` is sent so the server links the output to the active chat —
+ * the chat-scoped sidebar picks it up on the next `loadAssets`, no separate
+ * attach step needed for freshly generated images. Timeout is the host's
+ * send timeout: image backends run for minutes, not seconds.
+ * @param host - the chat widget (for its chat id and token)
+ * @param prompt - the image prompt
+ * @returns the generated assets, or the error line to render
+ */
+export async function generateImage(host: ChatHost, prompt: string,): Promise<ImageGenResult> {
+  if (!host.chatId) {
+    return { ok: false, error: "No active chat. Create or select a chat first.", };
+  }
+
+  const trimmed = prompt.trim();
+  if (!trimmed) {
+    return { ok: false, error: "Usage: /image <prompt> — describe the image to generate.", };
+  }
+
+  try {
+    const result = await _fetch<{ data: GeneratedAsset[] }>(
+      `${API_BASE}/api/v1/generation/image`,
+      {
+        method: "POST",
+        auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
+        body: { prompt: trimmed, chatId: host.chatId, },
+        handle401: false,
+        timeout: host.sendTimeoutMs,
+      },
+    );
+
+    if (!result.ok) {
+      return {
+        ok: false,
+        error: result.status !== undefined
+          ? `Image generation failed (HTTP ${result.status})`
+          : `Network error generating image: ${result.error.message}`,
+      };
+    }
+
+    return { ok: true, assets: result.data.data ?? [], };
+  } catch (error) {
+    return { ok: false, error: `Network error generating image: ${(error as Error).message}`, };
+  }
+}
+
+/** Read a local path into an uploadable `File`, or the error line to render. */
+async function readUploadFile(filePath: string,): Promise<{ ok: true; file: File } | { ok: false; error: string }> {
+  try {
+    const buf = await Bun.file(filePath,).arrayBuffer();
+    const slash = filePath.lastIndexOf("/",);
+    return {
+      ok: true,
+      file: new File([buf,], slash >= 0 ? filePath.slice(slash + 1,) : filePath,),
+    };
+  } catch (error) {
+    return { ok: false, error: `Cannot read ${filePath}: ${(error as Error).message}`, };
+  }
+}
+
+/**
+ * Upload a local file via multipart POST /api/v1/assets.
+ *
+ * `safeFetch` passes `FormData` through untouched (no JSON content-type),
+ * so this is the same upload the web gallery performs. The returned id feeds
+ * the sidebar attach flow or a message send's attachments.
+ * @param host - the chat widget (for its token)
+ * @param filePath - local path to upload
+ * @returns the new asset id, or the error line to render
+ */
+export async function uploadAsset(host: ChatHost, filePath: string,): Promise<UploadResult> {
+  const trimmed = filePath.trim();
+  if (!trimmed) {
+    return { ok: false, error: "Usage: /upload <path> — upload a local file as an asset.", };
+  }
+
+  let file: File;
+  const read = await readUploadFile(trimmed,);
+  if (!read.ok) { return read; }
+  file = read.file;
+
+  try {
+    const form = new FormData();
+    form.append("file", file,);
+    const result = await _fetch<{ id: string }>(`${API_BASE}/api/v1/assets`, {
+      method: "POST",
+      auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
+      body: form,
+      handle401: false,
+      timeout: host.sendTimeoutMs,
+    },);
+
+    if (!result.ok) {
+      return {
+        ok: false,
+        error: result.status !== undefined
+          ? `Upload failed (HTTP ${result.status})`
+          : `Network error uploading: ${result.error.message}`,
+      };
+    }
+
+    if (!result.data.id) {
+      return { ok: false, error: "Upload succeeded but returned no asset id", };
+    }
+
+    return { ok: true, assetId: result.data.id, };
+  } catch (error) {
+    return { ok: false, error: `Network error uploading: ${(error as Error).message}`, };
   }
 }
