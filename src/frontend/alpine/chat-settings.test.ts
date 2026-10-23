@@ -16,6 +16,11 @@ interface FetchCall {
   body: string | null;
 }
 
+// ── Resource contract ─────────────────────────────────────────────
+// Global stubs (fetch, document, Alpine) are captured at module load,
+// installed in beforeEach, and restored in afterEach — including on
+// failure. No files, no ports, no DB.
+
 const globals = globalThis as Record<string, unknown>;
 const originalFetch = globalThis.fetch;
 const originalDocument = globals.document;
