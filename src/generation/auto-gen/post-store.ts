@@ -16,6 +16,7 @@
 import type { Kysely, } from "kysely";
 import { MoodService, } from "../../characters/services/mood-service";
 import { detectHallucinations, } from "../../chat";
+import { triggerMessageTranslation, } from "../../chat/message-translations";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
@@ -243,4 +244,23 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
       }
     })();
   }
+
+  // Chat-first message translations (FEAT-message-translations-chat-first):
+  // additive post-store step — never a content hook, never gates or delays
+  // the response. Fire-and-forget with an explicit rejection guard.
+  void triggerMessageTranslation(database, config, {
+    messageId,
+    chatId,
+    actorId,
+    userId,
+    content,
+    provider: resolvedProviderName,
+    model: resolvedModel,
+  },).catch((error: unknown,) => {
+    log.warn("post-store translation rejected", {
+      chatId,
+      messageId,
+      err: error instanceof Error ? error.message : String(error,),
+    },);
+  },);
 }

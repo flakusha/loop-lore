@@ -4,7 +4,7 @@
 import { type Kysely, } from "kysely";
 import { generateResponse, isAssistantEnabled, } from "../../assistant/service";
 import type { AsyncStore, } from "../../async/store";
-import { autoTranslateText, buildTranslateDeps, } from "../../chat/auto-translate";
+import { triggerMessageTranslation, } from "../../chat/message-translations";
 import type { Config, } from "../../config/schema";
 
 import {
@@ -110,17 +110,11 @@ export async function maybeAutoReply(
   if (isAssistantEnabled(config,)) {
     const assistantResponse = generateResponse({ userInput: userMessage, },);
     if (assistantResponse) {
-      let assistantContent = filterProfanity(assistantResponse.content,);
-      // Per-chat auto-translation (outbound): opt-in via story_state;
-      // degrades to the original when unset or translation fails.
-      const outbound = await autoTranslateText({
-        text: assistantContent,
-        storyState: pausedRow?.story_state ?? null,
-        chatId,
-        deps: await buildTranslateDeps(database, config, actorId,),
-      },);
-
-      assistantContent = outbound.text;
+      // FEAT-message-translations-chat-first (full migration): the ORIGINAL
+      // is always the persisted row — no in-place auto-translate replacement
+      // (`assistantContent = outbound.text` is gone). Translation happens
+      // after the store as an additive variant row, fire-and-forget.
+      const assistantContent = filterProfanity(assistantResponse.content,) ?? "";
 
       let replyStoredContent = assistantContent;
       const replyEncoding = "identity";
@@ -205,6 +199,25 @@ export async function maybeAutoReply(
       }
 
       const assistantId = attempt.value;
+      const storedAssistantId = String(assistantId,);
+
+      // Additive translation variant (fire-and-forget): the reply is already
+      // committed; a translation failure writes no row and never fails or
+      // delays this response. The trigger internally skips when the display
+      // locale matches the effective model native locale.
+      void triggerMessageTranslation(database, config, {
+        messageId: storedAssistantId,
+        chatId,
+        actorId,
+        userId: actorId,
+        content: assistantContent,
+      },).catch((error: unknown,) => {
+        log().warn("reply translation rejected", {
+          chatId,
+          messageId: storedAssistantId,
+          err: error instanceof Error ? error.message : String(error,),
+        },);
+      },);
 
       return {
         replied: true,
