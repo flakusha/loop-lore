@@ -45,6 +45,7 @@ import "./rpg-questions";
 import "./rpg-stats";
 import "./settings";
 import "./settings-modal";
+import "./stat-allocation";
 import "./shortcuts";
 import "./sidebar";
 import "./story-controls";

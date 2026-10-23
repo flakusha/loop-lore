@@ -1678,7 +1678,10 @@
     "traitsCreated": "Traits created",
     "traitsDeleted": "Traits deleted",
     "traitsDeleteFailed": "Failed to delete traits",
-    "traitsNameRequired": "Name is required"
+    "traitsNameRequired": "Name is required",
+    "allocationLoadFailed": "Failed to load stat allocation",
+    "allocationSaveFailed": "Failed to save stat allocation",
+    "allocationSaved": "Stat allocation saved"
   },
   "analyze": {
     "ready": "Prompt analyzed",

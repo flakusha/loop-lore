@@ -57,6 +57,36 @@ describe("stat allocation service", () => {
     ).rejects.toBeInstanceOf(AllocationValidationError,);
   });
 
+  test("duplicate traitIds collapse", async () => {
+    const stats = { str: 15, dex: 14, con: 13, int: 12, wis: 10, cha: 8, };
+    const written = await putStatAllocation({ database: db, }, actorId, worldId, stats, [
+      "fast_reflexes",
+      "fast_reflexes",
+    ], userId,);
+
+    expect(written.traitIds,).toEqual(["fast_reflexes",],);
+  });
+
+  test("empty traitIds allowed", async () => {
+    const stats = { str: 15, dex: 14, con: 13, int: 12, wis: 10, cha: 8, };
+    const written = await putStatAllocation({ database: db, }, actorId, worldId, stats, [], userId,);
+    expect(written.traitIds,).toEqual([],);
+  });
+
+  test("accepts custom world bounds below the standard table floor", async () => {
+    const customWorld = await insertWorlds(db, userId, "Custom Bounds", {
+      requires_stats: 1,
+      stat_point_budget: 20,
+      stat_min: 6,
+      stat_max: 14,
+    },);
+
+    const customActor = await insertActors(db, "Custom Bounds Actor",);
+    const stats = { str: 6, dex: 6, con: 6, int: 6, wis: 6, cha: 6, };
+    const written = await putStatAllocation({ database: db, }, customActor, customWorld, stats, [], userId,);
+    expect(written.stats,).toEqual(stats,);
+  });
+
   test("get returns null when absent", async () => {
     expect(await getStatAllocation({ database: db, }, `missing-${crypto.randomUUID()}`,),).toBeNull();
   });

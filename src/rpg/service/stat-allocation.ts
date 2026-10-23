@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { type StatBlock, } from "../stats/types.js";
+import { type StatBlock, statCost, } from "../stats/types.js";
 import { validateStatBlock, } from "../stats/validation.js";
 import { assertTraitIds, getTraitsForWorld, } from "../traits/catalog.js";
 import type { RpgServiceDeps, } from "./types.js";
@@ -17,24 +17,12 @@ export interface StatAllocation {
 }
 
 /** World stat-requirement config */
-interface WorldStatConfig {
+export interface WorldStatConfig {
   requiresStats: number;
   statPointBudget: number;
   statMin: number;
   statMax: number;
 }
-
-/** Point-buy cost table (matches src/rpg/stats/generation.ts) */
-const POINT_BUY_COST: Record<number, number> = {
-  8: 0,
-  9: 1,
-  10: 2,
-  11: 3,
-  12: 4,
-  13: 5,
-  14: 7,
-  15: 9,
-};
 
 /** Validation failure */
 export class AllocationValidationError extends Error {
@@ -46,7 +34,13 @@ export class AllocationValidationError extends Error {
   }
 }
 
-async function readWorldConfig(deps: RpgServiceDeps, worldId: string,): Promise<WorldStatConfig | null> {
+/**
+ * Read a world's stat config (null when the world does not exist).
+ * @param deps
+ * @param worldId
+ * @returns {Promise<WorldStatConfig | null>}
+ */
+export async function readWorldConfig(deps: RpgServiceDeps, worldId: string,): Promise<WorldStatConfig | null> {
   const row = await deps.database
     .selectFrom("worlds",)
     .select(["requires_stats", "stat_point_budget", "stat_min", "stat_max",],)
@@ -99,12 +93,7 @@ export async function validateAllocation(
       );
     }
 
-    const cost = POINT_BUY_COST[value];
-    if (cost === undefined) {
-      throw new AllocationValidationError("budget", `Stat ${ability}=${value} has no point-buy cost`,);
-    }
-
-    totalCost += cost;
+    totalCost += statCost(value,);
   }
 
   if (totalCost > config.statPointBudget) {
@@ -192,8 +181,10 @@ export async function putStatAllocation(
   traitIds: readonly string[],
   grantedByUserId: string | null,
 ): Promise<StatAllocation> {
-  await validateAllocation(deps, worldId, stats, traitIds,);
+  const dedupedTraitIds = [...new Set(traitIds,),];
+  await validateAllocation(deps, worldId, stats, dedupedTraitIds,);
   const now = new Date().toISOString();
+  const writeTraitIds: readonly string[] = dedupedTraitIds;
 
   await deps.database.transaction().execute(async (transaction,) => {
     await transaction
@@ -226,7 +217,7 @@ export async function putStatAllocation(
       .execute();
 
     await transaction.deleteFrom("character_trait_assignments",).where("actor_id", "=", actorId,).execute();
-    for (const traitId of traitIds) {
+    for (const traitId of writeTraitIds) {
       await transaction
         .insertInto("character_trait_assignments",)
         .values({

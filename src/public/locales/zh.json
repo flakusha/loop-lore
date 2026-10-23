@@ -1619,7 +1619,10 @@
     "traitsCreated": "Traits created",
     "traitsDeleted": "Traits deleted",
     "traitsDeleteFailed": "Failed to delete traits",
-    "traitsNameRequired": "Name is required"
+    "traitsNameRequired": "Name is required",
+    "allocationLoadFailed": "Failed to load stat allocation",
+    "allocationSaveFailed": "Failed to save stat allocation",
+    "allocationSaved": "Stat allocation saved"
   },
   "commands": {
     "help": "显示可用命令",
