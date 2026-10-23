@@ -105,6 +105,16 @@ export class AssetView {
       this.renderCurrent();
       screen.render();
     },);
+
+    // Enter attaches the selected asset to the active chat so a later message
+    // send can carry it. While the input box is reading it holds
+    // `screen.grabKeys` (and Enter is not in `ignoreLocked`), so this only
+    // fires when focus is off the input — no conflict with sending.
+    screen.key(["enter",], () => {
+      if (!this.box.visible || this.assets.length === 0) { return; }
+      const asset = this.assets[this.currentIndex]!;
+      void this.attachAsset(asset.id,);
+    },);
   }
 
   // ── Rendering ───────────────────────────────────────────────
@@ -209,6 +219,51 @@ export class AssetView {
    */
   getChatId(): string | null {
     return this.chatId;
+  }
+
+  /**
+   * Link an asset to the active chat (`POST /api/v1/assets/:id/links`).
+   *
+   * The server's link row is what the chat-scoped sidebar list reads, so an
+   * uploaded or generated image becomes a chat attachment this way. Refreshes
+   * the list on success; failures surface as an info line, never a throw.
+   * @param assetId - asset to attach to the active chat
+   * @returns `true` when the link was created
+   */
+  async attachAsset(assetId: string,): Promise<boolean> {
+    if (!this.chatId) {
+      this.renderInfo("No active chat.",);
+      return false;
+    }
+
+    try {
+      const result = await _fetch(
+        `${API_BASE}/api/v1/assets/${encodeURIComponent(assetId,)}/links`,
+        {
+          method: "POST",
+          auth: this.sessionToken ? { sessionToken: this.sessionToken, } : undefined,
+          body: { entityType: "chat", entityId: this.chatId, },
+          handle401: false,
+        },
+      );
+
+      if (!result.ok) {
+        this.renderInfo(
+          result.status !== undefined
+            ? `Attach failed (HTTP ${result.status})`
+            : `Error: ${result.error.message}`,
+        );
+
+        return false;
+      }
+
+      await this.loadAssets();
+      this.renderInfo("Attached to this chat.",);
+      return true;
+    } catch (error) {
+      this.renderInfo(`Error: ${(error as Error).message}`,);
+      return false;
+    }
   }
 
   // ── Data loading ────────────────────────────────────────────

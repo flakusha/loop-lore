@@ -16,7 +16,14 @@
 import blessed from "blessed";
 import { TUI_DEFAULTS, } from "../../config/sections/tui";
 import { escapeMarkup, } from "../markup";
-import { handleSend as handleSendDispatch, loadCommands, loadMessages as loadMessagesDispatch, } from "./api";
+import {
+  generateImage as generateImageDispatch,
+  handleSend as handleSendDispatch,
+  loadCommands,
+  loadMessages as loadMessagesDispatch,
+  uploadAsset as uploadAssetDispatch,
+} from "./api";
+import type { ImageGenResult, MessageAttachment, UploadResult, } from "./api";
 import { CommandCompleter, } from "./commands";
 import { formatMessageLine, } from "./display";
 import type { ChatHost, ChatMessage, ChatWidgetOptions, } from "./types";
@@ -165,8 +172,29 @@ export class ChatWidget implements ChatHost {
         return;
       }
 
-      if (value.trim() && !this.isSending) {
-        void this.handleSend(value.trim(),);
+      const trimmed = value.trim();
+      // Client-side image-gen and upload: the TUI cannot rely on the web
+      // frontend's command-action dispatch, so `/image` and `/upload` are
+      // handled here. Anything else goes through the normal send path (the
+      // server still dispatches its own `/image` command for other clients).
+      if (trimmed.startsWith("/image ",)) {
+        this.inputBox.clearValue();
+        void this.generateImageFlow(trimmed.slice("/image ".length,),);
+        this.focusInput();
+        screen.render();
+        return;
+      }
+
+      if (trimmed.startsWith("/upload ",)) {
+        this.inputBox.clearValue();
+        void this.uploadFlow(trimmed.slice("/upload ".length,),);
+        this.focusInput();
+        screen.render();
+        return;
+      }
+
+      if (trimmed && !this.isSending) {
+        void this.handleSend(trimmed,);
         // Clear only what was actually dispatched. A send already in flight can
         // run for minutes, and clearing here threw away whatever the user typed
         // while waiting for it.
@@ -351,10 +379,83 @@ export class ChatWidget implements ChatHost {
    * Send message via POST /api/chats/:id/messages.
    * Shows typing indicator, adds user message + assistant auto-reply.
    * @param text - user message body
+   * @param attachments - optional asset ids the sent message carries
    * @returns resolves after dispatching to the API and updating local state.
    */
-  async handleSend(text: string,): Promise<void> {
-    return handleSendDispatch(this, text,);
+  async handleSend(text: string, attachments?: MessageAttachment[],): Promise<void> {
+    return handleSendDispatch(this, text, attachments,);
+  }
+
+  /**
+   * Generate an image from a prompt and report the result in-transcript.
+   *
+   * The server links the output to the active chat, so the F2 sidebar shows
+   * it on its next load — no follow-up action needed to keep the asset.
+   * @param prompt - the image prompt
+   * @returns the generation result
+   */
+  async generateImage(prompt: string,): Promise<ImageGenResult> {
+    return generateImageDispatch(this, prompt,);
+  }
+
+  /**
+   * Upload a local file as an asset and report the result in-transcript.
+   * @param filePath - local path to upload
+   * @returns the upload result
+   */
+  async uploadAsset(filePath: string,): Promise<UploadResult> {
+    return uploadAssetDispatch(this, filePath,);
+  }
+
+  /**
+   * `/image` submit flow: generate, then report the asset in-transcript.
+   * @param prompt - the image prompt
+   */
+  private async generateImageFlow(prompt: string,): Promise<void> {
+    this.showTyping();
+    try {
+      const result = await this.generateImage(prompt,);
+      this.hideTyping();
+      if (!result.ok) {
+        this.showError(result.error,);
+        return;
+      }
+
+      const names = result.assets.map((a,) => a.filename).join(", ",);
+      this.addMessage({
+        id: crypto.randomUUID(),
+        role: "system",
+        content: `Image ready: ${names || "(no assets returned)"} — see F2 assets sidebar.`,
+      },);
+    } catch (error) {
+      this.hideTyping();
+      this.showError(`Network error: ${(error as Error).message}`,);
+    }
+  }
+
+  /**
+   * `/upload` submit flow: upload, then report the asset id in-transcript.
+   * @param filePath - local path to upload
+   */
+  private async uploadFlow(filePath: string,): Promise<void> {
+    this.showTyping();
+    try {
+      const result = await this.uploadAsset(filePath,);
+      this.hideTyping();
+      if (!result.ok) {
+        this.showError(result.error,);
+        return;
+      }
+
+      this.addMessage({
+        id: crypto.randomUUID(),
+        role: "system",
+        content: `Uploaded ${result.assetId} — Enter in the F2 sidebar attaches it to this chat.`,
+      },);
+    } catch (error) {
+      this.hideTyping();
+      this.showError(`Network error: ${(error as Error).message}`,);
+    }
   }
 
   /**

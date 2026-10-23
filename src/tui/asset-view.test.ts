@@ -148,3 +148,41 @@ describe("AssetView — loadAssets auth", () => {
     expect(calls[0]!.url,).toContain("entity_id=abc%3Fdef",);
   });
 });
+
+describe("AssetView — attachAsset", () => {
+  it("POSTs the chat link for the asset and reloads the list", async () => {
+    stubClient();
+    const view = buildView("tok-1",) as LoadableView & Pick<AssetView, "attachAsset">;
+    const ok = await view.attachAsset("asset-9",);
+    expect(ok,).toBe(true,);
+    // First call is the link POST, second is the sidebar reload.
+    expect(calls,).toHaveLength(2,);
+    expect(calls[0]?.url,).toBe("http://localhost:3000/api/v1/assets/asset-9/links",);
+    expect(calls[0]?.options.auth,).toEqual({ sessionToken: "tok-1", },);
+  });
+
+  it("returns false without calling the client when no chat is bound", async () => {
+    stubClient();
+    const view = buildView("tok-1",) as LoadableView & Pick<AssetView, "attachAsset">;
+    view.chatId = null;
+    const ok = await view.attachAsset("asset-9",);
+    expect(ok,).toBe(false,);
+    expect(calls,).toHaveLength(0,);
+  });
+
+  it("returns false on an HTTP denial", async () => {
+    setFetch(<T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
+      Promise.resolve({
+        ok: false,
+        error: new Error("Forbidden",),
+        status: 403,
+        headers: new Headers(),
+      } as FetchResult<T>,)
+    );
+
+    const view = buildView() as LoadableView & Pick<AssetView, "attachAsset">;
+    const ok = await view.attachAsset("asset-9",);
+    expect(ok,).toBe(false,);
+    expect(calls,).toHaveLength(0,);
+  });
+});
