@@ -965,7 +965,6 @@ export async function insertWorlds(
     rpg_quests?: number;
     rules?: string;
     autonomy_config?: string;
-    // hint: Structural change (rename/retype). Check callers of this entity.
     rpg_skills?: number;
     requires_stats?: number;
     stat_point_budget?: number;
@@ -5971,56 +5970,6 @@ export async function insertFederationPerformanceBudgets(
   return id;
 }
 
-/** Insert a character_stat_allocation row. */
-export async function insertCharacterStatAllocation(
-  db: Db,
-  world_id: string,
-  allocated_str: number,
-  allocated_dex: number,
-  allocated_con: number,
-  allocated_int: number,
-  allocated_wis: number,
-  allocated_cha: number,
-  allocated_at: string,
-  opts?: { actor_id?: string; allocated_by_user_id?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("character_stat_allocation",).values({
-    world_id,
-    allocated_str,
-    allocated_dex,
-    allocated_con,
-    allocated_int,
-    allocated_wis,
-    allocated_cha,
-    allocated_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a character_trait_assignments row. */
-export async function insertCharacterTraitAssignments(
-  db: Db,
-  actor_id: string,
-  trait_id: string,
-  world_id: string,
-  granted_at: string,
-  opts?: { granted_by_user_id?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("character_trait_assignments",).values({
-    actor_id,
-    trait_id,
-    world_id,
-    granted_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a message_polls row. */
 export async function insertMessagePolls(
   db: Db,
@@ -6082,6 +6031,56 @@ export async function insertLinkPreviews(
     id,
     url_hash,
     url,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a character_stat_allocation row. */
+export async function insertCharacterStatAllocation(
+  db: Db,
+  world_id: string,
+  allocated_str: number,
+  allocated_dex: number,
+  allocated_con: number,
+  allocated_int: number,
+  allocated_wis: number,
+  allocated_cha: number,
+  allocated_at: string,
+  opts?: { actor_id?: string; allocated_by_user_id?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("character_stat_allocation",).values({
+    world_id,
+    allocated_str,
+    allocated_dex,
+    allocated_con,
+    allocated_int,
+    allocated_wis,
+    allocated_cha,
+    allocated_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a character_trait_assignments row. */
+export async function insertCharacterTraitAssignments(
+  db: Db,
+  actor_id: string,
+  trait_id: string,
+  world_id: string,
+  granted_at: string,
+  opts?: { granted_by_user_id?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("character_trait_assignments",).values({
+    actor_id,
+    trait_id,
+    world_id,
+    granted_at,
     ...restOpts,
   } as any,).execute();
   return id;
