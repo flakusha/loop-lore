@@ -127,4 +127,37 @@ describe("Character edit view E2E", () => {
       await page.close();
     }
   }, 60_000,);
+
+  test("the emotion-avatar panel re-rolls through the regenerate endpoint", async () => {
+    const page = await ctx.openPage();
+    const errors = trackPageErrors(page,);
+    try {
+      // The assertion is the request the panel sends, so the generation
+      // endpoint is stubbed instead of running a provider-less generation.
+      const payloads: Record<string, unknown>[] = [];
+      await page.route("**/emotion-avatars/regenerate", async (route,) => {
+        payloads.push(route.request().postDataJSON() as Record<string, unknown>,);
+        await route.fulfill({
+          status: 201,
+          contentType: "application/json",
+          body: JSON.stringify({ jobId: "job-e2e", },),
+        },);
+      },);
+
+      await gotoEdit(page,);
+      // The sub-resource panels live in a collapsed <details>.
+      await page.locator("[data-testid='actor-panels-section'] > summary",).click();
+
+      const panel = page.locator("[data-testid='character-emotion-avatars']",);
+      await panel.waitFor({ state: "visible", timeout: 30_000, },);
+      await panel.locator("button", { hasText: "Regenerate all", },).click();
+
+      for (let i = 0; i < 100 && payloads.length === 0; i++) { await Bun.sleep(50,); }
+      expect(payloads[0],).toEqual({ replace: "slot", },);
+    } finally {
+      errors.assert();
+      errors.detach();
+      await page.close();
+    }
+  }, 60_000,);
 });
