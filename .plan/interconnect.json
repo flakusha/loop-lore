@@ -4118,8 +4118,9 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec.md",
       "title": "fix(server): exit non-zero on uncaughtException/unhandledRejection shutdown",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/server/start.test.ts",
         "src/server/start.ts"
       ],
       "related": []
@@ -4129,8 +4130,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p.md",
       "title": "fix(server): fail closed when configured TLS certs cannot be provisioned",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/config/cert.ts",
+        "src/server/start.test.ts",
         "src/server/start.ts"
       ],
       "related": []
@@ -4153,8 +4156,9 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready.md",
       "title": "fix(server): gate traffic until plugins/seeds/assets are ready (or document the boot window)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/server/start.test.ts",
         "src/server/start.ts"
       ],
       "related": []
@@ -4164,8 +4168,9 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-server-log-rejected-background-init-promises-with-module.md",
       "title": "fix(server): log rejected background-init promises with module + error",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/server/init-background-services.test.ts",
         "src/server/init-background-services.ts"
       ],
       "related": []
@@ -4175,10 +4180,12 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md",
       "title": "fix(server): track and clear the regex-telemetry flush timer on app stop",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/elysia-app.ts",
-        "src/server/init-background-services.ts"
+        "src/server/init-background-services.test.ts",
+        "src/server/init-background-services.ts",
+        "src/server/start.ts"
       ],
       "related": []
     },
@@ -7100,10 +7107,11 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md",
       "title": "Per-sender rate-limiter buckets are never evicted (unbounded memory keyed on forged senders)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/api-governance/rate-limiting/store.ts",
         "src/integrations/email/spam-gate.ts",
+        "src/integrations/health.test.ts",
         "src/integrations/health.ts"
       ],
       "related": [
@@ -58887,6 +58895,7 @@
     {
       "path": "src/config/cert.ts",
       "owners": [
+        "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
         "TASK-caddy-tls-termination-with-automatic-https",
         "TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts",
         "TASK-cross-platform-portability",
@@ -70234,6 +70243,12 @@
       ]
     },
     {
+      "path": "src/integrations/health.test.ts",
+      "owners": [
+        "BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-"
+      ]
+    },
+    {
       "path": "src/integrations/health.ts",
       "owners": [
         "BUG-email-token-bucket-discards-fractional-refill-credit-permane",
@@ -81389,6 +81404,13 @@
       ]
     },
     {
+      "path": "src/server/init-background-services.test.ts",
+      "owners": [
+        "BUG-fix-server-log-rejected-background-init-promises-with-module",
+        "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o"
+      ]
+    },
+    {
       "path": "src/server/init-background-services.ts",
       "owners": [
         "BUG-character-seed-dedupes-on-display-name",
@@ -81401,6 +81423,9 @@
     {
       "path": "src/server/start.test.ts",
       "owners": [
+        "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
+        "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+        "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
         "TASK-add-a-federation-e2e-test-that-boots-two-real-servers"
       ]
     },
@@ -81414,6 +81439,7 @@
         "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
         "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
         "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+        "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
         "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
         "BUG-new-migration-parts-never-apply-to-existing-databases",
         "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
@@ -104296,7 +104322,22 @@
     {
       "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
       "kind": "produces",
+      "to": "src/server/start.test.ts"
+    },
+    {
+      "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
+      "kind": "produces",
       "to": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "produces",
+      "to": "src/config/cert.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "produces",
+      "to": "src/server/start.test.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -104321,7 +104362,17 @@
     {
       "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
       "kind": "produces",
+      "to": "src/server/start.test.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+      "kind": "produces",
       "to": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-log-rejected-background-init-promises-with-module",
+      "kind": "produces",
+      "to": "src/server/init-background-services.test.ts"
     },
     {
       "from": "BUG-fix-server-log-rejected-background-init-promises-with-module",
@@ -104336,7 +104387,17 @@
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "produces",
+      "to": "src/server/init-background-services.test.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "produces",
       "to": "src/server/init-background-services.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "produces",
+      "to": "src/server/start.ts"
     },
     {
       "from": "BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t",
@@ -107252,6 +107313,11 @@
       "from": "BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-",
       "kind": "produces",
       "to": "src/integrations/email/spam-gate.ts"
+    },
+    {
+      "from": "BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-",
+      "kind": "produces",
+      "to": "src/integrations/health.test.ts"
     },
     {
       "from": "BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-",
@@ -167790,6 +167856,12 @@
     {
       "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
       "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
+      "kind": "sibling",
       "to": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "via": "src/server/start.ts"
     },
@@ -172968,6 +173040,12 @@
     {
       "from": "BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k",
       "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k",
+      "kind": "sibling",
       "to": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "via": "src/server/start.ts"
     },
@@ -173251,6 +173329,12 @@
       "from": "BUG-auto-rotation-config-drift",
       "kind": "sibling",
       "to": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-auto-rotation-config-drift",
+      "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "via": "src/server/start.ts"
     },
     {
@@ -189318,6 +189402,12 @@
     {
       "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
       "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-eager-db-init-creates-on-disk-db-on-test-import",
+      "kind": "sibling",
       "to": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "via": "src/server/start.ts"
     },
@@ -196987,12 +197077,18 @@
       "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
       "kind": "sibling",
       "to": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
-      "via": "src/server/start.ts"
+      "via": "src/server/start.test.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
       "kind": "sibling",
       "to": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+      "via": "src/server/start.test.ts; src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
+      "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "via": "src/server/start.ts"
     },
     {
@@ -197012,6 +197108,12 @@
       "kind": "sibling",
       "to": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
+      "kind": "sibling",
+      "to": "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
+      "via": "src/server/start.test.ts"
     },
     {
       "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
@@ -197227,6 +197329,12 @@
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
       "kind": "sibling",
       "to": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+      "via": "src/server/start.test.ts; src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "via": "src/server/start.ts"
     },
     {
@@ -197250,6 +197358,12 @@
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
       "kind": "sibling",
+      "to": "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
+      "via": "src/server/start.test.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
       "via": "src/server/start.ts"
     },
@@ -197258,6 +197372,18 @@
       "kind": "sibling",
       "to": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
+      "to": "TASK-caddy-tls-termination-with-automatic-https",
+      "via": "src/config/cert.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
+      "to": "TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts",
+      "via": "src/config/cert.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -197275,7 +197401,7 @@
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
       "kind": "sibling",
       "to": "TASK-cross-platform-portability",
-      "via": "src/server/start.ts"
+      "via": "src/config/cert.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -197300,6 +197426,12 @@
       "kind": "sibling",
       "to": "TASK-fail-safe-execution-work-safety",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
+      "to": "TASK-harness-tool-sandbox",
+      "via": "src/config/cert.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -197341,7 +197473,7 @@
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
       "kind": "sibling",
       "to": "TASK-production-tls-modes-byo-certs-acme-and-proxy-termination",
-      "via": "src/server/start.ts"
+      "via": "src/config/cert.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -197388,14 +197520,32 @@
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
       "kind": "sibling",
+      "to": "TASK-tls-configuration-audit-and-startup-validation",
+      "via": "src/config/cert.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
       "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
       "kind": "sibling",
+      "to": "epic-architecture",
+      "via": "src/config/cert.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
       "to": "epic-certificate-and-tls-management",
-      "via": "src/server/start.ts"
+      "via": "src/config/cert.ts; src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
+      "kind": "sibling",
+      "to": "epic-configs-path-resolution",
+      "via": "src/config/cert.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -197407,7 +197557,7 @@
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
       "kind": "sibling",
       "to": "epic-cross-platform-portability",
-      "via": "src/server/start.ts"
+      "via": "src/config/cert.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
@@ -197598,6 +197748,12 @@
     {
       "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
       "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+      "kind": "sibling",
       "to": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "via": "src/server/start.ts"
     },
@@ -197612,6 +197768,12 @@
       "kind": "sibling",
       "to": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
+      "kind": "sibling",
+      "to": "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
+      "via": "src/server/start.test.ts"
     },
     {
       "from": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
@@ -197827,7 +197989,7 @@
       "from": "BUG-fix-server-log-rejected-background-init-promises-with-module",
       "kind": "sibling",
       "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
-      "via": "src/server/init-background-services.ts"
+      "via": "src/server/init-background-services.test.ts; src/server/init-background-services.ts"
     },
     {
       "from": "BUG-fix-server-log-rejected-background-init-promises-with-module",
@@ -197840,6 +198002,12 @@
       "kind": "sibling",
       "to": "epic-cron-scheduler",
       "via": "src/server/init-background-services.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -197874,8 +198042,20 @@
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
+      "to": "BUG-new-migration-parts-never-apply-to-existing-databases",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
       "to": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "BUG-server-host-config-and-host-env-override-are-dead-start-ts-n",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -197935,13 +198115,19 @@
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
-      "via": "src/elysia-app.ts"
+      "via": "src/elysia-app.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -197982,8 +198168,50 @@
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
+      "to": "TASK-cron-migrate-existing-timers",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-cron-provider-health-rescan",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-cross-platform-portability",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
       "to": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-enable-http-2-via-single-tls-port-consolidation",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-fail-safe-execution-work-safety",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -198018,8 +198246,32 @@
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
+      "to": "TASK-https-redirect-enforcement-for-plaintext-http",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-item-config-templates",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-local-instance-integrity-holistic",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-logging-hardening-minors-injection-rotation-races-sink-path-",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -198048,6 +198300,24 @@
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
+      "to": "TASK-ocsp-stapling-for-tls-certificate-status",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-outfit-change-hook",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-production-tls-modes-byo-certs-acme-and-proxy-termination",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
       "to": "TASK-recursive-self-improvement-agent-api-router-and-token-scope-",
       "via": "src/elysia-app.ts"
     },
@@ -198060,8 +198330,56 @@
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-watchdog-supervisor-process-spawn",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-runtime-integrity-watchdog-crash-recovery",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
       "to": "TASK-server-side-i18n-middleware",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-size-strict-debt",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-sni-multi-certificate-serving-for-multiple-domains",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-swarm-supervisor",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-tls-cipher-suite-hardening-and-secure-defaults",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -198108,6 +198426,12 @@
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
+      "to": "epic-certificate-and-tls-management",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
       "to": "epic-character-core-system",
       "via": "src/server/init-background-services.ts"
     },
@@ -198115,13 +198439,25 @@
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
       "to": "epic-cron-scheduler",
-      "via": "src/server/init-background-services.ts"
+      "via": "src/server/init-background-services.ts; src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "epic-cross-platform-portability",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
       "to": "epic-db-cold-storage-high-perf",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "epic-db-migration-compaction",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -198145,7 +198481,7 @@
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
       "to": "epic-file-splitting",
-      "via": "src/elysia-app.ts"
+      "via": "src/elysia-app.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -198168,8 +198504,14 @@
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "kind": "sibling",
+      "to": "epic-http-protocol-features",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
-      "via": "src/elysia-app.ts"
+      "via": "src/elysia-app.ts; src/server/start.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -198188,6 +198530,30 @@
       "kind": "sibling",
       "to": "epic-openapi-reference",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "epic-recursive-self-improvement",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "epic-runtime-integrity-fail-safes",
+      "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/server/start.ts"
     },
     {
       "from": "BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t",

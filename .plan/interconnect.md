@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3621
 - epics: 346
-- src paths owned: 4368
-- edges: produces 11371, consumes 402, sibling 33727, owns 2644, related 1191
+- src paths owned: 4370
+- edges: produces 11379, consumes 402, sibling 33777, owns 2644, related 1191
 
 ## Shared src hubs
 
@@ -452,7 +452,7 @@ output is byte-identical for identical inputs.
 | `src/components/overlay-stack.html` | `TASK-025`, `epic-frontend-components` |
 | `src/components/section-divider.html` | `TASK-chat-flow-section-navigation`, `TASK-chat-sectioning-multi-location` |
 | `src/components/settings/key-management.html` | `TASK-e2ee-crypto-ui`, `TASK-encryption-key-management-ui`, `epic-encryption-workflow` |
-| `src/config/cert.ts` | `TASK-caddy-tls-termination-with-automatic-https`, `TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts`, `TASK-cross-platform-portability`, `TASK-harness-tool-sandbox`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `TASK-tls-configuration-audit-and-startup-validation`, `epic-architecture`, `epic-certificate-and-tls-management`, `epic-configs-path-resolution`, `epic-cross-platform-portability` |
+| `src/config/cert.ts` | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `TASK-caddy-tls-termination-with-automatic-https`, `TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts`, `TASK-cross-platform-portability`, `TASK-harness-tool-sandbox`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `TASK-tls-configuration-audit-and-startup-validation`, `epic-architecture`, `epic-certificate-and-tls-management`, `epic-configs-path-resolution`, `epic-cross-platform-portability` |
 | `src/config/character-loader.ts` | `TASK-adopt-bun-yaml-to-replace-js-yaml`, `TASK-character-template-seeding`, `epic-character-core-system`, `epic-configs-path-resolution` |
 | `src/config/constants.ts` | `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `TASK-allow-data-dir-to-be-overridden-by-env-var`, `epic-configs-path-resolution` |
 | `src/config/generate-character-schema/index.ts` | `FEAT-character-spec-inclusion-race-origin-culture`, `epic-character-spec` |
@@ -1730,8 +1730,10 @@ output is byte-identical for identical inputs.
 | `src/server/handler.ts` | `BUG-access-log-never-records-userid-handle-x-user-id-header-neve`, `BUG-coverage-mjs-counts-top-level-src-files-as-modules`, `BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa`, `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-async-store-complete-fail-lifecycle-hooks`, `TASK-cors-middleware`, `TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-`, `TASK-headers-additional-useful-response-headers`, `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser`, `TASK-middleware-in-progress-status-endpoint-for-long-running-requ`, `TASK-middleware-request-id-elysia-derive`, `TASK-server-edge-error-handling-gaps-in-routes-layer`, `epic-comfyui-first-class-citizen`, `epic-middleware-request-lifecycle` |
 | `src/server/health.ts` | `TASK-recursive-self-improvement-health-liveness-readiness-probes`, `TASK-recursive-self-improvement-sidecar-python-provider-for-custo`, `epic-recursive-self-improvement` |
 | `src/server/index.ts` | `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `epic-file-splitting` |
+| `src/server/init-background-services.test.ts` | `BUG-fix-server-log-rejected-background-init-promises-with-module`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` |
 | `src/server/init-background-services.ts` | `BUG-character-seed-dedupes-on-display-name`, `BUG-fix-server-log-rejected-background-init-promises-with-module`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `epic-character-core-system`, `epic-cron-scheduler` |
-| `src/server/start.ts` | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen`, `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k`, `BUG-auto-rotation-config-drift`, `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `BUG-new-migration-parts-never-apply-to-existing-databases`, `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-cron-migrate-existing-timers`, `TASK-cron-provider-health-rescan`, `TASK-cross-platform-portability`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h`, `TASK-enable-http-2-via-single-tls-port-consolidation`, `TASK-fail-safe-execution-work-safety`, `TASK-https-redirect-enforcement-for-plaintext-http`, `TASK-item-config-templates`, `TASK-local-instance-integrity-holistic`, `TASK-logging-hardening-minors-injection-rotation-races-sink-path-`, `TASK-ocsp-stapling-for-tls-certificate-status`, `TASK-outfit-change-hook`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota`, `TASK-runtime-integrity-watchdog-crash-recovery`, `TASK-size-strict-debt`, `TASK-sni-multi-certificate-serving-for-multiple-domains`, `TASK-swarm-supervisor`, `TASK-tls-cipher-suite-hardening-and-secure-defaults`, `TASK-wire-fswatcher-onreload-callback-in-server-startup`, `epic-certificate-and-tls-management`, `epic-cron-scheduler`, `epic-cross-platform-portability`, `epic-db-migration-compaction`, `epic-file-splitting`, `epic-http-protocol-features`, `epic-local-process-swarm`, `epic-reactive-actor-appearance`, `epic-recursive-self-improvement`, `epic-runtime-integrity-fail-safes`, `epic-skills-professions-config` |
+| `src/server/start.test.ts` | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` |
+| `src/server/start.ts` | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen`, `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k`, `BUG-auto-rotation-config-drift`, `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `BUG-new-migration-parts-never-apply-to-existing-databases`, `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-cron-migrate-existing-timers`, `TASK-cron-provider-health-rescan`, `TASK-cross-platform-portability`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h`, `TASK-enable-http-2-via-single-tls-port-consolidation`, `TASK-fail-safe-execution-work-safety`, `TASK-https-redirect-enforcement-for-plaintext-http`, `TASK-item-config-templates`, `TASK-local-instance-integrity-holistic`, `TASK-logging-hardening-minors-injection-rotation-races-sink-path-`, `TASK-ocsp-stapling-for-tls-certificate-status`, `TASK-outfit-change-hook`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota`, `TASK-runtime-integrity-watchdog-crash-recovery`, `TASK-size-strict-debt`, `TASK-sni-multi-certificate-serving-for-multiple-domains`, `TASK-swarm-supervisor`, `TASK-tls-cipher-suite-hardening-and-secure-defaults`, `TASK-wire-fswatcher-onreload-callback-in-server-startup`, `epic-certificate-and-tls-management`, `epic-cron-scheduler`, `epic-cross-platform-portability`, `epic-db-migration-compaction`, `epic-file-splitting`, `epic-http-protocol-features`, `epic-local-process-swarm`, `epic-reactive-actor-appearance`, `epic-recursive-self-improvement`, `epic-runtime-integrity-fail-safes`, `epic-skills-professions-config` |
 | `src/server/static-files.ts` | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-`, `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra`, `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e`, `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc`, `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `TASK-docs-ui-endpoint-linkage`, `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto`, `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w`, `epic-cross-platform-portability`, `epic-docs-reconciliation`, `epic-http-protocol-features` |
 | `src/server/static-mime.ts` | `BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` |
 | `src/server/watchdog/cli.ts` | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `epic-recursive-self-improvement` |
@@ -5792,15 +5794,22 @@ output is byte-identical for identical inputs.
 | `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und` | produces | `src/routes/config-menu.ts` | - |
 | `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und` | produces | `src/routes/v1/index.ts` | - |
 | `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und` | produces | `src/server/handler.ts` | - |
+| `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | produces | `src/server/start.test.ts` | - |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | produces | `src/server/start.ts` | - |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | produces | `src/config/cert.ts` | - |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | produces | `src/server/start.test.ts` | - |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | produces | `src/server/start.ts` | - |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | produces | `src/routes/views/layout.ts` | - |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | produces | `src/server/static-files.test.ts` | - |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | produces | `src/server/static-files.ts` | - |
+| `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | produces | `src/server/start.test.ts` | - |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | produces | `src/server/start.ts` | - |
+| `BUG-fix-server-log-rejected-background-init-promises-with-module` | produces | `src/server/init-background-services.test.ts` | - |
 | `BUG-fix-server-log-rejected-background-init-promises-with-module` | produces | `src/server/init-background-services.ts` | - |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | produces | `src/elysia-app.ts` | - |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | produces | `src/server/init-background-services.test.ts` | - |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | produces | `src/server/init-background-services.ts` | - |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | produces | `src/server/start.ts` | - |
 | `BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t` | produces | `src/nsfw/moderation-service/flags.ts` | - |
 | `BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po` | produces | `src/frontend/alpine/chat-seen.ts` | - |
 | `BUG-frontend-dead-csrf-bearer-header-machinery` | produces | `src/auth/shared.ts` | - |
@@ -6384,6 +6393,7 @@ output is byte-identical for identical inputs.
 | `BUG-patrolroute-cast-without-array-validation` | produces | `src/rpc/npc-navigation/service/processing.ts` | - |
 | `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-` | produces | `src/api-governance/rate-limiting/store.ts` | - |
 | `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-` | produces | `src/integrations/email/spam-gate.ts` | - |
+| `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-` | produces | `src/integrations/health.test.ts` | - |
 | `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-` | produces | `src/integrations/health.ts` | - |
 | `BUG-permissions-middleware-auditentry-reaches-console-warn-in-pr` | produces | `src/middleware/permissions.ts` | - |
 | `BUG-persistbattle-lost-update-race-read-modify-write-without-tra` | produces | `src/rpg/service/battles/persistence.ts` | - |
@@ -18332,6 +18342,7 @@ output is byte-identical for identical inputs.
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.ts` |
+| `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | `src/server/start.ts` |
@@ -19195,6 +19206,7 @@ output is byte-identical for identical inputs.
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.ts` |
+| `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `BUG-key-rotation-non-transactional-incomplete-re-encryption-stra` | `src/crypto/key-rotation/rotate.ts` |
 | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | sibling | `BUG-key-rotation-noop-orphans-history` | `src/crypto/key-rotation/rotate.ts` |
@@ -19243,6 +19255,7 @@ output is byte-identical for identical inputs.
 | `BUG-auto-rotation-config-drift` | sibling | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.ts` |
+| `BUG-auto-rotation-config-drift` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
 | `BUG-auto-rotation-config-drift` | sibling | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | `src/config/schema-class/env-map.ts; src/server/start.ts` |
@@ -21920,6 +21933,7 @@ output is byte-identical for identical inputs.
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.ts` |
+| `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/db/index.ts` |
 | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
@@ -23198,11 +23212,13 @@ output is byte-identical for identical inputs.
 | `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und` | sibling | `epic-effect-v4-adoption-evaluation` | `src/app/register-plugins.ts` |
 | `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und` | sibling | `epic-file-splitting` | `src/app/register-plugins.ts` |
 | `BUG-fix-routing-mount-story-orchestration-agency-config-menu-und` | sibling | `epic-middleware-request-lifecycle` | `src/server/handler.ts` |
-| `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | `src/server/start.ts` |
-| `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.ts` |
+| `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | `src/server/start.test.ts; src/server/start.ts` |
+| `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.test.ts; src/server/start.ts` |
+| `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | `src/server/start.ts` |
+| `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` | `src/server/start.test.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `TASK-cron-migrate-existing-timers` | `src/server/start.ts` |
@@ -23238,26 +23254,31 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
 | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | sibling | `epic-skills-professions-config` | `src/server/start.ts` |
-| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.test.ts; src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` | `src/server/start.test.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-caddy-tls-termination-with-automatic-https` | `src/config/cert.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-certificate-lifecycle-expiry-monitoring-and-health-verdicts` | `src/config/cert.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-cron-migrate-existing-timers` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-cron-provider-health-rescan` | `src/server/start.ts` |
-| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-cross-platform-portability` | `src/config/cert.ts; src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-harness-tool-sandbox` | `src/config/cert.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-item-config-templates` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-local-instance-integrity-holistic` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-logging-hardening-minors-injection-rotation-races-sink-path-` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-ocsp-stapling-for-tls-certificate-status` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-outfit-change-hook` | `src/server/start.ts` |
-| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination` | `src/config/cert.ts; src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/server/start.ts` |
@@ -23265,10 +23286,13 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-sni-multi-certificate-serving-for-multiple-domains` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-swarm-supervisor` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-tls-cipher-suite-hardening-and-secure-defaults` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-tls-configuration-audit-and-startup-validation` | `src/config/cert.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `TASK-wire-fswatcher-onreload-callback-in-server-startup` | `src/server/start.ts` |
-| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-certificate-and-tls-management` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-architecture` | `src/config/cert.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-certificate-and-tls-management` | `src/config/cert.ts; src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-configs-path-resolution` | `src/config/cert.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-cron-scheduler` | `src/server/start.ts` |
-| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-cross-platform-portability` | `src/server/start.ts` |
+| `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-cross-platform-portability` | `src/config/cert.ts; src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-db-migration-compaction` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-file-splitting` | `src/server/start.ts` |
 | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | sibling | `epic-http-protocol-features` | `src/server/start.ts` |
@@ -23300,9 +23324,11 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `epic-docs-reconciliation` | `src/routes/views/layout.ts; src/server/static-files.ts` |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `epic-experimental-egui-frontend` | `src/routes/views/layout.ts` |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `epic-http-protocol-features` | `src/server/static-files.ts` |
+| `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | `src/server/start.ts` |
+| `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` | `src/server/start.test.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `TASK-cron-migrate-existing-timers` | `src/server/start.ts` |
@@ -23338,15 +23364,18 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
 | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | sibling | `epic-skills-professions-config` | `src/server/start.ts` |
-| `BUG-fix-server-log-rejected-background-init-promises-with-module` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/init-background-services.ts` |
+| `BUG-fix-server-log-rejected-background-init-promises-with-module` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/init-background-services.test.ts; src/server/init-background-services.ts` |
 | `BUG-fix-server-log-rejected-background-init-promises-with-module` | sibling | `epic-character-core-system` | `src/server/init-background-services.ts` |
 | `BUG-fix-server-log-rejected-background-init-promises-with-module` | sibling | `epic-cron-scheduler` | `src/server/init-background-services.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-middleware-asyncstore-fail-dead-code` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-middleware-idempotency-table-backend-unimplemented` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `BUG-version-resolver-middleware-built-not-wired` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `FEAT-035` | `src/elysia-app.ts` |
@@ -23356,28 +23385,51 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-admin-assistant-tooling-allowlist` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-adopt-bun-csrf-for-csrf-protection` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-api-first-foundation` | `src/elysia-app.ts` |
-| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/elysia-app.ts; src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-async-store-complete-fail-lifecycle-hooks` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-character-rpg-stats` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-chat-room-search-join` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-comfyui-first-class-workflow-library` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-cors-middleware` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-creative-studio-search-api` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-cron-migrate-existing-timers` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-cron-provider-health-rescan` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-fractal-locations-api-routes` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-frontend-client-contract-doc` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-gallery-fuzzy-search-pagination` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-i18n-alpine-client` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-item-config-templates` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-local-instance-integrity-holistic` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-logging-hardening-minors-injection-rotation-races-sink-path-` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-middleware-global-idempotency-replay-for-re-fired-requests` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-middleware-idempotency-wire-into-elysia` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-middleware-request-id-elysia-derive` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-ocsp-stapling-for-tls-certificate-status` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-outfit-change-hook` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-recursive-self-improvement-agent-api-router-and-token-scope-` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-recursive-self-improvement-health-liveness-readiness-probes` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-size-strict-debt` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-sni-multi-certificate-serving-for-multiple-domains` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-swarm-supervisor` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-tls-cipher-suite-hardening-and-secure-defaults` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-wire-fswatcher-onreload-callback-in-server-startup` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-analytics-observability` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-api-versioning` | `src/elysia-app.ts` |
@@ -23385,20 +23437,28 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-assistant-creative-studio-workflows` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-battle-action-systems` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-blog-system` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-certificate-and-tls-management` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-character-core-system` | `src/server/init-background-services.ts` |
-| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-cron-scheduler` | `src/server/init-background-services.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-cron-scheduler` | `src/server/init-background-services.ts; src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-cross-platform-portability` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-db-cold-storage-high-perf` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-db-migration-compaction` | `src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-e2e-integration-testing` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-effect-v4-adoption-evaluation` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-experimental-egui-frontend` | `src/elysia-app.ts` |
-| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-file-splitting` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-file-splitting` | `src/elysia-app.ts; src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-gallery-batch-operations` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-guest-access` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-headless-alternative-frontends` | `src/elysia-app.ts` |
-| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-local-process-swarm` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-http-protocol-features` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-local-process-swarm` | `src/elysia-app.ts; src/server/start.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-lora-discovery-application` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-middleware-request-lifecycle` | `src/elysia-app.ts` |
 | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-reactive-actor-appearance` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-recursive-self-improvement` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
+| `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | sibling | `epic-skills-professions-config` | `src/server/start.ts` |
 | `BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t` | sibling | `BUG-nsfw-flagqueue-leaks-reporter-pii` | `src/nsfw/moderation-service/flags.ts` |
 | `BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t` | sibling | `BUG-size-strict-pre-existing-dev-drift` | `src/nsfw/moderation-service/flags.ts` |
 | `BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t` | sibling | `TEST-nsfw-getflagqueue-status-filter-untested` | `src/nsfw/moderation-service/flags.ts` |
