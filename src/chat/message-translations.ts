@@ -146,6 +146,26 @@ export async function translateMessageToLocale(
   return { translated: true, stored: true, locale, };
 }
 
+/**
+ * Hard-delete every translation variant row for one message.
+ *
+ * Called when the message's content is edited: rows are additive
+ * retranslation caches, not history — the lazy/on-demand path regenerates
+ * them, so an edit clears them instead of flagging staleness.
+ * @param database
+ * @param messageId
+ * @returns {Promise<void>}
+ */
+export async function deleteMessageTranslations(
+  database: Kysely<DB>,
+  messageId: string,
+): Promise<void> {
+  await database
+    .deleteFrom("message_translations",)
+    .where("message_id", "=", messageId,)
+    .execute();
+}
+
 /** Inputs for the eager post-store / rule-based-reply trigger. */
 export interface TriggerTranslationOpts {
   messageId: string;
