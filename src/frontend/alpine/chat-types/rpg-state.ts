@@ -10,6 +10,14 @@ export interface ChatRpgState {
   statusEffects: StatusEffect[];
   equipment: EquipmentSlot[];
   loadRpgStats(): Promise<void>;
+  allocateAsi(ability: string,): Promise<void>;
+  resolveLevelUpAuto(): Promise<void>;
+  /** Last actor id resolved by loadRpgStats; spend endpoints mount under it. */
+  _rpgActorId: string | null;
+  /** Guards concurrent allocate/resolve clicks. */
+  rpgAsiBusy: boolean;
+  /** Last allocate/resolve failure, cleared on each attempt. */
+  rpgAsiError: string | null;
   getModifier(stat: number,): number;
   effectiveStat(base: number, effects: StatusEffect[],): number;
 }

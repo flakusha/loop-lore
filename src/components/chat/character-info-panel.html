@@ -79,6 +79,42 @@
               </div>
             </div>
 
+            <!-- Pending ASI: spend staged ability points -->
+            <template x-if="rpgStats?.pendingAsi > 0">
+              <div class="rpg-asi-section" data-testid="rpg-asi-section">
+                <div class="rpg-xp-row">
+                  <span><span x-text="rpgStats?.pendingAsi || 0"></span> ability points pending</span>
+                  <button
+                    class="btn btn-secondary btn-xs"
+                    :disabled="rpgAsiBusy"
+                    @click="resolveLevelUpAuto()"
+                    data-testid="rpg-asi-auto"
+                  >
+                    Auto
+                  </button>
+                </div>
+                <div class="rpg-asi-grid">
+                  <template x-for="a in ['str', 'dex', 'con', 'int', 'wis', 'cha']" :key="a">
+                    <button
+                      class="btn btn-secondary btn-xs"
+                      :disabled="rpgAsiBusy"
+                      @click="allocateAsi(a)"
+                      :data-testid="'rpg-asi-' + a"
+                    >
+                      <span x-text="a.toUpperCase()"></span> +2
+                    </button>
+                  </template>
+                </div>
+                <div
+                  x-show="rpgAsiError"
+                  style="font-size: 12px; color: #c00; margin-top: var(--space-1)"
+                  data-testid="rpg-asi-error"
+                >
+                  <span x-text="rpgAsiError"></span>
+                </div>
+              </div>
+            </template>
+
             <!-- Core Stats -->
             <div class="rpg-core-stats">
               <div class="rpg-stat-row">
