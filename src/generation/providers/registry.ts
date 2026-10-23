@@ -16,6 +16,9 @@ import { routingReorders, sharedRouter, } from "../routing/router";
 import type { TaskSignal, } from "../routing/task-signal";
 import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
+import { DeepLProvider, } from "./deepl";
+import { GoogleTranslateProvider, } from "./google-translate";
+import { LibreTranslateProvider, } from "./libretranslate";
 import { OllamaNativeProvider, } from "./ollama-native";
 import { OpenAiCompatibleProvider, } from "./openai-compatible";
 import type { LLMProvider, UserApiKeyResolver, } from "./types";
@@ -203,6 +206,21 @@ export function buildFailoverList(
     result.push({ name: ollama.name, provider: registry.get(ollama.name,)!, },);
   }
 
+  const deepl = providers?.deepl;
+  if (deepl && deepl.name !== primaryName && registry.has(deepl.name,)) {
+    result.push({ name: deepl.name, provider: registry.get(deepl.name,)!, },);
+  }
+
+  const libretranslate = providers?.libretranslate;
+  if (libretranslate && libretranslate.name !== primaryName && registry.has(libretranslate.name,)) {
+    result.push({ name: libretranslate.name, provider: registry.get(libretranslate.name,)!, },);
+  }
+
+  const googleTranslate = providers?.googleTranslate;
+  if (googleTranslate && googleTranslate.name !== primaryName && registry.has(googleTranslate.name,)) {
+    result.push({ name: googleTranslate.name, provider: registry.get(googleTranslate.name,)!, },);
+  }
+
   const routing = config?.generation?.routing;
   if (!signal || !routingReorders(routing,)) { return result; }
 
@@ -255,5 +273,29 @@ export function initializeProviders(config: Config,): void {
     const provider = new OllamaNativeProvider(config.generation.providers.ollamaNative,);
     registerProvider(config.generation.providers.ollamaNative.name, provider,);
     circuitBreaker.register(config.generation.providers.ollamaNative.name,);
+  }
+
+  if (config.generation.providers.deepl && !getProvider(config.generation.providers.deepl.name,)) {
+    const provider = new DeepLProvider(config.generation.providers.deepl,);
+    registerProvider(config.generation.providers.deepl.name, provider,);
+    circuitBreaker.register(config.generation.providers.deepl.name,);
+  }
+
+  if (
+    config.generation.providers.libretranslate &&
+    !getProvider(config.generation.providers.libretranslate.name,)
+  ) {
+    const provider = new LibreTranslateProvider(config.generation.providers.libretranslate,);
+    registerProvider(config.generation.providers.libretranslate.name, provider,);
+    circuitBreaker.register(config.generation.providers.libretranslate.name,);
+  }
+
+  if (
+    config.generation.providers.googleTranslate &&
+    !getProvider(config.generation.providers.googleTranslate.name,)
+  ) {
+    const provider = new GoogleTranslateProvider(config.generation.providers.googleTranslate,);
+    registerProvider(config.generation.providers.googleTranslate.name, provider,);
+    circuitBreaker.register(config.generation.providers.googleTranslate.name,);
   }
 }
