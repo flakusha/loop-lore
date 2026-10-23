@@ -161,7 +161,7 @@
     "title": "Actor memory tables carry no emotion_impact, so emotion-to-memory integration has no persistence",
     "label": "bug",
     "priority": "medium",
-    "epic": "epic-memory-knowledge-systems",
+    "epic": "memory-knowledge-systems",
     "tags": [],
     "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md",
     "status": "Not Started"
@@ -2613,7 +2613,7 @@
     "title": "chat split-classifier ships untested with hot-path aux LLM call against own scope",
     "label": "bug",
     "priority": "high",
-    "epic": "",
+    "epic": "conversation-branching",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md",
     "status": "Not Started"
@@ -6669,7 +6669,7 @@
     "title": "Module-level in-memory state grows without eviction",
     "label": "bug",
     "priority": "Medium",
-    "epic": "",
+    "epic": "runtime-memory-state-hygiene",
     "tags": [],
     "source": ".plan/tickets/BUG-module-level-in-memory-state-grows-without-eviction.md",
     "status": "Not Started"
@@ -7518,7 +7518,7 @@
     "title": "Per-sender rate-limiter buckets are never evicted (unbounded memory keyed on forged senders)",
     "label": "bug",
     "priority": "medium",
-    "epic": "",
+    "epic": "api-rate-limiting",
     "tags": [
       "integrations"
     ],
@@ -7637,7 +7637,7 @@
     "title": "Pin mismatch and transient probe failure both evict a peer from the mesh",
     "label": "bug",
     "priority": "low",
-    "epic": "",
+    "epic": "federation-swarm-sync",
     "tags": [
       "federation"
     ],
@@ -10124,7 +10124,7 @@
       "workflow"
     ],
     "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "c4f2d57"
   },
   "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-UNRESOLVED-PLACEHOLDERS": {
@@ -16670,6 +16670,24 @@
     "title": "Runtime Integrity, Crash Recovery & Fail-Safes",
     "type": "EPIC"
   },
+  "EPIC-RUNTIME-MEMORY-STATE-HYGIENE": {
+    "hash": "pending",
+    "extid": "EPIC-RUNTIME-MEMORY-STATE-HYGIENE",
+    "type": "EPIC",
+    "title": "Runtime Memory State Hygiene",
+    "label": "epic",
+    "priority": "P2",
+    "epic": "",
+    "tags": [
+      "memory",
+      "eviction",
+      "runtime",
+      "observability",
+      "review-rules"
+    ],
+    "source": ".plan/tickets/epic-runtime-memory-state-hygiene.md",
+    "status": "Not Started"
+  },
   "EPIC-SAM3-SEGMENTATION-INTEGRATION": {
     "hash": "b6fd26b",
     "extid": "EPIC-SAM3-SEGMENTATION-INTEGRATION",
@@ -20527,7 +20545,7 @@
     "title": "message translations chat-first",
     "label": "feat",
     "priority": "high",
-    "epic": "output-control-transforms",
+    "epic": "multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/FEAT-message-translations-chat-first.md",
     "status": "Not Started"
@@ -25394,7 +25412,7 @@
     "type": "TASK"
   },
   "TASK-AGENCY-COORDINATION-PRIORITY": {
-    "epic": "",
+    "epic": "research-agency-quality",
     "extid": "TASK-AGENCY-COORDINATION-PRIORITY",
     "git_issue": "31b4d5d",
     "hash": "31b4d5d",
@@ -26921,6 +26939,19 @@
     "title": "Assistant secret-lore access guard",
     "type": "TASK"
   },
+  "TASK-ASSISTANT-SERVER-SIDE-BRANCH-COMMAND": {
+    "hash": "cac3c1f",
+    "git_issue": "cac3c1f",
+    "extid": "TASK-ASSISTANT-SERVER-SIDE-BRANCH-COMMAND",
+    "type": "TASK",
+    "title": "assistant server-side /branch command",
+    "label": "task",
+    "priority": "medium",
+    "epic": "conversation-branching",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-server-side-branch-command.md",
+    "status": "Not Started"
+  },
   "TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE": {
     "epic": "epic-assistant-generation-extensions",
     "extid": "TASK-ASSISTANT-SLASH-COMMAND-TYPED-TOKEN-AUTOCOMPLETE",
@@ -28079,6 +28110,19 @@
     "tags": [],
     "title": "Baseline Skills Seed From Character Template",
     "type": "TASK"
+  },
+  "TASK-BATCH-EPIC-ATTACHMENT-TRIAGE": {
+    "hash": "57986c3",
+    "git_issue": "57986c3",
+    "extid": "TASK-BATCH-EPIC-ATTACHMENT-TRIAGE",
+    "type": "TASK",
+    "title": "batch epic-attachment triage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-batch-epic-attachment-triage.md",
+    "status": "Not Started"
   },
   "TASK-BATTLE-ACTION-SELECTOR": {
     "epic": "epic-battle-ui",
@@ -35415,6 +35459,19 @@
     "source": ".plan/tickets/TASK-document-asset-relation-graph-on-2d-canvas.md",
     "status": "Not Started"
   },
+  "TASK-DOCUMENT-DUAL-ASSISTANT-ROLE-GATES": {
+    "hash": "43d788f",
+    "git_issue": "43d788f",
+    "extid": "TASK-DOCUMENT-DUAL-ASSISTANT-ROLE-GATES",
+    "type": "TASK",
+    "title": "document dual assistant role-gates",
+    "label": "task",
+    "priority": "low",
+    "epic": "continuous-improvement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-document-dual-assistant-role-gates.md",
+    "status": "Not Started"
+  },
   "TASK-DOCUMENT-MEMORY-ISOLATION-CONTRACT-IN-DOCS-SPEC-MEMORY-SYSTE": {
     "hash": "488ff5f",
     "git_issue": "488ff5f",
@@ -41092,10 +41149,23 @@
     "title": "img2img init-image plumbing (prerequisite for the edit rung)",
     "label": "task",
     "priority": "critical",
-    "epic": "epic-reactive-actor-appearance",
+    "epic": "reactive-actor-appearance",
     "tags": [],
     "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md",
     "status": "Blocked"
+  },
+  "TASK-IMGEDIT-IN-CHAT-COMMAND": {
+    "hash": "6c1fecd",
+    "git_issue": "6c1fecd",
+    "extid": "TASK-IMGEDIT-IN-CHAT-COMMAND",
+    "type": "TASK",
+    "title": "imgedit in-chat command",
+    "label": "task",
+    "priority": "medium",
+    "epic": "assistant-generation-extensions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-imgedit-in-chat-command.md",
+    "status": "Not Started"
   },
   "TASK-IMMERSION-PRESENTATION": {
     "epic": "epic-immersion-presentation",
@@ -43949,7 +44019,7 @@
     "type": "TASK"
   },
   "TASK-MEMORY-EMOTION-IMPACT": {
-    "epic": "`epic-memory-knowledge-systems.md` (FEA-2026-056)",
+    "epic": "memory-knowledge-systems (FEA-2026-056)",
     "extid": "TASK-MEMORY-EMOTION-IMPACT",
     "git_issue": "adb4391",
     "hash": "adb4391",
@@ -44654,6 +44724,19 @@
     "tags": [],
     "title": "Migration 076: harden against malformed gm_config JSON",
     "type": "TASK"
+  },
+  "TASK-MIGRATION-SEQUENTIAL-FINALIZE-AND-RENUMBER-POLICY": {
+    "hash": "f5191ec",
+    "git_issue": "f5191ec",
+    "extid": "TASK-MIGRATION-SEQUENTIAL-FINALIZE-AND-RENUMBER-POLICY",
+    "type": "TASK",
+    "title": "migration sequential-finalize and renumber policy",
+    "label": "task",
+    "priority": "high",
+    "epic": "continuous-improvement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-migration-sequential-finalize-and-renumber-policy.md",
+    "status": "Not Started"
   },
   "TASK-MIGRATION-TOOLING-FOR-LEGACY-TO-RICH-CHARACTER-DATA": {
     "epic": "",
@@ -47661,6 +47744,19 @@
     "title": "EPIC: Plugin System & Extensibility",
     "type": "TASK"
   },
+  "TASK-POLL-COMMAND-FOR-GROUP-CHAT": {
+    "hash": "e88633d",
+    "git_issue": "e88633d",
+    "extid": "TASK-POLL-COMMAND-FOR-GROUP-CHAT",
+    "type": "TASK",
+    "title": "poll command for group chat",
+    "label": "task",
+    "priority": "medium",
+    "epic": "chat-rich-engagement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-poll-command-for-group-chat.md",
+    "status": "Not Started"
+  },
   "TASK-PORTABLE-STORY-BUNDLE-EXPORT-IMPORT": {
     "epic": "epic-import-export-io",
     "extid": "TASK-PORTABLE-STORY-BUNDLE-EXPORT-IMPORT",
@@ -50503,6 +50599,19 @@
     ],
     "title": "Shared Reputation Schema",
     "type": "TASK"
+  },
+  "TASK-REROLL-EMOTION-COMMAND": {
+    "hash": "e114243",
+    "git_issue": "e114243",
+    "extid": "TASK-REROLL-EMOTION-COMMAND",
+    "type": "TASK",
+    "title": "reroll-emotion command",
+    "label": "task",
+    "priority": "medium",
+    "epic": "avatar-regeneration-control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reroll-emotion-command.md",
+    "status": "Not Started"
   },
   "TASK-RESEARCH-CHARACTER-SYSTEMS-LANDSCAPE": {
     "epic": "epic-character-core-system (research sub-area)",
@@ -53727,7 +53836,7 @@
     "title": "test debt: coordination-priority queue-cap regression test",
     "label": "task",
     "priority": "low",
-    "epic": "",
+    "epic": "research-agency-quality",
     "tags": [],
     "source": ".plan/tickets/TASK-test-debt-coordination-priority-queue-cap-regression-test.md",
     "status": "Not Started"
@@ -54123,7 +54232,7 @@
     "type": "TASK"
   },
   "TASK-TIMELINE-BRANCHING-UI": {
-    "epic": "`epic-timeline-system.md`",
+    "epic": "timeline-system",
     "extid": "TASK-TIMELINE-BRANCHING-UI",
     "git_issue": "ed8dd6e",
     "hash": "ed8dd6e",
@@ -54147,6 +54256,19 @@
     "tags": [],
     "title": "Add `timeline_id` to `world_timeline_events`",
     "type": "TASK"
+  },
+  "TASK-TIMELINE-IN-CHAT-COMMAND": {
+    "hash": "0c5128c",
+    "git_issue": "0c5128c",
+    "extid": "TASK-TIMELINE-IN-CHAT-COMMAND",
+    "type": "TASK",
+    "title": "timeline in-chat command",
+    "label": "task",
+    "priority": "medium",
+    "epic": "timeline-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-timeline-in-chat-command.md",
+    "status": "Not Started"
   },
   "TASK-TIMELINE-MEMORY-INJECTION": {
     "epic": "`epic-memory-propagation.md`",
@@ -54581,7 +54703,7 @@
     "title": "Translator model role with general-model fallback",
     "label": "task",
     "priority": "medium",
-    "epic": "aux-enrichment-pipeline",
+    "epic": "multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/TASK-translator-model-role-with-general-model-fallback.md",
     "status": "Not Started"
