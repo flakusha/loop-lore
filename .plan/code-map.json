@@ -30155,10 +30155,6 @@
   ],
   "src/generation/matting/comfy-provider.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     },
@@ -31445,10 +31441,6 @@
   ],
   "src/generation/workflow-library/hydrate.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
     },
@@ -31458,10 +31450,6 @@
     }
   ],
   "src/generation/workflow-library/row.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
@@ -31479,6 +31467,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    }
+  ],
+  "src/generation/workflow-library/seed-parameters.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
     }
   ],
   "src/generation/workflow-library/seed.ts": [
@@ -32033,6 +32027,16 @@
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
     }
   ],
+  "src/image-edit/providers/comfyui-image-upload.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
+    }
+  ],
   "src/image-edit/providers/comfyui-owner.test.ts": [
     {
       "kind": "ticket",
@@ -32344,10 +32348,6 @@
     }
   ],
   "src/image-edit/templates/builtin/_helpers.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-reactive-actor-appearance.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
@@ -55283,6 +55283,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-context-priority-tiers.md"
+    }
+  ],
+  "src/validation/schemas/image-edit.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-reactive-actor-appearance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-edit-comfyui-provider-never-uploads-input-image.md"
     }
   ],
   "src/validation/schemas/index.ts": [
