@@ -17,12 +17,7 @@
         }
       },
       "expected": {
-        "message": {
-          "id": "msg-1",
-          "role": "user",
-          "content": "",
-          "created_at": ""
-        },
+        "message": null,
         "assistant": null
       }
     },

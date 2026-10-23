@@ -40,6 +40,15 @@ describe("policyForRoute", () => {
     expect(policyForRoute("/api/v1/generation/images",),).toBe(generationPolicy,);
   });
 
+  test("chat SSE stream resolves the chat policy (BUG-chat-sse-shares-generation-rate-bucket)", () => {
+    // GET /api/v1/generation/stream/:chatId is an SSE read, not a billable
+    // call — the suffix rule keeps it out of the 20/min generation bucket.
+    expect(policyForRoute("/api/v1/generation/stream/abc-123",),).toBe(chatPolicy,);
+    // Other generation traffic stays on the generation policy.
+    expect(policyForRoute("/api/v1/generation/image",),).toBe(generationPolicy,);
+    expect(policyForRoute("/api/v1/generation/stream",),).toBe(chatPolicy,);
+  });
+
   test("emotion-avatar batch generation resolves the generation policy (BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy)", () => {
     // POST /api/v1/actors/:actorId/emotion-avatars is nested under an id, so no
     // prefix rule reaches it; the suffix rule moves its per-entry image-gen

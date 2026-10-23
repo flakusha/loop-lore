@@ -267,7 +267,12 @@ pub fn parse_sent_message(raw: &str) -> Result<SentMessage, String> {
     return Err(String::from("send response is not an object"));
   }
   let row = value.get("data").filter(|data| data.is_object()).unwrap_or(&value);
-  let message = parse_message_row(row, "user").ok();
+  // A top-level {id, context, meta} envelope carries no message content —
+  // the send shape, not a message row. Rendering it yields an empty bubble,
+  // so treat a content-less row as absent (the stream delivers the reply).
+  let message = parse_message_row(row, "user")
+    .ok()
+    .filter(|message| !message.content.is_empty());
   let assistant = value
     .get("assistantMessage")
     .and_then(|row| parse_message_row(row, "assistant").ok());
