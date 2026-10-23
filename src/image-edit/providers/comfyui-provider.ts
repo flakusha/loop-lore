@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 260
 
 /**
  * ComfyUI Image Edit Provider — Executes templates via ComfyUI API
@@ -26,6 +27,7 @@ import type {
   ImageEditResult,
   WorkflowTemplate,
 } from "../types";
+import { uploadImageParams, } from "./comfyui-image-upload";
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function log() {
@@ -121,6 +123,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * @param template
    * @param opts
    * @returns the rendered images for this request
+   * @throws {Error} when an input image cannot be uploaded to ComfyUI
    * @throws {Error} when the workflow build or the ComfyUI prompt submission fails
    * @throws {SafeBufferError} when an output image exceeds the safe buffer limit during download
    */
@@ -141,6 +144,12 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     if (params.emotion) {
       params.emotion_modifier = this.getEmotionModifier(params.emotion as string,);
     }
+
+    // A LoadImage node takes the name of a file in ComfyUI's OWN input
+    // directory, so a local image has to be uploaded before the workflow is
+    // built. The upload happens BEFORE the submission: a failed upload must
+    // abort the run instead of queueing a filename ComfyUI has no bytes for.
+    await uploadImageParams({ client, template, params, },);
 
     const workflow = template.build(params,);
 
