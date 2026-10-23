@@ -16,7 +16,7 @@ import { createLogger, } from "../../logger/index.js";
 import type { Combatant, } from "../../rpg/combat.js";
 import type { StatBlock, } from "../../rpg/stats.js";
 import { createTestDb, } from "../../test-utils/create-test-db.js";
-import { insertActors, insertUsers, } from "../../test-utils/insert-helpers.js";
+import { insertActors, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers.js";
 import { performAttack, startBattle, } from "./battles.js";
 import { applyVictoryXpLeg, } from "./battles/rewards.js";
 import { buildCombatant, } from "./battles/types.js";
@@ -148,6 +148,23 @@ describe("applyVictoryXpLeg", () => {
     const row = await statsFor(fresh,);
     expect(row.xp,).toBe(10,); // CR 0 → 10 XP
     expect(row.level,).toBe(1,);
+  });
+
+  test("an opted-out world grants nothing", async () => {
+    const hero = await seedActor("Hero OptOut",);
+    const worldId = await insertWorlds(db, ownerId, "No XP World", {
+      rpg_enabled: 1,
+      rpg_xp: 0,
+    },);
+
+    await applyVictoryXpLeg(db, {
+      battleId: "battle-optout",
+      chatId: "chat-1",
+      worldId,
+      combatants: [combatant(hero, "Hero OptOut",), combatant("foe", "Orc", { isNpc: true, hp: 0, level: 5, },),],
+    },);
+
+    expect(await ledgerFor(hero,),).toHaveLength(0,);
   });
 });
 
