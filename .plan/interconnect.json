@@ -5218,6 +5218,7 @@
         "src/generation/providers/comfyui.ts",
         "src/generation/workflow-library/row.ts",
         "src/generation/workflow-library/validate.ts",
+        "src/image-edit/providers/comfyui-image-upload.ts",
         "src/image-edit/providers/comfyui-owner.test.ts",
         "src/image-edit/providers/comfyui-provider.ts",
         "src/image-edit/providers/sd-server-provider/ops.ts",
@@ -5238,6 +5239,7 @@
         "src/test-utils/create-test-db.ts",
         "src/test-utils/isolate-only.ts",
         "src/validation/schemas/comfyui-builder.ts",
+        "src/validation/schemas/image-edit.ts",
         "src/validation/schemas/index.ts"
       ],
       "related": []
@@ -50000,14 +50002,12 @@
         "src/generation/hooks/registry.ts",
         "src/generation/image-engine/comfyui.ts",
         "src/generation/image-engine/types.ts",
-        "src/generation/matting/comfy-provider.ts",
         "src/generation/providers/comfyui-upload.ts",
-        "src/generation/workflow-library/hydrate.ts",
-        "src/generation/workflow-library/row.ts",
+        "src/generation/workflow-library/seed-parameters.ts",
         "src/generation/workflow-library/seed.ts",
+        "src/image-edit/providers/comfyui-image-upload.ts",
         "src/image-edit/providers/comfyui-provider.ts",
         "src/image-edit/routes.ts",
-        "src/image-edit/templates/builtin/_helpers.ts",
         "src/image-edit/templates/builtin/img2img.ts",
         "src/image-edit/templates/builtin/inpaint.ts",
         "src/regex/image-edit.ts",
@@ -50023,6 +50023,7 @@
         "src/services/actor-items/transfer.ts",
         "src/tui/harness/display.test.ts",
         "src/validation/schemas/emotion-avatars.ts",
+        "src/validation/schemas/image-edit.ts",
         "src/validation/schemas/wardrobe.ts"
       ],
       "related": []
@@ -68552,8 +68553,7 @@
       "path": "src/generation/matting/comfy-provider.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "TASK-img2img-init-image-plumbing",
-        "epic-reactive-actor-appearance"
+        "TASK-img2img-init-image-plumbing"
       ]
     },
     {
@@ -69231,8 +69231,7 @@
       "path": "src/generation/workflow-library/hydrate.ts",
       "owners": [
         "BUG-workflow-library-img2img-row-has-no-parameters",
-        "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
-        "epic-reactive-actor-appearance"
+        "BUG-workflow-library-img2img-row-has-unresolved-placeholders"
       ]
     },
     {
@@ -69240,14 +69239,19 @@
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
         "BUG-workflow-library-img2img-row-has-no-parameters",
-        "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
-        "epic-reactive-actor-appearance"
+        "BUG-workflow-library-img2img-row-has-unresolved-placeholders"
       ]
     },
     {
       "path": "src/generation/workflow-library/seed-hydrate.test.ts",
       "owners": [
         "BUG-workflow-library-img2img-row-has-no-parameters"
+      ]
+    },
+    {
+      "path": "src/generation/workflow-library/seed-parameters.ts",
+      "owners": [
+        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -69567,6 +69571,13 @@
       ]
     },
     {
+      "path": "src/image-edit/providers/comfyui-image-upload.ts",
+      "owners": [
+        "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+        "epic-reactive-actor-appearance"
+      ]
+    },
+    {
       "path": "src/image-edit/providers/comfyui-owner.test.ts",
       "owners": [
         "BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-",
@@ -69697,8 +69708,7 @@
       "path": "src/image-edit/templates/builtin/_helpers.ts",
       "owners": [
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-        "TASK-comfyui-template-parameter-validation",
-        "epic-reactive-actor-appearance"
+        "TASK-comfyui-template-parameter-validation"
       ]
     },
     {
@@ -83611,6 +83621,13 @@
         "BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d",
         "TASK-harness-context-priority-tiers",
         "epic-harness-integration"
+      ]
+    },
+    {
+      "path": "src/validation/schemas/image-edit.ts",
+      "owners": [
+        "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+        "epic-reactive-actor-appearance"
       ]
     },
     {
@@ -105172,6 +105189,11 @@
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "produces",
+      "to": "src/image-edit/providers/comfyui-image-upload.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "produces",
       "to": "src/image-edit/providers/comfyui-owner.test.ts"
     },
     {
@@ -105268,6 +105290,11 @@
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "produces",
       "to": "src/validation/schemas/comfyui-builder.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "produces",
+      "to": "src/validation/schemas/image-edit.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -154382,27 +154409,22 @@
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
-      "to": "src/generation/matting/comfy-provider.ts"
-    },
-    {
-      "from": "epic-reactive-actor-appearance",
-      "kind": "produces",
       "to": "src/generation/providers/comfyui-upload.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
-      "to": "src/generation/workflow-library/hydrate.ts"
-    },
-    {
-      "from": "epic-reactive-actor-appearance",
-      "kind": "produces",
-      "to": "src/generation/workflow-library/row.ts"
+      "to": "src/generation/workflow-library/seed-parameters.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/generation/workflow-library/seed.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "produces",
+      "to": "src/image-edit/providers/comfyui-image-upload.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -154413,11 +154435,6 @@
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/image-edit/routes.ts"
-    },
-    {
-      "from": "epic-reactive-actor-appearance",
-      "kind": "produces",
-      "to": "src/image-edit/templates/builtin/_helpers.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -154493,6 +154510,11 @@
       "from": "epic-reactive-actor-appearance",
       "kind": "produces",
       "to": "src/validation/schemas/emotion-avatars.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "produces",
+      "to": "src/validation/schemas/image-edit.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -203846,7 +203868,7 @@
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/generation/workflow-library/row.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts"
+      "via": "src/generation/providers/comfyui-upload.ts; src/image-edit/providers/comfyui-image-upload.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts; src/validation/schemas/image-edit.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -229430,7 +229452,7 @@
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
+      "via": "src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
     },
     {
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
@@ -229448,7 +229470,7 @@
       "from": "BUG-workflow-library-img2img-row-has-unresolved-placeholders",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts"
+      "via": "src/generation/workflow-library/seed.ts"
     },
     {
       "from": "BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m",
@@ -293180,7 +293202,7 @@
       "from": "TASK-comfyui-template-parameter-validation",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts"
+      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts"
     },
     {
       "from": "TASK-comfyui-template-parameter-validation",
@@ -323486,7 +323508,7 @@
       "from": "TASK-img2img-init-image-plumbing",
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
-      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
+      "via": "src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts"
     },
     {
       "from": "TASK-img2img-init-image-plumbing",

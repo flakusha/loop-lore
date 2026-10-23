@@ -11994,10 +11994,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-voice-notes-playback.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
@@ -23405,12 +23401,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-regeneratevariant-does-not-pass-style-to-api.md"
-    }
-  ],
-  "src/frontend/alpine/chat-voice-notes.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-voice-notes-playback.md"
     }
   ],
   "src/frontend/alpine/chat.ts": [
@@ -45049,10 +45039,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-visual-novel-mode.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-voice-notes-playback.md"
     }
   ],
   "src/routes/v1/content-surface.ts": [
@@ -45939,18 +45925,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
-    }
-  ],
-  "src/routes/voice-notes.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-voice-notes-playback.md"
-    }
-  ],
-  "src/routes/voice-notes.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-voice-notes-playback.md"
     }
   ],
   "src/routes/wardrobe": [

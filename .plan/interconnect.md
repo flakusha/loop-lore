@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3607
 - epics: 344
-- src paths owned: 4364
-- edges: produces 11323, consumes 402, sibling 33361, owns 2631, related 1187
+- src paths owned: 4367
+- edges: produces 11324, consumes 402, sibling 33361, owns 2631, related 1187
 
 ## Shared src hubs
 
@@ -992,7 +992,7 @@ output is byte-identical for identical inputs.
 | `src/generation/lora/types.ts` | `TASK-lora-discovery-application`, `epic-lora-discovery-application` |
 | `src/generation/lora/validation.ts` | `TASK-lora-audit-standalone`, `TASK-lora-discovery-application`, `epic-lora-discovery-application` |
 | `src/generation/matting/auto-matte.ts` | `TASK-sam3-concept-cutout-wiring-sprites-avatar-matting-vn-alpha`, `epic-sam3-segmentation-integration` |
-| `src/generation/matting/comfy-provider.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-img2img-init-image-plumbing`, `epic-reactive-actor-appearance` |
+| `src/generation/matting/comfy-provider.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-img2img-init-image-plumbing` |
 | `src/generation/matting/factory.ts` | `TASK-sam3-direct-provider-via-meta-model-api`, `TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste`, `epic-sam3-segmentation-integration` |
 | `src/generation/matting/providers.ts` | `TASK-sam3-direct-provider-via-meta-model-api`, `epic-sam3-segmentation-integration` |
 | `src/generation/matting/service.ts` | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty`, `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-comfyui-pbr-texture-set-generation`, `TASK-derived-map-origin-links`, `TASK-held-item-axis-data-model`, `TASK-multi-concept-segmentation-masks`, `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images`, `epic-derived-map-generation` |
@@ -1033,8 +1033,8 @@ output is byte-identical for identical inputs.
 | `src/generation/video-` | `FEAT-065-sub-video`, `TASK-video-gen-route` |
 | `src/generation/video-gen-route.ts` | `FEAT-065-prompt-library-expanded`, `FEAT-065-sub-video`, `TASK-video-gen-route` |
 | `src/generation/video-prompt-templates.ts` | `FEAT-065-sub-video`, `FEAT-065-template-system`, `TASK-video-template-schema` |
-| `src/generation/workflow-library/hydrate.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders`, `epic-reactive-actor-appearance` |
-| `src/generation/workflow-library/row.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders`, `epic-reactive-actor-appearance` |
+| `src/generation/workflow-library/hydrate.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders` |
+| `src/generation/workflow-library/row.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders` |
 | `src/generation/workflow-library/seed.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `BUG-workflow-library-img2img-row-has-unresolved-placeholders`, `epic-reactive-actor-appearance` |
 | `src/generation/workflow-library/validate.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-external-comfyui-plugin-repo-integration-contract` |
 | `src/generation/workflow-loader/loader.ts` | `TASK-comfyui-first-class-workflow-library`, `epic-comfyui-first-class-citizen`, `epic-comfyui-plugin`, `epic-configs-path-resolution` |
@@ -1054,6 +1054,7 @@ output is byte-identical for identical inputs.
 | `src/i18n/plurals.ts` | `TASK-010-plurals`, `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `epic-publication-i18n` |
 | `src/i18n/translator.ts` | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin`, `TASK-010`, `TASK-010-plurals`, `epic-frontend-internationalization`, `epic-publication-i18n` |
 | `src/image-edit` | `TASK-assistant-creative-studio-workflow-gallery-edit`, `TASK-audit-undocumented-src-content-src-aux-pipeline-and-src-imag`, `TASK-recon-test-coverage`, `TASK-reconciliation-plan`, `epic-assistant-creative-studio-workflows`, `epic-docs-reconciliation` |
+| `src/image-edit/providers/comfyui-image-upload.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `epic-reactive-actor-appearance` |
 | `src/image-edit/providers/comfyui-owner.test.ts` | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-`, `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-audit-new-test-files-for-cross-file-process-collisions-befor`, `TASK-image-edit-run-authz-error-shape-regression` |
 | `src/image-edit/providers/comfyui-provider.ts` | `BUG-asset-dedup-collapses-all-users-edits-onto-one-system-owned-`, `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-image-edit-provider-and-template-capabilities-disagree`, `BUG-sd-server-image-providers-discard-the-generated-image-and-ab`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-comfyui-ws-progress-streaming`, `TASK-krea-2-reference-edit-template`, `epic-comfyui-plugin`, `epic-reactive-actor-appearance` |
 | `src/image-edit/providers/sd-server-provider/index.ts` | `BUG-image-edit-provider-and-template-capabilities-disagree`, `epic-derived-map-generation` |
@@ -1062,7 +1063,7 @@ output is byte-identical for identical inputs.
 | `src/image-edit/routes.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-image-edit-run-crashes-on-missing-params-and-the-template-re`, `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-assistant-command-execution-intent-detection`, `TASK-assistant-creative-studio-workflow-gallery-edit`, `TASK-audit-new-test-files-for-cross-file-process-collisions-befor`, `TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va`, `TASK-comfyui-depth-map-generation-template`, `TASK-comfyui-first-class-admin-workflows`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-comfyui-sam3-concept-mask-template`, `TASK-comfyui-sampler-scheduler-discovery`, `TASK-comfyui-template-parameter-validation`, `TASK-comfyui-workflow-parameterization`, `TASK-comfyui-ws-progress-streaming`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-external-comfyui-plugin-repo-integration-contract`, `TASK-illustrated-book-reference-pass`, `TASK-image-edit-depth-conditioned-editing`, `TASK-image-edit-run-authz-error-shape-regression`, `TASK-img2img-init-image-plumbing`, `TASK-imgedit-in-chat-command`, `TASK-outfit-narrative-extractor-regex-prefilter`, `epic-comfyui-first-class-citizen`, `epic-comfyui-plugin`, `epic-reactive-actor-appearance`, `epic-reference-conditioned-generation` |
 | `src/image-edit/run-authz.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-image-edit-concept-inpaint-template`, `TASK-image-edit-depth-conditioned-editing`, `TASK-image-edit-run-authz-error-shape-regression`, `TASK-multi-reference-conditioning-request-model`, `epic-sam3-segmentation-integration` |
 | `src/image-edit/template-registry.ts` | `BUG-image-edit-run-crashes-on-missing-params-and-the-template-re`, `BUG-workflow-library-img2img-row-has-no-parameters`, `FEAT-background`, `TASK-comfyui-first-class-admin-workflows`, `TASK-comfyui-first-class-workflow-library`, `TASK-comfyui-node-discovery-template-autofilter`, `TASK-external-comfyui-plugin-repo-integration-contract`, `TASK-krea-2-reference-edit-template`, `TASK-reference-capability-matrix-data-model`, `epic-comfyui-plugin`, `epic-config-templates`, `epic-reference-conditioned-generation`, `epic-worlds-extension` |
-| `src/image-edit/templates/builtin/_helpers.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-comfyui-template-parameter-validation`, `epic-reactive-actor-appearance` |
+| `src/image-edit/templates/builtin/_helpers.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-comfyui-template-parameter-validation` |
 | `src/image-edit/templates/builtin/controlnet.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `epic-derived-map-generation` |
 | `src/image-edit/templates/builtin/img2img.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-img2img-init-image-plumbing`, `epic-reactive-actor-appearance` |
 | `src/image-edit/templates/builtin/inpaint.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-image-edit-provider-and-template-capabilities-disagree`, `TASK-ground-up-scene-generation-with-background`, `TASK-held-item-whole-outfit-variant-axis`, `epic-reactive-actor-appearance` |
@@ -1883,6 +1884,7 @@ output is byte-identical for identical inputs.
 | `src/validation/schemas/chat.ts` | `BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve`, `BUG-settings-save-omits-gmconfig-for-online-chats`, `BUG-visualnovel-type-mismatch-across-api-db-layers`, `FEAT-world-template-chat-lifecycle`, `TASK-bound-linked-travel-prompts`, `TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min`, `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings`, `WIRE-extras-impersonateactorid-schema-validation` |
 | `src/validation/schemas/emotion-avatars.ts` | `TASK-identity-lock-seed-negative-prompt-and-anchor`, `epic-avatar-regeneration-control`, `epic-reactive-actor-appearance` |
 | `src/validation/schemas/entities.ts` | `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d`, `TASK-harness-context-priority-tiers`, `epic-harness-integration` |
+| `src/validation/schemas/image-edit.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `epic-reactive-actor-appearance` |
 | `src/validation/schemas/index.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `TASK-branch-merges-routes-and-typebox-schemas`, `TASK-extend-schema-fuzz-generation-beyond-src-validation-schemas` |
 | `src/validation/schemas/primitives.ts` | `BUG-actortype-persona-422-on-valid-ui-input`, `TASK-audit-t-unionenum-schema-fields-absent-value-silently-defaul`, `TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn`, `TASK-harmonize-quest-type-taxonomy`, `TASK-nsfw-rating-enforcement`, `epic-quests-encounters` |
 | `src/validation/schemas/responses` | `TASK-federation-admin-usage-dashboard-ui`, `epic-federation-offload-quotas` |
@@ -6016,6 +6018,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/generation/providers/comfyui.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/generation/workflow-library/row.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/generation/workflow-library/validate.ts` | - |
+| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/image-edit/providers/comfyui-image-upload.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/image-edit/providers/comfyui-owner.test.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/image-edit/providers/comfyui-provider.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/image-edit/providers/sd-server-provider/ops.ts` | - |
@@ -6036,6 +6039,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/test-utils/create-test-db.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/test-utils/isolate-only.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/validation/schemas/comfyui-builder.ts` | - |
+| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/validation/schemas/image-edit.ts` | - |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | produces | `src/validation/schemas/index.ts` | - |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | produces | `src/assets/service/delete.ts` | - |
 | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | produces | `src/generation/image-edit-service/apply.ts` | - |
@@ -15858,14 +15862,12 @@ output is byte-identical for identical inputs.
 | `epic-reactive-actor-appearance` | produces | `src/generation/hooks/registry.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/generation/image-engine/comfyui.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/generation/image-engine/types.ts` | - |
-| `epic-reactive-actor-appearance` | produces | `src/generation/matting/comfy-provider.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/generation/providers/comfyui-upload.ts` | - |
-| `epic-reactive-actor-appearance` | produces | `src/generation/workflow-library/hydrate.ts` | - |
-| `epic-reactive-actor-appearance` | produces | `src/generation/workflow-library/row.ts` | - |
+| `epic-reactive-actor-appearance` | produces | `src/generation/workflow-library/seed-parameters.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/generation/workflow-library/seed.ts` | - |
+| `epic-reactive-actor-appearance` | produces | `src/image-edit/providers/comfyui-image-upload.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/image-edit/providers/comfyui-provider.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/image-edit/routes.ts` | - |
-| `epic-reactive-actor-appearance` | produces | `src/image-edit/templates/builtin/_helpers.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/image-edit/templates/builtin/img2img.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/image-edit/templates/builtin/inpaint.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/regex/image-edit.ts` | - |
@@ -15881,6 +15883,7 @@ output is byte-identical for identical inputs.
 | `epic-reactive-actor-appearance` | produces | `src/services/actor-items/transfer.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/tui/harness/display.test.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/validation/schemas/emotion-avatars.ts` | - |
+| `epic-reactive-actor-appearance` | produces | `src/validation/schemas/image-edit.ts` | - |
 | `epic-reactive-actor-appearance` | produces | `src/validation/schemas/wardrobe.ts` | - |
 | `epic-recursive-self-improvement` | produces | `src/admin/config-keys.ts` | - |
 | `epic-recursive-self-improvement` | produces | `src/admin/config.ts` | - |
@@ -24370,7 +24373,7 @@ output is byte-identical for identical inputs.
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-platform-integrations` | `src/generation/providers/comfyui.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-provider-plugin-ecosystem` | `src/generation/providers/comfyui.ts` |
-| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-reactive-actor-appearance` | `src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/generation/workflow-library/row.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts` |
+| `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-reactive-actor-appearance` | `src/generation/providers/comfyui-upload.ts; src/image-edit/providers/comfyui-image-upload.ts; src/image-edit/providers/comfyui-provider.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts; src/image-edit/templates/builtin/inpaint.ts; src/validation/schemas/image-edit.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-reference-conditioned-generation` | `src/generation/providers/comfyui.ts; src/image-edit/routes.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-runtime-integrity-fail-safes` | `src/db/index.ts` |
 | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | sibling | `epic-sam3-segmentation-integration` | `src/image-edit/run-authz.ts` |
@@ -28634,10 +28637,10 @@ output is byte-identical for identical inputs.
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/template-service/crud.ts; src/generation/workflow-substitutor.ts; src/image-edit/routes.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-comfyui-plugin` | `src/image-edit/routes.ts; src/image-edit/template-registry.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-config-templates` | `src/image-edit/template-registry.ts` |
-| `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts` |
+| `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/seed.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-reference-conditioned-generation` | `src/image-edit/routes.ts; src/image-edit/template-registry.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `epic-worlds-extension` | `src/image-edit/template-registry.ts` |
-| `BUG-workflow-library-img2img-row-has-unresolved-placeholders` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/hydrate.ts; src/generation/workflow-library/row.ts; src/generation/workflow-library/seed.ts` |
+| `BUG-workflow-library-img2img-row-has-unresolved-placeholders` | sibling | `epic-reactive-actor-appearance` | `src/generation/workflow-library/seed.ts` |
 | `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m` | sibling | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | `src/middleware/auth/token.ts` |
 | `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m` | sibling | `TASK-input-hardening-batch` | `src/middleware/auth/token.ts` |
 | `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m` | sibling | `epic-auth-channel-provisioning` | `src/middleware/auth/token.ts` |
@@ -39259,7 +39262,7 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-template-parameter-validation` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/lora/routes/validate.ts; src/generation/workflow-substitutor.ts; src/image-edit/routes.ts; src/image-edit/types.ts; src/utils/clamp.ts` |
 | `TASK-comfyui-template-parameter-validation` | sibling | `epic-comfyui-plugin` | `src/generation/image-engine/comfyui.ts; src/image-edit/routes.ts` |
 | `TASK-comfyui-template-parameter-validation` | sibling | `epic-effect-v4-adoption-evaluation` | `src/generation/image-engine/types.ts` |
-| `TASK-comfyui-template-parameter-validation` | sibling | `epic-reactive-actor-appearance` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/_helpers.ts` |
+| `TASK-comfyui-template-parameter-validation` | sibling | `epic-reactive-actor-appearance` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/image-edit/routes.ts` |
 | `TASK-comfyui-template-parameter-validation` | sibling | `epic-reference-conditioned-generation` | `src/generation/image-engine/comfyui.ts; src/image-edit/routes.ts` |
 | `TASK-comfyui-template-registry` | sibling | `TASK-comfyui-ws-client-id-progress-reference-generation` | `src/generation/providers/comfyui.ts` |
 | `TASK-comfyui-template-registry` | sibling | `TASK-comfyui-ws-progress-streaming` | `src/generation/providers/comfyui.ts` |
@@ -44310,7 +44313,7 @@ output is byte-identical for identical inputs.
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-external-creative-tool-bridge` | `src/generation/providers/comfyui.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-platform-integrations` | `src/generation/providers/comfyui.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-provider-plugin-ecosystem` | `src/generation/providers/comfyui.ts` |
-| `TASK-img2img-init-image-plumbing` | sibling | `epic-reactive-actor-appearance` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/matting/comfy-provider.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts` |
+| `TASK-img2img-init-image-plumbing` | sibling | `epic-reactive-actor-appearance` | `src/generation/image-engine/comfyui.ts; src/generation/image-engine/types.ts; src/generation/providers/comfyui-upload.ts; src/image-edit/routes.ts; src/image-edit/templates/builtin/img2img.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-reference-conditioned-generation` | `src/generation/image-engine/comfyui.ts; src/generation/providers/comfyui.ts; src/image-edit/routes.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-technical-comparison-charts` | `src/generation/providers/comfyui.ts` |
 | `TASK-img2img-init-image-plumbing` | sibling | `epic-video-generation` | `src/generation/providers/comfyui.ts` |
