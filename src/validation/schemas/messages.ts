@@ -70,6 +70,19 @@ export const MessageVariantQuery = t.Object({
   variantIndex: t.Numeric({ minimum: 0, },),
 },);
 
+// Message translations (FEAT-message-translations-chat-first): the locale
+// is validated against the shared catalog at runtime (normalizeTargetLang)
+// so the schema stays a plain string and unknown codes hit the same 400
+// path as the auto-translate endpoint.
+export const MessageTranslationLocaleParams = t.Object({
+  id: Id,
+  locale: t.String({ minLength: 1, maxLength: 16, },),
+},);
+
+export const MessageTranslationBody = t.Object({
+  locale: t.String({ minLength: 1, maxLength: 16, },),
+},);
+
 export const MessageIdParams = t.Object({
   id: Id,
 },);
