@@ -3,7 +3,7 @@
 
 # FEAT: Skill usage XP: award skill and character XP when skills are exercised
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** no `addXp`/`SkillsService` caller in `src/rpg/interaction/` on dev; work in branch `xp-reward-sources`; verified 2026-10-23
 **Priority:** medium
 **Effort:** Medium
@@ -25,3 +25,5 @@ No production path awards skill-row XP on `character_skills` today: `SkillsServi
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-23 registry-driven close: git issue d735eda (registry tip: 95fa70b65 Konstantin Fedotov Close issue)

@@ -11088,7 +11088,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-achievements.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "achievements",
       "trophies",
@@ -11107,7 +11107,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-actor-autonomy-story-drive.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "autonomy",
       "npc",
@@ -11129,7 +11129,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-actor-turn-skip.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "turn-skip",
       "pass",
@@ -11149,7 +11149,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-actors.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "actors",
       "characters",
@@ -11373,7 +11373,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-api-rate-limiting.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "rate-limiting",
       "sliding-window",
@@ -11506,7 +11506,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-archival-workflow.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "archival",
       "soft-delete",
@@ -12245,7 +12245,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-chat-lifecycle-moderation.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "chat",
       "lifecycle",
@@ -12595,7 +12595,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-config-file-separation.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "config",
       "modularization",
@@ -12614,7 +12614,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-config-templates.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "llm",
       "sd",
@@ -13159,7 +13159,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-distributed-compute-sharing.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "distributed",
       "computing",
@@ -13220,7 +13220,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-e2e-integration-testing.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "testing",
       "e2e",
@@ -13619,7 +13619,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/EPIC-federation-swarm-sync.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "(none)"
     ],
@@ -13634,7 +13634,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-file-splitting.md",
-    "status": "In Progress",
+    "status": "done",
     "tags": [
       "refactor",
       "file-split",
@@ -20127,7 +20127,7 @@
       "world-opt-in"
     ],
     "source": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-GDPR-USER-DATA-RIGHTS": {
     "epic": "(none — proposed epic never materialized)",
@@ -21544,7 +21544,7 @@
       "skills"
     ],
     "source": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-SKILLS": {
     "epic": "epic-skills",
