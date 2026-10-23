@@ -28,6 +28,7 @@ import { memorySection, } from "./sections/memories";
 import { nsfwContextSection, } from "./sections/nsfw-context";
 import { nsfwPolicySection, } from "./sections/nsfw-policy";
 import { outfitContextSection, } from "./sections/outfit-context";
+import { outputLanguageSection, } from "./sections/output-language";
 import { styleSection, } from "./sections/output-style";
 import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { postHistorySection, } from "./sections/post-history";
@@ -57,6 +58,11 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   // the assistant-identity blocks so the chosen preset/character voice lands
   // next to the agent role it colors. Emits nothing for server-default chats.
   assistantPersonalitySection,
+  // Chat content-language directive (FEAT-language-selection-three-level).
+  // Sits with the voice/identity blocks; build() returns [] unless the chat
+  // set gm_config.contentLanguage (read-through autoTranslateLang), so unset
+  // chats stay byte-identical.
+  outputLanguageSection,
   groupParticipantsSection,
   groupTalkativitySection,
   userPersonaSection,
