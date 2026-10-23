@@ -6,12 +6,17 @@
  * FE-BE harmonization check.
  *
  * Joins frontend API calls against Elysia routes + TypeBox schemas.
- * Blocking: FE call with no BE route, method mismatch, unknown body/query
- * key, missing required body key (when the FE body literal is visible).
- * Advisory while triage is open: factory-built routes (createEntityRoutes
- * parentPrefix/entityPath) and guarded/group-mounted paths are invisible to
- * the literal scan and surface as FE-no-BE until taught. Promote to blocking
- * once triage clears or allowlists the classes below.
+ * BLOCKING (`"fe-be - harmony"` in `scripts/check/parallel/gate-table.mjs`):
+ * FE call with no BE route, method mismatch, unknown body/query key, and a
+ * body literal missing a required key. The gate reports zero blocking
+ * findings on dev (468 FE calls / 903 BE routes), so the "advisory while
+ * triage is open" caveat no longer holds: factory-built (createEntityRoutes)
+ * and guarded/group-mounted paths do not surface as FE-no-BE drift today.
+ * Revisit if a refactor makes them. BE-no-FE stays advisory — a route may
+ * serve the TUI, curl, or a partner.
+ *
+ * Output contract: findings only, plus one summary line adjacent to them; a
+ * clean run prints nothing (the check report's pass row carries the verdict).
  *
  * Run: `bun run scripts/check-fe-be-harmonization.ts`
  */
@@ -26,6 +31,8 @@ import { REPORT, samePath, } from "./fe-be-harmonization/shared";
 const fe = scanFe();
 const be = scanBe();
 const schemas = scanSchemas();
+/** Advisory findings echoed to stdout on failure; the full set lives in REPORT. */
+const ADVISORY_PREVIEW = 20;
 const blocking: string[] = [];
 const advisory: string[] = [];
 
@@ -83,17 +90,17 @@ for (const r of be) {
 
 mkdirSync(path.dirname(REPORT,), { recursive: true, },);
 writeFileSync(REPORT, JSON.stringify({ blocking, advisory, counts: { fe: fe.length, be: be.length, }, }, null, 2,),);
-console.log("=== FE-BE harmonization ===",);
-console.log(`FE calls: ${fe.length}, BE routes: ${be.length}, schemas: ${schemas.size}`,);
-for (const b of blocking) { console.log(`  ${b}`,); }
-for (const a of advisory.slice(0, 20,)) { console.log(`  ${a}`,); }
-if (advisory.length > 20) {
-  console.log(
-    `  ... +${advisory.length - 20} more advisory (see .tmp/fe-be-harmony.json)`,
-  );
-}
+// AC5: stdout carries findings only — no banner, no success line. The summary
+// line sits adjacent to the findings it counts.
 if (blocking.length > 0) {
-  console.log(`\nfail: ${blocking.length} blocking drift finding(s).`,);
+  console.log(
+    `fe-be - harmony: ${blocking.length} blocking finding(s), ${advisory.length} advisory ` +
+      `(${fe.length} FE calls / ${be.length} BE routes / ${schemas.size} schemas)`,
+  );
+  for (const b of blocking) { console.log(`  ${b}`,); }
+  for (const a of advisory.slice(0, ADVISORY_PREVIEW,)) { console.log(`  ${a}`,); }
+  if (advisory.length > ADVISORY_PREVIEW) {
+    console.log(`  ... +${advisory.length - ADVISORY_PREVIEW} more advisory (see ${REPORT})`,);
+  }
   process.exit(1,);
 }
-console.log("OK: no blocking drift.",);

@@ -26,12 +26,17 @@ Note: `console.*` is an enforced anti-pattern in `.agents/references/banned-patt
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Resolution: the banner/counts/success lines were folded into a single summary line printed adjacent to the findings they describe, which is the second option this ticket allows. `scripts/check-fe-be-harmonization.ts` now writes stdout only when there are blocking findings: one summary line (blocking count, advisory count, FE calls / BE routes / schemas), the blocking findings, an advisory preview capped by `ADVISORY_PREVIEW`, and one truncation pointer at the full `.tmp/fe-be-harmony.json` report. A clean run prints nothing and exits 0 — the check report's own pass row carries the verdict, so the deleted `OK: no blocking drift.` line had no reader. `console.*` here is a CLI report on stdout, not server-side logging: every sibling check script (`check-wiring.ts`, `check/i18n-keys.mjs`, `check/test-gaps.mjs`) writes the same way, so routing through `getLogger()` would send gate findings to a log file instead of the console excerpt the runner prints.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — findings only on stdout, one summary line, silent on success.
+- [x] Tests passing — gate exits 0 silently on dev; failure path verified by injecting drift.
+- [x] Documentation updated — script header output contract + epic AC5.
+
+## Verification
+
+- `bun run scripts/check-fe-be-harmonization.ts`: no output, exit 0.
+- Probe: temporary `feFetch("/api/__harmony_probe_missing_route")` → `fe-be - harmony: 1 blocking finding(s), 428 advisory (469 FE calls / 903 BE routes / 172 schemas)` + the finding + `... +408 more advisory (see <report>)`, exit 1; probe deleted.
 
 **Resolved:** 2026-10-23 registry-driven close: git issue a5f1d91 (registry tip: 6ebb0e90f Konstantin Fedotov Close issue)
