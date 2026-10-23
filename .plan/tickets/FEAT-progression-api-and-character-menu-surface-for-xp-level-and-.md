@@ -8,7 +8,7 @@
 **Priority:** high
 **Effort:** Medium
 **Caveats:** observability — the routes are live but undiscoverable in-world until the panel buttons land; no frontend consumer on dev
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Related:** .plan/tickets/TASK-wire-xp-loot-routes.md (mounted the xp-loot route surface this extends), .plan/tickets/FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md (exposes the level-up/allocate resolution actions), .plan/epics/epic-character-world-integration.md (character/impersonation panel in world scenes reads the stat block this surfaces)
 
 **Summary:**

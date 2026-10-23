@@ -9,7 +9,8 @@
 **Summary:** RBAC + SSO + Tenant Isolation
 **Context:** Epic proposed:epic-rbac-tenancy; tags rbac, tenancy.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-rbac-tenancy
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-rbac-tenancy" preserved 2026-10-23; no epic file exists.
 **Tags:** rbac, tenancy
 
 ## Summary

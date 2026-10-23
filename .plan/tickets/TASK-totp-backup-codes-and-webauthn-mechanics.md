@@ -10,7 +10,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** Authentication Channel Provisioning
+**Epic:** epic-auth-channel-provisioning
 
 ## Summary
 

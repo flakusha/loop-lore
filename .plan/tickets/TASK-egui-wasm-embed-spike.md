@@ -8,7 +8,7 @@
 doc now points to the spike measurements (2026-10-14).
 **Priority:** low
 **Effort:** Small
-**Epic:** `epic-experimental-egui-frontend`
+**Epic:** epic-experimental-egui-frontend
 **Tags:** egui, rust, wasm, spike, research, experimental
 **Related:** `.plan/epics/epic-experimental-egui-frontend.md`, `.plan/epics/epic-precompiled-hot-binaries.md`, `.plan/epics/epic-terminal-ui.md`, `docs/meta/research/egui-frontend-adoption.md`
 **Summary:** Build a throwaway `eframe`→WASM canvas on top of one existing htmx page, record real build times and bundle bytes for both backends, write a DOM-interop verdict, then delete it.

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** sam3-segmentation-integration
+**Epic:** epic-sam3-segmentation-integration
 **Tags:** segmentation, comfyui, spike
 **Depends on:** —
 **Related:** epic-comfyui-plugin.md, epic-byok-local-models.md, TASK-comfyui-node-discovery.md, TASK-comfyui-template-parameter-validation.md

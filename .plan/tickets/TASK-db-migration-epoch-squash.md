@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** High
+**Epic:** epic-db-migration-compaction
 
 ## Summary
 

@@ -9,7 +9,8 @@
 **Summary:** Content Compression (Zstd Streaming)
 **Context:** Epic proposed:epic-content-compression; tags compression, zstd.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-content-compression
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-content-compression" preserved 2026-10-23; no epic file exists.
 **Tags:** compression, zstd
 
 ## Summary

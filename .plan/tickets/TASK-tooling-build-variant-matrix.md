@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-external-tooling-build.md
+**Epic:** epic-external-tooling-build
 **Caveats:** `GGML_CURL` does not exist in this tree — it is retired and silently ignored at `CMakeLists.txt:195`; emitting it is a no-op that looks successful. Cells for CUDA, ROCm, SYCL, MUSA, Metal, OpenCL, and vendor BLAS are unverified on this host, so a test may only assert the flag *strings*, never that a build succeeds. `GGML_METAL` defaults ON on Apple and is meaningless on Linux, so its default differs by platform and must not be hardcoded OFF. The merged `variants.ts` is expected to exceed the 250-code-line budget (the discriminated unions moved in from the retired `types.ts`), so it carries an explicit `// size-allow: N` directive in its first 512 characters — `scripts/check-file-size.ts` counts code lines only, so JSDoc is free.
 
 **Summary:** Represent project × accelerator × architecture as a typed data table emitting the correct per-project CMake flags, in a single merged module.

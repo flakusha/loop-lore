@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Med
-**Epic:** Epic 36 (Chat Lifecycle), Epic 41 (Chat Transfer)
+**Epic:** epic-chat-lifecycle-moderation
 **Tags:** chat, search, discover, join, ux
 **Spec:** `docs/frontend/chat/search-and-filter.md` §Chat Room Search
 

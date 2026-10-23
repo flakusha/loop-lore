@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 
 **Summary:** Bench the wired `ResourceManager` under synthetic queued load: N concurrent requests × M priorities, measuring queue-wait p50/p95, denial rate, and low-priority starvation (max wait). Mock variant first (deterministic, CI-safe via `MockLLMProvider`); llama-swap variant after the LLM bench ticket lands. Catches scheduler regressions `FEAT-e2e-performance-benchmarks` cannot (it measures unqueued paths). Depends on the wire ticket.
 

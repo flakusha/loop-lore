@@ -13,7 +13,7 @@
 **Effort:** Medium
 **Type:** TASK
 **Tags:** 3d, gltf, assets
-**Epic:** Epic 28 (Asset Support)
+**Epic:** epic-3d-generation
 **Parent:** TASK-3d-view-modes (umbrella)
 
 ## Summary

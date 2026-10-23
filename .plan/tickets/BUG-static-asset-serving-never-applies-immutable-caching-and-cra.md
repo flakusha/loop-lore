@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-asset-platform-capabilities
 
 **Summary:**
 

@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-frontend-html-dedup-htmx-reuse
 
 **Summary:**
 

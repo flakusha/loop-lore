@@ -11,7 +11,7 @@
 
 **Status:** In Progress
 **Priority:** High
-**Epic:** epic-i18n (Phase 3)
+**Epic:** epic-i18n
 
 ## Summary
 

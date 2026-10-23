@@ -12,6 +12,7 @@
 **Status Note:** adopted in `adopt-bun-features`
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-crypto
 
 ## Summary
 

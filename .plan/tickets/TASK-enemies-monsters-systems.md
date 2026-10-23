@@ -12,6 +12,7 @@
 **Priority:** Medium
 **Status:** Not Started
 **Epic:** epic-battle-action-systems
+**Duplicate of:** TASK-enemies-monsters (kept — git-issue parity; status mirrored 2026-10-23)
 **Tags:** enemies, monsters, creatures, beasts, combat, config
 
 ## Description

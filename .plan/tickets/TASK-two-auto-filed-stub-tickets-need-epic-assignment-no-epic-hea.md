@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Trivial
+**Epic:** (none — hygiene/self-contained)
 **Tags:** plan-hygiene
 
 **Summary:**

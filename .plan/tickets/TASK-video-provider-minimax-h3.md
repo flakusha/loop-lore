@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** `epic-audio-video-sound` (Phase 4 via `epic-video-generation.md`)
+**Epic:** epic-audio-video-sound
 **Related:** `TASK-video-gen-route.md`, `TASK-video-template-schema.md`, `FEAT-065-sub-video.md`, `TASK-assistant-third-party-api-integration.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

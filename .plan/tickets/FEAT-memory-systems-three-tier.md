@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** medium
 **Effort:** Large
-**Epic:** epic-memory-systems
+**Epic:** epic-memory-profiling-budgets
 
 ## Summary
 

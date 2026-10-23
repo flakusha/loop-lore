@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Harness context builds as new PromptPurpose keys + new workflow YAMLs — both reusing existing patterns with zero loader/assembler changes.
 **Context:** Two-tier reuse: purpose-keyed prompts (`prompts/registry.ts` LLM_PROMPT_DEFAULTS + `resolveSystemPrompt`, 16 purposes in `purposes.ts`) and stored templates (FEAT-065: `generation/template-service/crud|resolve|apply`, `{{variable}}` substitution, `llm|image|video|audio|workflow` modalities, `workflow-library/` + validator); config loader reads `configs/templates/*.yaml` + `workflows/*.yaml`; entity workflows in `entities.yaml` (triggers→intent→steps→dispatch→approval); assembly cascade + `assembleWithTemplate()` + token-budget in-assembler.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

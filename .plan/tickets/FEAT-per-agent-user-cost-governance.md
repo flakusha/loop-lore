@@ -9,7 +9,8 @@
 **Summary:** Per-Agent/User Cost Governance
 **Context:** Epic proposed:epic-cost-governance; tags cost, governance.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-cost-governance
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-cost-governance" preserved 2026-10-23; no epic file exists.
 **Tags:** cost, governance
 
 ## Summary

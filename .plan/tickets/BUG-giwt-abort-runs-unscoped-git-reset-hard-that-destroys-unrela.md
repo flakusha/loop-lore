@@ -6,6 +6,7 @@
 **Status:** duplicate-of giwt/.plan/tickets/BUG-abort-hard-resets-dev-when-a-stash-pop-conflicts-destroying-.md (sibling: giwt/.plan/tickets/BUG-abort-pops-stashes-by-positional-ref-destroying-user-authore.md; both fixed in giwt 2026-10-02, clean-tree warn + dropped-sha undo per AC3, docs per AC4 in giwt/AGENTS.md + loop-lore/AGENTS.md)
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-tooling-improvement
 
 **Summary:**
 

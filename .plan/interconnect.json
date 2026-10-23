@@ -12429,7 +12429,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md",
       "title": "Level-up decision interface for autonomous LLM actors with affinity auto-allocation",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/rpg/level/decisions.ts",
         "src/rpg/skills/service/progression.ts"
@@ -15945,7 +15945,9 @@
         "src/rpg/actor-locations/service.ts",
         "src/rpg/npc-navigation/service/movement.ts"
       ],
-      "related": []
+      "related": [
+        "TASK-actor-position-physical-vs-spatial-split"
+      ]
     },
     {
       "id": "TASK-actor-position-physical-vs-spatial-split",
@@ -17160,7 +17162,9 @@
       "title": "Adopt View Transitions API for page navigation",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-adopt-view-transitions-api-for-page-navigation"
+      ]
     },
     {
       "id": "TASK-adopt-view-transitions-api-for-page-navigation",
@@ -17169,7 +17173,9 @@
       "title": "Adopt View Transitions API for page navigation",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-adopt-view-transitions-api-for-navigation"
+      ]
     },
     {
       "id": "TASK-adopt-web-animations-api-for-vn-scenes",
@@ -19529,10 +19535,7 @@
       "title": "backlog — coverage waivers + frontend batches (release-010 hardening)",
       "status": "Not Started",
       "srcRefs": [],
-      "related": [
-        "TASK-waiver-coverage-floor-below-80-for-plugins-frontend-native-i",
-        "epic-testing-qa"
-      ]
+      "related": []
     },
     {
       "id": "TASK-backlog-federation-interconnect-batch",
@@ -19587,9 +19590,7 @@
         "src/frontend/alpine/chat/index.ts",
         "src/routes/chats/manage.ts"
       ],
-      "related": [
-        "TASK-size-strict-debt"
-      ]
+      "related": []
     },
     {
       "id": "TASK-backlog-untriaged-advisory-orphan-sweep-2026-09-25",
@@ -27110,7 +27111,9 @@
       "title": "Enemies & Monsters Systems",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-enemies-monsters-systems"
+      ]
     },
     {
       "id": "TASK-enemies-monsters-systems",
@@ -28647,7 +28650,9 @@
       "title": "Fractal locations migration (013_locations_fractal.ts)",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-locations-fractal-migration"
+      ]
     },
     {
       "id": "TASK-frontend-actor-traits-location-and-world",
@@ -30741,7 +30746,9 @@
       "title": "Headless Mode & Alternative Frontends",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-headless-mode-alternative-frontends"
+      ]
     },
     {
       "id": "TASK-headless-mode-alternative-frontends",
@@ -32730,7 +32737,9 @@
       "srcRefs": [
         "src/frontend/alpine/location-explorer.ts"
       ],
-      "related": []
+      "related": [
+        "TASK-location-explorer-recursive-tree-transport-badge"
+      ]
     },
     {
       "id": "TASK-location-explorer-recursive-tree-transport-badge",
@@ -32775,7 +32784,9 @@
       "title": "Location tree integrity service",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-locations-tree-integrity-service"
+      ]
     },
     {
       "id": "TASK-locations-fractal-migration",
@@ -35268,7 +35279,9 @@
       "title": "NSFW-Disease Integration",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-nsfw-disease-integration"
+      ]
     },
     {
       "id": "TASK-nsfw-disease-integration",
@@ -35390,7 +35403,9 @@
       "title": "NSFW-Housing Integration",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-nsfw-housing-integration"
+      ]
     },
     {
       "id": "TASK-nsfw-housing-integration",
@@ -35661,7 +35676,9 @@
       "title": "NSFW-Social Integration",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-nsfw-social-integration"
+      ]
     },
     {
       "id": "TASK-nsfw-social-integration",
@@ -35712,7 +35729,9 @@
       "title": "NSFW-Weather Integration",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-nsfw-weather-integration"
+      ]
     },
     {
       "id": "TASK-nsfw-weather-integration",
@@ -35839,7 +35858,9 @@
       "title": "OpenAPI-Driven API Reference",
       "status": "Not Started",
       "srcRefs": [],
-      "related": []
+      "related": [
+        "TASK-openapi-reference"
+      ]
     },
     {
       "id": "TASK-openapi-reference",
@@ -42661,7 +42682,9 @@
       "srcRefs": [
         "src/transport/http1.ts"
       ],
-      "related": []
+      "related": [
+        "TASK-transport-layer-expansion"
+      ]
     },
     {
       "id": "TASK-transport-layer-expansion",
@@ -42722,7 +42745,9 @@
         "src/rpg/travel-routes/service.test.ts",
         "src/rpg/travel-routes/service.ts"
       ],
-      "related": []
+      "related": [
+        "TASK-travel-routes-schema-crud"
+      ]
     },
     {
       "id": "TASK-travel-routes-schema-crud",
@@ -45735,6 +45760,15 @@
         "src/notifications/service",
         "src/validation/schemas.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "epic-auth-config-contracts",
+      "kind": "epic",
+      "path": ".plan/epics/epic-auth-config-contracts.md",
+      "title": "Auth Config Contracts",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -49418,6 +49452,15 @@
       "related": []
     },
     {
+      "id": "epic-openwebui-parity",
+      "kind": "epic",
+      "path": ".plan/epics/epic-openwebui-parity.md",
+      "title": "Open WebUI Parity",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "epic-output-control-transforms",
       "kind": "epic",
       "path": ".plan/epics/epic-output-control-transforms.md",
@@ -49474,6 +49517,15 @@
         "epic-immersion-presentation",
         "epic-narration-actor-separation"
       ]
+    },
+    {
+      "id": "epic-platform-api-adoption",
+      "kind": "epic",
+      "path": ".plan/epics/epic-platform-api-adoption.md",
+      "title": "Platform API Adoption",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
     },
     {
       "id": "epic-platform-integrations",
@@ -49998,6 +50050,15 @@
       "related": []
     },
     {
+      "id": "epic-relation-graph-canvas",
+      "kind": "epic",
+      "path": ".plan/epics/epic-relation-graph-canvas.md",
+      "title": "Relation Graph Canvas",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "epic-relationships",
       "kind": "epic",
       "path": ".plan/epics/epic-relationships.md",
@@ -50357,6 +50418,15 @@
         "src/middleware/permissions.ts",
         "src/validation/prompt-injection.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "epic-server-lifecycle-hardening",
+      "kind": "epic",
+      "path": ".plan/epics/epic-server-lifecycle-hardening.md",
+      "title": "Server Lifecycle Hardening",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -86263,6 +86333,12 @@
       "via": "src/app/register-plugins.ts; src/components/chat/story-points-chip.html; src/db/020_actor_story_points_partial_unique.test.ts; src/generation/generation-routes/regenerate.ts; src/routes/agency/index.ts; src/services/agency/spend-helpers.ts; src/services/agency/story-points.test.ts; src/views/chat.html"
     },
     {
+      "from": "TASK-transport-expansion",
+      "kind": "consumes",
+      "to": "TASK-transport-layer-expansion",
+      "via": "src/transport/http1.ts"
+    },
+    {
       "from": "TASK-tui-api-contract-smoke-tests",
       "kind": "consumes",
       "to": "epic-terminal-ui",
@@ -86547,6 +86623,36 @@
       "to": "IDEA-2d-world-rag-business-process-mapping-spike"
     },
     {
+      "from": "epic-2d-sprite-world",
+      "kind": "owns",
+      "to": "TASK-2d-world-review-canvas-click-to-vn-choice-card-payload-contr"
+    },
+    {
+      "from": "epic-2d-sprite-world",
+      "kind": "owns",
+      "to": "TASK-2d-world-review-shared-seeded-rng-util-for-deterministic-pro"
+    },
+    {
+      "from": "epic-2d-sprite-world",
+      "kind": "owns",
+      "to": "TASK-2d-world-review-world-scoped-snapshot-and-event-sse-feed"
+    },
+    {
+      "from": "epic-2d-sprite-world",
+      "kind": "owns",
+      "to": "TASK-2d-world-review-zone-adjacency-validation-missing-connection"
+    },
+    {
+      "from": "epic-2d-sprite-world",
+      "kind": "owns",
+      "to": "TASK-2d-world-review-zone-rect-editor-for-map-zones-authoring"
+    },
+    {
+      "from": "epic-2d-sprite-world",
+      "kind": "owns",
+      "to": "TASK-backlog-vn-sprite-staging-batch"
+    },
+    {
       "from": "epic-3d-generation",
       "kind": "owns",
       "to": "TASK-023"
@@ -86554,17 +86660,37 @@
     {
       "from": "epic-3d-generation",
       "kind": "owns",
+      "to": "TASK-3d-character-avatars"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
       "to": "TASK-3d-generation"
     },
     {
-      "from": "epic-accessibility-input",
+      "from": "epic-3d-generation",
       "kind": "owns",
-      "to": "TASK-frontend-touch-gestures"
+      "to": "TASK-3d-gltf-assets"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-frontend-characters-page-spec"
+    },
+    {
+      "from": "epic-3d-generation",
+      "kind": "owns",
+      "to": "TASK-rigged-model-buffer-render"
     },
     {
       "from": "epic-accessibility-input",
       "kind": "owns",
       "to": "TASK-keyboard-navigation"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "owns",
+      "to": "TASK-keyboard-shortcuts"
     },
     {
       "from": "epic-accessibility-input",
@@ -86639,7 +86765,22 @@
     {
       "from": "epic-actor-autonomy-story-drive",
       "kind": "owns",
+      "to": "TASK-fetchskipcooldowns-issues-one-query-per-cooling-actor"
+    },
+    {
+      "from": "epic-actor-autonomy-story-drive",
+      "kind": "owns",
       "to": "TASK-gm-beat-scheduling"
+    },
+    {
+      "from": "epic-actor-autonomy-story-drive",
+      "kind": "owns",
+      "to": "TASK-matrix-cross-mech-g18-agentic-npc-autonomy"
+    },
+    {
+      "from": "epic-actor-autonomy-story-drive",
+      "kind": "owns",
+      "to": "TASK-per-actor-llm"
     },
     {
       "from": "epic-actor-autonomy-story-drive",
@@ -86664,6 +86805,21 @@
     {
       "from": "epic-actor-turn-skip",
       "kind": "owns",
+      "to": "BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c"
+    },
+    {
+      "from": "epic-actor-turn-skip",
+      "kind": "owns",
+      "to": "TASK-sc-turn-skipped-hook-emit-follow-create-ts-emitpluginevent-p"
+    },
+    {
+      "from": "epic-actor-turn-skip",
+      "kind": "owns",
+      "to": "TASK-turn-send-gate"
+    },
+    {
+      "from": "epic-actor-turn-skip",
+      "kind": "owns",
       "to": "TASK-turn-skip-cascade"
     },
     {
@@ -86675,6 +86831,26 @@
       "from": "epic-actors",
       "kind": "owns",
       "to": "BUG-actortype-persona-422-on-valid-ui-input"
+    },
+    {
+      "from": "epic-actors",
+      "kind": "owns",
+      "to": "BUG-parsepagination-default-50-silently-overrides-actorsquery-sc"
+    },
+    {
+      "from": "epic-actors",
+      "kind": "owns",
+      "to": "BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500"
+    },
+    {
+      "from": "epic-actors",
+      "kind": "owns",
+      "to": "FEAT-disable-or-hide-characters-from-the-db"
+    },
+    {
+      "from": "epic-actors",
+      "kind": "owns",
+      "to": "TASK-2d-world-review-proximity-query-for-nearby-actors-into-group"
     },
     {
       "from": "epic-actors",
@@ -86700,6 +86876,11 @@
       "from": "epic-actors",
       "kind": "owns",
       "to": "TASK-actors"
+    },
+    {
+      "from": "epic-actors",
+      "kind": "owns",
+      "to": "TASK-exclude-impersonated-actors-from-ai-turn-generation"
     },
     {
       "from": "epic-agency-story-points",
@@ -86735,6 +86916,11 @@
       "from": "epic-agency-story-points",
       "kind": "owns",
       "to": "TASK-rpg-player-agency-story-points"
+    },
+    {
+      "from": "epic-agency-story-points",
+      "kind": "owns",
+      "to": "TASK-story-points-prototype"
     },
     {
       "from": "epic-agency-story-points",
@@ -86852,6 +87038,61 @@
       "to": "FEAT-frontend-mode-config-accept-header-content-negotiation-cors"
     },
     {
+      "from": "epic-api-first-foundation",
+      "kind": "owns",
+      "to": "TASK-adopt-eden-for-type-safe-api-client"
+    },
+    {
+      "from": "epic-api-first-foundation",
+      "kind": "owns",
+      "to": "TASK-adopt-elysiajs-bearer-for-api-key-auth"
+    },
+    {
+      "from": "epic-api-first-foundation",
+      "kind": "owns",
+      "to": "TASK-adopt-elysiajs-compression-for-response-compression"
+    },
+    {
+      "from": "epic-api-first-foundation",
+      "kind": "owns",
+      "to": "TASK-adopt-elysiajs-cookie-for-cookie-management"
+    },
+    {
+      "from": "epic-api-first-foundation",
+      "kind": "owns",
+      "to": "TASK-adopt-elysiajs-cron-for-scheduled-tasks"
+    },
+    {
+      "from": "epic-api-first-foundation",
+      "kind": "owns",
+      "to": "TASK-adopt-elysiajs-etag-for-http-caching"
+    },
+    {
+      "from": "epic-api-first-foundation",
+      "kind": "owns",
+      "to": "TASK-adopt-elysiajs-helmet-for-security-headers"
+    },
+    {
+      "from": "epic-api-first-foundation",
+      "kind": "owns",
+      "to": "TASK-adopt-elysiajs-static-for-public-asset-serving"
+    },
+    {
+      "from": "epic-api-governance",
+      "kind": "owns",
+      "to": "BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa"
+    },
+    {
+      "from": "epic-api-governance",
+      "kind": "owns",
+      "to": "BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua"
+    },
+    {
+      "from": "epic-api-governance",
+      "kind": "owns",
+      "to": "TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-"
+    },
+    {
       "from": "epic-api-governance",
       "kind": "owns",
       "to": "TASK-openapi-specification"
@@ -86932,6 +87173,11 @@
       "to": "TASK-upgrade-the-test-gap-gate-to-an-ast-precise-matcher"
     },
     {
+      "from": "epic-api-openapi",
+      "kind": "owns",
+      "to": "TASK-build-time-openapi-export-scripts-gen-openapi-ts-gen-api-doc"
+    },
+    {
       "from": "epic-api-rate-limiting",
       "kind": "owns",
       "to": "BUG-429-responses-omit-retry-after-and-x-ratelimit-headers"
@@ -86944,12 +87190,52 @@
     {
       "from": "epic-api-rate-limiting",
       "kind": "owns",
+      "to": "BUG-chat-sse-shares-generation-rate-bucket"
+    },
+    {
+      "from": "epic-api-rate-limiting",
+      "kind": "owns",
       "to": "BUG-getclientip-is-untestable-without-a-live-bun-server-ip-sourcing"
     },
     {
       "from": "epic-api-rate-limiting",
       "kind": "owns",
+      "to": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te"
+    },
+    {
+      "from": "epic-api-rate-limiting",
+      "kind": "owns",
+      "to": "BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-"
+    },
+    {
+      "from": "epic-api-rate-limiting",
+      "kind": "owns",
+      "to": "BUG-settings-export-endpoint-has-no-rate-limiting"
+    },
+    {
+      "from": "epic-api-rate-limiting",
+      "kind": "owns",
       "to": "BUG-sse-streams-leak-string-error-internals-to-clients"
+    },
+    {
+      "from": "epic-api-rate-limiting",
+      "kind": "owns",
+      "to": "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes"
+    },
+    {
+      "from": "epic-api-routes",
+      "kind": "owns",
+      "to": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance"
+    },
+    {
+      "from": "epic-api-routes",
+      "kind": "owns",
+      "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop"
+    },
+    {
+      "from": "epic-api-routes",
+      "kind": "owns",
+      "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und"
     },
     {
       "from": "epic-api-routes",
@@ -86979,6 +87265,11 @@
     {
       "from": "epic-api-validation-guardrails",
       "kind": "owns",
+      "to": "BUG-characters-list-and-chats-list-bypass-parsepagination-valida"
+    },
+    {
+      "from": "epic-api-validation-guardrails",
+      "kind": "owns",
       "to": "BUG-config-schema-defaults-leak-absolute-paths"
     },
     {
@@ -87000,6 +87291,31 @@
       "from": "epic-api-validation-guardrails",
       "kind": "owns",
       "to": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san"
+    },
+    {
+      "from": "epic-api-validation-guardrails",
+      "kind": "owns",
+      "to": "TASK-ai-guardrails-input-sanitization-content-filtering-output-va"
+    },
+    {
+      "from": "epic-api-validation-guardrails",
+      "kind": "owns",
+      "to": "TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos"
+    },
+    {
+      "from": "epic-api-validation-guardrails",
+      "kind": "owns",
+      "to": "TASK-guard-sql-ref-identifier-construction-in-optimistic-locking"
+    },
+    {
+      "from": "epic-api-validation-guardrails",
+      "kind": "owns",
+      "to": "TASK-response-validation-logic-additions"
+    },
+    {
+      "from": "epic-api-versioning",
+      "kind": "owns",
+      "to": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s"
     },
     {
       "from": "epic-api-versioning",
@@ -87109,6 +87425,16 @@
     {
       "from": "epic-asset-platform-capabilities",
       "kind": "owns",
+      "to": "BUG-runtime-asset-compression-is-structurally-dead-needscompress"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
+      "to": "BUG-static-asset-serving-never-applies-immutable-caching-and-cra"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
       "to": "TASK-asset-attribution-chain"
     },
     {
@@ -87154,6 +87480,21 @@
     {
       "from": "epic-asset-platform-capabilities",
       "kind": "owns",
+      "to": "TASK-asset-tag-governance-and-unified-preview"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
+      "to": "TASK-caption-variants-create-recreate-pick-best-scenario"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
+      "to": "TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
       "to": "TASK-decision-av10-album-message-kind-axis"
     },
     {
@@ -87164,7 +87505,32 @@
     {
       "from": "epic-asset-platform-capabilities",
       "kind": "owns",
+      "to": "TASK-generation-asset-persistence-contract"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
+      "to": "TASK-in-chat-asset-edit-flow"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
+      "to": "TASK-keep-vs-regenerate-grading-and-dedup-verdict-at-image-persis"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
+      "to": "TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta"
+    },
+    {
+      "from": "epic-asset-platform-capabilities",
+      "kind": "owns",
       "to": "TASK-preview-dispatch-for-non-image-asset-types"
+    },
+    {
+      "from": "epic-asset-transform-metadata",
+      "kind": "owns",
+      "to": "BUG-character-avatar-put-delete-idor-by-bare-avatarid"
     },
     {
       "from": "epic-asset-transform-metadata",
@@ -87195,6 +87561,11 @@
       "from": "epic-asset-transform-metadata",
       "kind": "owns",
       "to": "TASK-render-path-resolvetransform-in-chat-bubbles"
+    },
+    {
+      "from": "epic-asset-transform-metadata",
+      "kind": "owns",
+      "to": "TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-"
     },
     {
       "from": "epic-asset-transform-metadata",
@@ -87344,6 +87715,11 @@
     {
       "from": "epic-assistant-entity-access",
       "kind": "owns",
+      "to": "TASK-assistant-secret-lore-access-guard"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "owns",
       "to": "TASK-explicit-approval-flow-for-assistant-mutations"
     },
     {
@@ -87369,6 +87745,21 @@
     {
       "from": "epic-assistant-generation-extensions",
       "kind": "owns",
+      "to": "TASK-backlog-item-generation-discoverability-batch"
+    },
+    {
+      "from": "epic-assistant-generation-extensions",
+      "kind": "owns",
+      "to": "TASK-delete-unreferenced-generation-story-assistant-and-chat-code"
+    },
+    {
+      "from": "epic-assistant-generation-extensions",
+      "kind": "owns",
+      "to": "TASK-imgedit-in-chat-command"
+    },
+    {
+      "from": "epic-assistant-generation-extensions",
+      "kind": "owns",
       "to": "TASK-prompt-library"
     },
     {
@@ -87390,6 +87781,11 @@
       "from": "epic-assistant-generation-extensions",
       "kind": "owns",
       "to": "TASK-user-prompt-gallery-frontend-page"
+    },
+    {
+      "from": "epic-assistant-gm-flows",
+      "kind": "owns",
+      "to": "BUG-acceptresponse-applies-world-events-before-the-turn-write-so"
     },
     {
       "from": "epic-assistant-gm-flows",
@@ -87479,6 +87875,11 @@
     {
       "from": "epic-assistant-gm-flows",
       "kind": "owns",
+      "to": "TASK-assistant-capabilities-discovery-surface"
+    },
+    {
+      "from": "epic-assistant-gm-flows",
+      "kind": "owns",
       "to": "TASK-assistant-capability-disclosure"
     },
     {
@@ -87520,6 +87921,11 @@
       "from": "epic-assistant-gm-flows",
       "kind": "owns",
       "to": "TASK-frontend-story-mode-ui"
+    },
+    {
+      "from": "epic-assistant-gm-flows",
+      "kind": "owns",
+      "to": "TASK-gm-config-ui-authoring"
     },
     {
       "from": "epic-assistant-gm-flows",
@@ -87569,7 +87975,17 @@
     {
       "from": "epic-audio-video-sound",
       "kind": "owns",
+      "to": "BUG-ambient-audio-route-links-generated-assets-to-arbitrary-mess"
+    },
+    {
+      "from": "epic-audio-video-sound",
+      "kind": "owns",
       "to": "FEAT-audio-video-sound-generation"
+    },
+    {
+      "from": "epic-audio-video-sound",
+      "kind": "owns",
+      "to": "TASK-adaptive-audio"
     },
     {
       "from": "epic-audio-video-sound",
@@ -87614,12 +88030,152 @@
     {
       "from": "epic-auth-access",
       "kind": "owns",
+      "to": "BUG-admin-providers-list-endpoint-is-public"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "BUG-admin-user-delete-has-no-self-delete-or-last-admin-guard"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "BUG-fix-auth-make-session-expiry-handling-agree-across-authentic"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "BUG-gallery-search-401s-anonymous-users-while-grid-serves-them"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "BUG-generation-control-plane-routes-lack-authorization"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
       "to": "TASK-032"
     },
     {
       "from": "epic-auth-access",
       "kind": "owns",
+      "to": "TASK-ac10-enumeration-safe-auth-error-strings-login-only"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-ac9-notifyfactorchange-trigger-helper-ladder-ready-no-tables"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-auth-hardening-xff-trust-session-cap-algo-pin-derive-short-c"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-auth-polish-mime-sniff-visibility-last-seen-i18n-cookie-regi"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-auth-session-hardening-batch-from-2026-10-04-review"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-frontend-exposes-session-token-in-localstorage"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-image-backends-x-access-authz-parity-audit-across-image-surf"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-moderator-permission-gating-for-read-only-review-surface"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-rbac-capability-matrix-not-enforced-25-of-30-caps-decorative"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
       "to": "TASK-users-roles-sessions-lifecycle"
+    },
+    {
+      "from": "epic-auth-access",
+      "kind": "owns",
+      "to": "TASK-verifyjwt-accepts-malformed-or-claimless-payload-as-valid"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-auth-factors-schema-and-service-core-f1"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-dedup-invites-redeem-and-auth-form-flows"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-f10-auth-factors-tests-and-2fa-spec-rewrite"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-f2-step-up-middleware-login-factor-prompt"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-f4-unlock-ladder-backoff-device-trust"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-f5-e-mail-otp-factor-delivery"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-f6-messenger-otp-and-login-approval"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-f7-factor-provisioning-guarantees-hardening"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-f8-oidc-rp-login-with-identity-bindings"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-f9-factor-management-and-recovery-ui"
     },
     {
       "from": "epic-auth-channel-provisioning",
@@ -87634,12 +88190,67 @@
     {
       "from": "epic-auth-channel-provisioning",
       "kind": "owns",
+      "to": "TASK-matrix-auth-channel-ac12-per-role-policy-shape"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-matrix-auth-channel-ac3-capability-registry-naming"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-matrix-auth-channel-ac4-matrix-bot-approval-session"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
       "to": "TASK-matrix-auth-matrix-megolm-approval-decide-megolm-verified-se"
     },
     {
       "from": "epic-auth-channel-provisioning",
       "kind": "owns",
       "to": "TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-totp-backup-codes-and-webauthn-mechanics"
+    },
+    {
+      "from": "epic-auth-channel-provisioning",
+      "kind": "owns",
+      "to": "TASK-x3-federated-otp-carry-but-reverify-phase-1-matrix-dm-send-v"
+    },
+    {
+      "from": "epic-auth-config-contracts",
+      "kind": "owns",
+      "to": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive"
+    },
+    {
+      "from": "epic-auth-config-contracts",
+      "kind": "owns",
+      "to": "BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d"
+    },
+    {
+      "from": "epic-auth-config-contracts",
+      "kind": "owns",
+      "to": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au"
+    },
+    {
+      "from": "epic-auth-config-contracts",
+      "kind": "owns",
+      "to": "TASK-docs-config-add-missing-sections-to-config-examples"
+    },
+    {
+      "from": "epic-auth-config-contracts",
+      "kind": "owns",
+      "to": "TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en"
+    },
+    {
+      "from": "epic-auth-config-contracts",
+      "kind": "owns",
+      "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h"
     },
     {
       "from": "epic-authoring-creation",
@@ -87650,6 +88261,21 @@
       "from": "epic-aux-enrichment-pipeline",
       "kind": "owns",
       "to": "BUG-aux-pipeline-prompt-reexport-asymmetry"
+    },
+    {
+      "from": "epic-aux-enrichment-pipeline",
+      "kind": "owns",
+      "to": "BUG-caption-route-never-sends-image-bytes-to-the-model"
+    },
+    {
+      "from": "epic-aux-enrichment-pipeline",
+      "kind": "owns",
+      "to": "BUG-memory-extraction-store-writes-memories-without-a-transactio"
+    },
+    {
+      "from": "epic-aux-enrichment-pipeline",
+      "kind": "owns",
+      "to": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou"
     },
     {
       "from": "epic-aux-enrichment-pipeline",
@@ -87704,7 +88330,17 @@
     {
       "from": "epic-aux-enrichment-pipeline",
       "kind": "owns",
+      "to": "TASK-aux-pipeline-task-markers-and-eval-labels-do-not-match-the-l"
+    },
+    {
+      "from": "epic-aux-enrichment-pipeline",
+      "kind": "owns",
       "to": "TASK-aux-scene-context"
+    },
+    {
+      "from": "epic-aux-enrichment-pipeline",
+      "kind": "owns",
+      "to": "TASK-i18n-doc-drift-translation-llm-spec-is-unimplemented"
     },
     {
       "from": "epic-aux-enrichment-pipeline",
@@ -87779,6 +88415,16 @@
     {
       "from": "epic-avatar-regeneration-control",
       "kind": "owns",
+      "to": "BUG-rate-limit-misses-post-emotion-avatars-single"
+    },
+    {
+      "from": "epic-avatar-regeneration-control",
+      "kind": "owns",
+      "to": "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin"
+    },
+    {
+      "from": "epic-avatar-regeneration-control",
+      "kind": "owns",
       "to": "TASK-generation-seed-capture-and-override-per-avatar"
     },
     {
@@ -87809,12 +88455,27 @@
     {
       "from": "epic-avatar-regeneration-control",
       "kind": "owns",
+      "to": "TASK-reroll-emotion-command"
+    },
+    {
+      "from": "epic-avatar-regeneration-control",
+      "kind": "owns",
       "to": "TASK-slot-replace-transactional-rebind-semantics"
     },
     {
       "from": "epic-battle-action-systems",
       "kind": "owns",
       "to": "BUG-chat-persist-init-hardcoded-scene"
+    },
+    {
+      "from": "epic-battle-action-systems",
+      "kind": "owns",
+      "to": "BUG-endbattle-overwrites-completed-battles-no-active-status-guar"
+    },
+    {
+      "from": "epic-battle-action-systems",
+      "kind": "owns",
+      "to": "BUG-persistbattle-lost-update-race-read-modify-write-without-tra"
     },
     {
       "from": "epic-battle-action-systems",
@@ -87835,6 +88496,11 @@
       "from": "epic-battle-action-systems",
       "kind": "owns",
       "to": "TASK-battle-arena-spectator"
+    },
+    {
+      "from": "epic-battle-action-systems",
+      "kind": "owns",
+      "to": "TASK-battle-encounter-template-system"
     },
     {
       "from": "epic-battle-action-systems",
@@ -87860,6 +88526,16 @@
       "from": "epic-battle-action-systems",
       "kind": "owns",
       "to": "TASK-battle-social-chests"
+    },
+    {
+      "from": "epic-battle-action-systems",
+      "kind": "owns",
+      "to": "TASK-battle-template-actions"
+    },
+    {
+      "from": "epic-battle-action-systems",
+      "kind": "owns",
+      "to": "TASK-battle-turn-order"
     },
     {
       "from": "epic-battle-action-systems",
@@ -87949,6 +88625,11 @@
     {
       "from": "epic-battle-ui",
       "kind": "owns",
+      "to": "TASK-no-browser-test-vn-scene-view-battle-ui-command-palette"
+    },
+    {
+      "from": "epic-battle-ui",
+      "kind": "owns",
       "to": "TASK-skill-check"
     },
     {
@@ -87994,12 +88675,52 @@
     {
       "from": "epic-byok-api-keys",
       "kind": "owns",
+      "to": "BUG-allowuserapikey-defined-but-never-enforced"
+    },
+    {
+      "from": "epic-byok-api-keys",
+      "kind": "owns",
+      "to": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key"
+    },
+    {
+      "from": "epic-byok-api-keys",
+      "kind": "owns",
+      "to": "BUG-byok-store-rejects-non-openaicompatible-provider-names"
+    },
+    {
+      "from": "epic-byok-api-keys",
+      "kind": "owns",
+      "to": "BUG-failover-replays-primary-byo-key-to-fallback-vendors"
+    },
+    {
+      "from": "epic-byok-api-keys",
+      "kind": "owns",
+      "to": "BUG-image-audio-providers-have-no-byo-key-or-failover"
+    },
+    {
+      "from": "epic-byok-api-keys",
+      "kind": "owns",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story"
+    },
+    {
+      "from": "epic-byok-api-keys",
+      "kind": "owns",
+      "to": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows"
+    },
+    {
+      "from": "epic-byok-api-keys",
+      "kind": "owns",
       "to": "TASK-byok-api-keys"
     },
     {
       "from": "epic-byok-local-models",
       "kind": "owns",
       "to": "TASK-admin-assistant-tooling-allowlist"
+    },
+    {
+      "from": "epic-byok-local-models",
+      "kind": "owns",
+      "to": "TASK-browser-side-gguf-kv-extraction-for-local-byok-models"
     },
     {
       "from": "epic-byok-local-models",
@@ -88014,7 +88735,27 @@
     {
       "from": "epic-byok-local-models",
       "kind": "owns",
+      "to": "TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving"
+    },
+    {
+      "from": "epic-byok-local-models",
+      "kind": "owns",
+      "to": "TASK-odysseus-hwfit-style-hardware-fit-scoring-for-local-models"
+    },
+    {
+      "from": "epic-byok-local-models",
+      "kind": "owns",
+      "to": "TASK-typescript-support-for-classifier-inference-transformers-js-"
+    },
+    {
+      "from": "epic-byok-local-models",
+      "kind": "owns",
       "to": "TASK-wllama-gguf-inference-engine-browser"
+    },
+    {
+      "from": "epic-certificate-and-tls-management",
+      "kind": "owns",
+      "to": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p"
     },
     {
       "from": "epic-certificate-and-tls-management",
@@ -88199,12 +88940,22 @@
     {
       "from": "epic-character-core-system",
       "kind": "owns",
+      "to": "TASK-character-approval-workflow-not-implemented"
+    },
+    {
+      "from": "epic-character-core-system",
+      "kind": "owns",
       "to": "TASK-character-core-system"
     },
     {
       "from": "epic-character-core-system",
       "kind": "owns",
       "to": "TASK-character-creator-prerogative"
+    },
+    {
+      "from": "epic-character-core-system",
+      "kind": "owns",
+      "to": "TASK-character-domain-residual-defects"
     },
     {
       "from": "epic-character-core-system",
@@ -88339,12 +89090,22 @@
     {
       "from": "epic-character-core-system",
       "kind": "owns",
+      "to": "TASK-frontend-surfaces-for-richer-character-extensions"
+    },
+    {
+      "from": "epic-character-core-system",
+      "kind": "owns",
       "to": "TASK-hook-result-payload-carry-context"
     },
     {
       "from": "epic-character-core-system",
       "kind": "owns",
       "to": "TASK-lorebook-template-seeding"
+    },
+    {
+      "from": "epic-character-core-system",
+      "kind": "owns",
+      "to": "TASK-migration-tooling-for-legacy-to-rich-character-data"
     },
     {
       "from": "epic-character-core-system",
@@ -88394,6 +89155,11 @@
     {
       "from": "epic-character-core-system",
       "kind": "owns",
+      "to": "TASK-shared-character-domain-models"
+    },
+    {
+      "from": "epic-character-core-system",
+      "kind": "owns",
       "to": "TASK-shared-schemas"
     },
     {
@@ -88405,6 +89171,21 @@
       "from": "epic-character-core-system",
       "kind": "owns",
       "to": "TEST-avatar-selection-fallback-empty-coverage"
+    },
+    {
+      "from": "epic-character-growth",
+      "kind": "owns",
+      "to": "BUG-character-growth-editor-arc-description-not-json-encoded"
+    },
+    {
+      "from": "epic-character-growth",
+      "kind": "owns",
+      "to": "TASK-char-growth-llm-assist"
+    },
+    {
+      "from": "epic-character-growth",
+      "kind": "owns",
+      "to": "TASK-fix-character-growth-pre-existing-gate-failures"
     },
     {
       "from": "epic-character-growth",
@@ -88475,6 +89256,11 @@
       "from": "epic-character-internal-traits",
       "kind": "owns",
       "to": "TASK-character-voice-profile"
+    },
+    {
+      "from": "epic-character-internal-traits",
+      "kind": "owns",
+      "to": "TASK-internal-traits-visibility-tiers"
     },
     {
       "from": "epic-character-internal-traits",
@@ -88559,6 +89345,11 @@
     {
       "from": "epic-character-spec",
       "kind": "owns",
+      "to": "FEAT-expand-character-templates-to-canonical-fields"
+    },
+    {
+      "from": "epic-character-spec",
+      "kind": "owns",
       "to": "FEAT-gurps-point-buy-character-creation"
     },
     {
@@ -88574,7 +89365,17 @@
     {
       "from": "epic-character-spec",
       "kind": "owns",
+      "to": "TASK-character-spec-adopt-sillytavern-extensions"
+    },
+    {
+      "from": "epic-character-spec",
+      "kind": "owns",
       "to": "TASK-character-spec-unified-api"
+    },
+    {
+      "from": "epic-character-world-setup",
+      "kind": "owns",
+      "to": "BUG-character-and-chat-setup-example-configs-document-fields-the"
     },
     {
       "from": "epic-character-world-setup",
@@ -88595,6 +89396,61 @@
       "from": "epic-character-world-setup",
       "kind": "owns",
       "to": "TASK-worldsetup-layer3-nsfw-decision"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-battle-rewards-grant-character-xp-on-enemy-defeat"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-progression-api-and-character-menu-surface-for-xp-level-and-"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "owns",
+      "to": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel"
     },
     {
       "from": "epic-chat-composer-flows",
@@ -88659,12 +89515,37 @@
     {
       "from": "epic-chat-context-optimization",
       "kind": "owns",
+      "to": "BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx"
+    },
+    {
+      "from": "epic-chat-context-optimization",
+      "kind": "owns",
+      "to": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin"
+    },
+    {
+      "from": "epic-chat-context-optimization",
+      "kind": "owns",
+      "to": "TASK-PLAN-MEMORY-SELECTION-UI"
+    },
+    {
+      "from": "epic-chat-context-optimization",
+      "kind": "owns",
+      "to": "TASK-asset-context-inclusion-budget-policy"
+    },
+    {
+      "from": "epic-chat-context-optimization",
+      "kind": "owns",
       "to": "TASK-chat-context-preference-per-scope"
     },
     {
       "from": "epic-chat-context-optimization",
       "kind": "owns",
       "to": "TASK-consolidate-duplicated-token-estimation"
+    },
+    {
+      "from": "epic-chat-context-optimization",
+      "kind": "owns",
+      "to": "TASK-context-budget-lore-prune-order"
     },
     {
       "from": "epic-chat-context-optimization",
@@ -88729,12 +89610,27 @@
     {
       "from": "epic-chat-context-optimization",
       "kind": "owns",
+      "to": "TASK-dedupe-context-window"
+    },
+    {
+      "from": "epic-chat-context-optimization",
+      "kind": "owns",
+      "to": "TASK-dedupe-message-listing"
+    },
+    {
+      "from": "epic-chat-context-optimization",
+      "kind": "owns",
       "to": "TASK-prompt-dry-run-inspection"
     },
     {
       "from": "epic-chat-context-optimization",
       "kind": "owns",
       "to": "TASK-talkativity-influence-response-verbosity"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
+      "to": "BUG-applyflag-skips-self-target-guard"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
@@ -88770,6 +89666,11 @@
       "from": "epic-chat-lifecycle-moderation",
       "kind": "owns",
       "to": "BUG-command-dispatch-async-handler-uncaught"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
+      "to": "BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
@@ -88849,7 +89750,17 @@
     {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "owns",
+      "to": "TASK-ai-dungeon-moderation-lesson"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
       "to": "TASK-c1-moderation-action-notices-with-actor-thumb"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
+      "to": "TASK-chat-autorenaming"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
@@ -88859,7 +89770,27 @@
     {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "owns",
+      "to": "TASK-chat-external-music-linking"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
       "to": "TASK-chat-lifecycle-moderation"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
+      "to": "TASK-chat-message-search"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
+      "to": "TASK-chat-room-filters"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
+      "to": "TASK-chat-room-search-join"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
@@ -88874,12 +89805,22 @@
     {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "owns",
+      "to": "TASK-context-window-monitor"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
       "to": "TASK-frontend-chat-archive-unarchive"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "owns",
       "to": "TASK-frontend-chat-moderate-action"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
+      "to": "TASK-hook-chain-and-moderation-robustness-in-generation-pipeline"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
@@ -88899,12 +89840,27 @@
     {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "owns",
+      "to": "TASK-no-browser-test-chat-streaming-message-lifecycle"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
       "to": "TASK-nsfw-moderation-priority"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
       "kind": "owns",
+      "to": "TASK-profanity-filter-hot-reload-per-chat-sensitivity"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
       "to": "TASK-promote-user-to-moderator"
+    },
+    {
+      "from": "epic-chat-lifecycle-moderation",
+      "kind": "owns",
+      "to": "TASK-smart-context-pruning"
     },
     {
       "from": "epic-chat-lifecycle-moderation",
@@ -88915,6 +89871,16 @@
       "from": "epic-chat-privacy",
       "kind": "owns",
       "to": "FEAT-temporary-ephemeral-chats"
+    },
+    {
+      "from": "epic-chat-privacy",
+      "kind": "owns",
+      "to": "TASK-asset-rag-caption-freshness-and-strip-before-index-privacy"
+    },
+    {
+      "from": "epic-chat-privacy",
+      "kind": "owns",
+      "to": "TASK-encrypted-search-minimal-first-slice"
     },
     {
       "from": "epic-chat-product-features",
@@ -89114,6 +90080,11 @@
     {
       "from": "epic-chat-rich-engagement",
       "kind": "owns",
+      "to": "TASK-poll-command-for-group-chat"
+    },
+    {
+      "from": "epic-chat-rich-engagement",
+      "kind": "owns",
       "to": "TASK-voice-notes-playback"
     },
     {
@@ -89129,12 +90100,22 @@
     {
       "from": "epic-chat-transfer-location",
       "kind": "owns",
+      "to": "TASK-chat-backgrounds-location-sync"
+    },
+    {
+      "from": "epic-chat-transfer-location",
+      "kind": "owns",
       "to": "TASK-chat-branch-merge"
     },
     {
       "from": "epic-chat-transfer-location",
       "kind": "owns",
       "to": "TASK-chat-location-change-event-log"
+    },
+    {
+      "from": "epic-chat-transfer-location",
+      "kind": "owns",
+      "to": "TASK-chat-sectioning-multi-location"
     },
     {
       "from": "epic-chat-transfer-location",
@@ -89234,7 +90215,57 @@
     {
       "from": "epic-cicd-pipeline",
       "kind": "owns",
+      "to": "BUG-bug-orphaned-remnants-of-the-removed-gate-in-the-check-runne"
+    },
+    {
+      "from": "epic-cicd-pipeline",
+      "kind": "owns",
+      "to": "BUG-co-authored-by-trailer-validation-gap-on-base-branches"
+    },
+    {
+      "from": "epic-cicd-pipeline",
+      "kind": "owns",
+      "to": "BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run"
+    },
+    {
+      "from": "epic-cicd-pipeline",
+      "kind": "owns",
+      "to": "BUG-diff-scoped-runs-silently-pass-having-run-zero-tests-on-two-"
+    },
+    {
+      "from": "epic-cicd-pipeline",
+      "kind": "owns",
+      "to": "BUG-e2e-browser-baseline-gate-ignores-diff-base-while-the-covera"
+    },
+    {
+      "from": "epic-cicd-pipeline",
+      "kind": "owns",
+      "to": "BUG-gates-csv-equals-form-is-silently-ignored-only-the-space-sep"
+    },
+    {
+      "from": "epic-cicd-pipeline",
+      "kind": "owns",
+      "to": "BUG-scoped-coverage-gate-omits-the-e2e-safeguard-prefix-its-plai"
+    },
+    {
+      "from": "epic-cicd-pipeline",
+      "kind": "owns",
+      "to": "BUG-the-roots-guard-on-project-root-diff-root-is-wired-to-no-gat"
+    },
+    {
+      "from": "epic-cicd-pipeline",
+      "kind": "owns",
       "to": "TASK-ci-cd"
+    },
+    {
+      "from": "epic-classifier-template-packs",
+      "kind": "owns",
+      "to": "FEAT-aux-classification-template-registry"
+    },
+    {
+      "from": "epic-classifier-template-packs",
+      "kind": "owns",
+      "to": "FEAT-classifier-template-packs-user-config"
     },
     {
       "from": "epic-cli-tooling-optique",
@@ -89245,6 +90276,11 @@
       "from": "epic-cli-tooling-optique",
       "kind": "owns",
       "to": "TASK-optique-cli-tooling-integration"
+    },
+    {
+      "from": "epic-code-quality",
+      "kind": "owns",
+      "to": "BUG-kysely-any-type-safety-gaps-in-db-layer"
     },
     {
       "from": "epic-code-quality",
@@ -89364,6 +90400,11 @@
     {
       "from": "epic-comfyui-first-class-citizen",
       "kind": "owns",
+      "to": "TASK-066"
+    },
+    {
+      "from": "epic-comfyui-first-class-citizen",
+      "kind": "owns",
       "to": "TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va"
     },
     {
@@ -89459,12 +90500,42 @@
     {
       "from": "epic-comfyui-plugin",
       "kind": "owns",
+      "to": "BUG-image-edit-provider-and-template-capabilities-disagree"
+    },
+    {
+      "from": "epic-comfyui-plugin",
+      "kind": "owns",
+      "to": "BUG-image-edit-run-crashes-on-missing-params-and-the-template-re"
+    },
+    {
+      "from": "epic-comfyui-plugin",
+      "kind": "owns",
+      "to": "BUG-sd-server-edit-returns-synthetic-asset-urls-that-404"
+    },
+    {
+      "from": "epic-comfyui-plugin",
+      "kind": "owns",
+      "to": "BUG-sd-server-image-providers-discard-the-generated-image-and-ab"
+    },
+    {
+      "from": "epic-comfyui-plugin",
+      "kind": "owns",
+      "to": "BUG-sdcpp-generate-edit-duplicated-with-divergent-endpoints-and-"
+    },
+    {
+      "from": "epic-comfyui-plugin",
+      "kind": "owns",
       "to": "BUG-workflow-library-img2img-row-has-unresolved-placeholders"
     },
     {
       "from": "epic-comfyui-plugin",
       "kind": "owns",
       "to": "FEAT-comfyui-plugin-workflow-templates"
+    },
+    {
+      "from": "epic-comfyui-plugin",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-comfyui-websocket-progress"
     },
     {
       "from": "epic-comfyui-plugin",
@@ -89534,6 +90605,11 @@
     {
       "from": "epic-communications-integrations",
       "kind": "owns",
+      "to": "TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle"
+    },
+    {
+      "from": "epic-communications-integrations",
+      "kind": "owns",
       "to": "TASK-email-integration"
     },
     {
@@ -89599,7 +90675,57 @@
     {
       "from": "epic-config-file-separation",
       "kind": "owns",
+      "to": "FEAT-config-file-separation-domain-extraction"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
+      "to": "FEAT-config-file-separation-schemas"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
+      "to": "TASK-config-backward-compat"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
+      "to": "TASK-config-domain-loader"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
+      "to": "TASK-config-domain-validation"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
+      "to": "TASK-config-examples-and-domain-file-support-for-uncovered-sectio"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
+      "to": "TASK-config-file-separation-domain-extraction"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
+      "to": "TASK-config-hot-reload"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
+      "to": "TASK-config-migration-tool"
+    },
+    {
+      "from": "epic-config-file-separation",
+      "kind": "owns",
       "to": "TASK-wire-fswatcher-onreload-callback-in-server-startup"
+    },
+    {
+      "from": "epic-config-templates",
+      "kind": "owns",
+      "to": "BUG-character-template-validator-rejects-every-legal-content-rat"
     },
     {
       "from": "epic-config-templates",
@@ -89627,6 +90753,11 @@
       "to": "TASK-template-unified-variable-engine"
     },
     {
+      "from": "epic-config-templates",
+      "kind": "owns",
+      "to": "TASK-user-prompt-template-library-storage-save-as-template-unbloc"
+    },
+    {
       "from": "epic-configs-path-resolution",
       "kind": "owns",
       "to": "FEAT-configs-path-resolution-file-relative-windows-macos-parity"
@@ -89650,11 +90781,6 @@
       "from": "epic-content-hashing-distributed-integrity",
       "kind": "owns",
       "to": "TASK-middleware-content-assets-gallery-hashing-validation"
-    },
-    {
-      "from": "epic-content-hashing-distributed-integrity",
-      "kind": "owns",
-      "to": "TASK-middleware-distributed-healing-revalidation-backups"
     },
     {
       "from": "epic-content-hashing-distributed-integrity",
@@ -89704,12 +90830,47 @@
     {
       "from": "epic-continuous-improvement",
       "kind": "owns",
+      "to": "BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
+      "to": "BUG-jscpd-ratchet-counts-clusters-not-duplicated-lines"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
+      "to": "BUG-jscpd-ratchet-gate-advisory-not-blocking"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
+      "to": "BUG-jscpd-ratchet-update-cannot-raise-baseline"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
+      "to": "BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
+      "to": "TASK-document-dual-assistant-role-gates"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
       "to": "TASK-fix-eslint-errors"
     },
     {
       "from": "epic-continuous-improvement",
       "kind": "owns",
       "to": "TASK-fix-html-inline-scripts"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
+      "to": "TASK-fix-shared-state-sqlite-contamination-in-unit-test-suite-53-"
     },
     {
       "from": "epic-continuous-improvement",
@@ -89724,12 +90885,42 @@
     {
       "from": "epic-continuous-improvement",
       "kind": "owns",
+      "to": "TASK-migration-sequential-finalize-and-renumber-policy"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
       "to": "TASK-remove-dist-artifact"
+    },
+    {
+      "from": "epic-continuous-improvement",
+      "kind": "owns",
+      "to": "TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts"
+    },
+    {
+      "from": "epic-conversation-branching",
+      "kind": "owns",
+      "to": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c"
+    },
+    {
+      "from": "epic-conversation-branching",
+      "kind": "owns",
+      "to": "BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq"
+    },
+    {
+      "from": "epic-conversation-branching",
+      "kind": "owns",
+      "to": "BUG-user-message-swipe-insert-retries-all-errors-and-mislabels-t"
     },
     {
       "from": "epic-conversation-branching",
       "kind": "owns",
       "to": "FEAT-browser-side-chat-input-versioning-with-transparent-rollback"
+    },
+    {
+      "from": "epic-conversation-branching",
+      "kind": "owns",
+      "to": "TASK-assistant-server-side-branch-command"
     },
     {
       "from": "epic-conversation-branching",
@@ -89780,6 +90971,16 @@
       "from": "epic-conversation-branching",
       "kind": "owns",
       "to": "TASK-world-time-sync-wait-and-chat-branch-merge"
+    },
+    {
+      "from": "epic-core-testing-frameworks",
+      "kind": "owns",
+      "to": "TASK-dbrt-validation-gaps"
+    },
+    {
+      "from": "epic-core-testing-frameworks",
+      "kind": "owns",
+      "to": "TASK-llm-mock-integration-suite"
     },
     {
       "from": "epic-crafting-professions",
@@ -89979,6 +91180,16 @@
     {
       "from": "epic-crypto",
       "kind": "owns",
+      "to": "BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys"
+    },
+    {
+      "from": "epic-crypto",
+      "kind": "owns",
+      "to": "BUG-admin-set-secrets-stored-plaintext-in-system-config"
+    },
+    {
+      "from": "epic-crypto",
+      "kind": "owns",
       "to": "BUG-auto-rotation-config-drift"
     },
     {
@@ -89994,12 +91205,22 @@
     {
       "from": "epic-crypto",
       "kind": "owns",
+      "to": "BUG-key-material-revoke-then-insert-sequences-are-non-transactio"
+    },
+    {
+      "from": "epic-crypto",
+      "kind": "owns",
       "to": "BUG-key-rotation-noop-orphans-history"
     },
     {
       "from": "epic-crypto",
       "kind": "owns",
       "to": "BUG-private-tier-no-true-e2e"
+    },
+    {
+      "from": "epic-crypto",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing"
     },
     {
       "from": "epic-crypto",
@@ -90014,6 +91235,11 @@
     {
       "from": "epic-crypto",
       "kind": "owns",
+      "to": "TASK-crypto-activitypub-keys-ts-has-zero-test-coverage"
+    },
+    {
+      "from": "epic-crypto",
+      "kind": "owns",
       "to": "TASK-crypto-algorithm-factory"
     },
     {
@@ -90024,12 +91250,22 @@
     {
       "from": "epic-crypto",
       "kind": "owns",
+      "to": "TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations"
+    },
+    {
+      "from": "epic-crypto",
+      "kind": "owns",
       "to": "TASK-crypto-config-algorithm"
     },
     {
       "from": "epic-crypto",
       "kind": "owns",
       "to": "TASK-crypto-plugin-hooks"
+    },
+    {
+      "from": "epic-crypto",
+      "kind": "owns",
+      "to": "TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-"
     },
     {
       "from": "epic-crypto",
@@ -90109,7 +91345,22 @@
     {
       "from": "epic-crypto",
       "kind": "owns",
+      "to": "TASK-test-debt-utils-integrations-crypto-regression-tests-for-13-"
+    },
+    {
+      "from": "epic-crypto",
+      "kind": "owns",
       "to": "TASK-world-location-encryption"
+    },
+    {
+      "from": "epic-data-integrity-acid",
+      "kind": "owns",
+      "to": "BUG-service-layer-multi-query-mutations-run-without-transactions"
+    },
+    {
+      "from": "epic-data-integrity-acid",
+      "kind": "owns",
+      "to": "BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key"
     },
     {
       "from": "epic-data-integrity-acid",
@@ -90144,6 +91395,11 @@
     {
       "from": "epic-data-integrity-acid",
       "kind": "owns",
+      "to": "TASK-data-level-integrity-checksums-and-re-readable-logical-dumps"
+    },
+    {
+      "from": "epic-data-integrity-acid",
+      "kind": "owns",
       "to": "TASK-define-booleanstate-state-machine-for-single-boolean-fields"
     },
     {
@@ -90170,11 +91426,6 @@
       "from": "epic-database-backup-recovery",
       "kind": "owns",
       "to": "TASK-BKP-004"
-    },
-    {
-      "from": "epic-database-backup-recovery",
-      "kind": "owns",
-      "to": "TASK-backup-restore-reliability-and-self-healing-for-federated-de"
     },
     {
       "from": "epic-database-backup-recovery",
@@ -90219,6 +91470,11 @@
     {
       "from": "epic-db-content-versioning",
       "kind": "owns",
+      "to": "TASK-019-content-versioning-heavy-tables"
+    },
+    {
+      "from": "epic-db-content-versioning",
+      "kind": "owns",
       "to": "TASK-db-content-versioning"
     },
     {
@@ -90259,7 +91515,32 @@
     {
       "from": "epic-db-migration-compaction",
       "kind": "owns",
+      "to": "TASK-019-hot-path-indexes"
+    },
+    {
+      "from": "epic-db-migration-compaction",
+      "kind": "owns",
+      "to": "TASK-backlog-migration-hygiene-duplicate-prefix-gate"
+    },
+    {
+      "from": "epic-db-migration-compaction",
+      "kind": "owns",
+      "to": "TASK-db-migration-epoch-squash"
+    },
+    {
+      "from": "epic-db-migration-compaction",
+      "kind": "owns",
       "to": "TASK-epic-db-migration-compaction-stale-premise-reconcile"
+    },
+    {
+      "from": "epic-db-migration-compaction",
+      "kind": "owns",
+      "to": "TASK-migration-076-distinguish-explicit-null-renderingoverride-fr"
+    },
+    {
+      "from": "epic-db-migration-compaction",
+      "kind": "owns",
+      "to": "TASK-migration-076-harden-against-malformed-gm-config-json"
     },
     {
       "from": "epic-deno-support",
@@ -90310,6 +91591,36 @@
       "from": "epic-deployment-topologies",
       "kind": "owns",
       "to": "TASK-deployment-topologies"
+    },
+    {
+      "from": "epic-derived-map-generation",
+      "kind": "owns",
+      "to": "TASK-comfyui-depth-map-generation-template"
+    },
+    {
+      "from": "epic-derived-map-generation",
+      "kind": "owns",
+      "to": "TASK-comfyui-pbr-texture-set-generation"
+    },
+    {
+      "from": "epic-derived-map-generation",
+      "kind": "owns",
+      "to": "TASK-derived-map-origin-links"
+    },
+    {
+      "from": "epic-derived-map-generation",
+      "kind": "owns",
+      "to": "TASK-gallery-filter-generated-derived-content"
+    },
+    {
+      "from": "epic-derived-map-generation",
+      "kind": "owns",
+      "to": "TASK-image-edit-depth-conditioned-editing"
+    },
+    {
+      "from": "epic-derived-map-generation",
+      "kind": "owns",
+      "to": "TASK-multi-concept-segmentation-masks"
     },
     {
       "from": "epic-disease-poison",
@@ -90419,6 +91730,56 @@
     {
       "from": "epic-e2e-integration-testing",
       "kind": "owns",
+      "to": "BUG-alpine-hydration-failures-undeclared-template-vars-untested"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "BUG-e2e-navigation-new-chat-404-page-error"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "BUG-logout-browser-e2e-races-its-own-navigation-and-needs-retry-"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "BUG-new-chat-e2e-reads-chat-participants-once-before-the-best-ef"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "BUG-new-chat-e2e-reads-the-create-response-body-after-navigation"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "TASK-2026-004"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "TASK-2026-005"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "TASK-2026-006"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "TASK-2026-007"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "TASK-2026-008"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
       "to": "TASK-BROWSER-E2E-UI-SURFACE-GAPS"
     },
     {
@@ -90455,6 +91816,11 @@
       "from": "epic-e2e-integration-testing",
       "kind": "owns",
       "to": "TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "owns",
+      "to": "TASK-retire-stale-integration-testing-tools"
     },
     {
       "from": "epic-e2e-integration-testing",
@@ -90574,6 +91940,11 @@
     {
       "from": "epic-email-integration",
       "kind": "owns",
+      "to": "BUG-email-adapter-ingests-mail-addressed-to-anyone-and-falls-bac"
+    },
+    {
+      "from": "epic-email-integration",
+      "kind": "owns",
       "to": "TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate"
     },
     {
@@ -90629,6 +92000,16 @@
     {
       "from": "epic-emotion-avatar-message-binding",
       "kind": "owns",
+      "to": "TASK-063"
+    },
+    {
+      "from": "epic-emotion-avatar-message-binding",
+      "kind": "owns",
+      "to": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio"
+    },
+    {
+      "from": "epic-emotion-avatar-message-binding",
+      "kind": "owns",
       "to": "TASK-emotion-avatar-message-binding"
     },
     {
@@ -90645,6 +92026,26 @@
       "from": "epic-emotion-avatar-message-binding",
       "kind": "owns",
       "to": "TEST-emotion-hook-to-avatarForMessage-integration"
+    },
+    {
+      "from": "epic-encryption-workflow",
+      "kind": "owns",
+      "to": "BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans"
+    },
+    {
+      "from": "epic-encryption-workflow",
+      "kind": "owns",
+      "to": "BUG-wire-encryption-for-generated-images"
+    },
+    {
+      "from": "epic-encryption-workflow",
+      "kind": "owns",
+      "to": "TASK-encryption-asset-encryption"
+    },
+    {
+      "from": "epic-encryption-workflow",
+      "kind": "owns",
+      "to": "TASK-epic17-encryption-e2e-expansion"
     },
     {
       "from": "epic-enemies-monsters",
@@ -90699,6 +92100,16 @@
     {
       "from": "epic-entity-generation-workflows",
       "kind": "owns",
+      "to": "TASK-creation-quality-gating-confirmation"
+    },
+    {
+      "from": "epic-entity-generation-workflows",
+      "kind": "owns",
+      "to": "TASK-generation-job-status-tracking"
+    },
+    {
+      "from": "epic-entity-generation-workflows",
+      "kind": "owns",
       "to": "TASK-item-generation-review-parity-extract-category-rarity-stats-"
     },
     {
@@ -90709,7 +92120,32 @@
     {
       "from": "epic-error-envelope",
       "kind": "owns",
+      "to": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso"
+    },
+    {
+      "from": "epic-error-envelope",
+      "kind": "owns",
+      "to": "BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-"
+    },
+    {
+      "from": "epic-error-envelope",
+      "kind": "owns",
+      "to": "BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated"
+    },
+    {
+      "from": "epic-error-envelope",
+      "kind": "owns",
+      "to": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w"
+    },
+    {
+      "from": "epic-error-envelope",
+      "kind": "owns",
       "to": "TASK-error-envelope"
+    },
+    {
+      "from": "epic-experimental-egui-frontend",
+      "kind": "owns",
+      "to": "BUG-egui-sent-message-echo-empty"
     },
     {
       "from": "epic-experimental-egui-frontend",
@@ -90794,6 +92230,11 @@
     {
       "from": "epic-external-creative-tool-bridge",
       "kind": "owns",
+      "to": "TASK-2026-openwebui-mcp-client-skeleton"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
       "to": "TASK-mcp-client-over-stdio-and-streamable-http"
     },
     {
@@ -90805,6 +92246,21 @@
       "from": "epic-external-creative-tool-bridge",
       "kind": "owns",
       "to": "TASK-mcp-tool-descriptor-to-plugin-tooldefinition-bridge"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
+      "to": "TASK-odysseus-style-external-agent-integration-surface"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
+      "to": "TASK-tool-calling-agents"
+    },
+    {
+      "from": "epic-external-creative-tool-bridge",
+      "kind": "owns",
+      "to": "TASK-workspace-mcp-bridge-on-openclaw-serve-registry-pattern"
     },
     {
       "from": "epic-external-tooling-build",
@@ -90849,6 +92305,11 @@
     {
       "from": "epic-faction-reputation",
       "kind": "owns",
+      "to": "BUG-deriverumors-exposes-internal-actor-uuid-in-user-facing-text"
+    },
+    {
+      "from": "epic-faction-reputation",
+      "kind": "owns",
       "to": "FEAT-faction-system-backend"
     },
     {
@@ -90885,6 +92346,36 @@
       "from": "epic-fe-be-harmonization",
       "kind": "owns",
       "to": "BUG-fe-be-harmonization-script-violates-its-own-no-console-accep"
+    },
+    {
+      "from": "epic-federation-offload-quotas",
+      "kind": "owns",
+      "to": "BUG-federation-delivery-reliability-queue-retry-idempotency-unde"
+    },
+    {
+      "from": "epic-federation-offload-quotas",
+      "kind": "owns",
+      "to": "BUG-federation-fan-out-queues-outbox-retries-only-for-push-failu"
+    },
+    {
+      "from": "epic-federation-offload-quotas",
+      "kind": "owns",
+      "to": "BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori"
+    },
+    {
+      "from": "epic-federation-offload-quotas",
+      "kind": "owns",
+      "to": "BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-"
+    },
+    {
+      "from": "epic-federation-offload-quotas",
+      "kind": "owns",
+      "to": "BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p"
+    },
+    {
+      "from": "epic-federation-offload-quotas",
+      "kind": "owns",
+      "to": "BUG-spki-pin-gate-is-not-enforced-across-http-redirects"
     },
     {
       "from": "epic-federation-offload-quotas",
@@ -90964,6 +92455,26 @@
     {
       "from": "epic-federation-swarm-sync",
       "kind": "owns",
+      "to": "BUG-federation-test-harness-needs-in-process-fixtures"
+    },
+    {
+      "from": "epic-federation-swarm-sync",
+      "kind": "owns",
+      "to": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f"
+    },
+    {
+      "from": "epic-federation-swarm-sync",
+      "kind": "owns",
+      "to": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent"
+    },
+    {
+      "from": "epic-federation-swarm-sync",
+      "kind": "owns",
+      "to": "BUG-signal-bridge-activation-trigger-undefined"
+    },
+    {
+      "from": "epic-federation-swarm-sync",
+      "kind": "owns",
       "to": "TASK-add-activitypubkeystatus-state-machine-for-activitypub-actor"
     },
     {
@@ -91010,6 +92521,11 @@
       "from": "epic-federation-swarm-sync",
       "kind": "owns",
       "to": "TASK-nodeinfo-well-known-discovery-endpoints"
+    },
+    {
+      "from": "epic-file-splitting",
+      "kind": "owns",
+      "to": "TASK-SPLIT-SERVER"
     },
     {
       "from": "epic-file-splitting",
@@ -91099,7 +92615,22 @@
     {
       "from": "epic-frontend-admin",
       "kind": "owns",
+      "to": "BUG-admin-analytics-tab-crashes-when-api-omits-fields"
+    },
+    {
+      "from": "epic-frontend-admin",
+      "kind": "owns",
+      "to": "BUG-admin-audit-pagination-uses-1-so-an-empty-result-set-reports"
+    },
+    {
+      "from": "epic-frontend-admin",
+      "kind": "owns",
       "to": "BUG-admin-audit-selectAll-schema-mismatch-empty"
+    },
+    {
+      "from": "epic-frontend-admin",
+      "kind": "owns",
+      "to": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp"
     },
     {
       "from": "epic-frontend-admin",
@@ -91114,7 +92645,17 @@
     {
       "from": "epic-frontend-admin",
       "kind": "owns",
+      "to": "TASK-admin-module-cleanup-index-ts-exports-consistent-error-handl"
+    },
+    {
+      "from": "epic-frontend-admin",
+      "kind": "owns",
       "to": "TASK-admin-overview-dashboard"
+    },
+    {
+      "from": "epic-frontend-admin",
+      "kind": "owns",
+      "to": "TASK-admin-revision-history-tab"
     },
     {
       "from": "epic-frontend-admin",
@@ -91189,7 +92730,17 @@
     {
       "from": "epic-frontend-age-gate",
       "kind": "owns",
+      "to": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che"
+    },
+    {
+      "from": "epic-frontend-age-gate",
+      "kind": "owns",
       "to": "TASK-reconcile-epic-frontend-age-gate-verify-age-gate-frontend-ca"
+    },
+    {
+      "from": "epic-frontend-backend-integration",
+      "kind": "owns",
+      "to": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m"
     },
     {
       "from": "epic-frontend-backend-integration",
@@ -91299,6 +92850,11 @@
     {
       "from": "epic-frontend-backend-integration",
       "kind": "owns",
+      "to": "TASK-image-backends-x-assistant-image-command-backend-routing-fai"
+    },
+    {
+      "from": "epic-frontend-backend-integration",
+      "kind": "owns",
       "to": "TASK-message-archive-restore-frontend"
     },
     {
@@ -91389,7 +92945,37 @@
     {
       "from": "epic-frontend-chat-commands",
       "kind": "owns",
+      "to": "TASK-help-full-command-list-with-descriptions"
+    },
+    {
+      "from": "epic-frontend-chat-commands",
+      "kind": "owns",
+      "to": "TASK-role-scoped-assistant-command-visibility"
+    },
+    {
+      "from": "epic-frontend-chat-commands",
+      "kind": "owns",
       "to": "TASK-slash-commands-chat-group-assistant"
+    },
+    {
+      "from": "epic-frontend-component-architecture",
+      "kind": "owns",
+      "to": "TASK-epic-frontend-component-architecture-clarification-2026-09-26"
+    },
+    {
+      "from": "epic-frontend-component-architecture",
+      "kind": "owns",
+      "to": "TASK-fb3-frontend-hub-index-ovr-subsystems"
+    },
+    {
+      "from": "epic-frontend-component-architecture",
+      "kind": "owns",
+      "to": "TASK-fb7-eager-vs-lazy-component-split-map-cmpxbnd"
+    },
+    {
+      "from": "epic-frontend-components",
+      "kind": "owns",
+      "to": "BUG-frontend-handlers-swallow-api-errors-silently-with-no-user-f"
     },
     {
       "from": "epic-frontend-components",
@@ -91417,6 +93003,11 @@
       "to": "TASK-message-reactions-in-out-context"
     },
     {
+      "from": "epic-frontend-encryption",
+      "kind": "owns",
+      "to": "TASK-epic-frontend-encryption-clarification-2026-09-26"
+    },
+    {
       "from": "epic-frontend-gallery",
       "kind": "owns",
       "to": "BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne"
@@ -91430,6 +93021,16 @@
       "from": "epic-frontend-gallery",
       "kind": "owns",
       "to": "TASK-character-avatar-gallery-binding"
+    },
+    {
+      "from": "epic-frontend-gallery",
+      "kind": "owns",
+      "to": "TASK-dedicated-gallery-pages-for-assistant-functionalities"
+    },
+    {
+      "from": "epic-frontend-gallery",
+      "kind": "owns",
+      "to": "TASK-fb9-gallery-private-asset-auth-gating-logxgal"
     },
     {
       "from": "epic-frontend-gallery",
@@ -91449,6 +93050,11 @@
     {
       "from": "epic-frontend-gallery",
       "kind": "owns",
+      "to": "TASK-gallery-generation-linkage-wiring"
+    },
+    {
+      "from": "epic-frontend-gallery",
+      "kind": "owns",
       "to": "TASK-gallery-review-approval-queue"
     },
     {
@@ -91462,9 +93068,29 @@
       "to": "TASK-gallery-user-tagging-propositions"
     },
     {
+      "from": "epic-frontend-gallery",
+      "kind": "owns",
+      "to": "TASK-image-backends-x-gallery-provenance-filter-backend-attributi"
+    },
+    {
       "from": "epic-frontend-headers-management",
       "kind": "owns",
       "to": "TASK-reconcile-epic-frontend-headers-verify-header-management-ui-"
+    },
+    {
+      "from": "epic-frontend-html-dedup-htmx-reuse",
+      "kind": "owns",
+      "to": "TASK-extract-htmx-view-fragments-from-duplicated-html-views"
+    },
+    {
+      "from": "epic-frontend-html-dedup-htmx-reuse",
+      "kind": "owns",
+      "to": "TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx"
+    },
+    {
+      "from": "epic-frontend-html-dedup-htmx-reuse",
+      "kind": "owns",
+      "to": "TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing"
     },
     {
       "from": "epic-frontend-html-dedup-htmx-reuse",
@@ -91494,6 +93120,11 @@
     {
       "from": "epic-frontend-internationalization",
       "kind": "owns",
+      "to": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin"
+    },
+    {
+      "from": "epic-frontend-internationalization",
+      "kind": "owns",
       "to": "TASK-010-plurals"
     },
     {
@@ -91519,12 +93150,62 @@
     {
       "from": "epic-frontend-notifications",
       "kind": "owns",
+      "to": "BUG-notification-bell-visible-on-login-register-pages"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
+      "to": "BUG-notification-prefs-silently-succeed-for-unknown-users-and-lo"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
+      "to": "BUG-notification-sse-tick-swallows-errors-silently"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
+      "to": "TASK-fb12-admin-role-change-notifies-affected-user-admxntf"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
+      "to": "TASK-fb8-login-success-and-failure-notification-logxntf"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
+      "to": "TASK-finalize-notification-bell-header-wiring"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
+      "to": "TASK-notification-expansion"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
+      "to": "TASK-quiet-hours"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
       "to": "TASK-reconcile-epic-frontend-notifications-verify-bell-prefs-ui-c"
+    },
+    {
+      "from": "epic-frontend-notifications",
+      "kind": "owns",
+      "to": "TASK-test-debt-admin-frontend-notifications-regression-tests-for-"
     },
     {
       "from": "epic-frontend-overview",
       "kind": "owns",
       "to": "TASK-adopt-view-transitions-api-for-navigation"
+    },
+    {
+      "from": "epic-frontend-routing",
+      "kind": "owns",
+      "to": "BUG-frontend-navigation-builds-urls-without-encodeuricomponent"
     },
     {
       "from": "epic-frontend-routing",
@@ -91539,12 +93220,72 @@
     {
       "from": "epic-frontend-settings",
       "kind": "owns",
+      "to": "BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin"
+    },
+    {
+      "from": "epic-frontend-settings",
+      "kind": "owns",
       "to": "FEAT-user-theming-system"
     },
     {
       "from": "epic-frontend-settings",
       "kind": "owns",
       "to": "TASK-reconcile-epic-frontend-settings-verify-settings-ui-capture-"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-ci-integration-github-actions-matrix-artifact-upload-on-cras"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-continuous-fuzzing-cluster-scheduler-corpus-sync-crash-triag"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-dashboard-integration-coverage-crashes-corpus-performance-ro"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-fuzzing-runtime-harness-tests-fuzz-harness-corpus-mutation-e"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-mutation-engine-bitflip-arithmetic-dictionary-structure-cros"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-per-target-fuzzing-harnesses-auth-asset-chat-llm-admin-ipc"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-regression-process-crash-classification-minimization-fix-ver"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-sanitizer-integration-asan-msan-ubsan-tsan"
+    },
+    {
+      "from": "epic-fuzzing-infrastructure",
+      "kind": "owns",
+      "to": "TASK-seed-corpora-10k-seeds-per-fuzzing-target"
+    },
+    {
+      "from": "epic-generation-flow-control",
+      "kind": "owns",
+      "to": "BUG-image-gen-opens-dead-llm-sse"
     },
     {
       "from": "epic-generation-flow-control",
@@ -91580,6 +93321,16 @@
       "from": "epic-gm-shadow-notes",
       "kind": "owns",
       "to": "BUG-gm-notes-get-500-sql-syntax-error"
+    },
+    {
+      "from": "epic-gm-shadow-notes",
+      "kind": "owns",
+      "to": "BUG-gm-shadow-note-revealed-to-reveal-is-a-read-modify-write-wit"
+    },
+    {
+      "from": "epic-gm-shadow-notes",
+      "kind": "owns",
+      "to": "TASK-gate-shadow-notes-status-x-visibility-composite"
     },
     {
       "from": "epic-gm-shadow-notes",
@@ -91629,6 +93380,11 @@
     {
       "from": "epic-group-chat",
       "kind": "owns",
+      "to": "BUG-assistant-and-group-chat-correctness-defects"
+    },
+    {
+      "from": "epic-group-chat",
+      "kind": "owns",
       "to": "TASK-backlog-chat-variants-taxonomy"
     },
     {
@@ -91650,6 +93406,11 @@
       "from": "epic-group-chat",
       "kind": "owns",
       "to": "TASK-group-chat-mention-routing"
+    },
+    {
+      "from": "epic-group-chat",
+      "kind": "owns",
+      "to": "TASK-group-chat-minors-from-2026-10-04-review"
     },
     {
       "from": "epic-group-chat",
@@ -91939,6 +93700,11 @@
     {
       "from": "epic-housing",
       "kind": "owns",
+      "to": "TASK-housing-general"
+    },
+    {
+      "from": "epic-housing",
+      "kind": "owns",
       "to": "TASK-housing-neighborhood"
     },
     {
@@ -92062,11 +93828,6 @@
       "to": "TASK-i18n-template-strings"
     },
     {
-      "from": "epic-i18n",
-      "kind": "owns",
-      "to": "TASK-server-side-i18n-middleware"
-    },
-    {
       "from": "epic-immersion-consistency-gate",
       "kind": "owns",
       "to": "TASK-action-applicability-gate"
@@ -92104,6 +93865,11 @@
     {
       "from": "epic-immersion-presentation",
       "kind": "owns",
+      "to": "TASK-text-effects-overlays"
+    },
+    {
+      "from": "epic-immersion-presentation",
+      "kind": "owns",
       "to": "TASK-vn-active-speaker-sprite-highlight-and-dimming"
     },
     {
@@ -92122,9 +93888,29 @@
       "to": "TASK-persona-lifecycle-contract"
     },
     {
+      "from": "epic-impersonation",
+      "kind": "owns",
+      "to": "TASK-personas-impersonation-plan-docs-bookkeeping-sweep"
+    },
+    {
+      "from": "epic-impersonation",
+      "kind": "owns",
+      "to": "TASK-refine-impersonation-constraint-to-location-timeline-scope"
+    },
+    {
       "from": "epic-implementation",
       "kind": "owns",
       "to": "TASK-implementation"
+    },
+    {
+      "from": "epic-implementation",
+      "kind": "owns",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio"
+    },
+    {
+      "from": "epic-import-export-io",
+      "kind": "owns",
+      "to": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip"
     },
     {
       "from": "epic-import-export-io",
@@ -92135,6 +93921,26 @@
       "from": "epic-import-export-io",
       "kind": "owns",
       "to": "FEAT-community-template-world-share-export-import"
+    },
+    {
+      "from": "epic-import-export-io",
+      "kind": "owns",
+      "to": "TASK-additional-card-imports"
+    },
+    {
+      "from": "epic-import-export-io",
+      "kind": "owns",
+      "to": "TASK-bulk-export-zip"
+    },
+    {
+      "from": "epic-import-export-io",
+      "kind": "owns",
+      "to": "TASK-charx-jpeg-rcc-support"
+    },
+    {
+      "from": "epic-import-export-io",
+      "kind": "owns",
+      "to": "TASK-chat-history-import-export"
     },
     {
       "from": "epic-import-export-io",
@@ -92274,12 +94080,42 @@
     {
       "from": "epic-inventory",
       "kind": "owns",
+      "to": "BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory"
+    },
+    {
+      "from": "epic-inventory",
+      "kind": "owns",
+      "to": "BUG-item-transfers-double-report-one-sentence-and-item-take-item"
+    },
+    {
+      "from": "epic-inventory",
+      "kind": "owns",
+      "to": "BUG-usebattleitem-consumes-inventory-and-persists-battle-outside"
+    },
+    {
+      "from": "epic-inventory",
+      "kind": "owns",
+      "to": "TASK-equipment-market-demand-feedback"
+    },
+    {
+      "from": "epic-inventory",
+      "kind": "owns",
       "to": "TASK-inventory"
     },
     {
       "from": "epic-inventory",
       "kind": "owns",
+      "to": "TASK-item-asset-avatar-display-in-inventory-trading-and-provision"
+    },
+    {
+      "from": "epic-inventory",
+      "kind": "owns",
       "to": "TASK-make-world-item-transfer-atomic-when-the-destination-actor-i"
+    },
+    {
+      "from": "epic-io-formats",
+      "kind": "owns",
+      "to": "TASK-gallery-review-minors-sweep-pagination-sync-io-formatsize-de"
     },
     {
       "from": "epic-io-formats",
@@ -92290,6 +94126,11 @@
       "from": "epic-item-system-extensions",
       "kind": "owns",
       "to": "FEAT-item-system-extensions"
+    },
+    {
+      "from": "epic-item-system-extensions",
+      "kind": "owns",
+      "to": "TASK-item-system-extensions"
     },
     {
       "from": "epic-item-systems-unification",
@@ -92315,6 +94156,11 @@
       "from": "epic-item-systems-unification",
       "kind": "owns",
       "to": "TASK-frontend-story-item-instance-transfer"
+    },
+    {
+      "from": "epic-item-systems-unification",
+      "kind": "owns",
+      "to": "TASK-gate-branches-display-invariant-item-instance-state"
     },
     {
       "from": "epic-item-systems-unification",
@@ -92379,12 +94225,22 @@
     {
       "from": "epic-items-economy-crafting",
       "kind": "owns",
+      "to": "TASK-crafting-uses-shared-sync-connection-causing-database-is-loc"
+    },
+    {
+      "from": "epic-items-economy-crafting",
+      "kind": "owns",
       "to": "TASK-item-definition-crud-frontend-editor"
     },
     {
       "from": "epic-items-economy-crafting",
       "kind": "owns",
       "to": "TASK-item-inventory-view-page"
+    },
+    {
+      "from": "epic-items-economy-crafting",
+      "kind": "owns",
+      "to": "TASK-loot-budget-affordance-gate"
     },
     {
       "from": "epic-items-economy-crafting",
@@ -92477,6 +94333,16 @@
       "to": "TASK-asset-versioning"
     },
     {
+      "from": "epic-items",
+      "kind": "owns",
+      "to": "TASK-giwt-migration-open-items"
+    },
+    {
+      "from": "epic-items",
+      "kind": "owns",
+      "to": "TASK-services-actor-items-ts-vs-services-actor-items-name-collisi"
+    },
+    {
       "from": "epic-licensing",
       "kind": "owns",
       "to": "TASK-030"
@@ -92484,7 +94350,17 @@
     {
       "from": "epic-licensing",
       "kind": "owns",
+      "to": "TASK-character-licensing"
+    },
+    {
+      "from": "epic-licensing",
+      "kind": "owns",
       "to": "TASK-fanout-chatid-default-deny"
+    },
+    {
+      "from": "epic-licensing",
+      "kind": "owns",
+      "to": "TASK-gate-licensing-triple-via-licenserightsvalidator"
     },
     {
       "from": "epic-licensing",
@@ -92505,6 +94381,26 @@
       "from": "epic-licensing",
       "kind": "owns",
       "to": "TASK-licensing"
+    },
+    {
+      "from": "epic-llama-swap",
+      "kind": "owns",
+      "to": "BUG-llama-swap-autostart-registers-no-llm-provider"
+    },
+    {
+      "from": "epic-llama-swap",
+      "kind": "owns",
+      "to": "FEAT-llama-swap-style-on-demand-load-unload-lifecycle-with-health"
+    },
+    {
+      "from": "epic-llama-swap",
+      "kind": "owns",
+      "to": "TASK-llama-swap-native-support-cpu-resident-classifier-model-reci"
+    },
+    {
+      "from": "epic-llama-swap",
+      "kind": "owns",
+      "to": "TASK-sse-live-model-status-and-in-flight-tracking"
     },
     {
       "from": "epic-llm-queue",
@@ -92572,6 +94468,21 @@
       "to": "TASK-wire-llm-resource-manager-into-generation-dispatch"
     },
     {
+      "from": "epic-local-model-file-discovery",
+      "kind": "owns",
+      "to": "FEAT-extra-model-paths-yaml-config"
+    },
+    {
+      "from": "epic-local-model-file-discovery",
+      "kind": "owns",
+      "to": "FEAT-model-category-registry-with-mtime-cache-listing"
+    },
+    {
+      "from": "epic-local-model-file-discovery",
+      "kind": "owns",
+      "to": "FEAT-model-preview-image-serving-with-traversal-guards"
+    },
+    {
       "from": "epic-local-process-swarm",
       "kind": "owns",
       "to": "BUG-probes-ts-stale-llama-swap-health-route-claim"
@@ -92594,6 +94505,11 @@
     {
       "from": "epic-local-process-swarm",
       "kind": "owns",
+      "to": "TASK-subagent-delegation-and-parallel-workstreams-for-local-proce"
+    },
+    {
+      "from": "epic-local-process-swarm",
+      "kind": "owns",
       "to": "TASK-swarm-local-router"
     },
     {
@@ -92610,6 +94526,16 @@
       "from": "epic-local-process-swarm",
       "kind": "owns",
       "to": "TASK-swarm-supervisor"
+    },
+    {
+      "from": "epic-locations",
+      "kind": "owns",
+      "to": "BUG-locations-query-loads-all-worlds-not-just-current-one"
+    },
+    {
+      "from": "epic-locations",
+      "kind": "owns",
+      "to": "TASK-coverage-waiver-locations-at-78-under-check-gate"
     },
     {
       "from": "epic-locations",
@@ -92679,7 +94605,37 @@
     {
       "from": "epic-logging",
       "kind": "owns",
+      "to": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log"
+    },
+    {
+      "from": "epic-logging",
+      "kind": "owns",
+      "to": "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con"
+    },
+    {
+      "from": "epic-logging",
+      "kind": "owns",
+      "to": "BUG-authenticate-last-seen-at-update-swallows-errors-silently"
+    },
+    {
+      "from": "epic-logging",
+      "kind": "owns",
+      "to": "BUG-generation-service-silent-catch-blocks-mask-production-error"
+    },
+    {
+      "from": "epic-logging",
+      "kind": "owns",
       "to": "BUG-logger-skipcensor-opt-out-is-unreachable-and-dbenabled-confi"
+    },
+    {
+      "from": "epic-logging",
+      "kind": "owns",
+      "to": "BUG-non-stream-generation-catch-relies-on-a-logging-claim-that-i"
+    },
+    {
+      "from": "epic-logging",
+      "kind": "owns",
+      "to": "TASK-logging-censor-exact-match-rules-error-stack-path-leak"
     },
     {
       "from": "epic-logging",
@@ -92769,6 +94725,11 @@
     {
       "from": "epic-logic-reconciliation",
       "kind": "owns",
+      "to": "TASK-user-seeding-role-expansion"
+    },
+    {
+      "from": "epic-logic-reconciliation",
+      "kind": "owns",
       "to": "TASK-wire-auto-rename"
     },
     {
@@ -92804,6 +94765,16 @@
     {
       "from": "epic-lora-discovery-application",
       "kind": "owns",
+      "to": "TASK-065"
+    },
+    {
+      "from": "epic-lora-discovery-application",
+      "kind": "owns",
+      "to": "TASK-lora-base-model-lineage-via-checkpoint-metadata"
+    },
+    {
+      "from": "epic-lora-discovery-application",
+      "kind": "owns",
       "to": "TASK-lora-discovery-application"
     },
     {
@@ -92829,7 +94800,32 @@
     {
       "from": "epic-lore-knowledge",
       "kind": "owns",
+      "to": "TASK-ask-menu-lore-gated-actions"
+    },
+    {
+      "from": "epic-lore-knowledge",
+      "kind": "owns",
       "to": "TASK-capability-disclosure-lore-ceiling"
+    },
+    {
+      "from": "epic-lore-knowledge",
+      "kind": "owns",
+      "to": "TASK-encrypted-lore-search-tokens"
+    },
+    {
+      "from": "epic-lore-knowledge",
+      "kind": "owns",
+      "to": "TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri"
+    },
+    {
+      "from": "epic-lore-knowledge",
+      "kind": "owns",
+      "to": "TASK-language-gated-lore-visibility"
+    },
+    {
+      "from": "epic-lore-knowledge",
+      "kind": "owns",
+      "to": "TASK-llm-enhance-lore-style-grounding"
     },
     {
       "from": "epic-lore-knowledge",
@@ -92840,6 +94836,16 @@
       "from": "epic-lore-knowledge",
       "kind": "owns",
       "to": "TASK-lore-timeline-reveal"
+    },
+    {
+      "from": "epic-lore-knowledge",
+      "kind": "owns",
+      "to": "TASK-lorebook-activation-search-scoring"
+    },
+    {
+      "from": "epic-lore-knowledge",
+      "kind": "owns",
+      "to": "TASK-lorebook-unified-search-index"
     },
     {
       "from": "epic-lore-knowledge",
@@ -92899,6 +94905,31 @@
     {
       "from": "epic-mechanics-governance",
       "kind": "owns",
+      "to": "BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not"
+    },
+    {
+      "from": "epic-mechanics-governance",
+      "kind": "owns",
+      "to": "BUG-fix-plugins-append-onload-registrations-to-manifest-registra"
+    },
+    {
+      "from": "epic-mechanics-governance",
+      "kind": "owns",
+      "to": "BUG-fix-plugins-define-plugin-route-matching-semantics"
+    },
+    {
+      "from": "epic-mechanics-governance",
+      "kind": "owns",
+      "to": "BUG-fix-plugins-make-plugin-discovery-failures-visible"
+    },
+    {
+      "from": "epic-mechanics-governance",
+      "kind": "owns",
+      "to": "TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m"
+    },
+    {
+      "from": "epic-mechanics-governance",
+      "kind": "owns",
       "to": "TASK-rpg-gate-chat-commands-behind-world-opt-in"
     },
     {
@@ -92920,6 +94951,11 @@
       "from": "epic-mechanics-governance",
       "kind": "owns",
       "to": "TASK-rpg-world-ruleset-templates-applied-at-creation"
+    },
+    {
+      "from": "epic-memory-knowledge-systems",
+      "kind": "owns",
+      "to": "BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me"
     },
     {
       "from": "epic-memory-knowledge-systems",
@@ -92994,6 +95030,16 @@
     {
       "from": "epic-memory-knowledge-systems",
       "kind": "owns",
+      "to": "TASK-matrix-cross-mech-g19-agent-memory-scoring"
+    },
+    {
+      "from": "epic-memory-knowledge-systems",
+      "kind": "owns",
+      "to": "TASK-matrix-cross-mech-g23-dynamic-memory-mid-response"
+    },
+    {
+      "from": "epic-memory-knowledge-systems",
+      "kind": "owns",
       "to": "TASK-memory-character-integration"
     },
     {
@@ -93005,6 +95051,11 @@
       "from": "epic-memory-knowledge-systems",
       "kind": "owns",
       "to": "TASK-memory-decay-logic"
+    },
+    {
+      "from": "epic-memory-knowledge-systems",
+      "kind": "owns",
+      "to": "TASK-memory-emotion-impact"
     },
     {
       "from": "epic-memory-knowledge-systems",
@@ -93054,6 +95105,11 @@
     {
       "from": "epic-memory-knowledge-systems",
       "kind": "owns",
+      "to": "TASK-npc-social-memory"
+    },
+    {
+      "from": "epic-memory-knowledge-systems",
+      "kind": "owns",
       "to": "TASK-related-memory-event-injection-hooks"
     },
     {
@@ -93062,9 +95118,39 @@
       "to": "TASK-visibility-report-for-chat-admins"
     },
     {
+      "from": "epic-memory-profiling-budgets",
+      "kind": "owns",
+      "to": "FEAT-memory-systems-three-tier"
+    },
+    {
+      "from": "epic-memory-profiling-budgets",
+      "kind": "owns",
+      "to": "TASK-memory-selection-ui"
+    },
+    {
       "from": "epic-memory-propagation",
       "kind": "owns",
       "to": "TASK-timeline-memory-injection"
+    },
+    {
+      "from": "epic-mesh-federation-content-sharing",
+      "kind": "owns",
+      "to": "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o"
+    },
+    {
+      "from": "epic-mesh-federation-content-sharing",
+      "kind": "owns",
+      "to": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat"
+    },
+    {
+      "from": "epic-mesh-federation-content-sharing",
+      "kind": "owns",
+      "to": "TASK-backlog-federation-interconnect-batch"
+    },
+    {
+      "from": "epic-mesh-federation-content-sharing",
+      "kind": "owns",
+      "to": "TASK-db-add-created-at-updated-at-to-federation-and-mesh-tables"
     },
     {
       "from": "epic-mesh-federation-content-sharing",
@@ -93124,12 +95210,47 @@
     {
       "from": "epic-messages",
       "kind": "owns",
+      "to": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just"
+    },
+    {
+      "from": "epic-messages",
+      "kind": "owns",
+      "to": "BUG-message-create-503-passthrough-omits-persisted-id-and-duplic"
+    },
+    {
+      "from": "epic-messages",
+      "kind": "owns",
+      "to": "BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup"
+    },
+    {
+      "from": "epic-messages",
+      "kind": "owns",
+      "to": "BUG-message-soft-delete-lets-any-chat-member-hide-any-member-s-m"
+    },
+    {
+      "from": "epic-messages",
+      "kind": "owns",
       "to": "FEAT-message-swipe-replay-branch"
     },
     {
       "from": "epic-messages",
       "kind": "owns",
       "to": "IDEA-migrated-history-tree-remap"
+    },
+    {
+      "from": "epic-messages",
+      "kind": "owns",
+      "to": "TASK-chat-history-can-inject-system-role-messages-prompt-injectio"
+    },
+    {
+      "from": "epic-messages",
+      "kind": "owns",
+      "to": "TASK-guided-regen-frontend-menu-wiring-on-assistant-messages"
+    },
+    {
+      "from": "epic-messages",
+      "kind": "owns",
+      "to": "TASK-lore-persona-traits-placed-as-system-messages-semantic-injec"
     },
     {
       "from": "epic-messages",
@@ -93160,6 +95281,11 @@
       "from": "epic-middleware-request-lifecycle",
       "kind": "owns",
       "to": "BUG-middleware-requestid-dual-write-last-wins"
+    },
+    {
+      "from": "epic-middleware-request-lifecycle",
+      "kind": "owns",
+      "to": "BUG-web-ui-never-sets-db-idempotencykey"
     },
     {
       "from": "epic-middleware-request-lifecycle",
@@ -93204,12 +95330,77 @@
     {
       "from": "epic-mini-games",
       "kind": "owns",
+      "to": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-"
+    },
+    {
+      "from": "epic-mini-games",
+      "kind": "owns",
       "to": "TASK-mini-games-framework"
     },
     {
       "from": "epic-mobile-app",
       "kind": "owns",
       "to": "FEAT-mobile-native-ux-haptics-swipe-voice-thumb-layout"
+    },
+    {
+      "from": "epic-model-family-presets",
+      "kind": "owns",
+      "to": "TASK-consolidate-template-constants-under-global-all-constants-um"
+    },
+    {
+      "from": "epic-model-info-frontend",
+      "kind": "owns",
+      "to": "FEAT-model-cards-with-metadata-panels-and-size-vram-surfacing"
+    },
+    {
+      "from": "epic-model-info-frontend",
+      "kind": "owns",
+      "to": "FEAT-model-tags-search-and-filter-over-local-index"
+    },
+    {
+      "from": "epic-model-metadata-read",
+      "kind": "owns",
+      "to": "BUG-supports-vision-never-refreshed-on-capability-update"
+    },
+    {
+      "from": "epic-model-metadata-read",
+      "kind": "owns",
+      "to": "FEAT-gguf-kv-typed-reader-with-arch-templated-key-registry"
+    },
+    {
+      "from": "epic-model-metadata-read",
+      "kind": "owns",
+      "to": "FEAT-header-only-safetensors-metadata-parser"
+    },
+    {
+      "from": "epic-model-metadata-read",
+      "kind": "owns",
+      "to": "FEAT-model-hash-blake3-and-sha256-with-cross-model-dedup"
+    },
+    {
+      "from": "epic-model-metadata-read",
+      "kind": "owns",
+      "to": "FEAT-tensor-key-prefix-model-classifier"
+    },
+    {
+      "from": "epic-model-metadata-read",
+      "kind": "owns",
+      "to": "TASK-hf-id-to-display-name-heuristics"
+    },
+    {
+      "from": "epic-model-metadata-read",
+      "kind": "owns",
+      "to": "TASK-model-metadata-sidecar-cache-and-hash-lookup-cascade"
+    },
+    {
+      "from": "epic-model-metadata-read",
+      "kind": "owns",
+      "to": "TASK-model-weight-sniffing-fallback-detect-from-weights"
+    },
+    {
+      "from": "epic-multi-instance-reconciliation",
+      "kind": "owns",
+      "to": "BUG-leader-and-swarm-topologies-lack-simultaneous-write-arbitrat"
     },
     {
       "from": "epic-multi-instance-reconciliation",
@@ -93220,6 +95411,11 @@
       "from": "epic-multi-instance-reconciliation",
       "kind": "owns",
       "to": "TASK-multi-instance-reconciliation"
+    },
+    {
+      "from": "epic-multi-instance-reconciliation",
+      "kind": "owns",
+      "to": "TASK-register-username-race-and-rate-limiter-multi-instance-gap"
     },
     {
       "from": "epic-multi-instance-reconciliation",
@@ -93245,6 +95441,11 @@
       "from": "epic-multi-session",
       "kind": "owns",
       "to": "TASK-sessions-api-routes"
+    },
+    {
+      "from": "epic-multilingual-carriage",
+      "kind": "owns",
+      "to": "FEAT-message-translations-chat-first"
     },
     {
       "from": "epic-multilingual-carriage",
@@ -93277,9 +95478,34 @@
       "to": "TASK-message-carriage-translator-ticket-closeout"
     },
     {
+      "from": "epic-multilingual-carriage",
+      "kind": "owns",
+      "to": "TASK-translator-model-role-with-general-model-fallback"
+    },
+    {
+      "from": "epic-multimodal-asset-reuse",
+      "kind": "owns",
+      "to": "TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files"
+    },
+    {
+      "from": "epic-multimodal-asset-reuse",
+      "kind": "owns",
+      "to": "TASK-asset-emotion-job-hygiene-orphaned-thumbnails-stuck-running-"
+    },
+    {
+      "from": "epic-multimodal-asset-reuse",
+      "kind": "owns",
+      "to": "TASK-gallery-asset-reuse-picker-for-world-location-item-creation"
+    },
+    {
       "from": "epic-multimodal-asset-reuse",
       "kind": "owns",
       "to": "TASK-model-agnostic-asset-representation"
+    },
+    {
+      "from": "epic-narration-actor-separation",
+      "kind": "owns",
+      "to": "TASK-narration-levels"
     },
     {
       "from": "epic-narration-actor-separation",
@@ -93404,6 +95630,11 @@
     {
       "from": "epic-npc-navigation",
       "kind": "owns",
+      "to": "BUG-patrolroute-cast-without-array-validation"
+    },
+    {
+      "from": "epic-npc-navigation",
+      "kind": "owns",
       "to": "FEAT-npc-navigation"
     },
     {
@@ -93424,6 +95655,11 @@
     {
       "from": "epic-npcs",
       "kind": "owns",
+      "to": "TASK-condition-driven-npc-behavior"
+    },
+    {
+      "from": "epic-npcs",
+      "kind": "owns",
       "to": "TASK-npc-boss-retinue-lore-and-relationship-service"
     },
     {
@@ -93439,12 +95675,42 @@
     {
       "from": "epic-npcs",
       "kind": "owns",
+      "to": "TASK-npc-chat-buffer"
+    },
+    {
+      "from": "epic-npcs",
+      "kind": "owns",
+      "to": "TASK-npc-plan-revision"
+    },
+    {
+      "from": "epic-npcs",
+      "kind": "owns",
+      "to": "TASK-npc-planning-loop"
+    },
+    {
+      "from": "epic-npcs",
+      "kind": "owns",
+      "to": "TASK-npc-reaction-system"
+    },
+    {
+      "from": "epic-npcs",
+      "kind": "owns",
       "to": "TASK-npc-retinue-minimal-chat-act-send-react-join"
     },
     {
       "from": "epic-npcs",
       "kind": "owns",
       "to": "TASK-npcs"
+    },
+    {
+      "from": "epic-nsfw-capabilities",
+      "kind": "owns",
+      "to": "TASK-PLAN-NSFW-RATING-UI"
+    },
+    {
+      "from": "epic-nsfw-capabilities",
+      "kind": "owns",
+      "to": "TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r"
     },
     {
       "from": "epic-nsfw-capabilities",
@@ -93664,6 +95930,11 @@
     {
       "from": "epic-nsfw-integration-gaps",
       "kind": "owns",
+      "to": "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa"
+    },
+    {
+      "from": "epic-nsfw-integration-gaps",
+      "kind": "owns",
       "to": "TASK-nsfw-housing-integration"
     },
     {
@@ -93700,6 +95971,11 @@
       "from": "epic-nsfw-moderation-priority",
       "kind": "owns",
       "to": "BUG-hashreporterid-uses-hardcoded-default-secret-in-production-b"
+    },
+    {
+      "from": "epic-nsfw-moderation-priority",
+      "kind": "owns",
+      "to": "BUG-nsfw-appeal-approvedby-taken-from-request-body"
     },
     {
       "from": "epic-nsfw-moderation-priority",
@@ -93764,6 +96040,11 @@
     {
       "from": "epic-nsfw-moderation-priority",
       "kind": "owns",
+      "to": "TASK-implement-bug-nsfw-reviewappeal-auto-reverses-actions"
+    },
+    {
+      "from": "epic-nsfw-moderation-priority",
+      "kind": "owns",
       "to": "TASK-telemetry-schema-comment-claims-additionalproperties-false-r"
     },
     {
@@ -93785,6 +96066,11 @@
       "from": "epic-nsfw-ui",
       "kind": "owns",
       "to": "TASK-nsfw-intimacy-interface"
+    },
+    {
+      "from": "epic-observability-telemetry",
+      "kind": "owns",
+      "to": "BUG-probes-ts-liveness-accepts-any-http-response-including-404-a"
     },
     {
       "from": "epic-observability-telemetry",
@@ -93812,6 +96098,51 @@
       "to": "TASK-openapi-reference"
     },
     {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-cancel-generation-wiring"
+    },
+    {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-retry-from-point"
+    },
+    {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-sse-reconnect-replay"
+    },
+    {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-stream-event-type-registry"
+    },
+    {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-structured-toolcall-renderer"
+    },
+    {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-thinking-block-render"
+    },
+    {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-tool-access-grants"
+    },
+    {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-tool-stream-interleaving"
+    },
+    {
+      "from": "epic-openwebui-parity",
+      "kind": "owns",
+      "to": "TASK-2026-openwebui-tool-valves-panel"
+    },
+    {
       "from": "epic-output-control-transforms",
       "kind": "owns",
       "to": "BUG-chat-prompt-override-bypass-on-reply"
@@ -93824,12 +96155,37 @@
     {
       "from": "epic-output-control-transforms",
       "kind": "owns",
+      "to": "FEAT-language-selection-three-level"
+    },
+    {
+      "from": "epic-output-control-transforms",
+      "kind": "owns",
+      "to": "FEAT-model-native-locale-config"
+    },
+    {
+      "from": "epic-output-control-transforms",
+      "kind": "owns",
+      "to": "FEAT-regex-output-transforms-user-defined-rules"
+    },
+    {
+      "from": "epic-output-control-transforms",
+      "kind": "owns",
+      "to": "FEAT-smart-regen-transforms-shorter-longer-funnier-darker"
+    },
+    {
+      "from": "epic-output-control-transforms",
+      "kind": "owns",
       "to": "TASK-generalized-pre-post-generation-hook-registry"
     },
     {
       "from": "epic-output-control-transforms",
       "kind": "owns",
       "to": "TASK-guided-regen-action-menu-on-assistant-messages"
+    },
+    {
+      "from": "epic-output-control-transforms",
+      "kind": "owns",
+      "to": "TASK-output-control-transforms-md-silent-on-ui-and-valid-regen-st"
     },
     {
       "from": "epic-output-control-transforms",
@@ -93849,7 +96205,17 @@
     {
       "from": "epic-output-control-transforms",
       "kind": "owns",
+      "to": "TASK-quick-regen-button"
+    },
+    {
+      "from": "epic-output-control-transforms",
+      "kind": "owns",
       "to": "TASK-regex-output-transforms-quick-win"
+    },
+    {
+      "from": "epic-output-control-transforms",
+      "kind": "owns",
+      "to": "TASK-response-length-control"
     },
     {
       "from": "epic-output-control-transforms",
@@ -93915,6 +96281,146 @@
       "from": "epic-performance-dashboard-slo",
       "kind": "owns",
       "to": "TASK-performance-dashboard-slos"
+    },
+    {
+      "from": "epic-perspective-narration-voice",
+      "kind": "owns",
+      "to": "TASK-tts-voice-narration"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-arraybuffersink-for-buffer-building"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-cookie-for-cookie-handling"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-deepequals-for-test-assertions"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-dns-for-dns-resolution"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-escapehtml-for-xss-prevention"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-file-bun-write-for-file-i-o"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-glob-for-file-matching"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-gzipsync-for-compression-standardization"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-image-for-image-processing"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-inspect-for-custom-formatting"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-markdown-to-replace-marked"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-password-for-password-hashing"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-peek-for-non-blocking-inspection"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-semver-for-version-comparison"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-shell-for-shell-commands"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-sleep-for-async-delays"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-spawn-for-child-processes"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-transpiler-for-plugin-typescript"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-bun-which-for-binary-discovery"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-dialog-api-for-native-modals"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-intersection-observer-for-lazy-loading"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-notification-api-for-desktop-notifications"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-page-visibility-api-and-service-worker"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-popover-api-for-tooltips-dropdowns-context-menus"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-view-transitions-api-for-page-navigation"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-web-animations-api-for-vn-scenes"
+    },
+    {
+      "from": "epic-platform-api-adoption",
+      "kind": "owns",
+      "to": "TASK-adopt-web-share-api-and-clipboard-api"
     },
     {
       "from": "epic-platform-integrations",
@@ -93984,12 +96490,27 @@
     {
       "from": "epic-platform-research",
       "kind": "owns",
+      "to": "TASK-matrix-cross-mech-g22-event-driven-automation"
+    },
+    {
+      "from": "epic-platform-research",
+      "kind": "owns",
       "to": "TASK-search-algorithm-research-rust-ffi"
     },
     {
       "from": "epic-player-state-machine",
       "kind": "owns",
+      "to": "TASK-npc-behavior-state-machine-foundation"
+    },
+    {
+      "from": "epic-player-state-machine",
+      "kind": "owns",
       "to": "TASK-sc10-player-state-machine-adapters"
+    },
+    {
+      "from": "epic-player-state-machine",
+      "kind": "owns",
+      "to": "TASK-world-state-motivation-context"
     },
     {
       "from": "epic-plugin-extension-points",
@@ -94014,7 +96535,17 @@
     {
       "from": "epic-plugin-extension-points",
       "kind": "owns",
+      "to": "TASK-plugin-extension-api"
+    },
+    {
+      "from": "epic-plugin-extension-points",
+      "kind": "owns",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins"
+    },
+    {
+      "from": "epic-plugin-extension-points",
+      "kind": "owns",
+      "to": "TASK-wire-plugin-bundles-to-richer-character-extensions"
     },
     {
       "from": "epic-plugin-management-ui",
@@ -94044,7 +96575,22 @@
     {
       "from": "epic-plugin-system",
       "kind": "owns",
+      "to": "BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat"
+    },
+    {
+      "from": "epic-plugin-system",
+      "kind": "owns",
       "to": "BUG-failed-plugin-load-leaks-a-registered-plugin"
+    },
+    {
+      "from": "epic-plugin-system",
+      "kind": "owns",
+      "to": "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error"
+    },
+    {
+      "from": "epic-plugin-system",
+      "kind": "owns",
+      "to": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-"
     },
     {
       "from": "epic-plugin-system",
@@ -94127,6 +96673,11 @@
       "to": "TASK-plugin-system"
     },
     {
+      "from": "epic-plugin-system",
+      "kind": "owns",
+      "to": "TASK-provider-contributions-via-plugin-system"
+    },
+    {
       "from": "epic-precompiled-hot-binaries",
       "kind": "owns",
       "to": "TASK-precompiled-hot-binaries"
@@ -94194,6 +96745,41 @@
     {
       "from": "epic-provider-plugin-ecosystem",
       "kind": "owns",
+      "to": "BUG-auto-started-llama-cpp-skips-circuit-breaker-registration"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
+      "to": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
+      "to": "BUG-extractjsonobject-slices-an-unbounded-llm-response-before-js"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
+      "to": "BUG-no-image-provider-plugin-seam-adding-family-touches-7-sites"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
+      "to": "BUG-ollama-native-provider-drops-generationmessage-images-so-fil"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
+      "to": "BUG-ollamanative-singleton-blocks-second-native-ollama"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
+      "to": "BUG-openai-compatible-streaming-body-has-no-idle-read-timeout-af"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
       "to": "FEAT-provider-plugin-ecosystem"
     },
     {
@@ -94204,7 +96790,22 @@
     {
       "from": "epic-provider-plugin-ecosystem",
       "kind": "owns",
+      "to": "TASK-plugin-and-tool-runtime-residual-defects"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
       "to": "TASK-plugin-management-api"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
+      "to": "TASK-refactor-llm-provider-adapters-onto-shared-base-factory"
+    },
+    {
+      "from": "epic-provider-plugin-ecosystem",
+      "kind": "owns",
+      "to": "TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste"
     },
     {
       "from": "epic-publication-i18n",
@@ -94230,6 +96831,21 @@
       "from": "epic-publication-i18n",
       "kind": "owns",
       "to": "TASK-unit-translation-service"
+    },
+    {
+      "from": "epic-quests-encounters",
+      "kind": "owns",
+      "to": "BUG-quest-and-story-state-handlers-read-ctx-userid-directly-retu"
+    },
+    {
+      "from": "epic-quests-encounters",
+      "kind": "owns",
+      "to": "BUG-quest-and-story-state-routes-discard-notification-rejections"
+    },
+    {
+      "from": "epic-quests-encounters",
+      "kind": "owns",
+      "to": "BUG-quest-engine-double-advances-from-stale-in-memory-progress-a"
     },
     {
       "from": "epic-quests-encounters",
@@ -94274,6 +96890,11 @@
     {
       "from": "epic-rag-assets-unified-storage-and-assistant-flows",
       "kind": "owns",
+      "to": "TASK-fts5-cross-session-recall-and-summarization-for-rag-unified-"
+    },
+    {
+      "from": "epic-rag-assets-unified-storage-and-assistant-flows",
+      "kind": "owns",
       "to": "TASK-gallery-asset-linkage-to-chat-from-assistant"
     },
     {
@@ -94290,6 +96911,11 @@
       "from": "epic-rag-assets-unified-storage-and-assistant-flows",
       "kind": "owns",
       "to": "TASK-search-rag-coverage-bridge"
+    },
+    {
+      "from": "epic-rag-assets-unified-storage-and-assistant-flows",
+      "kind": "owns",
+      "to": "TASK-worldbook-rag-decomposer"
     },
     {
       "from": "epic-rag-context-sources",
@@ -94480,6 +97106,11 @@
       "from": "epic-reactive-actor-appearance",
       "kind": "owns",
       "to": "TASK-identity-lock-seed-negative-prompt-and-anchor"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "owns",
+      "to": "TASK-img2img-init-image-plumbing"
     },
     {
       "from": "epic-reactive-actor-appearance",
@@ -94709,6 +97340,11 @@
     {
       "from": "epic-reference-conditioned-generation",
       "kind": "owns",
+      "to": "TASK-matrix-cross-mech-g21-asset-consistency-generation"
+    },
+    {
+      "from": "epic-reference-conditioned-generation",
+      "kind": "owns",
       "to": "TASK-minimax-h3-stills-reference-template"
     },
     {
@@ -94777,6 +97413,46 @@
       "to": "TASK-stills-lifecycle-queue-progress-client"
     },
     {
+      "from": "epic-relation-graph-canvas",
+      "kind": "owns",
+      "to": "TASK-document-asset-relation-graph-on-2d-canvas"
+    },
+    {
+      "from": "epic-relation-graph-canvas",
+      "kind": "owns",
+      "to": "TASK-faction-relation-graph-on-2d-canvas-backend-first"
+    },
+    {
+      "from": "epic-relation-graph-canvas",
+      "kind": "owns",
+      "to": "TASK-location-travel-graph-on-2d-canvas"
+    },
+    {
+      "from": "epic-relation-graph-canvas",
+      "kind": "owns",
+      "to": "TASK-memory-relation-graph-on-2d-canvas"
+    },
+    {
+      "from": "epic-relation-graph-canvas",
+      "kind": "owns",
+      "to": "TASK-story-entity-relation-graph-on-2d-canvas"
+    },
+    {
+      "from": "epic-relation-graph-canvas",
+      "kind": "owns",
+      "to": "TASK-story-timeline-view-on-2d-canvas"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same"
+    },
+    {
       "from": "epic-relationships",
       "kind": "owns",
       "to": "FEAT-relationship-drift-timeline-visualizer"
@@ -94789,7 +97465,67 @@
     {
       "from": "epic-relationships",
       "kind": "owns",
+      "to": "TASK-faction-membership-relationship-propagation"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "TASK-relationship-decay"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "TASK-relationship-events"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "TASK-relationship-memory"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "TASK-relationship-milestones"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "TASK-relationship-prompt"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "TASK-relationship-tests"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
+      "to": "TASK-relationship-type-evolution"
+    },
+    {
+      "from": "epic-relationships",
+      "kind": "owns",
       "to": "TASK-relationships"
+    },
+    {
+      "from": "epic-release-010",
+      "kind": "owns",
+      "to": "TASK-PLAN-RELEASE-V010"
+    },
+    {
+      "from": "epic-release-010",
+      "kind": "owns",
+      "to": "TASK-backlog-coverage-waivers-frontend-batches"
+    },
+    {
+      "from": "epic-release-010",
+      "kind": "owns",
+      "to": "TASK-browser-suite-release-gate-wiring"
+    },
+    {
+      "from": "epic-replayability",
+      "kind": "owns",
+      "to": "BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets"
     },
     {
       "from": "epic-replayability",
@@ -94799,7 +97535,17 @@
     {
       "from": "epic-replayability",
       "kind": "owns",
+      "to": "TASK-raise-rpg-battle-social-skills-progression-and-replayability"
+    },
+    {
+      "from": "epic-replayability",
+      "kind": "owns",
       "to": "TASK-reconcile-achievement-unlock-sources"
+    },
+    {
+      "from": "epic-replayability",
+      "kind": "owns",
+      "to": "TASK-replayability-session-seeded-random-tables"
     },
     {
       "from": "epic-replayability",
@@ -94810,6 +97556,21 @@
       "from": "epic-replayability",
       "kind": "owns",
       "to": "TASK-wire-replayability-routes"
+    },
+    {
+      "from": "epic-research-agency-quality",
+      "kind": "owns",
+      "to": "TASK-agency-coordination-priority"
+    },
+    {
+      "from": "epic-research-agency-quality",
+      "kind": "owns",
+      "to": "TASK-agency-quality-metrics"
+    },
+    {
+      "from": "epic-research-agency-quality",
+      "kind": "owns",
+      "to": "TASK-test-debt-coordination-priority-queue-cap-regression-test"
     },
     {
       "from": "epic-resolution-system",
@@ -94844,12 +97605,27 @@
     {
       "from": "epic-resolution-system",
       "kind": "owns",
+      "to": "TASK-resolution-family-decision"
+    },
+    {
+      "from": "epic-resolution-system",
+      "kind": "owns",
       "to": "TASK-resolution-system"
     },
     {
       "from": "epic-resolution-system",
       "kind": "owns",
       "to": "TASK-rpg-resolution-system"
+    },
+    {
+      "from": "epic-resolution-system",
+      "kind": "owns",
+      "to": "TASK-rpg-silent-catches-and-dice-modular-bias"
+    },
+    {
+      "from": "epic-resource-provision",
+      "kind": "owns",
+      "to": "TASK-provider-wiring-settings-convention-for-byok-and-resource-pr"
     },
     {
       "from": "epic-resource-provision",
@@ -94912,9 +97688,74 @@
       "to": "TASK-resource-provision-tests"
     },
     {
+      "from": "epic-review-check-parallel-ram-2026-09-03",
+      "kind": "owns",
+      "to": "TASK-license-compliance-check-inert-check-parallel-emits-info-ski"
+    },
+    {
+      "from": "epic-review-dev-2026-08-26-late-merges",
+      "kind": "owns",
+      "to": "TASK-dprint-formatting-enforced-ci-test-files"
+    },
+    {
+      "from": "epic-review-dev-2026-08-26-late-merges",
+      "kind": "owns",
+      "to": "TASK-nsfw-moderation-delete-audit-regression-verify"
+    },
+    {
+      "from": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "kind": "owns",
+      "to": "BUG-db-reinit-archive-destroys-previous-db-on-rename-failure"
+    },
+    {
+      "from": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "kind": "owns",
+      "to": "TASK-harden-canaccessnsfw-require-birth-date"
+    },
+    {
+      "from": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "kind": "owns",
+      "to": "TASK-input-hardening-batch"
+    },
+    {
+      "from": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "kind": "owns",
+      "to": "TASK-message-search-cannot-index-compressed-or-encrypted-content"
+    },
+    {
+      "from": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "kind": "owns",
+      "to": "TASK-resolve-message-content-unit-test-all-encodings"
+    },
+    {
+      "from": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "kind": "owns",
+      "to": "TASK-story-mode-runcontenthooks-integration-test"
+    },
+    {
       "from": "epic-rpg-content-systems",
       "kind": "owns",
       "to": "TASK-029"
+    },
+    {
+      "from": "epic-rpg-content-systems",
+      "kind": "owns",
+      "to": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel"
+    },
+    {
+      "from": "epic-rpg-mechanics",
+      "kind": "owns",
+      "to": "BUG-answerquestion-double-answer-race-toctou-on-status-check"
+    },
+    {
+      "from": "epic-rpg-mechanics",
+      "kind": "owns",
+      "to": "BUG-answerquestion-ignores-time-limit-expired-questions-still-an"
+    },
+    {
+      "from": "epic-rpg-mechanics",
+      "kind": "owns",
+      "to": "TASK-backlog-rpg-mechanics-opt-in-gating-priority"
     },
     {
       "from": "epic-rpg-mechanics",
@@ -94925,6 +97766,11 @@
       "from": "epic-rpg-mechanics",
       "kind": "owns",
       "to": "TASK-crafting-system"
+    },
+    {
+      "from": "epic-rpg-mechanics",
+      "kind": "owns",
+      "to": "TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat"
     },
     {
       "from": "epic-rpg-mechanics",
@@ -94999,7 +97845,22 @@
     {
       "from": "epic-rpg-mechanics",
       "kind": "owns",
+      "to": "TASK-rpg-skill-reset"
+    },
+    {
+      "from": "epic-rpg-mechanics",
+      "kind": "owns",
       "to": "TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history"
+    },
+    {
+      "from": "epic-rpg-mechanics",
+      "kind": "owns",
+      "to": "TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr"
+    },
+    {
+      "from": "epic-rpg-mechanics",
+      "kind": "owns",
+      "to": "TASK-skill-check-slash-commands"
     },
     {
       "from": "epic-rpg-mechanics",
@@ -95025,6 +97886,11 @@
       "from": "epic-rpg-patterns",
       "kind": "owns",
       "to": "TASK-rpg-patterns"
+    },
+    {
+      "from": "epic-rpg-progression",
+      "kind": "owns",
+      "to": "BUG-buildskilltree-silently-drops-orphan-nodes"
     },
     {
       "from": "epic-rpg-progression",
@@ -95059,6 +97925,11 @@
     {
       "from": "epic-runtime-integrity-fail-safes",
       "kind": "owns",
+      "to": "TASK-admin-handlers-lack-explicit-requireuserid-fail-open-structu"
+    },
+    {
+      "from": "epic-runtime-integrity-fail-safes",
+      "kind": "owns",
       "to": "TASK-fail-safe-execution-work-safety"
     },
     {
@@ -95072,9 +97943,124 @@
       "to": "TASK-runtime-integrity-watchdog-crash-recovery"
     },
     {
+      "from": "epic-runtime-integrity-fail-safes",
+      "kind": "owns",
+      "to": "TASK-server-edge-error-handling-gaps-in-routes-layer"
+    },
+    {
+      "from": "epic-runtime-memory-state-hygiene",
+      "kind": "owns",
+      "to": "BUG-module-level-in-memory-state-grows-without-eviction"
+    },
+    {
+      "from": "epic-sam3-segmentation-integration",
+      "kind": "owns",
+      "to": "TASK-comfyui-sam3-concept-mask-template"
+    },
+    {
+      "from": "epic-sam3-segmentation-integration",
+      "kind": "owns",
+      "to": "TASK-image-edit-concept-inpaint-template"
+    },
+    {
+      "from": "epic-sam3-segmentation-integration",
+      "kind": "owns",
+      "to": "TASK-matting-concept-prompt-contract"
+    },
+    {
+      "from": "epic-sam3-segmentation-integration",
+      "kind": "owns",
+      "to": "TASK-sam3-concept-cutout-wiring-sprites-avatar-matting-vn-alpha"
+    },
+    {
+      "from": "epic-sam3-segmentation-integration",
+      "kind": "owns",
+      "to": "TASK-sam3-direct-provider-via-meta-model-api"
+    },
+    {
+      "from": "epic-sam3-segmentation-integration",
+      "kind": "owns",
+      "to": "TASK-sam3-feasibility-probe-meta-model-api-vs-comfyui-custom-node"
+    },
+    {
+      "from": "epic-sam3-segmentation-integration",
+      "kind": "owns",
+      "to": "TASK-sam3-mask-cache-and-reuse"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "BUG-get-admin-model-roles-schema-array-vs-service-record-mismatc"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-agents-md-references-nonexistent-db-schemas-check-script"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-audit-t-unionenum-schema-fields-absent-value-silently-defaul"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-dead-eslint-stub-rules-and-a-dead-response-schema-on-the-dyn"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-faction-standing-schema"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-gate-validate-configs-example-files-against-their-schemas"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-input-validation-battle-schema-less-post-emotion-avatars-par"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-schema-constraint-hardening-sweep-bounds-dead-schemas-additi"
+    },
+    {
+      "from": "epic-schema",
+      "kind": "owns",
+      "to": "TASK-schema-rpg-investigation"
+    },
+    {
       "from": "epic-schema",
       "kind": "owns",
       "to": "TASK-schema"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
+      "to": "BUG-a-community-plugin-named-core-disables-all-five-built-in-too"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
+      "to": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme"
     },
     {
       "from": "epic-security-sandboxing",
@@ -95099,12 +98085,77 @@
     {
       "from": "epic-security-sandboxing",
       "kind": "owns",
+      "to": "TASK-asset-upload-path-traversal-enables-arbitrary-file-write"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
+      "to": "TASK-csp-allows-unsafe-inline-and-unsafe-eval-defeating-nonce"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
+      "to": "TASK-golden-corpus-and-scoring-ratchet-for-prompt-injection-signa"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
       "to": "TASK-llm-sandboxing"
     },
     {
       "from": "epic-security-sandboxing",
       "kind": "owns",
+      "to": "TASK-logger-censor-bypasses-message-field-pii-secret-leak"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
       "to": "TASK-repurpose-dead-sandboxed-field-into-a-strict-mode-policy-tag"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
+      "to": "TASK-settings-patch-uses-t-any-body-allowing-mass-assignment"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
+      "to": "TASK-svg-upload-leads-to-stored-xss"
+    },
+    {
+      "from": "epic-security-sandboxing",
+      "kind": "owns",
+      "to": "TASK-tool-call-user-text-sanitization"
+    },
+    {
+      "from": "epic-server-lifecycle-hardening",
+      "kind": "owns",
+      "to": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec"
+    },
+    {
+      "from": "epic-server-lifecycle-hardening",
+      "kind": "owns",
+      "to": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs"
+    },
+    {
+      "from": "epic-server-lifecycle-hardening",
+      "kind": "owns",
+      "to": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready"
+    },
+    {
+      "from": "epic-server-lifecycle-hardening",
+      "kind": "owns",
+      "to": "BUG-fix-server-log-rejected-background-init-promises-with-module"
+    },
+    {
+      "from": "epic-server-lifecycle-hardening",
+      "kind": "owns",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o"
+    },
+    {
+      "from": "epic-server-lifecycle-hardening",
+      "kind": "owns",
+      "to": "TASK-perf-server-no-cache-html-entry-points-stream-static-files-w"
     },
     {
       "from": "epic-shared-schemas",
@@ -95234,7 +98285,27 @@
     {
       "from": "epic-social-interaction",
       "kind": "owns",
+      "to": "TASK-alignment-speech-social-context"
+    },
+    {
+      "from": "epic-social-interaction",
+      "kind": "owns",
       "to": "TASK-character-interaction-outcomes"
+    },
+    {
+      "from": "epic-social-interaction",
+      "kind": "owns",
+      "to": "TASK-npc-social-conversation"
+    },
+    {
+      "from": "epic-social-interaction",
+      "kind": "owns",
+      "to": "TASK-npc-social-decision"
+    },
+    {
+      "from": "epic-social-interaction",
+      "kind": "owns",
+      "to": "TASK-npc-social-dynamics"
     },
     {
       "from": "epic-social-interaction",
@@ -95344,12 +98415,22 @@
     {
       "from": "epic-story-mode-ui",
       "kind": "owns",
+      "to": "TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-"
+    },
+    {
+      "from": "epic-story-mode-ui",
+      "kind": "owns",
       "to": "TASK-quest-log"
     },
     {
       "from": "epic-story-mode-ui",
       "kind": "owns",
       "to": "TASK-story-alpine"
+    },
+    {
+      "from": "epic-story-mode-ui",
+      "kind": "owns",
+      "to": "TASK-story-mode-frontend"
     },
     {
       "from": "epic-story-mode-ui",
@@ -95469,6 +98550,11 @@
     {
       "from": "epic-terminal-ui",
       "kind": "owns",
+      "to": "BUG-tui-blind-to-llm-assistant-turns"
+    },
+    {
+      "from": "epic-terminal-ui",
+      "kind": "owns",
       "to": "BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-"
     },
     {
@@ -95579,7 +98665,32 @@
     {
       "from": "epic-testing-qa",
       "kind": "owns",
+      "to": "BUG-test-async-store-offload-dir-fixed-path-race"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
       "to": "TASK-2026-009"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-2026-010"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-2026-011"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-2026-012"
     },
     {
       "from": "epic-testing-qa",
@@ -95590,6 +98701,26 @@
       "from": "epic-testing-qa",
       "kind": "owns",
       "to": "TASK-2026-015"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-2026-016"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-2026-017"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-2026-018"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-2026-019"
     },
     {
       "from": "epic-testing-qa",
@@ -95605,6 +98736,21 @@
       "from": "epic-testing-qa",
       "kind": "owns",
       "to": "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-add-security-regression-tests-for-critical-high-bugs"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-aggregate-browser-loop-no-fail-fast"
     },
     {
       "from": "epic-testing-qa",
@@ -95654,6 +98800,11 @@
     {
       "from": "epic-testing-qa",
       "kind": "owns",
+      "to": "TASK-cover-routes-battle-equipment-and-comparisons-export-to-the-"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
       "to": "TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature"
     },
     {
@@ -95674,7 +98825,22 @@
     {
       "from": "epic-testing-qa",
       "kind": "owns",
+      "to": "TASK-e2e-test-improvements"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
       "to": "TASK-e2e-view-expansion"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-end-to-end-regex-pipeline-integration-test"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-fix-cross-file-mock-module-leaks-under-non-isolated-and-cove"
     },
     {
       "from": "epic-testing-qa",
@@ -95689,7 +98855,12 @@
     {
       "from": "epic-testing-qa",
       "kind": "owns",
-      "to": "TASK-llm-mock-integration-suite"
+      "to": "TASK-focused-streaming-htmx-contract-browser-tests"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-frontend-e2e-improvements-draft"
     },
     {
       "from": "epic-testing-qa",
@@ -95699,12 +98870,37 @@
     {
       "from": "epic-testing-qa",
       "kind": "owns",
+      "to": "TASK-no-browser-test-admin-subpages-settings-tabs-i18n-theme-appl"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-no-browser-test-chat-panels-mood-avatars"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-non-isolated-bun-test-src-red-shared-state-contamination"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
       "to": "TASK-raise-12-below-floor-src-modules-to-the-80-coverage-gate"
     },
     {
       "from": "epic-testing-qa",
       "kind": "owns",
+      "to": "TASK-repair-chat-normal-startup-remove-test-bypass"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
       "to": "TASK-resolve-playwright-cfg"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-responsive-real-click-canary"
     },
     {
       "from": "epic-testing-qa",
@@ -95719,6 +98915,16 @@
     {
       "from": "epic-testing-qa",
       "kind": "owns",
+      "to": "TASK-test-debt-image-edit-and-sd-provider-regression-tests-for-9-"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-test-debt-txn-atomicity-regression-tests-for-9-fixes-incl-gm"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
       "to": "TASK-test-dialect-matrix"
     },
     {
@@ -95729,7 +98935,17 @@
     {
       "from": "epic-testing-qa",
       "kind": "owns",
+      "to": "TASK-test-image-edit-module"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
       "to": "TASK-test-load"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-test-performance-shared-state"
     },
     {
       "from": "epic-testing-qa",
@@ -95740,6 +98956,11 @@
       "from": "epic-testing-qa",
       "kind": "owns",
       "to": "TASK-test-runtime-coverage"
+    },
+    {
+      "from": "epic-testing-qa",
+      "kind": "owns",
+      "to": "TASK-test-telemetry-module"
     },
     {
       "from": "epic-testing-qa",
@@ -95769,7 +98990,17 @@
     {
       "from": "epic-timeline-system",
       "kind": "owns",
+      "to": "BUG-timeline-event-steering-manifest-status-update-and-timeline-"
+    },
+    {
+      "from": "epic-timeline-system",
+      "kind": "owns",
       "to": "TASK-cross-story-propagation"
+    },
+    {
+      "from": "epic-timeline-system",
+      "kind": "owns",
+      "to": "TASK-timeline-branching-ui"
     },
     {
       "from": "epic-timeline-system",
@@ -95779,7 +99010,17 @@
     {
       "from": "epic-timeline-system",
       "kind": "owns",
+      "to": "TASK-timeline-in-chat-command"
+    },
+    {
+      "from": "epic-timeline-system",
+      "kind": "owns",
       "to": "TASK-timeline-selection-api"
+    },
+    {
+      "from": "epic-timeline-system",
+      "kind": "owns",
+      "to": "TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap"
     },
     {
       "from": "epic-tooling-improvement",
@@ -95789,7 +99030,87 @@
     {
       "from": "epic-tooling-improvement",
       "kind": "owns",
+      "to": "BUG-giwt-abort-runs-unscoped-git-reset-hard-that-destroys-unrela"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-giwt-auto-close-asserts-a-ticket-is-done-when-no-md-marker-e"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-giwt-finalize-auto-stash-collides-with-shared-dev-wip"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-giwt-finalize-instructs-a-forbidden-dev-checkout-action"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-giwt-sync-fix-mutates-repo-wide-refs-issues-shared-across-al"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-giwt-sync-fix-writes-lowercase-git-statuses-into-ticket-md-f"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-index-json-records-epic-source-paths-under-plan-tickets-for-"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-stranded-post-finalize-fix-the-audio-low-pass-coefficient-re"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-ticket-closure-cites-nonexistent-git-commit-7a0f508c93"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
       "to": "BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
+      "to": "TASK-TICKET-STATUS-ENUM-MIGRATION-OF-302-DISTINCT-VALUES"
     },
     {
       "from": "epic-tooling-improvement",
@@ -95824,6 +99145,11 @@
     {
       "from": "epic-tooling-improvement",
       "kind": "owns",
+      "to": "TASK-ticket-status-enum-and-migration"
+    },
+    {
+      "from": "epic-tooling-improvement",
+      "kind": "owns",
       "to": "TASK-tooling-improvement"
     },
     {
@@ -95844,6 +99170,36 @@
     {
       "from": "epic-transport-expansion",
       "kind": "owns",
+      "to": "TASK-060"
+    },
+    {
+      "from": "epic-transport-expansion",
+      "kind": "owns",
+      "to": "TASK-061"
+    },
+    {
+      "from": "epic-transport-expansion",
+      "kind": "owns",
+      "to": "TASK-062"
+    },
+    {
+      "from": "epic-transport-expansion",
+      "kind": "owns",
+      "to": "TASK-067"
+    },
+    {
+      "from": "epic-transport-expansion",
+      "kind": "owns",
+      "to": "TASK-068"
+    },
+    {
+      "from": "epic-transport-expansion",
+      "kind": "owns",
+      "to": "TASK-069"
+    },
+    {
+      "from": "epic-transport-expansion",
+      "kind": "owns",
       "to": "TASK-transport-expansion"
     },
     {
@@ -95855,6 +99211,11 @@
       "from": "epic-transport-expansion",
       "kind": "owns",
       "to": "TASK-transport-server-wiring"
+    },
+    {
+      "from": "epic-transport-layer-expansion",
+      "kind": "owns",
+      "to": "TASK-epic-transport-layer-expansion-clarification-2026-09-26"
     },
     {
       "from": "epic-two-factor-auth",
@@ -95879,7 +99240,22 @@
     {
       "from": "epic-use-case-agentic-workspace",
       "kind": "owns",
+      "to": "TASK-adopt-hermes-5-category-tool-surface-into-agentic-workspace-"
+    },
+    {
+      "from": "epic-use-case-agentic-workspace",
+      "kind": "owns",
+      "to": "TASK-agentic-coding-sandbox-community-plugins"
+    },
+    {
+      "from": "epic-use-case-agentic-workspace",
+      "kind": "owns",
       "to": "TASK-agentic-workspace-mode"
+    },
+    {
+      "from": "epic-use-case-agentic-workspace",
+      "kind": "owns",
+      "to": "TASK-epic-use-case-agentic-workspace-clarification-2026-09-26"
     },
     {
       "from": "epic-use-case-agentic-workspace",
@@ -95960,6 +99336,11 @@
       "from": "epic-visual-novel-mode",
       "kind": "owns",
       "to": "TASK-vn-template-actions"
+    },
+    {
+      "from": "epic-wardrobe-avatar-variants",
+      "kind": "owns",
+      "to": "TASK-avatar-template-example-documents-outfits-default-outfit-tha"
     },
     {
       "from": "epic-wardrobe-avatar-variants",
@@ -96054,12 +99435,32 @@
     {
       "from": "epic-weather-environment",
       "kind": "owns",
+      "to": "TASK-skill-biome-hazard-countermeasures"
+    },
+    {
+      "from": "epic-weather-environment",
+      "kind": "owns",
+      "to": "TASK-weather-conditions-vitals-bridge"
+    },
+    {
+      "from": "epic-weather-environment",
+      "kind": "owns",
       "to": "TASK-weather-environment"
     },
     {
       "from": "epic-workflow-engine",
       "kind": "owns",
+      "to": "BUG-workflow-confirm-session-treats-optional-steps-as-required"
+    },
+    {
+      "from": "epic-workflow-engine",
+      "kind": "owns",
       "to": "FEAT-workflow-dag-engine-task-dependencies-scheduler"
+    },
+    {
+      "from": "epic-workflow-engine",
+      "kind": "owns",
+      "to": "TASK-backlog-workflow-gm-routing-batch"
     },
     {
       "from": "epic-workflow-engine",
@@ -96149,7 +99550,22 @@
     {
       "from": "epic-world-chat-channels-invites",
       "kind": "owns",
+      "to": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-"
+    },
+    {
+      "from": "epic-world-chat-channels-invites",
+      "kind": "owns",
       "to": "TASK-chat-only-world-channels-invite-driven-membership"
+    },
+    {
+      "from": "epic-world-chat-channels-invites",
+      "kind": "owns",
+      "to": "TASK-invite-code-generation"
+    },
+    {
+      "from": "epic-world-chat-channels-invites",
+      "kind": "owns",
+      "to": "TASK-join-flow-mechanics"
     },
     {
       "from": "epic-world-chat-channels-invites",
@@ -96160,6 +99576,11 @@
       "from": "epic-world-diplomacy-karma",
       "kind": "owns",
       "to": "TASK-action-karma-display-and-tier-wiring"
+    },
+    {
+      "from": "epic-world-locations",
+      "kind": "owns",
+      "to": "BUG-world-location-reparent-has-no-cycle-self-descendant-checks-"
     },
     {
       "from": "epic-world-locations",
@@ -96254,12 +99675,32 @@
     {
       "from": "epic-world-travel-time",
       "kind": "owns",
+      "to": "BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor"
+    },
+    {
+      "from": "epic-world-travel-time",
+      "kind": "owns",
+      "to": "BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h"
+    },
+    {
+      "from": "epic-world-travel-time",
+      "kind": "owns",
+      "to": "BUG-world-import-quest-time-location-id-not-remapped-connections"
+    },
+    {
+      "from": "epic-world-travel-time",
+      "kind": "owns",
       "to": "TASK-location-graph-editor-and-discovery-gating"
     },
     {
       "from": "epic-world-travel-time",
       "kind": "owns",
       "to": "TASK-location-travel-connected-fast-and-free-jump"
+    },
+    {
+      "from": "epic-world-travel-time",
+      "kind": "owns",
+      "to": "TASK-matrix-cross-mech-g20-living-world-persistence"
     },
     {
       "from": "epic-worlds-extension",
@@ -153842,6 +157283,11 @@
       "to": "TASK-auth-factors-schema-and-service-core-f1"
     },
     {
+      "from": "TASK-actor-position-physical-spatial-split",
+      "kind": "related",
+      "to": "TASK-actor-position-physical-vs-spatial-split"
+    },
+    {
       "from": "TASK-adaptive-audio",
       "kind": "related",
       "to": "TASK-cross-tool-data-portability-review"
@@ -153885,6 +157331,16 @@
       "from": "TASK-adopt-state-machine-framework-in-runtime-status-writes",
       "kind": "related",
       "to": "TASK-quest-status-transitions-bypass-state-machine"
+    },
+    {
+      "from": "TASK-adopt-view-transitions-api-for-navigation",
+      "kind": "related",
+      "to": "TASK-adopt-view-transitions-api-for-page-navigation"
+    },
+    {
+      "from": "TASK-adopt-view-transitions-api-for-page-navigation",
+      "kind": "related",
+      "to": "TASK-adopt-view-transitions-api-for-navigation"
     },
     {
       "from": "TASK-affordance-lookup-table",
@@ -154150,21 +157606,6 @@
       "from": "TASK-av1-cross-panel-regen-triggers-avatar-cache-reload-regenxbin",
       "kind": "related",
       "to": "TASK-persistent-regen-job-store-migration"
-    },
-    {
-      "from": "TASK-backlog-coverage-waivers-frontend-batches",
-      "kind": "related",
-      "to": "TASK-waiver-coverage-floor-below-80-for-plugins-frontend-native-i"
-    },
-    {
-      "from": "TASK-backlog-coverage-waivers-frontend-batches",
-      "kind": "related",
-      "to": "epic-testing-qa"
-    },
-    {
-      "from": "TASK-backlog-size-strict-regression-recovery",
-      "kind": "related",
-      "to": "TASK-size-strict-debt"
     },
     {
       "from": "TASK-backup-restore-reliability-and-self-healing-for-federated-de",
@@ -155427,6 +158868,11 @@
       "to": "TASK-character-multi-avatar"
     },
     {
+      "from": "TASK-enemies-monsters",
+      "kind": "related",
+      "to": "TASK-enemies-monsters-systems"
+    },
+    {
       "from": "TASK-external-comfyui-plugin-repo-integration-contract",
       "kind": "related",
       "to": "TASK-comfyui-node-discovery-template-autofilter"
@@ -155660,6 +159106,11 @@
       "from": "TASK-file-split-routes",
       "kind": "related",
       "to": "TASK-split-messages-route"
+    },
+    {
+      "from": "TASK-fractal-locations-migration-013-locations-fractal-ts",
+      "kind": "related",
+      "to": "TASK-locations-fractal-migration"
     },
     {
       "from": "TASK-frontend-actor-traits-location-and-world",
@@ -156107,6 +159558,11 @@
       "to": "epic-external-creative-tool-bridge"
     },
     {
+      "from": "TASK-headless-alternative-frontends",
+      "kind": "related",
+      "to": "TASK-headless-mode-alternative-frontends"
+    },
+    {
       "from": "TASK-hook-result-payload-carry-context",
       "kind": "related",
       "to": "BUG-emotion-mood-hook-payload-missing-actor-chat"
@@ -156360,6 +159816,16 @@
       "from": "TASK-location-crud-tree-connections",
       "kind": "related",
       "to": "TASK-world-locations"
+    },
+    {
+      "from": "TASK-location-explorer-recursive-tree",
+      "kind": "related",
+      "to": "TASK-location-explorer-recursive-tree-transport-badge"
+    },
+    {
+      "from": "TASK-location-tree-integrity-service",
+      "kind": "related",
+      "to": "TASK-locations-tree-integrity-service"
     },
     {
       "from": "TASK-loot-budget-affordance-gate",
@@ -156707,6 +160173,16 @@
       "to": "TASK-2026-014"
     },
     {
+      "from": "TASK-nsfw-disease",
+      "kind": "related",
+      "to": "TASK-nsfw-disease-integration"
+    },
+    {
+      "from": "TASK-nsfw-housing",
+      "kind": "related",
+      "to": "TASK-nsfw-housing-integration"
+    },
+    {
       "from": "TASK-nsfw-rating-enforcement",
       "kind": "related",
       "to": "TASK-nsfw-rating-schema"
@@ -156717,6 +160193,16 @@
       "to": "TASK-nsfw-rating-enforcement"
     },
     {
+      "from": "TASK-nsfw-social",
+      "kind": "related",
+      "to": "TASK-nsfw-social-integration"
+    },
+    {
+      "from": "TASK-nsfw-weather",
+      "kind": "related",
+      "to": "TASK-nsfw-weather-integration"
+    },
+    {
       "from": "TASK-observability-config-section",
       "kind": "related",
       "to": "FEAT-liveness-readiness-endpoints-opt-in-config"
@@ -156725,6 +160211,11 @@
       "from": "TASK-observability-config-section",
       "kind": "related",
       "to": "TASK-prometheus-metrics-endpoint-opt-in"
+    },
+    {
+      "from": "TASK-openapi-driven-api-reference",
+      "kind": "related",
+      "to": "TASK-openapi-reference"
     },
     {
       "from": "TASK-party-aux-transition",
@@ -157975,6 +161466,16 @@
       "from": "TASK-trade-history-npc-counterparty",
       "kind": "related",
       "to": "TASK-npc-inventory-frontend"
+    },
+    {
+      "from": "TASK-transport-expansion",
+      "kind": "related",
+      "to": "TASK-transport-layer-expansion"
+    },
+    {
+      "from": "TASK-travel-routes-schema-and-crud",
+      "kind": "related",
+      "to": "TASK-travel-routes-schema-crud"
     },
     {
       "from": "TASK-tts-voice-narration",
@@ -342865,12 +346366,6 @@
       "kind": "sibling",
       "to": "epic-rag-assets-unified-storage-and-assistant-flows",
       "via": "src/chat/transition-classifier.ts"
-    },
-    {
-      "from": "TASK-transport-expansion",
-      "kind": "sibling",
-      "to": "TASK-transport-layer-expansion",
-      "via": "src/transport/http1.ts"
     },
     {
       "from": "TASK-transport-expansion",

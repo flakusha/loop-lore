@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-comfyui-graph-builder-ts-port.md`, `TASK-stills-lifecycle-queue-progress-client.md`, `TASK-lora-audit-standalone.md`, `epic-model-family-presets.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

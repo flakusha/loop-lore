@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
+**Epic:** epic-tooling-improvement
 **Tags:** dead-code, plan-bookkeeping
 
 **Summary:**

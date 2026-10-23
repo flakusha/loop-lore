@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
+**Epic:** epic-relation-graph-canvas
 
 **Summary:** Render faction relations on the shared graph-canvas, adding the minimal factions backend the frontend needs first — no faction persistence exists today.
 

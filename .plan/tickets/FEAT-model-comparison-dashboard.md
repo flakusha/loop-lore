@@ -9,7 +9,8 @@
 **Summary:** Model-comparison Dashboard
 **Context:** Epic proposed:epic-model-dashboard; tags models, benchmark.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-model-dashboard
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-model-dashboard" preserved 2026-10-23; no epic file exists.
 **Tags:** models, benchmark
 
 ## Summary

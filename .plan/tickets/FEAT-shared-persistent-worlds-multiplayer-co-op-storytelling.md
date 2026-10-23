@@ -9,7 +9,8 @@
 **Summary:** Shared Persistent Worlds (multiplayer co-op storytelling)
 **Context:** Epic proposed:epic-shared-worlds; tags multiplayer, crdt.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-shared-worlds
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-shared-worlds" preserved 2026-10-23; no epic file exists.
 **Tags:** multiplayer, crdt
 
 ## Summary

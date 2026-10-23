@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-sd-cpp-reference-edit-parity.md`, `TASK-multi-reference-conditioning-request-model.md`, `TASK-reference-capability-matrix-data-model.md`, `epic-comfyui-plugin.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

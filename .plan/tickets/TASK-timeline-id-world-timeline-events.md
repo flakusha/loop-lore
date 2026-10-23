@@ -12,7 +12,7 @@
 **Status:** Done
 **Status Note:** 2026-09-10 — landed via final-form squash `e3b8edbf3`, verified on dev
 **Priority:** High
-**Epic:** `epic-timeline-system.md`
+**Epic:** epic-timeline-system
 **Type:** Migration
 
 ## What

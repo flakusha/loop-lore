@@ -7,7 +7,7 @@
 **Status Note:** Web + TUI surfaces already shipped: `/api/v1/harness/{runs,runs/:runId,stats}` (`src/routes/harness/index.ts`), admin tab (`src/views/admin.html:72`) + panel + Alpine state, `src/tui/harness/` 7 files wired to F3 (`src/tui/app.ts:75,89-93`), all reading the JSONL via `harness/query.ts`. Remaining: analytics per-model sub-block (needs `TASK-harness-stats-dashboard` telemetry events) and TUI command-registry verbs.
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** New "Harness"/"Runs" tab in admin.html reusing the admin shell + existing patterns; TUI gains dispatch verbs as command-registry entries (zero TUI rewrite); harness HTTP reads are an upgrade path only.
 **Context:** `src/views/` (22 files, auto-discovered via `plugin-pages.ts` + `serveView`, `adminViewGuard`); admin.html has 13 tabs; `src/routes/admin/` has 15 sub-routes (`admin/index.ts:49-63`); agency `spend.ts` is game currency (reuse the ledger pattern, not the unit); TUI is a thin HTTP client (`tui/app.ts`, chat widget POSTs `/api/chats/:id/messages`); dispatch hook already server-side (`routes/messages/command.ts` dispatchCommand → workflow-routing → runner + session-store 24h TTL).
 **Acceptance Criteria:** See ## Acceptance Criteria below.

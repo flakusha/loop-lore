@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** `epic-character-spec.md`
+**Epic:** epic-character-spec
 **Status:** In Progress
 **Priority:** High
 **Effort:** High

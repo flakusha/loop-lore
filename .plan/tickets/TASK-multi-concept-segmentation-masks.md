@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** derived-map-generation
+**Epic:** epic-derived-map-generation
 **Tags:** segmentation, matting, assets
 **Depends on:** `TASK-matting-concept-prompt-contract`
 **Related:** TASK-sam3-concept-cutout-wiring-sprites-avatar-matting-vn-alpha.md, TASK-sam3-mask-cache-and-reuse.md

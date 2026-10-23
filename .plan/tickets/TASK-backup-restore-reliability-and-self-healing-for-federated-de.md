@@ -13,7 +13,7 @@
 **Effort:** Large
 **Type:** Task
 **Tags:** backup, restore, federation, reliability, self-healing, sqlite, snapshot
-**Epic:** epic-database-backup-recovery.md (cross: epic-federation-swarm-sync.md, epic-db-asset-snapshot-recovery.md)
+**Epic:** epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync
 **Related:** TASK-BKP-001-sqlite-automated-backup.md, TASK-sqlite-backup-research.md, TASK-epic14-import-export-reconciliation.md, TASK-bulk-export-zip.md, FEAT-swarm-mode-reconciliation, FEAT-activitypub-federation
 
 ## Summary

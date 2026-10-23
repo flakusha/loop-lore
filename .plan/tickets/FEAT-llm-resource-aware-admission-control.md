@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Large
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 **Summary:** Adds an admission gate between dequeue and dispatch that answers "can this provider take this request right now?" — local slot budget, external in-flight cap, and windowed token/request budgets — plus reactive narrowing of the cap when a provider returns 429. Priority decides *order*; this decides *whether now*.
 **Context:** Priority alone does not bound throughput. With every provider cap set generously enough to never queue, a burst of aux + embedding traffic will still overshoot a local llama-swap slot budget, and external keys will still trip 429s. A 429 is `retryable`, so it is re-attempted by the shared policy at `src/generation/providers/retry.ts:47` (1s base, capped at 10s, `retries` attempts from `ProviderInstanceConfig.retries`); the caller blocks for that whole span while holding no local slot. This ticket is the second half of the epic's scheduling decision.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

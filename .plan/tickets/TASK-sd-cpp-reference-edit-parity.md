@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-sd-cpp-provider.md`, `TASK-reference-capability-matrix-data-model.md`, `epic-assistant-generation-extensions.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

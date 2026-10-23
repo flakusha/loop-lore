@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-external-tooling-build.md
+**Epic:** epic-external-tooling-build
 **Caveats:** Lexicographic tag sort is wrong for llama.cpp — `b9999` sorts after `b10000` in byte order, so `git tag | sort | tail -1` silently resolves to a stale build. llama-swap's `git describe` also under-reports: `v265` exists in the checkout but is not an ancestor of HEAD, so `describe` alone returns `v264-3-ga2796fb`. stable-diffusion.cpp's `<count>` field is not comparable across branches, so ordering must use tag creation date. A bare `'b*'` glob also matches the clone's `backup/...` refs and pollutes the sort.
 
 **Summary:** Resolve `latest` numerically per project and check out a pinned ref without ever destroying working-tree state.

@@ -19,7 +19,7 @@
 - [ ] **Built-in row immutability** — flat routes lack explicit `is_builtin` checks; future built-in rows would be writable by their owners
 - [ ] Tests: owner-create-then-list, non-owner PATCH/DELETE 403, built-in PATCH 405, apply with missing variables renders empty for unknown tokens
 - [ ] `admin-templates/` routes unchanged; surface is additive
-**Epic:** epic-config-templates (FEAT-065 umbrella)
+**Epic:** epic-config-templates
 **Refs:** `FEAT-065-template-system.md` (Phase 3), `FEAT-065-sub-video.md`, `FEAT-065-sub-audio.md`, `TASK-template-unified-variable-engine.md`, `src/routes/admin-templates/` (admin-scoped reference impl)
 
 ## Problem

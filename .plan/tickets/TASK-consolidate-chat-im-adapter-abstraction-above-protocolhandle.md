@@ -12,6 +12,7 @@
 **Status Note:** decision recorded, seam landed
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-communications-integrations
 
 ## Summary
 

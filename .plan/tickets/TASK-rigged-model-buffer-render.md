@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Med
+**Epic:** epic-3d-generation
 **Related:** TASK-3d-character-avatars, TASK-emotions-avatar-edit-model
 
 ## Summary

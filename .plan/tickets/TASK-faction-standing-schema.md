@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-schema
 **Related:** epic-faction-reputation.md, epic-worlds-extension.md, epic-social-interaction.md
 
 **Summary:**

@@ -10,6 +10,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-e2e-integration-testing
 **Type:** Bug
 **Tags:** e2e, testing, browser, tooling
 

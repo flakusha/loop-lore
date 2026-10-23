@@ -9,7 +9,8 @@
 **Summary:** Plot Autopilot (AI proposes next plot beats)
 **Context:** Epic proposed:epic-plot-autopilot; tags plot, ai.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-plot-autopilot
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-plot-autopilot" preserved 2026-10-23; no epic file exists.
 **Tags:** plot, ai
 
 ## Summary

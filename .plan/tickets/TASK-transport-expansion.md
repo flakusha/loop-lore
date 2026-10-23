@@ -13,6 +13,7 @@
 **Priority:** Medium
 **Effort:** Medium (remaining gaps only)
 **Epic:** epic-transport-expansion
+**Related:** TASK-transport-layer-expansion (duplicate pair)
 
 ## Summary
 

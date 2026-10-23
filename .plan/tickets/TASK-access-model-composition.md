@@ -9,7 +9,8 @@
 **Summary:** Access Model Composition
 **Context:** Epic proposed:epic-access-model; tags auth, access.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-access-model
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-access-model" preserved 2026-10-23; no epic file exists.
 **Tags:** auth, access
 
 ## Summary

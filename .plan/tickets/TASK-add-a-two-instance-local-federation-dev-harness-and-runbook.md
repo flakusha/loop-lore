@@ -6,7 +6,8 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** epic-local-multi-instance-federation
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "epic-local-multi-instance-federation" preserved 2026-10-23; no epic file exists.
 
 **Summary:** Provide a two-instance local federation harness (script or compose) plus a runbook, so two loop-lore servers can be brought up side by side from a clean checkout.
 

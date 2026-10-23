@@ -13,7 +13,7 @@
 **Effort:** Very High (security-sensitive; many sub-tickets)
 **Type:** Implementation Task (child of epic)
 **Tags:** agentic-coding, sandbox, git, opencode, claude-code, omp, codex, coding-agents, community-plugins, isolation, security, workspace-mode
-**Epic:** epic-use-case-agentic-workspace.md ✅ (verified 2026-09-07 — epic confirmed as fit, see "Epic fit" below)
+**Epic:** epic-use-case-agentic-workspace
 
 ## Summary
 

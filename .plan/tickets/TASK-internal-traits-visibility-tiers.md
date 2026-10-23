@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-character-internal-traits
 
 ## Summary
 

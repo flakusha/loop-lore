@@ -11,7 +11,8 @@
 **Status:** Not Started
 **Priority:** Medium (deferred — not required until schema evolution)
 **Effort:** Medium
-**Epic:** Data Integrity (Phase 3)
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "Data Integrity (Phase 3)" preserved 2026-10-23; no epic file exists.
 **Tags:** db, migration, format-version, data-migration
 **Spec:** `src/db/migrations/006_data_version_columns.ts`, `src/db/data-migrations/`
 

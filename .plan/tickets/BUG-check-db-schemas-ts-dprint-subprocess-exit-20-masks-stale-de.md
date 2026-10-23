@@ -13,7 +13,7 @@
 **Status Note:** closed 2026-09-14
 **Priority:** Medium
 **Type:** BUG
-**Epic:** epic-tooling-check-gates
+**Epic:** epic-continuous-improvement
 **Files:** `scripts/check-db-schemas.ts:89-99`
 
 ## Summary

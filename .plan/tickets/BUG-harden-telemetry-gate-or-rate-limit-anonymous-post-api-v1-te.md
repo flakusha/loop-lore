@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** auth-config-contracts
+**Epic:** epic-api-rate-limiting
 
 **Summary:**
 

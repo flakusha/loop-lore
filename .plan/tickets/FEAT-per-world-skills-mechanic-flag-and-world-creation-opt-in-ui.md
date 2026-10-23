@@ -8,7 +8,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** stale state — worlds created on dev have no skills opt-in column, so the branch migration must backfill existing rows on landing
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Tags:** rpg, skills, world-opt-in
 **Related:** .plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md (the enforcement this flag configures), .plan/tickets/TASK-rpg-world-ruleset-templates-applied-at-creation.md (world-creation-time config precedent)
 

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** conversation-branching
+**Epic:** epic-conversation-branching
 **Related:** `FEAT-classifier-template-packs-user-config.md` (classifier templates the split-classifier consumes), `TASK-TRANSITION-AUX-LLM-FALLBACK.md` (intended separate aux-classification scope)
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 

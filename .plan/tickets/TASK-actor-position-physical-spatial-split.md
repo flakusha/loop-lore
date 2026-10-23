@@ -7,6 +7,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-fractal-locations
+**Related:** TASK-actor-position-physical-vs-spatial-split (duplicate pair)
 **Tags:** actors, npc, position, transport, tree
 
 **Summary:** Split actor position into physical_location_id (root of containment chain) and spatial_location_id (deepest leaf). npc_states.location_id becomes a denormalized cache of spatial_location_id. physicalPropagated batch-UPDATE keyed on path LIKE for transport movement.

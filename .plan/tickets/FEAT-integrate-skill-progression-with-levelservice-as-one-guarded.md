@@ -8,7 +8,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** data races — the fan-in must serialize the two stores in one transaction or a crash between them leaves the stores disagreeing
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Tags:** rpg, xp, skills
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (the character-XP pipeline this extends), .plan/tickets/TASK-rpg-skill-points-on-level-up.md (skill-point currency reconciliation)
 

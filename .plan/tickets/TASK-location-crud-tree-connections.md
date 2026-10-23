@@ -6,7 +6,7 @@
 **Status:** Done
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-locations`
+**Epic:** epic-locations
 **Related:** `TASK-world-locations.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

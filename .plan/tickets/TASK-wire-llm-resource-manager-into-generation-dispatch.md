@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 **Summary:** First ticket of `epic-llm-request-scheduler.md`. Constructs a `ResourceManager` and routes every `callWithFailover` invocation through it, so the existing (currently orphaned) `src/llm/` scheduling slice becomes reachable from a real request. Behavior-preserving: all requests submit at `PriorityLevel.Normal` and the manager's `defaultMax` is set high enough that no request ever actually waits, until later tickets move the policy.
 **Context:** `src/llm/` (resource-manager, priority-queue, concurrency-limiter, message-state-machine, internal-handle, running-handles) is complete, tested, and imported by nothing outside its own tests. Its header comment at `src/llm/resource-manager.ts:13-15` states the intended call site was never written. This ticket writes it.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

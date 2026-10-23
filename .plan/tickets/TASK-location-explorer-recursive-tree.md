@@ -7,6 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-fractal-locations
+**Related:** TASK-location-explorer-recursive-tree-transport-badge (duplicate pair)
 **Tags:** ui, alpine, location-explorer, tree, transport
 
 **Summary:** Replace single-level location-explorer tree with recursive walker (depth ≤ 12). Transport badge displays current_route, travel_progress %, ETA. Filter chips by kind. No third-party tree library.

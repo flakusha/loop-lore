@@ -9,7 +9,8 @@
 **Summary:** Platform Support (Multi-OS / Mobile / Browser matrix)
 **Context:** Epic proposed:epic-platform-support; tags platform, mobile.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-platform-support
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-platform-support" preserved 2026-10-23; no epic file exists.
 **Tags:** platform, mobile
 
 ## Summary

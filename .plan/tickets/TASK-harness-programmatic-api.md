@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Drive harness sessions through `omp --mode rpc/json` (`createAgentSession`, `waitForIdle`) instead of building a session API; adopt pi storage layout (threads → JSONL, history.db FTS, blobs) + `skill://` naming only if a local store is ever needed.
 **Context:** No programmatic session surface exists in-repo; TUI is a thin HTTP client already. opencode `specs/tui-package.md` host/TUI split + grep gate is the reference pattern; `orchestrate`/`workflowz` prompts adapted as text, not code.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

@@ -9,7 +9,8 @@
 **Summary:** What-if Branch Simulator (fork world state, diff narratives)
 **Context:** Epic proposed:epic-branch-simulator; tags branches, simulator.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-branch-simulator
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-branch-simulator" preserved 2026-10-23; no epic file exists.
 **Tags:** branches, simulator
 
 ## Summary

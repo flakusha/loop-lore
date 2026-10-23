@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-licensing.md`
+**Epic:** epic-licensing
 **Related:** `TASK-licensing-publish-enforcement-point.md`, `TASK-licensing-asset-license-columns-migration.md`, `src/federation/clearance.ts`, `src/routes/federation-mesh-retract.ts`, `src/routes/worlds/access.ts`, `src/nsfw/capability-gate.ts`, `epic-narrative-publishing-workflows.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

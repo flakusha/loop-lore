@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `epic-licensing.md`
+**Epic:** epic-licensing
 **Related:** `TASK-licensing-publish-enforcement-point.md`, `TASK-licensing-publish-authorization-predicate.md`, `src/routes/character-licensing.ts`, `src/db/enums-character/content.ts`, `src/assets/service/validate.ts`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

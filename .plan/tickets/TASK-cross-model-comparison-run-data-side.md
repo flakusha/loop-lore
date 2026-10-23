@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-reference-capability-matrix-data-model.md`, `TASK-comfyui-ws-client-id-progress-reference-generation.md`, `TASK-sd-cpp-reference-edit-parity.md`, `epic-gallery-batch-operations.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

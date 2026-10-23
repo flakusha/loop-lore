@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** epic-creative-studio.md (MVP Tier 1)
+**Epic:** epic-creative-studio
 **Status:** Not Started
 **Effort:** Medium
 **Depends On:** TASK-creative-studio-search-api

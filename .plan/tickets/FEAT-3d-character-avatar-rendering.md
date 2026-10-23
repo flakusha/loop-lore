@@ -9,7 +9,8 @@
 **Summary:** 3D Character/Avatar Rendering
 **Context:** Epic proposed:epic-3d-avatars; tags 3d, avatar.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-3d-avatars
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-3d-avatars" preserved 2026-10-23; no epic file exists.
 **Tags:** 3d, avatar
 
 ## Summary

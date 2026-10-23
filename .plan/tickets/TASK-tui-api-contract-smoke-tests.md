@@ -6,7 +6,7 @@
 **Status:** Done
 **Priority:** low
 **Effort:** Small
-**Epic:** `epic-experimental-egui-frontend`
+**Epic:** epic-experimental-egui-frontend
 **Tags:** tui, testing, api, client-contract
 **Related:** `.plan/epics/epic-experimental-egui-frontend.md`, `.plan/epics/epic-terminal-ui.md`, `.plan/tickets/TASK-frontend-client-contract-doc.md`, `.plan/tickets/TASK-frontend-view-model-json-negotiation.md`
 **Summary:** Add a suite that drives the real Elysia app through the endpoints the TUI parses, so an API shape change fails a test instead of silently breaking a screen.

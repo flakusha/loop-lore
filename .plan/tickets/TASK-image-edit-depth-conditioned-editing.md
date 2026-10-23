@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** derived-map-generation
+**Epic:** epic-derived-map-generation
 **Tags:** image-edit, comfyui, controlnet, depth
 **Depends on:** `TASK-comfyui-depth-map-generation-template`
 **Related:** TASK-image-edit-concept-inpaint-template.md, TASK-derived-map-origin-links.md

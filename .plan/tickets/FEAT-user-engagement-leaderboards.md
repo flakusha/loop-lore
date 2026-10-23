@@ -9,7 +9,8 @@
 **Summary:** User Engagement & Leaderboards
 **Context:** Epic proposed:epic-user-engagement; tags engagement, leaderboards.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-user-engagement
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-user-engagement" preserved 2026-10-23; no epic file exists.
 **Tags:** engagement, leaderboards
 
 ## Summary

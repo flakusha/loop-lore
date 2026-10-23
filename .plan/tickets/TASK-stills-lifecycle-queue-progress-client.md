@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `epic-reference-conditioned-generation`
+**Epic:** epic-reference-conditioned-generation
 **Related:** `TASK-comfyui-graph-builder-ts-port.md`, `TASK-comfyui-ws-client-id-progress-reference-generation.md`, `TASK-comfyui-first-class-image-generation-queue-honors-comfyui-ba.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

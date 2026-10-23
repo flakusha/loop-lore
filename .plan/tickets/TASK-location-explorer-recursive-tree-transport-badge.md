@@ -7,6 +7,7 @@
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-fractal-locations
+**Duplicate of:** TASK-location-explorer-recursive-tree (kept — git-issue parity; status mirrored 2026-10-23)
 **Tags:** ui, alpine, location-explorer, tree, transport
 
 **Summary:** Replace single-level location-explorer tree with recursive walker (depth ≤ 12); transport badge displays current_route, travel_progress, ETA. Full details in TASK-location-explorer-recursive-tree.md.

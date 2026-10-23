@@ -12,7 +12,7 @@
 **Scope note (2026-09-26):** studio-initiated species workflow template; story-triggered in-place generation is the separate `FEAT-in-story-character-generation-via-assistant-chat-handoff.md` (already cross-linked, keep both). `species` intent target has since landed in `src/regex/intent.ts`; remaining work is the YAML template + bestiary backend.
 **Priority:** High (post-Gate C, with parent epic)
 **Effort:** Medium
-**Epic:** `epic-assistant-creative-studio-workflows` (§7.6)
+**Epic:** epic-assistant-creative-studio-workflows
 **Target entity epic:** `epic-enemies-monsters.md`
 **Depends on:** `epic-assistant-creative-studio-workflows` (runner/loader),
 `epic-enemies-monsters.md` (bestiary data model — `TASK-bestiary-catalog-schema-and-migration.md`),

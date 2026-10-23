@@ -11,7 +11,7 @@
 
 **Status:** Not Started
 **Priority:** Medium
-**Epic:** `epic-rarity-extensions.md`
+**Epic:** epic-rarity-extensions
 **Type:** Migration
 
 ## What

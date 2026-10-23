@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `epic-harness-integration`
+**Epic:** epic-harness-integration
 **Depends on:** `TASK-harness-model-routing`
 **Related:** docs/meta/research/harness-hook-schema-absorption.md
 

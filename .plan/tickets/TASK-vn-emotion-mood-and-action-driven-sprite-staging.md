@@ -11,7 +11,8 @@
 **Status:** Done
 **Status Note:** (2026-09-10) — frontend half: directive schema + derivation/application wired to renderer state; backend LLM/action extractors deferred
 **Priority:** high
-**Epic:** Emotion Avatar Message Binding; Visual Novel Mode
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "Emotion Avatar Message Binding; Visual Novel Mode" preserved 2026-10-23; no epic file exists.
 **Effort:** Medium
 
 ## Summary

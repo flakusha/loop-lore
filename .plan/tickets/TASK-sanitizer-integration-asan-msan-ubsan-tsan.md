@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** Fuzzing Infrastructure
+**Epic:** epic-fuzzing-infrastructure
 
 **Summary:**
 

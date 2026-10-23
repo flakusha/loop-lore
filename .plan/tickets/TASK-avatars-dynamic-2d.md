@@ -13,7 +13,8 @@
 **Effort:** Medium
 **Type:** TASK
 **Tags:** avatar, 2d, spine, dota-style
-**Epic:** Epic 26 (Avatar & Expression)
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "Epic 26 (Avatar & Expression)" preserved 2026-10-23; no epic file exists.
 **Parent:** TASK-3d-view-modes (umbrella)
 
 ## Summary

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** `tickets/index.json` stays the bookkeeping target; add YAML frontmatter emission, canonical status enum via the giwt.toml alias map, and Jira as a `giwt sync` provider. All sync logic stays in giwt.
 **Context:** Lifecycle: author .md → `giwt ticket` (`commands/ticket.ts`: file + `git issue create` + cross-link) → `git issue comment/state` → `bun run plan:sync` → `giwt sync` (headers + issue state → committed `tickets/index.json` ~1.3MB) → tier views via `plan:backlog:sync`. `git issue` FULL, PR→worktree FULL (`prs.ts` via gh), Jira ABSENT. Unbuilt design: `.plan/research-unified-spec-framework.md` (frontmatter + canonical enum + `scripts/spec/`, reuse index.json).
 **Acceptance Criteria:** See ## Acceptance Criteria below.

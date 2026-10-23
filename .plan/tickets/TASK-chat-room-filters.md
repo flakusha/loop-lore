@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Med
-**Epic:** Epic 24 (Filtering & Pagination), Epic 36 (Chat Lifecycle)
+**Epic:** epic-chat-lifecycle-moderation
 **Tags:** chat, filter, ux, sidebar
 **Spec:** `docs/frontend/chat/search-and-filter.md` §Chat Room Filters
 

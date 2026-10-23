@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-accessibility-input (Phase 2 Mobile Support, 🟡)
+**Epic:** epic-accessibility-input, epic-3d-generation
 
 ## Summary
 

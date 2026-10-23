@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 336 epics
+**Total:** 341 epics
 
 ## Summary
 
@@ -37,6 +37,7 @@
 | In Progress | Assistant Step Planning Surfaces (Todo / Kanban / Graph) | High | Large | 0 | [epic-assistant-step-planning.md](/.plan/epics/epic-assistant-step-planning.md) |
 | In Progress | Assistant/GM Flows Reconciliation | High | High | 0 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
 | Not Started | Audio, Video & Sound Generation | Medium | Very High (split into 5 sub-epics) | 0 | [epic-audio-video-sound.md](/.plan/epics/epic-audio-video-sound.md) |
+| Not Started | Auth Config Contracts | P2 | Medium | 0 | [epic-auth-config-contracts.md](/.plan/epics/epic-auth-config-contracts.md) |
 | Not Started | Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock | High (security-critical provisioning) | High | 0 | [epic-auth-channel-provisioning.md](/.plan/epics/epic-auth-channel-provisioning.md) |
 | Done | Authoring & Creation Tools | Medium | Medium | 0 | [epic-authoring-creation.md](/.plan/epics/epic-authoring-creation.md) |
 | In Progress | Authorization & Access Control | High | High | 0 | [epic-auth-access.md](/.plan/epics/epic-auth-access.md) |
@@ -266,12 +267,14 @@
 | In Progress | NSFW Capabilities — Ratings, Consent & Gating | High | Medium | 0 | [epic-nsfw-capabilities.md](/.plan/epics/epic-nsfw-capabilities.md) |
 | Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 0 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
 | Not Started | NSFW Interaction UI | P0 — Critical | Medium | 0 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |
+| Not Started | Open WebUI Parity | P2 | Large | 0 | [epic-openwebui-parity.md](/.plan/epics/epic-openwebui-parity.md) |
 | Done | OpenAPI-Driven API Reference | P1-High | Medium | 0 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
 | Not Started | Party Migration & Travel | Low | Medium | 0 | [epic-party-migration.md](/.plan/epics/epic-party-migration.md) |
 | In Progress | Per-World Character Setup & Overlay | High | Medium | 0 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
 | Not Started | Performance Dashboard & SLO Tracking | High | High | 0 | [epic-performance-dashboard-slo.md](/.plan/epics/epic-performance-dashboard-slo.md) |
 | Not Started | Perspective & Voice Control (1st / 3rd / Narrator) | High | Medium | 0 | [epic-perspective-narration-voice.md](/.plan/epics/epic-perspective-narration-voice.md) |
 | Not Started | Platform & Provider Integrations (EPIC-046) | P1-High | Very High | 0 | [epic-platform-integrations.md](/.plan/epics/epic-platform-integrations.md) |
+| Not Started | Platform API Adoption | P2 | Large | 0 | [epic-platform-api-adoption.md](/.plan/epics/epic-platform-api-adoption.md) |
 | In Progress | Platform Research & Feature Adoption (Permanently Ongoing) | Medium | Continuous | 0 | [epic-platform-research.md](/.plan/epics/epic-platform-research.md) |
 | In Progress | Player Agency — Story Points | Medium | Medium | 0 | [epic-agency-story-points.md](/.plan/epics/epic-agency-story-points.md) |
 | Not Started | Player State Machine — Cross-System Design | Medium | Medium | 0 | [epic-player-state-machine.md](/.plan/epics/epic-player-state-machine.md) |
@@ -297,6 +300,7 @@
 | Not Started | Realtime Transports | Medium | Medium | 0 | [epic-realtime-transports.md](/.plan/epics/epic-realtime-transports.md) |
 | Not Started | Recursive Self-Improvement — Watchdog, Agent Loop & On-the-Fly Development | High | Very High | 0 | [epic-recursive-self-improvement.md](/.plan/epics/epic-recursive-self-improvement.md) |
 | Not Started | Reference-Conditioned Generation — Model Matrix, Templates, and Generic Graph Pattern | High | High | 0 | [epic-reference-conditioned-generation.md](/.plan/epics/epic-reference-conditioned-generation.md) |
+| Not Started | Relation Graph Canvas | P2 | Large | 0 | [epic-relation-graph-canvas.md](/.plan/epics/epic-relation-graph-canvas.md) |
 | In Progress | Release 0.1.0 | High | Medium | 0 | [epic-release-010.md](/.plan/epics/epic-release-010.md) |
 | Not Started | Resolution System & Ruleset Family | High | Medium | 0 | [epic-resolution-system.md](/.plan/epics/epic-resolution-system.md) |
 | Not Started | Resource Provision | High | Large | 0 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
@@ -313,6 +317,7 @@
 | Done | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Not Started | Security & Sandboxing — Epic | medium | Medium | 0 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
+| Not Started | Server Lifecycle Hardening | P2 | Medium | 0 | [epic-server-lifecycle-hardening.md](/.plan/epics/epic-server-lifecycle-hardening.md) |
 | Done | Settings & Preferences UI | Medium | Medium | 0 | [epic-frontend-settings.md](/.plan/epics/epic-frontend-settings.md) |
 | Not Started | Shared Client SDK | Medium | Medium | 0 | [epic-shared-client-sdk.md](/.plan/epics/epic-shared-client-sdk.md) |
 | Done | Shared Schemas — Reputation, Consent, NSFW Content Rating | High | Medium | 0 | [epic-shared-schemas.md](/.plan/epics/epic-shared-schemas.md) |
@@ -587,6 +592,15 @@ Extends the Assistant/GM generation surface (see `epic-assistant-gm-flows.md`)
 - **File:** `.plan/epics/epic-audio-video-sound.md`
 
 Add atmospheric audio/video generation to enhance chat immersion. This epic
+
+### Auth Config Contracts
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Medium
+- **Type:** Bug Epic / Hardening
+- **Tags:** auth, config, secrets, contracts, hardening
+- **File:** `.plan/epics/epic-auth-config-contracts.md`
 
 ### Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock
 
@@ -2783,6 +2797,15 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Tags:** nsfw, intimacy, ui, frontend
 - **File:** `.plan/epics/epic-nsfw-ui.md`
 
+### Open WebUI Parity
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Large
+- **Type:** Feature Epic / Frontend-Backend Parity
+- **Tags:** openwebui, parity, sse, streaming, tool-calling
+- **File:** `.plan/epics/epic-openwebui-parity.md`
+
 ### OpenAPI-Driven API Reference
 
 - **Status:** Done
@@ -2842,6 +2865,15 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** Feature Epic
 - **Tags:** providers, integrations, llm, image, embeddings, voice, infrastructure
 - **File:** `.plan/epics/epic-platform-integrations.md`
+
+### Platform API Adoption
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Large
+- **Type:** Feature Epic / Platform Modernization
+- **Tags:** bun, web-platform, apis, modernization
+- **File:** `.plan/epics/epic-platform-api-adoption.md`
 
 ### Platform Research & Feature Adoption (Permanently Ongoing)
 
@@ -3072,6 +3104,15 @@ The repo already has an i18n system, and it is the wrong tool for this job — o
 
 Reference-based generation and editing — "change this, keep that" driven by one or
 
+### Relation Graph Canvas
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Large
+- **Type:** Feature Epic / Frontend Visualization
+- **Tags:** canvas, relationships, graph, visualization, 2d
+- **File:** `.plan/epics/epic-relation-graph-canvas.md`
+
 ### Release 0.1.0
 
 - **Status:** In Progress
@@ -3219,6 +3260,15 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 - **Type:** Infrastructure Epic
 - **Tags:** security, sandboxing, llm, prompt-injection, testing
 - **File:** `.plan/epics/epic-security-sandboxing-quickref.md`
+
+### Server Lifecycle Hardening
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Medium
+- **Type:** Bug Epic / Hardening
+- **Tags:** server, lifecycle, shutdown, boot, hardening
+- **File:** `.plan/epics/epic-server-lifecycle-hardening.md`
 
 ### Settings & Preferences UI
 

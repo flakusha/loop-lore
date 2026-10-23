@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Epic:** NSFW Game Mechanics, Weather & Environment
+**Epic:** epic-nsfw-game-mechanics, epic-weather-environment
+**Related:** TASK-nsfw-weather-integration (duplicate pair)
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

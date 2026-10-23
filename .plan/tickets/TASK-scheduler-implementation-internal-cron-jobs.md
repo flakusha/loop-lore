@@ -9,7 +9,8 @@
 **Summary:** Scheduler Implementation (Internal Cron Jobs)
 **Context:** Epic proposed:epic-scheduler; tags scheduler, cron.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-scheduler
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-scheduler" preserved 2026-10-23; no epic file exists.
 **Tags:** scheduler, cron
 
 ## Summary

@@ -9,7 +9,8 @@
 **Summary:** Chat Text Effects & Overlays Implementation
 **Context:** Epic proposed:epic-chat-effects-overlays; tags chat, effects.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-chat-effects-overlays
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-chat-effects-overlays" preserved 2026-10-23; no epic file exists.
 **Tags:** chat, effects
 
 ## Summary

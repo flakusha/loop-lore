@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** medium
-**Epic:** epic-content-hashing-distributed-integrity (cross-cuts with `epic-frontend-gallery`)
+**Epic:** epic-content-hashing-distributed-integrity
 **Issue:** TBD
 **Related:**
 - `src/db/migrations/016_asset_encryption.ts` (existing `assets.content_hash` — raw bytes SHA-256)

@@ -11,7 +11,7 @@
 **Status:** Done
 **Priority:** Medium
 **Effort:** Med
-**Epic:** Epic 36 (Chat Lifecycle & Moderation)
+**Epic:** epic-chat-lifecycle-moderation
 **Tags:** chat, context, pruning, memory
 **Git Issue:** FEAT-072
 

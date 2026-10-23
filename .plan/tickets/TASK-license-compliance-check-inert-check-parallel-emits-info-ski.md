@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
+**Epic:** epic-review-check-parallel-ram-2026-09-03
 **Tags:** licensing, compliance, plan-hygiene
 
 **Summary:**

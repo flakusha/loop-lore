@@ -10,6 +10,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-character-core-system
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

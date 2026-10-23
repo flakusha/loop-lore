@@ -12,6 +12,7 @@
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-openapi-reference
+**Related:** TASK-openapi-reference (duplicate pair)
 
 ## Summary
 

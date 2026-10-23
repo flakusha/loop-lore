@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 **Summary:** Stops treating llama-swap as an opaque OpenAI-compatible base URL. Reads the model set from the same config file the process is already spawned with, and applies a rotation + exclusion policy so the scheduler knows which model a request will actually land on and what it costs to get there.
 **Context:** `startLlamaSwap` (`src/services/server-external-manager/start-llama.ts:167-203`) already reads the config file — it pulls `startPort` out of it to pass `--listen`. The rest of the file, which names the models llama-swap can route to, is ignored. `probes.ts:73` only checks liveness via `/v1/models`.
 **Acceptance Criteria:** See ## Acceptance Criteria (Part 2) below.

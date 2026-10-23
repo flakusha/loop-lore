@@ -9,7 +9,8 @@
 **Summary:** Async NPC Mail (NPCs message user when away)
 **Context:** Epic proposed:epic-npc-mail; tags npc, messaging.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-npc-mail
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-npc-mail" preserved 2026-10-23; no epic file exists.
 **Tags:** npc, messaging
 
 ## Summary

@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-chat-context-optimization
 **Tags:** security, federation
 
 **Summary:**

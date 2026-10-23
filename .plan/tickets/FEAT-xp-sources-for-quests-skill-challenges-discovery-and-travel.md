@@ -9,7 +9,7 @@
 **Priority:** high
 **Effort:** Medium
 **Caveats:** idempotency — grants are keyed per reference_id where the leg supports it; skill-challenge awards have no production path, so that source string is currently unused
-**Epic:** character-xp-leveling
+**Epic:** epic-character-xp-leveling
 **Related:** .plan/epics/epic-quests-encounters.md (owns quest completion events this hooks), .plan/epics/epic-exploration-discovery.md (owns discovery/travel completion events this hooks), .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (grants persist through this service)
 
 **Summary:**

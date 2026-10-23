@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
-**Epic:** sam3-segmentation-integration
+**Epic:** epic-sam3-segmentation-integration
 **Tags:** assets, cache
 **Depends on:** `TASK-matting-concept-prompt-contract`, `TASK-comfyui-sam3-concept-mask-template`
 **Related:** epic-asset-platform-capabilities.md

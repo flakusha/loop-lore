@@ -12,7 +12,7 @@
 **Status Note:** Open — follow-up for a future session
 **Priority:** Low
 **Effort:** Small
-**Epic:** epic-deno-support (future Deno parity)
+**Epic:** epic-deno-support
 
 ## Summary
 

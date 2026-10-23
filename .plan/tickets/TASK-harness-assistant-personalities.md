@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Assistant personalities as FEAT-065 template-cascade presets (no new plumbing); split `AgentRoleDefinition` expertise vs voice (SillyTavern V2 shape, reimplemented) + lorebook scoped injectors.
 **Context:** Character vs persona systems converge at `prompt-assembler.ts` → `PROMPT_SECTIONS` (28 builders, `prompt/registry.ts`). `personality` is a required ≤2000ch string; `behavioral_modifier:` world traits + internal-traits voice block are the two existing emulation dials. GM behavior stays in `epic-assistant-gm-flows.md`.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

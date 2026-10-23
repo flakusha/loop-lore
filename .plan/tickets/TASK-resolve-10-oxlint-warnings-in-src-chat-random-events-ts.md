@@ -12,7 +12,7 @@
 **Severity:** Low
 **Priority:** Low
 **Type:** TASK
-**Epic:** epic-tooling-check-gates
+**Epic:** epic-continuous-improvement
 **Effort:** Small
 **Files:** `src/chat/random-events.ts`
 

@@ -12,7 +12,7 @@
 **Scope:** text-effects overlay components on text-fx core
 **Priority:** Low
 **Effort:** Med
-**Epic:** Epic Immersion & Presentation (sub-task)
+**Epic:** epic-immersion-presentation
 **Tags:** chat, text-effects, overlays, decoration, ux, css
 **Spec:** `docs/frontend/chat/text-effects-overlays.md`
 

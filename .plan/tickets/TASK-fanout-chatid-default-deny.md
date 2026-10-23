@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `epic-licensing.md`
+**Epic:** epic-licensing
 **Related:** `src/federation/fan-out.ts`, `src/federation/clearance.ts`, `src/federation/clearance.test.ts`, `TASK-licensing-publish-enforcement-point.md`, `TASK-licensing-publish-authorization-predicate.md`
 **Summary:** See ## Summary below.
 **Context:** See ## Context below.

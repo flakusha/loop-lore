@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Small (narrow the bypass to a named constant + restore the reject assertion; optional 032 backfill migration)
+**Epic:** epic-messages
 **Summary:** `guardMessages` (`src/db/validators/enforce.ts:100-110`) returns early for *any* status outside `MessageStatus`, not just the one legacy value it exists to tolerate. `""`, `"CONFIRMED"`, `"Sending"`, `"totally_bogus"`, `"null"` all pass where the pre-`7de2fcb49` guard threw, and `src/db/validators/enforce.test.ts:26-33` was inverted in the same commit to lock in the fail-open. Narrow the bypass to the named legacy literal and restore the reject assertion.
 **Context:** Follow-up commit `7de2fcb49` ("fix(db): tolerate the legacy messages.status default in the write guard") fixed a real regression — `messages.status` carries a DB-level default of `"visible"` which is not a `MessageStatus` member, so `updateMessageVisibility` on any default-inserted or legacy row threw and the write silently did not happen. The motivation is correct; the *scope* is not. `isKnownStatus()` (`:75-77`) is a membership test over `KNOWN_STATUSES` (`:79`), so "not in the enum" and "the legacy DB default" are conflated. Filed after a by-execution audit of the guard against the real migration defaults and every write path; three further defects found during that audit are recorded in the *Additional defects* section.
 

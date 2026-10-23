@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High (NSFW safety is a blocker for any third-party dispatch)
 **Effort:** Medium
-**Epic:** `epic-assistant-creative-studio-workflows`
+**Epic:** epic-assistant-creative-studio-workflows
 **Depends on:** `TASK-assistant-third-party-api-integration.md`, `epic-nsfw-moderation-priority.md`
 
 ## Summary

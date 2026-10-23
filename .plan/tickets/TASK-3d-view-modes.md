@@ -11,7 +11,8 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** High
-**Epic:** Epic 26 (Avatar & Expression), Epic 28 (Asset Support)
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "Epic 26 (Avatar & Expression), Epic 28 (Asset Support)" preserved 2026-10-23; no epic file exists.
 **Tags:** 3d, avatar, webgl, threejs, view-mode
 **Supersedes:** `TASK-3d-character-avatars.md`, `TASK-asset-3d-models.md`,
 `TASK-dynamic-avatars-dota-style.md`

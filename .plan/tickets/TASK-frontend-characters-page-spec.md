@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** (none — no dedicated frontend epic tracks this spec)
+**Epic:** epic-3d-generation
 **Related:** docs/frontend/characters.md
 **git issue:** ec5148d
 

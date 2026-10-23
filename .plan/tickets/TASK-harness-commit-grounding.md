@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** `.plan/epics/epic-harness-integration.md`
+**Epic:** epic-harness-integration
 **Summary:** Unify the 3 commit-format layers on one type/scope table + advisory diff-derived grounding warns (scope-vs-paths, batch size, sign-remediation hint). Anti-hallucination primitive for agent-authored commits.
 **Context:** Layers: SKILL.md prose (7 types, ≤50/72, batching ≤15, anti-patterns) → `message.ts validateMessage()` (shape only: SUBJECT_RE + no-trailing-period, accepts ANY lowercase type) → `commit-check.ts` CI (hardcoded VALID_TYPES/RECOMMENDED_SCOPES, fails unknown type; scope/length warnings-only; `.commitlint.yaml` orphaned — no reader). Message passes through verbatim (no diff cross-check). Flow: `commit.ts`/`commit-branch.ts` (validate → staged/dep guards → agent-key sign → verify → ledger); hooks do NOT gate giwt commits (`--no-verify`). GPG policy: never bypass, `giwt gpg-unlock`, stop-and-report.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

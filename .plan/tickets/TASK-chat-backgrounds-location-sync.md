@@ -11,6 +11,7 @@
 **Status:** Not Started
 **Priority:** Low
 **Effort:** Med–High
+**Epic:** epic-chat-transfer-location
 **Related:** TASK-dynamic-avatars-dota-style, TASK-emotion-intent-detection
 
 ## Summary

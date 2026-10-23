@@ -10,6 +10,7 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
+**Epic:** epic-social-interaction
 
 **References:**
 - Epic: .plan/epics/epic-character-world-integration.md

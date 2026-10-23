@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** High (post-Gate C, with parent epic)
 **Effort:** Medium
-**Epic:** `epic-assistant-creative-studio-workflows` (§7.6)
+**Epic:** epic-assistant-creative-studio-workflows
 **Target entity epic:** `epic-worlds-extension.md`
 **Depends on:** `epic-assistant-creative-studio-workflows` (runner/loader),
 `epic-worlds-extension.md` (world data model)

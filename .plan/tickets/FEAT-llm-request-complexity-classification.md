@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** high
 **Effort:** Medium
-**Epic:** `.plan/epics/epic-llm-request-scheduler.md`
+**Epic:** epic-llm-request-scheduler
 **Summary:** Classifies each queued LLM request into a `requestClass` + complexity score and derives a `Priority` from it, so the scheduler orders by work weight rather than by arrival alone. Pure function, evaluated before queueing; no LLM call is made to classify.
 **Context:** `ResourceManager.submit()` already takes a numeric `priority` and `PriorityLevel` already defines `High/Normal/Low` (`src/llm/resource-manager-types.ts:14-20`), but nothing in the codebase ever sets anything other than the default. This ticket supplies the value.
 **Acceptance Criteria:** See ## Acceptance Criteria below.

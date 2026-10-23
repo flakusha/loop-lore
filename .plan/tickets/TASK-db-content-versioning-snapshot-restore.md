@@ -9,7 +9,8 @@
 **Summary:** DB Content Versioning & Snapshot/Restore
 **Context:** Epic proposed:epic-db-versioning; tags db, versioning.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-db-versioning
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-db-versioning" preserved 2026-10-23; no epic file exists.
 **Tags:** db, versioning
 
 ## Summary

@@ -12,6 +12,7 @@
 **Priority:** Medium
 **Effort:** High
 **Epic:** epic-headless-alternative-frontends
+**Related:** TASK-headless-mode-alternative-frontends (duplicate pair)
 
 ## Summary
 

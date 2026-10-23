@@ -11,7 +11,7 @@
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Low
-**Epic:** EPIC-2026-39 (Config File Separation)
+**Epic:** epic-config-file-separation
 
 ## Summary
 

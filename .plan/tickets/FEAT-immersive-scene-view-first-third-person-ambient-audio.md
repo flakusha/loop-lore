@@ -9,7 +9,8 @@
 **Summary:** Immersive Scene View (first/third-person + ambient audio)
 **Context:** Epic proposed:epic-immersive-scene; tags 3d, scene.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Epic:** proposed:epic-immersive-scene
+**Epic:** (none — proposed epic never materialized)
+**Epic Note:** original value "proposed:epic-immersive-scene" preserved 2026-10-23; no epic file exists.
 **Tags:** 3d, scene
 
 ## Summary
