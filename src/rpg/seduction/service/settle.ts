@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { DB, } from "../../../db/schema";
 import type { Kysely, } from "kysely";
-import type { SeductionSkill, } from "./types";
+import { MoodService, } from "../../../characters/services/mood-service";
 import type { SeductionSkillCategory, } from "../../../db/enums";
 import { ContentIntensity, } from "../../../db/enums-character/nsfw";
-import { MoodService, } from "../../../characters/services/mood-service";
-import { XpSource, } from "../../xp/sources";
-import { awardXp, } from "./skills";
+import type { DB, } from "../../../db/schema";
+import { getLogger, } from "../../../logger";
 import { awardXpToActor, } from "../../level/index.js";
 import { checkMechanicEnabled, RpgMechanic, } from "../../service/world-gate.js";
-import { getLogger, } from "../../../logger";
 import { logXp, } from "../../service/xp";
+import { XpSource, } from "../../xp/sources";
 import { modifyArousal, } from "./arousal";
+import { awardXp, } from "./skills";
+import type { SeductionSkill, } from "./types";
 
 /**
  * Settle a resolved attempt: arousal, dual XP, and mood follow-through.
