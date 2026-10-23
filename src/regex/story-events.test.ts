@@ -220,6 +220,21 @@ describe("story-events regex", () => {
     it("matches offers", () => {
       expect(ITEM_GIVE.test("They offer the key to the guard.",),).toBe(true,);
     });
+
+    it("captures the item name, letter-led and bounded", () => {
+      expect(ITEM_GIVE.exec("Sam gives the Iron Sword to Kara.",)?.[1],).toBe("Iron Sword",);
+      expect(ITEM_GIVE.exec("Sam trades the Sword for the Shield.",)?.[1],).toBe("Sword",);
+      // A bare number is not an item name.
+      expect(ITEM_GIVE.test("Sam gives 5 to the guard.",),).toBe(false,);
+    });
+
+    it("stops the capture at a newline instead of bleeding into the next line", () => {
+      expect(ITEM_GIVE.exec("Sam gives the Sword\nHe leaves to town.",)?.[1],).toBe("Sword",);
+    });
+
+    it("does not match a name longer than 30 chars (same bound as ITEM_TAKE)", () => {
+      expect(ITEM_GIVE.test("Sam gives the Extraordinarily Long Sword of Legend to Kara.",),).toBe(false,);
+    });
   });
 
   describe("ITEM_TAKE", () => {

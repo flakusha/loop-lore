@@ -72,9 +72,16 @@ export const NPC_REVELATION =
 
 // ── Item Transfer Patterns ────────────────────────────────────
 
-/** Matches giving/handing items: "gives the sword to", "hands a potion for" */
+/** Matches giving/handing items: "gives the sword to", "hands a potion for".
+ *
+ * The capture is letter-led and bounded ({1,30} chars) like
+ * {@link ITEM_TAKE}, so a bare number is not an item name and a runaway
+ * narrative run cannot be swallowed into it. The `to`/`for` clause stays
+ * the give's own clause ending (no extra boundary words are needed - they
+ * would only overlap with it), and a newline also ends the name, so a give
+ * on one line does not bleed into the next one. */
 export const ITEM_GIVE =
-  /(?:gives?|hands?|offers?|passes?|trades?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?\s+(?:to\s+|for\s+)/i;
+  /(?:gives?|hands?|offers?|passes?|trades?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z][A-Za-z\s]{0,29}?)[""']?(?:\s+(?:to\s+|for\s+)|(?=\n))/i;
 
 /** Matches taking/picking up items: "takes the key", "picks up a scroll".
  *
