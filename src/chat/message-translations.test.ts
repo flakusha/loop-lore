@@ -6,6 +6,10 @@
  * skip (unknown locale / heuristic / translator-unavailable), and the
  * idempotent upsert. Outcomes are returned, never thrown, and a failure
  * never touches the stored original.
+ *
+ * Resource contract: one fresh in-memory DB per test (createTestDb in
+ * beforeEach), destroyed in afterEach; the provider-registry name is unique
+ * per run and unregistered in afterEach; no files, no ports.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Config, } from "../config/schema";

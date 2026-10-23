@@ -9,6 +9,12 @@
  *   - PATCH with an unknown code is a 400.
  *   - DELETE clears the target (null echo).
  *   - Non-participants get 403; unknown chats get 404.
+ *
+ * Resource contract: provider-registry names are unique per run and
+ * unregistered in afterEach/finally; flat tests get a fresh in-memory DB
+ * collected into `fixtures` and destroyed in afterEach, the nested suite
+ * uses beforeEach/afterEach; requests go through app.handle(), no listener
+ * is bound; no files.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -103,8 +109,20 @@ async function seed(db: Kysely<DB>,): Promise<void> {
 }
 
 describe("autoTranslateRoutes", () => {
+  // DBs created in the flat tests below, destroyed in afterEach so an
+  // undisposed bun:sqlite handle never leaks to sibling files.
+  const fixtures: TestDb[] = [];
+
+  afterEach(async () => {
+    while (fixtures.length > 0) {
+      await destroyTestDb(fixtures.pop()!,);
+    }
+  },);
+
   test("PATCH sets the target and echoes it back", async () => {
-    const { db, } = await createTestDb();
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
     await seed(db,);
     const app = makeApp(db, OWNER_ID,);
     const res = await app.handle(
@@ -128,7 +146,9 @@ describe("autoTranslateRoutes", () => {
   });
 
   test("PATCH with an unknown code is a 400", async () => {
-    const { db, } = await createTestDb();
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
     await seed(db,);
     const app = makeApp(db, OWNER_ID,);
     const res = await app.handle(
@@ -143,7 +163,9 @@ describe("autoTranslateRoutes", () => {
   });
 
   test("DELETE clears the target", async () => {
-    const { db, } = await createTestDb();
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
     await seed(db,);
     const app = makeApp(db, OWNER_ID,);
     await app.handle(
@@ -164,7 +186,9 @@ describe("autoTranslateRoutes", () => {
   });
 
   test("non-participant gets 403", async () => {
-    const { db, } = await createTestDb();
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
     await seed(db,);
     const app = makeApp(db, OUTSIDER_ID,);
     const res = await app.handle(
@@ -179,7 +203,9 @@ describe("autoTranslateRoutes", () => {
   });
 
   test("unknown chat gets 404", async () => {
-    const { db, } = await createTestDb();
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
     await seed(db,);
     const app = makeApp(db, OWNER_ID,);
     const res = await app.handle(
@@ -194,7 +220,9 @@ describe("autoTranslateRoutes", () => {
   });
 
   test("buildTranslateDeps never rejects without a configured provider", async () => {
-    const { db, } = await createTestDb();
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
     const config = createConfigSchema().defaults as Config;
     const deps = await buildTranslateDeps(db, config, OWNER_ID,);
     expect(typeof deps,).toBe("object",);

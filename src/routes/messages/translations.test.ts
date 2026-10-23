@@ -5,6 +5,11 @@
  * Route tests for the message-translation variant surface: auth gates,
  * 404 (never 403-leak) on foreign ids, unknown-locale 400, on-demand
  * translate + idempotent retranslate, and list/get decryption passthrough.
+ *
+ * Resource contract: one fresh in-memory DB per test (createTestDb in
+ * beforeEach), destroyed in afterEach; the provider-registry name is unique
+ * per run and unregistered in afterEach; requests go through app.handle(),
+ * no listener is bound; no files.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";

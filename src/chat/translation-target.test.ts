@@ -5,8 +5,12 @@
  * Precedence tests for the single translation-target module:
  * display-locale chain, effective native-locale chain, and the eager
  * trigger comparator.
+ *
+ * Resource contract: the storage-touching suite uses one fresh in-memory DB
+ * per test (createTestDb in beforeEach), destroyed in afterEach; no global
+ * stubs, no files, no ports.
  */
-import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { createConfigSchema, } from "../config/schema-class";
@@ -113,7 +117,7 @@ describe("resolveEffectiveNativeLocale chain", () => {
     db = fixture.db;
   },);
 
-  afterAll(async () => {
+  afterEach(async () => {
     await destroyTestDb(fixture,);
   },);
 
