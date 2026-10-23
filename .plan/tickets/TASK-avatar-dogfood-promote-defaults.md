@@ -7,7 +7,8 @@
 **Context:** Slice 1 of epic-avatar-dogfood (dogfood loop on PNG masters).
 **Acceptance Criteria:** (see below)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Slice-1 vertical landed as 2a960c696 — promoteAvatarToDefault op + tests; no avatar: lines flipped yet (blocked on real art from ticket a); restart-verify belongs to ticket (d).
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-avatar-dogfood
