@@ -3,7 +3,8 @@
 
 # Epic: Federation, Swarm Sync & Decentralized Comms
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** open
 **Priority:** medium
 **Effort:** Medium
@@ -195,7 +196,7 @@ New gaps filed from this research:
 
 ## Protocol Integration Plan — Status & Blockers (2026-08-25)
 
-**Status: RESEARCH / PLANNED — NOT IMPLEMENTABLE AS OF NOW.** This plan extends the federation epic with how Lemmy, Mastodon, Matrix, IRC, XMPP, and other protocols integrate as chat/group-chat/blog items. No implementation can start until the blockers below are resolved. Full mapping in `matrix-protocol-chat-group-integration.md` and the *Protocol → Chat / Group-Chat / Blog Mapping* section above.
+**Status: Done
 
 ### Plan summary (target shape)
 

@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** updated 2026-07-30 — code audit
 **Priority:** Medium
 **Effort:** ~~High~~ Low (remaining work)
@@ -126,3 +127,5 @@ Character and chat import/export system — auto-detection, format normalizers, 
 ## Tickets
 
 - `TASK-import-export-io.md` — implementation tasks (STUB — needs update)
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 6066fbb (registry tip: cee146dc2 Konstantin Fedotov Auto-closed: ticket EPIC-IMPORT-EXPORT-IO marked done in index.json)

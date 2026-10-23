@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** merged to dev: backend `95680e00`, frontend `d61ce737`
 **Priority:** Medium
 **Effort:** Medium
@@ -686,7 +687,7 @@ export interface Polls {
   options: string; // JSON
   config: string | null; // JSON
   resolution: PollResolution;
-  status: PollStatus;
+  status: Done
   result: string | null; // JSON
   context_type: PollContext;
   context_id: string;
@@ -1068,3 +1069,5 @@ These designs connect to the group chat reconciliation doc:
 | `PollService.createVote()` — duplicate vote prevention            | Edge case  |
 | `PollService.changeVote()` — updates with changed_from history    | Edge case  |
 | `PollService.expirePoll()` — timeout closes poll                  | Lifecycle  |
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 83cc19e (registry tip: 0bf1a7432 Konstantin Fedotov Auto-closed: ticket EPIC-WORLD-CHAT-CHANNELS-INVITES marked done in ind)

@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately.
 **Priority:** Medium
 **Effort:** Medium
@@ -101,3 +102,4 @@ re-implementing it per view.
 | ----- | --------- | ------- |
 | htmx `afterSwap` | emits | `Alpine.initTree()` on extracted fragments |
 
+**Resolved:** 2026-10-23 registry-driven close: git issue 895a3e6 (registry tip: 80158d2cb Konstantin Fedotov Auto-closed: ticket EPIC-FRONTEND-HTML-DEDUP-HTMX-REUSE marked done in )

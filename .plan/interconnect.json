@@ -19661,7 +19661,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-batch-epic-attachment-triage.md",
       "title": "batch epic-attachment triage",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -45173,7 +45173,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-achievements.md",
       "title": "Achievements",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/db/schema-achievements.ts",
         "src/frontend/achievements.html",
@@ -45189,7 +45189,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-actor-autonomy-story-drive.md",
       "title": "Actor Autonomy & Story Auto-Drive",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/autonomy/governor/index.test.ts",
         "src/autonomy/governor/index.ts",
@@ -45214,7 +45214,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-actor-turn-skip.md",
       "title": "Actor Turn Skip ('Continue' Without Breaking the Story)",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/prompt/sections/turn-skip-absence.ts",
         "src/generation/auto-gen/pass-filter.ts",
@@ -45234,7 +45234,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-actors.md",
       "title": "Actors & Entity System",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/db/migrations/001_init.ts",
         "src/db/schema-core.ts",
@@ -45382,7 +45382,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-api-rate-limiting.md",
       "title": "API Rate Limiting",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/api-governance/rate-limiting/algorithms.ts",
         "src/api-governance/rate-limiting/limiter.ts",
@@ -45505,7 +45505,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-archival-workflow.md",
       "title": "Archival Workflow",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/chat/service.ts",
         "src/chat/service/crud/archive.test.ts",
@@ -46419,7 +46419,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-chat-lifecycle-moderation.md",
       "title": "Chat Lifecycle, Transitions & Moderation",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/admin/model-roles.ts",
         "src/assistant/prompt-assembler.ts",
@@ -46818,7 +46818,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-config-file-separation.md",
       "title": "Config File Separation",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/config/load.ts",
         "src/config/schema.ts"
@@ -46830,7 +46830,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-config-templates.md",
       "title": "Configurable Template System",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/intent.ts",
         "src/assistant/prompt/sections/emotion-avatar.test.ts",
@@ -47345,7 +47345,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-distributed-compute-sharing.md",
       "title": "Distributed Computing & Sharing (Contributor Compute Network)",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/generation/providers/comfyui.ts",
         "src/generation/providers/registry.ts"
@@ -47382,7 +47382,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-e2e-integration-testing.md",
       "title": "E2E & Integration Testing Reliability",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/app/register-plugins.ts",
         "src/elysia-app.ts",
@@ -47811,7 +47811,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-federation-swarm-sync.md",
       "title": "Federation, Swarm Sync & Decentralized Comms",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/group-chat/turn-selector.ts"
       ],
@@ -47822,7 +47822,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-file-splitting.md",
       "title": "File Splitting & God-Module Refactor",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/app/register-plugins.ts",
         "src/assets/service.ts",
@@ -47883,7 +47883,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-admin.md",
       "title": "Admin Panel & Dashboard",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/frontend/alpine/admin-users.ts",
         "src/frontend/alpine/admin.ts",
@@ -47909,7 +47909,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-age-gate.md",
       "title": "Age Gate & Content Warnings",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/age-gate/controller.ts",
         "src/age-gate/service.ts",
@@ -47932,7 +47932,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-backend-integration.md",
       "title": "Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/frontend/alpine/rpg-stats.ts",
         "src/frontend/fe-fetch.ts"
@@ -48030,7 +48030,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-gallery.md",
       "title": "Frontend Gallery & Media Viewer",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/components/chat/gallery-sidebar.html",
@@ -48059,7 +48059,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-html-dedup-htmx-reuse.md",
       "title": "Frontend HTML Deduplication & HTMX AJAX Reuse",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/components/loading-state.html",
         "src/frontend/alpine/htmx-header.ts",
@@ -48132,7 +48132,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-frontend-settings.md",
       "title": "Settings & Preferences UI",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/components/modals/settings.html",
         "src/routes/v1/base-surface.ts",
@@ -48340,7 +48340,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-housing.md",
       "title": "Housing System",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/db/schema-housing.ts",
         "src/routes/housing.ts"
@@ -48383,7 +48383,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-i18n.md",
       "title": "Internationalization (i18n)",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [],
       "related": []
     },
@@ -48475,7 +48475,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-import-export-io.md",
       "title": "# Epic 14: Import/Export & Data Portability",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/characters/charx.ts",
         "src/characters/errors.ts",
@@ -48853,7 +48853,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-lora-discovery-application.md",
       "title": "LoRA Discovery & Application",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/generation/image-gen-route.ts",
@@ -49024,7 +49024,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-mesh-federation-content-sharing.md",
       "title": "Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [],
       "related": []
     },
@@ -49059,7 +49059,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-middleware-request-lifecycle.md",
       "title": "Middleware — Request Lifecycle, Idempotency & Async Results",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/async/offload.ts",
         "src/async/store.ts",
@@ -49357,7 +49357,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-npc-navigation.md",
       "title": "NPC Navigation",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [],
       "related": []
     },
@@ -49455,7 +49455,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-openapi-reference.md",
       "title": "OpenAPI-Driven API Reference",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/validation/schemas.ts"
@@ -50092,7 +50092,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-replayability.md",
       "title": "Replayability",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [],
       "related": []
     },
@@ -50481,7 +50481,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-skills.md",
       "title": "Skills",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/routes/rpg/index.ts"
       ],
@@ -50894,7 +50894,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-wardrobe-avatar-variants.md",
       "title": "Wardrobe / Loadout Avatar Variants",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/prompt-outfit.ts",
         "src/assistant/prompt/sections/emotion-avatar.ts",
@@ -50946,7 +50946,7 @@
       "kind": "epic",
       "path": ".plan/epics/epic-world-chat-channels-invites.md",
       "title": "World Chat Channels & Invite-Driven Membership",
-      "status": "done",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/prompt/sections/group-participants.ts",
         "src/assistant/prompt/sections/group-talkativity.test.ts",

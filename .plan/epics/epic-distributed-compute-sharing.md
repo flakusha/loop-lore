@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** analysis complete, tickets scoped
 **Priority:** Medium
 **Effort:** Very High
@@ -192,3 +193,5 @@ sandboxed (dedicated process/container/WASM) with no access to platform secrets.
       earnings, task history, model allowlist, consent, pause).
 - [ ] `TASK-distributed-incentive-community` — reward tiers, referral, leaderboard,
       badges.
+
+**Resolved:** 2026-10-23 registry-driven close: git issue 9ce4cd9 (registry tip: 3ec823247 Konstantin Fedotov Auto-closed: ticket EPIC-DISTRIBUTED-COMPUTE-SHARING marked done in ind)

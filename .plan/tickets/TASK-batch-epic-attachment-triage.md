@@ -39,9 +39,10 @@ see it for method) found, recomputed at audit time:
 
 **Acceptance Criteria:**
 
-- [ ] Every open TASK/BUG ticket has an Epic field that resolves to an existing
-      epic file, or an explicit "(none — hygiene/self-contained)" justification
-- [ ] Epic fields use bare slugs only
-- [ ] `bun run plan:validate` green on the linkage/status gates
+- [x] Every open TASK/BUG ticket has an Epic field resolving to an existing epic file, or an explicit "(none — …)" justification — executed 2026-10-23 (normalization 245 + reviewed attachments 402 + exact/strong 120 + markers 185)
+- [x] Attachment executed via two director-audited review sweeps (BUG 143 rows, TASK 363 rows) — verdicts in .tmp/2026-10-23/triage/ during execution
+- [~] Epic-field slug-convention unification (bare vs epic-prefixed) explicitly DECLINED by owner 2026-10-23 — out of scope, both spellings validate
+
+**Status Note:** Executed 2026-10-23; dev squashes ebba8110 + 337e98472. plan:validate linkage/status gates green at execution except one foreign index mismatch (FEAT-INTEGRATE-SKILL-PROGRESSION…, xp workstream) and the parked interconnect-regen branch plan-triage-links-fix.
 
 **Resolved:** 2026-10-23 registry-driven close: git issue 57986c3 (registry tip: 0de0c2fd4 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-BATCH-EPIC-ATTACHMENT-TRIAG)

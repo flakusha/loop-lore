@@ -6,7 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done
 **Priority:** Medium
 **Effort:** Medium
@@ -169,3 +170,4 @@ Remaining polish (Phase 3) only:
 | ----- | --------- | ------- |
 | htmx grid refresh | emits | Re-render after upload/delete |
 
+**Resolved:** 2026-10-23 registry-driven close: git issue 4e4298b (registry tip: e3f00ee9d Konstantin Fedotov Auto-closed: ticket EPIC-FRONTEND-GALLERY marked done in index.json)
