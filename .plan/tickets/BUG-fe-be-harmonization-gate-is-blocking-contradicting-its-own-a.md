@@ -42,6 +42,7 @@ Resolution: the gate is authoritative as **blocking**, and the epic text was the
 - [ ] Documentation updated
 
 **Resolved:** 2026-10-23 registry-driven close: git issue 3db1677 (registry tip: fd7e537ac Konstantin Fedotov Close issue)
+
 ## Verification
 
 - `bun run scripts/check-fe-be-harmonization.ts` on dev: silent, exit 0 (no blocking findings).
