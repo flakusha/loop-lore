@@ -3731,7 +3731,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fe-be-harmonization-gate-is-blocking-contradicting-its-own-a.md",
       "title": "FE-BE harmonization gate is blocking, contradicting its own advisory acceptance criterion",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -3740,7 +3740,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fe-be-harmonization-script-violates-its-own-no-console-accep.md",
       "title": "FE-BE harmonization script violates its own no-console acceptance criterion",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },

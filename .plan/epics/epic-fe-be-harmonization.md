@@ -48,10 +48,10 @@ No runtime validation, no OpenAPI codegen, no generated FE types. Add when the d
 ## Acceptance
 
 - `bun run scripts/check-fe-be-harmonization.ts` exits 0 on clean tree, nonzero with file:line findings on drift.
-- Gate lands advisory (`|| true`, `(advisory)` suffix, following the innerHTML-XSS precedent); promote to blocking once triage clears factory-built (`createEntityRoutes`), guarded/group-mounted, and upload-multipart classes.
+- Gate is BLOCKING in the runner (`"fe-be - harmony"` in `scripts/check/parallel/gate-table.mjs`). The original "land advisory, promote once triage clears" plan is superseded: the blocking classes report zero findings on dev (468 FE calls / 903 BE routes), so factory-built (`createEntityRoutes`) and guarded/group-mounted paths are not producing FE-no-BE noise. BE-no-FE stays advisory — a route may serve the TUI, curl, or a partner. Revisit if a refactor reintroduces that noise.
 - Findings name severity (blocking vs advisory) and the concrete fix direction.
 - Gate entry runs inside `bun run check` without new dependencies.
-- Script stays under the size gate; no `any`, no `console.*` (logger or stdout report only for findings).
+- Script stays under the size gate; no `any`; stdout carries findings only (one summary line adjacent to them), and a clean run is silent.
 
 ## Integration Points
 
@@ -81,4 +81,4 @@ No runtime validation, no OpenAPI codegen, no generated FE types. Add when the d
 | ----- | --------- | ------- |
 | Gate report | emits | `.tmp/fe-be-harmony.json` findings consumed by `bun run check` |
 
-**Reconciliation note (verified against dev):** the four analysis slices are implemented as separate modules under `scripts/fe-be-harmonization/` (`be-routes.ts`, `fe-calls.ts`, `schemas.ts`, `shared.ts`) behind `scripts/check-fe-be-harmonization.ts` (commit `6b28e7623`), findings carry severity plus fix direction, and the script runs inside `bun run check`. Two of the epic's own acceptance criteria are **not** met, so it is left open: (1) the gate is registered as a plain blocking entry at `scripts/check/parallel/gates.mjs:65` (`"fe-be - harmony"`), not advisory — the epic required the innerHTML-XSS `(advisory)` precedent; (2) `scripts/check-fe-be-harmonization.ts:86-99` emits `console.*` for banners and summaries, not only for findings, which its AC5 forbids. Filed as a ticket.
+**Reconciliation note (verified against dev):** the four analysis slices are implemented as separate modules under `scripts/fe-be-harmonization/` (`be-routes.ts`, `fe-calls.ts`, `schemas.ts`, `shared.ts`) behind `scripts/check-fe-be-harmonization.ts` (commit `6b28e7623`), findings carry severity plus fix direction, and the script runs inside `bun run check`. Both acceptance criteria that the earlier reconciliation flagged as unmet are now reconciled: (1) the gate is registered at `scripts/check/parallel/gate-table.mjs` and the epic says **blocking** — the runner shape was already blocking and the triage evidence (zero blocking findings across 468 FE calls / 903 BE routes) supports it, so the epic text was the stale side; (2) the script's stdout is findings-only — banner, counts, success line and the second truncation label collapsed into one summary line adjacent to the findings, and a clean run prints nothing. See `BUG-fe-be-harmonization-gate-is-blocking-contradicting-its-own-a` and `BUG-fe-be-harmonization-script-violates-its-own-no-console-accep` (both Done). The epic stays open for the external/non-htmx call-site coverage ticket.
