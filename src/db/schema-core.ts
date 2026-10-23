@@ -767,6 +767,13 @@ export interface MessageTranslations {
   provider: string | null;
   created_at: string;
   updated_at: string | null;
+  key_id: string | null;
+  content_encoding: Generated<string>;
+  e2e_payload: string | null;
+  e2e_session_id: string | null;
+  e2e_sender_eph_pub_jwk: string | null;
+  e2e_chain_index: number | null;
+  content_plaintext: string | null;
 }
 
 // ── messages ────────────────────────────────────────────

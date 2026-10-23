@@ -1913,6 +1913,13 @@ export const MessageTranslationsSchema = t.Object({
   created_at: t.String(),
   provider: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  key_id: t.Optional(t.String(),),
+  content_encoding: t.Optional(t.String(),),
+  e2e_payload: t.Optional(t.String(),),
+  e2e_session_id: t.Optional(t.String(),),
+  e2e_sender_eph_pub_jwk: t.Optional(t.String(),),
+  e2e_chain_index: t.Optional(t.Number(),),
+  content_plaintext: t.Optional(t.String(),),
 },);
 
 // ── messages ────────────────────────────────────────────
