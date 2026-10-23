@@ -23,6 +23,7 @@ import type { Config, } from "../config/schema";
 import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../crypto";
 import { ContentEncoding, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { normalizeBcp47Tag, } from "../i18n/bcp47";
 import { getLogger, } from "../logger";
 import { buildTranslateDeps, normalizeTargetLang, shouldSkipTranslation, } from "./auto-translate";
 import {
@@ -71,7 +72,12 @@ export async function translateMessageToLocale(
   config: Config,
   opts: TranslateToLocaleOpts,
 ): Promise<TranslationOutcome> {
-  const locale = normalizeTargetLang(opts.locale,);
+  // Gate against the shared catalog AND canonicalize: BCP-47 normalization
+  // is idempotent for catalog codes today and keeps stored rows canonical
+  // once free-form tags open at the translation boundaries (upsert
+  // idempotency must survive `en-us` vs `en-US`).
+  const catalogLocale = normalizeTargetLang(opts.locale,);
+  const locale = catalogLocale === null ? null : normalizeBcp47Tag(catalogLocale,);
   if (!locale) {
     return { translated: false, stored: false, locale: null, reason: "unknown-locale", };
   }
