@@ -68,6 +68,10 @@ const baseCtx = (): ActorEmotionAvatarsState => {
   state.selectedEmotions = [];
   state.promptPrefix = "";
   state.negativePrompt = "";
+  state.seed = null;
+  state.reuseSeed = false;
+  state.variants = [];
+  state.emotionTypes = [];
   state.busy = false;
   state.message = "";
   state.error = "";
@@ -369,6 +373,113 @@ describeOrSkip("actorEmotionAvatarsFactory", () => {
     expect(a,).not.toBe(b,);
     expect(a._eaActorId,).toBe("actor-a",);
     expect(b._eaActorId,).toBe("actor-b",);
+  });
+},);
+
+describeOrSkip("actorEmotionAvatars.seed", () => {
+  const bodyOf = (call: { opts: RequestInit } | undefined,) => JSON.parse(String(call?.opts.body ?? "{}",),);
+
+  test("forwards an explicit seed on the batch request", async () => {
+    handler = async () => Response.json({ jobId: "job-1", }, { status: 201, },);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.baseAvatarId = "av-1";
+    ctx.selectedEmotions = ["happy",];
+    ctx.seed = 4242;
+
+    expect(await ctx.startGeneration(),).toBe(true,);
+    const postCall = calls.find((c,) => c.opts.method === "POST");
+    expect(bodyOf(postCall,),).toMatchObject({ seed: 4242, },);
+  });
+
+  test("reuse sends the strategy instead of a seed", async () => {
+    handler = async () => Response.json({ jobId: "job-1", }, { status: 201, },);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.baseAvatarId = "av-1";
+    ctx.selectedEmotions = ["happy",];
+    ctx.seed = 4242;
+    ctx.reuseSeed = true;
+
+    expect(await ctx.startGeneration(),).toBe(true,);
+    const postCall = calls.find((c,) => c.opts.method === "POST");
+    expect(bodyOf(postCall,),).toMatchObject({ seedStrategy: "reuse", },);
+    expect(bodyOf(postCall,).seed,).toBeUndefined();
+  });
+
+  test("an empty seed is not sent", async () => {
+    handler = async () => Response.json({ jobId: "job-1", }, { status: 201, },);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.baseAvatarId = "av-1";
+    ctx.selectedEmotions = ["happy",];
+    ctx.seed = null;
+
+    expect(await ctx.startGeneration(),).toBe(true,);
+    const postCall = calls.find((c,) => c.opts.method === "POST");
+    expect(bodyOf(postCall,).seed,).toBeUndefined();
+    expect(bodyOf(postCall,).seedStrategy,).toBeUndefined();
+  });
+},);
+
+describeOrSkip("actorEmotionAvatars.regenerate", () => {
+  const bodyOf = (call: { opts: RequestInit } | undefined,) => JSON.parse(String(call?.opts.body ?? "{}",),);
+
+  test("re-rolls the given emotions with a slot replace", async () => {
+    handler = async () => Response.json({ jobId: "job-2", }, { status: 201, },);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+
+    expect(await ctx.regenerate(["happy",],),).toBe(true,);
+    const postCall = calls.find((c,) => c.opts.method === "POST");
+    expect(postCall?.url,).toBe("/api/v1/actors/actor-1/emotion-avatars/regenerate",);
+    expect(bodyOf(postCall,),).toEqual({ emotions: ["happy",], replace: "slot", },);
+  });
+
+  test("regenerate without emotions re-rolls the full batch", async () => {
+    handler = async () => Response.json({ jobId: "job-3", }, { status: 201, },);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+
+    expect(await ctx.regenerate(),).toBe(true,);
+    const postCall = calls.find((c,) => c.opts.method === "POST");
+    expect(bodyOf(postCall,),).toEqual({ replace: "slot", },);
+  });
+
+  test("surfaces the server message on a rejected re-roll", async () => {
+    handler = async () => Response.json({ message: "baseAvatarId is required", }, { status: 400, },);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+
+    expect(await ctx.regenerate(["happy",],),).toBe(false,);
+    expect(ctx.error,).toBe("baseAvatarId is required",);
+  });
+
+  test("no-op without an actor", async () => {
+    const ctx = baseCtx();
+    expect(await ctx.regenerate(["happy",],),).toBe(false,);
+    expect(calls,).toHaveLength(0,);
+  });
+},);
+
+describeOrSkip("actorEmotionAvatars.loadVariants", () => {
+  test("keeps only the base emotion variants", async () => {
+    handler = async (url,) =>
+      url.endsWith("/avatars",)
+        ? Response.json([
+          { id: "a1", assetId: "as-1", label: "happy", outfitId: null, tags: { emotion: "happy", }, },
+          { id: "a2", assetId: "as-2", label: "sad", outfitId: "outfit-1", tags: { emotion: "sad", }, },
+          { id: "a3", assetId: "as-3", label: "base", outfitId: null, tags: {}, },
+        ],)
+        : Response.json([],);
+
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    await ctx.loadVariants();
+
+    expect(ctx.variants,).toEqual([
+      { id: "a1", assetId: "as-1", label: "happy", emotion: "happy", },
+    ],);
   });
 },);
 

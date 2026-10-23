@@ -28,6 +28,7 @@ interface StartCall {
   outfitId?: string;
   replace?: boolean;
   seed?: number;
+  seedStrategy?: "reuse";
 }
 
 const startCalls: StartCall[] = [];
@@ -145,6 +146,34 @@ describeOrSkip("emotion-avatar seed option wiring", () => {
 
     expect(res.status,).toBe(201,);
     expect(startCalls[0]?.seed,).toBeUndefined();
+  });
+
+  test("the actor-level batch endpoint forwards the reuse strategy", async () => {
+    startCalls.length = 0;
+    const res = await makeApp(db,).handle(
+      post(`/api/actors/${ACTOR}/emotion-avatars`, {
+        baseAvatarId: "av-1",
+        emotions: ["happy",],
+        seedStrategy: "reuse",
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    expect(startCalls[0]?.seedStrategy,).toBe("reuse",);
+  });
+
+  test("an unknown seed strategy is not forwarded", async () => {
+    startCalls.length = 0;
+    const res = await makeApp(db,).handle(
+      post(`/api/actors/${ACTOR}/emotion-avatars`, {
+        baseAvatarId: "av-1",
+        emotions: ["happy",],
+        seedStrategy: "whatever",
+      },),
+    );
+
+    expect(res.status,).toBe(201,);
+    expect(startCalls[0]?.seedStrategy,).toBeUndefined();
   });
 
   test("the wardrobe batch endpoint forwards the base seed", async () => {

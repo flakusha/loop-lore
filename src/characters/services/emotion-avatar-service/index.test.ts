@@ -22,6 +22,7 @@ import { createTestDb, } from "../../../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../../../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { createAvatar, } from "../avatar-service/crud";
+import { DEFAULT_EMOTIONS, } from "./emotions";
 import { EmotionAvatarService, } from "./index";
 
 let uploadDir = "";
@@ -86,6 +87,27 @@ describeOrSkip("EmotionAvatarService.startBatchGeneration", () => {
     await expect(
       service.startBatchGeneration({ actorId, baseAvatarId: "no-such-avatar", },),
     ).rejects.toThrow("not found",);
+  },);
+
+  it.skipIf(!ISOLATED,)("an empty emotion list falls back to the default set", async () => {
+    // An empty list means "no subset", not "generate nothing": a zero-slot
+    // batch would report completed without producing a single avatar.
+    const jobId = await service.startBatchGeneration({
+      actorId,
+      baseAvatarId: avatarId,
+      emotions: [],
+    },);
+
+    const job = service.getJobStatus(jobId,);
+    expect(job?.results.map((result,) => result.emotion),).toEqual(DEFAULT_EMOTIONS,);
+
+    let status: string | undefined;
+    for (let i = 0; i < 200 && status !== "completed" && status !== "failed"; i++) {
+      await Bun.sleep(20,);
+      status = service.getJobStatus(jobId,)?.status;
+    }
+
+    expect(status === "completed" || status === "failed",).toBe(true,);
   },);
 
   it.skipIf(!ISOLATED,)("resolves an explicit matting provider thread-through", async () => {

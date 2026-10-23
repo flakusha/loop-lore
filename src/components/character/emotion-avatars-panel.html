@@ -24,26 +24,12 @@
 
   <fieldset>
     <legend>Emotions</legend>
-    <label class="emotion-toggle">
-      <input type="checkbox" :checked="selectedEmotions.includes('happy')" @change="toggleEmotion('happy')" />
-      happy
-    </label>
-    <label class="emotion-toggle">
-      <input type="checkbox" :checked="selectedEmotions.includes('sad')" @change="toggleEmotion('sad')" />
-      sad
-    </label>
-    <label class="emotion-toggle">
-      <input type="checkbox" :checked="selectedEmotions.includes('angry')" @change="toggleEmotion('angry')" />
-      angry
-    </label>
-    <label class="emotion-toggle">
-      <input type="checkbox" :checked="selectedEmotions.includes('surprised')" @change="toggleEmotion('surprised')" />
-      surprised
-    </label>
-    <label class="emotion-toggle">
-      <input type="checkbox" :checked="selectedEmotions.includes('neutral')" @change="toggleEmotion('neutral')" />
-      neutral
-    </label>
+    <template x-for="emotion in emotionTypes" :key="emotion">
+      <label class="emotion-toggle">
+        <input type="checkbox" :checked="selectedEmotions.includes(emotion)" @change="toggleEmotion(emotion)" />
+        <span x-text="emotion"></span>
+      </label>
+    </template>
   </fieldset>
 
   <label>
@@ -56,15 +42,60 @@
     <input type="text" x-model="negativePrompt" />
   </label>
 
-  <button type="button" :disabled="busy || !_eaActorId || !baseAvatarId" @click="startGeneration()">
+  <label>
+    Base seed (optional)
+    <input type="number" x-model.number="seed" min="0" :disabled="reuseSeed" placeholder="random" />
+  </label>
+
+  <label class="emotion-toggle">
+    <input type="checkbox" x-model="reuseSeed" />
+    Reuse the seed recorded for this actor
+  </label>
+
+  <button
+    type="button"
+    :disabled="busy || !_eaActorId || !baseAvatarId || selectedEmotions.length === 0"
+    @click="startGeneration()"
+  >
     Start batch generation
+  </button>
+
+  <button type="button" :disabled="busy || !_eaActorId" @click="regenerate()">
+    Regenerate all
+  </button>
+
+  <button
+    type="button"
+    :disabled="busy || !_eaActorId || selectedEmotions.length === 0"
+    @click="regenerate(selectedEmotions)"
+  >
+    Regenerate selected
   </button>
 
   <p x-show="message" x-text="message" class="emotion-avatars-message"></p>
   <p x-show="error" x-text="error" class="emotion-avatars-error"></p>
 
+  <h3>Current emotion avatars</h3>
+  <button type="button" :disabled="busy" @click="loadVariants()">
+    Refresh variants
+  </button>
+  <ul class="emotion-avatars-variants">
+    <template x-for="variant in variants" :key="variant.id">
+      <li>
+        <img :src="'/api/v1/assets/' + variant.assetId + '/thumb'" :alt="variant.label" width="56" height="56" />
+        <span x-text="variant.emotion"></span>
+        <button type="button" :disabled="busy" @click="regenerate([variant.emotion])">
+          Re-roll
+        </button>
+      </li>
+    </template>
+  </ul>
+  <p x-show="variants.length === 0" class="emotion-avatars-hint">
+    No emotion avatars yet.
+  </p>
+
   <h3>Jobs</h3>
-  <button type="button" :disabled="jobsLoading" @click="listJobs()">Refresh</button>
+  <button type="button" :disabled="jobsLoading" @click="refresh()">Refresh</button>
   <p x-show="jobsLoading">Loading…</p>
   <p x-show="jobsError" x-text="jobsError" class="emotion-avatars-error"></p>
 

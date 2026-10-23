@@ -147,6 +147,19 @@ describe("views/character-edit-form", () => {
     expect(html,).toContain("emotion-avatars-message",);
   });
 
+  test("the emotion-avatar panel ships the re-roll controls", () => {
+    const html = buildEditFormHtml(BASE,);
+    // Seed options (explicit base seed + reuse-the-recorded-seed).
+    expect(html,).toContain('x-model.number="seed"',);
+    expect(html,).toContain('x-model="reuseSeed"',);
+    // Re-roll entry points: the whole batch, the selected subset, one slot.
+    expect(html,).toContain("regenerate()",);
+    expect(html,).toContain("regenerate(selectedEmotions)",);
+    expect(html,).toContain("regenerate([variant.emotion])",);
+    // The emotion picker is driven by the plugin's full emotion list.
+    expect(html,).toContain('x-for="emotion in emotionTypes"',);
+  });
+
   test("escapes characterId in panel data scope", () => {
     const html = buildEditFormHtml({ ...BASE, characterId: "evil'); alert(1); ('", },);
     expect(html,).toContain("x-data=\"{ actorId: 'evil&#39;); alert(1); (&#39;' }\"",);
