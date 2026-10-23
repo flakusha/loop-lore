@@ -4,6 +4,9 @@
 /**
  * Tests for the classification-task registry: completeness over the
  * `AuxTaskName` union, single-source role preference, and call overrides.
+ *
+ * Resource contract: fully in-memory and parallel-safe — no DB, no files,
+ * no ports, no mutated module state or global stubs.
  */
 import { describe, expect, test, } from "bun:test";
 import { LLM_PROMPT_DEFAULTS, } from "../prompts/registry";
