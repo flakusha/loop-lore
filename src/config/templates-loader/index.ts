@@ -10,12 +10,23 @@
 import { loadCharacterFiles, } from "../character-loader";
 import type {
   AssistantWorkflowConfig,
+  ClassTemplateConfig,
   EntityTypePreset,
   MergeStrategy,
   TemplatesConfig,
 } from "../sections/templates";
 import { TEMPLATES_DEFAULTS, } from "../sections/templates";
-import { findTemplateFiles, findWorkflowFiles, parseTemplateFile, } from "./discovery";
+import { mergeClassifiersConfig, } from "./classifiers-merge";
+import {
+  validateClassifiersConfig,
+  warnUnknownClassifierServes,
+} from "./classifiers-validation";
+import {
+  findClassifierFiles,
+  findTemplateFiles,
+  findWorkflowFiles,
+  parseTemplateFile,
+} from "./discovery";
 import {
   mergeAvatarConfig,
   mergeCharacterConfig,
@@ -139,6 +150,11 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
 
   validateEntityTypePresets(config.workflows,);
 
+  // Classifier template packs: multi-file classifiers/*.yaml, same layering.
+  for (const filePath of findClassifierFiles(directory,)) {
+    config.classifiers = loadClassifierFile(config.classifiers, filePath,);
+  }
+
   return config;
 }
 
@@ -189,7 +205,50 @@ function loadWorkflowFile(
   }
 }
 
+/**
+ * Parse, validate and merge one `classifiers/*.yaml` file into the classifier
+ * template-pack domain (bare `{ [id]: pack }` map or `{ classifiers: … }`).
+ * @param current - classifier domain config merged so far
+ * @param filePath - pack file to load
+ * @returns The merged classifier domain config
+ * @throws {Error} wrapping any parse, validate or merge failure with the offending file path
+ */
+function loadClassifierFile(
+  current: TemplatesConfig["classifiers"],
+  filePath: string,
+): TemplatesConfig["classifiers"] {
+  try {
+    const raw = parseTemplateFile(filePath,);
+    const strategy = (raw.merge as MergeStrategy) ?? "extend";
+    validateClassifiersConfig(raw,);
+    warnUnknownClassifierServes(raw,);
+    const table = {
+      ...(raw.classifiers !== undefined
+        ? raw.classifiers as Record<string, unknown>
+        : raw),
+    };
+
+    delete table.merge;
+    return mergeClassifiersConfig(
+      current,
+      { classifiers: table as Record<string, ClassTemplateConfig>, },
+      strategy,
+    );
+  } catch (error) {
+    throw new Error(
+      `Failed to load classifier template ${filePath}: ${(error as Error).message}`,
+      { cause: error, },
+    );
+  }
+}
+
+export { mergeClassifiersConfig, } from "./classifiers-merge.js";
 export {
+  validateClassifiersConfig,
+  warnUnknownClassifierServes,
+} from "./classifiers-validation.js";
+export {
+  findClassifierFiles,
   findTemplateFiles,
   findWorkflowFiles,
   TEMPLATE_FILES,

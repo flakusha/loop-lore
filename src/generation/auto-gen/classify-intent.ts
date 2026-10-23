@@ -3,10 +3,10 @@
 
 import type { Kysely, } from "kysely";
 import { callAux, } from "../../aux-pipeline";
+import { resolveClassifierPrompt, } from "../../aux-pipeline/class-template-resolver";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger";
-import { resolveSystemPrompt, } from "../../prompts";
 import { clampUnit, jsonParseOr, } from "../../utils";
 import { type AssistantTuningOverride, AUTO_GEN_SHORT_REPLY_MAX_TOKENS, } from "../assistant-tuning";
 
@@ -28,6 +28,7 @@ export interface IntentClassification {
  * @param config
  * @param db
  * @param userId
+ * @param chatId - Chat ID; enables classifier-pack tag selection (optional)
  * @returns {Promise<IntentClassification | null>}
  */
 export async function classifyIntent(
@@ -35,17 +36,26 @@ export async function classifyIntent(
   config: Config,
   db: Kysely<DB>,
   userId?: string,
+  chatId?: string,
 ): Promise<IntentClassification | null> {
   try {
+    // Pack template > systemPrompts.intent override > code default.
+    const { prompt, params, } = await resolveClassifierPrompt({
+      config,
+      db,
+      task: "intent",
+      chatId,
+    },);
+
     const messages = [
-      { role: "system" as const, content: resolveSystemPrompt(config.templates.llm, "intent",), },
+      { role: "system" as const, content: prompt, },
       { role: "user" as const, content: userMessage.slice(0, 500,), },
     ];
 
-    // Shared AUX policy via the task registry: 2s timeout, 0.0 temperature,
-    // 100 max tokens, BYO key.
+    // Shared AUX policy via the task registry; pack params win when selected.
     const response = await callAux("intent", config, db, messages, {
       userId,
+      ...params,
     },);
 
     if (!response) { return null; }

@@ -183,6 +183,65 @@ export const templates = {
       },
       required: ["merge", "templates",] as const,
     },
+    classifiers: {
+      type: "object",
+      description:
+        "Classifier template packs — user-supplied 0-shot classification templates loaded from configs/templates/classifiers/*.yaml",
+      properties: {
+        merge: mergeStrategy,
+        classifiers: {
+          type: "object",
+          description: "Classifier template packs keyed by id",
+          additionalProperties: {
+            type: "object",
+            properties: {
+              id: { type: "string", description: "Unique template id", },
+              name: { type: "string", description: "Human-readable label", },
+              description: { type: "string", },
+              serves: {
+                type: "array",
+                description: "Aux decision points this template can answer",
+                items: { type: "string", },
+              },
+              tags: {
+                type: "array",
+                description: "Context tags required on the selection query",
+                items: { type: "string", },
+              },
+              when: {
+                type: "object",
+                description: "Structured guards that must all hold",
+                properties: {
+                  chatMode: {
+                    type: "array",
+                    description: "Chat mode whitelist: direct | group | story | battle",
+                    items: { type: "string", enum: ["direct", "group", "story", "battle",], },
+                  },
+                },
+              },
+              priority: { type: "number", description: "Higher wins among matching templates", },
+              params: {
+                type: "object",
+                description: "Sampling overrides for the aux call",
+                properties: {
+                  timeoutMs: { type: "number", },
+                  temperature: { type: "number", },
+                  maxTokens: { type: "number", },
+                },
+              },
+              labels: {
+                type: "array",
+                description: "Expected output vocabulary",
+                items: { type: "string", },
+              },
+              template: { type: "string", description: "System prompt replacing the purpose default", },
+            },
+            required: ["id", "name", "serves", "tags", "template",] as const,
+          },
+        },
+      },
+      required: ["merge", "classifiers",] as const,
+    },
   },
   required: [
     "llm",
@@ -190,5 +249,6 @@ export const templates = {
     "avatar",
     "imageEdit",
     "character",
+    "classifiers",
   ] as const,
 };
