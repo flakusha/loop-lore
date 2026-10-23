@@ -11,7 +11,8 @@
 
 **Status:** Not Started
 **Priority:** P0 — Critical
-**Epic:** `epic-timeline-system.md`
+**Epic:** timeline-system
+**Related:** `TASK-timeline-in-chat-command.md` (in-chat /timeline command complementing this fixed-flow UI)
 **Type:** Feature
 
 ## What

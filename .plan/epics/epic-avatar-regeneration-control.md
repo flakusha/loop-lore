@@ -101,6 +101,8 @@ landed (verified 2026-10-09):
       flight), restart-durable job status, route authz (actor + wardrobe-item
       ownership)
 
+- `TASK-reroll-emotion-command.md` — /reroll-emotion in-chat command wrapping emotion-avatar regenerate (open, 2026-10-23 attachment batch)
+
 ## Non-Goals
 
 - Prompt editing UX for emotion descriptors (lives in emotion definitions CRUD,

@@ -4,6 +4,8 @@
 # TASK-agency-coordination-priority: Autonomy scheduler defers on pending player intent
 
 **Status:** Not Started
+**Status Note:** verified 2026-10-23 — NOT landed on dev: `git grep coordinationPriority|pendingIntent dev -- src` returns zero matches; the agency commits on dev (105fbc715/e7ac5bed1) are the agency_mode metrics work item, not the scheduler deferral.
+**Epic:** research-agency-quality
 **Priority:** P1 (within EPIC-RESEARCH-AGENCY-QUALITY)
 **Effort:** 1 day
 **Parent epic:** `epic-research-agency-quality.md`

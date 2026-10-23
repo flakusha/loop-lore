@@ -261,6 +261,8 @@ interface ScenarioSource {
 - [x] `/video`, `/sfx`, `/music` commands — registered (action dispatch, availability-gated on a configured provider)
 - [x] `/roll`, `/summarize`, `/impersonate`, `/narrate`, `/ooc`, `/help` — complete
 
+- `TASK-imgedit-in-chat-command.md` — /imgedit in-chat command reaching the image-edit template registry (open, 2026-10-23 attachment batch)
+
 ## Files
 
 - `src/assistant/commands/image.ts` — `/image` command (registered, action dispatch; backend adapter pending)
