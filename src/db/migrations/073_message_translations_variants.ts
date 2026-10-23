@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 071_message_translations_variants
+ * 073_message_translations_variants
  *
  * Bring `message_translations` to the chat-first variant form:
  * - encryption columns mirroring `messages` (key_id, content_encoding,
