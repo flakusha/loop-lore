@@ -7,7 +7,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups
 **Priority:** Medium
