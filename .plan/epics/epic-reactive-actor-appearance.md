@@ -355,10 +355,17 @@ direction.
       → `TASK-avatar-render-target-discriminator.md`
 - [ ] **Workflow-library img2img row has no parameters (prerequisite)** — the
       seeded row declares `parameters: []` while the body holds eight
-      placeholders, so the graph cannot be built
-      → `BUG-workflow-library-img2img-row-has-no-parameters.md`
+      placeholders, so the graph cannot be built; the duplicate filing
+      `BUG-workflow-library-img2img-row-has-no-parameters.md` is closed as a
+      duplicate of the canonical ticket, and the fix landed on dev on
+      2026-10-23 in `fix/image-edit-upload-inline-bytes` (`6a8e5a309`), so the
+      defect is fixed on dev - this item stays unchecked
+      → `BUG-workflow-library-img2img-row-has-unresolved-placeholders.md`
 - [ ] **Image-edit ComfyUI provider never uploads input_image (prerequisite)** —
-      the provider submits a LoadImage node for a file it never uploaded
+      the provider submits a LoadImage node for a file it never uploaded; the
+      ticket is closed (registry) and the fix landed on dev on 2026-10-23 in
+      `fix/image-edit-upload-inline-bytes` (`c408ffb9a`), so the defect is
+      fixed on dev - this item stays unchecked
       → `BUG-image-edit-comfyui-provider-never-uploads-input-image.md`
 
 ## Non-Goals
