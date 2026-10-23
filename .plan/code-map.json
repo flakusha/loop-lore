@@ -8778,6 +8778,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
     },
     {
@@ -21878,6 +21882,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waivers-for-3-modules-below-80-floor.md"
     },
     {
@@ -24128,6 +24140,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx.md"
     },
     {
@@ -24868,6 +24884,10 @@
     }
   ],
   "src/frontend/alpine/shortcuts-listener.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-hot-reload-with-real-module-cache-busting.md"
@@ -38475,6 +38495,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nodeinfo-well-known-discovery-endpoints.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
     }
   ],
   "src/routes/achievements.ts": [
@@ -46628,7 +46652,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-resolution-family-decision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
     }
   ],
   "src/rpg/achievements/index.ts": [
@@ -51591,6 +51623,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
     }
   ],
   "src/services/actor-items.test.ts": [
@@ -52287,6 +52323,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-patterns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
     }
   ],
   "src/story/book-compiler.ts": [
@@ -53490,6 +53530,10 @@
     }
   ],
   "src/transport": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-progress-events-over-transport.md"

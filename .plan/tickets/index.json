@@ -33723,7 +33723,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "coverage waiver for chat/service/ownership.ts (bun async-body tracking limit)",
     "type": "TASK"
@@ -33736,7 +33736,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "Coverage waiver: frontend/alpine/shortcuts.ts at 36% under check gate",
     "type": "TASK"
@@ -49355,7 +49355,7 @@
     "epic": "epic-replayability",
     "tags": [],
     "source": ".plan/tickets/TASK-raise-rpg-battle-social-skills-progression-and-replayability.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-RANDOM-ENCOUNTERS-EVENTS": {
     "epic": "(none — proposed epic never materialized)",

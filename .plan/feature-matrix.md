@@ -1688,7 +1688,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2696 | 1024 | 45 | 899 | 32 | 0 | 696 |
+| (untagged) | 2696 | 1027 | 45 | 898 | 32 | 0 | 694 |
 
 ## By epic × status
 
@@ -1696,7 +1696,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | : | 58 | 27 | 0 | 31 | 0 | 0 | 0 |
 | (if applicable) | 40 | 37 | 0 | 3 | 0 | 0 | 0 |
-| (none — hygiene/self-contained) | 103 | 1 | 2 | 41 | 0 | 0 | 59 |
+| (none — hygiene/self-contained) | 103 | 2 | 2 | 40 | 0 | 0 | 59 |
 | (none — proposed epic never materialized) | 81 | 49 | 0 | 14 | 6 | 0 | 12 |
 | (none) | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | `epic-memory-knowledge-systems.md` | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1841,7 +1841,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-file-splitting | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | epic-fractal-locations | 13 | 0 | 0 | 0 | 0 | 0 | 13 |
 | epic-frontend-admin | 22 | 7 | 0 | 6 | 0 | 0 | 9 |
-| epic-frontend-age-gate | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
+| epic-frontend-age-gate | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
 | epic-frontend-backend-integration | 29 | 11 | 1 | 16 | 0 | 0 | 1 |
 | epic-frontend-bundle-optimization | 8 | 1 | 0 | 7 | 0 | 0 | 0 |
 | epic-frontend-chat-commands | 7 | 3 | 0 | 2 | 0 | 0 | 2 |
@@ -1965,7 +1965,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-relation-graph-canvas | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
 | epic-relationships | 13 | 1 | 1 | 8 | 0 | 0 | 3 |
 | epic-release-010 | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
-| epic-replayability | 7 | 2 | 1 | 2 | 0 | 0 | 2 |
+| epic-replayability | 7 | 3 | 1 | 2 | 0 | 0 | 1 |
 | epic-research-agency-quality | 3 | 0 | 0 | 0 | 2 | 0 | 1 |
 | epic-resolution-system | 10 | 3 | 0 | 2 | 0 | 0 | 5 |
 | epic-resource-provision | 13 | 0 | 0 | 13 | 0 | 0 | 0 |
