@@ -40,6 +40,7 @@ export {
   canAccessAsset,
   getAsset,
   getAssetData,
+  getOwnedAsset,
   isAssetEncrypted,
   listAssets,
 } from "./read";
