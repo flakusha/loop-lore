@@ -40,6 +40,9 @@ Fix `bun run check` failures: ESLint errors (73), TypeScript error (1), stale di
 | TASK-fix-html-inline-scripts   | Extract inline <script> blocks to frontend TS    | Medium   | Not Started |
 | TASK-promote-size-check-to-ci  | Promote check-file-size.ts from warn to CI gate  | Medium   | Not Started |
 
+- `TASK-migration-sequential-finalize-and-renumber-policy.md` — sequential finalize + renumber policy for 071_/072_ collisions (open, 2026-10-23)
+- `TASK-document-dual-assistant-role-gates.md` — document the two role-gate sites in the command registry header (open, 2026-10-23)
+
 ## ESLint Error Breakdown (73 errors)
 
 ### By File (top offenders)

@@ -6,7 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** aux-enrichment-pipeline
+**Epic:** multilingual-carriage
 
 **Summary:**
 

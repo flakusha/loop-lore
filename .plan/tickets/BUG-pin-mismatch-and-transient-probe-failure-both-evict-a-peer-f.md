@@ -6,6 +6,8 @@
 **Status:** Not Started
 **Priority:** low
 **Effort:** Small
+**Epic:** federation-swarm-sync
+**Related:** `epic-runtime-memory-state-hygiene.md` (peer-table eviction policy class)
 **Tags:** federation
 
 **Summary:**
