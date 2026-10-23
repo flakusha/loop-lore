@@ -1304,7 +1304,7 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | rotation | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | routes | 21 | 10 | 3 | 4 | 0 | 0 | 4 |
 | routing | 7 | 0 | 1 | 1 | 1 | 0 | 4 |
-| rpg | 80 | 31 | 3 | 15 | 5 | 0 | 26 |
+| rpg | 80 | 33 | 3 | 15 | 5 | 0 | 24 |
 | rpg-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | rsi | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | rss | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
@@ -1393,7 +1393,7 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | single-source-of-truth | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | size-check | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | size-strict | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
-| skills | 15 | 1 | 0 | 3 | 3 | 0 | 8 |
+| skills | 15 | 3 | 0 | 3 | 3 | 0 | 6 |
 | slack | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | slash-command | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | slash-commands | 2 | 0 | 1 | 0 | 0 | 0 | 1 |
@@ -1672,7 +1672,7 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | world-items | 4 | 2 | 0 | 1 | 1 | 0 | 0 |
 | world-lore | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | world-modeling | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| world-opt-in | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
+| world-opt-in | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | world-scoping | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | world-shaping | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | world-state | 3 | 0 | 0 | 3 | 0 | 0 | 0 |
@@ -1680,14 +1680,14 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | worlds | 12 | 3 | 1 | 4 | 0 | 0 | 4 |
 | wrong-direction | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | xmpp | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| xp | 6 | 0 | 1 | 0 | 0 | 0 | 5 |
+| xp | 6 | 1 | 1 | 0 | 0 | 0 | 4 |
 | xss | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | yaml | 4 | 1 | 1 | 0 | 1 | 0 | 1 |
 | yaml-frontmatter | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2685 | 1013 | 44 | 903 | 32 | 0 | 693 |
+| (untagged) | 2685 | 1014 | 44 | 903 | 32 | 0 | 692 |
 
 ## By epic × status
 
@@ -1762,7 +1762,7 @@ Total tickets: **3928** — untagged: **2685** — unbound to epic: **988**
 | epic-character-npc-lore-access | 8 | 0 | 0 | 8 | 0 | 0 | 0 |
 | epic-character-spec | 7 | 1 | 1 | 4 | 0 | 0 | 1 |
 | epic-character-world-setup | 5 | 2 | 0 | 1 | 0 | 0 | 2 |
-| epic-character-xp-leveling | 11 | 5 | 0 | 0 | 0 | 0 | 6 |
+| epic-character-xp-leveling | 11 | 8 | 0 | 0 | 0 | 0 | 3 |
 | epic-chat-composer-flows | 10 | 9 | 0 | 0 | 0 | 0 | 1 |
 | epic-chat-context-optimization | 25 | 2 | 0 | 17 | 1 | 0 | 5 |
 | epic-chat-context-optimization, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
