@@ -8660,15 +8660,15 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-message-carriage-fill-path-detection.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-model-native-locale-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-carriage-fill-path-detection.md"
     },
     {
       "kind": "ticket",
@@ -31132,15 +31132,15 @@
   "src/generation/translator-role.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-multilingual-carriage.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-output-control-transforms.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-multilingual-carriage.md"
     },
     {
       "kind": "ticket",
