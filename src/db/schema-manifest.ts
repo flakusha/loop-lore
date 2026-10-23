@@ -876,6 +876,13 @@ export const SCHEMA = new SchemaManifest()
     provider: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text",),
+    key_id: col("text",),
+    content_encoding: col("text", { notNull: true, hasDefault: true, },),
+    e2e_payload: col("text",),
+    e2e_session_id: col("text",),
+    e2e_sender_eph_pub_jwk: col("text",),
+    e2e_chain_index: col("integer",),
+    content_plaintext: col("text",),
   },)
   .table("meta_progression", {
     player_id: col("text", { primaryKey: true, },),
