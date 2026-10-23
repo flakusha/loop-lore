@@ -559,6 +559,50 @@ describe("attemptSeduction", () => {
     expect(result.dc,).toBe(50,);
   });
 
+  // ponytail: pins the LevelService pipeline-success half (settle.ts 81-88).
+  // An rpg_xp opt-in world routes the mirror through awardXpToActor, which
+  // lands on the shared ledger with the same source/amount as the raw path.
+  test("opt-in world mirrors XP through the level pipeline", async () => {
+    const { actorId, targetId, } = await makePair();
+    await insertCharacterSeductionSkills(
+      db,
+      actorId,
+      "communication",
+      "Small Talk",
+      NOW,
+      NOW,
+      { level: 1, xp: 0, xp_to_next: 1000, },
+    );
+
+    const worldOwner = await insertUsers(db, `xp-${actorId}`, "XP Owner",);
+    const worldId = await insertWorlds(db, worldOwner, "XP World", {
+      rpg_enabled: 1,
+      rpg_xp: 1,
+    },);
+
+    await settleAttempt({
+      db,
+      log: getLogger(),
+      actorId,
+      targetId,
+      skillCategory: "communication",
+      worldId,
+      relevantSkill: await getSkill(db, actorId, "communication", "Small Talk",),
+      success: true,
+      arousalDelta: 0,
+      xpGained: 25,
+    },);
+
+    const ledger = await db.selectFrom("xp_ledger",)
+      .where("actor_id", "=", actorId,)
+      .where("source", "=", "nsfw_seduction",)
+      .selectAll()
+      .execute();
+
+    expect(ledger,).toHaveLength(1,);
+    expect(ledger[0]!.amount,).toBe(25,);
+  });
+
   test("opted-out world falls back to the raw ledger mirror", async () => {
     const { actorId, targetId, } = await makePair();
     await insertCharacterSeductionSkills(

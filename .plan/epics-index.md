@@ -15,9 +15,9 @@
 | Not Started | 2D Sprite World | High | Very High total (split across sub-epics below) | 0 | [epic-2d-sprite-world.md](/.plan/epics/epic-2d-sprite-world.md) |
 | Not Started | 3D Asset Generation (Future) | Low | Very High | 0 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | In Progress | Accessibility & Input Systems | P0 — Critical | High | 0 | [epic-accessibility-input.md](/.plan/epics/epic-accessibility-input.md) |
-| In Progress | Actor Autonomy & Story Auto-Drive | High | Large | 0 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
-| In Progress | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 0 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
-| In Progress | Actors & Entity System | High | High | 0 | [epic-actors.md](/.plan/epics/epic-actors.md) |
+| Done | Actor Autonomy & Story Auto-Drive | High | Large | 0 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
+| Done | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 0 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
+| Done | Actors & Entity System | High | High | 0 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | Done | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | Done | Age Gate & Content Warnings | Medium | Medium | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
 | Not Started | Anonymity & Decentralization — Epic | medium | Medium | 0 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
@@ -28,7 +28,7 @@
 | Not Started | API-First Foundation | Medium | Medium | 0 | [epic-api-first-foundation.md](/.plan/epics/epic-api-first-foundation.md) |
 | Not Started | API/Library Distribution Mode | High | High | 0 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
 | Not Started | Architecture Overview | High | Medium | 0 | [epic-architecture.md](/.plan/epics/epic-architecture.md) |
-| In Progress | Archival Workflow | Medium | Medium | 0 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
+| Done | Archival Workflow | Medium | Medium | 0 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
 | In Progress | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 0 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
 | In Progress | Asset Transform Editing + Metadata | Medium | Medium | 0 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
 | In Progress | Assistant Entity Access & Manipulation | High | High | 0 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
@@ -59,7 +59,7 @@
 | In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
 | In Progress | Character XP, Leveling & Stat Progression in World | High | High | 0 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
 | Done | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
-| In Progress | Chat Lifecycle, Transitions & Moderation | High | High | 0 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
+| Done | Chat Lifecycle, Transitions & Moderation | High | High | 0 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
 | Not Started | Chat Product Features | High | High | 0 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
 | Not Started | Chat Rich Engagement (draft for new worktree) | Medium — messenger/AI parity gap | Medium | 0 | [epic-chat-rich-engagement.md](/.plan/epics/epic-chat-rich-engagement.md) |
 | Done | Chat Variants Taxonomy | High | Medium | 0 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
@@ -91,9 +91,9 @@
 | Not Started | Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance | Low | High | 0 | [epic-derived-map-generation.md](/.plan/epics/epic-derived-map-generation.md) |
 | Not Started | Design: Memory Knowledge Isolation and World Timeline | Low | Large | 0 | [epic-memory-isolation-design.md](/.plan/epics/epic-memory-isolation-design.md) |
 | Not Started | Disease & Poison Systems | Medium | High | 0 | [epic-disease-poison.md](/.plan/epics/epic-disease-poison.md) |
-| In Progress | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 0 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
+| Done | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 0 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
 | In Progress | Documentation Reconciliation & UX | Medium | Medium | 0 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
-| In Progress | E2E & Integration Testing Reliability | High | Medium | 0 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
+| Done | E2E & Integration Testing Reliability | High | Medium | 0 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
 | Not Started | Economy & Trading Systems | Medium | Very High | 0 | [epic-economy-trading.md](/.plan/epics/epic-economy-trading.md) |
 | Not Started | Editorial Review Workflow (Threads, Suggestions, Beta Readers) | Medium | Large | 0 | [epic-editorial-workflow.md](/.plan/epics/epic-editorial-workflow.md) |
 | Not Started | Email Integration | Medium | Medium | 0 | [epic-email-integration.md](/.plan/epics/epic-email-integration.md) |
@@ -118,12 +118,12 @@
 | Not Started | EPIC-RESEARCH-MATH-ECONOMY — Action & resource economy | medium | Medium (turn budget table + Bennies table + dispatch enforcement) | 0 | [epic-math-economy.md](/.plan/epics/epic-math-economy.md) |
 | Not Started | EPIC-RESEARCH-MATH-LEDGER — Event-sourced projections | medium | Large (event table + projection rebuild + tests) | 0 | [epic-math-ledger.md](/.plan/epics/epic-math-ledger.md) |
 | Not Started | EPIC-RESEARCH-MATH-RESOLUTION — Math models behind roll resolution | medium | Large (multiple sub-tickets, see Sub-systems) | 0 | [epic-math-resolution.md](/.plan/epics/epic-math-resolution.md) |
-| In Progress | Epic: Achievements | Medium | Medium | 0 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
+| Done | Epic: Achievements | Medium | Medium | 0 | [epic-achievements.md](/.plan/epics/epic-achievements.md) |
 | In Progress | Epic: Ambient, Music & Sound Effects | Medium | High | 0 | [epic-ambient-music-sfx.md](/.plan/epics/epic-ambient-music-sfx.md) |
 | Not Started | Epic: Analytics & Observability | High | Medium | 0 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
 | Not Started | Epic: AO NSFW Game Mechanics | High | Very High | 0 | [epic-nsfw-game-mechanics.md](/.plan/epics/epic-nsfw-game-mechanics.md) |
 | Not Started | Epic: API OpenAPI Specification | High | Medium | 0 | [epic-api-openapi.md](/.plan/epics/epic-api-openapi.md) |
-| In Progress | Epic: API Rate Limiting | High | Medium | 0 | [epic-api-rate-limiting.md](/.plan/epics/epic-api-rate-limiting.md) |
+| Done | Epic: API Rate Limiting | High | Medium | 0 | [epic-api-rate-limiting.md](/.plan/epics/epic-api-rate-limiting.md) |
 | Not Started | Epic: API Task Offloading | High | Medium | 0 | [epic-api-task-offloading.md](/.plan/epics/epic-api-task-offloading.md) |
 | Not Started | Epic: API Telemetry | High | Medium | 0 | [epic-api-telemetry.md](/.plan/epics/epic-api-telemetry.md) |
 | Not Started | Epic: API Validation & Guardrails | High | High | 0 | [epic-api-validation-guardrails.md](/.plan/epics/epic-api-validation-guardrails.md) |
@@ -131,8 +131,8 @@
 | In Progress | Epic: Assistant Creative Studio — Workflow Templates | High (MVP scoped, post-Gate C) | Large | 0 | [epic-assistant-creative-studio-workflows.md](/.plan/epics/epic-assistant-creative-studio-workflows.md) |
 | Not Started | Epic: Chat Context Optimization | High | High | 0 | [epic-chat-context-optimization.md](/.plan/epics/epic-chat-context-optimization.md) |
 | Not Started | Epic: Chat Privacy | Medium | Medium | 0 | [epic-chat-privacy.md](/.plan/epics/epic-chat-privacy.md) |
-| In Progress | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
-| In Progress | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
+| Done | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
+| Done | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
 | In Progress | Epic: Configuration Extensions — Extensible Enumerations | Medium | Medium | 0 | [epic-config-extensions.md](/.plan/epics/epic-config-extensions.md) |
 | In Progress | Epic: Context Injection Correctness | medium | Medium | 0 | [epic-context-injection-correctness.md](/.plan/epics/epic-context-injection-correctness.md) |
 | In Progress | Epic: Context Injection Templates | medium | Medium | 0 | [epic-context-injection-templates.md](/.plan/epics/epic-context-injection-templates.md) |
@@ -146,7 +146,7 @@
 | Done | Epic: Effect v4 Adoption Evaluation | Medium | Medium | 0 | [epic-effect-v4-adoption-evaluation.md](/.plan/epics/epic-effect-v4-adoption-evaluation.md) |
 | Not Started | Epic: Embeddable Backend | Low | Medium | 0 | [epic-embeddable-backend.md](/.plan/epics/epic-embeddable-backend.md) |
 | In Progress | Epic: Entity Generation Workflows | High (MVP scoped, post-Gate C) | Medium | 0 | [epic-entity-generation-workflows.md](/.plan/epics/epic-entity-generation-workflows.md) |
-| In Progress | Epic: Federation, Swarm Sync & Decentralized Comms | medium | Medium | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
+| Done | Epic: Federation, Swarm Sync & Decentralized Comms | medium | Medium | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
 | Not Started | Epic: Gallery Batch Operations | High (MVP scoped, post-Gate C) | Medium | 0 | [epic-gallery-batch-operations.md](/.plan/epics/epic-gallery-batch-operations.md) |
 | Not Started | Epic: Game Engine SDKs (Unity / Godot) | Low | High | 0 | [epic-game-engine-sdks.md](/.plan/epics/epic-game-engine-sdks.md) |
 | Not Started | Epic: Game Frontend Scenes (2D/3D) | Low | Medium | 0 | [epic-game-frontend-scenes.md](/.plan/epics/epic-game-frontend-scenes.md) |
@@ -196,7 +196,7 @@
 | In Progress | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
 | In Progress | FE-BE Harmonization — Epic | High | Small (one check script + gate) | 0 | [epic-fe-be-harmonization.md](/.plan/epics/epic-fe-be-harmonization.md) |
 | Not Started | Federated Workload Offload & Instance Quotas | High | Very High | 0 | [epic-federation-offload-quotas.md](/.plan/epics/epic-federation-offload-quotas.md) |
-| In Progress | File Splitting & God-Module Refactor | High | Very High | 0 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
+| Done | File Splitting & God-Module Refactor | High | Very High | 0 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
 | Not Started | Flexible RPG Patterns | Medium | Medium | 0 | [epic-rpg-patterns.md](/.plan/epics/epic-rpg-patterns.md) |
 | Not Started | Fractal Locations — Recursive Containment + Mobile Transports | High | High | 0 | [epic-fractal-locations.md](/.plan/epics/epic-fractal-locations.md) |
 | Not Started | Framework SDKs | Medium | High | 0 | [epic-framework-sdks.md](/.plan/epics/epic-framework-sdks.md) |
@@ -390,7 +390,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Actor Autonomy & Story Auto-Drive
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Feature Epic
@@ -399,7 +399,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Actor Turn Skip ('Continue' Without Breaking the Story)
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Small–Medium
 - **Type:** Feature Epic
@@ -408,7 +408,7 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 
 ### Actors & Entity System
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** High
 - **Type:** Foundation Epic
@@ -511,7 +511,7 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 
 ### Archival Workflow
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -800,7 +800,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Chat Lifecycle, Transitions & Moderation
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1110,7 +1110,7 @@ Disease and poison mechanics — afflictions, symptoms, cures, resistance, and h
 
 ### Distributed Computing & Sharing (Contributor Compute Network)
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Very High
 - **Type:** Feature Epic
@@ -1128,7 +1128,7 @@ Disease and poison mechanics — afflictions, symptoms, cures, resistance, and h
 
 ### E2E & Integration Testing Reliability
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Infrastructure Epic
@@ -1361,7 +1361,7 @@ Multi-system epic combining:
 
 ### Epic: Achievements
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** Medium
 - **Effort:** Medium
 - **Type:** Feature Epic
@@ -1412,7 +1412,7 @@ Game mechanics for adult/NSFW content — intimacy systems, seduction, relations
 
 ### Epic: API Rate Limiting
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Medium
 - **Type:** Infrastructure Epic
@@ -1490,7 +1490,7 @@ Chat privacy specification — covers message encryption, access control, privac
 
 ### Epic: Config File Separation
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic
@@ -1501,7 +1501,7 @@ Split the monolithic `config.toml` / `config.yaml` into domain-specific config f
 
 ### Epic: Configurable Template System
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Large
 - **Type:** Feature Epic / Configuration
@@ -1633,7 +1633,7 @@ Containerize the loop-lore application and establish deployment strategies for b
 
 ### Epic: Federation, Swarm Sync & Decentralized Comms
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** medium
 - **Effort:** Medium
 - **Type:** epic
@@ -2139,7 +2139,7 @@ One automated gate that cross-checks every frontend API call against the backend
 
 ### File Splitting & God-Module Refactor
 
-- **Status:** In Progress
+- **Status:** Done
 - **Priority:** High
 - **Effort:** Very High
 - **Type:** Refactoring Epic
@@ -3617,3 +3617,4 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
+
