@@ -133,6 +133,38 @@ describe("message translations service", () => {
     expect(rows,).toHaveLength(0,);
   });
 
+  test("well-formed non-catalog locales are accepted and stored canonically", async () => {
+    // "EN-us" is malformed-CASE but well-FORMED: canonicalized to en-US and
+    // stored; the case-variant retarget is the SAME row (upsert idempotency).
+    const outcome = await translateMessageToLocale(fixture.db, makeConfig(), {
+      messageId,
+      chatId,
+      actorId: userId,
+      userId,
+      plaintext: "hello world",
+      locale: "EN-us",
+    },);
+
+    expect(outcome,).toMatchObject({ stored: true, translated: true, locale: "en-US", },);
+
+    const again = await translateMessageToLocale(fixture.db, makeConfig(), {
+      messageId,
+      chatId,
+      actorId: userId,
+      userId,
+      plaintext: "hello world",
+      locale: "en-US",
+    },);
+
+    expect(again,).toMatchObject({ stored: true, locale: "en-US", },);
+
+    const rows = await fixture.db.selectFrom("message_translations",).selectAll()
+      .where("message_id", "=", messageId,).execute();
+
+    expect(rows,).toHaveLength(1,);
+    expect(rows[0]?.locale,).toBe("en-US",);
+  });
+
   test("unregistered translator provider skips with a warn (no general-model substitution)", async () => {
     unregisterProvider(PROVIDER,);
     const config = makeConfig();

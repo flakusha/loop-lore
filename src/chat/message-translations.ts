@@ -25,7 +25,7 @@ import { ContentEncoding, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { normalizeBcp47Tag, } from "../i18n/bcp47";
 import { getLogger, } from "../logger";
-import { buildTranslateDeps, normalizeTargetLang, shouldSkipTranslation, } from "./auto-translate";
+import { buildTranslateDeps, shouldSkipTranslation, } from "./auto-translate";
 import {
   resolveDisplayLocale,
   resolveEffectiveNativeLocale,
@@ -72,12 +72,11 @@ export async function translateMessageToLocale(
   config: Config,
   opts: TranslateToLocaleOpts,
 ): Promise<TranslationOutcome> {
-  // Gate against the shared catalog AND canonicalize: BCP-47 normalization
-  // is idempotent for catalog codes today and keeps stored rows canonical
-  // once free-form tags open at the translation boundaries (upsert
-  // idempotency must survive `en-us` vs `en-US`).
-  const catalogLocale = normalizeTargetLang(opts.locale,);
-  const locale = catalogLocale === null ? null : normalizeBcp47Tag(catalogLocale,);
+  // Well-formedness gate (pragmatic BCP-47): unknown-but-well-formed
+  // locales are accepted at translation boundaries — models speak more than
+  // the 10 UI-registry languages. Canonicalization keeps stored rows
+  // canonical so upsert idempotency survives `en-us` vs `en-US`.
+  const locale = normalizeBcp47Tag(opts.locale,);
   if (!locale) {
     return { translated: false, stored: false, locale: null, reason: "unknown-locale", };
   }
