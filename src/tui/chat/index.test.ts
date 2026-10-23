@@ -156,6 +156,8 @@ const blessedDefaultExport: Record<string, unknown> = {
 // delegation is observable without network access.
 const handleSendMock = mock(() => Promise.resolve());
 const loadMessagesMock = mock(() => Promise.resolve());
+const generateImageMock = mock(() => Promise.resolve({ ok: true, assets: [], },));
+const uploadAssetMock = mock(() => Promise.resolve({ ok: true, assetId: "a1", },));
 
 // The completer reaches the registry through the same module; it only fires
 // on a `/` keystroke, so the stub keeps the widget off the network.
@@ -169,6 +171,8 @@ if (ISOLATED) {
     handleSend: handleSendMock,
     loadMessages: loadMessagesMock,
     loadCommands: loadCommandsMock,
+    generateImage: generateImageMock,
+    uploadAsset: uploadAssetMock,
   }),);
 }
 
@@ -375,7 +379,7 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
       const input = widgetOf(chat, "inputBox",);
       await type(chat, "/",);
       input.emit("submit", "/",);
-      expect(handleSendMock,).toHaveBeenCalledWith(chat, "/",);
+      expect(handleSendMock,).toHaveBeenCalledWith(chat, "/", undefined,);
       expect(input.getValue(),).toBe("",);
     });
 
@@ -387,7 +391,7 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
       // Strip must not be stranded on the loading hint after the failure.
       expect(strip(chat,),).not.toContain("loading",);
       input.emit("submit", "/help",);
-      expect(handleSendMock,).toHaveBeenCalledWith(chat, "/help",);
+      expect(handleSendMock,).toHaveBeenCalledWith(chat, "/help", undefined,);
     });
   });
 
@@ -410,7 +414,7 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
     expect(handleSendMock,).not.toHaveBeenCalled();
     chat.isSending = false;
     inputBox.emit("submit", "hi",);
-    expect(handleSendMock,).toHaveBeenCalledWith(chat, "hi",);
+    expect(handleSendMock,).toHaveBeenCalledWith(chat, "hi", undefined,);
   });
 
   // A send can block for minutes (TUI_DEFAULTS.sendTimeoutMs). Clearing the box
@@ -426,14 +430,14 @@ describeOrSkip("ChatWidget — sessionToken threading", () => {
 
     chat.isSending = false;
     inputBox.emit("submit", "typed while busy",);
-    expect(handleSendMock,).toHaveBeenCalledWith(chat, "typed while busy",);
+    expect(handleSendMock,).toHaveBeenCalledWith(chat, "typed while busy", undefined,);
     expect(inputBox.getValue(),).toBe("",);
   });
 
   it("trims and dispatches a normal submission", () => {
     const chat = buildWidget();
     widgetOf(chat, "inputBox",).emit("submit", "  hello world  ",);
-    expect(handleSendMock,).toHaveBeenCalledWith(chat, "hello world",);
+    expect(handleSendMock,).toHaveBeenCalledWith(chat, "hello world", undefined,);
   });
 
   it("moves focus input → list → input", () => {
