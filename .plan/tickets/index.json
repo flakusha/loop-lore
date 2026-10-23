@@ -11088,7 +11088,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-achievements.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "achievements",
       "trophies",
@@ -11107,7 +11107,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-actor-autonomy-story-drive.md",
-    "status": "done",
+    "status": "In Progress",
     "tags": [
       "autonomy",
       "npc",
@@ -11129,7 +11129,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-actor-turn-skip.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "turn-skip",
       "pass",
@@ -11149,7 +11149,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-actors.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "actors",
       "characters",
@@ -11373,7 +11373,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-api-rate-limiting.md",
-    "status": "done",
+    "status": "In Progress",
     "tags": [
       "rate-limiting",
       "sliding-window",
@@ -11506,7 +11506,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-archival-workflow.md",
-    "status": "done",
+    "status": "In Progress",
     "tags": [
       "archival",
       "soft-delete",
@@ -12245,7 +12245,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-chat-lifecycle-moderation.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "chat",
       "lifecycle",
@@ -12595,7 +12595,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-config-file-separation.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "config",
       "modularization",
@@ -12614,7 +12614,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-config-templates.md",
-    "status": "done",
+    "status": "In Progress",
     "tags": [
       "llm",
       "sd",
@@ -13159,7 +13159,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-distributed-compute-sharing.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "distributed",
       "computing",
@@ -13220,7 +13220,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-e2e-integration-testing.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "testing",
       "e2e",
@@ -13619,7 +13619,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/EPIC-federation-swarm-sync.md",
-    "status": "done",
+    "status": "In Progress",
     "tags": [
       "(none)"
     ],
@@ -13634,7 +13634,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-file-splitting.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "refactor",
       "file-split",
@@ -13718,7 +13718,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-admin.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "(none)"
     ],
@@ -13733,7 +13733,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-age-gate.md",
-    "status": "done",
+    "status": "In Progress",
     "tags": [
       "frontend",
       "security",
@@ -13750,7 +13750,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/EPIC-FRONTEND-BACKEND-INTEGRATION.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "frontend",
       "integration",
@@ -13886,7 +13886,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-gallery.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "gallery",
       "media",
@@ -13922,7 +13922,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-html-dedup-htmx-reuse.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "frontend",
       "htmx",
@@ -14033,7 +14033,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-frontend-settings.md",
-    "status": "done",
+    "status": "In Progress",
     "tags": [
       "(none)"
     ],
@@ -14270,7 +14270,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/EPIC-HOUSING.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "housing",
       "base-building",
@@ -14334,7 +14334,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-i18n.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "i18n",
       "localization",
@@ -14363,6 +14363,24 @@
     ],
     "title": "Instant Messaging Integrations",
     "type": "EPIC"
+  },
+  "EPIC-IMAGE-PROMPT-TEMPLATING": {
+    "hash": "pending",
+    "extid": "EPIC-IMAGE-PROMPT-TEMPLATING",
+    "type": "EPIC",
+    "title": "Image Prompt Templating & Variance",
+    "label": "epic",
+    "priority": "P2",
+    "epic": "",
+    "tags": [
+      "generation",
+      "image",
+      "templates",
+      "config",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/epic-image-prompt-templating.md",
+    "status": "Not Started"
   },
   "EPIC-IMMERSION-CONSISTENCY-GATE": {
     "epic": "",
@@ -14454,7 +14472,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-import-export-io.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "import",
       "export",
@@ -14872,7 +14890,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-lora-discovery-application.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "lora",
       "stable-diffusion",
@@ -15128,7 +15146,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/tickets/epic-mesh-federation-content-sharing.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "mesh",
       "federation",
@@ -15188,7 +15206,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-middleware-request-lifecycle.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "(none)"
     ],
@@ -15588,7 +15606,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-npc-navigation.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "npc",
       "navigation",
@@ -15741,7 +15759,7 @@
     "label": "epic",
     "priority": "P1-High",
     "source": ".plan/tickets/epic-openapi-reference.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "api",
       "openapi",
@@ -16503,7 +16521,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-replayability.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "replayability",
       "branching",
@@ -16982,7 +17000,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/tickets/epic-skills.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "skills",
       "abilities",
@@ -17510,7 +17528,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-wardrobe-avatar-variants.md",
-    "status": "done",
+    "status": "In Progress",
     "tags": [
       "avatar",
       "wardrobe",
@@ -17570,7 +17588,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/tickets/epic-world-chat-channels-invites.md",
-    "status": "Done",
+    "status": "In Progress",
     "tags": [
       "worlds",
       "chat",
@@ -20233,6 +20251,32 @@
     "title": "i18n & Accessibility Foundation",
     "type": "FEAT"
   },
+  "FEAT-IMAGE-PROMPT-TEMPLATE-PACKS": {
+    "hash": "aa923ff",
+    "git_issue": "aa923ff",
+    "extid": "FEAT-IMAGE-PROMPT-TEMPLATE-PACKS",
+    "type": "FEAT",
+    "title": "Image prompt template packs",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-image-prompt-templating",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-image-prompt-template-packs.md",
+    "status": "Not Started"
+  },
+  "FEAT-IMAGE-TEMPLATE-VARIABLES-WITH-VARIANCE-EXPANSION": {
+    "hash": "c53d618",
+    "git_issue": "c53d618",
+    "extid": "FEAT-IMAGE-TEMPLATE-VARIABLES-WITH-VARIANCE-EXPANSION",
+    "type": "FEAT",
+    "title": "Image template variables with variance expansion",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-image-prompt-templating",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-image-template-variables-with-variance-expansion.md",
+    "status": "Not Started"
+  },
   "FEAT-IMMERSIVE-SCENE-VIEW-FIRST-THIRD-PERSON-AMBIENT-AUDIO": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "FEAT-IMMERSIVE-SCENE-VIEW-FIRST-THIRD-PERSON-AMBIENT-AUDIO",
@@ -20398,6 +20442,19 @@
     "tags": [],
     "title": "Item System Extensions",
     "type": "FEAT"
+  },
+  "FEAT-KREA-2-MODEL-PROFILE-CORRECTIONS": {
+    "hash": "8985f25",
+    "git_issue": "8985f25",
+    "extid": "FEAT-KREA-2-MODEL-PROFILE-CORRECTIONS",
+    "type": "FEAT",
+    "title": "Krea 2 model profile corrections",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-image-prompt-templating",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-krea-2-model-profile-corrections.md",
+    "status": "Not Started"
   },
   "FEAT-LANGUAGE-SELECTION-THREE-LEVEL": {
     "hash": "d5524af",
@@ -21128,6 +21185,19 @@
     ],
     "title": "Prompt/Lorebook Marketplace (Community-shared)",
     "type": "FEAT"
+  },
+  "FEAT-PROMPT-TEMPLATE-SEARCH-AND-TAGS": {
+    "hash": "24c3896",
+    "git_issue": "24c3896",
+    "extid": "FEAT-PROMPT-TEMPLATE-SEARCH-AND-TAGS",
+    "type": "FEAT",
+    "title": "Prompt template search and tags",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-image-prompt-templating",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-prompt-template-search-and-tags.md",
+    "status": "Not Started"
   },
   "FEAT-PROVIDER-PLUGIN-ECOSYSTEM": {
     "epic": "epic-provider-plugin-ecosystem",
@@ -34771,6 +34841,19 @@
     "tags": [],
     "title": "Dead rejectBodyImpersonation guard never fires — Elysia TypeBox parser strips performedBy before beforeHandle",
     "type": "TASK"
+  },
+  "TASK-DECIDE-LLM-IMAGE-PROMPT-WRITER-FATE": {
+    "hash": "534cfab",
+    "git_issue": "534cfab",
+    "extid": "TASK-DECIDE-LLM-IMAGE-PROMPT-WRITER-FATE",
+    "type": "TASK",
+    "title": "Decide LLM image prompt writer fate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-image-prompt-templating",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-llm-image-prompt-writer-fate.md",
+    "status": "Not Started"
   },
   "TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS": {
     "epic": "epic-asset-platform-capabilities",
@@ -50898,6 +50981,19 @@
     "tags": [],
     "title": "resolve 10 oxlint warnings in src/chat/random-events.ts",
     "type": "TASK"
+  },
+  "TASK-RESOLVE-DORMANT-EMOTIONENTRY-PROMPT-FIELD": {
+    "hash": "c373374",
+    "git_issue": "c373374",
+    "extid": "TASK-RESOLVE-DORMANT-EMOTIONENTRY-PROMPT-FIELD",
+    "type": "TASK",
+    "title": "Resolve dormant EmotionEntry prompt field",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-image-prompt-templating",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resolve-dormant-emotionentry-prompt-field.md",
+    "status": "Not Started"
   },
   "TASK-RESOLVE-MESSAGE-CONTENT-UNIT-TEST-ALL-ENCODINGS": {
     "epic": "epic-review-dev-2026-08-26-security-data-integrity-merges",
