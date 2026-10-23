@@ -5,8 +5,12 @@
  * Native-locale override tests (FEAT-model-native-locale-config):
  * setModelOverride persists nativeLocale, clearModelOverride resets it,
  * and the upsert rescan path NEVER clobbers an admin-authored locale.
+ *
+ * Resource contract: one fresh in-memory DB per test (createTestDb in
+ * beforeEach), destroyed in afterEach; PROVIDER/MODEL are only row keys
+ * inside the per-test DB, not registry entries; no files, no ports.
  */
-import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
@@ -55,18 +59,15 @@ describe("model native locale override", () => {
   let fixture: TestDb;
   let db: Kysely<DB>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     fixture = await createTestDb();
     db = fixture.db;
-  },);
-
-  afterAll(async () => {
-    await destroyTestDb(fixture,);
-  },);
-
-  beforeEach(async () => {
     await db.deleteFrom("model_capabilities",).execute();
     await seedRow(db, null,);
+  },);
+
+  afterEach(async () => {
+    await destroyTestDb(fixture,);
   },);
 
   test("setModelOverride persists the locale; clearModelOverride resets it", async () => {
