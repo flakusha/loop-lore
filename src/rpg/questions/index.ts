@@ -6,6 +6,7 @@
  */
 
 export { type AppliedEffects, applyQuestionEffects, } from "./effects";
+export { applyLevelUpAnswer, } from "./level-up";
 export {
   answerQuestion,
   createQuestion,
