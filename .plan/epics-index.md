@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 333 epics
+**Total:** 334 epics
 
 ## Summary
 
@@ -64,6 +64,7 @@
 | Done | Chat Variants Taxonomy | High | Medium | 0 | [epic-chat-variants-taxonomy.md](/.plan/epics/epic-chat-variants-taxonomy.md) |
 | In Progress | Chat/Group Chat Transfer & Location Change Mechanics | P2-B | High | 0 | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md) |
 | Not Started | CI/CD Pipeline | Low | Medium | 0 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
+| Not Started | Classifier Template Packs | P2 | Medium | 0 | [epic-classifier-template-packs.md](/.plan/epics/epic-classifier-template-packs.md) |
 | Not Started | Client-Side Routing | Medium | Medium | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | In Progress | Code Quality & Best Practices (Permanently Ongoing) | High | Continuous | 0 | [epic-code-quality.md](/.plan/epics/epic-code-quality.md) |
 | Not Started | ComfyUI First-Class Citizen — Workflow Library, Chat Selection, Admin Setup | High | High | 0 | [epic-comfyui-first-class-citizen.md](/.plan/epics/epic-comfyui-first-class-citizen.md) |
@@ -659,6 +660,8 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### Benchmark CI & Performance Regression Detection
 
 - **Status:** In Progress
@@ -839,6 +842,16 @@ Loop Lore has accumulated a constellation of chat-shaped product surfaces (assis
 - **Type:** epic
 - **Tags:** ci, testing, automation, deployment
 - **File:** `.plan/epics/epic-cicd-pipeline.md`
+
+
+### Classifier Template Packs
+
+- **Status:** Not Started
+- **Priority:** P2
+- **Effort:** Medium
+- **Type:** Feature Epic / Configuration
+- **Tags:** aux-pipeline, classification, templates, config
+- **File:** `.plan/epics/epic-classifier-template-packs.md`
 
 ### Client-Side Routing
 
@@ -2753,6 +2766,8 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### NSFW Interaction UI
 
 - **Status:** Not Started
@@ -3219,6 +3234,8 @@ LLM sandboxing, edge case automated testing, static asset escape prevention, and
 
 ### Current State Assessment
 
+### Current State Assessment
+
 ### Social Hub — Epic
 
 - **Status:** Not Started
@@ -3527,4 +3544,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

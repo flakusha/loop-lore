@@ -23,6 +23,11 @@
 **Effort:** Medium
 **Epic:** epic-avatar-regeneration-control
 
+**Resolved:** 2026-10-23 registry-driven close: git issue ff8f765 (registry tip: 4da2f4695 Konstantin Fedotov Close issue)
+**Priority:** medium
+**Effort:** Medium
+**Epic:** epic-avatar-regeneration-control
+
 ## Summary
 
 Per-avatar re-roll on emotion grid + regenerate-all + progress (job store backed). Part of epic Emotion Avatar Regeneration Control.

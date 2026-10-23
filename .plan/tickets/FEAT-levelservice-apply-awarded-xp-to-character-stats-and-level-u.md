@@ -4,6 +4,7 @@
 # FEAT: LevelService: apply awarded XP to character_stats and level-up benefits
 
 **Status:** Done
+// hint: Structural and logic conflict. Both design and behavior differ.
 **Status Note:** shipped on dev — `awardXpToActor` at `src/rpg/level/service.ts:49` (level-up benefits via `src/rpg/level/award.ts:117-119`), 5 production callers; verified 2026-10-23
 **Priority:** high
 **Effort:** Medium

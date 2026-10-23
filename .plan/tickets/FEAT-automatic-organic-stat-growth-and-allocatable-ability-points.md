@@ -4,6 +4,7 @@
 # FEAT: Automatic organic stat growth and allocatable ability points on level-up
 
 **Status:** Done
+// hint: Structural and logic conflict. Both design and behavior differ.
 **Status Note:** shipped on dev — `applyOrganicGrowth` at `src/rpg/level/growth.ts:75`, `allocateAsi` at `src/rpg/level/asi.ts:66`; verified 2026-10-23
 **Priority:** high
 **Effort:** Large

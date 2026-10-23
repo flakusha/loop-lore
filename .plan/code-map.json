@@ -184,6 +184,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-native-locale-config.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-multimodal-input-image-voice-character-reacts.md"
     },
     {
@@ -3042,6 +3046,10 @@
   "src/assistant/commands/translate.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-output-control-transforms.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
@@ -5803,8 +5811,16 @@
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
     },
     {
       "kind": "ticket",
@@ -5898,6 +5914,10 @@
     }
   ],
   "src/aux-pipeline/task-detect.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-task-management-integration.md"
@@ -5995,6 +6015,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-transition-aux-llm-fallback.md"
+    }
+  ],
+  "src/aux-pipeline/template-registry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
     }
   ],
   "src/aux-pipeline/types.ts": [
@@ -8622,11 +8652,23 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-output-control-transforms.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-carriage-fill-path-detection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-native-locale-config.md"
     },
     {
       "kind": "ticket",
@@ -8977,6 +9019,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/chat-lifecycle-moderation.md"
+    }
+  ],
+  "src/chat/message-translations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
     }
   ],
   "src/chat/mode-switch.ts": [
@@ -9627,6 +9675,16 @@
     {
       "kind": "spec",
       "source": "docs/spec/graph-cluster-chat-history.md"
+    }
+  ],
+  "src/chat/service/carriage-authoring.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
     }
   ],
   "src/chat/service/carriage.test.ts": [
@@ -12671,6 +12729,10 @@
       "source": ".plan/epics/epic-effect-v4-adoption-evaluation.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-native-locale-config.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
     }
@@ -13361,6 +13423,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-scheduler-config-surface.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-native-locale-config.md"
     },
     {
       "kind": "spec",
@@ -14094,11 +14160,19 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-entity-generation-workflows.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-workflow-engine.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-classifier-template-packs-user-config.md"
     },
     {
       "kind": "ticket",
@@ -14142,6 +14216,10 @@
     }
   ],
   "src/config/templates-loader/merge.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
@@ -16260,6 +16338,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-output-control-transforms.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
@@ -17347,6 +17429,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-memory-visualizer-knowledge-graph-over-asset-links.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
     },
     {
       "kind": "ticket",
@@ -19184,6 +19270,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-output-control-transforms.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-publication-i18n.md"
     },
     {
@@ -19237,6 +19327,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
     },
     {
       "kind": "ticket",
@@ -21915,6 +22009,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
+    }
+  ],
+  "src/frontend/alpine/admin-models/capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-native-locale-config.md"
     }
   ],
   "src/frontend/alpine/admin-models/logic.ts": [
@@ -28064,6 +28164,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-context-memory-events.md"
     },
     {
@@ -30073,6 +30177,12 @@
       "source": ".plan/tickets/TASK-template-unified-variable-engine.md"
     }
   ],
+  "src/generation/prompt/sections/carriage.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-language-selection-three-level.md"
+    }
+  ],
   "src/generation/provider-router.ts": [
     {
       "kind": "epic",
@@ -30683,6 +30793,12 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
+  "src/generation/providers/user-api-key.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-native-locale-config.md"
+    }
+  ],
   "src/generation/quality-metrics.ts": [
     {
       "kind": "ticket",
@@ -31013,13 +31129,15 @@
       "source": ".plan/tickets/TASK-redos-config-transforms-build-regexp-from-untrusted-pattern.md"
     }
   ],
-  "src/generation/translate.ts": [
+  "src/generation/translator-role.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-output-control-transforms.md"
-    }
-  ],
-  "src/generation/translator-role.ts": [
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-multilingual-carriage.md"
@@ -31539,6 +31657,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-native-locale-config.md"
     },
     {
       "kind": "ticket",
@@ -34136,6 +34258,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-language-selection-three-level.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-010.md"
     },
     {
@@ -36395,10 +36521,24 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/prompt-improve/prompts.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    }
+  ],
   "src/prompt-improve/service.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
     },
     {
       "kind": "ticket",
@@ -36420,11 +36560,19 @@
   "src/prompts/purposes.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
     },
     {
       "kind": "ticket",
@@ -36462,6 +36610,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
     },
     {
@@ -36479,6 +36631,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
     },
     {
       "kind": "ticket",
@@ -38315,6 +38471,12 @@
       "source": ".plan/tickets/TASK-data-migration-transitivity.md"
     }
   ],
+  "src/routes/admin/model-capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-model-native-locale-config.md"
+    }
+  ],
   "src/routes/admin/model-roles.test.ts": [
     {
       "kind": "ticket",
@@ -40022,6 +40184,10 @@
     }
   ],
   "src/routes/chats/auto-translate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-language-selection-three-level.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-chat-auto-translate.md"
@@ -42508,6 +42674,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-frontend-wizard-ui.md"
     },
     {
@@ -42611,6 +42781,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
     },
     {
       "kind": "ticket",
@@ -54316,7 +54490,15 @@
   "src/validation/prompt-injection.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-classifier-template-packs.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-security-sandboxing-quickref.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-aux-classification-template-registry.md"
     },
     {
       "kind": "ticket",
