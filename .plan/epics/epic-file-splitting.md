@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** core size-strict debt closed; `src/server/start.ts` remains documented follow-on
 **Priority:** High
