@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { DB, } from "../../../db/schema";
-import type { EncounterOutcome, NsfwEncounter, } from "./types";
 import type { Kysely, } from "kysely";
-import type { getLogger, } from "../../../logger";
-import { IntimacyService, } from "../../intimacy/service";
 import { MoodService, } from "../../../characters/services/mood-service";
-import { XpSource, } from "../../xp/sources";
+import type { DB, } from "../../../db/schema";
+import type { getLogger, } from "../../../logger";
+import { jsonStringifyOr, } from "../../../utils";
+import { IntimacyService, } from "../../intimacy/service";
 import { awardXpToActor, } from "../../level/index.js";
 import { checkMechanicEnabled, RpgMechanic, } from "../../service/world-gate.js";
-import { jsonStringifyOr, } from "../../../utils";
 import { logXp, } from "../../service/xp";
+import { XpSource, } from "../../xp/sources";
+import type { EncounterOutcome, NsfwEncounter, } from "./types";
 
 /**
  * First participant that is not `self` (pair leg needs a target).
