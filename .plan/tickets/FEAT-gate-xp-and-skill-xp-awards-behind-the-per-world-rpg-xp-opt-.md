@@ -3,9 +3,11 @@
 
 # FEAT: Gate XP and skill XP awards behind the per-world rpg_xp opt-in
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** `RpgMechanic.Xp` (`src/rpg/service/world-gate.ts:71`) has zero production callers on dev — gate unenforced; work in branch `xp-reward-sources`; verified 2026-10-23
 **Priority:** high
 **Effort:** Medium
+**Caveats:** authorization — every award site (routes, legs, seduction/encounter awarders) grants regardless of `worlds.rpg_xp` until this lands
 **Epic:** character-xp-leveling
 **Tags:** rpg, xp, world-opt-in
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (the award API this guards), src/rpg/service/world-gate.ts (the gate being enforced), .plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md (per-mechanic opt-in config origin)

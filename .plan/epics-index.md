@@ -56,7 +56,7 @@
 | In Progress | Character Growth & Arc Progression | High | High | 0 | [epic-character-growth.md](/.plan/epics/epic-character-growth.md) |
 | In Progress | Character Internal Traits, Aspirations & Moral Disposition | High | Medium | 0 | [epic-character-internal-traits.md](/.plan/epics/epic-character-internal-traits.md) |
 | In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
-| Not Started | Character XP, Leveling & Stat Progression in World | High | High | 0 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
+| In Progress | Character XP, Leveling & Stat Progression in World | High | High | 0 | [epic-character-xp-leveling.md](/.plan/epics/epic-character-xp-leveling.md) |
 | Done | Chat Composer Flows (draft for new worktree) | High — messenger parity gap | Medium | 0 | [epic-chat-composer-flows.md](/.plan/epics/epic-chat-composer-flows.md) |
 | Done | Chat Lifecycle, Transitions & Moderation | High | High | 0 | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md) |
 | Not Started | Chat Product Features | High | High | 0 | [epic-chat-product-features.md](/.plan/epics/epic-chat-product-features.md) |
@@ -764,7 +764,7 @@ A blog subsystem supporting both **LLM-authored** and **human-authored** posts.
 
 ### Character XP, Leveling & Stat Progression in World
 
-- **Status:** Not Started
+- **Status:** In Progress
 - **Priority:** High
 - **Effort:** High
 - **Type:** Feature Epic

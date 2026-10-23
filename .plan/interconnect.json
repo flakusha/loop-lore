@@ -11152,9 +11152,11 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-automatic-organic-stat-growth-and-allocatable-ability-points.md",
       "title": "Automatic organic stat growth and allocatable ability points on level-up",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/schema-core.ts",
+        "src/rpg/level/asi.ts",
+        "src/rpg/level/growth.ts",
         "src/rpg/service/character-stats.ts",
         "src/rpg/xp/constants.ts"
       ],
@@ -11215,9 +11217,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-battle-rewards-grant-character-xp-on-enemy-defeat.md",
       "title": "Battle rewards: grant character XP on enemy defeat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/encounters/service/participant-legs.ts",
+        "src/rpg/service/battles/rewards.ts",
         "src/rpg/xp/sources.ts"
       ],
       "related": [
@@ -12010,7 +12013,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md",
       "title": "Gate XP and skill XP awards behind the per-world rpg_xp opt-in",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/commands/attack.ts",
         "src/db/migrations/001_init.ts",
@@ -12152,7 +12155,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-integrate-skill-progression-with-levelservice-as-one-guarded.md",
       "title": "Integrate skill progression with LevelService as one guarded award pipeline",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/db/schema-core.ts",
         "src/routes/rpg/stats-actor.ts",
@@ -12238,8 +12241,9 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a.md",
       "title": "Level-up decision interface for autonomous LLM actors with affinity auto-allocation",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
+        "src/rpg/level/decisions.ts",
         "src/rpg/skills/service/progression.ts"
       ],
       "related": [
@@ -12252,10 +12256,12 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md",
       "title": "LevelService: apply awarded XP to character_stats and level-up benefits",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/schema-core.ts",
         "src/routes/rpg/xp-loot.ts",
+        "src/rpg/level/award.ts",
+        "src/rpg/level/service.ts",
         "src/rpg/seduction/service.test.ts",
         "src/rpg/service/character-stats.ts",
         "src/rpg/service/xp.ts",
@@ -12711,7 +12717,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui.md",
       "title": "Per-world skills mechanic flag and world-creation opt-in UI",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/db/schema-story.ts",
         "src/frontend/pages/worlds.ts",
@@ -12769,9 +12775,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-progression-api-and-character-menu-surface-for-xp-level-and-.md",
       "title": "Progression API and character menu surface for XP, level, and stats in world",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/frontend/battle/panel.ts",
+        "src/routes/rpg/progression.ts",
         "src/rpg/stats/modifiers.ts"
       ],
       "related": [
@@ -13045,7 +13052,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-.md",
       "title": "Skill usage XP: award skill and character XP when skills are exercised",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/commands/interaction.ts",
         "src/db/migrations/001_init.ts",
@@ -13443,12 +13450,15 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel.md",
       "title": "XP sources for quests, skill challenges, discovery, and travel",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/loot/persist.ts",
         "src/rpg/world-discovery/discovery.ts",
+        "src/rpg/world-discovery/xp-leg.ts",
+        "src/rpg/world-travel/migration.ts",
         "src/rpg/world-travel/travel.ts",
-        "src/rpg/xp/sources.ts"
+        "src/rpg/xp/sources.ts",
+        "src/story/quest-engine/xp.ts"
       ],
       "related": [
         "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
@@ -45806,23 +45816,38 @@
       "kind": "epic",
       "path": ".plan/epics/epic-character-xp-leveling.md",
       "title": "Character XP, Leveling & Stat Progression in World",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/db/migrations/001_init.ts",
         "src/db/schema-core.ts",
+        "src/routes/rpg/progression.ts",
+        "src/routes/rpg/skills-progression.ts",
         "src/routes/rpg/xp-loot.ts",
         "src/rpg/achievements/service/reward-apply.ts",
         "src/rpg/encounters/service/participant-legs.ts",
+        "src/rpg/level/asi.ts",
+        "src/rpg/level/award.ts",
+        "src/rpg/level/decisions.ts",
+        "src/rpg/level/growth.ts",
+        "src/rpg/level/service.ts",
         "src/rpg/loot/persist.ts",
         "src/rpg/seduction/service.test.ts",
         "src/rpg/seduction/service/settle.ts",
+        "src/rpg/service/battles/actions.ts",
+        "src/rpg/service/battles/rewards.ts",
         "src/rpg/service/character-stats.ts",
+        "src/rpg/service/world-gate.ts",
         "src/rpg/service/xp.ts",
         "src/rpg/skills/service/progression.ts",
+        "src/rpg/world-discovery/xp-leg.ts",
+        "src/rpg/world-travel/migration.ts",
+        "src/rpg/xp.test.ts",
         "src/rpg/xp/calculation.ts",
         "src/rpg/xp/constants.ts",
         "src/rpg/xp/levelup.ts",
-        "src/rpg/xp/sources.ts"
+        "src/rpg/xp/sources.test.ts",
+        "src/rpg/xp/sources.ts",
+        "src/story/quest-engine/xp.ts"
       ],
       "related": []
     },
@@ -75627,6 +75652,13 @@
       ]
     },
     {
+      "path": "src/routes/rpg/progression.ts",
+      "owners": [
+        "FEAT-progression-api-and-character-menu-surface-for-xp-level-and-",
+        "epic-character-xp-leveling"
+      ]
+    },
+    {
       "path": "src/routes/rpg/replayability.ts",
       "owners": [
         "TASK-wire-replayability-routes",
@@ -75638,7 +75670,8 @@
       "owners": [
         "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
         "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-",
-        "TASK-rpg-skill-tree-visualization-frontend"
+        "TASK-rpg-skill-tree-visualization-frontend",
+        "epic-character-xp-leveling"
       ]
     },
     {
@@ -77873,9 +77906,39 @@
       ]
     },
     {
+      "path": "src/rpg/level/asi.ts",
+      "owners": [
+        "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+        "epic-character-xp-leveling"
+      ]
+    },
+    {
+      "path": "src/rpg/level/award.ts",
+      "owners": [
+        "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+        "epic-character-xp-leveling"
+      ]
+    },
+    {
+      "path": "src/rpg/level/decisions.ts",
+      "owners": [
+        "FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a",
+        "epic-character-xp-leveling"
+      ]
+    },
+    {
+      "path": "src/rpg/level/growth.ts",
+      "owners": [
+        "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+        "epic-character-xp-leveling"
+      ]
+    },
+    {
       "path": "src/rpg/level/service.ts",
       "owners": [
-        "BUG-service-layer-multi-query-mutations-run-without-transactions"
+        "BUG-service-layer-multi-query-mutations-run-without-transactions",
+        "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+        "epic-character-xp-leveling"
       ]
     },
     {
@@ -78714,6 +78777,12 @@
       ]
     },
     {
+      "path": "src/rpg/service/battles/actions.ts",
+      "owners": [
+        "epic-character-xp-leveling"
+      ]
+    },
+    {
       "path": "src/rpg/service/battles/items.ts",
       "owners": [
         "BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory",
@@ -78724,6 +78793,13 @@
       "path": "src/rpg/service/battles/persistence.ts",
       "owners": [
         "BUG-persistbattle-lost-update-race-read-modify-write-without-tra"
+      ]
+    },
+    {
+      "path": "src/rpg/service/battles/rewards.ts",
+      "owners": [
+        "FEAT-battle-rewards-grant-character-xp-on-enemy-defeat",
+        "epic-character-xp-leveling"
       ]
     },
     {
@@ -78788,6 +78864,7 @@
         "FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui",
         "TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat",
         "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
+        "epic-character-xp-leveling",
         "epic-mechanics-governance"
       ]
     },
@@ -79263,6 +79340,13 @@
       ]
     },
     {
+      "path": "src/rpg/world-discovery/xp-leg.ts",
+      "owners": [
+        "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
+        "epic-character-xp-leveling"
+      ]
+    },
+    {
       "path": "src/rpg/world-travel/budget.ts",
       "owners": [
         "BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e",
@@ -79274,6 +79358,8 @@
       "owners": [
         "BUG-inconsistent-db-handle-in-migration-ts-npc-states-write",
         "BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o",
+        "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
+        "epic-character-xp-leveling",
         "epic-exploration-discovery"
       ]
     },
@@ -79310,6 +79396,7 @@
       "path": "src/rpg/xp.test.ts",
       "owners": [
         "TASK-rpg-mechanics-xp-loot",
+        "epic-character-xp-leveling",
         "epic-rpg-mechanics"
       ]
     },
@@ -79343,6 +79430,12 @@
       "path": "src/rpg/xp/levelup.ts",
       "owners": [
         "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+        "epic-character-xp-leveling"
+      ]
+    },
+    {
+      "path": "src/rpg/xp/sources.test.ts",
+      "owners": [
         "epic-character-xp-leveling"
       ]
     },
@@ -80932,6 +81025,13 @@
       "owners": [
         "BUG-quest-engine-double-advances-from-stale-in-memory-progress-a",
         "TASK-055"
+      ]
+    },
+    {
+      "path": "src/story/quest-engine/xp.ts",
+      "owners": [
+        "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
+        "epic-character-xp-leveling"
       ]
     },
     {
@@ -83568,7 +83668,7 @@
       "from": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
       "kind": "consumes",
       "to": "epic-exploration-discovery",
-      "via": "src/rpg/world-discovery/discovery.ts; src/rpg/world-travel/travel.ts"
+      "via": "src/rpg/world-discovery/discovery.ts; src/rpg/world-travel/migration.ts; src/rpg/world-travel/travel.ts"
     },
     {
       "from": "IDEA-chat-setup-templates",
@@ -105526,6 +105626,16 @@
     {
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
       "kind": "produces",
+      "to": "src/rpg/level/asi.ts"
+    },
+    {
+      "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+      "kind": "produces",
+      "to": "src/rpg/level/growth.ts"
+    },
+    {
+      "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+      "kind": "produces",
       "to": "src/rpg/service/character-stats.ts"
     },
     {
@@ -105592,6 +105702,11 @@
       "from": "FEAT-battle-rewards-grant-character-xp-on-enemy-defeat",
       "kind": "produces",
       "to": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "FEAT-battle-rewards-grant-character-xp-on-enemy-defeat",
+      "kind": "produces",
+      "to": "src/rpg/service/battles/rewards.ts"
     },
     {
       "from": "FEAT-battle-rewards-grant-character-xp-on-enemy-defeat",
@@ -106396,6 +106511,11 @@
     {
       "from": "FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a",
       "kind": "produces",
+      "to": "src/rpg/level/decisions.ts"
+    },
+    {
+      "from": "FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a",
+      "kind": "produces",
       "to": "src/rpg/skills/service/progression.ts"
     },
     {
@@ -106407,6 +106527,16 @@
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
       "kind": "produces",
       "to": "src/routes/rpg/xp-loot.ts"
+    },
+    {
+      "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+      "kind": "produces",
+      "to": "src/rpg/level/award.ts"
+    },
+    {
+      "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+      "kind": "produces",
+      "to": "src/rpg/level/service.ts"
     },
     {
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
@@ -106852,6 +106982,11 @@
       "from": "FEAT-progression-api-and-character-menu-surface-for-xp-level-and-",
       "kind": "produces",
       "to": "src/frontend/battle/panel.ts"
+    },
+    {
+      "from": "FEAT-progression-api-and-character-menu-surface-for-xp-level-and-",
+      "kind": "produces",
+      "to": "src/routes/rpg/progression.ts"
     },
     {
       "from": "FEAT-progression-api-and-character-menu-surface-for-xp-level-and-",
@@ -107371,12 +107506,27 @@
     {
       "from": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
       "kind": "produces",
+      "to": "src/rpg/world-discovery/xp-leg.ts"
+    },
+    {
+      "from": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
+      "kind": "produces",
+      "to": "src/rpg/world-travel/migration.ts"
+    },
+    {
+      "from": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
+      "kind": "produces",
       "to": "src/rpg/world-travel/travel.ts"
     },
     {
       "from": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
       "kind": "produces",
       "to": "src/rpg/xp/sources.ts"
+    },
+    {
+      "from": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
+      "kind": "produces",
+      "to": "src/story/quest-engine/xp.ts"
     },
     {
       "from": "FIX-add-jitter-to-the-finalize-lock-retry-backoff",
@@ -141201,6 +141351,16 @@
     {
       "from": "epic-character-xp-leveling",
       "kind": "produces",
+      "to": "src/routes/rpg/progression.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/routes/rpg/skills-progression.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
       "to": "src/routes/rpg/xp-loot.ts"
     },
     {
@@ -141212,6 +141372,31 @@
       "from": "epic-character-xp-leveling",
       "kind": "produces",
       "to": "src/rpg/encounters/service/participant-legs.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/level/asi.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/level/award.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/level/decisions.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/level/growth.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/level/service.ts"
     },
     {
       "from": "epic-character-xp-leveling",
@@ -141231,7 +141416,22 @@
     {
       "from": "epic-character-xp-leveling",
       "kind": "produces",
+      "to": "src/rpg/service/battles/actions.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/service/battles/rewards.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
       "to": "src/rpg/service/character-stats.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/service/world-gate.ts"
     },
     {
       "from": "epic-character-xp-leveling",
@@ -141242,6 +141442,21 @@
       "from": "epic-character-xp-leveling",
       "kind": "produces",
       "to": "src/rpg/skills/service/progression.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/world-discovery/xp-leg.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/world-travel/migration.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/rpg/xp.test.ts"
     },
     {
       "from": "epic-character-xp-leveling",
@@ -141261,7 +141476,17 @@
     {
       "from": "epic-character-xp-leveling",
       "kind": "produces",
+      "to": "src/rpg/xp/sources.test.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
       "to": "src/rpg/xp/sources.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "produces",
+      "to": "src/story/quest-engine/xp.ts"
     },
     {
       "from": "epic-chat-composer-flows",
@@ -197372,6 +197597,18 @@
     {
       "from": "BUG-inconsistent-db-handle-in-migration-ts-npc-states-write",
       "kind": "sibling",
+      "to": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
+      "via": "src/rpg/world-travel/migration.ts"
+    },
+    {
+      "from": "BUG-inconsistent-db-handle-in-migration-ts-npc-states-write",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/rpg/world-travel/migration.ts"
+    },
+    {
+      "from": "BUG-inconsistent-db-handle-in-migration-ts-npc-states-write",
+      "kind": "sibling",
       "to": "epic-exploration-discovery",
       "via": "src/rpg/world-travel/migration.ts; src/rpg/world-travel/types.ts"
     },
@@ -204830,6 +205067,18 @@
     {
       "from": "BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o",
       "kind": "sibling",
+      "to": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
+      "via": "src/rpg/world-travel/migration.ts"
+    },
+    {
+      "from": "BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/rpg/world-travel/migration.ts"
+    },
+    {
+      "from": "BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o",
+      "kind": "sibling",
       "to": "epic-exploration-discovery",
       "via": "src/rpg/world-travel/migration.ts"
     },
@@ -212084,6 +212333,12 @@
     {
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
       "kind": "sibling",
+      "to": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+      "via": "src/rpg/level/service.ts"
+    },
+    {
+      "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
+      "kind": "sibling",
       "to": "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-",
       "via": "src/rpg/loot/persist.ts"
     },
@@ -212271,7 +212526,7 @@
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/rpg/loot/persist.ts"
+      "via": "src/rpg/level/service.ts; src/rpg/loot/persist.ts"
     },
     {
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
@@ -226425,7 +226680,7 @@
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/db/schema-core.ts; src/rpg/service/character-stats.ts; src/rpg/xp/constants.ts"
+      "via": "src/db/schema-core.ts; src/rpg/level/asi.ts; src/rpg/level/growth.ts; src/rpg/service/character-stats.ts; src/rpg/xp/constants.ts"
     },
     {
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
@@ -227247,7 +227502,7 @@
       "from": "FEAT-battle-rewards-grant-character-xp-on-enemy-defeat",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/rpg/encounters/service/participant-legs.ts; src/rpg/xp/sources.ts"
+      "via": "src/rpg/encounters/service/participant-legs.ts; src/rpg/service/battles/rewards.ts; src/rpg/xp/sources.ts"
     },
     {
       "from": "FEAT-blog-system",
@@ -231255,7 +231510,7 @@
       "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/db/migrations/001_init.ts; src/routes/rpg/xp-loot.ts; src/rpg/encounters/service/participant-legs.ts; src/rpg/seduction/service/settle.ts"
+      "via": "src/db/migrations/001_init.ts; src/routes/rpg/skills-progression.ts; src/routes/rpg/xp-loot.ts; src/rpg/encounters/service/participant-legs.ts; src/rpg/seduction/service/settle.ts; src/rpg/service/world-gate.ts"
     },
     {
       "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
@@ -231789,7 +232044,7 @@
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/db/schema-core.ts; src/rpg/service/character-stats.ts; src/rpg/service/xp.ts; src/rpg/skills/service/progression.ts; src/rpg/xp/constants.ts"
+      "via": "src/db/schema-core.ts; src/rpg/service/character-stats.ts; src/rpg/service/world-gate.ts; src/rpg/service/xp.ts; src/rpg/skills/service/progression.ts; src/rpg/xp/constants.ts"
     },
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
@@ -231963,7 +232218,7 @@
       "from": "FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/rpg/skills/service/progression.ts"
+      "via": "src/rpg/level/decisions.ts; src/rpg/skills/service/progression.ts"
     },
     {
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
@@ -232209,7 +232464,7 @@
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/db/schema-core.ts; src/routes/rpg/xp-loot.ts; src/rpg/seduction/service.test.ts; src/rpg/service/character-stats.ts; src/rpg/service/xp.ts; src/rpg/xp/calculation.ts; src/rpg/xp/constants.ts; src/rpg/xp/levelup.ts"
+      "via": "src/db/schema-core.ts; src/routes/rpg/xp-loot.ts; src/rpg/level/award.ts; src/rpg/level/service.ts; src/rpg/seduction/service.test.ts; src/rpg/service/character-stats.ts; src/rpg/service/xp.ts; src/rpg/xp/calculation.ts; src/rpg/xp/constants.ts; src/rpg/xp/levelup.ts"
     },
     {
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
@@ -234885,7 +235140,7 @@
       "from": "FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/rpg/skills/service/progression.ts"
+      "via": "src/rpg/service/world-gate.ts; src/rpg/skills/service/progression.ts"
     },
     {
       "from": "FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui",
@@ -234970,6 +235225,12 @@
       "kind": "sibling",
       "to": "epic-battle-ui",
       "via": "src/frontend/battle/panel.ts"
+    },
+    {
+      "from": "FEAT-progression-api-and-character-menu-surface-for-xp-level-and-",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/routes/rpg/progression.ts"
     },
     {
       "from": "FEAT-prompt-lorebook-marketplace-community-shared",
@@ -235839,7 +236100,7 @@
       "from": "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/db/migrations/001_init.ts; src/rpg/encounters/service/participant-legs.ts; src/rpg/loot/persist.ts; src/rpg/seduction/service/settle.ts; src/rpg/skills/service/progression.ts"
+      "via": "src/db/migrations/001_init.ts; src/routes/rpg/skills-progression.ts; src/rpg/encounters/service/participant-legs.ts; src/rpg/loot/persist.ts; src/rpg/seduction/service/settle.ts; src/rpg/skills/service/progression.ts"
     },
     {
       "from": "FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-",
@@ -236751,7 +237012,7 @@
       "from": "FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel",
       "kind": "sibling",
       "to": "epic-character-xp-leveling",
-      "via": "src/rpg/loot/persist.ts; src/rpg/xp/sources.ts"
+      "via": "src/rpg/loot/persist.ts; src/rpg/world-discovery/xp-leg.ts; src/rpg/world-travel/migration.ts; src/rpg/xp/sources.ts; src/story/quest-engine/xp.ts"
     },
     {
       "from": "FIX-add-jitter-to-the-finalize-lock-retry-backoff",
@@ -305108,6 +305369,12 @@
     {
       "from": "TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat",
       "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/rpg/service/world-gate.ts"
+    },
+    {
+      "from": "TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat",
+      "kind": "sibling",
       "to": "epic-mechanics-governance",
       "via": "src/rpg/service/world-gate.ts"
     },
@@ -329252,6 +329519,12 @@
     {
       "from": "TASK-rpg-mechanics-xp-loot",
       "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/rpg/xp.test.ts"
+    },
+    {
+      "from": "TASK-rpg-mechanics-xp-loot",
+      "kind": "sibling",
       "to": "epic-rpg-core-wiring",
       "via": "src/db/schema-rpg.ts"
     },
@@ -329366,6 +329639,12 @@
     {
       "from": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
       "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/rpg/service/world-gate.ts"
+    },
+    {
+      "from": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
+      "kind": "sibling",
       "to": "epic-fractal-locations",
       "via": "src/db/migrations.test.ts"
     },
@@ -329470,6 +329749,12 @@
       "kind": "sibling",
       "to": "TASK-skill-constructor-on-character-edit",
       "via": "src/routes/rpg/skills.test.ts"
+    },
+    {
+      "from": "TASK-rpg-skill-tree-visualization-frontend",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/routes/rpg/skills-progression.ts"
     },
     {
       "from": "TASK-rpg-stats-frontend-wiring",
@@ -341649,7 +341934,7 @@
       "from": "epic-character-xp-leveling",
       "kind": "sibling",
       "to": "epic-exploration-discovery",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/schema-core.ts; src/rpg/world-travel/migration.ts"
     },
     {
       "from": "epic-character-xp-leveling",
@@ -341692,6 +341977,12 @@
       "kind": "sibling",
       "to": "epic-logging",
       "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
+    },
+    {
+      "from": "epic-character-xp-leveling",
+      "kind": "sibling",
+      "to": "epic-mechanics-governance",
+      "via": "src/rpg/service/world-gate.ts"
     },
     {
       "from": "epic-character-xp-leveling",
@@ -341745,7 +342036,7 @@
       "from": "epic-character-xp-leveling",
       "kind": "sibling",
       "to": "epic-rpg-mechanics",
-      "via": "src/routes/rpg/xp-loot.ts"
+      "via": "src/routes/rpg/xp-loot.ts; src/rpg/xp.test.ts"
     },
     {
       "from": "epic-character-xp-leveling",

@@ -3,9 +3,11 @@
 
 # FEAT: Skill usage XP: award skill and character XP when skills are exercised
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** no `addXp`/`SkillsService` caller in `src/rpg/interaction/` on dev; work in branch `xp-reward-sources`; verified 2026-10-23
 **Priority:** medium
 **Effort:** Medium
+**Caveats:** partial failure — skill-row and character XP stay disjoint until the fan-in ticket lands, so exercising a skill currently grants neither
 **Epic:** character-xp-leveling
 **Tags:** rpg, xp, skills
 **Related:** .plan/tickets/FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u.md (character-XP grants persist through this service), .plan/tickets/BUG-addxp-accepts-negative-xp-producing-nan-level-stored-in-db.md (prerequisite — validate XP input before wiring new awarders)

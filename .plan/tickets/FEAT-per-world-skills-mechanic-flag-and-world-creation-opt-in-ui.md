@@ -3,9 +3,11 @@
 
 # FEAT: Per-world skills mechanic flag and world-creation opt-in UI
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** no `rpg_skills` in `schema-story.ts`/`world-gate.ts`/`world-rpg-flags.ts` on dev; flag + world-creation/edit UI exist only in branch `xp-progression-surface` (unlanded); verified 2026-10-23
 **Priority:** medium
 **Effort:** Medium
+**Caveats:** stale state — worlds created on dev have no skills opt-in column, so the branch migration must backfill existing rows on landing
 **Epic:** character-xp-leveling
 **Tags:** rpg, skills, world-opt-in
 **Related:** .plan/tickets/FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-.md (the enforcement this flag configures), .plan/tickets/TASK-rpg-world-ruleset-templates-applied-at-creation.md (world-creation-time config precedent)

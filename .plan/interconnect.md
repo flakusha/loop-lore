@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3576
 - epics: 336
-- src paths owned: 4300
-- edges: produces 11071, consumes 398, sibling 31911, owns 1950, related 1166
+- src paths owned: 4310
+- edges: produces 11096, consumes 398, sibling 31922, owns 1950, related 1166
 
 ## Shared src hubs
 
@@ -1466,8 +1466,9 @@ output is byte-identical for identical inputs.
 | `src/routes/rpg/handler.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` |
 | `src/routes/rpg/index.ts` | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an`, `TASK-professions-service-routes`, `TASK-skills-routes`, `epic-achievements`, `epic-crafting-professions`, `epic-skills` |
 | `src/routes/rpg/npc-navigation.ts` | `BUG-npc-navigation-routes-all-stubbed`, `BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-`, `TASK-wire-npc-navigation-routes`, `epic-rpg-wiring-phase3` |
+| `src/routes/rpg/progression.ts` | `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-`, `epic-character-xp-leveling` |
 | `src/routes/rpg/replayability.ts` | `TASK-wire-replayability-routes`, `epic-rpg-wiring-phase3` |
-| `src/routes/rpg/skills-progression.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-`, `TASK-rpg-skill-tree-visualization-frontend` |
+| `src/routes/rpg/skills-progression.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-`, `TASK-rpg-skill-tree-visualization-frontend`, `epic-character-xp-leveling` |
 | `src/routes/rpg/skills.test.ts` | `TASK-rpg-skill-tree-visualization-frontend`, `TASK-skill-constructor-on-character-edit` |
 | `src/routes/rpg/skills.ts` | `TASK-skill-constructor-on-character-edit`, `TASK-skills-routes`, `TASK-wire-skills-routes`, `epic-rpg-wiring-phase3` |
 | `src/routes/rpg/stats-actor.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `TASK-rpg-gate-chat-commands-behind-world-opt-in` |
@@ -1595,6 +1596,11 @@ output is byte-identical for identical inputs.
 | `src/rpg/intimacy/service/actions.ts` | `TASK-033`, `TASK-rpg-nsfw-services-add-config-level-opt-in-gate`, `TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr` |
 | `src/rpg/intimacy/service/persist.ts` | `TASK-033`, `TASK-041`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` |
 | `src/rpg/items.ts` | `TASK-item-spec-parameters`, `epic-items-economy-crafting` |
+| `src/rpg/level/asi.ts` | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points`, `epic-character-xp-leveling` |
+| `src/rpg/level/award.ts` | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `epic-character-xp-leveling` |
+| `src/rpg/level/decisions.ts` | `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a`, `epic-character-xp-leveling` |
+| `src/rpg/level/growth.ts` | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points`, `epic-character-xp-leveling` |
+| `src/rpg/level/service.ts` | `BUG-service-layer-multi-query-mutations-run-without-transactions`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `epic-character-xp-leveling` |
 | `src/rpg/loot.test.ts` | `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `TASK-rpg-mechanics-xp-loot`, `epic-rpg-mechanics` |
 | `src/rpg/loot.ts` | `TASK-rpg-mechanics`, `TASK-rpg-mechanics-xp-loot`, `epic-rpg-mechanics` |
 | `src/rpg/loot/generation.ts` | `BUG-rpg-loot-luckmodifier-inverts-drop-quality-positive-luck-pro`, `TASK-persist-loot-drops`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` |
@@ -1632,11 +1638,12 @@ output is byte-identical for identical inputs.
 | `src/rpg/seduction/service/settle.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-`, `TASK-034`, `TASK-041`, `epic-character-xp-leveling` |
 | `src/rpg/seduction/service/skills.ts` | `BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo`, `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-`, `TASK-034`, `TASK-040`, `TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr` |
 | `src/rpg/service/battles/items.ts` | `BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory`, `BUG-usebattleitem-consumes-inventory-and-persists-battle-outside` |
+| `src/rpg/service/battles/rewards.ts` | `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat`, `epic-character-xp-leveling` |
 | `src/rpg/service/battles/social.ts` | `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `TASK-raise-rpg-battle-social-skills-progression-and-replayability` |
 | `src/rpg/service/character-stats.ts` | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `TASK-rpg-skill-combos-and-synergies`, `TASK-rpg-skill-points-on-level-up`, `TASK-weather-conditions-vitals-bridge`, `epic-character-core-system`, `epic-character-world-integration`, `epic-character-xp-leveling` |
 | `src/rpg/service/loot-tables.ts` | `BUG-rpg-loot-rollloottable-sets-used-flag-but-never-enforces-one`, `TASK-wire-xp-loot-routes`, `epic-rpg-core-wiring` |
 | `src/rpg/service/world-gate.test.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` |
-| `src/rpg/service/world-gate.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui`, `TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s`, `epic-mechanics-governance` |
+| `src/rpg/service/world-gate.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui`, `TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s`, `epic-character-xp-leveling`, `epic-mechanics-governance` |
 | `src/rpg/service/xp.ts` | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `TASK-wire-xp-loot-routes`, `epic-character-xp-leveling`, `epic-rpg-core-wiring` |
 | `src/rpg/skills` | `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
 | `src/rpg/skills/index.ts` | `FEAT-skills`, `TASK-add-missing-rpg-module-barrels` |
@@ -1656,12 +1663,13 @@ output is byte-identical for identical inputs.
 | `src/rpg/world-discovery/discovery.ts` | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel`, `epic-exploration-discovery` |
 | `src/rpg/world-discovery/events.ts` | `TASK-emit-exploration-encounter-triggered-from-the-discovery-even`, `epic-exploration-discovery` |
 | `src/rpg/world-discovery/trade.ts` | `BUG-edgeahead-does-not-validate-location-existence`, `epic-exploration-discovery` |
+| `src/rpg/world-discovery/xp-leg.ts` | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel`, `epic-character-xp-leveling` |
 | `src/rpg/world-travel/budget.ts` | `BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e`, `epic-exploration-discovery` |
-| `src/rpg/world-travel/migration.ts` | `BUG-inconsistent-db-handle-in-migration-ts-npc-states-write`, `BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o`, `epic-exploration-discovery` |
+| `src/rpg/world-travel/migration.ts` | `BUG-inconsistent-db-handle-in-migration-ts-npc-states-write`, `BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o`, `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel`, `epic-character-xp-leveling`, `epic-exploration-discovery` |
 | `src/rpg/world-travel/travel.test.ts` | `BUG-dead-code-guard-in-advancepartytravel`, `BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o` |
 | `src/rpg/world-travel/travel.ts` | `BUG-dead-code-guard-in-advancepartytravel`, `BUG-locations-query-loads-all-worlds-not-just-current-one`, `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel`, `epic-exploration-discovery` |
 | `src/rpg/world-travel/types.ts` | `BUG-inconsistent-db-handle-in-migration-ts-npc-states-write`, `epic-exploration-discovery` |
-| `src/rpg/xp.test.ts` | `TASK-rpg-mechanics-xp-loot`, `epic-rpg-mechanics` |
+| `src/rpg/xp.test.ts` | `TASK-rpg-mechanics-xp-loot`, `epic-character-xp-leveling`, `epic-rpg-mechanics` |
 | `src/rpg/xp.ts` | `TASK-040`, `TASK-rpg-mechanics`, `TASK-rpg-mechanics-xp-loot`, `epic-rpg-mechanics`, `epic-rpg-progression` |
 | `src/rpg/xp/calculation.ts` | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `epic-character-xp-leveling` |
 | `src/rpg/xp/constants.ts` | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points`, `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded`, `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u`, `epic-character-xp-leveling` |
@@ -1751,6 +1759,7 @@ output is byte-identical for identical inputs.
 | `src/story/quality/registry.ts` | `TASK-comparison-metric-collection-and-charts`, `epic-technical-comparison-charts` |
 | `src/story/quest-engine` | `TASK-consolidate-quest-engines`, `epic-quests-encounters` |
 | `src/story/quest-engine/progress.ts` | `BUG-quest-engine-double-advances-from-stale-in-memory-progress-a`, `TASK-055` |
+| `src/story/quest-engine/xp.ts` | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel`, `epic-character-xp-leveling` |
 | `src/story/quest-types.ts` | `TASK-harmonize-quest-type-taxonomy`, `epic-quests-encounters` |
 | `src/story/quests/registry.ts` | `TASK-harmonize-quest-type-taxonomy`, `epic-quests-encounters` |
 | `src/story/shared/story-utils.ts` | `TASK-cleanup-banned-types-console-logging-magic-strings`, `TASK-quest-status-transitions-bypass-state-machine` |
@@ -1970,7 +1979,7 @@ output is byte-identical for identical inputs.
 | `FEAT-seed-default-characters-identity` | consumes | `epic-character-core-system` | `src/characters/seed.ts; src/config/sections/characters.ts` |
 | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | consumes | `BUG-addxp-accepts-negative-xp-producing-nan-level-stored-in-db` | `src/rpg/skills/service/progression.ts` |
 | `FEAT-world-template-chat-lifecycle` | consumes | `FEAT-chat-template-config-lifecycle` | `src/chat/service/crud/create.ts; src/routes/chats/templates.ts; src/views/new-chat.html` |
-| `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | consumes | `epic-exploration-discovery` | `src/rpg/world-discovery/discovery.ts; src/rpg/world-travel/travel.ts` |
+| `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | consumes | `epic-exploration-discovery` | `src/rpg/world-discovery/discovery.ts; src/rpg/world-travel/migration.ts; src/rpg/world-travel/travel.ts` |
 | `IDEA-chat-setup-templates` | consumes | `BUG-chat-settings-modal-invalid-mode` | `src/validation/schemas.ts` |
 | `IDEA-chat-setup-templates` | consumes | `epic-chat-lifecycle-moderation` | `src/validation/schemas.ts` |
 | `IDEA-idea-prompt-improve-undo-history-multi-level-undo-stack-for-` | consumes | `TASK-prompt-improve-composer-ui` | `src/frontend/alpine/chat-actions/prompt-improve.ts` |
@@ -6299,6 +6308,8 @@ output is byte-identical for identical inputs.
 | `FEAT-attachment-frontend-ui` | produces | `src/frontend/gallery-upload.ts` | - |
 | `FEAT-attachment-review-queue-admin-ui` | produces | `src/routes/nsfw-moderation/flags.ts` | - |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | produces | `src/db/schema-core.ts` | - |
+| `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | produces | `src/rpg/level/asi.ts` | - |
+| `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | produces | `src/rpg/level/growth.ts` | - |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | produces | `src/rpg/service/character-stats.ts` | - |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | produces | `src/rpg/xp/constants.ts` | - |
 | `FEAT-background` | produces | `src/assets/controller.ts` | - |
@@ -6313,6 +6324,7 @@ output is byte-identical for identical inputs.
 | `FEAT-background` | produces | `src/image-edit/template-registry.ts` | - |
 | `FEAT-battle-core-implementation` | produces | `src/battle/resolution-integration/initiative.ts` | - |
 | `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | produces | `src/rpg/encounters/service/participant-legs.ts` | - |
+| `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | produces | `src/rpg/service/battles/rewards.ts` | - |
 | `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | produces | `src/rpg/xp/sources.ts` | - |
 | `FEAT-blog-system` | produces | `src/frontend/alpine/blog.ts` | - |
 | `FEAT-blog-system` | produces | `src/frontend/pages/blog.ts` | - |
@@ -6473,9 +6485,12 @@ output is byte-identical for identical inputs.
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | produces | `src/rpg/skills/service/progression.ts` | - |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | produces | `src/rpg/xp/constants.ts` | - |
 | `FEAT-irc-integration-channels-as-group-chat-pm-as-chat` | produces | `src/social-hub/adapters/irc.ts` | - |
+| `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a` | produces | `src/rpg/level/decisions.ts` | - |
 | `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a` | produces | `src/rpg/skills/service/progression.ts` | - |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | produces | `src/db/schema-core.ts` | - |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | produces | `src/routes/rpg/xp-loot.ts` | - |
+| `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | produces | `src/rpg/level/award.ts` | - |
+| `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | produces | `src/rpg/level/service.ts` | - |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | produces | `src/rpg/seduction/service.test.ts` | - |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | produces | `src/rpg/service/character-stats.ts` | - |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | produces | `src/rpg/service/xp.ts` | - |
@@ -6565,6 +6580,7 @@ output is byte-identical for identical inputs.
 | `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | produces | `src/validation/schemas/worlds.ts` | - |
 | `FEAT-plot-autopilot-ai-proposes-next-plot-beats` | produces | `src/story/plot-autopilot.ts` | - |
 | `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-` | produces | `src/frontend/battle/panel.ts` | - |
+| `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-` | produces | `src/routes/rpg/progression.ts` | - |
 | `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-` | produces | `src/rpg/stats/modifiers.ts` | - |
 | `FEAT-prompt-lorebook-marketplace-community-shared` | produces | `src/routes/marketplace.ts` | - |
 | `FEAT-queryable-audit-store` | produces | `src/routes/admin/audit.ts` | - |
@@ -6668,8 +6684,11 @@ output is byte-identical for identical inputs.
 | `FEAT-worlds-frontend-list-detail-timeline-location-travel-ui` | produces | `src/routes/views/worlds.ts` | - |
 | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | produces | `src/rpg/loot/persist.ts` | - |
 | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | produces | `src/rpg/world-discovery/discovery.ts` | - |
+| `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | produces | `src/rpg/world-discovery/xp-leg.ts` | - |
+| `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | produces | `src/rpg/world-travel/migration.ts` | - |
 | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | produces | `src/rpg/world-travel/travel.ts` | - |
 | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | produces | `src/rpg/xp/sources.ts` | - |
+| `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | produces | `src/story/quest-engine/xp.ts` | - |
 | `FIX-add-jitter-to-the-finalize-lock-retry-backoff` | produces | `src/commands/finalize.ts` | - |
 | `IDEA-chat-composer-inline-suggestions-proposal` | produces | `src/chat/composer/local-suggest.ts` | - |
 | `IDEA-chat-composer-inline-suggestions-proposal` | produces | `src/frontend/alpine/chat-composer-inline-suggest.ts` | - |
@@ -13434,19 +13453,34 @@ output is byte-identical for identical inputs.
 | `epic-character-world-setup` | produces | `src/test-utils/insert-helpers.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/db/migrations/001_init.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/db/schema-core.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/routes/rpg/progression.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/routes/rpg/skills-progression.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/routes/rpg/xp-loot.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/achievements/service/reward-apply.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/encounters/service/participant-legs.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/level/asi.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/level/award.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/level/decisions.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/level/growth.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/level/service.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/loot/persist.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/seduction/service.test.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/seduction/service/settle.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/service/battles/actions.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/service/battles/rewards.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/service/character-stats.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/service/world-gate.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/service/xp.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/skills/service/progression.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/world-discovery/xp-leg.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/world-travel/migration.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/xp.test.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/xp/calculation.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/xp/constants.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/xp/levelup.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/rpg/xp/sources.test.ts` | - |
 | `epic-character-xp-leveling` | produces | `src/rpg/xp/sources.ts` | - |
+| `epic-character-xp-leveling` | produces | `src/story/quest-engine/xp.ts` | - |
 | `epic-chat-composer-flows` | produces | `src/chat/service/visibility.ts` | - |
 | `epic-chat-composer-flows` | produces | `src/chat/service/write.ts` | - |
 | `epic-chat-composer-flows` | produces | `src/frontend/alpine/chat-send.ts` | - |
@@ -23302,6 +23336,8 @@ output is byte-identical for identical inputs.
 | `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `epic-logging` | `src/db/migrations/001_init.ts` |
 | `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `epic-technical-comparison-charts` | `src/db/migrations/001_init.ts` |
 | `BUG-inconsistent-db-handle-in-migration-ts-npc-states-write` | sibling | `BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o` | `src/rpg/world-travel/migration.ts` |
+| `BUG-inconsistent-db-handle-in-migration-ts-npc-states-write` | sibling | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | `src/rpg/world-travel/migration.ts` |
+| `BUG-inconsistent-db-handle-in-migration-ts-npc-states-write` | sibling | `epic-character-xp-leveling` | `src/rpg/world-travel/migration.ts` |
 | `BUG-inconsistent-db-handle-in-migration-ts-npc-states-write` | sibling | `epic-exploration-discovery` | `src/rpg/world-travel/migration.ts; src/rpg/world-travel/types.ts` |
 | `BUG-initdhratchetopts-theirinitialpub-declared-but-never-read` | sibling | `BUG-skipoldchain-zeroes-the-caller-s-receivingchainkey-despite-i` | `src/crypto/e2e/dh-ratchet.ts` |
 | `BUG-initdhratchetopts-theirinitialpub-declared-but-never-read` | sibling | `TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-` | `src/crypto/e2e/dh-ratchet.ts` |
@@ -24545,6 +24581,8 @@ output is byte-identical for identical inputs.
 | `BUG-npc-buy-and-sell-double-record-trade-history` | sibling | `BUG-service-layer-multi-query-mutations-run-without-transactions` | `src/services/trade/core.ts` |
 | `BUG-npc-buy-and-sell-double-record-trade-history` | sibling | `BUG-services-tradecore-validatelines-lacks-world-id-filter-cross` | `src/services/trade/core.ts` |
 | `BUG-npc-buy-and-sell-double-record-trade-history` | sibling | `epic-economy-trading` | `src/services/trade/core.ts; src/services/trade/npc.ts` |
+| `BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o` | sibling | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | `src/rpg/world-travel/migration.ts` |
+| `BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o` | sibling | `epic-character-xp-leveling` | `src/rpg/world-travel/migration.ts` |
 | `BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o` | sibling | `epic-exploration-discovery` | `src/rpg/world-travel/migration.ts` |
 | `BUG-npc-navigation-routes-all-stubbed` | sibling | `BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-` | `src/routes/rpg/npc-navigation.ts` |
 | `BUG-npc-navigation-routes-all-stubbed` | sibling | `TASK-wire-npc-navigation-routes` | `src/routes/rpg/npc-navigation.ts` |
@@ -25754,6 +25792,7 @@ output is byte-identical for identical inputs.
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `BUG-story-destroy-partial-quantity-update-path-missing-world-id-` | `src/story/items/instances.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `BUG-story-items-cross-world-idor-read-transfer-destroy` | `src/story/items/instances.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `BUG-updatepost-has-no-ownership-check-any-authenticated-user-can` | `src/rpg/blog/service/posts.ts` |
+| `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | `src/rpg/level/service.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | `src/rpg/loot/persist.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | `src/rpg/loot/persist.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `TASK-019-enforce-state-machine-validators-at-write` | `src/story/items/instances.ts` |
@@ -25785,7 +25824,7 @@ output is byte-identical for identical inputs.
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `TASK-wire-crafting-routes` | `src/rpg/crafting/orders.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `epic-agency-story-points` | `src/services/agency/bdi-nightly.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `epic-blog-system` | `src/rpg/blog/service/posts.ts` |
-| `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `epic-character-xp-leveling` | `src/rpg/loot/persist.ts` |
+| `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `epic-character-xp-leveling` | `src/rpg/level/service.ts; src/rpg/loot/persist.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `epic-crafting-professions` | `src/rpg/crafting/orders.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `epic-economy-trading` | `src/services/trade/balance.ts; src/services/trade/core.ts` |
 | `BUG-service-layer-multi-query-mutations-run-without-transactions` | sibling | `epic-inventory-system` | `src/story/items/instances.ts` |
@@ -28144,7 +28183,7 @@ output is byte-identical for identical inputs.
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-character-internal-traits` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-character-npc-lore-access` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-character-world-integration` | `src/rpg/service/character-stats.ts` |
-| `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-character-xp-leveling` | `src/db/schema-core.ts; src/rpg/service/character-stats.ts; src/rpg/xp/constants.ts` |
+| `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-character-xp-leveling` | `src/db/schema-core.ts; src/rpg/level/asi.ts; src/rpg/level/growth.ts; src/rpg/service/character-stats.ts; src/rpg/xp/constants.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-chat-lifecycle-moderation` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-chat-transfer-location` | `src/db/schema-core.ts` |
 | `FEAT-automatic-organic-stat-growth-and-allocatable-ability-points` | sibling | `epic-chat-variants-taxonomy` | `src/db/schema-core.ts` |
@@ -28281,7 +28320,7 @@ output is byte-identical for identical inputs.
 | `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | sibling | `TASK-040` | `src/rpg/encounters/service/participant-legs.ts` |
 | `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | sibling | `TASK-041` | `src/rpg/encounters/service/participant-legs.ts` |
 | `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | sibling | `TASK-042` | `src/rpg/encounters/service/participant-legs.ts` |
-| `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | sibling | `epic-character-xp-leveling` | `src/rpg/encounters/service/participant-legs.ts; src/rpg/xp/sources.ts` |
+| `FEAT-battle-rewards-grant-character-xp-on-enemy-defeat` | sibling | `epic-character-xp-leveling` | `src/rpg/encounters/service/participant-legs.ts; src/rpg/service/battles/rewards.ts; src/rpg/xp/sources.ts` |
 | `FEAT-blog-system` | sibling | `FEAT-llm-enhance-outside-the-chat-composer` | `src/views/blog.html` |
 | `FEAT-blog-system` | sibling | `TASK-blog-frontend-authoring` | `src/frontend/alpine/blog.ts; src/frontend/pages/blog.ts; src/views/blog.html` |
 | `FEAT-blog-system` | sibling | `TASK-blog-publish-unit-to-post-bridge` | `src/frontend/alpine/blog.ts; src/views/blog.html` |
@@ -28949,7 +28988,7 @@ output is byte-identical for identical inputs.
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `epic-character-npc-lore-access` | `src/db/migrations/001_init.ts; src/db/schema-story.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `epic-character-spec` | `src/db/migrations/001_init.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `epic-character-world-setup` | `src/db/migrations/001_init.ts` |
-| `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `epic-character-xp-leveling` | `src/db/migrations/001_init.ts; src/routes/rpg/xp-loot.ts; src/rpg/encounters/service/participant-legs.ts; src/rpg/seduction/service/settle.ts` |
+| `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `epic-character-xp-leveling` | `src/db/migrations/001_init.ts; src/routes/rpg/skills-progression.ts; src/routes/rpg/xp-loot.ts; src/rpg/encounters/service/participant-legs.ts; src/rpg/seduction/service/settle.ts; src/rpg/service/world-gate.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `epic-chat-transfer-location` | `src/db/migrations/001_init.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `epic-chat-variants-taxonomy` | `src/db/migrations/001_init.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `epic-crafting-professions` | `src/db/migrations/001_init.ts` |
@@ -29038,7 +29077,7 @@ output is byte-identical for identical inputs.
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-character-internal-traits` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-character-npc-lore-access` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-character-world-integration` | `src/rpg/service/character-stats.ts` |
-| `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-character-xp-leveling` | `src/db/schema-core.ts; src/rpg/service/character-stats.ts; src/rpg/service/xp.ts; src/rpg/skills/service/progression.ts; src/rpg/xp/constants.ts` |
+| `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-character-xp-leveling` | `src/db/schema-core.ts; src/rpg/service/character-stats.ts; src/rpg/service/world-gate.ts; src/rpg/service/xp.ts; src/rpg/skills/service/progression.ts; src/rpg/xp/constants.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-chat-lifecycle-moderation` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-chat-transfer-location` | `src/db/schema-core.ts` |
 | `FEAT-integrate-skill-progression-with-levelservice-as-one-guarded` | sibling | `epic-chat-variants-taxonomy` | `src/db/schema-core.ts` |
@@ -29067,7 +29106,7 @@ output is byte-identical for identical inputs.
 | `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a` | sibling | `TASK-raise-rpg-battle-social-skills-progression-and-replayability` | `src/rpg/skills/service/progression.ts` |
 | `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a` | sibling | `TASK-rpg-xp-intimacy-read-modify-write-lost-updates-under-concurr` | `src/rpg/skills/service/progression.ts` |
 | `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a` | sibling | `epic-character-growth` | `src/rpg/skills/service/progression.ts` |
-| `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a` | sibling | `epic-character-xp-leveling` | `src/rpg/skills/service/progression.ts` |
+| `FEAT-level-up-decision-interface-for-autonomous-llm-actors-with-a` | sibling | `epic-character-xp-leveling` | `src/rpg/level/decisions.ts; src/rpg/skills/service/progression.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-achievements-enum-revival-promote-service-layer-to-db-barrel` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-actor-item-service` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `TASK-actors-data-versioning` | `src/db/schema-core.ts` |
@@ -29108,7 +29147,7 @@ output is byte-identical for identical inputs.
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-character-internal-traits` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-character-npc-lore-access` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-character-world-integration` | `src/rpg/service/character-stats.ts` |
-| `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-character-xp-leveling` | `src/db/schema-core.ts; src/routes/rpg/xp-loot.ts; src/rpg/seduction/service.test.ts; src/rpg/service/character-stats.ts; src/rpg/service/xp.ts; src/rpg/xp/calculation.ts; src/rpg/xp/constants.ts; src/rpg/xp/levelup.ts` |
+| `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-character-xp-leveling` | `src/db/schema-core.ts; src/routes/rpg/xp-loot.ts; src/rpg/level/award.ts; src/rpg/level/service.ts; src/rpg/seduction/service.test.ts; src/rpg/service/character-stats.ts; src/rpg/service/xp.ts; src/rpg/xp/calculation.ts; src/rpg/xp/constants.ts; src/rpg/xp/levelup.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-chat-lifecycle-moderation` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-chat-transfer-location` | `src/db/schema-core.ts` |
 | `FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u` | sibling | `epic-chat-variants-taxonomy` | `src/db/schema-core.ts` |
@@ -29554,7 +29593,7 @@ output is byte-identical for identical inputs.
 | `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | sibling | `epic-actors` | `src/db/schema-story.ts` |
 | `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | sibling | `epic-character-growth` | `src/rpg/skills/service/progression.ts` |
 | `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | sibling | `epic-character-npc-lore-access` | `src/db/schema-story.ts` |
-| `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | sibling | `epic-character-xp-leveling` | `src/rpg/skills/service/progression.ts` |
+| `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | sibling | `epic-character-xp-leveling` | `src/rpg/service/world-gate.ts; src/rpg/skills/service/progression.ts` |
 | `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | sibling | `epic-enemies-monsters` | `src/db/schema-story.ts` |
 | `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | sibling | `epic-item-systems-unification` | `src/db/schema-story.ts` |
 | `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui` | sibling | `epic-mechanics-governance` | `src/rpg/service/world-gate.ts` |
@@ -29569,6 +29608,7 @@ output is byte-identical for identical inputs.
 | `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-` | sibling | `TASK-character-stat-modifiers-and-trait-application-engine` | `src/rpg/stats/modifiers.ts` |
 | `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-` | sibling | `epic-battle-action-systems` | `src/frontend/battle/panel.ts` |
 | `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-` | sibling | `epic-battle-ui` | `src/frontend/battle/panel.ts` |
+| `FEAT-progression-api-and-character-menu-surface-for-xp-level-and-` | sibling | `epic-character-xp-leveling` | `src/routes/rpg/progression.ts` |
 | `FEAT-prompt-lorebook-marketplace-community-shared` | sibling | `epic-output-control-transforms` | `src/routes/marketplace.ts` |
 | `FEAT-queryable-audit-store` | sibling | `TASK-moderator-permission-gating-for-read-only-review-surface` | `src/routes/nsfw-moderation/audit.ts` |
 | `FEAT-queryable-audit-store` | sibling | `epic-frontend-admin` | `src/routes/admin/audit.ts` |
@@ -29713,7 +29753,7 @@ output is byte-identical for identical inputs.
 | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | sibling | `epic-character-npc-lore-access` | `src/db/migrations/001_init.ts` |
 | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | sibling | `epic-character-spec` | `src/db/migrations/001_init.ts` |
 | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | sibling | `epic-character-world-setup` | `src/db/migrations/001_init.ts; src/db/schema-character.ts` |
-| `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | sibling | `epic-character-xp-leveling` | `src/db/migrations/001_init.ts; src/rpg/encounters/service/participant-legs.ts; src/rpg/loot/persist.ts; src/rpg/seduction/service/settle.ts; src/rpg/skills/service/progression.ts` |
+| `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | sibling | `epic-character-xp-leveling` | `src/db/migrations/001_init.ts; src/routes/rpg/skills-progression.ts; src/rpg/encounters/service/participant-legs.ts; src/rpg/loot/persist.ts; src/rpg/seduction/service/settle.ts; src/rpg/skills/service/progression.ts` |
 | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | sibling | `epic-chat-transfer-location` | `src/db/migrations/001_init.ts` |
 | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | sibling | `epic-chat-variants-taxonomy` | `src/db/migrations/001_init.ts` |
 | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-` | sibling | `epic-crafting-professions` | `src/db/migrations/001_init.ts; src/rpg/crafting/process.ts` |
@@ -29865,7 +29905,7 @@ output is byte-identical for identical inputs.
 | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | sibling | `TASK-051` | `src/rpg/loot/persist.ts` |
 | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | sibling | `TASK-054` | `src/rpg/loot/persist.ts` |
 | `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | sibling | `TASK-055` | `src/rpg/loot/persist.ts` |
-| `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | sibling | `epic-character-xp-leveling` | `src/rpg/loot/persist.ts; src/rpg/xp/sources.ts` |
+| `FEAT-xp-sources-for-quests-skill-challenges-discovery-and-travel` | sibling | `epic-character-xp-leveling` | `src/rpg/loot/persist.ts; src/rpg/world-discovery/xp-leg.ts; src/rpg/world-travel/migration.ts; src/rpg/xp/sources.ts; src/story/quest-engine/xp.ts` |
 | `FIX-add-jitter-to-the-finalize-lock-retry-backoff` | sibling | `TASK-delete-the-in-repo-scripts-worktree-fork-giwt-is-the-only-wo` | `src/commands/finalize.ts` |
 | `IDEA-chat-setup-templates` | sibling | `TASK-actors-api-routes` | `src/validation/schemas.ts` |
 | `IDEA-chat-setup-templates` | sibling | `TASK-add-response-schemas-remaining-routes` | `src/validation/schemas.ts` |
@@ -41258,6 +41298,7 @@ output is byte-identical for identical inputs.
 | `TASK-gate-validate-configs-example-files-against-their-schemas` | sibling | `epic-config-templates` | `src/config/templates-loader.test.ts` |
 | `TASK-gate-world-lore-lifecycle-confidence-distortion-disputed-tri` | sibling | `epic-faction-reputation` | `src/db` |
 | `TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat` | sibling | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | `src/rpg/service/world-gate.ts` |
+| `TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat` | sibling | `epic-character-xp-leveling` | `src/rpg/service/world-gate.ts` |
 | `TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat` | sibling | `epic-mechanics-governance` | `src/rpg/service/world-gate.ts` |
 | `TASK-generation-error-handling-gaps-detector-abort-void-promises` | sibling | `TASK-llm-markdown-document-prompts` | `src/story/gm/decisions/llm.ts` |
 | `TASK-generation-error-handling-gaps-detector-abort-void-promises` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/generation/auto-gen/call-llm.ts` |
@@ -45282,6 +45323,7 @@ output is byte-identical for identical inputs.
 | `TASK-rpg-mechanics-dice-stats` | sibling | `epic-rpg-core-wiring` | `src/db/schema-rpg.ts; src/routes/rpg.ts` |
 | `TASK-rpg-mechanics-dice-stats` | sibling | `epic-rpg-mechanics` | `src/db/schema-rpg.ts; src/rpg/dice.test.ts; src/rpg/dice.ts; src/rpg/stats.test.ts; src/rpg/stats.ts` |
 | `TASK-rpg-mechanics-xp-loot` | sibling | `TASK-schema-rpg-investigation` | `src/db/schema-rpg.ts` |
+| `TASK-rpg-mechanics-xp-loot` | sibling | `epic-character-xp-leveling` | `src/rpg/xp.test.ts` |
 | `TASK-rpg-mechanics-xp-loot` | sibling | `epic-rpg-core-wiring` | `src/db/schema-rpg.ts` |
 | `TASK-rpg-mechanics-xp-loot` | sibling | `epic-rpg-mechanics` | `src/db/schema-rpg.ts; src/rpg/loot.test.ts; src/rpg/loot.ts; src/rpg/xp.test.ts; src/rpg/xp.ts` |
 | `TASK-rpg-mechanics-xp-loot` | sibling | `epic-rpg-progression` | `src/rpg/xp.ts` |
@@ -45301,6 +45343,7 @@ output is byte-identical for identical inputs.
 | `TASK-rpg-nsfw-services-add-config-level-opt-in-gate` | sibling | `epic-frontend-age-gate` | `src/middleware/nsfw-gate/base-eval.ts` |
 | `TASK-rpg-nsfw-services-add-config-level-opt-in-gate` | sibling | `epic-world-shaping-divine` | `src/rpg/reputation.ts` |
 | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | sibling | `epic-assistant-entity-access` | `src/routes/worlds/worlds.ts` |
+| `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | sibling | `epic-character-xp-leveling` | `src/rpg/service/world-gate.ts` |
 | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | sibling | `epic-fractal-locations` | `src/db/migrations.test.ts` |
 | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | sibling | `epic-mechanics-governance` | `src/rpg/service/world-gate.ts` |
 | `TASK-rpg-silent-catches-and-dice-modular-bias` | sibling | `TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history` | `src/rpg/dice/roll.ts` |
@@ -45319,6 +45362,7 @@ output is byte-identical for identical inputs.
 | `TASK-rpg-skill-points-on-level-up` | sibling | `epic-character-world-integration` | `src/rpg/service/character-stats.ts` |
 | `TASK-rpg-skill-points-on-level-up` | sibling | `epic-character-xp-leveling` | `src/rpg/service/character-stats.ts` |
 | `TASK-rpg-skill-tree-visualization-frontend` | sibling | `TASK-skill-constructor-on-character-edit` | `src/routes/rpg/skills.test.ts` |
+| `TASK-rpg-skill-tree-visualization-frontend` | sibling | `epic-character-xp-leveling` | `src/routes/rpg/skills-progression.ts` |
 | `TASK-rpg-stats-frontend-wiring` | sibling | `TASK-skills-frontend` | `src/components/chat/character-info-panel.html` |
 | `TASK-rpg-stats-frontend-wiring` | sibling | `epic-battle-ui` | `src/frontend/alpine/rpg-stats.ts` |
 | `TASK-rpg-stats-frontend-wiring` | sibling | `epic-frontend-backend-integration` | `src/frontend/alpine/rpg-stats.ts` |
@@ -47348,7 +47392,7 @@ output is byte-identical for identical inputs.
 | `epic-character-xp-leveling` | sibling | `epic-editorial-workflow` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-emotion-avatar-message-binding` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-enemies-monsters` | `src/db/migrations/001_init.ts` |
-| `epic-character-xp-leveling` | sibling | `epic-exploration-discovery` | `src/db/schema-core.ts` |
+| `epic-character-xp-leveling` | sibling | `epic-exploration-discovery` | `src/db/schema-core.ts; src/rpg/world-travel/migration.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-federation-offload-quotas` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-impersonation` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-inventory-system` | `src/db/migrations/001_init.ts` |
@@ -47356,6 +47400,7 @@ output is byte-identical for identical inputs.
 | `epic-character-xp-leveling` | sibling | `epic-item-systems-unification` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-locations` | `src/db/migrations/001_init.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-logging` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
+| `epic-character-xp-leveling` | sibling | `epic-mechanics-governance` | `src/rpg/service/world-gate.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
@@ -47364,7 +47409,7 @@ output is byte-identical for identical inputs.
 | `epic-character-xp-leveling` | sibling | `epic-reactive-actor-appearance` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-research-agency-decision` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-rpg-core-wiring` | `src/routes/rpg/xp-loot.ts; src/rpg/service/xp.ts` |
-| `epic-character-xp-leveling` | sibling | `epic-rpg-mechanics` | `src/routes/rpg/xp-loot.ts` |
+| `epic-character-xp-leveling` | sibling | `epic-rpg-mechanics` | `src/routes/rpg/xp-loot.ts; src/rpg/xp.test.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-rpg-wiring-phase3` | `src/routes/rpg/xp-loot.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-skills-professions-config` | `src/db/schema-core.ts` |
 | `epic-character-xp-leveling` | sibling | `epic-technical-comparison-charts` | `src/db/migrations/001_init.ts` |
