@@ -10113,7 +10113,7 @@
     "type": "BUG"
   },
   "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-NO-PARAMETERS": {
-    "hash": "pending",
+    "hash": "c4f2d57",
     "extid": "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-NO-PARAMETERS",
     "type": "BUG",
     "title": "Workflow library img2img row has no parameters",
@@ -10124,7 +10124,8 @@
       "workflow"
     ],
     "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "c4f2d57"
   },
   "BUG-WORKFLOW-LIBRARY-IMG2IMG-ROW-HAS-UNRESOLVED-PLACEHOLDERS": {
     "hash": "15c0f40",
