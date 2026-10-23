@@ -12678,6 +12678,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-caddy-tls-termination-with-automatic-https.md"
     },
     {
@@ -33065,6 +33069,12 @@
       "source": ".plan/tickets/TASK-integration-infrastructure.md"
     }
   ],
+  "src/integrations/health.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md"
+    }
+  ],
   "src/integrations/health.ts": [
     {
       "kind": "ticket",
@@ -51137,6 +51147,16 @@
       "source": ".plan/tickets/BUG-runtime-asset-compression-is-structurally-dead-needscompress.md"
     }
   ],
+  "src/server/init-background-services.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-log-rejected-background-init-promises-with-module.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md"
+    }
+  ],
   "src/server/init-background-services.ts": [
     {
       "kind": "epic",
@@ -51160,6 +51180,18 @@
     }
   ],
   "src/server/start.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-add-a-federation-e2e-test-that-boots-two-real-servers.md"
@@ -51237,6 +51269,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md"
     },
     {
       "kind": "ticket",

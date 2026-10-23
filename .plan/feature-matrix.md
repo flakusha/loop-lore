@@ -783,7 +783,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | instances | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
 | integration | 15 | 5 | 0 | 2 | 0 | 0 | 8 |
 | integration-testing | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| integrations | 7 | 2 | 0 | 1 | 0 | 0 | 4 |
+| integrations | 7 | 3 | 0 | 1 | 0 | 0 | 3 |
 | integrity | 8 | 3 | 0 | 0 | 0 | 0 | 5 |
 | intent | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
 | intent-detection | 4 | 1 | 1 | 0 | 1 | 0 | 1 |
@@ -1688,7 +1688,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2696 | 1019 | 45 | 899 | 32 | 0 | 701 |
+| (untagged) | 2696 | 1024 | 45 | 899 | 32 | 0 | 696 |
 
 ## By epic × status
 
@@ -1721,7 +1721,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-api-governance | 6 | 0 | 0 | 3 | 0 | 0 | 3 |
 | epic-api-library-distribution | 13 | 0 | 0 | 3 | 0 | 0 | 10 |
 | epic-api-openapi | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-api-rate-limiting | 9 | 4 | 0 | 0 | 0 | 0 | 5 |
+| epic-api-rate-limiting | 9 | 5 | 0 | 0 | 0 | 0 | 4 |
 | epic-api-routes | 4 | 0 | 0 | 1 | 0 | 0 | 3 |
 | epic-api-task-offloading | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-api-telemetry | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
@@ -1757,7 +1757,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | EPIC-byok-api-keys | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-byok-local-models | 8 | 2 | 0 | 3 | 0 | 0 | 3 |
 | EPIC-byok-local-models | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| epic-certificate-and-tls-management | 10 | 1 | 0 | 8 | 0 | 0 | 1 |
+| epic-certificate-and-tls-management | 10 | 2 | 0 | 8 | 0 | 0 | 0 |
 | epic-character-core-system | 74 | 20 | 0 | 46 | 0 | 0 | 8 |
 | epic-character-growth | 5 | 1 | 0 | 2 | 0 | 0 | 2 |
 | epic-character-internal-traits | 14 | 5 | 0 | 8 | 0 | 0 | 1 |
@@ -1982,7 +1982,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-sam3-segmentation-integration | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | epic-schema | 13 | 0 | 0 | 8 | 0 | 0 | 5 |
 | epic-security-sandboxing | 15 | 3 | 0 | 7 | 0 | 0 | 5 |
-| epic-server-lifecycle-hardening | 6 | 1 | 0 | 0 | 0 | 0 | 5 |
+| epic-server-lifecycle-hardening | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
 | epic-shared-schemas | 7 | 7 | 0 | 0 | 0 | 0 | 0 |
 | epic-skills | 8 | 1 | 1 | 1 | 0 | 0 | 5 |
 | epic-skills-professions-config | 6 | 0 | 0 | 6 | 0 | 0 | 0 |
