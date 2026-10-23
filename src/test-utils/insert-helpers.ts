@@ -965,7 +965,7 @@ export async function insertWorlds(
     rpg_quests?: number;
     rules?: string;
     autonomy_config?: string;
-// hint: Structural change (rename/retype). Check callers of this entity.
+    // hint: Structural change (rename/retype). Check callers of this entity.
     rpg_skills?: number;
     requires_stats?: number;
     stat_point_budget?: number;

@@ -21608,7 +21608,14 @@
       "title": "Character Stat Allocation Frontend Modal And Edit Integration",
       "status": "done",
       "srcRefs": [
-        "src/frontend/modals/stat-allocation.html"
+        "src/components/character/stat-allocation-panel.html",
+        "src/frontend/alpine/index.ts",
+        "src/frontend/alpine/stat-allocation.ts",
+        "src/frontend/modals/stat-allocation.html",
+        "src/routes/rpg/index.ts",
+        "src/routes/rpg/stat-allocation.ts",
+        "src/routes/rpg/trait-catalog.ts",
+        "src/rpg/stats/types.ts"
       ],
       "related": [
         "TASK-character-stat-allocation-backend-api-and-db-integration",
@@ -21623,7 +21630,11 @@
       "title": "Character Stat Allocation Integration Tests E2E",
       "status": "done",
       "srcRefs": [
-        "src/routes/character-stat-allocation.ts"
+        "src/db/migrations.test.ts",
+        "src/routes/character-stat-allocation.ts",
+        "src/routes/rpg/stat-allocation.test.ts",
+        "src/rpg/service/stat-allocation.test.ts",
+        "src/rpg/stats/validation.test.ts"
       ],
       "related": [
         "TASK-character-stat-allocation-backend-api-and-db-integration",
@@ -58315,6 +58326,12 @@
       ]
     },
     {
+      "path": "src/components/character/stat-allocation-panel.html",
+      "owners": [
+        "TASK-character-stat-allocation-frontend-modal-and-edit-integration"
+      ]
+    },
+    {
       "path": "src/components/character/systems-panel.html",
       "owners": [
         "TASK-actor-systems-export-frontend"
@@ -61269,6 +61286,7 @@
         "TASK-blog-publish-unit-to-post-bridge",
         "TASK-branch-merge-db-migration-039",
         "TASK-branch-merge-tests-and-coverage",
+        "TASK-character-stat-allocation-integration-tests-e2e",
         "TASK-comic-page-composition-strategy",
         "TASK-comparison-set-variant-data-model",
         "TASK-comparison-tests-set-lifecycle-fan-out-comparability",
@@ -65035,6 +65053,7 @@
       "owners": [
         "TASK-author-suggestion-resolution-surface",
         "TASK-book-unit-editor-review-surface",
+        "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
         "TASK-comparison-grid-frontend",
         "TASK-comparison-two-cell-diff-modes",
         "TASK-finalize-notification-bell-header-wiring",
@@ -65520,6 +65539,12 @@
         "BUG-slash-autocomplete-regex-not-caret-anchored-swallows-enter",
         "EPIC-2026-23",
         "epic-frontend-chat-commands"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/stat-allocation.ts",
+      "owners": [
+        "TASK-character-stat-allocation-frontend-modal-and-edit-integration"
       ]
     },
     {
@@ -77017,6 +77042,7 @@
     {
       "path": "src/routes/rpg/index.ts",
       "owners": [
+        "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
         "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
         "TASK-professions-service-routes",
         "TASK-skills-routes",
@@ -77080,11 +77106,29 @@
       ]
     },
     {
+      "path": "src/routes/rpg/stat-allocation.test.ts",
+      "owners": [
+        "TASK-character-stat-allocation-integration-tests-e2e"
+      ]
+    },
+    {
+      "path": "src/routes/rpg/stat-allocation.ts",
+      "owners": [
+        "TASK-character-stat-allocation-frontend-modal-and-edit-integration"
+      ]
+    },
+    {
       "path": "src/routes/rpg/stats-actor.ts",
       "owners": [
         "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
         "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
         "TASK-rpg-gate-chat-commands-behind-world-opt-in"
+      ]
+    },
+    {
+      "path": "src/routes/rpg/trait-catalog.ts",
+      "owners": [
+        "TASK-character-stat-allocation-frontend-modal-and-edit-integration"
       ]
     },
     {
@@ -80263,6 +80307,12 @@
       ]
     },
     {
+      "path": "src/rpg/service/stat-allocation.test.ts",
+      "owners": [
+        "TASK-character-stat-allocation-integration-tests-e2e"
+      ]
+    },
+    {
       "path": "src/rpg/service/world-gate.test.ts",
       "owners": [
         "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
@@ -80576,6 +80626,7 @@
     {
       "path": "src/rpg/stats/types.ts",
       "owners": [
+        "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
         "TASK-character-stat-modifiers-and-trait-application-engine",
         "TASK-world-requires-stats-flag-and-point-budget-config"
       ]
@@ -80583,6 +80634,7 @@
     {
       "path": "src/rpg/stats/validation.test.ts",
       "owners": [
+        "TASK-character-stat-allocation-integration-tests-e2e",
         "epic-character-core-system"
       ]
     },
@@ -85512,6 +85564,12 @@
       "kind": "consumes",
       "to": "TASK-c1-moderation-action-notices-with-actor-thumb",
       "via": "src/chat/moderation.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "consumes",
+      "to": "TASK-world-requires-stats-flag-and-point-budget-config",
+      "via": "src/rpg/stats/types.ts"
     },
     {
       "from": "TASK-character-stat-allocation-integration-tests-e2e",
@@ -121071,12 +121129,67 @@
     {
       "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
       "kind": "produces",
+      "to": "src/components/character/stat-allocation-panel.html"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "produces",
+      "to": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "produces",
+      "to": "src/frontend/alpine/stat-allocation.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "produces",
       "to": "src/frontend/modals/stat-allocation.html"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "produces",
+      "to": "src/routes/rpg/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "produces",
+      "to": "src/routes/rpg/stat-allocation.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "produces",
+      "to": "src/routes/rpg/trait-catalog.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "produces",
+      "to": "src/rpg/stats/types.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "produces",
+      "to": "src/db/migrations.test.ts"
     },
     {
       "from": "TASK-character-stat-allocation-integration-tests-e2e",
       "kind": "produces",
       "to": "src/routes/character-stat-allocation.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "produces",
+      "to": "src/routes/rpg/stat-allocation.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "produces",
+      "to": "src/rpg/service/stat-allocation.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "produces",
+      "to": "src/rpg/stats/validation.test.ts"
     },
     {
       "from": "TASK-character-stat-modifiers-and-trait-application-engine",
@@ -186018,6 +186131,12 @@
     {
       "from": "BUG-create-test-db-custom-dialect-can-bypass-settestdatabase",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-create-test-db-custom-dialect-can-bypass-settestdatabase",
+      "kind": "sibling",
       "to": "TASK-chat-ask-type-fast-menu",
       "via": "src/db/schema-manifest.ts"
     },
@@ -188233,6 +188352,12 @@
       "from": "BUG-duplicate-migration-numeric-prefix-021",
       "kind": "sibling",
       "to": "TASK-branch-merge-tests-and-coverage",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-duplicate-migration-numeric-prefix-021",
+      "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
       "via": "src/db/migrations.test.ts"
     },
     {
@@ -212652,6 +212777,12 @@
     {
       "from": "BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migrations.test.ts"
     },
@@ -212984,6 +213115,12 @@
       "kind": "sibling",
       "to": "TASK-branch-merge-tests-and-coverage",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num",
+      "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
     },
     {
       "from": "BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num",
@@ -222828,6 +222965,12 @@
     {
       "from": "BUG-settestdatabase-global-leak-on-test-throw",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-settestdatabase-global-leak-on-test-throw",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
     },
@@ -225314,6 +225457,12 @@
       "kind": "sibling",
       "to": "TASK-branch-merge-tests-and-coverage",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
+      "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
     },
     {
       "from": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
@@ -250464,6 +250613,12 @@
     {
       "from": "TASK-019-audit-columns",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-019-audit-columns",
+      "kind": "sibling",
       "to": "TASK-chat-transfer-location",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -250772,6 +250927,12 @@
       "kind": "sibling",
       "to": "TASK-branch-merge-tests-and-coverage",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-019-content-versioning-heavy-tables",
+      "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
     },
     {
       "from": "TASK-019-content-versioning-heavy-tables",
@@ -251478,6 +251639,12 @@
     {
       "from": "TASK-019-hot-path-indexes",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-019-hot-path-indexes",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/README.md"
     },
@@ -251696,6 +251863,12 @@
       "kind": "sibling",
       "to": "TASK-branch-merge-tests-and-coverage",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-019-users-encryption-secret",
+      "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
     },
     {
       "from": "TASK-019-users-encryption-secret",
@@ -267726,6 +267899,12 @@
     {
       "from": "TASK-asset-provenance-ledger-for-generated-assets",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-asset-provenance-ledger-for-generated-assets",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
     },
@@ -275562,6 +275741,12 @@
     {
       "from": "TASK-author-suggestion-resolution-surface",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-author-suggestion-resolution-surface",
+      "kind": "sibling",
       "to": "TASK-comic-caption-bubble-layout",
       "via": "src/routes/views/escape-html.ts"
     },
@@ -280110,6 +280295,12 @@
     {
       "from": "TASK-blog-publish-unit-to-post-bridge",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-blog-publish-unit-to-post-bridge",
+      "kind": "sibling",
       "to": "TASK-comfyui-builder-routes-chain-crud-run-palette-proxy-graph-va",
       "via": "src/routes/v1/content-surface.ts"
     },
@@ -280694,6 +280885,12 @@
       "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/config/templates-loader/discovery.ts; src/regex/intent.ts"
+    },
+    {
+      "from": "TASK-book-unit-editor-review-surface",
+      "kind": "sibling",
+      "to": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "via": "src/frontend/alpine/index.ts"
     },
     {
       "from": "TASK-book-unit-editor-review-surface",
@@ -281562,6 +281759,12 @@
     {
       "from": "TASK-branch-merge-db-migration-039",
       "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-branch-merge-db-migration-039",
+      "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/migrations/README.md"
     },
@@ -281984,6 +282187,12 @@
       "kind": "sibling",
       "to": "TASK-branch-merges-routes-and-typebox-schemas",
       "via": "src/routes/chats/branch-merges.ts"
+    },
+    {
+      "from": "TASK-branch-merge-tests-and-coverage",
+      "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
     },
     {
       "from": "TASK-branch-merge-tests-and-coverage",
@@ -285590,6 +285799,228 @@
       "kind": "sibling",
       "to": "epic-file-splitting",
       "via": "src/routes/characters.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-character-stat-modifiers-and-trait-application-engine",
+      "via": "src/rpg/stats/types.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-comparison-grid-frontend",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-comparison-two-cell-diff-modes",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "via": "src/routes/rpg/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-finalize-notification-bell-header-wiring",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-frontend-touch-gestures",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-frontend-view-model-extraction",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-info-bubbles",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-professions-service-routes",
+      "via": "src/routes/rpg/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-publication-reader-locale-selector",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-publication-viewer-read-mode",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-shared-text-surface-toolbar",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "TASK-skills-routes",
+      "via": "src/routes/rpg/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-achievements",
+      "via": "src/routes/rpg/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-crafting-professions",
+      "via": "src/routes/rpg/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-frontend-age-gate",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-frontend-component-architecture",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-skills",
+      "via": "src/routes/rpg/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-comic-page-composition-strategy",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-comparison-set-variant-data-model",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-comparison-tests-set-lifecycle-fan-out-comparability",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-coverage-gate-true-multi-worker-fanout-investigation",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-fractal-locations-invariants-tests",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-licensing-asset-license-columns-migration",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-locations-fractal-migration",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-middleware-migration-compaction-data-version-hash",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-publication-artifact-schema",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-watchdog-events-table-and-telemet",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-reference-set-entity",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "epic-character-core-system",
+      "via": "src/rpg/stats/validation.test.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-integration-tests-e2e",
+      "kind": "sibling",
+      "to": "epic-fractal-locations",
+      "via": "src/db/migrations.test.ts"
     },
     {
       "from": "TASK-character-stat-modifiers-and-trait-application-engine",

@@ -11825,6 +11825,12 @@
       "source": ".plan/tickets/TASK-skills-frontend.md"
     }
   ],
+  "src/components/character/stat-allocation-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
+    }
+  ],
   "src/components/character/systems-panel.html": [
     {
       "kind": "ticket",
@@ -17515,6 +17521,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-tests-and-coverage.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md"
     },
     {
       "kind": "ticket",
@@ -24248,6 +24258,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-grid-frontend.md"
     },
     {
@@ -24995,6 +25009,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/EPIC-2026-23.md"
+    }
+  ],
+  "src/frontend/alpine/stat-allocation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
     }
   ],
   "src/frontend/alpine/store-schema.ts": [
@@ -44532,6 +44552,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreferenced-route-validation-modules-dead-helpers-an.md"
     },
     {
@@ -44641,6 +44665,18 @@
       "source": ".plan/tickets/TASK-wire-skills-routes.md"
     }
   ],
+  "src/routes/rpg/stat-allocation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md"
+    }
+  ],
+  "src/routes/rpg/stat-allocation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
+    }
+  ],
   "src/routes/rpg/stats-actor.ts": [
     {
       "kind": "ticket",
@@ -44653,6 +44689,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
+    }
+  ],
+  "src/routes/rpg/trait-catalog.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
     }
   ],
   "src/routes/rpg/world-location-traits.ts": [
@@ -49539,6 +49581,12 @@
       "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
     }
   ],
+  "src/rpg/service/stat-allocation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md"
+    }
+  ],
   "src/rpg/service/world-gate.test.ts": [
     {
       "kind": "ticket",
@@ -50006,6 +50054,10 @@
   "src/rpg/stats/types.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-stat-modifiers-and-trait-application-engine.md"
     },
     {
@@ -50017,6 +50069,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-core-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md"
     }
   ],
   "src/rpg/stats/validation.ts": [
