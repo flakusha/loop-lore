@@ -639,6 +639,28 @@ All endpoints prefixed with `/api/v1/` (versioned; see `docs/spec/api-versioning
 
 `PUT /api/v1/admin/nsfw` — body: NSFW config fields (admin only)
 
+## Image Edit
+
+### Workflow Templates — List
+
+`GET /api/v1/image-edit/templates` — list the workflow templates the server can run (built-in, config-driven and DB-backed) with their parameter specs
+
+### Installed Nodes — List
+
+`GET /api/v1/image-edit/nodes` — list the custom nodes installed on the ComfyUI backend
+
+### Capabilities — Get
+
+`GET /api/v1/image-edit/capabilities` — per-backend health and feature list (`comfyui`, `sd-server`)
+
+### Backend Health — Get
+
+`GET /api/v1/image-edit/health` — health flag per backend
+
+### Run Workflow
+
+`POST /api/v1/image-edit/run` — body: `{ template_id, backend, params?, chatId?, messageId? }` — `backend` is `comfyui` or `sd-server`; a `params` entry whose template type is `image` carries the asset id of an image the caller owns, never bytes or a path — the provider resolves the id and uploads it itself. Returns `{ data }` with the backend results.
+
 ## Beyond this page
 
 This page documents core resources. The full served surface is ~600 paths / ~800 operations — RPG (`/api/rpg/*`: dice, stats, combat, crafting, skills, loot), trade (`/api/v1/trade/*`: offers, counter, NPC, history), generation, assets, characters/actors, worlds, chat extras, admin, and plugins. For the exact contract see the generated `reference/openapi.json` (gitignored; regenerate with `bun run openapi`) and [`spec/api-routes.md`](../spec/api-routes.md).
