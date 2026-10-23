@@ -2,13 +2,15 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * AUX Pipeline — Task Detection from Prompt Shape
+ * AUX Pipeline — Task Detection from Prompt Shape (FALLBACK ONLY)
  *
- * Mock providers (tests/e2e, prompt-eval harness) receive only the resolved
- * message array — the AUX task name never crosses the provider boundary.
- * Detection matches distinctive markers of the default system prompts in
- * `prompts.ts`; config-level system-prompt overrides fall through to null
- * and callers use their fallback reply.
+ * The AUX task id crosses the provider boundary explicitly: `callAux` stamps
+ * `auxTask` onto every request it dispatches (from `AuxCallOptions.taskId` or
+ * its positional task argument), and mock providers read that field first.
+ * This module is the fallback for requests that carry no `auxTask` — e.g.
+ * direct provider calls in older tests — and matches distinctive markers of
+ * the DEFAULT system prompts in `prompts.ts`; a config-level prompt override
+ * falls through to null and callers use their fallback reply.
  */
 import type { AuxTaskName, } from "./types";
 

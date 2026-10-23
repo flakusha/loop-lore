@@ -47,12 +47,12 @@ export async function extractMemories(
   const messages: GenerationMessage[] = [{ role: "user", content: prompt, },];
 
   try {
-    // Shared AUX policy: 2s timeout, 0.0 temperature, BYO key. 200 max tokens —
-    // extraction returns a JSON array, larger than single-field classifiers.
+    // Shared AUX policy via the task registry: 2s timeout, BYO key, and the
+    // 200-token cap (extraction returns a JSON array, larger than the
+    // single-field classifiers).
     const response = await callAux("memory", config, db, messages, {
       userId,
       chatId,
-      maxTokens: 200,
     },);
 
     if (!response) {

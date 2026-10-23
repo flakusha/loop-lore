@@ -113,12 +113,11 @@ export async function detectGmTool(
     { role: "user" as const, content: content.slice(0, 500,), },
   ];
 
-  // Shared AUX policy: 2s timeout, 0.0 temperature, 100 max tokens, BYO key
+  // Shared AUX policy via the task registry: 2s timeout, 0.0 temperature,
+  // 100 max tokens, BYO key.
   const response = await callAux("gm-tool", config, db, messages, {
     userId,
     chatId,
-    temperature: 0,
-    maxTokens: 100,
   },);
 
   if (!response) { return null; }

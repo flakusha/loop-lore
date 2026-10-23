@@ -16,15 +16,20 @@
  */
 
 import {
+  CARRIAGE_AUTHORING_PROMPT,
+  CHAT_TITLE_PROMPT,
   GM_TOOL_DETECTION_PROMPT,
+  INJECTION_CHECK_PROMPT,
   INTENT_CLASSIFIER_PROMPT,
   MEMORY_EXTRACTION_PROMPT,
   MODERATION_PROMPT,
   NSFW_POLICY_LEVELS_PROMPT,
   NSFW_POLICY_PROMPT,
+  RAG_ASK_PROMPT,
   TRANSITION_CLASSIFIER_PROMPT,
 } from "../aux-pipeline/prompts";
 import type { LlmTemplateConfig, } from "../config/sections/templates";
+import { PROMPT_ANALYSIS_PROMPT, } from "../prompt-improve/prompts";
 import { ASSISTANT_SYSTEM_PROMPT, } from "./assistant-system";
 import type { PromptPurpose, } from "./purposes";
 import { VN_CHOICES_PROMPT, VN_QUESTIONS_PROMPT, VN_STORY_PROMPT, } from "./vn";
@@ -94,6 +99,16 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
   gmTool: GM_TOOL_DETECTION_PROMPT,
   /** Aux: moderation severity verdict */
   moderation: MODERATION_PROMPT,
+  /** Aux: prompt-injection confirm (step 2 of the injection check) */
+  injectionCheck: INJECTION_CHECK_PROMPT,
+  /** Aux: hidden carriage authoring (flat TOML estimate) */
+  carriage: CARRIAGE_AUTHORING_PROMPT,
+  /** Aux: prompt quality analysis (JSON profile) */
+  promptAnalysis: PROMPT_ANALYSIS_PROMPT,
+  /** Aux: chat title suggestion */
+  chatTitle: CHAT_TITLE_PROMPT,
+  /** Aux: RAG answer base — the call site appends `\n\nContext:\n…` */
+  ragAsk: RAG_ASK_PROMPT,
 };
 
 /**

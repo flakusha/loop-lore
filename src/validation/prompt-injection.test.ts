@@ -32,6 +32,9 @@ function makeConfig(): Config {
       providers: { openaiCompatible: [], },
     },
     byoKey: { enabled: false, encryptionKey: null, },
+    // The injection LLM confirm resolves its system prompt through the
+    // prompt registry — an empty overlay falls through to the code default.
+    templates: { llm: { merge: "extend", systemPrompts: {}, chatFormats: {}, }, },
   } as unknown as Config;
 }
 
