@@ -97,7 +97,7 @@ Single consumer (`queueMicrotask` + `setInterval`; Node timer unref'd). `Promise
 
 No `beforeExit`/`exit` flush hook: the queue timer is unref'd and `process.on("exit")` only kills subprocesses synchronously. Entries still buffered at exit are lost unless the caller awaits `flush()`.
 
-`src/server/start.ts` is the shipped graceful path — SIGTERM/SIGINT/SIGHUP stop the scheduler, async store, servers, plugins and HTTP(S), then race `logger.flush()` against a 5s timeout (`[logger] flush timed out` → `process.exit(1)`; success → `process.exit(0)`). `uncaughtException`/`unhandledRejection` log `logger.fatal(...)` and run the same shutdown.
+`src/server/start.ts` is the shipped graceful path — SIGTERM/SIGINT/SIGHUP stop the scheduler, async store, servers, plugins and HTTP(S), then race `logger.flush()` against a 5s timeout (`[logger] flush timed out` → `process.exit(1)`; success → `process.exit(0)`). `uncaughtException`/`unhandledRejection` log `logger.fatal(...)` and run the same shutdown, but exit with code 1 so a supervisor sees the crash instead of a clean stop.
 
 ## Config — `src/config/sections/logging.ts`
 

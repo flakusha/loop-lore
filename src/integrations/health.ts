@@ -170,6 +170,11 @@ export function classifyAdapterFailure(cause: unknown,): AdapterFailureCode {
   return "crash";
 }
 
+/** Max tracked buckets per limiter — the least-recently-used one is
+ * evicted beyond it (unauthenticated targets must not grow the map
+ * without bound). */
+const DEFAULT_MAX_BUCKETS = 4096;
+
 /** Refill rule for one bucket: burst `capacity` + `refillMs` cadence. */
 export interface RateLimitRule {
   capacity: number;
@@ -184,6 +189,8 @@ export interface AdapterRateLimiterOptions {
   perAdapter?: Record<string, RateLimitRule>;
   /** Clock injection for deterministic tests; default `Date.now`. */
   now?: () => number;
+  /** Max tracked buckets before the least-recently-used one is evicted. */
+  maxBuckets?: number;
 }
 
 /** Outcome of {@link AdapterRateLimiter.consume}. */
@@ -214,18 +221,36 @@ interface Bucket {
  */
 export function createAdapterRateLimiter(options: AdapterRateLimiterOptions,): AdapterRateLimiter {
   const now = options.now ?? (() => Date.now());
+  const maxBuckets = options.maxBuckets ?? DEFAULT_MAX_BUCKETS;
   const buckets = new Map<string, Bucket>();
 
   function bucketFor(keyed: { adapter: string; target: string; rule: RateLimitRule },): Bucket {
     const { adapter, target, rule, } = keyed;
     const key = `${adapter}\u0000${target}`;
-    let bucket = buckets.get(key,);
-    if (bucket === undefined) {
-      bucket = { tokens: rule.capacity, lastRefillAt: now(), };
-      buckets.set(key, bucket,);
+    const existing = buckets.get(key,);
+    if (existing !== undefined) {
+      // Re-insert so the Map's insertion order tracks recency (LRU order).
+      buckets.delete(key,);
+      buckets.set(key, existing,);
+      return existing;
     }
 
+    const bucket: Bucket = { tokens: rule.capacity, lastRefillAt: now(), };
+    buckets.set(key, bucket,);
+    evictOverflow();
     return bucket;
+  }
+
+  /** Drop the least-recently-used buckets once the cap is exceeded: buckets
+   * are keyed on unauthenticated targets (e.g. inbound email senders), so
+   * without a cap the map grows forever. ponytail: eviction hands an active
+   * target a fresh budget — swap in a TTL sweep if that ever matters. */
+  function evictOverflow(): void {
+    while (buckets.size > maxBuckets) {
+      const oldest = buckets.keys().next();
+      if (oldest.done) { return; }
+      buckets.delete(oldest.value,);
+    }
   }
 
   return {
