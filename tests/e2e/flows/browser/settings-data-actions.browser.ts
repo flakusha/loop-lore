@@ -75,7 +75,8 @@ describe("Settings data actions E2E", () => {
     }
   }, 60_000,);
 
-  // SKIPPED with evidence (see .tmp/NOTES.md): POST /api/v1/keys answers 500
+  // SKIPPED with evidence (see TASK-provide-smk-secret-in-browser-test-server-config-so-key-gene):
+  // POST /api/v1/keys answers 500
   // in the e2e server environment (encryption-key generation requires the SMK
   // secret, which the test config does not provide), so the keys-tab UI flow
   // cannot pass end to end today.
@@ -178,10 +179,11 @@ describe("Settings data actions E2E", () => {
     }
   }, 60_000,);
 
-  // SKIPPED with evidence (see .tmp/NOTES.md): the UI calls
+  // SKIPPED with evidence (see BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use):
+  // the UI calls
   // DELETE /api/v1/users/me, but src/routes/users/me.ts defines only
   // GET/PUT/PATCH — the server answers 422, so delete-all can never succeed.
-  // Product bug BUG-settings-delete-all-no-endpoint.
+  // Product bug BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use.
   test.skip("delete-all wipes the solo user's data after typed confirmation", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page,);
