@@ -17,6 +17,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { encryptValue, } from "../crypto";
 import type { DB, } from "../db/schema";
+import { listProviderInstances, } from "../generation/providers/provider-instances";
 import { uid, } from "../utils";
 import { forbidden, notFound, } from "../validation/middleware";
 import { ApiKeyCreateBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
@@ -78,10 +79,10 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         },);
       }
 
-      // Validate provider exists in config
-      const providerConfigs = config.generation.providers.openaiCompatible;
-      const providerExists = providerConfigs.some((p: { name?: string },) => p.name === providerName);
-      if (!providerExists) {
+      // Validate the provider exists in config — every provider instance the
+      // registry can dispatch to, not only the openai-compatible ones.
+      const knownProviders = listProviderInstances(config,).map((instance,) => instance.name);
+      if (!knownProviders.includes(providerName,)) {
         return jsonError({ message: `Unknown provider: ${providerName}`, status: HttpStatus.BadRequest, },);
       }
 
