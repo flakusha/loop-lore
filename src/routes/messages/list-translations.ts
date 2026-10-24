@@ -16,6 +16,7 @@ import type { Kysely, } from "kysely";
 import { resolveDisplayLocale, } from "../../chat/translation-target";
 import type { DB, } from "../../db/schema";
 import { normalizeBcp47Tag, } from "../../i18n/bcp47";
+import { getChildLogger, } from "../../logger";
 import { resolveMessageContent, } from "./helpers";
 
 /** Inputs for the `translateLocale=auto` display-locale resolution. */
@@ -56,6 +57,40 @@ export async function resolveAutoDisplayLocale(
     userSettings: user?.settings,
     uiLocale: inputs.uiLocale ?? null,
   },);
+}
+
+/**
+ * Negotiate the requested translation locale and attach the matching
+ * translation rows to a message list page.
+ *
+ * `requestedLocale` is the query value: an explicit locale, or `auto` to
+ * resolve through the display-locale precedence chain. A negotiation or
+ * lookup failure never costs the reader their page — it is logged and the
+ * page is returned untranslated.
+ * @param database
+ * @param messages - enriched list rows (mutated in place)
+ * @param inputs - chat/user context plus the requested locale
+ * @returns {Promise<void>}
+ */
+export async function attachRequestedTranslations(
+  database: Kysely<DB>,
+  messages: Record<string, unknown>[],
+  inputs: AutoLocaleInputs & { requestedLocale?: string | null },
+): Promise<void> {
+  if (!inputs.requestedLocale) { return; }
+  try {
+    const target = inputs.requestedLocale === "auto"
+      ? await resolveAutoDisplayLocale(database, inputs,)
+      : inputs.requestedLocale;
+
+    if (target) { await attachMessageTranslations(database, messages, target,); }
+  } catch (error) {
+    getChildLogger("routes.messages.list-translations",)?.error(
+      "Failed to attach message translations",
+      error instanceof Error ? error : undefined,
+      { chatId: inputs.chatId, },
+    );
+  }
 }
 
 /**

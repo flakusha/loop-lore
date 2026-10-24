@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 074_model_native_locale
+ * 077_model_native_locale
  *
  * Per-model admin override of the LLM's native locale (FEAT-model-native-
  * locale-config). Nullable TEXT on `model_capabilities`; admin-authored via
