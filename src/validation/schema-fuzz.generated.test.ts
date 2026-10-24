@@ -1687,6 +1687,18 @@ describe("MessageStatusUpdateBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageStatusUpdateBody,));
 });
 
+describe("MessageTranslationBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_messages.MessageTranslationBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageTranslationBody,));
+});
+
+describe("MessageTranslationLocaleParams", () => {
+  test("accepts generated values", () => checkAllValid(validation_messages.MessageTranslationLocaleParams,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageTranslationLocaleParams,));
+});
+
 describe("MessageVariantQuery", () => {
   test("accepts generated values", () => checkAllValid(validation_messages.MessageVariantQuery,));
 
@@ -2686,4 +2698,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 425 schemas discovered across 518 module(s).
+// 427 schemas discovered across 520 module(s).
