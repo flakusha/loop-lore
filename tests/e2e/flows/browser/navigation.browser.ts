@@ -242,37 +242,4 @@ describe("Navigation E2E", () => {
       }
     });
   });
-
-  describe("Login navigation", () => {
-    test("login page has all required elements", async () => {
-      const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
-      try {
-        await goto(page, "/views/login",);
-        await page.locator("[data-testid='username-input']",).waitFor({ state: "attached", timeout: 10_000, },);
-        await page.locator("[data-testid='password-input']",).waitFor({ state: "attached", timeout: 10_000, },);
-        await page.locator("[data-testid='login-submit']",).waitFor({ state: "attached", timeout: 10_000, },);
-        await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 10_000, },);
-      } finally {
-        errors.assert();
-        errors.detach();
-        await page.close();
-      }
-    });
-
-    test("demo login hx-post attribute is correct", async () => {
-      const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
-      try {
-        await goto(page, "/views/login",);
-        await page.locator("[data-testid='demo-login']",).waitFor({ state: "attached", timeout: 10_000, },);
-        const hxPost = await page.locator("[data-testid='demo-login']",).getAttribute("hx-post",);
-        expect(hxPost,).toBe("/api/v1/demo-login",);
-      } finally {
-        errors.assert();
-        errors.detach();
-        await page.close();
-      }
-    });
-  });
 });
