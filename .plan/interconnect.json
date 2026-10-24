@@ -3534,10 +3534,11 @@
       "status": "done",
       "srcRefs": [
         "src/assets/controller.ts",
-        "src/assets/controller/serve-policy.routes.test.ts",
         "src/assets/controller/serve.ts",
+        "src/assets/encryption.ts",
         "src/assets/serve-handlers.ts",
-        "src/assets/serve-raw.ts"
+        "src/assets/serve-raw.ts",
+        "src/assets/service/read.ts"
       ],
       "related": []
     },
@@ -3546,7 +3547,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext.md",
       "title": "Encrypted asset thumbnail is stored and served in plaintext",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assets/serve-handlers.ts",
         "src/assets/service/create.ts",
@@ -3746,7 +3747,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie.md",
       "title": "Fan-out content-clearance gate is opt-in on a caller-supplied chatId",
-      "status": "Wontfix",
+      "status": "done",
       "srcRefs": [
         "src/federation/clearance.test.ts",
         "src/federation/fan-out.ts",
@@ -7992,7 +7993,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p.md",
       "title": "runResyncPass fetches peer advertisements without the SPKI pin gate",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/federation/coordinator.ts",
         "src/federation/gossip.ts"
@@ -8435,7 +8436,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-spki-pin-gate-is-not-enforced-across-http-redirects.md",
       "title": "SPKI pin gate is not enforced across HTTP redirects",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/federation/peer-fetch.ts",
         "src/utils/safe-fetch/fetch.ts"
@@ -21605,7 +21606,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-character-stat-allocation-frontend-modal-and-edit-integration.md",
       "title": "Character Stat Allocation Frontend Modal And Edit Integration",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/modals/stat-allocation.html"
       ],
@@ -21620,7 +21621,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-character-stat-allocation-integration-tests-e2e.md",
       "title": "Character Stat Allocation Integration Tests E2E",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/character-stat-allocation.ts"
       ],
@@ -52247,12 +52248,6 @@
       ]
     },
     {
-      "path": "src/assets/controller/serve-policy.routes.test.ts",
-      "owners": [
-        "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte"
-      ]
-    },
-    {
       "path": "src/assets/controller/serve.ts",
       "owners": [
         "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
@@ -52282,6 +52277,12 @@
       "path": "src/assets/emotion-portraits.ts",
       "owners": [
         "epic-immersion-presentation"
+      ]
+    },
+    {
+      "path": "src/assets/encryption.ts",
+      "owners": [
+        "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte"
       ]
     },
     {
@@ -52547,6 +52548,7 @@
         "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
         "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
         "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
+        "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
         "BUG-listassets-treats-shared-visibility-as-world-readable",
         "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
@@ -103784,12 +103786,12 @@
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "produces",
-      "to": "src/assets/controller/serve-policy.routes.test.ts"
+      "to": "src/assets/controller/serve.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "produces",
-      "to": "src/assets/controller/serve.ts"
+      "to": "src/assets/encryption.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
@@ -103800,6 +103802,11 @@
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "produces",
       "to": "src/assets/serve-raw.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "produces",
+      "to": "src/assets/service/read.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
@@ -169703,6 +169710,12 @@
     {
       "from": "BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/service/read.ts"
+    },
+    {
+      "from": "BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact",
+      "kind": "sibling",
       "to": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",
       "via": "src/assets/service/delete.ts"
     },
@@ -170034,7 +170047,7 @@
       "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
       "kind": "sibling",
       "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
-      "via": "src/assets/controller.ts"
+      "via": "src/assets/controller.ts; src/assets/service/read.ts"
     },
     {
       "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
@@ -188489,6 +188502,12 @@
     {
       "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/service/read.ts"
+    },
+    {
+      "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
+      "kind": "sibling",
       "to": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
       "via": "src/routes/http-utils/errors.ts"
     },
@@ -190355,6 +190374,12 @@
     {
       "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
       "kind": "sibling",
+      "to": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "via": "src/assets/service/read.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me",
+      "kind": "sibling",
       "to": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "via": "src/assets/service/read.ts"
     },
@@ -191616,7 +191641,13 @@
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "sibling",
       "to": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
-      "via": "src/assets/controller.ts"
+      "via": "src/assets/controller.ts; src/assets/service/read.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "BUG-listassets-treats-shared-visibility-as-world-readable",
+      "via": "src/assets/service/read.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
@@ -191628,7 +191659,7 @@
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "sibling",
       "to": "BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme",
-      "via": "src/assets/serve-handlers.ts; src/assets/serve-raw.ts"
+      "via": "src/assets/serve-handlers.ts; src/assets/serve-raw.ts; src/assets/service/read.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
@@ -191669,6 +191700,12 @@
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "sibling",
+      "to": "TASK-comparison-comparability-validation",
+      "via": "src/assets/service/read.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
       "to": "TASK-dedup-top-jscpd-clone-clusters",
       "via": "src/assets/controller.ts"
     },
@@ -191700,7 +191737,7 @@
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "sibling",
       "to": "TASK-guest-asset-public-reads-open-public-asset-access",
-      "via": "src/assets/controller.ts; src/assets/serve-handlers.ts"
+      "via": "src/assets/controller.ts; src/assets/serve-handlers.ts; src/assets/service/read.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
@@ -191748,13 +191785,19 @@
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "sibling",
       "to": "epic-encryption-workflow",
-      "via": "src/assets/serve-raw.ts"
+      "via": "src/assets/serve-raw.ts; src/assets/service/read.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "sibling",
       "to": "epic-frontend-gallery",
       "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
+      "to": "epic-guest-access",
+      "via": "src/assets/service/read.ts"
     },
     {
       "from": "BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext",

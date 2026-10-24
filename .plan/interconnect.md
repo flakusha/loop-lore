@@ -11,7 +11,7 @@ output is byte-identical for identical inputs.
 - tickets: 3621
 - epics: 346
 - src paths owned: 4370
-- edges: produces 11390, consumes 402, sibling 33843, owns 2644, related 1191
+- edges: produces 11391, consumes 402, sibling 33849, owns 2644, related 1191
 
 ## Shared src hubs
 
@@ -84,7 +84,7 @@ output is byte-identical for identical inputs.
 | `src/assets/service/links.ts` | `BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par`, `TASK-comic-storyboard-panel-generation-workflow`, `TASK-comparison-cell-detail-metadata`, `TASK-comparison-gallery-comparison-set-integration`, `TASK-comparison-set-variant-data-model`, `TASK-item-asset-avatar-display-in-inventory-trading-and-provision`, `TASK-publication-artifact-schema`, `TASK-reference-set-entity`, `epic-narrative-publishing-workflows`, `epic-technical-comparison-charts` |
 | `src/assets/service/persist-generated.ts` | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst`, `TASK-asset-provenance-ledger-for-generated-assets`, `TASK-avatar-dogfood-assistant-generation`, `TASK-comparison-fan-out-engine`, `TASK-vector-gen-animated-raster`, `TASK-vector-gen-llm-svg-pipeline`, `epic-avatar-dogfood`, `epic-technical-comparison-charts`, `epic-vector-graphics-generation` |
 | `src/assets/service/read.test.ts` | `TASK-guest-asset-public-reads-open-public-asset-access`, `epic-encryption-workflow` |
-| `src/assets/service/read.ts` | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact`, `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-`, `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-`, `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-listassets-treats-shared-visibility-as-world-readable`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-comparison-comparability-validation`, `TASK-guest-asset-public-reads-open-public-asset-access`, `epic-encryption-workflow`, `epic-guest-access` |
+| `src/assets/service/read.ts` | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact`, `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-`, `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-`, `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me`, `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte`, `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-listassets-treats-shared-visibility-as-world-readable`, `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme`, `TASK-comparison-comparability-validation`, `TASK-guest-asset-public-reads-open-public-asset-access`, `epic-encryption-workflow`, `epic-guest-access` |
 | `src/assets/service/sanitize-svg.ts` | `TASK-comparison-chart-export-png-svg-csv`, `TASK-vector-gen-svg-serve-safety`, `epic-technical-comparison-charts` |
 | `src/assets/service/tag-propositions.ts` | `TASK-gallery-user-tagging-propositions`, `TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta`, `epic-asset-platform-capabilities` |
 | `src/assets/service/thumbnail.ts` | `BUG-asset-silent-catch-blocks-swallow-failures-with-no-log`, `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext`, `TASK-asset-b1-rendition-pipeline`, `TASK-asset-download-format-conversion-webp-png-jpg`, `TASK-preview-dispatch-for-non-image-asset-types`, `TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-`, `TASK-thumbnail-generation-256px-webp-at-upload`, `TASK-webp-as-a-first-class-stored-asset-format`, `epic-avatar-dogfood` |
@@ -5685,10 +5685,11 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | produces | `src/generation/hooks/mood-hook.ts` | - |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | produces | `src/generation/hooks/nsfw-hook.ts` | - |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/controller.ts` | - |
-| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/controller/serve-policy.routes.test.ts` | - |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/controller/serve.ts` | - |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/encryption.ts` | - |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/serve-handlers.ts` | - |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/serve-raw.ts` | - |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | produces | `src/assets/service/read.ts` | - |
 | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | produces | `src/assets/serve-handlers.ts` | - |
 | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | produces | `src/assets/service/create.ts` | - |
 | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | produces | `src/assets/service/delete.ts` | - |
@@ -18651,6 +18652,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/service/delete.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | `src/assets/service/read.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | `src/assets/service/read.ts` |
+| `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/service/read.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/service/delete.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/service/read.ts` |
 | `BUG-asset-deletion-unlinks-the-file-before-the-metadata-transact` | sibling | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | `src/assets/service/delete.ts` |
@@ -18706,7 +18708,7 @@ output is byte-identical for identical inputs.
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-assets-delete-fk-constraint-fails` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | `src/assets/service/read.ts; src/routes/http-utils/errors.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | `src/assets/service/read.ts` |
-| `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts` |
+| `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/controller.ts; src/assets/service/read.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso` | `src/routes/http-utils/errors.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
 | `BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts; src/assets/service/read.ts` |
@@ -21782,6 +21784,7 @@ output is byte-identical for identical inputs.
 | `BUG-duplicate-openassetpreview-definitions-with-divergent-behavi` | sibling | `epic-audio-video-sound` | `src/frontend/asset-preview.ts` |
 | `BUG-duplicate-openassetpreview-definitions-with-divergent-behavi` | sibling | `epic-frontend-gallery` | `src/frontend/pages/gallery.ts` |
 | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | sibling | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | `src/assets/service/read.ts` |
+| `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/service/read.ts` |
 | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | sibling | `BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso` | `src/routes/http-utils/errors.ts` |
 | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | sibling | `BUG-gallery-duplicate-serveGalleryGrid` | `src/routes/views/gallery.ts` |
 | `BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-` | sibling | `BUG-gallery-grid-exposes-other-users-private-assets` | `src/routes/views/gallery.ts` |
@@ -22093,6 +22096,7 @@ output is byte-identical for identical inputs.
 | `BUG-email-token-bucket-discards-fractional-refill-credit-permane` | sibling | `TASK-email-deliverability-spf-dkim-dmarc-and-inbound-spam-gate` | `src/integrations/email/spam-gate.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-emotion-avatar-emotions-array-uncapped-x-default-rate-policy` | `src/routes/character-emotion-avatars.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-emotion-avatar-fallback-metadata-incomplete` | `src/characters/services/emotion-avatar-fallback.ts` |
+| `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | `src/assets/service/read.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/service/read.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | `src/generation/matting/service.ts` |
 | `BUG-emotion-avatar-baseavatarid-is-unchecked-cross-user-asset-me` | sibling | `BUG-listassets-treats-shared-visibility-as-world-readable` | `src/assets/service/read.ts` |
@@ -22303,21 +22307,23 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `epic-federation-offload-quotas` | `src/aux-pipeline/runner.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | `src/assets/serve-handlers.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance` | `src/assets/controller.ts` |
-| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-image-edit-comfyui-provider-never-uploads-input-image` | `src/assets/controller.ts; src/assets/service/read.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-listassets-treats-shared-visibility-as-world-readable` | `src/assets/service/read.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/controller.ts` |
-| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | `src/assets/serve-handlers.ts; src/assets/serve-raw.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | `src/assets/serve-handlers.ts; src/assets/serve-raw.ts; src/assets/service/read.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `BUG-size-strict-pre-existing-dev-drift` | `src/assets/controller/serve.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `FEAT-background` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-asset-download-format-conversion-webp-png-jpg` | `src/assets/serve-raw.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-comfyui-first-class-admin-workflows` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-comfyui-first-class-workflow-library` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-comparison-comparability-validation` | `src/assets/service/read.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-dedup-top-jscpd-clone-clusters` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-egui-gallery-surface-grid-filters-thumbnails-upload` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-encryption-asset-encryption` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-frontend-and-http-utils-type-safety-batch` | `src/assets/serve-raw.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-gallery-fuzzy-search-pagination` | `src/assets/controller.ts` |
-| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-guest-asset-public-reads-open-public-asset-access` | `src/assets/controller.ts; src/assets/serve-handlers.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-guest-asset-public-reads-open-public-asset-access` | `src/assets/controller.ts; src/assets/serve-handlers.ts; src/assets/service/read.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-image-edit-concept-inpaint-template` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-review-thread-target-vocabulary` | `src/assets/controller.ts` |
@@ -22325,8 +22331,9 @@ output is byte-identical for identical inputs.
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `TASK-webp-as-a-first-class-stored-asset-format` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-aux-enrichment-pipeline` | `src/assets/controller.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-comfyui-first-class-citizen` | `src/assets/controller.ts` |
-| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-encryption-workflow` | `src/assets/serve-raw.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-encryption-workflow` | `src/assets/serve-raw.ts; src/assets/service/read.ts` |
 | `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-frontend-gallery` | `src/assets/controller.ts` |
+| `BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte` | sibling | `epic-guest-access` | `src/assets/service/read.ts` |
 | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `BUG-image-edit-derivative-link-files-an-asset-id-under-entity-ty` | `src/assets/service/delete.ts` |
 | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst` | `src/assets/service/create.ts` |
 | `BUG-encrypted-asset-thumbnail-is-stored-and-served-in-plaintext` | sibling | `BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme` | `src/assets/serve-handlers.ts; src/assets/variant-path.ts` |
