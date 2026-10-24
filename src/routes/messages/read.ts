@@ -108,7 +108,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
             const target = query.translateLocale === "auto"
               ? await resolveAutoDisplayLocale(database, {
                 chatId,
-                userId,
+                userId: userId ?? "",
                 uiLocale: detectLocale(ctx.request,),
               },)
               : query.translateLocale;
