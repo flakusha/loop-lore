@@ -10,7 +10,7 @@
 // only under per-file isolation, where a module registry cannot leak into
 // sibling files.
 import "./i18n.test-helper";
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { messageTranslate, } from "./message-translate";
 
