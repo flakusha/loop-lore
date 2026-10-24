@@ -23,4 +23,4 @@ The resync pass (src/federation/coordinator.ts:169-185) defaults to fetchPeerAdv
 - [ ] Tests passing
 - [ ] Documentation updated
 
-**Resolved:** 2026-10-23 registry-driven close: git issue 54b7962 (registry tip: 3b3c4df1d Konstantin Fedotov Auto-closed: appended .md marker marks BUG-RUNRESYNCPASS-FETCHES-PEER-A)
+**Resolved:** 2026-10-24 registry-driven close: git issue 54b7962 (registry tip: 3b3c4df1d Konstantin Fedotov Auto-closed: appended .md marker marks BUG-RUNRESYNCPASS-FETCHES-PEER-A)
