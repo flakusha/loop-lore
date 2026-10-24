@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3641
 - epics: 347
-- src paths owned: 4389
-- edges: produces 11449, consumes 403, sibling 34109, owns 2649, related 1191
+- src paths owned: 4392
+- edges: produces 11456, consumes 403, sibling 34113, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -1177,7 +1177,7 @@ output is byte-identical for identical inputs.
 | `src/nsfw/capability-gate.test.ts` | `TASK-033`, `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `TASK-rpg-nsfw-services-add-config-level-opt-in-gate` |
 | `src/nsfw/capability-gate.ts` | `TASK-033`, `TASK-034`, `TASK-037`, `TASK-c4-inbound-federated-content-verdict-notices`, `TASK-correct-task-037-s-overstated-resolution-no-contentwarning-t`, `TASK-licensing-publish-authorization-predicate`, `TASK-licensing-publish-enforcement-point`, `TASK-rpg-nsfw-services-add-config-level-opt-in-gate` |
 | `src/nsfw/moderation-service.ts` | `TASK-admin-content-review-queue`, `TASK-moderation-privacy-first-foundation`, `TASK-prompt-template-registry`, `epic-chat-lifecycle-moderation`, `epic-config-templates` |
-| `src/nsfw/moderation-service/appeals.test.ts` | `BUG-nsfw-appeals-as-any-and-dead-route`, `BUG-nsfw-reviewappeal-auto-reverses-actions` |
+| `src/nsfw/moderation-service/appeals.test.ts` | `BUG-nsfw-appeal-approvedby-taken-from-request-body`, `BUG-nsfw-appeals-as-any-and-dead-route`, `BUG-nsfw-reviewappeal-auto-reverses-actions` |
 | `src/nsfw/moderation-service/appeals.ts` | `BUG-nsfw-appeals-as-any-and-dead-route`, `BUG-nsfw-reviewappeal-auto-reverses-actions` |
 | `src/nsfw/moderation-service/audit.ts` | `BUG-getauditlog-performedby-exposed-to-moderators`, `BUG-nsfw-export-bundle-no-access-log`, `BUG-nsfw-modactions-performedby-from-body`, `BUG-nsfw-moderation-delete-destroys-audit-log`, `BUG-nsfw-modservice-notify-user-leaks-admin-reason` |
 | `src/nsfw/moderation-service/data.test.ts` | `BUG-nsfw-export-bundle-no-access-log`, `BUG-nsfw-moderation-delete-destroys-audit-log`, `TASK-dprint-formatting-enforced-ci-test-files`, `TASK-nsfw-moderation-delete-audit-regression-verify`, `epic-review-dev-2026-08-26-late-merges` |
@@ -1186,6 +1186,7 @@ output is byte-identical for identical inputs.
 | `src/nsfw/moderation-service/flags.ts` | `BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t`, `BUG-nsfw-flagqueue-leaks-reporter-pii`, `BUG-size-strict-pre-existing-dev-drift`, `TEST-nsfw-getflagqueue-status-filter-untested`, `epic-message-seen-state` |
 | `src/nsfw/moderation-service/mod-actions.ts` | `BUG-nsfw-modactions-performedby-from-body`, `BUG-nsfw-modservice-notify-user-leaks-admin-reason` |
 | `src/nsfw/moderation-service/overrides.ts` | `BUG-geteffectivensfw-phantom-users-enabled`, `BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al`, `epic-nsfw-capabilities` |
+| `src/nsfw/moderation-service/types.ts` | `BUG-getauditlog-performedby-exposed-to-moderators`, `BUG-nsfw-appeal-approvedby-taken-from-request-body` |
 | `src/nsfw/pii-redaction.ts` | `BUG-pii-redaction-hardcoded-dev-fallback-secret-no-prod-guard`, `TASK-input-hardening-batch`, `TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa` |
 | `src/nsfw/runtime-config.ts` | `BUG-nsfw-runtime-config-singleton-leaks-across-tests`, `TASK-prompt-template-registry` |
 | `src/nsfw/seduction-prerequisites.ts` | `TASK-nsfw-wire-seduction-encounter-preconditions`, `epic-faction-reputation` |
@@ -1472,7 +1473,7 @@ output is byte-identical for identical inputs.
 | `src/routes/metrics.ts` | `TASK-docs-api-disambiguate-infra-metrics-from-governance-api-v1-m`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `epic-api-telemetry`, `epic-effect-v4-adoption-evaluation` |
 | `src/routes/middleware/deprecation-headers.ts` | `FEAT-038`, `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an`, `TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-`, `TASK-headers-additional-useful-response-headers`, `TASK-shrink-unreferenced-types-and-helpers-in-routes-validation` |
 | `src/routes/middleware/version-redirect.ts` | `FEAT-037`, `epic-api-versioning`, `epic-architecture` |
-| `src/routes/middleware/version-resolver.test.ts` | `BUG-version-resolver-middleware-built-not-wired`, `epic-api-versioning` |
+| `src/routes/middleware/version-resolver.test.ts` | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s`, `BUG-version-resolver-middleware-built-not-wired`, `epic-api-versioning` |
 | `src/routes/middleware/version-resolver.ts` | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s`, `BUG-version-resolver-middleware-built-not-wired`, `epic-api-versioning` |
 | `src/routes/model-comparisons-analytics.ts` | `TASK-docs-spec-analytics-observability`, `epic-technical-comparison-charts` |
 | `src/routes/model-comparisons.test.ts` | `TASK-analytics-observability`, `TASK-docs-spec-analytics-observability`, `TASK-fix-eslint-errors`, `epic-analytics-observability`, `epic-continuous-improvement` |
@@ -1864,7 +1865,7 @@ output is byte-identical for identical inputs.
 | `src/turning` | `epic-emergent-narrative-design`, `epic-rpg-patterns` |
 | `src/turning/classifier-selection.ts` | `BUG-extractjsonobject-slices-an-unbounded-llm-response-before-js`, `TASK-outfit-change-aux-task-and-typebox-schema` |
 | `src/turning/skip-cooldown.ts` | `TASK-chat-feature-turn-talkativity-skip`, `TASK-fetchskipcooldowns-issues-one-query-per-cooling-actor` |
-| `src/turning/turn-manager.test.ts` | `BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` |
+| `src/turning/turn-manager.test.ts` | `BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c`, `BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` |
 | `src/turning/turn-manager.ts` | `TASK-fix-turn-number-double-count`, `epic-world-chat-channels-invites` |
 | `src/turning/turn-manager/participants.ts` | `BUG-chat-persist-init-hardcoded-scene`, `TASK-chat-feature-turn-talkativity-skip`, `epic-chat-product-features` |
 | `src/turning/turn-manager/selection.ts` | `BUG-chat-persist-init-hardcoded-scene`, `BUG-group-cascade-consecutive-turn-guard`, `BUG-turn-manager-selection-uses-a-stale-candidate-list-and-a-rea`, `TASK-chat-feature-turn-talkativity-skip`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-chat-product-features` |
@@ -5793,6 +5794,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa` | produces | `src/routes/v1/index.ts` | - |
 | `BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa` | produces | `src/server/handler.ts` | - |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | produces | `src/elysia-app.ts` | - |
+| `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | produces | `src/routes/middleware/version-resolver.test.ts` | - |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | produces | `src/routes/middleware/version-resolver.ts` | - |
 | `BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso` | produces | `src/routes/auth/responses.ts` | - |
 | `BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso` | produces | `src/routes/http-utils/errors.ts` | - |
@@ -6351,6 +6353,10 @@ output is byte-identical for identical inputs.
 | `BUG-npc-migration-with-deleted-destination-leaves-npc-stuck-at-o` | produces | `src/rpg/world-travel/travel.test.ts` | - |
 | `BUG-npc-navigation-routes-all-stubbed` | produces | `src/routes/rpg/npc-navigation.ts` | - |
 | `BUG-nsfw-appeal-approvedby-taken-from-request-body` | produces | `src/nsfw/moderation-service/appeals-reversal.ts` | - |
+| `BUG-nsfw-appeal-approvedby-taken-from-request-body` | produces | `src/nsfw/moderation-service/appeals.test.ts` | - |
+| `BUG-nsfw-appeal-approvedby-taken-from-request-body` | produces | `src/nsfw/moderation-service/index.ts` | - |
+| `BUG-nsfw-appeal-approvedby-taken-from-request-body` | produces | `src/nsfw/moderation-service/types.ts` | - |
+| `BUG-nsfw-appeal-approvedby-taken-from-request-body` | produces | `src/routes/nsfw-moderation/appeals.routes.test.ts` | - |
 | `BUG-nsfw-appeal-approvedby-taken-from-request-body` | produces | `src/routes/nsfw-moderation/appeals.ts` | - |
 | `BUG-nsfw-appeals-as-any-and-dead-route` | produces | `src/db/schema.ts` | - |
 | `BUG-nsfw-appeals-as-any-and-dead-route` | produces | `src/nsfw/moderation-service/appeals.test.ts` | - |
@@ -6486,6 +6492,7 @@ output is byte-identical for identical inputs.
 | `BUG-plugin-tool-gating-empty-role-bypass` | produces | `src/generation/generate-route/tool-execution.test.ts` | - |
 | `BUG-plugin-tool-gating-empty-role-bypass` | produces | `src/generation/generate-route/tool-execution.ts` | - |
 | `BUG-plugin-tool-gating-empty-role-bypass` | produces | `src/plugins/registry.ts` | - |
+| `BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500` | produces | `src/routes/character-emotions/actor.test.ts` | - |
 | `BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500` | produces | `src/routes/character-emotions/actor.ts` | - |
 | `BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500` | produces | `src/validation/schemas/character-systems.ts` | - |
 | `BUG-post-history-instruction-relocated-to-front-not-after-histor` | produces | `src/assistant/prompt-assembler.test.ts` | - |
@@ -6893,6 +6900,7 @@ output is byte-identical for identical inputs.
 | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | produces | `src/tui/chat/api.ts` | - |
 | `BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-` | produces | `src/tui/chat/send-timeout.test.ts` | - |
 | `BUG-tui-showerror-desyncs-itemcount-from-messagelist-length` | produces | `src/tui/chat/index.ts` | - |
+| `BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c` | produces | `src/turning/turn-manager.test.ts` | - |
 | `BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c` | produces | `src/turning/turn-manager/lifecycle.ts` | - |
 | `BUG-turn-manager-selection-uses-a-stale-candidate-list-and-a-rea` | produces | `src/turning/turn-manager/selection.ts` | - |
 | `BUG-turn-skip-concurrent-advance-posts-double-fire-auto-generati` | produces | `src/routes/chats/turn-skip-routes.test.ts` | - |
@@ -22892,7 +22900,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | `src/elysia-app.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | `src/elysia-app.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m` | `src/elysia-app.ts` |
-| `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `BUG-version-resolver-middleware-built-not-wired` | `src/elysia-app.ts; src/routes/middleware/version-resolver.ts` |
+| `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `BUG-version-resolver-middleware-built-not-wired` | `src/elysia-app.ts; src/routes/middleware/version-resolver.test.ts; src/routes/middleware/version-resolver.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `FEAT-035` | `src/elysia-app.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `FEAT-037` | `src/elysia-app.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard` | `src/elysia-app.ts` |
@@ -22924,7 +22932,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `epic-analytics-observability` | `src/elysia-app.ts` |
-| `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `epic-api-versioning` | `src/elysia-app.ts; src/routes/middleware/version-resolver.ts` |
+| `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `epic-api-versioning` | `src/elysia-app.ts; src/routes/middleware/version-resolver.test.ts; src/routes/middleware/version-resolver.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `epic-architecture` | `src/elysia-app.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `epic-assistant-creative-studio-workflows` | `src/elysia-app.ts` |
 | `BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s` | sibling | `epic-battle-action-systems` | `src/elysia-app.ts` |
@@ -24066,6 +24074,7 @@ output is byte-identical for identical inputs.
 | `BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth` | sibling | `epic-guest-access` | `src/routes/messages/read.ts` |
 | `BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth` | sibling | `epic-multilingual-carriage` | `src/routes/messages/read.ts` |
 | `BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth` | sibling | `epic-reactive-actor-appearance` | `src/routes/messages/read.ts` |
+| `BUG-getauditlog-performedby-exposed-to-moderators` | sibling | `BUG-nsfw-appeal-approvedby-taken-from-request-body` | `src/nsfw/moderation-service/types.ts` |
 | `BUG-getauditlog-performedby-exposed-to-moderators` | sibling | `BUG-nsfw-export-bundle-no-access-log` | `src/nsfw/moderation-service/audit.ts; src/routes/nsfw-moderation/audit.ts; src/routes/nsfw-moderation/shared.ts` |
 | `BUG-getauditlog-performedby-exposed-to-moderators` | sibling | `BUG-nsfw-flagqueue-leaks-reporter-pii` | `src/routes/nsfw-moderation/shared.ts` |
 | `BUG-getauditlog-performedby-exposed-to-moderators` | sibling | `BUG-nsfw-modactions-performedby-from-body` | `src/nsfw/moderation-service/audit.ts; src/routes/nsfw-moderation/shared.ts` |
@@ -26384,7 +26393,8 @@ output is byte-identical for identical inputs.
 | `BUG-npc-navigation-routes-all-stubbed` | sibling | `BUG-rpg-route-authz-gaps-xp-award-ledger-world-trait-idor-world-` | `src/routes/rpg/npc-navigation.ts` |
 | `BUG-npc-navigation-routes-all-stubbed` | sibling | `TASK-wire-npc-navigation-routes` | `src/routes/rpg/npc-navigation.ts` |
 | `BUG-npc-navigation-routes-all-stubbed` | sibling | `epic-rpg-wiring-phase3` | `src/routes/rpg/npc-navigation.ts` |
-| `BUG-nsfw-appeal-approvedby-taken-from-request-body` | sibling | `BUG-nsfw-appeals-as-any-and-dead-route` | `src/routes/nsfw-moderation/appeals.ts` |
+| `BUG-nsfw-appeal-approvedby-taken-from-request-body` | sibling | `BUG-nsfw-appeals-as-any-and-dead-route` | `src/nsfw/moderation-service/appeals.test.ts; src/routes/nsfw-moderation/appeals.ts` |
+| `BUG-nsfw-appeal-approvedby-taken-from-request-body` | sibling | `BUG-nsfw-reviewappeal-auto-reverses-actions` | `src/nsfw/moderation-service/appeals.test.ts` |
 | `BUG-nsfw-appeals-as-any-and-dead-route` | sibling | `TASK-051` | `src/db/schema.ts` |
 | `BUG-nsfw-appeals-as-any-and-dead-route` | sibling | `TASK-055` | `src/db/schema.ts` |
 | `BUG-nsfw-appeals-as-any-and-dead-route` | sibling | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | `src/db/schema.ts` |
@@ -28786,6 +28796,8 @@ output is byte-identical for identical inputs.
 | `BUG-tui-showerror-desyncs-itemcount-from-messagelist-length` | sibling | `TASK-tui-slash-command-completion` | `src/tui/chat/index.ts` |
 | `BUG-tui-showerror-desyncs-itemcount-from-messagelist-length` | sibling | `TASK-update-terminal-ui-spec-to-actual-file-layout` | `src/tui/chat/index.ts` |
 | `BUG-tui-showerror-desyncs-itemcount-from-messagelist-length` | sibling | `epic-terminal-ui` | `src/tui/chat/index.ts` |
+| `BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c` | sibling | `BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren` | `src/turning/turn-manager.test.ts` |
+| `BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c` | sibling | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` | `src/turning/turn-manager.test.ts` |
 | `BUG-turn-manager-selection-uses-a-stale-candidate-list-and-a-rea` | sibling | `TASK-chat-feature-turn-talkativity-skip` | `src/turning/turn-manager/selection.ts` |
 | `BUG-turn-manager-selection-uses-a-stale-candidate-list-and-a-rea` | sibling | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` | `src/turning/turn-manager/selection.ts` |
 | `BUG-turn-manager-selection-uses-a-stale-candidate-list-and-a-rea` | sibling | `epic-chat-product-features` | `src/turning/turn-manager/selection.ts` |

@@ -3990,6 +3990,7 @@
       "status": "done",
       "srcRefs": [
         "src/elysia-app.ts",
+        "src/routes/middleware/version-resolver.test.ts",
         "src/routes/middleware/version-resolver.ts"
       ],
       "related": []
@@ -6806,6 +6807,10 @@
       "status": "done",
       "srcRefs": [
         "src/nsfw/moderation-service/appeals-reversal.ts",
+        "src/nsfw/moderation-service/appeals.test.ts",
+        "src/nsfw/moderation-service/index.ts",
+        "src/nsfw/moderation-service/types.ts",
+        "src/routes/nsfw-moderation/appeals.routes.test.ts",
         "src/routes/nsfw-moderation/appeals.ts"
       ],
       "related": []
@@ -7477,6 +7482,7 @@
       "title": "POST /actors/:actorId/emotions is a dead endpoint - always 500",
       "status": "done",
       "srcRefs": [
+        "src/routes/character-emotions/actor.test.ts",
         "src/routes/character-emotions/actor.ts",
         "src/validation/schemas/character-systems.ts"
       ],
@@ -9373,6 +9379,7 @@
       "title": "turn-manager lifecycle requestRegeneration line 26 is dead code",
       "status": "done",
       "srcRefs": [
+        "src/turning/turn-manager.test.ts",
         "src/turning/turn-manager/lifecycle.ts"
       ],
       "related": []
@@ -72126,6 +72133,7 @@
     {
       "path": "src/nsfw/moderation-service/appeals.test.ts",
       "owners": [
+        "BUG-nsfw-appeal-approvedby-taken-from-request-body",
         "BUG-nsfw-appeals-as-any-and-dead-route",
         "BUG-nsfw-reviewappeal-auto-reverses-actions"
       ]
@@ -72188,6 +72196,12 @@
       ]
     },
     {
+      "path": "src/nsfw/moderation-service/index.ts",
+      "owners": [
+        "BUG-nsfw-appeal-approvedby-taken-from-request-body"
+      ]
+    },
+    {
       "path": "src/nsfw/moderation-service/mod-actions.ts",
       "owners": [
         "BUG-nsfw-modactions-performedby-from-body",
@@ -72217,7 +72231,8 @@
     {
       "path": "src/nsfw/moderation-service/types.ts",
       "owners": [
-        "BUG-getauditlog-performedby-exposed-to-moderators"
+        "BUG-getauditlog-performedby-exposed-to-moderators",
+        "BUG-nsfw-appeal-approvedby-taken-from-request-body"
       ]
     },
     {
@@ -74839,6 +74854,12 @@
       ]
     },
     {
+      "path": "src/routes/character-emotions/actor.test.ts",
+      "owners": [
+        "BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500"
+      ]
+    },
+    {
       "path": "src/routes/character-emotions/actor.ts",
       "owners": [
         "BUG-character-emotions-get-delete-idor-no-actor-id-scoping",
@@ -76892,6 +76913,7 @@
     {
       "path": "src/routes/middleware/version-resolver.test.ts",
       "owners": [
+        "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
         "BUG-version-resolver-middleware-built-not-wired",
         "epic-api-versioning"
       ]
@@ -77030,6 +77052,12 @@
         "TASK-fb12-admin-role-change-notifies-affected-user-admxntf",
         "TASK-moderator-permission-gating-for-read-only-review-surface",
         "TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa"
+      ]
+    },
+    {
+      "path": "src/routes/nsfw-moderation/appeals.routes.test.ts",
+      "owners": [
+        "BUG-nsfw-appeal-approvedby-taken-from-request-body"
       ]
     },
     {
@@ -83718,6 +83746,7 @@
     {
       "path": "src/turning/turn-manager.test.ts",
       "owners": [
+        "BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c",
         "BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren",
         "TASK-delete-unreferenced-generation-story-assistant-and-chat-code"
       ]
@@ -104700,6 +104729,11 @@
     {
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
       "kind": "produces",
+      "to": "src/routes/middleware/version-resolver.test.ts"
+    },
+    {
+      "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
+      "kind": "produces",
       "to": "src/routes/middleware/version-resolver.ts"
     },
     {
@@ -107490,6 +107524,26 @@
     {
       "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
       "kind": "produces",
+      "to": "src/nsfw/moderation-service/appeals.test.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "kind": "produces",
+      "to": "src/nsfw/moderation-service/index.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "kind": "produces",
+      "to": "src/nsfw/moderation-service/types.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "kind": "produces",
+      "to": "src/routes/nsfw-moderation/appeals.routes.test.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "kind": "produces",
       "to": "src/routes/nsfw-moderation/appeals.ts"
     },
     {
@@ -108161,6 +108215,11 @@
       "from": "BUG-plugin-tool-gating-empty-role-bypass",
       "kind": "produces",
       "to": "src/plugins/registry.ts"
+    },
+    {
+      "from": "BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500",
+      "kind": "produces",
+      "to": "src/routes/character-emotions/actor.test.ts"
     },
     {
       "from": "BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500",
@@ -110196,6 +110255,11 @@
       "from": "BUG-tui-showerror-desyncs-itemcount-from-messagelist-length",
       "kind": "produces",
       "to": "src/tui/chat/index.ts"
+    },
+    {
+      "from": "BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c",
+      "kind": "produces",
+      "to": "src/turning/turn-manager.test.ts"
     },
     {
       "from": "BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c",
@@ -195452,7 +195516,7 @@
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
       "kind": "sibling",
       "to": "BUG-version-resolver-middleware-built-not-wired",
-      "via": "src/elysia-app.ts; src/routes/middleware/version-resolver.ts"
+      "via": "src/elysia-app.ts; src/routes/middleware/version-resolver.test.ts; src/routes/middleware/version-resolver.ts"
     },
     {
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
@@ -195644,7 +195708,7 @@
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
       "kind": "sibling",
       "to": "epic-api-versioning",
-      "via": "src/elysia-app.ts; src/routes/middleware/version-resolver.ts"
+      "via": "src/elysia-app.ts; src/routes/middleware/version-resolver.test.ts; src/routes/middleware/version-resolver.ts"
     },
     {
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
@@ -202491,6 +202555,12 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/routes/messages/read.ts"
+    },
+    {
+      "from": "BUG-getauditlog-performedby-exposed-to-moderators",
+      "kind": "sibling",
+      "to": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "via": "src/nsfw/moderation-service/types.ts"
     },
     {
       "from": "BUG-getauditlog-performedby-exposed-to-moderators",
@@ -216404,7 +216474,13 @@
       "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
       "kind": "sibling",
       "to": "BUG-nsfw-appeals-as-any-and-dead-route",
-      "via": "src/routes/nsfw-moderation/appeals.ts"
+      "via": "src/nsfw/moderation-service/appeals.test.ts; src/routes/nsfw-moderation/appeals.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "kind": "sibling",
+      "to": "BUG-nsfw-reviewappeal-auto-reverses-actions",
+      "via": "src/nsfw/moderation-service/appeals.test.ts"
     },
     {
       "from": "BUG-nsfw-appeals-as-any-and-dead-route",
@@ -230811,6 +230887,18 @@
       "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/tui/chat/index.ts"
+    },
+    {
+      "from": "BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c",
+      "kind": "sibling",
+      "to": "BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren",
+      "via": "src/turning/turn-manager.test.ts"
+    },
+    {
+      "from": "BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c",
+      "kind": "sibling",
+      "to": "TASK-delete-unreferenced-generation-story-assistant-and-chat-code",
+      "via": "src/turning/turn-manager.test.ts"
     },
     {
       "from": "BUG-turn-manager-selection-uses-a-stale-candidate-list-and-a-rea",
