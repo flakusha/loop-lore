@@ -3,7 +3,7 @@
 
 # BUG: turn-manager lifecycle requestRegeneration line 26 is dead code
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Low
 **Effort:** Medium
 **Epic:** epic-actor-turn-skip
