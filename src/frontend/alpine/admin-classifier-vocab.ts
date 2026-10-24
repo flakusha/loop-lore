@@ -10,10 +10,10 @@
  * non-empty/uniqueness/length violations, mirrored client-side here.
  */
 import {
+  CLASSIFIER_TAG_VOCABULARY_KEY,
   MAX_TAG_LENGTH,
   MAX_VOCABULARY_TAGS,
-} from "../../aux-pipeline/class-tag-vocab";
-import { CLASSIFIER_TAG_VOCABULARY_KEY, } from "../../aux-pipeline/class-template-resolver";
+} from "../../aux-pipeline/class-tag-vocab-constants";
 import { jsonStringifyOr, } from "../../utils";
 import { showToast, } from "../ui";
 import { apiFetch, } from "./htmx";
