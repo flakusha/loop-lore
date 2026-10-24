@@ -26,10 +26,12 @@ With the contract aligned, an unknown `emotionId` would still fail the insert as
 
 **Resolution:**
 
-- `src/validation/schemas/character-systems.ts:203-211` — `CharacterEmotionBody` now declares `emotionId` (uuid), `intensity` (0-1, the column scale), and the optional `context` / `expiresAt` the handler writes; `emotion_name` is gone.
-- `src/routes/character-emotions/actor.ts:138-154` — the handler resolves the emotion definition before the upsert and answers 404 for an unknown id instead of letting the insert fail.
+- `src/validation/schemas/character-systems.ts:206-211` — `CharacterEmotionBody` now declares `emotionId` (uuid), `intensity` (0-1, the column scale), and the optional `context` / `expiresAt` the handler writes; `emotion_name` is gone.
+- `src/routes/character-emotions/actor.ts:138-156` — the handler resolves the emotion definition before the upsert and answers 404 for an unknown id instead of letting the insert fail.
 - Regression tests: `src/routes/character-emotions/actor.test.ts` → "post upserts the emotion row for a known emotion id" (201 and the row is persisted with the given intensity), "post updates the intensity of an emotion the actor already has", "post returns 404 for an unknown emotion id instead of failing the insert".
 
 ## Review 2026-10-04
 
 OPEN on dev - the handler destructures emotionId from the body (src/routes/character-emotions/actor.ts:137, insert :166-169) while the mounted schema declares only emotion_name + intensity 0-100 vs the 0-1 column scale (src/validation/schemas/character-systems.ts:203-206), so emotionId is always undefined -> NOT NULL FK violation -> 500, unchanged. No branch or worktree touches this file or the schema with a fix (pickaxe: refactors/lint only).
+
+**Resolved:** 2026-10-24 registry-driven close: git issue f3fbf56 (registry tip: 72afa5112 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-POST-ACTORS-ACTORID-EMOTIONS)
