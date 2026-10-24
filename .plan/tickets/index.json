@@ -931,6 +931,19 @@
     "source": ".plan/tickets/BUG-assistant-and-group-chat-correctness-defects.md",
     "status": "Not Started"
   },
+  "BUG-ASSISTANT-CREATED-LORE-ENTRIES-ARE-STORED-WITH-A-NULL-ID-SO-": {
+    "hash": "b1ade27",
+    "git_issue": "b1ade27",
+    "extid": "BUG-ASSISTANT-CREATED-LORE-ENTRIES-ARE-STORED-WITH-A-NULL-ID-SO-",
+    "type": "BUG",
+    "title": "Assistant-created lore entries are stored with a NULL id, so their cooldown never starts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md",
+    "status": "Not Started"
+  },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "epic": "epic-assistant-creative-studio-workflows",
     "extid": "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE",
@@ -8880,6 +8893,19 @@
     "tags": [],
     "title": "Security/auth merge wrapper `3ab26ccd` breaks the backend build",
     "type": "BUG"
+  },
+  "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR": {
+    "hash": "d71ac02",
+    "git_issue": "d71ac02",
+    "extid": "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR",
+    "type": "BUG",
+    "title": "Seeded-user config option seedActor is never read, so the mirror actor row is always created",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md",
+    "status": "Not Started"
   },
   "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET": {
     "hash": "36b98b4",
@@ -39771,6 +39797,19 @@
     "title": "Generalized pre/post-generation hook registry",
     "type": "TASK"
   },
+  "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO": {
+    "hash": "db7edfa",
+    "git_issue": "db7edfa",
+    "extid": "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO",
+    "type": "TASK",
+    "title": "Generated DB types mark every primary key as DB-generated, so an id-less INSERT type-checks and stores a NULL id",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md",
+    "status": "Not Started"
+  },
   "TASK-GENERATION-ASSET-PERSISTENCE-CONTRACT": {
     "epic": "epic-asset-platform-capabilities",
     "extid": "TASK-GENERATION-ASSET-PERSISTENCE-CONTRACT",
@@ -45907,6 +45946,19 @@
     "tags": [],
     "title": "No browser test: VN scene view, battle UI, command palette",
     "type": "TASK"
+  },
+  "TASK-NO-GATE-CHECKS-THAT-A-DECLARED-CONFIG-KEY-HAS-A-READER-SO-WR": {
+    "hash": "0be6465",
+    "git_issue": "0be6465",
+    "extid": "TASK-NO-GATE-CHECKS-THAT-A-DECLARED-CONFIG-KEY-HAS-A-READER-SO-WR",
+    "type": "TASK",
+    "title": "No gate checks that a declared config key has a reader, so write-only config options ship silently",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md",
+    "status": "Not Started"
   },
   "TASK-NODEINFO-WELL-KNOWN-DISCOVERY-ENDPOINTS": {
     "epic": "epic-federation-swarm-sync",

@@ -2615,6 +2615,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-npc-lore-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/assistant/commands/create-entity.ts": [
@@ -4296,6 +4304,10 @@
   "src/assistant/prompt/sections/lore-activation.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-055.md"
     },
     {
@@ -4319,6 +4331,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-npc-lore-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -4351,6 +4367,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-and-group-chat-correctness-defects.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -4480,7 +4500,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -12901,6 +12929,22 @@
       "source": "docs/spec/config-extensions.md"
     }
   ],
+  "src/config/hot-apply-consumers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    }
+  ],
+  "src/config/hot-apply.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
+    }
+  ],
   "src/config/hot-reload.test.ts": [
     {
       "kind": "ticket",
@@ -12915,6 +12959,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-continuous-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
     },
     {
       "kind": "ticket",
@@ -13247,6 +13295,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-integration-config-surface-schemas-example-toml-env-map.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
     },
     {
       "kind": "ticket",
@@ -13799,12 +13851,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-server-host-config-and-host-env-override-are-dead-start-ts-n.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
     }
   ],
   "src/config/schema/seeding.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-lorebook-template-seeding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
     },
     {
       "kind": "ticket",
@@ -13816,6 +13880,10 @@
     }
   ],
   "src/config/schema/testing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
@@ -17181,6 +17249,16 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/db/generated/db-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    }
+  ],
   "src/db/guard-triggers-update-twins.test.ts": [
     {
       "kind": "ticket",
@@ -17715,6 +17793,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -19216,6 +19302,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-db-tables.md"
     },
     {
@@ -19702,6 +19792,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
     {
@@ -20112,6 +20206,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
     },
     {
@@ -20161,6 +20259,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -20433,6 +20535,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -21003,6 +21109,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -25258,6 +25368,10 @@
     }
   ],
   "src/frontend/alpine/user-notifications.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-epic-frontend-notifications-verify-bell-prefs-ui-c.md"
@@ -35182,6 +35296,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     },
     {
@@ -35207,6 +35325,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-age-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -35752,6 +35874,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr.md"
     },
     {
@@ -35844,6 +35970,14 @@
   "src/nsfw/capability-gate.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
     },
     {
@@ -35918,6 +36052,10 @@
   "src/nsfw/moderation-service/appeals-reversal.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
     }
   ],
@@ -35952,6 +36090,10 @@
     }
   ],
   "src/nsfw/moderation-service/audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md"
@@ -36129,6 +36271,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -39053,6 +39199,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     }
   ],
   "src/routes/admin-templates/profiles.ts": [
@@ -42636,6 +42786,10 @@
   "src/routes/import/lorebook.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     },
     {
@@ -44122,6 +44276,10 @@
   "src/routes/notifications/index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/EPIC-2026-21.md"
     }
   ],
@@ -44132,6 +44290,10 @@
     }
   ],
   "src/routes/notifications/stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-notification-stream-error-unreachable.md"
@@ -44325,6 +44487,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-faction-reputation.md"
+    }
+  ],
+  "src/routes/nsfw/shared.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     }
   ],
   "src/routes/openapi.ts": [
@@ -46497,6 +46665,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-npc-lore-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -51240,6 +51412,10 @@
   "src/seeding/users.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
     },
     {
@@ -51564,6 +51740,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
     {
@@ -51589,6 +51769,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -52673,6 +52857,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rarity-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -55441,6 +55629,12 @@
       "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
     }
   ],
+  "src/utils/safe-regexp.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-diff-scoped-coverage-gate-floors-files-the-branch-did-not-au.md"
+    }
+  ],
   "src/utils/scratch.ts": [
     {
       "kind": "ticket",
@@ -56058,6 +56252,10 @@
     }
   ],
   "src/validation/schemas/responses.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-affordance-action-parser.md"
