@@ -17,7 +17,8 @@
  * - the plaintext shared token is sent once and does not linger in state;
  * - a blank budget field becomes null (unlimited), never 0.
  */
-import { beforeEach, describe, expect, mock, test, } from "bun:test";
+import { beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { adminFederation, FEDERATION_POLL_MS, } from "./admin-federation";
 
 import type { ApiFetchMock, } from "../tests/test-types";
@@ -25,12 +26,16 @@ import type { ApiFetchMock, } from "../tests/test-types";
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
-mock.module("./htmx", () => ({
-  apiFetch: ((url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  }) satisfies ApiFetchMock,
-}),);
+// ISOLATED-only: mock.module is process-global and poisons later files'
+// `./htmx` imports without --isolate (cross-file contamination).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: ((url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    }) satisfies ApiFetchMock,
+  }),);
+}
 
 beforeEach(() => {
   calls = [];
@@ -72,7 +77,7 @@ const GOOD_USAGE = {
   storage: { assetBytes: 10, heldBytes: 0, totalBytes: 10, assetCount: 2, budgetsAvailable: false, },
 };
 
-describe("admin federation — load", () => {
+describeOrSkip("admin federation — load", () => {
   test("loads the usage endpoint and projects peers", async () => {
     handler = async () => Response.json(GOOD_USAGE,);
     const state = fresh();
@@ -130,9 +135,9 @@ describe("admin federation — load", () => {
     expect(state._fedPollTimer,).toBeNull();
     expect(calls.length,).toBe(before,);
   });
-});
+},);
 
-describe("admin federation — delete typed-confirm", () => {
+describeOrSkip("admin federation — delete typed-confirm", () => {
   test("an empty confirm cannot submit", () => {
     const state = fresh();
     state.fedDeleteOrigin = "https://gpu.example";
@@ -174,9 +179,9 @@ describe("admin federation — delete typed-confirm", () => {
     expect(del?.url,).toBe("/api/v1/admin/federation/peers/https%3A%2F%2Fgpu.example",);
     expect(state.fedDeleteConfirm,).toBe("",);
   });
-});
+},);
 
-describe("admin federation — peer save", () => {
+describeOrSkip("admin federation — peer save", () => {
   test("dispatches the right payload and clears the token afterwards", async () => {
     handler = async (url,) =>
       url.endsWith("/usage",)
@@ -235,9 +240,9 @@ describe("admin federation — peer save", () => {
     expect(state.fedPeerDraft.sharedToken,).toBe("",);
     expect(state.fedProbeOutcome,).toBe("",);
   });
-});
+},);
 
-describe("admin federation — budget save", () => {
+describeOrSkip("admin federation — budget save", () => {
   test("a blank limit is sent as null (unlimited), never 0", async () => {
     handler = async (url,) => url.endsWith("/usage",) ? Response.json(GOOD_USAGE,) : Response.json({},);
     const state = fresh();
@@ -255,9 +260,9 @@ describe("admin federation — budget save", () => {
     expect(body.tokensPerMinute,).toBeNull();
     expect(body.maxQueueDepth,).toBeNull();
   });
-});
+},);
 
-describe("admin federation — matrix save", () => {
+describeOrSkip("admin federation — matrix save", () => {
   test("round-trips the preference map", async () => {
     const stored = { matrix: { preferences: { chat: ["https://gpu.example",], }, }, };
     handler = async () => Response.json(stored,);
@@ -269,4 +274,4 @@ describe("admin federation — matrix save", () => {
     const put = calls.find((c,) => c.opts.method === "PUT");
     expect(JSON.parse(String(put?.opts.body,),).preferences.chat,).toEqual(["https://gpu.example",],);
   });
-});
+},);

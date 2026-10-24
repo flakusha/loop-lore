@@ -22,9 +22,18 @@ const globalState = globalThis as unknown as Record<string, unknown>;
 const originalEventSource = globalState.EventSource;
 const originalApiFetch = globalState.apiFetch;
 const originalShowToast = globalState.showToast;
+// Save the pre-file window state: assigning a window here must not leak into
+// later files in a shared-process serial run (a location-less window breaks
+// any code that evaluates window.location).
+const hadWindow = "window" in globalThis;
+const originalWindow = (globalThis as { window?: unknown }).window;
+let installedWindow = false;
 
 beforeEach(() => {
-  if (!(globalThis as any).window) { (globalThis as any).window = globalThis; }
+  // Falsy check, not key presence: earlier files can leave a `window` KEY
+  // whose value is undefined, and the suite needs a real window object.
+  installedWindow = !(globalThis as { window?: unknown }).window;
+  if (installedWindow) { (globalThis as { window?: unknown }).window = globalThis; }
   FakeEventSource.instances = [];
   globalState.EventSource = FakeEventSource;
   globalState.apiFetch = async () => Response.json({ chats: {}, },);
@@ -35,6 +44,15 @@ afterEach(() => {
   globalState.EventSource = originalEventSource;
   globalState.apiFetch = originalApiFetch;
   globalState.showToast = originalShowToast;
+  if (installedWindow) {
+    if (hadWindow) {
+      (globalThis as { window?: unknown }).window = originalWindow;
+    } else {
+      delete (globalThis as { window?: unknown }).window;
+    }
+
+    installedWindow = false;
+  }
 },);
 
 describe("NotificationsManager start/stop", () => {
