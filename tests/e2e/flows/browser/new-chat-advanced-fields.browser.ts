@@ -39,13 +39,34 @@ describe("New chat advanced fields E2E", () => {
     await ctx?.close();
   },);
 
+  /**
+   * The auth login endpoint is rate limited per server process: this file
+   * logs in from four tests, the third attempt comes back 429, and the page
+   * never navigates. The session cookie is browser-scoped, so one login
+   * serves every page in this context.
+   */
+  let sessionReady = false;
+
   async function login(page: TestPage,) {
+    if (sessionReady) { return; }
     await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
     await page.locator("[data-testid='login-submit']",).waitFor({ state: "visible", timeout: 30_000, },);
     await page.fill("[data-testid='username-input']", SEED.user.username,);
     await page.fill("[data-testid='password-input']", SEED.user.password,);
+    // Arm the waiter BEFORE the click: attaching it afterwards races the
+    // htmx POST and degenerates into a guaranteed timeout under load.
+    const loginRes = page.waitForResponse(
+      (res,) => res.url().includes("/api/v1/auth/login",) && res.request().method() === "POST",
+      { timeout: 30_000, },
+    );
+
     await page.click("[data-testid='login-submit']",);
+    const res = await loginRes;
+    expect(res.status(),).toBe(200,);
+    // The login POST returning is not the same as the login navigation
+    // finishing - the client still has a redirect to /views/chat in flight.
     await page.waitForURL((url,) => url.pathname === "/views/chat", { timeout: 30_000, },);
+    sessionReady = true;
   }
 
   async function gotoNewChat(page: TestPage,) {
@@ -246,6 +267,13 @@ describe("New chat advanced fields E2E", () => {
         .waitFor({ state: "attached", timeout: 15_000, },);
 
       await variantSelect.selectOption("rpg",);
+      // Switching the variant re-renders the world options, so the world must
+      // be picked AFTER the switch: a required-but-empty select blocks the
+      // form submit and no POST is ever made.
+      await worldSelect
+        .locator(`option[value="${SEED.world.id}"]`,)
+        .waitFor({ state: "attached", timeout: 15_000, },);
+
       await worldSelect.selectOption(SEED.world.id,);
 
       const name = `RPG-Variant-Chat-${Date.now()}`;
