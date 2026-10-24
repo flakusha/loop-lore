@@ -362,7 +362,7 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-SYSTEM-CONFIG-DELETE-PASSES-USER-CONTROLLED-KEY-WITHOU": {
     "hash": "daacc4b",
@@ -484,7 +484,7 @@
     "epic": "epic-byok-api-keys",
     "tags": [],
     "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ALPINE-HYDRATION-FAILURES-UNDECLARED-TEMPLATE-VARS-UNTESTED": {
     "hash": "b0ab7a1",
@@ -1870,7 +1870,7 @@
     "epic": "epic-byok-api-keys",
     "tags": [],
     "source": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
     "epic": "",
@@ -4336,7 +4336,7 @@
     "epic": "epic-mechanics-governance",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-plugins-make-plugin-discovery-failures-visible.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-ROUTING-BRING-POST-API-V1-ASSETS-UNDER-BARREL-GOVERNANCE": {
     "hash": "3dd5054",
