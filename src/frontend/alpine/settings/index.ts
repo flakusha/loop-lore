@@ -14,6 +14,7 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     birthDate: "",
     theme: "default",
     locale: "en",
+    contentLocale: "",
     locales: [] as LocaleInfoArray,
     enterToSend: true,
     autoScroll: true,
