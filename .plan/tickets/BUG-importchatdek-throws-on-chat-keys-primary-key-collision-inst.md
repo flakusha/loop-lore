@@ -80,3 +80,5 @@ throws `UNIQUE constraint failed: chat_keys.id`; after the fix it passes and
 asserts that the colliding row keeps its id and its key material, that the
 imported DEK lands under a different, fresh local id for its own chat, and that
 it still decrypts to the sender's DEK.
+
+**Resolved:** 2026-10-24 registry-driven close: git issue 873fe9f (registry tip: 33a7e9360 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-IMPORTCHATDEK-THROWS-ON-CHAT)
