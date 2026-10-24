@@ -132,6 +132,15 @@ export async function loadAllPlugins(
 }
 
 /**
+ * Normalize a caught value into an Error that keeps its stack.
+ * @param error
+ * @returns the error, with the original stack preserved
+ */
+function asError(error: unknown): Error {
+  return error instanceof Error ? error : new Error(String(error,),);
+}
+
+/**
  * Load a single plugin from its directory: manifest, hooks, and state.
  * Exported for tests, which drive it with temp-dir fixtures.
  * @param db
@@ -148,7 +157,16 @@ export async function loadSinglePlugin(
 ): Promise<void> {
   const log = getLogger();
   const pluginFile = join(pluginDir, "plugin.ts");
-  if (!existsSync(pluginFile)) { return; }
+  if (!existsSync(pluginFile)) {
+    // A plugin directory without an entry point is a broken plugin, not a
+    // directory to skip silently — name it so the operator sees it.
+    log.warn(
+      `Plugin directory has no plugin.ts — skipping`,
+      { plugin: pluginName, origin, directory: pluginDir, },
+    );
+
+    return;
+  }
 
   // Held outside the try so the catch can roll back a partial registration.
   let registeredName: string | undefined;
@@ -157,7 +175,11 @@ export async function loadSinglePlugin(
     const mod = (await import(/* @vite-ignore */ pluginFile)) as Record<string, unknown>;
     const manifest = mod.plugin as PluginManifest | undefined;
     if (!manifest?.name) {
-      log.warn({ message: `Invalid plugin manifest`, pluginName });
+      log.warn(
+        `Invalid plugin manifest — no plugin manifest with a name was exported`,
+        { plugin: pluginName, origin, directory: pluginDir, },
+      );
+
       return;
     }
 
@@ -198,7 +220,12 @@ export async function loadSinglePlugin(
       registry.unregister(registeredName);
     }
 
-    log.error({ message: `Failed to load plugin`, plugin: pluginName, error: String(error,), });
+    // The error object carries the stack — String(error) drops it.
+    log.error(
+      `Failed to load plugin`,
+      asError(error,),
+      { plugin: pluginName, origin, directory: pluginDir, },
+    );
   }
 }
 
@@ -293,7 +320,11 @@ async function persistPluginState({ db, name, origin, }: PluginApprovalOpts): Pr
   } catch (error) {
     // Best-effort, but never silent: a caller that assumes the row landed
     // would otherwise run a plugin whose approval state it never learned.
-    getLogger().error({ message: `Failed to persist plugin state`, plugin: name, error: String(error,), });
+    getLogger().error(
+      `Failed to persist plugin state`,
+      asError(error,),
+      { plugin: name, origin, },
+    );
   }
 }
 
@@ -371,8 +402,14 @@ export async function unloadAllPlugins(): Promise<void> {
     if (plugin?.manifest.onUnload) {
       try {
         await plugin.manifest.onUnload();
-      } catch {
-        // swallow — best-effort shutdown
+      } catch (error) {
+        // Best-effort shutdown: one plugin's teardown failure must not stop
+        // the rest — but it must be visible.
+        getLogger().error(
+          `Plugin onUnload failed — continuing shutdown`,
+          asError(error,),
+          { plugin: name, },
+        );
       }
     }
   }

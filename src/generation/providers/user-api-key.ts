@@ -15,6 +15,7 @@ import { decryptValue, } from "../../crypto";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { findProviderInstance, } from "./provider-instances";
 import type { UserApiKeyResolver, } from "./types";
 
 /**
@@ -26,13 +27,7 @@ import type { UserApiKeyResolver, } from "./types";
  * @returns {boolean}
  */
 function userKeyAllowed(config: Config, providerName: string,): boolean {
-  const providers = config.generation?.providers;
-  const instance = providers?.openaiCompatible.find((entry,) => entry.name === providerName) ??
-    (providers?.anthropic?.name === providerName ? providers.anthropic : undefined) ??
-    (providers?.ollamaNative?.name === providerName ? providers.ollamaNative : undefined) ??
-    (providers?.bedrock?.name === providerName ? providers.bedrock : undefined);
-
-  return instance?.allowUserApiKey !== false;
+  return findProviderInstance(config, providerName,)?.allowUserApiKey !== false;
 }
 
 /**
