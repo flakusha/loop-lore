@@ -137,6 +137,22 @@ export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const { emotionId, intensity, context, expiresAt, } = ctx.body;
 
+        // `character_emotions.emotion_id` is a FK to `emotions.id`: an unknown
+        // id would fail the insert with a driver error (500), so resolve the
+        // definition here and answer 404 like the read path does.
+        const definition = await database
+          .selectFrom("emotions",)
+          .select("id",)
+          .where("id", "=", emotionId,)
+          .executeTakeFirst();
+
+        if (!definition) {
+          return jsonError({
+            message: ctx.t?.("characters.emotionNotFound",) ?? "Emotion not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
+
         // Upsert: check if emotion already exists for this actor
         const existing = await database
           .selectFrom("character_emotions",)
