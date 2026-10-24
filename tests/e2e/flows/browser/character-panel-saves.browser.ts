@@ -94,7 +94,8 @@ describe("Character panel saves E2E", () => {
     try {
       await gotoEdit(page,);
 
-      // KNOWN DEFECT (see .tmp/NOTES.md): the licensing panel's x-show
+      // KNOWN DEFECT (see BUG-character-licensing-panel-frozen-on-loading-licensing-alpine):
+      // the licensing panel's x-show
       // bindings never re-evaluate after the htmx swap — state loads (the
       // summary should render) but the view stays frozen on "Loading".
       // The form and its handlers are fully functional, so this test drives
