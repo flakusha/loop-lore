@@ -24,3 +24,5 @@ Same POST /api/v1/chat/:id/reply endpoint serves both plain-reply and LLM paths;
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-24 registry-driven close: git issue 8c29a33 (registry tip: 168189f73 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-TUI-BLIND-TO-LLM-ASSISTANT-T)

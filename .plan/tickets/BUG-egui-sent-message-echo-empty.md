@@ -24,3 +24,5 @@ Envelope mismatch between egui client parser and server chat-reply response shap
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-24 registry-driven close: git issue b5b3751 (registry tip: d4bb424a5 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-EGUI-SENT-MESSAGE-ECHO-EMPTY)
