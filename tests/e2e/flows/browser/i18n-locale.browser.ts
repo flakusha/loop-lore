@@ -113,6 +113,15 @@ describe("i18n E2E", () => {
 
       expect(reloadedLang.startsWith("es",),).toBe(true,);
 
+      // The locale bundle is installed by a module script, so the global
+      // helper only exists once that script has run - wait for it instead of
+      // racing it (the full browser suite runs the page under load).
+      await page.waitForFunction(
+        () => typeof (globalThis as unknown as { t?: unknown }).t === "function",
+        undefined,
+        { timeout: 15_000, },
+      );
+
       // English strings are pre-injected at layout render time
       // (src/routes/views/layout.ts wrapWithLayout), so a non-empty catalog
       // would prove nothing about the switch — assert the DISTINCT Spanish
