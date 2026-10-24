@@ -1063,6 +1063,7 @@ describe("ClassifierTagsUpdateBody", () => {
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_chat.ClassifierTagsUpdateBody,));
 });
+
 describe("CombatantSchema", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_combatSchemas.CombatantSchema,));
 
@@ -2691,4 +2692,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 425 schemas discovered across 517 module(s).
+// 426 schemas discovered across 518 module(s).
