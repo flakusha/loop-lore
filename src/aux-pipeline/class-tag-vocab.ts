@@ -15,14 +15,16 @@ import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import {
   CLASSIFIER_TAG_VOCABULARY_KEY,
   CLASSIFIER_TAGS_ACTIVE_PREFIX,
-} from "./class-template-resolver";
+  MAX_TAG_LENGTH,
+  MAX_VOCABULARY_TAGS,
+} from "./class-tag-vocab-constants";
 
-export { CLASSIFIER_TAG_VOCABULARY_KEY, } from "./class-template-resolver";
-
-/** Maximum characters in a single tag. */
-export const MAX_TAG_LENGTH = 64;
-/** Maximum number of tags in the curated vocabulary. */
-export const MAX_VOCABULARY_TAGS = 200;
+export {
+  CLASSIFIER_TAG_VOCABULARY_KEY,
+  CLASSIFIER_TAGS_ACTIVE_PREFIX,
+  MAX_TAG_LENGTH,
+  MAX_VOCABULARY_TAGS,
+} from "./class-tag-vocab-constants";
 
 /** Result of vocabulary validation. */
 export type TagVocabularyResult =

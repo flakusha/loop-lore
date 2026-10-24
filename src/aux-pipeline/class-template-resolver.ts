@@ -20,6 +20,10 @@ import { getLogger, } from "../logger";
 import { resolveSystemPrompt, } from "../prompts/registry";
 import { safeJsonParse, } from "../utils";
 import {
+  CLASSIFIER_TAG_VOCABULARY_KEY,
+  CLASSIFIER_TAGS_ACTIVE_PREFIX,
+} from "./class-tag-vocab-constants";
+import {
   type ClassTagInput,
   selectClassTemplate,
 } from "./class-template-select";
@@ -44,11 +48,10 @@ export interface ClassifierPromptContext {
   readonly chatId?: string;
 }
 
-/** system_config key holding the admin-curated tag vocabulary (JSON string[]). */
-export const CLASSIFIER_TAG_VOCABULARY_KEY = "classifier_tag_vocabulary";
-
-/** system_config key prefix for the per-chat active tag subset (JSON string[]). */
-export const CLASSIFIER_TAGS_ACTIVE_PREFIX = "classifier_tags_active:";
+export {
+  CLASSIFIER_TAG_VOCABULARY_KEY,
+  CLASSIFIER_TAGS_ACTIVE_PREFIX,
+} from "./class-tag-vocab-constants";
 
 /**
  * Module logger for classifier prompt resolution.
