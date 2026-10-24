@@ -126,6 +126,45 @@ describe("completeDispatch (libretranslate)", () => {
     );
   });
 
+  test("falls back to the state default target when the request has no model", async () => {
+    const captured: CapturedRequest[] = [];
+    await withMockFetch(
+      (url, init,) => {
+        captured.push({ url, init, },);
+        return jsonResponse({ translatedText: "hello", },);
+      },
+      async () => {
+        await completeDispatch(state, req({ model: "", },),);
+        expect(JSON.parse(captured[0]!.init.body as string,).target,).toBe("en",);
+      },
+    );
+  });
+
+  test("rejects a request with no target language at all", async () => {
+    const noTarget: LibreTranslateState = { ...state, defaultModel: "", };
+    await expect(completeDispatch(noTarget, req({ model: "", },),),).rejects.toBeInstanceOf(ProviderError,);
+    await expect(completeDispatch(noTarget, req({ model: "", },),),).rejects.toThrow(
+      "requires a target language",
+    );
+  });
+
+  test("rejects a request with no user message text", async () => {
+    const noText = req({ messages: [{ role: "system", content: "Translate this.", },], },);
+    await expect(completeDispatch(state, noText,),).rejects.toBeInstanceOf(ProviderError,);
+    await expect(completeDispatch(state, noText,),).rejects.toThrow("requires user message text",);
+  });
+
+  test("returns empty content when the instance omits translatedText", async () => {
+    await withMockFetch(
+      () => jsonResponse({ detectedLanguage: { language: "ES", }, },),
+      async () => {
+        const result = await completeDispatch(state, req(),);
+        expect(result.content,).toBe("",);
+        expect(result.finishReason,).toBe("stop",);
+      },
+    );
+  });
+
   test("API error rejects with ProviderError (no throw across the seam)", async () => {
     await withMockFetch(
       () => jsonResponse({ error: "Please contact the operator", }, 403,),

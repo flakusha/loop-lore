@@ -112,6 +112,20 @@ describe("completeDispatch (google-translate)", () => {
     );
   });
 
+  test("rejects when neither the request nor the state carries a target language", async () => {
+    const noTarget: GoogleTranslateState = { ...state, defaultModel: "", };
+    await expect(completeDispatch(noTarget, req({ model: "", },),),).rejects.toBeInstanceOf(ProviderError,);
+    await expect(completeDispatch(noTarget, req({ model: "", },),),).rejects.toThrow(
+      "Google Translate requires a target language (request model)",
+    );
+  });
+
+  test("rejects when the request carries no user text", async () => {
+    const noText = req({ messages: [{ role: "system", content: "Translate this.", },], },);
+    await expect(completeDispatch(state, noText,),).rejects.toBeInstanceOf(ProviderError,);
+    await expect(completeDispatch(state, noText,),).rejects.toThrow("requires user message text",);
+  });
+
   test("API error rejects with ProviderError (no throw across the seam)", async () => {
     await withMockFetch(
       () => jsonResponse({ error: { code: 400, message: "Invalid API key", status: "INVALID_ARGUMENT", }, }, 400,),
