@@ -9,6 +9,7 @@ type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 
 const globalState = globalThis as unknown as { apiFetch?: ApiFetchMock };
 const originalFetch = globalState.apiFetch;
+const originalBareFetch = (globalThis as { fetch?: unknown }).fetch;
 
 let calls: { url: string; opts?: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({ data: [], },);
@@ -29,6 +30,7 @@ beforeEach(() => {
 
 afterEach(() => {
   globalState.apiFetch = originalFetch;
+  (globalThis as { fetch?: unknown }).fetch = originalBareFetch;
 },);
 
 describe("buildFractalState factory", () => {

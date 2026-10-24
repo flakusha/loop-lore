@@ -1,4 +1,5 @@
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import { profiles, } from "./profiles";
 import type { ProfileDetail, } from "./types";
 
@@ -13,12 +14,16 @@ let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 let toasts: { type: string; message: string }[] = [];
 
-mock.module("../htmx", () => ({
-  apiFetch: (url: string, opts?: RequestInit,) => {
-    calls.push({ url, opts: opts ?? {}, },);
-    return handler(url, opts,);
-  },
-}),);
+// ISOLATED-only: mock.module is process-global and poisons later files'
+// `../htmx` imports without --isolate (cross-file contamination).
+if (ISOLATED) {
+  mock.module("../htmx", () => ({
+    apiFetch: (url: string, opts?: RequestInit,) => {
+      calls.push({ url, opts: opts ?? {}, },);
+      return handler(url, opts,);
+    },
+  }),);
+}
 
 beforeEach(() => {
   calls = [];
@@ -56,7 +61,7 @@ afterEach(() => {
   resetProfileState();
 },);
 
-describe("adminTemplates.profiles.loadTemplates", () => {
+describeOrSkip("adminTemplates.profiles.loadTemplates", () => {
   test("loads and stores the parsed list", async () => {
     handler = async () => Response.json(listPayload,);
     await profiles.loadTemplates();
@@ -88,9 +93,9 @@ describe("adminTemplates.profiles.loadTemplates", () => {
     await profiles.loadTemplates();
     expect(profiles.loadingTemplates,).toBe(false,);
   });
-});
+},);
 
-describe("adminTemplates.profiles.selectProfile / clearSelection", () => {
+describeOrSkip("adminTemplates.profiles.selectProfile / clearSelection", () => {
   test("stores the fetched profile detail", async () => {
     handler = async () => Response.json({ id: "p1", name: "Profile One", templates: {}, },);
     await profiles.selectProfile("p1",);
@@ -116,9 +121,9 @@ describe("adminTemplates.profiles.selectProfile / clearSelection", () => {
     profiles.clearSelection.call(profiles as never,);
     expect(profiles.selectedProfile,).toBeNull();
   });
-});
+},);
 
-describe("adminTemplates.profiles.deleteProfile", () => {
+describeOrSkip("adminTemplates.profiles.deleteProfile", () => {
   test("DELETEs and reloads the list on success", async () => {
     handler = async (_url, opts,) => opts?.method === "DELETE" ? Response.json({},) : Response.json(listPayload,);
     await profiles.deleteProfile("p9",);
@@ -145,9 +150,9 @@ describe("adminTemplates.profiles.deleteProfile", () => {
     await profiles.deleteProfile("p9",);
     expect(toasts[1]!.type,).toBe("error",);
   });
-});
+},);
 
-describe("adminTemplates.profiles.createProfile", () => {
+describeOrSkip("adminTemplates.profiles.createProfile", () => {
   test("refuses to submit without id or name", async () => {
     await profiles.createProfile();
     profiles.newProfile.id = "only-id";
@@ -207,4 +212,4 @@ describe("adminTemplates.profiles.createProfile", () => {
     await profiles.createProfile();
     expect(toasts[1]!.type,).toBe("error",);
   });
-});
+},);

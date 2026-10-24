@@ -6,24 +6,42 @@
  * (`turnQueue` — wrap-around, dead flags, empty roster) and the rendered
  * DOM contract (label, acting chip with `aria-current`, per-chip text).
  */
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { type FakeEl, installBattleDom, } from "../tests/battle-fake-dom";
 import { view, } from "../tests/battle-fake-mount";
 import { renderTurnOrder, turnQueue, } from "./turn-order";
 
 let restoreDom: () => void;
 
+// Sentinel save/restore for the i18n catalog (see tests/i18n.test.ts): wipe
+// via `= undefined` would leak into later files in a shared-process serial
+// run, so restore whatever catalog was loaded before this file.
+const localeStringsHost = globalThis as { __localeStrings?: unknown };
+const initialLocaleStrings = localeStringsHost.__localeStrings;
+let savedLocaleStrings: unknown;
+let hasSavedLocaleStrings = false;
+
 beforeEach(() => {
   restoreDom = installBattleDom();
+  savedLocaleStrings = localeStringsHost.__localeStrings;
+  hasSavedLocaleStrings = true;
   // Seed the alpine i18n catalog the strip resolves its label from.
-  (globalThis as { __localeStrings?: unknown }).__localeStrings = {
+  localeStringsHost.__localeStrings = {
     battle: { turnOrder: "Turn order", },
   };
 },);
 
 afterEach(() => {
-  (globalThis as { __localeStrings?: unknown }).__localeStrings = undefined;
+  if (hasSavedLocaleStrings) {
+    localeStringsHost.__localeStrings = savedLocaleStrings;
+    hasSavedLocaleStrings = false;
+  }
+
   restoreDom();
+},);
+
+afterAll(() => {
+  localeStringsHost.__localeStrings = initialLocaleStrings;
 },);
 
 describe("turnQueue", () => {
