@@ -16,6 +16,7 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { SECRET_KEY_PATTERN, } from "./config-keys";
+import { openConfigValue, sealConfigValue, } from "./config-secrets";
 /** Child logger scoped to "system-config". */
 function log() {
   return getLogger().child({ module: "system-config", },);
@@ -41,36 +42,47 @@ export const ARCHIVE_RETENTION_DAYS_DEFAULT = 90;
 /**
  * Return all system config entries ordered by key.
  * @param db
- * @returns every `system_config` row, key-ascending
+ * @returns every `system_config` row, key-ascending, secret values in plain text
  */
 export async function getAllConfig(db: Kysely<DB>,): Promise<ConfigEntry[]> {
-  return db.selectFrom("system_config",).selectAll().orderBy("key",).execute();
+  const rows = await db.selectFrom("system_config",).selectAll().orderBy("key",).execute();
+  const entries: ConfigEntry[] = [];
+  for (const row of rows) {
+    entries.push({ ...row, value: await openConfigValue(row.key, row.value,), },);
+  }
+
+  return entries;
 }
 
 /**
  * Return a single config entry by key, or undefined if missing.
  * @param db
  * @param key
- * @returns the entry, or `undefined` when the key was never written
+ * @returns the entry with its plain-text value, or `undefined` when the key was never written
  */
 export async function getConfig(db: Kysely<DB>, key: string,): Promise<ConfigEntry | undefined> {
-  return db.selectFrom("system_config",).selectAll().where("key", "=", key,).executeTakeFirst();
+  const row = await db.selectFrom("system_config",).selectAll().where("key", "=", key,).executeTakeFirst();
+  if (!row) { return undefined; }
+  return { ...row, value: await openConfigValue(row.key, row.value,), };
 }
 
 /**
  * Return the raw string value for a key, or undefined if missing.
  * @param db
  * @param key
- * @returns the stored value verbatim, or `undefined` when the key was never written
+ * @returns the plain-text value, or `undefined` when the key was never written
  */
 export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<string | undefined> {
   const row = await db.selectFrom("system_config",).select("value",).where("key", "=", key,).executeTakeFirst();
-  return row?.value;
+  if (!row) { return undefined; }
+  return await openConfigValue(key, row.value,);
 }
 
 /**
  * Insert or update a config entry.
  * Updates updated_at on conflict.
+ * A secret-classified key is stored sealed in the `secret:v1:` credential
+ * envelope; the live snapshot still receives the plain value.
  * After persisting, hot-applies the write to live consumers when the key
  * is hot-applicable (no-op for restart-required keys).
  * @param db
@@ -79,6 +91,7 @@ export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<stri
  * @param description
  * @returns requires_restart — matches decorateConfigEntry. When the write was
  *   not applied (no snapshot), hot keys report true (not live).
+ * @throws {SecretEnvelopeError} When a secret-classified value cannot be sealed.
  */
 export async function setConfig(
   db: Kysely<DB>,
@@ -86,13 +99,14 @@ export async function setConfig(
   value: string,
   description?: string,
 ): Promise<boolean> {
+  const storedValue = await sealConfigValue(key, value,);
   await db
     .insertInto("system_config",)
-    .values({ key, value, description: description ?? null, },)
+    .values({ key, value: storedValue, description: description ?? null, },)
     .onConflict((oc,) =>
       oc
         .column("key",)
-        .doUpdateSet({ value, description: description ?? null, updated_at: new Date().toISOString(), },)
+        .doUpdateSet({ value: storedValue, description: description ?? null, updated_at: new Date().toISOString(), },)
     )
     .execute();
 

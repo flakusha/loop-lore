@@ -113,6 +113,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-recursive-self-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
+    }
+  ],
+  "src/admin/config-secrets.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
+    }
+  ],
+  "src/admin/config-secrets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
     }
   ],
   "src/admin/config.test.ts": [
@@ -15087,6 +15103,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
     },
     {
       "kind": "ticket",
@@ -31027,6 +31047,16 @@
       "source": ".plan/tickets/FEAT-067.md"
     }
   ],
+  "src/generation/providers/provider-instances.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md"
+    }
+  ],
   "src/generation/providers/registry.test.ts": [
     {
       "kind": "ticket",
@@ -31093,6 +31123,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-vector-graphics-generation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
     },
     {
       "kind": "ticket",
@@ -31250,6 +31284,10 @@
     }
   ],
   "src/generation/providers/user-api-key.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-model-native-locale-config.md"
@@ -33259,6 +33297,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
     },
     {
       "kind": "ticket",
@@ -36591,6 +36633,12 @@
       "source": ".plan/tickets/TASK-plugin-and-tool-runtime-residual-defects.md"
     }
   ],
+  "src/plugins/loader.discovery-failures.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-plugins-make-plugin-discovery-failures-visible.md"
+    }
+  ],
   "src/plugins/loader.ts": [
     {
       "kind": "epic",
@@ -39196,6 +39244,10 @@
   "src/routes/admin/system-config.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp.md"
     },
     {
@@ -39425,6 +39477,16 @@
       "source": ".plan/epics/epic-byok-api-keys.md"
     }
   ],
+  "src/routes/api-keys.providers.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md"
+    }
+  ],
   "src/routes/api-keys.ts": [
     {
       "kind": "epic",
@@ -39433,6 +39495,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
     },
     {
       "kind": "ticket",

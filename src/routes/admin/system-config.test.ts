@@ -16,10 +16,11 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { setConfig, } from "../../admin/config";
+import { getConfigValue, setConfig, } from "../../admin/config";
 import { type ConfigChange, initConfigHotApply, onConfigChange, resetConfigHotApply, } from "../../config/hot-apply";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
+import { initSmk, } from "../../crypto/smk";
 import type { DB, } from "../../db/schema";
 import { createLogger, getLogger, setGlobalLogger, } from "../../logger";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -47,9 +48,17 @@ beforeAll(async () => {
   const tdb = await createTestDb();
   db = tdb.db;
   sqlite = tdb.sqlite;
+  await initSmk({
+    serverEncryptionKey: "f".repeat(64,),
+    required: false,
+    compressThreshold: 1024,
+    compressAlgorithm: "gzip",
+  },);
 },);
 
-afterAll(() => {
+afterAll(async () => {
+  // Reset the process-global SMK so later suites do not inherit an active key.
+  await initSmk({ required: false, compressThreshold: 1024, compressAlgorithm: "gzip", },);
   sqlite.close();
 },);
 
@@ -106,7 +115,7 @@ describe("admin system-config routes", () => {
     expect(raw,).not.toContain("s3cr3t",);
   });
 
-  test("PATCH still stores a secret value verbatim", async () => {
+  test("PATCH stores a secret value sealed, never verbatim", async () => {
     const app = makeApp(db, "admin",);
     const res = await app.handle(
       new Request("http://localhost/api/admin/system-config", {
@@ -123,7 +132,10 @@ describe("admin system-config routes", () => {
       .where("key", "=", "write.token",)
       .executeTakeFirst();
 
-    expect(stored?.value,).toBe("tok-123",);
+    expect(stored?.value,).not.toBe("tok-123",);
+    expect(stored?.value,).toStartWith("secret:v1:",);
+    // The read path hands the plain value back to the admin caller.
+    expect(await getConfigValue(db, "write.token",),).toBe("tok-123",);
   });
 
   test("PATCH /api/admin/system-config returns 200 with valid body", async () => {
