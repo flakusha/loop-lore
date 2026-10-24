@@ -46,6 +46,7 @@ globalThis.apiFetch = apiFetch;
 
 document.addEventListener("htmx:config:request", (e: Event,) => {
   const detail = (e as CustomEvent<{ ctx?: { request?: { headers: Record<string, string> } }; path?: unknown }>)
+  const detail = (e as CustomEvent<{ ctx?: { request?: { headers: Record<string, string> } }; path?: unknown }>)
     ?.detail;
 
   const headers = detail?.ctx?.request?.headers;
@@ -77,6 +78,8 @@ function triggerPageLoaders(): void {
 }
 
 document.addEventListener("htmx:after:init", (e: Event,) => {
+  const evt = e as unknown as { target?: Element; elt?: Element; detail?: { elt?: Element } };
+  const evt = e as unknown as { target?: Element; elt?: Element; detail?: { elt?: Element } };
   const evt = e as unknown as { target?: Element; elt?: Element; detail?: { elt?: Element } };
   const elt = (evt.target || evt.elt || evt?.detail?.elt) as Element;
   apiLog.debug("htmx:after:init", { tag: elt?.tagName, id: (elt as HTMLElement)?.id, },);
@@ -121,7 +124,10 @@ document.addEventListener("htmx:response:error", (e: Event,) => {
   }
 
   const res = detail?.ctx?.response;
-  if (!res) { return; }
+  // htmx may hand back a non-Response payload here (a stub or a plain
+  // object); calling .clone() on it throws inside the event handler and
+  // surfaces as an uncaught page error.
+  if (!res || typeof res.clone !== "function") { return; }
   res
     .clone()
     .text()
@@ -152,6 +158,8 @@ document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
 
 // ── hx-on::after-request replacements (success events) ──────
 document.addEventListener("htmx:after:request", (e: Event,) => {
+  const detail = (e as CustomEvent<{ successful?: boolean; elt?: HTMLElement }>)?.detail;
+  const detail = (e as CustomEvent<{ successful?: boolean; elt?: HTMLElement }>)?.detail;
   const detail = (e as CustomEvent<{ successful?: boolean; elt?: HTMLElement }>)?.detail;
   if (!detail?.successful) { return; }
   const successEvent = detail.elt?.dataset?.hxSuccessEvent;
