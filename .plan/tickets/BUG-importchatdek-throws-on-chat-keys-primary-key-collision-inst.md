@@ -3,7 +3,7 @@
 
 # BUG: importChatDek throws on chat_keys primary-key collision instead of degrading
 
-**Status:** Wontfix
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Tags:** federation
@@ -14,38 +14,69 @@ chat_keys.id is PRIMARY KEY and chat_id carries a UNIQUE index (src/db/migration
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`chat_keys` has two unique constraints: `id` is the PRIMARY KEY and `chat_id`
+carries a unique index (`src/db/migrations/001_init.ts:1678`, `:1999-2003`). The
+import insert declared `onConflict` only on `chat_id`, so a collision on the
+PRIMARY KEY was not a conflict target and SQLite raised
+`SQLITE_CONSTRAINT_PRIMARYKEY: UNIQUE constraint failed: chat_keys.id`,
+aborting the import for that artifact. The artifact arrives over the wire, so
+the remote peer chooses the key id - the collision is attacker controlled.
+
+Constraints: an existing row for the chat still wins (first import is
+authoritative), and another chat's row must never be overwritten or borrowed -
+the importing chat must not end up pointing at a key row that belongs to a
+different chat. Alternatives considered: a composite conflict target
+(`oc.columns(["id", "chat_id"])`) - rejected, SQLite has no unique index over
+both columns and rejects that clause outright; rejecting the artifact with a
+typed error - that still aborts the import for the targeted chat, which is the
+defect; binding the import to the colliding row - that would hand the chat a key
+row that belongs to another chat.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
 
 ## Resolution
 
-The SQL claim in the Summary is CORRECT and reproduces: the insert at
-`src/federation/dek-rewrap.ts:195-205` declares `onConflict` only on
-`chat_id`, so a PRIMARY KEY violation on `id` is not a conflict target and the
-insert throws `SQLITE_CONSTRAINT_PRIMARYKEY: UNIQUE constraint failed:
-chat_keys.id`.
+The SQL claim in the Summary is CORRECT and reproduces: the insert declared
+`onConflict` only on `chat_id`, so a PRIMARY KEY violation on `id` was not a
+conflict target and the insert threw `SQLITE_CONSTRAINT_PRIMARYKEY: UNIQUE
+constraint failed: chat_keys.id`.
 
-Not reachable, on two independent grounds:
+The previous Wontfix rested on two grounds. The first still holds; the second
+does not:
 
-1. `importChatDek` (`src/federation/dek-rewrap.ts:184`) has zero production
-   callers — only `src/federation/dek-rewrap.test.ts` and
-   `docs/review/federation-local-multi-instance-review.md:66`. There is no
-   inbound DEK wire route.
-2. `keyId` is not free-form. `exportChatDekForPeer` returns the SENDER's own
-   `chat_keys` row id (`src/federation/dek-rewrap.ts:111`, read at `:86-90`),
-   and that id is minted by `crypto.randomUUID()`
-   (`src/crypto/chat-keys.ts:143`). A sender cannot craft an arbitrary
-   `keyId` at all, so the described "crafted colliding key id" is not
-   reachable even once a route lands.
+1. `importChatDek` still has zero production callers - there is no inbound DEK
+   wire route yet.
+2. `keyId` is not free-form *for an honest sender*: `exportChatDekForPeer`
+   returns the sender's own `chat_keys` row id, minted by
+   `crypto.randomUUID()`. But the receiver's input is an artifact from the
+   wire, not that helper's output - a remote peer chooses the bytes it sends.
+   The "crafted colliding key id" of the Summary is therefore reachable as
+   soon as a route lands, and it aborts the import for the targeted chat.
 
-Fix direction for whenever a wire route does land: widen the conflict target
-to `.onConflict(oc => oc.columns(["id", "chat_id"]).doNothing())`, or reuse
-the pre-read already present at `:207-211` to detect the collision and fall
-back to the existing row. Wontfix rather than Done: the defect is real in the
-query but cannot occur, so no code change was made.
+The fix is in the query, at the seam every import goes through:
+
+- `src/federation/dek-rewrap.ts:221` - the conflict target is dropped
+  (`.onConflict(oc => oc.doNothing())`), so the insert tolerates a collision on
+  the PRIMARY KEY as well as on the unique `chat_id` index. A composite target
+  (`oc.columns(["id", "chat_id"])`) cannot be used: SQLite rejects it with
+  "ON CONFLICT clause does not match any PRIMARY KEY or UNIQUE constraint",
+  because no unique index spans both columns.
+- `src/federation/dek-rewrap.ts:204` - the id is checked before the insert; if
+  another chat already owns it, the DEK is materialized under a freshly minted
+  local id (`:210`) instead of aborting the import. The other chat's row is
+  never overwritten.
+- `src/federation/dek-rewrap.ts:170` - the contract is documented: the returned
+  id is the local `chat_keys` id, so a caller replicating messages must
+  rewrite their `key_id` to it when it differs from `artifact.keyId`.
+
+Regression test: `a colliding chat_keys.id does not abort the import`
+(`src/federation/dek-rewrap.test.ts:324`). Before the fix it fails - the import
+throws `UNIQUE constraint failed: chat_keys.id`; after the fix it passes and
+asserts that the colliding row keeps its id and its key material, that the
+imported DEK lands under a different, fresh local id for its own chat, and that
+it still decrypts to the sender's DEK.

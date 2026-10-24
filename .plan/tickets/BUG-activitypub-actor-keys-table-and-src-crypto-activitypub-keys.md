@@ -3,7 +3,7 @@
 
 # BUG: activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader
 
-**Status:** Not Started
+**Status:** Blocked
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-crypto
@@ -23,13 +23,36 @@ This ticket exists to make the zero-reader state explicit and reviewed, so it is
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Re-verified against the current tree, not inferred from the ticket body:
+
+- `src/crypto/activitypub-keys.ts` still exports `generateActivityPubKey`,
+  `getActiveActivityPubKey` and `rotateActivityPubKey` and still has no
+  production reader in `src/`; the `activitypub_actor_keys` table
+  (`src/db/migrations/001_init.ts:797`, `src/db/schema-manifest.ts:1379`) is
+  still unused at runtime.
+- The module is not orphaned work, it is the deliverable of a closed ticket:
+  BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry (Status:
+  Done) added exactly this keypair storage and rotation for
+  FEAT-activitypub-federation, and its acceptance criteria record the verified
+  behaviour of `generateActivityPubKey` and `rotateActivityPubKey`.
+- The planned feature still consumes it: FEAT-activitypub-federation (Status:
+  Not Started) requires every activity to be signed with the actor key from
+  `getActiveActivityPubKey` over `activitypub_actor_keys`
+  (`.plan/tickets/FEAT-activitypub-federation.md:140-142`), and the consent gate
+  in `src/characters/services/federation-consent.ts:84` is wired into key
+  minting and tested.
+
+So the "no production reader" observation is correct, but the premise that the
+module and the table are dead weight is false: they are finished, tested
+groundwork for a planned feature. Deleting them (and appending a migration that
+drops the table) would discard that groundwork and contradict this ticket's own
+recommendation and its Blocked-by note.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Zero-reader state re-verified against the current tree (no production reader, the table has no runtime user)
+- [x] The module's purpose traced to its own closed ticket and to FEAT-activitypub-federation
+- [x] Decision recorded: keep the module and the table, delete neither, add no migration
 
 ## Blocked-by (2026-10-04, p3-bugfix-2026-10-04)
 
@@ -39,3 +62,38 @@ lands, `src/crypto/activitypub-keys.ts` (`getActiveActivityPubKey`) over the
 `activitypub_actor_keys` table is the ready substrate: finished, tested groundwork
 (consent-gated key minting), not dead weight. Resolve keep-and-wire vs drop when that
 FEAT ships; do not remove earlier.
+
+## Resolution (2026-10-24, re-verification)
+
+The ticket's factual observation holds; the deletion premise does not. Nothing was
+deleted and no migration was added.
+
+Re-verified against the current tree:
+
+- `src/crypto/activitypub-keys.ts` still has no production reader in `src/`; the
+  only mentions are the module itself, the table
+  (`src/db/migrations/001_init.ts:797`, `src/db/schema-manifest.ts:1379`), the
+  generated validator and the test helper.
+- The module is the deliverable of a closed ticket, not an orphan:
+  BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry (Status:
+  Done) added this keypair storage and rotation for FEAT-activitypub-federation
+  and records the verified behaviour of `generateActivityPubKey` and
+  `rotateActivityPubKey`.
+- The planned feature still consumes it: FEAT-activitypub-federation (Status:
+  Not Started) requires every activity to be signed with the actor key from
+  `getActiveActivityPubKey` over `activitypub_actor_keys`
+  (`.plan/tickets/FEAT-activitypub-federation.md:140-142`), and the consent gate
+  in `src/characters/services/federation-consent.ts:84` is wired into key
+  minting.
+
+Deleting the module and appending a migration to drop the table would discard
+finished, tested groundwork for a feature that is still planned, and would
+contradict this ticket's own recommendation ("keep the code") and its
+Blocked-by note ("do not remove earlier"). The zero-reader state is now
+explicit and reviewed, which is what this ticket asked for.
+
+Remaining work is blocked by FEAT-activitypub-federation: when that feature
+lands, the module gets its production reader and the table stays. If the
+feature is dropped instead, this ticket becomes a plain cleanup - delete the
+module and its test file, and append a NEW forward migration that drops the
+table (never edit an applied migration).

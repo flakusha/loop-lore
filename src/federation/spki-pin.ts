@@ -73,6 +73,18 @@ export function pinsMatch(pin: string, pins: readonly string[],): boolean {
   return candidate !== "" && pins.some((p,) => normalizePin(p,) === candidate);
 }
 
+/**
+ * Verdict of one pin-verification attempt.
+ *
+ * - `matched`: the peer's live leaf SPKI is in the configured pin set.
+ * - `mismatched`: the pin gate rejected the peer — the observed SPKI is not
+ *   pinned, or the origin cannot be pinned at all (non-https, unusable pin
+ *   set). A security signal: the peer must not be talked to.
+ * - `unreachable`: the probe could not be completed (connect error, timeout).
+ *   Transient: no verdict was reached, so the peer is kept and re-probed.
+ */
+export type PinVerdict = "matched" | "mismatched" | "unreachable";
+
 /** Probe seam: open a TLS connection and return the leaf's SPKI pin. */
 export type SpkiProbe = (opts: {
   host: string;
@@ -166,21 +178,21 @@ function parsePinTarget(
 }
 
 /**
- * One-shot pin verification of a peer origin. Never throws: probe failures
- * (unreachable, timeout, TLS error) and unverifiable origins (non-https,
- * empty pin set) return `false`.
+ * One-shot pin verification of a peer origin. Never throws: a probe that
+ * could not be completed reports `unreachable`; an origin that cannot be
+ * pinned and a key that does not match report `mismatched`.
  * @param origin Peer origin (`https://host[:port]`).
  * @param pins Configured SPKI pins for the peer.
  * @param timeoutMs Pre-flight socket timeout.
- * @returns Whether the live leaf certificate matches any pin.
+ * @returns The pin verdict for this peer.
  */
 export async function verifyPeerPin(
   origin: string,
   pins: readonly string[],
   timeoutMs: number = PIN_PROBE_TIMEOUT_MS,
-): Promise<boolean> {
+): Promise<PinVerdict> {
   const target = parsePinTarget(origin, pins,);
-  if (target === null) { return false; }
+  if (target === null) { return "mismatched"; }
   try {
     const pin = await probeSpkiPin({
       host: target.host,
@@ -188,14 +200,14 @@ export async function verifyPeerPin(
       timeoutMs,
     },);
 
-    return pinsMatch(pin, target.pins,);
+    return pinsMatch(pin, target.pins,) ? "matched" : "mismatched";
   } catch (error) {
     getChildLogger("federation/spki-pin",)?.debug("verifyPeerPin: probe failed (unreachable, timeout, or TLS error)", {
       origin,
       err: error,
     },);
 
-    return false;
+    return "unreachable";
   }
 }
 
@@ -203,7 +215,7 @@ export async function verifyPeerPin(
 export type PeerPinVerifier = (
   origin: string,
   pins: readonly string[],
-) => Promise<boolean>;
+) => Promise<PinVerdict>;
 
 /**
  * Pin verifier with a per-origin verdict cache: one socket probe per origin
@@ -214,8 +226,8 @@ export type PeerPinVerifier = (
  * @param opts.ttlMs
  * @param opts.now
  * @param opts.probe
- * @returns `origin, pins → Promise<boolean>`, re-probing at most once per TTL
- *   per origin + pin set
+ * @returns `origin, pins → Promise<PinVerdict>`, re-probing at most once per
+ *   TTL per origin + pin set
  */
 export function createPeerPinVerifier(opts: {
   /** Verdict TTL in ms; defaults to `PIN_VERDICT_TTL_MS`. */
@@ -232,29 +244,29 @@ export function createPeerPinVerifier(opts: {
 
   return async (origin, pins,) => {
     const target = parsePinTarget(origin, pins,);
-    if (target === null) { return false; }
+    if (target === null) { return "mismatched"; }
     const cacheOrigin = canonicalOrigin(origin,);
-    if (cacheOrigin === null) { return false; }
+    if (cacheOrigin === null) { return "mismatched"; }
     // Key on origin + pin set so a reconfigured pin set always re-probes;
     // JSON escaping keeps distinct pin sets from colliding on a join char.
     const encoded = safeJsonStringify([...target.pins,].sort(),);
     const key = `${cacheOrigin}|${encoded.ok ? encoded.value : "[]"}`;
     const hit = verified.get(key,);
-    if (hit !== undefined && now() < hit.expiresAt) { return true; }
+    if (hit !== undefined && now() < hit.expiresAt) { return "matched"; }
     try {
       const pin = await probe({
         host: target.host,
         port: target.port,
       },);
 
-      if (!pinsMatch(pin, target.pins,)) { return false; }
+      if (!pinsMatch(pin, target.pins,)) { return "mismatched"; }
     } catch (error) {
       getChildLogger("federation/spki-pin",)?.debug(
         "cached pin verifier: probe failed (unreachable, timeout, or TLS error)",
         { origin: cacheOrigin, err: error, },
       );
 
-      return false;
+      return "unreachable";
     }
 
     if (verified.size >= MAX_VERDICTS) {
@@ -263,6 +275,6 @@ export function createPeerPinVerifier(opts: {
     }
 
     verified.set(key, { expiresAt: now() + ttlMs, },);
-    return true;
+    return "matched";
   };
 }

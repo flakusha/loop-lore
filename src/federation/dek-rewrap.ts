@@ -171,14 +171,18 @@ export async function openRewrappedDek(
  * Receiver side: open a re-wrapped DEK and materialize it as this
  * instance's `chat_keys` row (SMK-wrapped at rest). The sender's key id is
  * reused so replicated messages' `key_id` resolves directly; an existing
- * row for the chat always wins (first import is authoritative). The
- * replicated chat row must exist first — `chat_keys.chat_id` is an FK to
- * `chats.id`.
+ * row for the chat always wins (first import is authoritative). A colliding
+ * `chat_keys.id` — the PRIMARY KEY, owned by another chat — does not abort
+ * the import: the DEK is materialized under a fresh local id instead, so the
+ * caller MUST rewrite replicated messages' `key_id` to the returned id when
+ * it differs from `artifact.keyId`. The replicated chat row must exist first
+ * — `chat_keys.chat_id` is an FK to `chats.id`.
  * @param database Receiver database handle.
  * @param smk Receiver server master key.
  * @param artifact Received artifact.
  * @param ciphers Inbound ciphers to try (current, then grace).
- * @returns The winning chat_keys id.
+ * @returns The local `chat_keys` id holding the DEK — the sender's `keyId`
+ *   when it could be reused, otherwise a freshly minted local id.
  * @throws {Error} When no cipher opens the artifact or the insert fails.
  */
 export async function importChatDek(
@@ -192,16 +196,29 @@ export async function importChatDek(
   if (!rawBuf.ok) { throw rawBuf.error; }
   const encrypted = await encryptBytes(smk, rawBuf.buffer,);
 
+  // `chat_keys.id` is the PRIMARY KEY and `chat_id` carries a UNIQUE index:
+  // a peer can craft an artifact whose key id collides with another chat's
+  // row. `ON CONFLICT DO NOTHING` (no conflict target) covers every unique
+  // constraint, so neither collision aborts the import; a taken id is
+  // materialized under a fresh local id instead.
+  const idTaken = await database
+    .selectFrom("chat_keys",)
+    .select("id",)
+    .where("id", "=", artifact.keyId,)
+    .executeTakeFirst();
+
+  const keyId = idTaken === undefined ? artifact.keyId : crypto.randomUUID();
+
   await database
     .insertInto("chat_keys",)
     .values({
-      id: artifact.keyId,
+      id: keyId,
       chat_id: artifact.chatId,
       encrypted_chat_key: encrypted,
       created_at: new Date().toISOString(),
       expires_at: null,
     },)
-    .onConflict((oc,) => oc.column("chat_id",).doNothing())
+    .onConflict((oc,) => oc.doNothing())
     .execute();
 
   const winner = await database
