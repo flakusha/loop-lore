@@ -320,4 +320,62 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
 
     expect(rows,).toHaveLength(1,);
   });
+
+  test("a colliding chat_keys.id does not abort the import", async () => {
+    const sender = await createTestDb();
+    const [keyId, raw,] = await seedChat(sender.db, "chat-collide",);
+
+    const receiver = await createTestDb();
+    const rKey = await smk();
+    const receiverUser = await insertUsers(receiver.db, "u-collide", "U",);
+    await insertChats(receiver.db, "chat collide", receiverUser, {
+      id: "chat-collide",
+      encryption_level: "standard",
+    },);
+
+    await insertChats(receiver.db, "chat collide other", receiverUser, {
+      id: "chat-collide-other",
+      encryption_level: "standard",
+    },);
+
+    // Another chat already owns the key id the artifact carries.
+    const otherCipher = await encryptBytes(rKey, await randomDek(),);
+    await insertChatKeys(receiver.db, "chat-collide-other", otherCipher, { id: keyId, },);
+
+    const peerContentKey = await getOrCreateInboundKey(receiver.db, rKey, A_ORIGIN,);
+    const artifact = await exportChatDekForPeer(sender.db, await smk(), {
+      clearance: await clearFor(sender.db, "chat-collide",),
+      senderOrigin: A_ORIGIN,
+      peerContentKey,
+    },);
+
+    const importedId = await importChatDek(
+      receiver.db,
+      rKey,
+      artifact,
+      await inboundCiphers(receiver.db, rKey, A_ORIGIN,),
+    );
+
+    // The colliding row keeps its id and its key material ...
+    const otherRow = await receiver.db
+      .selectFrom("chat_keys",)
+      .select(["id", "encrypted_chat_key",],)
+      .where("chat_id", "=", "chat-collide-other",)
+      .executeTakeFirstOrThrow();
+
+    expect(otherRow.id,).toBe(keyId,);
+    expect(otherRow.encrypted_chat_key,).toBe(otherCipher,);
+
+    // ... and the imported DEK lands under a fresh local id for its own chat.
+    expect(importedId,).not.toBe(keyId,);
+    const imported = await receiver.db
+      .selectFrom("chat_keys",)
+      .select(["id", "encrypted_chat_key",],)
+      .where("chat_id", "=", "chat-collide",)
+      .executeTakeFirstOrThrow();
+
+    expect(imported.id,).toBe(importedId,);
+    const { decryptBytes, } = await import("../crypto/actor-key-bytes");
+    expect(toB64((await decryptBytes(rKey, imported.encrypted_chat_key,)) as Uint8Array,),).toBe(toB64(raw,),);
+  });
 },);

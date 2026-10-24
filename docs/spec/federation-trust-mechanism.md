@@ -168,7 +168,7 @@ export interface PeerFetcher {
 2. **Per-peer custom CA.** If `trust[origin].ca` is set, fetch uses that PEM bundle via the `tls.ca` option on Bun's underlying request. Verified live (drill: a peer signed by a self-hosted CA must succeed; the same fetch without `ca` must fail with a cert error).
 3. **SPKI pin pre-flight.** If `trust[origin].spkiPins` is set, the fetcher opens a `node:tls` socket first (`rejectUnauthorized: false`), captures the leaf SPKI via `getPeerCertificate(true)`, compares against the pin set, and only then issues the regular fetch. Result is cached per origin for the TTL (`config.federation.spkiPinCacheMs`, default 5 min).
 4. **mTLS.** App-side is intentionally NOT implemented. The doc + ticket note that mTLS is a deploy concern; recommend proxy-terminated (Caddy `reverse_proxy` with transport client certs + `tls_client_auth` inbound). `requireClientCert: true` on a peer entry is documentation only; enforcement happens at the proxy.
-5. **Failure semantics.** A TLS failure marks the peer stale (existing behavior: peer evicted by TTL on next gossip tick), emits a `peer.tls.failure` structured log entry, and never silently downgrades to plaintext.
+5. **Failure semantics.** A TLS failure marks the peer stale (existing behavior: peer evicted by TTL on next gossip tick), emits a `peer.tls.failure` structured log entry, and never silently downgrades to plaintext. A failed *pin pre-flight* is a different signal: a probe that could not be completed leaves the peer in the mesh (it is re-probed on the next round), while a probe that completes with a non-matching key evicts the peer.
 
 ---
 

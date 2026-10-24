@@ -131,6 +131,24 @@ describe("PeerTable — eviction sweep", () => {
     expect(table.getPeer("http://a:3000",),).toBeDefined();
     expect(table.getPeer("http://b:3000",),).toBeUndefined();
   });
+
+  test("retain keeps a peer that could not be polled past the TTL", () => {
+    const table = new PeerTable({ seeds: ["http://a:3000",], ttl: 100, now: () => clock, },);
+    advance(150,);
+    expect(table.sweep(),).toBe(1,);
+
+    const other = new PeerTable({ seeds: ["http://a:3000",], ttl: 100, now: () => clock, },);
+    advance(50,);
+    expect(other.retain("http://a:3000",),).toBe(true,);
+    advance(100,);
+    expect(other.sweep(),).toBe(0,);
+    expect(other.getPeer("http://a:3000",),).toBeDefined();
+  });
+
+  test("retain reports an unknown peer", () => {
+    const table = new PeerTable({ seeds: [], ttl: 100, now: () => clock, },);
+    expect(table.retain("http://a:3000",),).toBe(false,);
+  });
 });
 
 describe("PeerTable — start/stop timer (fake timers)", () => {
