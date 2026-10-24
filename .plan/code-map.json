@@ -10356,6 +10356,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
     },
     {
@@ -11907,6 +11911,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-backgrounds-location-sync.md"
+    }
+  ],
+  "src/components/chat/branch-list-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar.md"
     }
   ],
   "src/components/chat/branch-merge-modal.html": [
@@ -22890,6 +22900,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-branch-merge-frontend-wizard-ui.md"
     },
     {
@@ -22898,6 +22912,10 @@
     }
   ],
   "src/frontend/alpine/chat-branches.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-branch-switch-persists-but-never-swaps-displayed-messages.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-047.md"
@@ -23504,6 +23522,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
     },
     {
@@ -23764,6 +23786,10 @@
     }
   ],
   "src/frontend/alpine/chat/world.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-panel-fully-inert-in-direct-chats-participants-never-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-music-links-panel-stale-after-in-page-chat-switch.md"
@@ -24473,6 +24499,12 @@
       "source": "docs/frontend/chat/memories.md"
     }
   ],
+  "src/frontend/alpine/memory-panel-core.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-panel-never-renders-memories-in-any-chat-response-env.md"
+    }
+  ],
   "src/frontend/alpine/memory-panel.ts": [
     {
       "kind": "ticket",
@@ -24481,6 +24513,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s.md"
     },
     {
       "kind": "ticket",
@@ -24953,6 +24989,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use.md"
     }
   ],
   "src/frontend/alpine/shortcuts-listener.test.ts": [
@@ -38600,6 +38640,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on.md"
     },
     {
@@ -41274,6 +41318,10 @@
   "src/routes/chats/ownership.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
@@ -42713,6 +42761,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations-architecture.md"
+    }
+  ],
+  "src/routes/memory-audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-memory-audit-tab-always-404s-route-shape-mismatch.md"
     }
   ],
   "src/routes/message-archiving.test.ts": [
@@ -45311,6 +45365,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-put-api-users-id-settings-mass-assigns-the-request-body-and-.md"
+    }
+  ],
+  "src/routes/users/me.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use.md"
     }
   ],
   "src/routes/v1/actors-surface.ts": [

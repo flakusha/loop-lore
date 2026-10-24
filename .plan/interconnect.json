@@ -1337,6 +1337,28 @@
       "related": []
     },
     {
+      "id": "BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar.md",
+      "title": "Branch merge/delete confirm modals never initialize — dead markup",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/components/chat/branch-list-panel.html"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-branch-switch-persists-but-never-swaps-displayed-messages",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-branch-switch-persists-but-never-swaps-displayed-messages.md",
+      "title": "Branch switch persists but never swaps displayed messages",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/frontend/alpine/chat-branches.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-browser-e2e-asserts-absence-of-a-decrypt-failure-marker-acro",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-browser-e2e-asserts-absence-of-a-decrypt-failure-marker-acro.md",
@@ -2000,6 +2022,15 @@
       "srcRefs": [
         "src/routes/character-internal-traits/index.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "BUG-character-licensing-panel-frozen-on-loading-licensing-alpine",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-character-licensing-panel-frozen-on-loading-licensing-alpine.md",
+      "title": "Character licensing panel frozen on 'Loading licensing…' — Alpine effects dead after htmx load",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -2732,6 +2763,15 @@
       "srcRefs": [
         "src/routes/config-menu.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "BUG-config-menu-saved-preference-reverts-after-reload",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-config-menu-saved-preference-reverts-after-reload.md",
+      "title": "Config-menu saved preference reverts after reload",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -4227,6 +4267,17 @@
       "related": []
     },
     {
+      "id": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s.md",
+      "title": "formatMemoryDate throws on every rendered memory row — never spread onto component",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/frontend/alpine/memory-panel.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po.md",
@@ -4623,6 +4674,15 @@
       "srcRefs": [
         "src/services/agency/story-points/queries.ts"
       ],
+      "related": []
+    },
+    {
+      "id": "BUG-gif-picker-button-dead-in-real-chat-view-gifopen-never-flips",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-gif-picker-button-dead-in-real-chat-view-gifopen-never-flips.md",
+      "title": "Gif picker button dead in real chat view — _gifOpen never flips",
+      "status": "Not Started",
+      "srcRefs": [],
       "related": []
     },
     {
@@ -5371,6 +5431,18 @@
       "related": []
     },
     {
+      "id": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c.md",
+      "title": "Impersonate toggle can never activate — no chats route emits character_id",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/frontend/alpine/chat-utils/gallery.ts",
+        "src/routes"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md",
@@ -5966,6 +6038,17 @@
       "related": []
     },
     {
+      "id": "BUG-memory-audit-tab-always-404s-route-shape-mismatch",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-memory-audit-tab-always-404s-route-shape-mismatch.md",
+      "title": "Memory audit tab always 404s — route shape mismatch",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/routes/memory-audit.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-memory-create-form-hardcodes-episodic-type",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-memory-create-form-hardcodes-episodic-type.md",
@@ -6030,6 +6113,28 @@
       "related": []
     },
     {
+      "id": "BUG-memory-panel-fully-inert-in-direct-chats-participants-never-",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-memory-panel-fully-inert-in-direct-chats-participants-never-.md",
+      "title": "Memory panel fully inert in direct chats — participants never loaded",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/frontend/alpine/chat/world.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-memory-panel-never-renders-memories-in-any-chat-response-env",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-memory-panel-never-renders-memories-in-any-chat-response-env.md",
+      "title": "Memory panel never renders memories in any chat — response envelope mismatch",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/frontend/alpine/memory-panel-core.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-mention-parser-regex-fails-on-multi-word-names",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-mention-parser-regex-fails-on-multi-word-names.md",
@@ -6037,6 +6142,17 @@
       "status": "done",
       "srcRefs": [
         "src/group-chat/mention-parser.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass.md",
+      "title": "Merge wizard dead-ends at step 1 — selected sources never passed",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/frontend/alpine/chat-branch-merge.ts"
       ],
       "related": []
     },
@@ -7058,6 +7174,18 @@
       "srcRefs": [
         "src/cron/registry.ts",
         "src/federation/outbox.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-.md",
+      "title": "Ownership transfer writes actor id into chats.created_by (FK users.id) → 400",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/chat/service/ownership.ts",
+        "src/routes/chats/ownership.ts"
       ],
       "related": []
     },
@@ -8235,6 +8363,18 @@
         "src/db/migration-roundtrip.test.ts",
         "src/db/migrations.test.ts",
         "src/db/test-db-helpers.test.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use.md",
+      "title": "Settings 'Delete All Data' can never succeed — DELETE /api/v1/users/me does not exist",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/frontend/alpine/settings/general.ts",
+        "src/routes/users/me.ts"
       ],
       "related": []
     },
@@ -37447,6 +37587,15 @@
       "related": []
     },
     {
+      "id": "TASK-provide-smk-secret-in-browser-test-server-config-so-key-gene",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-provide-smk-secret-in-browser-test-server-config-so-key-gene.md",
+      "title": "Provide SMK secret in browser-test server config so key generation e2e can run",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-provider-contributions-via-plugin-system",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-provider-contributions-via-plugin-system.md",
@@ -57561,6 +57710,7 @@
     {
       "path": "src/chat/service/ownership.ts",
       "owners": [
+        "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
         "TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha",
         "TASK-chat-feature-ownership-transfer",
         "TASK-coverage-waiver-chat-ownership-async-body-limit",
@@ -58491,6 +58641,12 @@
       "path": "src/components/chat/background-panel.html",
       "owners": [
         "TASK-chat-backgrounds-location-sync"
+      ]
+    },
+    {
+      "path": "src/components/chat/branch-list-panel.html",
+      "owners": [
+        "BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar"
       ]
     },
     {
@@ -64340,6 +64496,7 @@
     {
       "path": "src/frontend/alpine/chat-branch-merge.ts",
       "owners": [
+        "BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass",
         "TASK-branch-merge-frontend-wizard-ui",
         "TASK-branch-merge-tests-and-coverage",
         "epic-conversation-branching"
@@ -64348,6 +64505,7 @@
     {
       "path": "src/frontend/alpine/chat-branches.ts",
       "owners": [
+        "BUG-branch-switch-persists-but-never-swaps-displayed-messages",
         "FEAT-047",
         "TASK-branch-merge-frontend-wizard-ui"
       ]
@@ -64742,6 +64900,7 @@
     {
       "path": "src/frontend/alpine/chat-utils/gallery.ts",
       "owners": [
+        "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
         "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
         "FEAT-in-chat-asset-preview-linkage-side-panel",
         "PERF-gallery-uploadChatAssets-sequential",
@@ -64869,6 +65028,7 @@
     {
       "path": "src/frontend/alpine/chat/world.ts",
       "owners": [
+        "BUG-memory-panel-fully-inert-in-direct-chats-participants-never-",
         "BUG-music-links-panel-stale-after-in-page-chat-switch",
         "BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-"
       ]
@@ -65280,10 +65440,17 @@
       ]
     },
     {
+      "path": "src/frontend/alpine/memory-panel-core.ts",
+      "owners": [
+        "BUG-memory-panel-never-renders-memories-in-any-chat-response-env"
+      ]
+    },
+    {
       "path": "src/frontend/alpine/memory-panel.ts",
       "owners": [
         "BUG-audit-panel-details-not-expandable",
         "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
+        "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
         "BUG-memory-create-form-hardcodes-episodic-type",
         "BUG-memory-injection-reason-not-displayed-in-ui",
         "FEAT-068",
@@ -65598,6 +65765,7 @@
     {
       "path": "src/frontend/alpine/settings/general.ts",
       "owners": [
+        "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use",
         "epic-terminal-ui"
       ]
     },
@@ -73665,6 +73833,7 @@
         "BUG-allowuserapikey-defined-but-never-enforced",
         "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
         "BUG-federation-authorization-who-may-publish-an-actor-undefined",
+        "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
         "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-nodeinfo-well-known-discovery-endpoints",
@@ -75259,6 +75428,7 @@
     {
       "path": "src/routes/chats/ownership.ts",
       "owners": [
+        "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
         "TASK-chat-feature-ownership-transfer"
       ]
     },
@@ -76146,6 +76316,12 @@
       "owners": [
         "FEAT-prompt-lorebook-marketplace-community-shared",
         "epic-output-control-transforms"
+      ]
+    },
+    {
+      "path": "src/routes/memory-audit.ts",
+      "owners": [
+        "BUG-memory-audit-tab-always-404s-route-shape-mismatch"
       ]
     },
     {
@@ -77649,6 +77825,12 @@
       "path": "src/routes/users/manage.ts",
       "owners": [
         "BUG-put-api-users-id-settings-mass-assigns-the-request-body-and-"
+      ]
+    },
+    {
+      "path": "src/routes/users/me.ts",
+      "owners": [
+        "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use"
       ]
     },
     {
@@ -101914,6 +102096,16 @@
       "to": "src/rpg/blog/service/posts.ts"
     },
     {
+      "from": "BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar",
+      "kind": "produces",
+      "to": "src/components/chat/branch-list-panel.html"
+    },
+    {
+      "from": "BUG-branch-switch-persists-but-never-swaps-displayed-messages",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-branches.ts"
+    },
+    {
       "from": "BUG-browser-e2e-suite-flakes-under-concurrent-runs",
       "kind": "produces",
       "to": "src/async/spill.ts"
@@ -104744,6 +104936,11 @@
       "to": "src/nsfw/moderation-service/flags.ts"
     },
     {
+      "from": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "kind": "produces",
+      "to": "src/frontend/alpine/memory-panel.ts"
+    },
+    {
       "from": "BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po",
       "kind": "produces",
       "to": "src/frontend/alpine/chat-seen.ts"
@@ -106139,6 +106336,16 @@
       "to": "src/assistant/commands/impersonate.ts"
     },
     {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "produces",
+      "to": "src/routes"
+    },
+    {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "produces",
       "to": "src/crypto/chat-keys.ts"
@@ -106569,6 +106776,11 @@
       "to": "src/memory/audit.ts"
     },
     {
+      "from": "BUG-memory-audit-tab-always-404s-route-shape-mismatch",
+      "kind": "produces",
+      "to": "src/routes/memory-audit.ts"
+    },
+    {
       "from": "BUG-memory-create-form-hardcodes-episodic-type",
       "kind": "produces",
       "to": "src/frontend/alpine/memory-panel.ts"
@@ -106639,9 +106851,24 @@
       "to": "src/frontend/alpine/memory-panel.ts"
     },
     {
+      "from": "BUG-memory-panel-fully-inert-in-direct-chats-participants-never-",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat/world.ts"
+    },
+    {
+      "from": "BUG-memory-panel-never-renders-memories-in-any-chat-response-env",
+      "kind": "produces",
+      "to": "src/frontend/alpine/memory-panel-core.ts"
+    },
+    {
       "from": "BUG-mention-parser-regex-fails-on-multi-word-names",
       "kind": "produces",
       "to": "src/group-chat/mention-parser.ts"
+    },
+    {
+      "from": "BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-branch-merge.ts"
     },
     {
       "from": "BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori",
@@ -107597,6 +107824,16 @@
       "from": "BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-",
       "kind": "produces",
       "to": "src/federation/outbox.ts"
+    },
+    {
+      "from": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
+      "kind": "produces",
+      "to": "src/chat/service/ownership.ts"
+    },
+    {
+      "from": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
+      "kind": "produces",
+      "to": "src/routes/chats/ownership.ts"
     },
     {
       "from": "BUG-parseacceptlanguage-ignores-quality-values-returns-header-or",
@@ -108697,6 +108934,16 @@
       "from": "BUG-settestdatabase-global-leak-on-test-throw",
       "kind": "produces",
       "to": "src/db/test-db-helpers.test.ts"
+    },
+    {
+      "from": "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use",
+      "kind": "produces",
+      "to": "src/frontend/alpine/settings/general.ts"
+    },
+    {
+      "from": "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use",
+      "kind": "produces",
+      "to": "src/routes/users/me.ts"
     },
     {
       "from": "BUG-settings-export-endpoint-has-no-rate-limiting",
@@ -168898,6 +169145,12 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "via": "src/routes"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "BUG-size-strict-pre-existing-dev-drift",
       "via": "src/generation/providers/registry.ts"
     },
@@ -173500,6 +173753,12 @@
     {
       "from": "BUG-audit-panel-details-not-expandable",
       "kind": "sibling",
+      "to": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "via": "src/frontend/alpine/memory-panel.ts"
+    },
+    {
+      "from": "BUG-audit-panel-details-not-expandable",
+      "kind": "sibling",
       "to": "BUG-memory-create-form-hardcodes-episodic-type",
       "via": "src/frontend/alpine/memory-panel.ts"
     },
@@ -175338,6 +175597,18 @@
       "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/routes/blog/posts.ts; src/rpg/blog/service/posts.ts"
+    },
+    {
+      "from": "BUG-branch-switch-persists-but-never-swaps-displayed-messages",
+      "kind": "sibling",
+      "to": "FEAT-047",
+      "via": "src/frontend/alpine/chat-branches.ts"
+    },
+    {
+      "from": "BUG-branch-switch-persists-but-never-swaps-displayed-messages",
+      "kind": "sibling",
+      "to": "TASK-branch-merge-frontend-wizard-ui",
+      "via": "src/frontend/alpine/chat-branches.ts"
     },
     {
       "from": "BUG-browser-e2e-suite-flakes-under-concurrent-runs",
@@ -178422,6 +178693,12 @@
       "kind": "sibling",
       "to": "BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x",
       "via": "src/frontend/alpine/htmx.ts"
+    },
+    {
+      "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
+      "kind": "sibling",
+      "to": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "via": "src/routes"
     },
     {
       "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
@@ -193792,6 +194069,12 @@
     {
       "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
       "kind": "sibling",
+      "to": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "via": "src/frontend/alpine/memory-panel.ts"
+    },
+    {
+      "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
+      "kind": "sibling",
       "to": "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
       "via": "src/elysia-app.ts"
     },
@@ -194280,6 +194563,12 @@
       "kind": "sibling",
       "to": "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o",
       "via": "src/federation/fan-out.ts; src/federation/outbox.ts"
+    },
+    {
+      "from": "BUG-federation-authorization-who-may-publish-an-actor-undefined",
+      "kind": "sibling",
+      "to": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "via": "src/routes"
     },
     {
       "from": "BUG-federation-authorization-who-may-publish-an-actor-undefined",
@@ -199632,6 +199921,36 @@
       "kind": "sibling",
       "to": "epic-message-seen-state",
       "via": "src/nsfw/moderation-service/flags.ts"
+    },
+    {
+      "from": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "kind": "sibling",
+      "to": "BUG-memory-create-form-hardcodes-episodic-type",
+      "via": "src/frontend/alpine/memory-panel.ts"
+    },
+    {
+      "from": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "kind": "sibling",
+      "to": "BUG-memory-injection-reason-not-displayed-in-ui",
+      "via": "src/frontend/alpine/memory-panel.ts"
+    },
+    {
+      "from": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "kind": "sibling",
+      "to": "FEAT-068",
+      "via": "src/frontend/alpine/memory-panel.ts"
+    },
+    {
+      "from": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "kind": "sibling",
+      "to": "FEAT-075",
+      "via": "src/frontend/alpine/memory-panel.ts"
+    },
+    {
+      "from": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "kind": "sibling",
+      "to": "FEAT-memory-frontend-3-memory-types-selection-ui-mid-chat-panel",
+      "via": "src/frontend/alpine/memory-panel.ts"
     },
     {
       "from": "BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po",
@@ -207182,6 +207501,96 @@
       "via": "src/assistant/commands/impersonate.ts"
     },
     {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "FEAT-in-chat-asset-preview-linkage-side-panel",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "PERF-gallery-uploadChatAssets-sequential",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TASK-assistant-creative-studio-workflow-gallery-batch",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-asset-access",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
+      "via": "src/routes"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "via": "src/routes"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TASK-nodeinfo-well-known-discovery-endpoints",
+      "via": "src/routes"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-gallery-asset-support",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on",
+      "via": "src/routes"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "TEST-gallery-frontend-utils-untested",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "epic-assistant-creative-studio-workflows",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "epic-faction-reputation",
+      "via": "src/routes"
+    },
+    {
+      "from": "BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c",
+      "kind": "sibling",
+      "to": "epic-gallery-batch-operations",
+      "via": "src/frontend/alpine/chat-utils/gallery.ts"
+    },
+    {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "sibling",
       "to": "BUG-inbound-federation-content-not-moderated-before-display",
@@ -211412,6 +211821,18 @@
       "via": "src/frontend/alpine/memory-panel.ts"
     },
     {
+      "from": "BUG-memory-panel-fully-inert-in-direct-chats-participants-never-",
+      "kind": "sibling",
+      "to": "BUG-music-links-panel-stale-after-in-page-chat-switch",
+      "via": "src/frontend/alpine/chat/world.ts"
+    },
+    {
+      "from": "BUG-memory-panel-fully-inert-in-direct-chats-participants-never-",
+      "kind": "sibling",
+      "to": "BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-",
+      "via": "src/frontend/alpine/chat/world.ts"
+    },
+    {
       "from": "BUG-mention-parser-regex-fails-on-multi-word-names",
       "kind": "sibling",
       "to": "TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery",
@@ -211500,6 +211921,24 @@
       "kind": "sibling",
       "to": "epic-world-chat-channels-invites",
       "via": "src/group-chat/mention-parser.ts"
+    },
+    {
+      "from": "BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass",
+      "kind": "sibling",
+      "to": "TASK-branch-merge-frontend-wizard-ui",
+      "via": "src/frontend/alpine/chat-branch-merge.ts"
+    },
+    {
+      "from": "BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass",
+      "kind": "sibling",
+      "to": "TASK-branch-merge-tests-and-coverage",
+      "via": "src/frontend/alpine/chat-branch-merge.ts"
+    },
+    {
+      "from": "BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass",
+      "kind": "sibling",
+      "to": "epic-conversation-branching",
+      "via": "src/frontend/alpine/chat-branch-merge.ts"
     },
     {
       "from": "BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori",
@@ -217212,6 +217651,30 @@
       "kind": "sibling",
       "to": "epic-publication-i18n",
       "via": "src/cron/registry.ts"
+    },
+    {
+      "from": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
+      "kind": "sibling",
+      "to": "TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha",
+      "via": "src/chat/service/ownership.ts"
+    },
+    {
+      "from": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
+      "kind": "sibling",
+      "to": "TASK-chat-feature-ownership-transfer",
+      "via": "src/chat/service/ownership.ts; src/routes/chats/ownership.ts"
+    },
+    {
+      "from": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
+      "kind": "sibling",
+      "to": "TASK-coverage-waiver-chat-ownership-async-body-limit",
+      "via": "src/chat/service/ownership.ts"
+    },
+    {
+      "from": "BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-",
+      "kind": "sibling",
+      "to": "epic-effect-v4-adoption-evaluation",
+      "via": "src/chat/service/ownership.ts"
     },
     {
       "from": "BUG-parseacceptlanguage-ignores-quality-values-returns-header-or",
@@ -223956,6 +224419,12 @@
       "kind": "sibling",
       "to": "epic-runtime-integrity-fail-safes",
       "via": "src/db/index.ts"
+    },
+    {
+      "from": "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use",
+      "kind": "sibling",
+      "to": "epic-terminal-ui",
+      "via": "src/frontend/alpine/settings/general.ts"
     },
     {
       "from": "BUG-settings-export-endpoint-has-no-rate-limiting",
