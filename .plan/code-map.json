@@ -15288,10 +15288,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-key-material-revoke-then-insert-sequences-are-non-transactio.md"
     },
     {
@@ -21518,6 +21514,10 @@
   "src/federation/gossip.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-capability-advertisement.md"
     },
     {
@@ -21846,6 +21846,10 @@
   "src/federation/spki-pin.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-same-host-loopback-peer-auth.md"
     }
   ],
@@ -21853,6 +21857,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-federation-offload-quotas.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md"
     },
     {
       "kind": "ticket",
@@ -53899,10 +53907,20 @@
       "source": "docs/spec/transport-unified.md"
     }
   ],
+  "src/transport/peer-table.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md"
+    }
+  ],
   "src/transport/peer-table.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-federation-offload-quotas.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md"
     },
     {
       "kind": "ticket",

@@ -5648,7 +5648,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-IN-MEMORY-LIMITER-NOT-SHARED-ACROSS-INSTANCES-NO-SHUTDOWN-CL": {
     "epic": "",
@@ -7697,7 +7697,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PLAN-BACKLOG-SYNC-INVOKES-REMOVED-GIWT-SUBCOMMAND-FAILING-BU": {
     "hash": "404adc9",

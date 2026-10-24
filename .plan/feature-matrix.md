@@ -614,7 +614,7 @@ Total tickets: **3950** — untagged: **2701** — unbound to epic: **991**
 | fe-be-db | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | feature | 15 | 2 | 0 | 13 | 0 | 0 | 0 |
 | feature-flags | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| federation | 24 | 5 | 1 | 1 | 1 | 0 | 16 |
+| federation | 24 | 7 | 1 | 1 | 1 | 0 | 14 |
 | feed | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | feeds | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | ffi | 3 | 0 | 2 | 1 | 0 | 0 | 0 |
@@ -1838,7 +1838,7 @@ Total tickets: **3950** — untagged: **2701** — unbound to epic: **991**
 | epic-faction-reputation | 7 | 2 | 0 | 1 | 0 | 0 | 4 |
 | epic-fe-be-harmonization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-federation-offload-quotas | 20 | 15 | 0 | 1 | 0 | 0 | 4 |
-| epic-federation-swarm-sync | 15 | 6 | 0 | 4 | 0 | 0 | 5 |
+| epic-federation-swarm-sync | 15 | 7 | 0 | 4 | 0 | 0 | 4 |
 | epic-file-splitting | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | epic-fractal-locations | 13 | 0 | 0 | 0 | 0 | 0 | 13 |
 | epic-frontend-admin | 22 | 7 | 0 | 6 | 0 | 0 | 9 |
@@ -2018,7 +2018,7 @@ Total tickets: **3950** — untagged: **2701** — unbound to epic: **991**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 0 | 0 | 1 | 0 | 0 | 5 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 991 | 630 | 46 | 33 | 43 | 0 | 239 |
+| (unbound) | 991 | 631 | 46 | 33 | 43 | 0 | 238 |
 
 ## Ticket detail
 
