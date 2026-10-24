@@ -229,4 +229,31 @@ describe("resolveClassifierPrompt", () => {
     const noTags = await resolveClassifierPrompt({ config, db, task: "intent", },);
     expect(LLM_PROMPT_DEFAULTS.intent,).toBe(noTags.prompt,);
   });
+
+  test("malformed vocabulary config is ignored; a chat with no participants has no actor tags", async () => {
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
+
+    await db
+      .insertInto("system_config",)
+      .values({
+        key: CLASSIFIER_TAG_VOCABULARY_KEY,
+        value: "not-json",
+        description: null,
+        created_at: "2026-01-01T00:00:00.000Z",
+        updated_at: "2026-01-01T00:00:00.000Z",
+      },)
+      .execute();
+
+    const classifiers = {
+      "scene-pacing": pack({ id: "scene-pacing", tags: ["pacing",], priority: 5, },),
+    };
+
+    const config = makeConfig(DEFAULT_LLM, classifiers,);
+
+    const result = await resolveClassifierPrompt({ config, db, task: "intent", chatId: "chat-1", },);
+    expect(result.packId,).toBeNull();
+    expect(LLM_PROMPT_DEFAULTS.intent,).toBe(result.prompt,);
+  });
 });
