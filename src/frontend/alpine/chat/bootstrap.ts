@@ -41,6 +41,7 @@ import { emojiAutocomplete, } from "../emoji-autocomplete";
 import { emojiPicker, } from "../emoji-picker";
 import { messageArchive, } from "../message-archive";
 import { messageSearch, } from "../message-search";
+import { messageTranslate, } from "../message-translate";
 import type { AlpineState, ChatState, } from "../types";
 import { worldChannels, } from "../world-channels";
 import { chatInlineState, } from "./inline-state";
@@ -104,6 +105,7 @@ export function chatState() {
     ...chatBranches,
     ...chatBranchMerge,
     ...messageArchive,
+    ...messageTranslate,
     ...chatInvites,
     ...worldChannels,
 
