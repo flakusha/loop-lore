@@ -25,7 +25,7 @@ export interface PeerEntry {
   origin: string;
   /** Current liveness verdict. */
   state: PeerState;
-  /** Last heartbeat timestamp (ms since epoch). */
+  /** Last liveness timestamp (ms since epoch): a heartbeat, or a poll that could not be completed. */
   lastSeen: number;
   /** Highest sequence number accepted from this peer (replay protection). */
   lastSeq: number;
@@ -141,6 +141,24 @@ export class PeerTable {
     peer.lastSeq = seq;
     peer.lastSeen = this.now();
     if (peer.state === "dead") { peer.state = "pending"; }
+    return true;
+  }
+
+  /**
+   * Keep a peer in the mesh after a poll that could not be completed.
+   *
+   * An inconclusive poll (e.g. the SPKI probe could not reach the peer) says
+   * nothing about the peer's health, so the peer must not be evicted by the
+   * TTL sweep — a transient failure must not drop a healthy peer from the
+   * mesh. The peer is polled again on the next round; a peer that never
+   * recovers keeps its row (the table size stays capped).
+   * @param origin
+   * @returns `true` when the peer is known.
+   */
+  retain(origin: string,): boolean {
+    const peer = this.peers.get(origin,);
+    if (!peer) { return false; }
+    peer.lastSeen = this.now();
     return true;
   }
 
