@@ -327,7 +327,7 @@ describe("GossipService — spki pin gate", () => {
   test("pin mismatch skips the fetch; the peer goes stale and is swept", async () => {
     const c = clock();
     const calls: { url: string; trust: FederationPeerTrustConfig | undefined }[] = [];
-    const svc = pinnedService({ now: c.now, pinVerify: async () => false, calls, },);
+    const svc = pinnedService({ now: c.now, pinVerify: async () => "mismatched", calls, },);
 
     const first = await svc.pollOnce();
     expect(first,).toEqual({ tick: 1, polled: 1, alive: 0, discovered: 0, },);
@@ -340,10 +340,32 @@ describe("GossipService — spki pin gate", () => {
     expect(svc.origins(),).toEqual([],);
   });
 
+  test("a probe that could not be completed keeps the peer in the mesh", async () => {
+    const c = clock();
+    const calls: { url: string; trust: FederationPeerTrustConfig | undefined }[] = [];
+    const svc = pinnedService({ now: c.now, pinVerify: async () => "unreachable", calls, },);
+
+    const first = await svc.pollOnce();
+    expect(first,).toEqual({ tick: 1, polled: 1, alive: 0, discovered: 0, },);
+    expect(calls,).toHaveLength(0,);
+
+    // Past the TTL: an inconclusive probe is no evidence of a dead peer, so
+    // the peer stays known and is probed again on the next round.
+    c.advance(2_000,);
+    const second = await svc.pollOnce();
+    expect(second,).toEqual({ tick: 2, polled: 1, alive: 0, discovered: 0, },);
+    expect(svc.getPeer(PINNED,),).toBeDefined();
+
+    c.advance(2_000,);
+    const third = await svc.pollOnce();
+    expect(third.polled,).toBe(1,);
+    expect(calls,).toHaveLength(0,);
+  });
+
   test("pin match proceeds to fetch and heartbeats", async () => {
     const c = clock();
     const calls: { url: string; trust: FederationPeerTrustConfig | undefined }[] = [];
-    const svc = pinnedService({ now: c.now, pinVerify: async () => true, calls, },);
+    const svc = pinnedService({ now: c.now, pinVerify: async () => "matched", calls, },);
 
     const summary = await svc.pollOnce();
     expect(summary,).toEqual({ tick: 1, polled: 1, alive: 1, discovered: 0, },);
@@ -356,7 +378,7 @@ describe("GossipService — spki pin gate", () => {
     let pinCalls = 0;
     const pinVerify: PeerPinVerifier = async () => {
       pinCalls += 1;
-      return true;
+      return "matched";
     };
 
     const svc = new GossipService({
@@ -379,7 +401,7 @@ describe("GossipService — spki pin gate", () => {
     let pinCalls = 0;
     const pinVerify: PeerPinVerifier = async () => {
       pinCalls += 1;
-      return false;
+      return "mismatched";
     };
 
     // Raw config key (upper-case host, explicit default port) must map onto

@@ -109,28 +109,28 @@ describe("probeSpkiPin", () => {
 });
 
 describe("verifyPeerPin", () => {
-  test("matching pin → true", async () => {
-    await expect(verifyPeerPin(`https://127.0.0.1:${tlsPort}`, [LEAF_PIN,],),).resolves.toBe(true,);
+  test("matching pin → matched", async () => {
+    await expect(verifyPeerPin(`https://127.0.0.1:${tlsPort}`, [LEAF_PIN,],),).resolves.toBe("matched",);
   });
 
-  test("correct pin among decoys → true", async () => {
+  test("correct pin among decoys → matched", async () => {
     await expect(
       verifyPeerPin(`https://127.0.0.1:${tlsPort}`, [
         "sha256:rF/8Fp0VQFNQ8uC7Y0PtLPHPOSHKOH2mSIX9bFxxQTc=",
         LEAF_PIN,
       ],),
-    ).resolves.toBe(true,);
+    ).resolves.toBe("matched",);
   });
 
-  test("mismatching pin → false", async () => {
+  test("mismatching pin → mismatched", async () => {
     await expect(
       verifyPeerPin(`https://127.0.0.1:${tlsPort}`, ["sha256:rF/8Fp0VQFNQ8uC7Y0PtLPHPOSHKOH2mSIX9bFxxQTc=",],),
-    ).resolves.toBe(false,);
+    ).resolves.toBe("mismatched",);
   });
 
-  test("unreachable origin → false (never throws)", async () => {
+  test("unreachable origin → unreachable (never throws)", async () => {
     const port = await closedPort();
-    await expect(verifyPeerPin(`https://127.0.0.1:${port}`, [LEAF_PIN,],),).resolves.toBe(false,);
+    await expect(verifyPeerPin(`https://127.0.0.1:${port}`, [LEAF_PIN,],),).resolves.toBe("unreachable",);
   });
 
   test.each([
@@ -138,8 +138,8 @@ describe("verifyPeerPin", () => {
     ["non-http scheme", "ftp://127.0.0.1:21", [LEAF_PIN,],],
     ["not a URL", "not-a-peer", [LEAF_PIN,],],
     ["empty pin set", `https://127.0.0.1:${tlsPort}`, [],],
-  ],)("%s → false", async (_name, origin, pins,) => {
-    await expect(verifyPeerPin(origin, pins,),).resolves.toBe(false,);
+  ],)("%s → mismatched", async (_name, origin, pins,) => {
+    await expect(verifyPeerPin(origin, pins,),).resolves.toBe("mismatched",);
   },);
 });
 
@@ -170,58 +170,58 @@ describe("createPeerPinVerifier", () => {
     const { probe, calls, } = spyProbe(LEAF_PIN,);
     const verify = createPeerPinVerifier({ ttlMs: 1_000, now: (): number => t, probe, },);
 
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(true,);
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(true,);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("matched",);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("matched",);
     expect(calls,).toHaveLength(1,);
 
     t = 999;
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(true,);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("matched",);
     expect(calls,).toHaveLength(1,);
 
     t = 1_000;
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(true,);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("matched",);
     expect(calls,).toHaveLength(2,);
   });
 
   test("negative verdicts are not cached", async () => {
     const { probe, calls, } = spyProbe("sha256:rF/8Fp0VQFNQ8uC7Y0PtLPHPOSHKOH2mSIX9bFxxQTc=",);
     const verify = createPeerPinVerifier({ now: (): number => 0, probe, },);
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(false,);
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(false,);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("mismatched",);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("mismatched",);
     expect(calls,).toHaveLength(2,);
   });
 
   test("a changed pin set re-probes", async () => {
     const { probe, calls, } = spyProbe(LEAF_PIN,);
     const verify = createPeerPinVerifier({ now: (): number => 0, probe, },);
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(true,);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("matched",);
     await expect(verify("https://peer.example.com", ["sha256:rF/8Fp0VQFNQ8uC7Y0PtLPHPOSHKOH2mSIX9bFxxQTc=",],),)
-      .resolves.toBe(false,);
+      .resolves.toBe("mismatched",);
 
     expect(calls,).toHaveLength(2,);
   });
 
-  test("probe failures return false, not throw", async () => {
+  test("probe failures return unreachable, not throw", async () => {
     const { probe, } = spyProbe(new Error("socket gone",),);
     const verify = createPeerPinVerifier({ probe, },);
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(false,);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("unreachable",);
   });
 
-  test("unverifiable origins return false without probing", async () => {
+  test("unverifiable origins are rejected without probing", async () => {
     const { probe, calls, } = spyProbe(LEAF_PIN,);
     const verify = createPeerPinVerifier({ probe, },);
-    await expect(verify("http://peer.example.com", [LEAF_PIN,],),).resolves.toBe(false,);
-    await expect(verify("https://peer.example.com", ["   ",],),).resolves.toBe(false,);
-    await expect(verify("::garbage::", [LEAF_PIN,],),).resolves.toBe(false,);
-    await expect(verify("https://peer.example.com:0", [LEAF_PIN,],),).resolves.toBe(false,);
+    await expect(verify("http://peer.example.com", [LEAF_PIN,],),).resolves.toBe("mismatched",);
+    await expect(verify("https://peer.example.com", ["   ",],),).resolves.toBe("mismatched",);
+    await expect(verify("::garbage::", [LEAF_PIN,],),).resolves.toBe("mismatched",);
+    await expect(verify("https://peer.example.com:0", [LEAF_PIN,],),).resolves.toBe("mismatched",);
     expect(calls,).toHaveLength(0,);
   });
 
   test("parses default port and ipv6 literals for the probe", async () => {
     const { probe, calls, } = spyProbe(LEAF_PIN,);
     const verify = createPeerPinVerifier({ probe, },);
-    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe(true,);
-    await expect(verify("https://[::1]:8443", [LEAF_PIN,],),).resolves.toBe(true,);
+    await expect(verify("https://peer.example.com", [LEAF_PIN,],),).resolves.toBe("matched",);
+    await expect(verify("https://[::1]:8443", [LEAF_PIN,],),).resolves.toBe("matched",);
     expect(calls,).toEqual([
       { host: "peer.example.com", port: 443, },
       { host: "::1", port: 8443, },
@@ -231,8 +231,8 @@ describe("createPeerPinVerifier", () => {
   test("default verifier caches against the live server (one socket per TTL)", async () => {
     const verify = createPeerPinVerifier();
     const before = socketsAccepted;
-    await expect(verify(`https://127.0.0.1:${tlsPort}`, [LEAF_PIN,],),).resolves.toBe(true,);
-    await expect(verify(`https://127.0.0.1:${tlsPort}`, [LEAF_PIN,],),).resolves.toBe(true,);
+    await expect(verify(`https://127.0.0.1:${tlsPort}`, [LEAF_PIN,],),).resolves.toBe("matched",);
+    await expect(verify(`https://127.0.0.1:${tlsPort}`, [LEAF_PIN,],),).resolves.toBe("matched",);
     expect(socketsAccepted,).toBe(before + 1,);
   });
 

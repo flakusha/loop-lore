@@ -24,7 +24,7 @@ import {
   type InstanceAdvertisement,
   type PeerFetch,
 } from "./peer-fetch";
-import { createPeerPinVerifier, type PeerPinVerifier, } from "./spki-pin";
+import { createPeerPinVerifier, type PeerPinVerifier, type PinVerdict, } from "./spki-pin";
 
 /** Lazy logger — resolved on first use (tests may never initialize one). */
 const getLog = (): Logger => getLogger().child({ module: "federation.gossip", },);
@@ -166,7 +166,14 @@ export class GossipService {
     // allSettled: a throwing custom fetchImpl still resolves the round
     // (the default seam never throws, but injected ones may).
     await Promise.allSettled(known.map(async (peer,) => {
-      if (!(await this.pinOk(peer,))) { return; }
+      const verdict = await this.pinVerdict(peer,);
+      if (verdict !== "matched") {
+        // An inconclusive probe says nothing about the peer's health: keep it
+        // in the mesh and re-probe it next round. A rejected pin is left to go
+        // stale so the sweep evicts it.
+        if (verdict === "unreachable") { this.table.retain(peer.origin,); }
+        return;
+      }
 
       let body: unknown = null;
       let ok = false;
@@ -202,19 +209,27 @@ export class GossipService {
   }
 
   /**
-   * Pre-fetch SPKI pin gate. Peers without configured pins pass; a failed or
-   * mismatching verdict skips the fetch — no heartbeat, so the peer goes
-   * stale and the sweep evicts it after the TTL (never a plaintext
-   * downgrade). Spec log event: `peer.tls.failure`.
+   * Pre-fetch SPKI pin gate. Peers without configured pins pass. A rejected
+   * pin (the peer's key does not match) is a security signal: the fetch is
+   * skipped — no heartbeat, so the peer goes stale and the sweep evicts it
+   * after the TTL (never a plaintext downgrade). A probe that could not be
+   * completed is inconclusive: the fetch is skipped as well, but the peer is
+   * kept and re-probed, because a transient failure is no evidence that the
+   * peer is dead. Spec log event: `peer.tls.failure`.
    * @param peer
+   * @returns The pin verdict for this peer.
    */
-  private async pinOk(peer: PeerEntry,): Promise<boolean> {
+  private async pinVerdict(peer: PeerEntry,): Promise<PinVerdict> {
     const trust = this.trustByOrigin[peer.origin];
-    if (trust?.spkiPins === undefined || trust.spkiPins.length === 0) { return true; }
-    const pinned = await this.pinVerify(peer.origin, trust.spkiPins,);
-    if (pinned) { return true; }
-    getLog().warn("peer.tls.failure", { origin: peer.origin, reason: "spki-pin", },);
-    return false;
+    if (trust?.spkiPins === undefined || trust.spkiPins.length === 0) { return "matched"; }
+    const verdict = await this.pinVerify(peer.origin, trust.spkiPins,);
+    if (verdict === "matched") { return "matched"; }
+    getLog().warn("peer.tls.failure", {
+      origin: peer.origin,
+      reason: verdict === "mismatched" ? "spki-pin-mismatch" : "spki-probe-unreachable",
+    },);
+
+    return verdict;
   }
 }
 
