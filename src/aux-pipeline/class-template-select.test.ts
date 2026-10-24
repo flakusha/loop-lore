@@ -183,6 +183,56 @@ describe("resolveClassifierPrompt", () => {
     expect(result.params,).toBeUndefined();
   });
 
+  test("actor-layer tags feed pack selection", async () => {
+    const fixture = await createTestDb();
+    fixtures.push(fixture,);
+    const { db, } = fixture;
+    await db
+      .insertInto("system_config",)
+      .values({
+        key: CLASSIFIER_TAG_VOCABULARY_KEY,
+        value: JSON.stringify(["pacing",],),
+        description: null,
+        created_at: "2026-01-01T00:00:00.000Z",
+        updated_at: "2026-01-01T00:00:00.000Z",
+      },)
+      .execute();
+
+    await db
+      .insertInto("users",)
+      .values({ id: "user-1", username: "owner", display_name: "Owner", },)
+      .execute();
+
+    await db
+      .insertInto("chats",)
+      .values({ id: "chat-1", name: "Chat One", type: "direct", created_by: "user-1", },)
+      .execute();
+
+    await db
+      .insertInto("actors",)
+      .values({
+        id: "actor-1",
+        display_name: "Actor One",
+        settings: JSON.stringify({ tags: ["pacing",], },),
+      },)
+      .execute();
+
+    await db
+      .insertInto("chat_participants",)
+      .values({ chat_id: "chat-1", actor_id: "actor-1", role_in_chat: "member", },)
+      .execute();
+
+    const config = makeConfig(DEFAULT_LLM, { p: pack({ tags: ["pacing",], },), },);
+    const result = await resolveClassifierPrompt({
+      config,
+      db,
+      task: "intent",
+      chatId: "chat-1",
+    },);
+
+    expect(result.packId,).toBe("p",);
+  });
+
   test("pack wins over the purpose default and surfaces its params", async () => {
     const fixture = await createTestDb();
     fixtures.push(fixture,);
