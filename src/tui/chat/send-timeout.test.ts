@@ -84,27 +84,39 @@ afterEach(() => {
   setFetch(realFetch,);
 },);
 
+/**
+ * The calls this suite made.
+ *
+ * The client seam is module-global: a request another suite left in flight can
+ * land in `calls` while this test awaits, so the assertions below look at this
+ * suite's own requests only.
+ */
+function ownCalls(text: string,): ClientCall[] {
+  return calls.filter((c,) => String(c.options.body ?? "",).includes(text,));
+}
+
 describe("handleSend — send timeout", () => {
   it("passes the host's sendTimeoutMs to the client", async () => {
     stubClient();
     await handleSend(makeHost({ sendTimeoutMs: 120_000, },), "hello",);
 
-    expect(calls,).toHaveLength(1,);
-    expect(calls[0]?.options.timeout,).toBe(120_000,);
+    const mine = ownCalls("hello",);
+    expect(mine,).toHaveLength(1,);
+    expect(mine[0]?.options.timeout,).toBe(120_000,);
   });
 
   it("uses the host timeout verbatim rather than the shared 30s default", async () => {
     stubClient();
     await handleSend(makeHost({ sendTimeoutMs: 45_000, },), "hello",);
 
-    expect(calls[0]?.options.timeout,).toBe(45_000,);
+    expect(ownCalls("hello",)[0]?.options.timeout,).toBe(45_000,);
   });
 
   it("carries the message body and auth alongside the timeout", async () => {
     stubClient();
     await handleSend(makeHost({ sessionToken: "tok-1", sendTimeoutMs: 90_000, },), "hi",);
 
-    const call = calls[0];
+    const call = ownCalls("hi",)[0];
     expect(call?.url,).toContain("/api/v1/chats/chat-1/messages",);
     expect(call?.options.method,).toBe("POST",);
     expect(call?.options.timeout,).toBe(90_000,);
