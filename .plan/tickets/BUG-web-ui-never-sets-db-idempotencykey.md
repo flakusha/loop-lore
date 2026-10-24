@@ -25,3 +25,5 @@ Web UI mints a fresh UUID per call (fe-fetch.ts:55-56) for the header cache only
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-24 registry-driven close: git issue edd643b (registry tip: 91fca6bf8 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-WEB-UI-NEVER-SETS-DB-IDEMPOT)
