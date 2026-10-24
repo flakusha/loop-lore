@@ -15,8 +15,10 @@
  * guards in `./shared`. The reviewer (`reviewedBy`) and executor
  * (`executedBy`) are taken from the authenticated session, never the
  * request body. The reversal endpoint enforces `admin.users` and
- * refuses to run when `executedBy === approvedBy` (dual-admin
- * confirmation; see `BUG-nsfw-reviewappeal-auto-reverses-actions`).
+ * refuses to run when the executor is the admin who approved the
+ * appeal (dual-admin confirmation; the approver is read from the
+ * appeal row, so a forged body field cannot bypass it — see
+ * `BUG-nsfw-appeal-approvedby-taken-from-request-body`).
  */
 import { Elysia, t, } from "elysia";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
@@ -35,9 +37,6 @@ export const submitAppealBody = t.Object({
 export const reviewAppealBody = t.Object({
   status: t.Union([t.Literal("approved",), t.Literal("denied",),],),
   reviewNote: t.String({ minLength: 1, maxLength: 2000, },),
-}, CLOSED,);
-export const executeReversalBody = t.Object({
-  approvedBy: t.String(),
 }, CLOSED,);
 
 /**
@@ -124,20 +123,20 @@ export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
         body: reviewAppealBody,
         response: { 200: SuccessResponse, 400: ErrorResponse, },
       },)
-      // Execute reversal — `admin.users` capability AND `executedBy !== approvedBy`.
+      // Execute reversal — `admin.users` capability AND the executor MUST NOT
+      // be the admin who approved the appeal. Both identities are server-side:
+      // the executor comes from the session, the approver from the appeal row.
       .post(`${prefix}/nsfw/moderation/appeals/:id/execute`, async (ctx: any,) => {
         const auth = requireAdminUsers(ctx,);
         if (typeof auth !== "string") { return auth; }
         try {
-          const { approvedBy, } = ctx.body as { approvedBy: string };
-          await svc.executeReversal(ctx.params.id, auth, approvedBy,);
+          await svc.executeReversal(ctx.params.id, auth,);
           return jsonResponse(SuccessResponse,);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 400,);
         }
       }, {
         params: appealIdParam,
-        body: executeReversalBody,
         response: { 200: SuccessResponse, 400: ErrorResponse, 403: ErrorResponse, },
       },)
   );
