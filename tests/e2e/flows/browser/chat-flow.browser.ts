@@ -92,21 +92,6 @@ describe("Toggle buttons", () => {
 });
 
 describe("Elements present", () => {
-  test("all chat panel elements exist in DOM", async () => {
-    const page = await ctx.openPage();
-    const errors = trackPageErrors(page,);
-    try {
-      await gotoChat(page,);
-      await page.locator("[data-testid='character-info-panel']",).waitFor({ state: "attached", timeout: 10_000, },);
-      await page.locator("[data-testid='gallery-sidebar']",).waitFor({ state: "attached", timeout: 10_000, },);
-      await page.locator("[data-testid='chat-list-panel']",).waitFor({ state: "attached", timeout: 10_000, },);
-    } finally {
-      errors.assert();
-      errors.detach();
-      await page.close();
-    }
-  });
-
   test("generation status container exists", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page,);

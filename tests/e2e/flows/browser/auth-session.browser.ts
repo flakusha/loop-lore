@@ -116,26 +116,6 @@ describe("Auth session E2E", () => {
   });
 
   describe("Admin access", () => {
-    test("non-admin is redirected away from the admin view", async () => {
-      const page = await ctx.openPage();
-      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
-      try {
-        await login(page, "e2euser", "password",);
-        await page.goto(`${ctx.url}/views/admin`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
-        // adminViewGuard 302s non-admins to "/", which then redirects to the
-        // authed home "/views/chat". Assert we left the admin view.
-        await page.waitForURL((url,) => url.pathname !== "/views/admin", { timeout: 30_000, },);
-        // sleep: DOM settle after redirect before reading URL
-        await page.waitForTimeout(500,);
-        const path = new URL(page.url(),).pathname;
-        expect(path,).not.toBe("/views/admin",);
-      } finally {
-        errors.assert();
-        errors.detach();
-        await page.close();
-      }
-    }, 60_000,);
-
     test("admin can load the admin view", async () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);

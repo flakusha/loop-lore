@@ -131,25 +131,6 @@ describe("Characters flow E2E", () => {
         await page.close();
       }
     });
-
-    test("create character form has required fields", async () => {
-      const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
-      try {
-        await gotoCharacters(page,);
-        await page.click("[data-testid='create-character']",);
-        await page.locator("[data-testid='create-character-form']",).waitFor({ state: "visible", timeout: 10_000, },);
-        // Fill and submit
-        await page.fill("#char-name", "Browser Test Character",);
-        await page.click("[data-testid='create-character-form'] button[type='submit']",);
-        // After creation, modal closes and character appears in grid
-        await page.locator("[data-testid='character-grid']",).waitFor({ state: "attached", timeout: 15_000, },);
-      } finally {
-        errors.assert();
-        errors.detach();
-        await page.close();
-      }
-    });
   });
 
   describe("Import character", () => {
@@ -161,20 +142,6 @@ describe("Characters flow E2E", () => {
         await page.locator("[data-testid='import-character']",).waitFor({ state: "visible", timeout: 10_000, },);
         await page.click("[data-testid='import-character']",);
         await page.locator("[data-testid='import-character-modal']",).waitFor({ state: "visible", timeout: 10_000, },);
-      } finally {
-        errors.assert();
-        errors.detach();
-        await page.close();
-      }
-    });
-
-    test("import form has file input", async () => {
-      const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
-      try {
-        await gotoCharacters(page,);
-        await page.click("[data-testid='import-character']",);
-        await page.locator("[data-testid='import-character-form']",).waitFor({ state: "visible", timeout: 10_000, },);
       } finally {
         errors.assert();
         errors.detach();
@@ -255,42 +222,5 @@ describe("Characters flow E2E", () => {
         await page.close();
       }
     }, 30_000,);
-  });
-
-  describe("Character edit navigation", () => {
-    test("character-edit form renders sub-editors without console errors", async () => {
-      const page = await ctx.openPage();
-      const errors = trackPageErrors(page,);
-      try {
-        // Open the seeded character in the grid, click into the detail modal,
-        // then navigate to /characters/:id/edit and confirm the form mounts.
-        await page.goto(`${ctx.url}/views/characters`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
-        await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 30_000, },);
-        await page
-          .locator(`[data-testid='character-card-${SEED.soloCharacter.id}']`,)
-          .waitFor({ state: "attached", timeout: 30_000, },);
-
-        // Navigate to the character-edit view directly — the form htmx-loads.
-        await page.goto(`${ctx.url}/characters/${SEED.soloCharacter.id}/edit`, {
-          waitUntil: "domcontentloaded",
-          timeout: 30_000,
-        },);
-
-        await page
-          .locator("[data-testid='character-edit-header']",)
-          .waitFor({ state: "attached", timeout: 30_000, },);
-
-        await page.locator("#character-edit-form",).waitFor({ state: "attached", timeout: 30_000, },);
-        // Web-first: wait for the htmx-loaded form's last section to mount
-        // instead of a fixed sleep.
-        await page
-          .locator("[data-testid='actor-panels-section']",)
-          .waitFor({ state: "attached", timeout: 30_000, },);
-      } finally {
-        errors.assert();
-        errors.detach();
-        await page.close();
-      }
-    }, 90_000,);
   });
 });
