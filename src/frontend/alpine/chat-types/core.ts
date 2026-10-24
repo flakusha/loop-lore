@@ -136,6 +136,16 @@ export interface ChatCoreState
   _customInstructions: string;
   /** Chat content language (gm_config.contentLanguage; "" = off). */
   _chatContentLanguage: string;
+  /** Message id currently being translated (per-message translate control). */
+  _mtBusy: string;
+  /** message id → rendered translation variant. */
+  _mtText: Record<string, { locale: string; content: string }>;
+  /** Resolve the display locale for the per-message translate button. */
+  mtLocale(): string;
+  /** Translate a message into the resolved display locale. */
+  translateMessage(messageId: string,): Promise<void>;
+  /** Cached translation for a message (null = none shown). */
+  translationFor(messageId: string,): { locale: string; content: string } | null;
   _quickReplies: QuickReplyButton[];
   _quickRepliesDirty: boolean;
   _startupFiredChat: string | null;
