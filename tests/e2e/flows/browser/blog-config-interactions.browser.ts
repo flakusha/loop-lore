@@ -142,7 +142,8 @@ describe("Blog and config interactions E2E", () => {
       expect(patchBody,).toContain(`"value":${!before}`,);
       expect(await page.locator("[data-testid='config-saved']",).isVisible(),).toBe(true,);
 
-      // KNOWN DEFECT (see .tmp/NOTES.md): the PATCH is accepted (200, correct
+      // KNOWN DEFECT (see BUG-config-menu-saved-preference-reverts-after-reload):
+      // the PATCH is accepted (200, correct
       // body) but after a reload the catalog still reports the OLD value, so
       // the save does not survive a page reload. Once fixed, re-add:
       //   expect(await page.locator(`#cf-${field}`).isChecked()).toBe(!before);
