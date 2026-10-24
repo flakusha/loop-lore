@@ -78,7 +78,8 @@ describe("Composer interactions (B7)", () => {
         id: chatId,
         name: `Composer E2E ${runTag}`,
         // Group: direct chats never load chat participants, which the
-        // impersonate toggle needs to resolve currentCharacter (NOTES.md §2).
+        // impersonate toggle needs to resolve currentCharacter
+        // (BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c).
         type: "group",
         mode: "story",
         created_by: SEED.solo.id,
@@ -247,7 +248,8 @@ describe("Composer interactions (B7)", () => {
     }
   }, 60_000,);
 
-  // PRODUCT BUG (NOTES.md §9): the impersonate toggle can never activate —
+  // PRODUCT BUG (BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c):
+  // the impersonate toggle can never activate —
   // currentCharacter is only ever set by loadCharacterInfo (chat-utils/gallery.ts:211),
   // which reads chat.character_id from GET /api/v1/chats/:id, but no chats route
   // ever emits character_id (grep: 0 hits in src/routes outside blog). Probed
@@ -331,7 +333,8 @@ describe("Composer interactions (B7)", () => {
     }
   }, 60_000,);
 
-  // PRODUCT BUG (NOTES.md §10): clicking the 🎞️ gif-picker button never opens
+  // PRODUCT BUG (BUG-gif-picker-button-dead-in-real-chat-view-gifopen-never-flips):
+  // clicking the 🎞️ gif-picker button never opens
   // the panel — probed live: after the click chatState._gifOpen is still false
   // (and the panel testid never renders). gifPicker actions are merged into
   // chatState (bootstrap.ts:96) and the unit tests pass, so the click handler
