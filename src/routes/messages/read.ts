@@ -26,7 +26,7 @@ import { resolveMessageContentForRender, } from "./render-message-content";
 import type { HandlerOpts, } from "./types";
 
 import { detectLocale, } from "../../middleware/i18n";
-import { attachMessageTranslations, resolveAutoDisplayLocale, } from "./list-translations";
+import { attachRequestedTranslations, } from "./list-translations";
 
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
@@ -103,27 +103,12 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         // message_translations row per message (ONE inArray select). Default
         // payloads (no param) are unchanged, and a negotiation failure never
         // costs the reader their message page.
-        if (query.translateLocale) {
-          try {
-            const target = query.translateLocale === "auto"
-              ? await resolveAutoDisplayLocale(database, {
-                chatId,
-                userId: userId ?? "",
-                uiLocale: detectLocale(ctx.request,),
-              },)
-              : query.translateLocale;
-
-            if (target) {
-              await attachMessageTranslations(database, enriched, target,);
-            }
-          } catch (error) {
-            getChildLogger("routes.messages.read",)?.error(
-              "Failed to attach message translations",
-              error instanceof Error ? error : undefined,
-              { chatId, },
-            );
-          }
-        }
+        await attachRequestedTranslations(database, enriched, {
+          chatId,
+          userId: userId ?? "",
+          uiLocale: detectLocale(ctx.request,),
+          requestedLocale: query.translateLocale,
+        },);
 
         return jsonPaginated({ data: enriched, total, page, pageSize, },);
       },
