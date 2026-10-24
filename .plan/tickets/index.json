@@ -2619,8 +2619,8 @@
     "status": "Not Started"
   },
   "BUG-CHAT-SSE-SHARES-GENERATION-RATE-BUCKET": {
-    "hash": "22882b8",
-    "git_issue": "22882b8",
+    "hash": "d8e70ef",
+    "git_issue": "d8e70ef",
     "extid": "BUG-CHAT-SSE-SHARES-GENERATION-RATE-BUCKET",
     "type": "BUG",
     "title": "Chat SSE shares generation rate bucket",
@@ -2629,7 +2629,7 @@
     "epic": "epic-api-rate-limiting",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-sse-shares-generation-rate-bucket.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CHAT-SWIPE-INDEX-RACE": {
     "epic": "",
@@ -3626,8 +3626,8 @@
     "status": "done"
   },
   "BUG-EGUI-SENT-MESSAGE-ECHO-EMPTY": {
-    "hash": "b5b3751",
-    "git_issue": "b5b3751",
+    "hash": "cd46578",
+    "git_issue": "cd46578",
     "extid": "BUG-EGUI-SENT-MESSAGE-ECHO-EMPTY",
     "type": "BUG",
     "title": "egui sent-message echo empty",
@@ -3636,7 +3636,7 @@
     "epic": "epic-experimental-egui-frontend",
     "tags": [],
     "source": ".plan/tickets/BUG-egui-sent-message-echo-empty.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ELYSIA-AUTH-TS-DEAD-SHIM-DUPLICATE-LOGIC": {
     "epic": "epic-architecture",
@@ -5597,8 +5597,8 @@
     "status": "done"
   },
   "BUG-IMAGE-GEN-OPENS-DEAD-LLM-SSE": {
-    "hash": "04edc5f",
-    "git_issue": "04edc5f",
+    "hash": "2b9b758",
+    "git_issue": "2b9b758",
     "extid": "BUG-IMAGE-GEN-OPENS-DEAD-LLM-SSE",
     "type": "BUG",
     "title": "Image-gen opens dead LLM SSE",
@@ -5607,7 +5607,7 @@
     "epic": "epic-generation-flow-control",
     "tags": [],
     "source": ".plan/tickets/BUG-image-gen-opens-dead-llm-sse.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "epic": "",
@@ -9705,8 +9705,8 @@
     "type": "BUG"
   },
   "BUG-TUI-BLIND-TO-LLM-ASSISTANT-TURNS": {
-    "hash": "8c29a33",
-    "git_issue": "8c29a33",
+    "hash": "cd0c71c",
+    "git_issue": "cd0c71c",
     "extid": "BUG-TUI-BLIND-TO-LLM-ASSISTANT-TURNS",
     "type": "BUG",
     "title": "TUI blind to LLM assistant turns",
@@ -9715,7 +9715,7 @@
     "epic": "epic-terminal-ui",
     "tags": [],
     "source": ".plan/tickets/BUG-tui-blind-to-llm-assistant-turns.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TUI-EGUI-FIXES-HOLD-LANDING-PAGE-1-ONLY-CLIENT-GALLERY-HAS-M": {
     "hash": "8a7a393",
@@ -10111,8 +10111,8 @@
     "type": "BUG"
   },
   "BUG-WEB-UI-NEVER-SETS-DB-IDEMPOTENCYKEY": {
-    "hash": "edd643b",
-    "git_issue": "edd643b",
+    "hash": "9e6a046",
+    "git_issue": "9e6a046",
     "extid": "BUG-WEB-UI-NEVER-SETS-DB-IDEMPOTENCYKEY",
     "type": "BUG",
     "title": "Web UI never sets DB idempotencyKey",
@@ -10121,7 +10121,7 @@
     "epic": "epic-middleware-request-lifecycle",
     "tags": [],
     "source": ".plan/tickets/BUG-web-ui-never-sets-db-idempotencykey.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW": {
     "hash": "ebafd77",
@@ -14555,6 +14555,26 @@
     ],
     "title": "Integrations Core",
     "type": "EPIC"
+  },
+  "EPIC-INTERACTION-SURFACES-AUDIT": {
+    "hash": "pending",
+    "extid": "EPIC-INTERACTION-SURFACES-AUDIT",
+    "type": "EPIC",
+    "title": "Interaction Surfaces Audit — Headless CLI + Surface Parity",
+    "label": "epic",
+    "priority": "High",
+    "epic": "",
+    "tags": [
+      "cli",
+      "headless",
+      "tui",
+      "docs",
+      "plugin-auth",
+      "seeding",
+      "dogfood"
+    ],
+    "source": ".plan/tickets/epic-interaction-surfaces-audit.md",
+    "status": "Not Started"
   },
   "EPIC-INVENTORY": {
     "epic": "",
@@ -35698,6 +35718,18 @@
     "source": ".plan/tickets/TASK-docs-config-document-secret-probe-idempotency-env-keys-in-en.md",
     "status": "Not Started"
   },
+  "TASK-DOCS-DRIFT-API": {
+    "hash": "pending",
+    "extid": "TASK-DOCS-DRIFT-API",
+    "type": "TASK",
+    "title": "Docs drift — login body, `lolo -h`, OpenAPI coverage, stale specs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-interaction-surfaces-audit.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-docs-drift-api.md",
+    "status": "done"
+  },
   "TASK-DOCS-FIX-DANGLING-LINKS": {
     "epic": "epic-docs-reconciliation",
     "extid": "TASK-DOCS-FIX-DANGLING-LINKS",
@@ -40830,6 +40862,30 @@
     "tags": [],
     "title": "Headless Mode & Alternative Frontends",
     "type": "TASK"
+  },
+  "TASK-HEADLESS-CLI-ASSETS-CHARACTERS": {
+    "hash": "pending",
+    "extid": "TASK-HEADLESS-CLI-ASSETS-CHARACTERS",
+    "type": "TASK",
+    "title": "Headless CLI — assets + characters (`lolo assets|characters --json`)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-interaction-surfaces-audit.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-headless-cli-assets-characters.md",
+    "status": "done"
+  },
+  "TASK-HEADLESS-CLI-CHAT-GENERATE": {
+    "hash": "pending",
+    "extid": "TASK-HEADLESS-CLI-CHAT-GENERATE",
+    "type": "TASK",
+    "title": "Headless CLI — chat + generate (`lolo chat|generate --json`)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-interaction-surfaces-audit.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-headless-cli-chat-generate.md",
+    "status": "done"
   },
   "TASK-HEADLESS-MODE-ALTERNATIVE-FRONTENDS": {
     "epic": "epic-headless-alternative-frontends",
@@ -47909,6 +47965,18 @@
     "tags": [],
     "title": "Plugin API System",
     "type": "TASK"
+  },
+  "TASK-PLUGIN-AUTH-RUNTIME-SEED": {
+    "hash": "pending",
+    "extid": "TASK-PLUGIN-AUTH-RUNTIME-SEED",
+    "type": "TASK",
+    "title": "Plugin auth surface + runtime seed endpoint",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-interaction-surfaces-audit.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plugin-auth-runtime-seed.md",
+    "status": "done"
   },
   "TASK-PLUGIN-BROWSER": {
     "epic": "epic-plugin-management-ui",
@@ -55387,6 +55455,18 @@
       "models"
     ],
     "source": ".plan/tickets/TASK-tui-models-overlay.md",
+    "status": "done"
+  },
+  "TASK-TUI-PARITY-IMAGEGEN-AVATAR": {
+    "hash": "pending",
+    "extid": "TASK-TUI-PARITY-IMAGEGEN-AVATAR",
+    "type": "TASK",
+    "title": "TUI parity — image-gen + avatar attach",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-interaction-surfaces-audit.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tui-parity-imagegen-avatar.md",
     "status": "done"
   },
   "TASK-TUI-SHELL-TESTABILITY": {

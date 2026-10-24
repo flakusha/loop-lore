@@ -24,3 +24,5 @@ Chat SSE is a read stream, not a generation spend; sharing the bucket couples ch
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-24 registry-driven close: git issue 22882b8 (registry tip: 424eb3f94 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-CHAT-SSE-SHARES-GENERATION-R)

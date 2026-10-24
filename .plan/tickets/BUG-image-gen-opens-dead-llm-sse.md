@@ -25,3 +25,5 @@ dispatchGenerationAction opens the LLM SSE after an image POST (generation-helpe
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-24 registry-driven close: git issue 04edc5f (registry tip: f61380e5e Konstantin Fedotov Auto-closed: appended .md marker marks BUG-IMAGE-GEN-OPENS-DEAD-LLM-SSE)
