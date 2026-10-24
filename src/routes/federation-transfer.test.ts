@@ -9,7 +9,7 @@
  * Elysia app, so every byte passes through the same handlers production
  * uses. No mesh-wide PSK touches the key-path test.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterAll, describe, expect, test, } from "bun:test";
 import type { Config, FederationConfig, } from "../config/schema";
 import { initSmk, } from "../crypto/smk";
 import type { Db, } from "../db";
@@ -62,6 +62,12 @@ function postToApp(app: MeshApp,): PeerPost {
     };
   };
 }
+
+// Reset the process-global SMK — initSmk leaks across test files in one bun
+// process and flips isEncryptionEnabled() for later suites (e.g. chat-sections).
+afterAll(async () => {
+  await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip", },);
+},);
 
 describe("A→B mesh transfer", () => {
   test("seal → reserve → push → decrypt verifies integrity", async () => {
