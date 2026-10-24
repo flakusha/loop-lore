@@ -72,7 +72,7 @@ function stubClient(): void {
     calls.push({ url, options: options ?? {}, },);
     return Promise.resolve({
       ok: true,
-      data: { id: "msg-1", } as T,
+      data: { id: "msg-1", assistantMessage: { id: "msg-2", content: "reply", }, } as T,
       status: 200,
       headers: new Headers(),
     },);
