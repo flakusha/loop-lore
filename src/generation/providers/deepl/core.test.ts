@@ -148,6 +148,25 @@ describe("completeDispatch (deepl)", () => {
     );
   });
 
+  test("rejects when neither the request nor the state carries a target language", async () => {
+    const noTarget: DeepLState = { ...state, defaultModel: "", };
+    await expect(completeDispatch(noTarget, req({ model: "", },),),).rejects.toThrow(
+      "DeepL translate requires a target language (request model)",
+    );
+
+    await expect(completeDispatch(noTarget, req({ model: "", },),),).rejects.toBeInstanceOf(ProviderError,);
+  });
+
+  test("rejects when the request carries no user text", async () => {
+    await expect(
+      completeDispatch(state, req({ messages: [{ role: "system", content: "translate", },], },),),
+    ).rejects.toThrow("DeepL translate requires user message text",);
+
+    await expect(
+      completeDispatch(state, req({ messages: [{ role: "system", content: "translate", },], },),),
+    ).rejects.toBeInstanceOf(ProviderError,);
+  });
+
   test("API error rejects with ProviderError (no throw across the seam)", async () => {
     await withMockFetch(
       () => jsonResponse({ message: "Wrong key", }, 403,),
