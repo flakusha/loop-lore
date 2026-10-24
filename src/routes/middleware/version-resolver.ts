@@ -15,7 +15,7 @@ import { Elysia, } from "elysia";
 import { HttpStatus, jsonError, } from "../http-utils";
 
 /** API versions this server serves. */
-export const SUPPORTED_API_VERSIONS = ["1",] as const;
+const SUPPORTED_API_VERSIONS = ["1",] as const;
 
 /** A version this server serves. */
 export type ApiVersion = (typeof SUPPORTED_API_VERSIONS)[number];
@@ -34,19 +34,16 @@ const ACCEPT_VERSION_RE = /application\/vnd\.loop-lore\.v(\d+)\+json/;
  *
  * Priority (same as `resolveVersion`): URL path first, Accept header second.
  * @param request
- * @returns the requested version and where it came from, or null when the
- * client named no version at all
+ * @returns the requested version, or null when the client named no version
  */
-export function requestedVersion(
-  request: Request,
-): { version: string; source: "path" | "accept" } | null {
+function requestedVersion(request: Request,): string | null {
   const url = new URL(request.url ?? "",);
   const pathMatch = PATH_VERSION_RE.exec(url.pathname,);
-  if (pathMatch?.[1]) { return { version: pathMatch[1], source: "path", }; }
+  if (pathMatch?.[1]) { return pathMatch[1]; }
 
   const accept = request.headers?.get("Accept",) ?? "";
   const acceptMatch = ACCEPT_VERSION_RE.exec(accept,);
-  if (acceptMatch?.[1]) { return { version: acceptMatch[1], source: "accept", }; }
+  if (acceptMatch?.[1]) { return acceptMatch[1]; }
 
   return null;
 }
@@ -55,7 +52,7 @@ export function requestedVersion(
  * True when this server serves the given version.
  * @param version
  */
-export function isSupportedVersion(version: string,): version is ApiVersion {
+function isSupportedVersion(version: string,): version is ApiVersion {
   return (SUPPORTED_API_VERSIONS as readonly string[]).includes(version,);
 }
 
@@ -69,14 +66,12 @@ export function isSupportedVersion(version: string,): version is ApiVersion {
  * @returns a 400 JSON error envelope naming the supported versions, or
  * undefined when the requested version is supported (or absent)
  */
-export function unsupportedVersionResponse(request: Request,): Response | undefined {
+function unsupportedVersionResponse(request: Request,): Response | undefined {
   const requested = requestedVersion(request,);
-  if (!requested || isSupportedVersion(requested.version,)) { return undefined; }
+  if (!requested || isSupportedVersion(requested,)) { return undefined; }
 
   return jsonError({
-    message: `Unsupported API version "${requested.version}". Supported versions: ${
-      SUPPORTED_API_VERSIONS.join(", ",)
-    }.`,
+    message: `Unsupported API version "${requested}". Supported versions: ${SUPPORTED_API_VERSIONS.join(", ",)}.`,
     status: HttpStatus.BadRequest,
   },);
 }
@@ -96,7 +91,7 @@ export function unsupportedVersionResponse(request: Request,): Response | undefi
  */
 export function resolveVersion(request: Request,): ApiVersion {
   const requested = requestedVersion(request,);
-  if (requested && isSupportedVersion(requested.version,)) { return requested.version; }
+  if (requested && isSupportedVersion(requested,)) { return requested; }
 
   return DEFAULT_VERSION;
 }

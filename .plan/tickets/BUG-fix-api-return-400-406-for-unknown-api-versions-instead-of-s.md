@@ -26,8 +26,10 @@ The fix keeps the resolver's fallback for requests that name no version (legacy 
 
 **Resolution:**
 
-- `src/routes/middleware/version-resolver.ts:62-82` — new `unsupportedVersionResponse(request)` returns a 400 JSON error envelope naming the supported versions when the client names an unsupported version (path `/api/vN/...` or `Accept: application/vnd.loop-lore.vN+json`), and `undefined` otherwise.
-- `src/routes/middleware/version-resolver.ts:113-119` — the `versionResolver()` plugin rejects such a request in an `onRequest` hook, so the 400 is answered before the request reaches a route (or the catch-all 308 to `/api/v1/v2/x`). Every app that mounts the middleware gets the same gate, so `src/elysia-app.ts` needed no change — the plugin is already mounted there.
-- `src/routes/middleware/version-resolver.ts:97` — `resolveVersion` keeps its documented fallback for requests that name no version.
+- `src/routes/middleware/version-resolver.ts:69-77` — new module-private `unsupportedVersionResponse(request)` returns a 400 JSON error envelope naming the supported versions when the client names an unsupported version (path `/api/vN/...` or `Accept: application/vnd.loop-lore.vN+json`), and `undefined` otherwise.
+- `src/routes/middleware/version-resolver.ts:108-113` — the `versionResolver()` plugin rejects such a request in an `onRequest` hook, so the 400 is answered before the request reaches a route (or the catch-all 308 to `/api/v1/v2/x`). Every app that mounts the middleware gets the same gate, so `src/elysia-app.ts` needed no change — the plugin is already mounted there.
+- `src/routes/middleware/version-resolver.ts:92-97` — `resolveVersion` keeps its documented fallback for requests that name no version.
 - `docs/spec/api-versioning.md` — documents the 400 for an unsupported version.
 - Regression tests: `src/routes/middleware/version-resolver.test.ts` → "createApp rejects unknown API versions > returns 400 for an unknown path version instead of redirecting to a 404" and "returns 400 for an unknown Accept-header version"; "leaves the legacy unversioned redirect intact" pins that an unversioned `/api/chats` still 308s to `/api/v1/chats`.
+
+**Resolved:** 2026-10-24 registry-driven close: git issue 4d3dab7 (registry tip: 48b05e55b Konstantin Fedotov Auto-closed: appended .md marker marks BUG-FIX-API-RETURN-400-406-FOR-U)
