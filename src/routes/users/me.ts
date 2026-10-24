@@ -117,6 +117,9 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           if (
             body.contentLocale !== undefined &&
             body.contentLocale !== null &&
+            // An empty string means "no content-language preference" — the
+            // settings page sends it when the selector is left unset.
+            body.contentLocale !== "" &&
             (typeof body.contentLocale !== "string" || !isWellFormedBcp47(body.contentLocale,))
           ) {
             return jsonError({
