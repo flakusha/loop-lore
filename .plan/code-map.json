@@ -38299,6 +38299,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as.md"
     }
   ],
   "src/regex/html-sanitize-streaming.edge.test.ts": [
@@ -38317,6 +38321,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    }
+  ],
+  "src/regex/html-sanitize.property.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as.md"
     }
   ],
   "src/regex/html-sanitize.test.ts": [
