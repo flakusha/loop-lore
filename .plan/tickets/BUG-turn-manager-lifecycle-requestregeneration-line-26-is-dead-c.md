@@ -50,3 +50,5 @@ Known limitation (not changed here): `requestRegeneration` still returns `true` 
 
 - `src/turning/turn-manager/lifecycle.ts:25-32` — the dead pre-mutation was removed; the state is now only changed through the mutation that `persistState` writes.
 - Regression test: `src/turning/turn-manager.test.ts` → "requestRegeneration() > does not claim a pending regeneration that was never persisted" (the chat row is gone, so nothing can be persisted — the in-memory state must not claim a pending regeneration).
+
+**Resolved:** 2026-10-24 registry-driven close: git issue c46deab (registry tip: bc0b9dfeb Konstantin Fedotov Auto-closed: appended .md marker marks BUG-TURN-MANAGER-LIFECYCLE-REQUE)
