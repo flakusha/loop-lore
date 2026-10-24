@@ -7,6 +7,7 @@
  */
 import { describe, expect, mock, test, } from "bun:test";
 import { AudioApiFamily, } from "../../../db/enums-config";
+import * as realWorkflowLoader from "../../workflow-loader";
 import type { AudioGenRequest, } from "../types";
 import { createComfyAudioProvider, } from "./comfyui";
 
@@ -43,7 +44,13 @@ describe("createComfyAudioProvider — run outcome", () => {
   const loadedWorkflow = { "1": { inputs: {}, class_type: "EmptyLatentAudio", }, };
 
   test("returns the audio sink buffer", async () => {
-    mock.module("../../workflow-loader", () => ({ loadComfyUIWorkflow: async () => loadedWorkflow, }),);
+    // Spread the real barrel: mock.module persists for the whole serial run,
+    // and a single-export object would leave findDeadNodes/isValidWorkflow/etc.
+    // undefined for every later importer of the barrel.
+    mock.module(
+      "../../workflow-loader",
+      () => ({ ...realWorkflowLoader, loadComfyUIWorkflow: async () => loadedWorkflow, }),
+    );
 
     const originalFetch = globalThis.fetch;
     const calls: string[] = [];
@@ -80,7 +87,13 @@ describe("createComfyAudioProvider — run outcome", () => {
   });
 
   test("maps a failed run to a 502", async () => {
-    mock.module("../../workflow-loader", () => ({ loadComfyUIWorkflow: async () => loadedWorkflow, }),);
+    // Spread the real barrel: mock.module persists for the whole serial run,
+    // and a single-export object would leave findDeadNodes/isValidWorkflow/etc.
+    // undefined for every later importer of the barrel.
+    mock.module(
+      "../../workflow-loader",
+      () => ({ ...realWorkflowLoader, loadComfyUIWorkflow: async () => loadedWorkflow, }),
+    );
 
     const originalFetch = globalThis.fetch;
     (globalThis as Record<string, unknown>).fetch = async (input: RequestInfo | URL,) => {
