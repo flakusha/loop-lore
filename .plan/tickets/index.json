@@ -635,6 +635,19 @@
     "title": "app: registerPlugins accepts asyncStore but never uses it",
     "type": "BUG"
   },
+  "BUG-APPEAL-REVERSAL-NOTIFICATION-IS-STORED-WITH-A-NULL-ID-WHICH-": {
+    "hash": "e490c6a",
+    "git_issue": "e490c6a",
+    "extid": "BUG-APPEAL-REVERSAL-NOTIFICATION-IS-STORED-WITH-A-NULL-ID-WHICH-",
+    "type": "BUG",
+    "title": "Appeal-reversal notification is stored with a NULL id, which hides the user's whole notification list",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md",
+    "status": "Not Started"
+  },
   "BUG-APPLYFLAG-SKIPS-SELF-TARGET-GUARD": {
     "hash": "af59426",
     "git_issue": "af59426",
@@ -2892,6 +2905,19 @@
     "title": "computeContextWindow phase-3 trims newest instead of oldest",
     "type": "BUG"
   },
+  "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-": {
+    "hash": "b751a45",
+    "git_issue": "b751a45",
+    "extid": "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-",
+    "type": "BUG",
+    "title": "Config-file reload silently re-enables NSFW after the admin turned it off",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md",
+    "status": "Not Started"
+  },
   "BUG-CONFIG-MENU-PATCH-STORES-THE-RAW-VALUE-FOR-USER-SCOPE-SETTIN": {
     "hash": "c77b7e9",
     "git_issue": "c77b7e9",
@@ -4245,7 +4271,7 @@
     "epic": "epic-api-versioning",
     "tags": [],
     "source": ".plan/tickets/BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FIX-API-UNIFY-ERROR-RESPONSE-ENVELOPES-KILL-RAW-RESPONSE-JSO": {
     "hash": "39603d6",
@@ -7244,7 +7270,7 @@
     "label": "security",
     "priority": "medium",
     "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "NSFW appeal approvedBy taken from request body",
     "type": "BUG"
@@ -7954,7 +7980,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "POST /actors/:actorId/emotions is a dead endpoint - always 500",
     "type": "BUG"
@@ -8545,6 +8571,19 @@
     "epic": "epic-schema",
     "tags": [],
     "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
+    "status": "Not Started"
+  },
+  "BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-SERVING-NSFW-AFTER-THE-ADMIN-KIL": {
+    "hash": "eaa16ea",
+    "git_issue": "eaa16ea",
+    "extid": "BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-SERVING-NSFW-AFTER-THE-ADMIN-KIL",
+    "type": "BUG",
+    "title": "Route-layer NSFW gate keeps serving NSFW after the admin kill switch is turned off",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md",
     "status": "Not Started"
   },
   "BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU": {
@@ -9949,7 +9988,7 @@
     "epic": "epic-actor-turn-skip",
     "tags": [],
     "source": ".plan/tickets/BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TURN-MANAGER-SELECTION-USES-A-STALE-CANDIDATE-LIST-AND-A-REA": {
     "hash": "d60b425",
@@ -35675,6 +35714,19 @@
     "tags": [],
     "title": "Dev Tooling Updates — Biome, dprint, stylelint",
     "type": "TASK"
+  },
+  "TASK-DIFF-SCOPED-COVERAGE-GATE-FLOORS-FILES-THE-BRANCH-DID-NOT-AU": {
+    "hash": "7c2b079",
+    "git_issue": "7c2b079",
+    "extid": "TASK-DIFF-SCOPED-COVERAGE-GATE-FLOORS-FILES-THE-BRANCH-DID-NOT-AU",
+    "type": "TASK",
+    "title": "Diff-scoped coverage gate floors files the branch did not author when the branch is behind its base",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-diff-scoped-coverage-gate-floors-files-the-branch-did-not-au.md",
+    "status": "Not Started"
   },
   "TASK-DISASTER-RECOVERY-RESEARCH": {
     "epic": "epic-db-asset-snapshot-recovery",
