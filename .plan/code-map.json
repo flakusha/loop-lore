@@ -4480,7 +4480,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -12901,6 +12909,22 @@
       "source": "docs/spec/config-extensions.md"
     }
   ],
+  "src/config/hot-apply-consumers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    }
+  ],
+  "src/config/hot-apply.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
+    }
+  ],
   "src/config/hot-reload.test.ts": [
     {
       "kind": "ticket",
@@ -12915,6 +12939,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-continuous-improvement.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
     },
     {
       "kind": "ticket",
@@ -17718,6 +17746,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md"
     },
     {
@@ -19702,6 +19734,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
     {
@@ -21003,6 +21039,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -25258,6 +25298,10 @@
     }
   ],
   "src/frontend/alpine/user-notifications.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-epic-frontend-notifications-verify-bell-prefs-ui-c.md"
@@ -35182,6 +35226,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     },
     {
@@ -35207,6 +35255,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-age-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -35752,6 +35804,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr.md"
     },
     {
@@ -35844,6 +35900,14 @@
   "src/nsfw/capability-gate.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
     },
     {
@@ -35918,10 +35982,18 @@
   "src/nsfw/moderation-service/appeals-reversal.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
     }
   ],
   "src/nsfw/moderation-service/appeals.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md"
@@ -35948,6 +36020,10 @@
     }
   ],
   "src/nsfw/moderation-service/audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md"
@@ -36041,6 +36117,12 @@
       "source": "docs/spec/chat-lifecycle-moderation.md"
     }
   ],
+  "src/nsfw/moderation-service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
+    }
+  ],
   "src/nsfw/moderation-service/mod-actions.ts": [
     {
       "kind": "ticket",
@@ -36089,6 +36171,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
     }
   ],
   "src/nsfw/pii-redaction.ts": [
@@ -36115,6 +36201,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -39039,6 +39129,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     }
   ],
   "src/routes/admin-templates/profiles.ts": [
@@ -40253,6 +40347,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
+    }
+  ],
+  "src/routes/character-emotions/actor.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500.md"
     }
   ],
   "src/routes/character-emotions/actor.ts": [
@@ -43922,6 +44022,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
     }
   ],
@@ -43937,6 +44041,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/api-versioning.md"
     }
   ],
   "src/routes/model-comparisons-analytics.ts": [
@@ -44094,6 +44202,10 @@
   "src/routes/notifications/index.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/EPIC-2026-21.md"
     }
   ],
@@ -44104,6 +44216,10 @@
     }
   ],
   "src/routes/notifications/stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-notification-stream-error-unreachable.md"
@@ -44149,6 +44265,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
+    }
+  ],
+  "src/routes/nsfw-moderation/appeals.routes.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
     }
   ],
   "src/routes/nsfw-moderation/appeals.ts": [
@@ -44291,6 +44413,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-faction-reputation.md"
+    }
+  ],
+  "src/routes/nsfw/shared.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     }
   ],
   "src/routes/openapi.ts": [
@@ -51530,6 +51658,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
     {
@@ -51555,6 +51687,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -54814,6 +54950,10 @@
   "src/turning/turn-manager.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren.md"
     },
     {
@@ -55401,6 +55541,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
+    }
+  ],
+  "src/utils/safe-regexp.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-diff-scoped-coverage-gate-floors-files-the-branch-did-not-au.md"
     }
   ],
   "src/utils/scratch.ts": [
@@ -56020,6 +56166,10 @@
     }
   ],
   "src/validation/schemas/responses.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-affordance-action-parser.md"
