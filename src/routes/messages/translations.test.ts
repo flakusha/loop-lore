@@ -6,6 +6,13 @@
  * 404 (never 403-leak) on foreign ids, unknown-locale 400, on-demand
  * translate + idempotent retranslate, and list/get decryption passthrough.
  *
+ * Authorization contract (server-side, verified per entry point):
+ *   - every route derives the caller from the request context and denies an
+ *     absent/falsy userId with a 401 BEFORE any resource lookup;
+ *   - access is re-checked PER MESSAGE (row level), so an id the caller does
+ *     not own is a 404 — never a 403, which would confirm the id exists;
+ *   - a denied POST must not reach the provider and must not write a row.
+ *
  * Resource contract: one fresh in-memory DB per test (createTestDb in
  * beforeEach), destroyed in afterEach; the provider-registry name is unique
  * per run and unregistered in afterEach; requests go through app.handle(),
@@ -36,6 +43,9 @@ const RUN_ID = randomUUID().slice(0, 8,);
 const PROVIDER = `mtr-provider-${RUN_ID}`;
 const MODEL = "mtr-model";
 
+/** Provider `complete` invocations in the current test — the outbound-call counter. */
+let providerCalls = 0;
+
 /** */
 function makeConfig(): Config {
   const defaults = createConfigSchema().defaults as unknown as {
@@ -47,10 +57,11 @@ function makeConfig(): Config {
   return defaults as unknown as Config;
 }
 
-function makeApp(db: Kysely<DB>, userId: string,) {
+/** `userId: null` builds the unauthenticated caller (no id in the context). */
+function makeApp(db: Kysely<DB>, userId: string | null,) {
   const config = makeConfig();
   return new Elysia()
-    .derive(() => ({ userId, userRole: "user", }))
+    .derive(() => ({ userId, userRole: userId === null ? null : "user", }))
     .use(translationRoutes({ database: db, config, },),);
 }
 
@@ -63,9 +74,13 @@ describe("message translation routes", () => {
 
   beforeEach(async () => {
     fixture = await createTestDb();
+    providerCalls = 0;
     registerProvider(PROVIDER, {
       capabilities: { label: "MTR Provider", streaming: false, },
-      complete: async (_req: GenerateRequest,) => ({ content: "hola", }),
+      complete: async (_req: GenerateRequest,) => {
+        providerCalls++;
+        return { content: "hola", };
+      },
       healthCheck: async () => ({ status: "ok" as const, }),
       listModels: async () => [],
     } as unknown as LLMProvider,);
@@ -73,8 +88,8 @@ describe("message translation routes", () => {
     const db = fixture.db;
     await insertUsers(db, `mtr-o-${ownerId}`, "Owner", { id: ownerId, } as never,);
     await insertActors(db, "Owner", { id: ownerId, user_id: ownerId, owner_id: ownerId, } as never,);
-    await insertUsers(db, `mtr-x-${outsiderId}`, "Outsider", { id: outsiderId, } as never,);
-    await insertActors(db, "Outsider", { id: outsiderId, user_id: outsiderId, owner_id: outsiderId, } as never,);
+    await insertUsers(db, `mtr-x-${outsiderId}`, "Outider", { id: outsiderId, } as never,);
+    await insertActors(db, "Outider", { id: outsiderId, user_id: outsiderId, owner_id: outsiderId, } as never,);
     await insertChats(db, "MTR Chat", ownerId, { id: chatId, } as never,);
     await insertChatParticipants(db, chatId, ownerId, { role_in_chat: ChatParticipantRole.Owner, },);
     messageId = await insertMessages(db, chatId, ownerId, MessageRole.Assistant, "hello world",);
@@ -120,6 +135,7 @@ describe("message translation routes", () => {
     );
 
     expect(res.status,).toBe(400,);
+    expect(providerCalls,).toBe(0,);
   });
 
   test("POST with a well-formed non-catalog locale is accepted (not a 400)", async () => {
@@ -155,6 +171,9 @@ describe("message translation routes", () => {
     expect(body.skipped,).toBeUndefined();
     expect(body.locale,).toBe("es",);
     expect(body.content,).toBe("hola",);
+    // The counter IS the outbound-call seam the denial tests assert on: if
+    // this ever reads 0, those denials would be passing vacuously.
+    expect(providerCalls,).toBeGreaterThan(0,);
 
     await post("es",);
     const rows = await fixture.db.selectFrom("message_translations",).selectAll()
@@ -196,5 +215,76 @@ describe("message translation routes", () => {
 
     expect(res.status,).toBe(200,);
     expect(await res.json(),).toMatchObject({ locale: "fr", content: "hola", },);
+  });
+
+  // -- authorization: default-deny -------------------------------
+
+  test("an unauthenticated caller is a 401 on every translation route", async () => {
+    const app = makeApp(fixture.db, null,);
+
+    const list = await app.handle(
+      new Request(`http://localhost/api/messages/${messageId}/translations`,),
+    );
+
+    expect(list.status,).toBe(401,);
+
+    const one = await app.handle(
+      new Request(`http://localhost/api/messages/${messageId}/translations/es`,),
+    );
+
+    expect(one.status,).toBe(401,);
+
+    const post = await app.handle(
+      new Request(`http://localhost/api/messages/${messageId}/translations`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ locale: "es", },),
+      },),
+    );
+
+    expect(post.status,).toBe(401,);
+
+    // Denied before any resource lookup: no provider call, no stored row.
+    expect(providerCalls,).toBe(0,);
+    const rows = await fixture.db.selectFrom("message_translations",).selectAll()
+      .where("message_id", "=", messageId,).execute();
+
+    expect(rows,).toHaveLength(0,);
+  });
+
+  test("a foreign message id is a 404 on the by-locale and POST routes too", async () => {
+    const app = makeApp(fixture.db, outsiderId,);
+
+    const one = await app.handle(
+      new Request(`http://localhost/api/messages/${messageId}/translations/es`,),
+    );
+
+    expect(one.status,).toBe(404,);
+
+    const post = await app.handle(
+      new Request(`http://localhost/api/messages/${messageId}/translations`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ locale: "es", },),
+      },),
+    );
+
+    expect(post.status,).toBe(404,);
+
+    // Row-level denial: the write path must not translate a message the
+    // caller cannot read, and must not store a row for it.
+    expect(providerCalls,).toBe(0,);
+    const rows = await fixture.db.selectFrom("message_translations",).selectAll()
+      .where("message_id", "=", messageId,).execute();
+
+    expect(rows,).toHaveLength(0,);
+  });
+
+  test("an unknown message id is a 404 for an authenticated caller, not a 500", async () => {
+    const res = await makeApp(fixture.db, ownerId,).handle(
+      new Request(`http://localhost/api/messages/${randomUUID()}/translations`,),
+    );
+
+    expect(res.status,).toBe(404,);
   });
 });
