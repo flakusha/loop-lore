@@ -1403,6 +1403,32 @@
     "title": "Blog post GET bypasses visibility policy (IDOR)",
     "type": "BUG"
   },
+  "BUG-BRANCH-MERGE-DELETE-CONFIRM-MODALS-NEVER-INITIALIZE-DEAD-MAR": {
+    "hash": "48922f4",
+    "git_issue": "48922f4",
+    "extid": "BUG-BRANCH-MERGE-DELETE-CONFIRM-MODALS-NEVER-INITIALIZE-DEAD-MAR",
+    "type": "BUG",
+    "title": "Branch merge/delete confirm modals never initialize — dead markup",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar.md",
+    "status": "Not Started"
+  },
+  "BUG-BRANCH-SWITCH-PERSISTS-BUT-NEVER-SWAPS-DISPLAYED-MESSAGES": {
+    "hash": "324a2c9",
+    "git_issue": "324a2c9",
+    "extid": "BUG-BRANCH-SWITCH-PERSISTS-BUT-NEVER-SWAPS-DISPLAYED-MESSAGES",
+    "type": "BUG",
+    "title": "Branch switch persists but never swaps displayed messages",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-branch-switch-persists-but-never-swaps-displayed-messages.md",
+    "status": "Not Started"
+  },
   "BUG-BROWSER-E2E-ASSERTS-ABSENCE-OF-A-DECRYPT-FAILURE-MARKER-ACRO": {
     "hash": "8b4b4c1",
     "git_issue": "8b4b4c1",
@@ -2118,6 +2144,19 @@
     "tags": [],
     "title": "character internal traits IDOR cross-user read write delete",
     "type": "BUG"
+  },
+  "BUG-CHARACTER-LICENSING-PANEL-FROZEN-ON-LOADING-LICENSING-ALPINE": {
+    "hash": "93b85cd",
+    "git_issue": "93b85cd",
+    "extid": "BUG-CHARACTER-LICENSING-PANEL-FROZEN-ON-LOADING-LICENSING-ALPINE",
+    "type": "BUG",
+    "title": "Character licensing panel frozen on 'Loading licensing…' — Alpine effects dead after htmx load",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-licensing-panel-frozen-on-loading-licensing-alpine.md",
+    "status": "Not Started"
   },
   "BUG-CHARACTER-LICENSING-UPSERT-RECORDS-LICENSE-HISTORY-FOR-ANY-A": {
     "epic": "",
@@ -2864,6 +2903,19 @@
     "epic": "epic-frontend-settings",
     "tags": [],
     "source": ".plan/tickets/BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin.md",
+    "status": "Not Started"
+  },
+  "BUG-CONFIG-MENU-SAVED-PREFERENCE-REVERTS-AFTER-RELOAD": {
+    "hash": "8387b00",
+    "git_issue": "8387b00",
+    "extid": "BUG-CONFIG-MENU-SAVED-PREFERENCE-REVERTS-AFTER-RELOAD",
+    "type": "BUG",
+    "title": "Config-menu saved preference reverts after reload",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-config-menu-saved-preference-reverts-after-reload.md",
     "status": "Not Started"
   },
   "BUG-CONFIG-SCHEMA-DEFAULTS-LEAK-ABSOLUTE-PATHS": {
@@ -4481,6 +4533,19 @@
     "title": "flagContent has TOCTOU race on duplicate flag check - SELECT then INSERT allows concurrent duplicates",
     "type": "BUG"
   },
+  "BUG-FORMATMEMORYDATE-THROWS-ON-EVERY-RENDERED-MEMORY-ROW-NEVER-S": {
+    "hash": "27901d8",
+    "git_issue": "27901d8",
+    "extid": "BUG-FORMATMEMORYDATE-THROWS-ON-EVERY-RENDERED-MEMORY-ROW-NEVER-S",
+    "type": "BUG",
+    "title": "formatMemoryDate throws on every rendered memory row — never spread onto component",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s.md",
+    "status": "Not Started"
+  },
   "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO": {
     "epic": "",
     "extid": "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO",
@@ -4871,6 +4936,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-getstorypointbalance-mutates-db-on-read-and-500s-on-concurre.md",
     "status": "Done"
+  },
+  "BUG-GIF-PICKER-BUTTON-DEAD-IN-REAL-CHAT-VIEW-GIFOPEN-NEVER-FLIPS": {
+    "hash": "c926e5a",
+    "git_issue": "c926e5a",
+    "extid": "BUG-GIF-PICKER-BUTTON-DEAD-IN-REAL-CHAT-VIEW-GIFOPEN-NEVER-FLIPS",
+    "type": "BUG",
+    "title": "Gif picker button dead in real chat view — _gifOpen never flips",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gif-picker-button-dead-in-real-chat-view-gifopen-never-flips.md",
+    "status": "Not Started"
   },
   "BUG-GIT-COMMANDS-IN-COMMIT-CHECK-AND-VERSION-BUMP-ARE-BUILT-BY-S": {
     "hash": "80cbcc0",
@@ -5635,6 +5713,19 @@
     "title": "impersonate command register callbacks are empty (no-op)",
     "type": "BUG"
   },
+  "BUG-IMPERSONATE-TOGGLE-CAN-NEVER-ACTIVATE-NO-CHATS-ROUTE-EMITS-C": {
+    "hash": "12f087e",
+    "git_issue": "12f087e",
+    "extid": "BUG-IMPERSONATE-TOGGLE-CAN-NEVER-ACTIVATE-NO-CHATS-ROUTE-EMITS-C",
+    "type": "BUG",
+    "title": "Impersonate toggle can never activate — no chats route emits character_id",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c.md",
+    "status": "Not Started"
+  },
   "BUG-IMPORTCHATDEK-THROWS-ON-CHAT-KEYS-PRIMARY-KEY-COLLISION-INST": {
     "hash": "873fe9f",
     "git_issue": "873fe9f",
@@ -6315,6 +6406,19 @@
     "title": "memory_audit_log action column typed string not union",
     "type": "BUG"
   },
+  "BUG-MEMORY-AUDIT-TAB-ALWAYS-404S-ROUTE-SHAPE-MISMATCH": {
+    "hash": "7c09b78",
+    "git_issue": "7c09b78",
+    "extid": "BUG-MEMORY-AUDIT-TAB-ALWAYS-404S-ROUTE-SHAPE-MISMATCH",
+    "type": "BUG",
+    "title": "Memory audit tab always 404s — route shape mismatch",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-audit-tab-always-404s-route-shape-mismatch.md",
+    "status": "Not Started"
+  },
   "BUG-MEMORY-CREATE-FORM-HARDCODES-EPISODIC-TYPE": {
     "epic": "",
     "extid": "BUG-MEMORY-CREATE-FORM-HARDCODES-EPISODIC-TYPE",
@@ -6385,6 +6489,32 @@
     "title": "memory injection reason not displayed in UI",
     "type": "BUG"
   },
+  "BUG-MEMORY-PANEL-FULLY-INERT-IN-DIRECT-CHATS-PARTICIPANTS-NEVER-": {
+    "hash": "c3e407b",
+    "git_issue": "c3e407b",
+    "extid": "BUG-MEMORY-PANEL-FULLY-INERT-IN-DIRECT-CHATS-PARTICIPANTS-NEVER-",
+    "type": "BUG",
+    "title": "Memory panel fully inert in direct chats — participants never loaded",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-panel-fully-inert-in-direct-chats-participants-never-.md",
+    "status": "Not Started"
+  },
+  "BUG-MEMORY-PANEL-NEVER-RENDERS-MEMORIES-IN-ANY-CHAT-RESPONSE-ENV": {
+    "hash": "46fcedc",
+    "git_issue": "46fcedc",
+    "extid": "BUG-MEMORY-PANEL-NEVER-RENDERS-MEMORIES-IN-ANY-CHAT-RESPONSE-ENV",
+    "type": "BUG",
+    "title": "Memory panel never renders memories in any chat — response envelope mismatch",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-panel-never-renders-memories-in-any-chat-response-env.md",
+    "status": "Not Started"
+  },
   "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
     "epic": "",
     "extid": "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES",
@@ -6397,6 +6527,19 @@
     "tags": [],
     "title": "mention-parser regex fails on multi-word names",
     "type": "BUG"
+  },
+  "BUG-MERGE-WIZARD-DEAD-ENDS-AT-STEP-1-SELECTED-SOURCES-NEVER-PASS": {
+    "hash": "1476e6d",
+    "git_issue": "1476e6d",
+    "extid": "BUG-MERGE-WIZARD-DEAD-ENDS-AT-STEP-1-SELECTED-SOURCES-NEVER-PASS",
+    "type": "BUG",
+    "title": "Merge wizard dead-ends at step 1 — selected sources never passed",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass.md",
+    "status": "Not Started"
   },
   "BUG-MESH-DELIVER-ACCEPTS-ENVELOPES-FROM-UNTRUSTED-OR-UNKNOWN-ORI": {
     "hash": "4b503b5",
@@ -7500,6 +7643,19 @@
     "source": ".plan/tickets/BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-.md",
     "status": "Not Started"
   },
+  "BUG-OWNERSHIP-TRANSFER-WRITES-ACTOR-ID-INTO-CHATS-CREATED-BY-FK-": {
+    "hash": "9140e24",
+    "git_issue": "9140e24",
+    "extid": "BUG-OWNERSHIP-TRANSFER-WRITES-ACTOR-ID-INTO-CHATS-CREATED-BY-FK-",
+    "type": "BUG",
+    "title": "Ownership transfer writes actor id into chats.created_by (FK users.id) → 400",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-.md",
+    "status": "Not Started"
+  },
   "BUG-PARALLEL-CHECK-RUNNER-HAS-NO-PER-GATE-TIMEOUT-SO-ONE-WEDGED-": {
     "hash": "dcd07fe",
     "git_issue": "dcd07fe",
@@ -8569,6 +8725,19 @@
     "title": "safeDecompress pre-check rejects compressed payloads over ~10KB (silent garbage reads)",
     "type": "BUG"
   },
+  "BUG-SANITIZEHTML-IS-NOT-IDEMPOTENT-TAG-REMOVAL-REASSEMBLY-CAN-AS": {
+    "hash": "e88cce6",
+    "git_issue": "e88cce6",
+    "extid": "BUG-SANITIZEHTML-IS-NOT-IDEMPOTENT-TAG-REMOVAL-REASSEMBLY-CAN-AS",
+    "type": "BUG",
+    "title": "sanitizeHtml is not idempotent — tag-removal reassembly can assemble fresh script markup (mXSS class)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as.md",
+    "status": "Not Started"
+  },
   "BUG-SCHEMA-VERSION-TABLE-DROPPED-BY-MIGRATION-COLLAPSE-FEAT-040-": {
     "hash": "acc9318",
     "git_issue": "acc9318",
@@ -8763,6 +8932,19 @@
     "tags": [],
     "title": "setTestDatabase-global-leak-on-test-throw",
     "type": "BUG"
+  },
+  "BUG-SETTINGS-DELETE-ALL-DATA-CAN-NEVER-SUCCEED-DELETE-API-V1-USE": {
+    "hash": "4b435ca",
+    "git_issue": "4b435ca",
+    "extid": "BUG-SETTINGS-DELETE-ALL-DATA-CAN-NEVER-SUCCEED-DELETE-API-V1-USE",
+    "type": "BUG",
+    "title": "Settings 'Delete All Data' can never succeed — DELETE /api/v1/users/me does not exist",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use.md",
+    "status": "Not Started"
   },
   "BUG-SETTINGS-EXPORT-ENDPOINT-HAS-NO-RATE-LIMITING": {
     "hash": "283539d",
@@ -48685,6 +48867,19 @@
     "epic": "epic-api-library-distribution",
     "tags": [],
     "source": ".plan/tickets/TASK-property-test-the-status-machines-and-composite-validators.md",
+    "status": "Not Started"
+  },
+  "TASK-PROVIDE-SMK-SECRET-IN-BROWSER-TEST-SERVER-CONFIG-SO-KEY-GENE": {
+    "hash": "016d3f9",
+    "git_issue": "016d3f9",
+    "extid": "TASK-PROVIDE-SMK-SECRET-IN-BROWSER-TEST-SERVER-CONFIG-SO-KEY-GENE",
+    "type": "TASK",
+    "title": "Provide SMK secret in browser-test server config so key generation e2e can run",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-provide-smk-secret-in-browser-test-server-config-so-key-gene.md",
     "status": "Not Started"
   },
   "TASK-PROVIDER-CONTRIBUTIONS-VIA-PLUGIN-SYSTEM": {
