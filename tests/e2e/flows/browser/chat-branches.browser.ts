@@ -16,7 +16,8 @@
  * Covered interaction: branch-menu-toggle → branch-row switch and
  * branch-panel-switch, asserting the message list swap + chats.active_branch_id.
  *
- * KNOWN PRODUCT BUGS (evidence in .tmp/NOTES.md §4/§5) block the rest of the
+ * KNOWN PRODUCT BUGS (BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar,
+ * BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass) block the rest of the
  * lifecycle: the merge/delete confirmation modals never initialize (no
  * _x_dataStack → x-show never applies), and the merge wizard never receives
  * its selected sources (merge-sources-next stays disabled). Those tests are
@@ -187,7 +188,8 @@ describe("Chat branch lifecycle (B1)", () => {
       expect(await rows.filter({ hasText: "Main", },).count(),).toBe(1,);
 
       // Switch back to Main through the dropdown (window.switchBranch).
-      // NOTE (NOTES.md §6): switchBranch PATCHes active_branch_id and toasts,
+      // NOTE (BUG-branch-switch-persists-but-never-swaps-displayed-messages):
+      // switchBranch PATCHes active_branch_id and toasts,
       // but does NOT reload the message list — the swap only becomes visible
       // after a reload, so the outcome is asserted against the DB + a reload.
       await rows.filter({ hasText: "Main", },).click();
@@ -217,7 +219,8 @@ describe("Chat branch lifecycle (B1)", () => {
       await page.locator("#toast-container .toast",).first().waitFor({ state: "visible", timeout: 10_000, },);
 
       await openChat(page,);
-      // NOTE (NOTES.md §7): the messages list is branch-unaware — even after a
+      // NOTE (BUG-branch-switch-persists-but-never-swaps-displayed-messages):
+      // the messages list is branch-unaware — even after a
       // reload it renders every chat message regardless of active_branch_id,
       // so a visible "swap" cannot be asserted. The persisted switch (DB
       // pointer), the toast, and the reloaded list are asserted instead.
@@ -229,12 +232,14 @@ describe("Chat branch lifecycle (B1)", () => {
     }
   }, 60_000,);
 
-  // ── Skipped: blocked by branch-panel UI defects (NOTES.md §4/§5). ──
-  // §4: the merge/delete confirmation modals (branch-merge-confirm /
+  // ── Skipped: blocked by branch-panel UI defects
+  // (BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar,
+  // BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass). ──
+  // The merge/delete confirmation modals (branch-merge-confirm /
   //     branch-delete-confirm) never initialize — the modal element has no
   //     _x_dataStack, its x-show never registers, and even a programmatic
   //     `deleteFor = id` write leaves display:none.
-  // §5: the merge wizard opens but `sources` stays empty (openBranchMerge
+  // The merge wizard opens but `sources` stays empty (openBranchMerge
   //     writes chatState fields the wizard's x-data never reads), so
   //     merge-sources-next stays disabled — the wizard dead-ends at step 1.
 

@@ -11,7 +11,8 @@
  *    uploads; the per-file browser server is torn down in afterAll.
  *  - Passes alone and in any order relative to other browser files.
  *
- * KNOWN PRODUCT BUG (see .tmp/NOTES.md in this worktree):
+ * KNOWN PRODUCT BUG (see BUG-memory-panel-never-renders-memories-in-any-chat-response-env
+ * and BUG-memory-panel-fully-inert-in-direct-chats-participants-never-):
  *  GET /api/v1/actors/:id/memories answers { data: [...] } while the panel's
  *  loadMemories() reads body.items, so the memory list NEVER renders; and in
  *  direct chats _chatParticipants is never loaded at all, so the character
@@ -35,7 +36,8 @@ const ERROR_ALLOWLIST = [
   // through the frontend.error console channel while this file runs.
   /frontend\.error/,
   /Auto-generation failed/,
-  // KNOWN PRODUCT BUG (NOTES.md): memory-panel.html calls formatMemoryDate(),
+  // KNOWN PRODUCT BUG (BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s):
+  // memory-panel.html calls formatMemoryDate(),
   // which is typed on ChatState but never implemented on the component, so any
   // rendered memory row (including the optimistic one createMemory prepends)
   // throws `ReferenceError: formatMemoryDate is not defined`. Allowlisted
@@ -64,7 +66,7 @@ describe("Memory panel CRUD + audit (B2)", () => {
     await page.locator("[data-testid='toggle-memory-panel']",).click();
     await page.locator("[data-testid='memory-panel']",).waitFor({ state: "visible", timeout: 10_000, },);
     // The character actor must resolve (this is exactly what fails in direct
-    // chats — see NOTES.md).
+    // chats — see BUG-memory-panel-fully-inert-in-direct-chats-participants-never-).
     await page.waitForFunction(
       () => {
         const el = document.querySelector("[x-data='chatState()']",);
@@ -83,7 +85,8 @@ describe("Memory panel CRUD + audit (B2)", () => {
     actorId = crypto.randomUUID();
 
     // Group chat: only group chats load chat participants, which the memory
-    // panel needs to resolve the character actor (see NOTES.md bug).
+    // panel needs to resolve the character actor (see
+    // BUG-memory-panel-fully-inert-in-direct-chats-participants-never-).
     await ctx.db
       .insertInto("chats",)
       .values({
@@ -164,7 +167,8 @@ describe("Memory panel CRUD + audit (B2)", () => {
       expect(row,).not.toBeNull();
       expect(row!.review_status,).toBe("committed",);
       // NOTE: the panel list is expected to stay empty here — the memories
-      // list response-envelope mismatch (NOTES.md) means new memories never
+      // list response-envelope mismatch
+      // (BUG-memory-panel-never-renders-memories-in-any-chat-response-env) means new memories never
       // render until that bug is fixed. The DB row above is the observable
       // outcome of the create interaction.
     } finally {
@@ -174,7 +178,8 @@ describe("Memory panel CRUD + audit (B2)", () => {
     }
   }, 60_000,);
 
-  // ── Skipped: blocked by the memories-list envelope bug (NOTES.md). ──
+  // ── Skipped: blocked by the memories-list envelope bug
+  // (BUG-memory-panel-never-renders-memories-in-any-chat-response-env). ──
   // Each of these drives a button that only exists inside a rendered memory
   // row; with loadMemories() parsing {items} out of a {data} response the
   // list is permanently empty, so there is no row to click.
@@ -185,10 +190,12 @@ describe("Memory panel CRUD + audit (B2)", () => {
   test.skip("rejecting a pending memory persists review_status rejected", () => {});
   test.skip("deleting a memory removes the row and the panel entry", () => {});
 
-  // Skipped: blocked by a third defect on the same surface (NOTES.md §3).
+  // Skipped: blocked by a third defect on the same surface
+  // (BUG-memory-audit-tab-always-404s-route-shape-mismatch).
   // The audit tab fetches GET /api/v1/actors/:id/memories/audit?limit=25,
   // which answers 404 (the backend mounts the audit route as
   // .../memories/:memoryId/audit), so the list is always empty/error and the
-  // action filters have nothing to narrow. Evidence in NOTES.md.
+  // action filters have nothing to narrow. Evidence in
+  // BUG-memory-audit-tab-always-404s-route-shape-mismatch.
   test.skip("audit tab lists this session's CRUD rows and the action filter narrows them", () => {});
 });
