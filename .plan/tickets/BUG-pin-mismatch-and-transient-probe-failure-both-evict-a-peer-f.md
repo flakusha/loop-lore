@@ -68,3 +68,5 @@ so the security-signal half keeps its behaviour. The verdict itself is covered b
 `probe failures return unreachable, not throw`
 (`src/federation/spki-pin.test.ts:204`); the new table API by `retain keeps a
 peer that could not be polled past the TTL` (`src/transport/peer-table.test.ts:135`).
+
+**Resolved:** 2026-10-24 registry-driven close: git issue d033d31 (registry tip: d2a156f07 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-PIN-MISMATCH-AND-TRANSIENT-P)
