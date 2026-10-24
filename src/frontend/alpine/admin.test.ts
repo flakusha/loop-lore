@@ -157,3 +157,48 @@ describe("global showTab fallback", () => {
     expect(warned,).toBe(true,);
   });
 });
+
+describe("showTab dispatch", () => {
+  test("loads every admin tab once", () => {
+    const a = fresh();
+    // The factory returns a plain object literal, so its loader methods are
+    // own enumerable properties we can stub to exercise every tab branch.
+    const host = a as Record<string, unknown>;
+    const called: string[] = [];
+    for (const key of Object.keys(host,)) {
+      if (key === "showTab" || key === "destroy") { continue; }
+      if (typeof host[key] === "function") {
+        host[key] = () => {
+          called.push(key,);
+        };
+      }
+    }
+
+    const tabs = [
+      "overview",
+      "users",
+      "worlds",
+      "chats",
+      "audit",
+      "worldEvents",
+      "models",
+      "review",
+      "templates",
+      "workflows",
+      "plugins",
+      "system",
+      "analytics",
+      "health",
+      "harness",
+      "federation",
+    ];
+
+    for (const tab of tabs) {
+      a.showTab(tab,);
+    }
+
+    expect(a.tabsLoaded.federation,).toBe(true,);
+    expect(called,).toContain("loadClassifierVocab",);
+    expect(called,).toContain("loadFederationMatrix",);
+  });
+});
