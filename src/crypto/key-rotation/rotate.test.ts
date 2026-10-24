@@ -35,6 +35,10 @@ beforeEach(async () => {
 },);
 
 afterAll(async () => {
+  // Reset the process-global SMK — initSmk leaks across test files in one
+  // bun process and flips isEncryptionEnabled() for later suites.
+  await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip", },);
+
   await db.destroy();
 },);
 

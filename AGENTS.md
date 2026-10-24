@@ -19,7 +19,10 @@ fd . docs/frontend/ --type f | head -20
 fd . src/ --type f -e ts | head -30
 
 # 4. Verify changes
-bun run check && bun test src/
+bun run check && bun run test:unit
+# (use `bun test src/` — serial, shared module registry/globals — only when
+# specifically reproducing cross-file contamination; see
+# .tmp/2026-10-24/shared-state-contamination/mechanism.md)
 
 # Coverage gate (new):
 # - `bun run test:coverage` writes `.tmp/coverage/lcov.info`
