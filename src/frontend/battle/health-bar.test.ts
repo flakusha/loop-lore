@@ -6,23 +6,41 @@
  * (role/aria attrs), 0–100 clamping of negative / over-max / zero-max inputs,
  * and the `t("battle.health")` default label with override support.
  */
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { installBattleDom, } from "../tests/battle-fake-dom";
 import { renderHealthBar, } from "./health-bar";
 
 let restoreDom: () => void;
 
+// Sentinel save/restore for the i18n catalog (see tests/i18n.test.ts): wipe
+// via `= undefined` would leak into later files in a shared-process serial
+// run, so restore whatever catalog was loaded before this file.
+const localeStringsHost = globalThis as { __localeStrings?: unknown };
+const initialLocaleStrings = localeStringsHost.__localeStrings;
+let savedLocaleStrings: unknown;
+let hasSavedLocaleStrings = false;
+
 beforeEach(() => {
   restoreDom = installBattleDom();
+  savedLocaleStrings = localeStringsHost.__localeStrings;
+  hasSavedLocaleStrings = true;
   // Seed the alpine i18n catalog the widget resolves its default label from.
-  (globalThis as { __localeStrings?: unknown }).__localeStrings = {
+  localeStringsHost.__localeStrings = {
     battle: { health: "Health", },
   };
 },);
 
 afterEach(() => {
-  (globalThis as { __localeStrings?: unknown }).__localeStrings = undefined;
+  if (hasSavedLocaleStrings) {
+    localeStringsHost.__localeStrings = savedLocaleStrings;
+    hasSavedLocaleStrings = false;
+  }
+
   restoreDom();
+},);
+
+afterAll(() => {
+  localeStringsHost.__localeStrings = initialLocaleStrings;
 },);
 
 describe("renderHealthBar", () => {

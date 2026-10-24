@@ -463,12 +463,20 @@ describe("focus.ts logic (fake DOM)", () => {
 
     it("falls back to documentElement dimensions when window metrics are absent", () => {
       // window.innerHeight undefined → the || falls back to documentElement.
-      (globalThis as { window?: unknown }).window = {} as unknown as Window;
-      const el = new FakeElement("div",);
-      el.rect = { top: 0, left: 0, bottom: 800, right: 600, };
-      expect(isInViewport(el as unknown as Element,),).toBe(true,);
-      el.rect = { top: 0, left: 0, bottom: 801, right: 600, };
-      expect(isInViewport(el as unknown as Element,),).toBe(false,);
+      // Restore the saved window afterward so the location-less stub never
+      // leaks into later files in a shared-process serial run.
+      const focusTestGlobals = globalThis as { window?: unknown };
+      const savedWindow = focusTestGlobals.window;
+      focusTestGlobals.window = {} as unknown as Window;
+      try {
+        const el = new FakeElement("div",);
+        el.rect = { top: 0, left: 0, bottom: 800, right: 600, };
+        expect(isInViewport(el as unknown as Element,),).toBe(true,);
+        el.rect = { top: 0, left: 0, bottom: 801, right: 600, };
+        expect(isInViewport(el as unknown as Element,),).toBe(false,);
+      } finally {
+        focusTestGlobals.window = savedWindow;
+      }
     });
   });
 
