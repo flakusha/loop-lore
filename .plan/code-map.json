@@ -906,6 +906,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-sse-shares-generation-rate-bucket.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md"
     },
     {
@@ -1379,10 +1383,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/api-routes.md"
     }
   ],
   "src/assets/emotion-portraits.ts": [
@@ -2209,6 +2209,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/access-model-clarification.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/api-routes.md"
     },
     {
       "kind": "spec",
@@ -11335,6 +11339,16 @@
       "source": ".plan/tickets/TASK-cli-import-export.md"
     }
   ],
+  "src/cli/headless.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-headless-cli-assets-characters.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-headless-cli-chat-generate.md"
+    }
+  ],
   "src/cli/import.ts": [
     {
       "kind": "ticket",
@@ -11375,6 +11389,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-interaction-surfaces-audit.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-headless-cli-chat-generate.md"
     },
     {
       "kind": "ticket",
@@ -20879,6 +20901,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-headless-alternative-frontends.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-interaction-surfaces-audit.md"
     },
     {
       "kind": "epic",
@@ -36750,6 +36776,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-plugin-auth-runtime-seed.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plugin-host-contract-for-third-party-integration-plugins.md"
     },
     {
@@ -36919,6 +36949,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-enforce-plugin-origin-at-request-time.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-plugin-auth-runtime-seed.md"
     }
   ],
   "src/plugins/sandbox.ts": [
@@ -51287,6 +51321,10 @@
       "source": ".plan/epics/epic-file-splitting.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-interaction-surfaces-audit.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
     },
@@ -54050,6 +54088,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-docs-drift-api.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md"
     }
   ],
@@ -54182,6 +54224,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-parity-imagegen-avatar.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-shell-testability.md"
     },
     {
@@ -54238,6 +54284,10 @@
   "src/tui/chat/api.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-blind-to-llm-assistant-turns.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
     },
     {
@@ -54285,6 +54335,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-parity-imagegen-avatar.md"
     },
     {
       "kind": "ticket",
@@ -54347,6 +54401,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    }
+  ],
+  "src/tui/chat/imagegen.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-parity-imagegen-avatar.md"
     }
   ],
   "src/tui/chat/index.test.ts": [

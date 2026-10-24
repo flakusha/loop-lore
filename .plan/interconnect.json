@@ -351,9 +351,15 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-set-secrets-stored-plaintext-in-system-config.md",
       "title": "Admin-set secrets stored plaintext in system_config",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
-        "src/admin/config.ts"
+        "src/admin/config-keys.ts",
+        "src/admin/config-secrets.test.ts",
+        "src/admin/config-secrets.ts",
+        "src/admin/config.ts",
+        "src/crypto/at-rest.ts",
+        "src/integrations/secrets.ts",
+        "src/routes/admin/system-config.test.ts"
       ],
       "related": []
     },
@@ -463,12 +469,17 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md",
       "title": "allowUserApiKey defined but never enforced",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/aux-pipeline",
         "src/config/schema/providers.ts",
         "src/generation",
-        "src/routes"
+        "src/generation/providers/provider-instances.ts",
+        "src/generation/providers/registry.ts",
+        "src/generation/providers/user-api-key.ts",
+        "src/routes",
+        "src/routes/api-keys.providers.test.ts",
+        "src/routes/api-keys.ts"
       ],
       "related": []
     },
@@ -1753,8 +1764,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md",
       "title": "BYOK store rejects non-openaiCompatible provider names",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/generation/providers/provider-instances.ts",
+        "src/routes/api-keys.providers.test.ts",
         "src/routes/api-keys.ts"
       ],
       "related": []
@@ -2498,8 +2511,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-chat-sse-shares-generation-rate-bucket.md",
       "title": "Chat SSE shares generation rate bucket",
-      "status": "Not Started",
-      "srcRefs": [],
+      "status": "done",
+      "srcRefs": [
+        "src/api-governance/rate-limiting/policies.ts"
+      ],
       "related": []
     },
     {
@@ -3394,7 +3409,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-egui-sent-message-echo-empty.md",
       "title": "egui sent-message echo empty",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/api.rs"
       ],
@@ -4068,8 +4083,9 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-plugins-make-plugin-discovery-failures-visible.md",
       "title": "fix(plugins): make plugin discovery failures visible",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/plugins/loader.discovery-failures.test.ts",
         "src/plugins/loader.ts"
       ],
       "related": []
@@ -5328,7 +5344,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-image-gen-opens-dead-llm-sse.md",
       "title": "Image-gen opens dead LLM SSE",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -9149,9 +9165,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-tui-blind-to-llm-assistant-turns.md",
       "title": "TUI blind to LLM assistant turns",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/tui/app-keys.ts",
+        "src/tui/chat/api.test.ts",
         "src/tui/chat/api.ts"
       ],
       "related": []
@@ -9519,7 +9536,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-web-ui-never-sets-db-idempotencykey.md",
       "title": "Web UI never sets DB idempotencyKey",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -26268,6 +26285,17 @@
       "related": []
     },
     {
+      "id": "TASK-docs-drift-api",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-docs-drift-api.md",
+      "title": "Docs drift — login body, `lolo -h`, OpenAPI coverage, stale specs",
+      "status": "done",
+      "srcRefs": [
+        "src/tui/app-keys.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-docs-fix-dangling-links",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-docs-fix-dangling-links.md",
@@ -30940,6 +30968,29 @@
       "related": [
         "TASK-headless-mode-alternative-frontends"
       ]
+    },
+    {
+      "id": "TASK-headless-cli-assets-characters",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-headless-cli-assets-characters.md",
+      "title": "Headless CLI — assets + characters (`lolo assets|characters --json`)",
+      "status": "done",
+      "srcRefs": [
+        "src/cli/headless.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-headless-cli-chat-generate",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-headless-cli-chat-generate.md",
+      "title": "Headless CLI — chat + generate (`lolo chat|generate --json`)",
+      "status": "done",
+      "srcRefs": [
+        "src/cli/headless.ts",
+        "src/cli/parser.ts"
+      ],
+      "related": []
     },
     {
       "id": "TASK-headless-mode-alternative-frontends",
@@ -36792,6 +36843,18 @@
       "title": "Plugin API System",
       "status": "Not Started",
       "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-plugin-auth-runtime-seed",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-plugin-auth-runtime-seed.md",
+      "title": "Plugin auth surface + runtime seed endpoint",
+      "status": "done",
+      "srcRefs": [
+        "src/plugins/loader.ts",
+        "src/plugins/route-access.ts"
+      ],
       "related": []
     },
     {
@@ -43202,6 +43265,19 @@
       "related": []
     },
     {
+      "id": "TASK-tui-parity-imagegen-avatar",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-tui-parity-imagegen-avatar.md",
+      "title": "TUI parity — image-gen + avatar attach",
+      "status": "done",
+      "srcRefs": [
+        "src/tui/asset-view.ts",
+        "src/tui/chat/api.ts",
+        "src/tui/chat/imagegen.test.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-tui-shell-testability",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-tui-shell-testability.md",
@@ -48795,6 +48871,19 @@
       "related": []
     },
     {
+      "id": "epic-interaction-surfaces-audit",
+      "kind": "epic",
+      "path": ".plan/epics/epic-interaction-surfaces-audit.md",
+      "title": "Interaction Surfaces Audit — Headless CLI + Surface Parity",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/cli/parser.ts",
+        "src/elysia-app.ts",
+        "src/server/index.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "epic-inventory",
       "kind": "epic",
       "path": ".plan/epics/epic-inventory.md",
@@ -51471,8 +51560,21 @@
     {
       "path": "src/admin/config-keys.ts",
       "owners": [
+        "BUG-admin-set-secrets-stored-plaintext-in-system-config",
         "epic-effect-v4-adoption-evaluation",
         "epic-recursive-self-improvement"
+      ]
+    },
+    {
+      "path": "src/admin/config-secrets.test.ts",
+      "owners": [
+        "BUG-admin-set-secrets-stored-plaintext-in-system-config"
+      ]
+    },
+    {
+      "path": "src/admin/config-secrets.ts",
+      "owners": [
+        "BUG-admin-set-secrets-stored-plaintext-in-system-config"
       ]
     },
     {
@@ -52019,6 +52121,7 @@
     {
       "path": "src/api-governance/rate-limiting/policies.ts",
       "owners": [
+        "BUG-chat-sse-shares-generation-rate-bucket",
         "BUG-rate-limit-misses-post-emotion-avatars-single",
         "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
         "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
@@ -57937,6 +58040,13 @@
       ]
     },
     {
+      "path": "src/cli/headless.ts",
+      "owners": [
+        "TASK-headless-cli-assets-characters",
+        "TASK-headless-cli-chat-generate"
+      ]
+    },
+    {
       "path": "src/cli/import.ts",
       "owners": [
         "TASK-cli-import-export"
@@ -57965,10 +58075,12 @@
     {
       "path": "src/cli/parser.ts",
       "owners": [
+        "TASK-headless-cli-chat-generate",
         "TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-",
         "TASK-optique-cli-tooling-integration",
         "TASK-tooling-build-cli-surface",
-        "epic-cli-tooling-optique"
+        "epic-cli-tooling-optique",
+        "epic-interaction-surfaces-audit"
       ]
     },
     {
@@ -60148,6 +60260,7 @@
     {
       "path": "src/crypto/at-rest.ts",
       "owners": [
+        "BUG-admin-set-secrets-stored-plaintext-in-system-config",
         "BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve",
         "BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en",
         "BUG-encryption-tier-not-enforced",
@@ -63046,6 +63159,7 @@
         "epic-gallery-batch-operations",
         "epic-guest-access",
         "epic-headless-alternative-frontends",
+        "epic-interaction-surfaces-audit",
         "epic-local-process-swarm",
         "epic-lora-discovery-application",
         "epic-middleware-request-lifecycle",
@@ -69154,6 +69268,13 @@
       ]
     },
     {
+      "path": "src/generation/providers/provider-instances.ts",
+      "owners": [
+        "BUG-allowuserapikey-defined-but-never-enforced",
+        "BUG-byok-store-rejects-non-openaicompatible-provider-names"
+      ]
+    },
+    {
       "path": "src/generation/providers/registry.test.ts",
       "owners": [
         "TASK-federation-peer-dispatch-compose-failover",
@@ -69164,6 +69285,7 @@
     {
       "path": "src/generation/providers/registry.ts",
       "owners": [
+        "BUG-allowuserapikey-defined-but-never-enforced",
         "BUG-size-strict-pre-existing-dev-drift",
         "FEAT-background",
         "FEAT-llama-swap-rotation-exclusion-policy",
@@ -69240,6 +69362,7 @@
     {
       "path": "src/generation/providers/user-api-key.ts",
       "owners": [
+        "BUG-allowuserapikey-defined-but-never-enforced",
         "FEAT-model-native-locale-config"
       ]
     },
@@ -70414,6 +70537,7 @@
       "path": "src/integrations/secrets.ts",
       "owners": [
         "BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-",
+        "BUG-admin-set-secrets-stored-plaintext-in-system-config",
         "FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal",
         "TASK-adapter-secret-storage-encrypted-credential-envelope"
       ]
@@ -72340,6 +72464,12 @@
       ]
     },
     {
+      "path": "src/plugins/loader.discovery-failures.test.ts",
+      "owners": [
+        "BUG-fix-plugins-make-plugin-discovery-failures-visible"
+      ]
+    },
+    {
       "path": "src/plugins/loader.ts",
       "owners": [
         "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
@@ -72360,6 +72490,7 @@
         "TASK-add-per-plugin-unload",
         "TASK-enforce-plugin-origin-at-request-time",
         "TASK-harness-programmatic-api",
+        "TASK-plugin-auth-runtime-seed",
         "TASK-plugin-host-contract-for-third-party-integration-plugins",
         "TASK-plugin-hot-reload-with-real-module-cache-busting",
         "TASK-plugin-management-api",
@@ -72449,7 +72580,8 @@
       "owners": [
         "BUG-plugin-route-registry-lacks-ownership-enforcement-idor",
         "BUG-plugin-tool-authorization-fails-open",
-        "TASK-enforce-plugin-origin-at-request-time"
+        "TASK-enforce-plugin-origin-at-request-time",
+        "TASK-plugin-auth-runtime-seed"
       ]
     },
     {
@@ -73993,6 +74125,7 @@
     {
       "path": "src/routes/admin/system-config.test.ts",
       "owners": [
+        "BUG-admin-set-secrets-stored-plaintext-in-system-config",
         "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
         "TASK-federation-admin-peer-and-quota-routes"
       ]
@@ -74130,8 +74263,16 @@
       ]
     },
     {
+      "path": "src/routes/api-keys.providers.test.ts",
+      "owners": [
+        "BUG-allowuserapikey-defined-but-never-enforced",
+        "BUG-byok-store-rejects-non-openaicompatible-provider-names"
+      ]
+    },
+    {
       "path": "src/routes/api-keys.ts",
       "owners": [
+        "BUG-allowuserapikey-defined-but-never-enforced",
         "BUG-byok-store-rejects-non-openaicompatible-provider-names",
         "FEAT-byok-api-keys",
         "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
@@ -81467,7 +81608,8 @@
       "owners": [
         "TASK-cross-platform-portability",
         "TASK-cross-platform-single-binary",
-        "epic-file-splitting"
+        "epic-file-splitting",
+        "epic-interaction-surfaces-audit"
       ]
     },
     {
@@ -83034,6 +83176,7 @@
       "owners": [
         "BUG-tui-app-getlogger-throws-when-running-standalone",
         "BUG-tui-blind-to-llm-assistant-turns",
+        "TASK-docs-drift-api",
         "TASK-tui-fire-and-forget-void-without-catch"
       ]
     },
@@ -83082,6 +83225,7 @@
         "TASK-tui-api-contract-smoke-tests",
         "TASK-tui-asset-view-remove-silent-catch-and-void-async-iife",
         "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+        "TASK-tui-parity-imagegen-avatar",
         "TASK-tui-shell-testability",
         "TASK-tui-spec-sync",
         "epic-harness-integration",
@@ -83113,6 +83257,7 @@
     {
       "path": "src/tui/chat/api.test.ts",
       "owners": [
+        "BUG-tui-blind-to-llm-assistant-turns",
         "TASK-tui",
         "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene"
       ]
@@ -83129,6 +83274,7 @@
         "TASK-tui-chat-picker",
         "TASK-tui-dedupe-api-base",
         "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+        "TASK-tui-parity-imagegen-avatar",
         "TASK-tui-slash-command-completion",
         "TASK-tui-spec-sync",
         "TASK-update-terminal-ui-spec-to-actual-file-layout",
@@ -83158,6 +83304,12 @@
         "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
         "TASK-update-terminal-ui-spec-to-actual-file-layout",
         "epic-terminal-ui"
+      ]
+    },
+    {
+      "path": "src/tui/chat/imagegen.test.ts",
+      "owners": [
+        "TASK-tui-parity-imagegen-avatar"
       ]
     },
     {
@@ -94627,6 +94779,31 @@
       "to": "TASK-integrations-shared-seams-encryptionprovider-messagebridge-b"
     },
     {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "owns",
+      "to": "TASK-docs-drift-api"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "owns",
+      "to": "TASK-headless-cli-assets-characters"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "owns",
+      "to": "TASK-headless-cli-chat-generate"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "owns",
+      "to": "TASK-plugin-auth-runtime-seed"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "owns",
+      "to": "TASK-tui-parity-imagegen-avatar"
+    },
+    {
       "from": "epic-inventory-system",
       "kind": "owns",
       "to": "TASK-actor-items-crud-ownership"
@@ -100719,7 +100896,37 @@
     {
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
       "kind": "produces",
+      "to": "src/admin/config-keys.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "produces",
+      "to": "src/admin/config-secrets.test.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "produces",
+      "to": "src/admin/config-secrets.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "produces",
       "to": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "produces",
+      "to": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "produces",
+      "to": "src/integrations/secrets.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "produces",
+      "to": "src/routes/admin/system-config.test.ts"
     },
     {
       "from": "BUG-admin-system-config-delete-passes-user-controlled-key-withou",
@@ -100839,7 +101046,32 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "produces",
+      "to": "src/generation/providers/provider-instances.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "produces",
+      "to": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "produces",
+      "to": "src/generation/providers/user-api-key.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "produces",
       "to": "src/generation"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "produces",
+      "to": "src/routes/api-keys.providers.test.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "produces",
+      "to": "src/routes/api-keys.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
@@ -102064,6 +102296,16 @@
     {
       "from": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
       "kind": "produces",
+      "to": "src/generation/providers/provider-instances.ts"
+    },
+    {
+      "from": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
+      "kind": "produces",
+      "to": "src/routes/api-keys.providers.test.ts"
+    },
+    {
+      "from": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
+      "kind": "produces",
       "to": "src/routes/api-keys.ts"
     },
     {
@@ -102865,6 +103107,11 @@
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "produces",
       "to": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "BUG-chat-sse-shares-generation-rate-bucket",
+      "kind": "produces",
+      "to": "src/api-governance/rate-limiting/policies.ts"
     },
     {
       "from": "BUG-chat-swipe-index-race",
@@ -104350,6 +104597,11 @@
       "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
       "kind": "produces",
       "to": "src/plugins/registry-store.ts"
+    },
+    {
+      "from": "BUG-fix-plugins-make-plugin-discovery-failures-visible",
+      "kind": "produces",
+      "to": "src/plugins/loader.discovery-failures.test.ts"
     },
     {
       "from": "BUG-fix-plugins-make-plugin-discovery-failures-visible",
@@ -109590,6 +109842,11 @@
       "from": "BUG-tui-blind-to-llm-assistant-turns",
       "kind": "produces",
       "to": "src/tui/app-keys.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "produces",
+      "to": "src/tui/chat/api.test.ts"
     },
     {
       "from": "BUG-tui-blind-to-llm-assistant-turns",
@@ -126687,6 +126944,11 @@
       "to": "src/config/schema-class/env-map.ts"
     },
     {
+      "from": "TASK-docs-drift-api",
+      "kind": "produces",
+      "to": "src/tui/app-keys.ts"
+    },
+    {
       "from": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
       "kind": "produces",
       "to": "src/routes/health.ts"
@@ -131295,6 +131557,21 @@
       "from": "TASK-headers-additional-useful-response-headers",
       "kind": "produces",
       "to": "src/server/handler.ts"
+    },
+    {
+      "from": "TASK-headless-cli-assets-characters",
+      "kind": "produces",
+      "to": "src/cli/headless.ts"
+    },
+    {
+      "from": "TASK-headless-cli-chat-generate",
+      "kind": "produces",
+      "to": "src/cli/headless.ts"
+    },
+    {
+      "from": "TASK-headless-cli-chat-generate",
+      "kind": "produces",
+      "to": "src/cli/parser.ts"
     },
     {
       "from": "TASK-health-bar",
@@ -136630,6 +136907,16 @@
       "from": "TASK-plugin-and-tool-runtime-residual-defects",
       "kind": "produces",
       "to": "src/services/trade/counter.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "produces",
+      "to": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "produces",
+      "to": "src/plugins/route-access.ts"
     },
     {
       "from": "TASK-plugin-browser",
@@ -142220,6 +142507,21 @@
       "from": "TASK-tui-models-overlay",
       "kind": "produces",
       "to": "src/views/admin.html"
+    },
+    {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "produces",
+      "to": "src/tui/asset-view.ts"
+    },
+    {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "produces",
+      "to": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "produces",
+      "to": "src/tui/chat/imagegen.test.ts"
     },
     {
       "from": "TASK-tui-shell-testability",
@@ -152760,6 +153062,21 @@
       "from": "epic-integrations-core",
       "kind": "produces",
       "to": "src/integrations/protocols/adapter.ts"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "produces",
+      "to": "src/cli/parser.ts"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "produces",
+      "to": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "produces",
+      "to": "src/server/index.ts"
     },
     {
       "from": "epic-inventory-system",
@@ -163745,6 +164062,12 @@
     {
       "from": "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts"
     },
@@ -164214,6 +164537,12 @@
       "from": "BUG-access-log-never-records-userid-handle-x-user-id-header-neve",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-access-log-never-records-userid-handle-x-user-id-header-neve",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -166979,6 +167308,12 @@
     {
       "from": "BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-",
       "kind": "sibling",
+      "to": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "via": "src/integrations/secrets.ts"
+    },
+    {
+      "from": "BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-",
+      "kind": "sibling",
       "to": "BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not",
       "via": "src/routes/v1/integrations-surface.ts"
     },
@@ -167513,6 +167848,12 @@
     {
       "from": "BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts"
     },
@@ -167699,6 +168040,12 @@
     {
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
       "kind": "sibling",
+      "to": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "via": "src/routes/admin/system-config.test.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
       "to": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
       "via": "src/admin/config.ts"
     },
@@ -167711,8 +168058,50 @@
     {
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
       "kind": "sibling",
+      "to": "BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "BUG-encryption-tier-not-enforced",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "BUG-private-tier-no-true-e2e",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "BUG-standard-tier-at-rest-encryption-silently-stores-plaintext-w",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
       "to": "FEAT-chat-archive-retention-config-archive-retention-days-admin-s",
       "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "FEAT-webhook-ingestion-bootstrap-wire-seams-at-the-v1-surface-cal",
+      "via": "src/integrations/secrets.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "TASK-adapter-secret-storage-encrypted-credential-envelope",
+      "via": "src/integrations/secrets.ts"
     },
     {
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
@@ -167729,8 +168118,50 @@
     {
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
       "kind": "sibling",
+      "to": "TASK-db-add-created-at-updated-at-metadata-to-actor-and-character",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "TASK-db-add-created-at-updated-at-metadata-to-infra-and-admin-tab",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "TASK-epic17-encryption-e2e-expansion",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "TASK-federation-admin-peer-and-quota-routes",
+      "via": "src/routes/admin/system-config.test.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
       "to": "TASK-restart-required-indicator-on-system-config-changes",
       "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "TASK-world-location-encryption",
+      "via": "src/crypto/at-rest.ts"
     },
     {
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
@@ -167741,8 +168172,26 @@
     {
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
       "kind": "sibling",
+      "to": "epic-crypto",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "epic-effect-v4-adoption-evaluation",
+      "via": "src/admin/config-keys.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/crypto/at-rest.ts"
+    },
+    {
+      "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+      "kind": "sibling",
       "to": "epic-recursive-self-improvement",
-      "via": "src/admin/config.ts"
+      "via": "src/admin/config-keys.ts; src/admin/config.ts"
     },
     {
       "from": "BUG-admin-system-config-delete-passes-user-controlled-key-withou",
@@ -168437,20 +168886,50 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
+      "via": "src/generation/providers/provider-instances.ts; src/routes/api-keys.providers.test.ts; src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "BUG-federation-authorization-who-may-publish-an-actor-undefined",
       "via": "src/routes"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "BUG-size-strict-pre-existing-dev-drift",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "FEAT-background",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "FEAT-byok-api-keys",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "FEAT-llama-swap-rotation-exclusion-policy",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "FEAT-llm-scheduler-config-surface",
-      "via": "src/config/schema/providers.ts"
+      "via": "src/config/schema/providers.ts; src/generation/providers/registry.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
       "to": "FEAT-model-native-locale-config",
-      "via": "src/config/schema/providers.ts"
+      "via": "src/config/schema/providers.ts; src/generation/providers/user-api-key.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
@@ -168479,6 +168958,18 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "TASK-comfyui-first-class-chat-selection",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/generation/providers/registry.ts; src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
       "via": "src/routes"
     },
@@ -168491,8 +168982,74 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "TASK-distributed-generation-integration",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-emotions-avatar-edit-model",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-dispatch-compose-failover",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-harness-model-routing",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-llama-swap-native-support-cpu-resident-classifier-model-reci",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "TASK-nodeinfo-well-known-discovery-endpoints",
       "via": "src/routes"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-resource-provision-routing-facade",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-sam3-direct-provider-via-meta-model-api",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-unit-translation-service",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-animated-raster",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-llm-svg-pipeline",
+      "via": "src/generation/providers/registry.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
@@ -168503,8 +169060,26 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "epic-byok-api-keys",
-      "via": "src/config/schema/providers.ts"
+      "via": "src/config/schema/providers.ts; src/generation/providers/registry.ts; src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-comfyui-plugin",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-distributed-compute-sharing",
+      "via": "src/generation/providers/registry.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
@@ -168521,8 +169096,50 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-llama-swap",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-llm-request-scheduler",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-platform-integrations",
+      "via": "src/generation/providers/registry.ts; src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "epic-prompt-improvement",
       "via": "src/aux-pipeline"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-provider-plugin-ecosystem",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/generation/providers/registry.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
@@ -168533,8 +169150,26 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "epic-resource-provision",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-sam3-segmentation-integration",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "epic-two-pass-delivery",
       "via": "src/aux-pipeline"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/generation/providers/registry.ts"
     },
     {
       "from": "BUG-alpine-init-hydration",
@@ -170724,6 +171359,12 @@
       "from": "BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle",
       "kind": "sibling",
       "to": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+      "via": "src/tui/asset-view.ts"
+    },
+    {
+      "from": "BUG-asset-view-advertises-a-del-unlink-keybinding-that-no-handle",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
       "via": "src/tui/asset-view.ts"
     },
     {
@@ -175259,6 +175900,12 @@
     {
       "from": "BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -176580,6 +177227,12 @@
       "from": "BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -183363,6 +184016,30 @@
       "via": "src/routes/chats/create.ts"
     },
     {
+      "from": "BUG-chat-sse-shares-generation-rate-bucket",
+      "kind": "sibling",
+      "to": "BUG-rate-limit-misses-post-emotion-avatars-single",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-chat-sse-shares-generation-rate-bucket",
+      "kind": "sibling",
+      "to": "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-chat-sse-shares-generation-rate-bucket",
+      "kind": "sibling",
+      "to": "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-chat-sse-shares-generation-rate-bucket",
+      "kind": "sibling",
+      "to": "epic-api-rate-limiting",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
       "from": "BUG-chat-swipe-index-race",
       "kind": "sibling",
       "to": "BUG-chat-trigger-auto-generation-unhandled-rejection",
@@ -185862,6 +186539,12 @@
       "from": "BUG-coverage-mjs-counts-top-level-src-files-as-modules",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-coverage-mjs-counts-top-level-src-files-as-modules",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -189623,6 +190306,12 @@
     {
       "from": "BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -190428,6 +191117,12 @@
       "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -192881,6 +193576,12 @@
     {
       "from": "BUG-failed-plugin-load-leaks-a-registered-plugin",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-failed-plugin-load-leaks-a-registered-plugin",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts"
     },
@@ -193494,6 +194195,12 @@
       "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -194675,6 +195382,12 @@
     {
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -195347,6 +196060,12 @@
     {
       "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -195701,6 +196420,12 @@
     {
       "from": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -195911,6 +196636,12 @@
     {
       "from": "BUG-fix-plugins-append-onload-registrations-to-manifest-registra",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-fix-plugins-append-onload-registrations-to-manifest-registra",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts"
     },
@@ -196031,6 +196762,12 @@
     {
       "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts"
     },
@@ -196140,6 +196877,12 @@
       "from": "BUG-fix-plugins-make-plugin-discovery-failures-visible",
       "kind": "sibling",
       "to": "TASK-harness-programmatic-api",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-fix-plugins-make-plugin-discovery-failures-visible",
+      "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
     {
@@ -196655,6 +197398,12 @@
     {
       "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -197070,6 +197819,12 @@
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -198799,6 +199554,12 @@
       "kind": "sibling",
       "to": "epic-http-protocol-features",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -204935,6 +205696,12 @@
     {
       "from": "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -205860,6 +206627,12 @@
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -207654,6 +208427,12 @@
       "from": "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error",
       "kind": "sibling",
       "to": "TASK-harness-programmatic-api",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error",
+      "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
     {
@@ -212105,6 +212884,12 @@
     {
       "from": "BUG-middleware-asyncstore-fail-dead-code",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-middleware-asyncstore-fail-dead-code",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -212508,6 +213293,12 @@
       "from": "BUG-middleware-idempotency-table-backend-unimplemented",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-middleware-idempotency-table-backend-unimplemented",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -213588,6 +214379,12 @@
       "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -215479,6 +216276,12 @@
       "kind": "sibling",
       "to": "TASK-moderator-permission-gating-for-read-only-review-surface",
       "via": "src/users/permissions.ts"
+    },
+    {
+      "from": "BUG-nsfw-cards-ships-ungated-post-routes",
+      "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
     },
     {
       "from": "BUG-nsfw-cards-ships-ungated-post-routes",
@@ -217415,6 +218218,12 @@
     {
       "from": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts"
     },
@@ -217715,6 +218524,12 @@
     {
       "from": "BUG-plugin-route-registry-lacks-ownership-enforcement-idor",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts; src/plugins/route-access.ts"
+    },
+    {
+      "from": "BUG-plugin-route-registry-lacks-ownership-enforcement-idor",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts; src/plugins/types.ts"
     },
@@ -217818,6 +218633,12 @@
       "from": "BUG-plugin-state-is-auto-approved-on-first-sight",
       "kind": "sibling",
       "to": "TASK-harness-programmatic-api",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-plugin-state-is-auto-approved-on-first-sight",
+      "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
       "via": "src/plugins/loader.ts"
     },
     {
@@ -218167,6 +218988,12 @@
       "kind": "sibling",
       "to": "TASK-per-model-per-provider-cost-attribution-for-llm-execution-st",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-plugin-tool-authorization-fails-open",
+      "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/route-access.ts"
     },
     {
       "from": "BUG-plugin-tool-authorization-fails-open",
@@ -221100,6 +221927,12 @@
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -226781,6 +227614,12 @@
     {
       "from": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -228791,6 +229630,12 @@
     {
       "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
       "kind": "sibling",
+      "to": "TASK-docs-drift-api",
+      "via": "src/tui/app-keys.ts"
+    },
+    {
+      "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
+      "kind": "sibling",
       "to": "TASK-frontend-and-http-utils-type-safety-batch",
       "via": "src/config/load/load.ts"
     },
@@ -228853,6 +229698,12 @@
       "kind": "sibling",
       "to": "TASK-tui-models-overlay",
       "via": "src/tui/app.ts"
+    },
+    {
+      "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/asset-view.ts"
     },
     {
       "from": "BUG-tui-app-getlogger-throws-when-running-standalone",
@@ -229097,6 +229948,12 @@
     {
       "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
       "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-app-never-threads-sessiontoken-into-chatwidget",
+      "kind": "sibling",
       "to": "TASK-tui-shell-testability",
       "via": "src/tui/app.ts; src/tui/chat/index.test.ts; src/tui/chat/index.ts"
     },
@@ -229217,6 +230074,12 @@
     {
       "from": "BUG-tui-blind-to-llm-assistant-turns",
       "kind": "sibling",
+      "to": "TASK-docs-drift-api",
+      "via": "src/tui/app-keys.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
       "to": "TASK-tui-api-contract-smoke-tests",
       "via": "src/tui/chat/api.ts"
     },
@@ -229242,6 +230105,12 @@
       "from": "BUG-tui-blind-to-llm-assistant-turns",
       "kind": "sibling",
       "to": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+      "via": "src/tui/chat/api.test.ts; src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-blind-to-llm-assistant-turns",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
       "via": "src/tui/chat/api.ts"
     },
     {
@@ -229260,7 +230129,7 @@
       "from": "BUG-tui-blind-to-llm-assistant-turns",
       "kind": "sibling",
       "to": "TASK-tui",
-      "via": "src/tui/chat/api.ts"
+      "via": "src/tui/chat/api.test.ts; src/tui/chat/api.ts"
     },
     {
       "from": "BUG-tui-blind-to-llm-assistant-turns",
@@ -229314,6 +230183,12 @@
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
       "kind": "sibling",
       "to": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
       "via": "src/tui/chat/api.ts"
     },
     {
@@ -229380,6 +230255,12 @@
       "from": "BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-",
       "kind": "sibling",
       "to": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
       "via": "src/tui/chat/api.ts"
     },
     {
@@ -230568,6 +231449,12 @@
       "from": "BUG-version-resolver-middleware-built-not-wired",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-version-resolver-middleware-built-not-wired",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -232961,6 +233848,12 @@
     {
       "from": "FEAT-035",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-035",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -233244,6 +234137,12 @@
       "from": "FEAT-037",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-037",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -241734,6 +242633,12 @@
       "from": "FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -254819,6 +255724,12 @@
     {
       "from": "TASK-046",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-046",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts; src/plugins/types.ts"
     },
@@ -254993,6 +255904,12 @@
     {
       "from": "TASK-047",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-047",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts; src/plugins/types.ts"
     },
@@ -255151,6 +256068,12 @@
       "kind": "sibling",
       "to": "TASK-plugin-and-tool-runtime-residual-defects",
       "via": "src/plugins/event-bus.ts; src/plugins/tool-executor.ts"
+    },
+    {
+      "from": "TASK-048",
+      "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
     },
     {
       "from": "TASK-048",
@@ -256459,6 +257382,12 @@
       "kind": "sibling",
       "to": "TASK-nsfw-gate-moderation-events",
       "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-055",
+      "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
     },
     {
       "from": "TASK-055",
@@ -258462,6 +259391,12 @@
       "from": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -262643,6 +263578,12 @@
     {
       "from": "TASK-add-per-plugin-unload",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-add-per-plugin-unload",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts"
     },
@@ -263214,6 +264155,12 @@
       "from": "TASK-admin-assistant-tooling-allowlist",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-admin-assistant-tooling-allowlist",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -264149,6 +265096,12 @@
     {
       "from": "TASK-adopt-bun-color-for-tui-colors",
       "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/asset-view.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-color-for-tui-colors",
+      "kind": "sibling",
       "to": "TASK-tui-shell-testability",
       "via": "src/tui/asset-view.ts"
     },
@@ -264504,6 +265457,12 @@
       "from": "TASK-adopt-bun-csrf-for-csrf-protection",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-csrf-for-csrf-protection",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -266100,6 +267059,12 @@
       "from": "TASK-api-first-foundation",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-api-first-foundation",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -274763,6 +275728,12 @@
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-async-request-response-result-store-separate-table-offload",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts; src/server/start.ts"
     },
@@ -275154,6 +276125,12 @@
       "from": "TASK-async-store-complete-fail-lifecycle-hooks",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-async-store-complete-fail-lifecycle-hooks",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -285677,6 +286654,12 @@
     {
       "from": "TASK-character-rpg-stats",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-character-rpg-stats",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -291239,6 +292222,12 @@
     {
       "from": "TASK-chat-room-search-join",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-chat-room-search-join",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -294809,6 +295798,12 @@
     {
       "from": "TASK-comfyui-first-class-admin-workflows",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-admin-workflows",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -295633,6 +296628,12 @@
       "kind": "sibling",
       "to": "epic-impersonation",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-workflow-library",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "TASK-comfyui-first-class-workflow-library",
@@ -302231,6 +303232,12 @@
     {
       "from": "TASK-cors-middleware",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-cors-middleware",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/config/load/safety.ts; src/elysia-app.ts"
     },
@@ -303395,6 +304402,12 @@
     {
       "from": "TASK-creative-studio-search-api",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-creative-studio-search-api",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -304355,6 +305368,12 @@
     {
       "from": "TASK-cross-platform-portability",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/server/index.ts"
+    },
+    {
+      "from": "TASK-cross-platform-portability",
+      "kind": "sibling",
       "to": "epic-llama-swap",
       "via": "src/services/server-external-manager/start-llama.ts"
     },
@@ -304435,6 +305454,12 @@
       "kind": "sibling",
       "to": "epic-http-protocol-features",
       "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "TASK-cross-platform-single-binary",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/server/index.ts"
     },
     {
       "from": "TASK-cross-story-propagation",
@@ -307973,6 +308998,12 @@
     {
       "from": "TASK-delete-unreferenced-platform-service-util-modules-dead-barre",
       "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/asset-view.ts"
+    },
+    {
+      "from": "TASK-delete-unreferenced-platform-service-util-modules-dead-barre",
+      "kind": "sibling",
       "to": "TASK-tui-shell-testability",
       "via": "src/tui/app.ts; src/tui/asset-view.ts; src/tui/chat/index.ts; src/tui/harness/index.ts"
     },
@@ -308851,6 +309882,12 @@
       "kind": "sibling",
       "to": "epic-encryption-workflow",
       "via": "src/config/schema-class/env-map.ts"
+    },
+    {
+      "from": "TASK-docs-drift-api",
+      "kind": "sibling",
+      "to": "TASK-tui-fire-and-forget-void-without-catch",
+      "via": "src/tui/app-keys.ts"
     },
     {
       "from": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
@@ -310536,6 +311573,12 @@
       "from": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -314201,6 +315244,12 @@
     {
       "from": "TASK-enforce-plugin-origin-at-request-time",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts; src/plugins/route-access.ts"
+    },
+    {
+      "from": "TASK-enforce-plugin-origin-at-request-time",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts; src/plugins/types.ts"
     },
@@ -316416,6 +317465,12 @@
       "from": "TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -319439,6 +320494,12 @@
     {
       "from": "TASK-fractal-locations-api-routes",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-fractal-locations-api-routes",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -319794,6 +320855,12 @@
       "from": "TASK-frontend-client-contract-doc",
       "kind": "sibling",
       "to": "epic-guest-access",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-frontend-client-contract-doc",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -320994,6 +322061,12 @@
       "from": "TASK-gallery-fuzzy-search-pagination",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-gallery-fuzzy-search-pagination",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -322781,6 +323854,12 @@
     {
       "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -324539,6 +325618,12 @@
     {
       "from": "TASK-harness-programmatic-api",
       "kind": "sibling",
+      "to": "TASK-plugin-auth-runtime-seed",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-harness-programmatic-api",
+      "kind": "sibling",
       "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
       "via": "src/plugins/loader.ts"
     },
@@ -325327,6 +326412,42 @@
       "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
       "via": "src/server/handler.ts"
+    },
+    {
+      "from": "TASK-headless-cli-assets-characters",
+      "kind": "sibling",
+      "to": "TASK-headless-cli-chat-generate",
+      "via": "src/cli/headless.ts"
+    },
+    {
+      "from": "TASK-headless-cli-chat-generate",
+      "kind": "sibling",
+      "to": "TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-",
+      "via": "src/cli/parser.ts"
+    },
+    {
+      "from": "TASK-headless-cli-chat-generate",
+      "kind": "sibling",
+      "to": "TASK-optique-cli-tooling-integration",
+      "via": "src/cli/parser.ts"
+    },
+    {
+      "from": "TASK-headless-cli-chat-generate",
+      "kind": "sibling",
+      "to": "TASK-tooling-build-cli-surface",
+      "via": "src/cli/parser.ts"
+    },
+    {
+      "from": "TASK-headless-cli-chat-generate",
+      "kind": "sibling",
+      "to": "epic-cli-tooling-optique",
+      "via": "src/cli/parser.ts"
+    },
+    {
+      "from": "TASK-headless-cli-chat-generate",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/cli/parser.ts"
     },
     {
       "from": "TASK-health-bar",
@@ -326286,6 +327407,12 @@
       "from": "TASK-i18n-alpine-client",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-i18n-alpine-client",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -334745,6 +335872,12 @@
     {
       "from": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts; src/middleware/rate-limit.ts"
     },
@@ -335411,6 +336544,12 @@
     {
       "from": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -335682,6 +336821,12 @@
       "from": "TASK-middleware-idempotency-wire-into-elysia",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-middleware-idempotency-wire-into-elysia",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -336257,6 +337402,12 @@
     {
       "from": "TASK-middleware-request-id-elysia-derive",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-middleware-request-id-elysia-derive",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts; src/middleware/rate-limit.ts"
     },
@@ -336348,6 +337499,12 @@
       "from": "TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-",
       "kind": "sibling",
       "to": "epic-cli-tooling-optique",
+      "via": "src/cli/parser.ts"
+    },
+    {
+      "from": "TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/cli/parser.ts"
     },
     {
@@ -338573,6 +339730,12 @@
     {
       "from": "TASK-optique-cli-tooling-integration",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/cli/parser.ts"
+    },
+    {
+      "from": "TASK-optique-cli-tooling-integration",
+      "kind": "sibling",
       "to": "epic-logging-telemetry",
       "via": "src/build/compress.ts"
     },
@@ -339919,6 +341082,48 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/services/actor-items/transfer.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "sibling",
+      "to": "TASK-plugin-host-contract-for-third-party-integration-plugins",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "sibling",
+      "to": "TASK-plugin-hot-reload-with-real-module-cache-busting",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "sibling",
+      "to": "TASK-plugin-management-api",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "sibling",
+      "to": "epic-platform-research",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "sibling",
+      "to": "epic-plugin-system",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "sibling",
+      "to": "epic-provider-plugin-ecosystem",
+      "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "TASK-plugin-auth-runtime-seed",
+      "kind": "sibling",
+      "to": "epic-security-sandboxing",
+      "via": "src/plugins/loader.ts"
     },
     {
       "from": "TASK-plugin-browser",
@@ -344261,6 +345466,12 @@
     {
       "from": "TASK-recursive-self-improvement-agent-api-router-and-token-scope-",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-recursive-self-improvement-agent-api-router-and-token-scope-",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts; src/middleware/rate-limit.ts"
     },
@@ -344694,6 +345905,12 @@
       "from": "TASK-recursive-self-improvement-health-liveness-readiness-probes",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-recursive-self-improvement-health-liveness-readiness-probes",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -348563,6 +349780,12 @@
     {
       "from": "TASK-server-side-i18n-middleware",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-server-side-i18n-middleware",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -350793,6 +352016,12 @@
       "via": "src/cli/parser.ts"
     },
     {
+      "from": "TASK-tooling-build-cli-surface",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/cli/parser.ts"
+    },
+    {
       "from": "TASK-trade-history-npc-counterparty",
       "kind": "sibling",
       "to": "epic-economy-trading",
@@ -350897,6 +352126,12 @@
     {
       "from": "TASK-tui-api-contract-smoke-tests",
       "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/asset-view.ts; src/tui/chat/api.ts"
+    },
+    {
+      "from": "TASK-tui-api-contract-smoke-tests",
+      "kind": "sibling",
       "to": "TASK-tui-shell-testability",
       "via": "src/tui/asset-view.ts"
     },
@@ -350928,6 +352163,12 @@
       "from": "TASK-tui-asset-view-remove-silent-catch-and-void-async-iife",
       "kind": "sibling",
       "to": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+      "via": "src/tui/asset-view.ts"
+    },
+    {
+      "from": "TASK-tui-asset-view-remove-silent-catch-and-void-async-iife",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
       "via": "src/tui/asset-view.ts"
     },
     {
@@ -350983,6 +352224,12 @@
       "kind": "sibling",
       "to": "TASK-tui-models-overlay",
       "via": "src/tui/app.ts; src/tui/chat/index.ts; src/tui/harness/index.ts"
+    },
+    {
+      "from": "TASK-tui-chat-picker",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/chat/api.ts"
     },
     {
       "from": "TASK-tui-chat-picker",
@@ -351049,6 +352296,12 @@
       "kind": "sibling",
       "to": "TASK-tui-models-overlay",
       "via": "src/tui/app.ts; src/tui/chat/index.ts"
+    },
+    {
+      "from": "TASK-tui-dedupe-api-base",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/chat/api.ts"
     },
     {
       "from": "TASK-tui-dedupe-api-base",
@@ -351185,6 +352438,12 @@
     {
       "from": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
       "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/asset-view.ts; src/tui/chat/api.ts"
+    },
+    {
+      "from": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
+      "kind": "sibling",
       "to": "TASK-tui-shell-testability",
       "via": "src/tui/app.ts; src/tui/asset-view.ts; src/tui/chat/index.ts"
     },
@@ -351309,6 +352568,42 @@
       "via": "src/tui/app.ts; src/tui/chat-picker.ts; src/tui/chat/index.ts; src/tui/harness/display.ts; src/tui/harness/index.ts; src/tui/models-overlay.ts; src/views/admin.html"
     },
     {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "sibling",
+      "to": "TASK-tui-shell-testability",
+      "via": "src/tui/asset-view.ts"
+    },
+    {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "sibling",
+      "to": "TASK-tui-slash-command-completion",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "sibling",
+      "to": "TASK-tui-spec-sync",
+      "via": "src/tui/asset-view.ts; src/tui/chat/api.ts"
+    },
+    {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "sibling",
+      "to": "TASK-update-terminal-ui-spec-to-actual-file-layout",
+      "via": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "sibling",
+      "to": "epic-harness-integration",
+      "via": "src/tui/asset-view.ts; src/tui/chat/api.ts"
+    },
+    {
+      "from": "TASK-tui-parity-imagegen-avatar",
+      "kind": "sibling",
+      "to": "epic-terminal-ui",
+      "via": "src/tui/asset-view.ts; src/tui/chat/api.ts"
+    },
+    {
       "from": "TASK-tui-shell-testability",
       "kind": "sibling",
       "to": "TASK-tui-slash-command-completion",
@@ -351427,6 +352722,12 @@
       "kind": "sibling",
       "to": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
       "via": "src/tui/chat/api.test.ts; src/tui/chat/api.ts; src/tui/chat/display.test.ts"
+    },
+    {
+      "from": "TASK-tui",
+      "kind": "sibling",
+      "to": "TASK-tui-parity-imagegen-avatar",
+      "via": "src/tui/chat/api.ts"
     },
     {
       "from": "TASK-tui",
@@ -353772,6 +355073,12 @@
       "from": "TASK-wire-llm-resource-manager-into-generation-dispatch",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "TASK-wire-llm-resource-manager-into-generation-dispatch",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -356171,6 +357478,12 @@
     {
       "from": "epic-analytics-observability",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-analytics-observability",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -356334,6 +357647,12 @@
       "from": "epic-api-versioning",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-api-versioning",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -356532,6 +357851,12 @@
       "from": "epic-architecture",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-architecture",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -357037,6 +358362,12 @@
       "kind": "sibling",
       "to": "epic-impersonation",
       "via": "src/assistant/command-parser.ts"
+    },
+    {
+      "from": "epic-assistant-creative-studio-workflows",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "epic-assistant-creative-studio-workflows",
@@ -357947,6 +359278,12 @@
     {
       "from": "epic-battle-action-systems",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-battle-action-systems",
+      "kind": "sibling",
       "to": "epic-inventory-system",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -358356,6 +359693,12 @@
       "from": "epic-blog-system",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-blog-system",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -361061,6 +362404,12 @@
     {
       "from": "epic-cli-tooling-optique",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/cli/parser.ts"
+    },
+    {
+      "from": "epic-cli-tooling-optique",
+      "kind": "sibling",
       "to": "epic-logging-telemetry",
       "via": "src/build/compress.ts"
     },
@@ -362495,6 +363844,12 @@
     {
       "from": "epic-db-cold-storage-high-perf",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-db-cold-storage-high-perf",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/db/index.ts; src/elysia-app.ts; src/middleware/rate-limit.ts"
     },
@@ -362939,6 +364294,12 @@
     {
       "from": "epic-e2e-integration-testing",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -363252,6 +364613,12 @@
       "from": "epic-effect-v4-adoption-evaluation",
       "kind": "sibling",
       "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-effect-v4-adoption-evaluation",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
       "via": "src/elysia-app.ts"
     },
     {
@@ -363773,6 +365140,12 @@
     {
       "from": "epic-experimental-egui-frontend",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-experimental-egui-frontend",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -364253,6 +365626,12 @@
     {
       "from": "epic-file-splitting",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts; src/server/index.ts"
+    },
+    {
+      "from": "epic-file-splitting",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts; src/server/start.ts"
     },
@@ -364511,6 +365890,12 @@
     {
       "from": "epic-gallery-batch-operations",
       "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-gallery-batch-operations",
+      "kind": "sibling",
       "to": "epic-local-process-swarm",
       "via": "src/elysia-app.ts"
     },
@@ -364567,6 +365952,12 @@
       "kind": "sibling",
       "to": "epic-implementation",
       "via": "src/assets/signed-url.ts"
+    },
+    {
+      "from": "epic-guest-access",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "epic-guest-access",
@@ -364723,6 +366114,12 @@
       "kind": "sibling",
       "to": "epic-workflow-engine",
       "via": "src/assistant/workflow-routing.ts; src/assistant/workflow-runner.ts; src/regex/intent.ts"
+    },
+    {
+      "from": "epic-headless-alternative-frontends",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "epic-headless-alternative-frontends",
@@ -364921,6 +366318,30 @@
       "kind": "sibling",
       "to": "epic-social-hub",
       "via": "src/integrations/adapter.ts"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "sibling",
+      "to": "epic-lora-discovery-application",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "sibling",
+      "to": "epic-middleware-request-lifecycle",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "epic-interaction-surfaces-audit",
+      "kind": "sibling",
+      "to": "epic-openapi-reference",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "epic-inventory-system",

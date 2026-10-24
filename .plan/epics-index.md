@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 343 epics
+**Total:** 344 epics
 
 ## Summary
 
@@ -227,6 +227,7 @@
 | Not Started | Implementation Guide | Medium | Medium | 0 | [epic-implementation.md](/.plan/epics/epic-implementation.md) |
 | Not Started | Instant Messaging Integrations | Medium | Medium | 0 | [epic-im-integrations.md](/.plan/epics/epic-im-integrations.md) |
 | In Progress | Integrations Core | Medium | Medium | 0 | [epic-integrations-core.md](/.plan/epics/epic-integrations-core.md) |
+| Not Started | Interaction Surfaces Audit — Headless CLI + Surface Parity | High | Large | 0 | [epic-interaction-surfaces-audit.md](/.plan/epics/epic-interaction-surfaces-audit.md) |
 | Not Started | Internationalization (i18n) | Medium | Medium | 0 | [epic-frontend-internationalization.md](/.plan/epics/epic-frontend-internationalization.md) |
 | Not Started | Inventory & Trading UI | P1 — High | Medium | 0 | [epic-inventory-ui.md](/.plan/epics/epic-inventory-ui.md) |
 | Not Started | Inventory System (Hub) | High | High | 0 | [epic-inventory-system.md](/.plan/epics/epic-inventory-system.md) |
@@ -2424,6 +2425,15 @@ Player housing and base building system — personal homes, guild halls, craftin
 - **Type:** Feature Epic
 - **Tags:** integrations, protocols, bridge, encryption, monitoring
 - **File:** `.plan/epics/epic-integrations-core.md`
+
+### Interaction Surfaces Audit — Headless CLI + Surface Parity
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** cli, headless, tui, docs, plugin-auth, seeding, dogfood
+- **File:** `.plan/epics/epic-interaction-surfaces-audit.md`
 
 ### Internationalization (i18n)
 
