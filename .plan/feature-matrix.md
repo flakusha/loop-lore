@@ -1688,7 +1688,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2696 | 1029 | 45 | 898 | 32 | 0 | 692 |
+| (untagged) | 2696 | 1033 | 45 | 898 | 32 | 0 | 688 |
 
 ## By epic × status
 
@@ -1753,7 +1753,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-battle-ui | 9 | 1 | 0 | 8 | 0 | 0 | 0 |
 | epic-benchmark-ci-regression | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-blog-system | 6 | 1 | 1 | 1 | 0 | 0 | 3 |
-| epic-byok-api-keys | 8 | 0 | 0 | 1 | 0 | 0 | 7 |
+| epic-byok-api-keys | 8 | 2 | 0 | 1 | 0 | 0 | 5 |
 | EPIC-byok-api-keys | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-byok-local-models | 8 | 2 | 0 | 3 | 0 | 0 | 3 |
 | EPIC-byok-local-models | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1801,7 +1801,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-creative-studio | 10 | 1 | 0 | 9 | 0 | 0 | 0 |
 | epic-cron-scheduler | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-cross-platform-portability | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
-| epic-crypto | 35 | 12 | 3 | 14 | 0 | 0 | 6 |
+| epic-crypto | 35 | 13 | 3 | 14 | 0 | 0 | 5 |
 | epic-data-integrity-acid | 11 | 1 | 0 | 5 | 0 | 0 | 5 |
 | epic-database-backup-recovery | 7 | 1 | 0 | 5 | 0 | 0 | 1 |
 | epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1903,7 +1903,7 @@ Total tickets: **3944** — untagged: **2696** — unbound to epic: **990**
 | epic-magic-spell-systems | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
 | epic-math-ai-bridge | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-math-resolution | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
-| epic-mechanics-governance | 10 | 2 | 0 | 3 | 0 | 0 | 5 |
+| epic-mechanics-governance | 10 | 3 | 0 | 3 | 0 | 0 | 4 |
 | epic-memory-knowledge-systems | 32 | 9 | 0 | 13 | 0 | 0 | 10 |
 | epic-memory-profiling-budgets | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-memory-propagation | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
