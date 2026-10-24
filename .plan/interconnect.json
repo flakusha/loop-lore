@@ -121,7 +121,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md",
       "title": "activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader",
-      "status": "Not Started",
+      "status": "Blocked",
       "srcRefs": [
         "src/characters/services/federation-consent.ts",
         "src/crypto/activitypub-keys.ts",
@@ -3987,7 +3987,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s.md",
       "title": "fix(api): return 400/406 for unknown API versions instead of silent v1 coercion",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/routes/middleware/version-resolver.ts"
@@ -5447,9 +5447,8 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md",
       "title": "importChatDek throws on chat_keys primary-key collision instead of degrading",
-      "status": "Wontfix",
+      "status": "done",
       "srcRefs": [
-        "src/crypto/chat-keys.ts",
         "src/db/migrations/001_init.ts",
         "src/federation/dek-rewrap.test.ts",
         "src/federation/dek-rewrap.ts"
@@ -6804,7 +6803,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md",
       "title": "NSFW appeal approvedBy taken from request body",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/nsfw/moderation-service/appeals-reversal.ts",
         "src/routes/nsfw-moderation/appeals.ts"
@@ -7364,9 +7363,14 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f.md",
       "title": "Pin mismatch and transient probe failure both evict a peer from the mesh",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
-        "src/federation/gossip.ts"
+        "src/federation/gossip.test.ts",
+        "src/federation/gossip.ts",
+        "src/federation/spki-pin.test.ts",
+        "src/federation/spki-pin.ts",
+        "src/transport/peer-table.test.ts",
+        "src/transport/peer-table.ts"
       ],
       "related": [
         "epic-runtime-memory-state-hygiene"
@@ -7471,7 +7475,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500.md",
       "title": "POST /actors/:actorId/emotions is a dead endpoint - always 500",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/character-emotions/actor.ts",
         "src/validation/schemas/character-systems.ts"
@@ -8182,6 +8186,18 @@
         "src/crypto/pipeline.ts",
         "src/routes/messages/helpers.ts",
         "src/utils/safe-buffer/compression.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as.md",
+      "title": "sanitizeHtml is not idempotent — tag-removal reassembly can assemble fresh script markup (mXSS class)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/regex/html-sanitize-core.ts",
+        "src/regex/html-sanitize.property.test.ts"
       ],
       "related": []
     },
@@ -9355,7 +9371,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c.md",
       "title": "turn-manager lifecycle requestRegeneration line 26 is dead code",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/turning/turn-manager/lifecycle.ts"
       ],
@@ -60474,7 +60490,6 @@
       "owners": [
         "BUG-chat-key-history-loss-join-leave",
         "BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint",
-        "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
         "BUG-key-material-revoke-then-insert-sequences-are-non-transactio",
         "BUG-private-tier-no-true-e2e",
         "TASK-chat-feature-encryption-key-rotation",
@@ -63516,6 +63531,7 @@
     {
       "path": "src/federation/gossip.test.ts",
       "owners": [
+        "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
         "TASK-federation-peer-capability-advertisement",
         "TASK-mesh-peer-discovery-gossip"
       ]
@@ -63736,12 +63752,14 @@
     {
       "path": "src/federation/spki-pin.test.ts",
       "owners": [
+        "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
         "TASK-federation-same-host-loopback-peer-auth"
       ]
     },
     {
       "path": "src/federation/spki-pin.ts",
       "owners": [
+        "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
         "TASK-federation-peer-workload-wire-endpoints",
         "TASK-federation-same-host-loopback-peer-auth",
         "epic-federation-offload-quotas"
@@ -73646,7 +73664,8 @@
     {
       "path": "src/regex/html-sanitize-core.ts",
       "owners": [
-        "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san"
+        "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
+        "BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as"
       ]
     },
     {
@@ -73665,6 +73684,12 @@
       "path": "src/regex/html-sanitize-streaming.ts",
       "owners": [
         "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san"
+      ]
+    },
+    {
+      "path": "src/regex/html-sanitize.property.test.ts",
+      "owners": [
+        "BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as"
       ]
     },
     {
@@ -83268,8 +83293,15 @@
       ]
     },
     {
+      "path": "src/transport/peer-table.test.ts",
+      "owners": [
+        "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f"
+      ]
+    },
+    {
       "path": "src/transport/peer-table.ts",
       "owners": [
+        "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
         "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
         "epic-federation-offload-quotas"
       ]
@@ -106348,11 +106380,6 @@
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "produces",
-      "to": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "produces",
       "to": "src/db/migrations/001_init.ts"
     },
     {
@@ -107978,7 +108005,32 @@
     {
       "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
       "kind": "produces",
+      "to": "src/federation/gossip.test.ts"
+    },
+    {
+      "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
+      "kind": "produces",
       "to": "src/federation/gossip.ts"
+    },
+    {
+      "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
+      "kind": "produces",
+      "to": "src/federation/spki-pin.test.ts"
+    },
+    {
+      "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
+      "kind": "produces",
+      "to": "src/federation/spki-pin.ts"
+    },
+    {
+      "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
+      "kind": "produces",
+      "to": "src/transport/peer-table.test.ts"
+    },
+    {
+      "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
+      "kind": "produces",
+      "to": "src/transport/peer-table.ts"
     },
     {
       "from": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
@@ -108764,6 +108816,16 @@
       "from": "BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10",
       "kind": "produces",
       "to": "src/utils/safe-buffer/compression.ts"
+    },
+    {
+      "from": "BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as",
+      "kind": "produces",
+      "to": "src/regex/html-sanitize-core.ts"
+    },
+    {
+      "from": "BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as",
+      "kind": "produces",
+      "to": "src/regex/html-sanitize.property.test.ts"
     },
     {
       "from": "BUG-schema-version-table-dropped-by-migration-collapse-feat-040-",
@@ -181577,12 +181639,6 @@
     {
       "from": "BUG-chat-key-history-loss-join-leave",
       "kind": "sibling",
-      "to": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-chat-key-history-loss-join-leave",
-      "kind": "sibling",
       "to": "BUG-key-material-revoke-then-insert-sequences-are-non-transactio",
       "via": "src/crypto/chat-keys.ts"
     },
@@ -181813,12 +181869,6 @@
       "kind": "sibling",
       "to": "epic-review-dev-2026-08-26-security-data-integrity-merges",
       "via": "src/routes/messages/helpers.ts"
-    },
-    {
-      "from": "BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint",
-      "kind": "sibling",
-      "to": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "via": "src/crypto/chat-keys.ts"
     },
     {
       "from": "BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint",
@@ -207599,12 +207649,6 @@
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "sibling",
-      "to": "BUG-key-material-revoke-then-insert-sequences-are-non-transactio",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
       "to": "BUG-locations-reparent-guard-silently-reverted-by-d572dddec",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -207637,12 +207681,6 @@
       "kind": "sibling",
       "to": "BUG-plugin-tool-authorization-fails-open",
       "via": "src/db/migrations/001_init.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "BUG-private-tier-no-true-e2e",
-      "via": "src/crypto/chat-keys.ts"
     },
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
@@ -207725,12 +207763,6 @@
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "sibling",
-      "to": "TASK-chat-feature-encryption-key-rotation",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
       "to": "TASK-chat-transfer-location",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -207739,66 +207771,6 @@
       "kind": "sibling",
       "to": "TASK-comic-page-composition-strategy",
       "via": "src/db/migrations/001_init.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-db-add-created-at-updated-at-metadata-to-actor-and-character",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-encryption-access-management",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-encryption-auto-key-rotation",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-encryption-group-key-distribution",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-encryption-key-rotation",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-encryption-wire-message-pipeline",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-epic17-encryption-e2e-expansion",
-      "via": "src/crypto/chat-keys.ts"
     },
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
@@ -207853,12 +207825,6 @@
       "kind": "sibling",
       "to": "TASK-review-thread-comment-model",
       "via": "src/db/migrations/001_init.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "TASK-world-location-encryption",
-      "via": "src/crypto/chat-keys.ts"
     },
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
@@ -207929,12 +207895,6 @@
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "sibling",
-      "to": "epic-chat-product-features",
-      "via": "src/crypto/chat-keys.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
       "to": "epic-chat-transfer-location",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -207967,12 +207927,6 @@
       "kind": "sibling",
       "to": "epic-emotion-avatar-message-binding",
       "via": "src/db/migrations/001_init.ts"
-    },
-    {
-      "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
-      "kind": "sibling",
-      "to": "epic-encryption-workflow",
-      "via": "src/crypto/chat-keys.ts"
     },
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
@@ -218478,13 +218432,31 @@
       "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
       "kind": "sibling",
       "to": "TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on",
-      "via": "src/federation/gossip.ts"
+      "via": "src/federation/gossip.ts; src/transport/peer-table.ts"
+    },
+    {
+      "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-capability-advertisement",
+      "via": "src/federation/gossip.test.ts"
+    },
+    {
+      "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-workload-wire-endpoints",
+      "via": "src/federation/spki-pin.ts"
+    },
+    {
+      "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
+      "kind": "sibling",
+      "to": "TASK-federation-same-host-loopback-peer-auth",
+      "via": "src/federation/spki-pin.test.ts; src/federation/spki-pin.ts"
     },
     {
       "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
       "kind": "sibling",
       "to": "TASK-mesh-peer-discovery-gossip",
-      "via": "src/federation/gossip.ts"
+      "via": "src/federation/gossip.test.ts; src/federation/gossip.ts"
     },
     {
       "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
@@ -218496,7 +218468,7 @@
       "from": "BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f",
       "kind": "sibling",
       "to": "epic-federation-offload-quotas",
-      "via": "src/federation/gossip.ts"
+      "via": "src/federation/gossip.ts; src/federation/spki-pin.ts; src/transport/peer-table.ts"
     },
     {
       "from": "BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-",
@@ -221185,6 +221157,12 @@
       "kind": "sibling",
       "to": "TASK-raise-rpg-battle-social-skills-progression-and-replayability",
       "via": "src/rpg/replayability/service/playthrough.ts"
+    },
+    {
+      "from": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
+      "kind": "sibling",
+      "to": "BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as",
+      "via": "src/regex/html-sanitize-core.ts"
     },
     {
       "from": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",

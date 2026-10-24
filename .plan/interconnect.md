@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3640
+- tickets: 3641
 - epics: 347
-- src paths owned: 4387
-- edges: produces 11443, consumes 403, sibling 34123, owns 2649, related 1191
+- src paths owned: 4389
+- edges: produces 11449, consumes 403, sibling 34109, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -535,7 +535,7 @@ output is byte-identical for identical inputs.
 | `src/crypto/asset-encryption.ts` | `BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-`, `TASK-chat-feature-component-buttons`, `TASK-data-level-integrity-checksums-and-re-readable-logical-dumps`, `TASK-db-add-created-at-updated-at-metadata-to-infra-and-admin-tab`, `TASK-encryption-asset-encryption`, `TASK-encryption-asset-encryption-update`, `TASK-encryption-backward-compatibility`, `epic-chat-product-features`, `epic-encryption-workflow` |
 | `src/crypto/at-rest.ts` | `BUG-admin-set-secrets-stored-plaintext-in-system-config`, `BUG-at-rest-tier-none-envelope-short-circuit-stores-plaintext-ve`, `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en`, `BUG-encryption-tier-not-enforced`, `BUG-private-tier-no-true-e2e`, `BUG-standard-tier-at-rest-encryption-silently-stores-plaintext-w`, `TASK-db-add-created-at-updated-at-metadata-to-actor-and-character`, `TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables`, `TASK-db-add-created-at-updated-at-metadata-to-infra-and-admin-tab`, `TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables`, `TASK-epic17-encryption-e2e-expansion`, `TASK-world-location-encryption`, `epic-crypto`, `epic-encryption-workflow` |
 | `src/crypto/byok.ts` | `BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f`, `TASK-assistant-entity-access-quota-engine`, `TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations`, `TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat`, `TASK-epic17-encryption-e2e-expansion`, `TASK-federation-same-host-loopback-peer-auth`, `TASK-mesh-encrypted-content-sharing-reservation-duplication`, `TASK-provider-wiring-settings-convention-for-byok-and-resource-pr`, `TASK-recursive-self-improvement-sidecar-python-provider-for-custo`, `TASK-resource-provision-credential-store`, `epic-byok-api-keys`, `epic-encryption-workflow`, `epic-federation-offload-quotas`, `epic-resource-provision` |
-| `src/crypto/chat-keys.ts` | `BUG-chat-key-history-loss-join-leave`, `BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint`, `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst`, `BUG-key-material-revoke-then-insert-sequences-are-non-transactio`, `BUG-private-tier-no-true-e2e`, `TASK-chat-feature-encryption-key-rotation`, `TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat`, `TASK-db-add-created-at-updated-at-metadata-to-actor-and-character`, `TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables`, `TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables`, `TASK-encryption-access-management`, `TASK-encryption-auto-key-rotation`, `TASK-encryption-group-key-distribution`, `TASK-encryption-key-rotation`, `TASK-encryption-wire-message-pipeline`, `TASK-epic17-encryption-e2e-expansion`, `TASK-world-location-encryption`, `epic-chat-product-features`, `epic-encryption-workflow` |
+| `src/crypto/chat-keys.ts` | `BUG-chat-key-history-loss-join-leave`, `BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint`, `BUG-key-material-revoke-then-insert-sequences-are-non-transactio`, `BUG-private-tier-no-true-e2e`, `TASK-chat-feature-encryption-key-rotation`, `TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat`, `TASK-db-add-created-at-updated-at-metadata-to-actor-and-character`, `TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables`, `TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables`, `TASK-encryption-access-management`, `TASK-encryption-auto-key-rotation`, `TASK-encryption-group-key-distribution`, `TASK-encryption-key-rotation`, `TASK-encryption-wire-message-pipeline`, `TASK-epic17-encryption-e2e-expansion`, `TASK-world-location-encryption`, `epic-chat-product-features`, `epic-encryption-workflow` |
 | `src/crypto/e2e/dh-ratchet-helpers.ts` | `BUG-skipoldchain-zeroes-the-caller-s-receivingchainkey-despite-i`, `TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-` |
 | `src/crypto/e2e/dh-ratchet.bugs.test.ts` | `BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros`, `TASK-e2ee-open-bugs` |
 | `src/crypto/e2e/dh-ratchet.ts` | `BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry`, `BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard`, `BUG-initdhratchetopts-theirinitialpub-declared-but-never-read`, `BUG-skipoldchain-zeroes-the-caller-s-receivingchainkey-despite-i`, `TASK-delete-unwired-dh-ratchet-e2e-subtree-in-src-crypto-e2e-and-`, `TASK-e2ee-open-bugs`, `TASK-e2ee-receiver-wiring` |
@@ -683,7 +683,7 @@ output is byte-identical for identical inputs.
 | `src/federation/encryption.ts` | `TASK-integrations-shared-seams-encryptionprovider-messagebridge-b`, `TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-` |
 | `src/federation/envelope.ts` | `FEAT-activitypub-federation`, `IDEA-cross-instance-conversation-threading-mention-inreplyto`, `TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke`, `TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-` |
 | `src/federation/fan-out.ts` | `BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun`, `BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie`, `BUG-federation-authorization-who-may-publish-an-actor-undefined`, `BUG-federation-fan-out-queues-outbox-retries-only-for-push-failu`, `BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o`, `TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke`, `TASK-fanout-chatid-default-deny`, `TASK-licensing-publish-authorization-predicate`, `TASK-licensing-publish-enforcement-point`, `TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-`, `epic-licensing` |
-| `src/federation/gossip.test.ts` | `TASK-federation-peer-capability-advertisement`, `TASK-mesh-peer-discovery-gossip` |
+| `src/federation/gossip.test.ts` | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f`, `TASK-federation-peer-capability-advertisement`, `TASK-mesh-peer-discovery-gossip` |
 | `src/federation/gossip.ts` | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f`, `BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-mesh-peer-discovery-gossip`, `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un`, `epic-federation-offload-quotas` |
 | `src/federation/outbox.ts` | `BUG-federation-authorization-who-may-publish-an-actor-undefined`, `BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o`, `BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-`, `epic-federation-offload-quotas` |
 | `src/federation/peer-fetch.ts` | `BUG-spki-pin-gate-is-not-enforced-across-http-redirects`, `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot`, `TASK-federation-peer-workload-wire-endpoints`, `TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl`, `epic-federation-offload-quotas` |
@@ -692,7 +692,8 @@ output is byte-identical for identical inputs.
 | `src/federation/peer-work-auth.ts` | `TASK-federation-peer-workload-wire-endpoints`, `TASK-federation-same-host-loopback-peer-auth`, `epic-federation-offload-quotas` |
 | `src/federation/sharing.test.ts` | `BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun`, `BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie`, `TASK-federation-storage-quota-accounting` |
 | `src/federation/sharing.ts` | `BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori`, `BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat`, `TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot`, `TASK-expose-dek-export-and-import-over-the-federation-wire-routes`, `TASK-federation-storage-quota-accounting`, `TASK-mesh-encrypted-content-sharing-reservation-duplication`, `epic-federation-offload-quotas` |
-| `src/federation/spki-pin.ts` | `TASK-federation-peer-workload-wire-endpoints`, `TASK-federation-same-host-loopback-peer-auth`, `epic-federation-offload-quotas` |
+| `src/federation/spki-pin.test.ts` | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f`, `TASK-federation-same-host-loopback-peer-auth` |
+| `src/federation/spki-pin.ts` | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f`, `TASK-federation-peer-workload-wire-endpoints`, `TASK-federation-same-host-loopback-peer-auth`, `epic-federation-offload-quotas` |
 | `src/frontend` | `BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio`, `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam`, `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null`, `BUG-frontend-dead-csrf-bearer-header-machinery`, `BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th`, `TASK-chat-avatar-resolver-outfit-aware`, `TASK-chat-composer-gif-picker`, `TASK-comment-only-catch-blocks-in-src-frontend-are-invisible-to-e`, `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature`, `TASK-coverage-waivers-for-3-modules-below-80-floor`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-equipment-stat-preview`, `TASK-item-provisioning-dashboard`, `TASK-npc-inventory-frontend`, `TASK-professions-frontend`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `TASK-skills-frontend`, `TASK-world-item-instance-npc`, `epic-reactive-actor-appearance` |
 | `src/frontend/3d/expression-controller.ts` | `TASK-3d-character-avatars`, `TASK-3d-vrm-foundation` |
 | `src/frontend/3d/vrm-loader.ts` | `TASK-3d-character-avatars`, `TASK-3d-vrm-foundation` |
@@ -1266,6 +1267,7 @@ output is byte-identical for identical inputs.
 | `src/regex` | `TASK-vn-emotion-mood-and-action-driven-sprite-staging`, `epic-immersion-consistency-gate`, `epic-narration-actor-separation` |
 | `src/regex/action-parser.ts` | `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-outfit-change-multi-actor-name-resolution`, `TASK-outfit-narrative-extractor-regex-prefilter`, `TASK-property-test-the-regex-action-parser-verb-and-target-extrac`, `epic-research-agency-affordance` |
 | `src/regex/game-state.ts` | `BUG-game-state-block-regex-truncates-payloads-containing-an-inne`, `FEAT-game-state-extraction-and-analysis-pipeline` |
+| `src/regex/html-sanitize-core.ts` | `BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san`, `BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as` |
 | `src/regex/html-sanitize.ts` | `BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re`, `BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san` |
 | `src/regex/image-edit.ts` | `TASK-avatar-pose-via-action-tag`, `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-outfit-narrative-extractor-regex-prefilter`, `epic-reactive-actor-appearance` |
 | `src/regex/index.ts` | `BUG-item-transfers-double-report-one-sentence-and-item-take-item`, `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `TASK-doc-spec-regex-extraction`, `TASK-regex-extraction-tests`, `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un` |
@@ -1831,7 +1833,7 @@ output is byte-identical for identical inputs.
 | `src/transport/index.ts` | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` |
 | `src/transport/negotiation-parsers.ts` | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-`, `BUG-parseacceptlanguage-ignores-quality-values-returns-header-or`, `BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate`, `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` |
 | `src/transport/negotiation.ts` | `BUG-negotiate-compression-selects-none-on-unsupported-algorithm-when-server-has-capabilities`, `BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate`, `TASK-057`, `TASK-059`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-instance-state-advertisement-endpoint`, `epic-transport-expansion` |
-| `src/transport/peer-table.ts` | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `epic-federation-offload-quotas` |
+| `src/transport/peer-table.ts` | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `epic-federation-offload-quotas` |
 | `src/transport/protocol.unified.ts` | `TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-federation-peer-workload-wire-endpoints`, `TASK-matrix-auth-capability-registry-naming-align-auth-challenge-`, `TASK-matrix-auth-matrix-megolm-approval-decide-megolm-verified-se`, `epic-federation-offload-quotas` |
 | `src/transport/test/harness.ts` | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-transport-server-wiring`, `epic-transport-expansion` |
 | `src/transport/upgrade.ts` | `BUG-upgrade-connection-metadata-state-lost`, `TASK-057`, `TASK-058`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `epic-transport-expansion` |
@@ -6127,7 +6129,6 @@ output is byte-identical for identical inputs.
 | `BUG-impersonate-commands-register-empty-callback` | produces | `src/assistant/commands/impersonate.ts` | - |
 | `BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c` | produces | `src/frontend/alpine/chat-utils/gallery.ts` | - |
 | `BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c` | produces | `src/routes` | - |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | produces | `src/crypto/chat-keys.ts` | - |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | produces | `src/db/migrations/001_init.ts` | - |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | produces | `src/federation/dek-rewrap.test.ts` | - |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | produces | `src/federation/dek-rewrap.ts` | - |
@@ -6453,7 +6454,12 @@ output is byte-identical for identical inputs.
 | `BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-` | produces | `src/personas/handlers.ts` | - |
 | `BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-` | produces | `src/personas/service.ts` | - |
 | `BUG-pii-redaction-hardcoded-dev-fallback-secret-no-prod-guard` | produces | `src/nsfw/pii-redaction.ts` | - |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | produces | `src/federation/gossip.test.ts` | - |
 | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | produces | `src/federation/gossip.ts` | - |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | produces | `src/federation/spki-pin.test.ts` | - |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | produces | `src/federation/spki-pin.ts` | - |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | produces | `src/transport/peer-table.test.ts` | - |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | produces | `src/transport/peer-table.ts` | - |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | produces | `src/db/migrations/001_init.ts` | - |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | produces | `src/plugins/loader.ts` | - |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | produces | `src/plugins/registry.ts` | - |
@@ -6611,6 +6617,8 @@ output is byte-identical for identical inputs.
 | `BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10` | produces | `src/crypto/pipeline.ts` | - |
 | `BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10` | produces | `src/routes/messages/helpers.ts` | - |
 | `BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10` | produces | `src/utils/safe-buffer/compression.ts` | - |
+| `BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as` | produces | `src/regex/html-sanitize-core.ts` | - |
+| `BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as` | produces | `src/regex/html-sanitize.property.test.ts` | - |
 | `BUG-schema-version-table-dropped-by-migration-collapse-feat-040-` | produces | `src/db/migrations/README.md` | - |
 | `BUG-schema-version-table-dropped-by-migration-collapse-feat-040-` | produces | `src/db/schema-version.ts` | - |
 | `BUG-sd-server-image-providers-discard-the-generated-image-and-ab` | produces | `src/image-edit/providers/comfyui-provider.ts` | - |
@@ -20582,7 +20590,6 @@ output is byte-identical for identical inputs.
 | `BUG-chat-key-history-loss-join-leave` | sibling | `BUG-encryption-tier-not-enforced` | `src/routes/messages/helpers.ts` |
 | `BUG-chat-key-history-loss-join-leave` | sibling | `BUG-get-messages-id-variants-has-toctou-race-on-parent-chat-auth` | `src/routes/messages/read.ts` |
 | `BUG-chat-key-history-loss-join-leave` | sibling | `BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export` | `src/routes/messages/helpers.ts` |
-| `BUG-chat-key-history-loss-join-leave` | sibling | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | `src/crypto/chat-keys.ts` |
 | `BUG-chat-key-history-loss-join-leave` | sibling | `BUG-key-material-revoke-then-insert-sequences-are-non-transactio` | `src/crypto/chat-keys.ts` |
 | `BUG-chat-key-history-loss-join-leave` | sibling | `BUG-key-rotation-non-transactional-incomplete-re-encryption-stra` | `src/crypto/key-distribution.ts` |
 | `BUG-chat-key-history-loss-join-leave` | sibling | `BUG-private-tier-no-true-e2e` | `src/crypto/chat-keys.ts; src/routes/messages/helpers.ts` |
@@ -20622,7 +20629,6 @@ output is byte-identical for identical inputs.
 | `BUG-chat-key-history-loss-join-leave` | sibling | `epic-multilingual-carriage` | `src/routes/messages/helpers.ts; src/routes/messages/read.ts` |
 | `BUG-chat-key-history-loss-join-leave` | sibling | `epic-reactive-actor-appearance` | `src/routes/messages/read.ts` |
 | `BUG-chat-key-history-loss-join-leave` | sibling | `epic-review-dev-2026-08-26-security-data-integrity-merges` | `src/routes/messages/helpers.ts` |
-| `BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint` | sibling | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | `src/crypto/chat-keys.ts` |
 | `BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint` | sibling | `BUG-key-material-revoke-then-insert-sequences-are-non-transactio` | `src/crypto/chat-keys.ts` |
 | `BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint` | sibling | `BUG-private-tier-no-true-e2e` | `src/crypto/chat-keys.ts` |
 | `BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint` | sibling | `BUG-tool-call-result-no-frontend-rendering` | `src/db/migrations/parts/006_chat.ts` |
@@ -24919,14 +24925,12 @@ output is byte-identical for identical inputs.
 | `BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c` | sibling | `epic-faction-reputation` | `src/routes` |
 | `BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c` | sibling | `epic-gallery-batch-operations` | `src/frontend/alpine/chat-utils/gallery.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-inbound-federation-content-not-moderated-before-display` | `src/db/migrations/001_init.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-key-material-revoke-then-insert-sequences-are-non-transactio` | `src/crypto/chat-keys.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-locations-reparent-guard-silently-reverted-by-d572dddec` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-memory-audit-log-action-column-typed-string-not-union` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-memory-embeddings-orphaned-on-actor-delete` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-plugin-tool-authorization-fails-open` | `src/db/migrations/001_init.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-private-tier-no-true-e2e` | `src/crypto/chat-keys.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin` | `src/federation/dek-rewrap.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `BUG-shadow-notes-table-missing-ttl-visibility-author-type-column` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `FEAT-065-template-system` | `src/db/migrations/001_init.ts` |
@@ -24940,19 +24944,8 @@ output is byte-identical for identical inputs.
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-019-audit-columns` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-019-enforce-state-machine-validators-at-write` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-archival-workflow` | `src/db/migrations/001_init.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-chat-feature-encryption-key-rotation` | `src/crypto/chat-keys.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-chat-transfer-location` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-comic-page-composition-strategy` | `src/db/migrations/001_init.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-db-add-created-at-updated-at-metadata-to-actor-and-character` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-db-add-created-at-updated-at-metadata-to-chat-domain-tables` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-db-add-created-at-updated-at-metadata-to-world-domain-tables` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-encryption-access-management` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-encryption-auto-key-rotation` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-encryption-group-key-distribution` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-encryption-key-rotation` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-encryption-wire-message-pipeline` | `src/crypto/chat-keys.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-epic17-encryption-e2e-expansion` | `src/crypto/chat-keys.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-expose-dek-export-and-import-over-the-federation-wire-routes` | `src/federation/dek-rewrap.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-federation-admin-peer-and-quota-routes` | `src/federation/dek-rewrap.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-licensing-publish-authorization-predicate` | `src/federation/dek-rewrap.ts` |
@@ -24962,7 +24955,6 @@ output is byte-identical for identical inputs.
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-rag-decomposition-index-pipeline` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-review-thread-comment-model` | `src/db/migrations/001_init.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-world-location-encryption` | `src/crypto/chat-keys.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `TASK-world-simulation-discovery-and-trade-events` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-actors` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-archival-workflow` | `src/db/migrations/001_init.ts` |
@@ -24974,14 +24966,12 @@ output is byte-identical for identical inputs.
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-character-spec` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-character-world-setup` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-character-xp-leveling` | `src/db/migrations/001_init.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-chat-product-features` | `src/crypto/chat-keys.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-chat-transfer-location` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-chat-variants-taxonomy` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-crafting-professions` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-db-migration-compaction` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-editorial-workflow` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-emotion-avatar-message-binding` | `src/db/migrations/001_init.ts` |
-| `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-encryption-workflow` | `src/crypto/chat-keys.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-enemies-monsters` | `src/db/migrations/001_init.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-federation-offload-quotas` | `src/federation/dek-rewrap.ts` |
 | `BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst` | sibling | `epic-impersonation` | `src/db/migrations/001_init.ts` |
@@ -26732,10 +26722,13 @@ output is byte-identical for identical inputs.
 | `BUG-pii-redaction-hardcoded-dev-fallback-secret-no-prod-guard` | sibling | `TASK-input-hardening-batch` | `src/nsfw/pii-redaction.ts` |
 | `BUG-pii-redaction-hardcoded-dev-fallback-secret-no-prod-guard` | sibling | `TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa` | `src/nsfw/pii-redaction.ts` |
 | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `BUG-runresyncpass-fetches-peer-advertisements-without-the-spki-p` | `src/federation/gossip.ts` |
-| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/federation/gossip.ts` |
-| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `TASK-mesh-peer-discovery-gossip` | `src/federation/gossip.ts` |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/federation/gossip.ts; src/transport/peer-table.ts` |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `TASK-federation-peer-capability-advertisement` | `src/federation/gossip.test.ts` |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `TASK-federation-peer-workload-wire-endpoints` | `src/federation/spki-pin.ts` |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `TASK-federation-same-host-loopback-peer-auth` | `src/federation/spki-pin.test.ts; src/federation/spki-pin.ts` |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `TASK-mesh-peer-discovery-gossip` | `src/federation/gossip.test.ts; src/federation/gossip.ts` |
 | `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un` | `src/federation/gossip.ts` |
-| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `epic-federation-offload-quotas` | `src/federation/gossip.ts` |
+| `BUG-pin-mismatch-and-transient-probe-failure-both-evict-a-peer-f` | sibling | `epic-federation-offload-quotas` | `src/federation/gossip.ts; src/federation/spki-pin.ts; src/transport/peer-table.ts` |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `BUG-plugin-route-registry-lacks-ownership-enforcement-idor` | `src/plugins/loader.ts` |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `BUG-plugin-state-is-auto-approved-on-first-sight` | `src/plugins/loader.ts` |
 | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | sibling | `BUG-plugin-tool-authorization-fails-open` | `src/db/migrations/001_init.ts` |
@@ -27184,6 +27177,7 @@ output is byte-identical for identical inputs.
 | `BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin` | sibling | `epic-federation-offload-quotas` | `src/federation/dek-rewrap.ts` |
 | `BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets` | sibling | `TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play` | `src/rpg/replayability/service/playthrough.ts` |
 | `BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets` | sibling | `TASK-raise-rpg-battle-social-skills-progression-and-replayability` | `src/rpg/replayability/service/playthrough.ts` |
+| `BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san` | sibling | `BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as` | `src/regex/html-sanitize-core.ts` |
 | `BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san` | sibling | `FEAT-llm-request-complexity-classification` | `src/generation/auto-gen/call-llm.ts` |
 | `BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san` | sibling | `TASK-federation-peer-dispatch-compose-failover` | `src/generation/auto-gen/call-llm.ts` |
 | `BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san` | sibling | `TASK-generation-error-handling-gaps-detector-abort-void-promises` | `src/generation/auto-gen/call-llm.ts` |
