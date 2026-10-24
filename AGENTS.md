@@ -318,7 +318,7 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     # scripts/check/jscpd-baseline.json shows as ADVISORY without
 #                     # failing the run).
 bun run check:report-ls  # aggregate check reports across all worktrees (flags stale)
-bun test src/        # unit tests
+bun run test:unit        # unit tests
 E2E_SAFEGUARD=1 bun test tests/e2e/  # e2e (if affecting)
 ```
 
