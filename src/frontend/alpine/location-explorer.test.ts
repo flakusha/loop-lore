@@ -1,8 +1,15 @@
-import { afterEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, describe, expect, test, } from "bun:test";
 import type { ExplorerDetail, ExplorerLocation, ExplorerLocationState, } from "./location-explorer";
 
 // ── apiFetch is a global registered by ./htmx at module load; we override
 // it here because the SUT references it via the global, not a static import.
+// The pre-file value is restored after the suite so the override never leaks
+// into later files in a shared-process serial run.
+const originalApiFetch = (globalThis as { apiFetch?: unknown }).apiFetch;
+afterAll(() => {
+  (globalThis as { apiFetch?: unknown }).apiFetch = originalApiFetch;
+},);
+
 let fetchCalls: { url: string; opts?: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts?: RequestInit,) => Response | Promise<Response>) | null = null;
 (globalThis as unknown as { apiFetch: (url: string, opts?: RequestInit,) => Promise<Response> }).apiFetch = async (

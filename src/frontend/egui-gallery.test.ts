@@ -12,7 +12,8 @@
  * global bridge functions; afterEach restores the globals captured at module
  * load.
  */
-import { afterEach, describe, expect, test, } from "bun:test";
+import { afterEach, expect, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import type { EguiGallerySink, } from "./egui-gallery";
 
 const { mock, } = await import("bun:test");
@@ -21,13 +22,17 @@ const { mock, } = await import("bun:test");
 let mockFetchResponse: Response = new Response("", { status: 200, },);
 let mockFetchCalls: Array<{ url: string; options?: RequestInit }> = [];
 
-mock.module("./fe-fetch", () => ({
-  feFetch: (url: string, options?: RequestInit,) => {
-    mockFetchCalls.push({ url, options, },);
-    return Promise.resolve(mockFetchResponse,);
-  },
-  getCsrfToken: () => "test-csrf",
-}),);
+// ISOLATED-only: mock.module is process-global and poisons later files'
+// `./fe-fetch` imports without --isolate (cross-file contamination).
+if (ISOLATED) {
+  mock.module("./fe-fetch", () => ({
+    feFetch: (url: string, options?: RequestInit,) => {
+      mockFetchCalls.push({ url, options, },);
+      return Promise.resolve(mockFetchResponse,);
+    },
+    getCsrfToken: () => "test-csrf",
+  }),);
+}
 
 const { requestThumbnail, uploadAsset, } = await import("./egui-gallery");
 
@@ -54,7 +59,7 @@ afterEach(() => {
   (globalThis as Record<string, unknown>).uploadAsset = realUpload;
 },);
 
-describe("requestThumbnail", () => {
+describeOrSkip("requestThumbnail", () => {
   test("decodes a blob and delivers RGBA to the sink", async () => {
     (globalThis as Record<string, unknown>).loopLoreEguiGallery = recordingSink;
 
@@ -104,9 +109,9 @@ describe("requestThumbnail", () => {
     expect(sinkCalls[0]?.method,).toBe("eguiThumbFailed",);
     expect(sinkCalls[0]?.assetId,).toBe("a1",);
   });
-});
+},);
 
-describe("uploadAsset", () => {
+describeOrSkip("uploadAsset", () => {
   test("opens the picker, posts the chosen file as multipart, and reports the new id", async () => {
     (globalThis as Record<string, unknown>).loopLoreEguiGallery = recordingSink;
     mockFetchResponse = Response.json({ id: "new-asset", },);
@@ -183,4 +188,4 @@ describe("uploadAsset", () => {
     expect(sinkCalls[0]?.method,).toBe("eguiAssetUploaded",);
     expect(sinkCalls[0]?.assetId,).toBe("",);
   });
-});
+},);

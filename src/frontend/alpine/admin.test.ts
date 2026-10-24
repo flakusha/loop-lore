@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 
-mock.module("./htmx", () => ({
-  apiFetch: (url: string, opts?: RequestInit,) => (globalThis as any).__apiFetch(url, opts,),
-}),);
+// ISOLATED-only: mock.module is process-global and poisons later files'
+// `./htmx` imports without --isolate (cross-file contamination).
+if (ISOLATED) {
+  mock.module("./htmx", () => ({
+    apiFetch: (url: string, opts?: RequestInit,) => (globalThis as any).__apiFetch(url, opts,),
+  }),);
+}
 
 // eslint-disable-next-line import/first
 import "./admin";
@@ -40,7 +45,7 @@ function fresh() {
   return globalState.adminPage!();
 }
 
-describe("adminPage factory", () => {
+describeOrSkip("adminPage factory", () => {
   test("returns shared state defaults", () => {
     const a = fresh();
     expect(a.activeTab,).toBe("overview",);
@@ -60,9 +65,9 @@ describe("adminPage factory", () => {
     const a = fresh();
     expect(a.displayKey("foo_bar",),).toBe("Foo Bar",);
   });
-});
+},);
 
-describe("init / destroy", () => {
+describeOrSkip("init / destroy", () => {
   test("init starts overview poll timer", async () => {
     const a = fresh();
     await a.init();
@@ -75,9 +80,9 @@ describe("init / destroy", () => {
     const a = fresh();
     expect(() => a.destroy()).not.toThrow();
   });
-});
+},);
 
-describe("showTab", () => {
+describeOrSkip("showTab", () => {
   test("sets activeTab and loads overview once", () => {
     const a = fresh();
     a.showTab("overview",);
@@ -93,9 +98,9 @@ describe("showTab", () => {
     a.goToSection("users",);
     expect(a.activeTab,).toBe("users",);
   });
-});
+},);
 
-describe("loadOverview", () => {
+describeOrSkip("loadOverview", () => {
   test("populates stats and recentEntries on success", async () => {
     handler = async (url,) => {
       if (url.includes("/stats",)) {
@@ -138,9 +143,9 @@ describe("loadOverview", () => {
     const a = fresh();
     await expect(a.loadOverview(),).resolves.toBeUndefined();
   });
-});
+},);
 
-describe("global showTab fallback", () => {
+describeOrSkip("global showTab fallback", () => {
   test("warns when called", () => {
     const warn = console.warn;
     let warned = false;
@@ -156,9 +161,9 @@ describe("global showTab fallback", () => {
 
     expect(warned,).toBe(true,);
   });
-});
+},);
 
-describe("showTab dispatch", () => {
+describeOrSkip("showTab dispatch", () => {
   test("loads every admin tab once", () => {
     const a = fresh();
     // The factory returns a plain object literal, so its loader methods are
@@ -201,4 +206,4 @@ describe("showTab dispatch", () => {
     expect(called,).toContain("loadClassifierVocab",);
     expect(called,).toContain("loadFederationMatrix",);
   });
-});
+},);

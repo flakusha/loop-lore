@@ -1,6 +1,13 @@
-import { beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { chatVoiceNoteMethods, } from "./chat-voice-notes";
 import type { ChatState, } from "./types";
+
+// Restore the pre-file globalThis.apiFetch after each test so the mock below
+// never leaks into later files in a shared-process serial run.
+const originalApiFetch = (globalThis as { apiFetch?: unknown }).apiFetch;
+afterEach(() => {
+  (globalThis as { apiFetch?: unknown }).apiFetch = originalApiFetch;
+},);
 
 /** Minimal chat-state facade over the voice-note methods under test. */
 function makeState(overrides: Record<string, unknown>,): ChatState {
