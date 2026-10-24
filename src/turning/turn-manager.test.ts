@@ -6,6 +6,7 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertMessages, } from "../test-utils/insert-helpers";
 import { TurnManager, } from "./turn-manager";
+import { createInitialState, } from "./turn-manager/state";
 
 let db: Kysely<DB>;
 const userId = "user-turn-1";
@@ -325,6 +326,22 @@ describe("TurnManager", () => {
       await tm.initialize();
       await tm.requestRegeneration("t1", "test",);
       await tm.clearRegeneration();
+      expect(tm.stateSnapshot!.pendingRegeneration,).toBeNull();
+    });
+
+    // Regression for BUG-turn-manager-lifecycle-requestregeneration-line-26-is-dead-c:
+    // `persistState` re-reads the committed row and replaces `host.state`
+    // before running the mutation, so the old pre-mutation was dead code —
+    // and, when the write could not land, it left the in-memory state
+    // claiming a regeneration that no row carried.
+    test("does not claim a pending regeneration that was never persisted", async () => {
+      // The chat row is gone (deleted after initialize), so `persistState`
+      // has nothing to write.
+      const tm = new TurnManager({ db, chatId: "chat-deleted", },);
+      tm.state = createInitialState();
+
+      await tm.requestRegeneration("turn-1", "low quality",);
+
       expect(tm.stateSnapshot!.pendingRegeneration,).toBeNull();
     });
   });

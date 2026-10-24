@@ -3,7 +3,7 @@
 
 # BUG: POST /actors/:actorId/emotions is a dead endpoint - always 500
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-actors
@@ -14,13 +14,21 @@ Handler destructures { emotionId, intensity, ... } from the body (src/routes/cha
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The handler won the field-name argument: `character_emotions.emotion_id` is a foreign key to `emotions.id`, so a row can only point at an emotion *definition* — the write path is keyed by id, not by name, and the frontend only reads this endpoint (it never posts a body). The schema therefore now declares `emotionId` (uuid) plus the optional `context` / `expiresAt` the handler already wrote, and `intensity` is bounded to the 0-1 scale of the column instead of the schema's 0-100.
+
+With the contract aligned, an unknown `emotionId` would still fail the insert as a driver error (500), so the handler resolves the definition first and answers 404 — the same status the read path uses for an unknown emotion.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+**Resolution:**
+
+- `src/validation/schemas/character-systems.ts:203-211` — `CharacterEmotionBody` now declares `emotionId` (uuid), `intensity` (0-1, the column scale), and the optional `context` / `expiresAt` the handler writes; `emotion_name` is gone.
+- `src/routes/character-emotions/actor.ts:138-154` — the handler resolves the emotion definition before the upsert and answers 404 for an unknown id instead of letting the insert fail.
+- Regression tests: `src/routes/character-emotions/actor.test.ts` → "post upserts the emotion row for a known emotion id" (201 and the row is persisted with the given intensity), "post updates the intensity of an emotion the actor already has", "post returns 404 for an unknown emotion id instead of failing the insert".
 
 ## Review 2026-10-04
 

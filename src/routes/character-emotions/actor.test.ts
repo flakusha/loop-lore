@@ -99,21 +99,60 @@ describe("actorRoutes", () => {
     expect(res.status,).toBe(404,);
   });
 
-  // POST /actors/:actorId/emotions is a known dead endpoint: the validation
-  // schema accepts `emotion_name` only, while the handler destructures
-  // `emotionId`, so a schema-valid body inserts a NULL emotion_id and the
-  // insert fails. Tracked by BUG-post-actors-actorid-emotions-is-a-dead-endpoint-
-  // always-500 — pinned here so the breakage stays visible.
-  test("post rejects a body without the schema's emotion_name", async () => {
+  // Regression for BUG-post-actors-actorid-emotions-is-a-dead-endpoint-always-500:
+  // the body schema accepted `emotion_name` only while the handler read
+  // `emotionId`, so the insert always carried a NULL emotion_id and every
+  // call 500'd. The body now carries the emotion definition's id.
+  test("post upserts the emotion row for a known emotion id", async () => {
     const res = await makeApp("alice",).handle(
       new Request(`http://localhost/api/actors/${ACTOR}/emotions`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ emotionId: EMO_ANGER, },),
+        body: JSON.stringify({ emotionId: EMO_ANGER, intensity: 0.75, },),
       },),
     );
 
-    expect(res.status,).toBe(422,);
+    expect(res.status,).toBe(201,);
+    const row = await db
+      .selectFrom("character_emotions",)
+      .select(["emotion_id", "intensity",],)
+      .where("actor_id", "=", ACTOR,)
+      .where("emotion_id", "=", EMO_ANGER,)
+      .executeTakeFirst();
+
+    expect(row?.emotion_id,).toBe(EMO_ANGER,);
+    expect(row?.intensity,).toBe(0.75,);
+  });
+
+  test("post updates the intensity of an emotion the actor already has", async () => {
+    const res = await makeApp("alice",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotions`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ emotionId: EMO_JOY, intensity: 0.25, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const row = await db
+      .selectFrom("character_emotions",)
+      .select("intensity",)
+      .where("id", "=", OWN_ROW,)
+      .executeTakeFirst();
+
+    expect(row?.intensity,).toBe(0.25,);
+  });
+
+  test("post returns 404 for an unknown emotion id instead of failing the insert", async () => {
+    const res = await makeApp("alice",).handle(
+      new Request(`http://localhost/api/actors/${ACTOR}/emotions`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ emotionId: "123e4567-e89b-12d3-a456-4266141740ff", },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
   });
 
   test("post under an unowned actor returns 404 before touching the table", async () => {
@@ -121,7 +160,7 @@ describe("actorRoutes", () => {
       new Request(`http://localhost/api/actors/${OTHER_ACTOR}/emotions`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ emotion_name: "Joy", },),
+        body: JSON.stringify({ emotionId: EMO_JOY, },),
       },),
     );
 

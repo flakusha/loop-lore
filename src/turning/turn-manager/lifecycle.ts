@@ -23,7 +23,11 @@ export async function requestRegeneration(
   if (currentAttempt >= host.maxRegenerations) { return false; }
 
   const nextAttempt = currentAttempt + 1;
-  host.state.pendingRegeneration = { turnId, attempt: nextAttempt, reason, };
+  // `persistState` re-reads the committed row and REPLACES `host.state` with
+  // a fresh object before running the mutation, so the state is only ever
+  // changed through the mutation that gets persisted. A pre-mutation here
+  // was dead code — and, when the write could not land, it left the
+  // in-memory state claiming a regeneration that no row carried.
   await persistState(host, (state,) => {
     state.pendingRegeneration = { turnId, attempt: nextAttempt, reason, };
   },);

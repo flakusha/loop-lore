@@ -34,10 +34,19 @@ is discarded when `host.state = {...}` executes inside `persistState`.
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`persistState` is the only writer of the turn-manager state: it re-reads the committed row, rebuilds `host.state` from it, and only then runs the caller's mutation. Any direct assignment to `host.state` before that call is therefore discarded — the pre-mutation at line 26 was unreachable.
+
+It was not harmless. When the write cannot land (the chat row is gone), `persistState` returns without touching `host.state`, so the pre-mutation was the only thing that made the in-memory state claim a pending regeneration that no row carried. Removing it makes the in-memory state reflect exactly what was persisted.
+
+Known limitation (not changed here): `requestRegeneration` still returns `true` when the persist could not land — `persistState` does not report the failure. Callers must not treat the return value as "the regeneration is now pending".
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+**Resolution:**
+
+- `src/turning/turn-manager/lifecycle.ts:25-32` — the dead pre-mutation was removed; the state is now only changed through the mutation that `persistState` writes.
+- Regression test: `src/turning/turn-manager.test.ts` → "requestRegeneration() > does not claim a pending regeneration that was never persisted" (the chat row is gone, so nothing can be persisted — the in-memory state must not claim a pending regeneration).
