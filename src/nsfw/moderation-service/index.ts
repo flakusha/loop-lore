@@ -133,11 +133,10 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
       reviewNote,
     },);
 
-  executeReversal = (appealId: string, executedBy: string, approvedBy: string,) =>
+  executeReversal = (appealId: string, executedBy: string,) =>
     executeReversal({
       thisL: this as unknown as NsfwModerationServiceContext,
       appealId,
       executedBy,
-      approvedBy,
     },);
 }

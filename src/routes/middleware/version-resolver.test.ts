@@ -15,8 +15,14 @@
  * `src/elysia-app.ts` so the field is populated for every request.
  */
 
-import { beforeAll, describe, expect, it, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it, test, } from "bun:test";
 import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import { flushActiveStore, } from "../../async/store-registry";
+import { loadConfig, } from "../../config/load";
+import type { DB, } from "../../db/schema";
+import { createApp, } from "../../elysia-app";
+import { createTestDb, } from "../../test-utils/create-test-db";
 import { resolveVersion, versionResolver, } from "./version-resolver";
 
 describe("resolveVersion (helper)", () => {
@@ -154,5 +160,64 @@ describe("createApp wires versionResolver (regression)", () => {
     expect(useIdx,).toBeGreaterThan(-1,);
     expect(regIdx,).toBeGreaterThan(-1,);
     expect(useIdx,).toBeLessThan(regIdx,);
+  });
+});
+
+/**
+ * Regression for BUG-fix-api-return-400-406-for-unknown-api-versions.
+ *
+ * An unknown API version used to fall through to the default version, so the
+ * catch-all 308'd `/api/v2/x` to `/api/v1/v2/x` — a redirect to a 404 instead
+ * of a clear error. The REAL `createApp` wiring is exercised here because the
+ * defect is about the request gate, not the resolver helper.
+ */
+describe("createApp rejects unknown API versions", () => {
+  let db: Kysely<DB>;
+  let app: ReturnType<typeof createApp>;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+    const config = loadConfig();
+    config.auth.required = false;
+    config.assets.uploadDir = ".tmp/";
+    app = createApp({
+      database: db,
+      config,
+      handleNonApiRequest: async () => new Response("nf", { status: 404, },),
+      handleApiRequest: async () => new Response("nf", { status: 404, },),
+    },);
+  },);
+
+  afterAll(async () => {
+    // Quiesce the async-store queue before closing the DB handle, otherwise
+    // queued writes hit a closed database.
+    await flushActiveStore();
+    await db.destroy();
+  },);
+
+  test("returns 400 for an unknown path version instead of redirecting to a 404", async () => {
+    const res = await app.handle(new Request("http://localhost/api/v2/chats",),);
+
+    expect(res.status,).toBe(400,);
+    const body = await res.text();
+    expect(body,).toContain("Unsupported API version",);
+    expect(body,).toContain("BAD_REQUEST",);
+  });
+
+  test("returns 400 for an unknown Accept-header version", async () => {
+    const res = await app.handle(
+      new Request("http://localhost/api/chats", {
+        headers: { Accept: "application/vnd.loop-lore.v2+json", },
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("leaves the legacy unversioned redirect intact", async () => {
+    const res = await app.handle(new Request("http://localhost/api/chats",),);
+
+    expect(res.status,).toBe(308,);
+    expect(res.headers.get("location",),).toBe("/api/v1/chats",);
   });
 });

@@ -11,12 +11,14 @@
  *   - PUT /api/nsfw/moderation/appeals/:id/review — moderator/admin
  *     only; reviewer is taken from the session, never the body.
  *   - POST /api/nsfw/moderation/appeals/:id/execute — `admin.users`
- *     capability AND `executedBy !== approvedBy`. Plain admins
- *     without `admin.users` are denied.
+ *     capability AND the executor MUST NOT be the admin who approved
+ *     the appeal. Plain admins without `admin.users` are denied.
  *
  * The dual-admin guard is enforced inside the service
- * (`executeReversal` throws when executedBy === approvedBy); this
- * layer verifies the route wires that invariant correctly.
+ * (`executeReversal` throws when the executor equals the appeal's
+ * server-side `reviewed_by`); this layer verifies the route wires that
+ * invariant correctly — and that a client-supplied approver cannot
+ * bypass it.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -82,6 +84,19 @@ describe("nsfw moderation appeal routes", () => {
   beforeAll(async () => {
     createLogger({ level: "warn", },);
     ({ db, sqlite, } = await createTestDb());
+    // notifications.user_id has a FK to users.id — the reversal notifies the
+    // moderator who applied the original action (seedAction's `admin-x`).
+    await db.insertInto("users",).values({
+      id: "admin-x",
+      username: "admin-x",
+      display_name: "Admin X",
+      secret_hash: null,
+      role: "admin",
+      status: "active",
+      settings: "{}",
+      row_version: 0,
+      created_at: "2026-01-01T00:00:00.000Z",
+    },).execute();
   },);
 
   afterAll(async () => {
@@ -234,7 +249,7 @@ describe("nsfw moderation appeal routes", () => {
     expect(res.status,).toBe(403,);
   });
 
-  test("POST /:id/execute rejected when executedBy === approvedBy", async () => {
+  test("POST /:id/execute rejected when the executor is the approving admin", async () => {
     const owner = uid();
     const actionId = `act-${uid()}`;
     await seedAction(db, actionId, owner,);
@@ -271,5 +286,56 @@ describe("nsfw moderation appeal routes", () => {
     );
 
     expect(exec.status,).toBe(400,);
+  });
+
+  test("POST /:id/execute ignores a forged approver in the body", async () => {
+    const owner = uid();
+    const actionId = `act-${uid()}`;
+    await seedAction(db, actionId, owner,);
+    const adminId = uid();
+    const ownerApp = createApp(db, owner,);
+    const submit = await ownerApp.handle(
+      submitRequest({ actionId, reason: "x", },),
+    );
+
+    const { data: appeal, } = await submit.json() as { data: { id: string } };
+    // The same admin reviews the appeal, then claims a different approver in
+    // the body to slip past the dual-admin guard.
+    const adminApp = createApp(db, adminId, "admin",);
+    await adminApp.handle(
+      new Request(
+        `http://localhost/api/nsfw/moderation/appeals/${appeal.id}/review`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ status: "approved", reviewNote: "ok", },),
+        },
+      ),
+    );
+
+    const exec = await adminApp.handle(
+      new Request(
+        `http://localhost/api/nsfw/moderation/appeals/${appeal.id}/execute`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ approvedBy: uid(), },),
+        },
+      ),
+    );
+
+    expect(exec.status,).toBe(400,);
+    // No reversal may run: the appeal stays pending and the block stays on.
+    const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
+      .where("id", "=", appeal.id,).executeTakeFirst();
+
+    expect(appealRow?.status,).toBe("pending_reversal",);
+
+    const reversal = await db.selectFrom("moderation_actions",).select("id",)
+      .where("action_type", "=", "unblock",)
+      .where("target_user_id", "=", owner,)
+      .executeTakeFirst();
+
+    expect(reversal,).toBeUndefined();
   });
 });

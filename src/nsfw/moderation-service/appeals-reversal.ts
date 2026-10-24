@@ -17,17 +17,17 @@ import type { ModAction, NsfwModerationServiceContext, } from "./types";
 export interface ExecuteReversalArgs {
   thisL: NsfwModerationServiceContext;
   appealId: string;
+  /** The admin executing the reversal — always the authenticated session's user. */
   executedBy: string;
-  /** The original approver's userId — MUST differ from `executedBy`. */
-  approvedBy: string;
 }
 
 /**
  * Execute the reversal of an appeal-approved moderation action.
  *
  * Guarded by:
- *   1. Caller `executedBy` MUST differ from the original approver
- *      (`approvedBy`) — dual-admin confirmation.
+ *   1. Caller `executedBy` MUST differ from the admin who approved the
+ *      appeal (`moderation_appeals.reviewed_by`, recorded server-side
+ *      from that reviewer's session) — dual-admin confirmation.
  *   2. The appeal MUST be in `pending_reversal` status.
  *   3. The target action MUST be superseded by this appeal.
  *
@@ -39,8 +39,6 @@ export interface ExecuteReversalArgs {
  * @param root0.thisL
  * @param root0.appealId
  * @param root0.executedBy
- * @param root0.approvedBy
- * @throws {Error}
  * @throws {Error}
  * @throws {Error}
  * @throws {Error}
@@ -49,20 +47,30 @@ export interface ExecuteReversalArgs {
  * @returns {Promise<ModAction>}
  */
 export async function executeReversal(
-  { thisL, appealId, executedBy, approvedBy, }: ExecuteReversalArgs,
+  { thisL, appealId, executedBy, }: ExecuteReversalArgs,
 ): Promise<ModAction> {
-  if (executedBy === approvedBy) {
-    throw new Error("executeReversal: a second admin is required for reversals.",);
-  }
-
   const appeal = await thisL.db.selectFrom("moderation_appeals",)
     .selectAll()
     .where("id", "=", appealId,)
     .executeTakeFirst() as unknown as
-      | { id: string; action_id: string; status: string; user_id: string }
+      | {
+        id: string;
+        action_id: string;
+        status: string;
+        user_id: string;
+        reviewed_by: string | null;
+      }
       | undefined;
 
   if (!appeal) { throw new Error(`executeReversal: appeal ${appealId} not found.`,); }
+
+  // Dual-admin confirmation: the approver is the admin recorded on the
+  // appeal row (server-side, written from the reviewer's session) — never
+  // a client-supplied value, so a caller cannot self-approve by forging one.
+  if (executedBy === appeal.reviewed_by) {
+    throw new Error("executeReversal: a second admin is required for reversals.",);
+  }
+
   if (appeal.status !== "pending_reversal") {
     throw new Error(
       `executeReversal: appeal ${appealId} is in status "${appeal.status}", expected "pending_reversal".`,
@@ -107,7 +115,7 @@ export async function executeReversal(
   thisL.log.info("Appeal reversal executed", {
     appealId,
     executedBy,
-    approvedBy,
+    approvedBy: appeal.reviewed_by,
     originalActionId: action.id,
     reversalActionId: reversal.id,
   },);

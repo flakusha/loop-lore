@@ -444,7 +444,7 @@ describe("reviewAppeal", () => {
 });
 
 describe("executeReversal", () => {
-  test("throws when caller is the same as the approver (single-admin guard)", async () => {
+  test("throws when the caller is the admin who approved the appeal (single-admin guard)", async () => {
     await insertActionRow({ id: "action-r1", actionType: "block", targetUserId: USER, },);
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r1", reason: "x", },);
     await reviewAppeal({
@@ -459,7 +459,6 @@ describe("executeReversal", () => {
       thisL: makeCtx(),
       appealId: appeal.id,
       executedBy: "admin-1",
-      approvedBy: "admin-1",
     },),).rejects.toThrow(/a second admin is required/,);
   });
 
@@ -478,7 +477,6 @@ describe("executeReversal", () => {
       thisL: makeCtx(),
       appealId: appeal.id,
       executedBy: "admin-2",
-      approvedBy: "admin-1",
     },),).rejects.toThrow(/expected "pending_reversal"/,);
   });
 
@@ -511,7 +509,6 @@ describe("executeReversal", () => {
       thisL: makeCtx({ unblockUser: unblock, },),
       appealId: appeal.id,
       executedBy: "admin-2",
-      approvedBy: "admin-1",
     },);
 
     expect(unblock,).toHaveBeenCalledTimes(1,);
@@ -577,7 +574,6 @@ describe("executeReversal", () => {
       thisL: makeCtx({ unblockUser: unblock, },),
       appealId: appeal.id,
       executedBy: "admin-2",
-      approvedBy: "admin-1",
     },);
 
     const note = await db.selectFrom("notifications",).selectAll()
@@ -609,7 +605,6 @@ describe("executeReversal", () => {
       thisL: makeCtx({ unblockUser: unblock, },),
       appealId: appeal.id,
       executedBy: "admin-2",
-      approvedBy: "admin-1",
     },),).rejects.toThrow(/not found/,);
 
     // The reversal side effects MUST NOT fire when the action is tombstoned.

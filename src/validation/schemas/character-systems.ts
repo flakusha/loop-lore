@@ -200,9 +200,14 @@ export const WorldActorParams = t.Object({
   actorId: t.String({ format: "uuid", },),
 },);
 
+// The handler upserts by `character_emotions.emotion_id` (FK → emotions.id),
+// so the body carries the emotion definition's id — not its name. The column
+// is a 0-1 scale (default 0.5), so the body is bounded to the same range.
 export const CharacterEmotionBody = t.Object({
-  emotion_name: t.String({ minLength: 1, },),
-  intensity: t.Optional(t.Number({ minimum: 0, maximum: 100, },),),
+  emotionId: t.String({ format: "uuid", }),
+  intensity: t.Optional(t.Number({ minimum: 0, maximum: 1, }),),
+  context: t.Optional(t.String(),),
+  expiresAt: t.Optional(t.String(),),
 },);
 
 export const EmotionDefinitionCreateBody = t.Object({

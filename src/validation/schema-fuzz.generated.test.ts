@@ -1260,12 +1260,6 @@ describe("executeResponse", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_trade_shared.executeResponse,));
 });
 
-describe("executeReversalBody", () => {
-  test("accepts generated values", () => checkAllValid(routes_nsfwModeration_appeals.executeReversalBody,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_nsfwModeration_appeals.executeReversalBody,));
-});
-
 describe("flagBody", () => {
   test("accepts generated values", () => checkAllValid(routes_nsfwModeration_shared.flagBody,));
 
@@ -2692,4 +2686,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 426 schemas discovered across 518 module(s).
+// 425 schemas discovered across 518 module(s).
