@@ -121,7 +121,10 @@ document.addEventListener("htmx:response:error", (e: Event,) => {
   }
 
   const res = detail?.ctx?.response;
-  if (!res) { return; }
+  // htmx may hand back a non-Response payload here (a stub or a plain
+  // object); calling .clone() on it throws inside the event handler and
+  // surfaces as an uncaught page error.
+  if (!res || typeof res.clone !== "function") { return; }
   res
     .clone()
     .text()
