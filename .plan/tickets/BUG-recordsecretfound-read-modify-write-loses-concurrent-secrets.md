@@ -3,7 +3,7 @@
 
 # BUG: recordSecretFound read-modify-write loses concurrent secrets
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-replayability
@@ -21,3 +21,5 @@ recordSecretFound (src/rpg/replayability/service/playthrough.ts:181-206) reads p
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue b9235db (registry tip: 2b5bd97ec Konstantin Fedotov Close issue)
