@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3667
 - epics: 350
-- src paths owned: 4445
-- edges: produces 11661, consumes 404, sibling 35206, owns 2649, related 1191
+- src paths owned: 4449
+- edges: produces 11668, consumes 404, sibling 35206, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -106,11 +106,13 @@ output is byte-identical for identical inputs.
 | `src/assistant/adapter/worlds.ts` | `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-world-location-access` |
 | `src/assistant/command-parser.ts` | `BUG-assistant-and-group-chat-correctness-defects`, `EPIC-2026-23`, `TASK-assistant-command-execution-intent-detection`, `TASK-assistant-commands-extension`, `TASK-assistant-creative-studio-workflows`, `epic-assistant-creative-studio-workflows`, `epic-frontend-chat-commands`, `epic-impersonation` |
 | `src/assistant/commands/adapt.ts` | `TASK-assistant-entity-access-adaptation`, `epic-assistant-entity-access` |
+| `src/assistant/commands/apply.ts` | `TASK-assistant-entity-access-modification-addition`, `epic-assistant-entity-access` |
 | `src/assistant/commands/assets.test.ts` | `TASK-assistant-entity-access-tests`, `epic-assistant-entity-access` |
 | `src/assistant/commands/assets.ts` | `TASK-assistant-entity-access-asset-access`, `TASK-assistant-entity-access-batch-rag-asset`, `epic-assistant-entity-access` |
 | `src/assistant/commands/attack.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `TASK-rpg-gate-chat-commands-behind-world-opt-in` |
 | `src/assistant/commands/battle.ts` | `TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-`, `TASK-rpg-gate-chat-commands-behind-world-opt-in` |
 | `src/assistant/commands/characters-access.ts` | `BUG-dev-red-at-head-assistant-command-module-split-broke-registr`, `epic-assistant-entity-access` |
+| `src/assistant/commands/clone.ts` | `TASK-assistant-entity-access-modification-addition`, `epic-assistant-entity-access` |
 | `src/assistant/commands/create-entity-lore.ts` | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-`, `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so`, `epic-character-npc-lore-access` |
 | `src/assistant/commands/create-entity.ts` | `BUG-create-entity-confirm-bypasses-world-ownership`, `TASK-item-generation-review-parity-extract-category-rarity-stats-`, `TASK-typescript-7-migration-typecheck-failures`, `epic-assistant-gm-flows`, `epic-locations` |
 | `src/assistant/commands/create.ts` | `BUG-assistant-improve-translate-rewrite-never-call-llm`, `FEAT-creative-process-commit-gating`, `FEAT-lore-structured-generation-via-assistant`, `FEAT-origin-capture-generation-seeding`, `FEAT-world-template-chat-lifecycle`, `TASK-assistant-command-execution-intent-detection`, `TASK-assistant-creative-studio-workflow-character`, `TASK-creation-quality-gating-confirmation`, `TASK-generation-failure-exposure-sanitize-raw-llm-error-output-in`, `TASK-item-generation-review-parity-extract-category-rarity-stats-`, `TASK-llm-markdown-document-prompts`, `TASK-precompiled-templates-injection`, `TASK-route-plugin-calls-through-the-shared-provider-path`, `epic-assistant-generation-extensions`, `epic-assistant-gm-flows`, `epic-entity-generation-workflows` |
@@ -128,6 +130,7 @@ output is byte-identical for identical inputs.
 | `src/assistant/commands/items.test.ts` | `BUG-dev-red-at-head-assistant-command-module-split-broke-registr`, `TASK-assistant-entity-access-tests` |
 | `src/assistant/commands/items.ts` | `TASK-assistant-entity-access-character-item-inventory`, `epic-assistant-entity-access` |
 | `src/assistant/commands/locations.ts` | `TASK-assistant-entity-access-world-location-access`, `epic-assistant-entity-access` |
+| `src/assistant/commands/modify.ts` | `TASK-assistant-entity-access-modification-addition`, `epic-assistant-entity-access` |
 | `src/assistant/commands/music.ts` | `BUG-advertised-sfx-music-video-commands-are-stubs`, `epic-assistant-generation-extensions` |
 | `src/assistant/commands/quest.ts` | `EPIC-2026-23`, `epic-assistant-generation-extensions` |
 | `src/assistant/commands/rag.test.ts` | `TASK-assistant-entity-access-tests`, `epic-assistant-entity-access` |
@@ -2093,7 +2096,7 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-asset-access` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/assets.ts; src/assistant/commands/index.ts` |
 | `TASK-assistant-entity-access-character-item-inventory` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/items.ts; src/routes/story-items/handlers.ts` |
 | `TASK-assistant-entity-access-duplication` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/duplicate.ts; src/assistant/quality/entity-creation.ts` |
-| `TASK-assistant-entity-access-modification-addition` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/import.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
+| `TASK-assistant-entity-access-modification-addition` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/apply.ts; src/assistant/commands/clone.ts; src/assistant/commands/import.ts; src/assistant/commands/modify.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
 | `TASK-assistant-entity-access-quota-engine` | consumes | `epic-resource-provision` | `src/crypto/byok.ts` |
 | `TASK-assistant-entity-access-rag-access` | consumes | `epic-assistant-entity-access` | `src/assistant/commands/rag.ts` |
 | `TASK-assistant-entity-access-schema` | consumes | `epic-assistant-entity-access` | `src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts` |
@@ -8703,7 +8706,11 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-duplication` | produces | `src/assistant/commands/duplicate.ts` | - |
 | `TASK-assistant-entity-access-duplication` | produces | `src/assistant/quality/entity-creation.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/adapter/entity.ts` | - |
-| `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/adapter/modify.ts` | - |
+| `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/apply.ts` | - |
+| `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/clone.ts` | - |
+| `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/entity-guard.ts` | - |
+| `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/entity-patch-spec.ts` | - |
+| `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/entity-patch.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/import.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/commands/modify.ts` | - |
 | `TASK-assistant-entity-access-modification-addition` | produces | `src/assistant/quality/entity-creation.ts` | - |
@@ -14326,14 +14333,17 @@ output is byte-identical for identical inputs.
 | `epic-assistant-creative-studio-workflows` | produces | `src/routes/generation/video.ts` | - |
 | `epic-assistant-creative-studio-workflows` | produces | `src/routes/messages/command.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/adapt.ts` | - |
+| `epic-assistant-entity-access` | produces | `src/assistant/commands/apply.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/assets.test.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/assets.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/characters-access.ts` | - |
+| `epic-assistant-entity-access` | produces | `src/assistant/commands/clone.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/duplicate.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/import.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/index.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/items.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/locations.ts` | - |
+| `epic-assistant-entity-access` | produces | `src/assistant/commands/modify.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/rag.test.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/rag.ts` | - |
 | `epic-assistant-entity-access` | produces | `src/assistant/commands/registry.ts` | - |

@@ -2419,12 +2419,6 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
     }
   ],
-  "src/assistant/adapter/modify.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
-    }
-  ],
   "src/assistant/adapter/quality.ts": [
     {
       "kind": "ticket",
@@ -2541,6 +2535,16 @@
       "source": ".plan/tickets/TASK-assistant-analyze-slash-command-over-prompt-analysis-service.md"
     }
   ],
+  "src/assistant/commands/apply.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    }
+  ],
   "src/assistant/commands/assets.test.ts": [
     {
       "kind": "epic",
@@ -2641,6 +2645,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
+    }
+  ],
+  "src/assistant/commands/clone.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
     }
   ],
   "src/assistant/commands/commit.ts": [
@@ -2803,6 +2817,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
+    }
+  ],
+  "src/assistant/commands/entity-guard.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    }
+  ],
+  "src/assistant/commands/entity-patch-spec.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    }
+  ],
+  "src/assistant/commands/entity-patch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
     }
   ],
   "src/assistant/commands/games.ts": [
@@ -3034,6 +3066,10 @@
     }
   ],
   "src/assistant/commands/modify.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"

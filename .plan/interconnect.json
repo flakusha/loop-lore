@@ -18891,7 +18891,11 @@
       "status": "done",
       "srcRefs": [
         "src/assistant/adapter/entity.ts",
-        "src/assistant/adapter/modify.ts",
+        "src/assistant/commands/apply.ts",
+        "src/assistant/commands/clone.ts",
+        "src/assistant/commands/entity-guard.ts",
+        "src/assistant/commands/entity-patch-spec.ts",
+        "src/assistant/commands/entity-patch.ts",
         "src/assistant/commands/import.ts",
         "src/assistant/commands/modify.ts",
         "src/assistant/quality/entity-creation.ts",
@@ -46534,14 +46538,17 @@
       "status": "in_progress",
       "srcRefs": [
         "src/assistant/commands/adapt.ts",
+        "src/assistant/commands/apply.ts",
         "src/assistant/commands/assets.test.ts",
         "src/assistant/commands/assets.ts",
         "src/assistant/commands/characters-access.ts",
+        "src/assistant/commands/clone.ts",
         "src/assistant/commands/duplicate.ts",
         "src/assistant/commands/import.ts",
         "src/assistant/commands/index.ts",
         "src/assistant/commands/items.ts",
         "src/assistant/commands/locations.ts",
+        "src/assistant/commands/modify.ts",
         "src/assistant/commands/rag.test.ts",
         "src/assistant/commands/rag.ts",
         "src/assistant/commands/registry.ts",
@@ -53561,12 +53568,6 @@
       ]
     },
     {
-      "path": "src/assistant/adapter/modify.ts",
-      "owners": [
-        "TASK-assistant-entity-access-modification-addition"
-      ]
-    },
-    {
       "path": "src/assistant/adapter/quality.ts",
       "owners": [
         "TASK-assistant-entity-access-adapter"
@@ -53646,6 +53647,13 @@
       "path": "src/assistant/commands/analyze.ts",
       "owners": [
         "TASK-assistant-analyze-slash-command-over-prompt-analysis-service"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/apply.ts",
+      "owners": [
+        "TASK-assistant-entity-access-modification-addition",
+        "epic-assistant-entity-access"
       ]
     },
     {
@@ -53733,6 +53741,13 @@
       ]
     },
     {
+      "path": "src/assistant/commands/clone.ts",
+      "owners": [
+        "TASK-assistant-entity-access-modification-addition",
+        "epic-assistant-entity-access"
+      ]
+    },
+    {
       "path": "src/assistant/commands/commit.ts",
       "owners": [
         "FEAT-creative-process-commit-gating"
@@ -53811,6 +53826,24 @@
       "owners": [
         "TASK-assistant-entity-access-duplication",
         "epic-assistant-entity-access"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/entity-guard.ts",
+      "owners": [
+        "TASK-assistant-entity-access-modification-addition"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/entity-patch-spec.ts",
+      "owners": [
+        "TASK-assistant-entity-access-modification-addition"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/entity-patch.ts",
+      "owners": [
+        "TASK-assistant-entity-access-modification-addition"
       ]
     },
     {
@@ -53952,7 +53985,8 @@
     {
       "path": "src/assistant/commands/modify.ts",
       "owners": [
-        "TASK-assistant-entity-access-modification-addition"
+        "TASK-assistant-entity-access-modification-addition",
+        "epic-assistant-entity-access"
       ]
     },
     {
@@ -86677,7 +86711,7 @@
       "from": "TASK-assistant-entity-access-modification-addition",
       "kind": "consumes",
       "to": "epic-assistant-entity-access",
-      "via": "src/assistant/commands/import.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts"
+      "via": "src/assistant/commands/apply.ts; src/assistant/commands/clone.ts; src/assistant/commands/import.ts; src/assistant/commands/modify.ts; src/assistant/quality/entity-creation.ts; src/routes/story-items/handlers.ts"
     },
     {
       "from": "TASK-assistant-entity-access-quota-engine",
@@ -120025,7 +120059,27 @@
     {
       "from": "TASK-assistant-entity-access-modification-addition",
       "kind": "produces",
-      "to": "src/assistant/adapter/modify.ts"
+      "to": "src/assistant/commands/apply.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-modification-addition",
+      "kind": "produces",
+      "to": "src/assistant/commands/clone.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-modification-addition",
+      "kind": "produces",
+      "to": "src/assistant/commands/entity-guard.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-modification-addition",
+      "kind": "produces",
+      "to": "src/assistant/commands/entity-patch-spec.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-modification-addition",
+      "kind": "produces",
+      "to": "src/assistant/commands/entity-patch.ts"
     },
     {
       "from": "TASK-assistant-entity-access-modification-addition",
@@ -148140,6 +148194,11 @@
     {
       "from": "epic-assistant-entity-access",
       "kind": "produces",
+      "to": "src/assistant/commands/apply.ts"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "produces",
       "to": "src/assistant/commands/assets.test.ts"
     },
     {
@@ -148151,6 +148210,11 @@
       "from": "epic-assistant-entity-access",
       "kind": "produces",
       "to": "src/assistant/commands/characters-access.ts"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "produces",
+      "to": "src/assistant/commands/clone.ts"
     },
     {
       "from": "epic-assistant-entity-access",
@@ -148176,6 +148240,11 @@
       "from": "epic-assistant-entity-access",
       "kind": "produces",
       "to": "src/assistant/commands/locations.ts"
+    },
+    {
+      "from": "epic-assistant-entity-access",
+      "kind": "produces",
+      "to": "src/assistant/commands/modify.ts"
     },
     {
       "from": "epic-assistant-entity-access",

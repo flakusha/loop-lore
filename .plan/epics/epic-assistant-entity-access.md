@@ -274,11 +274,11 @@ The adaptation engine:
 
 ### B4 — Modification + Addition
 
-- [ ] `/modify` command with quality gates
-- [ ] `/apply` command for direct patches
-- [ ] `/import` command
-- [ ] `/add` command
-- [ ] `/clone` command
+- [x] `/modify` command with quality gates
+- [x] `/apply` command for direct patches
+- [x] `/import` command
+- [x] `/add` command
+- [x] `/clone` command
 
 ### B5 — Duplication + Adaptation
 
@@ -299,9 +299,12 @@ The adaptation engine:
 - `src/assistant/commands/locations.ts` — `/loc-list`, `/loc-get`, `/loc-update` (TODO)
 - `src/assistant/commands/characters-access.ts` — `/char-list`, `/char-get`, `/char-update`, `/char-adapt` (TODO)
 - `src/assistant/commands/items.ts` — `/item-list`, `/item-get`, `/item-update`, `/inventory`, `/item-transfer`, `/item-drop`, `/item-pickup` (TODO)
+- `src/assistant/commands/apply.ts` — `/apply`
+- `src/assistant/commands/modify.ts` — `/modify`
+- `src/assistant/commands/clone.ts` — `/clone`
 - `src/assistant/commands/duplicate.ts` — `/duplicate` (TODO)
 - `src/assistant/commands/adapt.ts` — `/adapt` (TODO)
-- `src/assistant/commands/import.ts` — `/import`, `/add` (TODO)
+- `src/assistant/commands/import.ts` — `/import`, `/add`
 - `src/assistant/quality/adaptation.ts` — Adaptation quality gates (TODO)
 - `src/assistant/adapter/` — Entity adapter composing with existing services (TODO)
 - `src/assistant/commands/registry.ts` — command registry (exists)
