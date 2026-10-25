@@ -3,7 +3,7 @@
 
 # BUG: Plugin route registry lacks ownership enforcement (IDOR)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Epic:** epic-security-sandboxing
 **Effort:** Medium
@@ -71,3 +71,5 @@ Status left `Not Started`. No code changed by this assessment.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 7c24397 (registry tip: 52d49572b Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Message idempotency-key dedup not DB-enforced - concurrent duplicate messages
 
-**Status:** In Progress
+**Status:** Done
 **Implementation:** fix-message-idempotency-db-enforced (gates green; plan:sync/plan:validate advisory-only drift is pre-existing from concurrent sessions, identical findings on base)
 **Priority:** high
 **Effort:** Medium
@@ -35,3 +35,5 @@ OPEN on dev - src/db/migrations/001_init.ts:2151-2154 idx_messages_idempotency i
 ## Fix 2026-10-05
 
 Implemented on `fix-message-idempotency-db-enforced`. Commits: migration 040 (`bda8d8f0`), race-loss replay (`f33791be`), outcome propagation (`6635e294`), route short-circuit (`a6da2102`), empty-key coercion (`c3db9d68`), tests (`78bea44a`). Replay behavior proven against a migrated test DB: second same-key insert returns the winner's id and leaves exactly one row. Note: bun:sqlite reports the composite violation as `UNIQUE constraint failed: messages.chat_id, messages.idempotency_key` (each column table-prefixed) — the classifier keys on `messages.idempotency_key` appearing after the failure prefix plus the `SQLITE_CONSTRAINT_UNIQUE: uq_messages_idempotency_enforced` code form.
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 65ade0e (registry tip: 84d8fe60c Konstantin Fedotov Close issue)

@@ -1690,7 +1690,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2727 | 1082 | 45 | 898 | 32 | 0 | 670 |
+| (untagged) | 2727 | 1085 | 45 | 898 | 32 | 0 | 667 |
 
 ## By epic × status
 
@@ -1755,7 +1755,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-battle-ui | 9 | 1 | 0 | 8 | 0 | 0 | 0 |
 | epic-benchmark-ci-regression | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-blog-system | 6 | 1 | 1 | 1 | 0 | 0 | 3 |
-| epic-byok-api-keys | 8 | 3 | 0 | 1 | 0 | 0 | 4 |
+| epic-byok-api-keys | 8 | 4 | 0 | 1 | 0 | 0 | 3 |
 | EPIC-byok-api-keys | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-byok-local-models | 8 | 2 | 0 | 3 | 0 | 0 | 3 |
 | EPIC-byok-local-models | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1912,7 +1912,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-memory-propagation | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | epic-mesh-federation-content-sharing | 10 | 2 | 2 | 2 | 0 | 0 | 4 |
 | epic-message-seen-state | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
-| epic-messages | 9 | 2 | 0 | 5 | 0 | 0 | 2 |
+| epic-messages | 9 | 3 | 0 | 5 | 0 | 0 | 1 |
 | epic-middleware-request-lifecycle | 14 | 11 | 1 | 2 | 0 | 0 | 0 |
 | epic-mini-games | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | epic-mobile-app | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1984,7 +1984,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-runtime-memory-state-hygiene | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-sam3-segmentation-integration | 7 | 0 | 0 | 0 | 0 | 0 | 7 |
 | epic-schema | 13 | 0 | 0 | 8 | 0 | 0 | 5 |
-| epic-security-sandboxing | 15 | 4 | 0 | 7 | 0 | 0 | 4 |
+| epic-security-sandboxing | 15 | 5 | 0 | 7 | 0 | 0 | 3 |
 | epic-server-lifecycle-hardening | 6 | 5 | 0 | 0 | 0 | 0 | 1 |
 | epic-shared-schemas | 7 | 7 | 0 | 0 | 0 | 0 | 0 |
 | epic-skills | 8 | 1 | 1 | 1 | 0 | 0 | 5 |
