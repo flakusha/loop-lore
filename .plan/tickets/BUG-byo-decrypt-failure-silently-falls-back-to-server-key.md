@@ -3,7 +3,7 @@
 
 # BUG: BYO decrypt failure silently falls back to server key
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-byok-api-keys
@@ -22,3 +22,5 @@ Decrypt failure (wrong/rotated encryptionKey, corrupt row) only warn-logs (regis
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue f06f2d2 (registry tip: dee54e99e Konstantin Fedotov Close issue)
