@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { startInputModeTracking, } from "../a11y/responsive";
 import { $, } from "../dom";
 import {
   applyDirection,
@@ -42,6 +43,10 @@ globalThis.app = function() {
      */
     init() {
       initTelemetry();
+      // App-global input-mode tracker (touch-user/mouse-user body classes).
+      // init() re-runs across htmx body swaps; the singleton in a11y/
+      // responsive.ts keeps this a once-per-page-load start.
+      startInputModeTracking();
       const initCount = (globalThis.__appInitCount ?? 0) + 1;
       globalThis.__appInitCount = initCount;
       log.debug("init", { initCount, },);

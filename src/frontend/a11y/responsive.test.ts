@@ -8,7 +8,13 @@
  * pointerdown source and the class target are deterministic fakes.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { createInputModeTracker, HOVER_QUERY, REDUCED_MOTION_QUERY, } from "./responsive";
+import {
+  createInputModeTracker,
+  HOVER_QUERY,
+  REDUCED_MOTION_QUERY,
+  startInputModeTracking,
+  stopInputModeTracking,
+} from "./responsive";
 
 import type { InputModeSnapshot, PointerEventSource, } from "./responsive";
 
@@ -95,6 +101,58 @@ beforeEach(() => {
 afterEach(() => {
   globals.matchMedia = originalMatchMedia;
 },);
+
+// ── wiring singleton ─────────────────────────────────────────────────
+
+describe("input-mode wiring singleton", () => {
+  const originalDocument = globals.document;
+  const originalWindow = globals.window;
+
+  afterEach(() => {
+    stopInputModeTracking();
+    globals.document = originalDocument;
+    globals.window = originalWindow;
+  },);
+
+  test("start is idempotent across repeated app() inits", () => {
+    const events = createFakeEvents();
+    const target = createFakeTarget();
+    globals.document = { body: target, };
+    globals.window = events;
+
+    startInputModeTracking();
+    startInputModeTracking(); // htmx body swap re-runs app() init
+
+    expect(events.listeners.size,).toBe(1,);
+    firePointerDown(events, "touch",);
+    expect(target.has("touch-user",),).toBe(true,);
+  });
+
+  test("stop clears classes and listeners; a restart re-arms cleanly", () => {
+    const events = createFakeEvents();
+    const target = createFakeTarget();
+    globals.document = { body: target, };
+    globals.window = events;
+
+    startInputModeTracking();
+    firePointerDown(events, "mouse",);
+    expect(target.has("mouse-user",),).toBe(true,);
+
+    stopInputModeTracking();
+    expect(target.has("mouse-user",),).toBe(false,);
+    expect(events.listeners.size,).toBe(0,);
+
+    // Restart after teardown must attach exactly one new listener.
+    startInputModeTracking();
+    expect(events.listeners.size,).toBe(1,);
+    firePointerDown(events, "pen",);
+    expect(target.has("touch-user",),).toBe(true,);
+  });
+
+  test("stop without start is a no-op", () => {
+    expect(() => stopInputModeTracking()).not.toThrow();
+  });
+});
 
 // ── snapshot construction ──────────────────────────────────────────────
 

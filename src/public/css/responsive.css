@@ -90,6 +90,27 @@
   }
 }
 
+/* ── Input-mode classes (JS tracker) ───────────────────────
+   body.touch-user / body.mouse-user are set by the input-mode
+   tracker (a11y/responsive.ts, started from alpine/app.ts).
+   They classify OBSERVED input, where media queries classify
+   the device once: on hybrid touch-laptops reporting
+   `(hover: hover) and (pointer: fine)`, tap-revealed `:hover`
+   menus stick and hover-only affordances never open. These
+   rules sit after app.css (loaded last) and match its
+   selectors at equal/higher specificity, so they win.
+   body.mouse-user needs no rules: the desktop media-query
+   reality it describes is already the un-tagged default. */
+body.touch-user .message .bubble .actions-compact,
+body.touch-user .message .bubble .actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.touch-user .nav-item-row .nav-item-actions {
+  opacity: 1;
+}
+
 /* ── Print ─────────────────────────────────────────────────
    Opt-in utilities for views: `.no-print` hides, `.print-only`
    shows on paper only. Chrome (nav, toasts, modals, composer)

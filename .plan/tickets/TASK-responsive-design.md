@@ -23,7 +23,7 @@ Implement responsive design system with breakpoints, fluid typography, flexible 
 - [x] Fluid typography scaling — `clamp()` overrides for the shared `--fs-lg` … `--fs-display` tokens (pixel-identical at ≥1200px, floored on phones); reading sizes (`xs`–`md`) intentionally stay fixed for legibility
 - [x] Flexible grid layouts — `.asset-grid` was already fluid (`auto-fill`/`minmax`); `.rpg-stats-grid` now collapses to one column under 480px
 - [x] Mobile-first CSS approach — `responsive.css` is authored mobile-first (base = smallest tier, `min-width` tiers layer up); converting legacy `app.css` blocks is out of scope (see notes)
-- [x] Touch vs. mouse detection — `createInputModeTracker()` factory in `src/frontend/a11y/responsive.ts` (snapshot + `touch-user`/`mouse-user` classes, hybrid-safe); coarse-pointer CSS targets pre-existed; module is unwired so far (no JS consumer yet)
+- [x] Touch vs. mouse detection — `createInputModeTracker()` factory in `src/frontend/a11y/responsive.ts` (snapshot + `touch-user`/`mouse-user` classes, hybrid-safe); coarse-pointer CSS targets pre-existed; wired once per page load from `alpine/app.ts` init() via the idempotent `startInputModeTracking()` singleton, with `body.touch-user` hover-reveal overrides in `responsive.css`
 - [x] Reduced motion support — global `0.01ms` duration clamp added as an umbrella over the pre-existing per-component blocks (also stops spinner/typing-dot keyframes)
 - [x] High contrast mode support — `(prefers-contrast: more)` (the draft's `high` value does not parse): muted-text and border tokens remapped to the active theme's `--text-secondary`, focus outline thickened
 - [x] Print styles — `@media print` block: `.no-print`/`.print-only` utilities, app chrome stripped, black-on-white, external link URLs revealed
@@ -307,7 +307,13 @@ export class InputDetector {
 - `src/frontend/a11y/responsive.ts` — input-mode tracker factory
   (`createInputModeTracker()`, options-object, no class, no module state)
 - `src/frontend/a11y/responsive.test.ts` — unit tests (matchMedia/pointer/
-  classList fakes, no DOM)
+  classList fakes, no DOM) plus wiring-singleton tests (start-once guard,
+  end-to-end class toggling through the fake body, teardown/restart)
+- `src/frontend/alpine/app.ts` — starts the tracker in `init()` via
+  `startInputModeTracking()` (once per page load; htmx swaps re-run init
+  and the singleton guards)
+- `src/public/css/responsive.css` — `body.touch-user` hover-reveal
+  overrides for message actions and nav-item actions
 
 ## Implementation Notes (branch a11y-responsive-design, 2026-10-25)
 
@@ -329,6 +335,20 @@ is unwired (no JS consumer yet — same tracked status as `touch.ts`, and a
 follow-up wiring ticket is the natural next step); the draft's
 `getTouchTargetSize()` JS API is dropped — target sizing already belongs to
 CSS. No i18n strings were needed (pure CSS + one class-toggling utility).
+
+**Wiring update (2026-10-25, branch `a11y-tracker-wiring`, stacked on
+`a11y-responsive-design`):** the tracker is no longer unwired.
+`startInputModeTracking()`/`stopInputModeTracking()` module singletons in
+`responsive.ts` start it once per page load from `alpine/app.ts` init()
+(the root `x-data="app()"` component; init re-runs across htmx body swaps
+and the singleton guards against double listeners). `body.touch-user`
+overrides in `responsive.css` force hover-revealed affordances visible
+(message actions, nav-item actions) on devices where `(hover: hover)` media
+queries lie after a real touch; `body.mouse-user` needs no rules (desktop
+media-query reality is already the default). Session-lifetime singleton:
+the root body component has no destroy path, so teardown exists for tests
+and future reuse. Status stays In Progress until both branches land —
+merge order: `a11y-responsive-design` first, then `a11y-tracker-wiring`.
 
 **Gates (scoped, no full check run):** `bunx stylelint
 "src/public/**/*.css"`, `bun run typecheck:frontend`, scoped `eslint` +
