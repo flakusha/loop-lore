@@ -4,6 +4,7 @@
 # BUG: Admin providers list endpoint is public
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — GET /api/v1/providers (src/routes/admin/providers.ts:28-31) now calls `requirePermissionUserId(ctx, "admin.system")` and returns its error response for unauthenticated/unprivileged callers; the full provider health payload is no longer reachable anonymously.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-auth-access
@@ -14,7 +15,7 @@ The GET /api/v1/providers endpoint (src/routes/admin/providers.ts:28-49) is mark
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): GET /api/v1/providers (src/routes/admin/providers.ts:28-31) now calls `requirePermissionUserId(ctx, "admin.system")` and returns its error response for unauthenticated/unprivileged callers; the full provider health payload is no longer reachable anonymously.
 
 **Acceptance Criteria:**
 
