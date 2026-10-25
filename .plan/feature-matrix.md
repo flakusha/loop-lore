@@ -47,7 +47,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | adaptation | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
 | adapter | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
 | adapters | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
-| addition | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| addition | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | admin | 30 | 11 | 0 | 8 | 0 | 0 | 11 |
 | admin-trust | 4 | 4 | 0 | 0 | 0 | 0 | 0 |
 | admin-ui | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
@@ -118,7 +118,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | asset-persistence | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | asset-search | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | assets | 41 | 8 | 2 | 6 | 3 | 0 | 22 |
-| assistant | 57 | 6 | 5 | 20 | 3 | 0 | 23 |
+| assistant | 57 | 7 | 5 | 19 | 3 | 0 | 23 |
 | assistant-chat | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | assistant-flows | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | ast | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -762,7 +762,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | img2img | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | immersion | 5 | 3 | 0 | 0 | 0 | 0 | 2 |
 | impersonation | 3 | 2 | 1 | 0 | 0 | 0 | 0 |
-| import | 4 | 3 | 0 | 1 | 0 | 0 | 0 |
+| import | 4 | 4 | 0 | 0 | 0 | 0 | 0 |
 | import-export | 6 | 0 | 0 | 4 | 0 | 0 | 2 |
 | importer | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | in-chat-edit | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -953,7 +953,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | moderation | 24 | 13 | 3 | 1 | 0 | 0 | 7 |
 | moderator | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | modernization | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| modification | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| modification | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | modifier | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | modifiers | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | modular | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1185,7 +1185,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | qa-mode | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
 | quality | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | quality-assurance | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| quality-gates | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
+| quality-gates | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | quality-gating | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | quarantine | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | query | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1690,7 +1690,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2727 | 1094 | 45 | 898 | 32 | 0 | 658 |
+| (untagged) | 2727 | 1097 | 45 | 898 | 31 | 0 | 656 |
 
 ## By epic × status
 
@@ -1699,7 +1699,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | : | 58 | 27 | 0 | 31 | 0 | 0 | 0 |
 | (if applicable) | 40 | 37 | 0 | 3 | 0 | 0 | 0 |
 | (none — hygiene/self-contained) | 103 | 2 | 2 | 40 | 0 | 0 | 59 |
-| (none — proposed epic never materialized) | 81 | 49 | 0 | 14 | 6 | 0 | 12 |
+| (none — proposed epic never materialized) | 81 | 50 | 0 | 14 | 5 | 0 | 12 |
 | (none) | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | `epic-memory-knowledge-systems.md` | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | battle-ui | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1723,7 +1723,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-api-governance | 6 | 0 | 0 | 3 | 0 | 0 | 3 |
 | epic-api-library-distribution | 13 | 0 | 0 | 3 | 0 | 0 | 10 |
 | epic-api-openapi | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
-| epic-api-rate-limiting | 9 | 7 | 0 | 0 | 0 | 0 | 2 |
+| epic-api-rate-limiting | 9 | 8 | 0 | 0 | 0 | 0 | 1 |
 | epic-api-routes | 4 | 0 | 0 | 1 | 0 | 0 | 3 |
 | epic-api-task-offloading | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-api-telemetry | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
@@ -1734,7 +1734,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-asset-platform-capabilities | 30 | 7 | 0 | 12 | 0 | 0 | 11 |
 | epic-asset-transform-metadata | 11 | 1 | 0 | 9 | 0 | 0 | 1 |
 | epic-assistant-creative-studio-workflows | 12 | 2 | 0 | 0 | 10 | 0 | 0 |
-| epic-assistant-entity-access | 16 | 0 | 0 | 16 | 0 | 0 | 0 |
+| epic-assistant-entity-access | 16 | 1 | 0 | 15 | 0 | 0 | 0 |
 | epic-assistant-entity-access, epic-rag-context-sources | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-assistant-generation-extensions | 12 | 2 | 0 | 6 | 0 | 0 | 4 |
 | epic-assistant-generation-extensions, epic-assistant-gm-flows, epic-image-edit | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1746,7 +1746,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-auth-channel-provisioning | 19 | 0 | 0 | 14 | 0 | 0 | 5 |
 | epic-auth-config-contracts | 6 | 1 | 0 | 0 | 0 | 0 | 5 |
 | epic-authoring-creation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-aux-enrichment-pipeline | 18 | 4 | 4 | 5 | 0 | 0 | 5 |
+| epic-aux-enrichment-pipeline | 18 | 5 | 4 | 5 | 0 | 0 | 4 |
 | epic-avatar-alpha-vn-layering | 13 | 5 | 0 | 7 | 0 | 0 | 1 |
 | epic-avatar-dogfood | 4 | 0 | 1 | 0 | 0 | 0 | 3 |
 | epic-avatar-regeneration-control | 10 | 4 | 0 | 4 | 0 | 0 | 2 |
