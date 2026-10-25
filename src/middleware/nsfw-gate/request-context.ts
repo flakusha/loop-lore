@@ -19,6 +19,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db";
 import { getLogger, } from "../../logger";
+import { effectiveNsfwConfig, } from "../../nsfw/runtime-config";
 import type { NSFWRatingEnforcement, } from "../../schemas/nsfw-rating";
 import { getChatParticipantUserIds, } from "./access";
 import {
@@ -113,7 +114,8 @@ export async function resolveRequestContext(args: RequestContextArgs,): Promise<
   const participantIds = skip?.participants ? [] : await getChatParticipantUserIds(database, chatId,);
   const inputs = await loadGateInputs(database, [userId, ...participantIds,],);
 
-  const base = evaluateNsfwBase(config.nsfw, inputs.get(userId,), {
+  const gateConfig = effectiveNsfwConfig(config.nsfw,);
+  const base = evaluateNsfwBase(gateConfig, inputs.get(userId,), {
     ignoreModeration: skip?.moderation,
   },);
 
@@ -122,7 +124,7 @@ export async function resolveRequestContext(args: RequestContextArgs,): Promise<
   }
 
   if (!skip?.participants) {
-    const blocked = findBlockedParticipantFrom(config.nsfw, inputs, participantIds, userId,);
+    const blocked = findBlockedParticipantFrom(gateConfig, inputs, participantIds, userId,);
     if (blocked) {
       const reason = `participant_blocked:${blocked.reason}`;
       log.info("request-context: participant blocked", {

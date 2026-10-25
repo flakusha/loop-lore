@@ -74,6 +74,27 @@ export function getRuntimeNsfwConfig(): NsfwRuntimeConfig {
 }
 
 /**
+ * Effective NSFW config for enforcement.
+ *
+ * The route layer is handed the boot-time file `Config`, but the admin
+ * kill-switch lives in the runtime store — reading the file value alone
+ * ignores a live admin toggle (the store carries both the admin override
+ * and the live file value). Merge the two sources: NSFW is allowed only
+ * when the file config AND the runtime store allow it, and the minimum
+ * age comes from the runtime store (it carries the admin threshold).
+ * @param fileConfig
+ * @returns {NsfwConfig}
+ */
+export function effectiveNsfwConfig(fileConfig: NsfwConfig,): NsfwConfig {
+  const runtime = getRuntimeNsfwConfig();
+  return {
+    ...fileConfig,
+    allowNsfw: fileConfig.allowNsfw && runtime.allowNsfw,
+    nsfwMinAge: runtime.nsfwMinAge,
+  };
+}
+
+/**
  * Apply a partial update to the live runtime NSFW config.
  * @param partial
  * @returns {void}
