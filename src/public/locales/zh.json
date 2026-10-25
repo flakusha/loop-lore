@@ -51,7 +51,8 @@
     "rename": "Rename",
     "filter": "Filter…",
     "archive": "Archive",
-    "user": "用户"
+    "user": "用户",
+    "actions": "操作"
   },
   "auth": {
     "login": "Log In",
@@ -1979,5 +1980,44 @@
   "battle": {
     "turnOrder": "Turn order",
     "health": "Health"
+  },
+  "frontend": {
+    "keynav": {
+      "tab": "键盘",
+      "help": {
+        "title": "键盘快捷键",
+        "toggle": "显示键盘快捷键",
+        "close": "关闭浮层",
+        "colKey": "按键",
+        "colAction": "操作",
+        "hint": "按 ? 键切换此浮层"
+      },
+      "actions": {
+        "toggle-help": "切换快捷键帮助",
+        "goto-chatlist": "前往聊天列表",
+        "goto-personas": "前往角色设定",
+        "goto-characters": "前往角色",
+        "goto-settings": "前往设置",
+        "goto-gallery": "前往图库",
+        "goto-home": "前往首页",
+        "prev-chat": "上一个聊天",
+        "next-chat": "下一个聊天",
+        "scroll-down": "向下滚动",
+        "scroll-up": "向上滚动"
+      },
+      "editor": {
+        "title": "键盘快捷键",
+        "hint": "点击「重新绑定」后按下按键（或 g g 这样的 g 组合）。? 、Escape 和前缀 g 为保留键。",
+        "rebind": "重新绑定",
+        "reset": "恢复默认",
+        "enable": "启用键盘导航",
+        "enableHint": "开启 keynav 快捷键集（? 帮助、g 组合、j/k 滚动）。在您在此启用之前，快捷键保持关闭。",
+        "pressKey": "请按下按键…",
+        "pressAnother": "请按第二个按键…",
+        "invalid": "无效的快捷键（仅支持单个按键或 g 组合，不能只用修饰键）。",
+        "reserved": "该按键为保留键，无法重新绑定。",
+        "duplicate": "该按键已被其他快捷键使用。"
+      }
+    }
   }
 }

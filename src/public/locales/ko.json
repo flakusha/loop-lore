@@ -51,7 +51,8 @@
     "rename": "Rename",
     "filter": "Filter…",
     "archive": "Archive",
-    "user": "사용자"
+    "user": "사용자",
+    "actions": "동작"
   },
   "auth": {
     "login": "Log In",
@@ -1979,5 +1980,44 @@
   "battle": {
     "turnOrder": "Turn order",
     "health": "Health"
+  },
+  "frontend": {
+    "keynav": {
+      "tab": "키보드",
+      "help": {
+        "title": "키보드 단축키",
+        "toggle": "키보드 단축키 표시",
+        "close": "오버레이 닫기",
+        "colKey": "키",
+        "colAction": "동작",
+        "hint": "? 키로 이 오버레이를 토글합니다"
+      },
+      "actions": {
+        "toggle-help": "단축키 도움말 토글",
+        "goto-chatlist": "채팅 목록으로 이동",
+        "goto-personas": "페르소나로 이동",
+        "goto-characters": "캐릭터로 이동",
+        "goto-settings": "설정으로 이동",
+        "goto-gallery": "갤러리로 이동",
+        "goto-home": "홈으로 이동",
+        "prev-chat": "이전 채팅",
+        "next-chat": "다음 채팅",
+        "scroll-down": "아래로 스크롤",
+        "scroll-up": "위로 스크롤"
+      },
+      "editor": {
+        "title": "키보드 단축키",
+        "hint": "다시 할당을 클릭한 뒤 키를 누르세요(g g 같은 g 쌍도 가능). ? , Escape, 접두사 g는 예약되어 있습니다.",
+        "rebind": "다시 할당",
+        "reset": "기본값으로 재설정",
+        "enable": "키보드 탐색 사용",
+        "enableHint": "keynav 단축키 모음(? 도움말, g 쌍, j/k 스크롤)을 켭니다. 여기서 사용 설정하기 전까지는 단축키가 꺼져 있습니다.",
+        "pressKey": "키를 누르세요…",
+        "pressAnother": "두 번째 키를 누르세요…",
+        "invalid": "잘못된 단축키입니다(단일 키 또는 g 쌍만 가능, 수정 키 단독 불가).",
+        "reserved": "해당 키는 예약되어 있어 다시 할당할 수 없습니다.",
+        "duplicate": "해당 키는 다른 단축키에서 이미 사용 중입니다."
+      }
+    }
   }
 }

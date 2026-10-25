@@ -210,6 +210,24 @@ export function isKeyboardNavEnabled(): boolean {
 }
 
 /**
+ * Write or clear the opt-in `keynav` localStorage flag (Settings toggle).
+ * Storage failures degrade to a logged warning.
+ * @param enabled - True to enable keyboard navigation
+ * @returns {void}
+ */
+export function setKeyboardNavEnabled(enabled: boolean,): void {
+  try {
+    if (enabled) {
+      globalThis.localStorage?.setItem(KEYNAV_FLAG, "1",);
+    } else {
+      globalThis.localStorage?.removeItem(KEYNAV_FLAG,);
+    }
+  } catch (error) {
+    log.warn("keynav flag write failed", { err: (error as Error).message, },);
+  }
+}
+
+/**
  * Dispatch a keynav action on window for Alpine components.
  * @param action - The action identifier from the keymap
  * @returns {void}

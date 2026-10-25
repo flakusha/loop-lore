@@ -51,7 +51,8 @@
     "rename": "Rename",
     "filter": "Filter…",
     "archive": "Archive",
-    "user": "Usuario"
+    "user": "Usuario",
+    "actions": "Acciones"
   },
   "auth": {
     "login": "Log In",
@@ -1979,5 +1980,44 @@
   "battle": {
     "turnOrder": "Turn order",
     "health": "Health"
+  },
+  "frontend": {
+    "keynav": {
+      "tab": "Teclado",
+      "help": {
+        "title": "Atajos de teclado",
+        "toggle": "Mostrar atajos de teclado",
+        "close": "Cerrar ventana",
+        "colKey": "Tecla",
+        "colAction": "Acción",
+        "hint": "Pulsa ? para mostrar u ocultar esta ventana"
+      },
+      "actions": {
+        "toggle-help": "Mostrar u ocultar la ayuda de atajos",
+        "goto-chatlist": "Ir a la lista de chats",
+        "goto-personas": "Ir a personas",
+        "goto-characters": "Ir a personajes",
+        "goto-settings": "Ir a ajustes",
+        "goto-gallery": "Ir a la galería",
+        "goto-home": "Ir al inicio",
+        "prev-chat": "Chat anterior",
+        "next-chat": "Chat siguiente",
+        "scroll-down": "Desplazar hacia abajo",
+        "scroll-up": "Desplazar hacia arriba"
+      },
+      "editor": {
+        "title": "Atajos de teclado",
+        "hint": "Pulsa Reasignar y luego una tecla (o un par como g g). ? , Escape y el prefijo g están reservados.",
+        "rebind": "Reasignar",
+        "reset": "Restaurar valores",
+        "enable": "Activar navegación por teclado",
+        "enableHint": "Activa el conjunto de atajos keynav (? para ayuda, pares g, desplazamiento j/k). Los atajos permanecen desactivados hasta que los actives aquí.",
+        "pressKey": "Pulsa una tecla…",
+        "pressAnother": "Pulsa la segunda tecla…",
+        "invalid": "Atajo no válido (solo una tecla o un par g, sin modificadores solos).",
+        "reserved": "Esa tecla está reservada y no se puede reasignar.",
+        "duplicate": "Esa tecla ya la usa otro atajo."
+      }
+    }
   }
 }

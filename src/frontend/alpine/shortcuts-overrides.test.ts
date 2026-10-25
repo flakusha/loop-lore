@@ -11,8 +11,10 @@ import { beforeEach, describe, expect, it, } from "bun:test";
 import {
   DEFAULT_KEYMAP,
   getKeymap,
+  isKeyboardNavEnabled,
   KEYMAP_STORAGE_KEY,
   resetKeymapOverrides,
+  setKeyboardNavEnabled,
   setKeymapOverride,
   validateKeymapCombo,
 } from "./shortcuts";
@@ -80,6 +82,27 @@ describe("keymap overrides", () => {
     resetKeymapOverrides();
     expect(getKeymap(),).toEqual(DEFAULT_KEYMAP,);
     expect(storage.has(KEYMAP_STORAGE_KEY,),).toBe(false,);
+  });
+});
+
+describe("setKeyboardNavEnabled", () => {
+  it("writes the flag when enabled", () => {
+    setKeyboardNavEnabled(true,);
+    expect(isKeyboardNavEnabled(),).toBe(true,);
+    expect(storage.get("keynav",),).toBe("1",);
+  });
+
+  it("clears the flag when disabled", () => {
+    storage.set("keynav", "1",);
+    setKeyboardNavEnabled(false,);
+    expect(isKeyboardNavEnabled(),).toBe(false,);
+    expect(storage.has("keynav",),).toBe(false,);
+  });
+
+  it("degrades safely when storage is absent", () => {
+    delete (globals as { localStorage?: unknown }).localStorage;
+    expect(() => setKeyboardNavEnabled(true,)).not.toThrow();
+    expect(isKeyboardNavEnabled(),).toBe(false,);
   });
 });
 
