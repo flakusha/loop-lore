@@ -4,6 +4,7 @@
 # BUG: Rate-limit misses POST /emotion-avatars/single
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — `/emotion-avatars/single` is mapped to the generation policy in src/api-governance/rate-limiting/policies.ts:92 (suffix match via `policyForRoute` :112-119), matching the batch rule at :86; the policy table comment :87-91 names this ticket.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-avatar-regeneration-control
@@ -14,7 +15,7 @@ Evidence (approved finding 2, P2; .tmp/concern-dev-2026-10-07.md, .tmp/concern-a
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): `/emotion-avatars/single` is mapped to the generation policy in src/api-governance/rate-limiting/policies.ts:92 (suffix match via `policyForRoute` :112-119), matching the batch rule at :86; the policy table comment :87-91 names this ticket.
 
 **Acceptance Criteria:**
 
