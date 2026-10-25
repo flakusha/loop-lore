@@ -203,9 +203,9 @@ describe("apiKeysRoutes coverage", () => {
     // Two independent requests — the map issues them separately. Kept off
     // byte-identical adjacent lines: the weave-damage scan reads such a pair
     // as a rebase-duplication artifact.
-    const [a, b,] = await Promise.all(
-      [1, 2,].map(() => app.handle(new Request("http://localhost/api/user-api-keys", { ...body, },),)),
-    );
+    const firstRequest = new Request("http://localhost/api/user-api-keys", { ...body, },);
+    const secondRequest = new Request("http://localhost/api/user-api-keys", { ...body, },);
+    const [a, b,] = await Promise.all([app.handle(firstRequest,), app.handle(secondRequest,),],);
 
     expect(a.status,).toBe(200,);
     expect(b.status,).toBe(200,);
