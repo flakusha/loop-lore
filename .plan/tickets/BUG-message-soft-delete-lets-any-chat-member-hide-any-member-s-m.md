@@ -4,6 +4,7 @@
 # BUG: Message soft delete lets any chat member hide any member's message
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — DELETE /api/messages/:id (src/routes/messages/update.ts:57-67) now enforces author-or-admin (`message.actor_id !== actorId && !can(ctx.userRole, "admin.chat")` → 403) BEFORE both the hard-delete and soft `hidden_by_user` branches, so a non-author member can no longer hide another member's message.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-messages
@@ -14,7 +15,7 @@ DELETE /api/messages/:id soft path (src/routes/messages/update.ts:77-83) runs af
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): DELETE /api/messages/:id (src/routes/messages/update.ts:57-67) now enforces author-or-admin (`message.actor_id !== actorId && !can(ctx.userRole, "admin.chat")` → 403) BEFORE both the hard-delete and soft `hidden_by_user` branches, so a non-author member can no longer hide another member's message.
 
 **Acceptance Criteria:**
 
