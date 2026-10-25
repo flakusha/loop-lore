@@ -7,6 +7,7 @@
  * Records a mood event and (optionally) applies its happiness delta.
  */
 import { randomUUID, } from "node:crypto";
+import { withTransaction, } from "../shared-service-utils";
 import { applyHappinessDelta, } from "./apply-happiness-delta";
 import type { LogMoodEventOpts, MoodServiceContext, } from "./types";
 
@@ -31,7 +32,11 @@ export async function logEvent(
   const id = randomUUID();
   const now = new Date().toISOString();
 
-  await thisL.db.transaction().execute(async (trx,) => {
+  // withTransaction reuses the ambient transaction when thisL.db is already
+  // a trx (e.g. encounter fan-out runs under the caller's transaction) — a
+  // raw .transaction() there throws and the caller's best-effort leg would
+  // silently drop the event.
+  await withTransaction(thisL.db, async (trx,) => {
     await trx
       .insertInto("mood_events",)
       .values({

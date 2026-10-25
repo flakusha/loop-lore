@@ -58,4 +58,25 @@ describe("completePlaythrough", () => {
       "Playthrough already completed",
     );
   });
+
+  test("failed meta-progression write rolls the completion back (BUG-service-layer-multi-query-mutations-run-without-transactions)", async () => {
+    // Fail the SECOND write (meta_progression) after the status flip.
+    sqlite.exec(
+      `CREATE TRIGGER fail_meta_progression BEFORE INSERT ON meta_progression
+       BEGIN SELECT RAISE(ABORT, 'simulated meta write failure'); END;`,
+    );
+
+    try {
+      await expect(completePlaythrough(db, "run-1", "ending-dawn", "good", 3600,),).rejects.toThrow();
+
+      // The status flip must roll back with the failed meta write — the run
+      // must stay retryable instead of Completed-without-meta-progression.
+      const row = await db.selectFrom("playthroughs",).select("status",).where("id", "=", "run-1",)
+        .executeTakeFirstOrThrow();
+
+      expect(row.status,).toBe("active",);
+    } finally {
+      sqlite.exec("DROP TRIGGER fail_meta_progression;",);
+    }
+  });
 });

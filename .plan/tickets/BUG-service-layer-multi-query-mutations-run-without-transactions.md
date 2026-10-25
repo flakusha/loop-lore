@@ -3,8 +3,9 @@
 
 # BUG: Service-layer multi-query mutations run without transactions or conditional writes
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Critical
+**Resolved-progress 2026-10-25 (branch fix/bug-sweep, commit "fix(services): make playthrough and encounter completions atomic"):** two legs fixed — (1) completePlaythrough status flip + meta progression now one transaction with conditional status predicate + zero-rows lost-race throw (src/rpg/replayability/service/endings.ts:36-68; repro: trigger aborted meta_progression insert, run stayed Completed pre-fix, stays active now); (2) advancePhase outcome fan-out + completion mark now one transaction with CAS + zero-rows throw (src/rpg/encounters/service/phases.ts:93-130; repro: trigger aborted the nsfw_encounters completion, fan-out stayed applied pre-fix, rolls back now); plus mood logEvent switched to withTransaction so best-effort legs under an ambient trx no longer silently drop events (src/characters/services/mood-service/log-event.ts:34-42). STILL OPEN (verified live on tip): trade/core.ts validates lines on raw db pre-txn and in-txn failure paths are bare returns that commit partial debits; crafting fulfillOrder has no CAS on status; trade/balance ensureBalanceRow SELECT-then-INSERT with no unique index; achievements updateProgress SELECT-then-INSERT no txn/UNIQUE; blog posts updatePost 3 queries; body heat advanceHeatCycle; replayability endings DONE (this fix); encounters phases DONE (this fix); achievements deleteAchievement DONE (prior); bdi-nightly insertPlan loop. Gates: typecheck + eslint green 2026-10-25.
 **Effort:** Medium
 **Epic:** epic-data-integrity-acid
 
