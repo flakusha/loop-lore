@@ -51912,6 +51912,10 @@
   "src/server/start.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec.md"
     },
     {
