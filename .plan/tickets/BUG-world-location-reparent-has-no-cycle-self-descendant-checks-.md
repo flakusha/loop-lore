@@ -3,7 +3,7 @@
 
 # BUG: World location reparent has no cycle/self/descendant checks - wedges DB
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-world-locations
@@ -25,3 +25,5 @@ CRITICAL. PUT /worlds/:worldId/locations/:locId reparent (src/routes/worlds/loca
 ## Review 2026-10-04
 
 OPEN on dev (CRITICAL) - parent_location_id is set from the body via a raw UPDATE with only .where("id") + .where("world_id") (src/routes/worlds/locations.ts:211, 232-237); no self/cycle/existence checks. Same in fix-open-bug-tickets (:118, :211); moveSubtree has zero route callers on dev and in npc-navigation-rescue / feat-actor-autonomy-dispatch.
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 0253416 (registry tip: a156c6b03 Konstantin Fedotov Close issue)

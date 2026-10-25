@@ -3,7 +3,7 @@
 
 # BUG: Swipe-race classifier matches the composite idempotency UNIQUE violation, so merge retries 8 times then throws
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-conversation-branching
@@ -31,3 +31,5 @@ Source: .tmp/glm-review/deep-integrations-1015.md F-1 (gitignored; recorded here
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 200894b (registry tip: 6f8f3d9f5 Konstantin Fedotov Close issue)

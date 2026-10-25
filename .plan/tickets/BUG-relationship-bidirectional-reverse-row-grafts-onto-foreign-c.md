@@ -3,7 +3,7 @@
 
 # BUG: Relationship bidirectional reverse row grafts onto foreign characters
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-relationships
@@ -25,3 +25,5 @@ Relationship creation never validates target_actor_id ownership: with is_bidirec
 ## Review 2026-10-04
 
 OPEN on dev - src/characters/services/relationships-service/write.ts:66-84 inserts the bidirectional reverse row with actor_id = opts.targetActorId, no tenancy/ownership validation and no self-reference rejection; not-found throws remain plain Error (:120-123, :199-202) -> uncaught 500. The route performs no target ownership check (src/routes/character-relationships.ts:86-121). Full history of write.ts on all branches: refactors/lint only; no worktree modifies it.
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 7dc52b2 (registry tip: 66d37ac24 Konstantin Fedotov Close issue)

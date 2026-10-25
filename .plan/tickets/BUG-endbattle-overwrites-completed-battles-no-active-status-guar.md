@@ -3,7 +3,7 @@
 
 # BUG: endBattle overwrites completed battles (no active-status guard)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-battle-action-systems
@@ -21,3 +21,5 @@ endBattle (src/rpg/service/battles.ts:98-115) fetches the battle but never check
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue ea119af (registry tip: 08573e409 Konstantin Fedotov Close issue)
