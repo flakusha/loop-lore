@@ -26,7 +26,7 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-3 + F-8 (gitignored; recorde
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
 
 **Acceptance Criteria:**
 

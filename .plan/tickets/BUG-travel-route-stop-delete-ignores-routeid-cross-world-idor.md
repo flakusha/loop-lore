@@ -14,7 +14,7 @@ removeStop ignores its routeId argument (named _routeId; src/routes/worlds/fract
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
 
 **Acceptance Criteria:**
 
