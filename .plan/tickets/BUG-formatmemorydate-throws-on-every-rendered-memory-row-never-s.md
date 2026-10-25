@@ -3,7 +3,7 @@
 
 # BUG: formatMemoryDate throws on every rendered memory row — never spread onto component
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -31,3 +31,5 @@ FIX DIRECTION: Spread/implement formatMemoryDate on the memoryPanel component.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 27901d8 (registry tip: 92ded9fcc Konstantin Fedotov Close issue)
