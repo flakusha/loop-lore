@@ -8,6 +8,7 @@
 
 import { beforeEach, describe, expect, it, } from "bun:test";
 import {
+  isKeyboardNavEnabled,
   KEYMAP_STORAGE_KEY,
   resetKeymapOverrides,
 } from "../shortcuts";
@@ -104,6 +105,18 @@ describe("settings keynav editor", () => {
     ed.handleRebindKeydown(keyEvent({ key: "Escape", },),);
     expect(ed.rebindingAction,).toBe("",);
     expect(storage.has(KEYMAP_STORAGE_KEY,),).toBe(false,);
+  });
+
+  it("toggleKeyboardNav persists the flag and refreshes keynavEnabled", () => {
+    const ed = editor();
+    ed.loadKeymapSection();
+    expect(ed.keynavEnabled,).toBe(false,);
+    ed.toggleKeyboardNav(true,);
+    expect(ed.keynavEnabled,).toBe(true,);
+    expect(isKeyboardNavEnabled(),).toBe(true,);
+    ed.toggleKeyboardNav(false,);
+    expect(ed.keynavEnabled,).toBe(false,);
+    expect(isKeyboardNavEnabled(),).toBe(false,);
   });
 
   it("actionLabel translates via the i18n module and falls back to the raw id", () => {

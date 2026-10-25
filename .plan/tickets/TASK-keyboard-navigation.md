@@ -24,6 +24,15 @@ history and the remaining open item (context-specific per-page keymaps).
 The last unchecked AC (screen reader navigation) is tracked by
 `TASK-screen-reader-support.md`.
 
+Follow-up (review fixes, same branch): `validateKeymapCombo` now rejects
+non-`g` two-key pairs the listener could never fire; the rebind capture calls
+`stopPropagation()` so the document-level keynav listener no longer sees
+captured keys; and the previously missing opt-in toggle
+(`setKeyboardNavEnabled`, Settings → Keyboard checkbox) now writes/clears the
+`keynav` localStorage flag — before it, nothing on any surface ever set the
+flag, leaving the editor and overlay unreachable. Labels resolve through the
+alpine i18n module (`import { t } from "./i18n"`), not a global lookup.
+
 ## Summary
 
 Implement keyboard navigation system with tab order management, focus trapping for modals, skip links, and focus restoration. Required for WCAG 2.1 AA compliance.

@@ -83,12 +83,13 @@
         "hint": "Click Rebind, then press a key (or a g-pair like g g). ? , Escape and the g prefix are reserved.",
         "rebind": "Rebind",
         "reset": "Reset to defaults",
+        "enable": "Enable keyboard navigation",
+        "enableHint": "Turns on the `keynav` shortcut set (? for help, g-pairs, j/k scrolling). The shortcuts stay off until you enable them here.",
         "pressKey": "Press a key…",
         "pressAnother": "Press second key…",
         "invalid": "Not a valid shortcut (single key or g-pair only, no bare modifiers).",
         "reserved": "That key is reserved and cannot be rebound.",
-        "duplicate": "That key is already used by another shortcut.",
-        "optIn": "Keyboard navigation is off. Enable the “keynav” flag to use shortcuts and this editor."
+        "duplicate": "That key is already used by another shortcut."
       }
     }
   },
