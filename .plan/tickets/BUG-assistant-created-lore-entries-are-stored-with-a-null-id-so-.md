@@ -39,12 +39,28 @@ Pass an explicit id at the insert site — `id: uid()` in `src/assistant/command
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`insertEntityLore` was the only production lore writer that omitted `id`; every other writer (`promote-lore.ts`, `routes/import/lorebook.ts`, `routes/world-import/bundle.ts`) already passes one.
+
+The fix has two halves:
+
+1. The insert site now supplies `id: uid()` (`src/assistant/commands/create-entity-lore.ts:161`), matching the sibling writers. This closes the defect.
+2. The type hole that let the omission compile (`id: Generated<string>` claims a DB default that no migration creates) is closed by the GENERATOR, not by a hand edit of the generated file — `src/db/schema-*.ts` is regenerated from the migration chain, so a hand edit would be reverted by the next `db:sync-types` run.
+
+The generator half is owned by a separate branch (TASK-generated-db-types-mark-every-primary-key-as-db-generated-so, issue `db7edfa`) and is deliberately NOT part of this commit: the general rule change (`col.primaryKey` → not-`Generated`) breaks typecheck repo-wide, so it must land as its own change with its own sweep. See "Resolution" for the cross-reference.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+**Resolution:**
+
+- Fix: `src/assistant/commands/create-entity-lore.ts:157-162` — `loreValues` now carries `id: uid()`, so every assistant-created lore row (both `world_lore_entries` and `actor_lore_entries`, which share the same values object) is stored with a non-null id.
+- Type hardening is NOT in this commit: it belongs to TASK-generated-db-types-mark-every-primary-key-as-db-generated-so (issue `db7edfa`), which owns `scripts/generate-db-types.ts` and the generated `src/db/schema-*.ts`. Until that lands, `world_lore_entries.id` / `actor_lore_entries.id` remain `Generated<string>` and a future omission would still type-check — the regression test below is what guards it in the meantime.
+- Tests: `src/assistant/commands/create-entity-lore.test.ts` — "actor lore rows store a non-null id", "world lore rows store a non-null id", "the cooldown write-back stamps last_activated on the created row".
+  - Before the fix: all 3 FAIL (`expect(received).not.toBeNull()` → `Received: null`; the cooldown write-back updated 0 rows because `WHERE id = NULL` never matches).
+  - After the fix: 3 PASS (verified by temporarily removing the `id: uid()` line and re-running).
+- The third test drives the real prompt section (`loreSection.build`) and asserts the row's `last_activated` flips from NULL to a timestamp — i.e. the cooldown write-back actually reaches the row by id, which is the behaviour the NULL id silently broke.
 
 **Resolved:** 2026-10-25 registry-driven close: git issue b1ade27 (registry tip: e459c197c Konstantin Fedotov Auto-closed: appended .md marker marks BUG-ASSISTANT-CREATED-LORE-ENTRI)
