@@ -7,6 +7,10 @@
       "name": "analyze"
     },
     {
+      "name": "apply",
+      "requiredRole": "member"
+    },
+    {
       "name": "asset-list",
       "requiredRole": "member"
     },
@@ -48,6 +52,10 @@
       "requiredRole": "member"
     },
     {
+      "name": "clone",
+      "requiredRole": "member"
+    },
+    {
       "name": "context"
     },
     {
@@ -66,26 +74,6 @@
     },
     {
       "name": "dice"
-    },
-    {
-      "name": "apply",
-      "requiredRole": "member"
-    },
-    {
-      "name": "add",
-      "requiredRole": "member"
-    },
-    {
-      "name": "clone",
-      "requiredRole": "member"
-    },
-    {
-      "name": "modify",
-      "requiredRole": "owner"
-    },
-    {
-      "name": "import",
-      "requiredRole": "member"
     },
     {
       "name": "guide"
@@ -133,6 +121,14 @@
     },
     {
       "name": "char"
+    },
+    {
+      "name": "import",
+      "requiredRole": "member"
+    },
+    {
+      "name": "add",
+      "requiredRole": "member"
     },
     {
       "name": "improve"
@@ -195,6 +191,10 @@
     {
       "name": "loc-get",
       "requiredRole": "member"
+    },
+    {
+      "name": "modify",
+      "requiredRole": "owner"
     },
     {
       "name": "narrate"
@@ -301,6 +301,7 @@
       "expected": [
         "agency",
         "analyze",
+        "apply",
         "asset-list",
         "asset-preview",
         "asset-search",
@@ -312,17 +313,13 @@
         "char-update",
         "char-list",
         "char-get",
+        "clone",
         "context",
         "create",
         "debug",
         "detail",
         "roll",
         "dice",
-        "apply",
-        "add",
-        "clone",
-        "modify",
-        "import",
         "guide",
         "constraint",
         "scene",
@@ -337,6 +334,8 @@
         "help",
         "impersonate",
         "char",
+        "import",
+        "add",
         "improve",
         "forage",
         "evaluate",
@@ -354,6 +353,7 @@
         "loc-update",
         "loc-list",
         "loc-get",
+        "modify",
         "narrate",
         "ooc",
         "quest",
@@ -382,6 +382,7 @@
       "expected": [
         "agency",
         "analyze",
+        "apply",
         "asset-list",
         "asset-preview",
         "asset-search",
@@ -394,15 +395,13 @@
         "char-get",
         "create",
         "detail",
-        "apply",
-        "add",
-        "import",
         "constraint",
         "target",
         "orchestrate",
         "heal",
         "impersonate",
         "char",
+        "add",
         "forage",
         "evaluate",
         "persuade",
