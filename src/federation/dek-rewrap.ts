@@ -33,6 +33,7 @@
 import type { Kysely, } from "kysely";
 import { decryptBytes, encryptBytes, } from "../crypto/actor-key-bytes";
 import type { DB, } from "../db/schema";
+import { safeJsonStringify, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import { type ContentCipher, pskCipher, } from "./cipher";
 import { type ChatClearance, } from "./clearance";
@@ -50,6 +51,24 @@ export interface RewrappedDek {
   wrappedKey: string;
   /** Export wall-clock ms. */
   wrappedAt: number;
+}
+
+/**
+ * AAD context binding for a re-wrapped DEK
+ * (BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin): the
+ * plaintext envelope fields are attacker-relabelable, so the seal binds them
+ * as AES-GCM additional authenticated data. A re-labeled artifact fails GCM
+ * authentication on open instead of installing a key for the wrong chat.
+ * JSON array form so field values (origins contain colons) stay unambiguous.
+ * @param chatId - replicated chat id the artifact claims
+ * @param keyId - chat_keys.id the DEK was exported under
+ * @param senderOrigin - canonical exporting origin
+ * @throws {Error} When the context cannot be serialized (never for strings).
+ */
+function dekAad(chatId: string, keyId: string, senderOrigin: string,): string {
+  const result = safeJsonStringify(["loop-lore/dek-rewrap/v1", chatId, keyId, senderOrigin,],);
+  if (!result.ok) { throw new Error("DEK AAD serialization failed",); }
+  return result.value;
 }
 
 /**
@@ -94,7 +113,10 @@ export async function exportChatDekForPeer(
   }
 
   const raw = await decryptBytes(smk, row.encrypted_chat_key,);
-  const wrappedKey = await pskCipher(input.peerContentKey,).seal(raw as Uint8Array,);
+  const wrappedKey = await pskCipher(input.peerContentKey,).seal(
+    raw as Uint8Array,
+    dekAad(clearance.chatId, row.id, sender,),
+  );
 
   await database
     .insertInto("mesh_dek_exports",)
@@ -152,10 +174,11 @@ export async function openRewrappedDek(
   artifact: RewrappedDek,
   ciphers: readonly ContentCipher[],
 ): Promise<Uint8Array> {
+  const aad = dekAad(artifact.chatId, artifact.keyId, artifact.senderOrigin,);
   let lastError: Error | null = null;
   for (const cipher of ciphers) {
     try {
-      return await cipher.open(artifact.wrappedKey,);
+      return await cipher.open(artifact.wrappedKey, aad,);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error,),);
     }
@@ -183,7 +206,8 @@ export async function openRewrappedDek(
  * @param ciphers Inbound ciphers to try (current, then grace).
  * @returns The local `chat_keys` id holding the DEK — the sender's `keyId`
  *   when it could be reused, otherwise a freshly minted local id.
- * @throws {Error} When no cipher opens the artifact or the insert fails.
+ * @throws {Error} When the sender origin is non-canonical or has no recorded
+ *   peering, when no cipher opens the artifact, or the insert fails.
  */
 export async function importChatDek(
   database: Kysely<DB>,
@@ -191,6 +215,25 @@ export async function importChatDek(
   artifact: RewrappedDek,
   ciphers: readonly ContentCipher[],
 ): Promise<string> {
+  // Sender-origin verification
+  // (BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin): the
+  // labeled origin must be canonical AND a recorded peer — an artifact
+  // labeled with an arbitrary origin is refused before anything is installed.
+  const origin = canonicalOrigin(artifact.senderOrigin,);
+  if (origin === null || origin !== artifact.senderOrigin) {
+    throw new Error(`invalid sender origin in DEK artifact: ${artifact.senderOrigin}`,);
+  }
+
+  const peering = await database
+    .selectFrom("mesh_peers",)
+    .select("origin",)
+    .where("origin", "=", origin,)
+    .executeTakeFirst();
+
+  if (peering === undefined) {
+    throw new Error(`no peering for sender origin ${origin} — refusing DEK import`,);
+  }
+
   const raw = await openRewrappedDek(artifact, ciphers,);
   const rawBuf = safeFromUint8Array(raw,);
   if (!rawBuf.ok) { throw rawBuf.error; }
