@@ -15,7 +15,7 @@ import { encryptBytes, } from "../crypto/actor-key-bytes";
 import { initSmk, } from "../crypto/smk";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertChatKeys, insertChats, insertUsers, } from "../test-utils/insert-helpers";
+import { insertChatKeys, insertChats, insertMeshPeers, insertUsers, } from "../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { pskCipher, } from "./cipher";
 import {
@@ -221,6 +221,7 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
     const rKey = await smk();
     const receiverUser = await insertUsers(receiver.db, "u-rt", "U",);
     await insertChats(receiver.db, "chat rt", receiverUser, { id: "chat-rt", encryption_level: "standard", },);
+    await insertMeshPeers(receiver.db, { origin: A_ORIGIN, },);
     const peerContentKey = await getOrCreateInboundKey(receiver.db, rKey, A_ORIGIN,);
 
     const artifact = await exportChatDekForPeer(sender.db, await smk(), {
@@ -293,6 +294,7 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
     const rKey = await smk();
     const receiverUser = await insertUsers(receiver.db, "u-win", "U",);
     await insertChats(receiver.db, "chat win", receiverUser, { id: "chat-win", encryption_level: "standard", },);
+    await insertMeshPeers(receiver.db, { origin: A_ORIGIN, },);
     const existingId = await insertChatKeys(receiver.db, "chat-win", await encryptBytes(rKey, await randomDek(),),);
     const peerContentKey = await getOrCreateInboundKey(receiver.db, rKey, A_ORIGIN,);
 
@@ -332,6 +334,8 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
       id: "chat-collide",
       encryption_level: "standard",
     },);
+
+    await insertMeshPeers(receiver.db, { origin: A_ORIGIN, },);
 
     await insertChats(receiver.db, "chat collide other", receiverUser, {
       id: "chat-collide-other",
@@ -377,5 +381,74 @@ describeOrSkip("DEK re-wrap — receiver import", () => {
     expect(imported.id,).toBe(importedId,);
     const { decryptBytes, } = await import("../crypto/actor-key-bytes");
     expect(toB64((await decryptBytes(rKey, imported.encrypted_chat_key,)) as Uint8Array,),).toBe(toB64(raw,),);
+  });
+
+  test("a re-labeled artifact fails to open (AAD context binding)", async () => {
+    const sender = await createTestDb();
+    await seedChat(sender.db, "chat-aad",);
+    const peerContentKey = generateInboundKey();
+    const artifact = await exportChatDekForPeer(sender.db, await smk(), {
+      clearance: await clearFor(sender.db, "chat-aad",),
+      senderOrigin: A_ORIGIN,
+      peerContentKey,
+    },);
+
+    // The holding cipher opens the genuine artifact...
+    const opened = await openRewrappedDek(artifact, [pskCipher(peerContentKey,),],);
+    expect(opened,).toHaveLength(32,);
+
+    // ...but must NOT open when any bound field is re-labeled: the ciphertext
+    // is bound to (chatId, keyId, senderOrigin), so re-labeling breaks the
+    // GCM authentication tag instead of installing a mislabeled key.
+    const relabeled: RewrappedDek = { ...artifact, chatId: "chat-evil", };
+    await expect(openRewrappedDek(relabeled, [pskCipher(peerContentKey,),],),).rejects.toThrow();
+
+    const reKeyed: RewrappedDek = { ...artifact, keyId: "key-evil", };
+    await expect(openRewrappedDek(reKeyed, [pskCipher(peerContentKey,),],),).rejects.toThrow();
+
+    const reSourced: RewrappedDek = { ...artifact, senderOrigin: "https://evil.example", };
+    await expect(openRewrappedDek(reSourced, [pskCipher(peerContentKey,),],),).rejects.toThrow();
+  });
+
+  test("import from an origin with no recorded peering is refused", async () => {
+    const sender = await createTestDb();
+    await seedChat(sender.db, "chat-nopeer",);
+
+    const receiver = await createTestDb();
+    const rKey = await smk();
+    const receiverUser = await insertUsers(receiver.db, "u-nopeer", "U",);
+    await insertChats(receiver.db, "chat nopeer", receiverUser, {
+      id: "chat-nopeer",
+      encryption_level: "standard",
+    },);
+
+    const peerContentKey = await getOrCreateInboundKey(receiver.db, rKey, A_ORIGIN,);
+
+    // Replicated chats share stable ids across peers, so the sender-side
+    // chat carries the same id as the receiver's chat row.
+    const sender2 = await createTestDb();
+    await seedChat(sender2.db, "chat-nopeer",);
+    const artifact = await exportChatDekForPeer(sender2.db, await smk(), {
+      clearance: await authorizeChatExport(sender2.db, { chatId: "chat-nopeer", peerOrigin: B_ORIGIN, },),
+      senderOrigin: A_ORIGIN,
+      peerContentKey,
+    },);
+
+    // No mesh_peers row for A_ORIGIN: the labeled sender is not a peer.
+    await expect(importChatDek(
+      receiver.db,
+      rKey,
+      artifact,
+      await inboundCiphers(receiver.db, rKey, A_ORIGIN,),
+    ),).rejects.toThrow(/no peering/,);
+
+    // And nothing was installed for the chat.
+    const rows = await receiver.db
+      .selectFrom("chat_keys",)
+      .select("id",)
+      .where("chat_id", "=", "chat-nopeer",)
+      .execute();
+
+    expect(rows,).toHaveLength(0,);
   });
 },);

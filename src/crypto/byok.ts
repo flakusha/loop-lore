@@ -78,14 +78,23 @@ const LEGACY_GLOBAL_SALT = new TextEncoder().encode("loop-lore-byok-v1",);
  * Returns base64-encoded "salt:iv:ciphertext" (three chunks).
  * @param plaintext
  * @param secret
+ * @param aad Optional additional authenticated data (AES-GCM AAD): integrity-
+ *   bound to the ciphertext but not stored in it. Omit for the legacy
+ *   behavior (no AAD); omitting on decrypt matches ciphertexts sealed
+ *   without AAD.
  * @returns void
  */
-export async function encryptValue(plaintext: string, secret: string,): Promise<string> {
+export async function encryptValue(plaintext: string, secret: string, aad?: string,): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH,),);
   const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH,),);
   const key = await deriveKey(secret, salt,);
   const encoded = new TextEncoder().encode(plaintext,);
-  const ciphertext = await crypto.subtle.encrypt({ name: ALGORITHM, iv, }, key, encoded,);
+  const params: AesGcmParams = { name: ALGORITHM, iv, };
+  if (aad !== undefined) {
+    params.additionalData = new TextEncoder().encode(aad,) as unknown as BufferSource;
+  }
+
+  const ciphertext = await crypto.subtle.encrypt(params, key, encoded,);
   return `${salt.toBase64()}:${iv.toBase64()}:${new Uint8Array(ciphertext,).toBase64()}`;
 }
 
@@ -95,17 +104,24 @@ export async function encryptValue(plaintext: string, secret: string,): Promise<
  *   - old (2 chunks): "iv:ciphertext" — uses the legacy global salt
  * @param encrypted
  * @param secret
+ * @param aad Optional additional authenticated data — must match the value
+ *   used at seal time or authentication fails.
  * @returns void
  * @throws {Error}
  */
-export async function decryptValue(encrypted: string, secret: string,): Promise<string> {
+export async function decryptValue(encrypted: string, secret: string, aad?: string,): Promise<string> {
   const parts = encrypted.split(":",);
   if (parts.length === 3) {
     const salt = Uint8Array.fromBase64(parts[0]!,);
     const iv = Uint8Array.fromBase64(parts[1]!,);
     const data = Uint8Array.fromBase64(parts[2]!,);
     const key = await deriveKey(secret, salt,);
-    const plaintext = await crypto.subtle.decrypt({ name: ALGORITHM, iv, }, key, data,);
+    const params: AesGcmParams = { name: ALGORITHM, iv, };
+    if (aad !== undefined) {
+      params.additionalData = new TextEncoder().encode(aad,) as unknown as BufferSource;
+    }
+
+    const plaintext = await crypto.subtle.decrypt(params, key, data,);
     return new TextDecoder().decode(plaintext,);
   }
 
