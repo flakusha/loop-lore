@@ -5,6 +5,7 @@
 
 **Status:** Done
 **Priority:** critical
+**Resolved:** LIVE confirmed on tip — repro (trigger RAISE(ABORT) on the chat_keys swap; asset file undecryptable with the old key: "Decryption failed ... wrong key") failed pre-fix; reEncryptChatAssets now stages re-encrypted blobs at temp paths (src/crypto/key-rotation/re-encrypt.ts:134-147,201-211) and doRotate renames them into place only after the transaction commits, deleting them on any pre-commit failure (src/crypto/key-distribution.ts:52-71,176-260). 4/4 rotation-proofs + 7/7 re-encrypt + 23/23 chat-lifecycle tests green, gates green 2026-10-25, branch fix/bug-sweep.
 **Effort:** Medium
 **Epic:** epic-encryption-workflow
 
