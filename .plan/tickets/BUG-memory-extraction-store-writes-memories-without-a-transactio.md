@@ -5,6 +5,7 @@
 
 **Status:** Done
 **Priority:** Medium
+**Resolved:** LIVE confirmed on tip — repro (trigger RAISE(ABORT) on the second memory insert) left 1 partial memory committed; storeMemories now wraps the dedup loop + recordAuditLog in one db.transaction() with all statements on trx (src/memory/extraction-store.ts:53-137). Sub-claim correction: recordAuditLog never throws (audit.ts:139-140 "Errors are logged but never thrown"), so the audit-failure leg cannot abort anything — the transaction closes the crash-mid-loop window and the insert-failure leg. Never-purges sub-claim already stale (cron/jobs.ts callers). 26/26 extraction tests + 21 audit tests green, gates green 2026-10-25, branch fix/bug-sweep.
 **Effort:** Medium
 **Epic:** epic-aux-enrichment-pipeline
 

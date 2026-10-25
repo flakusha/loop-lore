@@ -60,71 +60,77 @@ export async function storeMemories(
   const sourceMessageIds = (provenance.sourceMessageIds ?? []).slice(0, MAX_CHAIN_IDS,);
   const sourceChatIds = provenance.sourceChatIds ?? [chatId,];
   const extractionKind = provenance.extractionKind ?? "single_response";
-  let stored = 0;
-  const auditEntries: Array<
-    { memoryId: string; actorId: string; userId: string | null; action: "create"; details: Record<string, unknown> }
-  > = [];
 
-  for (const memory of memories) {
-    const existing = await db
-      .selectFrom("actor_memories",)
-      .select("id",)
-      .where("actor_id", "=", actorId,)
-      .where("content", "=", memory.content,)
-      .executeTakeFirst();
+  // Loop + audit are one atomic unit: per-row autocommit leaves a partial,
+  // unaudited batch behind when any statement fails mid-sequence
+  // (BUG-memory-extraction-store-writes-memories-without-a-transactio).
+  return db.transaction().execute(async (trx,) => {
+    let stored = 0;
+    const auditEntries: Array<
+      { memoryId: string; actorId: string; userId: string | null; action: "create"; details: Record<string, unknown> }
+    > = [];
 
-    if (existing) {
-      continue;
+    for (const memory of memories) {
+      const existing = await trx
+        .selectFrom("actor_memories",)
+        .select("id",)
+        .where("actor_id", "=", actorId,)
+        .where("content", "=", memory.content,)
+        .executeTakeFirst();
+
+      if (existing) {
+        continue;
+      }
+
+      const id = randomUUID();
+      await trx
+        .insertInto("actor_memories",)
+        .values({
+          id,
+          actor_id: actorId,
+          content: memory.content,
+          memory_type: memory.memoryType,
+          confidence: memory.confidence,
+          importance: memory.importance,
+          keywords: jsonStringifyOr(memory.keywords,),
+          source_chat_id: chatId,
+          source_message_id: sourceMessageIds[0] ?? null,
+          source_message_ids: jsonStringifyOr(sourceMessageIds,),
+          source_chat_ids: jsonStringifyOr(sourceChatIds,),
+          extraction_kind: extractionKind,
+          scope: "character",
+          privacy: "shared",
+          review_status: provenance.reviewStatus ?? "committed",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },)
+        .execute();
+
+      auditEntries.push({
+        memoryId: id,
+        actorId,
+        userId: provenance.userId ?? null,
+        action: "create",
+        details: {
+          source: extractionKind,
+          memoryType: memory.memoryType,
+          confidence: memory.confidence,
+          importance: memory.importance,
+          sourceChatId: chatId,
+          sourceMessageIds,
+        },
+      },);
+
+      stored++;
     }
 
-    const id = randomUUID();
-    await db
-      .insertInto("actor_memories",)
-      .values({
-        id,
-        actor_id: actorId,
-        content: memory.content,
-        memory_type: memory.memoryType,
-        confidence: memory.confidence,
-        importance: memory.importance,
-        keywords: jsonStringifyOr(memory.keywords,),
-        source_chat_id: chatId,
-        source_message_id: sourceMessageIds[0] ?? null,
-        source_message_ids: jsonStringifyOr(sourceMessageIds,),
-        source_chat_ids: jsonStringifyOr(sourceChatIds,),
-        extraction_kind: extractionKind,
-        scope: "character",
-        privacy: "shared",
-        review_status: provenance.reviewStatus ?? "committed",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      },)
-      .execute();
+    if (stored > 0) {
+      getLog().info("Stored extracted memories", { actorId, chatId, count: stored, },);
+      await recordAuditLog(trx, auditEntries,);
+    }
 
-    auditEntries.push({
-      memoryId: id,
-      actorId,
-      userId: provenance.userId ?? null,
-      action: "create",
-      details: {
-        source: extractionKind,
-        memoryType: memory.memoryType,
-        confidence: memory.confidence,
-        importance: memory.importance,
-        sourceChatId: chatId,
-        sourceMessageIds,
-      },
-    },);
-
-    stored++;
-  }
-
-  if (stored > 0) {
-    getLog().info("Stored extracted memories", { actorId, chatId, count: stored, },);
-    await recordAuditLog(db, auditEntries,);
-  }
-
-  return stored;
+    return stored;
+  },);
 }
 
 /**
