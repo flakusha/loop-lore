@@ -35,8 +35,8 @@
    app.css components are pre-existing debt, out of scope here.
    Keep these maxima in sync with theme-base.css. */
 :root {
-  --fs-lg: clamp(16px, 15.1px + 0.24vw, 18px);
-  --fs-xl: clamp(18px, 17.1px + 0.24vw, 20px);
+  --fs-lg: clamp(16px, 15.1px + 0.25vw, 18px);
+  --fs-xl: clamp(18px, 17.1px + 0.25vw, 20px);
   --fs-2xl: clamp(20px, 18.3px + 0.48vw, 24px);
   --fs-3xl: clamp(24px, 20.6px + 0.95vw, 32px);
   --fs-display: clamp(32px, 25.2px + 1.9vw, 48px);
@@ -75,14 +75,17 @@
    ticket draft's `high` does not parse). Theme-agnostic: map
    muted text and hairline borders onto the active theme's
    stronger `--text-secondary` token instead of hardcoding
-   colors, and thicken the shared 2px focus outline. */
+   colors, and thicken focus outlines above component-specific
+   2px rules. */
 @media (prefers-contrast: more) {
   :root {
     --text-tertiary: var(--text-secondary);
     --border-default: var(--text-secondary);
   }
 
-  :focus-visible {
+  /* :root prefix raises specificity above component-scoped
+     :focus-visible rules (e.g. .btn:focus-visible in app.css). */
+  :root :focus-visible {
     outline-width: 3px;
   }
 }
@@ -117,6 +120,16 @@
     background: #fff;
     color: #000;
     font-size: 12pt;
+  }
+
+  /* Most text carries explicit theme colors (near-white on dark
+     themes) and bubbles use dark surface tokens — inheritance from
+     body is not enough, so force ink-on-paper inside content. */
+  #app-root,
+  #app-root * {
+    color: #000 !important;
+    background-color: transparent !important;
+    background-image: none !important;
   }
 
   a {
