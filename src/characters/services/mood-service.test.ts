@@ -9,7 +9,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { MoodService, } from "./mood-service";
-import { createTestActors, } from "./test-helpers";
+import { createTestActors, createTestWorld, } from "./test-helpers";
 
 describe("MoodService", () => {
   let db: Kysely<DB>;
@@ -161,6 +161,36 @@ describe("MoodService", () => {
       const crossed = await moodService.getMood(actorId,);
       expect(crossed?.happiness,).toBe(85,);
       expect(crossed?.lastMoodChange,).not.toBe(createdAt,);
+    });
+  });
+
+  describe("applyHappinessDelta concurrency", () => {
+    it("applies concurrent deltas without losing updates (CAS on the read value)", async () => {
+      const { actorId, } = await createTestActors(db, "test-actor-mood-cas-001",);
+      await moodService.createMood({ actorId, happiness: 50, moodStability: 0, },);
+
+      // Both appliers must not compute from the same pre-state and silently
+      // drop one delta — the loser retries from the fresh value instead.
+      await Promise.all([
+        moodService.applyHappinessDelta(actorId, undefined, 10,),
+        moodService.applyHappinessDelta(actorId, undefined, 10,),
+      ],);
+
+      const mood = await moodService.getMood(actorId,);
+      expect(mood?.happiness,).toBe(70,);
+    });
+  });
+
+  describe("getMood world scoping", () => {
+    it("global lookup (undefined worldId) sees world-scoped rows", async () => {
+      const { actorId, } = await createTestActors(db, "test-actor-mood-world-001",);
+      const worldId = await createTestWorld(db, "test-world-mood-01",);
+      await moodService.createMood({ actorId, worldId, },);
+
+      // worldId-agnostic query must not hide world-scoped rows behind a
+      // `world_id is null` filter.
+      expect(await moodService.getMood(actorId,),).toBeDefined();
+      expect(await moodService.getMood(actorId, worldId,),).toBeDefined();
     });
   });
 
