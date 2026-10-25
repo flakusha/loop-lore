@@ -165,6 +165,11 @@ export async function requireOwnedCharacter(
   userRole: string | null,
 ): Promise<OwnedCharacterResult> {
   const denied = `Character ${actorId} not found or not owned by you.`;
+  // `actors.owner_id` is nullable, so a caller without a user id would match
+  // an unowned row (`null === null`) inside checkActorOwnership. The actor PUT
+  // route rejects an unauthenticated caller before the ownership check
+  // (requireUserId); mirror that order so the assistant cannot widen it.
+  if (!userId) { return { ok: false, message: denied, }; }
   const row = await db
     .selectFrom("actors",)
     .select(["display_name", "description", "personality", "appearance", "scenario", "row_version",],)
