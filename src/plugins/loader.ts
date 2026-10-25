@@ -329,8 +329,22 @@ async function persistPluginState({ db, name, origin, }: PluginApprovalOpts): Pr
 }
 
 /**
+ * Whether an error means the plugin_state table does not exist yet (fresh DB
+ * before migrations ran). Only this case may fall back to the origin default.
+ * @param error - The caught DB error
+ * @returns True when the failure is a missing-table error
+ */
+function isMissingPluginStateTable(error: unknown,): boolean {
+  return error instanceof Error && /no such table/i.test(error.message,);
+}
+
+/**
  * Whether a plugin may run. The persisted plugin_state row decides; a name
  * with no row falls back to origin, so only `core` self-approves on first sight.
+ *
+ * Fails CLOSED on unexpected DB errors (BUG-ispluginactive-fails-open): a
+ * transient fault must not re-approve an admin-disabled core plugin. Only the
+ * pre-migration first boot (plugin_state table absent) uses the origin default.
  * @param opts
  * @param opts.db
  * @param opts.name
@@ -339,13 +353,22 @@ async function persistPluginState({ db, name, origin, }: PluginApprovalOpts): Pr
 async function isPluginActive({ db, name, origin, }: PluginApprovalOpts): Promise<boolean> {
   try {
     const row = await db
-      .selectFrom("plugin_state")
-      .select("status")
+      .selectFrom("plugin_state",)
+      .select("status",)
       .where("name", "=", name,)
       .executeTakeFirst();
 
     if (row) { return row.status === PluginStatus.Active; }
-  } catch {
+  } catch (error) {
+    if (!isMissingPluginStateTable(error,)) {
+      getLogger().error(
+        "plugin_state read failed — failing closed",
+        asError(error,),
+        { plugin: name, origin, },
+      );
+
+      return false;
+    }
     // plugin_state may not exist on first boot — fall through to the origin default.
   }
 
