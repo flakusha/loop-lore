@@ -8,7 +8,7 @@
  * pointerdown source and the class target are deterministic fakes.
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { createInputModeTracker, } from "./responsive";
+import { createInputModeTracker, HOVER_QUERY, REDUCED_MOTION_QUERY, } from "./responsive";
 
 import type { PointerEventSource, } from "./responsive";
 
@@ -16,9 +16,6 @@ type Globals = Record<string, unknown>;
 
 const globals = globalThis as unknown as Globals;
 const originalMatchMedia = globals.matchMedia;
-
-const HOVER_QUERY = "(hover: hover) and (pointer: fine)";
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 interface FakeQuery {
   matches: boolean;
