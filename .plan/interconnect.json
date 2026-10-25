@@ -454,6 +454,18 @@
       "related": []
     },
     {
+      "id": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic.md",
+      "title": "ai-action billable LLM endpoint classified 300/min chatPolicy",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/api-governance/rate-limiting/policies.ts",
+        "src/routes/messages/ai-action.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md",
@@ -2444,6 +2456,18 @@
       "related": []
     },
     {
+      "id": "BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo.md",
+      "title": "chat-pins cross-chat content leak: pin any message id into your own chat",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/chat/service/polls.ts",
+        "src/routes/chat-pins.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-chat-prompt-override-bypass-on-reply",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md",
@@ -3258,6 +3282,20 @@
       ]
     },
     {
+      "id": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md",
+      "title": "Dev red at HEAD: assistant command-module split broke registration and e2e import; uncommitted repair must land via worktree",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assistant/commands/characters-access.test.ts",
+        "src/assistant/commands/characters-access.ts",
+        "src/assistant/commands/items.test.ts",
+        "src/frontend/alpine/command-conformance.test.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md",
@@ -3807,6 +3845,20 @@
         "src/middleware/auth/token.ts",
         "src/routes/export-sse/start.ts",
         "src/routes/export.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai.md",
+      "title": "export-sse job Map never evicted; completed ZIP buffers retained forever",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/routes/export-sse/jobs.ts",
+        "src/routes/export-sse/start.ts",
+        "src/routes/export-sse/types.ts",
+        "src/routes/settings.ts"
       ],
       "related": []
     },
@@ -9020,6 +9072,18 @@
       "related": []
     },
     {
+      "id": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-story-states-npc-location-put-schema-drift-silent-no-op-with.md",
+      "title": "story-states npc/location PUT schema drift: silent no-op with vacuous green e2e",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/routes/story-states/handlers.ts",
+        "src/validation/schemas/world-state.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-stranded-post-finalize-fix-the-audio-low-pass-coefficient-re",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-stranded-post-finalize-fix-the-audio-low-pass-coefficient-re.md",
@@ -9392,6 +9456,32 @@
         "src/chat/memory-promotion.ts",
         "src/chat/transitions.test.ts",
         "src/db/migrations/058_actor_memory.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-translate-only-providers-ride-general-failover-chains-comple.md",
+      "title": "translate-only providers ride general failover chains; complete() returns a translation as a successful turn (incl. merge-LLM path)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/chat/service/merge/merge-llm-call.ts",
+        "src/generation/auto-gen/call-llm.ts",
+        "src/generation/providers/call-with-failover.ts",
+        "src/generation/providers/deepl/core.ts",
+        "src/generation/providers/registry.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "BUG-translation-route-silent-catch-ships-undecryptable-ciphertex",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-translation-route-silent-catch-ships-undecryptable-ciphertex.md",
+      "title": "translation route silent catch ships undecryptable ciphertext to external MT and persists it",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/routes/messages/translations.ts"
       ],
       "related": []
     },
@@ -9855,6 +9945,21 @@
       "related": []
     },
     {
+      "id": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec.md",
+      "title": "voice-notes passes null userRole, disabling admin arm of checkChatAccess",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/chat/service/access.ts",
+        "src/routes/chat-pins.ts",
+        "src/routes/message-polls.ts",
+        "src/routes/messages/ai-action.ts",
+        "src/routes/voice-notes.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-web-ui-never-sets-db-idempotencykey",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-web-ui-never-sets-db-idempotencykey.md",
@@ -9914,6 +10019,20 @@
       "related": [
         "epic-comfyui-first-class-citizen"
       ]
+    },
+    {
+      "id": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-withworldid-undefined-means-no-filter-relationship-read-upda.md",
+      "title": "withWorldId undefined-means-no-filter: relationship read/update/delete can hit an arbitrary world row",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/characters/services/relationships-service/read.ts",
+        "src/characters/services/relationships-service/write.ts",
+        "src/characters/services/shared-service-utils.ts",
+        "src/routes/character-relationships.ts"
+      ],
+      "related": []
     },
     {
       "id": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
@@ -33335,6 +33454,17 @@
       "related": []
     },
     {
+      "id": "TASK-locale-variant-aware-eager-translation-comparator-en-vs-en-u",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-locale-variant-aware-eager-translation-comparator-en-vs-en-u.md",
+      "title": "locale-variant-aware eager-translation comparator (en vs en-US)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/chat/translation-target.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-location-crud-tree-connections",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-location-crud-tree-connections.md",
@@ -35302,6 +35432,17 @@
       ]
     },
     {
+      "id": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-move-relationship-update-delete-existence-check-inside-the-t.md",
+      "title": "move relationship update/delete existence check inside the txn",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/characters/services/relationships-service/write.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "TASK-msg-forward-across-chats",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-msg-forward-across-chats.md",
@@ -36788,6 +36929,15 @@
       "related": []
     },
     {
+      "id": "TASK-parallel-safety-audit-of-shared-state-tests-flaky-check-cove",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-parallel-safety-audit-of-shared-state-tests-flaky-check-cove.md",
+      "title": "parallel-safety audit of shared-state tests (flaky-check covers sleeps/timeouts only; suite documented serial-only)",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "TASK-party-aux-transition",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-party-aux-transition.md",
@@ -37117,6 +37267,15 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-plan-format-migration-bold-keyword-sections-spdx-orphan-ref-.md",
       "title": "Plan-format migration: bold-keyword sections + SPDX + orphan ref cleanup across legacy tickets/epics",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
+      "id": "TASK-plan-hygiene-55-orphan-epic-bindings-incl-phantom-epic-38-1-",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-plan-hygiene-55-orphan-epic-bindings-incl-phantom-epic-38-1-.md",
+      "title": "plan hygiene: ~55 orphan epic bindings (incl. phantom EPIC-38) + 1 actionable sync issue",
       "status": "Not Started",
       "srcRefs": [],
       "related": []
@@ -43865,6 +44024,22 @@
       "status": "done",
       "srcRefs": [
         "src/assistant/prompt/sections/system.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md",
+      "title": "typed userId accessor replacing the (ctx as any).userId cluster",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/assets/controller.ts",
+        "src/routes/api-keys.ts",
+        "src/routes/http-utils/errors.ts",
+        "src/routes/http-utils/status.ts",
+        "src/routes/messages/translations.ts",
+        "src/routes/users/me.ts"
       ],
       "related": []
     },
@@ -51007,6 +51182,41 @@
       "related": []
     },
     {
+      "id": "epic-review-20261025-api-governance-perimeter",
+      "kind": "epic",
+      "path": ".plan/epics/epic-review-20261025-api-governance-perimeter.md",
+      "title": "API Governance Perimeter (2026-10-25 review round E-1)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/app/register-plugins.ts"
+      ],
+      "related": []
+    },
+    {
+      "id": "epic-review-20261025-dead-code-sweep",
+      "kind": "epic",
+      "path": ".plan/epics/epic-review-20261025-dead-code-sweep.md",
+      "title": "Dead-Code & Cutover-Debris Sweep + Gate Blind Spots (2026-10-25 review round E-3)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/components/chat/music-embed.html",
+        "src/regex/slugs.ts",
+        "src/views/partials/planning-todo.html"
+      ],
+      "related": []
+    },
+    {
+      "id": "epic-review-20261025-parallel-merge-integration",
+      "kind": "epic",
+      "path": ".plan/epics/epic-review-20261025-parallel-merge-integration.md",
+      "title": "Parallel-Merge Integration Sweep (2026-10-25 review round E-2)",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/regex/outfit-events.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "epic-review-check-parallel-ram-2026-09-03",
       "kind": "epic",
       "path": ".plan/epics/epic-review-check-parallel-ram-2026-09-03.md",
@@ -52578,6 +52788,7 @@
     {
       "path": "src/api-governance/rate-limiting/policies.ts",
       "owners": [
+        "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
         "BUG-chat-sse-shares-generation-rate-bucket",
         "BUG-rate-limit-misses-post-emotion-avatars-single",
         "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
@@ -52717,7 +52928,8 @@
         "epic-db-cold-storage-high-perf",
         "epic-e2e-integration-testing",
         "epic-effect-v4-adoption-evaluation",
-        "epic-file-splitting"
+        "epic-file-splitting",
+        "epic-review-20261025-api-governance-perimeter"
       ]
     },
     {
@@ -52799,6 +53011,7 @@
         "TASK-image-edit-concept-inpaint-template",
         "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
         "TASK-review-thread-target-vocabulary",
+        "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
         "TASK-webp-as-a-first-class-stored-asset-format",
         "epic-aux-enrichment-pipeline",
         "epic-comfyui-first-class-citizen",
@@ -53495,8 +53708,15 @@
       ]
     },
     {
+      "path": "src/assistant/commands/characters-access.test.ts",
+      "owners": [
+        "BUG-dev-red-at-head-assistant-command-module-split-broke-registr"
+      ]
+    },
+    {
       "path": "src/assistant/commands/characters-access.ts",
       "owners": [
+        "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
         "epic-assistant-entity-access"
       ]
     },
@@ -53699,6 +53919,7 @@
     {
       "path": "src/assistant/commands/items.test.ts",
       "owners": [
+        "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
         "TASK-assistant-entity-access-tests"
       ]
     },
@@ -56824,6 +57045,12 @@
       ]
     },
     {
+      "path": "src/characters/services/relationships-service/read.ts",
+      "owners": [
+        "BUG-withworldid-undefined-means-no-filter-relationship-read-upda"
+      ]
+    },
+    {
       "path": "src/characters/services/relationships-service/types.ts",
       "owners": [
         "TASK-shared-character-domain-models"
@@ -56835,6 +57062,8 @@
         "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
         "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
         "BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same",
+        "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+        "TASK-move-relationship-update-delete-existence-check-inside-the-t",
         "epic-character-growth"
       ]
     },
@@ -56842,6 +57071,12 @@
       "path": "src/characters/services/shared-service-utils.test.ts",
       "owners": [
         "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
+      ]
+    },
+    {
+      "path": "src/characters/services/shared-service-utils.ts",
+      "owners": [
+        "BUG-withworldid-undefined-means-no-filter-relationship-read-upda"
       ]
     },
     {
@@ -57682,6 +57917,7 @@
         "BUG-settings-save-omits-gmconfig-for-online-chats",
         "BUG-test-assertions-stale-gm-support-message",
         "BUG-vn-mode-locked-once-chat-has-confirmed-messages",
+        "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
         "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
         "TASK-expose-dek-export-and-import-over-the-federation-wire-routes",
         "TASK-guest-chat-public-reads-visibility-aware-chat-access",
@@ -58033,6 +58269,12 @@
       ]
     },
     {
+      "path": "src/chat/service/merge/merge-llm-call.ts",
+      "owners": [
+        "BUG-translate-only-providers-ride-general-failover-chains-comple"
+      ]
+    },
+    {
       "path": "src/chat/service/merge/merge-result-rows.ts",
       "owners": [
         "BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq"
@@ -58120,6 +58362,7 @@
     {
       "path": "src/chat/service/polls.ts",
       "owners": [
+        "BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo",
         "TASK-message-polls-votes"
       ]
     },
@@ -58410,6 +58653,12 @@
         "epic-chat-lifecycle-moderation",
         "epic-chat-product-features",
         "epic-chat-transfer-location"
+      ]
+    },
+    {
+      "path": "src/chat/translation-target.ts",
+      "owners": [
+        "TASK-locale-variant-aware-eager-translation-comparator-en-vs-en-u"
       ]
     },
     {
@@ -59209,6 +59458,12 @@
       "path": "src/components/chat/mood-panel.html",
       "owners": [
         "TASK-alpha-aware-render-binding-and-mood-panel"
+      ]
+    },
+    {
+      "path": "src/components/chat/music-embed.html",
+      "owners": [
+        "epic-review-20261025-dead-code-sweep"
       ]
     },
     {
@@ -65500,6 +65755,12 @@
       ]
     },
     {
+      "path": "src/frontend/alpine/command-conformance.test.ts",
+      "owners": [
+        "BUG-dev-red-at-head-assistant-command-module-split-broke-registr"
+      ]
+    },
+    {
       "path": "src/frontend/alpine/command-palette.ts",
       "owners": [
         "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in"
@@ -68481,6 +68742,7 @@
       "owners": [
         "BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire",
         "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
+        "BUG-translate-only-providers-ride-general-failover-chains-comple",
         "FEAT-llm-request-complexity-classification",
         "TASK-federation-peer-dispatch-compose-failover",
         "TASK-generation-error-handling-gaps-detector-abort-void-promises",
@@ -69765,6 +70027,7 @@
       "owners": [
         "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
         "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
+        "BUG-translate-only-providers-ride-general-failover-chains-comple",
         "FEAT-llm-resource-aware-admission-control",
         "TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p",
         "TASK-federation-peer-dispatch-compose-failover",
@@ -69844,6 +70107,12 @@
         "epic-reference-conditioned-generation",
         "epic-technical-comparison-charts",
         "epic-video-generation"
+      ]
+    },
+    {
+      "path": "src/generation/providers/deepl/core.ts",
+      "owners": [
+        "BUG-translate-only-providers-ride-general-failover-chains-comple"
       ]
     },
     {
@@ -69929,6 +70198,7 @@
         "BUG-allowuserapikey-defined-but-never-enforced",
         "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
         "BUG-size-strict-pre-existing-dev-drift",
+        "BUG-translate-only-providers-ride-general-failover-chains-comple",
         "FEAT-background",
         "FEAT-llama-swap-rotation-exclusion-policy",
         "FEAT-llm-scheduler-config-surface",
@@ -74296,7 +74566,8 @@
       "owners": [
         "TASK-outfit-change-hook",
         "TASK-outfit-narrative-extractor-regex-prefilter",
-        "epic-reactive-actor-appearance"
+        "epic-reactive-actor-appearance",
+        "epic-review-20261025-parallel-merge-integration"
       ]
     },
     {
@@ -74314,7 +74585,8 @@
     {
       "path": "src/regex/slugs.ts",
       "owners": [
-        "BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin"
+        "BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin",
+        "epic-review-20261025-dead-code-sweep"
       ]
     },
     {
@@ -74988,6 +75260,7 @@
         "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
         "FEAT-byok-api-keys",
         "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+        "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
         "epic-byok-api-keys",
         "epic-platform-integrations"
       ]
@@ -75459,6 +75732,7 @@
       "path": "src/routes/character-relationships.ts",
       "owners": [
         "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
+        "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
         "TASK-char-editor-db-storage-sync"
       ]
     },
@@ -75695,6 +75969,13 @@
       "path": "src/routes/chat-messages.ts",
       "owners": [
         "epic-chat-composer-flows"
+      ]
+    },
+    {
+      "path": "src/routes/chat-pins.ts",
+      "owners": [
+        "BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo",
+        "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec"
       ]
     },
     {
@@ -76388,13 +76669,15 @@
     {
       "path": "src/routes/export-sse/jobs.ts",
       "owners": [
-        "BUG-community-share-missing-lorebook-export"
+        "BUG-community-share-missing-lorebook-export",
+        "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai"
       ]
     },
     {
       "path": "src/routes/export-sse/start.ts",
       "owners": [
         "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+        "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
         "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
         "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
         "BUG-resolveuseridfromrequest-missing-user-status-check",
@@ -76405,6 +76688,12 @@
       "path": "src/routes/export-sse/status.ts",
       "owners": [
         "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u"
+      ]
+    },
+    {
+      "path": "src/routes/export-sse/types.ts",
+      "owners": [
+        "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai"
       ]
     },
     {
@@ -76679,6 +76968,7 @@
         "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
         "TASK-branch-merges-routes-and-typebox-schemas",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+        "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
         "epic-guest-access"
       ]
     },
@@ -76708,6 +76998,7 @@
       "owners": [
         "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
         "TASK-frontend-and-http-utils-type-safety-batch",
+        "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
         "epic-review-dev-2026-08-26-security-data-integrity-merges"
       ]
     },
@@ -76917,6 +77208,7 @@
     {
       "path": "src/routes/message-polls.ts",
       "owners": [
+        "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
         "TASK-message-polls-votes"
       ]
     },
@@ -77022,6 +77314,8 @@
     {
       "path": "src/routes/messages/ai-action.ts",
       "owners": [
+        "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+        "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
         "TASK-ai-message-utilities",
         "TASK-classifier-model-survey-message-intent-memory-ranking-emotio"
       ]
@@ -77365,6 +77659,13 @@
       "path": "src/routes/messages/translate-inbound.ts",
       "owners": [
         "TASK-per-chat-auto-translation-layer"
+      ]
+    },
+    {
+      "path": "src/routes/messages/translations.ts",
+      "owners": [
+        "BUG-translation-route-silent-catch-ships-undecryptable-ciphertex",
+        "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste"
       ]
     },
     {
@@ -78126,6 +78427,7 @@
     {
       "path": "src/routes/settings.ts",
       "owners": [
+        "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
         "BUG-handleexportall-leaks-group-chat-participants-messages-expor",
         "BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings",
         "BUG-settings-export-endpoint-has-no-rate-limiting",
@@ -78245,7 +78547,8 @@
     {
       "path": "src/routes/story-states/handlers.ts",
       "owners": [
-        "BUG-quest-and-story-state-routes-discard-notification-rejections"
+        "BUG-quest-and-story-state-routes-discard-notification-rejections",
+        "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with"
       ]
     },
     {
@@ -78433,7 +78736,8 @@
     {
       "path": "src/routes/users/me.ts",
       "owners": [
-        "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use"
+        "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use",
+        "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste"
       ]
     },
     {
@@ -78928,6 +79232,12 @@
       "path": "src/routes/vn-questions.ts",
       "owners": [
         "TASK-vn-qa-mode"
+      ]
+    },
+    {
+      "path": "src/routes/voice-notes.ts",
+      "owners": [
+        "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec"
       ]
     },
     {
@@ -85107,6 +85417,12 @@
       ]
     },
     {
+      "path": "src/validation/schemas/world-state.ts",
+      "owners": [
+        "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with"
+      ]
+    },
+    {
       "path": "src/validation/schemas/worlds.ts",
       "owners": [
         "BUG-world-lore-silently-stripped-on-create-and-update",
@@ -85463,7 +85779,8 @@
       "owners": [
         "TASK-assistant-todo-planning-tables-service-assistant-wiring",
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
-        "epic-assistant-step-planning"
+        "epic-assistant-step-planning",
+        "epic-review-20261025-dead-code-sweep"
       ]
     },
     {
@@ -101926,6 +102243,16 @@
       "to": "src/routes/character-traits/index.ts"
     },
     {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "produces",
+      "to": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "produces",
+      "to": "src/routes/messages/ai-action.ts"
+    },
+    {
       "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
       "kind": "produces",
       "to": "src/admin/config.test.ts"
@@ -104006,6 +104333,16 @@
       "to": "src/turning/turn-manager/selection.ts"
     },
     {
+      "from": "BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo",
+      "kind": "produces",
+      "to": "src/chat/service/polls.ts"
+    },
+    {
+      "from": "BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo",
+      "kind": "produces",
+      "to": "src/routes/chat-pins.ts"
+    },
+    {
       "from": "BUG-chat-prompt-override-bypass-on-reply",
       "kind": "produces",
       "to": "src/generation/auto-gen-cascade.test.ts"
@@ -104786,6 +105123,26 @@
       "to": "src/generation/auto-gen/prepare-generation.ts"
     },
     {
+      "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
+      "kind": "produces",
+      "to": "src/assistant/commands/characters-access.test.ts"
+    },
+    {
+      "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
+      "kind": "produces",
+      "to": "src/assistant/commands/characters-access.ts"
+    },
+    {
+      "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
+      "kind": "produces",
+      "to": "src/assistant/commands/items.test.ts"
+    },
+    {
+      "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
+      "kind": "produces",
+      "to": "src/frontend/alpine/command-conformance.test.ts"
+    },
+    {
       "from": "BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros",
       "kind": "produces",
       "to": "src/crypto/e2e/dh-ratchet.bugs.test.ts"
@@ -105379,6 +105736,26 @@
       "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
       "kind": "produces",
       "to": "src/routes/export.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "produces",
+      "to": "src/routes/export-sse/jobs.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "produces",
+      "to": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "produces",
+      "to": "src/routes/export-sse/types.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "produces",
+      "to": "src/routes/settings.ts"
     },
     {
       "from": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
@@ -110751,6 +111128,16 @@
       "to": "src/story/game-master/execute.ts"
     },
     {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "produces",
+      "to": "src/routes/story-states/handlers.ts"
+    },
+    {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "produces",
+      "to": "src/validation/schemas/world-state.ts"
+    },
+    {
       "from": "BUG-stranded-post-finalize-fix-the-audio-low-pass-coefficient-re",
       "kind": "produces",
       "to": "src/generation/audio/providers/local.ts"
@@ -111174,6 +111561,36 @@
       "from": "BUG-transitions-test-ts-ownership-tests-fail-with-fk-constraint-",
       "kind": "produces",
       "to": "src/db/migrations/058_actor_memory.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "produces",
+      "to": "src/chat/service/merge/merge-llm-call.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "produces",
+      "to": "src/generation/auto-gen/call-llm.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "produces",
+      "to": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "produces",
+      "to": "src/generation/providers/deepl/core.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "produces",
+      "to": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translation-route-silent-catch-ships-undecryptable-ciphertex",
+      "kind": "produces",
+      "to": "src/routes/messages/translations.ts"
     },
     {
       "from": "BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate",
@@ -111626,6 +112043,31 @@
       "to": "src/chat/service/party.ts"
     },
     {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "produces",
+      "to": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "produces",
+      "to": "src/routes/chat-pins.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "produces",
+      "to": "src/routes/message-polls.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "produces",
+      "to": "src/routes/messages/ai-action.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "produces",
+      "to": "src/routes/voice-notes.ts"
+    },
+    {
       "from": "BUG-webhook-dedup-is-recorded-before-dispatch-so-a-handler-throw",
       "kind": "produces",
       "to": "src/integrations/bridge.test.ts"
@@ -111679,6 +112121,26 @@
       "from": "BUG-whitenote-ui-types-rejected-422",
       "kind": "produces",
       "to": "src/routes/gm-notes/schemas.ts"
+    },
+    {
+      "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "kind": "produces",
+      "to": "src/characters/services/relationships-service/read.ts"
+    },
+    {
+      "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "kind": "produces",
+      "to": "src/characters/services/relationships-service/write.ts"
+    },
+    {
+      "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "kind": "produces",
+      "to": "src/characters/services/shared-service-utils.ts"
+    },
+    {
+      "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "kind": "produces",
+      "to": "src/routes/character-relationships.ts"
     },
     {
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
@@ -135211,6 +135673,11 @@
       "to": "src/chat/random-events.ts"
     },
     {
+      "from": "TASK-locale-variant-aware-eager-translation-comparator-en-vs-en-u",
+      "kind": "produces",
+      "to": "src/chat/translation-target.ts"
+    },
+    {
       "from": "TASK-location-crud-tree-connections",
       "kind": "produces",
       "to": "src/db/enums-story/world.ts"
@@ -137224,6 +137691,11 @@
       "from": "TASK-mood-shift-delta-tuning-word-boundary",
       "kind": "produces",
       "to": "src/utils"
+    },
+    {
+      "from": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
+      "kind": "produces",
+      "to": "src/characters/services/relationships-service/write.ts"
     },
     {
       "from": "TASK-msg-forward-across-chats",
@@ -144459,6 +144931,36 @@
       "from": "TASK-two-tier-custom-instructions",
       "kind": "produces",
       "to": "src/assistant/prompt/sections/system.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "produces",
+      "to": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "produces",
+      "to": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "produces",
+      "to": "src/routes/http-utils/errors.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "produces",
+      "to": "src/routes/http-utils/status.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "produces",
+      "to": "src/routes/messages/translations.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "produces",
+      "to": "src/routes/users/me.ts"
     },
     {
       "from": "TASK-typescript-7-migration-typecheck-failures",
@@ -157851,6 +158353,31 @@
       "to": "src/generation/resource-provider.ts"
     },
     {
+      "from": "epic-review-20261025-api-governance-perimeter",
+      "kind": "produces",
+      "to": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "epic-review-20261025-dead-code-sweep",
+      "kind": "produces",
+      "to": "src/components/chat/music-embed.html"
+    },
+    {
+      "from": "epic-review-20261025-dead-code-sweep",
+      "kind": "produces",
+      "to": "src/regex/slugs.ts"
+    },
+    {
+      "from": "epic-review-20261025-dead-code-sweep",
+      "kind": "produces",
+      "to": "src/views/partials/planning-todo.html"
+    },
+    {
+      "from": "epic-review-20261025-parallel-merge-integration",
+      "kind": "produces",
+      "to": "src/regex/outfit-events.ts"
+    },
+    {
       "from": "epic-review-dev-2026-08-26-late-merges",
       "kind": "produces",
       "to": "src/nsfw/moderation-service/data.test.ts"
@@ -170408,6 +170935,54 @@
       "via": "src/frontend/alpine/chat-actions/dispatch.ts"
     },
     {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "BUG-chat-sse-shares-generation-rate-bucket",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "BUG-rate-limit-misses-post-emotion-avatars-single",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "via": "src/routes/messages/ai-action.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "TASK-ai-message-utilities",
+      "via": "src/routes/messages/ai-action.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
+      "via": "src/routes/messages/ai-action.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "TASK-rate-policies-missing-for-actor-image-gen-and-matte-routes",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
+      "from": "BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic",
+      "kind": "sibling",
+      "to": "epic-api-rate-limiting",
+      "via": "src/api-governance/rate-limiting/policies.ts"
+    },
+    {
       "from": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
       "kind": "sibling",
       "to": "BUG-archive-retention-hardcoded-30-days-should-be-configurable-9",
@@ -170878,6 +171453,12 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
       "via": "src/routes/api-keys.ts"
     },
@@ -171012,6 +171593,12 @@
       "kind": "sibling",
       "to": "TASK-sam3-direct-provider-via-meta-model-api",
       "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/api-keys.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
@@ -171786,6 +172373,12 @@
       "kind": "sibling",
       "to": "epic-multilingual-carriage",
       "via": "src/routes/messages/create.ts"
+    },
+    {
+      "from": "BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -173200,6 +173793,12 @@
     {
       "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-dedup-ignores-requested-encryption-tier-and-key-return",
+      "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts; src/assets/service/create.ts"
     },
@@ -173542,6 +174141,12 @@
     {
       "from": "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-link-share-json-routes-500-body-already-used-elysia-su",
+      "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts"
     },
@@ -173742,6 +174347,12 @@
       "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
       "via": "src/routes/http-utils/errors.ts"
+    },
+    {
+      "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts; src/routes/http-utils/errors.ts"
     },
     {
       "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
@@ -173962,6 +174573,12 @@
     {
       "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-silent-catch-blocks-swallow-failures-with-no-log",
+      "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts; src/assets/service/thumbnail.ts"
     },
@@ -174119,6 +174736,12 @@
       "from": "BUG-asset-upload-chat-key-derivation-failure-silently-downgrades",
       "kind": "sibling",
       "to": "TASK-review-thread-target-vocabulary",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-upload-chat-key-derivation-failure-silently-downgrades",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
       "via": "src/assets/controller.ts"
     },
     {
@@ -174496,6 +175119,12 @@
     {
       "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
+      "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts"
     },
@@ -174659,6 +175288,12 @@
       "from": "BUG-assets-delete-fk-constraint-fails",
       "kind": "sibling",
       "to": "TASK-review-thread-target-vocabulary",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-assets-delete-fk-constraint-fails",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
       "via": "src/assets/controller.ts"
     },
     {
@@ -177376,6 +178011,12 @@
     {
       "from": "BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire",
       "kind": "sibling",
+      "to": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "via": "src/generation/auto-gen/call-llm.ts"
+    },
+    {
+      "from": "BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire",
+      "kind": "sibling",
       "to": "FEAT-llm-request-complexity-classification",
       "via": "src/generation/auto-gen/call-llm.ts"
     },
@@ -179990,6 +180631,12 @@
       "via": "src/routes/messages/create.ts"
     },
     {
+      "from": "BUG-bug-async-result-store-track-never-called-request-results-pi",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
       "from": "BUG-bug-async-store-complete-drops-response-body-larger-than-max",
       "kind": "sibling",
       "to": "BUG-runoffloadpass-phase1-spill-and-db-update-not-atomic",
@@ -182302,6 +182949,12 @@
     {
       "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
       "kind": "sibling",
+      "to": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "via": "src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
       "to": "FEAT-background",
       "via": "src/generation/providers/registry.ts"
     },
@@ -182531,6 +183184,12 @@
       "from": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
       "kind": "sibling",
       "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
       "via": "src/routes/api-keys.ts"
     },
     {
@@ -186596,6 +187255,18 @@
       "via": "src/routes/messages/post.ts"
     },
     {
+      "from": "BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo",
+      "kind": "sibling",
+      "to": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "via": "src/routes/chat-pins.ts"
+    },
+    {
+      "from": "BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/chat/service/polls.ts"
+    },
+    {
       "from": "BUG-chat-prompt-override-bypass-on-reply",
       "kind": "sibling",
       "to": "BUG-chat-swipe-index-race",
@@ -189282,6 +189953,12 @@
       "kind": "sibling",
       "to": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
       "via": "src/routes/export.ts"
+    },
+    {
+      "from": "BUG-community-share-missing-lorebook-export",
+      "kind": "sibling",
+      "to": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "via": "src/routes/export-sse/jobs.ts"
     },
     {
       "from": "BUG-community-share-missing-lorebook-export",
@@ -192626,6 +193303,18 @@
       "via": "src/assistant/intent.ts"
     },
     {
+      "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-tests",
+      "via": "src/assistant/commands/items.test.ts"
+    },
+    {
+      "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
+      "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/assistant/commands/characters-access.ts"
+    },
+    {
       "from": "BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros",
       "kind": "sibling",
       "to": "TASK-e2ee-open-bugs",
@@ -193133,6 +193822,12 @@
       "from": "BUG-dual-vn-choices-route-registration-shadows-guarded-route",
       "kind": "sibling",
       "to": "epic-file-splitting",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "BUG-dual-vn-choices-route-registration-shadows-guarded-route",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
       "via": "src/app/register-plugins.ts"
     },
     {
@@ -193763,6 +194458,12 @@
       "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
       "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/routes/http-utils/errors.ts"
+    },
+    {
+      "from": "BUG-dynamic-gallery-search-has-no-visibility-filter-and-no-real-",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
       "via": "src/routes/http-utils/errors.ts"
     },
     {
@@ -196834,6 +197535,12 @@
     {
       "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte",
+      "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts"
     },
@@ -197596,6 +198303,12 @@
     {
       "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
       "kind": "sibling",
+      "to": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-routes-re-resolve-identity-and-fall-back-to-solo",
+      "kind": "sibling",
       "to": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
       "via": "src/routes/export-sse/start.ts"
     },
@@ -197676,6 +198389,72 @@
       "kind": "sibling",
       "to": "epic-import-export-io",
       "via": "src/routes/export.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "BUG-export-status-download-endpoints-leak-other-users-jobs-via-u",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "BUG-handleexportall-leaks-group-chat-participants-messages-expor",
+      "via": "src/routes/settings.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings",
+      "via": "src/routes/settings.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "BUG-resolveuseridfromrequest-missing-user-status-check",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "BUG-settings-export-endpoint-has-no-rate-limiting",
+      "via": "src/routes/settings.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
+      "via": "src/routes/export-sse/start.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "TASK-format-version-migration",
+      "via": "src/routes/settings.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "TASK-response-length-control",
+      "via": "src/routes/settings.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "TASK-settings-patch-uses-t-any-body-allowing-mass-assignment",
+      "via": "src/routes/settings.ts"
+    },
+    {
+      "from": "BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai",
+      "kind": "sibling",
+      "to": "TASK-text-effects-overlays",
+      "via": "src/routes/settings.ts"
     },
     {
       "from": "BUG-export-sse-start-throws-controller-is-already-closed-on-clie",
@@ -197868,6 +198647,12 @@
       "kind": "sibling",
       "to": "epic-security-sandboxing",
       "via": "src/plugins/loader.ts"
+    },
+    {
+      "from": "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
+      "kind": "sibling",
+      "to": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "via": "src/generation/providers/call-with-failover.ts"
     },
     {
       "from": "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
@@ -199780,6 +200565,12 @@
     {
       "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/http-utils/errors.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "sibling",
       "to": "epic-guest-access",
       "via": "src/routes/http-utils/errors.ts"
     },
@@ -201598,6 +202389,12 @@
     {
       "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
+      "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts"
     },
@@ -202190,6 +202987,12 @@
       "via": "src/elysia-app.ts"
     },
     {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori",
@@ -202458,6 +203261,12 @@
       "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
       "via": "src/server/handler.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
     },
     {
       "from": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
@@ -207020,6 +207829,12 @@
       "via": "src/routes/v1/governance.test.ts"
     },
     {
+      "from": "BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin",
+      "kind": "sibling",
+      "to": "epic-review-20261025-dead-code-sweep",
+      "via": "src/regex/slugs.ts"
+    },
+    {
       "from": "BUG-group-cascade-consecutive-turn-guard",
       "kind": "sibling",
       "to": "BUG-group-cascade-max-turns-off-by-one",
@@ -211038,6 +211853,12 @@
       "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
       "via": "src/routes/v1/openapi.ts"
+    },
+    {
+      "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -216506,6 +217327,12 @@
       "via": "src/app/register-plugins.ts"
     },
     {
+      "from": "BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "kind": "sibling",
       "to": "BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-",
@@ -219526,6 +220353,12 @@
     {
       "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
       "kind": "sibling",
+      "to": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "via": "src/characters/services/relationships-service/write.ts"
+    },
+    {
+      "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
+      "kind": "sibling",
       "to": "TASK-041",
       "via": "src/characters/services/mood-service.test.ts; src/characters/services/mood-service/apply-happiness-delta.ts; src/characters/services/mood-service/log-event.ts"
     },
@@ -219534,6 +220367,12 @@
       "kind": "sibling",
       "to": "TASK-mood-shift-delta-tuning-word-boundary",
       "via": "src/characters/services/mood-service/apply-happiness-delta.ts"
+    },
+    {
+      "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
+      "kind": "sibling",
+      "to": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
+      "via": "src/characters/services/relationships-service/write.ts"
     },
     {
       "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
@@ -220056,6 +220895,12 @@
       "kind": "sibling",
       "to": "TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste",
       "via": "src/generation/image-edit-service/apply.ts; src/generation/image-gen-route.ts"
+    },
+    {
+      "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
@@ -220613,6 +221458,12 @@
       "from": "BUG-no-role-restriction-for-changing-chat-settings",
       "kind": "sibling",
       "to": "BUG-vn-mode-locked-once-chat-has-confirmed-messages",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-no-role-restriction-for-changing-chat-settings",
+      "kind": "sibling",
+      "to": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
       "via": "src/chat/service/access.ts"
     },
     {
@@ -225128,6 +225979,12 @@
       "via": "src/routes/quests/handlers.ts"
     },
     {
+      "from": "BUG-quest-and-story-state-routes-discard-notification-rejections",
+      "kind": "sibling",
+      "to": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "via": "src/routes/story-states/handlers.ts"
+    },
+    {
       "from": "BUG-quest-engine-double-advances-from-stale-in-memory-progress-a",
       "kind": "sibling",
       "to": "TASK-055",
@@ -225892,6 +226749,12 @@
     {
       "from": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
       "kind": "sibling",
+      "to": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "via": "src/generation/auto-gen/call-llm.ts"
+    },
+    {
+      "from": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
+      "kind": "sibling",
       "to": "FEAT-llm-request-complexity-classification",
       "via": "src/generation/auto-gen/call-llm.ts"
     },
@@ -226226,6 +227089,12 @@
       "via": "src/app/register-plugins.ts"
     },
     {
+      "from": "BUG-register-plugins-150-references-undefined-chatsectionsroutes",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
       "from": "BUG-register-rate-limiter-consumes-on-username-collision-retries",
       "kind": "sibling",
       "to": "BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif",
@@ -226378,13 +227247,37 @@
     {
       "from": "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
       "kind": "sibling",
+      "to": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "via": "src/characters/services/relationships-service/write.ts; src/routes/character-relationships.ts"
+    },
+    {
+      "from": "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
+      "kind": "sibling",
       "to": "TASK-char-editor-db-storage-sync",
       "via": "src/routes/character-relationships.ts"
     },
     {
       "from": "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
       "kind": "sibling",
+      "to": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
+      "via": "src/characters/services/relationships-service/write.ts"
+    },
+    {
+      "from": "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
+      "kind": "sibling",
       "to": "epic-character-growth",
+      "via": "src/characters/services/relationships-service/write.ts"
+    },
+    {
+      "from": "BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same",
+      "kind": "sibling",
+      "to": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "via": "src/characters/services/relationships-service/write.ts"
+    },
+    {
+      "from": "BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same",
+      "kind": "sibling",
+      "to": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
       "via": "src/characters/services/relationships-service/write.ts"
     },
     {
@@ -226956,6 +227849,12 @@
       "kind": "sibling",
       "to": "TASK-server-side-i18n-middleware",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
@@ -229804,6 +230703,12 @@
     {
       "from": "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/users/me.ts"
+    },
+    {
+      "from": "BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use",
+      "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/frontend/alpine/settings/general.ts"
     },
@@ -229847,6 +230752,12 @@
       "from": "BUG-settings-save-omits-gmconfig-for-online-chats",
       "kind": "sibling",
       "to": "BUG-vn-mode-locked-once-chat-has-confirmed-messages",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-settings-save-omits-gmconfig-for-online-chats",
+      "kind": "sibling",
+      "to": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
       "via": "src/chat/service/access.ts"
     },
     {
@@ -230736,6 +231647,12 @@
       "kind": "sibling",
       "to": "BUG-tool-call-result-no-frontend-rendering",
       "via": "src/generation/generate-route/stream-to-client.ts"
+    },
+    {
+      "from": "BUG-size-strict-pre-existing-dev-drift",
+      "kind": "sibling",
+      "to": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "via": "src/generation/providers/registry.ts"
     },
     {
       "from": "BUG-size-strict-pre-existing-dev-drift",
@@ -233558,6 +234475,12 @@
       "via": "src/elysia-app.ts"
     },
     {
+      "from": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
       "from": "BUG-story-destroy-partial-quantity-update-path-missing-world-id-",
       "kind": "sibling",
       "to": "BUG-story-items-cross-world-idor-read-transfer-destroy",
@@ -234443,6 +235366,12 @@
       "from": "BUG-test-assertions-stale-gm-support-message",
       "kind": "sibling",
       "to": "BUG-vn-mode-locked-once-chat-has-confirmed-messages",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-test-assertions-stale-gm-support-message",
+      "kind": "sibling",
+      "to": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
       "via": "src/chat/service/access.ts"
     },
     {
@@ -235398,6 +236327,228 @@
       "kind": "sibling",
       "to": "TASK-recon-test-coverage",
       "via": "src/chat/memory-promotion.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "FEAT-background",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "FEAT-llama-swap-rotation-exclusion-policy",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "FEAT-llm-request-complexity-classification",
+      "via": "src/generation/auto-gen/call-llm.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "FEAT-llm-resource-aware-admission-control",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "FEAT-llm-scheduler-config-surface",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-comfyui-first-class-chat-selection",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-distributed-generation-integration",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-emotions-avatar-edit-model",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-dispatch-compose-failover",
+      "via": "src/generation/auto-gen/call-llm.ts; src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-generation-error-handling-gaps-detector-abort-void-promises",
+      "via": "src/generation/auto-gen/call-llm.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-harness-model-routing",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-llama-swap-native-support-cpu-resident-classifier-model-reci",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-resource-provision-routing-facade",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-route-plugin-calls-through-the-shared-provider-path",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-sam3-direct-provider-via-meta-model-api",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-unit-translation-service",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-animated-raster",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-llm-svg-pipeline",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
+      "via": "src/generation/auto-gen/call-llm.ts; src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-comfyui-plugin",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-distributed-compute-sharing",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/generation/auto-gen/call-llm.ts; src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-llama-swap",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-llm-request-scheduler",
+      "via": "src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-platform-integrations",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-provider-plugin-ecosystem",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-resource-provision",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-sam3-segmentation-integration",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-translation-route-silent-catch-ships-undecryptable-ciphertex",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/messages/translations.ts"
     },
     {
       "from": "BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate",
@@ -236848,6 +237999,12 @@
     {
       "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "kind": "sibling",
       "to": "epic-byok-api-keys",
       "via": "src/routes/api-keys.coverage.test.ts; src/routes/api-keys.ts"
     },
@@ -237766,6 +238923,12 @@
     {
       "from": "BUG-vn-mode-locked-once-chat-has-confirmed-messages",
       "kind": "sibling",
+      "to": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-vn-mode-locked-once-chat-has-confirmed-messages",
+      "kind": "sibling",
       "to": "TASK-024",
       "via": "src/chat/service/party.ts"
     },
@@ -237867,6 +239030,66 @@
     },
     {
       "from": "BUG-vn-mode-locked-once-chat-has-confirmed-messages",
+      "kind": "sibling",
+      "to": "epic-visual-novel-mode",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "TASK-ai-message-utilities",
+      "via": "src/routes/messages/ai-action.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "TASK-classifier-model-survey-message-intent-memory-ranking-emotio",
+      "via": "src/routes/messages/ai-action.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "TASK-expose-dek-export-and-import-over-the-federation-wire-routes",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "TASK-guest-chat-public-reads-visibility-aware-chat-access",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "TASK-message-polls-votes",
+      "via": "src/routes/message-polls.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "TASK-vn-choice-opt-in",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
+      "kind": "sibling",
+      "to": "epic-guest-access",
+      "via": "src/chat/service/access.ts"
+    },
+    {
+      "from": "BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec",
       "kind": "sibling",
       "to": "epic-visual-novel-mode",
       "via": "src/chat/service/access.ts"
@@ -238116,6 +239339,24 @@
       "kind": "sibling",
       "to": "epic-story-mode-ui",
       "via": "src/components/chat/gm-panel.html; src/frontend/alpine/gm-panel.ts"
+    },
+    {
+      "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "kind": "sibling",
+      "to": "TASK-char-editor-db-storage-sync",
+      "via": "src/routes/character-relationships.ts"
+    },
+    {
+      "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "kind": "sibling",
+      "to": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
+      "via": "src/characters/services/relationships-service/write.ts"
+    },
+    {
+      "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
+      "kind": "sibling",
+      "to": "epic-character-growth",
+      "via": "src/characters/services/relationships-service/write.ts"
     },
     {
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
@@ -245200,6 +246441,12 @@
     {
       "from": "FEAT-background",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "FEAT-background",
+      "kind": "sibling",
       "to": "TASK-unit-translation-service",
       "via": "src/generation/providers/registry.ts"
     },
@@ -245555,6 +246802,12 @@
       "from": "FEAT-byok-api-keys",
       "kind": "sibling",
       "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "FEAT-byok-api-keys",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
       "via": "src/routes/api-keys.ts"
     },
     {
@@ -252780,6 +254033,12 @@
       "kind": "sibling",
       "to": "epic-logging",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "FEAT-memory-visualizer-knowledge-graph-over-asset-links",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
     },
     {
       "from": "FEAT-memory-visualizer-knowledge-graph-over-asset-links",
@@ -280384,6 +281643,12 @@
     {
       "from": "TASK-assistant-todo-planning-tables-service-assistant-wiring",
       "kind": "sibling",
+      "to": "epic-review-20261025-dead-code-sweep",
+      "via": "src/views/partials/planning-todo.html"
+    },
+    {
+      "from": "TASK-assistant-todo-planning-tables-service-assistant-wiring",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -288932,6 +290197,12 @@
       "via": "src/cron/jobs.ts"
     },
     {
+      "from": "TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
       "from": "TASK-bound-linked-travel-prompts",
       "kind": "sibling",
       "to": "TASK-chat-feature-location-transition-transfer",
@@ -289630,6 +290901,12 @@
     {
       "from": "TASK-branch-merges-routes-and-typebox-schemas",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/http-utils/errors.ts"
+    },
+    {
+      "from": "TASK-branch-merges-routes-and-typebox-schemas",
+      "kind": "sibling",
       "to": "epic-guest-access",
       "via": "src/routes/http-utils/errors.ts"
     },
@@ -289974,6 +291251,12 @@
       "kind": "sibling",
       "to": "epic-recursive-self-improvement",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
     },
     {
       "from": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
@@ -302032,6 +303315,12 @@
     {
       "from": "TASK-comfyui-first-class-admin-workflows",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-admin-workflows",
+      "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts"
     },
@@ -302784,6 +304073,12 @@
       "kind": "sibling",
       "to": "TASK-timeline-id-world-timeline-events",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-workflow-library",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-comfyui-first-class-workflow-library",
@@ -310568,6 +311863,12 @@
       "via": "src/app/register-plugins.ts"
     },
     {
+      "from": "TASK-crafting-stations-execution",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
       "from": "TASK-crafting-system",
       "kind": "sibling",
       "to": "TASK-response-validation-logic-additions",
@@ -312298,6 +313599,12 @@
     {
       "from": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "kind": "sibling",
       "to": "TASK-unit-translation-service",
       "via": "src/generation/providers/registry.ts"
     },
@@ -313422,6 +314729,12 @@
       "kind": "sibling",
       "to": "TASK-tui-models-overlay",
       "via": "src/views/admin.html"
+    },
+    {
+      "from": "TASK-dedup-top-jscpd-clone-clusters",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-dedup-top-jscpd-clone-clusters",
@@ -315160,6 +316473,12 @@
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
       "kind": "sibling",
+      "to": "epic-review-20261025-dead-code-sweep",
+      "via": "src/views/partials/planning-todo.html"
+    },
+    {
+      "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "kind": "sibling",
       "to": "epic-terminal-ui",
       "via": "src/views/admin.html"
     },
@@ -315756,6 +317075,12 @@
       "kind": "sibling",
       "to": "TASK-timeline-id-world-timeline-events",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/http-utils/status.ts"
     },
     {
       "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
@@ -318170,6 +319495,12 @@
       "via": "src/elysia-app.ts"
     },
     {
+      "from": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
       "from": "TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p",
       "kind": "sibling",
       "to": "TASK-federation-peer-dispatch-compose-failover",
@@ -318611,6 +319942,12 @@
       "from": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
       "kind": "sibling",
       "to": "TASK-review-thread-target-vocabulary",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
       "via": "src/assets/controller.ts"
     },
     {
@@ -320760,6 +322097,12 @@
       "kind": "sibling",
       "to": "TASK-review-thread-target-vocabulary",
       "via": "src/assets/controller.ts; src/db/schema-content.ts"
+    },
+    {
+      "from": "TASK-encryption-asset-encryption",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-encryption-asset-encryption",
@@ -327238,6 +328581,12 @@
     {
       "from": "TASK-frontend-and-http-utils-type-safety-batch",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/http-utils/status.ts"
+    },
+    {
+      "from": "TASK-frontend-and-http-utils-type-safety-batch",
+      "kind": "sibling",
       "to": "TASK-validate-expansion-config-at-load-time",
       "via": "src/config/load/load.ts"
     },
@@ -328566,6 +329915,12 @@
       "kind": "sibling",
       "to": "TASK-signed-urls-for-asset-downloads",
       "via": "src/frontend/pages/gallery.ts"
+    },
+    {
+      "from": "TASK-gallery-fuzzy-search-pagination",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-gallery-fuzzy-search-pagination",
@@ -330654,6 +332009,12 @@
       "kind": "sibling",
       "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
       "via": "src/assets/signed-url.ts"
+    },
+    {
+      "from": "TASK-guest-asset-public-reads-open-public-asset-access",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-guest-asset-public-reads-open-public-asset-access",
@@ -335416,6 +336777,12 @@
     {
       "from": "TASK-image-edit-concept-inpaint-template",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-image-edit-concept-inpaint-template",
+      "kind": "sibling",
       "to": "TASK-webp-as-a-first-class-stored-asset-format",
       "via": "src/assets/controller.ts"
     },
@@ -339988,6 +341355,12 @@
     {
       "from": "TASK-lora-discovery-application",
       "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "TASK-lora-discovery-application",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/generation/image-gen-route.ts"
     },
@@ -341286,6 +342659,12 @@
       "kind": "sibling",
       "to": "TASK-runtime-migration-staleness-guard",
       "via": "src/db/migrate.ts"
+    },
+    {
+      "from": "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
+      "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
     },
     {
       "from": "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
@@ -343960,6 +345339,12 @@
     {
       "from": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
       "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
+      "kind": "sibling",
       "to": "epic-security-sandboxing-quickref",
       "via": "src/middleware/permissions.ts"
     },
@@ -344248,6 +345633,12 @@
     {
       "from": "TASK-middleware-idempotency-wire-into-elysia",
       "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "TASK-middleware-idempotency-wire-into-elysia",
+      "kind": "sibling",
       "to": "epic-transport-expansion",
       "via": "src/config/schema.ts"
     },
@@ -344412,6 +345803,12 @@
       "kind": "sibling",
       "to": "epic-recursive-self-improvement",
       "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "TASK-middleware-in-progress-status-endpoint-for-long-running-requ",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
     },
     {
       "from": "TASK-middleware-migration-compaction-data-version-hash",
@@ -345618,6 +347015,12 @@
       "kind": "sibling",
       "to": "epic-emotion-avatar-message-binding",
       "via": "src/generation/hooks/emotion-hook.ts"
+    },
+    {
+      "from": "TASK-move-relationship-update-delete-existence-check-inside-the-t",
+      "kind": "sibling",
+      "to": "epic-character-growth",
+      "via": "src/characters/services/relationships-service/write.ts"
     },
     {
       "from": "TASK-msg-forward-across-chats",
@@ -347650,6 +349053,12 @@
     {
       "from": "TASK-outfit-change-hook",
       "kind": "sibling",
+      "to": "epic-review-20261025-parallel-merge-integration",
+      "via": "src/regex/outfit-events.ts"
+    },
+    {
+      "from": "TASK-outfit-change-hook",
+      "kind": "sibling",
       "to": "epic-runtime-integrity-fail-safes",
       "via": "src/server/start.ts"
     },
@@ -347922,6 +349331,12 @@
       "kind": "sibling",
       "to": "epic-research-agency-affordance",
       "via": "src/regex/action-parser.ts"
+    },
+    {
+      "from": "TASK-outfit-narrative-extractor-regex-prefilter",
+      "kind": "sibling",
+      "to": "epic-review-20261025-parallel-merge-integration",
+      "via": "src/regex/outfit-events.ts"
     },
     {
       "from": "TASK-party-aux-transition",
@@ -355594,6 +357009,12 @@
     {
       "from": "TASK-review-thread-target-vocabulary",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-review-thread-target-vocabulary",
+      "kind": "sibling",
       "to": "TASK-vector-gen-gallery-asset-support",
       "via": "src/db/enums-content.ts"
     },
@@ -357532,6 +358953,12 @@
     {
       "from": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
       "kind": "sibling",
+      "to": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "via": "src/routes/http-utils/errors.ts"
+    },
+    {
+      "from": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "kind": "sibling",
       "to": "TASK-unify-401-guard-helpers",
       "via": "src/routes/actor-auth.ts"
     },
@@ -358007,6 +359434,12 @@
       "from": "TASK-skills-routes",
       "kind": "sibling",
       "to": "epic-file-splitting",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "TASK-skills-routes",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
       "via": "src/app/register-plugins.ts"
     },
     {
@@ -358565,6 +359998,12 @@
       "from": "TASK-story-points-prototype",
       "kind": "sibling",
       "to": "epic-file-splitting",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "TASK-story-points-prototype",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
       "via": "src/app/register-plugins.ts"
     },
     {
@@ -360336,6 +361775,54 @@
       "kind": "sibling",
       "to": "epic-chat-context-optimization",
       "via": "src/assistant/prompt/sections/system.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "sibling",
+      "to": "TASK-webp-as-a-first-class-stored-asset-format",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "sibling",
+      "to": "epic-aux-enrichment-pipeline",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "sibling",
+      "to": "epic-comfyui-first-class-citizen",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "sibling",
+      "to": "epic-frontend-gallery",
+      "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "sibling",
+      "to": "epic-guest-access",
+      "via": "src/routes/http-utils/errors.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "sibling",
+      "to": "epic-platform-integrations",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste",
+      "kind": "sibling",
+      "to": "epic-review-dev-2026-08-26-security-data-integrity-merges",
+      "via": "src/routes/http-utils/status.ts"
     },
     {
       "from": "TASK-typescript-7-migration-typecheck-failures",
@@ -364816,6 +366303,12 @@
     {
       "from": "epic-agency-story-points",
       "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "epic-agency-story-points",
+      "kind": "sibling",
       "to": "epic-visual-novel-mode",
       "via": "src/views/chat.html"
     },
@@ -366258,6 +367751,12 @@
       "kind": "sibling",
       "to": "epic-research-agency-decision",
       "via": "src/routes/v1/base-surface.ts"
+    },
+    {
+      "from": "epic-assistant-step-planning",
+      "kind": "sibling",
+      "to": "epic-review-20261025-dead-code-sweep",
+      "via": "src/views/partials/planning-todo.html"
     },
     {
       "from": "epic-assistant-step-planning",
@@ -368154,6 +369653,12 @@
       "kind": "sibling",
       "to": "epic-publication-i18n",
       "via": "src/db/schema-"
+    },
+    {
+      "from": "epic-character-growth",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
     },
     {
       "from": "epic-character-growth",
@@ -371452,6 +372957,12 @@
     {
       "from": "epic-db-cold-storage-high-perf",
       "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "epic-db-cold-storage-high-perf",
+      "kind": "sibling",
       "to": "epic-runtime-integrity-fail-safes",
       "via": "src/db/index.ts"
     },
@@ -371890,6 +373401,12 @@
     {
       "from": "epic-e2e-integration-testing",
       "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "epic-e2e-integration-testing",
+      "kind": "sibling",
       "to": "epic-technical-comparison-charts",
       "via": "src/generation/providers/comfyui.ts"
     },
@@ -372240,6 +373757,12 @@
       "kind": "sibling",
       "to": "epic-recursive-self-improvement",
       "via": "src/admin/config-keys.ts"
+    },
+    {
+      "from": "epic-effect-v4-adoption-evaluation",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
     },
     {
       "from": "epic-effect-v4-adoption-evaluation",
@@ -373236,6 +374759,12 @@
       "kind": "sibling",
       "to": "epic-recursive-self-improvement",
       "via": "src/server/start.ts"
+    },
+    {
+      "from": "epic-file-splitting",
+      "kind": "sibling",
+      "to": "epic-review-20261025-api-governance-perimeter",
+      "via": "src/app/register-plugins.ts"
     },
     {
       "from": "epic-file-splitting",
@@ -375420,6 +376949,12 @@
       "kind": "sibling",
       "to": "epic-research-agency-decision",
       "via": "src/db/schema-core.ts; src/regex/stage2-llm.ts"
+    },
+    {
+      "from": "epic-reactive-actor-appearance",
+      "kind": "sibling",
+      "to": "epic-review-20261025-parallel-merge-integration",
+      "via": "src/regex/outfit-events.ts"
     },
     {
       "from": "epic-reactive-actor-appearance",

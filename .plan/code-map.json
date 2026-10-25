@@ -906,6 +906,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-sse-shares-generation-rate-bucket.md"
     },
     {
@@ -1077,6 +1081,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-20261025-api-governance-perimeter.md"
     },
     {
       "kind": "ticket",
@@ -1331,6 +1339,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-review-thread-target-vocabulary.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md"
     },
     {
       "kind": "ticket",
@@ -2603,10 +2615,20 @@
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
     }
   ],
+  "src/assistant/commands/characters-access.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md"
+    }
+  ],
   "src/assistant/commands/characters-access.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md"
     }
   ],
   "src/assistant/commands/characters.test.ts": [
@@ -2970,6 +2992,10 @@
     }
   ],
   "src/assistant/commands/items.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
@@ -8275,6 +8301,12 @@
       "source": ".plan/tickets/TASK-memory-trust-modifier-wiring.md"
     }
   ],
+  "src/characters/services/relationships-service/read.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-withworldid-undefined-means-no-filter-relationship-read-upda.md"
+    }
+  ],
   "src/characters/services/relationships-service/types.ts": [
     {
       "kind": "ticket",
@@ -8297,12 +8329,26 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-withworldid-undefined-means-no-filter-relationship-read-upda.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-move-relationship-update-delete-existence-check-inside-the-t.md"
     }
   ],
   "src/characters/services/shared-service-utils.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    }
+  ],
+  "src/characters/services/shared-service-utils.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-withworldid-undefined-means-no-filter-relationship-read-upda.md"
     }
   ],
   "src/characters/services/skills-service-bridge.ts": [
@@ -9806,6 +9852,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation.md"
     },
     {
@@ -10389,6 +10439,12 @@
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
     }
   ],
+  "src/chat/service/merge/merge-llm-call.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-translate-only-providers-ride-general-failover-chains-comple.md"
+    }
+  ],
   "src/chat/service/merge/merge-result-rows.ts": [
     {
       "kind": "ticket",
@@ -10564,6 +10620,10 @@
     }
   ],
   "src/chat/service/polls.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-polls-votes.md"
@@ -11235,6 +11295,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/chat-lifecycle-moderation.md"
+    }
+  ],
+  "src/chat/translation-target.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-locale-variant-aware-eager-translation-comparator-en-vs-en-u.md"
     }
   ],
   "src/chat/types.test.ts": [
@@ -12427,6 +12493,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-alpha-aware-render-binding-and-mood-panel.md"
+    }
+  ],
+  "src/components/chat/music-embed.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-20261025-dead-code-sweep.md"
     }
   ],
   "src/components/chat/participant-mgmt.html": [
@@ -24117,6 +24189,12 @@
       "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
     }
   ],
+  "src/frontend/alpine/command-conformance.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md"
+    }
+  ],
   "src/frontend/alpine/command-palette.ts": [
     {
       "kind": "ticket",
@@ -28676,6 +28754,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-translate-only-providers-ride-general-failover-chains-comple.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-request-complexity-classification.md"
     },
     {
@@ -31150,6 +31232,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-translate-only-providers-ride-general-failover-chains-comple.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-llm-resource-aware-admission-control.md"
     },
     {
@@ -31397,6 +31483,12 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
+  "src/generation/providers/deepl/core.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-translate-only-providers-ride-general-failover-chains-comple.md"
+    }
+  ],
   "src/generation/providers/edge-tts.ts": [
     {
       "kind": "epic",
@@ -31575,6 +31667,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-translate-only-providers-ride-general-failover-chains-comple.md"
     },
     {
       "kind": "ticket",
@@ -39009,6 +39105,10 @@
       "source": ".plan/epics/epic-reactive-actor-appearance.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-20261025-parallel-merge-integration.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-change-hook.md"
     },
@@ -39030,6 +39130,10 @@
     }
   ],
   "src/regex/slugs.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-20261025-dead-code-sweep.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin.md"
@@ -40117,6 +40221,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md"
     }
   ],
   "src/routes/asset-notes.ts": [
@@ -40906,6 +41014,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-withworldid-undefined-means-no-filter-relationship-read-upda.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-editor-db-storage-sync.md"
     }
   ],
@@ -41271,6 +41383,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-composer-flows.md"
+    }
+  ],
+  "src/routes/chat-pins.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec.md"
     }
   ],
   "src/routes/chat-regenerate.ts": [
@@ -42419,12 +42541,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai.md"
     }
   ],
   "src/routes/export-sse/start.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-export-routes-re-resolve-identity-and-fall-back-to-solo.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai.md"
     },
     {
       "kind": "ticket",
@@ -42451,6 +42581,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-export-status-download-endpoints-leak-other-users-jobs-via-u.md"
+    }
+  ],
+  "src/routes/export-sse/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai.md"
     }
   ],
   "src/routes/export.test.ts": [
@@ -42961,6 +43097,10 @@
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/client-contract.md"
     }
@@ -43017,6 +43157,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-and-http-utils-type-safety-batch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md"
     }
   ],
   "src/routes/http-utils/types.ts": [
@@ -43338,6 +43482,10 @@
   "src/routes/message-polls.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-message-polls-votes.md"
     }
   ],
@@ -43566,6 +43714,14 @@
     }
   ],
   "src/routes/messages/ai-action.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ai-message-utilities.md"
@@ -44315,6 +44471,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
+  "src/routes/messages/translations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-translation-route-silent-catch-ships-undecryptable-ciphertex.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md"
     }
   ],
   "src/routes/messages/types.ts": [
@@ -45490,6 +45656,10 @@
   "src/routes/settings.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-handleexportall-leaks-group-chat-participants-messages-expor.md"
     },
     {
@@ -45687,6 +45857,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-quest-and-story-state-routes-discard-notification-rejections.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-states-npc-location-put-schema-drift-silent-no-op-with.md"
     }
   ],
   "src/routes/story-states/location.ts": [
@@ -45971,6 +46145,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md"
     }
   ],
   "src/routes/v1/actors-surface.ts": [
@@ -46963,6 +47141,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
+    }
+  ],
+  "src/routes/voice-notes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec.md"
     }
   ],
   "src/routes/wardrobe": [
@@ -56825,6 +57009,12 @@
       "source": ".plan/tickets/TASK-identity-lock-seed-negative-prompt-and-anchor.md"
     }
   ],
+  "src/validation/schemas/world-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-states-npc-location-put-schema-drift-silent-no-op-with.md"
+    }
+  ],
   "src/validation/schemas/worlds.ts": [
     {
       "kind": "ticket",
@@ -57589,6 +57779,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-step-planning.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-20261025-dead-code-sweep.md"
     },
     {
       "kind": "ticket",

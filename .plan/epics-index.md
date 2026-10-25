@@ -6,7 +6,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `giwt plan gen-docs`.
 
-**Total:** 344 epics
+**Total:** 347 epics
 
 ## Summary
 
@@ -24,6 +24,7 @@
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Epic | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
 | Not Started | API Governance — Quick Reference | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance-quickref.md](/.plan/epics/epic-api-governance-quickref.md) |
+| Not Started | API Governance Perimeter (2026-10-25 review round E-1) | High | Large | 0 | [epic-review-20261025-api-governance-perimeter.md](/.plan/epics/epic-review-20261025-api-governance-perimeter.md) |
 | In Progress | API Routes | High | Medium | 0 | [epic-api-routes.md](/.plan/epics/epic-api-routes.md) |
 | Not Started | API-First Foundation | Medium | Medium | 0 | [epic-api-first-foundation.md](/.plan/epics/epic-api-first-foundation.md) |
 | Not Started | API/Library Distribution Mode | High | High | 0 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
@@ -88,6 +89,7 @@
 | Not Started | Database Schema | High | Medium | 0 | [epic-schema.md](/.plan/epics/epic-schema.md) |
 | Not Started | DB & Asset Snapshot Recovery | High | High | 0 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
 | Not Started | DB Migration Compaction — final-form single migration (Path B) | Medium (maintainability; no runtime behavior change on a fresh DB) | High | 0 | [epic-db-migration-compaction.md](/.plan/epics/epic-db-migration-compaction.md) |
+| Not Started | Dead-Code & Cutover-Debris Sweep + Gate Blind Spots (2026-10-25 review round E-3) | Medium | Medium | 0 | [epic-review-20261025-dead-code-sweep.md](/.plan/epics/epic-review-20261025-dead-code-sweep.md) |
 | Not Started | Deno Support (Possible Node) | Low | Medium | 0 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
 | Not Started | Derived-Map Generation — Depth, Textures, Multi-Mask, Provenance | Low | High | 0 | [epic-derived-map-generation.md](/.plan/epics/epic-derived-map-generation.md) |
 | Not Started | Design: Memory Knowledge Isolation and World Timeline | Low | Large | 0 | [epic-memory-isolation-design.md](/.plan/epics/epic-memory-isolation-design.md) |
@@ -272,6 +274,7 @@
 | Not Started | NSFW Interaction UI | P0 — Critical | Medium | 0 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |
 | Not Started | Open WebUI Parity | P2 | Large | 0 | [epic-openwebui-parity.md](/.plan/epics/epic-openwebui-parity.md) |
 | Done | OpenAPI-Driven API Reference | P1-High | Medium | 0 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
+| Not Started | Parallel-Merge Integration Sweep (2026-10-25 review round E-2) | Medium | Large | 0 | [epic-review-20261025-parallel-merge-integration.md](/.plan/epics/epic-review-20261025-parallel-merge-integration.md) |
 | Not Started | Party Migration & Travel | Low | Medium | 0 | [epic-party-migration.md](/.plan/epics/epic-party-migration.md) |
 | In Progress | Per-World Character Setup & Overlay | High | Medium | 0 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
 | Not Started | Performance Dashboard & SLO Tracking | High | High | 0 | [epic-performance-dashboard-slo.md](/.plan/epics/epic-performance-dashboard-slo.md) |
@@ -474,6 +477,15 @@ OpenAPI specification, request validation, rate limiting, telemetry, and resourc
 - **Type:** Infrastructure Epic
 - **Tags:** openapi, validation, rate-limiting, telemetry, offloading
 - **File:** `.plan/epics/epic-api-governance-quickref.md`
+
+### API Governance Perimeter (2026-10-25 review round E-1)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Infrastructure Epic
+- **Tags:** api-governance, rate-limiting, mount-topology, versioning, review-2026-10-25
+- **File:** `.plan/epics/epic-review-20261025-api-governance-perimeter.md`
 
 ### API Routes
 
@@ -1078,6 +1090,15 @@ Unit, integration, E2E, performance-load, and security test framework architectu
 - **Type:** Refactor Epic
 - **Tags:** db, schema, migrations, squashing, kysely, technical-debt
 - **File:** `.plan/epics/epic-db-migration-compaction.md`
+
+### Dead-Code & Cutover-Debris Sweep + Gate Blind Spots (2026-10-25 review round E-3)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Infrastructure Epic
+- **Tags:** dead-code, knip, cutover-debris, gates, review-2026-10-25
+- **File:** `.plan/epics/epic-review-20261025-dead-code-sweep.md`
 
 ### Deno Support (Possible Node)
 
@@ -2846,6 +2867,15 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **File:** `.plan/epics/epic-openapi-reference.md`
 
 Auto-generate the API Reference from an OpenAPI spec derived from TypeScript
+
+### Parallel-Merge Integration Sweep (2026-10-25 review round E-2)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** integration, parallel-merge, story-state, translation, review-2026-10-25
+- **File:** `.plan/epics/epic-review-20261025-parallel-merge-integration.md`
 
 ### Party Migration & Travel
 
