@@ -313,7 +313,7 @@ describe("extractMemories", () => {
 
 describe("storeMemories", () => {
   let db: Kysely<DB>;
-  let sqlite: { close(): void };
+  let sqlite: import("bun:sqlite").Database;
 
   beforeEach(async () => {
     createLogger({ level: "error", },);
@@ -328,6 +328,41 @@ describe("storeMemories", () => {
   afterEach(() => {
     sqlite.close();
   },);
+
+  it("rolls back the whole batch when a mid-loop insert fails (BUG-memory-extraction-store-writes-memories-without-a-transactio)", async () => {
+    // Fail the SECOND memory insert: per-row autocommit would leave the
+    // first memory committed with no audit trail.
+    sqlite.exec(
+      `CREATE TRIGGER fail_second_memory_insert BEFORE INSERT ON actor_memories
+       WHEN NEW.content = 'Second memory fails mid-loop'
+       BEGIN SELECT RAISE(ABORT, 'simulated mid-loop insert failure'); END;`,
+    );
+
+    try {
+      await expect(storeMemories(db, "actor-ex", "chat-ex", [
+        {
+          content: "First memory lands before the failure",
+          memoryType: mt("fact",),
+          confidence: 0.9,
+          importance: 4,
+          keywords: [],
+        },
+        {
+          content: "Second memory fails mid-loop",
+          memoryType: mt("fact",),
+          confidence: 0.9,
+          importance: 4,
+          keywords: [],
+        },
+      ],),).rejects.toThrow();
+
+      // The whole batch must roll back — no partial, unaudited memories.
+      const rows = await db.selectFrom("actor_memories",).select("id",).execute();
+      expect(rows,).toHaveLength(0,);
+    } finally {
+      sqlite.exec("DROP TRIGGER fail_second_memory_insert;",);
+    }
+  });
 
   it("persists memories with defaults and returns the stored count", async () => {
     const stored = await storeMemories(db, "actor-ex", "chat-ex", [
