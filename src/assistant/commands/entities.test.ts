@@ -24,9 +24,13 @@ import {
 import type { CommandContext, CommandHandler, } from "./registry";
 import { getCommand, } from "./registry";
 
-// Named import: loading ./entities also executes the module and registers
-// the command handlers (no separate side-effect import needed).
-import { parseEntityPatch, } from "./entities";
+// The patch grammar lives in ./entity-patch; the command modules register
+// their handlers as a side effect of being imported.
+import { parseEntityPatch, } from "./entity-patch";
+import "./apply";
+import "./clone";
+import "./import";
+import "./modify";
 
 function mustGet(name: string,): CommandHandler {
   const handler = getCommand(name,);

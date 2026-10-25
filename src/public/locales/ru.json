@@ -1388,6 +1388,12 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmModifyEntity": "Применить предложенные изменения к «{name}»?",
+    "entityModified": "Изменения применены к {name}",
+    "failedModifyEntity": "Не удалось применить изменения к {name}",
+    "confirmImportEntity": "Импортировать персонажа «{name}»?",
+    "entityImported": "{name} импортирован",
+    "failedImportEntity": "Не удалось импортировать {name}",
     "confirmApplyEntity": "Применить ожидающие изменения к «{name}»?",
     "confirmAddEntity": "Добавить новый {kind} «{name}»?",
     "confirmCloneEntity": "Создать копию «{name}»?",
@@ -1671,6 +1677,8 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "modify": "Попросить модель переписать сущность (/modify <kind> <id> \"запрос\")",
+    "import": "Импортировать карточку персонажа из загруженного файла (/import character <файл>)",
     "apply": "Изменить поля world/location/item (/apply <kind> <id> ключ=значение …)",
     "add": "Добавить новую location или item в мир (/add <kind> <имя> [world-id])",
     "clone": "Копировать существующую location или item (/clone <kind> <исходный-id>)",

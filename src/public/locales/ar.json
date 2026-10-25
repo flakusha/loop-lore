@@ -1388,6 +1388,12 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmModifyEntity": "هل تريد تطبيق التغييرات المقترحة على \"{name}\"؟",
+    "entityModified": "تم تطبيق التغييرات على {name}",
+    "failedModifyEntity": "فشل تطبيق التغييرات على {name}",
+    "confirmImportEntity": "هل تريد استيراد الشخصية \"{name}\"؟",
+    "entityImported": "تم استيراد {name}",
+    "failedImportEntity": "فشل استيراد {name}",
     "confirmApplyEntity": "تطبيق التغييرات المعلّقة على \"{name}\"؟",
     "confirmAddEntity": "إضافة {kind} جديد \"{name}\"؟",
     "confirmCloneEntity": "إنشاء نسخة من \"{name}\"؟",
@@ -1671,6 +1677,8 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "modify": "دع النموذج يعيد كتابة كيان (/modify <kind> <id> \"الطلب\")",
+    "import": "استيراد بطاقة شخصية من ملف مرفوع (/import character <ملف>)",
     "apply": "تعديل حقول world/location/item (/apply <kind> <id> مفتاح=قيمة …)",
     "add": "إضافة location أو item جديد إلى عالم (/add <kind> <الاسم> [world-id])",
     "clone": "نسخ location أو item موجود (/clone <kind> <معرّف-المصدر>)",

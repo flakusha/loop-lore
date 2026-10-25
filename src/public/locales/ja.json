@@ -1388,6 +1388,12 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmModifyEntity": "「{name}」への変更を適用しますか？",
+    "entityModified": "{name}に変更を適用しました",
+    "failedModifyEntity": "{name}への変更の適用に失敗しました",
+    "confirmImportEntity": "キャラクター「{name}」をインポートしますか？",
+    "entityImported": "{name}をインポートしました",
+    "failedImportEntity": "{name}のインポートに失敗しました",
     "confirmApplyEntity": "「{name}」への変更を適用しますか？",
     "confirmAddEntity": "新しい{kind}「{name}」を追加しますか？",
     "confirmCloneEntity": "「{name}」のコピーを作成しますか？",
@@ -1671,6 +1677,8 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "modify": "エンティティをモデルに書き換えさせる (/modify <kind> <id> \"変更内容\")",
+    "import": "アップロードしたファイルからキャラクターカードを取り込む (/import character <ファイル>)",
     "apply": "world/location/item のフィールドを変更 (/apply <kind> <id> キー=値 …)",
     "add": "新しい location または item をワールドに追加 (/add <kind> <名前> [world-id])",
     "clone": "既存の location / item をコピー (/clone <kind> <ソースid>)",
