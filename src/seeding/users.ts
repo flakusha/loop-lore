@@ -132,23 +132,26 @@ async function seedSingleUser(
         },)
         .execute();
 
-      // Mirror actor so the user can own chats/entities.
-      await trx
-        .insertInto("actors",)
-        .values({
-          id: userId,
-          actor_type: "user",
-          display_name: seedUser.username,
-          user_id: userId,
-          owner_id: userId,
-          agent_type: "none",
-          settings: "{}",
-          import_spec: "raw",
-          data_source_format: "json",
-          data_raw: null,
-          row_version: 0,
-        },)
-        .execute();
+      // Mirror actor so the user can own chats/entities. `seedActor: false`
+      // opts out of it.
+      if (seedUser.seedActor !== false) {
+        await trx
+          .insertInto("actors",)
+          .values({
+            id: userId,
+            actor_type: "user",
+            display_name: seedUser.username,
+            user_id: userId,
+            owner_id: userId,
+            agent_type: "none",
+            settings: "{}",
+            import_spec: "raw",
+            data_source_format: "json",
+            data_raw: null,
+            row_version: 0,
+          },)
+          .execute();
+      }
 
       await trx
         .insertInto("seed_audit",)

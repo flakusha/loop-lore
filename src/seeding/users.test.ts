@@ -189,4 +189,51 @@ describe("seedConfiguredUsers", () => {
 
     expect(exists,).toBeUndefined();
   });
+
+  test("seedActor: false skips the mirror actor row", async () => {
+    const created = await seedConfiguredUsers(db, {
+      seeding: {
+        enabled: true,
+        users: [
+          { username: "actorless1", password: "pw", role: UserRole.Player, seedActor: false, },
+          { username: "actorful1", password: "pw", role: UserRole.Player, },
+        ],
+      },
+      auth: auth(true,),
+    },);
+
+    expect(created,).toBe(2,);
+
+    const actorless = await db
+      .selectFrom("users",)
+      .select("id",)
+      .where("username", "=", "actorless1",)
+      .executeTakeFirst();
+
+    expect(actorless,).toBeDefined();
+
+    const actorlessActor = await db
+      .selectFrom("actors",)
+      .select("id",)
+      .where("id", "=", actorless!.id,)
+      .executeTakeFirst();
+
+    expect(actorlessActor,).toBeUndefined();
+
+    const actorful = await db
+      .selectFrom("users",)
+      .select("id",)
+      .where("username", "=", "actorful1",)
+      .executeTakeFirst();
+
+    expect(actorful,).toBeDefined();
+
+    const actorfulActor = await db
+      .selectFrom("actors",)
+      .select("id",)
+      .where("id", "=", actorful!.id,)
+      .executeTakeFirst();
+
+    expect(actorfulActor,).toBeDefined();
+  });
 });
