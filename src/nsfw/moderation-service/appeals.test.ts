@@ -8,6 +8,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, mock, test, } from "
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger";
+import { NotificationService, } from "../../notifications/service";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import {
   getPendingAppeals,
@@ -580,6 +581,81 @@ describe("executeReversal", () => {
       .where("user_id", "=", "moderator-A",).executeTakeFirst();
 
     expect(note?.type,).toBe("appeal.reversed",);
+  });
+
+  test("reversal notification is stored with a non-null id", async () => {
+    // `notifications.id` is a TEXT PRIMARY KEY with no DB default — a row
+    // stored without one keeps id = NULL, which makes it unaddressable and
+    // breaks the notification list the client validates.
+    await db.insertInto("users",).values({
+      id: "moderator-B",
+      username: "moderator-B",
+      display_name: "Moderator B",
+      secret_hash: null,
+      role: "admin",
+      status: "active",
+      settings: "{}",
+      row_version: 0,
+      created_at: "2026-01-01T00:00:00.000Z",
+    },).execute();
+
+    await db.insertInto("moderation_actions",).values({
+      id: "action-r4b",
+      action_type: "block",
+      target_user_id: USER,
+      performed_by: "moderator-B",
+      reason: "x",
+      scope: "nsfw",
+      scope_id: null,
+      metadata: "{}",
+      created_at: "2026-01-01T00:00:00.000Z",
+      deleted_at: null,
+      deleted_by: null,
+      superseded_by: null,
+    },).execute();
+
+    const unblock = mock(() =>
+      Promise.resolve({
+        id: "rev-r4b",
+        actionType: "unblock",
+        targetUserId: USER,
+        performedBy: "admin-2",
+        reason: "x",
+        scope: "nsfw",
+        scopeId: null,
+        createdAt: "2026-01-01T00:00:00.000Z",
+        metadata: "{}",
+      } as unknown as ModAction,)
+    );
+
+    const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r4b", reason: "x", },);
+    await reviewAppeal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      reviewedBy: "admin-1",
+      status: "approved",
+      reviewNote: "ok",
+    },);
+
+    await executeReversal({
+      thisL: makeCtx({ unblockUser: unblock, },),
+      appealId: appeal.id,
+      executedBy: "admin-2",
+    },);
+
+    const note = await db.selectFrom("notifications",).selectAll()
+      .where("user_id", "=", "moderator-B",).executeTakeFirst();
+
+    expect(note?.id,).not.toBeNull();
+    expect(note?.id.length,).toBeGreaterThan(0,);
+
+    // The user-visible symptom: the notification list the client validates
+    // must carry a usable id.
+    const listed = await new NotificationService(db,).list("moderator-B",);
+    const reversalNote = listed.find((n,) => n.type === "appeal.reversed");
+    expect(reversalNote,).toBeDefined();
+    expect(reversalNote!.id,).not.toBeNull();
+    expect(reversalNote!.id.length,).toBeGreaterThan(0,);
   });
 
   test("throws when the underlying action is soft-deleted (deleted_at IS NOT NULL)", async () => {
