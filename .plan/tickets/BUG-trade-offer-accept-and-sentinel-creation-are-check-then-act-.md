@@ -3,7 +3,7 @@
 
 # BUG: Trade offer accept and sentinel creation are check-then-act races
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Critical
 **Effort:** Medium
 **Epic:** epic-mini-games
@@ -29,3 +29,5 @@ Source: .tmp/longcat/review-plugins-services.md H1 and H4.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue aa7abb5 (registry tip: ff7c432f0 Konstantin Fedotov Close issue)

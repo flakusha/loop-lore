@@ -9886,7 +9886,7 @@
     "epic": "epic-mini-games",
     "tags": [],
     "source": ".plan/tickets/BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-": {
     "epic": "epic-chat-lifecycle-moderation, epic-assistant-gm-flows",

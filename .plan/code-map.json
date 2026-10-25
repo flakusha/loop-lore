@@ -22327,12 +22327,6 @@
       "source": ".plan/tickets/TASK-screen-reader-support.md"
     }
   ],
-  "src/frontend/a11y/breakpoints.css": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-responsive-design.md"
-    }
-  ],
   "src/frontend/a11y/focus-manager.ts": [
     {
       "kind": "epic",
@@ -22341,12 +22335,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-keyboard-navigation.md"
-    }
-  ],
-  "src/frontend/a11y/grid.css": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-responsive-design.md"
     }
   ],
   "src/frontend/a11y/haptic.ts": [
@@ -22361,7 +22349,7 @@
       "source": ".plan/epics/epic-accessibility-input.md"
     }
   ],
-  "src/frontend/a11y/print.css": [
+  "src/frontend/a11y/responsive.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-responsive-design.md"
@@ -22417,12 +22405,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mobile-touch-gestures.md"
-    }
-  ],
-  "src/frontend/a11y/typography.css": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-responsive-design.md"
     }
   ],
   "src/frontend/achievements.html": [
@@ -37887,6 +37869,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css.md"
+    }
+  ],
+  "src/public/css/responsive.css": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-responsive-design.md"
     }
   ],
   "src/public/css/story.css": [
@@ -57251,6 +57239,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-info-bubbles.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-responsive-design.md"
     },
     {
       "kind": "ticket",

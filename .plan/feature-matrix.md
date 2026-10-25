@@ -1690,7 +1690,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2727 | 1085 | 45 | 898 | 32 | 0 | 667 |
+| (untagged) | 2727 | 1086 | 45 | 898 | 32 | 0 | 666 |
 
 ## By epic × status
 
@@ -1914,7 +1914,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-message-seen-state | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-messages | 9 | 3 | 0 | 5 | 0 | 0 | 1 |
 | epic-middleware-request-lifecycle | 14 | 11 | 1 | 2 | 0 | 0 | 0 |
-| epic-mini-games | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
+| epic-mini-games | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-mobile-app | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-model-family-presets | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-model-info-frontend | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
