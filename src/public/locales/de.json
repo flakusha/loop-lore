@@ -1388,6 +1388,12 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmModifyEntity": "Die vorgeschlagenen Änderungen auf \"{name}\" anwenden?",
+    "entityModified": "Änderungen auf {name} angewendet",
+    "failedModifyEntity": "Änderungen auf {name} konnten nicht angewendet werden",
+    "confirmImportEntity": "Die Figur \"{name}\" importieren?",
+    "entityImported": "{name} importiert",
+    "failedImportEntity": "{name} konnte nicht importiert werden",
     "confirmApplyEntity": "Die ausstehenden Änderungen auf „{name}“ anwenden?",
     "confirmAddEntity": "Das neue {kind} „{name}“ hinzufügen?",
     "confirmCloneEntity": "Eine Kopie von „{name}“ erstellen?",
@@ -1671,6 +1677,8 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "modify": "Eine Entität vom Modell umschreiben lassen (/modify <kind> <id> \"Anfrage\")",
+    "import": "Eine Charakterkarte aus einer hochgeladenen Datei importieren (/import character <Datei>)",
     "apply": "Felder eines Worlds, Standorts oder Items ändern (/apply <kind> <id> schlüssel=wert …)",
     "add": "Neue Location oder neues Item zu einer Welt hinzufügen (/add <kind> <name> [world-id])",
     "clone": "Bestehende Location oder bestehendes Item kopieren (/clone <kind> <quell-id>)",

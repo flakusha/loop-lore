@@ -1388,6 +1388,12 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmModifyEntity": "\"{name}\"에 제안된 변경 사항을 적용하시겠습니까?",
+    "entityModified": "{name}에 변경 사항을 적용했습니다",
+    "failedModifyEntity": "{name}에 변경 사항을 적용하지 못했습니다",
+    "confirmImportEntity": "\"{name}\" 캐릭터를 가져오시겠습니까?",
+    "entityImported": "{name}을(를) 가져왔습니다",
+    "failedImportEntity": "{name}을(를) 가져오지 못했습니다",
     "confirmApplyEntity": "\"{name}\"에 변경 사항을 적용하시겠습니까?",
     "confirmAddEntity": "새 {kind} \"{name}\"을(를) 추가하시겠습니까?",
     "confirmCloneEntity": "\"{name}\"의 복사본을 만드시겠습니까?",
@@ -1671,6 +1677,8 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "modify": "모델이 엔티티를 다시 쓰게 합니다 (/modify <kind> <id> \"요청\")",
+    "import": "업로드한 파일에서 캐릭터 카드를 가져옵니다 (/import character <파일>)",
     "apply": "world/location/item 필드 변경 (/apply <kind> <id> 키=값 …)",
     "add": "월드에 새 location 또는 item 추가 (/add <kind> <이름> [world-id])",
     "clone": "기존 location 또는 item 복사 (/clone <kind> <원본-id>)",

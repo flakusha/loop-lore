@@ -7,6 +7,7 @@ import { jsonBody, } from "../json";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
 import { battleActionHandlers, } from "./battle";
+import { entityActionHandlers, } from "./entities";
 import { type DispatchCtx, dispatchGenerationAction, dispatchQuestAction, } from "./generation-helpers";
 import { itemActionHandlers, } from "./item-actions";
 import { wizardActionHandlers, } from "./wizard";
@@ -63,6 +64,7 @@ export type ActionHandler = (
 const actionHandlers: Record<string, ActionHandler> = {
   ...battleActionHandlers,
   ...itemActionHandlers,
+  ...entityActionHandlers,
   ...wizardActionHandlers,
 
   "generate-image": async (ctx, payload, chatId,) => {
@@ -326,6 +328,130 @@ const actionHandlers: Record<string, ActionHandler> = {
     }
   },
 
+
+  "apply-entity": async (ctx, payload,) => {
+    const kind = (payload?.kind as string) ?? "";
+    const entityId = (payload?.entityId as string) ?? "";
+    const worldId = (payload?.worldId as string) ?? "";
+    const name = (payload?.name as string) ?? "";
+    const updates = (payload?.updates ?? {}) as Record<string, unknown>;
+    if (!kind || !entityId || !worldId || Object.keys(updates,).length === 0) {
+      log.warn("apply-entity: missing required payload fields", { payload, },);
+      return;
+    }
+
+    // Exactly the routes the backend preview documents per kind.
+    const path = kind === "world"
+      ? `/api/v1/worlds/${worldId}`
+      : kind === "location"
+      ? `/api/v1/worlds/${worldId}/locations/${entityId}`
+      : kind === "item"
+      ? `/api/v1/worlds/${worldId}/items/${entityId}`
+      : null;
+
+    if (!path) {
+      log.warn("apply-entity: unknown entity kind", { kind, },);
+      return;
+    }
+
+    const label = name || entityId;
+    if (!confirm(t("toasts.confirmApplyEntity", { name: label, },),)) { return; }
+    try {
+      const res = await apiFetch(path, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody(updates,),
+      },);
+
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok
+          ? t("toasts.entityApplied", { name: label, },)
+          : t("toasts.failedApplyEntity", { name: label, },),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedApplyEntity", { name: label, },), },);
+    }
+  },
+
+  "add-entity": async (ctx, payload,) => {
+    const kind = (payload?.kind as string) ?? "";
+    const worldId = (payload?.worldId as string) ?? "";
+    const name = (payload?.name as string) ?? "";
+    const fields = (payload?.fields ?? {}) as Record<string, unknown>;
+    if (!kind || !worldId || !name) {
+      log.warn("add-entity: missing required payload fields", { payload, },);
+      return;
+    }
+
+    const path = kind === "location"
+      ? `/api/v1/worlds/${worldId}/locations`
+      : kind === "item"
+      ? `/api/v1/worlds/${worldId}/items`
+      : null;
+
+    if (!path) {
+      log.warn("add-entity: unknown entity kind", { kind, },);
+      return;
+    }
+
+    if (!confirm(t("toasts.confirmAddEntity", { kind, name, },),)) { return; }
+    try {
+      const res = await apiFetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ name, ...fields, },),
+      },);
+
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok ? t("toasts.entityAdded", { name, },) : t("toasts.failedAddEntity", { name, },),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedAddEntity", { name, },), },);
+    }
+  },
+
+  "clone-entity": async (ctx, payload,) => {
+    const kind = (payload?.kind as string) ?? "";
+    const sourceId = (payload?.sourceId as string) ?? "";
+    const worldId = (payload?.worldId as string) ?? "";
+    const name = (payload?.name as string) ?? "";
+    const fields = (payload?.fields ?? {}) as Record<string, unknown>;
+    if (!kind || !sourceId || !worldId || !name || Object.keys(fields,).length === 0) {
+      log.warn("clone-entity: missing required payload fields", { payload, },);
+      return;
+    }
+
+    // The create routes are the clone routes: the copied fields travel in the
+    // POST body with the new name already applied.
+    const path = kind === "location"
+      ? `/api/v1/worlds/${worldId}/locations`
+      : kind === "item"
+      ? `/api/v1/worlds/${worldId}/items`
+      : null;
+
+    if (!path) {
+      log.warn("clone-entity: unknown entity kind", { kind, },);
+      return;
+    }
+
+    if (!confirm(t("toasts.confirmCloneEntity", { name, },),)) { return; }
+    try {
+      const res = await apiFetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody(fields,),
+      },);
+
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok ? t("toasts.entityCloned", { name, },) : t("toasts.failedCloneEntity", { name, },),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedCloneEntity", { name, },), },);
+    }
+  },
 
   "impersonate-toggle": async (ctx, payload, chatId,) => {
     const mode = (payload?.mode as string) ?? "toggle";

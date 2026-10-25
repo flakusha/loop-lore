@@ -1388,6 +1388,12 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmModifyEntity": "将建议的更改应用到“{name}”？",
+    "entityModified": "已对{name}应用更改",
+    "failedModifyEntity": "无法对{name}应用更改",
+    "confirmImportEntity": "导入角色“{name}”？",
+    "entityImported": "已导入{name}",
+    "failedImportEntity": "导入{name}失败",
     "confirmApplyEntity": "是否将待定更改应用到“{name}”？",
     "confirmAddEntity": "添加新的{kind}“{name}”？",
     "confirmCloneEntity": "创建“{name}”的副本？",
@@ -1671,6 +1677,8 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "modify": "让模型重写实体 (/modify <kind> <id> \"请求\")",
+    "import": "从上传的文件导入角色卡 (/import character <文件>)",
     "apply": "修改 world/location/item 的字段 (/apply <kind> <id> 键=值 …)",
     "add": "向世界添加新的 location 或 item (/add <kind> <名称> [world-id])",
     "clone": "复制现有的 location 或 item (/clone <kind> <源id>)",
