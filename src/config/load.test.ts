@@ -6,6 +6,7 @@ import { createLogger, } from "../logger";
 import {
   coerceValue,
   deepMerge,
+  isLoopbackHost,
   loadConfig,
   setByPath,
   validateAuthSafety,
@@ -681,6 +682,53 @@ describe("validateAuthSafety", () => {
     expect(() => {
       validateAuthSafety(authConfig({ required: false, jwtSecret: "", },),);
     },).not.toThrow();
+  });
+
+  test("refuses non-loopback bind in solo mode (BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au)", () => {
+    const config = authConfig({ required: false, },);
+    Object.assign(config.server, { host: "0.0.0.0", },);
+
+    expect(() => {
+      validateAuthSafety(config,);
+    },).toThrow(/AUTH SAFETY.*not a loopback/,);
+  });
+
+  test("allows non-loopback solo bind with UNSAFE_SOLO_REMOTE_BIND=true", () => {
+    const config = authConfig({ required: false, },);
+    Object.assign(config.server, { host: "0.0.0.0", },);
+    const original = process.env.UNSAFE_SOLO_REMOTE_BIND;
+    try {
+      process.env.UNSAFE_SOLO_REMOTE_BIND = "true";
+      expect(() => {
+        validateAuthSafety(config,);
+      },).not.toThrow();
+    } finally {
+      if (original === undefined) { delete process.env.UNSAFE_SOLO_REMOTE_BIND; }
+      else { process.env.UNSAFE_SOLO_REMOTE_BIND = original; }
+    }
+  });
+
+  test("allows non-loopback bind when auth.required is true", () => {
+    const config = authConfig({ required: true, jwtSecret: "a".repeat(48,), },);
+    Object.assign(config.server, { host: "0.0.0.0", },);
+
+    expect(() => {
+      validateAuthSafety(config,);
+    },).not.toThrow();
+  });
+
+  test("isLoopbackHost classifies loopback vs network hosts", () => {
+    expect(isLoopbackHost("localhost",),).toBe(true,);
+    expect(isLoopbackHost("127.0.0.1",),).toBe(true,);
+    expect(isLoopbackHost("127.8.8.8",),).toBe(true,);
+    expect(isLoopbackHost("::1",),).toBe(true,);
+    expect(isLoopbackHost("[::1]",),).toBe(true,);
+    expect(isLoopbackHost("api.localhost",),).toBe(true,);
+
+    expect(isLoopbackHost("0.0.0.0",),).toBe(false,);
+    expect(isLoopbackHost("::",),).toBe(false,);
+    expect(isLoopbackHost("192.168.1.5",),).toBe(false,);
+    expect(isLoopbackHost("example.com",),).toBe(false,);
   });
 
   test("rejects empty secret when auth.required is true", () => {

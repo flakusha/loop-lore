@@ -5,6 +5,7 @@
 
 **Status:** Done
 **Priority:** low
+**Resolved:** LIVE confirmed on tip — repro (validateAuthSafety with solo config + server.host=0.0.0.0 threw nothing) failed pre-fix; validateAuthSafety solo branch now throws "AUTH SAFETY: ... not a loopback address" for explicit non-loopback hosts unless UNSAFE_SOLO_REMOTE_BIND=true, via new isLoopbackHost classifier (src/config/load/safety.ts:55-72,76-124); gate runs at loadConfig() in start.ts:46 before serve() at :162. Empty/unset host skips the gate (fixture configs use host=""). 62/62 load tests green, gates green 2026-10-25, branch fix/bug-sweep.
 **Effort:** Medium
 **Epic:** epic-auth-config-contracts
 
