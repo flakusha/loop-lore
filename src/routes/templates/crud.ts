@@ -54,7 +54,10 @@ const ListQuery = Type.Object({ modality: Type.Optional(Type.String(),), },);
  */
 function requireGuestReadable(ctx: unknown,): Response | null {
   const { userId, userRole, } = extractAuth(ctx,);
-  if (userId !== null || userRole === UserRole.Guest) { return null; }
+  // Truthy id check (not `!== null`): extractAuth casts, and a context that
+  // never went through the auth derive carries `undefined` — the same
+  // convention as `requireUserId`'s `if (!userId)` and the actor list.
+  if (userId || userRole === UserRole.Guest) { return null; }
   return unauthorizedResponse(undefined, (ctx as { t?: TranslatorFn }).t,);
 }
 
