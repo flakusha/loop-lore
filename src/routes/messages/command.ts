@@ -145,15 +145,27 @@ export async function fetchChatAndRole(
   database: Kysely<DB>,
   chatId: string,
   actorId: string,
-): Promise<{ chat: CommandChatRow | undefined; role: ChatParticipantRole; userRole: string | null }> {
+): Promise<{
+  chat: CommandChatRow | undefined;
+  role: ChatParticipantRole;
+  userRole: string | null;
+  currentCharacter: CommandContext["currentCharacter"];
+}> {
   const settled = await Promise.allSettled([
     // Caller role first, chat row second — order differs from the adjacent
     // transition-cut lookup so the shared builder boilerplate is not a clone.
+    // Impersonation lives on the participant row: the actor the caller is
+    // playing in this chat becomes the context's `currentCharacter`.
     database
       .selectFrom("chat_participants",)
-      .select("role_in_chat",)
-      .where("chat_id", "=", chatId,)
-      .where("actor_id", "=", actorId,)
+      .leftJoin("actors", "actors.id", "chat_participants.impersonate_actor_id",)
+      .select([
+        "chat_participants.role_in_chat",
+        "chat_participants.impersonate_actor_id",
+        "actors.display_name as impersonate_display_name",
+      ],)
+      .where("chat_participants.chat_id", "=", chatId,)
+      .where("chat_participants.actor_id", "=", actorId,)
       .executeTakeFirst(),
     database
       .selectFrom("chats",)
@@ -167,7 +179,16 @@ export async function fetchChatAndRole(
   const chat = settled[1]?.status === "fulfilled" ? settled[1].value : undefined;
   // Fail closed: an unreadable site role stays null, which `can()` denies.
   const userRole = settled[2]?.status === "fulfilled" ? settled[2].value : null;
-  return { chat, role: participant?.role_in_chat ?? ChatParticipantRole.Member, userRole, };
+  // The participant's impersonated actor is the command context's
+  // `currentCharacter` — commands like /inventory and /item-pickup default to it.
+  const currentCharacter = participant?.impersonate_actor_id
+    ? {
+      id: participant.impersonate_actor_id,
+      name: participant.impersonate_display_name ?? participant.impersonate_actor_id,
+    }
+    : undefined;
+
+  return { chat, role: participant?.role_in_chat ?? ChatParticipantRole.Member, userRole, currentCharacter, };
 }
 
 /**
@@ -236,7 +257,7 @@ export async function dispatchCommand(
 
   const context = settled[0]?.status === "fulfilled"
     ? settled[0].value
-    : { chat: undefined, role: ChatParticipantRole.Member, userRole: null, };
+    : { chat: undefined, role: ChatParticipantRole.Member, userRole: null, currentCharacter: undefined, };
 
   const chatRecord = context.chat;
   const recentMessages = settled[1]?.status === "fulfilled" ? settled[1].value : [];
@@ -266,6 +287,7 @@ export async function dispatchCommand(
     config,
     userId: actorId,
     userRole: context.userRole,
+    currentCharacter: context.currentCharacter,
   };
 
   let result: CommandResult;

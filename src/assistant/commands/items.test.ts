@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for the item read commands: /item-list, /item-get, /inventory.
+ * Tests for the item commands: /item-list, /item-get, /inventory,
+ * /item-update, /item-transfer, /item-drop and /item-pickup.
  *
  * Item data is world-scoped and owner-scoped, so every test that asserts a
  * successful read is paired with one asserting `checkWorldOwnership` refuses a
@@ -15,10 +16,12 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
+  insertChats,
   insertItems,
   insertLocations,
   insertUsers,
   insertWorldItems,
+  insertWorldMembers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
 import type { CommandContext, CommandHandler, } from "./registry";
@@ -36,8 +39,11 @@ function mustGet(name: string,): CommandHandler {
 
 const itemList = mustGet("item-list",);
 const itemGet = mustGet("item-get",);
-const itemUpdate = mustGet("item-update",);
 const inventory = mustGet("inventory",);
+const itemUpdate = mustGet("item-update",);
+const itemTransfer = mustGet("item-transfer",);
+const itemDrop = mustGet("item-drop",);
+const itemPickup = mustGet("item-pickup",);
 
 describe("item commands", () => {
   let db: Kysely<DB>;
@@ -49,12 +55,14 @@ describe("item commands", () => {
   let charId: string;
 
   const ctx = (overrides?: Partial<CommandContext>,): CommandContext => ({
-    chatId: "chat-1",
+    chatId,
     db,
     userId: ownerId,
-    activeChat: { id: "chat-1", worldId, },
+    activeChat: { id: chatId, worldId, },
     ...overrides,
   });
+
+  let chatId: string;
 
   beforeAll(async () => {
     ({ db, } = await createTestDb());
@@ -65,7 +73,19 @@ describe("item commands", () => {
   },);
 
   beforeEach(async () => {
-    for (const table of ["world_items", "items", "locations", "actors", "worlds", "users",] as const) {
+    for (
+      const table of [
+        "world_items",
+        "items",
+        "chat_participants",
+        "chats",
+        "world_members",
+        "locations",
+        "actors",
+        "worlds",
+        "users",
+      ] as const
+    ) {
       await db.deleteFrom(table,).execute();
     }
 
@@ -78,6 +98,13 @@ describe("item commands", () => {
     otherWorldId = await insertWorlds(db, otherId, "Hidden Keep", {},);
 
     charId = await insertActors(db, "Iria", { actor_type: "character", owner_id: ownerId, },);
+    await insertWorldMembers(db, worldId, charId,);
+    const hallId = await insertLocations(db, worldId, "Ash Gate", {},);
+    chatId = await insertChats(db, "Item Chat", ownerId, {
+      world_id: worldId,
+      current_location_id: hallId,
+    },);
+
     itemId = await insertItems(db, worldId, "Iron Sword", ItemCategory.Weapon, {
       description: "A blunt blade.",
       rarity: "rare",
@@ -436,5 +463,194 @@ describe("item commands", () => {
 
     const empty = parseItemUpdates("no pairs here",);
     expect(empty,).toEqual({ ok: false, error: expect.stringContaining("No updates parsed",), },);
+  });
+
+  // ── /item-transfer (preview) ──────────────────────────────
+
+  test("previews a transfer to a location with names in the payload", async () => {
+    const hall = await insertLocations(db, worldId, "Ash Gate", {},);
+    const placed = await insertWorldItems(db, worldId, itemId, { owner_actor_id: charId, quantity: 2, },);
+
+    const result = await itemTransfer([placed, hall,], ctx(),);
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("item-transfer",);
+    expect(result.systemMessage,).toContain("**Transfer preview**",);
+    expect(result.systemMessage,).toContain("Ash Gate",);
+    expect(result.systemMessage,).toContain("Confirm in the dialog to apply.",);
+    expect(result.actionPayload,).toEqual({
+      worldId,
+      instanceId: placed,
+      quantity: 2,
+      toLocationId: hall,
+      itemName: "Iron Sword",
+      toName: "Ash Gate",
+    },);
+  });
+
+  test("previews a transfer to a character", async () => {
+    const atLocation = await insertWorldItems(db, worldId, itemId, { quantity: 1, },);
+    const result = await itemTransfer([atLocation, charId,], ctx(),);
+    expect(result.action,).toBe("item-transfer",);
+    expect(result.actionPayload,).toMatchObject({ toActorId: charId, toName: "Iria", },);
+    expect(result.actionPayload,).not.toHaveProperty("toLocationId",);
+    expect(result.systemMessage,).toContain("character **Iria**",);
+  });
+
+  test("rejects a transfer to a character who is not in the instance's world", async () => {
+    const outsider = await insertActors(db, "Nomad", { actor_type: "character", owner_id: otherId, },);
+    const placed = await insertWorldItems(db, worldId, itemId, { quantity: 1, },);
+
+    const result = await itemTransfer([placed, outsider,], ctx(),);
+    expect(result.systemMessage,).toContain("**Transfer rejected:**",);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("shows usage with fewer than two arguments", async () => {
+    expect((await itemTransfer([], ctx(),)).systemMessage,).toContain("Usage: /item-transfer",);
+    const placed = await insertWorldItems(db, worldId, itemId, { quantity: 1, },);
+    expect((await itemTransfer([placed,], ctx(),)).systemMessage,).toContain("Usage: /item-transfer",);
+  });
+
+  test("rejects a destination that is neither a location in the world nor a character", async () => {
+    const placed = await insertWorldItems(db, worldId, itemId, { quantity: 1, },);
+
+    const result = await itemTransfer([placed, "nowhere-1",], ctx(),);
+    expect(result.systemMessage,).toContain("**Transfer rejected:**",);
+    expect(result.action,).toBeUndefined();
+
+    // A location from ANOTHER world does not count either.
+    const foreignLoc = await insertLocations(db, otherWorldId, "Hidden Vault", {},);
+    const foreign = await itemTransfer([placed, foreignLoc,], ctx(),);
+    expect(foreign.systemMessage,).toContain("**Transfer rejected:**",);
+    expect(foreign.action,).toBeUndefined();
+  });
+
+  test("a missing instance is worded identically to a denied one (no existence oracle)", async () => {
+    const placed = await insertWorldItems(db, worldId, itemId, { owner_actor_id: charId, quantity: 1, },);
+    const missingId = `wi-${crypto.randomUUID()}`;
+
+    const denied = await itemTransfer([placed, charId,], ctx({ userId: otherId, },),);
+    const absent = await itemTransfer([missingId, charId,], ctx(),);
+
+    expect(denied.systemMessage,).toBe(`Item instance ${placed} not found or access denied.`,);
+    expect(denied.action,).toBeUndefined();
+    expect(absent.systemMessage!.replace(missingId, "<id>",),).toBe(
+      denied.systemMessage!.replace(placed, "<id>",),
+    );
+  });
+
+  test("answers unavailable instead of throwing when ctx has no db", async () => {
+    const result = await itemTransfer(["wi-1", charId,], {
+      chatId,
+      userId: ownerId,
+      activeChat: { id: chatId, worldId, },
+    },);
+
+    expect(result.systemMessage,).toContain("**Items unavailable:** command context missing database.",);
+  });
+
+  // ── /item-drop (preview) ──────────────────────────────────
+
+  test("previews a drop at the chat's current location", async () => {
+    const placed = await insertWorldItems(db, worldId, itemId, { owner_actor_id: charId, quantity: 1, },);
+
+    const result = await itemDrop([placed,], ctx(),);
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("item-drop",);
+    expect(result.systemMessage,).toContain("**Drop preview**",);
+    expect(result.systemMessage,).toContain("placed on the ground",);
+    expect(result.systemMessage,).toContain("Ash Gate",);
+    expect(result.actionPayload,).toMatchObject({
+      worldId,
+      instanceId: placed,
+      itemName: "Iron Sword",
+      toName: "Ash Gate",
+    },);
+
+    expect(result.actionPayload!.toLocationId,).toBeTruthy();
+  });
+
+  test("refuses to drop an instance nobody carries", async () => {
+    const placed = await insertWorldItems(db, worldId, itemId, { quantity: 1, },);
+
+    const result = await itemDrop([placed,], ctx(),);
+    expect(result.systemMessage,).toContain("**Drop rejected:**",);
+    expect(result.systemMessage,).toContain("not being carried",);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("reports when the chat has no current location", async () => {
+    const placed = await insertWorldItems(db, worldId, itemId, { owner_actor_id: charId, quantity: 1, },);
+    await db.updateTable("chats",).set({ current_location_id: null, },).where("id", "=", chatId,).execute();
+
+    const result = await itemDrop([placed,], ctx(),);
+    expect(result.systemMessage,).toBe("**Drop unavailable:** the chat has no current location to drop the item at.",);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("shows usage with no instance id", async () => {
+    expect((await itemDrop([], ctx(),)).systemMessage,).toBe("Usage: /item-drop <instance-id>",);
+  });
+
+  // ── /item-pickup (preview) ────────────────────────────────
+
+  test("previews a pickup by the chat's current character", async () => {
+    const hall = await insertLocations(db, worldId, "Ash Gate", {},);
+    const placed = await insertWorldItems(db, worldId, itemId, { location_id: hall, quantity: 1, },);
+
+    const result = await itemPickup([placed,], ctx({ currentCharacter: { id: charId, name: "Iria", }, },),);
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("item-pickup",);
+    expect(result.systemMessage,).toContain("**Pickup preview**",);
+    expect(result.systemMessage,).toContain("**Iria**",);
+    expect(result.actionPayload,).toEqual({
+      worldId,
+      instanceId: placed,
+      quantity: 1,
+      toActorId: charId,
+      itemName: "Iron Sword",
+      toName: "Iria",
+    },);
+  });
+
+  test("an explicit char id overrides the current character", async () => {
+    const otherChar = await insertActors(db, "Bram", { actor_type: "character", owner_id: ownerId, },);
+    await insertWorldMembers(db, worldId, otherChar,);
+    const hall = await insertLocations(db, worldId, "Ash Gate", {},);
+    const placed = await insertWorldItems(db, worldId, itemId, { location_id: hall, quantity: 1, },);
+
+    const result = await itemPickup([placed, otherChar,], ctx(),);
+    expect(result.actionPayload,).toMatchObject({ toActorId: otherChar, toName: "Bram", },);
+  });
+
+  test("refuses to pick up an instance that is not lying at a location", async () => {
+    const carried = await insertWorldItems(db, worldId, itemId, { owner_actor_id: charId, quantity: 1, },);
+
+    const result = await itemPickup([carried,], ctx({ currentCharacter: { id: charId, name: "Iria", }, },),);
+    expect(result.systemMessage,).toContain("**Pickup rejected:**",);
+    expect(result.systemMessage,).toContain("not lying at a location",);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("rejects a pickup by a character who is not in the instance's world", async () => {
+    const outsider = await insertActors(db, "Nomad", { actor_type: "character", owner_id: otherId, },);
+    const hall = await insertLocations(db, worldId, "Ash Gate", {},);
+    const placed = await insertWorldItems(db, worldId, itemId, { location_id: hall, quantity: 1, },);
+
+    const result = await itemPickup([placed, outsider,], ctx(),);
+    expect(result.systemMessage,).toContain("**Pickup rejected:**",);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("shows usage when there is neither an argument nor a current character", async () => {
+    expect((await itemPickup([], ctx(),)).systemMessage,).toContain("Usage: /item-pickup",);
+  });
+
+  test("rejects an unknown receiver character", async () => {
+    const placed = await insertWorldItems(db, worldId, itemId, { quantity: 1, },);
+
+    const result = await itemPickup([placed, "ghost-1",], ctx(),);
+    expect(result.systemMessage,).toContain("**Pickup rejected:**",);
+    expect(result.action,).toBeUndefined();
   });
 });
