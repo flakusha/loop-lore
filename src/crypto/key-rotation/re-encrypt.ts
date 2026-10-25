@@ -131,6 +131,19 @@ export async function reEncryptChatMessages(
   return reEncrypted;
 }
 
+/** Result of {@link reEncryptChatAssets} — re-encrypted blobs are staged, not in-place. */
+export interface AssetReEncryptResult {
+  reEncrypted: number;
+  failures: { id: string; reason: string }[];
+  /**
+   * Re-encrypted blobs staged at temp paths. The caller renames these into
+   * place ONLY after its DB transaction commits; on any pre-commit failure
+   * it deletes them so the original (old-key) files stay consistent with
+   * the rolled-back database.
+   */
+  staged: { tmpPath: string; finalPath: string }[];
+}
+
 /**
  * @param database
  * @param chatId
@@ -138,7 +151,7 @@ export async function reEncryptChatMessages(
  * @param pipelineConfig
  * @param oldKey
  * @param newKey
- * @returns void
+ * @returns AssetReEncryptResult with staged temp paths for post-commit rename
  */
 export async function reEncryptChatAssets(
   database: Kysely<DB>,
@@ -147,7 +160,7 @@ export async function reEncryptChatAssets(
   pipelineConfig: PipelineConfig,
   oldKey: ChatKey,
   newKey: ChatKey,
-): Promise<{ reEncrypted: number; failures: { id: string; reason: string }[] }> {
+): Promise<AssetReEncryptResult> {
   // Find encrypted assets linked to this chat
   const assets = await database
     .selectFrom("assets",)
@@ -161,6 +174,7 @@ export async function reEncryptChatAssets(
 
   let reEncrypted = 0;
   const failures: { id: string; reason: string }[] = [];
+  const staged: { tmpPath: string; finalPath: string }[] = [];
 
   for (const asset of assets) {
     if (!asset.encrypted_key_id) { continue; }
@@ -187,7 +201,13 @@ export async function reEncryptChatAssets(
       );
 
       if (result.encrypted) {
-        writeFileSync(filePath, result.data,);
+        // Stage to a temp path — the caller renames into place only after
+        // its DB transaction commits, so a rollback cannot leave new-key
+        // ciphertext on disk under the old key
+        // (BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans).
+        const tmpPath = `${filePath}.reenc-${asset.id}.tmp`;
+        writeFileSync(tmpPath, result.data,);
+        staged.push({ tmpPath, finalPath: filePath, },);
         reEncrypted++;
       }
     } catch (err) {
@@ -195,5 +215,5 @@ export async function reEncryptChatAssets(
     }
   }
 
-  return { reEncrypted, failures, };
+  return { reEncrypted, failures, staged, };
 }
