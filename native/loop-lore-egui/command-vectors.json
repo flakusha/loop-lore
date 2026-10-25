@@ -44,6 +44,10 @@
       "requiredRole": "member"
     },
     {
+      "name": "char-update",
+      "requiredRole": "member"
+    },
+    {
       "name": "context"
     },
     {
@@ -134,6 +138,10 @@
     },
     {
       "name": "item-get",
+      "requiredRole": "member"
+    },
+    {
+      "name": "item-update",
       "requiredRole": "member"
     },
     {
@@ -259,6 +267,7 @@
         "caption",
         "char-list",
         "char-get",
+        "char-update",
         "context",
         "create",
         "debug",
@@ -287,6 +296,7 @@
         "study",
         "item-list",
         "item-get",
+        "item-update",
         "inventory",
         "link",
         "loc-list",
@@ -326,6 +336,7 @@
         "caption",
         "char-list",
         "char-get",
+        "char-update",
         "create",
         "detail",
         "constraint",
@@ -337,6 +348,7 @@
         "forage",
         "evaluate",
         "persuade",
+        "item-update",
         "narrate",
         "rag-search",
         "rag-ask",
