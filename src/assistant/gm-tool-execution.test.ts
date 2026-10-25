@@ -18,7 +18,9 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { dispatchCommand, } from "../routes/messages/command";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertChats, insertUsers, } from "../test-utils/insert-helpers";
+import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../test-utils/insert-helpers";
+import type { CommandContext, } from "./commands/registry";
+import { registerCommand, } from "./commands/registry";
 import type { GmToolDetection, } from "./gm-tool-detection";
 import { executeGmToolRequest, isGmModeChat, } from "./gm-tool-execution";
 
@@ -223,5 +225,32 @@ describe("executeGmToolRequest", () => {
     const gmIdx = routeSource.indexOf("executeGmToolRequest({",);
     expect(slashIdx,).toBeGreaterThan(-1,);
     expect(gmIdx,).toBeGreaterThan(slashIdx,);
+  });
+
+  it("passes the impersonated character as currentCharacter to the command context", async () => {
+    const { db, chatId, userId, } = await setupChat(true,);
+    const charId = await insertActors(db, "Iria", { actor_type: "character", owner_id: userId, },);
+    await insertChatParticipants(db, chatId, userId, { impersonate_actor_id: charId, },);
+
+    // Override the check_stats mapping's handler to capture the context the
+    // GM path builds (registerCommand replaces the registration in place).
+    let seen: CommandContext["currentCharacter"];
+    registerCommand("stats", async (_args, ctx,) => {
+      seen = ctx.currentCharacter;
+      return { handled: true, systemMessage: "stats-ok", };
+    }, { requiredRole: "member", },);
+
+    const outcome = await executeGmToolRequest({
+      database: db,
+      config,
+      actorId: userId,
+      chatId,
+      content: "show my stats",
+      detect: async () => detection("check_stats", 0.9,),
+    },);
+
+    expect(outcome.handled,).toBe(true,);
+    expect(seen,).toEqual({ id: charId, name: "Iria", },);
+    expect(await systemMessageCount(db, chatId,),).toBe(1,);
   });
 });

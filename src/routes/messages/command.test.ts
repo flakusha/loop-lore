@@ -15,7 +15,7 @@ import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
+import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { commandActiveChat, dispatchCommand, fetchChatAndRole, } from "./command";
 
 beforeAll(() => {
@@ -51,10 +51,21 @@ async function setup(): Promise<Setup> {
 describe("fetchChatAndRole", () => {
   it("returns the chat row and defaults the role to member", async () => {
     const { db, chatId, userId, } = await setup();
-    const { chat, role, } = await fetchChatAndRole(db, chatId, userId,);
+    const { chat, role, currentCharacter, } = await fetchChatAndRole(db, chatId, userId,);
     expect(chat?.id,).toBe(chatId,);
     expect(chat?.gm_config,).toBeNull();
     expect(role,).toBe("member",);
+    // No participant row → no impersonation → no currentCharacter.
+    expect(currentCharacter,).toBeUndefined();
+  });
+
+  it("returns the impersonated actor as currentCharacter", async () => {
+    const { db, chatId, userId, } = await setup();
+    const charId = await insertActors(db, "Iria", { actor_type: "character", owner_id: userId, },);
+    await insertChatParticipants(db, chatId, userId, { impersonate_actor_id: charId, },);
+
+    const { currentCharacter, } = await fetchChatAndRole(db, chatId, userId,);
+    expect(currentCharacter,).toEqual({ id: charId, name: "Iria", },);
   });
 
   it("returns undefined chat for an unknown chat id", async () => {
