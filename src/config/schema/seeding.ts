@@ -35,7 +35,10 @@ export interface SeedUserConfig {
   password: string;
   /** Role to assign. Must be a valid UserRole. */
   role: UserRole;
-  /** Seed a mirror actor row (default true — required to own chats/entities). */
+  /**
+   * Seed a mirror actor row (default true — required to own chats/entities).
+   * Set to false to skip the mirror actor.
+   */
   seedActor?: boolean;
 }
 
