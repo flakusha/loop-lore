@@ -4,6 +4,7 @@
 # BUG: Settings export endpoint has no rate limiting
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — settings export is rate limited: `exportLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: 10 })` (src/routes/settings.ts:25), consumed by the export handler at :220-223 with a 429 on denial.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-rate-limiting
@@ -14,7 +15,7 @@ The GET /api/v1/settings/export endpoint (src/routes/settings.ts:212-230) genera
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): settings export is rate limited: `exportLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: 10 })` (src/routes/settings.ts:25), consumed by the export handler at :220-223 with a 429 on denial.
 
 **Acceptance Criteria:**
 
