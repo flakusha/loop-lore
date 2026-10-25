@@ -11,8 +11,11 @@
  * same signal. All media/event access degrades cleanly outside browsers.
  */
 
+/** Pointer kinds reported by PointerEvent.pointerType — single source for the union and the runtime membership check. */
+const POINTER_KINDS = ["mouse", "touch", "pen",] as const;
+
 /** Pointer kinds reported by PointerEvent.pointerType. */
-export type PointerKind = "mouse" | "touch" | "pen";
+export type PointerKind = (typeof POINTER_KINDS)[number];
 
 /** Immutable view of the tracked input-mode signals. */
 export interface InputModeSnapshot {
@@ -49,8 +52,8 @@ export interface InputModeTrackerOptions {
 }
 
 /** Same query as alpine/info-bubble.ts so JS and CSS agree on hover. */
-const HOVER_QUERY = "(hover: hover) and (pointer: fine)";
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+export const HOVER_QUERY = "(hover: hover) and (pointer: fine)";
+export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 const NOOP = (): void => undefined;
 
@@ -126,8 +129,9 @@ export function createInputModeTracker(options: InputModeTrackerOptions = {},) {
 
   const onPointerDown = (event: Event,): void => {
     const pointerType = (event as PointerEvent).pointerType;
-    if (pointerType !== "mouse" && pointerType !== "touch" && pointerType !== "pen") { return; }
-    snapshot.pointer = pointerType;
+    const kind = POINTER_KINDS.find((candidate,) => candidate === pointerType);
+    if (!kind) { return; }
+    snapshot.pointer = kind;
     syncClasses();
     emit();
   };
