@@ -36,6 +36,10 @@ export async function ensureBalanceRow(
 
   if (existing) { return existing.balance; }
 
+  // Atomic guard (uq_actor_currencies_actor_world_currency, migration 079):
+  // a concurrent ensure that wins the insert race turns this insert into a
+  // no-op, and the re-read below returns the winner's row — previously the
+  // raced pair inserted two ledger rows.
   await db
     .insertInto("actor_currencies",)
     .values({
@@ -45,9 +49,18 @@ export async function ensureBalanceRow(
       currency_type: currency,
       balance: 0,
     },)
+    .onConflict((oc,) => oc.columns(["actor_id", "world_id", "currency_type",],).doNothing())
     .execute();
 
-  return 0;
+  const winner = await db
+    .selectFrom("actor_currencies",)
+    .select("balance",)
+    .where("actor_id", "=", actorId,)
+    .where("world_id", "=", worldId,)
+    .where("currency_type", "=", currency,)
+    .executeTakeFirst();
+
+  return winner?.balance ?? 0;
 }
 
 /**

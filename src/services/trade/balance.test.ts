@@ -16,7 +16,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { credit, debit, getBalance, transferCurrency, } from "./balance";
+import { credit, debit, ensureBalanceRow, getBalance, transferCurrency, } from "./balance";
 
 let db: Kysely<DB>;
 let worldId: string;
@@ -132,5 +132,50 @@ describe("credit / debit — negative amount guards", () => {
 
   test("debit throws on negative amount", () => {
     expect(() => debit(db, actorA, worldId, -1,)).toThrow("non-negative",);
+  });
+});
+
+describe("ensureBalanceRow — concurrent creation", () => {
+  test("a raced pair of ensures creates ONE row and both callers read 0", async () => {
+    // Fresh user/world/actor so no earlier test seeded this ledger key.
+    const userId = uid();
+    await insertUsers(db, `u-${userId}`, "Race Owner", {
+      id: userId as never,
+      role: "solo" as never,
+      status: "active" as never,
+      settings: "{}" as never,
+    },);
+
+    const raceWorld = uid();
+    await insertWorlds(db, userId, "Race World", { id: raceWorld as never, },);
+    const raceActor = uid();
+    await insertActors(db, "Racer", {
+      id: raceActor as never,
+      actor_type: "character" as never,
+      user_id: userId,
+      owner_id: userId,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
+
+    // BUG-service-layer-multi-query-mutations (ensureBalanceRow leg): the
+    // SELECT-then-INSERT has no unique constraint on
+    // (actor_id, world_id, currency_type), so two concurrent ensures both
+    // pass the lookup and both insert a ledger row.
+    await Promise.all([
+      ensureBalanceRow(db, raceActor, raceWorld, "gold",),
+      ensureBalanceRow(db, raceActor, raceWorld, "gold",),
+    ],);
+
+    const rows = await db
+      .selectFrom("actor_currencies",)
+      .selectAll()
+      .where("actor_id", "=", raceActor,)
+      .where("world_id", "=", raceWorld,)
+      .where("currency_type", "=", "gold",)
+      .execute();
+
+    expect(rows,).toHaveLength(1,);
+    expect(rows[0]?.balance,).toBe(0,);
   });
 });
