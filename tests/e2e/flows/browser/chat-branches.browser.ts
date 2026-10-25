@@ -24,6 +24,7 @@
  * test.skip below.
  */
 
+import { type MessageRole, } from "@/db/enums";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, waitForAlpineReady, } from "../../helpers/htmx-alpine";
@@ -48,7 +49,7 @@ describe("Chat branch lifecycle (B1)", () => {
   const TIP_TEXT = "branch-tip-utterance";
 
   /** Insert one message row on the given parent chain. */
-  async function insertMessage(id: string, role: string, content: string, parentId: string | null,) {
+  async function insertMessage(id: string, role: MessageRole, content: string, parentId: string | null,) {
     await ctx.db
       .insertInto("messages",)
       .values({
