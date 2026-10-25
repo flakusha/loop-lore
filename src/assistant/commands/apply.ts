@@ -97,9 +97,10 @@ registerCommand("apply", async (args, ctx,): Promise<CommandResult> => {
 
   const changes = formatPatch(parsed.patch,);
   const effects = kind === "location" ? locationEffects(parsed.patch,) : [];
-  // World and location PUT routes set updated_at unconditionally
-  // (handleUpdateWorld/handleUpdateLocation); the item PUT route does too.
-  // Surface it for every kind so the preview names every row the confirm touches.
+  // Every PUT route behind these kinds bumps `updated_at` on the row it writes
+  // (handleUpdateWorld/handleUpdateLocation, the item-definitions PUT, and the
+  // actor PUT via updateWithVersionCheck). Surface it for every kind so the
+  // preview names every row the confirm touches.
   effects.push(kind === "world" ? "Touches `updated_at` on the world row." : "Touches `updated_at` on the row.",);
 
   return {
