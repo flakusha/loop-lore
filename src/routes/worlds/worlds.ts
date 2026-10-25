@@ -12,6 +12,7 @@ import {
 } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
 import { WorldStateService, } from "../../story/world-state";
+import { can, } from "../../users/permissions";
 import { uid, } from "../../utils";
 import { unauthorized, } from "../../validation/middleware";
 import {
@@ -30,6 +31,7 @@ import { applyRpgUpdates, rpgCreateFlags, } from "./world-rpg-flags";
  * @param page
  * @param pageSize
  * @param userId
+ * @param userRole
  * @param q
  * @returns {Promise<Response>}
  */
@@ -38,6 +40,7 @@ export async function handleListWorlds(
   page: number,
   pageSize: number,
   userId: string | null,
+  userRole: string | null,
   q?: string,
 ) {
   const offset = (page - 1) * pageSize;
@@ -69,9 +72,18 @@ export async function handleListWorlds(
 
     countQuery = countQuery.where(visible,);
     listQuery = listQuery.where(visible,);
-  } else {
+  } else if (can(userRole, "world.view",)) {
+    // Guest tier: an account-less visitor on the guest-enabled list route
+    // sees PUBLIC worlds only — the same arm `requireWorldAccess` admits on
+    // the detail route. Gated on the guest role so a null id WITHOUT the
+    // tier (derive denied the request, bare test double) matches nothing —
+    // no account-less enumeration, mirroring the chat list's public arm.
     countQuery = countQuery.where("visibility", "=", WorldVisibility.Public,);
     listQuery = listQuery.where("visibility", "=", WorldVisibility.Public,);
+  } else {
+    // No identity and no guest tier: the derive denied this request —
+    // return an empty page rather than the public catalog.
+    return jsonPaginated({ data: [], total: 0, page, pageSize, },);
   }
 
   const trimmedQ = q?.trim() ?? "";

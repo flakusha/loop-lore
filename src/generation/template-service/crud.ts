@@ -89,19 +89,27 @@ export function serializeTemplateInput(
 
 /**
  * List a user's templates (all modalities) plus LLM presets.
+ * The synthetic guest tier (`userId: null`) owns nothing — it gets the
+ * built-in presets only, the read-only catalog the public template surface
+ * serves without an account.
  * @param db - Kysely database handle
- * @param userId - Owning user
+ * @param userId - Owning user (null = guest tier: presets only)
  * @param modality - Optional modality filter (presets only listed for llm)
  * @returns row summaries plus presets (presets only for llm)
  */
 export async function listTemplates(
   db: Kysely<DB>,
-  userId: string,
+  userId: string | null,
   modality?: TemplateModality,
 ): Promise<TemplateSummary[]> {
-  let query = db.selectFrom("prompt_templates",).selectAll().where("owner_id", "=", userId,);
-  if (modality) { query = query.where("modality", "=", modality,); }
-  const rows = await query.orderBy("name", "asc",).execute();
+  // A guest owns nothing: an unfiltered query would return EVERY user's
+  // rows, so the owned-rows query only runs for an authenticated caller.
+  let rows: PromptTemplateRow[] = [];
+  if (userId !== null) {
+    let query = db.selectFrom("prompt_templates",).selectAll().where("owner_id", "=", userId,);
+    if (modality) { query = query.where("modality", "=", modality,); }
+    rows = await query.orderBy("name", "asc",).execute();
+  }
 
   const summaries: TemplateSummary[] = rows.map((row,) => toSummary(row, userId,));
   if (!modality || modality === "llm") {
@@ -239,10 +247,11 @@ export async function deleteTemplate(db: Kysely<DB>, id: string, userId: string,
 /**
  * Summarize a template row for list output.
  * @param row - stored template row
- * @param userId - requesting user (drives the isOwner flag)
+ * @param userId - requesting user (drives the isOwner flag; null = guest,
+ *   which owns no rows, so isOwner is always false)
  * @returns the list summary shape
  */
-function toSummary(row: PromptTemplateRow, userId: string,): TemplateSummary {
+function toSummary(row: PromptTemplateRow, userId: string | null,): TemplateSummary {
   return {
     id: row.id,
     modality: row.modality,

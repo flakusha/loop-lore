@@ -18,10 +18,11 @@ import { promptTemplateRoutes, } from "./index";
 /**
  * @param db
  * @param userId
+ * @param userRole
  */
-function makeApp(db: Kysely<DB>, userId: string | null,): Elysia {
+function makeApp(db: Kysely<DB>, userId: string | null, userRole = "user",): Elysia {
   return new Elysia({ name: "test-prompt-templates", },)
-    .derive({ as: "scoped", }, () => ({ userId, userRole: "user", }),)
+    .derive({ as: "scoped", }, () => ({ userId, userRole, }),)
     .use(promptTemplateRoutes({ database: db, },),) as unknown as Elysia;
 }
 
@@ -375,5 +376,124 @@ describe("promptTemplateRoutes", () => {
     expect(exported.exportedBy,).toBe(userId,);
     const packed = exported.templates.find((t,) => t.name === "Pack A");
     expect(packed?.payload.templateBody,).toBe(IMAGE_BODY.payload.templateBody,);
+  });
+});
+
+/**
+ * The guest tier (`auth.guestAccess`): an account-less visitor may list and
+ * read the built-in LLM presets on the flat routes — and nothing else. Every
+ * mutation (create/patch/delete), the render endpoint, and the transfer
+ * pack I/O stay behind `requireUserId`. The per-modality nested routes
+ * carry owner rows only (presets are LLM-only), so they stay
+ * authenticated too.
+ */
+describe("promptTemplateRoutes — guest tier read access", () => {
+  let db: Kysely<DB>;
+  const userId = uid();
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+    await insertUsers(db, `guest-${userId}`, "Guest Checker", { id: userId, } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("a guest lists the built-in presets and only those", async () => {
+    // Seed one owned row: the guest list must NOT include it.
+    const app = makeApp(db, userId,);
+    const created = await app.handle(
+      new Request("http://localhost/api/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify(IMAGE_BODY,),
+      },),
+    );
+
+    expect(created.status,).toBe(200,);
+
+    const guest = makeApp(db, null, "guest",);
+    const res = await guest.handle(new Request("http://localhost/api/templates",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { templates: { id: string; isPreset: boolean }[] };
+    expect(body.templates.length,).toBeGreaterThan(0,);
+    expect(body.templates.every((tpl,) => tpl.isPreset),).toBe(true,);
+    expect(body.templates.some((tpl,) => tpl.id === "preset-roleplay"),).toBe(true,);
+  });
+
+  test("a guest reads a preset by id but gets 404 for a user-owned row", async () => {
+    const app = makeApp(db, userId,);
+    const created = await app.handle(
+      new Request("http://localhost/api/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify(LLM_BODY,),
+      },),
+    );
+
+    expect(created.status,).toBe(200,);
+    const row = ((await created.json()) as { template: { id: string } }).template;
+
+    const guest = makeApp(db, null, "guest",);
+    const preset = await guest.handle(new Request("http://localhost/api/templates/preset-roleplay",),);
+    expect(preset.status,).toBe(200,);
+    expect(((await preset.json()) as { template: { isPreset: boolean } }).template.isPreset,).toBe(true,);
+
+    const owned = await guest.handle(new Request(`http://localhost/api/templates/${row.id}`,),);
+    expect(owned.status,).toBe(404,);
+  });
+
+  test("a guest cannot create, update, delete, apply, or transfer", async () => {
+    const guest = makeApp(db, null, "guest",);
+    const create = await guest.handle(
+      new Request("http://localhost/api/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify(IMAGE_BODY,),
+      },),
+    );
+
+    expect(create.status,).toBe(401,);
+    const patch = await guest.handle(
+      new Request("http://localhost/api/templates/preset-roleplay", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ name: "Hijacked", },),
+      },),
+    );
+
+    expect(patch.status,).toBe(401,);
+    const del = await guest.handle(
+      new Request("http://localhost/api/templates/preset-roleplay", { method: "DELETE", },),
+    );
+
+    expect(del.status,).toBe(401,);
+    const apply = await guest.handle(
+      new Request("http://localhost/api/templates/preset-roleplay/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ context: {}, },),
+      },),
+    );
+
+    expect(apply.status,).toBe(401,);
+    const pack = await guest.handle(new Request("http://localhost/api/templates/export",),);
+    expect(pack.status,).toBe(401,);
+  });
+
+  test("nested modality routes stay authenticated for a guest", async () => {
+    const guest = makeApp(db, null, "guest",);
+    const video = await guest.handle(new Request("http://localhost/api/templates/video",),);
+    expect(video.status,).toBe(401,);
+    const audio = await guest.handle(new Request("http://localhost/api/templates/audio",),);
+    expect(audio.status,).toBe(401,);
+  });
+
+  test("an anonymous caller without the guest tier keeps the 401 on reads", async () => {
+    const anon = makeApp(db, null,);
+    const res = await anon.handle(new Request("http://localhost/api/templates",),);
+    expect(res.status,).toBe(401,);
   });
 });

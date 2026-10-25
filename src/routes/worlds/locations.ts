@@ -42,7 +42,9 @@ export async function handleListLocations(
   userRole: string | null,
   q?: string,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  // Read-only route: the synthetic guest tier (auth.guestAccess) may read
+  // the locations of a PUBLIC world here — and only here.
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole, { allowGuest: true, },);
   if (worldErr) { return worldErr; }
 
   const offset = (page - 1) * pageSize;
@@ -181,7 +183,9 @@ export async function handleGetLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  // Read-only route: the synthetic guest tier (auth.guestAccess) may read a
+  // location of a PUBLIC world here — and only here.
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole, { allowGuest: true, },);
   if (worldErr) { return worldErr; }
 
   const location = await database
