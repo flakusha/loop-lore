@@ -36,21 +36,33 @@ export async function completePlaythrough(
 
   const now = new Date().toISOString();
 
-  await (db as any)
-    .updateTable("playthroughs",)
-    .set({
-      status: "completed",
-      ending_id: endingId,
-      ending_type: endingType,
-      completion_time: completionTime,
-      completed_at: now,
-      updated_at: now,
-    },)
-    .where("id", "=", playthroughId,)
-    .execute();
+  // Status flip + meta progression are one atomic unit: a mid-sequence
+  // failure used to strand the run Completed with meta progression missing
+  // (BUG-service-layer-multi-query-mutations-run-without-transactions).
+  // The conditional predicate plus zero-rows check makes a concurrent
+  // double-complete a detected lost race instead of a silent re-apply.
+  await db.transaction().execute(async (trx,) => {
+    const result = await (trx as any)
+      .updateTable("playthroughs",)
+      .set({
+        status: "completed",
+        ending_id: endingId,
+        ending_type: endingType,
+        completion_time: completionTime,
+        completed_at: now,
+        updated_at: now,
+      },)
+      .where("id", "=", playthroughId,)
+      .where("status", "!=", "completed",)
+      .executeTakeFirst();
 
-  // Update meta-progression
-  await updateMetaProgression(db, playthrough.playerId, endingId, endingType,);
+    if (Number(result?.numUpdatedRows ?? 0,) === 0) {
+      throw new Error("Playthrough already completed",);
+    }
+
+    // Update meta-progression
+    await updateMetaProgression(trx, playthrough.playerId, endingId, endingType,);
+  },);
 
   getLog().info("Playthrough completed", {
     playthroughId,
