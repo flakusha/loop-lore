@@ -31745,6 +31745,12 @@
       "source": ".plan/tickets/IDEA-epic-tool-calling-mcp-2026-09-26.md"
     }
   ],
+  "src/generation/template-service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md"
+    }
+  ],
   "src/generation/template-service.ts": [
     {
       "kind": "epic",
@@ -31771,6 +31777,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-workflow-library-img2img-row-has-no-parameters.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md"
+    }
+  ],
+  "src/generation/template-service/resolve.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md"
     }
   ],
   "src/generation/template-types.ts": [
@@ -34873,6 +34889,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
     }
   ],
   "src/middleware/auth/solo-user.ts": [
@@ -40817,6 +40837,12 @@
       "source": ".plan/tickets/TASK-019-enforce-state-machine-validators-at-write.md"
     }
   ],
+  "src/routes/characters/list.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
+    }
+  ],
   "src/routes/characters/list.ts": [
     {
       "kind": "epic",
@@ -40829,6 +40855,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-parsepagination-default-50-silently-overrides-actorsquery-sc.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
+    }
+  ],
+  "src/routes/characters/read.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
     }
   ],
   "src/routes/characters/update.ts": [
@@ -45487,6 +45523,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-first-class-citizen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md"
     }
   ],
   "src/routes/templates/index.ts": [
@@ -45521,12 +45561,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-ambient-sound-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md"
     }
   ],
   "src/routes/templates/templates.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-sub-image.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md"
     }
   ],
   "src/routes/templates/transfer.ts": [
@@ -46937,6 +46985,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-location-delete-crashes-on-location-states-fk.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
     }
   ],
   "src/routes/worlds/locations-routes.ts": [
@@ -46985,6 +47037,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fractal-locations-api-routes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
     },
     {
       "kind": "ticket",
@@ -47056,7 +47112,17 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+    }
+  ],
+  "src/routes/worlds/worlds-routes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
     }
   ],
   "src/routes/worlds/worlds.ts": [
@@ -47083,6 +47149,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md"
     },
     {
       "kind": "ticket",
@@ -51977,6 +52047,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-ui-endpoint-linkage.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md"
     },
     {
       "kind": "ticket",

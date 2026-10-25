@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3650
 - epics: 347
-- src paths owned: 4402
-- edges: produces 11513, consumes 403, sibling 34627, owns 2649, related 1191
+- src paths owned: 4407
+- edges: produces 11529, consumes 403, sibling 34672, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -1037,7 +1037,7 @@ output is byte-identical for identical inputs.
 | `src/generation/smart-regen.ts` | `BUG-buildstyleprompt-never-injected-into-llm-request`, `BUG-smart-regen-style-not-threaded-through`, `FEAT-smart-regen-decision-gate-in-main-pipeline`, `FEAT-smart-regen-transforms-shorter-longer-funnier-darker`, `epic-output-control-transforms` |
 | `src/generation/stream-buffer.ts` | `TASK-2026-openwebui-comfyui-websocket-progress`, `TASK-2026-openwebui-retry-from-point`, `TASK-2026-openwebui-sse-reconnect-replay`, `TASK-2026-openwebui-stream-event-type-registry`, `TASK-2026-openwebui-structured-toolcall-renderer`, `TASK-2026-openwebui-thinking-block-render`, `epic-architecture`, `epic-experimental-egui-frontend` |
 | `src/generation/template-service.ts` | `FEAT-065-prompt-library-expanded`, `FEAT-065-sub-image`, `FEAT-065-sub-llm`, `epic-ambient-music-sfx` |
-| `src/generation/template-service/crud.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `epic-comfyui-first-class-citizen` |
+| `src/generation/template-service/crud.ts` | `BUG-workflow-library-img2img-row-has-no-parameters`, `TASK-guest-public-functionality-surface-feed-templates-docs`, `epic-comfyui-first-class-citizen` |
 | `src/generation/template-types.ts` | `TASK-video-template-schema`, `epic-comfyui-first-class-citizen` |
 | `src/generation/tools/create-item.ts` | `TASK-055`, `TASK-056` |
 | `src/generation/transforms.ts` | `FEAT-regex-output-transforms-user-defined-rules`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `TASK-redos-config-transforms-build-regexp-from-untrusted-pattern`, `epic-output-control-transforms` |
@@ -1141,6 +1141,7 @@ output is byte-identical for identical inputs.
 | `src/middleware/admin-gate.ts` | `TASK-epic11-admin-settings-reconciliation`, `TASK-federation-admin-usage-dashboard-ui`, `TASK-recursive-self-improvement-watchdog-admin-ui-page-get-api`, `epic-architecture`, `epic-federation-offload-quotas` |
 | `src/middleware/auth.test.ts` | `BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22`, `BUG-elysia-auth-ts-dead-shim-duplicate-logic`, `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing`, `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` |
 | `src/middleware/auth/authenticate.ts` | `BUG-authenticate-last-seen-at-update-swallows-errors-silently`, `BUG-diff-scoped-gates-diff-against-a-stale-merge-base-so-scope-e`, `BUG-elysia-auth-ts-dead-shim-duplicate-logic`, `BUG-fix-auth-make-session-expiry-handling-agree-across-authentic`, `BUG-frontend-dead-csrf-bearer-header-machinery`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `TASK-auth-session-hardening-batch-from-2026-10-04-review`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `epic-guest-access` |
+| `src/middleware/auth/guest-access.test.ts` | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-guest-world-public-browse-read-only-public-worlds` |
 | `src/middleware/auth/solo-user.ts` | `TASK-solo-user-cold-start-race-caches-phantom-uid`, `epic-guest-access` |
 | `src/middleware/auth/token.ts` | `BUG-export-routes-re-resolve-identity-and-fall-back-to-solo`, `BUG-fix-auth-make-session-expiry-handling-agree-across-authentic`, `BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec`, `BUG-resolveuseridfromrequest-missing-user-status-check`, `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m`, `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing`, `TASK-input-hardening-batch`, `epic-auth-channel-provisioning` |
 | `src/middleware/csp-nonce.ts` | `TASK-adopt-elysiajs-helmet-for-security-headers`, `epic-architecture` |
@@ -1358,7 +1359,7 @@ output is byte-identical for identical inputs.
 | `src/routes/characters/create.ts` | `BUG-character-create-silently-drops-personality-scenario-welcome`, `BUG-plugin-tool-authorization-fails-open`, `TASK-nsfw-rating-enforcement`, `WIRE-characters-create-avatar-linking-missing`, `WIRE-impersonate-command-palette-no-actionpayload-dispatch`, `WIRE-nsfw-audit-page-missing-inline-authz` |
 | `src/routes/characters/export.ts` | `BUG-community-share-missing-lorebook-export`, `FEAT-expand-character-templates-to-canonical-fields` |
 | `src/routes/characters/index.ts` | `epic-character-core-system`, `epic-character-spec` |
-| `src/routes/characters/list.ts` | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida`, `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc`, `epic-character-core-system` |
+| `src/routes/characters/list.ts` | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida`, `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc`, `TASK-guest-world-public-browse-read-only-public-worlds`, `epic-character-core-system` |
 | `src/routes/characters/update.ts` | `FEAT-expand-character-templates-to-canonical-fields`, `TASK-char-growth-api`, `TASK-nsfw-rating-enforcement`, `TASK-size-allow-waivers-characters-update-ts-and-chat-bootstrap-t`, `epic-character-growth` |
 | `src/routes/chat-export.test.ts` | `BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi`, `epic-import-export-io` |
 | `src/routes/chat-export.ts` | `TASK-collapse-duplicate-markdown-exporter`, `TASK-epic14-import-export-reconciliation`, `TASK-widen-import-export-io-for-publications`, `epic-import-export-io`, `epic-logic-reconciliation` |
@@ -1536,7 +1537,9 @@ output is byte-identical for identical inputs.
 | `src/routes/telemetry.ts` | `BUG-analytics-per-user-routes-filter-telemetry-events-by-raw-ids`, `BUG-frontend-generation-completed-telemetry-never-reaches-the-se`, `BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te`, `BUG-telemetry-errors-leaks-raw-event-data`, `BUG-telemetry-purge-unbounded-days`, `BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids`, `FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha`, `FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard`, `FEAT-error-monitoring-alerting`, `FEAT-feat-telemetry-telemetry-quota-and-abuse-dashboard`, `TASK-admin-llm-execution-analytics-per-model-per-provider-rollups`, `TASK-harness-stats-dashboard`, `TASK-telemetry-endpoint-trusts-userid-from-request-body`, `epic-logging` |
 | `src/routes/templates.ts` | `FEAT-065-sub-audio`, `FEAT-065-sub-image`, `FEAT-065-sub-llm`, `FEAT-065-sub-video` |
 | `src/routes/templates/apply.ts` | `TASK-public-templates-routes`, `epic-comfyui-first-class-citizen` |
-| `src/routes/templates/modality.ts` | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w`, `FEAT-065-template-system`, `TASK-ambient-sound-system`, `epic-ambient-music-sfx`, `epic-audio-video-sound` |
+| `src/routes/templates/crud.ts` | `TASK-guest-public-functionality-surface-feed-templates-docs`, `epic-comfyui-first-class-citizen` |
+| `src/routes/templates/modality.ts` | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w`, `FEAT-065-template-system`, `TASK-ambient-sound-system`, `TASK-guest-public-functionality-surface-feed-templates-docs`, `epic-ambient-music-sfx`, `epic-audio-video-sound` |
+| `src/routes/templates/templates.test.ts` | `FEAT-065-sub-image`, `TASK-guest-public-functionality-surface-feed-templates-docs` |
 | `src/routes/trade/history.ts` | `TASK-trade-history-npc-counterparty`, `epic-economy-trading` |
 | `src/routes/trade/index.ts` | `TASK-frontend-trade-balance-and-execute`, `TASK-trade-history-npc-counterparty` |
 | `src/routes/trade/npc.ts` | `TASK-trade-history-npc-counterparty`, `epic-economy-trading` |
@@ -1584,12 +1587,12 @@ output is byte-identical for identical inputs.
 | `src/routes/worlds/access.ts` | `TASK-assistant-entity-access-schema`, `TASK-assistant-entity-access-world-location-access`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-licensing-publish-authorization-predicate`, `TASK-licensing-publish-enforcement-point` |
 | `src/routes/worlds/fractal-locations-routes.ts` | `epic-locations`, `epic-terminal-ui` |
 | `src/routes/worlds/fractal-travel-routes.ts` | `BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `epic-world-travel-time` |
-| `src/routes/worlds/locations-routes.test.ts` | `BUG-location-connections-validation-accepts-junk-and-persists-it`, `BUG-location-delete-crashes-on-location-states-fk` |
-| `src/routes/worlds/locations.ts` | `BUG-location-connections-validation-accepts-junk-and-persists-it`, `BUG-location-delete-crashes-on-location-states-fk`, `BUG-locations-reparent-guard-silently-reverted-by-d572dddec`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-`, `FEAT-world-template-chat-lifecycle`, `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-world-location-access`, `TASK-fractal-locations-api-routes`, `TASK-location-crud-tree-connections`, `TASK-location-editor-structured-ui`, `TASK-location-explorer`, `epic-locations` |
+| `src/routes/worlds/locations-routes.test.ts` | `BUG-location-connections-validation-accepts-junk-and-persists-it`, `BUG-location-delete-crashes-on-location-states-fk`, `TASK-guest-world-public-browse-read-only-public-worlds` |
+| `src/routes/worlds/locations.ts` | `BUG-location-connections-validation-accepts-junk-and-persists-it`, `BUG-location-delete-crashes-on-location-states-fk`, `BUG-locations-reparent-guard-silently-reverted-by-d572dddec`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-`, `FEAT-world-template-chat-lifecycle`, `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-world-location-access`, `TASK-fractal-locations-api-routes`, `TASK-guest-world-public-browse-read-only-public-worlds`, `TASK-location-crud-tree-connections`, `TASK-location-editor-structured-ui`, `TASK-location-explorer`, `epic-locations` |
 | `src/routes/worlds/timelines.ts` | `BUG-world-timelines-unauthenticated-read-and-create`, `epic-review-dev-2026-08-26-security-data-integrity-merges` |
 | `src/routes/worlds/world-rpg-flags.ts` | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `FEAT-per-world-skills-mechanic-flag-and-world-creation-opt-in-ui`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` |
-| `src/routes/worlds/worlds-routes.test.ts` | `BUG-world-lore-silently-stripped-on-create-and-update`, `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` |
-| `src/routes/worlds/worlds.ts` | `BUG-world-lore-silently-stripped-on-create-and-update`, `TASK-assistant-entity-access-adaptation`, `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-world-location-access`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s`, `epic-assistant-entity-access` |
+| `src/routes/worlds/worlds-routes.test.ts` | `BUG-world-lore-silently-stripped-on-create-and-update`, `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-guest-world-public-browse-read-only-public-worlds`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` |
+| `src/routes/worlds/worlds.ts` | `BUG-world-lore-silently-stripped-on-create-and-update`, `TASK-assistant-entity-access-adaptation`, `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-world-location-access`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-guest-world-public-browse-read-only-public-worlds`, `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s`, `epic-assistant-entity-access` |
 | `src/rpg` | `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `TASK-raise-rpg-battle-social-skills-progression-and-replayability`, `TASK-resolution-family-decision`, `TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on`, `epic-resolution-system` |
 | `src/rpg/achievements/service.ts` | `FEAT-achievements`, `TASK-fix-eslint-errors`, `epic-continuous-improvement` |
 | `src/rpg/achievements/service/crud.ts` | `BUG-service-layer-multi-query-mutations-run-without-transactions`, `TASK-rpg-and-blog-service-db-handles-are-typed-as-any-losing-quer` |
@@ -1754,7 +1757,7 @@ output is byte-identical for identical inputs.
 | `src/server/init-background-services.ts` | `BUG-character-seed-dedupes-on-display-name`, `BUG-fix-server-log-rejected-background-init-promises-with-module`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `epic-character-core-system`, `epic-cron-scheduler` |
 | `src/server/start.test.ts` | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` |
 | `src/server/start.ts` | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen`, `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k`, `BUG-auto-rotation-config-drift`, `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `BUG-new-migration-parts-never-apply-to-existing-databases`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-cron-migrate-existing-timers`, `TASK-cron-provider-health-rescan`, `TASK-cross-platform-portability`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h`, `TASK-enable-http-2-via-single-tls-port-consolidation`, `TASK-fail-safe-execution-work-safety`, `TASK-https-redirect-enforcement-for-plaintext-http`, `TASK-item-config-templates`, `TASK-local-instance-integrity-holistic`, `TASK-logging-hardening-minors-injection-rotation-races-sink-path-`, `TASK-ocsp-stapling-for-tls-certificate-status`, `TASK-outfit-change-hook`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota`, `TASK-runtime-integrity-watchdog-crash-recovery`, `TASK-size-strict-debt`, `TASK-sni-multi-certificate-serving-for-multiple-domains`, `TASK-swarm-supervisor`, `TASK-tls-cipher-suite-hardening-and-secure-defaults`, `TASK-wire-fswatcher-onreload-callback-in-server-startup`, `epic-certificate-and-tls-management`, `epic-cron-scheduler`, `epic-cross-platform-portability`, `epic-db-migration-compaction`, `epic-file-splitting`, `epic-http-protocol-features`, `epic-local-process-swarm`, `epic-reactive-actor-appearance`, `epic-recursive-self-improvement`, `epic-runtime-integrity-fail-safes`, `epic-skills-professions-config` |
-| `src/server/static-files.ts` | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-`, `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra`, `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e`, `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc`, `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `TASK-docs-ui-endpoint-linkage`, `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto`, `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w`, `epic-cross-platform-portability`, `epic-docs-reconciliation`, `epic-http-protocol-features` |
+| `src/server/static-files.ts` | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-`, `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra`, `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e`, `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc`, `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `TASK-docs-ui-endpoint-linkage`, `TASK-guest-public-functionality-surface-feed-templates-docs`, `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto`, `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w`, `epic-cross-platform-portability`, `epic-docs-reconciliation`, `epic-http-protocol-features` |
 | `src/server/static-mime.ts` | `BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` |
 | `src/server/watchdog/cli.ts` | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `epic-recursive-self-improvement` |
 | `src/server/watchdog/events.ts` | `TASK-recursive-self-improvement-watchdog-events-table-and-telemet`, `epic-recursive-self-improvement` |
@@ -11185,9 +11188,25 @@ output is byte-identical for identical inputs.
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | produces | `src/routes/worlds/worlds-routes.test.ts` | - |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | produces | `src/routes/worlds/worlds.ts` | - |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | produces | `src/users/permissions.ts` | - |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | produces | `src/generation/template-service.test.ts` | - |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | produces | `src/generation/template-service/crud.ts` | - |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | produces | `src/generation/template-service/resolve.ts` | - |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | produces | `src/routes/templates/crud.ts` | - |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | produces | `src/routes/templates/modality.ts` | - |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | produces | `src/routes/templates/templates.test.ts` | - |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | produces | `src/server/static-files.ts` | - |
 | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | produces | `src/middleware/rate-limit.ts` | - |
 | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | produces | `src/routes/auth/shared.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/middleware/auth/guest-access.test.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/characters/list.test.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/characters/list.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/characters/read.ts` | - |
 | `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/chat-search/join.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/worlds/locations-routes.test.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/worlds/locations.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/worlds/worlds-routes.test.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/worlds/worlds-routes.ts` | - |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | produces | `src/routes/worlds/worlds.ts` | - |
 | `TASK-guided-regen-action-menu-on-assistant-messages` | produces | `src/assistant/commands/regen.ts` | - |
 | `TASK-harmonize-quest-type-taxonomy` | produces | `src/db/enums-story/quests.ts` | - |
 | `TASK-harmonize-quest-type-taxonomy` | produces | `src/frontend/pages/quests.ts` | - |
@@ -20772,6 +20791,7 @@ output is byte-identical for identical inputs.
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `EPIC-2026-24` | `src/routes/http-utils/parse.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-archival-workflow` | `src/routes/chats/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | `src/routes/chats/list.ts` |
+| `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/characters/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `epic-archival-workflow` | `src/routes/chats/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `epic-character-core-system` | `src/routes/characters/list.ts` |
 | `BUG-characters-list-and-chats-list-bypass-parsepagination-valida` | sibling | `epic-guest-access` | `src/routes/chats/list.ts` |
@@ -22374,6 +22394,7 @@ output is byte-identical for identical inputs.
 | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-` | sibling | `TASK-cross-platform-single-binary` | `src/server/static-files.ts` |
 | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/middleware/dynamic-response.ts; src/transport/negotiation-parsers.ts` |
 | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/server/static-files.ts` |
+| `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-` | sibling | `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w` | `src/server/static-files.ts` |
 | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-` | sibling | `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un` | `src/middleware/dynamic-response.ts` |
@@ -23898,6 +23919,7 @@ output is byte-identical for identical inputs.
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/routes/views/layout.ts; src/server/static-files.ts` |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `TASK-frontend-view-model-extraction` | `src/routes/views/layout.ts` |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `TASK-frontend-view-model-json-negotiation` | `src/routes/views/layout.ts` |
+| `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl` | `src/routes/views/layout.ts` |
 | `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs` | sibling | `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w` | `src/server/static-files.ts` |
@@ -25707,6 +25729,7 @@ output is byte-identical for identical inputs.
 | `BUG-location-connections-validation-accepts-junk-and-persists-it` | sibling | `TASK-assistant-entity-access-adapter` | `src/routes/worlds/locations.ts` |
 | `BUG-location-connections-validation-accepts-junk-and-persists-it` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/routes/worlds/locations.ts` |
 | `BUG-location-connections-validation-accepts-junk-and-persists-it` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
+| `BUG-location-connections-validation-accepts-junk-and-persists-it` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations-routes.test.ts; src/routes/worlds/locations.ts` |
 | `BUG-location-connections-validation-accepts-junk-and-persists-it` | sibling | `TASK-location-crud-tree-connections` | `src/routes/worlds/locations.ts` |
 | `BUG-location-connections-validation-accepts-junk-and-persists-it` | sibling | `TASK-location-editor-structured-ui` | `src/routes/worlds/locations.ts` |
 | `BUG-location-connections-validation-accepts-junk-and-persists-it` | sibling | `TASK-location-explorer` | `src/routes/worlds/locations.ts` |
@@ -25722,6 +25745,7 @@ output is byte-identical for identical inputs.
 | `BUG-location-delete-crashes-on-location-states-fk` | sibling | `TASK-assistant-entity-access-adapter` | `src/routes/worlds/locations.ts` |
 | `BUG-location-delete-crashes-on-location-states-fk` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/routes/worlds/locations.ts` |
 | `BUG-location-delete-crashes-on-location-states-fk` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
+| `BUG-location-delete-crashes-on-location-states-fk` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations-routes.test.ts; src/routes/worlds/locations.ts` |
 | `BUG-location-delete-crashes-on-location-states-fk` | sibling | `TASK-location-crud-tree-connections` | `src/routes/worlds/locations.ts` |
 | `BUG-location-delete-crashes-on-location-states-fk` | sibling | `TASK-location-editor-structured-ui` | `src/routes/worlds/locations.ts` |
 | `BUG-location-delete-crashes-on-location-states-fk` | sibling | `TASK-location-explorer` | `src/routes/worlds/locations.ts` |
@@ -25756,6 +25780,7 @@ output is byte-identical for identical inputs.
 | `BUG-locations-reparent-guard-silently-reverted-by-d572dddec` | sibling | `TASK-chat-transfer-location` | `src/db/migrations/001_init.ts` |
 | `BUG-locations-reparent-guard-silently-reverted-by-d572dddec` | sibling | `TASK-comic-page-composition-strategy` | `src/db/migrations/001_init.ts` |
 | `BUG-locations-reparent-guard-silently-reverted-by-d572dddec` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
+| `BUG-locations-reparent-guard-silently-reverted-by-d572dddec` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations.ts` |
 | `BUG-locations-reparent-guard-silently-reverted-by-d572dddec` | sibling | `TASK-harness-canvas-viz` | `src/locations/tree.ts` |
 | `BUG-locations-reparent-guard-silently-reverted-by-d572dddec` | sibling | `TASK-location-crud-tree-connections` | `src/db/migrations/001_init.ts; src/locations/tree.ts; src/routes/worlds/locations.ts` |
 | `BUG-locations-reparent-guard-silently-reverted-by-d572dddec` | sibling | `TASK-location-editor-structured-ui` | `src/routes/worlds/locations.ts` |
@@ -26501,6 +26526,7 @@ output is byte-identical for identical inputs.
 | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | sibling | `TASK-frontend-client-contract-doc` | `src/elysia-app.ts` |
 | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | sibling | `TASK-gallery-fuzzy-search-pagination` | `src/elysia-app.ts` |
 | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/elysia-app.ts` |
+| `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/routes/templates/modality.ts` |
 | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | sibling | `TASK-i18n-alpine-client` | `src/elysia-app.ts` |
 | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | sibling | `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser` | `src/elysia-app.ts` |
 | `BUG-modality-template-patch-classifies-db-read-failures-as-400-w` | sibling | `TASK-middleware-global-idempotency-replay-for-re-fired-requests` | `src/elysia-app.ts` |
@@ -27016,6 +27042,7 @@ output is byte-identical for identical inputs.
 | `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d` | `src/validation/schemas/actors.ts` |
 | `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `TASK-affordance-lookup-table` | `src/validation/schemas/actors.ts` |
 | `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `TASK-growth-epic-reconciliation` | `src/validation/schemas/actors.ts` |
+| `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/characters/list.ts` |
 | `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `TASK-nsfw-rating-enforcement` | `src/validation/schemas/actors.ts` |
 | `BUG-parsepagination-default-50-silently-overrides-actorsquery-sc` | sibling | `epic-character-core-system` | `src/routes/characters/list.ts` |
 | `BUG-patch-settings-endpoint-has-no-key-allowlist-currentsettings` | sibling | `BUG-settings-export-endpoint-has-no-rate-limiting` | `src/routes/settings.ts` |
@@ -28487,6 +28514,8 @@ output is byte-identical for identical inputs.
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-generation-logit-bias-logprobs` | `src/generation/providers/openai-compatible/http.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos` | `src/generation/generate-route/handler.ts` |
+| `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
+| `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-harness-assistant-personalities` | `src/assistant/prompt-assembler.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-harness-context-templates` | `src/assistant/prompt-assembler.ts` |
 | `BUG-size-strict-pre-existing-dev-drift` | sibling | `TASK-harness-lean-ctx-tools` | `src/assistant/prompt-assembler.ts` |
@@ -28754,6 +28783,7 @@ output is byte-identical for identical inputs.
 | `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t` | sibling | `TASK-cross-platform-portability` | `src/server/static-files.ts` |
 | `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t` | sibling | `TASK-cross-platform-single-binary` | `src/server/static-files.ts` |
 | `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/server/static-files.ts` |
+| `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t` | sibling | `TASK-headers-additional-useful-response-headers` | `src/middleware/response-headers.ts` |
 | `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t` | sibling | `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w` | `src/server/static-files.ts` |
@@ -28767,6 +28797,7 @@ output is byte-identical for identical inputs.
 | `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` | sibling | `TASK-cross-platform-portability` | `src/server/static-files.ts` |
 | `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` | sibling | `TASK-cross-platform-single-binary` | `src/server/static-files.ts` |
 | `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/server/static-files.ts` |
+| `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` | sibling | `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w` | `src/server/static-files.ts` |
 | `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` | sibling | `epic-cross-platform-portability` | `src/server/static-files.ts` |
@@ -28777,6 +28808,7 @@ output is byte-identical for identical inputs.
 | `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e` | sibling | `TASK-cross-platform-portability` | `src/server/static-files.ts` |
 | `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e` | sibling | `TASK-cross-platform-single-binary` | `src/server/static-files.ts` |
 | `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/server/static-files.ts` |
+| `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e` | sibling | `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w` | `src/server/static-files.ts` |
 | `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e` | sibling | `epic-cross-platform-portability` | `src/server/static-files.ts` |
@@ -29662,6 +29694,7 @@ output is byte-identical for identical inputs.
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `TASK-comic-storyboard-panel-generation-workflow` | `src/image-edit/routes.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `TASK-external-comfyui-plugin-repo-integration-contract` | `src/generation/workflow-library/validate.ts; src/generation/workflow-substitutor.ts; src/image-edit/routes.ts; src/image-edit/template-registry.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `TASK-fix-test-failures` | `src/test-utils/create-test-db.ts` |
+| `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/generation/template-service/crud.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `TASK-illustrated-book-reference-pass` | `src/image-edit/routes.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `TASK-image-edit-depth-conditioned-editing` | `src/image-edit/routes.ts` |
 | `BUG-workflow-library-img2img-row-has-no-parameters` | sibling | `TASK-image-edit-run-authz-error-shape-regression` | `src/image-edit/routes.ts` |
@@ -29701,6 +29734,7 @@ output is byte-identical for identical inputs.
 | `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-` | sibling | `TASK-assistant-entity-access-adapter` | `src/routes/worlds/locations.ts` |
 | `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/routes/worlds/locations.ts` |
 | `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
+| `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations.ts` |
 | `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-` | sibling | `TASK-harness-canvas-viz` | `src/locations/tree.ts` |
 | `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-` | sibling | `TASK-location-crud-tree-connections` | `src/locations/tree.ts; src/routes/worlds/locations.ts` |
 | `BUG-world-location-reparent-has-no-cycle-self-descendant-checks-` | sibling | `TASK-location-editor-structured-ui` | `src/routes/worlds/locations.ts` |
@@ -29712,6 +29746,7 @@ output is byte-identical for identical inputs.
 | `BUG-world-lore-silently-stripped-on-create-and-update` | sibling | `TASK-assistant-entity-access-adapter` | `src/routes/worlds/worlds.ts` |
 | `BUG-world-lore-silently-stripped-on-create-and-update` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/routes/worlds/worlds.ts` |
 | `BUG-world-lore-silently-stripped-on-create-and-update` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts` |
+| `BUG-world-lore-silently-stripped-on-create-and-update` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts` |
 | `BUG-world-lore-silently-stripped-on-create-and-update` | sibling | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | `src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts; src/validation/schemas/worlds.ts` |
 | `BUG-world-lore-silently-stripped-on-create-and-update` | sibling | `epic-assistant-entity-access` | `src/routes/worlds/worlds.ts` |
 | `BUG-world-state-init-seeds-all-db-actors-into-every-world` | sibling | `FEAT-character-world-setup` | `src/story/world-state/init.ts` |
@@ -30141,6 +30176,7 @@ output is byte-identical for identical inputs.
 | `FEAT-065-sub-image` | sibling | `TASK-comparison-set-variant-data-model` | `src/db/schema-generation.ts` |
 | `FEAT-065-sub-image` | sibling | `TASK-comparison-workflow-template-and-command` | `src/generation/image-gen-route.ts` |
 | `FEAT-065-sub-image` | sibling | `TASK-emotions-avatar-edit-model` | `src/generation/image-gen-route.ts` |
+| `FEAT-065-sub-image` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/routes/templates/templates.test.ts` |
 | `FEAT-065-sub-image` | sibling | `TASK-image-backends-x-access-authz-parity-audit-across-image-surf` | `src/generation/image-gen-route.ts` |
 | `FEAT-065-sub-image` | sibling | `TASK-local-image-generation-queue` | `src/generation/image-gen-route.ts` |
 | `FEAT-065-sub-image` | sibling | `TASK-lora-discovery-application` | `src/generation/image-gen-route.ts` |
@@ -30261,6 +30297,7 @@ output is byte-identical for identical inputs.
 | `FEAT-065-template-system` | sibling | `TASK-docs-spec-analytics-observability` | `src/routes/v1/content-surface.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-emotions-avatar-edit-model` | `src/generation/image-gen-route.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-file-split-class-factory` | `src/assistant/prompt-assembler.ts` |
+| `FEAT-065-template-system` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/routes/templates/modality.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-harness-assistant-personalities` | `src/assistant/prompt-assembler.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-harness-context-priority-tiers` | `src/assistant/prompt/registry.ts` |
 | `FEAT-065-template-system` | sibling | `TASK-harness-context-templates` | `src/assistant/prompt-assembler.ts` |
@@ -31514,6 +31551,7 @@ output is byte-identical for identical inputs.
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre` | `src/routes/rpg/xp-loot.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `TASK-gate-worlds-rpg-7-col-flags-through-master-mechanics-validat` | `src/rpg/service/world-gate.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/worlds-routes.test.ts` |
+| `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/worlds-routes.test.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `TASK-link-npc-inventory` | `src/db/schema-story.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `TASK-location-crud-tree-connections` | `src/db/migrations/001_init.ts` |
 | `FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
@@ -32474,6 +32512,7 @@ output is byte-identical for identical inputs.
 | `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc` | sibling | `TASK-cross-platform-single-binary` | `src/server/static-files.ts` |
 | `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/transport/negotiation-parsers.ts` |
 | `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/server/static-files.ts` |
+| `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc` | sibling | `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w` | `src/server/static-files.ts` |
 | `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc` | sibling | `epic-cross-platform-portability` | `src/server/static-files.ts` |
@@ -32555,6 +32594,7 @@ output is byte-identical for identical inputs.
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-frontend-chat-setup-templates-edit-delete` | `src/routes/chats/templates.ts` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-frontend-view-model-extraction` | `src/views/world-detail.html` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-generation-failure-exposure-sanitize-raw-llm-error-output-in` | `src/assistant/commands/create.ts` |
+| `FEAT-world-template-chat-lifecycle` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations.ts` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-i18n-template-strings` | `src/views/new-chat.html` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-item-generation-review-parity-extract-category-rarity-stats-` | `src/assistant/commands/create.ts` |
 | `FEAT-world-template-chat-lifecycle` | sibling | `TASK-llm-markdown-document-prompts` | `src/assistant/commands/create.ts; src/prompts/registry.ts` |
@@ -35351,6 +35391,7 @@ output is byte-identical for identical inputs.
 | `TASK-ambient-sound-system` | sibling | `TASK-comparison-fan-out-engine` | `src/generation/providers/comfyui.ts` |
 | `TASK-ambient-sound-system` | sibling | `TASK-comparison-metric-collection-and-charts` | `src/generation/providers/comfyui.ts` |
 | `TASK-ambient-sound-system` | sibling | `TASK-external-comfyui-plugin-repo-integration-contract` | `src/generation/providers/comfyui.ts` |
+| `TASK-ambient-sound-system` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/routes/templates/modality.ts` |
 | `TASK-ambient-sound-system` | sibling | `TASK-img2img-init-image-plumbing` | `src/generation/providers/comfyui.ts` |
 | `TASK-ambient-sound-system` | sibling | `TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds` | `src/generation/providers/comfyui.test.ts; src/generation/providers/comfyui.ts` |
 | `TASK-ambient-sound-system` | sibling | `TASK-multimodal-asset-reuse` | `src/generation/providers/comfyui.ts` |
@@ -36326,6 +36367,7 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-assistant-entity-access-world-location-access` | `src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-explicit-approval-flow-for-assistant-mutations` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/worlds.ts` |
+| `TASK-assistant-entity-access-adaptation` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | `src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adaptation` | sibling | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-assistant-entity-access-asset-access` | `src/assistant/adapter/assets.ts` |
@@ -36343,6 +36385,7 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-fast-action-prompt-pipeline` | `src/assistant/commands/registry.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/worlds.ts` |
+| `TASK-assistant-entity-access-adapter` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-harness-frontend-consolidation` | `src/assistant/commands/registry.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-interaction-service-foundation` | `src/assistant/commands/registry.ts` |
 | `TASK-assistant-entity-access-adapter` | sibling | `TASK-location-crud-tree-connections` | `src/routes/worlds/locations.ts` |
@@ -36425,6 +36468,7 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-entity-access-tests` | sibling | `epic-assistant-gm-flows` | `src/assistant/quality/entity-creation.ts` |
 | `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-fractal-locations-api-routes` | `src/routes/worlds/locations.ts` |
 | `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/routes/worlds/access.ts; src/routes/worlds/worlds.ts` |
+| `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts` |
 | `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-licensing-publish-authorization-predicate` | `src/routes/worlds/access.ts` |
 | `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-licensing-publish-enforcement-point` | `src/routes/worlds/access.ts` |
 | `TASK-assistant-entity-access-world-location-access` | sibling | `TASK-location-crud-tree-connections` | `src/routes/worlds/locations.ts` |
@@ -41803,6 +41847,7 @@ output is byte-identical for identical inputs.
 | `TASK-cross-platform-portability` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/server/static-files.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-fail-safe-execution-work-safety` | `src/server/start.ts` |
+| `TASK-cross-platform-portability` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-harness-tool-sandbox` | `src/config/cert.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `TASK-cross-platform-portability` | sibling | `TASK-https-redirect-enforcement-for-plaintext-http` | `src/server/start.ts` |
@@ -41844,6 +41889,7 @@ output is byte-identical for identical inputs.
 | `TASK-cross-platform-portability` | sibling | `epic-runtime-integrity-fail-safes` | `src/server/start.ts` |
 | `TASK-cross-platform-portability` | sibling | `epic-skills-professions-config` | `src/server/start.ts` |
 | `TASK-cross-platform-single-binary` | sibling | `TASK-docs-ui-endpoint-linkage` | `src/server/static-files.ts` |
+| `TASK-cross-platform-single-binary` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `TASK-cross-platform-single-binary` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `TASK-cross-platform-single-binary` | sibling | `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w` | `src/server/static-files.ts` |
 | `TASK-cross-platform-single-binary` | sibling | `epic-cross-platform-portability` | `src/server/static-files.ts` |
@@ -42652,6 +42698,7 @@ output is byte-identical for identical inputs.
 | `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-federation-admin-usage-dashboard-ui` | `src/routes/views.test.ts` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-frontend-view-model-extraction` | `src/routes/views/layout.ts` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-frontend-view-model-json-negotiation` | `src/routes/views/layout.ts` |
+| `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-guest-public-functionality-surface-feed-templates-docs` | `src/server/static-files.ts` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-i18n-alpine-client` | `src/views/layout.html` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-i18n-template-strings` | `src/views/layout.html` |
@@ -44334,6 +44381,7 @@ output is byte-identical for identical inputs.
 | `TASK-fractal-locations-api-routes` | sibling | `TASK-frontend-client-contract-doc` | `src/elysia-app.ts` |
 | `TASK-fractal-locations-api-routes` | sibling | `TASK-gallery-fuzzy-search-pagination` | `src/elysia-app.ts` |
 | `TASK-fractal-locations-api-routes` | sibling | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | `src/elysia-app.ts` |
+| `TASK-fractal-locations-api-routes` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/routes/worlds/locations.ts` |
 | `TASK-fractal-locations-api-routes` | sibling | `TASK-i18n-alpine-client` | `src/elysia-app.ts` |
 | `TASK-fractal-locations-api-routes` | sibling | `TASK-location-crud-tree-connections` | `src/routes/worlds/locations.ts` |
 | `TASK-fractal-locations-api-routes` | sibling | `TASK-location-editor-structured-ui` | `src/routes/location-explorer.ts; src/routes/worlds/locations.ts` |
@@ -44911,6 +44959,7 @@ output is byte-identical for identical inputs.
 | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | sibling | `epic-multilingual-carriage` | `src/chat/service/read.ts; src/routes/messages/read.ts` |
 | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | sibling | `epic-reactive-actor-appearance` | `src/routes/messages/read.ts` |
 | `TASK-guest-chat-public-reads-visibility-aware-chat-access` | sibling | `epic-visual-novel-mode` | `src/chat/service/access.ts` |
+| `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `TASK-guest-world-public-browse-read-only-public-worlds` | `src/middleware/auth/guest-access.test.ts; src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `TASK-i18n-alpine-client` | `src/elysia-app.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `TASK-integration-config-surface-schemas-example-toml-env-map` | `src/config/schema-class/env-map.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `TASK-licensing-publish-authorization-predicate` | `src/routes/worlds/access.ts` |
@@ -44956,6 +45005,14 @@ output is byte-identical for identical inputs.
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-lora-discovery-application` | `src/elysia-app.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-middleware-request-lifecycle` | `src/elysia-app.ts` |
 | `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag` | sibling | `epic-openapi-reference` | `src/elysia-app.ts` |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/server/static-files.ts` |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w` | `src/server/static-files.ts` |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `epic-ambient-music-sfx` | `src/routes/templates/modality.ts` |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `epic-audio-video-sound` | `src/routes/templates/modality.ts` |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/template-service/crud.ts; src/routes/templates/crud.ts` |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `epic-cross-platform-portability` | `src/server/static-files.ts` |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `epic-docs-reconciliation` | `src/server/static-files.ts` |
+| `TASK-guest-public-functionality-surface-feed-templates-docs` | sibling | `epic-http-protocol-features` | `src/server/static-files.ts` |
 | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | sibling | `TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d` | `src/routes/auth/shared.ts` |
 | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | sibling | `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser` | `src/middleware/rate-limit.ts` |
 | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | sibling | `TASK-middleware-in-progress-status-endpoint-for-long-running-requ` | `src/middleware/rate-limit.ts` |
@@ -44974,7 +45031,14 @@ output is byte-identical for identical inputs.
 | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | sibling | `epic-guest-access` | `src/routes/auth/shared.ts` |
 | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | sibling | `epic-local-process-swarm` | `src/middleware/rate-limit.ts` |
 | `TASK-guest-rate-limiting-audit-logging-for-guest-reads` | sibling | `epic-recursive-self-improvement` | `src/middleware/rate-limit.ts` |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | sibling | `TASK-location-crud-tree-connections` | `src/routes/worlds/locations.ts` |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | sibling | `TASK-location-editor-structured-ui` | `src/routes/worlds/locations.ts` |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | sibling | `TASK-location-explorer` | `src/routes/worlds/locations.ts` |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | sibling | `TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s` | `src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts` |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | sibling | `epic-assistant-entity-access` | `src/routes/worlds/worlds.ts` |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | sibling | `epic-character-core-system` | `src/routes/characters/list.ts` |
 | `TASK-guest-world-public-browse-read-only-public-worlds` | sibling | `epic-guest-access` | `src/routes/chat-search/join.ts` |
+| `TASK-guest-world-public-browse-read-only-public-worlds` | sibling | `epic-locations` | `src/routes/worlds/locations.ts` |
 | `TASK-guided-regen-action-menu-on-assistant-messages` | sibling | `TASK-route-plugin-calls-through-the-shared-provider-path` | `src/assistant/commands/regen.ts` |
 | `TASK-harmonize-quest-type-taxonomy` | sibling | `TASK-i18n-template-strings` | `src/views/quests.html` |
 | `TASK-harmonize-quest-type-taxonomy` | sibling | `TASK-nsfw-rating-enforcement` | `src/validation/schemas/primitives.ts` |

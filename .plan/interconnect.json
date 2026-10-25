@@ -30667,7 +30667,15 @@
       "path": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md",
       "title": "Guest public functionality surface: feed, templates, docs",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/generation/template-service.test.ts",
+        "src/generation/template-service/crud.ts",
+        "src/generation/template-service/resolve.ts",
+        "src/routes/templates/crud.ts",
+        "src/routes/templates/modality.ts",
+        "src/routes/templates/templates.test.ts",
+        "src/server/static-files.ts"
+      ],
       "related": []
     },
     {
@@ -30689,7 +30697,16 @@
       "title": "Guest world public browse: read-only public worlds",
       "status": "done",
       "srcRefs": [
-        "src/routes/chat-search/join.ts"
+        "src/middleware/auth/guest-access.test.ts",
+        "src/routes/characters/list.test.ts",
+        "src/routes/characters/list.ts",
+        "src/routes/characters/read.ts",
+        "src/routes/chat-search/join.ts",
+        "src/routes/worlds/locations-routes.test.ts",
+        "src/routes/worlds/locations.ts",
+        "src/routes/worlds/worlds-routes.test.ts",
+        "src/routes/worlds/worlds-routes.ts",
+        "src/routes/worlds/worlds.ts"
       ],
       "related": []
     },
@@ -69916,6 +69933,12 @@
       ]
     },
     {
+      "path": "src/generation/template-service.test.ts",
+      "owners": [
+        "TASK-guest-public-functionality-surface-feed-templates-docs"
+      ]
+    },
+    {
       "path": "src/generation/template-service.ts",
       "owners": [
         "FEAT-065-prompt-library-expanded",
@@ -69928,7 +69951,14 @@
       "path": "src/generation/template-service/crud.ts",
       "owners": [
         "BUG-workflow-library-img2img-row-has-no-parameters",
+        "TASK-guest-public-functionality-surface-feed-templates-docs",
         "epic-comfyui-first-class-citizen"
+      ]
+    },
+    {
+      "path": "src/generation/template-service/resolve.ts",
+      "owners": [
+        "TASK-guest-public-functionality-surface-feed-templates-docs"
       ]
     },
     {
@@ -71714,7 +71744,8 @@
     {
       "path": "src/middleware/auth/guest-access.test.ts",
       "owners": [
-        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag"
+        "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+        "TASK-guest-world-public-browse-read-only-public-worlds"
       ]
     },
     {
@@ -75311,11 +75342,24 @@
       ]
     },
     {
+      "path": "src/routes/characters/list.test.ts",
+      "owners": [
+        "TASK-guest-world-public-browse-read-only-public-worlds"
+      ]
+    },
+    {
       "path": "src/routes/characters/list.ts",
       "owners": [
         "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
         "BUG-parsepagination-default-50-silently-overrides-actorsquery-sc",
+        "TASK-guest-world-public-browse-read-only-public-worlds",
         "epic-character-core-system"
+      ]
+    },
+    {
+      "path": "src/routes/characters/read.ts",
+      "owners": [
+        "TASK-guest-world-public-browse-read-only-public-worlds"
       ]
     },
     {
@@ -78012,6 +78056,7 @@
     {
       "path": "src/routes/templates/crud.ts",
       "owners": [
+        "TASK-guest-public-functionality-surface-feed-templates-docs",
         "epic-comfyui-first-class-citizen"
       ]
     },
@@ -78033,6 +78078,7 @@
         "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
         "FEAT-065-template-system",
         "TASK-ambient-sound-system",
+        "TASK-guest-public-functionality-surface-feed-templates-docs",
         "epic-ambient-music-sfx",
         "epic-audio-video-sound"
       ]
@@ -78040,7 +78086,8 @@
     {
       "path": "src/routes/templates/templates.test.ts",
       "owners": [
-        "FEAT-065-sub-image"
+        "FEAT-065-sub-image",
+        "TASK-guest-public-functionality-surface-feed-templates-docs"
       ]
     },
     {
@@ -78816,7 +78863,8 @@
       "path": "src/routes/worlds/locations-routes.test.ts",
       "owners": [
         "BUG-location-connections-validation-accepts-junk-and-persists-it",
-        "BUG-location-delete-crashes-on-location-states-fk"
+        "BUG-location-delete-crashes-on-location-states-fk",
+        "TASK-guest-world-public-browse-read-only-public-worlds"
       ]
     },
     {
@@ -78837,6 +78885,7 @@
         "TASK-assistant-entity-access-adapter",
         "TASK-assistant-entity-access-world-location-access",
         "TASK-fractal-locations-api-routes",
+        "TASK-guest-world-public-browse-read-only-public-worlds",
         "TASK-location-crud-tree-connections",
         "TASK-location-editor-structured-ui",
         "TASK-location-explorer",
@@ -78882,7 +78931,14 @@
         "BUG-world-lore-silently-stripped-on-create-and-update",
         "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
         "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+        "TASK-guest-world-public-browse-read-only-public-worlds",
         "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s"
+      ]
+    },
+    {
+      "path": "src/routes/worlds/worlds-routes.ts",
+      "owners": [
+        "TASK-guest-world-public-browse-read-only-public-worlds"
       ]
     },
     {
@@ -78893,6 +78949,7 @@
         "TASK-assistant-entity-access-adapter",
         "TASK-assistant-entity-access-world-location-access",
         "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+        "TASK-guest-world-public-browse-read-only-public-worlds",
         "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
         "epic-assistant-entity-access"
       ]
@@ -82187,6 +82244,7 @@
         "TASK-cross-platform-portability",
         "TASK-cross-platform-single-binary",
         "TASK-docs-ui-endpoint-linkage",
+        "TASK-guest-public-functionality-surface-feed-templates-docs",
         "TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto",
         "TASK-perf-server-no-cache-html-entry-points-stream-static-files-w",
         "epic-cross-platform-portability",
@@ -131881,6 +131939,41 @@
       "to": "src/users/permissions.ts"
     },
     {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "produces",
+      "to": "src/generation/template-service.test.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "produces",
+      "to": "src/generation/template-service/crud.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "produces",
+      "to": "src/generation/template-service/resolve.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "produces",
+      "to": "src/routes/templates/crud.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "produces",
+      "to": "src/routes/templates/modality.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "produces",
+      "to": "src/routes/templates/templates.test.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "produces",
+      "to": "src/server/static-files.ts"
+    },
+    {
       "from": "TASK-guest-rate-limiting-audit-logging-for-guest-reads",
       "kind": "produces",
       "to": "src/middleware/rate-limit.ts"
@@ -131893,7 +131986,52 @@
     {
       "from": "TASK-guest-world-public-browse-read-only-public-worlds",
       "kind": "produces",
+      "to": "src/middleware/auth/guest-access.test.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
+      "to": "src/routes/characters/list.test.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
+      "to": "src/routes/characters/list.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
+      "to": "src/routes/characters/read.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
       "to": "src/routes/chat-search/join.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
+      "to": "src/routes/worlds/locations-routes.test.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
+      "to": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
+      "to": "src/routes/worlds/worlds-routes.test.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
+      "to": "src/routes/worlds/worlds-routes.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "produces",
+      "to": "src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-guided-regen-action-menu-on-assistant-messages",
@@ -182878,6 +183016,12 @@
     {
       "from": "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
       "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/characters/list.ts"
+    },
+    {
+      "from": "BUG-characters-list-and-chats-list-bypass-parsepagination-valida",
+      "kind": "sibling",
       "to": "epic-archival-workflow",
       "via": "src/routes/chats/list.ts"
     },
@@ -192490,6 +192634,12 @@
     {
       "from": "BUG-dynamic-response-accept-encoding-negotiation-uses-substring-",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-dynamic-response-accept-encoding-negotiation-uses-substring-",
+      "kind": "sibling",
       "to": "TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto",
       "via": "src/server/static-files.ts"
     },
@@ -201630,6 +201780,12 @@
       "kind": "sibling",
       "to": "TASK-frontend-view-model-json-negotiation",
       "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
+      "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/server/static-files.ts"
     },
     {
       "from": "BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs",
@@ -212488,6 +212644,12 @@
     {
       "from": "BUG-location-connections-validation-accepts-junk-and-persists-it",
       "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/locations-routes.test.ts; src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "BUG-location-connections-validation-accepts-junk-and-persists-it",
+      "kind": "sibling",
       "to": "TASK-location-crud-tree-connections",
       "via": "src/routes/worlds/locations.ts"
     },
@@ -212574,6 +212736,12 @@
       "kind": "sibling",
       "to": "TASK-fractal-locations-api-routes",
       "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "BUG-location-delete-crashes-on-location-states-fk",
+      "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/locations-routes.test.ts; src/routes/worlds/locations.ts"
     },
     {
       "from": "BUG-location-delete-crashes-on-location-states-fk",
@@ -212777,6 +212945,12 @@
       "from": "BUG-locations-reparent-guard-silently-reverted-by-d572dddec",
       "kind": "sibling",
       "to": "TASK-fractal-locations-api-routes",
+      "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "BUG-locations-reparent-guard-silently-reverted-by-d572dddec",
+      "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
       "via": "src/routes/worlds/locations.ts"
     },
     {
@@ -217252,6 +217426,12 @@
     {
       "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/routes/templates/modality.ts"
+    },
+    {
+      "from": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -220338,6 +220518,12 @@
       "kind": "sibling",
       "to": "TASK-growth-epic-reconciliation",
       "via": "src/validation/schemas/actors.ts"
+    },
+    {
+      "from": "BUG-parsepagination-default-50-silently-overrides-actorsquery-sc",
+      "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/characters/list.ts"
     },
     {
       "from": "BUG-parsepagination-default-50-silently-overrides-actorsquery-sc",
@@ -229168,6 +229354,18 @@
     {
       "from": "BUG-size-strict-pre-existing-dev-drift",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-size-strict-pre-existing-dev-drift",
+      "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "BUG-size-strict-pre-existing-dev-drift",
+      "kind": "sibling",
       "to": "TASK-harness-assistant-personalities",
       "via": "src/assistant/prompt-assembler.ts"
     },
@@ -230770,6 +230968,12 @@
     {
       "from": "BUG-static-asset-caching-unconditional-vary-immutable-on-short-t",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-static-asset-caching-unconditional-vary-immutable-on-short-t",
+      "kind": "sibling",
       "to": "TASK-headers-additional-useful-response-headers",
       "via": "src/middleware/response-headers.ts"
     },
@@ -230848,6 +231052,12 @@
     {
       "from": "BUG-static-asset-serving-never-applies-immutable-caching-and-cra",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-static-asset-serving-never-applies-immutable-caching-and-cra",
+      "kind": "sibling",
       "to": "TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto",
       "via": "src/server/static-files.ts"
     },
@@ -230903,6 +231113,12 @@
       "from": "BUG-static-files-304-only-matches-a-single-exact-if-none-match-e",
       "kind": "sibling",
       "to": "TASK-docs-ui-endpoint-linkage",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "BUG-static-files-304-only-matches-a-single-exact-if-none-match-e",
+      "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
       "via": "src/server/static-files.ts"
     },
     {
@@ -236218,6 +236434,12 @@
     {
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/generation/template-service/crud.ts"
+    },
+    {
+      "from": "BUG-workflow-library-img2img-row-has-no-parameters",
+      "kind": "sibling",
       "to": "TASK-illustrated-book-reference-pass",
       "via": "src/image-edit/routes.ts"
     },
@@ -236452,6 +236674,12 @@
     {
       "from": "BUG-world-location-reparent-has-no-cycle-self-descendant-checks-",
       "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "BUG-world-location-reparent-has-no-cycle-self-descendant-checks-",
+      "kind": "sibling",
       "to": "TASK-harness-canvas-viz",
       "via": "src/locations/tree.ts"
     },
@@ -236513,6 +236741,12 @@
       "from": "BUG-world-lore-silently-stripped-on-create-and-update",
       "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "BUG-world-lore-silently-stripped-on-create-and-update",
+      "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
       "via": "src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts"
     },
     {
@@ -239092,6 +239326,12 @@
     {
       "from": "FEAT-065-sub-image",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/routes/templates/templates.test.ts"
+    },
+    {
+      "from": "FEAT-065-sub-image",
+      "kind": "sibling",
       "to": "TASK-image-backends-x-access-authz-parity-audit-across-image-surf",
       "via": "src/generation/image-gen-route.ts"
     },
@@ -239808,6 +240048,12 @@
       "kind": "sibling",
       "to": "TASK-file-split-class-factory",
       "via": "src/assistant/prompt-assembler.ts"
+    },
+    {
+      "from": "FEAT-065-template-system",
+      "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/routes/templates/modality.ts"
     },
     {
       "from": "FEAT-065-template-system",
@@ -247330,6 +247576,12 @@
     {
       "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
       "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/worlds-routes.test.ts"
+    },
+    {
+      "from": "FEAT-gate-xp-and-skill-xp-awards-behind-the-per-world-rpg-xp-opt-",
+      "kind": "sibling",
       "to": "TASK-link-npc-inventory",
       "via": "src/db/schema-story.ts"
     },
@@ -253090,6 +253342,12 @@
     {
       "from": "FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc",
+      "kind": "sibling",
       "to": "TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto",
       "via": "src/server/static-files.ts"
     },
@@ -253572,6 +253830,12 @@
       "kind": "sibling",
       "to": "TASK-generation-failure-exposure-sanitize-raw-llm-error-output-in",
       "via": "src/assistant/commands/create.ts"
+    },
+    {
+      "from": "FEAT-world-template-chat-lifecycle",
+      "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/locations.ts"
     },
     {
       "from": "FEAT-world-template-chat-lifecycle",
@@ -270352,6 +270616,12 @@
     {
       "from": "TASK-ambient-sound-system",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/routes/templates/modality.ts"
+    },
+    {
+      "from": "TASK-ambient-sound-system",
+      "kind": "sibling",
       "to": "TASK-img2img-init-image-plumbing",
       "via": "src/generation/providers/comfyui.ts"
     },
@@ -276202,6 +276472,12 @@
     {
       "from": "TASK-assistant-entity-access-adaptation",
       "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adaptation",
+      "kind": "sibling",
       "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
       "via": "src/routes/worlds/worlds.ts"
     },
@@ -276300,6 +276576,12 @@
       "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-adapter",
+      "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-assistant-entity-access-adapter",
@@ -276792,6 +277074,12 @@
       "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/routes/worlds/access.ts; src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-world-location-access",
+      "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/locations.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-assistant-entity-access-world-location-access",
@@ -309064,6 +309352,12 @@
     {
       "from": "TASK-cross-platform-portability",
       "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "TASK-cross-platform-portability",
+      "kind": "sibling",
       "to": "TASK-harness-tool-sandbox",
       "via": "src/config/cert.ts"
     },
@@ -309305,6 +309599,12 @@
       "from": "TASK-cross-platform-single-binary",
       "kind": "sibling",
       "to": "TASK-docs-ui-endpoint-linkage",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "TASK-cross-platform-single-binary",
+      "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
       "via": "src/server/static-files.ts"
     },
     {
@@ -314154,6 +314454,12 @@
       "kind": "sibling",
       "to": "TASK-frontend-view-model-json-negotiation",
       "via": "src/routes/views/layout.ts"
+    },
+    {
+      "from": "TASK-docs-ui-endpoint-linkage",
+      "kind": "sibling",
+      "to": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "via": "src/server/static-files.ts"
     },
     {
       "from": "TASK-docs-ui-endpoint-linkage",
@@ -324250,6 +324556,12 @@
     {
       "from": "TASK-fractal-locations-api-routes",
       "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "TASK-fractal-locations-api-routes",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -327712,6 +328024,12 @@
     {
       "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "kind": "sibling",
+      "to": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "via": "src/middleware/auth/guest-access.test.ts; src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "kind": "sibling",
       "to": "TASK-i18n-alpine-client",
       "via": "src/elysia-app.ts"
     },
@@ -327980,6 +328298,54 @@
       "via": "src/elysia-app.ts"
     },
     {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "sibling",
+      "to": "TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "sibling",
+      "to": "TASK-perf-server-no-cache-html-entry-points-stream-static-files-w",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "sibling",
+      "to": "epic-ambient-music-sfx",
+      "via": "src/routes/templates/modality.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "sibling",
+      "to": "epic-audio-video-sound",
+      "via": "src/routes/templates/modality.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "sibling",
+      "to": "epic-comfyui-first-class-citizen",
+      "via": "src/generation/template-service/crud.ts; src/routes/templates/crud.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "sibling",
+      "to": "epic-cross-platform-portability",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "sibling",
+      "to": "epic-docs-reconciliation",
+      "via": "src/server/static-files.ts"
+    },
+    {
+      "from": "TASK-guest-public-functionality-surface-feed-templates-docs",
+      "kind": "sibling",
+      "to": "epic-http-protocol-features",
+      "via": "src/server/static-files.ts"
+    },
+    {
       "from": "TASK-guest-rate-limiting-audit-logging-for-guest-reads",
       "kind": "sibling",
       "to": "TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d",
@@ -328090,8 +328456,50 @@
     {
       "from": "TASK-guest-world-public-browse-read-only-public-worlds",
       "kind": "sibling",
+      "to": "TASK-location-crud-tree-connections",
+      "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "sibling",
+      "to": "TASK-location-editor-structured-ui",
+      "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "sibling",
+      "to": "TASK-location-explorer",
+      "via": "src/routes/worlds/locations.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "sibling",
+      "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
+      "via": "src/routes/worlds/worlds-routes.test.ts; src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/routes/worlds/worlds.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "sibling",
+      "to": "epic-character-core-system",
+      "via": "src/routes/characters/list.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "sibling",
       "to": "epic-guest-access",
       "via": "src/routes/chat-search/join.ts"
+    },
+    {
+      "from": "TASK-guest-world-public-browse-read-only-public-worlds",
+      "kind": "sibling",
+      "to": "epic-locations",
+      "via": "src/routes/worlds/locations.ts"
     },
     {
       "from": "TASK-guided-regen-action-menu-on-assistant-messages",
