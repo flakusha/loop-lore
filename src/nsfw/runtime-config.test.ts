@@ -12,10 +12,12 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { insertSystemConfig, } from "../test-utils/insert-helpers";
 import {
   applyStoredNsfwConfig,
+  effectiveNsfwConfig,
   getRuntimeNsfwConfig,
   initNsfwRuntimeConfig,
   resetNsfwRuntimeConfig,
   updateRuntimeNsfwConfig,
+  updateRuntimeNsfwFileConfig,
 } from "./runtime-config";
 
 describe("nsfw runtime config store", () => {
@@ -95,6 +97,53 @@ describe("nsfw runtime config store", () => {
     await applyStoredNsfwConfig(db,);
     const cfg = getRuntimeNsfwConfig();
     expect(cfg.allowNsfw,).toBe(false,);
+    expect(cfg.nsfwMinAge,).toBe(21,);
+  });
+
+  test("effectiveNsfwConfig blocks when the runtime store forbids NSFW", () => {
+    initNsfwRuntimeConfig({
+      allowNsfw: false,
+      nsfwMinAge: 21,
+      defaultNsfwScope: "chat",
+      consentRequired: true,
+      auditLogging: true,
+      useLlmClassifier: false,
+    },);
+
+    // The per-request file config still allows NSFW, but the admin kill
+    // switch lives in the runtime store - the effective value must block.
+    const effective = effectiveNsfwConfig({
+      allowNsfw: true,
+      nsfwMinAge: 18,
+      defaultNsfwScope: "chat",
+      consentRequired: true,
+      auditLogging: true,
+      useLlmClassifier: false,
+    },);
+
+    expect(effective.allowNsfw,).toBe(false,);
+    // The admin threshold wins over the file value.
+    expect(effective.nsfwMinAge,).toBe(21,);
+  });
+
+  test("updateRuntimeNsfwFileConfig keeps the admin override", () => {
+    initNsfwRuntimeConfig({
+      allowNsfw: true,
+      nsfwMinAge: 18,
+      defaultNsfwScope: "chat",
+      consentRequired: true,
+      auditLogging: true,
+      useLlmClassifier: false,
+    },);
+
+    // Admin turns NSFW off (override layer).
+    updateRuntimeNsfwConfig({ allowNsfw: false, },);
+    // A config-file reload re-reads the file layer, which still says true.
+    updateRuntimeNsfwFileConfig({ allowNsfw: true, nsfwMinAge: 21, },);
+
+    const cfg = getRuntimeNsfwConfig();
+    expect(cfg.allowNsfw,).toBe(false,);
+    // The file layer value IS applied for a field the admin did not override.
     expect(cfg.nsfwMinAge,).toBe(21,);
   });
 
