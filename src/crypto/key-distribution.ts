@@ -17,6 +17,7 @@
  */
 
 import type { Kysely, } from "kysely";
+import { renameSync, rmSync, } from "node:fs";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger";
@@ -48,6 +49,24 @@ export function getRotationEventCount(): number {
 export function resetRotationEventCount(): void {
   rotationEventCount = 0;
   inflightRotations.clear();
+}
+
+/**
+ * Delete staged re-encrypted asset temp files after a failed rotation.
+ * Best-effort: a leftover temp file must not mask the original error.
+ * @param staged - temp paths produced by {@link reEncryptChatAssets}
+ */
+function discardStagedAssets(staged: { tmpPath: string; finalPath: string }[],): void {
+  for (const { tmpPath, } of staged) {
+    try {
+      rmSync(tmpPath, { force: true, },);
+    } catch (error) {
+      log().warn("Failed to remove staged re-encrypt temp file", {
+        tmpPath,
+        error: (error as Error).message,
+      },);
+    }
+  }
 }
 
 /**
@@ -175,10 +194,12 @@ async function doRotate(
 
   const newChatKey: ChatKey = { key: newKey, keyId: newId, rawKey: newRawKey, };
 
-  // Re-encrypt asset files BEFORE opening the transaction.
-  // Asset files are written via writeFileSync — if the DB txn rolls back
-  // after asset overwrite, files are encrypted under new key but DB reverts
-  // to old key, making assets permanently undecryptable.
+  // Re-encrypt asset files BEFORE opening the transaction, but STAGE the
+  // re-encrypted blobs at temp paths. If the DB txn rolls back, the staged
+  // files are deleted and the original (old-key) files remain consistent
+  // with the reverted database — in-place writes here would leave new-key
+  // ciphertext on disk under the old key, permanently destroying the assets
+  // (BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans).
   const assetResult = await reEncryptChatAssets(
     database,
     chatId,
@@ -189,6 +210,7 @@ async function doRotate(
   );
 
   if (assetResult.failures.length > 0) {
+    discardStagedAssets(assetResult.staged,);
     throw new Error(
       `rotateKeyOnLeave: ${assetResult.failures.length} asset(s) failed to re-encrypt: ${
         assetResult.failures[0]!.reason
@@ -197,47 +219,61 @@ async function doRotate(
   }
 
   // Wrap message re-encryption + key swap in a single transaction.
-  // On any failure, the entire rotation is rolled back — no mixed key state.
-  // Asset files are already written and are independent of the DB transaction.
+  // On any failure, the entire rotation is rolled back and the staged asset
+  // files are discarded — no mixed key state.
   // Declared `let` so the post-transaction audit block can read the count.
   let reEncrypted = 0;
 
   let failures: { id: string; reason: string }[] = [];
 
-  await database.transaction().execute(async (trx,) => {
-    // Re-encrypt all messages (visible + non-visible) OLD→NEW.
-    const result = await reEncryptWithKeys(
-      trx,
-      chatId,
-      oldChatKey,
-      newChatKey,
-      RE_ENCRYPT_LIMIT,
-      { includeAll: true, },
-    );
+  try {
+    await database.transaction().execute(async (trx,) => {
+      // Re-encrypt all messages (visible + non-visible) OLD→NEW.
+      const result = await reEncryptWithKeys(
+        trx,
+        chatId,
+        oldChatKey,
+        newChatKey,
+        RE_ENCRYPT_LIMIT,
+        { includeAll: true, },
+      );
 
-    reEncrypted = result.reEncrypted;
-    failures = result.failures;
+      reEncrypted = result.reEncrypted;
+      failures = result.failures;
 
-    if (failures.length > 0) {
-      throw new Error(`rotateKeyOnLeave: ${failures.length} message(s) failed to re-encrypt: ${failures[0]!.reason}`,);
-    }
+      if (failures.length > 0) {
+        throw new Error(
+          `rotateKeyOnLeave: ${failures.length} message(s) failed to re-encrypt: ${failures[0]!.reason}`,
+        );
+      }
 
-    // Swap the chat key row ONLY after all re-encryption succeeds.
-    await trx
-      .updateTable("chat_keys",)
-      .set({ id: newId, encrypted_chat_key: newEncryptedKey, expires_at: null, },)
-      .where("chat_id", "=", chatId,)
-      .execute();
+      // Swap the chat key row ONLY after all re-encryption succeeds.
+      await trx
+        .updateTable("chat_keys",)
+        .set({ id: newId, encrypted_chat_key: newEncryptedKey, expires_at: null, },)
+        .where("chat_id", "=", chatId,)
+        .execute();
 
-    log().info("Rotated chat key on participant leave (forward secrecy)", {
-      chatId,
-      departedParticipantId,
-      oldKeyId: oldChatKey.keyId,
-      newKeyId: newId,
-      messagesReEncrypted: reEncrypted,
-      assetsReEncrypted: assetResult.reEncrypted,
+      log().info("Rotated chat key on participant leave (forward secrecy)", {
+        chatId,
+        departedParticipantId,
+        oldKeyId: oldChatKey.keyId,
+        newKeyId: newId,
+        messagesReEncrypted: reEncrypted,
+        assetsReEncrypted: assetResult.reEncrypted,
+      },);
     },);
-  },);
+  } catch (error) {
+    // The transaction rolled back — discard the staged blobs so the
+    // old-key files on disk stay consistent with the reverted DB.
+    discardStagedAssets(assetResult.staged,);
+    throw error;
+  }
+
+  // The key swap is committed and durable — now swap the file bytes in.
+  for (const { tmpPath, finalPath, } of assetResult.staged) {
+    renameSync(tmpPath, finalPath,);
+  }
 
   await recordRotationAuditLeave(database, {
     chatId,

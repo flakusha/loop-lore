@@ -234,4 +234,51 @@ describe("rotation acceptance proofs", () => {
     const plain = await decryptAssetBlob(onDisk, newKey, ASSET_ID,);
     expect(plain.toString(),).toBe(ASSET_BYTES,);
   });
+
+  test("mid-rotation DB failure keeps the asset file under the OLD key (BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans)", async () => {
+    await seedChatWithHistory();
+    const ownerId = await insertOwnerAndGetId("proof-owner-2",);
+    const oldKey = await getChatKey(db, CHAT,);
+    const sealed = await encryptAssetBlob(Buffer.from(ASSET_BYTES,), oldKey, oldKey.keyId, ASSET_ID, {
+      algorithm: "zstd",
+      threshold: 1024,
+    }, "at-rest",);
+
+    expect(sealed.encrypted,).toBe(true,);
+    mkdirSync(join(uploadDir, "raw", ASSET_ID.slice(0, 2,), ASSET_ID.slice(2, 4,),), { recursive: true, },);
+    writeFileSync(join(uploadDir, ASSET_PATH,), sealed.data,);
+    await insertAssets(db, ownerId, "secret.png", "image/png", "image" as never, sealed.data.length, ASSET_PATH, {
+      id: ASSET_ID as never,
+      encryption_tier: "at-rest",
+      encrypted_key_id: oldKey.keyId,
+    },);
+
+    await db.insertInto("asset_links",).values({ asset_id: ASSET_ID, entity_type: "chat", entity_id: CHAT, },)
+      .execute();
+
+    // Fail the DB transaction (the chat_keys swap) AFTER the asset file
+    // re-encrypt has run — the historical order permanently destroyed the
+    // file by leaving NEW-key ciphertext on disk under the OLD key row.
+    harness.sqlite.exec(
+      "CREATE TRIGGER fail_chat_key_swap BEFORE UPDATE ON chat_keys " +
+        "BEGIN SELECT RAISE(ABORT, 'simulated swap failure'); END;",
+    );
+
+    try {
+      await expect(rotateKeyOnLeave(db, CHAT, LEAVER,),).rejects.toThrow();
+
+      // DB rolled back to the old key — the file on disk must still be
+      // OLD-key ciphertext, i.e. decryptable, not orphaned new-key bytes.
+      const row = await db.selectFrom("chat_keys",).select("id",).where("chat_id", "=", CHAT,)
+        .executeTakeFirstOrThrow();
+
+      expect(row.id,).toBe(oldKey.keyId,);
+
+      const onDisk = readFileSync(join(uploadDir, ASSET_PATH,),);
+      const plain = await decryptAssetBlob(onDisk, oldKey, ASSET_ID,);
+      expect(plain.toString(),).toBe(ASSET_BYTES,);
+    } finally {
+      harness.sqlite.exec("DROP TRIGGER fail_chat_key_swap;",);
+    }
+  });
 });
