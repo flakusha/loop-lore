@@ -168,4 +168,35 @@ describe("RelationshipsService", () => {
       expect(relationship?.familiarity,).toBe(60,);
     });
   });
+
+  describe("createRelationship concurrency (BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same)", () => {
+    it("yields exactly one relationship pair when the same pair is created concurrently", async () => {
+      await createTestActors(db, "test-actor-rel-race-a",);
+      await createTestActors(db, "test-actor-rel-race-b",);
+
+      const results = await Promise.allSettled([
+        relationshipsService.createRelationship({
+          actorId: "test-actor-rel-race-a",
+          targetActorId: "test-actor-rel-race-b",
+          relationshipType: "friend",
+        },),
+        relationshipsService.createRelationship({
+          actorId: "test-actor-rel-race-a",
+          targetActorId: "test-actor-rel-race-b",
+          relationshipType: "friend",
+        },),
+      ],);
+
+      const rows = await db
+        .selectFrom("character_relationships",)
+        .selectAll()
+        .where("actor_id", "=", "test-actor-rel-race-a",)
+        .where("target_actor_id", "=", "test-actor-rel-race-b",)
+        .execute();
+
+      const fulfilled = results.filter((r,) => r.status === "fulfilled");
+      expect(fulfilled.length,).toBe(1,);
+      expect(rows.length,).toBe(1,);
+    });
+  });
 });
