@@ -216,19 +216,25 @@ export async function getActorKey({ database, keyId, smk, }: GetActorKeyOpts,): 
  * @returns The new key ID.
  */
 export async function rotateActorKey({ database, actorId, smk, }: GenerateActorKeyOpts,): Promise<string> {
-  // Expire all current active keys for this actor
-  await database
-    .updateTable("actor_keys",)
-    .set({
-      status: "expired",
-      expires_at: new Date().toISOString(),
-    },)
-    .where("actor_id", "=", actorId,)
-    .where("status", "=", "active",)
-    .execute();
+  // Expire + generate are one atomic unit: an expire that commits without the
+  // replacement insert strands the actor with zero active keys and breaks all
+  // subsequent encryption for it
+  // (BUG-key-material-revoke-then-insert-sequences-are-non-transactio).
+  return database.transaction().execute(async (trx,) => {
+    // Expire all current active keys for this actor
+    await trx
+      .updateTable("actor_keys",)
+      .set({
+        status: "expired",
+        expires_at: new Date().toISOString(),
+      },)
+      .where("actor_id", "=", actorId,)
+      .where("status", "=", "active",)
+      .execute();
 
-  // Generate new key
-  return generateActorKey({ database, actorId, smk, name: "primary", },);
+    // Generate new key
+    return generateActorKey({ database: trx, actorId, smk, name: "primary", },);
+  },);
 }
 
 /**
