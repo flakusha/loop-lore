@@ -23,6 +23,7 @@ function installWindow(keynavFlag: string | null,): void {
   (globalThis as { document?: unknown }).document = {
     body: { style: { overflow: "", }, },
     addEventListener: () => {},
+    querySelector: () => null,
   };
 
   (globalThis as { localStorage?: unknown }).localStorage = {
@@ -96,5 +97,155 @@ describe("keynavHelp", () => {
 
     expect(help.label("scroll-down",),).toBe("Scroll down",);
     g.__localeStrings = saved;
+  });
+});
+
+// ── Focus trap ──────────────────────────────────────────────────────────
+
+const docListeners = new Map<string, (event: KeyboardEvent,) => void>();
+const rafQueue: Array<() => void> = [];
+
+/** Element stand-in: focus() only lands while the fake document is visible. */
+class FakeElement {
+  focused = false;
+
+  constructor(
+    private readonly doc: { activeElement: unknown; visible: boolean },
+    readonly children: FakeElement[] = [],
+  ) {}
+
+  focus(): void {
+    if (!this.doc.visible) { return; }
+    this.focused = true;
+    this.doc.activeElement = this;
+  }
+
+  contains(node: unknown,): boolean {
+    return node === this || this.children.some((child,) => child.contains(node,));
+  }
+
+  querySelectorAll(): FakeElement[] {
+    return this.children;
+  }
+}
+
+interface FocusDom {
+  doc: { activeElement: unknown; visible: boolean };
+  trigger: FakeElement;
+  focusables: FakeElement[];
+}
+
+/** Install a fake document whose overlay can take focus. */
+function installFocusDom(): FocusDom {
+  installWindow("1",);
+  docListeners.clear();
+  rafQueue.length = 0;
+  const doc = { activeElement: null as unknown, visible: true, };
+  const trigger = new FakeElement(doc,);
+  const closeButton = new FakeElement(doc,);
+  const panel = new FakeElement(doc,);
+  const overlay = new FakeElement(doc, [closeButton, panel,],);
+  doc.activeElement = trigger;
+  (globalThis as { document?: unknown }).document = {
+    get activeElement() {
+      return doc.activeElement;
+    },
+    body: { style: { overflow: "", }, },
+    addEventListener: (type: string, fn: (event: KeyboardEvent,) => void,) => {
+      docListeners.set(type, fn,);
+    },
+    removeEventListener: (type: string,) => {
+      docListeners.delete(type,);
+    },
+    querySelector: () => overlay,
+  };
+
+  (globalThis as { requestAnimationFrame?: unknown }).requestAnimationFrame = (fn: () => void,) => {
+    rafQueue.push(fn,);
+    return rafQueue.length;
+  };
+
+  return { doc, trigger, focusables: [closeButton, panel,], };
+}
+
+/** Fire a Tab keydown at the document-level focus trap. */
+function pressTab(shiftKey = false,): { prevented: boolean } {
+  const event = {
+    key: "Tab",
+    shiftKey,
+    prevented: false,
+    preventDefault(): void {
+      event.prevented = true;
+    },
+  };
+
+  docListeners.get("keydown",)?.(event as unknown as KeyboardEvent,);
+  return event;
+}
+
+describe("keynavHelp focus trap", () => {
+  it("moves focus into the overlay on open and restores it on close", async () => {
+    const { doc, trigger, focusables, } = installFocusDom();
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    help.toggle();
+    expect(doc.activeElement,).toBe(focusables[0],);
+    help.close();
+    expect(doc.activeElement,).toBe(trigger,);
+  });
+
+  it("waits for the overlay to become visible before moving focus in", async () => {
+    const { doc, focusables, } = installFocusDom();
+    doc.visible = false;
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    help.toggle();
+    expect(doc.activeElement,).not.toBe(focusables[0],);
+    doc.visible = true;
+    rafQueue.shift()?.();
+    expect(doc.activeElement,).toBe(focusables[0],);
+    help.close();
+  });
+
+  it("keeps Tab and Shift+Tab inside the overlay", async () => {
+    const { doc, focusables, } = installFocusDom();
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    help.toggle();
+    expect(doc.activeElement,).toBe(focusables[0],);
+
+    const forward = pressTab();
+    expect(forward.prevented,).toBe(true,);
+    expect(doc.activeElement,).toBe(focusables[1],);
+
+    const wrapped = pressTab();
+    expect(wrapped.prevented,).toBe(true,);
+    expect(doc.activeElement,).toBe(focusables[0],);
+
+    const backward = pressTab(true,);
+    expect(backward.prevented,).toBe(true,);
+    expect(doc.activeElement,).toBe(focusables[1],);
+    help.close();
+  });
+
+  it("pulls focus back into the overlay when it has escaped", async () => {
+    const { doc, focusables, } = installFocusDom();
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    help.toggle();
+    doc.activeElement = new FakeElement(doc,);
+    pressTab();
+    expect(doc.activeElement,).toBe(focusables[0],);
+    help.close();
+  });
+
+  it("releases the trap on close", async () => {
+    installFocusDom();
+    const { keynavHelp, } = await freshHelp();
+    const help = keynavHelp();
+    help.toggle();
+    expect(docListeners.has("keydown",),).toBe(true,);
+    help.close();
+    expect(docListeners.has("keydown",),).toBe(false,);
   });
 });
