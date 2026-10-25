@@ -1388,6 +1388,15 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmApplyEntity": "是否将待定更改应用到“{name}”？",
+    "confirmAddEntity": "添加新的{kind}“{name}”？",
+    "confirmCloneEntity": "创建“{name}”的副本？",
+    "entityApplied": "已将更改应用到{name}",
+    "failedApplyEntity": "无法将更改应用到{name}",
+    "entityAdded": "已添加{name}",
+    "failedAddEntity": "添加{name}失败",
+    "entityCloned": "已创建“{name}”的副本",
+    "failedCloneEntity": "创建“{name}”的副本失败",
     "networkError": "网络错误",
     "failed": "失败",
     "chatDeleted": "聊天已删除",
@@ -1662,6 +1671,9 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "apply": "修改 world/location/item 的字段 (/apply <kind> <id> 键=值 …)",
+    "add": "向世界添加新的 location 或 item (/add <kind> <名称> [world-id])",
+    "clone": "复制现有的 location 或 item (/clone <kind> <源id>)",
     "help": "显示可用命令",
     "roll": "掷骰子（例如 /roll 2d6+3）",
     "summarize": "总结最近的消息",

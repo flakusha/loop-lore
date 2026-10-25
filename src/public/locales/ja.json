@@ -1388,6 +1388,15 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmApplyEntity": "「{name}」への変更を適用しますか？",
+    "confirmAddEntity": "新しい{kind}「{name}」を追加しますか？",
+    "confirmCloneEntity": "「{name}」のコピーを作成しますか？",
+    "entityApplied": "{name}に変更を適用しました",
+    "failedApplyEntity": "{name}への変更の適用に失敗しました",
+    "entityAdded": "{name}を追加しました",
+    "failedAddEntity": "{name}の追加に失敗しました",
+    "entityCloned": "「{name}」のコピーを作成しました",
+    "failedCloneEntity": "「{name}」のコピーの作成に失敗しました",
     "networkError": "ネットワークエラー",
     "failed": "失敗しました",
     "chatDeleted": "チャットを削除しました",
@@ -1662,6 +1671,9 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "apply": "world/location/item のフィールドを変更 (/apply <kind> <id> キー=値 …)",
+    "add": "新しい location または item をワールドに追加 (/add <kind> <名前> [world-id])",
+    "clone": "既存の location / item をコピー (/clone <kind> <ソースid>)",
     "help": "利用可能なコマンドを表示",
     "roll": "ダイスを振る（例: /roll 2d6+3）",
     "summarize": "最近のメッセージを要約",
