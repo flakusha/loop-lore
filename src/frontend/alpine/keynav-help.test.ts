@@ -83,16 +83,18 @@ describe("keynavHelp", () => {
     expect(document.body.style.overflow,).toBe("",);
   });
 
-  it("label() translates via the i18n helper and falls back to the action id", async () => {
+  it("label() translates via the i18n module and falls back to the action id", async () => {
     installWindow("1",);
     const { keynavHelp, } = await freshHelp();
     const help = keynavHelp();
     expect(help.label("scroll-down",),).toBe("scroll-down",);
-    (globalThis as { t?: (k: string,) => string }).t = (key,) =>
-      key === "frontend.keynav.actions.scroll-down" ? "Scroll down" : key;
+    const g = globalThis as unknown as { __localeStrings?: unknown };
+    const saved = g.__localeStrings;
+    g.__localeStrings = {
+      frontend: { keynav: { actions: { "scroll-down": "Scroll down", }, }, },
+    };
 
     expect(help.label("scroll-down",),).toBe("Scroll down",);
-    const g = globalThis as unknown as { t?: unknown };
-    delete g.t;
+    g.__localeStrings = saved;
   });
 });

@@ -65,7 +65,8 @@ typed subdirectories** (`chat/`, `character/`). There is no
 - **Wizard / assistant / participant:** `wizard-panel.html`,
   `assistant-panel.html`, `character-info-panel.html`,
   `participant-mgmt.html`
-- **Search / nav:** `message-search-bar.html`, `keynav-help.html`
+- **Search / nav:** `message-search-bar.html` (the keynav help overlay lives
+  inline in `src/views/layout.html`, not in `src/components/chat/`)
 
 ### Character components (`src/components/character/`)
 

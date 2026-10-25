@@ -112,6 +112,12 @@ export function validateKeymapCombo(
     return { ok: false, reason: "reserved", };
   }
 
+  // The listener can only ever fire `g <key>` sequences (pendingG arms on the
+  // literal "g"), so any other two-key pair is unusable, not just duplicate.
+  if (keys.length === 2 && keys[0] !== "g") {
+    return { ok: false, reason: "invalid", };
+  }
+
   // Inside a sequence only the second key is checked: the `g` prefix is the
   // reserved sequence starter, and "g g" is a legitimate (default) binding.
   if (keys.length === 2 && RESERVED_COMBOS.slice(0, 2,).includes(keys[1]!,)) {

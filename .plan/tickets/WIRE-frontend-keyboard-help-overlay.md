@@ -171,7 +171,7 @@ kbd {
 
 - [x] `?` key opens the help overlay
 - [x] Overlay reads shortcuts from `getKeymap()` registry
-- [x] All strings are i18n-localised (no hardcoded English labels)
+- [x] All strings are i18n-localised (corrected history: the first wiring commit reached for a `globalThis.t` that did not reliably resolve, rendering raw action ids in the Action columns; fixed by importing `t` directly from `src/frontend/alpine/i18n.ts` — the dominant Alpine convention — in the `fix(a11y)` follow-up)
 - [x] Escape closes the overlay
 - [ ] Focus is trapped inside overlay while open (`@alpinejs/focus` not loaded; `x-trap` from the original design is not in effect — markup stays keyboard-accessible, Tab reaches the close control)
 - [ ] Focus returns to previously focused element on close

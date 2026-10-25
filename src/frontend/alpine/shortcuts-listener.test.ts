@@ -31,6 +31,8 @@ const focused: string[] = [];
 const querySelectorResults: Record<string, unknown> = {};
 let prevented = false;
 let keynavEnabled = true;
+/** Backing store for the localStorage stub (persists keymap overrides). */
+const listenerStore = new Map<string, string>();
 const _origWindow = (globalThis as { window?: unknown }).window;
 const _origAddEventListener = globalThis.document.addEventListener;
 const _origQuerySelector = globalThis.document.querySelector;
@@ -101,6 +103,7 @@ beforeEach(() => {
   focused.length = 0;
   prevented = false;
   keynavEnabled = true;
+  listenerStore.clear();
   for (const k of Object.keys(querySelectorResults,)) { delete querySelectorResults[k]; }
   origToggleSidebar = (globalThis as { toggleSidebar?: unknown }).toggleSidebar;
   origLocation = (globalThis as { location?: unknown }).location;
@@ -116,9 +119,9 @@ beforeEach(() => {
   };
 
   (globalThis as { localStorage?: unknown }).localStorage = {
-    getItem: (k: string,) => (k === "keynav" && keynavEnabled ? "1" : null),
-    setItem: () => {},
-    removeItem: () => {},
+    getItem: (k: string,) => (k === "keynav" && keynavEnabled ? "1" : listenerStore.get(k,) ?? null),
+    setItem: (k: string, v: string,) => void listenerStore.set(k, String(v,),),
+    removeItem: (k: string,) => void listenerStore.delete(k,),
   };
 
   (globalThis.document as { querySelector: (sel: string,) => unknown }).querySelector = (sel: string,) => {
@@ -423,6 +426,21 @@ describe("keynav enabled", () => {
       expect(cap.received.length,).toBe(0,);
       expect(prevented,).toBe(false,);
     } finally {
+      cap.cleanup();
+    }
+  });
+
+  it("a rebound combo fires live without reload (old combo goes dead)", () => {
+    const cap = captureWindowEvent("keynav:action",);
+    try {
+      shortcuts.setKeymapOverride("scroll-down", "x",);
+      fire({ key: "x", },);
+      expect(cap.received,).toEqual([{ detail: { action: "scroll-down", }, },],);
+      cap.received.length = 0;
+      fire({ key: "j", },);
+      expect(cap.received.length,).toBe(0,);
+    } finally {
+      shortcuts.resetKeymapOverrides();
       cap.cleanup();
     }
   });

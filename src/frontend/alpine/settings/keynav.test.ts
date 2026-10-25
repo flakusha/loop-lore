@@ -7,7 +7,10 @@
  */
 
 import { beforeEach, describe, expect, it, } from "bun:test";
-import { KEYMAP_STORAGE_KEY, resetKeymapOverrides, } from "../shortcuts";
+import {
+  KEYMAP_STORAGE_KEY,
+  resetKeymapOverrides,
+} from "../shortcuts";
 import { keynav, } from "./keynav";
 import type { SettingsState, } from "./types";
 
@@ -31,6 +34,7 @@ function keyEvent(overrides: Partial<KeyboardEvent>,): KeyboardEvent {
     altKey: false,
     metaKey: false,
     preventDefault: () => {},
+    stopPropagation: () => {},
   };
 
   return { ...base, ...overrides, } as unknown as KeyboardEvent;
@@ -100,6 +104,19 @@ describe("settings keynav editor", () => {
     ed.handleRebindKeydown(keyEvent({ key: "Escape", },),);
     expect(ed.rebindingAction,).toBe("",);
     expect(storage.has(KEYMAP_STORAGE_KEY,),).toBe(false,);
+  });
+
+  it("actionLabel translates via the i18n module and falls back to the raw id", () => {
+    const ed = editor();
+    expect(ed.actionLabel("scroll-down",),).toBe("scroll-down",);
+    const g = globalThis as unknown as { __localeStrings?: unknown };
+    const saved = g.__localeStrings;
+    g.__localeStrings = {
+      frontend: { keynav: { actions: { "scroll-down": "Desplazar hacia abajo", }, }, },
+    };
+
+    expect(ed.actionLabel("scroll-down",),).toBe("Desplazar hacia abajo",);
+    g.__localeStrings = saved;
   });
 
   it("reset clears stored overrides", () => {
