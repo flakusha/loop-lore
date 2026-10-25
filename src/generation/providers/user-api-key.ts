@@ -19,6 +19,29 @@ import { findProviderInstance, } from "./provider-instances";
 import type { UserApiKeyResolver, } from "./types";
 
 /**
+ * Thrown when a stored BYO key exists but cannot be decrypted (rotated or
+ * wrong `byoKey.encryptionKey`, corrupt row).
+ *
+ * BUG-byo-decrypt-failure-silently-falls-back-to-server-key: the previous
+ * warn-log-and-undefined fallback let the request proceed on the SERVER key
+ * while the user believed their own key was billed. The typed failure now
+ * aborts the request before any vendor call (`resolveProvider` awaits the
+ * resolver during option resolution, and `callWithFailover` awaits it outside
+ * the per-attempt try, so the throw propagates without failover).
+ */
+export class ByoKeyDecryptError extends Error {
+  constructor(provider: string, userId: string,) {
+    super(
+      `BYO API key for provider "${provider}" could not be decrypted ` +
+        `(user ${userId}) — re-save your key; the request was NOT dispatched ` +
+        "on the server key",
+    );
+
+    this.name = "ByoKeyDecryptError";
+  }
+}
+
+/**
  * Whether a stored user key may be used against this provider instance.
  * Only an explicit `false` denies: an instance absent from config (partial
  * configs in tests, `callAux` forwarding a stub) keeps the historical default.
@@ -35,7 +58,10 @@ function userKeyAllowed(config: Config, providerName: string,): boolean {
  *
  * Returns undefined whenever the key must not be used: BYO disabled, no
  * encryption key, a provider with `allowUserApiKey: false`, or no stored key.
- * A decrypt/lookup failure logs and degrades to the server key — never throws.
+ * A stored key that FAILS to decrypt throws {@link ByoKeyDecryptError} —
+ * warn-logged here, then surfaced so the request is never billed to the
+ * server key (BUG-byo-decrypt-failure-silently-falls-back-to-server-key).
+ * @throws {ByoKeyDecryptError} when a stored key exists but decryption fails
  * @param opts
  * @param opts.userId
  * @param opts.config
@@ -65,15 +91,16 @@ export function userApiKeyResolver(opts: {
       if (!row) { return undefined; }
       return await decryptValue(row.api_key_encrypted, config.byoKey.encryptionKey,);
     } catch (error) {
-      // Non-fatal fallback — log provider + userId (never key material).
+      // Fatal for the request — log provider + userId (never key material),
+      // then surface the typed failure instead of billing the server key.
       const reason = error instanceof Error ? error.message : String(error,);
-      getLogger().warn("BYO API key decrypt failed — falling back to server key", {
+      getLogger().warn("BYO API key decrypt failed — aborting request instead of falling back to server key", {
         provider: providerName,
         userId,
         error: reason,
       },);
 
-      return undefined;
+      throw new ByoKeyDecryptError(providerName, userId,);
     }
   };
 }
