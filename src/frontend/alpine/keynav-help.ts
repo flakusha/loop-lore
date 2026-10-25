@@ -13,6 +13,67 @@
 import { t, } from "./i18n";
 import { getKeymap, isKeyboardNavEnabled, type ShortcutEntry, } from "./shortcuts";
 
+/** Selector for the overlay element rendered in layout.html. */
+const OVERLAY_SELECTOR = '[data-testid="keynav-help-overlay"]';
+
+/** Selector for the elements that can hold keyboard focus. */
+const FOCUSABLE_SELECTOR = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+/** Releases the focus trap of the open overlay (null while the overlay is closed). */
+let releaseFocusTrap: (() => void) | null = null;
+
+/**
+ * Trap keyboard focus inside the help overlay.
+ *
+ * Alpine reveals the overlay with x-show one animation frame after `open`
+ * flips, so focus is moved in as soon as the overlay accepts it and retried
+ * on the following frames. Tab and Shift+Tab only ever reach the overlay's
+ * focusable elements.
+ *
+ * @param overlay - The overlay element
+ * @returns A release function that removes the trap and restores the focus
+ */
+function trapOverlayFocus(overlay: HTMLElement,): () => void {
+  const previous = document.activeElement as HTMLElement | null;
+
+  const focusables = (): HTMLElement[] => Array.from(overlay.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR,),);
+
+  const onKeyDown = (event: KeyboardEvent,): void => {
+    if (event.key !== "Tab") { return; }
+    const items = focusables();
+    if (items.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const current = items.indexOf(document.activeElement as HTMLElement,);
+    const next = event.shiftKey
+      ? (current <= 0 ? items.length - 1 : current - 1)
+      : (current < 0 || current === items.length - 1 ? 0 : current + 1);
+
+    event.preventDefault();
+    items[next]?.focus();
+  };
+
+  document.addEventListener("keydown", onKeyDown as EventListener, true,);
+
+  // Move focus into the overlay once it is visible (x-show reveals it a frame later).
+  let attempts = 10;
+  const pullFocusIn = (): void => {
+    const [first,] = focusables();
+    first?.focus();
+    if (overlay.contains(document.activeElement,) || attempts-- <= 0) { return; }
+    globalThis.requestAnimationFrame(pullFocusIn,);
+  };
+
+  pullFocusIn();
+
+  return () => {
+    document.removeEventListener("keydown", onKeyDown as EventListener, true,);
+    previous?.focus();
+  };
+}
+
 /** State exposed to the Alpine template in layout.html. */
 export interface KeynavHelpState {
   open: boolean;
@@ -50,9 +111,16 @@ export function keynavHelp(): KeynavHelpState {
      */
     toggle() {
       if (!this.navEnabled) { return; }
-      this.open = !this.open;
-      if (this.open) { this.shortcuts = getKeymap(); }
-      document.body.style.overflow = this.open ? "hidden" : "";
+      if (this.open) {
+        this.close();
+        return;
+      }
+
+      this.open = true;
+      this.shortcuts = getKeymap();
+      document.body.style.overflow = "hidden";
+      const overlay = document.querySelector<HTMLElement>(OVERLAY_SELECTOR,);
+      if (overlay) { releaseFocusTrap = trapOverlayFocus(overlay,); }
     },
 
     /**
@@ -62,6 +130,8 @@ export function keynavHelp(): KeynavHelpState {
       if (!this.open) { return; }
       this.open = false;
       document.body.style.overflow = "";
+      releaseFocusTrap?.();
+      releaseFocusTrap = null;
     },
 
     /**
