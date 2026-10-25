@@ -3,7 +3,7 @@
 
 # BUG: Assistant-created lore entries are stored with a NULL id, so their cooldown never starts
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -46,3 +46,5 @@ Pass an explicit id at the insert site — `id: uid()` in `src/assistant/command
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue b1ade27 (registry tip: e459c197c Konstantin Fedotov Auto-closed: appended .md marker marks BUG-ASSISTANT-CREATED-LORE-ENTRI)

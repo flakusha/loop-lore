@@ -3,7 +3,7 @@
 
 # BUG: Appeal-reversal notification is stored with a NULL id, which hides the user's whole notification list
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -21,3 +21,5 @@ notifyModeratorReversal inserts into notifications without an id column, so the 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue e490c6a (registry tip: b57599045 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-APPEAL-REVERSAL-NOTIFICATION)
