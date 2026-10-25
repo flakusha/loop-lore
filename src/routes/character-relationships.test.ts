@@ -136,6 +136,69 @@ describe("character-relationships routes", () => {
     expect(body.error,).toContain("required",);
   });
 
+  // BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c: the
+  // service used to insert the reverse row with actor_id = the target, so a
+  // user could graft relationship data onto another user's character.
+  test("POST create rejects a foreign-tenancy target instead of grafting", async () => {
+    const res = await makeApp(db, "member", "user",).handle(
+      new Request(`http://localhost/api/actors/${B}/relationships`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          target_actor_id: A,
+          relationship_type: "rival",
+          is_bidirectional: true,
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+
+    const grafts = await db
+      .selectFrom("character_relationships",)
+      .selectAll()
+      .where("actor_id", "=", A,)
+      .execute();
+
+    expect(grafts,).toEqual([],);
+  });
+
+  test("POST create rejects self-reference", async () => {
+    const res = await makeApp(db, "member", "user",).handle(
+      new Request(`http://localhost/api/actors/${B}/relationships`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ target_actor_id: B, relationship_type: "friend", },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+
+    const selfRows = await db
+      .selectFrom("character_relationships",)
+      .selectAll()
+      .where("actor_id", "=", B,)
+      .where("target_actor_id", "=", B,)
+      .execute();
+
+    expect(selfRows,).toEqual([],);
+  });
+
+  test("POST create 404s on a nonexistent target instead of an FK 500", async () => {
+    const res = await makeApp(db, "member", "user",).handle(
+      new Request(`http://localhost/api/actors/${B}/relationships`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({
+          target_actor_id: "00000000-0000-4000-8000-0000000000ff",
+          relationship_type: "friend",
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+  });
+
   test("POST create stores full fields incl. world, metadata, bidirectional", async () => {
     const res = await makeApp(db, "member", "user",).handle(
       new Request(`http://localhost/api/actors/${B}/relationships`, {
