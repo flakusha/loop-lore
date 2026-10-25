@@ -4,6 +4,7 @@
 # BUG: endBattle overwrites completed battles (no active-status guard)
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — endBattle refuses non-active battles: `if (battle.status !== BattleStatus.Active) throw new Error(...is not active.)` (src/rpg/service/battles.ts:108-110); completed battles can no longer be overwritten.
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-battle-action-systems
@@ -14,7 +15,7 @@ endBattle (src/rpg/service/battles.ts:98-115) fetches the battle but never check
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): endBattle refuses non-active battles: `if (battle.status !== BattleStatus.Active) throw new Error(...is not active.)` (src/rpg/service/battles.ts:108-110); completed battles can no longer be overwritten.
 
 **Acceptance Criteria:**
 
