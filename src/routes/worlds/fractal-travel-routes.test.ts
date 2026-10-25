@@ -3,13 +3,13 @@
 
 // src/routes/worlds/fractal-travel-routes.test.ts — the travel-route
 // endpoints: listing, detail, creation, stops, and transport attachment.
-import { beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
 import {
   insertLocations,
   insertTravelRoutes,
@@ -22,15 +22,16 @@ import type { HandleOpts, } from "./types";
 
 describe("fractalTravelRoutes", () => {
   let db: Kysely<DB>;
+  let fixture: Awaited<ReturnType<typeof createTestDb>>;
   let ownerId: string;
   let worldId: string;
   let routeId: string;
   let portId: string;
-  let transportId: string;
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
-    ({ db, } = await createTestDb());
+    fixture = await createTestDb();
+    db = fixture.db;
 
     ownerId = uid();
     await db
@@ -49,13 +50,16 @@ describe("fractalTravelRoutes", () => {
     await insertWorlds(db, ownerId, "Travel World", { id: worldId, } as never,);
 
     portId = await insertLocations(db, worldId, "Port A",);
-    transportId = await insertLocations(db, worldId, "Ferry", {
-      kind: "transport",
-      mobility_mode: "free",
-    },);
 
     routeId = await insertTravelRoutes(db, worldId, "Ferry Loop", "sea",);
     await insertTravelRouteStops(db, routeId, portId, 0,);
+  },);
+
+  // The file-scoped fixture is released here instead of being left to
+  // process exit: `afterAll` runs even when a test fails, so a failing test
+  // cannot leak the handle into the rest of the suite.
+  afterAll(async () => {
+    await destroyTestDb(fixture,);
   },);
 
   /**
@@ -124,8 +128,17 @@ describe("fractalTravelRoutes", () => {
 
   test("attaches a transport to a route and detaches it again", async () => {
     const app = appWithAuth(ownerId, "solo",);
+    // Own route and transport: the shared fixtures stay read-only, so this
+    // test's attach/detach cannot leak state into any other test.
+    const ownRouteId = await insertTravelRoutes(db, worldId, "Attach Loop", "sea",);
+    await insertTravelRouteStops(db, ownRouteId, portId, 0,);
+    const ownTransportId = await insertLocations(db, worldId, "Own Ferry", {
+      kind: "transport",
+      mobility_mode: "free",
+    },);
+
     const attached = await app.handle(
-      new Request(`http://localhost/api/worlds/${worldId}/travel-routes/${routeId}/attach/${transportId}`, {
+      new Request(`http://localhost/api/worlds/${worldId}/travel-routes/${ownRouteId}/attach/${ownTransportId}`, {
         method: "POST",
       },),
     );
@@ -133,7 +146,7 @@ describe("fractalTravelRoutes", () => {
     expect(attached.status,).toBe(200,);
 
     const detached = await app.handle(
-      new Request(`http://localhost/api/worlds/${worldId}/travel-routes/${routeId}/attach/${transportId}`, {
+      new Request(`http://localhost/api/worlds/${worldId}/travel-routes/${ownRouteId}/attach/${ownTransportId}`, {
         method: "DELETE",
       },),
     );
