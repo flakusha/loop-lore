@@ -539,6 +539,24 @@ describe("worldRoutes — guest tier read access", () => {
     expect(res.status,).toBe(401,);
   });
 
+  test("a guest cannot update or delete a world — even a PUBLIC one", async () => {
+    const id = await createWorld({ name: "Guest Mutation Target", visibility: "public", },);
+    const guest = appWithAuth(db, null, "guest",);
+    const put = await guest.handle(
+      new Request(`${BASE}/api/worlds/${id}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Hijacked", },),
+      },),
+    );
+
+    // requireWorldOwner denies the null user id with 403 — the guest can
+    // READ a public world but never mutate it.
+    expect(put.status,).toBe(403,);
+    const del = await guest.handle(new Request(`${BASE}/api/worlds/${id}`, { method: "DELETE", },),);
+    expect(del.status,).toBe(403,);
+  });
+
   test("a registered non-member reads a PUBLIC world (registered-public tier)", async () => {
     const strangerId = uid();
     await insertUsers(db, `world-stranger-${strangerId}`, "World Stranger", { id: strangerId, } as never,);
