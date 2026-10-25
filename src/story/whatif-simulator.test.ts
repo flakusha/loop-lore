@@ -136,6 +136,7 @@ describe("createWhatIfSimulator", () => {
       // An insert helper seeds tl-b rows directly.
       const seedOnB = async (description: string, occurredAt: string,) => {
         await db.insertInto("world_timeline_events",).values({
+          id: crypto.randomUUID(),
           world_id: worldId,
           event_type: "world_lore_update",
           description,

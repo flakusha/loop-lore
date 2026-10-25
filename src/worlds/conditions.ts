@@ -155,6 +155,7 @@ export async function advanceConditions(
   },).where("world_id", "=", worldId,).execute();
 
   await db.insertInto("world_condition_history",).values({
+    id: crypto.randomUUID(),
     world_id: worldId,
     recorded_at: stamp,
     weather,

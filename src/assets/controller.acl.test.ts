@@ -85,7 +85,7 @@ async function seed(): Promise<Fixture> {
 
   await db
     .insertInto("asset_shares",)
-    .values({ asset_id: asset.id, shared_with_id: outsiderId, shared_by_id: ownerId, },)
+    .values({ id: randomUUID(), asset_id: asset.id, shared_with_id: outsiderId, shared_by_id: ownerId, },)
     .execute();
 
   return { db, uploadDir, ownerId, outsiderId, assetId: asset.id, };

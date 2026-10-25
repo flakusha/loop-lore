@@ -143,6 +143,7 @@ describeReal("callWithFailover — BYO key scoping", () => {
     installChain(seen, PRIMARY, FALLBACK,);
 
     await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
       user_id: USER_ID,
       provider_name: PRIMARY,
       api_key_encrypted: await encryptValue("sk-user-secret-for-a", SECRET,),

@@ -312,6 +312,7 @@ describe("PUT /api/worlds/:worldId/autonomy/actor/:actorId", () => {
   test("leaves the traits the panel does not own untouched", async () => {
     const actorId = await addActor("Bryn", ownerId,);
     await db.insertInto("character_internal_traits",).values({
+      id: crypto.randomUUID(),
       actor_id: actorId,
       aspirations: JSON.stringify({ primary: "find the sea", },),
     },).execute();

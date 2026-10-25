@@ -12,7 +12,7 @@ import type {
 
 // ── synthetic_data ────────────────────────────────────────────
 export interface SyntheticData {
-  id: Generated<string>;
+  id: string;
   chat_id: string | null;
   world_id: string | null;
   type: SyntheticDataType;

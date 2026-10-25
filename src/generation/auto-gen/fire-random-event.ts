@@ -68,6 +68,7 @@ export async function fireRandomEvent(
   await database
     .insertInto("chat_random_events",)
     .values({
+      id: crypto.randomUUID(),
       chat_id: chatId,
       content: event.content,
       event_id: event.id,

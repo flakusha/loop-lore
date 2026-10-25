@@ -11,7 +11,7 @@ import type {
 
 // ── model_comparisons ────────────────────────────────────────────
 export interface ModelComparisons {
-  id: Generated<string>;
+  id: string;
   message_id: string;
   user_id: string;
   reference_model: string;
@@ -22,7 +22,7 @@ export interface ModelComparisons {
 
 // ── content_flags ────────────────────────────────────────────
 export interface ContentFlags {
-  id: Generated<string>;
+  id: string;
   reporter_id: string;
   content_type: string;
   content_id: string;
@@ -39,7 +39,7 @@ export interface ContentFlags {
 
 // ── moderation_actions ────────────────────────────────────────────
 export interface ModerationActions {
-  id: Generated<string>;
+  id: string;
   action_type: string;
   target_user_id: string;
   performed_by: string;
@@ -56,7 +56,7 @@ export interface ModerationActions {
 
 // ── moderation_appeals ────────────────────────────────────────────
 export interface ModerationAppeals {
-  id: Generated<string>;
+  id: string;
   user_id: string;
   action_id: string;
   reason: string;
@@ -69,7 +69,7 @@ export interface ModerationAppeals {
 
 // ── nsfw_user_preferences ────────────────────────────────────────────
 export interface NsfwUserPreferences {
-  id: Generated<string>;
+  id: string;
   user_id: string;
   nsfw_enabled: Generated<number>;
   max_rating: Generated<string>;
