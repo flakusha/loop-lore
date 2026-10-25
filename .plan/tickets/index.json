@@ -3876,6 +3876,19 @@
     "title": "encrypted-payload sniffing misclassifies user JSON as pre-encrypted content",
     "type": "BUG"
   },
+  "BUG-ENCRYPTION-FLOW-BROWSER-TS-IS-NOT-COVERED-BY-EXPECTED-404-NO": {
+    "hash": "9dad45f",
+    "git_issue": "9dad45f",
+    "extid": "BUG-ENCRYPTION-FLOW-BROWSER-TS-IS-NOT-COVERED-BY-EXPECTED-404-NO",
+    "type": "BUG",
+    "title": "encryption-flow.browser.ts is not covered by EXPECTED_404_NOISE_ALLOWLIST, so the by-design game-state 404 flakes it under load",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-encryption-flow-browser-ts-is-not-covered-by-expected-404-no.md",
+    "status": "Not Started"
+  },
   "BUG-ENCRYPTION-TIER-NOT-ENFORCED": {
     "epic": "epic-crypto",
     "extid": "BUG-ENCRYPTION-TIER-NOT-ENFORCED",
@@ -39821,7 +39834,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-GENERATION-ASSET-PERSISTENCE-CONTRACT": {
     "epic": "epic-asset-platform-capabilities",
