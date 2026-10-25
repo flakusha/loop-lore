@@ -14,10 +14,16 @@
  * - PUT /api/v1/worlds/:worldId                    (world patch)
  * - PUT /api/v1/worlds/:worldId/locations/:locId   (location patch)
  * - PUT /api/v1/worlds/:worldId/items/:itemId      (item patch)
+ * - PUT /api/v1/actors/:actorId                    (character patch)
  */
-import { requireOwnedWorldEntity, } from "./entity-guard";
+import { requireOwnedCharacter, requireOwnedWorldEntity, } from "./entity-guard";
 import { formatPatch, locationEffects, parseEntityPatch, } from "./entity-patch";
-import { ITEM_APPLY_SPEC, LOCATION_APPLY_SPEC, WORLD_APPLY_SPEC, } from "./entity-patch-spec";
+import {
+  CHARACTER_MODIFY_SPEC,
+  ITEM_APPLY_SPEC,
+  LOCATION_APPLY_SPEC,
+  WORLD_APPLY_SPEC,
+} from "./entity-patch-spec";
 import { type CommandResult, registerCommand, } from "./registry";
 
 const NO_DB = (what: string,): CommandResult => ({
@@ -25,7 +31,7 @@ const NO_DB = (what: string,): CommandResult => ({
   handled: true,
 });
 
-const APPLY_KINDS = ["world", "location", "item",] as const;
+const APPLY_KINDS = ["world", "location", "item", "character",] as const;
 
 // ── /apply <kind> <id> <patch> ───────────────────────────────
 
@@ -34,7 +40,8 @@ registerCommand("apply", async (args, ctx,): Promise<CommandResult> => {
   const entityId = args[1] || "";
   if (!kind || !entityId) {
     return {
-      systemMessage: 'Usage: /apply <world|location|item> <id> name="New Name" description="…"',
+      systemMessage:
+        'Usage: /apply <world|location|item|character> <id> name="New Name" description="…" (characters patch displayName)',
       handled: true,
     };
   }
@@ -48,10 +55,19 @@ registerCommand("apply", async (args, ctx,): Promise<CommandResult> => {
 
   const db = ctx.db;
   if (!db) {
-    return NO_DB(kind === "world" ? "Worlds" : kind === "location" ? "Locations" : "Items",);
+    return NO_DB(
+      kind === "world" ? "Worlds" : kind === "location" ? "Locations" : kind === "item" ? "Items" : "Characters",
+    );
   }
 
-  const spec = kind === "world" ? WORLD_APPLY_SPEC : kind === "location" ? LOCATION_APPLY_SPEC : ITEM_APPLY_SPEC;
+  const spec = kind === "world"
+    ? WORLD_APPLY_SPEC
+    : kind === "location"
+    ? LOCATION_APPLY_SPEC
+    : kind === "item"
+    ? ITEM_APPLY_SPEC
+    : CHARACTER_MODIFY_SPEC;
+
   const parsed = parseEntityPatch(args.slice(2,).join(" ",), spec, kind,);
   if (!parsed.ok) {
     return { systemMessage: `**Update patch rejected:** ${parsed.error}`, handled: true, };
@@ -60,11 +76,25 @@ registerCommand("apply", async (args, ctx,): Promise<CommandResult> => {
   // The patch is parsed before any row is touched, but the guard runs before
   // the preview. For world the id IS the scope; for location/item `world_id`
   // lives on the row, so the row is read first — the same read-first ordering
-  // `/loc-get` uses.
-  const owned = await requireOwnedWorldEntity(db, kind, entityId, ctx.userId ?? null, ctx.userRole ?? null,);
-  if (!owned.ok) { return { systemMessage: owned.message, handled: true, }; }
+  // `/loc-get` uses. Characters carry their own ownership guard
+  // (`checkActorOwnership`) — the actor PUT route's own guard.
+  let name: string;
+  let worldId: string;
+  let contentVersion: number | undefined;
+  if (kind === "character") {
+    const owned = await requireOwnedCharacter(db, entityId, ctx.userId ?? null, ctx.userRole ?? null,);
+    if (!owned.ok) { return { systemMessage: owned.message, handled: true, }; }
+    name = owned.character.name;
+    worldId = "";
+    // The actor PUT route requires the optimistic-locking version.
+    contentVersion = owned.character.contentVersion;
+  } else {
+    const owned = await requireOwnedWorldEntity(db, kind, entityId, ctx.userId ?? null, ctx.userRole ?? null,);
+    if (!owned.ok) { return { systemMessage: owned.message, handled: true, }; }
+    name = owned.scope.name;
+    worldId = owned.scope.worldId;
+  }
 
-  const { name, worldId, } = owned.scope;
   const changes = formatPatch(parsed.patch,);
   const effects = kind === "location" ? locationEffects(parsed.patch,) : [];
   // World and location PUT routes set updated_at unconditionally
@@ -79,7 +109,14 @@ registerCommand("apply", async (args, ctx,): Promise<CommandResult> => {
       "Confirm in the dialog to apply.",
     ].filter(Boolean,).join("\n\n",),
     action: "apply-entity",
-    actionPayload: { kind, entityId, worldId, updates: parsed.patch, name, },
+    actionPayload: {
+      kind,
+      entityId,
+      worldId,
+      updates: parsed.patch,
+      name,
+      ...(contentVersion !== undefined ? { contentVersion, } : {}),
+    },
     handled: true,
   };
 }, { requiredRole: "member", },);

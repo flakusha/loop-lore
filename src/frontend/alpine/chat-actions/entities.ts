@@ -32,13 +32,18 @@ export const entityActionHandlers: Record<string, EntityActionHandler> = {
     const worldId = (payload?.worldId as string) ?? "";
     const name = (payload?.name as string) ?? "";
     const updates = (payload?.updates ?? {}) as Record<string, unknown>;
-    if (!kind || !entityId || !worldId || Object.keys(updates,).length === 0) {
+    const contentVersion = payload?.contentVersion as number | undefined;
+    // Characters live on the actor route and carry no world id; every other
+    // kind is world-scoped.
+    if (!kind || !entityId || (kind !== "character" && !worldId) || Object.keys(updates,).length === 0) {
       log.warn("apply-entity: missing required payload fields", { payload, },);
       return;
     }
 
     // Exactly the routes the backend preview documents per kind.
-    const path = kind === "world"
+    const path = kind === "character"
+      ? `/api/v1/actors/${entityId}`
+      : kind === "world"
       ? `/api/v1/worlds/${worldId}`
       : kind === "location"
       ? `/api/v1/worlds/${worldId}/locations/${entityId}`
@@ -57,7 +62,9 @@ export const entityActionHandlers: Record<string, EntityActionHandler> = {
       const res = await apiFetch(path, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody(updates,),
+        // The actor route requires the optimistic-locking version; every other
+        // route takes the patch as-is.
+        body: jsonBody(kind === "character" ? { ...updates, contentVersion, } : updates,),
       },);
 
       ctx.$dispatch?.("show-toast", {

@@ -203,3 +203,49 @@ describeOrSkip("dispatchCommandAction import-entity", () => {
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to import Rin", },],);
   });
 },);
+
+describeOrSkip("dispatchCommandAction apply-entity", () => {
+  const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+  afterEach(() => {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
+  },);
+
+  test("confirmed character apply PUTs to /api/v1/actors/:aid with the content version", async () => {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => true;
+    fetchHandler = () => Response.json({ ok: true, }, { status: 200, },);
+    const ctx = buildCtx();
+    await dispatch(ctx, "apply-entity", {
+      kind: "character",
+      entityId: "a1",
+      worldId: "",
+      name: "Rin",
+      updates: { personality: "secretive", },
+      contentVersion: 3,
+    },);
+
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/actors/a1",);
+    expect(fetchCalls[0]?.opts.method,).toBe("PUT",);
+    expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({
+      personality: "secretive",
+      contentVersion: 3,
+    },);
+
+    expect(ctx.toasts,).toEqual([{ type: "success", message: "Changes applied to Rin", },],);
+  });
+
+  test("a world apply without a world id is dropped as an incomplete payload", async () => {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => true;
+    const ctx = buildCtx();
+    await dispatch(ctx, "apply-entity", {
+      kind: "world",
+      entityId: "w1",
+      worldId: "",
+      name: "Emberfall",
+      updates: { name: "New Ember", },
+    },);
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+},);
