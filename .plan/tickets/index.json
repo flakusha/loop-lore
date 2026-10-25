@@ -21086,7 +21086,7 @@
     "epic": "epic-multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/FEAT-message-translations-chat-first.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-MESSAGING-BRIDGE-EXTENSIONS": {
     "epic": "",
