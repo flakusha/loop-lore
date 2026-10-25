@@ -12,7 +12,7 @@
  * uses for `link-asset`.
  */
 
-import { WorldVisibility, } from "../../db/enums";
+import { WorldKind, WorldVisibility, } from "../../db/enums";
 import { requireWorldOwner, } from "../../routes/worlds/access";
 import { type CommandResult, registerCommand, } from "./registry";
 
@@ -20,6 +20,15 @@ import { type CommandResult, registerCommand, } from "./registry";
 const WORLD_UPDATE_STRING_FIELDS = ["name", "description", "lore", "kind", "visibility",] as const;
 /** Numeric world fields `/world-update` accepts. */
 const WORLD_UPDATE_NUMBER_FIELDS = ["scanDepth", "tokenBudget", "difficultyModifier",] as const;
+/**
+ * String fields whose value must match a known literal — the route rejects
+ * anything else with 422, so the preview must not promise a change the API
+ * refuses (mirrors `WorldUpdateBody` in `src/validation/schemas/worlds.ts`).
+ */
+const WORLD_UPDATE_ENUMS: Record<string, readonly string[]> = {
+  visibility: Object.values(WorldVisibility,),
+  kind: Object.values(WorldKind,),
+};
 
 /** One `key=value` pair parsed out of a `/world-update` argument list. */
 export type WorldUpdatePatch = Partial<
@@ -49,10 +58,20 @@ export function parseWorldUpdates(input: string,): ParseWorldUpdatesResult {
     const value = match[3] ?? match[4] ?? match[5] ?? "";
 
     if ((WORLD_UPDATE_STRING_FIELDS as readonly string[]).includes(key,)) {
-      if (key === "visibility" && !Object.values(WorldVisibility,).includes(value as WorldVisibility,)) {
+      const allowed = WORLD_UPDATE_ENUMS[key];
+      if (allowed && !allowed.includes(value,)) {
         return {
           ok: false,
-          error: `Invalid visibility "${value}" — expected one of: ${Object.values(WorldVisibility,).join(", ",)}.`,
+          error: `Invalid ${key} "${value}" — expected one of: ${allowed.join(", ",)}.`,
+        };
+      }
+
+      // The route's `Name` schema accepts 1-255 characters and rejects the
+      // rest with 422 — a preview must not promise a change the API refuses.
+      if (key === "name" && (value.length < 1 || value.length > 255)) {
+        return {
+          ok: false,
+          error: `Field "name" must be 1-255 characters, got ${value.length}.`,
         };
       }
 
