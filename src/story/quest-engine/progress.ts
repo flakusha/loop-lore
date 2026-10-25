@@ -130,8 +130,16 @@ async function applyProgress(
   delta: number,
   sourceMessageId?: string,
 ): Promise<QuestProgressEntry> {
-  const newProgress = Math.min(quest.progress + delta, quest.target,);
+  const previousProgress = quest.progress;
+  const newProgress = Math.min(previousProgress + delta, quest.target,);
   const completed = newProgress >= quest.target;
+
+  // Keep the in-memory row fresh: processEvent selects active quests once and
+  // may apply several events to the same row — a stale snapshot would recompute
+  // from the old progress and lose every gain after the first event
+  // (BUG-quest-engine-double-advances-from-stale-in-memory-progress-a).
+  // Milestone math and the returned entry below read previousProgress.
+  quest.progress = newProgress;
 
   // Completion is a status transition — validate against the machine so a
   // terminal/abandoned quest cannot silently flip to completed.
@@ -159,13 +167,13 @@ async function applyProgress(
   let oldMilestone: { progress: number; narrative: string } | undefined;
   let newMilestone: { progress: number; narrative: string } | undefined;
   for (const h of hooks) {
-    if (h.progress <= quest.progress && (!oldMilestone || h.progress > oldMilestone.progress)) {
+    if (h.progress <= previousProgress && (!oldMilestone || h.progress > oldMilestone.progress)) {
       oldMilestone = h;
     }
 
     if (
       h.progress <= newProgress &&
-      h.progress > quest.progress &&
+      h.progress > previousProgress &&
       (!newMilestone || h.progress > newMilestone.progress)
     ) {
       newMilestone = h;
@@ -194,7 +202,7 @@ async function applyProgress(
     questId: quest.id,
     questName: quest.name,
     questType: quest.type as QuestType,
-    previousProgress: quest.progress,
+    previousProgress,
     newProgress,
     target: quest.target,
     delta,
