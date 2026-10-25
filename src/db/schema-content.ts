@@ -26,7 +26,7 @@ export interface AssetLinks {
 
 // ── asset_shares ────────────────────────────────────────────
 export interface AssetShares {
-  id: Generated<string>;
+  id: string;
   asset_id: string;
   shared_with_id: string;
   shared_by_id: string;
@@ -35,7 +35,7 @@ export interface AssetShares {
 
 // ── assets ────────────────────────────────────────────
 export interface Assets {
-  id: Generated<string>;
+  id: string;
   owner_id: string;
   filename: string;
   mime_type: string;
@@ -60,7 +60,7 @@ export interface Assets {
 
 // ── asset_tags ────────────────────────────────────────────
 export interface AssetTags {
-  id: Generated<string>;
+  id: string;
   asset_id: string;
   tag: string;
   scope: Generated<string>;
@@ -71,7 +71,7 @@ export interface AssetTags {
 
 // ── asset_tag_dismissals ────────────────────────────────────────────
 export interface AssetTagDismissals {
-  id: Generated<string>;
+  id: string;
   asset_id: string;
   tag: string;
   user_id: string;

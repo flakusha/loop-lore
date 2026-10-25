@@ -109,6 +109,7 @@ async function seedLocation(
   await db
     .insertInto("location_states",)
     .values({
+      id: crypto.randomUUID(),
       location_id: id,
       world_id: worldId,
       atmosphere: "cozy",

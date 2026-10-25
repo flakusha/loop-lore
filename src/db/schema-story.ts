@@ -34,7 +34,7 @@ import type { AuditColumns, } from "./schema-audit";
 
 // ── location_states ────────────────────────────────────────────
 export interface LocationStates {
-  id: Generated<string>;
+  id: string;
   location_id: string;
   world_id: string;
   description_override: string | null;
@@ -50,7 +50,7 @@ export interface LocationStates {
 
 // ── locations ────────────────────────────────────────────
 export interface Locations extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string;
   description: string | null;
@@ -69,7 +69,7 @@ export interface Locations extends AuditColumns {
 
 // ── world_items ────────────────────────────────────────────
 export interface WorldItems {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   item_id: string;
   location_id: string | null;
@@ -88,7 +88,7 @@ export interface WorldItems {
 
 // ── world_lore_entries ────────────────────────────────────────────
 export interface WorldLoreEntries extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string | null;
   content: string;
@@ -119,7 +119,7 @@ export interface WorldLoreEntries extends AuditColumns {
 
 // ── world_states ────────────────────────────────────────────
 export interface WorldStates {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   snapshot: string;
   trigger_message_id: string | null;
@@ -130,7 +130,7 @@ export interface WorldStates {
 
 // ── worlds ────────────────────────────────────────────
 export interface Worlds extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   owner_id: string;
   name: string;
   description: string | null;
@@ -162,7 +162,7 @@ export interface Worlds extends AuditColumns {
 
 // ── actor_lore_entries ────────────────────────────────────────────
 export interface ActorLoreEntries extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   name: string | null;
   content: string;
@@ -189,7 +189,7 @@ export interface ActorLoreEntries extends AuditColumns {
 
 // ── story_turns ────────────────────────────────────────────
 export interface StoryTurns {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   turn_number: number;
   actor_id: string;
@@ -211,7 +211,7 @@ export interface StoryTurns {
 
 // ── items ────────────────────────────────────────────
 export interface Items extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string;
   description: string | null;
@@ -226,7 +226,7 @@ export interface Items extends AuditColumns {
 
 // ── npc_states ────────────────────────────────────────────
 export interface NpcStates {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string;
   location_id: string | null;
@@ -242,7 +242,7 @@ export interface NpcStates {
 
 // ── quest_progress ────────────────────────────────────────────
 export interface QuestProgress {
-  id: Generated<string>;
+  id: string;
   quest_id: string;
   chat_id: string;
   progress: Generated<number>;
@@ -256,7 +256,7 @@ export interface QuestProgress {
 
 // ── quests ────────────────────────────────────────────
 export interface Quests extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   creator_id: string;
   name: string;
@@ -278,7 +278,7 @@ export interface Quests extends AuditColumns {
 
 // ── actor_memories ────────────────────────────────────────────
 export interface ActorMemories {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   source_chat_id: string | null;
   content: string;
@@ -311,7 +311,7 @@ export interface ActorMemories {
 
 // ── quest_reward_ledger ────────────────────────────────────────────
 export interface QuestRewardLedger {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   ledger_key: string;
   world_item_ids: string;
@@ -320,7 +320,7 @@ export interface QuestRewardLedger {
 
 // ── rpg_questions ────────────────────────────────────────────
 export interface RpgQuestions {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   actor_id: string;
   type: string;
@@ -341,7 +341,7 @@ export interface RpgQuestions {
 
 // ── world_timescale ────────────────────────────────────────────
 export interface WorldTimescale {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   epoch: Generated<string>;
   scale_size: Generated<number>;
@@ -353,7 +353,7 @@ export interface WorldTimescale {
 
 // ── world_timescale_history ────────────────────────────────────────────
 export interface WorldTimescaleHistory {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   epoch: string;
   changed_at: Generated<string>;

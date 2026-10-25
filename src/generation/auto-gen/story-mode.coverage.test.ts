@@ -169,6 +169,7 @@ async function seedLocation(db: Kysely<DB>, worldId: string,): Promise<string> {
   },).execute();
 
   await db.insertInto("location_states",).values({
+    id: randomUUID(),
     location_id: id,
     world_id: worldId,
     atmosphere: "cozy",

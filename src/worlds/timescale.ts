@@ -135,6 +135,7 @@ export function createTimescaleService(db: Kysely<DB>, options: TimescaleOptions
 
     const stamp = now().toISOString();
     await db.insertInto("world_timescale",).values({
+      id: crypto.randomUUID(),
       world_id: worldId,
       epoch: DEFAULT_EPOCH,
       scale_size: DEFAULT_SCALE_SIZE,
@@ -146,7 +147,7 @@ export function createTimescaleService(db: Kysely<DB>, options: TimescaleOptions
 
     await db
       .insertInto("world_timescale_history",)
-      .values({ world_id: worldId, epoch: DEFAULT_EPOCH, changed_at: stamp, },)
+      .values({ id: crypto.randomUUID(), world_id: worldId, epoch: DEFAULT_EPOCH, changed_at: stamp, },)
       .execute();
 
     getLogger().debug("created default world_timescale row", { worldId, epoch: DEFAULT_EPOCH, },);
@@ -213,7 +214,12 @@ export function createTimescaleService(db: Kysely<DB>, options: TimescaleOptions
         if (update.epoch !== undefined && update.epoch !== current.epoch) {
           await db
             .insertInto("world_timescale_history",)
-            .values({ world_id: worldId, epoch: update.epoch, changed_at: update.updated_at, },)
+            .values({
+              id: crypto.randomUUID(),
+              world_id: worldId,
+              epoch: update.epoch,
+              changed_at: update.updated_at,
+            },)
             .execute();
         }
       }

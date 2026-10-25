@@ -16,7 +16,7 @@ import type {
 
 // ── shadow_notes ────────────────────────────────────────────
 export interface ShadowNotes {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   type: ShadowNoteType;
   content: string;
@@ -33,7 +33,7 @@ export interface ShadowNotes {
 
 // ── whitenotes ────────────────────────────────────────────
 export interface Whitenotes {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   type: WhiteneoteType;
   content: string;

@@ -350,6 +350,7 @@ describe("resolveProvider", () => {
     },).execute();
 
     await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
       user_id: "byo-user",
       provider_name: "sm-cov-byo-a",
       api_key_encrypted: await encryptValue("sk-byo-secret", secret,),
@@ -381,6 +382,7 @@ describe("resolveProvider", () => {
     },).execute();
 
     await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
       user_id: "byo-user-blocked",
       provider_name: "sm-cov-byo-blocked",
       api_key_encrypted: await encryptValue("sk-byo-secret", secret,),
@@ -427,6 +429,7 @@ describe("resolveProvider", () => {
     },).execute();
 
     await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
       user_id: "byo-user-anthropic",
       provider_name: "sm-cov-byo-anthropic",
       api_key_encrypted: await encryptValue("sk-byo-secret", secret,),
@@ -469,6 +472,7 @@ describe("resolveProvider", () => {
     },).execute();
 
     await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
       user_id: "byo-user-broken",
       provider_name: "sm-cov-byo-b",
       api_key_encrypted: "not-valid-ciphertext",

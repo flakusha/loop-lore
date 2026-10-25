@@ -13,7 +13,7 @@ import type {
 
 // ── generation_attempts ────────────────────────────────────────────
 export interface GenerationAttempts {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   parent_message_id: string;
   actor_id: string;

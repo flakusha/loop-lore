@@ -17,7 +17,7 @@ import { registerContentVersion, } from "../../db/content-version";
 import { LoreEntryStatus, LorePosition, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
 import { normalizeAudienceScope, } from "../../story/events/promote-lore";
-import { safeJsonStringify, } from "../../utils";
+import { safeJsonStringify, uid, } from "../../utils";
 import type { LoreScope, } from "../lore/audience";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
 import type { GeneratedEntityLoreEntry, } from "../quality/entity-creation";
@@ -155,6 +155,10 @@ export async function insertEntityLore(
     const selectiveFlag = entry.selective && hasKeys ? 1 : 0;
 
     const loreValues = {
+      // `id` is a TEXT PRIMARY KEY with no DB default — the app must supply it.
+      // Omitting it stores NULL, which breaks the cooldown write-back (it
+      // addresses rows by id) and leaves the row unaddressable forever.
+      id: uid(),
       name: entry.name,
       content: entry.content,
       keys: keysStr,

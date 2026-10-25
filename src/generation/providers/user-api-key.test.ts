@@ -74,6 +74,7 @@ beforeAll(async () => {
 
   for (const provider of [ALLOWED, BLOCKED,]) {
     await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
       user_id: USER_ID,
       provider_name: provider,
       api_key_encrypted: await encryptValue(`sk-${provider}`, SECRET,),
@@ -118,6 +119,7 @@ describe("userApiKeyResolver", () => {
 
   test("degrades to undefined when decryption fails", async () => {
     await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
       user_id: USER_ID,
       provider_name: UNSTORED,
       api_key_encrypted: "not-valid-ciphertext",

@@ -51,7 +51,8 @@ describe("withTransaction", () => {
 
   it("commits writes when the callback succeeds", async () => {
     await withTransaction(db, async (trx,) => {
-      await trx.insertInto("actors",).values({ display_name: "withTransaction-commit", },).execute();
+      await trx.insertInto("actors",).values({ id: crypto.randomUUID(), display_name: "withTransaction-commit", },)
+        .execute();
     },);
 
     const rows = await db
@@ -66,7 +67,9 @@ describe("withTransaction", () => {
   it("rolls back writes when the callback throws", async () => {
     await expect(
       withTransaction(db, async (trx,) => {
-        await trx.insertInto("actors",).values({ display_name: "withTransaction-rollback", },).execute();
+        await trx.insertInto("actors",).values({ id: crypto.randomUUID(), display_name: "withTransaction-rollback", },)
+          .execute();
+
         throw new Error("boom",);
       },),
     ).rejects.toThrow("boom",);
