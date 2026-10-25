@@ -22,7 +22,8 @@ registerCommand("video", (args,): CommandResult => {
 
   // TODO: Call video generation provider (ComfyUI, Runway, etc.)
   return {
-    systemMessage: `**Video generation queued:** ${prompt}\n\nThe video will appear in the chat when ready.`,
+    systemMessage:
+      `**Video generation is not implemented yet** — this command is a placeholder, so nothing was generated.\n\nPrompt: ${prompt}`,
     action: "generate-video",
     actionPayload: { prompt, },
     handled: true,

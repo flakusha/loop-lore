@@ -40,7 +40,8 @@ registerCommand("music", (args,): CommandResult => {
   // Generate audio via audio provider
   // TODO: Call audio generation provider
   return {
-    systemMessage: `**Music generation queued:** ${prompt}\n\nThe music will appear in the chat when ready.`,
+    systemMessage:
+      `**Music generation is not implemented yet** — this command is a placeholder, so nothing was generated.\n\nPrompt: ${prompt}`,
     action: "generate-music",
     actionPayload: { prompt, },
     handled: true,
