@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress — overlay wired 2026-10-25 (`a11y-keynav-phase3`); focus trap ACs remain open
+**Status:** Done
+**Status Note:** focus trap + focus restore implemented 2026-10-25 (`a11y-keynav-phase3`) — no `@alpinejs/focus` dependency; document-level Tab/Shift+Tab trap in `src/frontend/alpine/keynav-help.ts`
 **Priority:** Medium
 **Effort:** Small
 **Epic:** (none — proposed epic never materialized)
@@ -173,15 +174,15 @@ kbd {
 - [x] Overlay reads shortcuts from `getKeymap()` registry
 - [x] All strings are i18n-localised (corrected history: the first wiring commit reached for a `globalThis.t` that did not reliably resolve, rendering raw action ids in the Action columns; fixed by importing `t` directly from `src/frontend/alpine/i18n.ts` — the dominant Alpine convention — in the `fix(a11y)` follow-up)
 - [x] Escape closes the overlay
-- [ ] Focus is trapped inside overlay while open (`@alpinejs/focus` not loaded; `x-trap` from the original design is not in effect — markup stays keyboard-accessible, Tab reaches the close control)
-- [ ] Focus returns to previously focused element on close
+- [x] Focus is trapped inside overlay while open (`@alpinejs/focus` not loaded — `keynav-help.ts` installs a document-level Tab/Shift+Tab trap that cycles the overlay's focusable elements and pulls focus back in when it escapes)
+- [x] Focus returns to previously focused element on close (the element focused before the overlay opened is restored when it closes)
 - [x] `prefers-reduced-motion` disables overlay animation
 - [x] Overlay is keyboard-accessible (Tab navigation works)
-- [x] Unit test: overlay open/close state (`src/frontend/alpine/keynav-help.test.ts`); focus trap still untested (no trap)
+- [x] Unit test: overlay open/close state + focus trap/restore (`src/frontend/alpine/keynav-help.test.ts` — trap, Tab cycling, escape pull-back and focus restore are asserted)
 
 ## Implementation Note (2026-10-25, `a11y-keynav-phase3`)
 
-Wired, but with two deviations from the original design:
+Wired, but with three deviations from the original design:
 
 1. `resolveIncludes()` runs only on view content (`loadView`), never on the
    layout itself, so `{{> keynav-help.html}}` in `layout.html` would have
@@ -191,6 +192,13 @@ Wired, but with two deviations from the original design:
 2. `src/public/css/**` was off-limits on the branch (sibling worktrees), so
    the pre-existing `mobile-keynav.css` (previously referenced by nothing)
    is linked from the layout instead of appending rules to `app.css`.
+
+3. The focus trap ships without `@alpinejs/focus` (not a dependency of this
+   repo). `keynav-help.ts` remembers `document.activeElement` when the
+   overlay opens, moves focus into the overlay once Alpine's `x-show` has
+   revealed it (one animation frame later) and installs a document-level
+   Tab/Shift+Tab handler that cycles the overlay's focusable elements;
+   closing removes the handler and restores the remembered focus.
 
 `keynavHelp()` now also gates the help button on the `keynav` flag
 (`navEnabled`), re-reads the keymap on every open (rebound combos show up
@@ -203,10 +211,10 @@ without a reload), and is registered in the Alpine bundle
 |------|--------|
 | `src/frontend/alpine/keynav-help.ts` | new |
 | `src/frontend/alpine/keynav-help.test.ts` | new |
-| `src/components/chat/keynav-help.html` | new |
-| `src/public/css/app.css` | modify — add overlay CSS |
-| `src/i18n/locales/en.json` | modify — add `frontend.keynav.*` keys |
-| `src/views/layout.html` | modify — include `keynav-help.html` |
+| `src/components/chat/keynav-help.html` | removed — overlay markup inlined into `layout.html` |
+| `src/public/css/mobile-keynav.css` | reuse — overlay CSS (pre-existing file, linked from the layout) |
+| `src/public/locales/en.json` | modify — add `frontend.keynav.*` keys |
+| `src/views/layout.html` | modify — inline overlay markup (sidebar footer) |
 
 ## Related
 
