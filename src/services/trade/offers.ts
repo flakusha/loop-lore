@@ -6,6 +6,7 @@
  *
  * Uses `crafting_orders` with `trade_type = "trade"` and a sentinel `recipe_id`.
  */
+import { sql, } from "kysely";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
@@ -19,6 +20,12 @@ export const TRADE_RECIPE_SENTINEL = "__trade_offer__";
  * Ensure the sentinel recipe exists for trade offers.
  * The crafting_orders table has a FK on recipe_id → crafting_recipes.id,
  * so we need a real row to reference for trade offers.
+ *
+ * BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-: the
+ * check-then-insert lost races between concurrent createOffer calls with an
+ * unhandled UNIQUE constraint. The two inserts now run in one transaction
+ * with ON CONFLICT DO NOTHING, so a loser of the race is a no-op instead of
+ * a crash; the pre-SELECT stays as the common-case fast path.
  * @param db
  * @param worldId
  * @returns {Promise<void>}
@@ -36,38 +43,40 @@ export async function ensureTradeSentinel(
 
   const now = new Date().toISOString();
 
-  // Sentinel item (FK: crafting_recipes.output_item_id → items.id).
-  await db.insertInto("items",).values({
-    id: TRADE_RECIPE_SENTINEL,
-    world_id: worldId,
-    name: "__trade_offer__",
-    category: "misc",
-    description: "Sentinel item for trade offers — do not delete",
-    created_at: now,
-    updated_at: now,
-  },).execute();
+  await db.transaction().execute(async (trx,) => {
+    // Sentinel item (FK: crafting_recipes.output_item_id → items.id).
+    await trx.insertInto("items",).values({
+      id: TRADE_RECIPE_SENTINEL,
+      world_id: worldId,
+      name: "__trade_offer__",
+      category: "misc",
+      description: "Sentinel item for trade offers — do not delete",
+      created_at: now,
+      updated_at: now,
+    },).onConflict((oc,) => oc.doNothing()).execute();
 
-  // Sentinel recipe (FK: crafting_orders.recipe_id → crafting_recipes.id).
-  await db.insertInto("crafting_recipes",).values({
-    id: TRADE_RECIPE_SENTINEL,
-    world_id: worldId,
-    name: "__trade_offer__",
-    description: "Sentinel recipe for trade offers — do not delete",
-    discipline: "smithing",
-    tier: 0,
-    level_required: 0,
-    output_item_id: TRADE_RECIPE_SENTINEL,
-    output_quantity: 0,
-    crafting_time_seconds: 0,
-    base_success_chance: 0,
-    base_quality_min: 0,
-    base_quality_max: 0,
-    perfect_threshold: 0,
-    discovered_by_default: 0,
-    tags: "[]",
-    created_at: now,
-    updated_at: now,
-  },).execute();
+    // Sentinel recipe (FK: crafting_orders.recipe_id → crafting_recipes.id).
+    await trx.insertInto("crafting_recipes",).values({
+      id: TRADE_RECIPE_SENTINEL,
+      world_id: worldId,
+      name: "__trade_offer__",
+      description: "Sentinel recipe for trade offers — do not delete",
+      discipline: "smithing",
+      tier: 0,
+      level_required: 0,
+      output_item_id: TRADE_RECIPE_SENTINEL,
+      output_quantity: 0,
+      crafting_time_seconds: 0,
+      base_success_chance: 0,
+      base_quality_min: 0,
+      base_quality_max: 0,
+      perfect_threshold: 0,
+      discovered_by_default: 0,
+      tags: "[]",
+      created_at: now,
+      updated_at: now,
+    },).onConflict((oc,) => oc.doNothing()).execute();
+  },);
 }
 
 /**
@@ -119,8 +128,17 @@ export async function createOffer(
 }
 
 /**
- * Accept a pending trade offer. Returns the offer row for the caller to
- * execute the trade with. Only the seller (crafter_actor_id) can accept.
+ * Atomically claim a trade offer for acceptance and return the offer row for
+ * the caller to execute the trade with. Only the seller (crafter_actor_id) can
+ * accept a `pending` offer; only the buyer can accept a `countered` offer.
+ *
+ * BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-: the
+ * status/deadline/permission checks used to run against a plain SELECT, so
+ * two concurrent accepts both passed the window and both executed
+ * tradeCore — double debit, double transfer. The claim is now a conditional
+ * UPDATE (`WHERE id = ? AND status = <status as read>`): exactly one racer
+ * gets the row, the loser receives `{ success: false }` and the lifecycle
+ * caller never dispatches tradeCore for it.
  * @param db
  * @param offerId
  * @param acceptorActorId
@@ -166,6 +184,21 @@ export async function loadOfferForAccept(
 
   if (offer.status === "countered" && offer.requester_actor_id !== acceptorActorId) {
     return { success: false, reason: "only the buyer can accept a countered offer", };
+  }
+
+  // Atomic claim: flip open → accepted only while the row still carries the
+  // status we validated against. Zero affected rows = another accept won the
+  // race; the caller must not run tradeCore. Raw SQL + numAffectedRows per
+  // the repo's CAS pattern (src/db/optimistic-locking.ts) — the Kysely query
+  // builder's UpdateResult does not surface affected rows on this driver.
+  const claim = await sql`
+    update ${sql.table("crafting_orders",)}
+    set status = ${"accepted"}, updated_at = ${new Date().toISOString()}
+    where ${sql.ref("id",)} = ${offerId} and ${sql.ref("status",)} = ${offer.status}
+  `.execute(db,);
+
+  if (Number(claim.numAffectedRows,) === 0) {
+    return { success: false, reason: "offer no longer open (another accept won the race)", };
   }
 
   const buyerItems: TradeLine[] = jsonParseOr(offer.offered_materials, [] as TradeLine[],);
