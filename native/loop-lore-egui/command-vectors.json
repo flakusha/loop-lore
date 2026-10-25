@@ -153,11 +153,11 @@
       "requiredRole": "member"
     },
     {
-      "name": "loc-list",
+      "name": "loc-update",
       "requiredRole": "member"
     },
     {
-      "name": "loc-update",
+      "name": "loc-list",
       "requiredRole": "member"
     },
     {
@@ -303,8 +303,8 @@
         "item-get",
         "inventory",
         "link",
-        "loc-list",
         "loc-update",
+        "loc-list",
         "loc-get",
         "narrate",
         "ooc",
