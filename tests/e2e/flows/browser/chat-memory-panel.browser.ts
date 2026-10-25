@@ -36,14 +36,6 @@ const ERROR_ALLOWLIST = [
   // through the frontend.error console channel while this file runs.
   /frontend\.error/,
   /Auto-generation failed/,
-  // KNOWN PRODUCT BUG (BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s):
-  // memory-panel.html calls formatMemoryDate(),
-  // which is typed on ChatState but never implemented on the component, so any
-  // rendered memory row (including the optimistic one createMemory prepends)
-  // throws `ReferenceError: formatMemoryDate is not defined`. Allowlisted
-  // HERE ONLY so the create/audit interactions stay testable; every other
-  // page error still fails the file.
-  /formatMemoryDate is not defined/,
 ];
 
 describe("Memory panel CRUD + audit (B2)", () => {
