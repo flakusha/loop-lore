@@ -188,11 +188,12 @@ describe("battle item helpers (pure)", () => {
 
 describe("battle item + social service", () => {
   let db: Kysely<DB>;
+  let sqlite: import("bun:sqlite").Database;
   let createdBy: string;
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
-    ({ db, } = await createTestDb());
+    ({ db, sqlite, } = await createTestDb());
     createdBy = uid();
     await insertUsers(
       db,
@@ -269,6 +270,55 @@ describe("battle item + social service", () => {
     // Stock decremented in the inventory.
     const remaining = await listUsableBattleItems({ database: db, }, actorId,);
     expect(remaining[0]?.quantity,).toBe(1,);
+  });
+
+  it("useBattleItem does not consume inventory when the battle persist fails (BUG-usebattleitem-consumes-inventory-and-persists-battle-outside)", async () => {
+    const actorId = uid();
+    await seedActor(db, createdBy, actorId,);
+    await insertActorItems(db, actorId, "Healing Draught", "consumable" as never, {
+      id: "dr-tx-rollback",
+      quantity: 2,
+      metadata: healMeta(6,),
+    },);
+
+    const battle = await startBattle({ database: db, }, {
+      chatId: uid(),
+      createdBy,
+      combatants: [makeCombatant(actorId, "Alice", false, 20,), makeCombatant("orc-tx", "Orc", true, 15,),],
+    },);
+
+    const orc = battle.combatants.find((c,) => c.id === "orc-tx")!;
+    orc.hp = 10;
+    await persistBattle(
+      { database: db, },
+      battle.id,
+      battle.round,
+      battle.turnIndex,
+      battle.combatants,
+      battle.log,
+      BattleStatus.Active,
+    );
+
+    // Fail the SECOND write (persistBattle) after the inventory consumption.
+    sqlite.exec(
+      `CREATE TRIGGER fail_battle_persist_tx BEFORE UPDATE ON battles
+       WHEN OLD.id = '${battle.id}' BEGIN SELECT RAISE(ABORT, 'simulated persist failure'); END;`,
+    );
+
+    try {
+      await expect(useBattleItem({ database: db, }, {
+        battleId: battle.id,
+        actorId,
+        targetId: "orc-tx",
+        itemId: "Healing Draught",
+      },),).rejects.toThrow();
+
+      // The consumption must roll back with the failed persist.
+      const remaining = await listUsableBattleItems({ database: db, }, actorId,);
+      expect(remaining[0]?.quantity,).toBe(2,);
+    } finally {
+      sqlite.exec("DROP TRIGGER fail_battle_persist_tx;",);
+    }
   });
 
   it("useBattleItem rejects unknown actors, targets, and items", async () => {

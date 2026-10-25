@@ -190,8 +190,6 @@ export async function useBattleItem(
     return c.id === actor.id ? consumeAction(c, ActionType.UseItem,) : c;
   },);
 
-  const remaining = await consumeInventoryUnit(deps, item.id, item.quantity,);
-
   const action: CombatAction = {
     actorId: actor.id,
     type: ActionType.UseItem,
@@ -200,15 +198,24 @@ export async function useBattleItem(
     description: `${actor.name} uses ${item.name} on ${target.name} — restores ${healed} HP.`,
   };
 
-  await persistBattle(
-    deps,
-    battle.id,
-    battle.round,
-    battle.turnIndex,
-    updated,
-    [...battle.log, action,],
-    BattleStatus.Active,
-  );
+  // Consume + persist are one atomic unit: a failure between them must roll
+  // the inventory consumption back (BUG-usebattleitem-consumes-inventory-and-persists-battle-outside).
+  let remaining = 0;
+  await deps.database.transaction().execute(async (trx,) => {
+    const trxDeps: RpgServiceDeps = { ...deps, database: trx, };
+
+    remaining = await consumeInventoryUnit(trxDeps, item.id, item.quantity,);
+
+    await persistBattle(
+      trxDeps,
+      battle.id,
+      battle.round,
+      battle.turnIndex,
+      updated,
+      [...battle.log, action,],
+      BattleStatus.Active,
+    );
+  },);
 
   log().debug("Battle item used", { battleId: battle.id, itemId: item.id, healed, },);
 

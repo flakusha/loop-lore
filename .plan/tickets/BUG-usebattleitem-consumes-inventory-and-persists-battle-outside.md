@@ -5,6 +5,7 @@
 
 **Status:** Done
 **Priority:** Critical
+**Resolved:** LIVE confirmed on tip — repro (trigger RAISE(ABORT) on the battles UPDATE; inventory stayed consumed at quantity 1) failed pre-fix; consumeInventoryUnit + persistBattle now wrapped in one deps.database.transaction() with trx threaded via { ...deps, database: trx } (src/rpg/service/battles/items.ts:202-216); consumption rolls back on persist failure. 14/14 battles-actions tests green, gates green 2026-10-25, branch fix/bug-sweep.
 **Effort:** Medium
 **Epic:** epic-inventory
 
