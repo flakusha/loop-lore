@@ -25,7 +25,8 @@ function handleSfx(args: string[],): CommandResult {
 
   // TODO: Call audio generation provider
   return {
-    systemMessage: `**Sound effect queued:** ${prompt}`,
+    systemMessage:
+      `**Sound effect generation is not implemented yet** — this command is a placeholder, so nothing was generated.\n\nPrompt: ${prompt}`,
     action: "generate-sfx",
     actionPayload: { prompt, },
     handled: true,
