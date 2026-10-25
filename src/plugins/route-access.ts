@@ -92,6 +92,50 @@ export function checkRouteAccess(opts: RouteAccessOpts,): Response | null {
   return null;
 }
 
+/** Options for {@link ownershipDenial}. */
+export interface OwnershipOpts {
+  /** Identity of the caller. Omitted means anonymous. */
+  caller?: PluginCaller;
+  /** `user_id` of the row being read or written; null/undefined for unscoped rows. */
+  ownerUserId?: string | null;
+  /** Request-locale translator for the 401/403 bodies (same contract as {@link checkRouteAccess}). */
+  t?: TranslatorFn;
+}
+
+/**
+ * Row-level ownership check for plugin route handlers — the copy-paste answer
+ * to the "ACCESS CONTROL IS ROUTE-LEVEL, NOT ROW-LEVEL" caveat on
+ * `RouteDefinition` (BUG-plugin-route-registry-lacks-ownership-enforcement-idor).
+ *
+ * {@link checkRouteAccess} decides whether a request REACHES a handler; this
+ * decides whether the handler may touch THE row in question. Call it inside
+ * the handler with the row's owner and return the denial instead of the row:
+ *
+ *   const denial = ownershipDenial({ caller, ownerUserId: row.user_id, t, },);
+ *   if (denial) { return denial; }
+ *
+ * - no caller → 401: an anonymous request cannot own anything;
+ * - `caller.userId !== ownerUserId` → 403: cross-user access refused, and the
+ *   body carries no row data, so probing ids leaks nothing;
+ * - unscoped rows (no owner) → null: the caller may proceed.
+ *
+ * There is deliberately no wildcard-role bypass: admin cross-user access is an
+ * admission-layer concern (`permissions`), and that gate already ran before
+ * the handler.
+ * @param opts - caller identity, the row's owner, optional translator
+ * @returns The denial `Response` (401/403), or `null` when access is allowed.
+ */
+export function ownershipDenial(opts: OwnershipOpts,): Response | null {
+  const { caller, ownerUserId, t, } = opts;
+  if (!caller) { return unauthorizedResponse(undefined, t,); }
+
+  if (ownerUserId != null && caller.userId !== ownerUserId) {
+    return forbiddenResponse(undefined, t,);
+  }
+
+  return null;
+}
+
 /**
  * Best-effort security audit log. An uninitialised logger (boot, unit tests)
  * must never turn a denial into a crash — the denial itself still stands.

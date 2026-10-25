@@ -10,7 +10,8 @@
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { dispatchPluginRoute, registry, unloadAllPlugins, } from "./loader";
-import { checkRouteAccess, } from "./route-access";
+import { checkRouteAccess, ownershipDenial, } from "./route-access";
+import type { PluginCaller, } from "./route-access";
 
 let calls = 0;
 
@@ -430,5 +431,85 @@ describe("checkRouteAccess", () => {
     },);
 
     expect(await denial?.json(),).toMatchObject({ error: "de:errors.forbidden:", },);
+  });
+});
+
+describe("ownershipDenial — row-level ownership check", () => {
+  /**
+   * A user-scoped row store standing in for the DB reads a real plugin route
+   * would do; the handler is the copy-paste shape the helper documents.
+   */
+  const rows = new Map<string, { id: string; user_id: string | null; secret: string; }>([
+    ["row-1", { id: "row-1", user_id: "user-a", secret: "a-private-data", },],
+  ]);
+
+  function rowHandler(): (request: Request, caller?: PluginCaller,) => Promise<Response | null> {
+    return async (request, caller,) => {
+      const id = new URL(request.url,).searchParams.get("id",) ?? "";
+      const row = rows.get(id,);
+      if (!row) {
+        return new Response("not found", { status: 404, },);
+      }
+
+      const denial = ownershipDenial({ caller, ownerUserId: row.user_id, },);
+      if (denial) { return denial; }
+      return Response.json(row,);
+    };
+  }
+
+  beforeEach(() => {
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/row", handler: rowHandler(), requiresAuth: true, },
+    ],);
+  });
+
+  test("user B cannot read user A's row via a direct id", async () => {
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/row?id=row-1",),
+      caller: { userId: "user-b", userRole: "user", },
+    },);
+
+    expect(res?.status,).toBe(403,);
+    expect(await res?.text(),).not.toContain("a-private-data",);
+  });
+
+  test("the owning user reads the row through the same route", async () => {
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/row?id=row-1",),
+      caller: { userId: "user-a", userRole: "user", },
+    },);
+
+    expect(res?.status,).toBe(200,);
+    expect(await res?.json(),).toMatchObject({ secret: "a-private-data", },);
+  });
+
+  test("an anonymous caller is unauthorized at the row level too", async () => {
+    // Direct handler invocation — dispatch's requiresAuth gate would 401
+    // first; this pins the helper's own anonymous denial.
+    const res = await rowHandler()(new Request("http://x/row?id=row-1",),);
+
+    expect(res?.status,).toBe(401,);
+  });
+
+  test("an unscoped row (no owner) is served to any authenticated caller", async () => {
+    rows.set("row-2", { id: "row-2", user_id: null, secret: "global", },);
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/row?id=row-2",),
+      caller: { userId: "user-b", userRole: "user", },
+    },);
+
+    expect(res?.status,).toBe(200,);
+    rows.delete("row-2",);
+  });
+
+  test("localises the 403 through the threaded translator", () => {
+    const denial = ownershipDenial({
+      caller: { userId: "user-b", userRole: "user", },
+      ownerUserId: "user-a",
+      t: (key: string,) => "de:" + key + ":",
+    },);
+
+    expect(denial,).not.toBeNull();
+    expect(denial?.status,).toBe(403,);
   });
 });
