@@ -23,7 +23,8 @@ import {
   insertWorldMembers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
-import { type CommandContext, type CommandHandler, getCommand, } from "./registry";
+import type { CommandContext, CommandHandler, } from "./registry";
+import { getCommand, } from "./registry";
 
 // Side-effect import: the handlers register themselves on module load.
 import "./worlds-access";
