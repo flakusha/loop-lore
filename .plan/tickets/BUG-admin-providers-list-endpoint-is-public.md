@@ -3,7 +3,7 @@
 
 # BUG: Admin providers list endpoint is public
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-auth-access
@@ -21,3 +21,5 @@ The GET /api/v1/providers endpoint (src/routes/admin/providers.ts:28-49) is mark
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue bf85b93 (registry tip: ff58548ac Konstantin Fedotov Close issue)

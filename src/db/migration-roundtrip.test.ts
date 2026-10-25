@@ -106,6 +106,10 @@ try {
   // already initialized
 }
 
+// 15000ms per test: these step 77 migrations one at a time (up to 154
+// migrator calls, each re-scanning the migration dir). The bun:test default
+// 5000ms timeout is below what that costs on a loaded machine, so the tests
+// failed on timeout alone while passing in isolation.
 describe("migration roundtrip", () => {
   // Tests below set the override in-body; clear it even when a test throws
   // mid-way, so it cannot leak into sibling files sharing this process
@@ -139,7 +143,7 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-  });
+  }, 15000,);
 
   test("migrateDown rolls back all migrations to empty DB", async () => {
     const { db, sqlite, } = createFreshDb();
@@ -171,7 +175,7 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-  });
+  }, 15000,);
 
   test("re-migrating after full roundtrip produces identical schema", async () => {
     const { db, sqlite, } = createFreshDb();
@@ -200,7 +204,7 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-  });
+  }, 15000,);
 
   test("each migration up adds its expected tables and down removes them", async () => {
     const { db, sqlite, } = createFreshDb();
@@ -241,7 +245,7 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-  });
+  }, 15000,);
 
   test("every migrated table has at least one column", async () => {
     const { db, sqlite, } = createFreshDb();
@@ -259,5 +263,5 @@ describe("migration roundtrip", () => {
 
     await db.destroy();
     sqlite.close();
-  });
+  }, 15000,);
 });

@@ -3,7 +3,7 @@
 
 # BUG: consumeInventoryUnit uses stale quantity (TOCTOU on inventory)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-inventory
@@ -21,3 +21,5 @@ useBattleItem (src/rpg/service/battles/items.ts:191,230-251) reads the item rows
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue aba5489 (registry tip: b95dcdaa4 Konstantin Fedotov Close issue)
