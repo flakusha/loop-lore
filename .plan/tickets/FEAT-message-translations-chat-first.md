@@ -3,7 +3,7 @@
 
 # FEAT: message translations chat-first
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-multilingual-carriage
@@ -136,3 +136,5 @@ Remaining open questions for the owner (do not resolve unilaterally):
 - [ ] GET list / GET by locale / POST on-demand routes mounted with
       variants-equivalent access gates and 404 (not 403) on foreign ids
 - [ ] Validation schemas reject unknown locales against `LOCALE_REGISTRY`
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 9fb4f99 (registry tip: 8b40e6821 Konstantin Fedotov Close issue)
