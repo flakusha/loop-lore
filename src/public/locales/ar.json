@@ -1396,6 +1396,7 @@
     "chatTransferred": "تم نقل المحادثة",
     "chatAlreadyInLocation": "المحادثة موجودة بالفعل في هذا الموقع",
     "locationUpdated": "تم تحديث الموقع",
+    "failedUpdateLocation": "فشل تحديث الموقع",
     "failedDeleteChat": "فشل حذف المحادثة",
     "failedRenameChat": "فشلت إعادة تسمية المحادثة",
     "failedArchive": "فشلت الأرشفة",

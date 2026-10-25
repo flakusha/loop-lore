@@ -157,6 +157,10 @@
       "requiredRole": "member"
     },
     {
+      "name": "loc-update",
+      "requiredRole": "member"
+    },
+    {
       "name": "loc-get",
       "requiredRole": "member"
     },
@@ -300,6 +304,7 @@
         "inventory",
         "link",
         "loc-list",
+        "loc-update",
         "loc-get",
         "narrate",
         "ooc",
@@ -349,6 +354,7 @@
         "evaluate",
         "persuade",
         "item-update",
+        "loc-update",
         "narrate",
         "rag-search",
         "rag-ask",

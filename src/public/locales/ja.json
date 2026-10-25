@@ -1396,6 +1396,7 @@
     "chatTransferred": "チャットを移行しました",
     "chatAlreadyInLocation": "チャットは既にこの場所にあります",
     "locationUpdated": "場所を更新しました",
+    "failedUpdateLocation": "場所の更新に失敗しました",
     "failedDeleteChat": "チャットの削除に失敗しました",
     "failedRenameChat": "チャット名の変更に失敗しました",
     "failedArchive": "アーカイブに失敗しました",
