@@ -49,15 +49,14 @@ export async function withTransaction<T,>(
  */
 export function withWorldId<T,>(qb: T, worldId: string | undefined, worldCol = "world_id",): T {
   // Kysely's $if is typed per-table; the generic cast is unavoidable here.
+  // An undefined worldId means the caller is world-agnostic: add NO world
+  // filter so the query spans the global (NULL) scope and every world-scoped
+  // row. Forcing `world_id is null` here used to hide world-scoped rows from
+  // global lookups (and let a write pair read one row set and write another).
 
-  const chain = (qb as any).$if(
+  return (qb as any).$if(
     !!worldId,
     (q: any,) => q.where(worldCol, "=", worldId!,),
-  );
-
-  return chain.$if(
-    !worldId,
-    (q: any,) => q.where(worldCol, "is", null,),
   ) as T;
 }
 
