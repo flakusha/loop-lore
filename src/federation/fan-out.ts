@@ -22,6 +22,7 @@ import {
 } from "./duplication";
 import { type MeshEncryptionProvider, } from "./encryption";
 import { type ContentEnvelope, sealContent, } from "./envelope";
+import { meshReserveProof, } from "./mesh-proof";
 import { markOutboxDone, queueOutboxRetry, } from "./outbox";
 import { type PeerPost, } from "./peer-fetch";
 import { DEFAULT_RESERVATION_TTL_MS, } from "./sharing";
@@ -86,10 +87,18 @@ export interface GrantedReservation {
   contentKey?: string;
 }
 
+/** Optional fan-out wiring (mesh PSK for reserve proof signing). */
+interface FanOutOpts {
+  /** Shared mesh PSK; when set, reserve bodies carry an HMAC proof. */
+  meshPsk?: string;
+}
+
 /**
  * Request capacity on a receiving peer (sender side). The response carries
  * the receiver's inbound content key for this sender — seal the push with
- * it instead of the mesh PSK whenever present.
+ * it instead of the mesh PSK whenever present. When the mesh PSK is wired
+ * the body carries an HMAC-SHA256 proof over the canonical reservation
+ * fields; receivers reject unsigned reserves.
  * @param post Transport POST.
  * @param origin Receiver origin.
  * @param request Reservation request.
@@ -98,6 +107,7 @@ export interface GrantedReservation {
  * @param request.sizeBytes
  * @param request.contentType
  * @param request.ttlMs
+ * @param opts Sender options ({@link FanOutOpts}).
  * @returns Reservation id plus optional inbound content key.
  * @throws When the peer refuses or is unreachable.
  */
@@ -111,14 +121,21 @@ export async function requestReservation(
     contentType?: string;
     ttlMs?: number;
   },
+  opts?: FanOutOpts,
 ): Promise<GrantedReservation> {
-  const response = await post(`${origin}/api/mesh-reserve`, {
+  const reserveBody = {
     senderOrigin: request.senderOrigin,
     contentHash: request.contentHash,
     sizeBytes: request.sizeBytes,
     contentType: request.contentType ?? "blob",
     ttlMs: request.ttlMs ?? DEFAULT_RESERVATION_TTL_MS,
-  },);
+  };
+
+  const payload = opts?.meshPsk
+    ? { ...reserveBody, proof: await meshReserveProof(opts.meshPsk, reserveBody,), }
+    : reserveBody;
+
+  const response = await post(`${origin}/api/mesh-reserve`, payload,);
 
   const body = (response.body ?? null) as { reservationId?: unknown; contentKey?: unknown } | null;
   const reservationId = body?.reservationId;
@@ -142,6 +159,7 @@ export async function requestReservation(
  * @param policy Configured duplication policy.
  * @param encryption Cipher selection (probe seal + per-target content keys).
  * @param content Payload to replicate.
+ * @param opts Sender options ({@link FanOutOpts}).
  * @returns {Promise<FanOutResult>}
  */
 export async function fanOutContent(
@@ -151,6 +169,7 @@ export async function fanOutContent(
   policy: DuplicationPolicy,
   encryption: MeshEncryptionProvider,
   content: FanOutContent,
+  opts?: FanOutOpts,
 ): Promise<FanOutResult> {
   const type = content.contentType ?? "blob";
   const clock = content.clock ?? Date.now();
@@ -196,7 +215,7 @@ export async function fanOutContent(
         contentHash: probe.hash,
         sizeBytes: probe.size,
         contentType: type,
-      },);
+      }, opts,);
 
       const cipher = encryption.contentCipher(granted.contentKey,);
       envelope = await sealContent({
