@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 // src/assistant/commands/index.ts
 //
 // Command system barrel — registers all commands and re-exports registry.
@@ -45,6 +44,7 @@ import "./translate";
 import "./video";
 import "./workflow";
 import "./worlds-access";
+import "./worlds-mutate";
 
 export { parseCommand, } from "../command-parser";
 export type { ParsedCommand, } from "../command-parser";

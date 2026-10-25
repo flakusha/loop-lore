@@ -7,6 +7,8 @@
  * The interesting behaviour is the visibility filter — owned, public, and
  * joined worlds are in; another user's private world is out — and the fact
  * that `/world-get` refuses the same world `/world-list` will not show.
+ * Mutation commands (/world-update, /world-delete) are covered in
+ * ./worlds-mutate.test.ts.
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
@@ -21,8 +23,7 @@ import {
   insertWorldMembers,
   insertWorlds,
 } from "../../test-utils/insert-helpers";
-import type { CommandContext, CommandHandler, } from "./registry";
-import { getCommand, } from "./registry";
+import { type CommandContext, type CommandHandler, getCommand, } from "./registry";
 
 // Side-effect import: the handlers register themselves on module load.
 import "./worlds-access";

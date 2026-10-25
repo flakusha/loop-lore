@@ -8,6 +8,8 @@
  * in `src/routes/worlds/worlds.ts`: a world is visible when the caller owns it,
  * when it is public, or when the caller is a member of it. `/world-get` gates
  * the detail read through `requireWorldAccess`, the guard the world routes use.
+ * The mutating side (`/world-update`, `/world-delete`) lives in
+ * `./worlds-mutate` and composes with `requireWorldOwner`.
  */
 
 import { WorldVisibility, } from "../../db/enums";
