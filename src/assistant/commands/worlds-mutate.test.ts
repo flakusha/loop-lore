@@ -110,12 +110,15 @@ describe("world mutation commands", () => {
     }
   });
 
-  test("rejects unknown fields, bad numbers, and bad visibility values", () => {
+  test("rejects unknown fields, bad numbers, bad enum values, and out-of-range names", () => {
     for (
       const [input, fragment,] of [
         ["owner_id=x", "Unknown world field",],
         ["difficultyModifier=high", "expects a number",],
         ["visibility=shiny", "Invalid visibility",],
+        ["kind=bogus", "Invalid kind",],
+        ['name=""', "must be 1-255 characters",],
+        [`name=${"x".repeat(256,)}`, "must be 1-255 characters",],
         ["no pairs here", "No updates parsed",],
       ] as const
     ) {
