@@ -8,4 +8,4 @@ export { applyProviderEnvVars, } from "./env";
 export { loadConfig, validateConfig, } from "./load";
 export { coerceValue, deepMerge, setByPath, } from "./parse";
 export { MIN_PII_SECRET_LENGTH, validatePiiSafety, } from "./pii-safety";
-export { MIN_JWT_SECRET_LENGTH, validateAuthSafety, validateDatabaseSafety, } from "./safety";
+export { isLoopbackHost, MIN_JWT_SECRET_LENGTH, validateAuthSafety, validateDatabaseSafety, } from "./safety";

@@ -55,6 +55,25 @@ export function validateDatabaseSafety(config: Config,): void {
 export const MIN_JWT_SECRET_LENGTH = 32;
 
 /**
+ * True when `host` binds only the loopback interface: `localhost`,
+ * `*.localhost`, the IPv4 loopback range 127.0.0.0/8, or `::1`. Wildcard
+ * hosts (`0.0.0.0`, `::`) and LAN/remote hosts are NOT loopback.
+ * @param host
+ * @returns boolean
+ */
+export function isLoopbackHost(host: string,): boolean {
+  // Strip IPv6 brackets: "[::1]" names the same loopback address as "::1".
+  const h = host.trim().toLowerCase().replace(/^\[/, "",).replace(/\]$/, "",);
+
+  if (h === "localhost" || h.endsWith(".localhost",) || h === "::1") { return true; }
+
+  const v4 = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/,);
+  if (v4) { return Number(v4[1],) === 127; }
+
+  return false;
+}
+
+/**
  * Validate auth safety constraints.
  *
  * When `auth.required = true` (multi-user mode), JWTs are signed with
@@ -76,7 +95,31 @@ export const MIN_JWT_SECRET_LENGTH = 32;
  */
 export function validateAuthSafety(config: Config,): void {
   const { auth, } = config;
-  if (!auth.required) { return; }
+
+  if (!auth.required) {
+    // Solo mode auto-authenticates every request as the solo super-user
+    // (authenticate.ts solo fallback), so a non-loopback bind exposes
+    // admin-equivalent access to the entire network. Fail boot unless the
+    // operator explicitly opted in (same escape-hatch convention as
+    // UNSAFE_SQLITE_MULTIINSTANCE)
+    // (BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au).
+    // An empty host means "unset" — skip it; only explicit binds gate.
+    if (
+      config.server.host !== "" &&
+      !isLoopbackHost(config.server.host,) &&
+      process.env.UNSAFE_SOLO_REMOTE_BIND !== "true"
+    ) {
+      throw new Error(
+        "AUTH SAFETY: auth.required = false (solo mode) but server.host = " +
+          `"${config.server.host}" is not a loopback address. Every ` +
+          "unauthenticated request would resolve to the solo super-user, exposing " +
+          "admin-equivalent access to the network. Fix: bind to 127.0.0.1/localhost, " +
+          "set auth.required = true, or set UNSAFE_SOLO_REMOTE_BIND=true to override.",
+      );
+    }
+
+    return;
+  }
 
   const secret = auth.jwtSecret ?? "";
   if (secret.length === 0) {
