@@ -149,6 +149,18 @@
       "requiredRole": "member"
     },
     {
+      "name": "item-transfer",
+      "requiredRole": "member"
+    },
+    {
+      "name": "item-drop",
+      "requiredRole": "member"
+    },
+    {
+      "name": "item-pickup",
+      "requiredRole": "member"
+    },
+    {
       "name": "link",
       "requiredRole": "member"
     },
@@ -310,6 +322,9 @@
         "item-list",
         "item-get",
         "inventory",
+        "item-transfer",
+        "item-drop",
+        "item-pickup",
         "link",
         "loc-update",
         "loc-list",
@@ -364,6 +379,7 @@
         "evaluate",
         "persuade",
         "item-update",
+        "item-transfer",
         "loc-update",
         "narrate",
         "rag-search",
