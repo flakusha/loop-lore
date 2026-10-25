@@ -3,7 +3,7 @@
 
 # BUG: Failover replays primary BYO key to fallback vendors
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-byok-api-keys
@@ -22,3 +22,5 @@ Cross-vendor key disclosure: callWithFailover passes same req (same apiKey) to e
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 248a28b (registry tip: 0f2f862e6 Konstantin Fedotov Close issue)

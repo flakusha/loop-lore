@@ -3,7 +3,7 @@
 
 # BUG: GM shadow-note revealed_to reveal is a read-modify-write without serialization: concurrent reveals lose an append
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-gm-shadow-notes
@@ -33,3 +33,5 @@ Source: .tmp/glm-review/deep-landing-1015.md F-1 (gitignored; recorded here verb
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 2b495f0 (registry tip: 4c1d6ea88 Konstantin Fedotov stale-resolved verified 2026-10-25: revealed_to merge runs inside datab)

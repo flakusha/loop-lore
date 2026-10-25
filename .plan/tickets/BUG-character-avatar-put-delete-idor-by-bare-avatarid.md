@@ -3,7 +3,7 @@
 
 # BUG: Character avatar PUT/DELETE IDOR by bare avatarId
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-asset-transform-metadata
@@ -25,3 +25,5 @@ src/routes/character-avatars.ts:105-156 authorize the PATH actor (requireActorAc
 ## Review 2026-10-04
 
 Fix verified in worktree fix-avatar-idor (commit 4118634d3 "fix(routes): scope avatar PUT/DELETE to the path actor": src/routes/character-avatars.ts PUT and DELETE now getAvatar(avatarId) then 404 unless avatar.actorId === actorId, +23/-2, with regression tests in src/routes/character-avatars.test.ts +32; committed dev HEAD still authorizes the path actor only, then updates/deletes by bare avatarId); keep open until that branch finalizes/merges, then close.
+
+**Resolved:** 2026-10-25 registry-driven close: git issue b9e9cfb (registry tip: 002e5a3f2 Konstantin Fedotov Close issue)

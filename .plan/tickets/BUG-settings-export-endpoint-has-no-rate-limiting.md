@@ -3,7 +3,7 @@
 
 # BUG: Settings export endpoint has no rate limiting
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-rate-limiting
@@ -21,3 +21,5 @@ The GET /api/v1/settings/export endpoint (src/routes/settings.ts:212-230) genera
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 283539d (registry tip: eeed17fd6 Konstantin Fedotov Close issue)

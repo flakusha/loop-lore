@@ -3,7 +3,7 @@
 
 # BUG: mesh-deliver accepts envelopes from untrusted or unknown origins without a peer-trust check
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas
@@ -33,3 +33,5 @@ Fix: verify mesh_peers.state === 'trusted' for envelope.origin before accept, on
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 4b503b5 (registry tip: 75c193286 Konstantin Fedotov Close issue)

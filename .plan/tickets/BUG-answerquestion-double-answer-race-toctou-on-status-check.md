@@ -3,7 +3,7 @@
 
 # BUG: answerQuestion double-answer race (TOCTOU on status check)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics
@@ -21,3 +21,5 @@ answerQuestion (src/rpg/questions/service.ts:196-260) reads the question row, ch
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue fc864ee (registry tip: be1450956 Konstantin Fedotov Close issue)
