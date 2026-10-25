@@ -35,7 +35,7 @@ let chatId: string;
 // The d20 is crypto-random, so a bare roll can land a natural 1 — which the
 // interaction service resolves as a CRITICAL FAILURE regardless of the DC.
 // Rig the die so the success path under test is deterministic.
-const withForcedDie = async (value: number, run: () => Promise<void>,): Promise<void> => {
+const withForcedDie = async <T,>(value: number, run: () => Promise<T>,): Promise<T> => {
   const original = crypto.getRandomValues;
   Object.defineProperty(crypto, "getRandomValues", {
     configurable: true,
@@ -46,7 +46,7 @@ const withForcedDie = async (value: number, run: () => Promise<void>,): Promise<
   },);
 
   try {
-    await run();
+    return await run();
   } finally {
     Object.defineProperty(crypto, "getRandomValues", { configurable: true, value: original, },);
   }
@@ -275,9 +275,8 @@ describe("awardSkillUsageXp", () => {
     const skillId = await seedSkill(actorId, "persuasion",);
     // DC 1: a rigged non-natural-1 roll always succeeds, so the payout path
     // under test is the deterministic one.
-    let resolution: Awaited<ReturnType<typeof resolveInteraction>> | undefined;
-    await withForcedDie(15, async () => {
-      resolution = await resolveInteraction(db, {
+    const resolution = await withForcedDie(15, async () =>
+      await resolveInteraction(db, {
         command: "persuade",
         category: "social",
         actorId,
@@ -285,10 +284,9 @@ describe("awardSkillUsageXp", () => {
         worldId,
         skill: "persuasion",
         difficulty: 1,
-      },);
-    },);
+      },),);
 
-    expect(resolution?.id,).not.toBeNull();
+    expect(resolution.id,).not.toBeNull();
 
     const skill = await db.selectFrom("character_skills",).selectAll().where("id", "=", skillId,)
       .executeTakeFirstOrThrow();
