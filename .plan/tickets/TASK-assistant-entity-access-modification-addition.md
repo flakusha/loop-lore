@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** `/clone` copies the source entity (copied fields plus `key=value` overrides) and the user confirms before it is persisted. The richer `/duplicate` command (copy with `--with <changes>`) is B5 and stays open in `TASK-assistant-entity-access-duplication.md`. `/import` is wired for the `character` kind only: this ticket's import flow and the repo's import infrastructure (`char import: PNG/YAML/TOML/JSON/CHARX`) are character-card shaped, so the epic's world/location/item import rows are NOT implemented.
 **Priority:** High
 **Effort:** High
 **Type:** Task
