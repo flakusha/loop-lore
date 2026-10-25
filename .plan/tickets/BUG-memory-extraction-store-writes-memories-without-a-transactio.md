@@ -3,7 +3,7 @@
 
 # BUG: Memory extraction store writes memories without a transaction and never purges
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-aux-enrichment-pipeline
@@ -30,3 +30,5 @@ Source: .tmp/longcat/review-consolidated.md nit 13; .tmp/longcat/review-assets-d
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue b3249b1 (registry tip: 72271e3b6 Konstantin Fedotov Close issue)
