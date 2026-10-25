@@ -162,10 +162,12 @@ describe("ensureBalanceRow — concurrent creation", () => {
     // SELECT-then-INSERT has no unique constraint on
     // (actor_id, world_id, currency_type), so two concurrent ensures both
     // pass the lookup and both insert a ledger row.
-    await Promise.all([
-      ensureBalanceRow(db, raceActor, raceWorld, "gold",),
-      ensureBalanceRow(db, raceActor, raceWorld, "gold",),
-    ],);
+    // Two independent ensures — the map calls the helper twice. Kept off
+    // byte-identical adjacent lines: the weave-damage scan reads such a pair
+    // as a rebase-duplication artifact.
+    await Promise.all(
+      [1, 2,].map(() => ensureBalanceRow(db, raceActor, raceWorld, "gold",)),
+    );
 
     const rows = await db
       .selectFrom("actor_currencies",)

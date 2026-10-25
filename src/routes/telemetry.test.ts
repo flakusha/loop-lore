@@ -528,8 +528,10 @@ describeReal("telemetry routes — enabled", () => {
           },),
         );
 
-      expect((await post()).status,).toBe(200,);
-      expect((await post()).status,).toBe(200,);
+      const firstStatus = (await post()).status;
+      const secondStatus = (await post()).status;
+      expect(firstStatus,).toBe(200,);
+      expect(secondStatus,).toBe(200,);
 
       const blocked = await post();
       expect(blocked.status,).toBe(429,);

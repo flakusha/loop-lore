@@ -23,7 +23,7 @@ describe("Domain Config Loading", () => {
     // Create domain config files
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.server.toml",),
-      '[server]\nport = 8080\nhost = "0.0.0.0"\n',
+      '[server]\nport = 8080\nhost = "127.0.0.1"\n',
     );
 
     writeFileSync(
@@ -34,7 +34,7 @@ describe("Domain Config Loading", () => {
     const config = loadConfig(TEST_DIR,);
 
     expect(config.server.port,).toBe(8080,);
-    expect(config.server.host,).toBe("0.0.0.0",);
+    expect(config.server.host,).toBe("127.0.0.1",);
     expect(config.db.type,).toBe("sqlite",);
     expect(config.db.sqliteFilename,).toBe("./test.db",);
 
@@ -73,13 +73,13 @@ describe("Domain Config Loading", () => {
 
     writeFileSync(
       path.join(TEST_DIR, "configs", "config.server.yaml",),
-      'server:\n  port: 8080\n  host: "0.0.0.0"\n',
+      'server:\n  port: 8080\n  host: "127.0.0.1"\n',
     );
 
     const config = loadConfig(TEST_DIR,);
 
     expect(config.server.port,).toBe(8080,);
-    expect(config.server.host,).toBe("0.0.0.0",);
+    expect(config.server.host,).toBe("127.0.0.1",);
 
     // Cleanup
     rmSync(TEST_DIR, { recursive: true, },);
