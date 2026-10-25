@@ -1,0 +1,142 @@
+/*
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ * SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+ */
+
+/* ============================================================
+   loop-lore — Responsive Layer (TASK-responsive-design)
+
+   Loaded LAST: after theme-base.css (token overrides win) and
+   after app.css (layout overrides win). Mobile-first: base
+   rules below target the smallest tier, min-width tiers layer
+   up. Authoring convention mirrors app.css range notation
+   (`(width <= Npx)` / `(width >= Npx)`).
+
+   ── Breakpoint tier map ────────────────────────────────────
+   <480px     Mobile base: stacked layout, fullscreen drawer
+              panels (app.css `<= 480px` / `<= 768px` blocks);
+              RPG stat grid collapses to one column (below).
+   480-768px  Tablet: same drawer/overlay behavior — covered by
+              the app.css `<= 768px` blocks; no extra rules.
+   768-1200px Desktop default: app.css base rules; fluid type
+              still interpolating (below).
+   >=1200px   Wide: layout identical to desktop (drawer sidebar
+              + capped reading column are intentional on every
+              viewport, see docs/frontend/chat/layout.md); fluid
+              type tokens reach their maximum (below).
+   ============================================================ */
+
+/* ── Fluid typography ──────────────────────────────────────
+   Re-declares the shared `--fs-*` display tokens from
+   theme-base.css with clamp(): pixel-identical at >=1200px,
+   fluid below, never below the readability floor. Reading
+   sizes (xs…md) stay FIXED on purpose — shrinking body text
+   on small screens hurts legibility. Raw px font-sizes inside
+   app.css components are pre-existing debt, out of scope here.
+   Keep these maxima in sync with theme-base.css. */
+:root {
+  --fs-lg: clamp(16px, 15.1px + 0.24vw, 18px);
+  --fs-xl: clamp(18px, 17.1px + 0.24vw, 20px);
+  --fs-2xl: clamp(20px, 18.3px + 0.48vw, 24px);
+  --fs-3xl: clamp(24px, 20.6px + 0.95vw, 32px);
+  --fs-display: clamp(32px, 25.2px + 1.9vw, 48px);
+}
+
+/* ── Flexible grids ────────────────────────────────────────
+   .asset-grid is already fluid (auto-fill + minmax). app.css
+   keeps the RPG stat grid two-column on desktop; collapse it
+   on phones like .wizard-review-list / .world-page-columns. */
+@media (width <= 479px) {
+  .rpg-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Reduced motion (global floor) ─────────────────────────
+   Umbrella over the per-component `transition: none` blocks
+   already in app.css / vn.css / info-bubble.css: also stops
+   animations they do not cover (spinner, typing dots). The
+   0.01ms pattern keeps transitionend/animationend firing so
+   JS listeners stay correct — animations effectively freeze
+   after one frame instead of being removed. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── High contrast ─────────────────────────────────────────
+   `prefers-contrast: more` (the valid MQ Level 5 value — the
+   ticket draft's `high` does not parse). Theme-agnostic: map
+   muted text and hairline borders onto the active theme's
+   stronger `--text-secondary` token instead of hardcoding
+   colors, and thicken the shared 2px focus outline. */
+@media (prefers-contrast: more) {
+  :root {
+    --text-tertiary: var(--text-secondary);
+    --border-default: var(--text-secondary);
+  }
+
+  :focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* ── Print ─────────────────────────────────────────────────
+   Opt-in utilities for views: `.no-print` hides, `.print-only`
+   shows on paper only. Chrome (nav, toasts, modals, composer)
+   is always stripped; content prints black-on-white. */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print,
+  .sidebar,
+  .backdrop,
+  .hamburger,
+  .toast-container,
+  .notification-bell,
+  .modal-overlay,
+  .input-area,
+  .main-header .actions,
+  .skip-to-content {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 12pt;
+  }
+
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  /* Reveal external targets; internal SPA routes are noise on
+     paper, so only absolute http(s) links are expanded. */
+  #app-root a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .message {
+    break-inside: avoid;
+  }
+}
