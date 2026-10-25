@@ -5496,7 +5496,7 @@
     "epic": "epic-auth-config-contracts",
     "tags": [],
     "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-HARDEN-TELEMETRY-GATE-OR-RATE-LIMIT-ANONYMOUS-POST-API-V1-TE": {
     "hash": "c48fd6c",
@@ -5975,7 +5975,7 @@
       "story-items"
     ],
     "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ITEM-TRANSFERS-DOUBLE-REPORT-ONE-SENTENCE-AND-ITEM-TAKE-ITEM": {
     "hash": "5acbda7",
@@ -6094,7 +6094,7 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/BUG-key-material-revoke-then-insert-sequences-are-non-transactio.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-KEY-ROTATION-NON-TRANSACTIONAL-INCOMPLETE-RE-ENCRYPTION-STRA": {
     "epic": "",
@@ -6541,7 +6541,7 @@
     "epic": "epic-aux-enrichment-pipeline",
     "tags": [],
     "source": ".plan/tickets/BUG-memory-extraction-store-writes-memories-without-a-transactio.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI": {
     "epic": "",
@@ -6638,7 +6638,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
     "epic": "",
@@ -8521,7 +8521,7 @@
     "epic": "epic-relationships",
     "tags": [],
     "source": ".plan/tickets/BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
     "epic": "epic-federation-swarm-sync",
@@ -8586,7 +8586,7 @@
     "epic": "epic-encryption-workflow",
     "tags": [],
     "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ROTATEKEYONLEAVE-RE-ENCRYPTS-MESSAGES-ONLY-ENCRYPTED-ASSETS-": {
     "epic": "",
@@ -10211,7 +10211,7 @@
     "epic": "epic-inventory",
     "tags": [],
     "source": ".plan/tickets/BUG-usebattleitem-consumes-inventory-and-persists-battle-outside.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-USER-API-KEYS-NON-UNIQUE-INDEX-READ-THEN-WRITE-UPSERT-ALLOWS": {
     "hash": "d16b146",

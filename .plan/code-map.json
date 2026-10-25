@@ -45523,6 +45523,12 @@
       "source": ".plan/tickets/TASK-hoist-inline-route-response-schemas-to-exported-consts.md"
     }
   ],
+  "src/routes/story-items/routes.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md"
+    }
+  ],
   "src/routes/story-orchestration/api-versioning.test.ts": [
     {
       "kind": "ticket",

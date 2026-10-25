@@ -614,7 +614,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | fe-be-db | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | feature | 15 | 2 | 0 | 13 | 0 | 0 | 0 |
 | feature-flags | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| federation | 24 | 9 | 1 | 1 | 1 | 0 | 12 |
+| federation | 24 | 10 | 1 | 1 | 1 | 0 | 11 |
 | feed | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | feeds | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | ffi | 3 | 0 | 2 | 1 | 0 | 0 | 0 |
@@ -1354,7 +1354,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | seasons | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | secrets | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| security | 41 | 13 | 3 | 8 | 0 | 0 | 17 |
+| security | 41 | 14 | 3 | 8 | 0 | 0 | 16 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 12 | 1 | 0 | 8 | 0 | 0 | 3 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -1457,7 +1457,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | story-coherence | 2 | 0 | 0 | 0 | 0 | 0 | 2 |
 | story-drive | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | story-generation | 2 | 1 | 1 | 0 | 0 | 0 | 0 |
-| story-items | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
+| story-items | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | story-points | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | story-steering | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | streaming | 13 | 0 | 1 | 1 | 0 | 0 | 11 |
@@ -1690,7 +1690,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2727 | 1088 | 45 | 898 | 32 | 0 | 664 |
+| (untagged) | 2727 | 1094 | 45 | 898 | 32 | 0 | 658 |
 
 ## By epic × status
 
@@ -1744,9 +1744,9 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-audio-video-sound | 11 | 1 | 0 | 6 | 0 | 0 | 4 |
 | epic-auth-access | 20 | 6 | 0 | 8 | 0 | 0 | 6 |
 | epic-auth-channel-provisioning | 19 | 0 | 0 | 14 | 0 | 0 | 5 |
-| epic-auth-config-contracts | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
+| epic-auth-config-contracts | 6 | 1 | 0 | 0 | 0 | 0 | 5 |
 | epic-authoring-creation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| epic-aux-enrichment-pipeline | 18 | 3 | 4 | 5 | 0 | 0 | 6 |
+| epic-aux-enrichment-pipeline | 18 | 4 | 4 | 5 | 0 | 0 | 5 |
 | epic-avatar-alpha-vn-layering | 13 | 5 | 0 | 7 | 0 | 0 | 1 |
 | epic-avatar-dogfood | 4 | 0 | 1 | 0 | 0 | 0 | 3 |
 | epic-avatar-regeneration-control | 10 | 4 | 0 | 4 | 0 | 0 | 2 |
@@ -1803,7 +1803,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-creative-studio | 10 | 1 | 0 | 9 | 0 | 0 | 0 |
 | epic-cron-scheduler | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-cross-platform-portability | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
-| epic-crypto | 35 | 13 | 3 | 14 | 0 | 0 | 5 |
+| epic-crypto | 35 | 14 | 3 | 14 | 0 | 0 | 4 |
 | epic-data-integrity-acid | 11 | 1 | 0 | 5 | 0 | 0 | 5 |
 | epic-database-backup-recovery | 7 | 1 | 0 | 5 | 0 | 0 | 1 |
 | epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1828,7 +1828,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-embeddable-engine-game-frontend | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-emergent-narrative-design | 4 | 2 | 0 | 2 | 0 | 0 | 0 |
 | epic-emotion-avatar-message-binding | 10 | 6 | 0 | 3 | 0 | 0 | 1 |
-| epic-encryption-workflow | 4 | 0 | 1 | 1 | 0 | 0 | 2 |
+| epic-encryption-workflow | 4 | 1 | 1 | 1 | 0 | 0 | 1 |
 | epic-enemies-monsters | 9 | 0 | 0 | 1 | 0 | 0 | 8 |
 | epic-entity-generation-workflows | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-error-envelope | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
@@ -1883,7 +1883,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-instance-federation | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
 | epic-integrations-core | 7 | 5 | 0 | 0 | 0 | 0 | 2 |
 | epic-interaction-surfaces-audit.md | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
-| epic-inventory | 7 | 1 | 0 | 1 | 1 | 0 | 4 |
+| epic-inventory | 7 | 2 | 0 | 1 | 1 | 0 | 3 |
 | epic-inventory-system | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-inventory-ui | 8 | 1 | 0 | 7 | 0 | 0 | 0 |
 | epic-io-formats | 2 | 0 | 0 | 2 | 0 | 0 | 0 |
@@ -1910,7 +1910,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-memory-knowledge-systems | 32 | 9 | 0 | 13 | 0 | 0 | 10 |
 | epic-memory-profiling-budgets | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | epic-memory-propagation | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| epic-mesh-federation-content-sharing | 10 | 2 | 2 | 2 | 0 | 0 | 4 |
+| epic-mesh-federation-content-sharing | 10 | 3 | 2 | 2 | 0 | 0 | 3 |
 | epic-message-seen-state | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-messages | 9 | 3 | 0 | 5 | 0 | 0 | 1 |
 | epic-middleware-request-lifecycle | 14 | 11 | 1 | 2 | 0 | 0 | 0 |
@@ -1966,7 +1966,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-recursive-self-improvement | 27 | 0 | 0 | 0 | 0 | 0 | 27 |
 | epic-reference-conditioned-generation | 24 | 0 | 0 | 1 | 0 | 0 | 23 |
 | epic-relation-graph-canvas | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
-| epic-relationships | 13 | 2 | 1 | 8 | 0 | 0 | 2 |
+| epic-relationships | 13 | 3 | 1 | 8 | 0 | 0 | 1 |
 | epic-release-010 | 3 | 0 | 0 | 2 | 0 | 0 | 1 |
 | epic-replayability | 7 | 4 | 1 | 2 | 0 | 0 | 0 |
 | epic-research-agency-quality | 3 | 0 | 0 | 0 | 2 | 0 | 1 |
@@ -2019,7 +2019,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 2 | 0 | 1 | 0 | 0 | 3 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 1018 | 638 | 46 | 33 | 43 | 0 | 258 |
+| (unbound) | 1018 | 639 | 46 | 33 | 43 | 0 | 257 |
 
 ## Ticket detail
 

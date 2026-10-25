@@ -3,7 +3,7 @@
 
 # BUG: useBattleItem consumes inventory and persists battle outside one transaction
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Critical
 **Effort:** Medium
 **Epic:** epic-inventory
@@ -30,3 +30,5 @@ Source: .tmp/longcat/review-consolidated.md nit 16; .tmp/cat-jam/review-generati
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue d469731 (registry tip: 44a375b83 Konstantin Fedotov Close issue)
