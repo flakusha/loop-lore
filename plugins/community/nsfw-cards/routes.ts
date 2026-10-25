@@ -7,15 +7,34 @@
 
 import { initSeduction, playSeductionCard, cardToString } from "./engine";
 import { jsonResponse, jsonError, HttpStatus } from "../../../src/routes/http-utils";
+import type { PluginCaller } from "../../../src/plugins/types";
+import { hasAll } from "../../../src/users/permissions";
+
+/**
+ * Internal NSFW capability check (BUG-nsfw-cards-ships-ungated-post-routes):
+ * the registry declarations are the primary gate, but a future dispatch path
+ * that skips them must not silently unguard these handlers.
+ * @param caller - resolved identity, omitted when anonymous
+ * @returns Forbidden response when the caller lacks `nsfw.play`, else null
+ */
+function nsfwDenial(caller?: PluginCaller): Response | null {
+  if (!caller || !hasAll(caller.userRole ?? null, ["nsfw.play",],)) {
+    return jsonError("nsfw.play capability required", HttpStatus.Forbidden);
+  }
+  return null;
+}
 
 /**
  * Handle POST /api/nsfw-cards/start
  *
  * Body: { difficulty?, handSize? }
  */
-export async function handleStart(request: Request): Promise<Response | null> {
+export async function handleStart(request: Request, caller?: PluginCaller): Promise<Response | null> {
   const url = new URL(request.url);
   if (url.pathname !== "/api/nsfw-cards/start" || request.method !== "POST") return null;
+
+  const denial = nsfwDenial(caller,);
+  if (denial) { return denial; }
 
   let body: Record<string, unknown> = {};
   try {
@@ -61,9 +80,12 @@ export async function handleStart(request: Request): Promise<Response | null> {
  *
  * Body: { state: SeductionState, cardIndex: number }
  */
-export async function handlePlay(request: Request): Promise<Response | null> {
+export async function handlePlay(request: Request, caller?: PluginCaller): Promise<Response | null> {
   const url = new URL(request.url);
   if (url.pathname !== "/api/nsfw-cards/play" || request.method !== "POST") return null;
+
+  const denial = nsfwDenial(caller,);
+  if (denial) { return denial; }
 
   let body: Record<string, unknown>;
   try {

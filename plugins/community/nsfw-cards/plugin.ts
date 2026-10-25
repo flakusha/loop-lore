@@ -20,12 +20,18 @@ export const plugin: PluginManifest = {
   license: "Apache-2.0 OR MIT",
 
   async onLoad(context) {
-    // Register API routes
+    // Register API routes — state-changing POSTs, so both declare the gate
+    // (BUG-nsfw-cards-ships-ungated-post-routes): a session is required and
+    // the caller must hold the `nsfw.play` capability. `nsfw.play` is granted
+    // to no default role (only "*" holders pass) until an operator grants it
+    // via permission overrides — default-deny by design.
     context.registerApiRoute({
       method: "POST",
       path: "/api/nsfw-cards/start",
       handler: handleStart,
       description: "Start a seduction encounter",
+      requiresAuth: true,
+      permissions: ["nsfw.play",],
     });
 
     context.registerApiRoute({
@@ -33,6 +39,8 @@ export const plugin: PluginManifest = {
       path: "/api/nsfw-cards/play",
       handler: handlePlay,
       description: "Play a seduction card",
+      requiresAuth: true,
+      permissions: ["nsfw.play",],
     });
 
     // Register AI tool for chat-based seduction
