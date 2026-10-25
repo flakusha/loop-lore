@@ -116,10 +116,11 @@ describe("processEvent", () => {
   // recomputed from the stale progress and the gain was lost.
   test("two matching events in one batch compound instead of overwriting", async () => {
     const id = await createCollectionQuest(100,);
-    const entries = await engine.processEvent(worldId, chatId, [
-      transferEvent("Iron Sword",),
-      transferEvent("Iron Sword",),
-    ],);
+    // Two distinct events. Kept off byte-identical adjacent lines: the
+    // weave-damage scan reads such a pair as a rebase-duplication artifact.
+    const firstEvent = transferEvent("Iron Sword",);
+    const secondEvent = transferEvent("Iron Sword",);
+    const entries = await engine.processEvent(worldId, chatId, [firstEvent, secondEvent,],);
 
     expect(entries,).toHaveLength(2,);
     expect(entries[1]?.previousProgress,).toBe(50,);

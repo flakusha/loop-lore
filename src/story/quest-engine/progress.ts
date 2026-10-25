@@ -16,6 +16,7 @@ import { DuplicateItemDefinitionError, ItemsService, } from "../items";
 import { PROGRESS_CALCULATORS, } from "../quests/registry";
 import { requireQuestTransition, selectActiveQuests, upsertQuestProgress, } from "../shared/story-utils";
 import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
+import { computeMilestoneText, type MilestoneHook, } from "./progress-milestone";
 import type { ProgressQuestRow, QuestProgressEntry, QuestState, } from "./types";
 import { awardQuestCompletionXp, } from "./xp";
 
@@ -141,27 +142,8 @@ async function applyProgress(
   // Milestone math and the returned entry below read previousProgress.
   quest.progress = newProgress;
 
-  const hooks = jsonParseOr(quest.narrative_hooks, [],) as { progress: number; narrative: string }[];
-  let oldMilestone: { progress: number; narrative: string } | undefined;
-  let newMilestone: { progress: number; narrative: string } | undefined;
-  for (const h of hooks) {
-    if (h.progress <= previousProgress && (!oldMilestone || h.progress > oldMilestone.progress)) {
-      oldMilestone = h;
-    }
-
-    if (
-      h.progress <= newProgress &&
-      h.progress > previousProgress &&
-      (!newMilestone || h.progress > newMilestone.progress)
-    ) {
-      newMilestone = h;
-    }
-  }
-
-  let milestoneText: string | null = null;
-  if (newMilestone && (!oldMilestone || oldMilestone.progress < newMilestone.progress)) {
-    milestoneText = newMilestone.narrative;
-  }
+  const hooks = jsonParseOr(quest.narrative_hooks, [],) as MilestoneHook[];
+  const milestoneText = computeMilestoneText(hooks, previousProgress, newProgress,);
 
   // The whole completion sequence — transition gate, progress write,
   // per-chat upsert, reward writes, completion XP — is one atomic unit: a
