@@ -1388,6 +1388,15 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmApplyEntity": "Применить ожидающие изменения к «{name}»?",
+    "confirmAddEntity": "Добавить новый {kind} «{name}»?",
+    "confirmCloneEntity": "Создать копию «{name}»?",
+    "entityApplied": "Изменения применены к {name}",
+    "failedApplyEntity": "Не удалось применить изменения к {name}",
+    "entityAdded": "{name} добавлен",
+    "failedAddEntity": "Не удалось добавить {name}",
+    "entityCloned": "Копия «{name}» создана",
+    "failedCloneEntity": "Не удалось создать копию {name}",
     "networkError": "Ошибка сети",
     "failed": "Ошибка",
     "chatDeleted": "Чат удалён",
@@ -1662,6 +1671,9 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "apply": "Изменить поля world/location/item (/apply <kind> <id> ключ=значение …)",
+    "add": "Добавить новую location или item в мир (/add <kind> <имя> [world-id])",
+    "clone": "Копировать существующую location или item (/clone <kind> <исходный-id>)",
     "help": "Показать доступные команды",
     "roll": "Бросить кости (например, /roll 2d6+3)",
     "summarize": "Суммировать недавние сообщения",

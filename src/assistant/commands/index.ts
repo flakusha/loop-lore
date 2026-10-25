@@ -16,6 +16,7 @@ import "./create";
 import "./debug";
 import "./detail";
 import "./dice";
+import "./entities";
 import "./gm-guidance";
 import "./harness-verbs";
 import "./heal";
