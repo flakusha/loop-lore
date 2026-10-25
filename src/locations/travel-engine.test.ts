@@ -153,3 +153,62 @@ describe("TravelTickEngine", () => {
     expect(summary.capped,).toBe(0,);
   });
 });
+
+// BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor: removeStop used
+// to delete by stop id only, so a route id from world A could delete world B's
+// stops (the route layer only checks the path world's owner).
+describe("TravelRouteService.removeStop scoping", () => {
+  beforeEach(async () => {
+    await resetTestDb(testDb.sqlite,);
+    await insertUsers(testDb.db, OWNER, "Tick Owner", { id: OWNER, },);
+  },);
+
+  test("refuses to delete another route's stop by bare id", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const worldA = await makeWorld();
+    const worldB = await makeWorld();
+    const routeA = await routes.createRoute({
+      worldId: worldA,
+      name: "A-line",
+      kind: "sea",
+      loop: false,
+      secondsPerUnit: 60,
+    },);
+
+    const routeB = await routes.createRoute({
+      worldId: worldB,
+      name: "B-line",
+      kind: "sea",
+      loop: false,
+      secondsPerUnit: 60,
+    },);
+
+    const stopBLoc = await makeStop(worldB, "foreign-stop",);
+    const foreignStopRow = await routes.addStop({ routeId: routeB, locationId: stopBLoc, stopOrder: 0, },);
+
+    await routes.removeStop(routeA, foreignStopRow,);
+
+    const row = testDb.sqlite.query(`SELECT id FROM travel_route_stops WHERE id = ?`,).get(foreignStopRow,);
+    expect(row,).toBeTruthy();
+  });
+
+  test("deletes a stop that belongs to the given route", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({
+      worldId,
+      name: "own-line",
+      kind: "sea",
+      loop: false,
+      secondsPerUnit: 60,
+    },);
+
+    const stopLoc = await makeStop(worldId, "own-stop",);
+    const stopRow = await routes.addStop({ routeId, locationId: stopLoc, stopOrder: 0, },);
+
+    await routes.removeStop(routeId, stopRow,);
+
+    const row = testDb.sqlite.query(`SELECT id FROM travel_route_stops WHERE id = ?`,).get(stopRow,);
+    expect(row,).toBeNull();
+  });
+});
