@@ -576,6 +576,113 @@ describeOrSkip("dispatchCommandAction link-asset", () => {
   });
 },);
 
+describeOrSkip("dispatchCommandAction loc-update", () => {
+  const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+  afterEach(() => {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
+  },);
+
+  function confirmWith(value: boolean, captured?: { message?: string },) {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = (message,) => {
+      if (captured) { captured.message = message; }
+      return value;
+    };
+  }
+
+  test("confirmed loc-update PUTs the patch to /api/v1/worlds/:wid/locations/:lid and toasts success", async () => {
+    confirmWith(true,);
+    mockFetch(200, { ok: true, },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "loc-update",
+      { locId: "loc-1", worldId: "w1", name: "Ash Gate", updates: { name: "Iron Gate", coordX: 3, }, },
+      "chat-1",
+    );
+
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/w1/locations/loc-1",);
+    expect(fetchCalls[0]?.opts.method,).toBe("PUT",);
+    const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
+    expect(body,).toEqual({ name: "Iron Gate", coordX: 3, },);
+    expect(ctx.toasts,).toEqual([{ type: "success", message: "Location updated", },],);
+  });
+
+  test("confirm dialog shows the location name, not the raw id", async () => {
+    const captured: { message?: string } = {};
+    confirmWith(true, captured,);
+    mockFetch(200,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "loc-update",
+      { locId: "loc-1", worldId: "w1", name: "Ash Gate", updates: { name: "Iron Gate", }, },
+      "chat-1",
+    );
+
+    expect(captured.message,).toContain("Ash Gate",);
+    expect(captured.message,).not.toContain("loc-1",);
+  });
+
+  test("confirm dialog falls back to the locId when the name is empty", async () => {
+    const captured: { message?: string } = {};
+    confirmWith(true, captured,);
+    mockFetch(200,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "loc-update",
+      { locId: "loc-1", worldId: "w1", name: "", updates: { name: "Iron Gate", }, },
+      "chat-1",
+    );
+
+    expect(captured.message,).toContain("loc-1",);
+  });
+
+  test("dismissed confirm sends nothing", async () => {
+    confirmWith(false,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "loc-update",
+      { locId: "loc-1", worldId: "w1", name: "Ash Gate", updates: { name: "Iron Gate", }, },
+      "chat-1",
+    );
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("missing payload fields send nothing", async () => {
+    confirmWith(true,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "loc-update", { locId: "loc-1", }, "chat-1",);
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "loc-update",
+      { locId: "loc-1", worldId: "w1", },
+      "chat-1",
+    );
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("failed PUT toasts error", async () => {
+    confirmWith(true,);
+    mockFetch(403, { error: "forbidden", },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "loc-update",
+      { locId: "loc-1", worldId: "w1", name: "Ash Gate", updates: { name: "Iron Gate", }, },
+      "chat-1",
+    );
+
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to update location", },],);
+  });
+},);
+
 describeOrSkip("dispatchCommandAction impersonate", () => {
   test("impersonate-toggle off PUTs null and clears flags", async () => {
     mockFetch(200, {},);
