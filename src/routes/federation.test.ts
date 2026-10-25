@@ -17,6 +17,7 @@ import { PeerWorkloadClass, } from "../db/enums";
 import { pskCipher, } from "../federation/cipher";
 import { upsertPeer, } from "../federation/coordinator";
 import { sealContent, } from "../federation/envelope";
+import { meshReserveProof, } from "../federation/mesh-proof";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { federationRoutes, } from "./federation";
 
@@ -286,15 +287,52 @@ describe("federationRoutes — mesh-deliver", () => {
   ): Promise<string> {
     const db = await dbFor();
     await upsertPeer(db, { origin, state: "trusted", },);
-    const res = await postReserve(PSK_CONFIG, {
+    const body = {
       senderOrigin: origin,
       contentHash: `hash-${origin}-${sizeBytes}`,
       sizeBytes,
+    };
+
+    const res = await postReserve(PSK_CONFIG, {
+      ...body,
+      proof: await meshReserveProof("route-test-psk", body,),
     },);
 
     expect(res.status,).toBe(200,);
     return (await res.json() as { reservationId: string }).reservationId;
   }
+
+  test("reserve without a PSK proof is rejected (no key issuance to unauthenticated callers)", async () => {
+    // Before BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat
+    // was fixed this returned 200 and handed out the peer's inbound key.
+    const db = await dbFor();
+    await upsertPeer(db, { origin: "https://a.example", state: "trusted", },);
+    const res = await postReserve(PSK_CONFIG, {
+      senderOrigin: "https://a.example",
+      contentHash: "hash-unsigned",
+      sizeBytes: 20,
+    },);
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("reserve with a wrong PSK proof is rejected", async () => {
+    const db = await dbFor();
+    await upsertPeer(db, { origin: "https://a.example", state: "trusted", },);
+    const res = await postReserve(PSK_CONFIG, {
+      senderOrigin: "https://a.example",
+      contentHash: "hash-badproof",
+      sizeBytes: 20,
+      proof: "0".repeat(64,),
+    },);
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("reserve with a valid PSK proof grants capacity", async () => {
+    const reservationId = await reserveFor("https://a.example", 20,);
+    expect(typeof reservationId,).toBe("string",);
+  });
 
   test("valid envelope stores and verifies (A→B integrity)", async () => {
     // Deliver is now gated on a trusted peer that holds a reservation
@@ -370,10 +408,22 @@ describe("federationRoutes — mesh-deliver", () => {
     expect(row,).toBeUndefined();
   });
 
+  /** @param body Signed reserve body for `PSK_CONFIG` (route-test-psk). */
+  async function postSignedReserve(body: {
+    senderOrigin: string;
+    contentHash: string;
+    sizeBytes: number;
+  },): Promise<Response> {
+    return postReserve(PSK_CONFIG, {
+      ...body,
+      proof: await meshReserveProof("route-test-psk", body,),
+    },);
+  }
+
   test("reserve → deliver confirms the reservation", async () => {
     const db = await dbFor();
     await upsertPeer(db, { origin: "https://route-peer.example", state: "trusted", },);
-    const reserve = await postReserve(PSK_CONFIG, {
+    const reserve = await postSignedReserve({
       senderOrigin: "https://route-peer.example",
       contentHash: "route-hash-1",
       sizeBytes: 18,
@@ -409,21 +459,23 @@ describe("federationRoutes — mesh-deliver", () => {
       capacityBytes: 5,
     },);
 
+    // An unsigned reserve answers 401 before trust is even consulted —
+    // trust state must not leak to unauthenticated callers.
     const stranger = await postReserve(PSK_CONFIG, {
       senderOrigin: "https://stranger.example",
       contentHash: "x",
       sizeBytes: 1,
     },);
 
-    expect(stranger.status,).toBe(403,);
-    const first = await postReserve(PSK_CONFIG, {
+    expect(stranger.status,).toBe(401,);
+    const first = await postSignedReserve({
       senderOrigin: "https://small-peer.example",
       contentHash: "y",
       sizeBytes: 3,
     },);
 
     expect(first.status,).toBe(200,);
-    const second = await postReserve(PSK_CONFIG, {
+    const second = await postSignedReserve({
       senderOrigin: "https://small-peer.example",
       contentHash: "z",
       sizeBytes: 3,
@@ -444,7 +496,7 @@ describe("federationRoutes — mesh-deliver", () => {
 
     const db = await dbFor();
     await upsertPeer(db, { origin: "https://plain-peer.example", state: "trusted", },);
-    const res = await postReserve(PSK_CONFIG, {
+    const res = await postSignedReserve({
       senderOrigin: "https://plain-peer.example",
       contentHash: "plain-hash",
       sizeBytes: 4,
@@ -471,10 +523,15 @@ describe("federationRoutes — mesh-deliver", () => {
       server: { ...PSK_CONFIG.server, trustProxy: true, },
     };
 
-    const res = await postReserve(proxied, {
+    const proxiedBody = {
       senderOrigin: "https://proxy-peer.example",
       contentHash: "proxy-hash",
       sizeBytes: 4,
+    };
+
+    const res = await postReserve(proxied, {
+      ...proxiedBody,
+      proof: await meshReserveProof("route-test-psk", proxiedBody,),
     },);
 
     expect(res.status,).toBe(200,);

@@ -19,6 +19,7 @@ import {
 } from "../federation/delivery";
 import { createMeshEncryption, } from "../federation/encryption";
 import { type ContentEnvelope, } from "../federation/envelope";
+import { verifyMeshReserveProof, } from "../federation/mesh-proof";
 import { canonicalOrigin, } from "../federation/peer-fetch";
 import { getOrCreateInboundKey, } from "../federation/peer-keys";
 import {
@@ -96,6 +97,7 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
         sizeBytes?: unknown;
         contentType?: unknown;
         ttlMs?: unknown;
+        proof?: unknown;
       } | null;
 
       if (
@@ -107,6 +109,26 @@ export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
           message: "invalid reservation request",
           status: HttpStatus.BadRequest,
           code: ErrorCode.BadRequest,
+        },);
+      }
+
+      // PSK proof-of-possession before anything else: the PSK used to gate
+      // only whether the endpoint was on, so any reachable client could
+      // name a trusted origin and collect its inbound content key.
+      // (BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat)
+      const proofOk = await verifyMeshReserveProof(secret, {
+        senderOrigin: request.senderOrigin,
+        contentHash: request.contentHash,
+        sizeBytes: request.sizeBytes,
+        contentType: typeof request.contentType === "string" ? request.contentType : undefined,
+        ttlMs: typeof request.ttlMs === "number" ? request.ttlMs : undefined,
+      }, request.proof,);
+
+      if (!proofOk) {
+        return jsonError({
+          message: "missing or invalid mesh proof",
+          status: HttpStatus.Unauthorized,
+          code: ErrorCode.Unauthorized,
         },);
       }
 
