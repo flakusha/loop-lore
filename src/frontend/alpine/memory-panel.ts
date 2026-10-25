@@ -11,7 +11,7 @@
 import { memoryPanelActions, } from "./memory-panel-actions";
 import { memoryPanelCore, } from "./memory-panel-core";
 import { memoryPanelAudit, } from "./memory-panel/audit";
-import { injectAuditKinds, } from "./memory-panel/transform";
+import { formatMemoryDate as formatMemoryDateIso, injectAuditKinds, } from "./memory-panel/transform";
 import type { AuditEntry, ChatState, } from "./types";
 
 export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
@@ -44,6 +44,16 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
 
   getInjectAuditKinds(entry: AuditEntry,): string[] {
     return injectAuditKinds(entry, this.memoryPanel,);
+  },
+
+  /**
+   * Format a memory row timestamp for display (BUG-formatmemorydate:
+   * the template calls this, so it must exist on the component itself).
+   * @param value - ISO timestamp from a memory row
+   * @returns Locale-formatted date, or "" for invalid input
+   */
+  formatMemoryDate(value: string,): string {
+    return formatMemoryDateIso(value,);
   },
 
   // ── Audit tab (FEAT-075) ──────────────────────────────────────────
