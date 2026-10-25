@@ -41,6 +41,14 @@ export interface PointerEventSource {
   removeEventListener(type: "pointerdown", listener: (event: Event,) => void, options?: AddEventListenerOptions,): void;
 }
 
+/** Handle for one running input-mode tracker. */
+export interface InputModeTracker {
+  /** Current snapshot (defensive copy). */
+  current(): InputModeSnapshot;
+  /** Detach listeners and clear the touch-user/mouse-user classes. */
+  stop(): void;
+}
+
 /** */
 export interface InputModeTrackerOptions {
   /** Receives the touch-user/mouse-user classes; default document.body when present. */
@@ -98,7 +106,7 @@ function resolveDefaultEvents(): PointerEventSource | undefined {
  * Create an input-mode tracker. Pure factory — no module state; call
  * stop() to detach every listener and clear the tracked classes.
  */
-export function createInputModeTracker(options: InputModeTrackerOptions = {},) {
+export function createInputModeTracker(options: InputModeTrackerOptions = {},): InputModeTracker {
   const target = options.target ?? resolveDefaultTarget();
   const events = options.events ?? resolveDefaultEvents();
   const snapshot: InputModeSnapshot = {
@@ -148,4 +156,30 @@ export function createInputModeTracker(options: InputModeTrackerOptions = {},) {
       target?.classList.remove("touch-user", "mouse-user",);
     },
   };
+}
+
+/**
+ * Session-lifetime tracker singleton.
+ *
+ * Started once from the root Alpine component (alpine/app.ts init()):
+ * `<body x-data="app()">` re-runs init() across htmx body swaps, so the
+ * module-level handle guards against double listeners / stale classes.
+ * Session-scoped on purpose — the body classes live for the whole page
+ * load; stop() exists for tests and any future destroy path.
+ */
+let activeTracker: InputModeTracker | undefined;
+
+/**
+ * Start the app-global input-mode tracker if not already running.
+ * Idempotent: repeated calls (htmx swaps re-running app() init) are no-ops.
+ */
+export function startInputModeTracking(): void {
+  if (activeTracker) { return; }
+  activeTracker = createInputModeTracker();
+}
+
+/** Stop the singleton tracker and detach its listeners; no-op if not running. */
+export function stopInputModeTracking(): void {
+  activeTracker?.stop();
+  activeTracker = undefined;
 }
