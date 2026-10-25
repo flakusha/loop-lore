@@ -23460,6 +23460,19 @@
     "title": "# TASK-071: Info Bubbles (help tooltips in config menus)",
     "type": "TASK"
   },
+  "TASK-181-PRE-EXISTING-OPTIONS-OBJECT-PARAMS-ESLINT-WARNINGS-ACROS": {
+    "hash": "d5c2c1b",
+    "git_issue": "d5c2c1b",
+    "extid": "TASK-181-PRE-EXISTING-OPTIONS-OBJECT-PARAMS-ESLINT-WARNINGS-ACROS",
+    "type": "TASK",
+    "title": "181 pre-existing options-object-params eslint warnings across ~95 files",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md",
+    "status": "Not Started"
+  },
   "TASK-2026-002": {
     "epic": "(none — hygiene/self-contained)",
     "extid": "TASK-2026-002",
@@ -40505,7 +40518,7 @@
     "epic": "epic-guest-access",
     "tags": [],
     "source": ".plan/tickets/TASK-guest-public-functionality-surface-feed-templates-docs.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-GUEST-RATE-LIMITING-AUDIT-LOGGING-FOR-GUEST-READS": {
     "hash": "1d01122",
@@ -40531,7 +40544,7 @@
     "epic": "epic-guest-access",
     "tags": [],
     "source": ".plan/tickets/TASK-guest-world-public-browse-read-only-public-worlds.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-GUIDED-REGEN-ACTION-MENU-ON-ASSISTANT-MESSAGES": {
     "epic": "epic-output-control-transforms",
