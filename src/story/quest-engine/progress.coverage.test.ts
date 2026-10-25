@@ -26,6 +26,7 @@ import type { WorldStateService, } from "../world-state";
 import { QuestEngine, } from "./index";
 
 let db: Kysely<DB>;
+let sqlite: import("bun:sqlite").Database;
 let engine: QuestEngine;
 let worldId: string;
 let userId: string;
@@ -55,7 +56,7 @@ beforeAll(() => {
 },);
 
 beforeEach(async () => {
-  ({ db, } = await createTestDb());
+  ({ db, sqlite, } = await createTestDb());
   engine = new QuestEngine(db,);
   userId = uid();
   await insertUsers(db, `user-${userId}`, "Owner", { id: userId, } as never,);
@@ -145,6 +146,32 @@ describe("processEvent", () => {
     await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],);
     expect(await questStatus(id,),).toBe(QuestStatus.Completed,);
     expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),).toEqual([],);
+  });
+
+  test("completion sequence is atomic — failed upsert rolls the completion back (BUG-quest-engine-double-advances-from-stale-in-memory-progress-a residual)", async () => {
+    const id = await createCollectionQuest(50,);
+
+    // Fail the SECOND write of the completion sequence (quest_progress upsert).
+    sqlite.exec(
+      `CREATE TRIGGER fail_quest_progress_upsert BEFORE INSERT ON quest_progress
+       BEGIN SELECT RAISE(ABORT, 'simulated upsert failure'); END;`,
+    );
+
+    try {
+      await expect(
+        engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),
+      ).rejects.toThrow();
+
+      // The quests completion write must roll back with the failed upsert —
+      // no terminal Completed-without-progress-rows state.
+      const row = await db.selectFrom("quests",).select(["status", "progress",],)
+        .where("id", "=", id,).executeTakeFirstOrThrow();
+
+      expect(row.status,).toBe(QuestStatus.Active,);
+      expect(row.progress,).toBe(0,);
+    } finally {
+      sqlite.exec("DROP TRIGGER fail_quest_progress_upsert;",);
+    }
   });
 
   test("damaged data — malformed config JSON is skipped, not fatal", async () => {
