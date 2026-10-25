@@ -42,7 +42,7 @@ Positive contrast to keep: src/rpg/achievements/service/progress.ts:147-204 clai
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): the sweep made the playthrough-completion and encounter-phase legs transactional (conditional status predicates, zero-rows lost-race throws) and reused the ambient transaction for the XP award — see the Resolved-progress entry above. The ticket stays In Progress until the remaining legs land.
 
 **Acceptance Criteria:**
 

@@ -4,6 +4,7 @@
 # BUG: Plugin route registry lacks ownership enforcement (IDOR)
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — see Fix 2026-10-25 below — `ownershipDenial` (src/plugins/route-access.ts) + cross-user regression tests (src/plugins/route-access.test.ts), gates green, issue BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR.
 **Priority:** critical
 **Epic:** epic-security-sandboxing
 **Effort:** Medium
@@ -64,7 +65,7 @@ Status left `Not Started`. No code changed by this assessment.
 
 **Context:**
 
-Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): see Fix 2026-10-25 below — `ownershipDenial` (src/plugins/route-access.ts) + cross-user regression tests (src/plugins/route-access.test.ts), gates green, issue BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR.
 
 **Acceptance Criteria:**
 
