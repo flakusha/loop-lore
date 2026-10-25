@@ -16,6 +16,7 @@ import { ItemCategory, UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
+  insertActors,
   insertItems,
   insertLocations,
   insertUsers,
@@ -66,7 +67,7 @@ describe("entity mutation commands", () => {
   },);
 
   beforeEach(async () => {
-    for (const table of ["items", "locations", "worlds", "users",] as const) {
+    for (const table of ["items", "locations", "actors", "worlds", "users",] as const) {
       await db.deleteFrom(table,).execute();
     }
 
@@ -175,10 +176,60 @@ describe("entity mutation commands", () => {
   });
 
   test("rejects a kind outside the v1 scope", async () => {
-    const result = await apply(["character", "c1", "name=X",], ctx(),);
-    expect(result.systemMessage,).toContain('Unknown entity kind "character"',);
-    expect(result.systemMessage,).toContain("world, location, item",);
+    const result = await apply(["dragon", "c1", "name=X",], ctx(),);
+    expect(result.systemMessage,).toContain('Unknown entity kind "dragon"',);
+    expect(result.systemMessage,).toContain("world, location, item, character",);
     expect(result.action,).toBeUndefined();
+  });
+
+  test("previews a character patch behind the actor ownership guard", async () => {
+    const actorId = await insertActors(db, "Rin", {
+      owner_id: ownerId,
+      user_id: ownerId,
+      row_version: 3,
+      description: "A ranger",
+      personality: "wry",
+      appearance: "tall",
+    },);
+
+    const result = await apply(["character", actorId, "personality=secretive",], ctx(),);
+
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("apply-entity",);
+    const payload = result.actionPayload ?? {};
+    expect(payload.kind,).toBe("character",);
+    expect(payload.entityId,).toBe(actorId,);
+    expect(payload.updates,).toEqual({ personality: "secretive", },);
+    // The actor PUT route requires the optimistic-locking version.
+    expect(payload.contentVersion,).toBe(3,);
+    expect(result.systemMessage,).toContain("Rin",);
+
+    // Preview-only: the row is untouched until the confirmed frontend handler
+    // calls the actor route.
+    const row = await db.selectFrom("actors",).select("personality",).where("id", "=", actorId,)
+      .executeTakeFirstOrThrow();
+
+    expect(row.personality,).toBe("wry",);
+  });
+
+  test("refuses a character patch the caller does not own, worded like a missing one", async () => {
+    const foreign = await insertActors(db, "Rook", {
+      owner_id: otherId,
+      user_id: otherId,
+      description: "A smuggler",
+      personality: "sly",
+      appearance: "lean",
+    },);
+
+    const missing = `actor-${crypto.randomUUID()}`;
+
+    const denied = await apply(["character", foreign, "personality=secretive",], ctx(),);
+    const absent = await apply(["character", missing, "personality=secretive",], ctx(),);
+
+    // Same wording apart from the id — no existence oracle.
+    expect(denied.systemMessage?.replace(foreign, "<id>",),).toBe(absent.systemMessage?.replace(missing, "<id>",),);
+    expect(denied.systemMessage,).toContain("not found or not owned by you",);
+    expect(denied.action,).toBeUndefined();
   });
 
   test("previews a world patch without persisting it", async () => {
