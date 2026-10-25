@@ -4,6 +4,7 @@
 # BUG: World location reparent has no cycle/self/descendant checks - wedges DB
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — reparentLocation (src/routes/worlds/locations-reparent.ts:20, called from src/routes/worlds/locations.ts:222-224) guards all four cases BEFORE the UPDATE: not-found 404, foreign location, self-parent 400 ("location cannot be its own parent"), cross-world 404, descendant-cycle 400 ("move would create a cycle"); pinned in locations-reparent.test.ts:88-136.
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-world-locations
@@ -14,7 +15,7 @@ CRITICAL. PUT /worlds/:worldId/locations/:locId reparent (src/routes/worlds/loca
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): reparentLocation (src/routes/worlds/locations-reparent.ts:20, called from src/routes/worlds/locations.ts:222-224) guards all four cases BEFORE the UPDATE: not-found 404, foreign location, self-parent 400 ("location cannot be its own parent"), cross-world 404, descendant-cycle 400 ("move would create a cycle"); pinned in locations-reparent.test.ts:88-136.
 
 **Acceptance Criteria:**
 
