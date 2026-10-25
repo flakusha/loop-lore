@@ -2623,6 +2623,12 @@
       "source": ".plan/tickets/FEAT-creative-process-commit-gating.md"
     }
   ],
+  "src/assistant/commands/create-entity-lore.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
+    }
+  ],
   "src/assistant/commands/create-entity-lore.ts": [
     {
       "kind": "epic",
@@ -2791,6 +2797,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-gm-flows.md"
+    }
+  ],
+  "src/assistant/commands/generation-stubs.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     }
   ],
   "src/assistant/commands/gm-guidance.ts": [
@@ -3001,6 +3013,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     }
   ],
   "src/assistant/commands/narrate.ts": [
@@ -3275,6 +3291,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     }
   ],
   "src/assistant/commands/workflow-dispatch.test.ts": [
@@ -4486,6 +4506,10 @@
     }
   ],
   "src/assistant/prompt/sections/nsfw-context.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
@@ -12957,6 +12981,12 @@
       "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
     }
   ],
+  "src/config/hot-apply.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    }
+  ],
   "src/config/hot-apply.ts": [
     {
       "kind": "ticket",
@@ -13459,6 +13489,12 @@
       "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md"
     }
   ],
+  "src/config/schema-class/json-schema/seeding.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
+    }
+  ],
   "src/config/schema-class/json-schema/server.ts": [
     {
       "kind": "ticket",
@@ -13902,6 +13938,10 @@
     }
   ],
   "src/config/schema/testing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
@@ -19319,6 +19359,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -35576,6 +35624,10 @@
   "src/middleware/nsfw-gate/request-context.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char.md"
     }
   ],
@@ -36170,6 +36222,10 @@
   "src/nsfw/moderation-service/appeals.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
     },
     {
@@ -36376,6 +36432,10 @@
     }
   ],
   "src/nsfw/runtime-config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
@@ -39301,6 +39361,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     }
   ],
   "src/routes/admin-nsfw.ts": [
@@ -51583,6 +51647,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
+    }
+  ],
+  "src/seeding/users.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
     }
   ],
   "src/seeding/users.ts": [

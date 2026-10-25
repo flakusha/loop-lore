@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3652
 - epics: 347
-- src paths owned: 4416
-- edges: produces 11549, consumes 403, sibling 34783, owns 2649, related 1191
+- src paths owned: 4421
+- edges: produces 11564, consumes 403, sibling 34814, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -125,6 +125,7 @@ output is byte-identical for identical inputs.
 | `src/assistant/commands/interaction.ts` | `FEAT-skill-usage-xp-award-skill-and-character-xp-when-skills-are-`, `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre`, `epic-faction-reputation`, `epic-math-ai-bridge` |
 | `src/assistant/commands/items.ts` | `TASK-assistant-entity-access-character-item-inventory`, `epic-assistant-entity-access` |
 | `src/assistant/commands/locations.ts` | `TASK-assistant-entity-access-world-location-access`, `epic-assistant-entity-access` |
+| `src/assistant/commands/music.ts` | `BUG-advertised-sfx-music-video-commands-are-stubs`, `epic-assistant-generation-extensions` |
 | `src/assistant/commands/quest.ts` | `EPIC-2026-23`, `epic-assistant-generation-extensions` |
 | `src/assistant/commands/rag.test.ts` | `TASK-assistant-entity-access-tests`, `epic-assistant-entity-access` |
 | `src/assistant/commands/rag.ts` | `TASK-assistant-entity-access-batch-rag-asset`, `TASK-assistant-entity-access-rag-access`, `epic-assistant-entity-access` |
@@ -136,6 +137,7 @@ output is byte-identical for identical inputs.
 | `src/assistant/commands/stats.ts` | `TASK-assistant-commands-extension`, `TASK-fast-action-utility-catalog` |
 | `src/assistant/commands/summarize.ts` | `TASK-route-plugin-calls-through-the-shared-provider-path`, `TASK-summarize-format-tldr-bullets-detailed-gradation`, `epic-assistant-generation-extensions` |
 | `src/assistant/commands/translate.ts` | `BUG-assistant-improve-translate-rewrite-never-call-llm`, `EPIC-2026-23`, `TASK-intellect-growth-interactions`, `TASK-per-chat-auto-translation-layer`, `TASK-route-plugin-calls-through-the-shared-provider-path`, `TASK-unit-translation-service`, `epic-output-control-transforms`, `epic-publication-i18n` |
+| `src/assistant/commands/video.ts` | `BUG-advertised-sfx-music-video-commands-are-stubs`, `epic-assistant-generation-extensions` |
 | `src/assistant/commands/workflow.ts` | `BUG-workflow-confirm-session-treats-optional-steps-as-required`, `TASK-author-suggestion-resolution-surface`, `TASK-book-outline-generation-workflow`, `TASK-book-unit-editor-review-surface`, `TASK-comparison-workflow-template-and-command`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui`, `epic-entity-generation-workflows`, `epic-narrative-publishing-workflows` |
 | `src/assistant/emotion-detector.ts` | `TASK-character-multi-avatar`, `TASK-emotion-intent-detection` |
 | `src/assistant/entity-spec/handoff.ts` | `BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just`, `TASK-assistant-gm-handoff` |
@@ -177,7 +179,7 @@ output is byte-identical for identical inputs.
 | `src/assistant/prompt/sections/lore.test.ts` | `TASK-world-lore-lifecycle-confidence-decay-distortion`, `epic-character-npc-lore-access` |
 | `src/assistant/prompt/sections/lore.ts` | `BUG-assistant-and-group-chat-correctness-defects`, `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-`, `FEAT-055`, `FEAT-066`, `FEAT-creative-process-commit-gating`, `FEAT-lore-structured-generation-via-assistant`, `FEAT-origin-capture-generation-seeding`, `FEAT-race-origin-lore-identity-memory-config`, `FEAT-race-origin-lore-identity-model`, `FEAT-seed-default-characters-identity`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-assistant-secret-lore-access-guard`, `TASK-lore-persona-traits-placed-as-system-messages-semantic-injec`, `TASK-world-lore-lifecycle-confidence-decay-distortion`, `epic-character-npc-lore-access`, `epic-lore-knowledge`, `epic-timeline-system` |
 | `src/assistant/prompt/sections/memories.ts` | `BUG-ollama-outage-hard-fails-all-generations`, `BUG-sectionbuilder-interface-missing-included-memory-ids-field`, `FEAT-075`, `FEAT-race-origin-lore-identity-memory-config`, `TASK-fts5-cross-session-recall-and-summarization-for-rag-unified-`, `TASK-memory-provision-wiring`, `TASK-memory-trust-modifier-wiring`, `TASK-related-memory-event-injection-hooks`, `TASK-timeline-memory-injection`, `epic-crafting-professions` |
-| `src/assistant/prompt/sections/nsfw-context.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un` |
+| `src/assistant/prompt/sections/nsfw-context.ts` | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un` |
 | `src/assistant/prompt/sections/nsfw-policy.ts` | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-nsfw-runtime-config-singleton-leaks-across-tests`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-prompt-template-registry`, `epic-config-templates` |
 | `src/assistant/prompt/sections/system.ts` | `BUG-account-tier-custom-instructions-render-as-system-message-wi`, `TASK-character-world-prompt-overrides-injected-verbatim-as-system`, `TASK-two-tier-custom-instructions`, `epic-chat-context-optimization` |
 | `src/assistant/prompt/sections/user-persona.ts` | `epic-context-injection-correctness`, `epic-impersonation` |
@@ -492,7 +494,7 @@ output is byte-identical for identical inputs.
 | `src/config/schema/sd-provider.ts` | `TASK-appearance-edit-vs-generation-strategy-selector`, `TASK-comparison-fan-out-engine`, `TASK-identity-lock-seed-negative-prompt-and-anchor`, `TASK-sam3-direct-provider-via-meta-model-api`, `TASK-sd-cpp-provider`, `TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste`, `epic-byok-api-keys`, `epic-comfyui-first-class-citizen`, `epic-reference-conditioned-generation`, `epic-sam3-segmentation-integration`, `epic-technical-comparison-charts` |
 | `src/config/schema/sections/server.ts` | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr` |
 | `src/config/schema/seeding.ts` | `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir`, `TASK-lorebook-template-seeding`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-reconcile-ts-import-extensions-user-seeding-session`, `TASK-world-template-full-model-coverage` |
-| `src/config/schema/testing.ts` | `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server`, `TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene` |
+| `src/config/schema/testing.ts` | `BUG-advertised-sfx-music-video-commands-are-stubs`, `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr`, `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server`, `TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene` |
 | `src/config/schema/tui.ts` | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-tui-enabled-config-flag-never-read`, `epic-terminal-ui` |
 | `src/config/sections/age-gate.ts` | `BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k`, `epic-frontend-age-gate` |
 | `src/config/sections/auth.ts` | `BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive`, `BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `TASK-adopt-bun-csrf-for-csrf-protection`, `TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` |
@@ -640,7 +642,7 @@ output is byte-identical for identical inputs.
 | `src/db/reinit.ts` | `BUG-db-reinit-archive-destroys-previous-db-on-rename-failure`, `BUG-db-reinit-archive-directory-has-no-rotation-pii-accumulates-`, `TASK-db-reinit-archives-previous-database-instead-of-deleting`, `epic-configs-path-resolution`, `epic-db-migration-compaction`, `epic-review-dev-2026-08-26-security-data-integrity-merges` |
 | `src/db/revalidate.ts` | `TASK-middleware-distributed-healing-revalidation-backups`, `epic-content-hashing-distributed-integrity` |
 | `src/db/schema` | `BUG-chat-message-create-swipe-race`, `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return`, `TASK-faction-standing-schema`, `TASK-federation-peer-registry-workload-columns`, `epic-enemies-monsters` |
-| `src/db/schema-` | `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-emotions-avatar-edit-model`, `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so`, `TASK-harness-db-tables`, `TASK-message-seen-state-schema`, `TASK-middleware-fe-be-db-record-content-hashing`, `TASK-publication-artifact-schema`, `TASK-recursive-self-improvement-watchdog-events-table-and-telemet`, `TASK-schema-migration`, `epic-architecture`, `epic-character-growth`, `epic-data-integrity-acid`, `epic-editorial-workflow`, `epic-narrative-publishing-workflows`, `epic-publication-i18n`, `epic-runtime-integrity-fail-safes`, `epic-schema` |
+| `src/db/schema-` | `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me`, `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-`, `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-emotions-avatar-edit-model`, `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so`, `TASK-harness-db-tables`, `TASK-message-seen-state-schema`, `TASK-middleware-fe-be-db-record-content-hashing`, `TASK-publication-artifact-schema`, `TASK-recursive-self-improvement-watchdog-events-table-and-telemet`, `TASK-schema-migration`, `epic-architecture`, `epic-character-growth`, `epic-data-integrity-acid`, `epic-editorial-workflow`, `epic-narrative-publishing-workflows`, `epic-publication-i18n`, `epic-runtime-integrity-fail-safes`, `epic-schema` |
 | `src/db/schema-api-keys.ts` | `FEAT-byok-api-keys`, `epic-byok-api-keys` |
 | `src/db/schema-battle.ts` | `epic-battle-action-systems`, `epic-battle-integration-gaps` |
 | `src/db/schema-blog.ts` | `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem`, `FEAT-activitypub-federation`, `IDEA-cross-instance-conversation-threading-mention-inreplyto`, `TASK-assistant-scenario-source`, `TASK-blog-publish-unit-to-post-bridge`, `TASK-blog-rss-atom-sitemap`, `TASK-blog-unit-scheduled-serialization`, `TASK-review-thread-comment-model`, `epic-blog-system`, `epic-editorial-workflow` |
@@ -1167,6 +1169,7 @@ output is byte-identical for identical inputs.
 | `src/middleware/nsfw-gate/constants.ts` | `BUG-untrusted-new-date-parse-without-invalid-date-guard`, `epic-review-dev-2026-08-26-security-data-integrity-merges` |
 | `src/middleware/nsfw-gate/index.ts` | `TASK-add-a-coverage-assertion-for-the-opt-in-nsfw-gate-on-by-id-r`, `epic-frontend-age-gate` |
 | `src/middleware/nsfw-gate/logging.ts` | `BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud`, `BUG-nsfw-gate-log-plaintext-pii`, `TASK-chat-feature-moderation`, `epic-chat-product-features` |
+| `src/middleware/nsfw-gate/request-context.ts` | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` |
 | `src/middleware/permissions.ts` | `BUG-permissions-middleware-auditentry-reaches-console-warn-in-pr`, `TASK-chat-feature-moderation`, `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser`, `TASK-middleware-global-idempotency-replay-for-re-fired-requests`, `epic-architecture`, `epic-chat-product-features`, `epic-logging`, `epic-security-sandboxing-quickref` |
 | `src/middleware/rate-limit.test.ts` | `BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta`, `BUG-register-rate-limiter-consumes-on-username-collision-retries`, `TASK-federation-performance-quota-enforcement` |
 | `src/middleware/rate-limit.ts` | `BUG-429-responses-omit-retry-after-and-x-ratelimit-headers`, `BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl`, `BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou`, `BUG-nsfw-export-bundle-no-access-log`, `BUG-pruneexpired-boundary-comment-states-opposite-of-implementat`, `BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta`, `BUG-refund-contract-invites-over-admission-in-peek-record-flows-`, `BUG-register-rate-limiter-consumes-on-username-collision-retries`, `BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif`, `TASK-federation-performance-quota-enforcement`, `TASK-guest-rate-limiting-audit-logging-for-guest-reads`, `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser`, `TASK-middleware-in-progress-status-endpoint-for-long-running-requ`, `TASK-middleware-request-id-elysia-derive`, `TASK-rate-limit-coverage-expansion`, `TASK-recursive-self-improvement-agent-api-router-and-token-scope-`, `TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree`, `TASK-recursive-self-improvement-health-liveness-readiness-probes`, `TASK-recursive-self-improvement-sidecar-python-provider-for-custo`, `TASK-register-username-race-and-rate-limiter-multi-instance-gap`, `epic-api-rate-limiting`, `epic-architecture`, `epic-db-cold-storage-high-perf`, `epic-federation-offload-quotas`, `epic-local-process-swarm`, `epic-recursive-self-improvement` |
@@ -1186,7 +1189,7 @@ output is byte-identical for identical inputs.
 | `src/nsfw/capability-gate.ts` | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-033`, `TASK-034`, `TASK-037`, `TASK-c4-inbound-federated-content-verdict-notices`, `TASK-correct-task-037-s-overstated-resolution-no-contentwarning-t`, `TASK-licensing-publish-authorization-predicate`, `TASK-licensing-publish-enforcement-point`, `TASK-rpg-nsfw-services-add-config-level-opt-in-gate` |
 | `src/nsfw/moderation-service.ts` | `TASK-admin-content-review-queue`, `TASK-moderation-privacy-first-foundation`, `TASK-prompt-template-registry`, `epic-chat-lifecycle-moderation`, `epic-config-templates` |
 | `src/nsfw/moderation-service/appeals-reversal.ts` | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-`, `BUG-nsfw-appeal-approvedby-taken-from-request-body`, `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` |
-| `src/nsfw/moderation-service/appeals.test.ts` | `BUG-nsfw-appeal-approvedby-taken-from-request-body`, `BUG-nsfw-appeals-as-any-and-dead-route`, `BUG-nsfw-reviewappeal-auto-reverses-actions` |
+| `src/nsfw/moderation-service/appeals.test.ts` | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-`, `BUG-nsfw-appeal-approvedby-taken-from-request-body`, `BUG-nsfw-appeals-as-any-and-dead-route`, `BUG-nsfw-reviewappeal-auto-reverses-actions` |
 | `src/nsfw/moderation-service/appeals.ts` | `BUG-nsfw-appeals-as-any-and-dead-route`, `BUG-nsfw-reviewappeal-auto-reverses-actions` |
 | `src/nsfw/moderation-service/audit.ts` | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-`, `BUG-getauditlog-performedby-exposed-to-moderators`, `BUG-nsfw-export-bundle-no-access-log`, `BUG-nsfw-modactions-performedby-from-body`, `BUG-nsfw-moderation-delete-destroys-audit-log`, `BUG-nsfw-modservice-notify-user-leaks-admin-reason` |
 | `src/nsfw/moderation-service/data.test.ts` | `BUG-nsfw-export-bundle-no-access-log`, `BUG-nsfw-moderation-delete-destroys-audit-log`, `TASK-dprint-formatting-enforced-ci-test-files`, `TASK-nsfw-moderation-delete-audit-regression-verify`, `epic-review-dev-2026-08-26-late-merges` |
@@ -1197,7 +1200,7 @@ output is byte-identical for identical inputs.
 | `src/nsfw/moderation-service/overrides.ts` | `BUG-geteffectivensfw-phantom-users-enabled`, `BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al`, `epic-nsfw-capabilities` |
 | `src/nsfw/moderation-service/types.ts` | `BUG-getauditlog-performedby-exposed-to-moderators`, `BUG-nsfw-appeal-approvedby-taken-from-request-body` |
 | `src/nsfw/pii-redaction.ts` | `BUG-pii-redaction-hardcoded-dev-fallback-secret-no-prod-guard`, `TASK-input-hardening-batch`, `TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa` |
-| `src/nsfw/runtime-config.ts` | `BUG-nsfw-runtime-config-singleton-leaks-across-tests`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-prompt-template-registry` |
+| `src/nsfw/runtime-config.ts` | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-nsfw-runtime-config-singleton-leaks-across-tests`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `TASK-prompt-template-registry` |
 | `src/nsfw/seduction-prerequisites.ts` | `TASK-nsfw-wire-seduction-encounter-preconditions`, `epic-faction-reputation` |
 | `src/nsfw/social-integration.ts` | `TASK-042`, `epic-faction-reputation`, `epic-mini-games-design`, `epic-nsfw-integration-gaps`, `epic-shared-schemas` |
 | `src/nsfw/telemetry-id-hashes.ts` | `BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f`, `TASK-harness-stats-dashboard` |
@@ -1300,6 +1303,7 @@ output is byte-identical for identical inputs.
 | `src/routes/actors.ts` | `TASK-actors-api-routes`, `epic-actors` |
 | `src/routes/admin-comfyui-workflows/create.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters` |
 | `src/routes/admin-comfyui-workflows/update.ts` | `BUG-image-edit-comfyui-provider-never-uploads-input-image`, `BUG-workflow-library-img2img-row-has-no-parameters` |
+| `src/routes/admin-nsfw.test.ts` | `BUG-nsfw-runtime-config-singleton-leaks-across-tests`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` |
 | `src/routes/admin-nsfw.ts` | `BUG-nsfw-runtime-config-singleton-leaks-across-tests`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` |
 | `src/routes/admin-templates/update.ts` | `BUG-admin-template-update-writes-to-unvalidated-detail-mode-keys`, `BUG-admin-templates-update-remove-lack-admin-settings-gate` |
 | `src/routes/admin.ts` | `TASK-encryption-auto-key-rotation`, `TASK-file-split-routes`, `epic-file-splitting`, `epic-logic-reconciliation` |
@@ -5106,9 +5110,13 @@ output is byte-identical for identical inputs.
 | `BUG-admin-template-update-writes-to-unvalidated-detail-mode-keys` | produces | `src/routes/admin-templates/update.ts` | - |
 | `BUG-admin-templates-update-remove-lack-admin-settings-gate` | produces | `src/routes/admin-templates/update.ts` | - |
 | `BUG-admin-user-delete-has-no-self-delete-or-last-admin-guard` | produces | `src/routes/admin/users.ts` | - |
+| `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/assistant/commands/generation-stubs.test.ts` | - |
+| `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/assistant/commands/music.ts` | - |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/assistant/commands/registry.ts` | - |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/assistant/commands/sfx.ts` | - |
+| `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/assistant/commands/video.ts` | - |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/assistant/sd.ts` | - |
+| `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/config/schema/testing.ts` | - |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/frontend/alpine/chat-actions/dispatch.ts` | - |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/routes/commands/index.test.ts` | - |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | produces | `src/routes/commands/index.ts` | - |
@@ -5149,9 +5157,11 @@ output is byte-identical for identical inputs.
 | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it` | produces | `src/routes/messages/types.ts` | - |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/db/migrations/001_init.ts` | - |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/db/schema-core.ts` | - |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/db/schema-` | - |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/frontend/alpine/user-notifications.ts` | - |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/notifications/service/crud.ts` | - |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/nsfw/moderation-service/appeals-reversal.ts` | - |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/nsfw/moderation-service/appeals.test.ts` | - |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/nsfw/moderation-service/audit.ts` | - |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/routes/notifications/index.ts` | - |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | produces | `src/routes/notifications/stream.ts` | - |
@@ -5213,6 +5223,7 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-and-group-chat-correctness-defects` | produces | `src/group-chat/mention-parser.ts` | - |
 | `BUG-assistant-and-group-chat-correctness-defects` | produces | `src/group-chat/turn-selector.ts` | - |
 | `BUG-assistant-and-group-chat-correctness-defects` | produces | `src/routes/messages/command.ts` | - |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/assistant/commands/create-entity-lore.test.ts` | - |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/assistant/commands/create-entity-lore.ts` | - |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/assistant/prompt/sections/lore-activation.ts` | - |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/assistant/prompt/sections/lore-load.ts` | - |
@@ -5221,6 +5232,7 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/db/migrations/001_init.ts` | - |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/db/schema-manifest.ts` | - |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/db/schema-story.ts` | - |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/db/schema-` | - |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/routes/import/lorebook.ts` | - |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/routes/world-import/bundle.ts` | - |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | produces | `src/story/events/promote-lore.ts` | - |
@@ -5602,9 +5614,11 @@ output is byte-identical for identical inputs.
 | `BUG-community-share-missing-lorebook-export` | produces | `src/routes/world-import/bundle.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/assistant/prompt/sections/nsfw-policy.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/config/hot-apply-consumers.ts` | - |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/config/hot-apply.test.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/config/hot-apply.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/config/hot-reload.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/nsfw/capability-gate.ts` | - |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/nsfw/runtime-config.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/server/start.ts` | - |
 | `BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin` | produces | `src/routes/config-menu.ts` | - |
 | `BUG-config-schema-defaults-leak-absolute-paths` | produces | `src/config/generate-schema.ts` | - |
@@ -6638,13 +6652,16 @@ output is byte-identical for identical inputs.
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/db/index.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/elysia-app.ts` | - |
 | `BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-` | produces | `src/routes/entity-routes/create.ts` | - |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/assistant/prompt/sections/nsfw-context.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/assistant/prompt/sections/nsfw-policy.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/config/hot-apply.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/elysia-app.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/middleware/nsfw-gate/access.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/middleware/nsfw-gate/base-eval.ts` | - |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/middleware/nsfw-gate/request-context.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/nsfw/capability-gate.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/nsfw/runtime-config.ts` | - |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/routes/admin-nsfw.test.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/routes/admin-nsfw.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/routes/nsfw/shared.ts` | - |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | produces | `src/server/start.ts` | - |
@@ -6689,7 +6706,9 @@ output is byte-identical for identical inputs.
 | `BUG-sectionbuilder-interface-missing-included-memory-ids-field` | produces | `src/assistant/prompt/types.ts` | - |
 | `BUG-security-merge-build-break-instances-ts` | produces | `src/story/items/index.ts` | - |
 | `BUG-security-merge-build-break-instances-ts` | produces | `src/story/items/instances.ts` | - |
+| `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir` | produces | `src/config/schema-class/json-schema/seeding.ts` | - |
 | `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir` | produces | `src/config/schema/seeding.ts` | - |
+| `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir` | produces | `src/seeding/users.test.ts` | - |
 | `BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir` | produces | `src/seeding/users.ts` | - |
 | `BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-` | produces | `src/frontend/alpine/chat/world.ts` | - |
 | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | produces | `src/config/schema-class/env-map.ts` | - |
@@ -18251,7 +18270,8 @@ output is byte-identical for identical inputs.
 | `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem` | sibling | `epic-logging` | `src/db/migrations/001_init.ts` |
 | `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem` | sibling | `epic-technical-comparison-charts` | `src/db/migrations/001_init.ts` |
 | `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me` | sibling | `BUG-actortype-persona-422-on-valid-ui-input` | `src/validation/db-schemas.ts` |
-| `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me` | sibling | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | `src/db/schema-story.ts` |
+| `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me` | sibling | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | `src/db/schema-` |
+| `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me` | sibling | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | `src/db/schema-; src/db/schema-story.ts` |
 | `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me` | sibling | `BUG-chat-fts-encrypt-mismatch` | `src/db/migrations/README.md` |
 | `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me` | sibling | `BUG-chat-message-delete-soft-fails-compliance` | `src/db/migrations/README.md` |
 | `BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me` | sibling | `BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx` | `src/chat/context-window.ts` |
@@ -18568,13 +18588,16 @@ output is byte-identical for identical inputs.
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `TASK-harness-frontend-consolidation` | `src/assistant/commands/registry.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `TASK-image-backends-x-assistant-image-command-backend-routing-fai` | `src/frontend/alpine/chat-actions/dispatch.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `TASK-interaction-service-foundation` | `src/assistant/commands/registry.ts` |
+| `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr` | `src/config/schema/testing.ts` |
+| `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` | `src/config/schema/testing.ts` |
+| `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene` | `src/config/schema/testing.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `TASK-slash-commands-chat-group-assistant` | `src/assistant/commands/registry.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `TASK-tui-slash-command-completion` | `src/routes/commands/index.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `WIRE-assistant-command-palette-stale-static-list` | `src/assistant/commands/registry.ts; src/routes/commands/index.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `epic-ambient-music-sfx` | `src/assistant/commands/sfx.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `epic-assistant-creative-studio-workflows` | `src/assistant/commands/registry.ts; src/assistant/sd.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `epic-assistant-entity-access` | `src/assistant/commands/registry.ts` |
-| `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `epic-assistant-generation-extensions` | `src/assistant/commands/registry.ts; src/assistant/commands/sfx.ts; src/assistant/sd.ts` |
+| `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `epic-assistant-generation-extensions` | `src/assistant/commands/music.ts; src/assistant/commands/registry.ts; src/assistant/commands/sfx.ts; src/assistant/commands/video.ts; src/assistant/sd.ts` |
 | `BUG-advertised-sfx-music-video-commands-are-stubs` | sibling | `epic-impersonation` | `src/frontend/alpine/chat-actions/dispatch.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-archive-retention-hardcoded-30-days-should-be-configurable-9` | `src/admin/config.ts` |
 | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen` | sibling | `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k` | `src/server/start.ts` |
@@ -18804,7 +18827,7 @@ output is byte-identical for identical inputs.
 | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it` | sibling | `epic-effect-v4-adoption-evaluation` | `src/app/register-plugins.ts` |
 | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it` | sibling | `epic-file-splitting` | `src/app/register-plugins.ts` |
 | `BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it` | sibling | `epic-multilingual-carriage` | `src/routes/messages/create.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | `src/db/migrations/001_init.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | `src/db/migrations/001_init.ts; src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr` | `src/notifications/service/crud.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with` | `src/db/migrations/001_init.ts` |
@@ -18819,11 +18842,13 @@ output is byte-identical for identical inputs.
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-memory-embeddings-orphaned-on-actor-delete` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-notification-stream-error-unreachable` | `src/routes/notifications/stream.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-nsfw-appeal-approvedby-taken-from-request-body` | `src/nsfw/moderation-service/appeals-reversal.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-nsfw-appeal-approvedby-taken-from-request-body` | `src/nsfw/moderation-service/appeals-reversal.ts; src/nsfw/moderation-service/appeals.test.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-nsfw-appeals-as-any-and-dead-route` | `src/nsfw/moderation-service/appeals.test.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-nsfw-export-bundle-no-access-log` | `src/nsfw/moderation-service/audit.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-nsfw-modactions-performedby-from-body` | `src/nsfw/moderation-service/audit.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-nsfw-moderation-delete-destroys-audit-log` | `src/nsfw/moderation-service/audit.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-nsfw-modservice-notify-user-leaks-admin-reason` | `src/nsfw/moderation-service/audit.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-nsfw-reviewappeal-auto-reverses-actions` | `src/nsfw/moderation-service/appeals.test.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-personas-converttocharacter-drops-title-temperature-max-toke` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `BUG-plugin-tool-authorization-fails-open` | `src/db/migrations/001_init.ts` |
@@ -18852,6 +18877,7 @@ output is byte-identical for identical inputs.
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-archival-workflow` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-asymmetric-key-pairs-followup` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-asymmetric-key-pairs` | `src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-autonomy-rate-governor-for-llm-actors` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-avatar-render-target-discriminator` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-character-creator-prerogative` | `src/db/schema-core.ts` |
@@ -18866,34 +18892,42 @@ output is byte-identical for identical inputs.
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-e2ee-receiver-wiring` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-egui-sse-response-streaming-through-the-browser-bridge` | `src/routes/notifications/stream.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-emotion-avatar-message-binding` | `src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-emotions-avatar-edit-model` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-federation-peer-registry-workload-columns` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-fix-actor-item-value-type` | `src/db/schema-core.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/db/schema-core.ts; src/nsfw/moderation-service/appeals-reversal.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/db/schema-; src/db/schema-core.ts; src/nsfw/moderation-service/appeals-reversal.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-harness-db-tables` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-inline-markdown-suggestion-model` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-item-side-outfit-change-trigger` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-location-crud-tree-connections` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-markdown-canonical-intermediate-contract` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-message-seen-state-schema` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-mini-games-framework` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-notification-and-telemetry-service-nits` | `src/notifications/service/crud.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/001_init.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/001_init.ts; src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-publication-glossary-term-base` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-publication-unit-translation-store` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-rag-decomposition-index-pipeline` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-reconcile-epic-frontend-notifications-verify-bell-prefs-ui-c` | `src/frontend/alpine/user-notifications.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-recursive-self-improvement-watchdog-events-table-and-telemet` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-review-thread-comment-model` | `src/db/migrations/001_init.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-schema-migration` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-test-chat-module` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-timeline-id-world-timeline-events` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-world-requires-stats-flag-and-point-budget-config` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `TASK-world-simulation-discovery-and-trade-events` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-actors` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-architecture` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-archival-workflow` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-battle-action-systems` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-battle-integration-gaps` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-byok-api-keys` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-character-core-system` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-character-growth` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-character-internal-traits` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-character-npc-lore-access` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-character-spec` | `src/db/migrations/001_init.ts` |
@@ -18904,8 +18938,9 @@ output is byte-identical for identical inputs.
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-chat-variants-taxonomy` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-config-extensions` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-crafting-professions` | `src/db/migrations/001_init.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-data-integrity-acid` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-db-migration-compaction` | `src/db/migrations/001_init.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-editorial-workflow` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-editorial-workflow` | `src/db/migrations/001_init.ts; src/db/schema-; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-emotion-avatar-message-binding` | `src/db/migrations/001_init.ts; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-enemies-monsters` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-exploration-discovery` | `src/db/schema-core.ts` |
@@ -18920,12 +18955,14 @@ output is byte-identical for identical inputs.
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-mini-games` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-multilingual-carriage` | `src/db/schema-core.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-output-control-transforms` | `src/db/schema-core.ts` |
-| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-publication-i18n` | `src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-publication-i18n` | `src/db/schema-; src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-rarity-extensions` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-reactive-actor-appearance` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-research-agency-decision` | `src/db/schema-core.ts` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-runtime-integrity-fail-safes` | `src/db/schema-` |
+| `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-schema` | `src/db/schema-` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-skills-professions-config` | `src/db/schema-core.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-technical-comparison-charts` | `src/db/migrations/001_init.ts` |
 | `BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
@@ -19441,13 +19478,15 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-archival-workflow` | `src/db/migrations/001_init.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-assistant-secret-lore-access-guard` | `src/assistant/prompt/sections/lore.ts` |
-| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/db/schema-manifest.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/db/schema-; src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-chat-ask-type-fast-menu` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-chat-transfer-location` | `src/db/migrations/001_init.ts; src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-clean-transfer-orphans` | `src/db/schema-story.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-comic-page-composition-strategy` | `src/db/migrations/001_init.ts; src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-e2ee-receiver-wiring` | `src/db/schema-manifest.ts` |
-| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/assistant/commands/create-entity-lore.ts; src/db/generated/db-types.ts; src/db/schema-manifest.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-emotions-avatar-edit-model` | `src/db/schema-` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/assistant/commands/create-entity-lore.ts; src/db/generated/db-types.ts; src/db/schema-; src/db/schema-manifest.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-harness-db-tables` | `src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-harness-topic-session-attach` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-link-npc-inventory` | `src/db/schema-story.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-location-crud-tree-connections` | `src/db/migrations/001_init.ts` |
@@ -19455,27 +19494,31 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-lorebook-template-seeding` | `src/routes/import/lorebook.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-markdown-heading-parse-and-import` | `src/routes/import/lorebook.ts; src/routes/world-import/bundle.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min` | `src/db/schema-manifest.ts` |
-| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-message-seen-state-schema` | `src/db/schema-manifest.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-message-seen-state-schema` | `src/db/schema-; src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-messages-outfit-id-column` | `src/db/schema-manifest.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-migration-sequential-finalize-and-renumber-policy` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | `src/db/migrations/001_init.ts` |
-| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/001_init.ts; src/db/schema-manifest.ts; src/db/schema-story.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-publication-artifact-schema` | `src/db/migrations/001_init.ts; src/db/schema-; src/db/schema-manifest.ts; src/db/schema-story.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-publication-continuity-lint` | `src/db/schema-story.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-rag-decomposition-index-pipeline` | `src/db/migrations/001_init.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-recursive-self-improvement-watchdog-events-table-and-telemet` | `src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-redos-lore-activation-builds-regexp-from-author-controlled-k` | `src/assistant/prompt/sections/lore-activation.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-resource-provision-schema` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-review-thread-comment-model` | `src/db/migrations/001_init.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-schema-migration` | `src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-timeline-id-world-timeline-events` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-vn-branching-choices` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-world-lore-lifecycle-confidence-decay-distortion` | `src/assistant/prompt/sections/lore.ts; src/story/events/promote-lore.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-world-requires-stats-flag-and-point-budget-config` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `TASK-world-simulation-discovery-and-trade-events` | `src/db/migrations/001_init.ts; src/db/schema-manifest.ts; src/db/schema-story.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-actors` | `src/db/migrations/001_init.ts; src/db/schema-story.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-architecture` | `src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-archival-workflow` | `src/db/migrations/001_init.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-battle-action-systems` | `src/db/migrations/001_init.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-byok-api-keys` | `src/db/migrations/001_init.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-character-core-system` | `src/db/migrations/001_init.ts` |
-| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-character-growth` | `src/db/schema-manifest.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-character-growth` | `src/db/schema-; src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-character-internal-traits` | `src/db/migrations/001_init.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-character-npc-lore-access` | `src/assistant/commands/create-entity-lore.ts; src/assistant/prompt/sections/lore-load.ts; src/assistant/prompt/sections/lore.ts; src/db/migrations/001_init.ts; src/db/schema-story.ts; src/routes/world-import/bundle.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-character-spec` | `src/db/migrations/001_init.ts` |
@@ -19485,8 +19528,9 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-chat-variants-taxonomy` | `src/db/migrations/001_init.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-comfyui-first-class-citizen` | `src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-crafting-professions` | `src/db/migrations/001_init.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-data-integrity-acid` | `src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-db-migration-compaction` | `src/db/migrations/001_init.ts` |
-| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-editorial-workflow` | `src/db/migrations/001_init.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-editorial-workflow` | `src/db/migrations/001_init.ts; src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-emotion-avatar-message-binding` | `src/db/migrations/001_init.ts; src/db/schema-manifest.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-enemies-monsters` | `src/db/migrations/001_init.ts; src/db/schema-story.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-harness-integration` | `src/db/schema-manifest.ts` |
@@ -19498,9 +19542,12 @@ output is byte-identical for identical inputs.
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-logging` | `src/db/migrations/001_init.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-lore-knowledge` | `src/assistant/prompt/sections/lore.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-multi-instance-reconciliation` | `src/db/schema-manifest.ts` |
-| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-story.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-narrative-publishing-workflows` | `src/db/schema-; src/db/schema-story.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-project-spaces-pm-integration` | `src/db/schema-story.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-publication-i18n` | `src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-rarity-extensions` | `src/story/events/promote-lore.ts` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-runtime-integrity-fail-safes` | `src/db/schema-` |
+| `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-schema` | `src/db/schema-` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-technical-comparison-charts` | `src/db/migrations/001_init.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-timeline-system` | `src/assistant/prompt/sections/lore.ts` |
 | `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-` | sibling | `epic-visual-novel-mode` | `src/db/schema-manifest.ts` |
@@ -21682,8 +21729,8 @@ output is byte-identical for identical inputs.
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
-| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | `src/assistant/prompt/sections/nsfw-policy.ts` |
-| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | `src/assistant/prompt/sections/nsfw-policy.ts; src/config/hot-apply.ts; src/nsfw/capability-gate.ts; src/server/start.ts` |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | `src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts` |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | `src/assistant/prompt/sections/nsfw-policy.ts; src/config/hot-apply.ts; src/nsfw/capability-gate.ts; src/nsfw/runtime-config.ts; src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-033` | `src/nsfw/capability-gate.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-034` | `src/nsfw/capability-gate.ts` |
@@ -21710,7 +21757,7 @@ output is byte-identical for identical inputs.
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-outfit-change-hook` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-plugin-hot-reload-with-real-module-cache-busting` | `src/config/hot-reload.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination` | `src/server/start.ts` |
-| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-prompt-template-registry` | `src/assistant/prompt/sections/nsfw-policy.ts` |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-prompt-template-registry` | `src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-rpg-nsfw-services-add-config-level-opt-in-gate` | `src/nsfw/capability-gate.ts` |
@@ -27017,7 +27064,7 @@ output is byte-identical for identical inputs.
 | `BUG-nsfw-preferences-admin-read-materializes-row` | sibling | `TASK-moderator-permission-gating-for-read-only-review-surface` | `src/routes/nsfw-moderation/shared.ts` |
 | `BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa` | sibling | `TASK-harness-sync-ledger-v2` | `src/middleware/nsfw-gate/consent-ledger.ts` |
 | `BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa` | sibling | `TASK-specify-content-warnings-write-the-frontend-contract` | `src/middleware/nsfw-gate/consent-ledger.ts` |
-| `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | `src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts; src/routes/admin-nsfw.ts` |
+| `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | `src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts; src/routes/admin-nsfw.test.ts; src/routes/admin-nsfw.ts` |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `TASK-generated-db-types-mark-every-primary-key-as-db-generated-so` | `src/story/game-master.test.ts` |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `TASK-prompt-template-registry` | `src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts` |
 | `BUG-nsfw-runtime-config-singleton-leaks-across-tests` | sibling | `TASK-wire-gm-service-story-mode` | `src/story/game-master.test.ts` |
@@ -27899,6 +27946,8 @@ output is byte-identical for identical inputs.
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-cron-provider-health-rescan` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-cross-platform-portability` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on` | `src/server/start.ts` |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep` | `src/assistant/prompt/sections/nsfw-context.ts` |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` | `src/assistant/prompt/sections/nsfw-context.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag` | `src/elysia-app.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-enable-http-2-via-single-tls-port-consolidation` | `src/server/start.ts` |
@@ -27927,10 +27976,11 @@ output is byte-identical for identical inputs.
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-recursive-self-improvement-health-liveness-readiness-probes` | `src/elysia-app.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota` | `src/server/start.ts` |
-| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` | `src/middleware/nsfw-gate/base-eval.ts` |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char` | `src/middleware/nsfw-gate/base-eval.ts; src/middleware/nsfw-gate/request-context.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-rpg-nsfw-services-add-config-level-opt-in-gate` | `src/middleware/nsfw-gate/base-eval.ts; src/nsfw/capability-gate.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-runtime-integrity-watchdog-crash-recovery` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
+| `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un` | `src/assistant/prompt/sections/nsfw-context.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-size-strict-debt` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-sni-multi-certificate-serving-for-multiple-domains` | `src/server/start.ts` |
 | `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil` | sibling | `TASK-swarm-supervisor` | `src/server/start.ts` |

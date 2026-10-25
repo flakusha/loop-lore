@@ -426,9 +426,13 @@
       "title": "advertised /sfx /music /video commands are stubs",
       "status": "done",
       "srcRefs": [
+        "src/assistant/commands/generation-stubs.test.ts",
+        "src/assistant/commands/music.ts",
         "src/assistant/commands/registry.ts",
         "src/assistant/commands/sfx.ts",
+        "src/assistant/commands/video.ts",
         "src/assistant/sd.ts",
+        "src/config/schema/testing.ts",
         "src/frontend/alpine/chat-actions/dispatch.ts",
         "src/routes/commands/index.test.ts",
         "src/routes/commands/index.ts"
@@ -621,10 +625,12 @@
       "status": "done",
       "srcRefs": [
         "src/db/migrations/001_init.ts",
+        "src/db/schema-",
         "src/db/schema-core.ts",
         "src/frontend/alpine/user-notifications.ts",
         "src/notifications/service/crud.ts",
         "src/nsfw/moderation-service/appeals-reversal.ts",
+        "src/nsfw/moderation-service/appeals.test.ts",
         "src/nsfw/moderation-service/audit.ts",
         "src/routes/notifications/index.ts",
         "src/routes/notifications/stream.ts",
@@ -905,12 +911,14 @@
       "title": "Assistant-created lore entries are stored with a NULL id, so their cooldown never starts",
       "status": "done",
       "srcRefs": [
+        "src/assistant/commands/create-entity-lore.test.ts",
         "src/assistant/commands/create-entity-lore.ts",
         "src/assistant/prompt/sections/lore-activation.ts",
         "src/assistant/prompt/sections/lore-load.ts",
         "src/assistant/prompt/sections/lore.ts",
         "src/db/generated/db-types.ts",
         "src/db/migrations/001_init.ts",
+        "src/db/schema-",
         "src/db/schema-manifest.ts",
         "src/db/schema-story.ts",
         "src/routes/import/lorebook.ts",
@@ -2803,9 +2811,11 @@
       "srcRefs": [
         "src/assistant/prompt/sections/nsfw-policy.ts",
         "src/config/hot-apply-consumers.ts",
+        "src/config/hot-apply.test.ts",
         "src/config/hot-apply.ts",
         "src/config/hot-reload.ts",
         "src/nsfw/capability-gate.ts",
+        "src/nsfw/runtime-config.ts",
         "src/server/start.ts"
       ],
       "related": []
@@ -8108,13 +8118,16 @@
       "title": "Route-layer NSFW gate keeps serving NSFW after the admin kill switch is turned off",
       "status": "done",
       "srcRefs": [
+        "src/assistant/prompt/sections/nsfw-context.ts",
         "src/assistant/prompt/sections/nsfw-policy.ts",
         "src/config/hot-apply.ts",
         "src/elysia-app.ts",
         "src/middleware/nsfw-gate/access.ts",
         "src/middleware/nsfw-gate/base-eval.ts",
+        "src/middleware/nsfw-gate/request-context.ts",
         "src/nsfw/capability-gate.ts",
         "src/nsfw/runtime-config.ts",
+        "src/routes/admin-nsfw.test.ts",
         "src/routes/admin-nsfw.ts",
         "src/routes/nsfw/shared.ts",
         "src/server/start.ts"
@@ -8387,7 +8400,9 @@
       "title": "Seeded-user config option seedActor is never read, so the mirror actor row is always created",
       "status": "done",
       "srcRefs": [
+        "src/config/schema-class/json-schema/seeding.ts",
         "src/config/schema/seeding.ts",
+        "src/seeding/users.test.ts",
         "src/seeding/users.ts"
       ],
       "related": []
@@ -53435,6 +53450,12 @@
       ]
     },
     {
+      "path": "src/assistant/commands/create-entity-lore.test.ts",
+      "owners": [
+        "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-"
+      ]
+    },
+    {
       "path": "src/assistant/commands/create-entity-lore.ts",
       "owners": [
         "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -53515,6 +53536,12 @@
       "owners": [
         "TASK-assistant-gm-flows",
         "epic-assistant-generation-extensions"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/generation-stubs.test.ts",
+      "owners": [
+        "BUG-advertised-sfx-music-video-commands-are-stubs"
       ]
     },
     {
@@ -53641,6 +53668,7 @@
     {
       "path": "src/assistant/commands/music.ts",
       "owners": [
+        "BUG-advertised-sfx-music-video-commands-are-stubs",
         "epic-assistant-generation-extensions"
       ]
     },
@@ -53804,6 +53832,7 @@
     {
       "path": "src/assistant/commands/video.ts",
       "owners": [
+        "BUG-advertised-sfx-music-video-commands-are-stubs",
         "epic-assistant-generation-extensions"
       ]
     },
@@ -54489,6 +54518,7 @@
     {
       "path": "src/assistant/prompt/sections/nsfw-context.ts",
       "owners": [
+        "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
         "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
         "TASK-delete-unreferenced-generation-story-assistant-and-chat-code",
         "TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un"
@@ -59536,6 +59566,12 @@
       ]
     },
     {
+      "path": "src/config/hot-apply.test.ts",
+      "owners": [
+        "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-"
+      ]
+    },
+    {
       "path": "src/config/hot-apply.ts",
       "owners": [
         "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
@@ -59804,6 +59840,12 @@
       ]
     },
     {
+      "path": "src/config/schema-class/json-schema/seeding.ts",
+      "owners": [
+        "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir"
+      ]
+    },
+    {
       "path": "src/config/schema-class/json-schema/server.ts",
       "owners": [
         "BUG-config-schema-defaults-leak-absolute-paths"
@@ -60006,6 +60048,7 @@
     {
       "path": "src/config/schema/testing.ts",
       "owners": [
+        "BUG-advertised-sfx-music-video-commands-are-stubs",
         "TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr",
         "TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server",
         "TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene"
@@ -62827,6 +62870,8 @@
       "path": "src/db/schema-",
       "owners": [
         "BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me",
+        "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+        "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
         "TASK-async-request-response-result-store-separate-table-offload",
         "TASK-emotions-avatar-edit-model",
         "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -72157,6 +72202,7 @@
     {
       "path": "src/middleware/nsfw-gate/request-context.ts",
       "owners": [
+        "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
         "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char"
       ]
     },
@@ -72464,6 +72510,7 @@
     {
       "path": "src/nsfw/moderation-service/appeals.test.ts",
       "owners": [
+        "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
         "BUG-nsfw-appeal-approvedby-taken-from-request-body",
         "BUG-nsfw-appeals-as-any-and-dead-route",
         "BUG-nsfw-reviewappeal-auto-reverses-actions"
@@ -72584,6 +72631,7 @@
     {
       "path": "src/nsfw/runtime-config.ts",
       "owners": [
+        "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
         "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
         "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
         "TASK-prompt-template-registry"
@@ -74433,7 +74481,8 @@
     {
       "path": "src/routes/admin-nsfw.test.ts",
       "owners": [
-        "BUG-nsfw-runtime-config-singleton-leaks-across-tests"
+        "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
+        "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil"
       ]
     },
     {
@@ -82127,6 +82176,12 @@
       "path": "src/seeding/index.ts",
       "owners": [
         "TASK-reconcile-ts-import-extensions-user-seeding-session"
+      ]
+    },
+    {
+      "path": "src/seeding/users.test.ts",
+      "owners": [
+        "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir"
       ]
     },
     {
@@ -101619,6 +101674,16 @@
     {
       "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
       "kind": "produces",
+      "to": "src/assistant/commands/generation-stubs.test.ts"
+    },
+    {
+      "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
+      "kind": "produces",
+      "to": "src/assistant/commands/music.ts"
+    },
+    {
+      "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
+      "kind": "produces",
       "to": "src/assistant/commands/registry.ts"
     },
     {
@@ -101629,7 +101694,17 @@
     {
       "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
       "kind": "produces",
+      "to": "src/assistant/commands/video.ts"
+    },
+    {
+      "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
+      "kind": "produces",
       "to": "src/assistant/sd.ts"
+    },
+    {
+      "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
+      "kind": "produces",
+      "to": "src/config/schema/testing.ts"
     },
     {
       "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
@@ -101834,6 +101909,11 @@
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "produces",
+      "to": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "produces",
       "to": "src/frontend/alpine/user-notifications.ts"
     },
     {
@@ -101845,6 +101925,11 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "produces",
       "to": "src/nsfw/moderation-service/appeals-reversal.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "produces",
+      "to": "src/nsfw/moderation-service/appeals.test.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -102154,6 +102239,11 @@
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "produces",
+      "to": "src/assistant/commands/create-entity-lore.test.ts"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "produces",
       "to": "src/assistant/commands/create-entity-lore.ts"
     },
     {
@@ -102190,6 +102280,11 @@
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "produces",
       "to": "src/db/schema-story.ts"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "produces",
+      "to": "src/db/schema-"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -104099,6 +104194,11 @@
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "produces",
+      "to": "src/config/hot-apply.test.ts"
+    },
+    {
+      "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
+      "kind": "produces",
       "to": "src/config/hot-apply.ts"
     },
     {
@@ -104110,6 +104210,11 @@
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "produces",
       "to": "src/nsfw/capability-gate.ts"
+    },
+    {
+      "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
+      "kind": "produces",
+      "to": "src/nsfw/runtime-config.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
@@ -109279,6 +109384,11 @@
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "produces",
+      "to": "src/assistant/prompt/sections/nsfw-context.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "produces",
       "to": "src/assistant/prompt/sections/nsfw-policy.ts"
     },
     {
@@ -109304,12 +109414,22 @@
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "produces",
+      "to": "src/middleware/nsfw-gate/request-context.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "produces",
       "to": "src/nsfw/capability-gate.ts"
     },
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "produces",
       "to": "src/nsfw/runtime-config.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "produces",
+      "to": "src/routes/admin-nsfw.test.ts"
     },
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
@@ -109534,7 +109654,17 @@
     {
       "from": "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir",
       "kind": "produces",
+      "to": "src/config/schema-class/json-schema/seeding.ts"
+    },
+    {
+      "from": "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir",
+      "kind": "produces",
       "to": "src/config/schema/seeding.ts"
+    },
+    {
+      "from": "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir",
+      "kind": "produces",
+      "to": "src/seeding/users.test.ts"
     },
     {
       "from": "BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir",
@@ -167841,8 +167971,14 @@
     {
       "from": "BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me",
       "kind": "sibling",
+      "to": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me",
+      "kind": "sibling",
       "to": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
-      "via": "src/db/schema-story.ts"
+      "via": "src/db/schema-; src/db/schema-story.ts"
     },
     {
       "from": "BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me",
@@ -169743,6 +169879,24 @@
     {
       "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
       "kind": "sibling",
+      "to": "TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr",
+      "via": "src/config/schema/testing.ts"
+    },
+    {
+      "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
+      "kind": "sibling",
+      "to": "TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server",
+      "via": "src/config/schema/testing.ts"
+    },
+    {
+      "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
+      "kind": "sibling",
+      "to": "TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene",
+      "via": "src/config/schema/testing.ts"
+    },
+    {
+      "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
+      "kind": "sibling",
       "to": "TASK-slash-commands-chat-group-assistant",
       "via": "src/assistant/commands/registry.ts"
     },
@@ -169780,7 +169934,7 @@
       "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
       "kind": "sibling",
       "to": "epic-assistant-generation-extensions",
-      "via": "src/assistant/commands/registry.ts; src/assistant/commands/sfx.ts; src/assistant/sd.ts"
+      "via": "src/assistant/commands/music.ts; src/assistant/commands/registry.ts; src/assistant/commands/sfx.ts; src/assistant/commands/video.ts; src/assistant/sd.ts"
     },
     {
       "from": "BUG-advertised-sfx-music-video-commands-are-stubs",
@@ -171160,7 +171314,7 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
       "to": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
-      "via": "src/db/migrations/001_init.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171250,7 +171404,13 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
       "to": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
-      "via": "src/nsfw/moderation-service/appeals-reversal.ts"
+      "via": "src/nsfw/moderation-service/appeals-reversal.ts; src/nsfw/moderation-service/appeals.test.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "BUG-nsfw-appeals-as-any-and-dead-route",
+      "via": "src/nsfw/moderation-service/appeals.test.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171275,6 +171435,12 @@
       "kind": "sibling",
       "to": "BUG-nsfw-modservice-notify-user-leaks-admin-reason",
       "via": "src/nsfw/moderation-service/audit.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "BUG-nsfw-reviewappeal-auto-reverses-actions",
+      "via": "src/nsfw/moderation-service/appeals.test.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171447,6 +171613,12 @@
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
+      "to": "TASK-async-request-response-result-store-separate-table-offload",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
       "to": "TASK-autonomy-rate-governor-for-llm-actors",
       "via": "src/db/schema-core.ts"
     },
@@ -171531,6 +171703,12 @@
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
+      "to": "TASK-emotions-avatar-edit-model",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
       "to": "TASK-federation-peer-registry-workload-columns",
       "via": "src/db/schema-core.ts"
     },
@@ -171544,7 +171722,13 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-core.ts; src/nsfw/moderation-service/appeals-reversal.ts"
+      "via": "src/db/schema-; src/db/schema-core.ts; src/nsfw/moderation-service/appeals-reversal.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "TASK-harness-db-tables",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171579,8 +171763,20 @@
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
+      "to": "TASK-message-seen-state-schema",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
       "to": "TASK-messages-outfit-id-column",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "TASK-middleware-fe-be-db-record-content-hashing",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171604,7 +171800,7 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
       "to": "TASK-publication-artifact-schema",
-      "via": "src/db/migrations/001_init.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171633,8 +171829,20 @@
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-watchdog-events-table-and-telemet",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
       "to": "TASK-review-thread-comment-model",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "TASK-schema-migration",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171669,6 +171877,12 @@
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
+      "to": "epic-architecture",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
       "to": "epic-archival-workflow",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -171695,6 +171909,12 @@
       "kind": "sibling",
       "to": "epic-character-core-system",
       "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "epic-character-growth",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171759,6 +171979,12 @@
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
+      "to": "epic-data-integrity-acid",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
       "to": "epic-db-migration-compaction",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -171766,7 +171992,7 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
       "to": "epic-editorial-workflow",
-      "via": "src/db/migrations/001_init.ts; src/db/schema-core.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-; src/db/schema-core.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171856,7 +172082,7 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/schema-; src/db/schema-core.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171868,7 +172094,7 @@
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
       "kind": "sibling",
       "to": "epic-publication-i18n",
-      "via": "src/db/schema-core.ts"
+      "via": "src/db/schema-; src/db/schema-core.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -171887,6 +172113,18 @@
       "kind": "sibling",
       "to": "epic-research-agency-decision",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "epic-runtime-integrity-fail-safes",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "epic-schema",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -174982,7 +175220,7 @@
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-; src/db/schema-manifest.ts"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175017,8 +175255,20 @@
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
+      "to": "TASK-emotions-avatar-edit-model",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/assistant/commands/create-entity-lore.ts; src/db/generated/db-types.ts; src/db/schema-manifest.ts"
+      "via": "src/assistant/commands/create-entity-lore.ts; src/db/generated/db-types.ts; src/db/schema-; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
+      "to": "TASK-harness-db-tables",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175066,13 +175316,19 @@
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
       "to": "TASK-message-seen-state-schema",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-; src/db/schema-manifest.ts"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
       "to": "TASK-messages-outfit-id-column",
       "via": "src/db/schema-manifest.ts"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
+      "to": "TASK-middleware-fe-be-db-record-content-hashing",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175090,7 +175346,7 @@
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
       "to": "TASK-publication-artifact-schema",
-      "via": "src/db/migrations/001_init.ts; src/db/schema-manifest.ts; src/db/schema-story.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-; src/db/schema-manifest.ts; src/db/schema-story.ts"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175103,6 +175359,12 @@
       "kind": "sibling",
       "to": "TASK-rag-decomposition-index-pipeline",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-watchdog-events-table-and-telemet",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175121,6 +175383,12 @@
       "kind": "sibling",
       "to": "TASK-review-thread-comment-model",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
+      "to": "TASK-schema-migration",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175161,6 +175429,12 @@
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
+      "to": "epic-architecture",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
       "to": "epic-archival-workflow",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -175186,7 +175460,7 @@
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
       "to": "epic-character-growth",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-; src/db/schema-manifest.ts"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175245,6 +175519,12 @@
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
+      "to": "epic-data-integrity-acid",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
       "to": "epic-db-migration-compaction",
       "via": "src/db/migrations/001_init.ts"
     },
@@ -175252,7 +175532,7 @@
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
       "to": "epic-editorial-workflow",
-      "via": "src/db/migrations/001_init.ts"
+      "via": "src/db/migrations/001_init.ts; src/db/schema-"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175324,7 +175604,7 @@
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
-      "via": "src/db/schema-story.ts"
+      "via": "src/db/schema-; src/db/schema-story.ts"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -175335,8 +175615,26 @@
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
       "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
       "to": "epic-rarity-extensions",
       "via": "src/story/events/promote-lore.ts"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
+      "to": "epic-runtime-integrity-fail-safes",
+      "via": "src/db/schema-"
+    },
+    {
+      "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
+      "kind": "sibling",
+      "to": "epic-schema",
+      "via": "src/db/schema-"
     },
     {
       "from": "BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-",
@@ -188428,13 +188726,13 @@
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "sibling",
       "to": "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
-      "via": "src/assistant/prompt/sections/nsfw-policy.ts"
+      "via": "src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "sibling",
       "to": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
-      "via": "src/assistant/prompt/sections/nsfw-policy.ts; src/config/hot-apply.ts; src/nsfw/capability-gate.ts; src/server/start.ts"
+      "via": "src/assistant/prompt/sections/nsfw-policy.ts; src/config/hot-apply.ts; src/nsfw/capability-gate.ts; src/nsfw/runtime-config.ts; src/server/start.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
@@ -188596,7 +188894,7 @@
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "sibling",
       "to": "TASK-prompt-template-registry",
-      "via": "src/assistant/prompt/sections/nsfw-policy.ts"
+      "via": "src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
@@ -220438,7 +220736,7 @@
       "from": "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
       "kind": "sibling",
       "to": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
-      "via": "src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts; src/routes/admin-nsfw.ts"
+      "via": "src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts; src/routes/admin-nsfw.test.ts; src/routes/admin-nsfw.ts"
     },
     {
       "from": "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
@@ -225729,6 +226027,18 @@
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "sibling",
+      "to": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
+      "via": "src/assistant/prompt/sections/nsfw-context.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "sibling",
+      "to": "TASK-delete-unreferenced-generation-story-assistant-and-chat-code",
+      "via": "src/assistant/prompt/sections/nsfw-context.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "sibling",
       "to": "TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h",
       "via": "src/server/start.ts"
     },
@@ -225898,7 +226208,7 @@
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
       "kind": "sibling",
       "to": "TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char",
-      "via": "src/middleware/nsfw-gate/base-eval.ts"
+      "via": "src/middleware/nsfw-gate/base-eval.ts; src/middleware/nsfw-gate/request-context.ts"
     },
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
@@ -225917,6 +226227,12 @@
       "kind": "sibling",
       "to": "TASK-server-side-i18n-middleware",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "kind": "sibling",
+      "to": "TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un",
+      "via": "src/assistant/prompt/sections/nsfw-context.ts"
     },
     {
       "from": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
