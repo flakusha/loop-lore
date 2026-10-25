@@ -4,6 +4,7 @@
 # BUG: awardXp only levels up once per call (multi-level overflow lost)
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — awardXp (src/rpg/seduction/service/skills.ts:125-131) already loops multi-level overflow: `while (newLevel < MAX_SKILL_LEVEL && overflowXp >= xpForLevel(newLevel))` consumes every threshold and persists level/xp/xp_to_next (:135-144). The single-level limitation the ticket describes no longer exists.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-character-xp-leveling
@@ -14,7 +15,7 @@ When xpAmount exceeds multiple level thresholds, awardXp (src/rpg/seduction/serv
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): awardXp (src/rpg/seduction/service/skills.ts:125-131) already loops multi-level overflow: `while (newLevel < MAX_SKILL_LEVEL && overflowXp >= xpForLevel(newLevel))` consumes every threshold and persists level/xp/xp_to_next (:135-144). The single-level limitation the ticket describes no longer exists.
 
 **Acceptance Criteria:**
 
