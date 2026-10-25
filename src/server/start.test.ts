@@ -76,10 +76,14 @@ if (ISOLATED) {
     setGlobalLogger: () => {},
   }),);
 
+  // `config/hot-apply-consumers` imports the file-layer writer too, so the
+  // mock has to expose it — a mock that only stubs the override writer
+  // breaks module linking for every importer.
   mock.module("../nsfw/runtime-config", () => ({
     applyStoredNsfwConfig: async () => {},
     initNsfwRuntimeConfig: () => {},
     updateRuntimeNsfwConfig: () => {},
+    updateRuntimeNsfwFileConfig: () => {},
   }),);
 
   mock.module("../plugins", () => ({
