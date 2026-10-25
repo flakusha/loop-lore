@@ -760,6 +760,7 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
   });
 },);
 
+
 describeOrSkip("dispatchCommandAction world-update / world-delete", () => {
   const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
   afterEach(() => {
@@ -871,3 +872,216 @@ describeOrSkip("dispatchCommandAction world-update / world-delete", () => {
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to delete world", },],);
   });
 },);
+
+
+
+describeOrSkip("dispatchCommandAction item mutations", () => {
+  const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+  afterEach(() => {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
+  },);
+
+  function confirmWith(value: boolean,) {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
+  }
+
+  const TRANSFER_PAYLOAD = {
+    worldId: "w1",
+    instanceId: "wi-1",
+    toLocationId: "loc-9",
+    itemName: "Iron Sword",
+    toName: "Ash Gate",
+  };
+
+  test("confirmed item-transfer POSTs the transfer route with toLocationId", async () => {
+    confirmWith(true,);
+    mockFetch(200,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-transfer", TRANSFER_PAYLOAD, "chat-1",);
+
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/w1/item-instances/wi-1/transfer",);
+    expect(fetchCalls[0]?.opts.method,).toBe("POST",);
+    expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ quantity: 1, toLocationId: "loc-9", },);
+    expect(ctx.toasts,).toEqual([{ type: "success", message: "Item transferred", },],);
+  });
+
+  test("item-transfer with a character destination sends toActorId instead", async () => {
+    confirmWith(true,);
+    mockFetch(200,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-transfer", {
+      worldId: "w1",
+      instanceId: "wi-1",
+      toActorId: "char-3",
+      itemName: "Iron Sword",
+      toName: "Iria",
+    }, "chat-1",);
+
+    expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ quantity: 1, toActorId: "char-3", },);
+  });
+
+  test("dismissed item-transfer confirm sends nothing", async () => {
+    confirmWith(false,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-transfer", TRANSFER_PAYLOAD, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("item-transfer with missing payload fields sends nothing", async () => {
+    confirmWith(true,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-transfer", { worldId: "w1", }, "chat-1",);
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-transfer", null, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("failed item-transfer POST toasts error", async () => {
+    confirmWith(true,);
+    mockFetch(403, { error: "forbidden", },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-transfer", TRANSFER_PAYLOAD, "chat-1",);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to transfer item", },],);
+  });
+
+  test("200 with success:false toasts error (route-level transfer failure)", async () => {
+    confirmWith(true,);
+    mockFetch(200, { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-transfer", TRANSFER_PAYLOAD, "chat-1",);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to transfer item", },],);
+  });
+
+  test("item-transfer network error toasts error", async () => {
+    confirmWith(true,);
+    mockFetchNetworkError();
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-transfer", TRANSFER_PAYLOAD, "chat-1",);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to transfer item", },],);
+  });
+
+  const DROP_PAYLOAD = {
+    worldId: "w1",
+    instanceId: "wi-2",
+    toLocationId: "loc-9",
+    itemName: "Torch",
+    toName: "Ash Gate",
+  };
+
+  test("confirmed item-drop POSTs the transfer route with toLocationId", async () => {
+    confirmWith(true,);
+    mockFetch(200,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-drop", DROP_PAYLOAD, "chat-1",);
+
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/w1/item-instances/wi-2/transfer",);
+    expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ quantity: 1, toLocationId: "loc-9", },);
+    expect(ctx.toasts,).toEqual([{ type: "success", message: "Item dropped", },],);
+  });
+
+  test("dismissed item-drop confirm sends nothing", async () => {
+    confirmWith(false,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-drop", DROP_PAYLOAD, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("item-drop with missing payload fields sends nothing", async () => {
+    confirmWith(true,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "item-drop",
+      { worldId: "w1", instanceId: "wi-2", },
+      "chat-1",
+    );
+
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-drop", null, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("failed item-drop POST and network error toast errors", async () => {
+    confirmWith(true,);
+    mockFetch(500,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-drop", DROP_PAYLOAD, "chat-1",);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to drop item", },],);
+
+    mockFetchNetworkError();
+    const ctx2 = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx2 as any, "item-drop", DROP_PAYLOAD, "chat-1",);
+    expect(ctx2.toasts,).toEqual([{ type: "error", message: "Failed to drop item", },],);
+  });
+
+  test("item-drop 200 with success:false toasts error", async () => {
+    confirmWith(true,);
+    mockFetch(200, { success: false, transferred: 0, },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-drop", DROP_PAYLOAD, "chat-1",);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to drop item", },],);
+  });
+
+  const PICKUP_PAYLOAD = {
+    worldId: "w1",
+    instanceId: "wi-3",
+    toActorId: "char-3",
+    itemName: "Key",
+    toName: "Iria",
+  };
+
+  test("confirmed item-pickup POSTs the transfer route with toActorId", async () => {
+    confirmWith(true,);
+    mockFetch(200,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-pickup", PICKUP_PAYLOAD, "chat-1",);
+
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/w1/item-instances/wi-3/transfer",);
+    expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ quantity: 1, toActorId: "char-3", },);
+    expect(ctx.toasts,).toEqual([{ type: "success", message: "Item picked up", },],);
+  });
+
+  test("dismissed item-pickup confirm sends nothing", async () => {
+    confirmWith(false,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-pickup", PICKUP_PAYLOAD, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("item-pickup with missing payload fields sends nothing", async () => {
+    confirmWith(true,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-pickup", { worldId: "w1", }, "chat-1",);
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-pickup", null, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("failed item-pickup POST and network error toast errors", async () => {
+    confirmWith(true,);
+    mockFetch(404,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-pickup", PICKUP_PAYLOAD, "chat-1",);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to pick up item", },],);
+
+    mockFetchNetworkError();
+    const ctx2 = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx2 as any, "item-pickup", PICKUP_PAYLOAD, "chat-1",);
+    expect(ctx2.toasts,).toEqual([{ type: "error", message: "Failed to pick up item", },],);
+  });
+
+  test("item-pickup 200 with success:false toasts error", async () => {
+    confirmWith(true,);
+    mockFetch(200, { success: false, transferred: 0, },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "item-pickup", PICKUP_PAYLOAD, "chat-1",);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to pick up item", },],);
+  });
+},);
+
