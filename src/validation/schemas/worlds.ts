@@ -30,12 +30,30 @@ export const WorldCreateBody = t.Object({
   rpgSkills: t.Optional(Flag,),
 },);
 
+/**
+ * Default-free `kind` for UPDATE bodies.
+ *
+ * `t.UnionEnum` bakes `default` into the compiled schema (its first member),
+ * so Elysia's parse force-set an omitted `kind` to "rpg" — the handler's
+ * `body.kind != null` guard could never see it as absent, and every partial
+ * update silently reset the column. A plain literal union carries no default
+ * (same remedy as `EntityScopeUpdateSchema` in ./entities.ts).
+ */
+const WorldKindUpdate = t.Union([t.Literal("rpg",), t.Literal("chat",),],);
+
+/** Default-free `visibility` for UPDATE bodies — see {@link WorldKindUpdate}. */
+const WorldVisibilityUpdate = t.Union([
+  t.Literal("public",),
+  t.Literal("unlisted",),
+  t.Literal("private",),
+],);
+
 export const WorldUpdateBody = t.Object({
   name: t.Optional(Name,),
   description: t.Optional(t.String(),),
   lore: t.Optional(t.String(),),
-  kind: t.Optional(WorldKindSchema,),
-  visibility: t.Optional(WorldVisibilitySchema,),
+  kind: t.Optional(WorldKindUpdate,),
+  visibility: t.Optional(WorldVisibilityUpdate,),
   rpgEnabled: t.Optional(Flag,),
   rpgDice: t.Optional(Flag,),
   rpgChecks: t.Optional(Flag,),
