@@ -126,6 +126,7 @@ function parseEnvelope(raw: string,): ContentEnvelope | null {
  * @param opts.batch Max rows per pass.
  * @param opts.maxAttempts Failure threshold before dead-lettering.
  * @param opts.baseBackoffMs Backoff base in ms.
+ * @param opts.meshPsk Shared mesh PSK; signs reserve bodies with an HMAC proof.
  * @returns {Promise<MeshOutboxPassSummary>}
  */
 export async function runMeshOutboxPass(
@@ -137,6 +138,7 @@ export async function runMeshOutboxPass(
     batch?: number;
     maxAttempts?: number;
     baseBackoffMs?: number;
+    meshPsk?: string;
   } = {},
 ): Promise<MeshOutboxPassSummary> {
   // In-flight guard: skip this tick if a previous pass is still running.
@@ -162,6 +164,7 @@ async function runMeshOutboxPassInner(
     batch?: number;
     maxAttempts?: number;
     baseBackoffMs?: number;
+    meshPsk?: string;
   },
 ): Promise<MeshOutboxPassSummary> {
   const nowMs = opts.now ?? Date.now();
@@ -215,7 +218,7 @@ async function runMeshOutboxPassInner(
           contentHash: envelope.hash,
           sizeBytes: envelope.size,
           contentType: envelope.type,
-        },);
+        }, { meshPsk: opts.meshPsk, },);
 
         await pushEnvelope(post, row.target_origin, envelope, granted.reservationId,);
         delivered = true;

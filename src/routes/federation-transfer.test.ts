@@ -104,7 +104,7 @@ describe("A→B mesh transfer", () => {
       senderOrigin: A_ORIGIN,
       contentHash: probe.hash,
       sizeBytes: probe.size,
-    },);
+    }, { meshPsk: PSK, },);
 
     expect(typeof reservationId,).toBe("string",);
     expect(typeof contentKey,).toBe("string",);
