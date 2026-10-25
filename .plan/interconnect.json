@@ -18687,7 +18687,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md",
       "title": "Assistant Character, Item & Inventory Access Commands",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
         "src/assistant/adapter/characters.ts",
         "src/assistant/adapter/entity.ts",

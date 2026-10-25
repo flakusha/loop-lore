@@ -8,7 +8,8 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** shipped commands are marked below; the rest of the entity-access commands land with the other branches of this epic.
 **Priority:** High
 **Effort:** High
 **Type:** Task
@@ -72,11 +73,11 @@ Inventory is tracked through `world_items` table with `actor_id` foreign key. A 
 
 - [ ] Implement `charListHandler` — Character list for owner
 - [ ] Implement `charGetHandler` — Character card with stats and lore
-- [ ] Implement `charUpdateHandler` — Update character fields with confirmation
+- [x] Implement `charUpdateHandler` — Update character fields with confirmation
 - [ ] Implement `charAdaptHandler` — Adapt character to new world
 - [ ] Implement `itemListHandler` — Item definitions in a world
 - [ ] Implement `itemGetHandler` — Item definition + instances
-- [ ] Implement `itemUpdateHandler` — Update item definition
+- [x] Implement `itemUpdateHandler` — Update item definition
 - [ ] Implement `inventoryHandler` — Character's carried items
 - [ ] Implement `itemTransferHandler` — Transfer item instance
 - [ ] Implement `itemDropHandler` — Drop item at current location
@@ -88,11 +89,11 @@ Inventory is tracked through `world_items` table with `actor_id` foreign key. A 
 
 - [ ] `/char-list` returns owned characters
 - [ ] `/char-get` returns character card + stats + lore
-- [ ] `/char-update` modifies fields with confirmation
+- [x] `/char-update` modifies fields with confirmation
 - [ ] `/char-adapt` delegates to adaptation engine
 - [ ] `/item-list` returns item definitions in a world
 - [ ] `/item-get` returns item definition + instances
-- [ ] `/item-update` modifies definition with confirmation
+- [x] `/item-update` modifies definition with confirmation
 - [ ] `/inventory` returns character's carried items
 - [ ] `/item-transfer` moves item instance to target
 - [ ] `/item-drop` drops item at current location
