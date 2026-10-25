@@ -232,6 +232,25 @@ describe("entity mutation commands", () => {
     expect(denied.action,).toBeUndefined();
   });
 
+  test("denies a character patch when the command context carries no user", async () => {
+    // `actors.owner_id` is nullable: an unowned row would match a caller
+    // without a user id (`null === null`) if the guard did not reject the
+    // missing user before the ownership check.
+    const unowned = await insertActors(db, "Wisp", {
+      owner_id: null,
+      user_id: null,
+      description: "A drifting spirit",
+      personality: "quiet",
+      appearance: "faint",
+    },);
+
+    const denied = await apply(["character", unowned, "personality=secretive",], ctx({ userId: undefined, },),);
+
+    expect(denied.handled,).toBe(true,);
+    expect(denied.systemMessage,).toContain("not found or not owned by you",);
+    expect(denied.action,).toBeUndefined();
+  });
+
   test("previews a world patch without persisting it", async () => {
     const result = await apply(["world", worldId, 'name="New Ember"', "scanDepth=80",], ctx(),);
 
