@@ -11,7 +11,7 @@ output is byte-identical for identical inputs.
 - tickets: 3652
 - epics: 347
 - src paths owned: 4421
-- edges: produces 11564, consumes 403, sibling 34814, owns 2649, related 1191
+- edges: produces 11565, consumes 403, sibling 34815, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -1762,7 +1762,7 @@ output is byte-identical for identical inputs.
 | `src/server/index.ts` | `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `epic-file-splitting`, `epic-interaction-surfaces-audit` |
 | `src/server/init-background-services.test.ts` | `BUG-fix-server-log-rejected-background-init-promises-with-module`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` |
 | `src/server/init-background-services.ts` | `BUG-character-seed-dedupes-on-display-name`, `BUG-fix-server-log-rejected-background-init-promises-with-module`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `epic-character-core-system`, `epic-cron-scheduler` |
-| `src/server/start.test.ts` | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` |
+| `src/server/start.test.ts` | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` |
 | `src/server/start.ts` | `BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen`, `BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k`, `BUG-auto-rotation-config-drift`, `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-`, `BUG-eager-db-init-creates-on-disk-db-on-test-import`, `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec`, `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p`, `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready`, `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o`, `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au`, `BUG-new-migration-parts-never-apply-to-existing-databases`, `BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil`, `BUG-server-host-config-and-host-env-override-are-dead-start-ts-n`, `TASK-async-request-response-result-store-separate-table-offload`, `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi`, `TASK-cron-migrate-existing-timers`, `TASK-cron-provider-health-rescan`, `TASK-cross-platform-portability`, `TASK-delete-dead-src-transport-protocol-handler-tree-and-write-on`, `TASK-docs-probes-fix-readiness-docstring-document-api-health-vs-h`, `TASK-enable-http-2-via-single-tls-port-consolidation`, `TASK-fail-safe-execution-work-safety`, `TASK-https-redirect-enforcement-for-plaintext-http`, `TASK-item-config-templates`, `TASK-local-instance-integrity-holistic`, `TASK-logging-hardening-minors-injection-rotation-races-sink-path-`, `TASK-ocsp-stapling-for-tls-certificate-status`, `TASK-outfit-change-hook`, `TASK-production-tls-modes-byo-certs-acme-and-proxy-termination`, `TASK-recursive-self-improvement-watchdog-supervisor-process-spawn`, `TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota`, `TASK-runtime-integrity-watchdog-crash-recovery`, `TASK-size-strict-debt`, `TASK-sni-multi-certificate-serving-for-multiple-domains`, `TASK-swarm-supervisor`, `TASK-tls-cipher-suite-hardening-and-secure-defaults`, `TASK-wire-fswatcher-onreload-callback-in-server-startup`, `epic-certificate-and-tls-management`, `epic-cron-scheduler`, `epic-cross-platform-portability`, `epic-db-migration-compaction`, `epic-file-splitting`, `epic-http-protocol-features`, `epic-local-process-swarm`, `epic-reactive-actor-appearance`, `epic-recursive-self-improvement`, `epic-runtime-integrity-fail-safes`, `epic-skills-professions-config` |
 | `src/server/static-files.ts` | `BUG-dynamic-response-accept-encoding-negotiation-uses-substring-`, `BUG-fix-server-gate-docs-serving-on-config-redirect-docs-to-docs`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-static-asset-caching-unconditional-vary-immutable-on-short-t`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra`, `BUG-static-files-304-only-matches-a-single-exact-if-none-match-e`, `FEAT-static-file-server-honors-accept-encoding-q-values-and-wildc`, `TASK-cross-platform-portability`, `TASK-cross-platform-single-binary`, `TASK-docs-ui-endpoint-linkage`, `TASK-guest-public-functionality-surface-feed-templates-docs`, `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto`, `TASK-perf-server-no-cache-html-entry-points-stream-static-files-w`, `epic-cross-platform-portability`, `epic-docs-reconciliation`, `epic-http-protocol-features` |
 | `src/server/static-mime.ts` | `BUG-findcompressedvariant-serves-q-0-codings-the-client-explicit`, `BUG-static-asset-serving-never-applies-immutable-caching-and-cra` |
@@ -5619,6 +5619,7 @@ output is byte-identical for identical inputs.
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/config/hot-reload.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/nsfw/capability-gate.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/nsfw/runtime-config.ts` | - |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/server/start.test.ts` | - |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | produces | `src/server/start.ts` | - |
 | `BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin` | produces | `src/routes/config-menu.ts` | - |
 | `BUG-config-schema-defaults-leak-absolute-paths` | produces | `src/config/generate-schema.ts` | - |
@@ -21723,9 +21724,9 @@ output is byte-identical for identical inputs.
 | `BUG-community-share-missing-lorebook-export` | sibling | `epic-lore-knowledge` | `src/routes/actor-lore-entries.ts` |
 | `BUG-community-share-missing-lorebook-export` | sibling | `epic-rpg-patterns` | `src/characters` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-eager-db-init-creates-on-disk-db-on-test-import` | `src/server/start.ts` |
-| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | `src/server/start.ts` |
-| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | `src/server/start.ts` |
-| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.ts` |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec` | `src/server/start.test.ts; src/server/start.ts` |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p` | `src/server/start.test.ts; src/server/start.ts` |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready` | `src/server/start.test.ts; src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `BUG-new-migration-parts-never-apply-to-existing-databases` | `src/server/start.ts` |
@@ -21735,6 +21736,7 @@ output is byte-identical for identical inputs.
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-033` | `src/nsfw/capability-gate.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-034` | `src/nsfw/capability-gate.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-037` | `src/nsfw/capability-gate.ts` |
+| `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-add-a-federation-e2e-test-that-boots-two-real-servers` | `src/server/start.test.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-async-request-response-result-store-separate-table-offload` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-build-identity-hash-for-tamper-detection-searxng-style-commi` | `src/server/start.ts` |
 | `BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-` | sibling | `TASK-c4-inbound-federated-content-verdict-notices` | `src/nsfw/capability-gate.ts` |

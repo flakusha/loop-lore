@@ -2816,6 +2816,7 @@
         "src/config/hot-reload.ts",
         "src/nsfw/capability-gate.ts",
         "src/nsfw/runtime-config.ts",
+        "src/server/start.test.ts",
         "src/server/start.ts"
       ],
       "related": []
@@ -82308,6 +82309,7 @@
     {
       "path": "src/server/start.test.ts",
       "owners": [
+        "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
         "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
         "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
         "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
@@ -104215,6 +104217,11 @@
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "produces",
       "to": "src/nsfw/runtime-config.ts"
+    },
+    {
+      "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
+      "kind": "produces",
+      "to": "src/server/start.test.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
@@ -188690,19 +188697,19 @@
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "sibling",
       "to": "BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec",
-      "via": "src/server/start.ts"
+      "via": "src/server/start.test.ts; src/server/start.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "sibling",
       "to": "BUG-fix-server-fail-closed-when-configured-tls-certs-cannot-be-p",
-      "via": "src/server/start.ts"
+      "via": "src/server/start.test.ts; src/server/start.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
       "kind": "sibling",
       "to": "BUG-fix-server-gate-traffic-until-plugins-seeds-assets-are-ready",
-      "via": "src/server/start.ts"
+      "via": "src/server/start.test.ts; src/server/start.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
@@ -188757,6 +188764,12 @@
       "kind": "sibling",
       "to": "TASK-037",
       "via": "src/nsfw/capability-gate.ts"
+    },
+    {
+      "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
+      "kind": "sibling",
+      "to": "TASK-add-a-federation-e2e-test-that-boots-two-real-servers",
+      "via": "src/server/start.test.ts"
     },
     {
       "from": "BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-",
