@@ -99,7 +99,7 @@
         }
       }
     },
-    "src/components/chat/{_gm-guidance-body,assistant-panel,background-panel,branch-list-panel,branch-merge-modal,chat-header,chat-list-panel,chat-settings-modal,emotion-avatars-panel,gallery-sidebar,gm-panel,gm-quests-panel,gm-story-panel,input-area,keynav-help,location-panel,memory-panel,message-list,mood-panel,music-panel,participant-mgmt,pins-panel,rpg-questions,sections-panel,story-view,wizard-panel}.html": {
+    "src/components/chat/{_gm-guidance-body,assistant-panel,background-panel,branch-list-panel,branch-merge-modal,chat-header,chat-list-panel,chat-settings-modal,emotion-avatars-panel,gallery-sidebar,gm-panel,gm-quests-panel,gm-story-panel,input-area,location-panel,memory-panel,message-list,mood-panel,music-panel,participant-mgmt,pins-panel,rpg-questions,sections-panel,story-view,wizard-panel}.html": {
       "rules": {
         "require-owned-elements": {
           "severity": "off",

@@ -10,6 +10,7 @@
  * `keynav` localStorage flag).
  */
 
+import { t, } from "./i18n";
 import { getKeymap, isKeyboardNavEnabled, type ShortcutEntry, } from "./shortcuts";
 
 /** State exposed to the Alpine template in layout.html. */
@@ -22,12 +23,6 @@ export interface KeynavHelpState {
   toggle(): void;
   close(): void;
   label(key: string,): string;
-}
-
-/** Read the client-side translation helper registered by the i18n bundle. */
-function globalT(): ((key: string,) => string) | undefined {
-  const g: { t?: (k: string,) => string } = globalThis;
-  return g.t;
 }
 
 /**
@@ -77,9 +72,8 @@ export function keynavHelp(): KeynavHelpState {
      */
     label(key: string,): string {
       const i18nKey = `frontend.keynav.actions.${key}`;
-      const fn = globalT();
-      const translated = fn?.(i18nKey,);
-      return translated && translated !== i18nKey ? translated : key;
+      const translated = t(i18nKey,);
+      return translated === i18nKey ? key : translated;
     },
   };
 }
