@@ -61,6 +61,31 @@ export function parseCommand(input: string,): ParsedCommand | null;
 /damage <amount> <target> - apply damage
 /heal <amount> <target> - heal target
 
+### Entity Modification & Addition
+
+```
+/apply <world|location|item> <id> <key=value>...
+/modify <world|location|item|character> <id> <request...>
+/add <location|item> <name> [world] [key=value]...
+/clone <location|item> <source-id> [key=value]...
+/import character <asset-id|file>
+```
+
+- `/apply` applies a direct field-level patch (no LLM)
+- `/modify` asks the model for updated fields, then runs the quality gates
+  (schema validation is a hard reject, duplicate and consistency are warnings)
+- `/add` creates a new location/item in an existing world
+- `/clone` copies an entity and applies `key=value` overrides to the copy
+- `/import` imports a character card (PNG/YAML/TOML/JSON/CHARX) from an asset
+
+All five are preview-only: the request is parsed and checked, and the user
+confirms the preview before the real HTTP route is called. The ownership
+checks are the routes' own guards (`requireWorldOwner`, `checkWorldOwnership`,
+`checkActorOwnership`) - there is no separate access layer.
+
+Source: `src/assistant/commands/{apply,modify,import,clone}.ts`,
+`entity-patch.ts` (patch grammar), `entity-patch-spec.ts` (per-kind fields).
+
 ## Command Access Tiers
 
 Commands have access tiers based on world rules:
