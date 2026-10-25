@@ -108,7 +108,14 @@ function makeState(): {
     },
   };
 
-  return Object.assign(state, chatTouchGestures,);
+  return Object.assign(state, chatTouchGestures, {
+    // Concrete defaults narrow the Partial's `| undefined` so the declared
+    // return type holds after Object.assign.
+    _touchSwipeTarget: null,
+    _touchOnControl: false,
+    _touchGesturesEl: null,
+    _touchGesturesCleanups: [] as (() => void)[],
+  },);
 }
 
 function touchStart(target: FakeNode | null, x: number, y: number,): Record<string, unknown> {
@@ -287,7 +294,7 @@ describe("htmx swap lifecycle", () => {
     dom = makeMessageList();
     currentList = dom.list;
     state.setupTouchGestures();
-    expect(state._touchGesturesEl,).toBe(dom.list,);
+    expect(state._touchGesturesEl,).toBe(dom.list as unknown as Element,);
 
     // The removed node keeps no listeners → a late swipe dispatches nothing.
     removed.fire("touchstart", touchStart(dom.leaf, 220, 300,),);
@@ -337,7 +344,7 @@ describe("attachment guards", () => {
     g.matchMedia = (query: string,) => ({ matches: query === "(pointer: coarse)", });
     const state = makeState();
     state.setupTouchGestures();
-    expect(state._touchGesturesEl,).toBe(dom.list,);
+    expect(state._touchGesturesEl,).toBe(dom.list as unknown as Element,);
     expect(dom.list.listenerCount("touchstart",),).toBeGreaterThan(0,);
   });
 
