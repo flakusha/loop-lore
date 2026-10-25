@@ -4,6 +4,7 @@
 # BUG: consumeInventoryUnit uses stale quantity (TOCTOU on inventory)
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — the prescribed guard already exists on dev: `consumeInventoryUnit` (src/rpg/service/battles/items.ts:233-272) adds `.where("quantity", "=", current)` to both the DELETE (:250) and UPDATE (:264) paths and throws `Item ... was modified concurrently` when zero rows are affected (:253-255, :267-269). The check-then-act window the ticket describes is closed; no further change needed.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-inventory
@@ -14,7 +15,7 @@ useBattleItem (src/rpg/service/battles/items.ts:191,230-251) reads the item rows
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): the prescribed guard already exists on dev: `consumeInventoryUnit` (src/rpg/service/battles/items.ts:233-272) adds `.where("quantity", "=", current)` to both the DELETE (:250) and UPDATE (:264) paths and throws `Item ... was modified concurrently` when zero rows are affected (:253-255, :267-269). The check-then-act window the ticket describes is closed; no further change needed.
 
 **Acceptance Criteria:**
 
