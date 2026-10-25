@@ -4,6 +4,7 @@
 # BUG: Mood and relationship services mutate multi-row state without transactions
 
 **Status:** Done
+**Status Note:** fixed 2026-10-25 (commit f091e5683, branch fix/bug-sweep) — legs 2 (applyHappinessDelta) and 4 (get-mood/withWorldId) of the four-leg list; legs 1 (logEvent orphan row) and 3 (updateMood last_mood_change) landed earlier on this branch. applyHappinessDelta's standalone path is now a compare-and-set on the read values (row id + happiness) with a bounded 3-attempt retry; withWorldId no longer emits `world_id is null` for an undefined worldId, so world-agnostic lookups span global + world-scoped rows. Repro: two concurrent +10 deltas landed as 60 pre-fix, 70 post-fix; getMood(actor) returned undefined for a world-scoped row pre-fix. Pinned in src/characters/services/mood-service.test.ts.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-aux-enrichment-pipeline
@@ -28,7 +29,15 @@ Source: .tmp/longcat/review-characters.md H1, H2, H3, H4, H5, M6.
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Mood and relationship services mutated multi-row state with no transaction: read-modify-write and paired bidirectional writes could commit half of a change. This ticket tracks the four mood legs (event row, happiness delta, last_mood_change, world scoping); the relationship legs are tracked separately.
+
+**Resolution:**
+
+- src/characters/services/mood-service/apply-happiness-delta.ts — the standalone path is now a compare-and-set on the read values (row id + happiness) with a bounded 3-attempt retry, so concurrent deltas cannot clobber each other.
+- src/characters/services/mood-service/get-mood.ts — withWorldId no longer emits `world_id is null` for an undefined worldId, so world-agnostic lookups span global + world-scoped rows.
+- Legs 1 (logEvent orphan row) and 3 (updateMood last_mood_change) landed earlier on this branch.
+- src/characters/services/mood-service.test.ts — pins the concurrent-delta outcome and the world-scoped lookup.
+- Commit f091e5683 (branch fix/bug-sweep).
 
 **Acceptance Criteria:**
 
