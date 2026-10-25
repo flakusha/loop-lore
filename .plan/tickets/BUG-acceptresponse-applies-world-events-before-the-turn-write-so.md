@@ -3,7 +3,7 @@
 
 # BUG: acceptResponse applies world events before the turn write, so a rejected turn keeps applied world mutations
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows
@@ -31,3 +31,5 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-5 (gitignored; recorded here
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 8af2b9a (registry tip: f4cfa1c86 Konstantin Fedotov Close issue)

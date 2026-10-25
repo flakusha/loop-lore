@@ -70,7 +70,7 @@
     "epic": "epic-assistant-gm-flows",
     "tags": [],
     "source": ".plan/tickets/BUG-acceptresponse-applies-world-events-before-the-turn-write-so.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ACCESS-LOG-NEVER-RECORDS-USERID-HANDLE-X-USER-ID-HEADER-NEVE": {
     "epic": "epic-logging",
@@ -336,7 +336,7 @@
     "epic": "epic-auth-access",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-PROVIDERS-LIST-VS-AUTH-CONFLICT-NEEDS-CONTRACT-DECISIO": {
     "hash": "1568edc",
@@ -568,7 +568,7 @@
     "epic": "epic-rpg-mechanics",
     "tags": [],
     "source": ".plan/tickets/BUG-answerquestion-double-answer-race-toctou-on-status-check.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ANSWERQUESTION-IGNORES-TIME-LIMIT-EXPIRED-QUESTIONS-STILL-AN": {
     "hash": "a90f770",
@@ -635,6 +635,18 @@
     "title": "app: registerPlugins accepts asyncStore but never uses it",
     "type": "BUG"
   },
+  "BUG-APPEAL-REVERSAL-NOTIFICATION-IS-STORED-WITH-A-NULL-ID-WHICH-": {
+    "hash": "pending",
+    "extid": "BUG-APPEAL-REVERSAL-NOTIFICATION-IS-STORED-WITH-A-NULL-ID-WHICH-",
+    "type": "BUG",
+    "title": "Appeal-reversal notification is stored with a NULL id, which hides the user's whole notification list",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md",
+    "status": "done"
+  },
   "BUG-APPLYFLAG-SKIPS-SELF-TARGET-GUARD": {
     "hash": "af59426",
     "git_issue": "af59426",
@@ -646,7 +658,7 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-applyflag-skips-self-target-guard.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ARCHIVE-RETENTION-HARDCODED-30-DAYS-SHOULD-BE-CONFIGURABLE-9": {
     "epic": "epic-archival-workflow",
@@ -739,7 +751,7 @@
     "label": "security",
     "priority": "high",
     "source": ".plan/tickets/BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Asset links and shares routes only requireUserId - cross-user enumeration",
     "type": "BUG"
@@ -917,6 +929,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-assistant-and-group-chat-correctness-defects.md",
     "status": "Not Started"
+  },
+  "BUG-ASSISTANT-CREATED-LORE-ENTRIES-ARE-STORED-WITH-A-NULL-ID-SO-": {
+    "hash": "pending",
+    "extid": "BUG-ASSISTANT-CREATED-LORE-ENTRIES-ARE-STORED-WITH-A-NULL-ID-SO-",
+    "type": "BUG",
+    "title": "Assistant-created lore entries are stored with a NULL id, so their cooldown never starts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md",
+    "status": "done"
   },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "epic": "epic-assistant-creative-studio-workflows",
@@ -1215,7 +1239,7 @@
     "epic": "epic-character-xp-leveling",
     "tags": [],
     "source": ".plan/tickets/BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED": {
     "epic": "",
@@ -1997,7 +2021,7 @@
     "label": "security",
     "priority": "high",
     "source": ".plan/tickets/BUG-character-avatar-put-delete-idor-by-bare-avatarid.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Character avatar PUT/DELETE IDOR by bare avatarId",
     "type": "BUG"
@@ -2892,6 +2916,18 @@
     "title": "computeContextWindow phase-3 trims newest instead of oldest",
     "type": "BUG"
   },
+  "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-": {
+    "hash": "pending",
+    "extid": "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-",
+    "type": "BUG",
+    "title": "Config-file reload silently re-enables NSFW after the admin turned it off",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md",
+    "status": "done"
+  },
   "BUG-CONFIG-MENU-PATCH-STORES-THE-RAW-VALUE-FOR-USER-SCOPE-SETTIN": {
     "hash": "c77b7e9",
     "git_issue": "c77b7e9",
@@ -2983,7 +3019,7 @@
     "epic": "epic-inventory",
     "tags": [],
     "source": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CONTENT-HASH-NAMING-FOR-GENERATED-ASSETS": {
     "hash": "f7527f0",
@@ -3837,6 +3873,19 @@
     "title": "encrypted-payload sniffing misclassifies user JSON as pre-encrypted content",
     "type": "BUG"
   },
+  "BUG-ENCRYPTION-FLOW-BROWSER-TS-IS-NOT-COVERED-BY-EXPECTED-404-NO": {
+    "hash": "9dad45f",
+    "git_issue": "9dad45f",
+    "extid": "BUG-ENCRYPTION-FLOW-BROWSER-TS-IS-NOT-COVERED-BY-EXPECTED-404-NO",
+    "type": "BUG",
+    "title": "encryption-flow.browser.ts is not covered by EXPECTED_404_NOISE_ALLOWLIST, so the by-design game-state 404 flakes it under load",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-encryption-flow-browser-ts-is-not-covered-by-expected-404-no.md",
+    "status": "Not Started"
+  },
   "BUG-ENCRYPTION-TIER-NOT-ENFORCED": {
     "epic": "epic-crypto",
     "extid": "BUG-ENCRYPTION-TIER-NOT-ENFORCED",
@@ -3861,7 +3910,7 @@
     "epic": "epic-battle-action-systems",
     "tags": [],
     "source": ".plan/tickets/BUG-endbattle-overwrites-completed-battles-no-active-status-guar.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ENTITY-TEMPLATE-POSITION-CONFIG-UNVALIDATED-TYPOS-SILENTLY-B": {
     "epic": "",
@@ -4021,7 +4070,7 @@
     "epic": "epic-byok-api-keys",
     "tags": [],
     "source": ".plan/tickets/BUG-failover-replays-primary-byo-key-to-fallback-vendors.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FAN-OUT-CONTENT-CLEARANCE-GATE-IS-OPT-IN-ON-A-CALLER-SUPPLIE": {
     "hash": "142027d",
@@ -4544,7 +4593,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO": {
     "epic": "",
@@ -5171,7 +5220,7 @@
     "epic": "epic-gm-shadow-notes",
     "tags": [],
     "source": ".plan/tickets/BUG-gm-shadow-note-revealed-to-reveal-is-a-read-modify-write-wit.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GMNOTESSECTION-INJECTS-SHADOW-NOTES-INTO-ALL-ACTORS-PROMPTS": {
     "epic": "",
@@ -5236,7 +5285,7 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD": {
     "epic": "epic-chat-lifecycle-moderation",
@@ -5366,7 +5415,7 @@
     "epic": "epic-messages",
     "tags": [],
     "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GZIP-STORED-UNENCRYPTED-MESSAGES-REACH-LLM-PROMPT-AND-EXPORT": {
     "epic": "",
@@ -5895,7 +5944,7 @@
     "epic": "epic-plugin-system",
     "tags": [],
     "source": ".plan/tickets/BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ISPLURALNODE-DUPLICATED-IN-SERVER-AND-FRONTEND-I18N-DIVERGIN": {
     "hash": "5f8bbe7",
@@ -5908,6 +5957,21 @@
     "epic": "epic-frontend-internationalization",
     "tags": [],
     "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md",
+    "status": "Not Started"
+  },
+  "BUG-ITEM-DEFINITION-ROUTE-NON-ARRAY-PROPERTIES-EFFECTS-CAUSES-UN": {
+    "hash": "56882eb",
+    "git_issue": "56882eb",
+    "extid": "BUG-ITEM-DEFINITION-ROUTE-NON-ARRAY-PROPERTIES-EFFECTS-CAUSES-UN",
+    "type": "BUG",
+    "title": "Item definition route: non-array properties.effects causes unhandled 500",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "story-items"
+    ],
+    "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md",
     "status": "Not Started"
   },
   "BUG-ITEM-TRANSFERS-DOUBLE-REPORT-ONE-SENTENCE-AND-ITEM-TAKE-ITEM": {
@@ -6555,7 +6619,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-MESH-RESERVE-ISSUES-INBOUND-CONTENT-KEYS-WITHOUT-AUTHENTICAT": {
     "hash": "1138d0f",
@@ -6659,7 +6723,7 @@
     "label": "security",
     "priority": "high",
     "source": ".plan/tickets/BUG-message-soft-delete-lets-any-chat-member-hide-any-member-s-m.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Message soft delete lets any chat member hide any member's message",
     "type": "BUG"
@@ -7292,7 +7356,7 @@
     "epic": "epic-security-sandboxing",
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-NSFW-CONSENT-AUTO-GRANTED-IN-MEMORY-FOR-ANY-LOGGED-IN-USER-N": {
     "epic": "",
@@ -7760,7 +7824,7 @@
     "epic": "epic-battle-action-systems",
     "tags": [],
     "source": ".plan/tickets/BUG-persistbattle-lost-update-race-read-modify-write-without-tra.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PERSONA-UPDATE-ON-CROSS-USER-ID-RETURNS-200-OK-INSTEAD-OF-40": {
     "epic": "",
@@ -8139,7 +8203,7 @@
     "epic": "epic-quests-encounters",
     "tags": [],
     "source": ".plan/tickets/BUG-quest-engine-double-advances-from-stale-in-memory-progress-a.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-QUEST-UPDATE-NOTIFICATIONS-IGNORE-THE-MUTED-WORLD-SCOPE": {
     "hash": "e10d22e",
@@ -8178,7 +8242,7 @@
     "epic": "epic-avatar-regeneration-control",
     "tags": [],
     "source": ".plan/tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-RATE-LIMIT-POLICIES-STARVE-NORMAL-CHAT-TRAFFIC-WITH-429S": {
     "epic": "",
@@ -8324,7 +8388,7 @@
     "epic": "epic-replayability",
     "tags": [],
     "source": ".plan/tickets/BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-REDOS-IN-HTML-SANITIZE-SCRIPT-TAG-PATTERN-CHUNK-BOUNDARY-SAN": {
     "epic": "epic-api-validation-guardrails",
@@ -8438,7 +8502,7 @@
     "label": "security",
     "priority": "high",
     "source": ".plan/tickets/BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Relationship bidirectional reverse row grafts onto foreign characters",
     "type": "BUG"
@@ -8546,6 +8610,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
     "status": "Not Started"
+  },
+  "BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-SERVING-NSFW-AFTER-THE-ADMIN-KIL": {
+    "hash": "pending",
+    "extid": "BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-SERVING-NSFW-AFTER-THE-ADMIN-KIL",
+    "type": "BUG",
+    "title": "Route-layer NSFW gate keeps serving NSFW after the admin kill switch is turned off",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md",
+    "status": "done"
   },
   "BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU": {
     "hash": "911cb41",
@@ -8842,6 +8918,18 @@
     "title": "Security/auth merge wrapper `3ab26ccd` breaks the backend build",
     "type": "BUG"
   },
+  "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR": {
+    "hash": "pending",
+    "extid": "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR",
+    "type": "BUG",
+    "title": "Seeded-user config option seedActor is never read, so the mirror actor row is always created",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md",
+    "status": "done"
+  },
   "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET": {
     "hash": "36b98b4",
     "git_issue": "36b98b4",
@@ -8957,7 +9045,7 @@
     "epic": "epic-api-rate-limiting",
     "tags": [],
     "source": ".plan/tickets/BUG-settings-export-endpoint-has-no-rate-limiting.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SETTINGS-SAVE-OMITS-GMCONFIG-FOR-ONLINE-CHATS": {
     "epic": "",
@@ -9464,7 +9552,7 @@
     "epic": "epic-conversation-branching",
     "tags": [],
     "source": ".plan/tickets/BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SYNC-INDEX-TYPE-FILTER-SILENTLY-EXCLUDES-IDEA-TICKETS-FROM-E": {
     "hash": "28d0678",
@@ -9842,7 +9930,7 @@
     "label": "security",
     "priority": "high",
     "source": ".plan/tickets/BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Travel-route stop DELETE ignores routeId - cross-world IDOR",
     "type": "BUG"
@@ -10515,7 +10603,7 @@
     "label": "security",
     "priority": "critical",
     "source": ".plan/tickets/BUG-world-location-reparent-has-no-cycle-self-descendant-checks-.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "World location reparent has no cycle/self/descendant checks - wedges DB",
     "type": "BUG"
@@ -20394,6 +20482,19 @@
     "title": "GDPR & User Data Rights",
     "type": "FEAT"
   },
+  "FEAT-GENERATED-FRONTEND-REFERENCE-DOCS-TYPEDOC-TO-VITEPRESS": {
+    "hash": "b145d6f",
+    "git_issue": "b145d6f",
+    "extid": "FEAT-GENERATED-FRONTEND-REFERENCE-DOCS-TYPEDOC-TO-VITEPRESS",
+    "type": "FEAT",
+    "title": "Generated frontend reference docs (Typedoc to VitePress)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-generated-frontend-reference-docs-typedoc-to-vitepress.md",
+    "status": "Not Started"
+  },
   "FEAT-GENERIC-2D-GRAPH-CANVAS-RENDERER-REUSING-GAME-CANVAS": {
     "hash": "4dbc02d",
     "git_issue": "4dbc02d",
@@ -21008,7 +21109,7 @@
     "epic": "epic-multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/FEAT-message-translations-chat-first.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "FEAT-MESSAGING-BRIDGE-EXTENSIONS": {
     "epic": "",
@@ -23394,6 +23495,19 @@
     "tags": [],
     "title": "# TASK-071: Info Bubbles (help tooltips in config menus)",
     "type": "TASK"
+  },
+  "TASK-181-PRE-EXISTING-OPTIONS-OBJECT-PARAMS-ESLINT-WARNINGS-ACROS": {
+    "hash": "d5c2c1b",
+    "git_issue": "d5c2c1b",
+    "extid": "TASK-181-PRE-EXISTING-OPTIONS-OBJECT-PARAMS-ESLINT-WARNINGS-ACROS",
+    "type": "TASK",
+    "title": "181 pre-existing options-object-params eslint warnings across ~95 files",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md",
+    "status": "Not Started"
   },
   "TASK-2026-002": {
     "epic": "(none — hygiene/self-contained)",
@@ -35676,6 +35790,19 @@
     "title": "Dev Tooling Updates — Biome, dprint, stylelint",
     "type": "TASK"
   },
+  "TASK-DIFF-SCOPED-COVERAGE-GATE-FLOORS-FILES-THE-BRANCH-DID-NOT-AU": {
+    "hash": "7c2b079",
+    "git_issue": "7c2b079",
+    "extid": "TASK-DIFF-SCOPED-COVERAGE-GATE-FLOORS-FILES-THE-BRANCH-DID-NOT-AU",
+    "type": "TASK",
+    "title": "Diff-scoped coverage gate floors files the branch did not author when the branch is behind its base",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-diff-scoped-coverage-gate-floors-files-the-branch-did-not-au.md",
+    "status": "Not Started"
+  },
   "TASK-DISASTER-RECOVERY-RESEARCH": {
     "epic": "epic-db-asset-snapshot-recovery",
     "extid": "TASK-DISASTER-RECOVERY-RESEARCH",
@@ -39718,6 +39845,18 @@
     "tags": [],
     "title": "Generalized pre/post-generation hook registry",
     "type": "TASK"
+  },
+  "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO": {
+    "hash": "pending",
+    "extid": "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO",
+    "type": "TASK",
+    "title": "Generated DB types mark every primary key as DB-generated, so an id-less INSERT type-checks and stores a NULL id",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md",
+    "status": "done"
   },
   "TASK-GENERATION-ASSET-PERSISTENCE-CONTRACT": {
     "epic": "epic-asset-platform-capabilities",
@@ -45855,6 +45994,19 @@
     "tags": [],
     "title": "No browser test: VN scene view, battle UI, command palette",
     "type": "TASK"
+  },
+  "TASK-NO-GATE-CHECKS-THAT-A-DECLARED-CONFIG-KEY-HAS-A-READER-SO-WR": {
+    "hash": "0be6465",
+    "git_issue": "0be6465",
+    "extid": "TASK-NO-GATE-CHECKS-THAT-A-DECLARED-CONFIG-KEY-HAS-A-READER-SO-WR",
+    "type": "TASK",
+    "title": "No gate checks that a declared config key has a reader, so write-only config options ship silently",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md",
+    "status": "Not Started"
   },
   "TASK-NODEINFO-WELL-KNOWN-DISCOVERY-ENDPOINTS": {
     "epic": "epic-federation-swarm-sync",

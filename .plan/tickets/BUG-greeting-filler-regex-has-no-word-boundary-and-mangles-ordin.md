@@ -3,7 +3,7 @@
 
 # BUG: GREETING_FILLER regex has no word boundary and mangles ordinary words in chat auto-rename
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-chat-lifecycle-moderation
@@ -31,3 +31,5 @@ Source: .tmp/glm-review/deep-regex-1015.md F-2 (gitignored; recorded here verbat
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue b1d4e75 (registry tip: 9332a994e Konstantin Fedotov Close issue)

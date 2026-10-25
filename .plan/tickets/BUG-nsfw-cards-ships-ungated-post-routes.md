@@ -3,7 +3,7 @@
 
 # BUG: nsfw-cards ships ungated POST routes
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Epic:** epic-security-sandboxing
 **Effort:** Medium
@@ -34,3 +34,5 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue ac70870 (registry tip: c7674cab4 Konstantin Fedotov Close issue)
