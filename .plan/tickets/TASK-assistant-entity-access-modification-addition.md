@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** High
 **Type:** Task
@@ -130,3 +130,5 @@ All mutation commands (`/modify`, `/apply`, `/import`, `/add`, `/clone`) require
 - `src/assistant/quality/entity-creation.ts` — Quality-gating pipeline (reuse)
 - `src/assistant/adapter/entity.ts` — EntityAdapter interface
 - `src/routes/story-items/handlers.ts` — Existing import logic (reference)
+
+**Resolved:** 2026-10-25 registry-driven close: git issue f7dc042 (registry tip: e6fa6635f Konstantin Fedotov Auto-closed: appended .md marker marks TASK-ASSISTANT-ENTITY-ACCESS-MOD)

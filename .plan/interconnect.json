@@ -74,7 +74,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-acceptresponse-applies-world-events-before-the-turn-write-so.md",
       "title": "acceptResponse applies world events before the turn write, so a rejected turn keeps applied world mutations",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/story/events/application/apply.ts",
         "src/story/game-master/accept.ts"
@@ -554,7 +554,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-answerquestion-double-answer-race-toctou-on-status-check.md",
       "title": "answerQuestion double-answer race (TOCTOU on status check)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/questions/service.ts"
       ],
@@ -730,7 +730,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-.md",
       "title": "Asset links and shares routes only requireUserId - cross-user enumeration",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/assets/service/read.ts",
@@ -1825,7 +1825,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md",
       "title": "BYO decrypt failure silently falls back to server key",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -1928,7 +1928,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-character-avatar-put-delete-idor-by-bare-avatarid.md",
       "title": "Character avatar PUT/DELETE IDOR by bare avatarId",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/avatar/crud.ts",
         "src/routes/character-avatars.test.ts",
@@ -3728,7 +3728,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-endbattle-overwrites-completed-battles-no-active-status-guar.md",
       "title": "endBattle overwrites completed battles (no active-status guard)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/service/battles.ts"
       ],
@@ -3867,7 +3867,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-failover-replays-primary-byo-key-to-fallback-vendors.md",
       "title": "Failover replays primary BYO key to fallback vendors",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/providers/call-with-failover.ts"
       ],
@@ -4927,7 +4927,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-gm-shadow-note-revealed-to-reveal-is-a-read-modify-write-wit.md",
       "title": "GM shadow-note revealed_to reveal is a read-modify-write without serialization: concurrent reveals lose an append",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/gm-notes/shadow.ts"
       ],
@@ -4980,7 +4980,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-greeting-filler-regex-has-no-word-boundary-and-mangles-ordin.md",
       "title": "GREETING_FILLER regex has no word boundary and mangles ordinary words in chat auto-rename",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/regex/slugs.ts"
       ],
@@ -5116,7 +5116,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md",
       "title": "guardMessages bypass passes through every unknown status, not just the legacy \"visible\" default",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/entity-spec/handoff.ts",
         "src/characters/importers/character-systems/licensing.ts",
@@ -5227,7 +5227,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md",
       "title": "harden(auth): refuse or loudly gate non-loopback bind while auth.required=false",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/config/sections/auth.ts",
         "src/config/sections/server.ts",
@@ -5659,7 +5659,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error.md",
       "title": "isPluginActive fails open for core plugins on any DB error",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/plugins/loader.ts"
       ],
@@ -5683,9 +5683,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md",
       "title": "Item definition route: non-array properties.effects causes unhandled 500",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/story-items/handlers.ts",
+        "src/routes/story-items/routes.coverage.test.ts",
         "src/story/items/definitions.ts",
         "src/story/items/effects.ts"
       ],
@@ -5784,7 +5785,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-key-material-revoke-then-insert-sequences-are-non-transactio.md",
       "title": "Key-material revoke-then-insert sequences are non-transactional: a failure strands the actor with zero active keys",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/crypto/activitypub-keys.ts",
         "src/crypto/actor-keys.ts",
@@ -6182,7 +6183,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-memory-extraction-store-writes-memories-without-a-transactio.md",
       "title": "Memory extraction store writes memories without a transaction and never purges",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/memory/extraction-store.ts",
         "src/memory/extraction.ts",
@@ -6250,7 +6251,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori.md",
       "title": "mesh-deliver accepts envelopes from untrusted or unknown origins without a peer-trust check",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/app/register-plugins.ts",
         "src/config/schema-class/federation.ts",
@@ -6266,7 +6267,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md",
       "title": "Mesh reserve issues inbound content keys without authenticating the requester",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/federation/peer-keys.ts",
         "src/federation/sharing.ts",
@@ -6316,7 +6317,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup.md",
       "title": "Message idempotency-key dedup not DB-enforced - concurrent duplicate messages",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/db/migrations/001_init.ts",
         "src/routes/messages/create.ts"
@@ -6939,7 +6940,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-nsfw-cards-ships-ungated-post-routes.md",
       "title": "nsfw-cards ships ungated POST routes",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/plugins/loader.ts",
         "src/plugins/types.ts",
@@ -7373,7 +7374,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-persistbattle-lost-update-race-read-modify-write-without-tra.md",
       "title": "persistBattle lost-update race (read-modify-write without transaction)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/service/battles/persistence.ts"
       ],
@@ -7506,7 +7507,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-plugin-route-registry-lacks-ownership-enforcement-idor.md",
       "title": "Plugin route registry lacks ownership enforcement (IDOR)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/plugins/loader.ts",
         "src/plugins/route-access.test.ts",
@@ -7754,7 +7755,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-quest-engine-double-advances-from-stale-in-memory-progress-a.md",
       "title": "Quest engine double-advances from stale in-memory progress and completes via a non-transactional multi-write sequence",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/story/quest-engine/progress.ts"
       ],
@@ -7789,7 +7790,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-rate-limit-misses-post-emotion-avatars-single.md",
       "title": "Rate-limit misses POST /emotion-avatars/single",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/api-governance/rate-limiting/policies.ts",
         "src/routes/v1/actors-surface.ts",
@@ -7904,7 +7905,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md",
       "title": "Re-wrapped DEK artifacts lack context binding (no AAD), enabling cross-chat key confusion on import",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/federation/cipher.ts",
         "src/federation/dek-rewrap.ts"
@@ -8022,7 +8023,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c.md",
       "title": "Relationship bidirectional reverse row grafts onto foreign characters",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/relationships-service/write.ts",
         "src/routes/character-relationships.ts"
@@ -8034,7 +8035,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same.md",
       "title": "relationship duplicate guard runs before txn: concurrent same-pair creates can double-insert",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/relationships-service/write.ts"
       ],
@@ -8088,7 +8089,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-asset-files-before-the-db-trans.md",
       "title": "rotateKeyOnLeave re-encrypts asset files before the DB transaction, so a rollback permanently destroys encrypted chat assets",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/crypto/key-distribution.ts",
         "src/crypto/key-rotation/re-encrypt.ts"
@@ -8531,7 +8532,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-settings-export-endpoint-has-no-rate-limiting.md",
       "title": "Settings export endpoint has no rate limiting",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/settings.ts"
       ],
@@ -9041,7 +9042,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq.md",
       "title": "Swipe-race classifier matches the composite idempotency UNIQUE violation, so merge retries 8 times then throws",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/merge/merge-result-rows.ts",
         "src/routes/messages/swipe-race-insert.ts",
@@ -9346,7 +9347,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-.md",
       "title": "Trade offer accept and sentinel creation are check-then-act races",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/services/trade/lifecycle.ts",
         "src/services/trade/offers.ts"
@@ -9394,7 +9395,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor.md",
       "title": "Travel-route stop DELETE ignores routeId - cross-world IDOR",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/locations/routes.ts",
         "src/routes/worlds/fractal-travel-routes.ts"
@@ -9658,7 +9659,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-usebattleitem-consumes-inventory-and-persists-battle-outside.md",
       "title": "useBattleItem consumes inventory and persists battle outside one transaction",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/service/battles/items.ts"
       ],
@@ -9669,7 +9670,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md",
       "title": "user_api_keys non-unique index + read-then-write upsert allows dup rows",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -10003,7 +10004,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h.md",
       "title": "World delete untransactioned + missing travel cleanup -> FK 500 half-deleted world",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/index.ts",
         "src/routes/worlds/worlds-delete.ts"
@@ -10026,7 +10027,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-world-location-reparent-has-no-cycle-self-descendant-checks-.md",
       "title": "World location reparent has no cycle/self/descendant checks - wedges DB",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/locations/tree.ts",
         "src/routes/worlds/locations.ts"
@@ -32833,7 +32834,9 @@
       "srcRefs": [
         "src/frontend/a11y/a11y.css",
         "src/frontend/a11y/focus-manager.ts",
-        "src/frontend/a11y/skip-links.ts"
+        "src/frontend/a11y/skip-links.ts",
+        "src/frontend/alpine/focus.ts",
+        "src/frontend/alpine/shortcuts.ts"
       ],
       "related": []
     },
@@ -40231,13 +40234,13 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-responsive-design.md",
       "title": "Responsive Design System",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
-        "src/frontend/a11y/breakpoints.css",
-        "src/frontend/a11y/grid.css",
-        "src/frontend/a11y/print.css",
+        "src/frontend/a11y/responsive.test.ts",
         "src/frontend/a11y/responsive.ts",
-        "src/frontend/a11y/typography.css"
+        "src/frontend/alpine/app.ts",
+        "src/public/css/responsive.css",
+        "src/views/layout.html"
       ],
       "related": []
     },
@@ -45720,17 +45723,18 @@
       "kind": "ticket",
       "path": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md",
       "title": "Frontend Keyboard Navigation Help Overlay (`?`)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/components/chat/keynav-help.html",
         "src/frontend/alpine/chat-panels.ts",
         "src/frontend/alpine/focus.ts",
         "src/frontend/alpine/i18n.ts",
+        "src/frontend/alpine/index.ts",
         "src/frontend/alpine/keynav-help.test.ts",
         "src/frontend/alpine/keynav-help.ts",
         "src/frontend/alpine/shortcuts.ts",
-        "src/i18n/locales/en.json",
-        "src/public/css/app.css",
+        "src/public/css/mobile-keynav.css",
+        "src/public/locales/en.json",
         "src/views/layout.html"
       ],
       "related": []
@@ -45875,6 +45879,7 @@
       "title": "Accessibility & Input Systems",
       "status": "in_progress",
       "srcRefs": [
+        "src/components/chat/keynav-help.html",
         "src/frontend/a11y/a11y.css",
         "src/frontend/a11y/focus-manager.ts",
         "src/frontend/a11y/keyboard-shortcuts.ts",
@@ -45885,8 +45890,11 @@
         "src/frontend/alpine/chat-touch-gestures.test.ts",
         "src/frontend/alpine/chat-touch-gestures.ts",
         "src/frontend/alpine/focus.ts",
+        "src/frontend/alpine/index.ts",
+        "src/frontend/alpine/shortcuts.ts",
         "src/frontend/touch.test.ts",
-        "src/frontend/touch.ts"
+        "src/frontend/touch.ts",
+        "src/views/layout.html"
       ],
       "related": []
     },
@@ -59092,7 +59100,8 @@
     {
       "path": "src/components/chat/keynav-help.html",
       "owners": [
-        "WIRE-frontend-keyboard-help-overlay"
+        "WIRE-frontend-keyboard-help-overlay",
+        "epic-accessibility-input"
       ]
     },
     {
@@ -64273,22 +64282,10 @@
       ]
     },
     {
-      "path": "src/frontend/a11y/breakpoints.css",
-      "owners": [
-        "TASK-responsive-design"
-      ]
-    },
-    {
       "path": "src/frontend/a11y/focus-manager.ts",
       "owners": [
         "TASK-keyboard-navigation",
         "epic-accessibility-input"
-      ]
-    },
-    {
-      "path": "src/frontend/a11y/grid.css",
-      "owners": [
-        "TASK-responsive-design"
       ]
     },
     {
@@ -64304,7 +64301,7 @@
       ]
     },
     {
-      "path": "src/frontend/a11y/print.css",
+      "path": "src/frontend/a11y/responsive.test.ts",
       "owners": [
         "TASK-responsive-design"
       ]
@@ -64347,12 +64344,6 @@
       "path": "src/frontend/a11y/touch-targets.css",
       "owners": [
         "TASK-mobile-touch-gestures"
-      ]
-    },
-    {
-      "path": "src/frontend/a11y/typography.css",
-      "owners": [
-        "TASK-responsive-design"
       ]
     },
     {
@@ -64660,6 +64651,7 @@
       "path": "src/frontend/alpine/app.ts",
       "owners": [
         "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
+        "TASK-responsive-design",
         "epic-frontend-age-gate"
       ]
     },
@@ -65588,6 +65580,7 @@
     {
       "path": "src/frontend/alpine/focus.ts",
       "owners": [
+        "TASK-keyboard-navigation",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
         "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-modal-focus-trap",
@@ -65726,7 +65719,9 @@
         "TASK-publication-reader-locale-selector",
         "TASK-publication-viewer-read-mode",
         "TASK-shared-text-surface-toolbar",
+        "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-navigation-global-keymap",
+        "epic-accessibility-input",
         "epic-encryption-workflow",
         "epic-experimental-egui-frontend",
         "epic-frontend-age-gate",
@@ -66170,9 +66165,11 @@
         "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
         "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
         "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+        "TASK-keyboard-navigation",
         "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-navigation-global-keymap",
-        "WIRE-frontend-touch-swipe-gestures"
+        "WIRE-frontend-touch-swipe-gestures",
+        "epic-accessibility-input"
       ]
     },
     {
@@ -70529,12 +70526,6 @@
       ]
     },
     {
-      "path": "src/i18n/locales/en.json",
-      "owners": [
-        "WIRE-frontend-keyboard-help-overlay"
-      ]
-    },
-    {
       "path": "src/i18n/plurals.ts",
       "owners": [
         "TASK-010-plurals",
@@ -73450,7 +73441,6 @@
         "TASK-location-explorer",
         "TASK-text-effects-overlays",
         "TASK-visual-novel-mode",
-        "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-mobile-off-canvas-drawer",
         "WIRE-frontend-mobile-sticky-bottom-composer",
         "WIRE-frontend-touch-swipe-gestures",
@@ -73480,7 +73470,14 @@
     {
       "path": "src/public/css/mobile-keynav.css",
       "owners": [
-        "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css"
+        "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+        "WIRE-frontend-keyboard-help-overlay"
+      ]
+    },
+    {
+      "path": "src/public/css/responsive.css",
+      "owners": [
+        "TASK-responsive-design"
       ]
     },
     {
@@ -73518,7 +73515,8 @@
         "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
         "TASK-branch-merge-frontend-wizard-ui",
         "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
-        "TASK-info-bubbles"
+        "TASK-info-bubbles",
+        "WIRE-frontend-keyboard-help-overlay"
       ]
     },
     {
@@ -78132,6 +78130,12 @@
         "TASK-frontend-story-item-instance-transfer",
         "TASK-hoist-inline-route-response-schemas-to-exported-consts",
         "epic-inventory-system"
+      ]
+    },
+    {
+      "path": "src/routes/story-items/routes.coverage.test.ts",
+      "owners": [
+        "BUG-item-definition-route-non-array-properties-effects-causes-un"
       ]
     },
     {
@@ -85231,7 +85235,9 @@
         "TASK-i18n-alpine-client",
         "TASK-i18n-template-strings",
         "TASK-info-bubbles",
+        "TASK-responsive-design",
         "WIRE-frontend-keyboard-help-overlay",
+        "epic-accessibility-input",
         "epic-docs-reconciliation",
         "epic-frontend-headers-management"
       ]
@@ -107235,6 +107241,11 @@
       "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
       "kind": "produces",
       "to": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "produces",
+      "to": "src/routes/story-items/routes.coverage.test.ts"
     },
     {
       "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
@@ -134457,6 +134468,16 @@
       "to": "src/frontend/a11y/skip-links.ts"
     },
     {
+      "from": "TASK-keyboard-navigation",
+      "kind": "produces",
+      "to": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "produces",
+      "to": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
       "from": "TASK-krea-2-reference-edit-diagnosis",
       "kind": "produces",
       "to": "src/generation/lora/discovery-comfyui.ts"
@@ -141099,17 +141120,7 @@
     {
       "from": "TASK-responsive-design",
       "kind": "produces",
-      "to": "src/frontend/a11y/breakpoints.css"
-    },
-    {
-      "from": "TASK-responsive-design",
-      "kind": "produces",
-      "to": "src/frontend/a11y/grid.css"
-    },
-    {
-      "from": "TASK-responsive-design",
-      "kind": "produces",
-      "to": "src/frontend/a11y/print.css"
+      "to": "src/frontend/a11y/responsive.test.ts"
     },
     {
       "from": "TASK-responsive-design",
@@ -141119,7 +141130,17 @@
     {
       "from": "TASK-responsive-design",
       "kind": "produces",
-      "to": "src/frontend/a11y/typography.css"
+      "to": "src/frontend/alpine/app.ts"
+    },
+    {
+      "from": "TASK-responsive-design",
+      "kind": "produces",
+      "to": "src/public/css/responsive.css"
+    },
+    {
+      "from": "TASK-responsive-design",
+      "kind": "produces",
+      "to": "src/views/layout.html"
     },
     {
       "from": "TASK-restart-required-indicator-on-system-config-changes",
@@ -146194,6 +146215,11 @@
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
+      "to": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "produces",
       "to": "src/frontend/alpine/keynav-help.test.ts"
     },
     {
@@ -146209,12 +146235,12 @@
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
-      "to": "src/i18n/locales/en.json"
+      "to": "src/public/css/mobile-keynav.css"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
-      "to": "src/public/css/app.css"
+      "to": "src/public/locales/en.json"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
@@ -146439,6 +146465,11 @@
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
+      "to": "src/components/chat/keynav-help.html"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
       "to": "src/frontend/a11y/a11y.css"
     },
     {
@@ -146489,12 +146520,27 @@
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
+      "to": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
+      "to": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
       "to": "src/frontend/touch.test.ts"
     },
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
       "to": "src/frontend/touch.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
+      "to": "src/views/layout.html"
     },
     {
       "from": "epic-achievements",
@@ -208986,7 +209032,19 @@
     {
       "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -212946,6 +213004,12 @@
     {
       "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
       "kind": "sibling",
+      "to": "TASK-keyboard-navigation",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
@@ -212959,6 +213023,12 @@
       "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -212970,6 +213040,12 @@
     {
       "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
       "kind": "sibling",
+      "to": "TASK-keyboard-navigation",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
@@ -212983,6 +213059,12 @@
       "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -213336,6 +213418,12 @@
     {
       "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
+      "kind": "sibling",
       "to": "TASK-server-side-i18n-middleware",
       "via": "src/routes/views/layout.ts"
     },
@@ -213349,6 +213437,12 @@
       "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -219888,7 +219982,19 @@
     {
       "from": "BUG-notification-bell-visible-on-login-register-pages",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-notification-bell-visible-on-login-register-pages",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-notification-bell-visible-on-login-register-pages",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -233670,6 +233776,12 @@
     {
       "from": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/frontend/alpine/app.ts"
+    },
+    {
+      "from": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
+      "kind": "sibling",
       "to": "TASK-server-side-i18n-middleware",
       "via": "src/routes/views/layout.ts"
     },
@@ -235580,12 +235692,6 @@
       "kind": "sibling",
       "to": "TASK-vn-qa-mode",
       "via": "src/public/css/vn.css"
-    },
-    {
-      "from": "BUG-undefined-css-custom-properties-break-rendering",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
     },
     {
       "from": "BUG-undefined-css-custom-properties-break-rendering",
@@ -258126,12 +258232,6 @@
     {
       "from": "TASK-025",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-025",
-      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -265267,6 +265367,12 @@
       "from": "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
       "kind": "sibling",
       "to": "TASK-info-bubbles",
+      "via": "src/public/locales/en.json"
+    },
+    {
+      "from": "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/locales/en.json"
     },
     {
@@ -282042,7 +282148,19 @@
     {
       "from": "TASK-author-suggestion-resolution-surface",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-author-suggestion-resolution-surface",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-author-suggestion-resolution-surface",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -286398,7 +286516,19 @@
     {
       "from": "TASK-blog-frontend-authoring",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-blog-frontend-authoring",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-blog-frontend-authoring",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -287298,7 +287428,19 @@
     {
       "from": "TASK-book-unit-editor-review-surface",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-book-unit-editor-review-surface",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-book-unit-editor-review-surface",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -288146,6 +288288,12 @@
       "kind": "sibling",
       "to": "TASK-message-carriage-table-migration-admin-read",
       "via": "src/routes/messages/read.ts"
+    },
+    {
+      "from": "TASK-branch-merge-frontend-wizard-ui",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/locales/en.json"
     },
     {
       "from": "TASK-branch-merge-frontend-wizard-ui",
@@ -292056,7 +292204,19 @@
     {
       "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -294408,12 +294568,6 @@
     {
       "from": "TASK-chat-feature-component-buttons",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-chat-feature-component-buttons",
-      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -296238,12 +296392,6 @@
     {
       "from": "TASK-chat-flow-section-navigation",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-chat-flow-section-navigation",
-      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -296886,12 +297034,6 @@
     {
       "from": "TASK-chat-message-search",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-chat-message-search",
-      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -297043,12 +297185,6 @@
       "from": "TASK-chat-room-filters",
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-chat-room-filters",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/css/app.css"
     },
     {
@@ -300186,6 +300322,12 @@
     {
       "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
+      "kind": "sibling",
       "to": "TASK-text-effects-overlays",
       "via": "src/frontend/alpine-init.ts"
     },
@@ -300199,6 +300341,12 @@
       "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -305610,7 +305758,19 @@
     {
       "from": "TASK-comparison-grid-frontend",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-comparison-grid-frontend",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-comparison-grid-frontend",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -306522,7 +306682,19 @@
     {
       "from": "TASK-comparison-two-cell-diff-modes",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-comparison-two-cell-diff-modes",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-comparison-two-cell-diff-modes",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -308112,7 +308284,19 @@
     {
       "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -308694,6 +308878,12 @@
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
+      "to": "TASK-keyboard-navigation",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
       "to": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
       "via": "src/frontend/fe-fetch.ts"
     },
@@ -308767,6 +308957,12 @@
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -312378,7 +312574,19 @@
     {
       "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -313524,6 +313732,12 @@
     {
       "from": "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/locales/en.json"
+    },
+    {
+      "from": "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
+      "kind": "sibling",
       "to": "epic-auth-access",
       "via": "src/frontend/alpine/admin-users.ts"
     },
@@ -313807,7 +314021,7 @@
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
+      "via": "src/public/css/mobile-keynav.css"
     },
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
@@ -315588,6 +315802,12 @@
     {
       "from": "TASK-docs-ui-endpoint-linkage",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-docs-ui-endpoint-linkage",
+      "kind": "sibling",
       "to": "TASK-server-side-i18n-middleware",
       "via": "src/routes/views/layout.ts"
     },
@@ -315601,6 +315821,12 @@
       "from": "TASK-docs-ui-endpoint-linkage",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-docs-ui-endpoint-linkage",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -322464,7 +322690,19 @@
     {
       "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -324714,7 +324952,19 @@
     {
       "from": "TASK-finalize-notification-bell-header-wiring",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-finalize-notification-bell-header-wiring",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-finalize-notification-bell-header-wiring",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -326670,6 +326920,12 @@
     {
       "from": "TASK-frontend-touch-gestures",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-frontend-touch-gestures",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -326695,7 +326951,7 @@
       "from": "TASK-frontend-touch-gestures",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts; src/frontend/touch.ts"
+      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/alpine/index.ts; src/frontend/touch.test.ts; src/frontend/touch.ts"
     },
     {
       "from": "TASK-frontend-touch-gestures",
@@ -326838,6 +327094,12 @@
     {
       "from": "TASK-frontend-view-model-extraction",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-frontend-view-model-extraction",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -326846,6 +327108,12 @@
       "kind": "sibling",
       "to": "WIRE-nsfw-audit-page-missing-inline-authz",
       "via": "src/routes/views/plugin-pages.ts"
+    },
+    {
+      "from": "TASK-frontend-view-model-extraction",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/frontend/alpine/index.ts"
     },
     {
       "from": "TASK-frontend-view-model-extraction",
@@ -333294,6 +333562,12 @@
     {
       "from": "TASK-i18n-alpine-client",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-alpine-client",
+      "kind": "sibling",
       "to": "TASK-server-side-i18n-middleware",
       "via": "src/elysia-app.ts"
     },
@@ -333308,6 +333582,12 @@
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/frontend/alpine/i18n.ts; src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-alpine-client",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
     },
     {
       "from": "TASK-i18n-alpine-client",
@@ -333534,6 +333814,12 @@
     {
       "from": "TASK-i18n-template-strings",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-template-strings",
+      "kind": "sibling",
       "to": "TASK-restart-required-indicator-on-system-config-changes",
       "via": "src/views/settings.html"
     },
@@ -333565,6 +333851,12 @@
       "from": "TASK-i18n-template-strings",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-template-strings",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -334554,6 +334846,12 @@
     {
       "from": "TASK-info-bubbles",
       "kind": "sibling",
+      "to": "TASK-responsive-design",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-info-bubbles",
+      "kind": "sibling",
       "to": "TASK-restart-required-indicator-on-system-config-changes",
       "via": "src/views/settings.html"
     },
@@ -334573,13 +334871,19 @@
       "from": "TASK-info-bubbles",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/views/layout.html"
+      "via": "src/frontend/alpine/index.ts; src/public/locales/en.json; src/views/layout.html"
     },
     {
       "from": "TASK-info-bubbles",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-info-bubbles",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/frontend/alpine/index.ts; src/views/layout.html"
     },
     {
       "from": "TASK-info-bubbles",
@@ -336420,8 +336724,44 @@
     {
       "from": "TASK-keyboard-navigation",
       "kind": "sibling",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-modal-focus-trap",
+      "via": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-mobile-off-canvas-drawer",
+      "via": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/a11y.css; src/frontend/a11y/focus-manager.ts"
+      "via": "src/frontend/a11y/a11y.css; src/frontend/a11y/focus-manager.ts; src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
     },
     {
       "from": "TASK-krea-2-reference-edit-diagnosis",
@@ -338023,12 +338363,6 @@
       "from": "TASK-location-explorer",
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-location-explorer",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/css/app.css"
     },
     {
@@ -341970,7 +342304,19 @@
     {
       "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -349464,7 +349810,19 @@
     {
       "from": "TASK-publication-reader-locale-selector",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-publication-reader-locale-selector",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-publication-reader-locale-selector",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -349866,7 +350224,19 @@
     {
       "from": "TASK-publication-viewer-read-mode",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-publication-viewer-read-mode",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-publication-viewer-read-mode",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -353964,8 +354334,32 @@
     {
       "from": "TASK-responsive-design",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-responsive-design",
+      "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/responsive.ts"
+      "via": "src/frontend/a11y/responsive.ts; src/views/layout.html"
+    },
+    {
+      "from": "TASK-responsive-design",
+      "kind": "sibling",
+      "to": "epic-docs-reconciliation",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-responsive-design",
+      "kind": "sibling",
+      "to": "epic-frontend-age-gate",
+      "via": "src/frontend/alpine/app.ts"
+    },
+    {
+      "from": "TASK-responsive-design",
+      "kind": "sibling",
+      "to": "epic-frontend-headers-management",
+      "via": "src/views/layout.html"
     },
     {
       "from": "TASK-restart-required-indicator-on-system-config-changes",
@@ -355968,7 +356362,19 @@
     {
       "from": "TASK-shared-text-surface-toolbar",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-shared-text-surface-toolbar",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-shared-text-surface-toolbar",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -357566,12 +357972,6 @@
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
       "via": "src/public/css/app.css; src/views/chat.html"
-    },
-    {
-      "from": "TASK-text-effects-overlays",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
     },
     {
       "from": "TASK-text-effects-overlays",
@@ -359966,12 +360366,6 @@
       "kind": "sibling",
       "to": "TASK-vn-template-actions",
       "via": "src/components/chat/chat-settings-modal.html; src/frontend/vn/transition-engine.ts; src/frontend/vn/typewriter.ts"
-    },
-    {
-      "from": "TASK-visual-novel-mode",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
     },
     {
       "from": "TASK-visual-novel-mode",
@@ -362689,43 +363083,55 @@
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
-      "via": "src/frontend/alpine/focus.ts; src/public/css/app.css"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "WIRE-frontend-mobile-sticky-bottom-composer",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "WIRE-frontend-touch-swipe-gestures",
-      "via": "src/frontend/alpine/shortcuts.ts; src/public/css/app.css"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/focus.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
-      "to": "epic-chat-lifecycle-moderation",
-      "via": "src/public/css/app.css"
+      "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/components/chat/keynav-help.html; src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts; src/views/layout.html"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-frontend-age-gate",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-frontend-component-architecture",
+      "via": "src/frontend/alpine/index.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
@@ -362767,7 +363173,7 @@
       "from": "WIRE-frontend-keyboard-navigation-global-keymap",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/alpine/focus.ts"
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-navigation-global-keymap",
@@ -362869,7 +363275,7 @@
       "from": "WIRE-frontend-touch-swipe-gestures",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/touch.ts"
+      "via": "src/frontend/alpine/shortcuts.ts; src/frontend/touch.ts"
     },
     {
       "from": "WIRE-frontend-touch-swipe-gestures",
@@ -362972,6 +363378,42 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-docs-reconciliation",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-frontend-age-gate",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-frontend-component-architecture",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-frontend-headers-management",
+      "via": "src/views/layout.html"
     },
     {
       "from": "epic-achievements",

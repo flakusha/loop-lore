@@ -12255,6 +12255,10 @@
   ],
   "src/components/chat/keynav-help.html": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-accessibility-input.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     }
@@ -24252,6 +24256,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-keyboard-navigation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
     },
     {
@@ -24512,6 +24520,10 @@
   "src/frontend/alpine/index.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-accessibility-input.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
     },
     {
@@ -24577,6 +24589,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-shared-text-surface-toolbar.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     },
     {
       "kind": "ticket",
@@ -25225,6 +25241,10 @@
   ],
   "src/frontend/alpine/shortcuts.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-accessibility-input.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l.md"
     },
@@ -25235,6 +25255,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-keyboard-navigation.md"
     },
     {
       "kind": "ticket",
@@ -32589,12 +32613,6 @@
       "source": ".plan/tickets/TASK-unit-translation-service.md"
     }
   ],
-  "src/i18n/locales/en.json": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
-    }
-  ],
   "src/i18n/plurals.ts": [
     {
       "kind": "epic",
@@ -37824,10 +37842,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-mobile-off-canvas-drawer.md"
     },
     {
@@ -37873,6 +37887,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     }
   ],
   "src/public/css/responsive.css": [
@@ -37949,6 +37967,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-info-bubbles.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     }
   ],
   "src/rag/access.ts": [
@@ -57194,6 +57216,10 @@
     }
   ],
   "src/views/layout.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-accessibility-input.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
