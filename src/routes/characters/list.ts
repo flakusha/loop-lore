@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { ActorVisibility, } from "../../db/enums";
+import { can, } from "../../users/permissions";
 import {
   ActorsQuery,
   ErrorResponse,
@@ -34,9 +36,23 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
 
         const userId = ctx.userId as string | null;
+        const userRole = ctx.userRole as string | null;
         if (userId) {
           countQuery = countQuery.where((eb,) => eb("owner_id", "=", userId,).or("owner_id", "is", null,));
           listQuery = listQuery.where((eb,) => eb("owner_id", "=", userId,).or("owner_id", "is", null,));
+        } else if (can(userRole, "character.view",)) {
+          // Guest tier: an account-less visitor sees exactly the set the
+          // single-actor read admits (GET /api/actors/:actorId) — PUBLIC
+          // actors only. Gated on the role so a null id WITHOUT the tier
+          // (derive denied the request, bare test double) matches nothing —
+          // no account-less enumeration of every user's private cast.
+          countQuery = countQuery.where("visibility", "=", ActorVisibility.Public,);
+          listQuery = listQuery.where("visibility", "=", ActorVisibility.Public,);
+        } else {
+          // No identity and no guest tier: the derive denied this request —
+          // ids are non-null PKs, so this matches nothing.
+          countQuery = countQuery.where("id", "is", null,);
+          listQuery = listQuery.where("id", "is", null,);
         }
 
         const countResult = await countQuery.executeTakeFirst();

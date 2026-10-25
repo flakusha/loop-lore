@@ -334,20 +334,31 @@ describe("worldRoutes — list visibility + delete", () => {
     return id;
   }
 
-  test("anonymous callers see only public worlds; owners see their own too", async () => {
+  test("guest callers see only public worlds; owners see their own too", async () => {
     const app = appWithAuth(db, ownerId, "user",);
     // NOTE: visibility must be explicit — Elysia's normalizer fills an
     // omitted enum with its first variant ("public"), so the handler's
     // Private fallback only applies to direct calls.
     const ownedId = await createWorld(app, { name: "Private Realm", visibility: "private", },);
     const publicId = await createWorld(app, { name: "Public Realm", visibility: "public", },);
+    const unlistedId = await createWorld(app, { name: "Unlisted Realm", visibility: "unlisted", },);
 
+    // The guest tier (userId null + role guest) matches only the public arm.
+    const guest = appWithAuth(db, null, "guest",);
+    const guestRes = await guest.handle(new Request(`${BASE}/api/worlds`,),);
+    expect(guestRes.status,).toBe(200,);
+    const guestIds = ((await guestRes.json()) as { data: { id: string }[] }).data.map((w,) => w.id);
+    expect(guestIds,).toContain(publicId,);
+    expect(guestIds,).not.toContain(ownedId,);
+    expect(guestIds,).not.toContain(unlistedId,);
+
+    // An id-less caller WITHOUT the guest role (derive denied the request,
+    // bare test double) matches nothing — no account-less enumeration.
     const anon = appWithAuth(db, null, null,);
     const anonRes = await anon.handle(new Request(`${BASE}/api/worlds`,),);
     expect(anonRes.status,).toBe(200,);
     const anonIds = ((await anonRes.json()) as { data: { id: string }[] }).data.map((w,) => w.id);
-    expect(anonIds,).toContain(publicId,);
-    expect(anonIds,).not.toContain(ownedId,);
+    expect(anonIds,).toEqual([],);
 
     const ownerRes = await app.handle(new Request(`${BASE}/api/worlds`,),);
     expect(ownerRes.status,).toBe(200,);
@@ -526,5 +537,23 @@ describe("worldRoutes — guest tier read access", () => {
     );
 
     expect(res.status,).toBe(401,);
+  });
+
+  test("a registered non-member reads a PUBLIC world (registered-public tier)", async () => {
+    const strangerId = uid();
+    await insertUsers(db, `world-stranger-${strangerId}`, "World Stranger", { id: strangerId, } as never,);
+    const id = await createWorld({ name: "Registered Public", visibility: "public", },);
+    const stranger = appWithAuth(db, strangerId, "user",);
+    const res = await stranger.handle(new Request(`${BASE}/api/worlds/${id}`,),);
+    expect(res.status,).toBe(200,);
+
+    // …and lists it, but a stranger's PRIVATE world stays invisible.
+    const privateId = await createWorld({ name: "Registered Private", visibility: "private", },);
+    const listed = await stranger.handle(new Request(`${BASE}/api/worlds`,),);
+    const ids = ((await listed.json()) as { data: { id: string }[] }).data.map((w,) => w.id);
+    expect(ids,).toContain(id,);
+    expect(ids,).not.toContain(privateId,);
+    const denied = await stranger.handle(new Request(`${BASE}/api/worlds/${privateId}`,),);
+    expect(denied.status,).toBe(404,);
   });
 });

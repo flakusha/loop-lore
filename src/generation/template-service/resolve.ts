@@ -16,18 +16,21 @@ import { getOwnedTemplate, } from "./crud";
 
 /**
  * Resolve a template reference to its definition: user row or LLM preset.
+ * A null user (synthetic guest tier) resolves presets only — guest reads on
+ * the public template surface never touch owner rows.
  * @param db - Kysely database handle
  * @param id - Template or preset id
- * @param userId - Requesting user (row ownership enforced)
+ * @param userId - Requesting user (row ownership enforced; null = presets only)
  * @returns {Promise<{ row: PromptTemplateRow; preset: null; } | { row: null; preset: LlmTemplatePreset; } | null>}
  */
 export async function resolveTemplateDef(
   db: Kysely<DB>,
   id: string,
-  userId: string,
+  userId: string | null,
 ): Promise<{ row: PromptTemplateRow; preset: null } | { row: null; preset: LlmTemplatePreset } | null> {
   const preset = findLlmTemplatePreset(id,);
   if (preset) { return { row: null, preset, }; }
+  if (userId === null) { return null; }
   const row = await getOwnedTemplate(db, id, userId,);
   return row ? { row, preset: null, } : null;
 }
