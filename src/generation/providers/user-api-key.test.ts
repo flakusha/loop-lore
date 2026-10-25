@@ -16,7 +16,7 @@ import type { Config, } from "../../config/schema";
 import { encryptValue, } from "../../crypto";
 import type { DB, } from "../../db/schema";
 import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
-import { userApiKeyResolver, } from "./user-api-key";
+import { ByoKeyDecryptError, userApiKeyResolver, } from "./user-api-key";
 
 const SECRET = "uak-encryption-key";
 const USER_ID = "uak-user";
@@ -117,7 +117,7 @@ describe("userApiKeyResolver", () => {
     expect(await userApiKeyResolver({ userId: USER_ID, config: cfg, db: testDb, },)(ALLOWED,),).toBeUndefined();
   });
 
-  test("degrades to undefined when decryption fails", async () => {
+  test("throws ByoKeyDecryptError when decryption fails — never silently bills the server key", async () => {
     await testDb.insertInto("user_api_keys",).values({
       id: crypto.randomUUID(),
       user_id: USER_ID,
@@ -126,6 +126,14 @@ describe("userApiKeyResolver", () => {
     },).execute();
 
     const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
-    expect(await resolve(UNSTORED,),).toBeUndefined();
+    await expect(resolve(UNSTORED,),).rejects.toThrow(ByoKeyDecryptError,);
+  });
+
+  test("ByoKeyDecryptError names the provider, never key material", async () => {
+    const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
+    const err = await resolve(UNSTORED,).catch((e: unknown,) => e);
+    expect(err,).toBeInstanceOf(ByoKeyDecryptError,);
+    expect((err as Error).message,).toContain(UNSTORED,);
+    expect((err as Error).message,).not.toContain("sk-",);
   });
 });
