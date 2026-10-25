@@ -94,20 +94,34 @@ export async function advancePhase(
     // Roll for outcomes
     const triggered = rollOutcomes(encounter.outcomes,);
 
-    // Apply outcomes
-    await applyOutcomes(db, encounter, triggered,);
-
-    // Mark complete
+    // Outcome fan-out + completion mark are one atomic unit: a failure
+    // between them used to commit the fan-out while the encounter stayed
+    // active, so a re-run re-applied every outcome
+    // (BUG-service-layer-multi-query-mutations-run-without-transactions).
+    // The conditional predicate plus zero-rows check turns a concurrent
+    // double-advance into a detected lost race (rolled back) instead of a
+    // silent re-apply.
     const now = new Date().toISOString();
-    await db
-      .updateTable("nsfw_encounters",)
-      .set({
-        status: "completed",
-        current_phase: nextPhase,
-        updated_at: now,
-      },)
-      .where("id", "=", encounterId,)
-      .execute();
+    await db.transaction().execute(async (trx,) => {
+      // Apply outcomes
+      await applyOutcomes(trx, encounter, triggered,);
+
+      // Mark complete
+      const result = await trx
+        .updateTable("nsfw_encounters",)
+        .set({
+          status: "completed",
+          current_phase: nextPhase,
+          updated_at: now,
+        },)
+        .where("id", "=", encounterId,)
+        .where("status", "!=", "completed",)
+        .executeTakeFirst();
+
+      if (Number(result?.numUpdatedRows ?? 0,) === 0) {
+        throw new Error(`Encounter ${encounterId} was concurrently completed`,);
+      }
+    },);
 
     const log = getLogger().child({ module: "encounters", },);
     log.info(`Encounter ${encounterId} completed with ${triggered.length} outcomes`,);

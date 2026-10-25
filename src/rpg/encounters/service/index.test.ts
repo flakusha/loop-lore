@@ -283,6 +283,64 @@ describe("EncounterService", () => {
     },);
   });
 
+  test("advancePhase completion is atomic — failed status write rolls outcomes back (BUG-service-layer-multi-query-mutations-run-without-transactions)", async () => {
+    const service = new EncounterService(db,);
+    const encounter = await service.createEncounter({
+      database: db,
+      encounterType: "tender",
+      participants: ["actor-1",],
+      phases: [{
+        name: "Only",
+        duration: 1,
+        actionsAvailable: ["all",],
+        arousalEffects: [],
+        narrativeBeats: [],
+      },],
+      outcomes: [{
+        type: "satisfaction",
+        probability: 1,
+        effects: {
+          intimacyChange: 5,
+          moodChange: 10,
+          satisfactionBonus: 15,
+          memoryCreated: false,
+          reputationChange: 0,
+        },
+      },],
+    },);
+
+    // Fail the status write after the outcome fan-out ran.
+    sqlite.exec(
+      `CREATE TRIGGER fail_encounter_complete BEFORE UPDATE ON nsfw_encounters
+       WHEN NEW.status = 'completed' BEGIN SELECT RAISE(ABORT, 'simulated completion failure'); END;`,
+    );
+
+    try {
+      await expect(service.advancePhase(encounter.id,),).rejects.toThrow();
+
+      // The outcome fan-out (mood events, XP ledger) must roll back with the
+      // failed completion — otherwise a re-run re-applies every outcome.
+      const moodRows = await db.selectFrom("mood_events",)
+        .where("event_type", "=", "encounter.completed",)
+        .selectAll()
+        .execute();
+
+      expect(moodRows,).toHaveLength(0,);
+
+      const xpRows = await db.selectFrom("xp_ledger",)
+        .where("source", "=", "nsfw_encounter",)
+        .selectAll()
+        .execute();
+
+      expect(xpRows,).toHaveLength(0,);
+
+      const still = await service.getEncounter(encounter.id,);
+      expect(still?.status,).toBe("active",);
+    } finally {
+      sqlite.exec("DROP TRIGGER fail_encounter_complete;",);
+    }
+  });
+
   test("deleteEncounter removes the encounter and reports status", async () => {
     const service = new EncounterService(db,);
     const encounter = await service.createEncounter({
