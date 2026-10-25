@@ -1388,6 +1388,15 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmApplyEntity": "Aplicar as alterações pendentes a \"{name}\"?",
+    "confirmAddEntity": "Adicionar o novo {kind} \"{name}\"?",
+    "confirmCloneEntity": "Criar uma cópia de \"{name}\"?",
+    "entityApplied": "Alterações aplicadas a {name}",
+    "failedApplyEntity": "Falha ao aplicar alterações a {name}",
+    "entityAdded": "{name} adicionado",
+    "failedAddEntity": "Falha ao adicionar {name}",
+    "entityCloned": "Cópia de {name} criada",
+    "failedCloneEntity": "Falha ao criar uma cópia de {name}",
     "networkError": "Erro de rede",
     "failed": "Falhou",
     "chatDeleted": "Chat excluído",
@@ -1662,6 +1671,9 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "apply": "Alterar campos de world/location/item (/apply <kind> <id> chave=valor …)",
+    "add": "Adicionar nova location ou item a um mundo (/add <kind> <nome> [world-id])",
+    "clone": "Copiar uma location ou item existente (/clone <kind> <id-origem>)",
     "help": "Mostrar comandos disponíveis",
     "roll": "Rolar dados (ex.: /roll 2d6+3)",
     "summarize": "Resumir mensagens recentes",

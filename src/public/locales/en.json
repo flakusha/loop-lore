@@ -1472,6 +1472,15 @@
     }
   },
   "toasts": {
+    "confirmApplyEntity": "Apply the pending changes to \"{name}\"?",
+    "confirmAddEntity": "Add the new {kind} \"{name}\"?",
+    "confirmCloneEntity": "Create a copy of \"{name}\"?",
+    "entityApplied": "Changes applied to {name}",
+    "failedApplyEntity": "Failed to apply changes to {name}",
+    "entityAdded": "{name} added",
+    "failedAddEntity": "Failed to add {name}",
+    "entityCloned": "Copy of {name} created",
+    "failedCloneEntity": "Failed to create a copy of {name}",
     "networkError": "Network error",
     "failed": "Failed",
     "chatDeleted": "Chat deleted",
@@ -1795,6 +1804,9 @@
     "failed": "Could not set that reminder."
   },
   "commands": {
+    "apply": "Patch fields on a world/location/item (/apply <kind> <id> key=value …)",
+    "add": "Add a new location or item to a world (/add <kind> <name> [world-id])",
+    "clone": "Copy an existing location or item (/clone <kind> <source-id>)",
     "help": "Show available commands",
     "roll": "Roll dice (e.g., /roll 2d6+3)",
     "summarize": "Summarize recent messages",
