@@ -72,8 +72,10 @@ describe(MIGRATION, () => {
       await down(db as unknown as UntypedDb,);
       expect(await hasIndex(db, UNIQUE_INDEX,),).toBe(false,);
 
-      await insertActorCurrencies(db, actorId, worldId, "gold", { balance: 10, },);
-      await insertActorCurrencies(db, actorId, worldId, "gold", { balance: 20, },);
+      await Promise.all([
+        insertActorCurrencies(db, actorId, worldId, "gold", { balance: 10, },),
+        insertActorCurrencies(db, actorId, worldId, "gold", { balance: 20, },),
+      ],);
 
       const warnings = await captureWarnings(async () => {
         await up(db as unknown as UntypedDb,);
@@ -121,8 +123,10 @@ describe(MIGRATION, () => {
       },);
 
       await down(db as unknown as UntypedDb,);
-      await insertActorCurrencies(db, actorId, worldId, "gold", { balance: 10, },);
-      await insertActorCurrencies(db, actorId, worldId, "silver", { balance: 5, },);
+      await Promise.all([
+        insertActorCurrencies(db, actorId, worldId, "gold", { balance: 10, },),
+        insertActorCurrencies(db, actorId, worldId, "silver", { balance: 5, },),
+      ],);
 
       const warnings = await captureWarnings(async () => {
         await up(db as unknown as UntypedDb,);

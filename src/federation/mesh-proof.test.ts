@@ -34,13 +34,20 @@ describe("mesh reserve proof", () => {
   });
 
   test("a missing or malformed proof does not verify", async () => {
-    expect(await verifyMeshReserveProof("psk-secret", MATERIAL, undefined,),).toBe(false,);
-    expect(await verifyMeshReserveProof("psk-secret", MATERIAL, 42,),).toBe(false,);
+    const [missing, malformed,] = await Promise.all([
+      verifyMeshReserveProof("psk-secret", MATERIAL, undefined,),
+      verifyMeshReserveProof("psk-secret", MATERIAL, 42,),
+    ],);
+
+    expect(missing,).toBe(false,);
+    expect(malformed,).toBe(false,);
   });
 
   test("optional fields are signed, so a proof over them misses the bare material", async () => {
-    const bare = await meshReserveProof("psk-secret", MATERIAL,);
-    const typed = await meshReserveProof("psk-secret", { ...MATERIAL, contentType: "text/plain", },);
+    const [bare, typed,] = await Promise.all([
+      meshReserveProof("psk-secret", MATERIAL,),
+      meshReserveProof("psk-secret", { ...MATERIAL, contentType: "text/plain", },),
+    ],);
 
     expect(bare,).not.toBe(typed,);
     expect(await verifyMeshReserveProof("psk-secret", MATERIAL, typed,),).toBe(false,);
