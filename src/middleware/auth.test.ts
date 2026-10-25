@@ -153,6 +153,7 @@ describe("resolveUserIdFromRequest", () => {
     await db
       .insertInto("sessions",)
       .values({
+        id: crypto.randomUUID(),
         user_id: userId,
         secret_hash: tokenHash,
         ip: "127.0.0.1",
@@ -187,6 +188,7 @@ describe("resolveUserIdFromRequest", () => {
     await db
       .insertInto("sessions",)
       .values({
+        id: crypto.randomUUID(),
         user_id: userId,
         secret_hash: tokenHash,
         ip: "127.0.0.1",
@@ -251,6 +253,7 @@ describe("resolveUserIdFromRequest", () => {
     await db
       .insertInto("sessions",)
       .values({
+        id: crypto.randomUUID(),
         user_id: userId,
         secret_hash: tokenHash,
         ip: "127.0.0.1",
@@ -291,6 +294,7 @@ describe("resolveUserIdFromRequest", () => {
     await db
       .insertInto("sessions",)
       .values({
+        id: crypto.randomUUID(),
         user_id: userId,
         secret_hash: tokenHash,
         ip: "127.0.0.1",
@@ -327,6 +331,7 @@ describe("resolveUserIdFromRequest", () => {
     await db
       .insertInto("sessions",)
       .values({
+        id: crypto.randomUUID(),
         user_id: userId,
         secret_hash: tokenHash,
         ip: "127.0.0.1",
@@ -364,6 +369,7 @@ describe("resolveUserIdFromRequest", () => {
     await db
       .insertInto("sessions",)
       .values({
+        id: crypto.randomUUID(),
         user_id: userId,
         secret_hash: tokenHash,
         ip: "127.0.0.1",
@@ -400,6 +406,7 @@ describe("resolveUserIdFromRequest", () => {
     await db
       .insertInto("sessions",)
       .values({
+        id: crypto.randomUUID(),
         user_id: userId,
         secret_hash: tokenHash,
         ip: "127.0.0.1",
@@ -446,6 +453,7 @@ describe("resolveUserIdFromRequest", () => {
     await db
       .insertInto("sessions",)
       .values({
+        id: crypto.randomUUID(),
         user_id: userId,
         secret_hash: tokenHash,
         ip: "127.0.0.1",

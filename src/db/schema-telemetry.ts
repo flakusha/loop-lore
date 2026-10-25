@@ -8,7 +8,7 @@ import type { Generated, } from "kysely";
 
 // ── telemetry_events ────────────────────────────────────────────
 export interface TelemetryEvents {
-  id: Generated<string>;
+  id: string;
   session_id: string | null;
   user_id: string | null;
   chat_id: string | null;

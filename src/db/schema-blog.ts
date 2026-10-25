@@ -9,7 +9,7 @@ import type { AuditColumns, } from "./schema-audit";
 
 // ── blog_comments ────────────────────────────────────────────
 export interface BlogComments {
-  id: Generated<string>;
+  id: string;
   post_id: string;
   author_id: string;
   body: string;
@@ -20,7 +20,7 @@ export interface BlogComments {
 
 // ── blog_follows ────────────────────────────────────────────
 export interface BlogFollows {
-  id: Generated<string>;
+  id: string;
   follower_id: string;
   author_id: string;
   created_at: Generated<string>;
@@ -28,7 +28,7 @@ export interface BlogFollows {
 
 // ── blog_posts ────────────────────────────────────────────
 export interface BlogPosts extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   author_id: string;
   title: string;
   body: string;
@@ -46,7 +46,7 @@ export interface BlogPosts extends AuditColumns {
 
 // ── blog_rag_sources ────────────────────────────────────────────
 export interface BlogRagSources {
-  id: Generated<string>;
+  id: string;
   post_id: string;
   source_type: string;
   uri: string;
@@ -58,7 +58,7 @@ export interface BlogRagSources {
 
 // ── blog_tags ────────────────────────────────────────────
 export interface BlogTags {
-  id: Generated<string>;
+  id: string;
   post_id: string;
   tag: string;
   created_at: string | null;

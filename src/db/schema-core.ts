@@ -85,7 +85,7 @@ export interface DataMigrations {
 
 // ── log_entries ────────────────────────────────────────────
 export interface LogEntries {
-  id: Generated<string>;
+  id: string;
   level: Generated<number>;
   timestamp: number;
   time: string;
@@ -104,7 +104,7 @@ export interface LogEntries {
 
 // ── meta_progression ────────────────────────────────────────────
 export interface MetaProgression {
-  player_id: Generated<string>;
+  player_id: string;
   total_playthroughs: Generated<number>;
   endings_seen: Generated<string>;
   secrets_found: Generated<string>;
@@ -117,7 +117,7 @@ export interface MetaProgression {
 
 // ── model_capabilities ────────────────────────────────────────────
 export interface ModelCapabilities {
-  id: Generated<string>;
+  id: string;
   provider_id: string;
   model_id: string;
   context_window: number | null;
@@ -138,7 +138,7 @@ export interface ModelCapabilities {
 
 // ── model_role_overrides ────────────────────────────────────────────
 export interface ModelRoleOverrides {
-  role: Generated<ModelRole>;
+  role: ModelRole;
   provider: string;
   model: string;
   created_at: Generated<string>;
@@ -149,7 +149,7 @@ export interface ModelRoleOverrides {
 
 // ── notifications ────────────────────────────────────────────
 export interface Notifications {
-  id: Generated<string>;
+  id: string;
   user_id: string;
   type: string;
   title: string;
@@ -162,7 +162,7 @@ export interface Notifications {
 
 // ── plugin_state ────────────────────────────────────────────
 export interface PluginState {
-  name: Generated<string>;
+  name: string;
   status: Generated<PluginStatus>;
   enabled_at: string | null;
   disabled_at: string | null;
@@ -173,7 +173,7 @@ export interface PluginState {
 
 // ── request_results ────────────────────────────────────────────
 export interface RequestResults {
-  id: Generated<string>;
+  id: string;
   method: string;
   route_pattern: string;
   user_id: string | null;
@@ -193,7 +193,7 @@ export interface RequestResults {
 
 // ── seed_audit ────────────────────────────────────────────
 export interface SeedAudit {
-  id: Generated<string>;
+  id: string;
   seed_type: string;
   seed_id: string;
   seeded_by: string;
@@ -204,7 +204,7 @@ export interface SeedAudit {
 
 // ── sessions ────────────────────────────────────────────
 export interface Sessions {
-  id: Generated<string>;
+  id: string;
   user_id: string;
   secret_hash: string;
   ip: string | null;
@@ -216,7 +216,7 @@ export interface Sessions {
 
 // ── system_config ────────────────────────────────────────────
 export interface SystemConfig {
-  key: Generated<string>;
+  key: string;
   value: string;
   description: string | null;
   created_at: Generated<string>;
@@ -225,7 +225,7 @@ export interface SystemConfig {
 
 // ── user_api_keys ────────────────────────────────────────────
 export interface UserApiKeys {
-  id: Generated<string>;
+  id: string;
   user_id: string;
   provider_name: string;
   api_key_encrypted: string;
@@ -235,7 +235,7 @@ export interface UserApiKeys {
 
 // ── users ────────────────────────────────────────────
 export interface Users {
-  id: Generated<string>;
+  id: string;
   username: string;
   display_name: string;
   secret_hash: string | null;
@@ -267,7 +267,7 @@ export interface AssetTransforms {
 
 // ── world_invites ────────────────────────────────────────────
 export interface WorldInvites {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   code: string;
   created_by: string | null;
@@ -286,7 +286,7 @@ export interface WorldMembers {
 
 // ── world_timeline_events ────────────────────────────────────────────
 export interface WorldTimelineEvents {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   story_id: string | null;
   event_type: string;
@@ -300,7 +300,7 @@ export interface WorldTimelineEvents {
 
 // ── world_timelines ────────────────────────────────────────────
 export interface WorldTimelines {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string;
   description: string | null;
@@ -310,7 +310,7 @@ export interface WorldTimelines {
 
 // ── world_event_steerings ────────────────────────────────────────────
 export interface WorldEventSteerings {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   timeline_id: Generated<string>;
   description: string;
@@ -325,7 +325,7 @@ export interface WorldEventSteerings {
 
 // ── activitypub_actor_keys ────────────────────────────────────────────
 export interface ActivitypubActorKeys {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   key_id: string;
   public_jwk: string;
@@ -338,7 +338,7 @@ export interface ActivitypubActorKeys {
 
 // ── actor_currencies ────────────────────────────────────────────
 export interface ActorCurrencies {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string;
   currency_type: string;
@@ -349,7 +349,7 @@ export interface ActorCurrencies {
 
 // ── actor_e2e_pubkeys ────────────────────────────────────────────
 export interface ActorE2ePubkeys {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   public_key_jwk: string;
   algorithm: Generated<string>;
@@ -360,7 +360,7 @@ export interface ActorE2ePubkeys {
 
 // ── actor_items ────────────────────────────────────────────
 export interface ActorItems {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   name: string;
   description: string | null;
@@ -380,7 +380,7 @@ export interface ActorItems {
 
 // ── actor_keys ────────────────────────────────────────────
 export interface ActorKeys {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   name: string;
   key_type: KeyType;
@@ -393,7 +393,7 @@ export interface ActorKeys {
 
 // ── actor_notes ────────────────────────────────────────────
 export interface ActorNotes {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   title: string;
   content: string;
@@ -406,7 +406,7 @@ export interface ActorNotes {
 
 // ── actors ────────────────────────────────────────────
 export interface Actors {
-  id: Generated<string>;
+  id: string;
   actor_type: Generated<ActorType>;
   display_name: string;
   user_id: string | null;
@@ -448,7 +448,7 @@ export interface Actors {
 
 // ── character_arc ────────────────────────────────────────────
 export interface CharacterArc {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   current_stage: string;
   stage_description: string | null;
@@ -457,7 +457,7 @@ export interface CharacterArc {
 
 // ── growth_log ────────────────────────────────────────────
 export interface GrowthLog {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   axis: string;
   event_type: string;
@@ -477,7 +477,7 @@ export interface GrowthLog {
 
 // ── character_internal_traits ────────────────────────────────────────────
 export interface CharacterInternalTraits {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   aspirations: Generated<string>;
   moral_disposition: Generated<string>;
@@ -548,7 +548,7 @@ export interface CharacterStats extends AuditColumns {
 
 // ── characters ────────────────────────────────────────────
 export interface Characters extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   owner_id: string;
   name: string;
   avatar_asset_id: string | null;
@@ -562,7 +562,7 @@ export interface Characters extends AuditColumns {
 
 // ── chat_background_assignments ────────────────────────────────────────────
 export interface ChatBackgroundAssignments {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   background_id: string;
   created_at: Generated<string>;
@@ -570,7 +570,7 @@ export interface ChatBackgroundAssignments {
 
 // ── chat_backgrounds ────────────────────────────────────────────
 export interface ChatBackgrounds {
-  id: Generated<string>;
+  id: string;
   name: string;
   type: Generated<string>;
   location_id: string | null;
@@ -582,7 +582,7 @@ export interface ChatBackgrounds {
 
 // ── chat_invites ────────────────────────────────────────────
 export interface ChatInvites {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   code: string;
   created_by: string | null;
@@ -595,7 +595,7 @@ export interface ChatInvites {
 
 // ── chat_keys ────────────────────────────────────────────
 export interface ChatKeys {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   encrypted_chat_key: string;
   created_at: Generated<string>;
@@ -604,7 +604,7 @@ export interface ChatKeys {
 
 // ── chat_location_events ────────────────────────────────────────────
 export interface ChatLocationEvents {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   section_id: string | null;
   from_location_id: string | null;
@@ -616,7 +616,7 @@ export interface ChatLocationEvents {
 
 // ── chat_mentions ────────────────────────────────────────────
 export interface ChatMentions {
-  id: Generated<string>;
+  id: string;
   message_id: string;
   actor_id: string;
   created_at: Generated<string>;
@@ -639,7 +639,7 @@ export interface ChatParticipants {
 
 // ── chat_pins ────────────────────────────────────────────
 export interface ChatPins {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   message_id: string;
   pinned_by: string;
@@ -650,7 +650,7 @@ export interface ChatPins {
 
 // ── chat_sections ────────────────────────────────────────────
 export interface ChatSections {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   label: string;
   description: string | null;
@@ -663,7 +663,7 @@ export interface ChatSections {
 
 // ── chat_setup_templates ────────────────────────────────────────────
 export interface ChatSetupTemplates {
-  id: Generated<string>;
+  id: string;
   slug: string;
   name: string;
   description: string | null;
@@ -679,7 +679,7 @@ export interface ChatSetupTemplates {
 
 // ── chats ────────────────────────────────────────────
 export interface Chats extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   name: string;
   type: Generated<ChatType>;
   mode: Generated<ChatMode>;
@@ -717,7 +717,7 @@ export interface Chats extends AuditColumns {
 
 // ── chat_random_events ────────────────────────────────────────────
 export interface ChatRandomEvents {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   event_id: string;
   category: string;
@@ -742,7 +742,7 @@ export interface GroupInitiatives {
 
 // ── message_reactions ────────────────────────────────────────────
 export interface MessageReactions {
-  id: Generated<string>;
+  id: string;
   message_id: string;
   user_id: string;
   emoji: string;
@@ -751,7 +751,7 @@ export interface MessageReactions {
 
 // ── message_seen ────────────────────────────────────────────
 export interface MessageSeen {
-  id: Generated<string>;
+  id: string;
   message_id: string;
   actor_id: string;
   state: Generated<string>;
@@ -761,7 +761,7 @@ export interface MessageSeen {
 
 // ── message_translations ────────────────────────────────────────────
 export interface MessageTranslations {
-  id: Generated<string>;
+  id: string;
   message_id: string;
   locale: string;
   content: string;
@@ -779,7 +779,7 @@ export interface MessageTranslations {
 
 // ── messages ────────────────────────────────────────────
 export interface Messages {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   actor_id: string;
   parent_id: string | null;
@@ -827,7 +827,7 @@ export interface Messages {
 
 // ── music_links ────────────────────────────────────────────
 export interface MusicLinks {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   section_id: string | null;
   sender_id: string;
@@ -851,7 +851,7 @@ export interface MusicLinks {
 
 // ── proactive_messaging_config ────────────────────────────────────────────
 export interface ProactiveMessagingConfig {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   actor_id: string;
   frequency: Generated<string>;
@@ -867,7 +867,7 @@ export interface ProactiveMessagingConfig {
 
 // ── vn_choices ────────────────────────────────────────────
 export interface VnChoices {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   scene_index: number;
   label: string;
@@ -883,7 +883,7 @@ export interface VnChoices {
 
 // ── personas ────────────────────────────────────────────
 export interface Personas {
-  id: Generated<string>;
+  id: string;
   user_id: string;
   name: string;
   avatar_asset_id: string | null;
@@ -1014,7 +1014,7 @@ export interface Playthroughs {
 
 // ── trade_history ────────────────────────────────────────────
 export interface TradeHistory {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   buyer_actor_id: string;
   seller_actor_id: string;
@@ -1041,7 +1041,7 @@ export interface XpLedger {
 
 // ── memory_embeddings ────────────────────────────────────────────
 export interface MemoryEmbeddings {
-  memory_id: Generated<string>;
+  memory_id: string;
   model: Generated<string>;
   dimensions: Generated<number>;
   vector_blob: Uint8Array;
@@ -1050,7 +1050,7 @@ export interface MemoryEmbeddings {
 
 // ── generation_jobs ────────────────────────────────────────────
 export interface GenerationJobs {
-  id: Generated<string>;
+  id: string;
   kind: string;
   actor_id: string | null;
   status: Generated<string>;
@@ -1065,7 +1065,7 @@ export interface GenerationJobs {
 
 // ── prompt_templates ────────────────────────────────────────────
 export interface PromptTemplates {
-  id: Generated<string>;
+  id: string;
   owner_id: string;
   modality: Generated<TemplateModality>;
   name: string;
@@ -1083,7 +1083,7 @@ export interface PromptTemplates {
 
 // ── nsfw_consent_state ────────────────────────────────────────────
 export interface NsfwConsentState {
-  id: Generated<string>;
+  id: string;
   user_id: string;
   chat_id: string;
   action: string;
@@ -1096,7 +1096,7 @@ export interface NsfwConsentState {
 
 // ── e2e_group_wraps ────────────────────────────────────────────
 export interface E2eGroupWraps {
-  id: Generated<string>;
+  id: string;
   group_session_id: string;
   recipient_actor_id: string;
   wrapped_key: string;
@@ -1107,7 +1107,7 @@ export interface E2eGroupWraps {
 
 // ── e2e_sessions ────────────────────────────────────────────
 export interface E2eSessions {
-  id: Generated<string>;
+  id: string;
   sender_actor_id: string;
   recipient_actor_id: string | null;
   chat_id: string | null;
@@ -1126,7 +1126,7 @@ export interface E2eSessions {
 
 // ── e2e_skipped_keys ────────────────────────────────────────────
 export interface E2eSkippedKeys {
-  id: Generated<string>;
+  id: string;
   session_id: string;
   dh_public_jwk: string;
   counter: number;
@@ -1137,7 +1137,7 @@ export interface E2eSkippedKeys {
 
 // ── e2e_skipped_message_keys ────────────────────────────────────────────
 export interface E2eSkippedMessageKeys {
-  id: Generated<string>;
+  id: string;
   session_id: string;
   recipient_actor_id: string;
   chain_index: number;
@@ -1154,7 +1154,7 @@ export interface MessageSearchTokens {
 
 // ── workflow_sessions ────────────────────────────────────────────
 export interface WorkflowSessions {
-  chat_id: Generated<string>;
+  chat_id: string;
   workflow_id: string;
   step_values: Generated<string>;
   confirmed: Generated<number>;
@@ -1163,7 +1163,7 @@ export interface WorkflowSessions {
 
 // ── mesh_peers ────────────────────────────────────────────
 export interface MeshPeers {
-  origin: Generated<string>;
+  origin: string;
   state: Generated<string>;
   capabilities: Generated<string>;
   last_seen: string | null;
@@ -1180,7 +1180,7 @@ export interface MeshPeers {
 
 // ── mesh_negotiations ────────────────────────────────────────────
 export interface MeshNegotiations {
-  id: Generated<string>;
+  id: string;
   peer_origin: string;
   state: Generated<string>;
   updated_at: Generated<string>;
@@ -1188,7 +1188,7 @@ export interface MeshNegotiations {
 
 // ── mesh_reservations ────────────────────────────────────────────
 export interface MeshReservations {
-  id: Generated<string>;
+  id: string;
   peer_origin: string;
   content_hash: string;
   size_bytes: number;
@@ -1200,7 +1200,7 @@ export interface MeshReservations {
 
 // ── mesh_deliveries ────────────────────────────────────────────
 export interface MeshDeliveries {
-  content_id: Generated<string>;
+  content_id: string;
   origin: string;
   content_hash: string;
   clock: number;
@@ -1209,7 +1209,7 @@ export interface MeshDeliveries {
 
 // ── mesh_inbound_keys ────────────────────────────────────────────
 export interface MeshInboundKeys {
-  peer_origin: Generated<string>;
+  peer_origin: string;
   encrypted_key: string;
   previous_encrypted_key: string | null;
   created_at: Generated<string>;
@@ -1218,7 +1218,7 @@ export interface MeshInboundKeys {
 
 // ── rotation_history ────────────────────────────────────────────
 export interface RotationHistory {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   actor_id: string | null;
   reason: string;
@@ -1230,7 +1230,7 @@ export interface RotationHistory {
 
 // ── travel_routes ────────────────────────────────────────────
 export interface TravelRoutes {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string;
   kind: TransportKind;
@@ -1242,7 +1242,7 @@ export interface TravelRoutes {
 
 // ── travel_route_stops ────────────────────────────────────────────
 export interface TravelRouteStops {
-  id: Generated<string>;
+  id: string;
   route_id: string;
   location_id: string;
   stop_order: number;
@@ -1256,7 +1256,7 @@ export interface TravelRouteStops {
 
 // ── actor_locations ────────────────────────────────────────────
 export interface ActorLocations {
-  actor_id: Generated<string>;
+  actor_id: string;
   physical_location_id: string;
   spatial_location_id: string;
   entered_at: Generated<string>;
@@ -1264,7 +1264,7 @@ export interface ActorLocations {
 
 // ── memory_audit_log ────────────────────────────────────────────
 export interface MemoryAuditLog {
-  id: Generated<string>;
+  id: string;
   memory_id: string;
   actor_id: string;
   user_id: string | null;
@@ -1275,7 +1275,7 @@ export interface MemoryAuditLog {
 
 // ── status_effect ────────────────────────────────────────────
 export interface StatusEffect {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   effect_id: string;
   category: string;
@@ -1389,7 +1389,7 @@ export interface ActorPlanRevisions {
 
 // ── chat_branches ────────────────────────────────────────────
 export interface ChatBranches {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   parent_message_id: string;
   name: string;
@@ -1399,7 +1399,7 @@ export interface ChatBranches {
 
 // ── model_comparison_runs ────────────────────────────────────────────
 export interface ModelComparisonRuns {
-  id: Generated<string>;
+  id: string;
   user_id: string;
   prompt: string;
   results: string;
@@ -1446,7 +1446,7 @@ export interface AutonomyBudget {
 
 // ── world_simulation_state ────────────────────────────────────────────
 export interface WorldSimulationState {
-  world_id: Generated<string>;
+  world_id: string;
   next_tick_at: string;
   paused: Generated<number>;
   last_run_at: string | null;
@@ -1457,7 +1457,7 @@ export interface WorldSimulationState {
 
 // ── carriage_records ────────────────────────────────────────────
 export interface CarriageRecords {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   source_chat_id: string | null;
   scope: string;
@@ -1467,7 +1467,7 @@ export interface CarriageRecords {
 
 // ── wardrobe_items ────────────────────────────────────────────
 export interface WardrobeItems {
-  id: Generated<string>;
+  id: string;
   actor_id: string | null;
   world_id: string | null;
   name: string;
@@ -1567,7 +1567,7 @@ export interface NpcMigrations {
 
 // ── world_travel_budget ────────────────────────────────────────────
 export interface WorldTravelBudget {
-  world_id: Generated<string>;
+  world_id: string;
   spent: Generated<number>;
   ceiling: Generated<number>;
   window_start_tick: Generated<number>;
@@ -1602,7 +1602,7 @@ export interface LocationDiscovery {
 
 // ── scheduled_messages ────────────────────────────────────────────
 export interface ScheduledMessages {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   author_id: string;
   body: string;
@@ -1612,7 +1612,7 @@ export interface ScheduledMessages {
 
 // ── message_reminders ────────────────────────────────────────────
 export interface MessageReminders {
-  id: Generated<string>;
+  id: string;
   message_id: string;
   user_id: string;
   remind_at: string;
@@ -1620,7 +1620,7 @@ export interface MessageReminders {
 
 // ── branch_merges ────────────────────────────────────────────
 export interface BranchMerges {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   base_message_id: string;
   mode: string;
@@ -1644,7 +1644,7 @@ export interface BranchMergeSources {
 
 // ── plan_items ────────────────────────────────────────────
 export interface PlanItems {
-  id: Generated<string>;
+  id: string;
   owner_id: string;
   chat_id: string | null;
   title: string;
@@ -1666,7 +1666,7 @@ export interface PlanLinks {
 
 // ── vn_questions ────────────────────────────────────────────
 export interface VnQuestions {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   scene_index: number;
   question_type: Generated<string>;
@@ -1700,7 +1700,7 @@ export interface LocationEdges {
 
 // ── world_conditions ────────────────────────────────────────────
 export interface WorldConditions {
-  world_id: Generated<string>;
+  world_id: string;
   weather: Generated<string>;
   time_of_day: Generated<string>;
   season: Generated<string>;
@@ -1716,7 +1716,7 @@ export interface WorldConditions {
 
 // ── world_condition_history ────────────────────────────────────────────
 export interface WorldConditionHistory {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   recorded_at: Generated<string>;
   weather: string;
@@ -1878,7 +1878,7 @@ export interface MonsterSpawns {
 
 // ── factions ────────────────────────────────────────────
 export interface Factions {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string;
   description: Generated<string>;
@@ -1890,7 +1890,7 @@ export interface Factions {
 
 // ── faction_memberships ────────────────────────────────────────────
 export interface FactionMemberships {
-  id: Generated<string>;
+  id: string;
   faction_id: string;
   actor_id: string;
   role: Generated<FactionRole>;
@@ -1899,7 +1899,7 @@ export interface FactionMemberships {
 
 // ── faction_relationships ────────────────────────────────────────────
 export interface FactionRelationships {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   faction_a_id: string;
   faction_b_id: string;
@@ -1911,7 +1911,7 @@ export interface FactionRelationships {
 
 // ── faction_standing ────────────────────────────────────────────
 export interface FactionStanding {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   faction_id: string;
   actor_id: string;
@@ -1925,7 +1925,7 @@ export interface FactionStanding {
 
 // ── karma_profiles ────────────────────────────────────────────
 export interface KarmaProfiles {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   actor_id: string;
   overall: Generated<number>;
@@ -1935,7 +1935,7 @@ export interface KarmaProfiles {
 
 // ── karma_events ────────────────────────────────────────────
 export interface KarmaEvents {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   actor_id: string;
   category: KarmaCategory;
@@ -1988,7 +1988,7 @@ export interface MapZones {
 
 // ── vn_choice_selections ────────────────────────────────────────────
 export interface VnChoiceSelections {
-  id: Generated<string>;
+  id: string;
   chat_id: string;
   choice_id: string;
   scene_index: number;
@@ -2034,7 +2034,7 @@ export interface FederationPerformanceBudgets {
 
 // ── message_polls ────────────────────────────────────────────
 export interface MessagePolls {
-  id: Generated<string>;
+  id: string;
   message_id: string;
   question: string;
   options: string;
@@ -2047,7 +2047,7 @@ export interface MessagePolls {
 
 // ── poll_votes ────────────────────────────────────────────
 export interface PollVotes {
-  id: Generated<string>;
+  id: string;
   poll_id: string;
   user_id: string;
   option_idx: number;
@@ -2056,7 +2056,7 @@ export interface PollVotes {
 
 // ── link_previews ────────────────────────────────────────────
 export interface LinkPreviews {
-  id: Generated<string>;
+  id: string;
   url_hash: string;
   url: string;
   title: string | null;
@@ -2067,7 +2067,7 @@ export interface LinkPreviews {
 
 // ── character_stat_allocation ────────────────────────────────────────────
 export interface CharacterStatAllocation {
-  actor_id: Generated<string>;
+  actor_id: string;
   world_id: string;
   allocated_str: number;
   allocated_dex: number;

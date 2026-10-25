@@ -22,7 +22,7 @@ import type { AuditColumns, } from "./schema-audit";
 
 // ── crafting_attempts ────────────────────────────────────────────
 export interface CraftingAttempts {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string;
   recipe_id: string;
@@ -41,7 +41,7 @@ export interface CraftingAttempts {
 
 // ── crafting_orders ────────────────────────────────────────────
 export interface CraftingOrders {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   requester_actor_id: string;
   crafter_actor_id: string | null;
@@ -60,7 +60,7 @@ export interface CraftingOrders {
 
 // ── crafting_recipe_materials ────────────────────────────────────────────
 export interface CraftingRecipeMaterials {
-  id: Generated<string>;
+  id: string;
   recipe_id: string;
   item_id: string;
   quantity: Generated<number>;
@@ -73,7 +73,7 @@ export interface CraftingRecipeMaterials {
 
 // ── crafting_recipes ────────────────────────────────────────────
 export interface CraftingRecipes extends AuditColumns {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string;
   description: string | null;
@@ -94,7 +94,7 @@ export interface CraftingRecipes extends AuditColumns {
 
 // ── crafting_station_defs ────────────────────────────────────────────
 export interface CraftingStationDefs {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string;
   description: string | null;
@@ -111,7 +111,7 @@ export interface CraftingStationDefs {
 
 // ── crafting_station_instances ────────────────────────────────────────────
 export interface CraftingStationInstances {
-  id: Generated<string>;
+  id: string;
   station_def_id: string;
   world_id: string;
   location_id: string | null;
@@ -124,7 +124,7 @@ export interface CraftingStationInstances {
 
 // ── gathering_node_defs ────────────────────────────────────────────
 export interface GatheringNodeDefs {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   name: string;
   description: string | null;
@@ -139,7 +139,7 @@ export interface GatheringNodeDefs {
 
 // ── gathering_node_instances ────────────────────────────────────────────
 export interface GatheringNodeInstances {
-  id: Generated<string>;
+  id: string;
   node_def_id: string;
   world_id: string;
   location_id: string | null;
@@ -155,7 +155,7 @@ export interface GatheringNodeInstances {
 
 // ── gathering_node_materials ────────────────────────────────────────────
 export interface GatheringNodeMaterials {
-  id: Generated<string>;
+  id: string;
   node_def_id: string;
   item_id: string;
   min_quantity: Generated<number>;
@@ -169,7 +169,7 @@ export interface GatheringNodeMaterials {
 
 // ── profession_specializations ────────────────────────────────────────────
 export interface ProfessionSpecializations {
-  id: Generated<string>;
+  id: string;
   profession_id: string;
   name: string;
   description: string | null;
@@ -183,7 +183,7 @@ export interface ProfessionSpecializations {
 
 // ── professions ────────────────────────────────────────────
 export interface Professions {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string;
   discipline: CraftingDiscipline;
@@ -196,7 +196,7 @@ export interface Professions {
 
 // ── recipe_discoveries ────────────────────────────────────────────
 export interface RecipeDiscoveries {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string;
   recipe_id: string;

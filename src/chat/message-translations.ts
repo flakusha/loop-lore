@@ -127,6 +127,7 @@ export async function translateMessageToLocale(
   await database
     .insertInto("message_translations",)
     .values({
+      id: crypto.randomUUID(),
       message_id: opts.messageId,
       locale,
       content: storedContent,

@@ -129,7 +129,7 @@ describe("Quest update notification world mute E2E", () => {
     // The GM action route notifies every participant of the action's world.
     await server.db
       .insertInto("npc_states",)
-      .values({ actor_id: SEED.character.id, world_id: SEED.world.id, health: 100, },)
+      .values({ id: crypto.randomUUID(), actor_id: SEED.character.id, world_id: SEED.world.id, health: 100, },)
       .execute();
 
     const prefs = await adminApi.patch("/api/v1/notifications/preferences", {
