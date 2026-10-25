@@ -8378,7 +8378,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-RECORDSECRETFOUND-READ-MODIFY-WRITE-LOSES-CONCURRENT-SECRETS": {
     "hash": "b9235db",
@@ -10224,7 +10224,7 @@
     "epic": "epic-byok-api-keys",
     "tags": [],
     "source": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-USER-MESSAGE-SWIPE-INSERT-RETRIES-ALL-ERRORS-AND-MISLABELS-T": {
     "epic": "epic-conversation-branching",
@@ -10582,7 +10582,7 @@
     "label": "bug",
     "priority": "high",
     "source": ".plan/tickets/BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "World delete untransactioned + missing travel cleanup -> FK 500 half-deleted world",
     "type": "BUG"

@@ -3,7 +3,7 @@
 
 # BUG: Re-wrapped DEK artifacts lack context binding (no AAD), enabling cross-chat key confusion on import
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-chat-context-optimization
@@ -22,3 +22,5 @@ RewrappedDek carries chatId/keyId/senderOrigin as plaintext fields next to wrapp
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 93dae7b (registry tip: 8755515bb Konstantin Fedotov Close issue)

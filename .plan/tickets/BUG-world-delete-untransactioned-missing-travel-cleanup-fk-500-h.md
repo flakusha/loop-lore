@@ -3,7 +3,7 @@
 
 # BUG: World delete untransactioned + missing travel cleanup -> FK 500 half-deleted world
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-world-travel-time
@@ -25,3 +25,5 @@ DELETE world (src/routes/worlds/worlds-delete.ts:25-71) never deletes travel_rou
 ## Review 2026-10-04
 
 OPEN on dev - src/routes/worlds/worlds-delete.ts:25-71 has no travel_route_stops/travel_routes/actor_locations deletes and no transaction (plain awaits throughout); grep for travel_route|actor_locations|transaction in worktree copies: no matches.
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 74dfbd8 (registry tip: 925503bbd Konstantin Fedotov Close issue)
