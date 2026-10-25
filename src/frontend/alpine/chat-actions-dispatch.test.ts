@@ -759,3 +759,115 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
     expect(fetchCalls.length,).toBe(0,);
   });
 },);
+
+describeOrSkip("dispatchCommandAction world-update / world-delete", () => {
+  const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+  afterEach(() => {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
+  },);
+
+  function confirmWith(value: boolean,) {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
+  }
+
+  test("confirmed world-update PUTs the patch to /api/v1/worlds/:id and toasts success", async () => {
+    confirmWith(true,);
+    mockFetch(200, { ok: true, },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "world-update",
+      { worldId: "w1", updates: { description: "Colder", difficultyModifier: 3, }, },
+      "chat-1",
+    );
+
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/w1",);
+    expect(fetchCalls[0]?.opts.method,).toBe("PUT",);
+    expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({
+      description: "Colder",
+      difficultyModifier: 3,
+    },);
+
+    expect(ctx.toasts,).toEqual([{ type: "success", message: "World saved", },],);
+  });
+
+  test("dismissed world-update sends nothing", async () => {
+    confirmWith(false,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "world-update",
+      { worldId: "w1", updates: { description: "x", }, },
+      "chat-1",
+    );
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("world-update with no updates or no world id sends nothing", async () => {
+    confirmWith(true,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "world-update", { worldId: "w1", }, "chat-1",);
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "world-update",
+      { updates: { description: "x", }, },
+      "chat-1",
+    );
+
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("failed world-update PUT toasts error", async () => {
+    confirmWith(true,);
+    mockFetch(403, { error: "forbidden", },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "world-update",
+      { worldId: "w1", updates: { description: "x", }, },
+      "chat-1",
+    );
+
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to save", },],);
+  });
+
+  test("confirmed world-delete DELETEs /api/v1/worlds/:id and toasts success", async () => {
+    confirmWith(true,);
+    mockFetch(204,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "world-delete", { worldId: "w1", }, "chat-1",);
+
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/worlds/w1",);
+    expect(fetchCalls[0]?.opts.method,).toBe("DELETE",);
+    expect(ctx.toasts,).toEqual([{ type: "success", message: "World deleted", },],);
+  });
+
+  test("dismissed world-delete sends nothing", async () => {
+    confirmWith(false,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "world-delete", { worldId: "w1", }, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("missing world id sends nothing", async () => {
+    confirmWith(true,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "world-delete", {}, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("failed world-delete toasts error", async () => {
+    confirmWith(true,);
+    mockFetch(500, { error: "boom", },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "world-delete", { worldId: "w1", }, "chat-1",);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to delete world", },],);
+  });
+},);

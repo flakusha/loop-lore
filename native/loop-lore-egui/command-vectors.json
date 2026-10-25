@@ -206,6 +206,14 @@
     {
       "name": "world-get",
       "requiredRole": "member"
+    },
+    {
+      "name": "world-update",
+      "requiredRole": "member"
+    },
+    {
+      "name": "world-delete",
+      "requiredRole": "member"
     }
   ],
   "roleGate": [
@@ -318,7 +326,9 @@
         "summarize",
         "sum",
         "world-list",
-        "world-get"
+        "world-get",
+        "world-update",
+        "world-delete"
       ]
     },
     {
@@ -359,7 +369,8 @@
         "rag-search",
         "rag-ask",
         "stats",
-        "summarize"
+        "summarize",
+        "world-update"
       ]
     },
     {
