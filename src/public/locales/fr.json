@@ -1388,6 +1388,12 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmModifyEntity": "Appliquer les changements suggérés à « {name} » ?",
+    "entityModified": "Modifications appliquées à {name}",
+    "failedModifyEntity": "Échec de l'application des modifications à {name}",
+    "confirmImportEntity": "Importer le personnage « {name} » ?",
+    "entityImported": "{name} importé",
+    "failedImportEntity": "Échec de l'import de {name}",
     "confirmApplyEntity": "Appliquer les modifications en attente à « {name} » ?",
     "confirmAddEntity": "Ajouter le nouveau {kind} « {name} » ?",
     "confirmCloneEntity": "Créer une copie de « {name} » ?",
@@ -1671,6 +1677,8 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "modify": "Laisser le modèle réécrire une entité (/modify <kind> <id> \"demande\")",
+    "import": "Importer une fiche personnage depuis un fichier téléversé (/import character <fichier>)",
     "apply": "Modifier les champs d'un world/location/item (/apply <kind> <id> clé=valeur …)",
     "add": "Ajouter une nouvelle location ou un item à un monde (/add <kind> <nom> [world-id])",
     "clone": "Copier une location ou un item existant (/clone <kind> <id-source>)",

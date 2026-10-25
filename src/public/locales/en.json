@@ -1472,6 +1472,12 @@
     }
   },
   "toasts": {
+    "confirmModifyEntity": "Apply the suggested changes to \"{name}\"?",
+    "entityModified": "Changes applied to {name}",
+    "failedModifyEntity": "Failed to apply changes to {name}",
+    "confirmImportEntity": "Import the character \"{name}\"?",
+    "entityImported": "{name} imported",
+    "failedImportEntity": "Failed to import {name}",
     "confirmApplyEntity": "Apply the pending changes to \"{name}\"?",
     "confirmAddEntity": "Add the new {kind} \"{name}\"?",
     "confirmCloneEntity": "Create a copy of \"{name}\"?",
@@ -1804,6 +1810,8 @@
     "failed": "Could not set that reminder."
   },
   "commands": {
+    "modify": "Let the model rewrite an entity (/modify <kind> <id> \"request\")",
+    "import": "Import a character card from an uploaded file (/import character <file>)",
     "apply": "Patch fields on a world/location/item (/apply <kind> <id> key=value …)",
     "add": "Add a new location or item to a world (/add <kind> <name> [world-id])",
     "clone": "Copy an existing location or item (/clone <kind> <source-id>)",

@@ -80,6 +80,14 @@
       "requiredRole": "member"
     },
     {
+      "name": "modify",
+      "requiredRole": "owner"
+    },
+    {
+      "name": "import",
+      "requiredRole": "member"
+    },
+    {
       "name": "guide"
     },
     {
@@ -313,6 +321,8 @@
         "apply",
         "add",
         "clone",
+        "modify",
+        "import",
         "guide",
         "constraint",
         "scene",
@@ -386,6 +396,7 @@
         "detail",
         "apply",
         "add",
+        "import",
         "constraint",
         "target",
         "orchestrate",
