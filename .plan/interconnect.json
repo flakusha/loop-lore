@@ -5241,7 +5241,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md",
       "title": "harden(telemetry): gate or rate-limit anonymous POST /api/v1/telemetry/event writes",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/middleware/csrf.ts",
         "src/routes/telemetry.ts"
@@ -6556,7 +6556,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-mood-and-relationship-services-mutate-multi-row-state-withou.md",
       "title": "Mood and relationship services mutate multi-row state without transactions",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/mood-service/apply-happiness-delta.ts",
         "src/characters/services/mood-service/get-mood.ts",
@@ -18734,7 +18734,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md",
       "title": "Assistant Entity Modification & Addition Commands",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/adapter/entity.ts",
         "src/assistant/adapter/modify.ts",
