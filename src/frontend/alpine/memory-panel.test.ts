@@ -579,3 +579,20 @@ describe("memoryPanel.createMemory failure paths", () => {
     expect(c.memoryPanel!.characterMemories,).toEqual([],);
   });
 });
+
+// BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s:
+// memory-panel.html:209 calls formatMemoryDate(mem.createdAt), the method is
+// declared on ChatState, but it was never spread onto the component — every
+// rendered memory row threw `ReferenceError: formatMemoryDate is not defined`.
+describe("memoryPanel.formatMemoryDate wiring", () => {
+  test("is implemented on the component and formats ISO dates", () => {
+    const c = ctx();
+    expect(typeof c.formatMemoryDate,).toBe("function",);
+    expect(c.formatMemoryDate!("2026-09-19T12:00:00.000Z",),).toBeTruthy();
+  });
+
+  test("returns an empty string for invalid timestamps", () => {
+    const c = ctx();
+    expect(c.formatMemoryDate!("not-a-date",),).toBe("",);
+  });
+});
