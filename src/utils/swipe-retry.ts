@@ -23,6 +23,11 @@
 export function isSwipeIndexUniqueViolation(err: unknown,): boolean {
   if (!(err instanceof Error)) { return false; }
   const msg = err.message;
+  // A composite UNIQUE failure that names idempotency_key (bun:sqlite lists
+  // every violated column, e.g. "messages.chat_id, messages.idempotency_key")
+  // is a real idempotency conflict — it must NOT retry as a swipe race
+  // (BUG-swipe-race-classifier).
+  if (/messages\.idempotency_key/i.test(msg,)) { return false; }
   return /UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,) ||
     /SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,);
 }

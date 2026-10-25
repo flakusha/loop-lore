@@ -125,6 +125,15 @@ describe("isSwipeIndexUniqueViolation", () => {
       false,
     );
 
+    // BUG-swipe-race-classifier: bun:sqlite emits the COMPOSITE form for the
+    // idempotency index — an idempotency conflict must never retry as a
+    // swipe race.
+    expect(
+      isSwipeIndexUniqueViolation(
+        new Error("UNIQUE constraint failed: messages.chat_id, messages.idempotency_key",),
+      ),
+    ).toBe(false,);
+
     expect(isSwipeIndexUniqueViolation(new Error("FOREIGN KEY constraint failed",),),).toBe(false,);
     expect(isSwipeIndexUniqueViolation("not an error",),).toBe(false,);
   });
