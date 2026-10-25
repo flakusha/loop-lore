@@ -69,9 +69,14 @@ describe("Memory panel CRUD + audit (B2)", () => {
     // chats — see BUG-memory-panel-fully-inert-in-direct-chats-participants-never-).
     await page.waitForFunction(
       () => {
-        const el = document.querySelector("[x-data='chatState()']",);
-        const d = window.Alpine.$data(el,);
-        return !!d?._getCharacterActorId?.();
+        const el = document.querySelector<HTMLElement>("[x-data='chatState()']",);
+        if (!el) { return false; }
+
+        const d = window.Alpine.$data(el,) as {
+          _getCharacterActorId?: () => string | null;
+        };
+
+        return !!d._getCharacterActorId?.();
       },
       undefined,
       { timeout: 15_000, },
