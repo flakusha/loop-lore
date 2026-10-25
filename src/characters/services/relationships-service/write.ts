@@ -32,6 +32,13 @@ export interface CreateRelationshipArgs {
 export async function createRelationship(
   { thisL, opts, }: CreateRelationshipArgs,
 ): Promise<string> {
+  // Self-reference would let a caller mint an actor->itself row (the reverse
+  // insert of a bidirectional pair would duplicate it); the route maps this
+  // to 400 before reaching us (BUG-relationship-bidirectional-...-foreign-c).
+  if (opts.actorId === opts.targetActorId) {
+    throw new Error("An actor cannot have a relationship with itself",);
+  }
+
   const existing = await getRelationship({
     thisL,
     actorId: opts.actorId,

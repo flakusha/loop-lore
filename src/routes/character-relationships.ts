@@ -9,6 +9,7 @@
  */
 import { Elysia, t, } from "elysia";
 import { RelationshipsService, } from "../characters/services/relationships-service";
+import { can, } from "../users/permissions";
 import {
   ActorIdParams,
   ActorTargetParams,
@@ -103,6 +104,31 @@ export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",
         return jsonError({
           message: "target_actor_id and relationship_type are required",
           status: HttpStatus.BadRequest,
+        },);
+      }
+
+      // BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c:
+      // the bidirectional reverse row is inserted with actor_id = target, so
+      // an unvalidated target would graft relationship data onto another
+      // user's character. Self-reference and missing targets used to slip
+      // through as 201 / FK 500.
+      if (target_actor_id === actorId) {
+        return jsonError({
+          message: "an actor cannot have a relationship with itself",
+          status: HttpStatus.BadRequest,
+        },);
+      }
+
+      const target = await database
+        .selectFrom("actors",)
+        .select("owner_id",)
+        .where("id", "=", target_actor_id,)
+        .executeTakeFirst();
+
+      if (!target || (target.owner_id !== userId && !can(ctx.userRole as string | null, "admin.character",))) {
+        return jsonError({
+          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          status: HttpStatus.NotFound,
         },);
       }
 
