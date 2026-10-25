@@ -151,7 +151,11 @@ export function defaultJobs(): CronJobDef[] {
         if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
         const { runMeshOutboxPass, } = await import("../federation/outbox");
 
-        const summary = await runMeshOutboxPass(database, { trustByOrigin: trustByOriginOf(config,), },);
+        const summary = await runMeshOutboxPass(database, {
+          trustByOrigin: trustByOriginOf(config,),
+          meshPsk: config.federation.meshPsk,
+        },);
+
         logger.info("federation outbox drain complete", { module: "cron", ...summary, },);
         return summary;
       },
