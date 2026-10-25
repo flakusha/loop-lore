@@ -4,6 +4,7 @@
 # BUG: persistBattle lost-update race (read-modify-write without transaction)
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — persistBattle's UPDATE carries `.where("status", "=", BattleStatus.Active)` (src/rpg/service/battles/persistence.ts:125) and throws on zero affected rows (:128-130), closing the completed-battle overwrite the ticket describes (ticket's own prescribed fix form; residual active-vs-active serialization tracked by the useBattleItem transaction ticket).
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-battle-action-systems
@@ -14,7 +15,7 @@ Every battle action (src/rpg/service/battles/persistence.ts:92-126) calls requir
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): persistBattle's UPDATE carries `.where("status", "=", BattleStatus.Active)` (src/rpg/service/battles/persistence.ts:125) and throws on zero affected rows (:128-130), closing the completed-battle overwrite the ticket describes (ticket's own prescribed fix form; residual active-vs-active serialization tracked by the useBattleItem transaction ticket).
 
 **Acceptance Criteria:**
 
