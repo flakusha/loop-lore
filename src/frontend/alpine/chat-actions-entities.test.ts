@@ -196,7 +196,7 @@ describeOrSkip("dispatchCommandAction apply-entity", () => {
     confirmWith(true,);
     const ctx = buildCtx();
     await dispatch(ctx, "apply-entity", {
-      kind: "character",
+      kind: "dragon",
       entityId: "c1",
       worldId: "w1",
       name: "Iria",
