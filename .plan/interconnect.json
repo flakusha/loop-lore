@@ -3684,6 +3684,15 @@
       "related": []
     },
     {
+      "id": "BUG-encryption-flow-browser-ts-is-not-covered-by-expected-404-no",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-encryption-flow-browser-ts-is-not-covered-by-expected-404-no.md",
+      "title": "encryption-flow.browser.ts is not covered by EXPECTED_404_NOISE_ALLOWLIST, so the by-design game-state 404 flakes it under load",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "BUG-encryption-tier-not-enforced",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-encryption-tier-not-enforced.md",
@@ -30036,12 +30045,32 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md",
       "title": "Generated DB types mark every primary key as DB-generated, so an id-less INSERT type-checks and stores a NULL id",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/assets/controller.acl.test.ts",
+        "src/assets/service/delete.test.ts",
         "src/assistant/commands/create-entity-lore.ts",
+        "src/characters/services/shared-service-utils.test.ts",
+        "src/chat/message-translations.ts",
         "src/db/generated/db-types.ts",
         "src/db/schema-",
-        "src/db/schema-manifest.ts"
+        "src/db/schema-core.ts",
+        "src/db/schema-manifest.ts",
+        "src/db/schema.ts",
+        "src/generation/auto-gen/fire-random-event.ts",
+        "src/generation/auto-gen/story-mode.coverage.test.ts",
+        "src/generation/providers/failover-key-scope.test.ts",
+        "src/generation/providers/registry-branches.test.ts",
+        "src/generation/providers/user-api-key.test.ts",
+        "src/middleware/auth.test.ts",
+        "src/nsfw/moderation-service/appeals-reversal.ts",
+        "src/routes/worlds/autonomy-routes.test.ts",
+        "src/story/game-master.test.ts",
+        "src/story/whatif-simulator.test.ts",
+        "src/test-utils/insert-helpers.ts",
+        "src/validation/db-schemas.ts",
+        "src/worlds/conditions.ts",
+        "src/worlds/timescale.ts"
       ],
       "related": []
     },
@@ -52638,6 +52667,12 @@
       ]
     },
     {
+      "path": "src/assets/controller.acl.test.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
+      ]
+    },
+    {
       "path": "src/assets/controller.routes.test.ts",
       "owners": [
         "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
@@ -52898,6 +52933,12 @@
         "epic-content-hashing-distributed-integrity",
         "epic-encryption-workflow",
         "epic-narrative-publishing-workflows"
+      ]
+    },
+    {
+      "path": "src/assets/service/delete.test.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
     {
@@ -56688,6 +56729,12 @@
       ]
     },
     {
+      "path": "src/characters/services/shared-service-utils.test.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
+      ]
+    },
+    {
       "path": "src/characters/services/skills-service-bridge.ts",
       "owners": [
         "TASK-fix-lint-baseline-debt",
@@ -57291,7 +57338,8 @@
     {
       "path": "src/chat/message-translations.ts",
       "owners": [
-        "FEAT-message-translations-chat-first"
+        "FEAT-message-translations-chat-first",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
     {
@@ -62971,6 +63019,7 @@
         "TASK-emotion-avatar-message-binding",
         "TASK-federation-peer-registry-workload-columns",
         "TASK-fix-actor-item-value-type",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
         "TASK-inline-markdown-suggestion-model",
         "TASK-item-side-outfit-change-trigger",
         "TASK-markdown-canonical-intermediate-contract",
@@ -63362,6 +63411,7 @@
         "TASK-emotion-intent-detection",
         "TASK-fix-db-migrations",
         "TASK-gallery-editor-structured-ui",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
         "TASK-internal-external-flagging",
         "TASK-middleware-migration-compaction-data-version-hash",
         "TASK-nsfw-gate-moderation-events",
@@ -68357,6 +68407,7 @@
     {
       "path": "src/generation/auto-gen/fire-random-event.ts",
       "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
         "TASK-reconcile-leftover-finalize-stash-0-random-events-post-store"
       ]
     },
@@ -68505,6 +68556,12 @@
       "path": "src/generation/auto-gen/story-mode-fail-closed.test.ts",
       "owners": [
         "TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-"
+      ]
+    },
+    {
+      "path": "src/generation/auto-gen/story-mode.coverage.test.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
     {
@@ -69637,6 +69694,12 @@
       ]
     },
     {
+      "path": "src/generation/providers/failover-key-scope.test.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
+      ]
+    },
+    {
       "path": "src/generation/providers/ollama-native/http.ts",
       "owners": [
         "BUG-ollama-native-provider-drops-generationmessage-images-so-fil",
@@ -69684,6 +69747,12 @@
       "owners": [
         "BUG-allowuserapikey-defined-but-never-enforced",
         "BUG-byok-store-rejects-non-openaicompatible-provider-names"
+      ]
+    },
+    {
+      "path": "src/generation/providers/registry-branches.test.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
     {
@@ -69769,6 +69838,12 @@
         "epic-harness-integration",
         "epic-platform-integrations",
         "epic-provider-plugin-ecosystem"
+      ]
+    },
+    {
+      "path": "src/generation/providers/user-api-key.test.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
     {
@@ -71724,7 +71799,8 @@
         "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22",
         "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
         "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing",
-        "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-"
+        "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
     {
@@ -72372,7 +72448,8 @@
       "path": "src/nsfw/moderation-service/appeals-reversal.ts",
       "owners": [
         "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
-        "BUG-nsfw-appeal-approvedby-taken-from-request-body"
+        "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
     {
@@ -78799,7 +78876,8 @@
     {
       "path": "src/routes/worlds/autonomy-routes.test.ts",
       "owners": [
-        "TASK-autonomy-config-surface-layering-presets-and-overrides"
+        "TASK-autonomy-config-surface-layering-presets-and-overrides",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
     {
@@ -82900,6 +82978,7 @@
       "path": "src/story/game-master.test.ts",
       "owners": [
         "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
         "TASK-wire-gm-service-story-mode",
         "epic-assistant-gm-flows"
       ]
@@ -83303,6 +83382,12 @@
       ]
     },
     {
+      "path": "src/story/whatif-simulator.test.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
+      ]
+    },
+    {
       "path": "src/story/whatif-simulator.ts",
       "owners": [
         "TASK-authoring-creation",
@@ -83433,6 +83518,7 @@
         "TASK-coverage-waivers-for-3-modules-below-80-floor",
         "TASK-e2ee-receiver-wiring",
         "TASK-federation-peer-registry-workload-columns",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
         "TASK-message-seen-state-schema",
         "TASK-messages-outfit-id-column",
         "TASK-middleware-migration-compaction-data-version-hash",
@@ -84490,6 +84576,7 @@
         "TASK-e2ee-receiver-wiring",
         "TASK-federation-peer-registry-workload-columns",
         "TASK-fix-actor-item-value-type",
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
         "TASK-memory-history-search-bind-message-chain-reconstructable-con",
         "TASK-message-seen-state-schema",
         "TASK-middleware-migration-compaction-data-version-hash",
@@ -85364,6 +85451,12 @@
       ]
     },
     {
+      "path": "src/worlds/conditions.ts",
+      "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
+      ]
+    },
+    {
       "path": "src/worlds/license.ts",
       "owners": [
         "epic-worlds-extension"
@@ -85384,6 +85477,7 @@
     {
       "path": "src/worlds/timescale.ts",
       "owners": [
+        "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
         "epic-world-travel-time",
         "epic-worlds-extension"
       ]
@@ -131301,12 +131395,37 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "produces",
+      "to": "src/assets/controller.acl.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/assets/service/delete.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
       "to": "src/assistant/commands/create-entity-lore.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "produces",
+      "to": "src/characters/services/shared-service-utils.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/chat/message-translations.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
       "to": "src/db/generated/db-types.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -131317,6 +131436,81 @@
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "produces",
       "to": "src/db/schema-"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/generation/auto-gen/fire-random-event.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/generation/auto-gen/story-mode.coverage.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/generation/providers/failover-key-scope.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/generation/providers/registry-branches.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/generation/providers/user-api-key.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/middleware/auth.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/nsfw/moderation-service/appeals-reversal.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/routes/worlds/autonomy-routes.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/story/game-master.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/story/whatif-simulator.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/worlds/conditions.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "produces",
+      "to": "src/worlds/timescale.ts"
     },
     {
       "from": "TASK-generation-error-handling-gaps-detector-abort-void-promises",
@@ -165008,6 +165202,12 @@
       "via": "src/age-gate/controller.test.ts"
     },
     {
+      "from": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/middleware/auth.test.ts"
+    },
+    {
       "from": "BUG-a-community-plugin-named-core-disables-all-five-built-in-too",
       "kind": "sibling",
       "to": "BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat",
@@ -166037,7 +166237,7 @@
       "from": "BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
     },
     {
       "from": "BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys",
@@ -166781,6 +166981,12 @@
       "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -167897,7 +168103,7 @@
       "from": "BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-"
+      "via": "src/db/schema-; src/validation/db-schemas.ts"
     },
     {
       "from": "BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me",
@@ -168305,6 +168511,12 @@
       "from": "BUG-actortype-persona-422-on-valid-ui-input",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/validation/db-schemas.ts"
+    },
+    {
+      "from": "BUG-actortype-persona-422-on-valid-ui-input",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/validation/db-schemas.ts"
     },
     {
@@ -171318,6 +171530,12 @@
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts; src/nsfw/moderation-service/appeals-reversal.ts"
     },
     {
       "from": "BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-",
@@ -182674,6 +182892,12 @@
     {
       "from": "BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "BUG-characters-flow-browser-e2e-flakes-on-a-game-state-404-and-o",
+      "kind": "sibling",
       "to": "TASK-message-seen-state-schema",
       "via": "src/test-utils/insert-helpers.ts"
     },
@@ -193942,6 +194166,12 @@
     {
       "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/middleware/auth.test.ts"
+    },
+    {
+      "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
+      "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/elysia-app.ts; src/middleware/auth/authenticate.ts"
     },
@@ -194693,6 +194923,12 @@
       "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-emotion-avatar-fallback-metadata-incomplete",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -197663,7 +197899,7 @@
       "from": "BUG-federation-identity-mapping-to-local-users-undefined",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-manifest.ts; src/db/schema.ts"
     },
     {
       "from": "BUG-federation-identity-mapping-to-local-users-undefined",
@@ -206944,6 +207180,12 @@
     {
       "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/validation/db-schemas.ts"
+    },
+    {
+      "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
+      "kind": "sibling",
       "to": "TASK-guest-chat-public-reads-visibility-aware-chat-access",
       "via": "src/routes/messages/update.ts"
     },
@@ -213526,6 +213768,12 @@
     {
       "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "BUG-memory-audit-log-action-column-typed-string-not-union",
+      "kind": "sibling",
       "to": "TASK-inline-markdown-suggestion-model",
       "via": "src/db/schema-core.ts"
     },
@@ -219230,6 +219478,12 @@
       "via": "src/nsfw/moderation-service/appeals.test.ts"
     },
     {
+      "from": "BUG-nsfw-appeal-approvedby-taken-from-request-body",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/nsfw/moderation-service/appeals-reversal.ts"
+    },
+    {
       "from": "BUG-nsfw-appeals-as-any-and-dead-route",
       "kind": "sibling",
       "to": "TASK-051",
@@ -219299,6 +219553,12 @@
       "from": "BUG-nsfw-appeals-as-any-and-dead-route",
       "kind": "sibling",
       "to": "TASK-gallery-editor-structured-ui",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "BUG-nsfw-appeals-as-any-and-dead-route",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema.ts"
     },
     {
@@ -220174,6 +220434,12 @@
     {
       "from": "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/story/game-master.test.ts"
+    },
+    {
+      "from": "BUG-nsfw-runtime-config-singleton-leaks-across-tests",
+      "kind": "sibling",
       "to": "TASK-prompt-template-registry",
       "via": "src/assistant/prompt/sections/nsfw-policy.ts; src/nsfw/runtime-config.ts"
     },
@@ -220830,6 +221096,12 @@
       "kind": "sibling",
       "to": "TASK-format-version-migration",
       "via": "src/personas/service.ts"
+    },
+    {
+      "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "BUG-personas-converttocharacter-drops-title-temperature-max-toke",
@@ -235090,6 +235362,12 @@
     {
       "from": "BUG-validation-avatarselectionruleschema-missing-action-first-an",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/validation/db-schemas.ts"
+    },
+    {
+      "from": "BUG-validation-avatarselectionruleschema-missing-action-first-an",
+      "kind": "sibling",
       "to": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
       "via": "src/validation/db-schemas.ts"
     },
@@ -235541,6 +235819,12 @@
       "from": "BUG-visualnovel-type-mismatch-across-api-db-layers",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/validation/db-schemas.ts"
+    },
+    {
+      "from": "BUG-visualnovel-type-mismatch-across-api-db-layers",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/validation/db-schemas.ts"
     },
     {
@@ -242374,6 +242658,12 @@
     {
       "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-automatic-organic-stat-growth-and-allocatable-ability-points",
+      "kind": "sibling",
       "to": "TASK-inline-markdown-suggestion-model",
       "via": "src/db/schema-core.ts"
     },
@@ -243731,6 +244021,12 @@
       "from": "FEAT-character-world-setup",
       "kind": "sibling",
       "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "FEAT-character-world-setup",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/test-utils/insert-helpers.ts"
     },
     {
@@ -246934,6 +247230,12 @@
     {
       "from": "FEAT-expand-character-templates-to-canonical-fields",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-expand-character-templates-to-canonical-fields",
+      "kind": "sibling",
       "to": "TASK-inline-markdown-suggestion-model",
       "via": "src/db/schema-core.ts"
     },
@@ -248092,6 +248394,12 @@
     {
       "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-integrate-skill-progression-with-levelservice-as-one-guarded",
+      "kind": "sibling",
       "to": "TASK-inline-markdown-suggestion-model",
       "via": "src/db/schema-core.ts"
     },
@@ -248603,6 +248911,12 @@
       "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-levelservice-apply-awarded-xp-to-character-stats-and-level-u",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -251202,6 +251516,12 @@
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
       "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "FEAT-message-translations-chat-first",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/chat/message-translations.ts; src/db/schema-core.ts"
     },
     {
       "from": "FEAT-message-translations-chat-first",
@@ -260644,6 +260964,12 @@
     {
       "from": "TASK-051",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-051",
+      "kind": "sibling",
       "to": "TASK-held-item-axis-data-model",
       "via": "src/db/enums-story/items.ts"
     },
@@ -261389,6 +261715,12 @@
       "from": "TASK-055",
       "kind": "sibling",
       "to": "TASK-gallery-editor-structured-ui",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-055",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema.ts"
     },
     {
@@ -264514,6 +264846,12 @@
     {
       "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts; src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-achievements-enum-revival-promote-service-layer-to-db-barrel",
+      "kind": "sibling",
       "to": "TASK-inline-markdown-suggestion-model",
       "via": "src/db/schema-core.ts"
     },
@@ -265247,6 +265585,12 @@
       "from": "TASK-actor-item-service",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actor-item-service",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -266050,6 +266394,12 @@
     {
       "from": "TASK-actors-child-tables-crud",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-actors-child-tables-crud",
+      "kind": "sibling",
       "to": "TASK-message-seen-state-schema",
       "via": "src/test-utils/insert-helpers.ts"
     },
@@ -266255,6 +266605,12 @@
       "from": "TASK-actors-data-versioning",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-actors-data-versioning",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -266832,6 +267188,12 @@
       "kind": "sibling",
       "to": "TASK-frontend-view-model-extraction",
       "via": "src/views/chat.html"
+    },
+    {
+      "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation",
@@ -269758,6 +270120,12 @@
     {
       "from": "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/middleware/auth.test.ts"
+    },
+    {
+      "from": "TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing",
+      "kind": "sibling",
       "to": "TASK-input-hardening-batch",
       "via": "src/middleware/auth/token.ts"
     },
@@ -271541,7 +271909,7 @@
       "from": "TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-manifest.ts; src/db/schema.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return",
@@ -276814,6 +277182,12 @@
     {
       "from": "TASK-assistant-entity-access-character-item-inventory",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-character-item-inventory",
+      "kind": "sibling",
       "to": "TASK-internal-external-flagging",
       "via": "src/db/schema.ts"
     },
@@ -277626,6 +278000,12 @@
       "kind": "sibling",
       "to": "TASK-gallery-editor-structured-ui",
       "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-assistant-scenario-source",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema.ts; src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-assistant-scenario-source",
@@ -278452,6 +278832,12 @@
     {
       "from": "TASK-asymmetric-key-pairs-followup",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs-followup",
+      "kind": "sibling",
       "to": "TASK-implement-the-crypto-algorithm-registry-and-factory-cryptoal",
       "via": "src/crypto/e2e/key-pairs.ts; src/crypto/e2e/server-registry.ts; src/frontend/e2e/key-store.ts; src/routes/actor-e2e-pubkeys.ts"
     },
@@ -278849,6 +279235,12 @@
       "from": "TASK-asymmetric-key-pairs",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-asymmetric-key-pairs",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -279335,7 +279727,7 @@
       "from": "TASK-async-request-response-result-store-separate-table-offload",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-; src/db/schema-manifest.ts"
+      "via": "src/db/schema-; src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
@@ -280444,6 +280836,12 @@
     {
       "from": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/middleware/auth.test.ts"
+    },
+    {
+      "from": "TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-",
+      "kind": "sibling",
       "to": "TASK-import-export-io",
       "via": "src/routes/export.ts"
     },
@@ -281212,6 +281610,12 @@
     {
       "from": "TASK-autonomy-config-surface-layering-presets-and-overrides",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/routes/worlds/autonomy-routes.test.ts"
+    },
+    {
+      "from": "TASK-autonomy-config-surface-layering-presets-and-overrides",
+      "kind": "sibling",
       "to": "epic-actor-autonomy-story-drive",
       "via": "src/autonomy/scheduler/index.test.ts; src/autonomy/scheduler/index.ts"
     },
@@ -281351,6 +281755,12 @@
       "from": "TASK-autonomy-rate-governor-for-llm-actors",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-autonomy-rate-governor-for-llm-actors",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -282958,6 +283368,12 @@
     {
       "from": "TASK-avatar-dogfood-assistant-generation",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-avatar-dogfood-assistant-generation",
+      "kind": "sibling",
       "to": "TASK-message-seen-state-schema",
       "via": "src/test-utils/insert-helpers.ts"
     },
@@ -284004,6 +284420,12 @@
       "kind": "sibling",
       "to": "TASK-frontend-story-mode-ui",
       "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-avatar-render-target-discriminator",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-avatar-render-target-discriminator",
@@ -289126,6 +289548,12 @@
     {
       "from": "TASK-character-creator-prerogative",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-creator-prerogative",
+      "kind": "sibling",
       "to": "TASK-harness-assistant-personalities",
       "via": "src/characters/parser.ts"
     },
@@ -289804,6 +290232,12 @@
     {
       "from": "TASK-character-multi-avatar",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-character-multi-avatar",
+      "kind": "sibling",
       "to": "TASK-gm-panel",
       "via": "src/views/chat.html"
     },
@@ -290250,6 +290684,12 @@
       "kind": "sibling",
       "to": "TASK-format-version-migration",
       "via": "src/routes/characters.ts"
+    },
+    {
+      "from": "TASK-character-personality-integrity",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-character-personality-integrity",
@@ -292114,6 +292554,12 @@
     {
       "from": "TASK-chat-backgrounds-location-sync",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-chat-backgrounds-location-sync",
+      "kind": "sibling",
       "to": "TASK-gm-panel",
       "via": "src/views/chat.html"
     },
@@ -292571,6 +293017,12 @@
       "from": "TASK-chat-context-preference-per-scope",
       "kind": "sibling",
       "to": "TASK-fix-actor-item-value-type",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-chat-context-preference-per-scope",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema-core.ts"
     },
     {
@@ -296951,7 +297403,7 @@
       "from": "TASK-chat-transfer-location",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
     },
     {
       "from": "TASK-chat-transfer-location",
@@ -300412,6 +300864,12 @@
     {
       "from": "TASK-comfyui-first-class-workflow-library",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-comfyui-first-class-workflow-library",
+      "kind": "sibling",
       "to": "TASK-guest-asset-public-reads-open-public-asset-access",
       "via": "src/assets/controller.ts"
     },
@@ -302423,7 +302881,7 @@
       "from": "TASK-comic-page-composition-strategy",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-manifest.ts; src/db/schema.ts"
     },
     {
       "from": "TASK-comic-page-composition-strategy",
@@ -305068,6 +305526,12 @@
     {
       "from": "TASK-comparison-set-variant-data-model",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-comparison-set-variant-data-model",
+      "kind": "sibling",
       "to": "TASK-harness-db-tables",
       "via": "src/db/migrations/README.md"
     },
@@ -306371,6 +306835,12 @@
       "from": "TASK-consolidate-quest-engines",
       "kind": "sibling",
       "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-consolidate-quest-engines",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/test-utils/insert-helpers.ts"
     },
     {
@@ -307985,6 +308455,12 @@
       "from": "TASK-coverage-waivers-for-3-modules-below-80-floor",
       "kind": "sibling",
       "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-coverage-waivers-for-3-modules-below-80-floor",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/test-utils/insert-helpers.ts"
     },
     {
@@ -313324,6 +313800,12 @@
     {
       "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-delete-unreferenced-route-validation-modules-dead-helpers-an",
+      "kind": "sibling",
       "to": "TASK-headers-additional-useful-response-headers",
       "via": "src/routes/middleware/deprecation-headers.ts"
     },
@@ -315119,7 +315601,7 @@
       "from": "TASK-e2ee-receiver-wiring",
       "kind": "sibling",
       "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-core.ts; src/db/schema-manifest.ts; src/db/schema.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-e2ee-receiver-wiring",
@@ -316588,6 +317070,12 @@
     {
       "from": "TASK-emotion-avatar-message-binding",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-emotion-avatar-message-binding",
+      "kind": "sibling",
       "to": "TASK-inline-markdown-suggestion-model",
       "via": "src/db/schema-core.ts"
     },
@@ -317033,6 +317521,12 @@
       "from": "TASK-emotion-intent-detection",
       "kind": "sibling",
       "to": "TASK-gallery-editor-structured-ui",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-emotion-intent-detection",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema.ts"
     },
     {
@@ -322360,6 +322854,12 @@
     {
       "from": "TASK-federation-peer-registry-workload-columns",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-federation-peer-registry-workload-columns",
+      "kind": "sibling",
       "to": "TASK-harness-db-tables",
       "via": "src/db/migrations/README.md"
     },
@@ -323644,6 +324144,12 @@
     {
       "from": "TASK-fix-actor-item-value-type",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema-core.ts; src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-fix-actor-item-value-type",
+      "kind": "sibling",
       "to": "TASK-implement-trade",
       "via": "src/db/migrations/parts/005_actor_data.ts"
     },
@@ -323999,6 +324505,12 @@
       "from": "TASK-fix-db-migrations",
       "kind": "sibling",
       "to": "TASK-gallery-editor-structured-ui",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-fix-db-migrations",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "via": "src/db/schema.ts"
     },
     {
@@ -325864,6 +326376,12 @@
     {
       "from": "TASK-gallery-editor-structured-ui",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-gallery-editor-structured-ui",
+      "kind": "sibling",
       "to": "TASK-guest-asset-public-reads-open-public-asset-access",
       "via": "src/routes/views/gallery.ts"
     },
@@ -326536,20 +327054,56 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "TASK-inline-markdown-suggestion-model",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-internal-external-flagging",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-item-side-outfit-change-trigger",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-markdown-canonical-intermediate-contract",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "TASK-matrix-auth-per-role-factor-policy-shape-decide-per-role-min",
       "via": "src/db/schema-manifest.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
+      "via": "src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-message-carriage-table-migration-admin-read",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "TASK-message-seen-state-schema",
-      "via": "src/db/schema-; src/db/schema-manifest.ts"
+      "via": "src/db/schema-; src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "TASK-messages-outfit-id-column",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-core.ts; src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -326560,26 +327114,80 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "TASK-middleware-migration-compaction-data-version-hash",
+      "via": "src/db/schema.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "TASK-migration-sequential-finalize-and-renumber-policy",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-manifest.ts; src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-mini-games-framework",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-nsfw-gate-moderation-events",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-prompt-nsfw-traits-section",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-property-test-the-db-schemas-insert-read-round-trip",
+      "via": "src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "TASK-publication-artifact-schema",
-      "via": "src/db/schema-; src/db/schema-manifest.ts"
+      "via": "src/db/schema-; src/db/schema-manifest.ts; src/db/schema.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-publication-glossary-term-base",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-publication-unit-translation-store",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-reconcile-achievement-unlock-sources",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-reconcile-leftover-finalize-stash-0-random-events-post-store",
+      "via": "src/generation/auto-gen/fire-random-event.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "TASK-recursive-self-improvement-watchdog-events-table-and-telemet",
-      "via": "src/db/schema-"
+      "via": "src/db/schema-; src/db/schema.ts; src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "TASK-resource-provision-schema",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-manifest.ts; src/db/schema.ts; src/test-utils/insert-helpers.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -326590,8 +327198,20 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "TASK-test-chat-module",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "TASK-timeline-id-world-timeline-events",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-core.ts; src/db/schema-manifest.ts; src/db/schema.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-user-block-ban-shadow",
+      "via": "src/db/schema.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -326602,8 +327222,68 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "TASK-wire-achievements-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-wire-combat-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-wire-gm-service-story-mode",
+      "via": "src/story/game-master.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-wire-npc-navigation-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-wire-quests-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-wire-replayability-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-wire-skills-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-wire-world-location-traits-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-wire-xp-loot-routes",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "TASK-world-location-encryption",
+      "via": "src/db/schema.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "TASK-world-requires-stats-flag-and-point-budget-config",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-core.ts; src/db/schema-manifest.ts; src/db/schema.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -326614,26 +327294,116 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "epic-actors",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "epic-architecture",
       "via": "src/db/schema-"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "epic-assistant-gm-flows",
+      "via": "src/story/game-master.test.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-battle-action-systems",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-battle-integration-gaps",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/db/schema-core.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-character-core-system",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "epic-character-growth",
-      "via": "src/db/schema-; src/db/schema-manifest.ts"
+      "via": "src/db/schema-; src/db/schema-manifest.ts; src/db/schema.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-character-internal-traits",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "epic-character-npc-lore-access",
-      "via": "src/assistant/commands/create-entity-lore.ts"
+      "via": "src/assistant/commands/create-entity-lore.ts; src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-character-world-setup",
+      "via": "src/test-utils/insert-helpers.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-character-xp-leveling",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-chat-lifecycle-moderation",
+      "via": "src/db/schema-core.ts; src/db/schema.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-chat-transfer-location",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-chat-variants-taxonomy",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-manifest.ts; src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-config-extensions",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-crafting-professions",
+      "via": "src/test-utils/insert-helpers.ts; src/validation/db-schemas.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-cross-layer-reconciliation",
+      "via": "src/validation/db-schemas.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -326645,13 +327415,25 @@
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "epic-editorial-workflow",
-      "via": "src/db/schema-"
+      "via": "src/db/schema-; src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "epic-emotion-avatar-message-binding",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-exploration-discovery",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -326662,20 +327444,74 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "epic-impersonation",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-item-systems-unification",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-logging",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-mini-games",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "epic-multi-instance-reconciliation",
-      "via": "src/db/schema-manifest.ts"
+      "via": "src/db/schema-core.ts; src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-multilingual-carriage",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "epic-narrative-publishing-workflows",
-      "via": "src/db/schema-"
+      "via": "src/db/schema-; src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-output-control-transforms",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
       "to": "epic-publication-i18n",
-      "via": "src/db/schema-"
+      "via": "src/db/schema-; src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-rarity-extensions",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-research-agency-decision",
+      "via": "src/db/schema-core.ts"
     },
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
@@ -326692,8 +327528,32 @@
     {
       "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
       "kind": "sibling",
+      "to": "epic-skills-professions-config",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
       "to": "epic-visual-novel-mode",
       "via": "src/db/schema-manifest.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-world-chat-channels-invites",
+      "via": "src/db/schema-core.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-world-travel-time",
+      "via": "src/worlds/timescale.ts"
+    },
+    {
+      "from": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "kind": "sibling",
+      "to": "epic-worlds-extension",
+      "via": "src/db/schema.ts; src/worlds/timescale.ts"
     },
     {
       "from": "TASK-generation-error-handling-gaps-detector-abort-void-promises",
