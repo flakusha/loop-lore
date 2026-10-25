@@ -150,6 +150,10 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
+        // BUG-travel-route-stop-delete: the stop must belong to a route in
+        // THIS world — 404 when the route id doesn't resolve under it.
+        const route = await routes.getRoute(ctx.params.worldId, ctx.params.routeId,);
+        if (!route) { return jsonError({ message: "route not found", status: HttpStatus.NotFound, },); }
         await routes.removeStop(ctx.params.routeId, ctx.params.stopId,);
         return new Response(null, { status: 204, },);
       },
@@ -157,7 +161,7 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
         response: { 204: t.Void(), 401: ErrorResponse, 404: ErrorResponse, },
         detail: {
           summary: "Remove stop from route",
-          description: "Delete a stop by id.",
+          description: "Delete a stop by id, scoped to the route.",
           tags: ["Worlds",],
         },
       },

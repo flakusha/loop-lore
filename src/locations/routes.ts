@@ -215,8 +215,18 @@ export class TravelRouteService {
     } | undefined;
   }
 
-  async removeStop(_routeId: string, stopId: string,): Promise<void> {
-    await this.db.deleteFrom("travel_route_stops",).where("id", "=", stopId,).execute();
+  /**
+   * Delete a stop, scoped to the given route (BUG-travel-route-stop-delete
+   * cross-world IDOR: a bare stop id must not be deletable via another
+   * route's id).
+   * @param routeId - Parent route whose stop is being removed
+   * @param stopId - Stop row id
+   */
+  async removeStop(routeId: string, stopId: string,): Promise<void> {
+    await this.db.deleteFrom("travel_route_stops",)
+      .where("id", "=", stopId,)
+      .where("route_id", "=", routeId,)
+      .execute();
   }
 
   async listStops(routeId: string,): Promise<TravelRouteStopRow[]> {
