@@ -109,6 +109,24 @@ describe("processEvent", () => {
     expect(entries[0]?.milestoneHit,).toBeNull();
   });
 
+  // BUG-quest-engine-double-advances-from-stale-in-memory-progress-a:
+  // processEvent selects active quests once, then applies each event — but
+  // applyProgress never refreshed the in-memory row, so the second event
+  // recomputed from the stale progress and the gain was lost.
+  test("two matching events in one batch compound instead of overwriting", async () => {
+    const id = await createCollectionQuest(100,);
+    const entries = await engine.processEvent(worldId, chatId, [
+      transferEvent("Iron Sword",),
+      transferEvent("Iron Sword",),
+    ],);
+
+    expect(entries,).toHaveLength(2,);
+    expect(entries[1]?.previousProgress,).toBe(50,);
+    expect(entries[1]?.newProgress,).toBe(100,);
+    expect(entries[1]?.completed,).toBe(true,);
+    expect(await questStatus(id,),).toBe(QuestStatus.Completed,);
+  });
+
   test("non-matching items and event types leave progress untouched", async () => {
     await createCollectionQuest();
     expect(await engine.processEvent(worldId, chatId, [transferEvent("Wooden Shield",),],),).toEqual([],);
