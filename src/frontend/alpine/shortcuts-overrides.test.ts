@@ -13,6 +13,7 @@ import {
   getKeymap,
   isKeyboardNavEnabled,
   KEYMAP_STORAGE_KEY,
+  RESERVED_COMBOS,
   resetKeymapOverrides,
   setKeyboardNavEnabled,
   setKeymapOverride,
@@ -132,6 +133,12 @@ describe("validateKeymapCombo", () => {
     expect(validateKeymapCombo("?", "scroll-down", map(),).ok,).toBe(false,);
     expect(validateKeymapCombo("Escape", "scroll-down", map(),).ok,).toBe(false,);
     expect(validateKeymapCombo("g", "scroll-down", map(),).ok,).toBe(false,);
+  });
+
+  it("rejects every combo the reserved list names", () => {
+    for (const combo of RESERVED_COMBOS) {
+      expect(validateKeymapCombo(combo, "scroll-down", map(),).ok,).toBe(false,);
+    }
   });
 
   it("rejects combos already bound to another action", () => {
