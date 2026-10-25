@@ -1203,6 +1203,12 @@
       "source": ".plan/tickets/TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-.md"
     }
   ],
+  "src/assets/controller.acl.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    }
+  ],
   "src/assets/controller.routes.test.ts": [
     {
       "kind": "ticket",
@@ -1761,6 +1767,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/crypto.md"
+    }
+  ],
+  "src/assets/service/delete.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/assets/service/delete.ts": [
@@ -8251,6 +8263,12 @@
       "source": ".plan/tickets/BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same.md"
     }
   ],
+  "src/characters/services/shared-service-utils.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    }
+  ],
   "src/characters/services/skills-service-bridge.ts": [
     {
       "kind": "epic",
@@ -9269,6 +9287,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/chat/mode-switch.ts": [
@@ -19910,6 +19932,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-inline-markdown-suggestion-model.md"
     },
     {
@@ -20753,6 +20779,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -28686,6 +28716,10 @@
   "src/generation/auto-gen/fire-random-event.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md"
     }
   ],
@@ -29009,6 +29043,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
+    }
+  ],
+  "src/generation/auto-gen/story-mode.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/generation/auto-gen/story-mode.test.ts": [
@@ -31203,6 +31243,12 @@
       "source": ".plan/epics/epic-tts-foundation.md"
     }
   ],
+  "src/generation/providers/failover-key-scope.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    }
+  ],
   "src/generation/providers/ollama-native/http.ts": [
     {
       "kind": "epic",
@@ -31279,6 +31325,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md"
+    }
+  ],
+  "src/generation/providers/registry-branches.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/generation/providers/registry.test.ts": [
@@ -31505,6 +31557,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
+  "src/generation/providers/user-api-key.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/generation/providers/user-api-key.ts": [
@@ -34833,6 +34891,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/middleware/auth/authenticate.ts": [
@@ -36099,6 +36161,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/nsfw/moderation-service/appeals.test.ts": [
@@ -46895,6 +46961,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-config-surface-layering-presets-and-overrides.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/routes/worlds/autonomy-routes.ts": [
@@ -53012,6 +53082,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-gm-service-story-mode.md"
     }
   ],
@@ -53717,6 +53791,12 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/story/whatif-simulator.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    }
+  ],
   "src/story/whatif-simulator.ts": [
     {
       "kind": "epic",
@@ -53969,6 +54049,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-registry-workload-columns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -55896,6 +55980,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     },
     {
@@ -57581,6 +57669,12 @@
       "source": ".plan/tickets/TASK-043.md"
     }
   ],
+  "src/worlds/conditions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
+    }
+  ],
   "src/worlds/license.ts": [
     {
       "kind": "epic",
@@ -57607,6 +57701,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-worlds-extension.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ]
 }
