@@ -3,7 +3,8 @@
 
 # BUG: Item definition route: non-array properties.effects causes unhandled 500
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** fixed 2026-10-25 (`fix-item-effects-500`) — the route rejects a non-array `properties.effects` with 400 BadRequest before `createDefinition` runs
 **Priority:** high
 **Effort:** Medium
 **Tags:** story-items
@@ -21,10 +22,17 @@ Expected: 400 BadRequest with a clear message (properties.effects must be an arr
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+`POST /api/v1/worlds/:worldId/items` ran `parseItemEffects(def.properties.effects)` inside
+`createDefinition` without a guard, and the route's catch only handled
+`DuplicateItemDefinitionError`, so a non-array `effects` value escaped as a 500.
+
+Fixed at the route/validation layer, following the handler's existing
+`jsonError`/`BadRequest` conventions: a non-array `properties.effects` is now
+answered with 400 BadRequest before `createDefinition` runs. Covered by
+`src/routes/story-items/routes.coverage.test.ts`.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
