@@ -130,12 +130,15 @@ describe("fractalTravelRoutes", () => {
     const app = appWithAuth(ownerId, "solo",);
     // Own route and transport: the shared fixtures stay read-only, so this
     // test's attach/detach cannot leak state into any other test.
-    const ownRouteId = await insertTravelRoutes(db, worldId, "Attach Loop", "sea",);
+    const [ownRouteId, ownTransportId,] = await Promise.all([
+      insertTravelRoutes(db, worldId, "Attach Loop", "sea",),
+      insertLocations(db, worldId, "Own Ferry", {
+        kind: "transport",
+        mobility_mode: "free",
+      },),
+    ],);
+
     await insertTravelRouteStops(db, ownRouteId, portId, 0,);
-    const ownTransportId = await insertLocations(db, worldId, "Own Ferry", {
-      kind: "transport",
-      mobility_mode: "free",
-    },);
 
     const attached = await app.handle(
       new Request(`http://localhost/api/worlds/${worldId}/travel-routes/${ownRouteId}/attach/${ownTransportId}`, {
