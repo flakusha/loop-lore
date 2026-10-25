@@ -206,27 +206,35 @@ export class CraftingOrderService {
       return { ok: false, reason: error instanceof Error ? error.message : String(error,), };
     }
 
-    if (order.offered_payment > 0) {
-      const paid = await this.trade.trade({
-        worldId: order.world_id,
-        buyerActorId: order.requester_actor_id,
-        sellerActorId: order.crafter_actor_id,
-        buyerItems: [],
-        sellerItems: [],
-        price: order.offered_payment,
-      },);
+    try {
+      if (order.offered_payment > 0) {
+        const paid = await this.trade.trade({
+          worldId: order.world_id,
+          buyerActorId: order.requester_actor_id,
+          sellerActorId: order.crafter_actor_id,
+          buyerItems: [],
+          sellerItems: [],
+          price: order.offered_payment,
+        },);
 
-      if (!paid.success) {
-        await releaseClaim();
-        return { ok: false, reason: "payment failed", };
+        if (!paid.success) {
+          await releaseClaim();
+          return { ok: false, reason: "payment failed", };
+        }
       }
-    }
 
-    await this.db.updateTable("crafting_orders",)
-      .set({ status: "fulfilled", updated_at: new Date().toISOString(), },)
-      .where("id", "=", orderId,)
-      .where("status", "=", "fulfilling",)
-      .execute();
+      await this.db.updateTable("crafting_orders",)
+        .set({ status: "fulfilled", updated_at: new Date().toISOString(), },)
+        .where("id", "=", orderId,)
+        .where("status", "=", "fulfilling",)
+        .execute();
+    } catch (error) {
+      // The claim must never wedge the order: a crash or DB rejection here
+      // would otherwise strand 'fulfilling' — a status accept, cancel, and
+      // fulfil all refuse. Release first, then surface the original error.
+      await releaseClaim();
+      throw error;
+    }
 
     return { ok: true, attemptId: attempt.attemptId, };
   }
