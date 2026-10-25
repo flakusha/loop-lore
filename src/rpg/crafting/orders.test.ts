@@ -150,4 +150,83 @@ describe("CraftingOrderService.fulfillOrder — concurrent fulfil", () => {
 
     expect(order?.status,).toBe("fulfilled",);
   });
+
+  test("a mid-fulfil side-effect failure releases the claim and the order stays retryable", async () => {
+    const outputItemId = uid();
+    await insertItems(db, worldId, "Bolt", "material", { id: outputItemId as never, },);
+    const recipeId = uid();
+    const now = new Date().toISOString();
+    await db.insertInto("crafting_recipes",).values({
+      id: recipeId,
+      world_id: worldId,
+      name: "Cut Bolt",
+      description: null,
+      discipline: "smithing",
+      tier: 1,
+      level_required: 1,
+      output_item_id: outputItemId,
+      output_quantity: 1,
+      crafting_time_seconds: 1,
+      base_success_chance: 1,
+      base_quality_min: 1,
+      base_quality_max: 10,
+      perfect_threshold: 100,
+      station_type_required: null,
+      discovered_by_default: 1,
+      tags: "[]",
+      created_at: now,
+      updated_at: now,
+    },).execute();
+
+    // Fund the payment so the retry below can go through the real trade.
+    await credit(db, requesterId, worldId, 500,);
+
+    const orderId = uid();
+    await db.insertInto("crafting_orders",).values({
+      id: orderId,
+      world_id: worldId,
+      requester_actor_id: requesterId,
+      crafter_actor_id: crafterId,
+      recipe_id: recipeId,
+      quantity: 1,
+      max_quality: null,
+      offered_payment: 100,
+      offered_materials: "[]",
+      status: "accepted",
+      deadline: null,
+      created_at: now,
+      updated_at: now,
+      trade_type: "crafting",
+    },).execute();
+
+    // Crash-class payment failure AFTER the claim: the claim must release,
+    // or the order wedges in 'fulfilling' — a status accept, cancel, and
+    // fulfil all refuse.
+    const wedged = new CraftingOrderService(db,);
+    (wedged as unknown as { trade: { trade: () => Promise<never> } }).trade = {
+      trade: () => Promise.reject(new Error("payment exploded",),),
+    };
+
+    await expect(wedged.fulfillOrder(orderId,),).rejects.toThrow("payment exploded",);
+
+    const released = await db
+      .selectFrom("crafting_orders",)
+      .select("status",)
+      .where("id", "=", orderId,)
+      .executeTakeFirst();
+
+    expect(released?.status,).toBe("accepted",);
+
+    // Retry with the real trade — the order must be fulfillable again.
+    const retry = await new CraftingOrderService(db,).fulfillOrder(orderId,);
+    expect(retry.ok,).toBe(true,);
+
+    const fulfilled = await db
+      .selectFrom("crafting_orders",)
+      .select("status",)
+      .where("id", "=", orderId,)
+      .executeTakeFirst();
+
+    expect(fulfilled?.status,).toBe("fulfilled",);
+  });
 });
