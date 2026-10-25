@@ -64,8 +64,6 @@ registerCommand("char-list", async (_args, ctx,): Promise<CommandResult> => {
 
   return {
     systemMessage: `**Your characters (${rows.length}):**\n\n${list}`,
-    action: "char-list",
-    actionPayload: { characters: rows, },
     handled: true,
   };
 }, { requiredRole: "member", },);
@@ -137,8 +135,6 @@ registerCommand("char-get", async (args, ctx,): Promise<CommandResult> => {
       `**Stats:** ${statStr}`,
       `**Lore entries (${lore.length}):**\n${loreList}`,
     ].filter(Boolean,).join("\n",),
-    action: "char-get",
-    actionPayload: { character: card, stats, lore, },
     handled: true,
   };
 }, { requiredRole: "member", },);
