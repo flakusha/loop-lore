@@ -4,6 +4,7 @@
 # BUG: GM shadow-note revealed_to reveal is a read-modify-write without serialization: concurrent reveals lose an append
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — the revealed_to merge now runs inside one `database.transaction()` (src/routes/gm-notes/shadow.ts:161): select (:165-169), Set merge (:181) and full-array UPDATE (:194-202) all execute on the transaction, so a concurrent reveal can no longer interleave read-read-write and drop an actor id.
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-gm-shadow-notes
@@ -26,7 +27,7 @@ Source: .tmp/glm-review/deep-landing-1015.md F-1 (gitignored; recorded here verb
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): the revealed_to merge now runs inside one `database.transaction()` (src/routes/gm-notes/shadow.ts:161): select (:165-169), Set merge (:181) and full-array UPDATE (:194-202) all execute on the transaction, so a concurrent reveal can no longer interleave read-read-write and drop an actor id.
 
 **Acceptance Criteria:**
 
