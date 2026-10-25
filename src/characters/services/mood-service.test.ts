@@ -4,25 +4,33 @@
  * Unit tests for character mood, happiness meter,
  * and expression modifiers.
  */
-import { beforeAll, describe, expect, it, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
 import { MoodService, } from "./mood-service";
 import { createTestActors, createTestWorld, } from "./test-helpers";
 
 describe("MoodService", () => {
   let db: Kysely<DB>;
+  let fixture: Awaited<ReturnType<typeof createTestDb>>;
   let moodService: MoodService;
   let testActorId: string;
 
   beforeAll(async () => {
-    const testDb = await createTestDb();
-    db = testDb.db;
+    fixture = await createTestDb();
+    db = fixture.db;
     moodService = MoodService(db,);
 
     const { actorId, } = await createTestActors(db, "test-actor-mood-001",);
     testActorId = actorId;
+  },);
+
+  // Released here, not left to process exit: `afterAll` runs even when a
+  // test fails, so a failing test cannot leak the handle into the rest of
+  // the suite.
+  afterAll(async () => {
+    await destroyTestDb(fixture,);
   },);
 
   describe("createMood", () => {
