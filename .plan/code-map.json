@@ -14825,6 +14825,12 @@
       "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
     }
   ],
+  "src/cron/dag": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
+    }
+  ],
   "src/cron/dag/engine.test.ts": [
     {
       "kind": "ticket",
@@ -21293,6 +21299,12 @@
       "source": ".plan/tickets/FEAT-user-theming-system.md"
     }
   ],
+  "src/eslint-rules/options-object-params.mjs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
+    }
+  ],
   "src/export/sillytavern-v2.ts": [
     {
       "kind": "ticket",
@@ -22357,6 +22369,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
     },
     {
       "kind": "ticket",
@@ -36027,6 +36043,12 @@
       "source": "docs/spec/nsfw-integration.md"
     }
   ],
+  "src/nsfw/moderation-service": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
+    }
+  ],
   "src/nsfw/moderation-service.ts": [
     {
       "kind": "epic",
@@ -44603,6 +44625,12 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
+  "src/routes/quests": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
+    }
+  ],
   "src/routes/quests.test.ts": [
     {
       "kind": "ticket",
@@ -45188,6 +45216,10 @@
     }
   ],
   "src/routes/story-items": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
@@ -46739,6 +46771,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
     }
   ],
   "src/routes/worlds.test.ts": [
@@ -52547,6 +52583,12 @@
       "source": ".plan/tickets/TASK-sd-cpp-provider.md"
     }
   ],
+  "src/services/trade": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
+    }
+  ],
   "src/services/trade-core": [
     {
       "kind": "ticket",
@@ -53055,6 +53097,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
     },
     {
       "kind": "ticket",
@@ -55494,6 +55540,10 @@
     }
   ],
   "src/utils/safe-buffer": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
