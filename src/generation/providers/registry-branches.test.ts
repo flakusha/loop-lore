@@ -33,6 +33,7 @@ import {
   unregisterProvider,
 } from "./registry";
 import type { ProviderCapabilities, } from "./types";
+import { ByoKeyDecryptError, } from "./user-api-key";
 
 /** Base generation config with no providers and an unresolvable default. */
 function emptyConfig(): Config {
@@ -459,7 +460,7 @@ describe("resolveProvider", () => {
     expect(resolved.resolvedApiKey,).toBeUndefined();
   });
 
-  test("falls back to the server key when BYO decryption fails", async () => {
+  test("refuses to fall back to the server key when BYO decryption fails", async () => {
     registerMock("sm-cov-byo-b",);
     const secret = "sm-cov-test-secret-key";
     await testDb.insertInto("users",).values({
@@ -480,16 +481,17 @@ describe("resolveProvider", () => {
 
     const config = emptyConfig();
     config.byoKey = { enabled: true, encryptionKey: secret, } as Config["byoKey"];
-    const resolved = await resolveProvider({
-      provider: "sm-cov-byo-b",
-      model: "m",
-      userId: "byo-user-broken",
-      config,
-      db: testDb,
-    },);
-
-    expect(resolved.resolvedProviderName,).toBe("sm-cov-byo-b",);
-    expect(resolved.resolvedApiKey,).toBeUndefined();
+    // The request must fail instead of silently billing the server key:
+    // falling back would charge the operator for a key the caller owns.
+    await expect(
+      resolveProvider({
+        provider: "sm-cov-byo-b",
+        model: "m",
+        userId: "byo-user-broken",
+        config,
+        db: testDb,
+      },),
+    ).rejects.toThrow(ByoKeyDecryptError,);
   });
 });
 
