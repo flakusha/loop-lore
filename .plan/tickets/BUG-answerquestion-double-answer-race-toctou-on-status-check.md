@@ -4,6 +4,7 @@
 # BUG: answerQuestion double-answer race (TOCTOU on status check)
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — the answer UPDATE carries `.where("status", "=", RpgQuestionStatus.Open)` (src/rpg/questions/service.ts:236) and throws `not_open` when zero rows are affected (:239-241); a concurrent second answer loses the conditional update before any effects run.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics
@@ -14,7 +15,7 @@ answerQuestion (src/rpg/questions/service.ts:196-260) reads the question row, ch
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): the answer UPDATE carries `.where("status", "=", RpgQuestionStatus.Open)` (src/rpg/questions/service.ts:236) and throws `not_open` when zero rows are affected (:239-241); a concurrent second answer loses the conditional update before any effects run.
 
 **Acceptance Criteria:**
 
