@@ -10,6 +10,7 @@
 import type {
   AlpineState,
   ChatState,
+  KeynavHelpState,
   NotificationBellState,
   NotificationCenterState,
   NotificationPrefsState,
@@ -38,6 +39,7 @@ declare global {
       __: (key: string, fallback?: string,) => string;
     };
     notificationsBell: () => NotificationBellState;
+    keynavHelp: () => KeynavHelpState;
     notificationPrefs: () => NotificationPrefsState;
     notificationCenter: () => NotificationCenterState;
     chatState: () => AlpineState<ChatState>;
@@ -77,6 +79,7 @@ declare global {
   var worldEditState: Window["worldEditState"];
   var app: Window["app"];
   var notificationsBell: Window["notificationsBell"];
+  var keynavHelp: Window["keynavHelp"];
   var notificationPrefs: Window["notificationPrefs"];
   var notificationCenter: Window["notificationCenter"];
   var __USER_ID: string | undefined;

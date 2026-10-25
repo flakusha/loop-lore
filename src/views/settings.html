@@ -114,6 +114,17 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'keys' }" @click="activeTab = 'keys'">
           {{{t("settings.keys")}}}
         </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'keynav' }"
+          @click="activeTab = 'keynav'; loadKeymapSection()"
+          role="tab"
+          :aria-selected="activeTab === 'keynav'"
+          id="tab-keynav"
+          data-testid="settings-tab-keynav"
+        >
+          {{{t("frontend.keynav.tab")}}}
+        </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'models' }" @click="activeTab = 'models'">
           {{{t("settings.models")}}}
         </button>
@@ -790,6 +801,94 @@
             </template>
           </div>
         </div>
+      </div>
+
+      <!-- Keyboard Shortcuts Tab (opt-in via the `keynav` localStorage flag) -->
+      <div
+        x-show="activeTab === 'keynav'"
+        class="settings-tab-content"
+        data-testid="settings-keynav"
+        role="tabpanel"
+        aria-labelledby="tab-keynav"
+        tabindex="0"
+        @keydown="handleRebindKeydown($event)"
+      >
+        <template x-if="keynavEnabled">
+          <div class="settings-section">
+            <div class="section-title">{{{t("frontend.keynav.editor.title")}}}</div>
+            <p style="color: var(--text-secondary); font-size: 13px">
+              {{{t("frontend.keynav.editor.hint")}}}
+            </p>
+            <div
+              x-show="keynavError"
+              role="alert"
+              style="margin: var(--space-3) 0; padding: var(--space-2) var(--space-3); background: #ffd8d8; border: 1px solid #e6a0a0; border-radius: var(--radius-md); color: #6b0a0a; font-size: 13px"
+              x-text="t(keynavError)"
+              data-testid="keynav-editor-error"
+            >
+            </div>
+            <table class="keynav-help-table" style="width: 100%; margin-top: var(--space-3)">
+              <thead>
+                <tr>
+                  <th>{{{t("frontend.keynav.help.colKey")}}}</th>
+                  <th>{{{t("frontend.keynav.help.colAction")}}}</th>
+                  <th><span class="sr-only">{{{t("common.actions")}}}</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="entry in keymap" :key="entry.action">
+                  <tr>
+                    <td>
+                      <kbd x-show="rebindingAction !== entry.action" x-text="entry.combo"></kbd>
+                      <kbd
+                        x-show="rebindingAction === entry.action"
+                        style="outline: 2px solid var(--accent-primary, #6cf)"
+                        x-text="rebindAwaitSecond ? t('frontend.keynav.editor.pressAnother') : t('frontend.keynav.editor.pressKey')"
+                      ></kbd>
+                    </td>
+                    <td x-text="actionLabel(entry.action)"></td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        x-show="rebindingAction !== entry.action"
+                        @click="startRebind(entry.action)"
+                        data-testid="keynav-rebind"
+                      >
+                        {{{t("frontend.keynav.editor.rebind")}}}
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        x-show="rebindingAction === entry.action"
+                        @click="cancelRebind()"
+                      >
+                        {{{t("common.cancel")}}}
+                      </button>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+            <div style="margin-top: var(--space-4)">
+              <button
+                type="button"
+                class="btn btn-warning"
+                @click="resetKeymapToDefaults()"
+                data-testid="keynav-reset"
+              >
+                {{{t("frontend.keynav.editor.reset")}}}
+              </button>
+            </div>
+          </div>
+        </template>
+        <template x-if="!keynavEnabled">
+          <div class="settings-section">
+            <p style="color: var(--text-secondary)">
+              {{{t("frontend.keynav.editor.optIn")}}}
+            </p>
+          </div>
+        </template>
       </div>
     </div>
   </main>

@@ -246,17 +246,23 @@ flowchart TD
 - Mobile-specific patterns
 - Touch target sizing (44px CSS in `app.css`)
 
-### Phase 3: Keyboard Shortcuts
 
-- Shortcut system
-- Shortcut editor UI
-- Context-specific shortcuts
-- Shortcut help overlay
+### Phase 3: Keyboard Shortcuts 🟡 Partial → largely wired (2026-10-25, `a11y-keynav-phase3`)
+
+Corrected history: an earlier read of this phase treated the shortcut surface as "missing";
+audit found it built-but-unwired instead.
+
+- Shortcut system — **existed, already wired** (corrected): `src/frontend/alpine/shortcuts.ts` registers a document keydown listener at bundle load (`src/frontend/alpine/index.ts` import chain), opt-in via the `keynav` localStorage flag; Ctrl+B/N/L/K always on, single-key + `g <key>` sequences dispatch `keynav:action` / `keynav:toggle-help` and feed `registerKeynavHandler`. Covered by `shortcuts.test.ts` + `shortcuts-listener.test.ts`.
+- Shortcut help overlay — **existed but unwired; WIRED 2026-10-25**: `keynavHelp()` was registered nowhere and `src/components/chat/keynav-help.html` was included by no view (knip `epic-frontend-keynav-mobile` ignore). Now the overlay markup lives inline in `src/views/layout.html` inside the sidebar footer (the `{{> }}` include resolver only runs on view content, not the layout, so the include directive could not be used — the redundant partial was removed), with an aria-labelled help button gated on the `keynav` flag; Escape closes; `mobile-keynav.css` (previously referenced by nothing) is now linked from the layout. Component registered in the Alpine bundle and `window-types.ts`.
+- Shortcut editor UI — **added 2026-10-25**: Settings → Keyboard tab (`settings/keynav.ts` submodule composed into `settingsPage()`), rebinding single-key/`g`-pair combos, persisted to localStorage `keynav.keymap`, validated (`validateKeymapCombo`: no duplicates, no bare modifiers, `?`/`Escape`/`g` reserved), reset-to-defaults; `getKeymap()` merges stored overrides over `DEFAULT_KEYMAP` and the keydown listener consumes the merged map. Whole section still renders nothing unless the `keynav` flag is set (opt-in preserved). Unit coverage: `shortcuts-overrides.test.ts`, `settings/keynav.test.ts`, `keynav-help.test.ts`.
+- Context-specific shortcuts — **still open**: the global map already covers chat-page scroll (j/k) and chat switching ([/]); per-page keymaps (battle/inventory/world) have no consumers yet. Plan: register `registerKeynavHandler` actions inside each page's existing Alpine init — do not widen the global listener.
+- Editor i18n for non-en locales — reconciled by `bun run i18n:check` (warn-only) as other locales catch up.
 
 ### Phase 4: Advanced Features
 
-- Screen reader optimizations (ARIA live regions done; full navigation pending)
-- Keyboard shortcuts for power users
+- Screen reader optimizations (ARIA live regions done; full navigation pending — tracked by `TASK-screen-reader-support.md`)
+- Keyboard shortcuts for power users — partially delivered by the Phase 3 rebind editor (2026-10-25); user-defined macro/context shortcuts remain open
+- Help-overlay focus trap: the markup is keyboard-accessible (Escape close, Tab reaches controls) but `@alpinejs/focus` is not loaded, so the `x-trap` from the original WIRE design is not in effect — full focus trap + focus restore stays open under `WIRE-frontend-keyboard-help-overlay.md`
 
 ### Phase 5: Testing & Polish
 
@@ -288,7 +294,7 @@ flowchart TD
 | 1 — Core a11y (shipped 2026-07-31) | (folded into `src/frontend/alpine/focus.ts`) | shipped |
 | 2 — Touch gestures | `TASK-touch-gestures.md` (also `TASK-frontend-touch-gestures.md` — done, `TASK-mobile-touch-gestures.md`, `WIRE-frontend-touch-swipe-gestures.md`) | chat message list wired 2026-10-25; composer/pinch/pull-to-refresh open |
 | 2 — Mobile responsive breakpoints | `TASK-responsive-design.md` | open |
-| 3 — Keyboard shortcuts | `TASK-keyboard-navigation.md` | open |
+| 3 — Keyboard shortcuts | `TASK-keyboard-navigation.md` (core system done); overlay wired + rebind editor added 2026-10-25 via `a11y-keynav-phase3`; context-specific shortcuts open | partially done — overlay/editor shipped, per-page keymaps open |
 | 4 — Screen reader optimizations | `TASK-screen-reader-support.md` | open (in progress) |
 
 **Gap (2026-09-23, resolved):** the then-open question of whether to file a touch-gesture ticket is moot — `TASK-touch-gestures.md` and three sibling tickets exist. The former wiring gap (`src/frontend/touch.ts` unimported, untested) was closed on the chat message list 2026-10-25 (see Phase 2); composer/sidebar gestures and pinch/pull-to-refresh remain open under the tickets above.
