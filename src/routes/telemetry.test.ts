@@ -55,7 +55,6 @@ function makeApp(
   userId?: string,
   userRole?: string,
   opts: {
-    config?: Config;
     eventRateLimiter?: ReturnType<typeof createRateLimiter>;
   } = {},
 ) {
@@ -67,7 +66,6 @@ function makeApp(
   return app.use(
     telemetryRoutes({
       database: db,
-      config: opts.config,
       eventRateLimiter: opts.eventRateLimiter,
     },),
   );
