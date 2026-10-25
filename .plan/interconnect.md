@@ -10,8 +10,8 @@ output is byte-identical for identical inputs.
 
 - tickets: 3653
 - epics: 347
-- src paths owned: 4433
-- edges: produces 11612, consumes 404, sibling 34989, owns 2649, related 1191
+- src paths owned: 4432
+- edges: produces 11619, consumes 404, sibling 35038, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -445,6 +445,7 @@ output is byte-identical for identical inputs.
 | `src/components/chat/gm-quests-panel.html` | `FEAT-quest-log-ui-extended-to-full-spec-quest-browser`, `epic-story-mode-ui` |
 | `src/components/chat/gm-story-panel.html` | `FEAT-per-chat-assistant-gm-frontend`, `TASK-frontend-story-mode-ui` |
 | `src/components/chat/input-area.html` | `EPIC-2026-23`, `TASK-assistant-slash-command-typed-token-autocomplete`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-prompt-improve-composer-ui`, `WIRE-frontend-mobile-sticky-bottom-composer`, `epic-frontend-chat-commands`, `epic-frontend-components`, `epic-frontend-emoji-reactions` |
+| `src/components/chat/keynav-help.html` | `WIRE-frontend-keyboard-help-overlay`, `epic-accessibility-input` |
 | `src/components/chat/location-panel.html` | `TASK-bound-linked-travel-prompts`, `TASK-chat-location-frontend` |
 | `src/components/chat/memory-panel.html` | `BUG-audit-panel-details-not-expandable`, `BUG-audit-panel-renders-action-text-labels-instead-of-icons` |
 | `src/components/chat/message-list.html` | `BUG-xss-in-music-embed-fallback-rendering`, `FEAT-emotion-reactive-portraits-auto-swap-on-emotion-detect`, `FEAT-style-picker-ui-for-smart-regen`, `TASK-aux-emotion-avatar`, `TASK-avatar-framing-tag-member`, `TASK-avatar-render-target-discriminator`, `TASK-chat-external-music-linking`, `TASK-chat-feature-component-buttons`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-emotion-avatar-message-binding`, `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing`, `TASK-frontend-story-mode-ui`, `TASK-link-previews-unfurl`, `TASK-message-polls-votes`, `TASK-message-reactions-in-out-context`, `TASK-migrate-text-surfaces-to-shared-primitives`, `TASK-msg-forward-across-chats`, `epic-emotion-avatar-message-binding`, `epic-frontend-emoji-reactions` |
@@ -777,7 +778,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/alpine/export-progress.stream.test.ts` | `BUG-export-progress-stream-test-lost-stream-contract-assertion`, `BUG-export-progress-stream-test-status-assertion-is-flaky` |
 | `src/frontend/alpine/export-progress.ts` | `BUG-export-progress-stream-test-status-assertion-is-flaky`, `TASK-export-frontend-progress`, `TASK-publication-export-formats` |
 | `src/frontend/alpine/feature-gate.ts` | `TASK-chat-context-feature-permissions`, `epic-crafting-professions` |
-| `src/frontend/alpine/focus.ts` | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-keyboard-modal-focus-trap`, `WIRE-frontend-keyboard-navigation-global-keymap`, `WIRE-frontend-mobile-off-canvas-drawer`, `epic-accessibility-input` |
+| `src/frontend/alpine/focus.ts` | `TASK-keyboard-navigation`, `TASK-simplification-sweep-micro-cleanups-and-single-implementatio`, `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-keyboard-modal-focus-trap`, `WIRE-frontend-keyboard-navigation-global-keymap`, `WIRE-frontend-mobile-off-canvas-drawer`, `epic-accessibility-input` |
 | `src/frontend/alpine/game-canvas/index.ts` | `BUG-characters-flow-browser-e2e-trips-on-the-by-design-game-stat`, `FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas` |
 | `src/frontend/alpine/games.ts` | `TASK-mini-games-framework`, `epic-mini-games` |
 | `src/frontend/alpine/gguf-probe.ts` | `FEAT-gguf-kv-typed-reader-with-arch-templated-key-registry`, `TASK-browser-side-gguf-kv-extraction-for-local-byok-models`, `epic-model-metadata-read` |
@@ -786,7 +787,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/alpine/housing.ts` | `TASK-housing-frontend`, `TASK-nsfw-housing-management` |
 | `src/frontend/alpine/htmx.ts` | `BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam`, `BUG-frontend-dead-csrf-bearer-header-machinery`, `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x`, `BUG-tui-app-never-threads-sessiontoken-into-chatwidget`, `TASK-book-unit-editor-review-surface`, `TASK-codemod-fetch-json-safe-utils`, `TASK-cors-middleware`, `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature`, `TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx`, `TASK-federation-admin-usage-dashboard-ui`, `TASK-html-dedup-audit`, `TASK-html-dedup-shared-partials`, `TASK-htmx-ajax-request-helper`, `epic-federation-offload-quotas`, `epic-frontend-components`, `epic-frontend-html-dedup-htmx-reuse` |
 | `src/frontend/alpine/i18n.ts` | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin`, `TASK-010`, `TASK-i18n-alpine-client`, `TASK-reconcile-epic-frontend-i18n-verify-i18n-wiring-capture-gaps`, `WIRE-frontend-keyboard-help-overlay` |
-| `src/frontend/alpine/index.ts` | `TASK-author-suggestion-resolution-surface`, `TASK-book-unit-editor-review-surface`, `TASK-character-stat-allocation-frontend-modal-and-edit-integration`, `TASK-comparison-grid-frontend`, `TASK-comparison-two-cell-diff-modes`, `TASK-finalize-notification-bell-header-wiring`, `TASK-frontend-touch-gestures`, `TASK-frontend-view-model-extraction`, `TASK-info-bubbles`, `TASK-middleware-browser-side-storage-request-hash-reconciliation`, `TASK-publication-reader-locale-selector`, `TASK-publication-viewer-read-mode`, `TASK-shared-text-surface-toolbar`, `WIRE-frontend-keyboard-navigation-global-keymap`, `epic-encryption-workflow`, `epic-experimental-egui-frontend`, `epic-frontend-age-gate`, `epic-frontend-component-architecture` |
+| `src/frontend/alpine/index.ts` | `TASK-author-suggestion-resolution-surface`, `TASK-book-unit-editor-review-surface`, `TASK-character-stat-allocation-frontend-modal-and-edit-integration`, `TASK-comparison-grid-frontend`, `TASK-comparison-two-cell-diff-modes`, `TASK-finalize-notification-bell-header-wiring`, `TASK-frontend-touch-gestures`, `TASK-frontend-view-model-extraction`, `TASK-info-bubbles`, `TASK-middleware-browser-side-storage-request-hash-reconciliation`, `TASK-publication-reader-locale-selector`, `TASK-publication-viewer-read-mode`, `TASK-shared-text-surface-toolbar`, `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-keyboard-navigation-global-keymap`, `epic-accessibility-input`, `epic-encryption-workflow`, `epic-experimental-egui-frontend`, `epic-frontend-age-gate`, `epic-frontend-component-architecture` |
 | `src/frontend/alpine/info-bubble.ts` | `TASK-info-bubbles`, `epic-immersion-presentation` |
 | `src/frontend/alpine/integrations.ts` | `TASK-im-abstraction-layer`, `TASK-integration-infrastructure`, `epic-integrations-core` |
 | `src/frontend/alpine/inventory.ts` | `TASK-equipment-stat-preview`, `TASK-inventory-alpine`, `epic-inventory-ui` |
@@ -816,7 +817,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/alpine/settings.ts` | `TASK-encryption-key-management-ui`, `TASK-epic11-admin-settings-reconciliation`, `TASK-i18n-settings-wiring`, `TASK-response-length-control`, `epic-multi-session` |
 | `src/frontend/alpine/settings/general.ts` | `BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use`, `epic-terminal-ui` |
 | `src/frontend/alpine/shortcuts-listener.test.ts` | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `TASK-plugin-hot-reload-with-real-module-cache-busting` |
-| `src/frontend/alpine/shortcuts.ts` | `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l`, `BUG-keynav-stale-unsubscribe-deletes-live-handler-set`, `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-keyboard-navigation-global-keymap`, `WIRE-frontend-touch-swipe-gestures` |
+| `src/frontend/alpine/shortcuts.ts` | `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l`, `BUG-keynav-stale-unsubscribe-deletes-live-handler-set`, `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che`, `TASK-keyboard-navigation`, `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-keyboard-navigation-global-keymap`, `WIRE-frontend-touch-swipe-gestures`, `epic-accessibility-input` |
 | `src/frontend/alpine/sidebar.ts` | `TASK-chat-room-filters`, `TASK-chat-room-search-join`, `TASK-frontend-touch-gestures`, `WIRE-frontend-mobile-off-canvas-drawer`, `WIRE-frontend-touch-swipe-gestures` |
 | `src/frontend/alpine/slash-autocomplete.ts` | `BUG-slash-autocomplete-regex-not-caret-anchored-swallows-enter`, `EPIC-2026-23`, `epic-frontend-chat-commands` |
 | `src/frontend/alpine/story-controls.ts` | `BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m`, `TASK-frontend-story-mode-ui` |
@@ -1253,11 +1254,12 @@ output is byte-identical for identical inputs.
 | `src/prompts/registry.test.ts` | `TASK-prompt-template-registry`, `epic-config-templates` |
 | `src/prompts/registry.ts` | `BUG-aux-pipeline-prompt-reexport-asymmetry`, `FEAT-065`, `FEAT-065-template-system`, `FEAT-aux-classification-template-registry`, `FEAT-world-template-chat-lifecycle`, `TASK-cleanup-banned-types-console-logging-magic-strings`, `TASK-llm-markdown-document-prompts`, `TASK-prompt-library`, `TASK-prompt-template-registry`, `TASK-template-unified-variable-engine`, `epic-assistant-gm-flows`, `epic-classifier-template-packs`, `epic-config-templates`, `epic-context-injection-templates` |
 | `src/prompts/task-clarification.ts` | `FEAT-task-clarification-injection-template-for-chat-assistant-gen`, `TASK-author-task-clarification-prompt-templates-per-task-type`, `epic-task-management-integration` |
-| `src/public/css/app.css` | `BUG-undefined-css-custom-properties-break-rendering`, `TASK-025`, `TASK-chat-feature-component-buttons`, `TASK-chat-flow-section-navigation`, `TASK-chat-message-search`, `TASK-chat-room-filters`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-location-explorer`, `TASK-text-effects-overlays`, `TASK-visual-novel-mode`, `WIRE-frontend-keyboard-help-overlay`, `WIRE-frontend-mobile-off-canvas-drawer`, `WIRE-frontend-mobile-sticky-bottom-composer`, `WIRE-frontend-touch-swipe-gestures`, `epic-chat-lifecycle-moderation` |
+| `src/public/css/app.css` | `BUG-undefined-css-custom-properties-break-rendering`, `TASK-025`, `TASK-chat-feature-component-buttons`, `TASK-chat-flow-section-navigation`, `TASK-chat-message-search`, `TASK-chat-room-filters`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-location-explorer`, `TASK-text-effects-overlays`, `TASK-visual-novel-mode`, `WIRE-frontend-mobile-off-canvas-drawer`, `WIRE-frontend-mobile-sticky-bottom-composer`, `WIRE-frontend-touch-swipe-gestures`, `epic-chat-lifecycle-moderation` |
 | `src/public/css/gallery.css` | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-gallery-minimal-image-asset-viewer` |
 | `src/public/css/games.css` | `TASK-mini-games-framework`, `epic-mini-games` |
+| `src/public/css/mobile-keynav.css` | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `WIRE-frontend-keyboard-help-overlay` |
 | `src/public/css/vn.css` | `BUG-undefined-css-custom-properties-break-rendering`, `TASK-css-deduplication-jscpd-full`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-held-item-axis-data-model`, `TASK-visual-novel-mode`, `TASK-vn-qa-mode` |
-| `src/public/locales/en.json` | `TASK-ac10-enumeration-safe-auth-error-strings-login-only`, `TASK-branch-merge-frontend-wizard-ui`, `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave`, `TASK-info-bubbles` |
+| `src/public/locales/en.json` | `TASK-ac10-enumeration-safe-auth-error-strings-login-only`, `TASK-branch-merge-frontend-wizard-ui`, `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave`, `TASK-info-bubbles`, `WIRE-frontend-keyboard-help-overlay` |
 | `src/rag/access.ts` | `TASK-rag-business-features`, `epic-rag-enterprise` |
 | `src/rag/analytics.ts` | `TASK-rag-business-features`, `epic-rag-enterprise` |
 | `src/rag/audit.ts` | `TASK-rag-business-features`, `epic-rag-enterprise` |
@@ -1954,7 +1956,7 @@ output is byte-identical for identical inputs.
 | `src/views/chat.html` | `BUG-characters-flow-browser-e2e-trips-on-the-by-design-game-stat`, `FEAT-047`, `FEAT-2d-interactive-game-canvas-for-chat-scenes`, `TASK-2026-openwebui-cancel-generation-wiring`, `TASK-2026-openwebui-structured-toolcall-renderer`, `TASK-2026-openwebui-thinking-block-render`, `TASK-2026-openwebui-tool-valves-panel`, `TASK-3d-character-avatars`, `TASK-3d-view-modes-ui`, `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation`, `TASK-character-multi-avatar`, `TASK-chat-autorenaming`, `TASK-chat-backgrounds-location-sync`, `TASK-chat-flow-section-navigation`, `TASK-chat-location-frontend`, `TASK-chat-message-search`, `TASK-chat-sectioning-multi-location`, `TASK-conversation-branching`, `TASK-dynamic-avatars-dota-style`, `TASK-emotion-intent-detection`, `TASK-emotions-avatar-edit-model`, `TASK-encryption-browser-pre-encrypt`, `TASK-frontend-view-model-extraction`, `TASK-gm-panel`, `TASK-harness-canvas-viz`, `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto`, `TASK-rigged-model-buffer-render`, `TASK-story-points-prototype`, `TASK-text-effects-overlays`, `TASK-thinking-tag-context-prune`, `TASK-visual-novel-mode`, `epic-agency-story-points`, `epic-architecture`, `epic-visual-novel-mode` |
 | `src/views/chat/ChatView.vue` | `TASK-025`, `TASK-029` |
 | `src/views/gallery.html` | `BUG-2025-002-reference-error-view-not-defined`, `TASK-comparison-cell-detail-metadata`, `TASK-comparison-grid-frontend`, `TASK-egui-gallery-surface-grid-filters-thumbnails-upload`, `TASK-fb9-gallery-private-asset-auth-gating-logxgal`, `TASK-user-prompt-gallery-frontend-page`, `epic-experimental-egui-frontend`, `epic-technical-comparison-charts`, `epic-terminal-ui` |
-| `src/views/layout.html` | `BUG-html-lang-hardcoded-no-dir-handling-for-i18n`, `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin`, `BUG-notification-bell-visible-on-login-register-pages`, `TASK-blog-frontend-authoring`, `TASK-comfyui-builder-track-a-alpine-preset-chain-form`, `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in`, `TASK-define-shared-nav-state-contract-between-client-side-routing`, `TASK-docs-ui-endpoint-linkage`, `TASK-fb3-frontend-hub-index-ovr-subsystems`, `TASK-i18n-alpine-client`, `TASK-i18n-template-strings`, `TASK-info-bubbles`, `TASK-responsive-design`, `WIRE-frontend-keyboard-help-overlay`, `epic-docs-reconciliation`, `epic-frontend-headers-management` |
+| `src/views/layout.html` | `BUG-html-lang-hardcoded-no-dir-handling-for-i18n`, `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin`, `BUG-notification-bell-visible-on-login-register-pages`, `TASK-blog-frontend-authoring`, `TASK-comfyui-builder-track-a-alpine-preset-chain-form`, `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in`, `TASK-define-shared-nav-state-contract-between-client-side-routing`, `TASK-docs-ui-endpoint-linkage`, `TASK-fb3-frontend-hub-index-ovr-subsystems`, `TASK-i18n-alpine-client`, `TASK-i18n-template-strings`, `TASK-info-bubbles`, `TASK-responsive-design`, `WIRE-frontend-keyboard-help-overlay`, `epic-accessibility-input`, `epic-docs-reconciliation`, `epic-frontend-headers-management` |
 | `src/views/login.html` | `BUG-browser-e2e-suite-flakes-under-concurrent-runs`, `TASK-i18n-template-strings`, `TASK-reconcile-epic-frontend-login-verify-login-register-ui-captu` |
 | `src/views/new-chat.html` | `FEAT-chat-template-config-lifecycle`, `FEAT-world-template-chat-lifecycle`, `IDEA-chat-setup-templates`, `TASK-i18n-template-strings`, `epic-chat-variants-taxonomy`, `epic-config-templates` |
 | `src/views/notifications.html` | `TASK-finalize-notification-bell-header-wiring`, `epic-terminal-ui` |
@@ -11701,6 +11703,8 @@ output is byte-identical for identical inputs.
 | `TASK-keyboard-navigation` | produces | `src/frontend/a11y/a11y.css` | - |
 | `TASK-keyboard-navigation` | produces | `src/frontend/a11y/focus-manager.ts` | - |
 | `TASK-keyboard-navigation` | produces | `src/frontend/a11y/skip-links.ts` | - |
+| `TASK-keyboard-navigation` | produces | `src/frontend/alpine/focus.ts` | - |
+| `TASK-keyboard-navigation` | produces | `src/frontend/alpine/shortcuts.ts` | - |
 | `TASK-krea-2-reference-edit-diagnosis` | produces | `src/generation/lora/discovery-comfyui.ts` | - |
 | `TASK-krea-2-reference-edit-diagnosis` | produces | `src/generation/node-id.ts` | - |
 | `TASK-krea-2-reference-edit-diagnosis` | produces | `src/generation/workflow-substitutor.ts` | - |
@@ -14048,11 +14052,12 @@ output is byte-identical for identical inputs.
 | `WIRE-frontend-keyboard-help-overlay` | produces | `src/frontend/alpine/chat-panels.ts` | - |
 | `WIRE-frontend-keyboard-help-overlay` | produces | `src/frontend/alpine/focus.ts` | - |
 | `WIRE-frontend-keyboard-help-overlay` | produces | `src/frontend/alpine/i18n.ts` | - |
+| `WIRE-frontend-keyboard-help-overlay` | produces | `src/frontend/alpine/index.ts` | - |
 | `WIRE-frontend-keyboard-help-overlay` | produces | `src/frontend/alpine/keynav-help.test.ts` | - |
 | `WIRE-frontend-keyboard-help-overlay` | produces | `src/frontend/alpine/keynav-help.ts` | - |
 | `WIRE-frontend-keyboard-help-overlay` | produces | `src/frontend/alpine/shortcuts.ts` | - |
-| `WIRE-frontend-keyboard-help-overlay` | produces | `src/i18n/locales/en.json` | - |
-| `WIRE-frontend-keyboard-help-overlay` | produces | `src/public/css/app.css` | - |
+| `WIRE-frontend-keyboard-help-overlay` | produces | `src/public/css/mobile-keynav.css` | - |
+| `WIRE-frontend-keyboard-help-overlay` | produces | `src/public/locales/en.json` | - |
 | `WIRE-frontend-keyboard-help-overlay` | produces | `src/views/layout.html` | - |
 | `WIRE-frontend-keyboard-modal-focus-trap` | produces | `src/frontend/alpine/chat-panels.ts` | - |
 | `WIRE-frontend-keyboard-modal-focus-trap` | produces | `src/frontend/alpine/focus.test.ts` | - |
@@ -14097,6 +14102,7 @@ output is byte-identical for identical inputs.
 | `epic-3d-generation` | produces | `src/frontend/3d/world-map.ts` | - |
 | `epic-3d-generation` | produces | `src/generation/providers/3d.ts` | - |
 | `epic-3d-generation` | produces | `src/routes/three-d.ts` | - |
+| `epic-accessibility-input` | produces | `src/components/chat/keynav-help.html` | - |
 | `epic-accessibility-input` | produces | `src/frontend/a11y/a11y.css` | - |
 | `epic-accessibility-input` | produces | `src/frontend/a11y/focus-manager.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/a11y/keyboard-shortcuts.ts` | - |
@@ -14107,8 +14113,11 @@ output is byte-identical for identical inputs.
 | `epic-accessibility-input` | produces | `src/frontend/alpine/chat-touch-gestures.test.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/alpine/chat-touch-gestures.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/alpine/focus.ts` | - |
+| `epic-accessibility-input` | produces | `src/frontend/alpine/index.ts` | - |
+| `epic-accessibility-input` | produces | `src/frontend/alpine/shortcuts.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/touch.test.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/touch.ts` | - |
+| `epic-accessibility-input` | produces | `src/views/layout.html` | - |
 | `epic-achievements` | produces | `src/db/schema-achievements.ts` | - |
 | `epic-achievements` | produces | `src/frontend/achievements.html` | - |
 | `epic-achievements` | produces | `src/routes/achievements.ts` | - |
@@ -25222,6 +25231,7 @@ output is byte-identical for identical inputs.
 | `BUG-html-lang-hardcoded-no-dir-handling-for-i18n` | sibling | `TASK-info-bubbles` | `src/views/layout.html` |
 | `BUG-html-lang-hardcoded-no-dir-handling-for-i18n` | sibling | `TASK-responsive-design` | `src/views/layout.html` |
 | `BUG-html-lang-hardcoded-no-dir-handling-for-i18n` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `BUG-html-lang-hardcoded-no-dir-handling-for-i18n` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `BUG-html-lang-hardcoded-no-dir-handling-for-i18n` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `BUG-html-lang-hardcoded-no-dir-handling-for-i18n` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
 | `BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x` | sibling | `BUG-tui-app-never-threads-sessiontoken-into-chatwidget` | `src/frontend/alpine/htmx.ts` |
@@ -25882,13 +25892,17 @@ output is byte-identical for identical inputs.
 | `BUG-key-rotation-noop-orphans-history` | sibling | `epic-encryption-workflow` | `src/crypto/actor-keys.ts; src/crypto/key-rotation/rotate.ts` |
 | `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l` | sibling | `BUG-keynav-stale-unsubscribe-deletes-live-handler-set` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l` | sibling | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | `src/frontend/alpine/shortcuts.ts` |
+| `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l` | sibling | `TASK-keyboard-navigation` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/shortcuts.ts` |
+| `BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l` | sibling | `epic-accessibility-input` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-keynav-stale-unsubscribe-deletes-live-handler-set` | sibling | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | `src/frontend/alpine/shortcuts.ts` |
+| `BUG-keynav-stale-unsubscribe-deletes-live-handler-set` | sibling | `TASK-keyboard-navigation` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-keynav-stale-unsubscribe-deletes-live-handler-set` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-keynav-stale-unsubscribe-deletes-live-handler-set` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-keynav-stale-unsubscribe-deletes-live-handler-set` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/shortcuts.ts` |
+| `BUG-keynav-stale-unsubscribe-deletes-live-handler-set` | sibling | `epic-accessibility-input` | `src/frontend/alpine/shortcuts.ts` |
 | `BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec` | sibling | `BUG-resolveuseridfromrequest-missing-user-status-check` | `src/middleware/auth/token.ts` |
 | `BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec` | sibling | `BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m` | `src/middleware/auth/token.ts` |
 | `BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec` | sibling | `TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing` | `src/middleware/auth/token.ts` |
@@ -25951,6 +25965,7 @@ output is byte-identical for identical inputs.
 | `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin` | sibling | `TASK-server-side-i18n-middleware` | `src/routes/views/layout.ts` |
 | `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin` | sibling | `TASK-template-preflight-production-resolver-gate` | `src/routes/views/layout.ts` |
 | `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin` | sibling | `epic-docs-reconciliation` | `src/routes/views/layout.ts; src/views/layout.html` |
 | `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin` | sibling | `epic-experimental-egui-frontend` | `src/routes/views/layout.ts` |
 | `BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
@@ -27066,6 +27081,7 @@ output is byte-identical for identical inputs.
 | `BUG-notification-bell-visible-on-login-register-pages` | sibling | `TASK-info-bubbles` | `src/views/layout.html` |
 | `BUG-notification-bell-visible-on-login-register-pages` | sibling | `TASK-responsive-design` | `src/views/layout.html` |
 | `BUG-notification-bell-visible-on-login-register-pages` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `BUG-notification-bell-visible-on-login-register-pages` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `BUG-notification-bell-visible-on-login-register-pages` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `BUG-notification-bell-visible-on-login-register-pages` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
 | `BUG-notification-participant-helpers-write-actor-id-into-the-use` | sibling | `BUG-quest-update-notifications-ignore-the-muted-world-scope` | `src/notifications/service/triggers.ts` |
@@ -29700,7 +29716,6 @@ output is byte-identical for identical inputs.
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css; src/public/css/vn.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `TASK-vn-qa-mode` | `src/public/css/vn.css` |
-| `BUG-undefined-css-custom-properties-break-rendering` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `BUG-undefined-css-custom-properties-break-rendering` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -33461,7 +33476,6 @@ output is byte-identical for identical inputs.
 | `TASK-025` | sibling | `TASK-location-explorer` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
-| `TASK-025` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-025` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -34652,6 +34666,7 @@ output is byte-identical for identical inputs.
 | `TASK-ac10-enumeration-safe-auth-error-strings-login-only` | sibling | `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | `src/public/locales/en.json` |
 | `TASK-ac10-enumeration-safe-auth-error-strings-login-only` | sibling | `TASK-fb8-login-success-and-failure-notification-logxntf` | `src/routes/auth/login.ts` |
 | `TASK-ac10-enumeration-safe-auth-error-strings-login-only` | sibling | `TASK-info-bubbles` | `src/public/locales/en.json` |
+| `TASK-ac10-enumeration-safe-auth-error-strings-login-only` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/locales/en.json` |
 | `TASK-ac9-notifyfactorchange-trigger-helper-ladder-ready-no-tables` | sibling | `TASK-c1-moderation-action-notices-with-actor-thumb` | `src/notifications/service/triggers.ts` |
 | `TASK-ac9-notifyfactorchange-trigger-helper-ladder-ready-no-tables` | sibling | `TASK-fb12-admin-role-change-notifies-affected-user-admxntf` | `src/notifications/service/triggers.ts` |
 | `TASK-ac9-notifyfactorchange-trigger-helper-ladder-ready-no-tables` | sibling | `TASK-fb8-login-success-and-failure-notification-logxntf` | `src/notifications/service/triggers.ts` |
@@ -37447,7 +37462,9 @@ output is byte-identical for identical inputs.
 | `TASK-author-suggestion-resolution-surface` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `TASK-unify-item-types` | `src/db/enums-story/items.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui` | `src/assistant/commands/workflow.ts; src/frontend/creative-studio/workflow.ts` |
+| `TASK-author-suggestion-resolution-surface` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-author-suggestion-resolution-surface` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `epic-assistant-creative-studio-workflows` | `src/frontend/creative-studio/workflow.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `epic-creative-studio` | `src/frontend/creative-studio/workflow.ts` |
 | `TASK-author-suggestion-resolution-surface` | sibling | `epic-editorial-workflow` | `src/db/enums-story/items.ts` |
@@ -38175,6 +38192,7 @@ output is byte-identical for identical inputs.
 | `TASK-blog-frontend-authoring` | sibling | `TASK-info-bubbles` | `src/views/layout.html` |
 | `TASK-blog-frontend-authoring` | sibling | `TASK-responsive-design` | `src/views/layout.html` |
 | `TASK-blog-frontend-authoring` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `TASK-blog-frontend-authoring` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `TASK-blog-frontend-authoring` | sibling | `epic-blog-system` | `src/frontend/alpine/blog.ts; src/frontend/pages/blog.ts; src/views/blog.html` |
 | `TASK-blog-frontend-authoring` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `TASK-blog-frontend-authoring` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
@@ -38324,7 +38342,9 @@ output is byte-identical for identical inputs.
 | `TASK-book-unit-editor-review-surface` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-book-unit-editor-review-surface` | sibling | `TASK-unify-item-types` | `src/db/enums-core/flags.ts; src/db/enums-story/items.ts` |
 | `TASK-book-unit-editor-review-surface` | sibling | `TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui` | `src/assistant/commands/workflow.ts; src/frontend/creative-studio/workflow.ts` |
+| `TASK-book-unit-editor-review-surface` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-book-unit-editor-review-surface` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-book-unit-editor-review-surface` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-book-unit-editor-review-surface` | sibling | `epic-creative-studio` | `src/frontend/creative-studio/workflow.ts` |
 | `TASK-book-unit-editor-review-surface` | sibling | `epic-crypto` | `src/db/enums-core/flags.ts` |
 | `TASK-book-unit-editor-review-surface` | sibling | `epic-editorial-workflow` | `src/db/enums-story/items.ts` |
@@ -38466,6 +38486,7 @@ output is byte-identical for identical inputs.
 | `TASK-branch-merge-frontend-wizard-ui` | sibling | `TASK-info-bubbles` | `src/public/locales/en.json` |
 | `TASK-branch-merge-frontend-wizard-ui` | sibling | `TASK-item-side-outfit-change-trigger` | `src/routes/messages/read.ts` |
 | `TASK-branch-merge-frontend-wizard-ui` | sibling | `TASK-message-carriage-table-migration-admin-read` | `src/routes/messages/read.ts` |
+| `TASK-branch-merge-frontend-wizard-ui` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/locales/en.json` |
 | `TASK-branch-merge-frontend-wizard-ui` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/stores/ui-store.ts` |
 | `TASK-branch-merge-frontend-wizard-ui` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/stores/ui-store.ts` |
 | `TASK-branch-merge-frontend-wizard-ui` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/stores/ui-store.ts` |
@@ -39117,7 +39138,9 @@ output is byte-identical for identical inputs.
 | `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `TASK-publication-viewer-read-mode` | `src/frontend/alpine/index.ts` |
 | `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `TASK-skills-routes` | `src/routes/rpg/index.ts` |
+| `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `epic-achievements` | `src/routes/rpg/index.ts` |
 | `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `epic-crafting-professions` | `src/routes/rpg/index.ts` |
 | `TASK-character-stat-allocation-frontend-modal-and-edit-integration` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
@@ -39509,7 +39532,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
 | `TASK-chat-feature-component-buttons` | sibling | `TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc` | `src/group-chat/mention-parser.ts` |
-| `TASK-chat-feature-component-buttons` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `TASK-chat-feature-component-buttons` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `TASK-chat-feature-component-buttons` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-chat-feature-component-buttons` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -39814,7 +39836,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-text-effects-overlays` | `src/frontend/alpine/chat.ts; src/public/css/app.css; src/views/chat.html` |
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-thinking-tag-context-prune` | `src/frontend/alpine/chat.ts; src/views/chat.html` |
 | `TASK-chat-flow-section-navigation` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css; src/views/chat.html` |
-| `TASK-chat-flow-section-navigation` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `TASK-chat-flow-section-navigation` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `TASK-chat-flow-section-navigation` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-chat-flow-section-navigation` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -39922,7 +39943,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-message-search` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css; src/views/chat.html` |
 | `TASK-chat-message-search` | sibling | `TASK-thinking-tag-context-prune` | `src/views/chat.html` |
 | `TASK-chat-message-search` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css; src/views/chat.html` |
-| `TASK-chat-message-search` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `TASK-chat-message-search` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `TASK-chat-message-search` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-chat-message-search` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -39949,7 +39969,6 @@ output is byte-identical for identical inputs.
 | `TASK-chat-room-filters` | sibling | `TASK-location-explorer` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
-| `TASK-chat-room-filters` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/sidebar.ts; src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-chat-room-filters` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/sidebar.ts; src/public/css/app.css` |
@@ -40476,6 +40495,7 @@ output is byte-identical for identical inputs.
 | `TASK-comfyui-builder-track-a-alpine-preset-chain-form` | sibling | `TASK-text-effects-overlays` | `src/frontend/alpine-init.ts` |
 | `TASK-comfyui-builder-track-a-alpine-preset-chain-form` | sibling | `TASK-tui-models-overlay` | `src/views/admin.html` |
 | `TASK-comfyui-builder-track-a-alpine-preset-chain-form` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `TASK-comfyui-builder-track-a-alpine-preset-chain-form` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `TASK-comfyui-builder-track-a-alpine-preset-chain-form` | sibling | `epic-comfyui-first-class-citizen` | `src/image-edit/types.ts` |
 | `TASK-comfyui-builder-track-a-alpine-preset-chain-form` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `TASK-comfyui-builder-track-a-alpine-preset-chain-form` | sibling | `epic-experimental-egui-frontend` | `src/views/admin.html` |
@@ -41377,7 +41397,9 @@ output is byte-identical for identical inputs.
 | `TASK-comparison-grid-frontend` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend/pages/shared.ts` |
 | `TASK-comparison-grid-frontend` | sibling | `TASK-text-effects-overlays` | `src/frontend/alpine-init.ts` |
 | `TASK-comparison-grid-frontend` | sibling | `TASK-user-prompt-gallery-frontend-page` | `src/views/gallery.html` |
+| `TASK-comparison-grid-frontend` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-grid-frontend` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-comparison-grid-frontend` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-grid-frontend` | sibling | `epic-derived-map-generation` | `src/routes/views/gallery.ts` |
 | `TASK-comparison-grid-frontend` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-grid-frontend` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts; src/routes/views/plugin-dynamic.ts; src/views/gallery.html` |
@@ -41529,7 +41551,9 @@ output is byte-identical for identical inputs.
 | `TASK-comparison-two-cell-diff-modes` | sibling | `TASK-publication-reader-locale-selector` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-two-cell-diff-modes` | sibling | `TASK-publication-viewer-read-mode` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-two-cell-diff-modes` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
+| `TASK-comparison-two-cell-diff-modes` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-two-cell-diff-modes` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-comparison-two-cell-diff-modes` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-two-cell-diff-modes` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-two-cell-diff-modes` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
 | `TASK-comparison-two-cell-diff-modes` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
@@ -41796,6 +41820,7 @@ output is byte-identical for identical inputs.
 | `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in` | sibling | `TASK-info-bubbles` | `src/views/layout.html` |
 | `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in` | sibling | `TASK-responsive-design` | `src/views/layout.html` |
 | `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in` | sibling | `epic-experimental-egui-frontend` | `src/frontend/stores/index.ts` |
 | `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
@@ -41892,6 +41917,7 @@ output is byte-identical for identical inputs.
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-html-dedup-shared-partials` | `src/frontend/alpine/htmx.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-htmx-ajax-request-helper` | `src/frontend/alpine/htmx.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-item-provisioning-dashboard` | `src/frontend` |
+| `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-keyboard-navigation` | `src/frontend/alpine/shortcuts.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | `src/frontend/fe-fetch.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-middleware-fe-be-db-record-content-hashing` | `src/frontend/fe-fetch.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `TASK-npc-inventory-frontend` | `src/frontend` |
@@ -41905,6 +41931,7 @@ output is byte-identical for identical inputs.
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/shortcuts.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/shortcuts.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/shortcuts.ts` |
+| `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `epic-accessibility-input` | `src/frontend/alpine/shortcuts.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `epic-auth-access` | `src/frontend/fe-fetch.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `epic-federation-offload-quotas` | `src/frontend/alpine/htmx.ts; src/frontend/fe-fetch.ts` |
 | `TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che` | sibling | `epic-frontend-backend-integration` | `src/frontend/fe-fetch.ts` |
@@ -42508,6 +42535,7 @@ output is byte-identical for identical inputs.
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `TASK-info-bubbles` | `src/views/layout.html` |
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `TASK-responsive-design` | `src/views/layout.html` |
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `TASK-define-shared-nav-state-contract-between-client-side-routing` | sibling | `epic-frontend-headers-management` | `src/components/header.html; src/views/layout.html` |
 | `TASK-defined-but-not-enforced-debt-unused-schemas-and-dead-valida` | sibling | `TASK-delete-duplicate-config-schema-shim-layers-dead-config-emitt` | `src/config/sections/messages.ts` |
@@ -42698,6 +42726,7 @@ output is byte-identical for identical inputs.
 | `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | sibling | `TASK-i18n-template-strings` | `src/views/admin.html` |
 | `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | sibling | `TASK-info-bubbles` | `src/public/locales/en.json` |
 | `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | sibling | `TASK-tui-models-overlay` | `src/views/admin.html` |
+| `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/locales/en.json` |
 | `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | sibling | `epic-auth-access` | `src/frontend/alpine/admin-users.ts` |
 | `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | sibling | `epic-experimental-egui-frontend` | `src/views/admin.html` |
 | `TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave` | sibling | `epic-federation-offload-quotas` | `src/views/admin.html` |
@@ -42745,7 +42774,7 @@ output is byte-identical for identical inputs.
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-vn-qa-mode` | `src/public/css/vn.css` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on` | `src/routes` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `TASK-world-item-instance-npc` | `src/frontend` |
-| `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
+| `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/mobile-keynav.css` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/components/chat/input-area.html; src/public/css/app.css` |
 | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -43046,6 +43075,7 @@ output is byte-identical for identical inputs.
 | `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-server-side-i18n-middleware` | `src/routes/views/layout.ts` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `TASK-template-preflight-production-resolver-gate` | `src/routes/views/layout.ts` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `TASK-docs-ui-endpoint-linkage` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `epic-cross-platform-portability` | `src/server/static-files.ts` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `epic-docs-reconciliation` | `src/routes/views/layout.ts; src/server/static-files.ts; src/views/layout.html` |
 | `TASK-docs-ui-endpoint-linkage` | sibling | `epic-experimental-egui-frontend` | `src/routes/views/layout.ts` |
@@ -44191,6 +44221,7 @@ output is byte-identical for identical inputs.
 | `TASK-fb3-frontend-hub-index-ovr-subsystems` | sibling | `TASK-info-bubbles` | `src/views/layout.html` |
 | `TASK-fb3-frontend-hub-index-ovr-subsystems` | sibling | `TASK-responsive-design` | `src/views/layout.html` |
 | `TASK-fb3-frontend-hub-index-ovr-subsystems` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `TASK-fb3-frontend-hub-index-ovr-subsystems` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `TASK-fb3-frontend-hub-index-ovr-subsystems` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `TASK-fb3-frontend-hub-index-ovr-subsystems` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
 | `TASK-fb5-route-transitions-reuse-central-htmx-swap-lifecycle-rtgx` | sibling | `TASK-federation-admin-usage-dashboard-ui` | `src/frontend/alpine/htmx.ts` |
@@ -44565,7 +44596,9 @@ output is byte-identical for identical inputs.
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/views/settings.html` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `TASK-thinking-tag-context-prune` | `src/views/settings.html` |
+| `TASK-finalize-notification-bell-header-wiring` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts; src/views/settings.html` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
 | `TASK-finalize-notification-bell-header-wiring` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
@@ -44891,11 +44924,12 @@ output is byte-identical for identical inputs.
 | `TASK-frontend-touch-gestures` | sibling | `TASK-publication-viewer-read-mode` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `TASK-touch-gestures` | `src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts` |
+| `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/sidebar.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/frontend/touch.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/sidebar.ts; src/frontend/touch.ts` |
-| `TASK-frontend-touch-gestures` | sibling | `epic-accessibility-input` | `src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts; src/frontend/touch.ts` |
+| `TASK-frontend-touch-gestures` | sibling | `epic-accessibility-input` | `src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/alpine/index.ts; src/frontend/touch.test.ts; src/frontend/touch.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
@@ -44919,8 +44953,10 @@ output is byte-identical for identical inputs.
 | `TASK-frontend-view-model-extraction` | sibling | `TASK-thinking-tag-context-prune` | `src/views/chat.html` |
 | `TASK-frontend-view-model-extraction` | sibling | `TASK-visual-novel-mode` | `src/views/chat.html` |
 | `TASK-frontend-view-model-extraction` | sibling | `TASK-waive-seven-diff-scoped-coverage-floors-surfaced-by-jsdoc-on` | `src/routes/views/view-serving.ts` |
+| `TASK-frontend-view-model-extraction` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-view-model-extraction` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-view-model-extraction` | sibling | `WIRE-nsfw-audit-page-missing-inline-authz` | `src/routes/views/plugin-pages.ts` |
+| `TASK-frontend-view-model-extraction` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-view-model-extraction` | sibling | `epic-agency-story-points` | `src/views/chat.html` |
 | `TASK-frontend-view-model-extraction` | sibling | `epic-architecture` | `src/views/chat.html` |
 | `TASK-frontend-view-model-extraction` | sibling | `epic-character-internal-traits` | `src/routes/views/characters.ts` |
@@ -45999,6 +46035,7 @@ output is byte-identical for identical inputs.
 | `TASK-i18n-alpine-client` | sibling | `TASK-server-side-i18n-middleware` | `src/elysia-app.ts` |
 | `TASK-i18n-alpine-client` | sibling | `TASK-wire-llm-resource-manager-into-generation-dispatch` | `src/elysia-app.ts` |
 | `TASK-i18n-alpine-client` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/i18n.ts; src/views/layout.html` |
+| `TASK-i18n-alpine-client` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `TASK-i18n-alpine-client` | sibling | `epic-analytics-observability` | `src/elysia-app.ts` |
 | `TASK-i18n-alpine-client` | sibling | `epic-api-versioning` | `src/elysia-app.ts` |
 | `TASK-i18n-alpine-client` | sibling | `epic-architecture` | `src/elysia-app.ts` |
@@ -46043,6 +46080,7 @@ output is byte-identical for identical inputs.
 | `TASK-i18n-template-strings` | sibling | `TASK-tui-chat-picker` | `src/views/chat-list.html` |
 | `TASK-i18n-template-strings` | sibling | `TASK-tui-models-overlay` | `src/views/admin.html` |
 | `TASK-i18n-template-strings` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `TASK-i18n-template-strings` | sibling | `epic-accessibility-input` | `src/views/layout.html` |
 | `TASK-i18n-template-strings` | sibling | `epic-chat-lifecycle-moderation` | `src/components/chat/chat-header.html` |
 | `TASK-i18n-template-strings` | sibling | `epic-chat-variants-taxonomy` | `src/views/new-chat.html` |
 | `TASK-i18n-template-strings` | sibling | `epic-config-templates` | `src/views/new-chat.html` |
@@ -46211,8 +46249,9 @@ output is byte-identical for identical inputs.
 | `TASK-info-bubbles` | sibling | `TASK-restart-required-indicator-on-system-config-changes` | `src/views/settings.html` |
 | `TASK-info-bubbles` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-info-bubbles` | sibling | `TASK-thinking-tag-context-prune` | `src/views/settings.html` |
-| `TASK-info-bubbles` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
+| `TASK-info-bubbles` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts; src/public/locales/en.json; src/views/layout.html` |
 | `TASK-info-bubbles` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-info-bubbles` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts; src/views/layout.html` |
 | `TASK-info-bubbles` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `TASK-info-bubbles` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts; src/views/settings.html` |
 | `TASK-info-bubbles` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
@@ -46519,7 +46558,13 @@ output is byte-identical for identical inputs.
 | `TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/auth/jwt.ts` |
 | `TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt` | sibling | `epic-architecture` | `src/middleware/elysia-auth.ts` |
 | `TASK-jwt-header-alg-kid-never-asserted-fail-open-route-guard-patt` | sibling | `epic-security-sandboxing-quickref` | `src/auth/jwt.ts` |
-| `TASK-keyboard-navigation` | sibling | `epic-accessibility-input` | `src/frontend/a11y/a11y.css; src/frontend/a11y/focus-manager.ts` |
+| `TASK-keyboard-navigation` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/frontend/alpine/focus.ts` |
+| `TASK-keyboard-navigation` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts` |
+| `TASK-keyboard-navigation` | sibling | `WIRE-frontend-keyboard-modal-focus-trap` | `src/frontend/alpine/focus.ts` |
+| `TASK-keyboard-navigation` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts` |
+| `TASK-keyboard-navigation` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/focus.ts` |
+| `TASK-keyboard-navigation` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/shortcuts.ts` |
+| `TASK-keyboard-navigation` | sibling | `epic-accessibility-input` | `src/frontend/a11y/a11y.css; src/frontend/a11y/focus-manager.ts; src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts` |
 | `TASK-krea-2-reference-edit-diagnosis` | sibling | `TASK-lora-audit-standalone` | `src/generation/lora/discovery-comfyui.ts; src/generation/node-id.ts; src/image-edit/templates/builtin/lora.ts` |
 | `TASK-krea-2-reference-edit-diagnosis` | sibling | `TASK-lora-discovery-application` | `src/generation/lora/discovery-comfyui.ts` |
 | `TASK-krea-2-reference-edit-diagnosis` | sibling | `epic-comfyui-first-class-citizen` | `src/generation/lora/discovery-comfyui.ts; src/generation/workflow-substitutor.ts; src/image-edit/templates/builtin/lora.ts` |
@@ -46787,7 +46832,6 @@ output is byte-identical for identical inputs.
 | `TASK-location-explorer` | sibling | `TASK-migrate-text-surfaces-to-shared-primitives` | `src/views/world-edit.html` |
 | `TASK-location-explorer` | sibling | `TASK-text-effects-overlays` | `src/public/css/app.css` |
 | `TASK-location-explorer` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css` |
-| `TASK-location-explorer` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `TASK-location-explorer` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `TASK-location-explorer` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-location-explorer` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -47444,7 +47488,9 @@ output is byte-identical for identical inputs.
 | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `TASK-tui` | `src/frontend/fe-fetch.ts` |
 | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `TASK-unify-401-guard-helpers` | `src/frontend/fe-fetch.ts` |
+| `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `epic-auth-access` | `src/frontend/fe-fetch.ts` |
 | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `epic-chat-product-features` | `src/middleware/idempotency.ts` |
 | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | sibling | `epic-content-hashing-distributed-integrity` | `src/frontend/reconcile.ts; src/frontend/request-cache.ts` |
@@ -48693,7 +48739,9 @@ output is byte-identical for identical inputs.
 | `TASK-publication-glossary-term-base` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
 | `TASK-publication-reader-locale-selector` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-publication-reader-locale-selector` | sibling | `TASK-unit-translation-service` | `src/i18n/locale-registry.ts` |
+| `TASK-publication-reader-locale-selector` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-publication-reader-locale-selector` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-publication-reader-locale-selector` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-publication-reader-locale-selector` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
 | `TASK-publication-reader-locale-selector` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts; src/routes/views/plugin-dynamic.ts` |
 | `TASK-publication-reader-locale-selector` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
@@ -48760,7 +48808,9 @@ output is byte-identical for identical inputs.
 | `TASK-publication-viewer-read-mode` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
 | `TASK-publication-viewer-read-mode` | sibling | `TASK-simplification-sweep-micro-cleanups-and-single-implementatio` | `src/assets/signed-url.ts` |
 | `TASK-publication-viewer-read-mode` | sibling | `TASK-unify-item-types` | `src/db/enums-story/items.ts` |
+| `TASK-publication-viewer-read-mode` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-publication-viewer-read-mode` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-publication-viewer-read-mode` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-publication-viewer-read-mode` | sibling | `epic-editorial-workflow` | `src/db/enums-story/items.ts` |
 | `TASK-publication-viewer-read-mode` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
 | `TASK-publication-viewer-read-mode` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts; src/routes/views/plugin-dynamic.ts` |
@@ -49444,7 +49494,7 @@ output is byte-identical for identical inputs.
 | `TASK-response-validation-logic-additions` | sibling | `epic-character-world-integration` | `src/rpg/combat.ts` |
 | `TASK-response-validation-logic-additions` | sibling | `epic-rpg-mechanics` | `src/rpg/combat.ts` |
 | `TASK-responsive-design` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/views/layout.html` |
-| `TASK-responsive-design` | sibling | `epic-accessibility-input` | `src/frontend/a11y/responsive.ts` |
+| `TASK-responsive-design` | sibling | `epic-accessibility-input` | `src/frontend/a11y/responsive.ts; src/views/layout.html` |
 | `TASK-responsive-design` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
 | `TASK-responsive-design` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/app.ts` |
 | `TASK-responsive-design` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
@@ -49781,7 +49831,9 @@ output is byte-identical for identical inputs.
 | `TASK-shared-character-domain-models` | sibling | `epic-character-spec` | `src/characters/spec/character.ts` |
 | `TASK-shared-character-domain-models` | sibling | `epic-character-world-integration` | `src/characters/spec/character.ts` |
 | `TASK-shared-character-domain-models` | sibling | `epic-skills-professions-config` | `src/rpg/skills/service/types.ts` |
+| `TASK-shared-text-surface-toolbar` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/index.ts` |
 | `TASK-shared-text-surface-toolbar` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
+| `TASK-shared-text-surface-toolbar` | sibling | `epic-accessibility-input` | `src/frontend/alpine/index.ts` |
 | `TASK-shared-text-surface-toolbar` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
 | `TASK-shared-text-surface-toolbar` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
 | `TASK-shared-text-surface-toolbar` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
@@ -50048,7 +50100,6 @@ output is byte-identical for identical inputs.
 | `TASK-test-factories` | sibling | `epic-testing-qa` | `src/test-utils/factories.ts` |
 | `TASK-text-effects-overlays` | sibling | `TASK-thinking-tag-context-prune` | `src/frontend/alpine/chat.ts; src/views/chat.html` |
 | `TASK-text-effects-overlays` | sibling | `TASK-visual-novel-mode` | `src/public/css/app.css; src/views/chat.html` |
-| `TASK-text-effects-overlays` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `TASK-text-effects-overlays` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `TASK-text-effects-overlays` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-text-effects-overlays` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -50448,7 +50499,6 @@ output is byte-identical for identical inputs.
 | `TASK-visual-novel-mode` | sibling | `TASK-vn-qa-mode` | `src/frontend/alpine/chat-settings/vn.ts; src/frontend/vn/qa-mode.ts; src/public/css/vn.css` |
 | `TASK-visual-novel-mode` | sibling | `TASK-vn-scene-template-system` | `src/components/chat/chat-settings-modal.html; src/frontend/vn/transition-engine.ts; src/frontend/vn/typewriter.ts` |
 | `TASK-visual-novel-mode` | sibling | `TASK-vn-template-actions` | `src/components/chat/chat-settings-modal.html; src/frontend/vn/transition-engine.ts; src/frontend/vn/typewriter.ts` |
-| `TASK-visual-novel-mode` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/public/css/app.css` |
 | `TASK-visual-novel-mode` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/public/css/app.css` |
 | `TASK-visual-novel-mode` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
 | `TASK-visual-novel-mode` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/public/css/app.css` |
@@ -50901,20 +50951,22 @@ output is byte-identical for identical inputs.
 | `WIRE-extras-impersonateactorid-schema-validation` | sibling | `epic-chat-transfer-location` | `src/routes/chats/extras.ts` |
 | `WIRE-extras-impersonateactorid-schema-validation` | sibling | `epic-impersonation` | `src/routes/chats/extras.ts` |
 | `WIRE-frontend-keyboard-help-overlay` | sibling | `WIRE-frontend-keyboard-modal-focus-trap` | `src/frontend/alpine/chat-panels.ts; src/frontend/alpine/focus.ts` |
-| `WIRE-frontend-keyboard-help-overlay` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts` |
-| `WIRE-frontend-keyboard-help-overlay` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/focus.ts; src/public/css/app.css` |
-| `WIRE-frontend-keyboard-help-overlay` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/public/css/app.css` |
-| `WIRE-frontend-keyboard-help-overlay` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/shortcuts.ts; src/public/css/app.css` |
-| `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-accessibility-input` | `src/frontend/alpine/focus.ts` |
-| `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-chat-lifecycle-moderation` | `src/public/css/app.css` |
+| `WIRE-frontend-keyboard-help-overlay` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts` |
+| `WIRE-frontend-keyboard-help-overlay` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/focus.ts` |
+| `WIRE-frontend-keyboard-help-overlay` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/shortcuts.ts` |
+| `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-accessibility-input` | `src/components/chat/keynav-help.html; src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts; src/views/layout.html` |
 | `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
+| `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
+| `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
+| `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
+| `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-frontend-component-architecture` | `src/frontend/alpine/index.ts` |
 | `WIRE-frontend-keyboard-help-overlay` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
 | `WIRE-frontend-keyboard-modal-focus-trap` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/focus.ts` |
 | `WIRE-frontend-keyboard-modal-focus-trap` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/focus.ts` |
 | `WIRE-frontend-keyboard-modal-focus-trap` | sibling | `epic-accessibility-input` | `src/frontend/alpine/focus.ts` |
 | `WIRE-frontend-keyboard-navigation-global-keymap` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/focus.ts; src/frontend/stores/ui-store.ts` |
 | `WIRE-frontend-keyboard-navigation-global-keymap` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/shortcuts.ts; src/frontend/stores/ui-store.ts` |
-| `WIRE-frontend-keyboard-navigation-global-keymap` | sibling | `epic-accessibility-input` | `src/frontend/alpine/focus.ts` |
+| `WIRE-frontend-keyboard-navigation-global-keymap` | sibling | `epic-accessibility-input` | `src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts` |
 | `WIRE-frontend-keyboard-navigation-global-keymap` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
 | `WIRE-frontend-keyboard-navigation-global-keymap` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
 | `WIRE-frontend-keyboard-navigation-global-keymap` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
@@ -50931,7 +50983,7 @@ output is byte-identical for identical inputs.
 | `WIRE-frontend-mobile-sticky-bottom-composer` | sibling | `epic-frontend-chat-commands` | `src/components/chat/input-area.html` |
 | `WIRE-frontend-mobile-sticky-bottom-composer` | sibling | `epic-frontend-components` | `src/components/chat/input-area.html` |
 | `WIRE-frontend-mobile-sticky-bottom-composer` | sibling | `epic-frontend-emoji-reactions` | `src/components/chat/input-area.html` |
-| `WIRE-frontend-touch-swipe-gestures` | sibling | `epic-accessibility-input` | `src/frontend/touch.ts` |
+| `WIRE-frontend-touch-swipe-gestures` | sibling | `epic-accessibility-input` | `src/frontend/alpine/shortcuts.ts; src/frontend/touch.ts` |
 | `WIRE-frontend-touch-swipe-gestures` | sibling | `epic-chat-lifecycle-moderation` | `src/public/css/app.css` |
 | `WIRE-frontend-touch-swipe-gestures` | sibling | `epic-frontend-notifications` | `src/frontend/stores/ui-store.ts` |
 | `WIRE-impersonate-command-palette-no-actionpayload-dispatch` | sibling | `WIRE-nsfw-audit-page-missing-inline-authz` | `src/routes/characters/create.ts` |
@@ -50949,6 +51001,12 @@ output is byte-identical for identical inputs.
 | `epic-3d-generation` | sibling | `epic-tts-foundation` | `src/db/enums-content.ts` |
 | `epic-3d-generation` | sibling | `epic-vector-graphics-generation` | `src/db/enums-content.ts` |
 | `epic-3d-generation` | sibling | `epic-video-generation` | `src/db/enums-content.ts` |
+| `epic-accessibility-input` | sibling | `epic-docs-reconciliation` | `src/views/layout.html` |
+| `epic-accessibility-input` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
+| `epic-accessibility-input` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
+| `epic-accessibility-input` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
+| `epic-accessibility-input` | sibling | `epic-frontend-component-architecture` | `src/frontend/alpine/index.ts` |
+| `epic-accessibility-input` | sibling | `epic-frontend-headers-management` | `src/views/layout.html` |
 | `epic-achievements` | sibling | `epic-battle-action-systems` | `src/routes/v1/actors-surface.ts` |
 | `epic-achievements` | sibling | `epic-battle-integration-gaps` | `src/routes/v1/actors-surface.ts` |
 | `epic-achievements` | sibling | `epic-character-core-system` | `src/routes/v1/actors-surface.ts` |

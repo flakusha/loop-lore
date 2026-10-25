@@ -18769,7 +18769,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md",
       "title": "Assistant Entity Modification & Addition Commands",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/adapter/entity.ts",
         "src/assistant/adapter/modify.ts",
@@ -32869,7 +32869,9 @@
       "srcRefs": [
         "src/frontend/a11y/a11y.css",
         "src/frontend/a11y/focus-manager.ts",
-        "src/frontend/a11y/skip-links.ts"
+        "src/frontend/a11y/skip-links.ts",
+        "src/frontend/alpine/focus.ts",
+        "src/frontend/alpine/shortcuts.ts"
       ],
       "related": []
     },
@@ -45756,17 +45758,18 @@
       "kind": "ticket",
       "path": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md",
       "title": "Frontend Keyboard Navigation Help Overlay (`?`)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/components/chat/keynav-help.html",
         "src/frontend/alpine/chat-panels.ts",
         "src/frontend/alpine/focus.ts",
         "src/frontend/alpine/i18n.ts",
+        "src/frontend/alpine/index.ts",
         "src/frontend/alpine/keynav-help.test.ts",
         "src/frontend/alpine/keynav-help.ts",
         "src/frontend/alpine/shortcuts.ts",
-        "src/i18n/locales/en.json",
-        "src/public/css/app.css",
+        "src/public/css/mobile-keynav.css",
+        "src/public/locales/en.json",
         "src/views/layout.html"
       ],
       "related": []
@@ -45911,6 +45914,7 @@
       "title": "Accessibility & Input Systems",
       "status": "in_progress",
       "srcRefs": [
+        "src/components/chat/keynav-help.html",
         "src/frontend/a11y/a11y.css",
         "src/frontend/a11y/focus-manager.ts",
         "src/frontend/a11y/keyboard-shortcuts.ts",
@@ -45921,8 +45925,11 @@
         "src/frontend/alpine/chat-touch-gestures.test.ts",
         "src/frontend/alpine/chat-touch-gestures.ts",
         "src/frontend/alpine/focus.ts",
+        "src/frontend/alpine/index.ts",
+        "src/frontend/alpine/shortcuts.ts",
         "src/frontend/touch.test.ts",
-        "src/frontend/touch.ts"
+        "src/frontend/touch.ts",
+        "src/views/layout.html"
       ],
       "related": []
     },
@@ -59131,7 +59138,8 @@
     {
       "path": "src/components/chat/keynav-help.html",
       "owners": [
-        "WIRE-frontend-keyboard-help-overlay"
+        "WIRE-frontend-keyboard-help-overlay",
+        "epic-accessibility-input"
       ]
     },
     {
@@ -65629,6 +65637,7 @@
     {
       "path": "src/frontend/alpine/focus.ts",
       "owners": [
+        "TASK-keyboard-navigation",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
         "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-modal-focus-trap",
@@ -65767,7 +65776,9 @@
         "TASK-publication-reader-locale-selector",
         "TASK-publication-viewer-read-mode",
         "TASK-shared-text-surface-toolbar",
+        "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-navigation-global-keymap",
+        "epic-accessibility-input",
         "epic-encryption-workflow",
         "epic-experimental-egui-frontend",
         "epic-frontend-age-gate",
@@ -66217,9 +66228,11 @@
         "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
         "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
         "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+        "TASK-keyboard-navigation",
         "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-navigation-global-keymap",
-        "WIRE-frontend-touch-swipe-gestures"
+        "WIRE-frontend-touch-swipe-gestures",
+        "epic-accessibility-input"
       ]
     },
     {
@@ -70581,12 +70594,6 @@
       ]
     },
     {
-      "path": "src/i18n/locales/en.json",
-      "owners": [
-        "WIRE-frontend-keyboard-help-overlay"
-      ]
-    },
-    {
       "path": "src/i18n/plurals.ts",
       "owners": [
         "TASK-010-plurals",
@@ -73510,7 +73517,6 @@
         "TASK-location-explorer",
         "TASK-text-effects-overlays",
         "TASK-visual-novel-mode",
-        "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-mobile-off-canvas-drawer",
         "WIRE-frontend-mobile-sticky-bottom-composer",
         "WIRE-frontend-touch-swipe-gestures",
@@ -73540,7 +73546,8 @@
     {
       "path": "src/public/css/mobile-keynav.css",
       "owners": [
-        "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css"
+        "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+        "WIRE-frontend-keyboard-help-overlay"
       ]
     },
     {
@@ -73584,7 +73591,8 @@
         "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
         "TASK-branch-merge-frontend-wizard-ui",
         "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
-        "TASK-info-bubbles"
+        "TASK-info-bubbles",
+        "WIRE-frontend-keyboard-help-overlay"
       ]
     },
     {
@@ -85352,6 +85360,7 @@
         "TASK-info-bubbles",
         "TASK-responsive-design",
         "WIRE-frontend-keyboard-help-overlay",
+        "epic-accessibility-input",
         "epic-docs-reconciliation",
         "epic-frontend-headers-management"
       ]
@@ -134747,6 +134756,16 @@
       "to": "src/frontend/a11y/skip-links.ts"
     },
     {
+      "from": "TASK-keyboard-navigation",
+      "kind": "produces",
+      "to": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "produces",
+      "to": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
       "from": "TASK-krea-2-reference-edit-diagnosis",
       "kind": "produces",
       "to": "src/generation/lora/discovery-comfyui.ts"
@@ -146484,6 +146503,11 @@
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
+      "to": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "produces",
       "to": "src/frontend/alpine/keynav-help.test.ts"
     },
     {
@@ -146499,12 +146523,12 @@
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
-      "to": "src/i18n/locales/en.json"
+      "to": "src/public/css/mobile-keynav.css"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
-      "to": "src/public/css/app.css"
+      "to": "src/public/locales/en.json"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
@@ -146729,6 +146753,11 @@
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
+      "to": "src/components/chat/keynav-help.html"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
       "to": "src/frontend/a11y/a11y.css"
     },
     {
@@ -146779,12 +146808,27 @@
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
+      "to": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
+      "to": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
       "to": "src/frontend/touch.test.ts"
     },
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
       "to": "src/frontend/touch.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
+      "to": "src/views/layout.html"
     },
     {
       "from": "epic-achievements",
@@ -209744,6 +209788,12 @@
     {
       "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
       "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -213704,6 +213754,12 @@
     {
       "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
       "kind": "sibling",
+      "to": "TASK-keyboard-navigation",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
@@ -213717,6 +213773,12 @@
       "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -213728,6 +213790,12 @@
     {
       "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
       "kind": "sibling",
+      "to": "TASK-keyboard-navigation",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
@@ -213741,6 +213809,12 @@
       "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -214113,6 +214187,12 @@
       "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -220803,6 +220883,12 @@
       "from": "BUG-notification-bell-visible-on-login-register-pages",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "BUG-notification-bell-visible-on-login-register-pages",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -236608,12 +236694,6 @@
       "kind": "sibling",
       "to": "TASK-vn-qa-mode",
       "via": "src/public/css/vn.css"
-    },
-    {
-      "from": "BUG-undefined-css-custom-properties-break-rendering",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
     },
     {
       "from": "BUG-undefined-css-custom-properties-break-rendering",
@@ -259178,12 +259258,6 @@
     {
       "from": "TASK-025",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-025",
-      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -266319,6 +266393,12 @@
       "from": "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
       "kind": "sibling",
       "to": "TASK-info-bubbles",
+      "via": "src/public/locales/en.json"
+    },
+    {
+      "from": "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/locales/en.json"
     },
     {
@@ -283094,7 +283174,19 @@
     {
       "from": "TASK-author-suggestion-resolution-surface",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-author-suggestion-resolution-surface",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-author-suggestion-resolution-surface",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -287462,6 +287554,12 @@
     {
       "from": "TASK-blog-frontend-authoring",
       "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-blog-frontend-authoring",
+      "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/frontend/alpine/blog.ts; src/frontend/pages/blog.ts; src/views/blog.html"
     },
@@ -288356,7 +288454,19 @@
     {
       "from": "TASK-book-unit-editor-review-surface",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-book-unit-editor-review-surface",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-book-unit-editor-review-surface",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -289204,6 +289314,12 @@
       "kind": "sibling",
       "to": "TASK-message-carriage-table-migration-admin-read",
       "via": "src/routes/messages/read.ts"
+    },
+    {
+      "from": "TASK-branch-merge-frontend-wizard-ui",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/locales/en.json"
     },
     {
       "from": "TASK-branch-merge-frontend-wizard-ui",
@@ -293114,7 +293230,19 @@
     {
       "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -295466,12 +295594,6 @@
     {
       "from": "TASK-chat-feature-component-buttons",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-chat-feature-component-buttons",
-      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -297296,12 +297418,6 @@
     {
       "from": "TASK-chat-flow-section-navigation",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-chat-flow-section-navigation",
-      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -297944,12 +298060,6 @@
     {
       "from": "TASK-chat-message-search",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-chat-message-search",
-      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -298101,12 +298211,6 @@
       "from": "TASK-chat-room-filters",
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-chat-room-filters",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/css/app.css"
     },
     {
@@ -301263,6 +301367,12 @@
       "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -306674,7 +306784,19 @@
     {
       "from": "TASK-comparison-grid-frontend",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-comparison-grid-frontend",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-comparison-grid-frontend",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -307586,7 +307708,19 @@
     {
       "from": "TASK-comparison-two-cell-diff-modes",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-comparison-two-cell-diff-modes",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-comparison-two-cell-diff-modes",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -309188,6 +309322,12 @@
     {
       "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
       "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -309764,6 +309904,12 @@
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
+      "to": "TASK-keyboard-navigation",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
       "to": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
       "via": "src/frontend/fe-fetch.ts"
     },
@@ -309837,6 +309983,12 @@
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -313460,6 +313612,12 @@
     {
       "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
       "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -314600,6 +314758,12 @@
     {
       "from": "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/locales/en.json"
+    },
+    {
+      "from": "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
+      "kind": "sibling",
       "to": "epic-auth-access",
       "via": "src/frontend/alpine/admin-users.ts"
     },
@@ -314883,7 +315047,7 @@
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
+      "via": "src/public/css/mobile-keynav.css"
     },
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
@@ -316683,6 +316847,12 @@
       "from": "TASK-docs-ui-endpoint-linkage",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-docs-ui-endpoint-linkage",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -323558,6 +323728,12 @@
     {
       "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
       "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
+      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -325802,7 +325978,19 @@
     {
       "from": "TASK-finalize-notification-bell-header-wiring",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-finalize-notification-bell-header-wiring",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-finalize-notification-bell-header-wiring",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -327758,6 +327946,12 @@
     {
       "from": "TASK-frontend-touch-gestures",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-frontend-touch-gestures",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -327783,7 +327977,7 @@
       "from": "TASK-frontend-touch-gestures",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts; src/frontend/touch.ts"
+      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/alpine/index.ts; src/frontend/touch.test.ts; src/frontend/touch.ts"
     },
     {
       "from": "TASK-frontend-touch-gestures",
@@ -327926,6 +328120,12 @@
     {
       "from": "TASK-frontend-view-model-extraction",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-frontend-view-model-extraction",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -327934,6 +328134,12 @@
       "kind": "sibling",
       "to": "WIRE-nsfw-audit-page-missing-inline-authz",
       "via": "src/routes/views/plugin-pages.ts"
+    },
+    {
+      "from": "TASK-frontend-view-model-extraction",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/frontend/alpine/index.ts"
     },
     {
       "from": "TASK-frontend-view-model-extraction",
@@ -334406,6 +334612,12 @@
     {
       "from": "TASK-i18n-alpine-client",
       "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-alpine-client",
+      "kind": "sibling",
       "to": "epic-analytics-observability",
       "via": "src/elysia-app.ts"
     },
@@ -334665,6 +334877,12 @@
       "from": "TASK-i18n-template-strings",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "TASK-i18n-template-strings",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -335679,13 +335897,19 @@
       "from": "TASK-info-bubbles",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/views/layout.html"
+      "via": "src/frontend/alpine/index.ts; src/public/locales/en.json; src/views/layout.html"
     },
     {
       "from": "TASK-info-bubbles",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-info-bubbles",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/frontend/alpine/index.ts; src/views/layout.html"
     },
     {
       "from": "TASK-info-bubbles",
@@ -337526,8 +337750,44 @@
     {
       "from": "TASK-keyboard-navigation",
       "kind": "sibling",
+      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
+      "via": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-modal-focus-trap",
+      "via": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-mobile-off-canvas-drawer",
+      "via": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
+      "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "TASK-keyboard-navigation",
+      "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/a11y.css; src/frontend/a11y/focus-manager.ts"
+      "via": "src/frontend/a11y/a11y.css; src/frontend/a11y/focus-manager.ts; src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
     },
     {
       "from": "TASK-krea-2-reference-edit-diagnosis",
@@ -339129,12 +339389,6 @@
       "from": "TASK-location-explorer",
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "TASK-location-explorer",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/css/app.css"
     },
     {
@@ -343076,7 +343330,19 @@
     {
       "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -350570,7 +350836,19 @@
     {
       "from": "TASK-publication-reader-locale-selector",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-publication-reader-locale-selector",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-publication-reader-locale-selector",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -350972,7 +351250,19 @@
     {
       "from": "TASK-publication-viewer-read-mode",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-publication-viewer-read-mode",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-publication-viewer-read-mode",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -355077,7 +355367,7 @@
       "from": "TASK-responsive-design",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/responsive.ts"
+      "via": "src/frontend/a11y/responsive.ts; src/views/layout.html"
     },
     {
       "from": "TASK-responsive-design",
@@ -357098,7 +357388,19 @@
     {
       "from": "TASK-shared-text-surface-toolbar",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-shared-text-surface-toolbar",
+      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-shared-text-surface-toolbar",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -358696,12 +358998,6 @@
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
       "via": "src/public/css/app.css; src/views/chat.html"
-    },
-    {
-      "from": "TASK-text-effects-overlays",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
     },
     {
       "from": "TASK-text-effects-overlays",
@@ -361096,12 +361392,6 @@
       "kind": "sibling",
       "to": "TASK-vn-template-actions",
       "via": "src/components/chat/chat-settings-modal.html; src/frontend/vn/transition-engine.ts; src/frontend/vn/typewriter.ts"
-    },
-    {
-      "from": "TASK-visual-novel-mode",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/app.css"
     },
     {
       "from": "TASK-visual-novel-mode",
@@ -363819,43 +364109,55 @@
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
-      "via": "src/frontend/alpine/focus.ts; src/public/css/app.css"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "WIRE-frontend-mobile-sticky-bottom-composer",
-      "via": "src/public/css/app.css"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "WIRE-frontend-touch-swipe-gestures",
-      "via": "src/frontend/alpine/shortcuts.ts; src/public/css/app.css"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/focus.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
-      "to": "epic-chat-lifecycle-moderation",
-      "via": "src/public/css/app.css"
+      "to": "WIRE-frontend-touch-swipe-gestures",
+      "via": "src/frontend/alpine/shortcuts.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-accessibility-input",
+      "via": "src/components/chat/keynav-help.html; src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts; src/views/layout.html"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-frontend-age-gate",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-frontend-component-architecture",
+      "via": "src/frontend/alpine/index.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
@@ -363897,7 +364199,7 @@
       "from": "WIRE-frontend-keyboard-navigation-global-keymap",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/alpine/focus.ts"
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-navigation-global-keymap",
@@ -363999,7 +364301,7 @@
       "from": "WIRE-frontend-touch-swipe-gestures",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/touch.ts"
+      "via": "src/frontend/alpine/shortcuts.ts; src/frontend/touch.ts"
     },
     {
       "from": "WIRE-frontend-touch-swipe-gestures",
@@ -364102,6 +364404,42 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-docs-reconciliation",
+      "via": "src/views/layout.html"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-frontend-age-gate",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-frontend-component-architecture",
+      "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "sibling",
+      "to": "epic-frontend-headers-management",
+      "via": "src/views/layout.html"
     },
     {
       "from": "epic-achievements",
