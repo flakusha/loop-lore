@@ -3,7 +3,7 @@
 
 # BUG: harden(telemetry): gate or rate-limit anonymous POST /api/v1/telemetry/event writes
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-rate-limiting
@@ -21,3 +21,5 @@ Sources: stream-c #12. Where: src/routes/telemetry.ts:54-79 (no 401 branch; sche
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue c48fd6c (registry tip: e5100ef70 Konstantin Fedotov Close issue)

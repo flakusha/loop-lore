@@ -3,7 +3,7 @@
 
 # BUG: Mood and relationship services mutate multi-row state without transactions
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-aux-enrichment-pipeline
@@ -35,3 +35,5 @@ Source: .tmp/longcat/review-characters.md H1, H2, H3, H4, H5, M6.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 07b0fee (registry tip: e0920aeca Konstantin Fedotov Close issue)
