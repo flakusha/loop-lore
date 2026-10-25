@@ -4,6 +4,7 @@
 # BUG: Travel-route stop DELETE ignores routeId - cross-world IDOR
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — removeStop now scopes the DELETE to the route (`.where("route_id", "=", routeId)`, src/locations/routes.ts:225-233) and DELETE /api/v1/worlds/:worldId/travel-routes/:routeId/stops/:stopId 404s when the route does not resolve under the path world (src/routes/worlds/fractal-travel-routes.ts:153-158); regressions in src/locations/travel-engine.test.ts describe "TravelRouteService.removeStop scoping" (6/6 pass on the fix; note stop ids are travel_route_stops row ids returned by addStop, not location ids). BEFORE-EVIDENCE (observed 2026-10-25 by swapping in the parent-commit file 6621f744a^ via .tmp/travel-probe.ts and restoring byte-identically): 5 pass / 1 fail — exactly "refuses to delete another route's stop by bare id" fails against the old unscoped delete. Neighbors green: travel-engine + related suites. Gates: typecheck + eslint green on final HEAD (run 666566-mvnfwjhq), worktree fix/bug-sweep, issue BUG-TRAVEL-ROUTE-STOP-DELETE-IGNORES-ROUTEID-CROSS-WORLD-IDOR.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-world-travel-time
@@ -14,7 +15,7 @@ removeStop ignores its routeId argument (named _routeId; src/routes/worlds/fract
 
 **Context:**
 
-Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): removeStop now scopes the DELETE to the route (`.where("route_id", "=", routeId)`, src/locations/routes.ts:225-233) and DELETE /api/v1/worlds/:worldId/travel-routes/:routeId/stops/:stopId 404s when the route does not resolve under the path world (src/routes/worlds/fractal-travel-routes.ts:153-158); regressions in src/locations/travel-engine.test.ts describe "TravelRouteService.removeStop scoping" (6/6 pass on the fix; note stop ids are travel_route_stops row ids returned by addStop, not location ids).
 
 **Acceptance Criteria:**
 

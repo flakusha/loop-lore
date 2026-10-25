@@ -4,8 +4,8 @@
 # BUG: rotateKeyOnLeave re-encrypts asset files before the DB transaction, so a rollback permanently destroys encrypted chat assets
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — LIVE confirmed on tip — repro (trigger RAISE(ABORT) on the chat_keys swap; asset file undecryptable with the old key: "Decryption failed ... wrong key") failed pre-fix; reEncryptChatAssets now stages re-encrypted blobs at temp paths (src/crypto/key-rotation/re-encrypt.ts:134-147,201-211) and doRotate renames them into place only after the transaction commits, deleting them on any pre-commit failure (src/crypto/key-distribution.ts:52-71,176-260). 4/4 rotation-proofs + 7/7 re-encrypt + 23/23 chat-lifecycle tests green, gates green 2026-10-25, branch fix/bug-sweep.
 **Priority:** critical
-**Resolved:** LIVE confirmed on tip — repro (trigger RAISE(ABORT) on the chat_keys swap; asset file undecryptable with the old key: "Decryption failed ... wrong key") failed pre-fix; reEncryptChatAssets now stages re-encrypted blobs at temp paths (src/crypto/key-rotation/re-encrypt.ts:134-147,201-211) and doRotate renames them into place only after the transaction commits, deleting them on any pre-commit failure (src/crypto/key-distribution.ts:52-71,176-260). 4/4 rotation-proofs + 7/7 re-encrypt + 23/23 chat-lifecycle tests green, gates green 2026-10-25, branch fix/bug-sweep.
 **Effort:** Medium
 **Epic:** epic-encryption-workflow
 
@@ -27,7 +27,7 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-1 (report is gitignored; fin
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): resolved 2026-10-25 (`fix/bug-sweep`) — LIVE confirmed on tip — repro (trigger RAISE(ABORT) on the chat_keys swap; asset file undecryptable with the old key: "Decryption failed ... wrong key") failed pre-fix; reEncryptChatAssets now stages re-encrypted blobs at temp paths (src/crypto/key-rotation/re-encrypt.ts:134-147,201-211) and doRotate renames them into place only after the transaction commits, deleting them on any pre-commit failure (src/crypto/key-distribution.ts:52-71,176-260). 4/4 rotation-proofs + 7/7 re-encrypt + 23/23 chat-lifecycle tests green, gates green 2026-10-25, branch fix/bug-sweep.
 
 **Acceptance Criteria:**
 

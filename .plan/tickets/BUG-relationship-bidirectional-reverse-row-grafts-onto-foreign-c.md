@@ -4,6 +4,7 @@
 # BUG: Relationship bidirectional reverse row grafts onto foreign characters
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — POST /api/v1/actors/:actorId/relationships (src/routes/character-relationships.ts:110-134) now rejects self-reference with 400 and validates the target actor (404 when missing or foreign-tenancy, admin override via admin.character) before the service inserts — the bidirectional reverse row can no longer graft relationship data onto another user's character, and a missing target 404s instead of FK-500ing; createRelationship (src/characters/services/relationships-service/write.ts:32-40) adds the matching self-reference guard for non-route callers. Repros pinned in src/routes/character-relationships.test.ts (foreign-target graft / self-reference / nonexistent target; 29/29 pass — all three failed before with 201+graft / 201 self-row / FK 500). Gates: typecheck + eslint green 2026-10-25, worktree fix/bug-sweep, issue BUG-RELATIONSHIP-BIDIRECTIONAL-REVERSE-ROW-GRAFTS-ONTO-FOREIGN-C.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-relationships
@@ -14,7 +15,7 @@ Relationship creation never validates target_actor_id ownership: with is_bidirec
 
 **Context:**
 
-Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): POST /api/v1/actors/:actorId/relationships (src/routes/character-relationships.ts:110-134) now rejects self-reference with 400 and validates the target actor (404 when missing or foreign-tenancy, admin override via admin.character) before the service inserts — the bidirectional reverse row can no longer graft relationship data onto another user's character, and a missing target 404s instead of FK-500ing; createRelationship (src/characters/services/relationships-service/write.ts:32-40) adds the matching self-reference guard for non-route callers.
 
 **Acceptance Criteria:**
 

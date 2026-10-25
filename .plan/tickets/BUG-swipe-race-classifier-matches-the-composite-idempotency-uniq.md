@@ -4,6 +4,7 @@
 # BUG: Swipe-race classifier matches the composite idempotency UNIQUE violation, so merge retries 8 times then throws
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — isSwipeIndexUniqueViolation (src/utils/swipe-retry.ts:23-37) now returns false whenever the violation message names `messages.idempotency_key`, so the composite bun:sqlite form `UNIQUE constraint failed: messages.chat_id, messages.idempotency_key` no longer classifies as a swipe race (merge-result-rows stops burning its 8-retry budget on an unconditional idempotency conflict). Composite string pinned in src/utils/swipe-retry.test.ts (failing before: `Expected false, Received true`; 8/8 after). Gates: typecheck + eslint green 2026-10-25, worktree fix/bug-sweep, issue BUG-SWIPE-RACE-CLASSIFIER-MATCHES-THE-COMPOSITE-IDEMPOTENCY-UNIQ.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-conversation-branching
@@ -24,7 +25,7 @@ Source: .tmp/glm-review/deep-integrations-1015.md F-1 (gitignored; recorded here
 
 **Context:**
 
-Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): isSwipeIndexUniqueViolation (src/utils/swipe-retry.ts:23-37) now returns false whenever the violation message names `messages.idempotency_key`, so the composite bun:sqlite form `UNIQUE constraint failed: messages.chat_id, messages.idempotency_key` no longer classifies as a swipe race (merge-result-rows stops burning its 8-retry budget on an unconditional idempotency conflict).
 
 **Acceptance Criteria:**
 

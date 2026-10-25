@@ -4,8 +4,8 @@
 # BUG: harden(auth): refuse or loudly gate non-loopback bind while auth.required=false
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — LIVE confirmed on tip — repro (validateAuthSafety with solo config + server.host=0.0.0.0 threw nothing) failed pre-fix; validateAuthSafety solo branch now throws "AUTH SAFETY: ... not a loopback address" for explicit non-loopback hosts unless UNSAFE_SOLO_REMOTE_BIND=true, via new isLoopbackHost classifier (src/config/load/safety.ts:55-72,76-124); gate runs at loadConfig() in start.ts:46 before serve() at :162. Empty/unset host skips the gate (fixture configs use host=""). 62/62 load tests green, gates green 2026-10-25, branch fix/bug-sweep.
 **Priority:** low
-**Resolved:** LIVE confirmed on tip — repro (validateAuthSafety with solo config + server.host=0.0.0.0 threw nothing) failed pre-fix; validateAuthSafety solo branch now throws "AUTH SAFETY: ... not a loopback address" for explicit non-loopback hosts unless UNSAFE_SOLO_REMOTE_BIND=true, via new isLoopbackHost classifier (src/config/load/safety.ts:55-72,76-124); gate runs at loadConfig() in start.ts:46 before serve() at :162. Empty/unset host skips the gate (fixture configs use host=""). 62/62 load tests green, gates green 2026-10-25, branch fix/bug-sweep.
 **Effort:** Medium
 **Epic:** epic-auth-config-contracts
 
@@ -15,7 +15,7 @@ Sources: stream-c #7. Where: src/middleware/auth/authenticate.ts:160-177 (solo f
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): resolved 2026-10-25 (`fix/bug-sweep`) — LIVE confirmed on tip — repro (validateAuthSafety with solo config + server.host=0.0.0.0 threw nothing) failed pre-fix; validateAuthSafety solo branch now throws "AUTH SAFETY: ... not a loopback address" for explicit non-loopback hosts unless UNSAFE_SOLO_REMOTE_BIND=true, via new isLoopbackHost classifier (src/config/load/safety.ts:55-72,76-124); gate runs at loadConfig() in start.ts:46 before serve() at :162. Empty/unset host skips the gate (fixture configs use host=""). 62/62 load tests green, gates green 2026-10-25, branch fix/bug-sweep.
 
 **Acceptance Criteria:**
 
