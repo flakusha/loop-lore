@@ -240,7 +240,7 @@ flowchart TD
 
 ### Phase 2: Mobile Support 🟡 Partial
 
-- Touch gesture system (`src/frontend/touch.ts` — swipe/tap/long-press utilities exist and are maintained, but are **not wired into any surface** (zero importers in `src/`) and have **no unit tests**. The earlier "REMOVED 2026-08-14 / dead code" note was stale: the file was deleted then restored, and has been maintained since (JSDoc, lint, SPDX passes). Tracked by `TASK-touch-gestures.md`, `TASK-frontend-touch-gestures.md`, `TASK-mobile-touch-gestures.md`, `WIRE-frontend-touch-swipe-gestures.md`.
+- Touch gesture system — **wired into the chat message list (2026-10-25)**. `src/frontend/alpine/chat-touch-gestures.ts` attaches `src/frontend/touch.ts` (`onSwipe` / `onLongPress`) to `#message-list` with event delegation: swipe left → archive-confirm dialog, swipe right → edit, long-press → message context menu. Gestures dispatch the same actions the visible buttons use, attach only on touch-capable devices (pointer-coarse guard), no-op on buttons/inputs, and tear down cleanly across htmx swaps. Unit tests: `src/frontend/touch.test.ts`, `src/frontend/alpine/chat-touch-gestures.test.ts`. Remaining Phase 2 surface work (composer/sidebar gestures, pull-to-refresh, pinch zoom) stays tracked by `TASK-touch-gestures.md` and `WIRE-frontend-touch-swipe-gestures.md`.
 - Responsive breakpoints (partial)
 - Mobile-specific patterns
 - Touch target sizing (44px CSS in `app.css`)
@@ -285,9 +285,9 @@ flowchart TD
 | Phase | Ticket | Status |
 | ----- | ------ | ------ |
 | 1 — Core a11y (shipped 2026-07-31) | (folded into `src/frontend/alpine/focus.ts`) | shipped |
-| 2 — Touch gestures | `TASK-touch-gestures.md` (also `TASK-frontend-touch-gestures.md`, `TASK-mobile-touch-gestures.md`, `WIRE-frontend-touch-swipe-gestures.md`) | open — filed, not wired |
+| 2 — Touch gestures | `TASK-touch-gestures.md` (also `TASK-frontend-touch-gestures.md` — done, `TASK-mobile-touch-gestures.md`, `WIRE-frontend-touch-swipe-gestures.md`) | chat message list wired 2026-10-25; composer/pinch/pull-to-refresh open |
 | 2 — Mobile responsive breakpoints | `TASK-responsive-design.md` | open |
 | 3 — Keyboard shortcuts | `TASK-keyboard-navigation.md` | open |
 | 4 — Screen reader optimizations | `TASK-screen-reader-support.md` | open (in progress) |
 
-**Gap (2026-09-23, resolved):** the then-open question of whether to file a touch-gesture ticket is moot — `TASK-touch-gestures.md` and three sibling tickets exist. The remaining Phase 2 gap is wiring, not filing: the utilities in `src/frontend/touch.ts` are still unimported and untested.
+**Gap (2026-09-23, resolved):** the then-open question of whether to file a touch-gesture ticket is moot — `TASK-touch-gestures.md` and three sibling tickets exist. The former wiring gap (`src/frontend/touch.ts` unimported, untested) was closed on the chat message list 2026-10-25 (see Phase 2); composer/sidebar gestures and pinch/pull-to-refresh remain open under the tickets above.

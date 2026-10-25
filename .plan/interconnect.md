@@ -746,6 +746,8 @@ output is byte-identical for identical inputs.
 | `src/frontend/alpine/chat-settings/gm-config.ts` | `BUG-settings-save-omits-gmconfig-for-online-chats`, `FEAT-chat-settings-modal-output-styling-control`, `FEAT-expose-full-vn-settings-from-spec`, `TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings`, `epic-assistant-gm-flows` |
 | `src/frontend/alpine/chat-settings/vn.ts` | `TASK-visual-novel-mode`, `TASK-vn-cast-server-producer`, `TASK-vn-qa-mode`, `epic-visual-novel-mode` |
 | `src/frontend/alpine/chat-slash.ts` | `TASK-assistant-server-side-branch-command`, `TASK-egui-command-surface-parity-palette-role-gated-commands-slas`, `epic-experimental-egui-frontend` |
+| `src/frontend/alpine/chat-touch-gestures.test.ts` | `TASK-touch-gestures`, `epic-accessibility-input` |
+| `src/frontend/alpine/chat-touch-gestures.ts` | `TASK-frontend-touch-gestures`, `TASK-mobile-touch-gestures`, `TASK-touch-gestures`, `epic-accessibility-input` |
 | `src/frontend/alpine/chat-types.ts` | `TASK-chat-room-search-join`, `TASK-gm-guided-story-creation`, `TASK-visual-novel-mode` |
 | `src/frontend/alpine/chat-types/core.ts` | `BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null`, `TASK-2026-openwebui-cancel-generation-wiring`, `TASK-2026-openwebui-retry-from-point`, `TASK-2026-openwebui-sse-reconnect-replay`, `TASK-2026-openwebui-structured-toolcall-renderer`, `TASK-2026-openwebui-thinking-block-render`, `TASK-assistant-creative-studio-workflow-gallery-batch`, `TASK-backlog-size-strict-regression-recovery`, `epic-gallery-batch-operations` |
 | `src/frontend/alpine/chat-types/gm.ts` | `FEAT-per-chat-assistant-gm-frontend`, `TASK-gm-guided-story-creation` |
@@ -899,6 +901,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/settings/resource-provision.ts` | `TASK-resource-provision-quota-ui`, `epic-resource-provision` |
 | `src/frontend/stores/index.ts` | `TASK-correct-dead-file-references-and-store-shape-drift-in-the-in`, `TASK-frontend-view-model-extraction`, `epic-experimental-egui-frontend` |
 | `src/frontend/stores/ui-store.ts` | `TASK-branch-merge-frontend-wizard-ui`, `TASK-chat-state-contract`, `TASK-e2e-state-contracts`, `WIRE-frontend-keyboard-navigation-global-keymap`, `WIRE-frontend-mobile-off-canvas-drawer`, `WIRE-frontend-touch-swipe-gestures`, `epic-frontend-notifications` |
+| `src/frontend/touch.test.ts` | `TASK-frontend-touch-gestures`, `TASK-mobile-touch-gestures`, `TASK-touch-gestures`, `epic-accessibility-input` |
 | `src/frontend/touch.ts` | `TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep`, `TASK-frontend-touch-gestures`, `WIRE-frontend-mobile-sticky-bottom-composer`, `WIRE-frontend-touch-swipe-gestures`, `epic-accessibility-input` |
 | `src/frontend/ui.ts` | `BUG-size-strict-pre-existing-dev-drift`, `BUG-tests-delete-app-installed-globals-breaking-every-later-test`, `TASK-010`, `TASK-finalize-notification-bell-header-wiring`, `TASK-fix-test-failures` |
 | `src/frontend/vendor.ts` | `TASK-delete-unreferenced-platform-service-util-modules-dead-barre`, `TASK-frontend-lazy-vendor`, `epic-frontend-bundle-optimization` |
@@ -2329,6 +2332,7 @@ output is byte-identical for identical inputs.
 | `TASK-specify-content-warnings-write-the-frontend-contract` | consumes | `TASK-037` | `src/db/enums-character/nsfw.ts; src/rpg/fantasies/service/fulfill.ts; src/rpg/fantasies/service/types.ts` |
 | `TASK-specify-content-warnings-write-the-frontend-contract` | consumes | `epic-nsfw-game-mechanics` | `src/db/enums-character/nsfw.ts` |
 | `TASK-story-points-prototype` | consumes | `epic-agency-story-points` | `src/app/register-plugins.ts; src/components/chat/story-points-chip.html; src/db/020_actor_story_points_partial_unique.test.ts; src/generation/generation-routes/regenerate.ts; src/routes/agency/index.ts; src/services/agency/spend-helpers.ts; src/services/agency/story-points.test.ts; src/views/chat.html` |
+| `TASK-touch-gestures` | consumes | `epic-accessibility-input` | `src/frontend/alpine/chat-touch-gestures.test.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts` |
 | `TASK-transport-expansion` | consumes | `TASK-transport-layer-expansion` | `src/transport/http1.ts` |
 | `TASK-tui-api-contract-smoke-tests` | consumes | `epic-terminal-ui` | `src/tui/asset-view.ts; src/tui/chat/api.ts; src/tui/harness/api.ts` |
 | `TASK-unit-translation-service` | consumes | `TASK-publication-glossary-term-base` | `src/i18n/locale-registry.ts` |
@@ -11017,6 +11021,7 @@ output is byte-identical for identical inputs.
 | `TASK-frontend-surfaces-for-richer-character-extensions` | produces | `src/components/character/extension-editor-panel.html` | - |
 | `TASK-frontend-surfaces-for-richer-character-extensions` | produces | `src/frontend/alpine/npc.ts` | - |
 | `TASK-frontend-touch-gestures` | produces | `src/frontend/a11y/touch-gestures.ts` | - |
+| `TASK-frontend-touch-gestures` | produces | `src/frontend/alpine/chat-touch-gestures.ts` | - |
 | `TASK-frontend-touch-gestures` | produces | `src/frontend/alpine/index.ts` | - |
 | `TASK-frontend-touch-gestures` | produces | `src/frontend/alpine/sidebar.ts` | - |
 | `TASK-frontend-touch-gestures` | produces | `src/frontend/touch.test.ts` | - |
@@ -12112,6 +12117,8 @@ output is byte-identical for identical inputs.
 | `TASK-mobile-touch-gestures` | produces | `src/frontend/a11y/haptic.ts` | - |
 | `TASK-mobile-touch-gestures` | produces | `src/frontend/a11y/touch-gestures.ts` | - |
 | `TASK-mobile-touch-gestures` | produces | `src/frontend/a11y/touch-targets.css` | - |
+| `TASK-mobile-touch-gestures` | produces | `src/frontend/alpine/chat-touch-gestures.ts` | - |
+| `TASK-mobile-touch-gestures` | produces | `src/frontend/touch.test.ts` | - |
 | `TASK-model-comparison-reactions` | produces | `src/routes/model-comparisons.ts` | - |
 | `TASK-model-weight-sniffing-fallback-detect-from-weights` | produces | `src/model_loader.cpp` | - |
 | `TASK-moderation-privacy-first-foundation` | produces | `src/admin/model-roles.ts` | - |
@@ -13469,6 +13476,9 @@ output is byte-identical for identical inputs.
 | `TASK-tor-integration` | produces | `src/anonymity/tor/hidden-service.ts` | - |
 | `TASK-tor-integration` | produces | `src/anonymity/tor/proxy.ts` | - |
 | `TASK-tor-integration` | produces | `src/anonymity/tor/tor.ts` | - |
+| `TASK-touch-gestures` | produces | `src/frontend/alpine/chat-touch-gestures.test.ts` | - |
+| `TASK-touch-gestures` | produces | `src/frontend/alpine/chat-touch-gestures.ts` | - |
+| `TASK-touch-gestures` | produces | `src/frontend/touch.test.ts` | - |
 | `TASK-trade-history-npc-counterparty` | produces | `src/routes/trade/history.ts` | - |
 | `TASK-trade-history-npc-counterparty` | produces | `src/routes/trade/index.ts` | - |
 | `TASK-trade-history-npc-counterparty` | produces | `src/routes/trade/npc.ts` | - |
@@ -14053,7 +14063,10 @@ output is byte-identical for identical inputs.
 | `epic-accessibility-input` | produces | `src/frontend/a11y/screen-reader.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/a11y/touch-gestures.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/alpine/a11y.ts` | - |
+| `epic-accessibility-input` | produces | `src/frontend/alpine/chat-touch-gestures.test.ts` | - |
+| `epic-accessibility-input` | produces | `src/frontend/alpine/chat-touch-gestures.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/alpine/focus.ts` | - |
+| `epic-accessibility-input` | produces | `src/frontend/touch.test.ts` | - |
 | `epic-accessibility-input` | produces | `src/frontend/touch.ts` | - |
 | `epic-achievements` | produces | `src/db/schema-achievements.ts` | - |
 | `epic-achievements` | produces | `src/frontend/achievements.html` | - |
@@ -44699,15 +44712,16 @@ output is byte-identical for identical inputs.
 | `TASK-frontend-touch-gestures` | sibling | `TASK-frontend-view-model-extraction` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `TASK-info-bubbles` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `TASK-middleware-browser-side-storage-request-hash-reconciliation` | `src/frontend/alpine/index.ts` |
-| `TASK-frontend-touch-gestures` | sibling | `TASK-mobile-touch-gestures` | `src/frontend/a11y/touch-gestures.ts` |
+| `TASK-frontend-touch-gestures` | sibling | `TASK-mobile-touch-gestures` | `src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `TASK-publication-reader-locale-selector` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `TASK-publication-viewer-read-mode` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `TASK-shared-text-surface-toolbar` | `src/frontend/alpine/index.ts` |
+| `TASK-frontend-touch-gestures` | sibling | `TASK-touch-gestures` | `src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-keyboard-navigation-global-keymap` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-mobile-off-canvas-drawer` | `src/frontend/alpine/sidebar.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/frontend/touch.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `WIRE-frontend-touch-swipe-gestures` | `src/frontend/alpine/sidebar.ts; src/frontend/touch.ts` |
-| `TASK-frontend-touch-gestures` | sibling | `epic-accessibility-input` | `src/frontend/a11y/touch-gestures.ts; src/frontend/touch.ts` |
+| `TASK-frontend-touch-gestures` | sibling | `epic-accessibility-input` | `src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts; src/frontend/touch.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `epic-encryption-workflow` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/index.ts` |
 | `TASK-frontend-touch-gestures` | sibling | `epic-frontend-age-gate` | `src/frontend/alpine/index.ts` |
@@ -47588,7 +47602,8 @@ output is byte-identical for identical inputs.
 | `TASK-mini-games-framework` | sibling | `epic-skills-professions-config` | `src/db/schema-core.ts` |
 | `TASK-mini-games-framework` | sibling | `epic-world-chat-channels-invites` | `src/db/schema-core.ts` |
 | `TASK-minimal-video-generation-dispatch-route-for-workflow-engine` | sibling | `epic-assistant-creative-studio-workflows` | `src/routes/generation/video.ts` |
-| `TASK-mobile-touch-gestures` | sibling | `epic-accessibility-input` | `src/frontend/a11y/touch-gestures.ts` |
+| `TASK-mobile-touch-gestures` | sibling | `TASK-touch-gestures` | `src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts` |
+| `TASK-mobile-touch-gestures` | sibling | `epic-accessibility-input` | `src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts` |
 | `TASK-model-comparison-reactions` | sibling | `epic-analytics-observability` | `src/routes/model-comparisons.ts` |
 | `TASK-model-comparison-reactions` | sibling | `epic-continuous-improvement` | `src/routes/model-comparisons.ts` |
 | `TASK-model-comparison-reactions` | sibling | `epic-technical-comparison-charts` | `src/routes/model-comparisons.ts` |

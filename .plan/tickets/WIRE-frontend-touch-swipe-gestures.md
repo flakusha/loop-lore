@@ -19,6 +19,8 @@
 
 Extend the existing `src/frontend/touch.ts` `onSwipe` with higher-level gesture handlers (swipe left/right on chat list for prev/next chat, pull-to-refresh on chat view). Fix `prefersReducedMotion()` to check at runtime, not module-load time. All gestures are opt-in via `uiStore.swipeGesturesEnabled`.
 
+> **2026-10-25 status note:** message-list swipe/long-press gestures landed under `TASK-frontend-touch-gestures.md` (chat rows, not chat-list navigation), so this ticket's own scope is still open. Its `prefersReducedMotion` premise is stale: `touch.ts` already evaluates it at attach time (not module load), and `onSwipe`/`onLongPress` trigger no animation, so no runtime gesture-start check is required for them — only `onTap` consults it (click fallback).
+
 ## Current State
 
 - `src/frontend/touch.ts` **already exists** with `onSwipe(element, options)` using passive `touchstart`/`touchend` listeners.

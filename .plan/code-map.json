@@ -23561,6 +23561,34 @@
       "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md"
     }
   ],
+  "src/frontend/alpine/chat-touch-gestures.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-accessibility-input.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-touch-gestures.md"
+    }
+  ],
+  "src/frontend/alpine/chat-touch-gestures.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-accessibility-input.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mobile-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-touch-gestures.md"
+    }
+  ],
   "src/frontend/alpine/chat-transfer.ts": [
     {
       "kind": "ticket",
@@ -27517,8 +27545,20 @@
   ],
   "src/frontend/touch.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-accessibility-input.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mobile-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-touch-gestures.md"
     }
   ],
   "src/frontend/touch.ts": [

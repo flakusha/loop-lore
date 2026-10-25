@@ -29674,9 +29674,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-frontend-touch-gestures.md",
       "title": "Frontend touch gesture system — wire recovered utility into mobile UI",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/a11y/touch-gestures.ts",
+        "src/frontend/alpine/chat-touch-gestures.ts",
         "src/frontend/alpine/index.ts",
         "src/frontend/alpine/sidebar.ts",
         "src/frontend/touch.test.ts",
@@ -35102,7 +35103,9 @@
       "srcRefs": [
         "src/frontend/a11y/haptic.ts",
         "src/frontend/a11y/touch-gestures.ts",
-        "src/frontend/a11y/touch-targets.css"
+        "src/frontend/a11y/touch-targets.css",
+        "src/frontend/alpine/chat-touch-gestures.ts",
+        "src/frontend/touch.test.ts"
       ],
       "related": []
     },
@@ -43257,8 +43260,12 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-touch-gestures.md",
       "title": "Touch gestures (mobile interaction surface)",
-      "status": "Not Started",
-      "srcRefs": [],
+      "status": "in_progress",
+      "srcRefs": [
+        "src/frontend/alpine/chat-touch-gestures.test.ts",
+        "src/frontend/alpine/chat-touch-gestures.ts",
+        "src/frontend/touch.test.ts"
+      ],
       "related": [
         "epic-accessibility-input"
       ]
@@ -45875,7 +45882,10 @@
         "src/frontend/a11y/screen-reader.ts",
         "src/frontend/a11y/touch-gestures.ts",
         "src/frontend/alpine/a11y.ts",
+        "src/frontend/alpine/chat-touch-gestures.test.ts",
+        "src/frontend/alpine/chat-touch-gestures.ts",
         "src/frontend/alpine/focus.ts",
+        "src/frontend/touch.test.ts",
         "src/frontend/touch.ts"
       ],
       "related": []
@@ -65154,6 +65164,22 @@
       ]
     },
     {
+      "path": "src/frontend/alpine/chat-touch-gestures.test.ts",
+      "owners": [
+        "TASK-touch-gestures",
+        "epic-accessibility-input"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/chat-touch-gestures.ts",
+      "owners": [
+        "TASK-frontend-touch-gestures",
+        "TASK-mobile-touch-gestures",
+        "TASK-touch-gestures",
+        "epic-accessibility-input"
+      ]
+    },
+    {
       "path": "src/frontend/alpine/chat-transfer.ts",
       "owners": [
         "TASK-chat-transfer-frontend"
@@ -67786,7 +67812,10 @@
     {
       "path": "src/frontend/touch.test.ts",
       "owners": [
-        "TASK-frontend-touch-gestures"
+        "TASK-frontend-touch-gestures",
+        "TASK-mobile-touch-gestures",
+        "TASK-touch-gestures",
+        "epic-accessibility-input"
       ]
     },
     {
@@ -87745,6 +87774,12 @@
       "kind": "consumes",
       "to": "epic-agency-story-points",
       "via": "src/app/register-plugins.ts; src/components/chat/story-points-chip.html; src/db/020_actor_story_points_partial_unique.test.ts; src/generation/generation-routes/regenerate.ts; src/routes/agency/index.ts; src/services/agency/spend-helpers.ts; src/services/agency/story-points.test.ts; src/views/chat.html"
+    },
+    {
+      "from": "TASK-touch-gestures",
+      "kind": "consumes",
+      "to": "epic-accessibility-input",
+      "via": "src/frontend/alpine/chat-touch-gestures.test.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts"
     },
     {
       "from": "TASK-transport-expansion",
@@ -131229,6 +131264,11 @@
     {
       "from": "TASK-frontend-touch-gestures",
       "kind": "produces",
+      "to": "src/frontend/alpine/chat-touch-gestures.ts"
+    },
+    {
+      "from": "TASK-frontend-touch-gestures",
+      "kind": "produces",
       "to": "src/frontend/alpine/index.ts"
     },
     {
@@ -136700,6 +136740,16 @@
       "from": "TASK-mobile-touch-gestures",
       "kind": "produces",
       "to": "src/frontend/a11y/touch-targets.css"
+    },
+    {
+      "from": "TASK-mobile-touch-gestures",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-touch-gestures.ts"
+    },
+    {
+      "from": "TASK-mobile-touch-gestures",
+      "kind": "produces",
+      "to": "src/frontend/touch.test.ts"
     },
     {
       "from": "TASK-model-comparison-reactions",
@@ -143487,6 +143537,21 @@
       "to": "src/anonymity/tor/tor.ts"
     },
     {
+      "from": "TASK-touch-gestures",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-touch-gestures.test.ts"
+    },
+    {
+      "from": "TASK-touch-gestures",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-touch-gestures.ts"
+    },
+    {
+      "from": "TASK-touch-gestures",
+      "kind": "produces",
+      "to": "src/frontend/touch.test.ts"
+    },
+    {
       "from": "TASK-trade-history-npc-counterparty",
       "kind": "produces",
       "to": "src/routes/trade/history.ts"
@@ -146409,7 +146474,22 @@
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
+      "to": "src/frontend/alpine/chat-touch-gestures.test.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-touch-gestures.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
       "to": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "epic-accessibility-input",
+      "kind": "produces",
+      "to": "src/frontend/touch.test.ts"
     },
     {
       "from": "epic-accessibility-input",
@@ -326561,7 +326641,7 @@
       "from": "TASK-frontend-touch-gestures",
       "kind": "sibling",
       "to": "TASK-mobile-touch-gestures",
-      "via": "src/frontend/a11y/touch-gestures.ts"
+      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts"
     },
     {
       "from": "TASK-frontend-touch-gestures",
@@ -326580,6 +326660,12 @@
       "kind": "sibling",
       "to": "TASK-shared-text-surface-toolbar",
       "via": "src/frontend/alpine/index.ts"
+    },
+    {
+      "from": "TASK-frontend-touch-gestures",
+      "kind": "sibling",
+      "to": "TASK-touch-gestures",
+      "via": "src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts"
     },
     {
       "from": "TASK-frontend-touch-gestures",
@@ -326609,7 +326695,7 @@
       "from": "TASK-frontend-touch-gestures",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/touch.ts"
+      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts; src/frontend/touch.ts"
     },
     {
       "from": "TASK-frontend-touch-gestures",
@@ -343894,8 +343980,14 @@
     {
       "from": "TASK-mobile-touch-gestures",
       "kind": "sibling",
+      "to": "TASK-touch-gestures",
+      "via": "src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts"
+    },
+    {
+      "from": "TASK-mobile-touch-gestures",
+      "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/touch-gestures.ts"
+      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts"
     },
     {
       "from": "TASK-model-comparison-reactions",
