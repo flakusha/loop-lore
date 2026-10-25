@@ -29,13 +29,15 @@ const DEFAULTS: NsfwRuntimeConfig = {
 
 /** Singleton store — prevents module-level mutable state issues. */
 class NsfwRuntimeConfigStore {
-  private config: NsfwRuntimeConfig = { ...DEFAULTS, };
+  private file: NsfwRuntimeConfig = { ...DEFAULTS, };
+  private override: Partial<NsfwRuntimeConfig> = {};
 
   /**
    * @param config
    */
   init(config: NsfwRuntimeConfig,): void {
-    this.config = { ...DEFAULTS, ...config, };
+    this.file = { ...DEFAULTS, ...config, };
+    this.override = {};
   }
 
   /** */
@@ -43,14 +45,24 @@ class NsfwRuntimeConfigStore {
    * @returns {NsfwConfig}
    */
   get(): NsfwRuntimeConfig {
-    return { ...this.config, };
+    return { ...this.file, ...this.override, };
   }
 
   /**
+   * Admin override: persisted in `system_config`, re-applied at startup. It is
+   * kept apart from the file layer so a config-file reload cannot undo it.
    * @param partial
    */
   update(partial: Partial<NsfwRuntimeConfig>,): void {
-    this.config = { ...this.config, ...partial, };
+    this.override = { ...this.override, ...partial, };
+  }
+
+  /**
+   * Config-file value: never touches the admin override.
+   * @param partial
+   */
+  updateFile(partial: Partial<NsfwRuntimeConfig>,): void {
+    this.file = { ...this.file, ...partial, };
   }
 }
 
@@ -96,11 +108,24 @@ export function effectiveNsfwConfig(fileConfig: NsfwConfig,): NsfwConfig {
 
 /**
  * Apply a partial update to the live runtime NSFW config.
+ * This is the ADMIN path: the value is persisted in `system_config` and
+ * re-applied at startup, so it lives in the override layer and survives a
+ * config-file reload.
  * @param partial
  * @returns {void}
  */
 export function updateRuntimeNsfwConfig(partial: Partial<NsfwRuntimeConfig>,): void {
   nsfwRuntimeConfig.update(partial,);
+}
+
+/**
+ * Apply a partial update that came from the CONFIG FILE (a hot reload). It
+ * only touches the file layer, so an admin override is preserved.
+ * @param partial
+ * @returns {void}
+ */
+export function updateRuntimeNsfwFileConfig(partial: Partial<NsfwRuntimeConfig>,): void {
+  nsfwRuntimeConfig.updateFile(partial,);
 }
 
 /**

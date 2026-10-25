@@ -152,6 +152,17 @@ export function applyConfigChange(domain: string, config: Config,): ConfigChange
   if (previous) { collectChangedPaths(previous, config, "", changedPaths,); }
   previous = config;
 
+  return emitChange(domain, config, changedPaths,);
+}
+
+/**
+ * Emit a classified change to the subscribers.
+ * @param domain
+ * @param config
+ * @param changedPaths
+ * @returns The emitted change.
+ */
+function emitChange(domain: string, config: Config, changedPaths: string[],): ConfigChange {
   const hotPaths = changedPaths.filter((path,) => classifyConfigPath(path,) === "hot");
   const restartPaths = changedPaths.filter((path,) => classifyConfigPath(path,) === "restart");
   const change: ConfigChange = {
@@ -189,6 +200,10 @@ export function applyConfigWrite(key: string, value: string,): boolean {
   const targetType = getTypeOfPath(next as unknown as Record<string, unknown>, key,);
   const coerced = coerceValue(value, targetType,);
   setByPath(next as unknown as Record<string, unknown>, key, coerced,);
-  applyConfigChange("system_config", next,);
+  // The write is an admin override, not a file edit: emit it without touching
+  // the file baseline. Otherwise the next config-file reload would diff the
+  // file against the ADMIN value, see the NSFW path as changed, and push the
+  // file value back over the admin override.
+  emitChange("system_config", next, [key,],);
   return true;
 }
