@@ -146,6 +146,50 @@ const actionHandlers: Record<string, ActionHandler> = {
     }
   },
 
+  "world-update": async (ctx, payload,) => {
+    const worldId = (payload?.worldId as string) ?? "";
+    const updates = (payload?.updates ?? {}) as Record<string, unknown>;
+    if (!worldId || Object.keys(updates,).length === 0) {
+      log.warn("world-update: missing required payload fields", { payload, },);
+      return;
+    }
+
+    if (!confirm(`Apply the pending update to world "${worldId}"?`,)) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/worlds/${worldId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody(updates,),
+      },);
+
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok ? t("toasts.worldSaved",) : t("toasts.failedSaveWorld",),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSaveWorld",), },);
+    }
+  },
+
+  "world-delete": async (ctx, payload,) => {
+    const worldId = (payload?.worldId as string) ?? "";
+    if (!worldId) {
+      log.warn("world-delete: missing required payload fields", { payload, },);
+      return;
+    }
+
+    if (!confirm(`Permanently delete world "${worldId}"?`,)) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/worlds/${worldId}`, { method: "DELETE", },);
+
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok ? t("toasts.worldDeleted",) : t("toasts.failedDeleteWorld",),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedDeleteWorld",), },);
+    }
+  },
   "impersonate-toggle": async (ctx, payload, chatId,) => {
     const mode = (payload?.mode as string) ?? "toggle";
     if (mode === "off") {
