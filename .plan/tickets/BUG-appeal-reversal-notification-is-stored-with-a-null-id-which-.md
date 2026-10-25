@@ -14,12 +14,30 @@ notifyModeratorReversal inserts into notifications without an id column, so the 
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Same defect class as `BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md`: a TEXT PRIMARY KEY with no DB default, written without an id. `notifyModeratorReversal` was the only production `notifications` writer that omitted it (`notifications/service/crud.ts:58` and `nsfw/moderation-service/audit.ts:141` both pass one).
+
+The fix has two halves:
+
+1. The insert site now supplies `id: uid()` (`src/nsfw/moderation-service/appeals-reversal.ts:143-147`). This closes the defect.
+2. The type hole that let the omission compile (`id: Generated<string>` claims a DB default that no migration creates) is closed by the GENERATOR — `src/db/schema-*.ts` is regenerated from the migration chain, so a hand edit would be reverted by the next `db:sync-types` run.
+
+The generator half is owned by a separate branch (TASK-generated-db-types-mark-every-primary-key-as-db-generated-so, issue `db7edfa`) and is deliberately NOT part of this commit: the general rule change breaks typecheck repo-wide, so it must land as its own change with its own sweep.
+
+A forward migration making `notifications.id` NOT NULL was considered and deliberately NOT done: SQLite requires a full table rebuild for that, it would need a backfill of any already-stored NULL-id rows, and the compile-time guarantee (owned by db7edfa) already covers the failure mode at the source. The rebuild is a separate, riskier change; the ticket's own summary lists it as one option among several.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+**Resolution:**
+
+- Fix: `src/nsfw/moderation-service/appeals-reversal.ts:143-147` — the `notifications` insert now passes `id: uid()`; the `uid` import was added at `:13`.
+- Type hardening is NOT in this commit: it belongs to TASK-generated-db-types-mark-every-primary-key-as-db-generated-so (issue `db7edfa`), which owns `scripts/generate-db-types.ts` and the generated `src/db/schema-*.ts`. Until that lands, `Notifications.id` remains `Generated<string>` and a future omission would still type-check — the regression test below is what guards it in the meantime.
+- Test: `src/nsfw/moderation-service/appeals.test.ts` — "reversal notification is stored with a non-null id" (added next to the existing "reversal writes a notifications row for the original moderator" case). It drives the real reversal flow (`submitAppeal` → `reviewAppeal` → `executeReversal`), then asserts the stored row's `id` is non-null AND that the row returned by the public `NotificationService.list()` carries a usable id — the user-visible symptom the ticket describes (a null id fails the client's `NotificationListItem` validation and empties the whole list).
+  - Before the fix: FAIL — `expect(received).not.toBeNull()` → `Received: null` (18 other tests in the file still passed).
+  - After the fix: PASS (19/19 in the file).
+- The pre-existing test "reversal writes a notifications row for the original moderator" was left untouched — its contract (a `notifications` row with `type = "appeal.reversed"` exists for the moderator) is unchanged.
 
 **Resolved:** 2026-10-25 registry-driven close: git issue e490c6a (registry tip: b57599045 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-APPEAL-REVERSAL-NOTIFICATION)
