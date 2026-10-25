@@ -274,7 +274,10 @@ template surface opened to the guest tier:
   an id-less caller without the guest role matches nothing, so a denied
   derive never degrades into anonymous enumeration of the catalog.
   Unlisted and private worlds stay invisible to a guest; the owned/public/
-  member arms for authenticated callers are unchanged.
+  member arms for authenticated callers are unchanged. Note: the id-less
+  role-less list arm returns an empty page rather than the public catalog —
+  unreachable in production (the derive 401s or assigns the guest tier);
+  kept as defense-in-depth.
 - The read-only location surface (`GET /api/worlds/:worldId/locations` and
   `/locations/:locId`) opted in with `requireWorldAccess(...,
   { allowGuest: true })` — the Phase 1 pattern on the rest of the read
