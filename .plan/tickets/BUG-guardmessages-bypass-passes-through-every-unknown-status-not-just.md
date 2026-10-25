@@ -4,6 +4,7 @@
 # BUG: guardMessages bypass passes through every unknown status, not just the legacy "visible" default
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — guardMessages no longer fails open: `assertKnownAxis` (src/db/validators/enforce.ts:110-125) throws for any non-enum value, exempting only the pinned legacy literal `visible` (:94-95); guardMessages (:154-165) validates each axis against its own enum and then asserts the pair (:164). The old isKnownStatus early return is gone.
 **Priority:** high
 **Effort:** Small (narrow the bypass to a named constant + restore the reject assertion; optional 032 backfill migration)
 **Epic:** epic-messages
