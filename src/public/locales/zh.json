@@ -1396,6 +1396,7 @@
     "chatTransferred": "聊天已转移",
     "chatAlreadyInLocation": "聊天已在此位置",
     "locationUpdated": "位置已更新",
+    "failedUpdateLocation": "更新位置失败",
     "failedDeleteChat": "删除聊天失败",
     "failedRenameChat": "重命名聊天失败",
     "failedArchive": "归档失败",

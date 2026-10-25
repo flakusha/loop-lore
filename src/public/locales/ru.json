@@ -1396,6 +1396,7 @@
     "chatTransferred": "Чат передан",
     "chatAlreadyInLocation": "Чат уже находится в этой локации",
     "locationUpdated": "Локация обновлена",
+    "failedUpdateLocation": "Не удалось обновить локацию",
     "failedDeleteChat": "Не удалось удалить чат",
     "failedRenameChat": "Не удалось переименовать чат",
     "failedArchive": "Не удалось архивировать",

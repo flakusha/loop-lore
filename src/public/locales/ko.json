@@ -1396,6 +1396,7 @@
     "chatTransferred": "채팅이 이전되었습니다",
     "chatAlreadyInLocation": "채팅이 이미 이 위치에 있습니다",
     "locationUpdated": "위치가 업데이트되었습니다",
+    "failedUpdateLocation": "위치 업데이트 실패",
     "failedDeleteChat": "채팅 삭제에 실패했습니다",
     "failedRenameChat": "채팅 이름 변경에 실패했습니다",
     "failedArchive": "보관에 실패했습니다",

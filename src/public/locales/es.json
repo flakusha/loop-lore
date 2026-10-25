@@ -1396,6 +1396,7 @@
     "chatTransferred": "Chat transferido",
     "chatAlreadyInLocation": "El chat ya está en esta ubicación",
     "locationUpdated": "Ubicación actualizada",
+    "failedUpdateLocation": "No se pudo actualizar la ubicación",
     "failedDeleteChat": "No se pudo eliminar el chat",
     "failedRenameChat": "No se pudo renombrar el chat",
     "failedArchive": "No se pudo archivar",
