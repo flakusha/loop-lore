@@ -1388,6 +1388,15 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmApplyEntity": "\"{name}\"에 변경 사항을 적용하시겠습니까?",
+    "confirmAddEntity": "새 {kind} \"{name}\"을(를) 추가하시겠습니까?",
+    "confirmCloneEntity": "\"{name}\"의 복사본을 만드시겠습니까?",
+    "entityApplied": "{name}에 변경 사항이 적용되었습니다",
+    "failedApplyEntity": "{name}에 변경 사항을 적용하지 못했습니다",
+    "entityAdded": "{name}이(가) 추가되었습니다",
+    "failedAddEntity": "{name}을(를) 추가하지 못했습니다",
+    "entityCloned": "\"{name}\"의 복사본이 생성되었습니다",
+    "failedCloneEntity": "\"{name}\"의 복사본을 만들지 못했습니다",
     "networkError": "네트워크 오류",
     "failed": "실패",
     "chatDeleted": "채팅이 삭제되었습니다",
@@ -1662,6 +1671,9 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "apply": "world/location/item 필드 변경 (/apply <kind> <id> 키=값 …)",
+    "add": "월드에 새 location 또는 item 추가 (/add <kind> <이름> [world-id])",
+    "clone": "기존 location 또는 item 복사 (/clone <kind> <원본-id>)",
     "help": "사용 가능한 명령 표시",
     "roll": "주사위 굴리기 (예: /roll 2d6+3)",
     "summarize": "최근 메시지 요약",

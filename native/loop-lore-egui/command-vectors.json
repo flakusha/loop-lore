@@ -68,6 +68,18 @@
       "name": "dice"
     },
     {
+      "name": "apply",
+      "requiredRole": "member"
+    },
+    {
+      "name": "add",
+      "requiredRole": "member"
+    },
+    {
+      "name": "clone",
+      "requiredRole": "member"
+    },
+    {
       "name": "guide"
     },
     {
@@ -298,6 +310,9 @@
         "detail",
         "roll",
         "dice",
+        "apply",
+        "add",
+        "clone",
         "guide",
         "constraint",
         "scene",
@@ -369,6 +384,8 @@
         "char-get",
         "create",
         "detail",
+        "apply",
+        "add",
         "constraint",
         "target",
         "orchestrate",

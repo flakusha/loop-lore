@@ -1388,6 +1388,15 @@
     "sort": "Sort"
   },
   "toasts": {
+    "confirmApplyEntity": "تطبيق التغييرات المعلّقة على \"{name}\"؟",
+    "confirmAddEntity": "إضافة {kind} جديد \"{name}\"؟",
+    "confirmCloneEntity": "إنشاء نسخة من \"{name}\"؟",
+    "entityApplied": "تم تطبيق التغييرات على {name}",
+    "failedApplyEntity": "فشل تطبيق التغييرات على {name}",
+    "entityAdded": "تمت إضافة {name}",
+    "failedAddEntity": "فشل إضافة {name}",
+    "entityCloned": "تم إنشاء نسخة من {name}",
+    "failedCloneEntity": "فشل إنشاء نسخة من {name}",
     "networkError": "خطأ في الشبكة",
     "failed": "فشل",
     "chatDeleted": "تم حذف المحادثة",
@@ -1662,6 +1671,9 @@
     "allocationSaved": "Stat allocation saved"
   },
   "commands": {
+    "apply": "تعديل حقول world/location/item (/apply <kind> <id> مفتاح=قيمة …)",
+    "add": "إضافة location أو item جديد إلى عالم (/add <kind> <الاسم> [world-id])",
+    "clone": "نسخ location أو item موجود (/clone <kind> <معرّف-المصدر>)",
     "help": "عرض الأوامر المتاحة",
     "roll": "رمي النرد (مثال: /roll 2d6+3)",
     "summarize": "تلخيص الرسائل الأخيرة",
