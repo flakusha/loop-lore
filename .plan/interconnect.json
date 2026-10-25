@@ -13045,7 +13045,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-message-translations-chat-first.md",
       "title": "message translations chat-first",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/auto-translate.ts",
         "src/chat/message-translations.ts",

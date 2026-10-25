@@ -1689,7 +1689,7 @@ Total tickets: **3975** — untagged: **2726** — unbound to epic: **1016**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2726 | 1050 | 45 | 898 | 32 | 0 | 701 |
+| (untagged) | 2726 | 1051 | 45 | 898 | 32 | 0 | 700 |
 
 ## By epic × status
 
@@ -1920,7 +1920,7 @@ Total tickets: **3975** — untagged: **2726** — unbound to epic: **1016**
 | epic-model-metadata-read | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
 | epic-multi-instance-reconciliation | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | epic-multi-session | 4 | 1 | 0 | 3 | 0 | 0 | 0 |
-| epic-multilingual-carriage | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
+| epic-multilingual-carriage | 8 | 1 | 0 | 0 | 0 | 0 | 7 |
 | epic-multimodal-asset-reuse | 4 | 0 | 0 | 3 | 0 | 0 | 1 |
 | epic-narration-actor-separation | 3 | 0 | 0 | 1 | 0 | 0 | 2 |
 | epic-narrative-publishing-workflows | 19 | 0 | 0 | 0 | 0 | 0 | 19 |
