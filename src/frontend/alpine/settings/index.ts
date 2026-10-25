@@ -4,6 +4,7 @@
 import { api, } from "./api";
 import { chat, } from "./chat";
 import { general, } from "./general";
+import { keynav, } from "./keynav";
 import { restartBanner, } from "./restart-banner";
 import type { LocaleInfoArray, SettingsState, } from "./types";
 
@@ -44,5 +45,6 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     ...chat(),
     ...api(),
     ...restartBanner(),
+    ...keynav(),
   };
 };

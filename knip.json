@@ -153,14 +153,15 @@
     //   nsfw-context.ts -> owned by wire-deadcode
     //   activitypub-keys.ts -> prerequisite for FEAT-activitypub-federation
     //     (BUG-activitypub-actor-keys-table... says keep until that FEAT lands)
-    //   touch.ts, keynav-help.ts, mobile-composer.ts -> open WIRE tickets under
-    //     epic-frontend-keynav-mobile; keynav-help/mobile-composer already have
-    //     live HTML partials binding x-data="keynavHelp()"/"mobileComposer()"
+    //   touch.ts, mobile-composer.ts -> open WIRE tickets under
+    //     epic-frontend-keynav-mobile; mobile-composer already has a
+    //     live HTML partial binding x-data="mobileComposer()"
+    //   (keynav-help.ts removed 2026-10-25: wired into layout.html + the
+    //     Alpine bundle by a11y-keynav-phase3)
     //   transport/index.ts + transport/test/harness.ts -> CONTESTED:
     //     epic-transport-expansion.md lists both as Built deliverables
     "src/assistant/prompt/sections/nsfw-context.ts",
     "src/crypto/activitypub-keys.ts",
-    "src/frontend/alpine/keynav-help.ts",
     "src/frontend/alpine/mobile-composer.ts",
     "src/frontend/touch.ts",
     "src/transport/index.ts",

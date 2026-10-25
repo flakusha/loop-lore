@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="/css/vn.css" media="all" />
     <link rel="stylesheet" href="/css/story.css" media="all" />
     <link rel="stylesheet" href="/css/components/info-bubble.css" media="all" />
+    <link rel="stylesheet" href="/css/mobile-keynav.css" media="all" />
 
     <!-- Responsive layer (TASK-responsive-design) — must stay LAST:
          overrides theme-base tokens + app.css layout -->
@@ -238,6 +239,65 @@
           >
             ⚙
           </button>
+
+          <!-- Keyboard navigation (opt-in): help button + shortcut overlay.
+               Hidden entirely unless the `keynav` localStorage flag is set. -->
+          <div x-data="keynavHelp()" x-init="init()">
+            <button
+              type="button"
+              class="btn-icon"
+              x-show="navEnabled"
+              x-cloak
+              x-on:click="toggle()"
+              title="{{{t("frontend.keynav.help.toggle")}}}"
+              aria-label="{{{t("frontend.keynav.help.toggle")}}}"
+              aria-haspopup="dialog"
+              data-testid="keynav-help-button"
+            >
+              ⌨
+            </button>
+            <div
+              class="keynav-help-overlay"
+              x-show="open"
+              x-cloak
+              role="dialog"
+              aria-modal="true"
+              aria-label="{{{t("frontend.keynav.help.title")}}}"
+              aria-labelledby="keynav-help-title"
+              x-on:click.self="close()"
+              x-on:keydown.escape.window="close()"
+              data-testid="keynav-help-overlay"
+            >
+              <div class="keynav-help-panel">
+                <header class="keynav-help-header">
+                  <h2 id="keynav-help-title">{{{t("frontend.keynav.help.title")}}}</h2>
+                  <button
+                    type="button"
+                    class="keynav-help-close"
+                    x-on:click="close()"
+                    aria-label="{{{t("frontend.keynav.help.close")}}}"
+                  >&#x2715;</button>
+                </header>
+                <table class="keynav-help-table" aria-labelledby="keynav-help-title">
+                  <thead>
+                    <tr>
+                      <th>{{{t("frontend.keynav.help.colKey")}}}</th>
+                      <th>{{{t("frontend.keynav.help.colAction")}}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="s in shortcuts" :key="s.action">
+                      <tr>
+                        <td><kbd x-text="s.combo"></kbd></td>
+                        <td x-text="label(s.action)"></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+                <p class="keynav-help-footer">{{{t("frontend.keynav.help.hint")}}}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </aside>
