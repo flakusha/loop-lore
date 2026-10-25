@@ -1,8 +1,27 @@
-import "./items-update";
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * /item-list, /item-get, /inventory — assistant access to item definitions
+ * and the items a character carries. `/item-update` lives in `./items-update`,
+ * which also owns the `/item-update` argument parser.
+ *
+ * Item data is world-scoped and owner-scoped, so every command here runs
+ * `checkWorldOwnership` from `src/routes/story-items/handlers.ts` before any
+ * row is read. Reads go through `ItemsService` rather than raw SQL so the
+ * definition/instance join stays in one place.
+ */
+
 import { checkWorldOwnership, } from "../../routes/story-items/handlers";
 import { type ItemInstance, ItemsService, } from "../../story/items";
-import { safeJsonParse, } from "../../utils";
+import { parseItemUpdates, } from "./items-update";
 import { type CommandResult, registerCommand, } from "./registry";
+
+// `parseItemUpdates` moved to `./items-update`, the module that owns
+// `/item-update`. It is re-exported here so existing importers keep working,
+// and the import keeps `/item-update` registering before `/item-list`,
+// `/item-get` and `/inventory` — the order the frozen command vectors expect.
+export { parseItemUpdates, };
 export const DENIED = "not found or access denied";
 
 registerCommand("item-list", async (args, ctx,): Promise<CommandResult> => {
@@ -102,99 +121,6 @@ registerCommand("item-get", async (args, ctx,): Promise<CommandResult> => {
     handled: true,
   };
 }, { requiredRole: "member", },);
-
-/**
- * Update fields `/item-update` accepts, keyed as the user writes them. They map
- * onto what `handleDefinition` (`src/routes/story-items/handlers.ts`) reads
- * from the `PUT /api/v1/worlds/:worldId/items/:itemId` body.
- */
-const ITEM_UPDATE_STRING_FIELDS = ["name", "description", "category", "rarity",] as const;
-/** Numeric fields `/item-update` accepts. */
-const ITEM_UPDATE_NUMBER_FIELDS = ["value", "weight",] as const;
-/** Every accepted field, for unknown-field error messages. */
-const ALL_ITEM_UPDATE_FIELDS = [...ITEM_UPDATE_STRING_FIELDS, ...ITEM_UPDATE_NUMBER_FIELDS, "properties",] as const;
-
-/**
- * One `key=value` pair parsed out of an `/item-update` argument list.
- */
-export type ItemUpdatePatch = Partial<
-  Record<(typeof ALL_ITEM_UPDATE_FIELDS)[number], string | number | Record<string, unknown>>
->;
-
-/** A JSON object (arrays excluded) — the shape the route stores in `properties`. */
-function isJsonObject(value: unknown,): value is Record<string, unknown> {
-  return value !== null && typeof value === "object" && !Array.isArray(value,);
-}
-
-export type ParseItemUpdatesResult =
-  | { ok: true; updates: ItemUpdatePatch }
-  | { ok: false; error: string };
-
-/**
- * Parse `key=value` update pairs from the text after the item id. Values may
- * be quoted to include spaces; unquoted values end at whitespace. Tokens that
- * are not `key=value` pairs are ignored. A repeated key is LAST-WINS: the
- * final pair overwrites earlier ones in the returned patch.
- * @param input - raw argument text after the item id
- * @returns ok with the allowed-field patch, or an error describing the first bad pair
- */
-export function parseItemUpdates(input: string,): ParseItemUpdatesResult {
-  const pairRe = /([a-zA-Z]+)\s*=\s*("([^"]*)"|'([^']*)'|(\S+))/g;
-  const updates: ItemUpdatePatch = {};
-  let matched = false;
-
-  for (const match of input.matchAll(pairRe,)) {
-    matched = true;
-    const key = match[1] ?? "";
-    const value = match[3] ?? match[4] ?? match[5] ?? "";
-
-    if ((ITEM_UPDATE_STRING_FIELDS as readonly string[]).includes(key,)) {
-      if (key === "name" && value === "") {
-        return { ok: false, error: 'Field "name" expects a non-empty item name, got "".', };
-      }
-
-      updates[key as keyof ItemUpdatePatch] = value;
-      continue;
-    }
-
-    if ((ITEM_UPDATE_NUMBER_FIELDS as readonly string[]).includes(key,)) {
-      const num = Number(value,);
-      if (!Number.isFinite(num,)) {
-        return { ok: false, error: `Field "${key}" expects a number, got "${value}".`, };
-      }
-
-      updates[key as keyof ItemUpdatePatch] = num;
-      continue;
-    }
-
-    if (key === "properties") {
-      const parsed = safeJsonParse<unknown>(value,);
-      if (!parsed.ok || !isJsonObject(parsed.value,)) {
-        return {
-          ok: false,
-          error: 'Field "properties" expects a JSON object, e.g. properties={"damage":"1d6"}.',
-        };
-      }
-
-      updates.properties = parsed.value;
-      continue;
-    }
-
-    return {
-      ok: false,
-      error: `Unknown item field "${key}" — allowed: ${ALL_ITEM_UPDATE_FIELDS.join(", ",)}.`,
-    };
-  }
-
-  if (!matched) {
-    return {
-      ok: false,
-      error: 'No updates parsed — use key=value pairs, e.g. name="Iron Sword" value=50.',
-    };
-  }
-
-  return { ok: true, updates, };
-}
 
 registerCommand("inventory", async (args, ctx,): Promise<CommandResult> => {
   const charId = args[0] ?? ctx.currentCharacter?.id;

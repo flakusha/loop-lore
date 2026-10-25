@@ -2,15 +2,122 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * /char-update — assistant command to modify a character the caller owns.
+ * /char-update — assistant command to modify a character the caller owns, plus
+ * the `key=value` parser for its arguments.
  */
 
 import { ActorType, } from "../../db/enums";
 import { checkActorOwnership, } from "../../routes/actor-auth";
-import {
-  parseCharacterUpdates,
-} from "./characters-access";
 import { type CommandResult, registerCommand, } from "./registry";
+
+/**
+ * String fields `/char-update` accepts, keyed exactly as the user writes them.
+ * They map onto the camelCase body `buildActorUpdates`
+ * (`src/routes/characters/update.ts`) reads from the `PUT /api/v1/actors/:actorId`
+ * request.
+ */
+const CHAR_UPDATE_STRING_FIELDS = [
+  "displayName",
+  "description",
+  "systemPrompt",
+  "agentRole",
+  "avatarAssetId",
+  "contentRating",
+  "personality",
+  "appearance",
+  "defaultOutfit",
+  "welcomeMessage",
+  "mesExample",
+  "scenario",
+  "postHistoryInstructions",
+  "creatorNotes",
+  "creator",
+  "characterVersion",
+  "growthMode",
+] as const;
+
+/** Numeric fields `/char-update` accepts. */
+const CHAR_UPDATE_NUMBER_FIELDS = ["avatarFocusX", "avatarFocusY",] as const;
+/** Boolean fields `/char-update` accepts. */
+const CHAR_UPDATE_BOOLEAN_FIELDS = ["llmAssistEnabled",] as const;
+/** Every accepted field, for unknown-field error messages. */
+const ALL_CHAR_UPDATE_FIELDS = [
+  ...CHAR_UPDATE_STRING_FIELDS,
+  ...CHAR_UPDATE_NUMBER_FIELDS,
+  ...CHAR_UPDATE_BOOLEAN_FIELDS,
+] as const;
+
+/**
+ * One `key=value` pair parsed out of a `/char-update` argument list.
+ */
+export type CharacterUpdatePatch = Partial<
+  Record<
+    (typeof CHAR_UPDATE_STRING_FIELDS | typeof CHAR_UPDATE_NUMBER_FIELDS | typeof CHAR_UPDATE_BOOLEAN_FIELDS)[number],
+    string | number | boolean
+  >
+>;
+
+export type ParseCharacterUpdatesResult =
+  | { ok: true; updates: CharacterUpdatePatch }
+  | { ok: false; error: string };
+
+/**
+ * Parse `key=value` update pairs from the text after the character id. Values
+ * may be quoted to include spaces; unquoted values end at whitespace. Tokens
+ * that are not `key=value` pairs are ignored. A repeated key is LAST-WINS: the
+ * final pair overwrites earlier ones in the returned patch.
+ * @param input - raw argument text after the character id
+ * @returns ok with the allowed-field patch, or an error describing the first bad pair
+ */
+export function parseCharacterUpdates(input: string,): ParseCharacterUpdatesResult {
+  const pairRe = /([a-zA-Z]+)\s*=\s*("([^"]*)"|'([^']*)'|(\S+))/g;
+  const updates: CharacterUpdatePatch = {};
+  let matched = false;
+
+  for (const match of input.matchAll(pairRe,)) {
+    matched = true;
+    const key = match[1] ?? "";
+    const value = match[3] ?? match[4] ?? match[5] ?? "";
+
+    if ((CHAR_UPDATE_STRING_FIELDS as readonly string[]).includes(key,)) {
+      updates[key as keyof CharacterUpdatePatch] = value;
+      continue;
+    }
+
+    if ((CHAR_UPDATE_NUMBER_FIELDS as readonly string[]).includes(key,)) {
+      const num = Number(value,);
+      if (!Number.isFinite(num,)) {
+        return { ok: false, error: `Field "${key}" expects a number, got "${value}".`, };
+      }
+
+      updates[key as keyof CharacterUpdatePatch] = num;
+      continue;
+    }
+
+    if ((CHAR_UPDATE_BOOLEAN_FIELDS as readonly string[]).includes(key,)) {
+      if (value !== "true" && value !== "false") {
+        return { ok: false, error: `Field "${key}" expects true or false, got "${value}".`, };
+      }
+
+      updates[key as keyof CharacterUpdatePatch] = value === "true";
+      continue;
+    }
+
+    return {
+      ok: false,
+      error: `Unknown character field "${key}" — allowed: ${ALL_CHAR_UPDATE_FIELDS.join(", ",)}.`,
+    };
+  }
+
+  if (!matched) {
+    return {
+      ok: false,
+      error: 'No updates parsed — use key=value pairs, e.g. displayName="Iria the Bold".',
+    };
+  }
+
+  return { ok: true, updates, };
+}
 
 registerCommand("char-update", async (args, ctx,): Promise<CommandResult> => {
   const charId = args[0];
