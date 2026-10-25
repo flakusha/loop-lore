@@ -24,6 +24,7 @@ const VALID_HEX_KEY = "a".repeat(64,);
 const ACTOR_ID = "actor-test-001";
 
 let db: Kysely<DB>;
+let rawSqlite: Database;
 /** Actors that receive keys — actor_keys.actor_id references actors.id. */
 const KEY_BEARING_ACTORS = [
   ACTOR_ID,
@@ -47,6 +48,7 @@ async function ensureActor(actorId: string,): Promise<void> {
 
 beforeAll(async () => {
   const sqlite = new Database(":memory:",);
+  rawSqlite = sqlite;
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
   await migrate(db as unknown as Kysely<unknown>,);
   for (const actorId of KEY_BEARING_ACTORS) { await ensureActor(actorId,); }
@@ -209,6 +211,36 @@ describe("rotateActorKey", () => {
       .executeTakeFirst();
 
     expect(newRow!.status,).toBe("active",);
+  });
+
+  test("keeps the old key active when the new-key insert fails (BUG-key-material-revoke-then-insert-sequences-are-non-transactio)", async () => {
+    const smk = getSmkKeySafe();
+    const actorId = "actor-rotate-tx";
+    await ensureActor(actorId,);
+    await generateActorKey({ database: db, actorId, smk, name: "primary", },);
+
+    // Fail the SECOND write (the new-key insert) after the expire.
+    rawSqlite.exec(
+      `CREATE TRIGGER fail_actor_key_insert BEFORE INSERT ON actor_keys
+       WHEN NEW.actor_id = '${actorId}' BEGIN SELECT RAISE(ABORT, 'simulated key insert failure'); END;`,
+    );
+
+    try {
+      await expect(rotateActorKey({ database: db, actorId, smk, },),).rejects.toThrow();
+
+      // The expire must roll back with the failed insert — the actor must
+      // never be stranded with zero active keys.
+      const active = await db
+        .selectFrom("actor_keys",)
+        .select("id",)
+        .where("actor_id", "=", actorId,)
+        .where("status", "=", "active",)
+        .executeTakeFirst();
+
+      expect(active,).toBeDefined();
+    } finally {
+      rawSqlite.exec("DROP TRIGGER fail_actor_key_insert;",);
+    }
   });
 });
 

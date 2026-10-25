@@ -66,6 +66,11 @@ export interface RevokePublicKeyOpts {
   actorId: string;
 }
 
+/** Match a SQLite UNIQUE-constraint failure (insert-race retry, chat-keys.ts precedent). */
+function isUniqueViolation(error: unknown,): boolean {
+  return /unique constraint/i.test(error instanceof Error ? error.message : String(error,),);
+}
+
 /**
  * Register (or rotate) the public key for an actor. Replaces any existing
  * active row for that actor — only one active pubkey per actor at a time.
@@ -76,38 +81,53 @@ export interface RevokePublicKeyOpts {
 export async function registerPublicKey(opts: RegisterPublicKeyOpts,): Promise<PublicKeyRow> {
   const { database, actorId, publicKeyJwk, } = opts;
   const algorithm = opts.algorithm ?? DEFAULT_ALGORITHM;
-  const id = uid();
-  const now = sql`(datetime('now'))`;
 
-  // Soft-revoke any existing active row so the unique index lets us insert.
-  // COALESCE preserves any pre-existing revoked_at (no-op when already revoked).
-  await database
-    .updateTable("actor_e2e_pubkeys",)
-    .set({ revoked_at: sql`COALESCE(revoked_at, datetime('now'))`, },)
-    .where("actor_id", "=", actorId,)
-    .where("revoked_at", "is", null,)
-    .execute();
+  // Revoke + insert are one atomic unit: a revoke that commits without the
+  // replacement insert leaves the actor with zero active pubkeys
+  // (BUG-key-material-revoke-then-insert-sequences-are-non-transactio).
+  // One retry on a UNIQUE violation covers a concurrent registration whose
+  // revoke landed between our revoke and insert (chat-keys.ts precedent).
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const id = uid();
+    try {
+      return await database.transaction().execute(async (trx,) => {
+        // Soft-revoke any existing active row so the unique index lets us insert.
+        // COALESCE preserves any pre-existing revoked_at (no-op when already revoked).
+        await trx
+          .updateTable("actor_e2e_pubkeys",)
+          .set({ revoked_at: sql`COALESCE(revoked_at, datetime('now'))`, },)
+          .where("actor_id", "=", actorId,)
+          .where("revoked_at", "is", null,)
+          .execute();
 
-  await database
-    .insertInto("actor_e2e_pubkeys",)
-    .values({
-      id,
-      actor_id: actorId,
-      public_key_jwk: serializeJwk(publicKeyJwk,),
-      algorithm,
-      created_at: now as unknown as string,
-      expires_at: opts.expiresAt ?? null,
-      revoked_at: null,
-    },)
-    .execute();
+        await trx
+          .insertInto("actor_e2e_pubkeys",)
+          .values({
+            id,
+            actor_id: actorId,
+            public_key_jwk: serializeJwk(publicKeyJwk,),
+            algorithm,
+            created_at: sql`(datetime('now'))` as unknown as string,
+            expires_at: opts.expiresAt ?? null,
+            revoked_at: null,
+          },)
+          .execute();
 
-  const row = await database
-    .selectFrom("actor_e2e_pubkeys",)
-    .selectAll()
-    .where("id", "=", id,)
-    .executeTakeFirstOrThrow();
+        const row = await trx
+          .selectFrom("actor_e2e_pubkeys",)
+          .selectAll()
+          .where("id", "=", id,)
+          .executeTakeFirstOrThrow();
 
-  return rowToPublicKey(row,);
+        return rowToPublicKey(row,);
+      },);
+    } catch (error) {
+      if (attempt === 1 || !isUniqueViolation(error,)) { throw error; }
+    }
+  }
+
+  // Unreachable: the loop returns or throws on its final iteration.
+  throw new Error("registerPublicKey: retry loop exited",);
 }
 
 /**
