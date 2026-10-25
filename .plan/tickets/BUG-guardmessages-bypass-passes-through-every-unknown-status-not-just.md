@@ -3,7 +3,7 @@
 
 # BUG: guardMessages bypass passes through every unknown status, not just the legacy "visible" default
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small (narrow the bypass to a named constant + restore the reject assertion; optional 032 backfill migration)
 **Epic:** epic-messages
@@ -221,3 +221,5 @@ That is the *intent* of the bypass and is what the `032` backfill would eliminat
 
 **Tags:** db, state-machine, validators, fail-open, guard
 **Related:** src/db/validators/enforce.ts, src/db/validators/enforce.test.ts, src/db/enums-core/messages.ts, src/db/migrations/001_init.ts, src/chat/service/visibility.ts, src/routes/messages/create.ts, src/routes/messages/forward.ts, src/routes/character-licensing.ts, src/characters/importers/character-systems/licensing.ts, TASK-019-enforce-state-machine-validators-at-write, TASK-gate-licensing-triple-via-licenserightsvalidator, BUG-duplicate-migration-numeric-prefix-021
+
+**Resolved:** 2026-10-25 registry-driven close: git issue fc37920 (registry tip: 5f0f94b0d Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Quest engine double-advances from stale in-memory progress and completes via a non-transactional multi-write sequence
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-quests-encounters
@@ -33,3 +33,5 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-3 + F-8 (gitignored; recorde
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue fad5ab4 (registry tip: e7ce81ad7 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Rate-limit misses POST /emotion-avatars/single
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-avatar-regeneration-control
@@ -21,3 +21,5 @@ Evidence (approved finding 2, P2; .tmp/concern-dev-2026-10-07.md, .tmp/concern-a
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 3ee5466 (registry tip: a0df12c1a Konstantin Fedotov Close issue)

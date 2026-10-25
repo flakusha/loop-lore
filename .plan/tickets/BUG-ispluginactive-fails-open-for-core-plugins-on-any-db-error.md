@@ -3,7 +3,7 @@
 
 # BUG: isPluginActive fails open for core plugins on any DB error
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-plugin-system
@@ -31,3 +31,5 @@ Source: .tmp/glm-review/deep-plugins-1015.md F-4 (gitignored; recorded here verb
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue eb8141c (registry tip: 6cbd597de Konstantin Fedotov Close issue)

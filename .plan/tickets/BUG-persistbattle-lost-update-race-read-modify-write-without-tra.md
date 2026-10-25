@@ -3,7 +3,7 @@
 
 # BUG: persistBattle lost-update race (read-modify-write without transaction)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-battle-action-systems
@@ -21,3 +21,5 @@ Every battle action (src/rpg/service/battles/persistence.ts:92-126) calls requir
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue cf7fe39 (registry tip: 352ae4b96 Konstantin Fedotov Close issue)
