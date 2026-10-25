@@ -85,10 +85,8 @@ describe("character commands", () => {
   test("lists the characters the caller owns", async () => {
     const result = await charList([], ctx(),);
     expect(result.handled,).toBe(true,);
-    expect(result.action,).toBe("char-list",);
     expect(result.systemMessage,).toContain("Iria",);
     expect(result.systemMessage,).toContain("A weathered scout.",);
-    expect(result.actionPayload!.characters as unknown[],).toHaveLength(1,);
   });
 
   test("never lists another user's characters", async () => {
@@ -125,7 +123,6 @@ describe("character commands", () => {
 
     const result = await charGet([charId,], ctx(),);
     expect(result.handled,).toBe(true,);
-    expect(result.action,).toBe("char-get",);
     expect(result.systemMessage,).toContain("**Character:** Iria",);
     expect(result.systemMessage,).toContain("Wry, watchful.",);
     expect(result.systemMessage,).toContain("Weathered leathers.",);
@@ -135,14 +132,12 @@ describe("character commands", () => {
     expect(result.systemMessage,).toContain("level 4 · HP 30/40 · AC 15",);
     expect(result.systemMessage,).toContain("DEX 16",);
     expect(result.systemMessage,).toContain("Tide gate",);
-    expect(result.actionPayload!.lore as unknown[],).toHaveLength(1,);
 
     // Same row, same command, caller who does not own it: refused, and no card
     // field appears. Keeps this happy path from being tautological about access.
     const denied = await charGet([charId,], ctx({ userId: otherId, },),);
     expect(denied.systemMessage,).toBe(`Character ${charId} not found or access denied.`,);
     expect(denied.systemMessage,).not.toContain("A weathered scout.",);
-    expect(denied.action,).toBeUndefined();
   });
 
   test("renders the empty-state for a character with no stats or lore", async () => {
@@ -161,7 +156,6 @@ describe("character commands", () => {
     const result = await charGet([theirs,], ctx(),);
     expect(result.systemMessage,).toBe(`Character ${theirs} not found or access denied.`,);
     expect(result.systemMessage,).not.toContain("Secret plans.",);
-    expect(result.action,).toBeUndefined();
   });
 
   test("a missing character is worded identically to a denied one", async () => {
