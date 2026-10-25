@@ -12535,6 +12535,15 @@
       "related": []
     },
     {
+      "id": "FEAT-generated-frontend-reference-docs-typedoc-to-vitepress",
+      "kind": "ticket",
+      "path": ".plan/tickets/FEAT-generated-frontend-reference-docs-typedoc-to-vitepress.md",
+      "title": "Generated frontend reference docs (Typedoc to VitePress)",
+      "status": "Not Started",
+      "srcRefs": [],
+      "related": []
+    },
+    {
       "id": "FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas",
       "kind": "ticket",
       "path": ".plan/tickets/FEAT-generic-2d-graph-canvas-renderer-reusing-game-canvas.md",

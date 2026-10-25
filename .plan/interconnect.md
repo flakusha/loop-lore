@@ -8,7 +8,7 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3651
+- tickets: 3652
 - epics: 347
 - src paths owned: 4416
 - edges: produces 11549, consumes 403, sibling 34783, owns 2649, related 1191
