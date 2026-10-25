@@ -4,6 +4,7 @@
 # BUG: formatMemoryDate throws on every rendered memory row — never spread onto component
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — formatMemoryDate implemented on the memoryPanel component (src/frontend/alpine/memory-panel.ts — delegates to memory-panel/transform.ts:85), repro pinned by new "memoryPanel.formatMemoryDate wiring" tests in src/frontend/alpine/memory-panel.test.ts (failing before: `Expected "function", received "undefined"`; 32/32 after), and the `/formatMemoryDate is not defined/` allowlist entry removed from tests/e2e/flows/browser/chat-memory-panel.browser.ts so the browser E2E now fails on regression. Gates: typecheck + eslint green (2026-10-25, worktree fix/bug-sweep, issue BUG-FORMATMEMORYDATE-THROWS-ON-EVERY-RENDERED-MEMORY-ROW-NEVER-S).
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -24,7 +25,7 @@ FIX DIRECTION: Spread/implement formatMemoryDate on the memoryPanel component.
 
 **Context:**
 
-Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): formatMemoryDate implemented on the memoryPanel component (src/frontend/alpine/memory-panel.ts — delegates to memory-panel/transform.ts:85), repro pinned by new "memoryPanel.formatMemoryDate wiring" tests in src/frontend/alpine/memory-panel.test.ts (failing before: `Expected "function", received "undefined"`; 32/32 after), and the `/formatMemoryDate is not defined/` allowlist entry removed from tests/e2e/flows/browser/chat-memory-panel.browser.ts so the browser E2E now fails on regression.
 
 **Acceptance Criteria:**
 

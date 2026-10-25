@@ -4,8 +4,8 @@
 # BUG: Key-material revoke-then-insert sequences are non-transactional: a failure strands the actor with zero active keys
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — LIVE confirmed on tip — (A) repro (trigger RAISE(ABORT) on the new-key insert) left zero active keys; rotateActorKey now wraps expire+generate in database.transaction() (src/crypto/actor-keys.ts:218-241). (B) repro (trigger on the pubkey insert) left zero active pubkeys; registerPublicKey now wraps revoke+insert in a transaction with one UNIQUE-violation retry (src/crypto/e2e/server-registry.ts:81-133). Deviation: the ticket's unique-index premise is stale — actor_e2e_pubkeys has no unique index on tip (001_init.ts:980-990 plain indexes only); the retry is defensive and has no automatable single-connection test (txn rollback erases simulated trigger state); rollback legs pinned in actor-keys.test.ts and server-registry.integration.test.ts. 16/16 + 13/13 green, gates green 2026-10-25, branch fix/bug-sweep.
 **Priority:** high
-**Resolved:** LIVE confirmed on tip — (A) repro (trigger RAISE(ABORT) on the new-key insert) left zero active keys; rotateActorKey now wraps expire+generate in database.transaction() (src/crypto/actor-keys.ts:218-241). (B) repro (trigger on the pubkey insert) left zero active pubkeys; registerPublicKey now wraps revoke+insert in a transaction with one UNIQUE-violation retry (src/crypto/e2e/server-registry.ts:81-133). Deviation: the ticket's unique-index premise is stale — actor_e2e_pubkeys has no unique index on tip (001_init.ts:980-990 plain indexes only); the retry is defensive and has no automatable single-connection test (txn rollback erases simulated trigger state); rollback legs pinned in actor-keys.test.ts and server-registry.integration.test.ts. 16/16 + 13/13 green, gates green 2026-10-25, branch fix/bug-sweep.
 **Effort:** Medium
 **Epic:** epic-crypto
 
@@ -27,7 +27,7 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-4 + F-6 (gitignored; recorde
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): resolved 2026-10-25 (`fix/bug-sweep`) — LIVE confirmed on tip — (A) repro (trigger RAISE(ABORT) on the new-key insert) left zero active keys; rotateActorKey now wraps expire+generate in database.transaction() (src/crypto/actor-keys.ts:218-241). (B) repro (trigger on the pubkey insert) left zero active pubkeys; registerPublicKey now wraps revoke+insert in a transaction with one UNIQUE-violation retry (src/crypto/e2e/server-registry.ts:81-133). Deviation: the ticket's unique-index premise is stale — actor_e2e_pubkeys has no unique index on tip (001_init.ts:980-990 plain indexes only); the retry is defensive and has no automatable single-connection test (txn rollback erases simulated trigger state); rollback legs pinned in actor-keys.test.ts and server-registry.integration.test.ts. 16/16 + 13/13 green, gates green 2026-10-25, branch fix/bug-sweep.
 
 **Acceptance Criteria:**
 

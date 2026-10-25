@@ -4,6 +4,7 @@
 # BUG: nsfw-cards ships ungated POST routes
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — both POST registrations (plugins/community/nsfw-cards/plugin.ts:24-46) now declare `requiresAuth: true` + `permissions: ["nsfw.play"]`, and both handlers (plugins/community/nsfw-cards/routes.ts — nsfwDenial guard at the top of handleStart/handlePlay) enforce the same check internally so a dispatch path that skips the registry gate cannot unguard them. DECISION (recorded per fix direction): `nsfw.play` is a NEW capability granted to NO default role — only "*" holders (admin/solo/tester) pass — so the routes are default-deny for user/creator/moderator/etc. until an operator grants `nsfw.play` via permission overrides; no existing vocabulary entry fit (admin.audit.nsfw is an audit-scoped admin permission, not a content capability). Repros in plugins/community/nsfw-cards/routes.test.ts (5 tests): declaration test + anonymous→401 + user-role→403 + admin→handler + direct-handler-without-caller→403. Before-evidence (captured): declaration test `Expected true, Received undefined`, anonymous `Expected 401, Received 200`, user `Expected 403, Received 200`, direct `Expected 403, Received 200`; 1 pass / 4 fail pre-fix, 5/5 post-fix. Gates: typecheck + eslint green (run 687742-mvng4hwx), worktree fix/bug-sweep, issue BUG-NSFW-CARDS-SHIPS-UNGATED-POST-ROUTES.
 **Priority:** high
 **Epic:** epic-security-sandboxing
 **Effort:** Medium
@@ -27,7 +28,7 @@
 
 **Context:**
 
-Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): both POST registrations (plugins/community/nsfw-cards/plugin.ts:24-46) now declare `requiresAuth: true` + `permissions: ["nsfw.play"]`, and both handlers (plugins/community/nsfw-cards/routes.ts — nsfwDenial guard at the top of handleStart/handlePlay) enforce the same check internally so a dispatch path that skips the registry gate cannot unguard them.
 
 **Acceptance Criteria:**
 

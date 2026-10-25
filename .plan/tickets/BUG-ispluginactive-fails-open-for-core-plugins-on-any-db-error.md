@@ -4,6 +4,7 @@
 # BUG: isPluginActive fails open for core plugins on any DB error
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — isPluginActive (src/plugins/loader.ts:339-381) now fails CLOSED on unexpected plugin_state read errors — logs `plugin_state read failed — failing closed` and returns false — while only the pre-migration missing-table error (`no such table`, isMissingPluginStateTable :331-337) keeps the origin-default fallback for first boot. Regressions in src/plugins/loader.discovery-failures.test.ts describe "plugin_state read failures fail closed" (5/5 pass on the fix). BEFORE-EVIDENCE (observed 2026-10-25 by swapping in the parent-commit file b599daffe^ via .tmp/loader-probe.ts and restoring byte-identically): 4 pass / 1 fail — exactly "a transient plugin_state read failure disables a core plugin" fails against the old bare catch (full output .tmp/loader-probe-out.txt). Neighbors green: loader.test.ts 26/26, loader-dispatch.test.ts 7/7. Gates: typecheck + eslint green on final HEAD (run 666566-mvnfwjhq), worktree fix/bug-sweep, issue BUG-ISPLUGINACTIVE-FAILS-OPEN-FOR-CORE-PLUGINS-ON-ANY-DB-ERROR.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-plugin-system
@@ -24,7 +25,7 @@ Source: .tmp/glm-review/deep-plugins-1015.md F-4 (gitignored; recorded here verb
 
 **Context:**
 
-Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): isPluginActive (src/plugins/loader.ts:339-381) now fails CLOSED on unexpected plugin_state read errors — logs `plugin_state read failed — failing closed` and returns false — while only the pre-migration missing-table error (`no such table`, isMissingPluginStateTable :331-337) keeps the origin-default fallback for first boot.
 
 **Acceptance Criteria:**
 

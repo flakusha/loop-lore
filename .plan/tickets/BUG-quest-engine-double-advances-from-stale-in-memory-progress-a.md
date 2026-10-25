@@ -4,6 +4,7 @@
 # BUG: Quest engine double-advances from stale in-memory progress and completes via a non-transactional multi-write sequence
 
 **Status:** Done
+**Status Note:** resolved 2026-10-25 (`fix/bug-sweep`) — stale-progress claim FIXED — applyProgress (src/story/quest-engine/progress.ts:133-141, :164-180, :206-215) now refreshes the in-memory row (`quest.progress = newProgress`) and does all milestone math plus the returned entry from a captured `previousProgress`, so multiple events in one processEvent batch compound (50→100 and complete) instead of each recomputing from the stale snapshot. Repro pinned in src/story/quest-engine/progress.coverage.test.ts "two matching events in one batch compound instead of overwriting" (failing before: `previousProgress Expected 50, Received 0`, quest left active; 22/22 after). RESIDUAL CLOSED 2026-10-25 (commit "fix(quests): make the completion sequence transactional"): the completion sequence now runs in one state.db transaction — gate + progress write + upsert + rewards (trx-backed ItemsService) + XP atomic; worldState.snapshot and the memory event moved post-commit; in-memory progress un-advances on rollback. Repro pinned in progress.coverage.test.ts "completion sequence is atomic" (trigger aborted the upsert; quest stayed Completed pre-fix, rolls back to Active/0 now). Gates: typecheck + eslint green 2026-10-25, worktree fix/bug-sweep, issue BUG-QUEST-ENGINE-DOUBLE-ADVANCES-FROM-STALE-IN-MEMORY-PROGRESS-A.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-quests-encounters
@@ -26,7 +27,7 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-3 + F-8 (gitignored; recorde
 
 **Context:**
 
-Closure rationale (verified 2026-10-25 against the current implementation): the closure rationale recorded in the Status Note above
+Closure rationale (2026-10-25, branch `fix/bug-sweep`): stale-progress claim FIXED — applyProgress (src/story/quest-engine/progress.ts:133-141, :164-180, :206-215) now refreshes the in-memory row (`quest.progress = newProgress`) and does all milestone math plus the returned entry from a captured `previousProgress`, so multiple events in one processEvent batch compound (50→100 and complete) instead of each recomputing from the stale snapshot.
 
 **Acceptance Criteria:**
 
