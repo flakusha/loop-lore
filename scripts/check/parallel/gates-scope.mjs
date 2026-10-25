@@ -74,6 +74,25 @@ export function pickScopedFiles(files, extPattern, exists,) {
   return picked;
 }
 
+/**
+ * Turn repo-relative spec paths into the argument form `bun test` treats as
+ * PATHS.
+ *
+ * `bun test <arg>` treats an argument WITHOUT a leading `./` as a name FILTER:
+ * it searches the tree for test files whose path matches and exits non-zero
+ * with "The following filters did not match any test files" when none do. The
+ * e2e specs are named `*.browser.ts`, which the filter form never matches, so
+ * the scoped browser gate failed on EVERY spec-only diff. The full suite does
+ * not have the bug: `run-browser-tests.ts` already builds the `./`-prefixed
+ * form. This keeps the scoped gate identical to it.
+ *
+ * @param specs - Repo-relative spec paths (CHANGED_FILES entries).
+ * @returns The same paths, prefixed so bun runs them as files.
+ */
+export function browserSpecPaths(specs,) {
+  return specs.map((f,) => `./${f}`);
+}
+
 const onDisk = (f,) => existsSync(path.resolve(PROJECT_ROOT, f,),);
 
 /**

@@ -10,7 +10,7 @@
  */
 
 import { expect, test, } from "bun:test";
-import { pickScopedFiles, } from "./gates-scope.mjs";
+import { browserSpecPaths, pickScopedFiles, } from "./gates-scope.mjs";
 
 const TS = /\.(ts|tsx|js|jsx|mjs|cjs|md)$/;
 const MD = /\.md$/;
@@ -75,4 +75,11 @@ test("returns null past the command-line budget", () => {
 test("the md picker takes only markdown", () => {
   const picked = pickScopedFiles(["docs/a.md", "src/a.ts",], MD, all,);
   expect(picked,).toEqual(["docs/a.md",],);
+});
+
+test("browser spec paths carry the ./ prefix so bun runs them as files", () => {
+  expect(browserSpecPaths(["tests/e2e/flows/browser/chat-send.browser.ts",],),).toEqual([
+    "./tests/e2e/flows/browser/chat-send.browser.ts",
+  ],);
+  expect(browserSpecPaths([],),).toEqual([],);
 });
