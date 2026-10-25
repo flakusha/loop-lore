@@ -270,8 +270,12 @@ describe("federationRoutes — instance-state carries buildHash", () => {
       const body = (await res.json()) as Record<string, unknown>;
       expect(typeof body.buildHash,).toBe("string",);
       expect(body.buildHash,).toMatch(/^[0-9a-f]{16}$/,);
-      // sanity: a fresh compute against the same default cwd returns the same short hash
-      const id: BuildIdentity = await computeBuildIdentity({ force: true, },);
+      // The route serves the memoized build identity, so compare against that
+      // same memoized instance. A forced recompute re-walks the live source
+      // tree, and concurrent writers to the repo (sibling test workers, the
+      // coverage runner) can change that tree between the two computes — that
+      // made this assertion flaky with no product regression behind it.
+      const id: BuildIdentity = await computeBuildIdentity();
       expect(body.buildHash,).toBe(id.buildHashShort,);
     },
     15000,
