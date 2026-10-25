@@ -280,6 +280,8 @@ The adaptation engine:
 - [x] `/add` command
 - [x] `/clone` command
 
+Scope note: `/import` is wired for the `character` kind only (the repo's import infrastructure is character-card shaped: PNG/YAML/TOML/JSON/CHARX), so the world/location/item import rows of the API table above are not implemented. `/clone` copies the source fields plus `key=value` overrides; the richer `/duplicate` workflow stays in B5.
+
 ### B5 — Duplication + Adaptation
 
 - [ ] `/duplicate` command
