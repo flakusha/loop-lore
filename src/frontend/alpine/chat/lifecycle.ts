@@ -96,6 +96,11 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
       await this._loadChatFromUrl();
     } finally {
       this.registerPanelHandlers();
+      // Touch gestures (Phase 2) attach to the live #message-list node —
+      // installed even when a load above throws (same N15 rationale as the
+      // panel handlers). Optional call: lifecycle tests drive init() with a
+      // bare ctx that does not carry the gesture submodule.
+      (this as { setupTouchGestures?: () => void }).setupTouchGestures?.();
     }
   },
 
@@ -138,6 +143,10 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
    */
   destroy() {
     this.unregisterPanelHandlers();
+    // Detach touch-gesture listeners from the element captured at setup —
+    // the live #message-list node may already have been replaced by an htmx
+    // swap; teardown drops the cleanups captured then (no leaked listeners).
+    (this as { teardownTouchGestures?: () => void }).teardownTouchGestures?.();
     destroyVnRenderer();
 
     this._cleanupSSE?.();
