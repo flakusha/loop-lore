@@ -119,6 +119,33 @@ const actionHandlers: Record<string, ActionHandler> = {
     }
   },
 
+  "loc-update": async (ctx, payload,) => {
+    const locId = (payload?.locId as string) ?? "";
+    const worldId = (payload?.worldId as string) ?? "";
+    const name = (payload?.name as string) ?? "";
+    const updates = (payload?.updates ?? {}) as Record<string, unknown>;
+    if (!locId || !worldId || Object.keys(updates,).length === 0) {
+      log.warn("loc-update: missing required payload fields", { payload, },);
+      return;
+    }
+
+    if (!confirm(`Apply the pending update to location "${name || locId}"?`,)) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/worlds/${worldId}/locations/${locId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody(updates,),
+      },);
+
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok ? t("toasts.locationUpdated",) : t("toasts.failedUpdateLocation",),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedUpdateLocation",), },);
+    }
+  },
+
   "impersonate-toggle": async (ctx, payload, chatId,) => {
     const mode = (payload?.mode as string) ?? "toggle";
     if (mode === "off") {

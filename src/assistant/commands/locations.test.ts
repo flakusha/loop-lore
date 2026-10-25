@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for the location read commands: /loc-list, /loc-get.
+ * Tests for the location read commands: /loc-list, /loc-get — and the
+ * /loc-update preview command.
  *
  * Both commands resolve a world and then run `requireWorldAccess`, so the tests
  * pin the same guard the world routes use: a caller who cannot read the world
@@ -22,8 +23,9 @@ import {
 import type { CommandContext, CommandHandler, } from "./registry";
 import { getCommand, } from "./registry";
 
-// Side-effect import: the handlers register themselves on module load.
-import "./locations";
+// Named import: loading ./locations also executes the module and registers
+// the command handlers (no separate side-effect import needed).
+import { parseLocationUpdates, } from "./locations";
 
 function mustGet(name: string,): CommandHandler {
   const handler = getCommand(name,);
@@ -33,6 +35,7 @@ function mustGet(name: string,): CommandHandler {
 
 const locList = mustGet("loc-list",);
 const locGet = mustGet("loc-get",);
+const locUpdate = mustGet("loc-update",);
 
 describe("location commands", () => {
   let db: Kysely<DB>;
@@ -288,5 +291,89 @@ describe("location commands", () => {
       expect(getDenied.systemMessage,).not.toContain("Foreign Hall",);
       expect(getDenied.action,).toBeUndefined();
     }
+  });
+
+  // ── /loc-update ───────────────────────────────────────────
+
+  test("shows usage with no location id", async () => {
+    expect((await locUpdate([], ctx(),)).systemMessage,).toContain("Usage: /loc-update",);
+  });
+
+  test("returns an update preview carrying the parsed patch and the location name, without persisting it", async () => {
+    const gate = await insertLocations(db, worldId, "Ash Gate", { description: "A gate of black iron.", },);
+    const result = await locUpdate([gate, 'name="Iron Gate"', "coordX=3",], ctx(),);
+
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("loc-update",);
+    expect(result.actionPayload,).toEqual({
+      locId: gate,
+      worldId,
+      name: "Ash Gate",
+      updates: { name: "Iron Gate", coordX: 3, },
+    },);
+
+    // The confirm dialog names the location, not the raw id.
+    expect(result.systemMessage,).toContain("Ash Gate",);
+    expect(result.systemMessage,).toContain("**name** → Iron Gate",);
+
+    // Nothing is persisted by the command — the confirm dialog applies the
+    // patch through PUT /api/v1/worlds/:worldId/locations/:locId.
+    const row = await db.selectFrom("locations",).selectAll().where("id", "=", gate,).executeTakeFirst();
+    expect(row?.name,).toBe("Ash Gate",);
+  });
+
+  test("states the route's cascade effects in the preview", async () => {
+    const gate = await insertLocations(db, worldId, "Ash Gate", {},);
+    const result = await locUpdate(
+      [gate, "parentLocationId=loc-parent", 'connections=["loc-a"]',],
+      ctx(),
+    );
+
+    expect(result.systemMessage,).toContain("Reparents",);
+    expect(result.systemMessage,).toContain("depth and cycle checks",);
+    expect(result.systemMessage,).toContain("connections",);
+    expect(result.systemMessage,).toContain("same world",);
+  });
+
+  test("rejects unknown fields, bad numbers, and malformed connections", () => {
+    expect(parseLocationUpdates("colour=red",).ok,).toBe(false,);
+    expect(parseLocationUpdates("coordX=abc",).ok,).toBe(false,);
+    expect(parseLocationUpdates("connections=not-json",).ok,).toBe(false,);
+    expect(parseLocationUpdates("",).ok,).toBe(false,);
+
+    const emptyParent = parseLocationUpdates('parentLocationId=""',);
+    expect(emptyParent.ok,).toBe(false,);
+    if (!emptyParent.ok) {
+      expect(emptyParent.error,).toBe('Field "parentLocationId" expects a location id, got "".',);
+    }
+
+    // Duplicate keys are last-wins.
+    const dupes = parseLocationUpdates("name=First name=Second",);
+    expect(dupes.ok,).toBe(true,);
+    if (dupes.ok) { expect(dupes.updates.name,).toBe("Second",); }
+  });
+
+  test("rejects a caller who does not own the world", async () => {
+    const foreign = await insertLocations(db, otherWorldId, "Foreign Hall", {},);
+    const result = await locUpdate([foreign, "name=Hacked",], ctx(),);
+    expect(result.systemMessage,).toBe(`Location ${foreign} not found or not owned by you.`,);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("reports a missing location the same way as one the caller does not own", async () => {
+    const missing = `loc-${crypto.randomUUID()}`;
+    const foreign = await insertLocations(db, otherWorldId, "Foreign Hall", {},);
+
+    const absent = await locUpdate([missing, "name=X",], ctx(),);
+    const denied = await locUpdate([foreign, "name=X",], ctx(),);
+    expect(absent.systemMessage!.replace(missing, "<id>",),).toBe(
+      denied.systemMessage!.replace(foreign, "<id>",),
+    );
+  });
+
+  test("answers unavailable instead of throwing when ctx has no db", async () => {
+    const result = await locUpdate([`loc-${crypto.randomUUID()}`, "name=X",], { chatId: "chat-1", userId: ownerId, },);
+    expect(result.handled,).toBe(true,);
+    expect(result.systemMessage,).toContain("**Locations unavailable:** command context missing database.",);
   });
 });

@@ -1482,6 +1482,7 @@
     "chatTransferred": "Chat transferred",
     "chatAlreadyInLocation": "Chat is already in this location",
     "locationUpdated": "Location updated",
+    "failedUpdateLocation": "Failed to update location",
     "failedDeleteChat": "Failed to delete chat",
     "failedRenameChat": "Failed to rename chat",
     "failedSaveSettings": "Failed to save settings",
