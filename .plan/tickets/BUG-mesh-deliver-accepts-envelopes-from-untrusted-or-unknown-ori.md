@@ -4,6 +4,7 @@
 # BUG: mesh-deliver accepts envelopes from untrusted or unknown origins without a peer-trust check
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — mesh deliver now requires a string reservationId (src/routes/federation-mesh.ts:194-200, 400 otherwise), authorizes the claimed origin via `authorizeMeshPeer` → `assertTrustedPeer` (mesh_peers.state='trusted') at :204/:44-67, and decrypts fail-closed (:213-235).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas
@@ -26,7 +27,7 @@ Fix: verify mesh_peers.state === 'trusted' for envelope.origin before accept, on
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): mesh deliver now requires a string reservationId (src/routes/federation-mesh.ts:194-200, 400 otherwise), authorizes the claimed origin via `authorizeMeshPeer` → `assertTrustedPeer` (mesh_peers.state='trusted') at :204/:44-67, and decrypts fail-closed (:213-235).
 
 **Acceptance Criteria:**
 
