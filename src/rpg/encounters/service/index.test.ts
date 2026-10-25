@@ -460,6 +460,63 @@ describe("outcome fan-out (TASK-036/040/041/042/043)", () => {
     expect(pair?.score,).toBe(5,);
   });
 
+  test("XP leg under the completion txn still runs the leveling pipeline", async () => {
+    // Regression: awardXpToActor opened its own nested .transaction() inside
+    // the enclosing completion transaction (Kysely throws), so the leg's
+    // catch silently downgraded to a raw ledger write and character_stats
+    // never received the XP. The ledger-only assertions above cannot see
+    // this - applyGrant also writes xp_ledger, so the row count matches.
+    const service = new EncounterService(db,);
+    const { a, b, } = await seedPair();
+    // Opt-in world: the XP gate reads world.rpg_xp (with rpg_enabled as the
+    // master flag) and the leg downgrades to a bare ledger write when the
+    // gate denies.
+    await db.updateTable("worlds",)
+      .set({ rpg_enabled: 1, rpg_xp: 1, },)
+      .where("id", "=", "world-1",)
+      .execute();
+
+    const encounter = await service.createEncounter({
+      database: db,
+      worldId: "world-1",
+      encounterType: "romantic",
+      participants: [a, b,],
+      phases: [{
+        name: "Only",
+        duration: 1,
+        actionsAvailable: ["all",],
+        arousalEffects: [],
+        narrativeBeats: [],
+      },],
+      outcomes: [{
+        type: "satisfaction",
+        probability: 1,
+        effects: {
+          intimacyChange: 5,
+          moodChange: 10,
+          satisfactionBonus: 15,
+          memoryCreated: false,
+          reputationChange: 0,
+        },
+      },],
+    },);
+
+    const result = await service.advancePhase(encounter.id,);
+    expect(result.complete,).toBeTrue();
+
+    // The pipeline (awardXpToActor) ensures and updates character_stats; the
+    // downgrade path (logXp) never touches the sheet.
+    for (const actor of [a, b,]) {
+      const stats = await db.selectFrom("character_stats",)
+        .where("actor_id", "=", actor,)
+        .selectAll()
+        .executeTakeFirst();
+
+      expect(stats,).toBeDefined();
+      expect(stats!.xp,).toBe(15,);
+    }
+  });
+
   test("romantic venue amplifies the intimacy delta by +2 (TASK-043)", async () => {
     const service = new EncounterService(db,);
     const { a, b, } = await seedPair();

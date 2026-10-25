@@ -29,6 +29,7 @@
  * progression pipeline (BUG-addxp-accepts-negative-xp is a separate ticket).
  */
 import type { Kysely, } from "kysely";
+import { withTransaction, } from "../../characters/services/shared-service-utils";
 import type { DB, } from "../../db/schema.js";
 import { applyGrant, type LedgerGrant, } from "./award.js";
 import { isLedgerUniqueViolation, replayGrant, } from "./replay.js";
@@ -53,7 +54,11 @@ export async function awardXpToActor(
   const grant = validateGrant(input,);
 
   try {
-    return await db.transaction().execute(async (trx,) => {
+    // withTransaction reuses the ambient transaction when db is already a
+    // trx (e.g. encounter XP legs run under the caller's completion txn) -
+    // a nested .transaction() throws on a Kysely Transaction, which the
+    // leg's fallback would silently downgrade to a bare ledger write.
+    return await withTransaction(db, async (trx,) => {
       if (grant.referenceId !== undefined) {
         const prior = await findLedgerGrant(trx, grant,);
         if (prior) {
@@ -67,7 +72,7 @@ export async function awardXpToActor(
     if (grant.referenceId !== undefined && isLedgerUniqueViolation(cause,)) {
       // A concurrent call won the unique key between our pre-check and the
       // ledger insert; our (rolled-back) attempt downgrades to a replay.
-      return db.transaction().execute(async (trx,) => {
+      return withTransaction(db, async (trx,) => {
         const prior = await findLedgerGrant(trx, grant,);
         if (!prior) { throw cause; }
         return replayGrant(trx, grant, prior.id,);
