@@ -12,7 +12,7 @@ import { getLogger, } from "../../logger";
 import { emitMemoryEvent, MEMORY_EVENT_QUEST_COMPLETED, } from "../../memory/events";
 import { jsonParseOr, } from "../../utils";
 import { applyEvents, } from "../events";
-import { DuplicateItemDefinitionError, } from "../items";
+import { DuplicateItemDefinitionError, ItemsService, } from "../items";
 import { PROGRESS_CALCULATORS, } from "../quests/registry";
 import { requireQuestTransition, selectActiveQuests, upsertQuestProgress, } from "../shared/story-utils";
 import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
@@ -141,28 +141,6 @@ async function applyProgress(
   // Milestone math and the returned entry below read previousProgress.
   quest.progress = newProgress;
 
-  // Completion is a status transition — validate against the machine so a
-  // terminal/abandoned quest cannot silently flip to completed.
-  if (completed) {
-    await requireQuestTransition(state.db, quest.id, QuestStatus.Completed,);
-  }
-
-  await state.db
-    .updateTable("quests",)
-    .set({
-      progress: newProgress,
-      ...(completed && { status: QuestStatus.Completed, completed_at: new Date().toISOString(), }),
-    },)
-    .where("id", "=", quest.id,)
-    .execute();
-
-  await upsertQuestProgress(state.db, quest.id, chatId, newProgress, completed, sourceMessageId,);
-
-  // AC5: completion surfaces on the memory event stream (fire-and-forget).
-  if (completed) {
-    emitMemoryEvent(state.db, MEMORY_EVENT_QUEST_COMPLETED, { questId: quest.id, chatId, progress: newProgress, },);
-  }
-
   const hooks = jsonParseOr(quest.narrative_hooks, [],) as { progress: number; narrative: string }[];
   let oldMilestone: { progress: number; narrative: string } | undefined;
   let newMilestone: { progress: number; narrative: string } | undefined;
@@ -183,19 +161,65 @@ async function applyProgress(
   let milestoneText: string | null = null;
   if (newMilestone && (!oldMilestone || oldMilestone.progress < newMilestone.progress)) {
     milestoneText = newMilestone.narrative;
-    if (state.worldState) {
-      await state.worldState.snapshot(
-        quest.world_id,
-        undefined,
-        undefined,
-        `Quest milestone: ${quest.name} - ${milestoneText}`,
-      );
-    }
   }
 
+  // The whole completion sequence — transition gate, progress write,
+  // per-chat upsert, reward writes, completion XP — is one atomic unit: a
+  // mid-sequence failure used to leave the quest Completed (terminal — retry
+  // throws TransitionError) with rewards/progress rows permanently missing
+  // (BUG-quest-engine-double-advances-from-stale-in-memory-progress-a,
+  // residual leg). Narrative extras that hold their own handles
+  // (worldState.snapshot) and the fire-and-forget memory event run after
+  // the commit — they must not query the outer handle mid-transaction.
+  try {
+    await state.db.transaction().execute(async (trx,) => {
+      // Completion is a status transition — validate against the machine so a
+      // terminal/abandoned quest cannot silently flip to completed.
+      if (completed) {
+        await requireQuestTransition(trx, quest.id, QuestStatus.Completed,);
+      }
+
+      await trx
+        .updateTable("quests",)
+        .set({
+          progress: newProgress,
+          ...(completed && { status: QuestStatus.Completed, completed_at: new Date().toISOString(), }),
+        },)
+        .where("id", "=", quest.id,)
+        .execute();
+
+      await upsertQuestProgress(trx, quest.id, chatId, newProgress, completed, sourceMessageId,);
+
+      if (completed) {
+        await distributeRewards(
+          { ...state, db: trx, items: state.items ? new ItemsService(trx,) : undefined, },
+          quest.id,
+          quest.world_id,
+          quest.rewards,
+        );
+
+        await awardQuestCompletionXp(trx, quest,);
+      }
+    },);
+  } catch (error) {
+    // The DB rolled back — un-advance the in-memory row so a retry computes
+    // from the committed progress instead of the discarded write.
+    quest.progress = previousProgress;
+    throw error;
+  }
+
+  // AC5: completion surfaces on the memory event stream (fire-and-forget).
   if (completed) {
-    await distributeRewards(state, quest.id, quest.world_id, quest.rewards,);
-    await awardQuestCompletionXp(state.db, quest,);
+    emitMemoryEvent(state.db, MEMORY_EVENT_QUEST_COMPLETED, { questId: quest.id, chatId, progress: newProgress, },);
+  }
+
+  if (milestoneText && state.worldState) {
+    await state.worldState.snapshot(
+      quest.world_id,
+      undefined,
+      undefined,
+      `Quest milestone: ${quest.name} - ${milestoneText}`,
+    );
   }
 
   return {
