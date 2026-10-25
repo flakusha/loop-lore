@@ -5,6 +5,7 @@
 
 **Status:** Done
 **Priority:** low
+**Resolved:** LIVE confirmed on tip — repro (both concurrent same-pair creates fulfilled, 2 forward rows via Promise.allSettled in relationships-service.test.ts) failed pre-fix; getRelationship + guardNotExists moved inside withTransaction (src/characters/services/relationships-service/write.ts:54-63); second creator now sees the in-transaction row or fails its own BEGIN. 11/11 relationships-service tests green, gates (typecheck+eslint) green 2026-10-25, branch fix/bug-sweep.
 **Effort:** Medium
 **Epic:** epic-relationships
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

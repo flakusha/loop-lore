@@ -39,19 +39,26 @@ export async function createRelationship(
     throw new Error("An actor cannot have a relationship with itself",);
   }
 
-  const existing = await getRelationship({
-    thisL,
-    actorId: opts.actorId,
-    targetActorId: opts.targetActorId,
-    worldId: opts.worldId,
-  },);
-
-  guardNotExists(existing, "Relationship", `${opts.actorId}->${opts.targetActorId}`,);
-
   const id = randomUUID();
   const now = new Date().toISOString();
 
   await withTransaction(thisL.db, async (trx,) => {
+    // The duplicate read must run inside the transaction: issued before it,
+    // two concurrent creates of the same pair both pass the guard and
+    // double-insert (BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same).
+    // On the single-connection SQLite driver a second creator either sees the
+    // in-transaction row or fails to open its own transaction — never a second pair.
+    const existing = await getRelationship(
+      {
+        thisL: { ...thisL, db: trx, },
+        actorId: opts.actorId,
+        targetActorId: opts.targetActorId,
+        worldId: opts.worldId,
+      },
+    );
+
+    guardNotExists(existing, "Relationship", `${opts.actorId}->${opts.targetActorId}`,);
+
     await trx
       .insertInto("character_relationships",)
       .values({
