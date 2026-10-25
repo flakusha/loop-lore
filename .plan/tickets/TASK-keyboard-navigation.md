@@ -13,6 +13,17 @@
 **Effort:** Medium
 **Epic:** epic-accessibility-input
 
+## Status Note (2026-10-25, `a11y-keynav-phase3`)
+
+The focus-management scope below is delivered by `src/frontend/alpine/focus.ts`
+(not the spec's `src/frontend/a11y/focus-manager.ts` — that path was never
+created; the shipped surface is the real one). The shortcut layer built on top
+of it lives in `src/frontend/alpine/shortcuts.ts` + `keynav-help.ts` + the
+Settings keymap editor; see the epic's Phase 3 section for the corrected
+history and the remaining open item (context-specific per-page keymaps).
+The last unchecked AC (screen reader navigation) is tracked by
+`TASK-screen-reader-support.md`.
+
 ## Summary
 
 Implement keyboard navigation system with tab order management, focus trapping for modals, skip links, and focus restoration. Required for WCAG 2.1 AA compliance.

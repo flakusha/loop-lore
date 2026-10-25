@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+export type { KeynavHelpState, } from "./keynav-help";
+
 export type {
   ChatPinRow,
   ChatState,
