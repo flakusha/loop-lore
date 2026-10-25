@@ -565,7 +565,6 @@
     "src/frontend/alpine/game-canvas/draw.ts#drawPlaceholder",
     "src/frontend/alpine/game-canvas/draw.ts#drawScene",
     "src/frontend/alpine/gm-panel-entities.ts#gmPanelEntities",
-    "src/frontend/alpine/keynav-help.ts#keynavHelp",
     "src/frontend/alpine/local-engine-load.ts#buildLoadRequest",
     "src/frontend/alpine/local-engine-load.ts#resolveEnginePlan",
     "src/frontend/alpine/local-inference.ts#ELIGIBLE_TASKS",

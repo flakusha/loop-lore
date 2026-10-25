@@ -116,6 +116,17 @@ describe("validateKeymapCombo", () => {
     expect(validateKeymapCombo("g g", "scroll-down", map(),).ok,).toBe(false,);
   });
 
+  it("rejects a reserved second key in a g-pair", () => {
+    expect(validateKeymapCombo("g ?", "scroll-down", map(),).ok,).toBe(false,);
+    expect(validateKeymapCombo("g Escape", "scroll-down", map(),).ok,).toBe(false,);
+  });
+
+  it("rejects a non-g pair the listener could never fire", () => {
+    expect(validateKeymapCombo("z q", "scroll-down", map(),),).toEqual(
+      { ok: false, reason: "invalid", },
+    );
+  });
+
   it("allows rebinding an action to its own current combo", () => {
     expect(validateKeymapCombo("j", "scroll-down", map(),),).toEqual({ ok: true, },);
   });
