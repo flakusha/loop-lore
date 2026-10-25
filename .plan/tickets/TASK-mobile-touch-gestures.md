@@ -17,6 +17,8 @@
 
 Implement mobile touch gesture system with swipe, tap, long-press, and pinch gestures. Ensure touch targets are 44x44px minimum for WCAG 2.5.8 compliance.
 
+> **2026-10-25 status note:** the previously checked swipe/long-press/fallback boxes below became real in the chat message list (`src/frontend/alpine/chat-touch-gestures.ts` — swipe left → archive dialog, swipe right → edit, long-press → context menu, no-touch fallback via the visible buttons; unit tests in `src/frontend/touch.test.ts` / `chat-touch-gestures.test.ts`). Pull-to-refresh, pinch zoom, haptics, and gesture-conflict resolution remain open.
+
 ## Acceptance Criteria
 
 - [x] Touch targets 44x44px minimum
