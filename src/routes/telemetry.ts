@@ -24,7 +24,13 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
+import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
+import {
+  createRateLimiter,
+  type RateLimiter,
+  rateLimitHeaders,
+} from "../middleware/rate-limit";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../routes/http-utils";
 
 import {
@@ -39,11 +45,26 @@ import {
   TelemetryAnalyticsErrorsRow,
   TelemetryEventBody,
 } from "../validation/schemas";
+import { getClientIp, } from "./auth/shared";
 import { purgeTelemetryEvents, } from "./telemetry-purge";
 
 interface HandleOpts {
   database: Kysely<DB>;
+  /** Server config; when omitted (tests) the IP key falls back to peer-only. */
+  config?: Config;
+  /** Test seam: override the per-IP event limiter (defaults to a fresh one). */
+  eventRateLimiter?: RateLimiter;
 }
+
+/**
+ * Per-IP sliding-window budget for POST /telemetry/event
+ * (BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te):
+ * the endpoint is reachable without auth (solo-mode pre-auth beacons) and
+ * CSRF-exempt, so the only thing bounding an anonymous flood used to be the
+ * 8 KiB event_data cap — row growth was unbounded. 30/min per IP leaves a
+ * legit page-session far enough above headroom to never see a 429.
+ */
+const EVENT_RATE_LIMIT = { windowMs: 60_000, maxRequests: 30, } as const;
 
 /**
  * @param root0
@@ -51,11 +72,40 @@ interface HandleOpts {
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
-export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
+export function telemetryRoutes(
+  { database, config, eventRateLimiter, }: HandleOpts,
+  prefix = "/api",
+): Elysia {
+  // Per-mount instance (same default-overridable-seam shape as
+  // integrationsSurface) so tests get independent budgets; the production
+  // surface mounts this plugin exactly once.
+  const eventLimiter = eventRateLimiter ?? createRateLimiter(EVENT_RATE_LIMIT,);
+  // getClientIp only reads config.server?.trustProxy; a missing config
+  // (tests) means headers are never trusted — peer IP or "unknown" only.
+  const trustConfig = config ?? ({ server: {}, } as Config);
+
   return new Elysia({ name: "telemetry", },)
     .post(`${prefix}/telemetry/event`, async (ctx: any,) => {
       if (!isFrontendTelemetryEnabled()) {
         return jsonResponse({ ok: true, dropped: "frontend telemetry disabled", },);
+      }
+
+      // Per-IP gate BEFORE record(): anonymous flood stops growing
+      // telemetry_events here instead of after the insert.
+      const ip = getClientIp(
+        ctx.request as Request,
+        trustConfig,
+        ctx.server?.requestIP(ctx.request as Request,)?.address ?? null,
+      );
+
+      const limit = eventLimiter.consume(ip,);
+      if (!limit.allowed) {
+        return new Response(null, {
+          status: HttpStatus.TooManyRequests,
+          // Retry-After = seconds until the oldest in-window hit ages out
+          // (same convention as the auth rateLimitHtml responses).
+          headers: rateLimitHeaders(limit, limit.resetSec,),
+        },);
       }
 
       await record(database, {
@@ -70,7 +120,7 @@ export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): El
       return jsonResponse({ ok: true, },);
     }, {
       body: TelemetryEventBody,
-      response: { 200: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, },
+      response: { 200: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, 429: ErrorResponse, },
       detail: {
         summary: "Record telemetry event",
         description: "Record a frontend telemetry event (requires telemetry to be enabled).",
