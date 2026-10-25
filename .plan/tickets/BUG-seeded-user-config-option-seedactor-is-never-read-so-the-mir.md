@@ -3,7 +3,7 @@
 
 # BUG: Seeded-user config option seedActor is never read, so the mirror actor row is always created
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -37,3 +37,5 @@ Pick one side and make the code match: either honour the flag in `seedSingleUser
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue d71ac02 (registry tip: 381afc19b Konstantin Fedotov Auto-closed: appended .md marker marks BUG-SEEDED-USER-CONFIG-OPTION-SE)
