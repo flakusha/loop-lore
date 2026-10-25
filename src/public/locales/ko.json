@@ -1598,7 +1598,9 @@
     "networkErrorDuringRetry": "Network error during retry",
     "classifierVocabSaved": "어휘가 저장되었습니다",
     "classifierTagsSaved": "분류 태그가 저장되었습니다",
-    "classifierTagsSaveFailed": "분류 태그 저장 실패"
+    "classifierTagsSaveFailed": "분류 태그 저장 실패",
+    "characterUpdated": "캐릭터 {name}이(가) 업데이트되었습니다",
+    "failedUpdateCharacter": "캐릭터 업데이트 실패"
   },
   "status": {
     "characterResponding": "캐릭터가 응답 중...",
