@@ -16,6 +16,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { createRateLimiter, } from "../middleware/rate-limit";
 import { hashId, record, } from "../telemetry/service";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
@@ -47,14 +48,29 @@ const describeReal = telemetryPristine ? describe : describe.skip;
  * @param db
  * @param userId
  * @param userRole
+ * @param opts
  */
-function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
+function makeApp(
+  db: Kysely<DB>,
+  userId?: string,
+  userRole?: string,
+  opts: {
+    config?: Config;
+    eventRateLimiter?: ReturnType<typeof createRateLimiter>;
+  } = {},
+) {
   const app = new Elysia({ name: "test-telemetry", },);
   if (userId) {
     app.derive(() => ({ userId, userRole, sessionId: `sess-${userId}`, }));
   }
 
-  return app.use(telemetryRoutes({ database: db, },),);
+  return app.use(
+    telemetryRoutes({
+      database: db,
+      config: opts.config,
+      eventRateLimiter: opts.eventRateLimiter,
+    },),
+  );
 }
 
 interface EventBody {
@@ -489,5 +505,51 @@ describeReal("telemetry routes — enabled", () => {
     );
 
     expect(res.status,).toBe(422,);
+  });
+
+  // BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te:
+  // anonymous flood must not grow telemetry_events without bound. The
+  // per-IP sliding-window gate stops recording past the budget. (Bucket
+  // keys collapse to "unknown" in this harness — app.handle() exposes no
+  // peer IP and default-deny ignores spoofable headers — so per-key
+  // isolation itself is covered by get-client-ip.test.ts and
+  // rate-limit.test.ts; this pins the route-level 429 + row-cap contract.)
+  test("POST /telemetry/event: burst above the budget returns 429 and stops row growth", async () => {
+    const limiter = createRateLimiter({ windowMs: 60_000, maxRequests: 2, },);
+    try {
+      const app = makeApp(db, "rate-limit-user", "user", {
+        eventRateLimiter: limiter,
+      },);
+
+      const post = () =>
+        app.handle(
+          new Request("http://localhost/api/telemetry/event", {
+            method: "POST",
+            headers: { "content-type": "application/json", },
+            body: JSON.stringify({ type: "frontend.page_view", data: { path: "/rl", }, },),
+          },),
+        );
+
+      expect((await post()).status,).toBe(200,);
+      expect((await post()).status,).toBe(200,);
+
+      const blocked = await post();
+      expect(blocked.status,).toBe(429,);
+      expect(blocked.headers.get("retry-after",),).toBeTruthy();
+      expect(blocked.headers.get("x-ratelimit-limit",),).toBe("2",);
+
+      // The gate keeps holding — the flood never reaches record().
+      expect((await post()).status,).toBe(429,);
+
+      const rows = await db
+        .selectFrom("telemetry_events",)
+        .select("id",)
+        .where("user_id", "=", hashId("rate-limit-user",),)
+        .execute();
+
+      expect(rows,).toHaveLength(2,);
+    } finally {
+      limiter.destroy();
+    }
   });
 },);
