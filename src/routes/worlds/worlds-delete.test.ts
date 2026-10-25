@@ -14,6 +14,7 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { sql, } from "kysely";
 import type { Kysely, } from "kysely";
+import { InteractionCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -135,9 +136,9 @@ describe("handleDeleteWorld teardown", () => {
       world_id: worldId,
       actor_id: actorId,
       location_id: parent,
-      command: "look",
-      category: "movement" as never,
-      skill: "none",
+      command: "study",
+      category: InteractionCategory.Intellect,
+      skill: "intellect",
       difficulty: 0,
       outcome: "success",
     },).execute();
