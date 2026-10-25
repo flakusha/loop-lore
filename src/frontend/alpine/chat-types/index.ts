@@ -62,6 +62,7 @@ export type {
   RpgQuestionView,
 } from "./rpg-state";
 export type { ChatSideChannelsState, SideChannel, } from "./side-channels-state";
+export type { ChatTouchGestureState, } from "./touch-gesture-state";
 export type { ChatWizardState, } from "./wizard-state";
 export type { WorldChannelChat, } from "./world";
 export type { ChatInviteRow, ChatWorldChannelsState, } from "./world-channels";
