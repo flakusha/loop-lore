@@ -29,6 +29,7 @@ import "./items";
 import "./items-update";
 import "./link";
 import "./locations";
+import "./locations-update";
 import "./music";
 import "./narrate";
 import "./ooc";
