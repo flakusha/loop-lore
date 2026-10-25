@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db";
 import type { ContentRating, } from "../../db/enums";
+import { effectiveNsfwConfig, } from "../../nsfw/runtime-config";
 import { evaluateNsfwBase, findBlockedParticipant, loadGateInputs, } from "./base-eval";
 import { isNsfwRating, NSFW_INTIMACY_THRESHOLD, } from "./constants";
 
@@ -34,7 +35,7 @@ export async function canAccessNsfw(
   }
 
   const inputs = await loadGateInputs(database, [userId,],);
-  return evaluateNsfwBase(config.nsfw, inputs.get(userId,),);
+  return evaluateNsfwBase(effectiveNsfwConfig(config.nsfw,), inputs.get(userId,),);
 }
 
 /**
@@ -160,7 +161,13 @@ export async function checkChatNsfwAccess(
   // age/config gate — the initiator's clearance alone is not sufficient.
   // Batched (two queries total) instead of one canAccessNsfw per participant.
   const participantUserIds = await getChatParticipantUserIds(database, chatId,);
-  const blocked = await findBlockedParticipant(database, config.nsfw, participantUserIds, userId ?? undefined,);
+  const blocked = await findBlockedParticipant(
+    database,
+    effectiveNsfwConfig(config.nsfw,),
+    participantUserIds,
+    userId ?? undefined,
+  );
+
   if (blocked) {
     return {
       allowed: false,

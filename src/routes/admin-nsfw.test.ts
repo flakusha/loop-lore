@@ -2,15 +2,19 @@
  * Tests for admin NSFW routes — config get/update, policy listing
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import type { Config, } from "../config/schema/config";
+import { NsfwSection, } from "../config/sections";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { resetNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { insertUsers, } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 import { adminNsfwRoutes, } from "./admin-nsfw";
+import { requireNsfwRouteAccess, } from "./nsfw/shared";
 
 /**
  * @param db
@@ -217,5 +221,58 @@ describe("GET /api/admin/nsfw/policy", () => {
     // Should only return non-sfw actors
     expect(body.every((a,) => a.content_rating !== "sfw"),).toBe(true,);
     expect(body.some((a,) => a.display_name === "NSFW Character"),).toBe(true,);
+  });
+});
+
+describe("admin NSFW kill-switch reaches the route layer", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+
+  beforeAll(async () => {
+    createLogger({ level: "warn", },);
+    ({ db, sqlite, } = await createTestDb());
+  },);
+
+  // The admin PUT mutates the shared runtime NSFW singleton. Restore the
+  // module default each test so allowNsfw=false never leaks into later test
+  // files in the same worker.
+  beforeEach(() => {
+    resetNsfwRuntimeConfig();
+  },);
+
+  afterEach(() => {
+    resetNsfwRuntimeConfig();
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("PUT allowNsfw=false blocks NSFW route access", async () => {
+    const userId = uid();
+    await insertUsers(db, userId, userId, {
+      id: userId as never,
+      birth_date: "1990-01-01",
+      age_gate_accepted_at: "2026-01-01T00:00:00Z",
+    },);
+
+    // The file config still allows NSFW — only the admin toggle turns it off.
+    const config = { nsfw: new NsfwSection({},), } as unknown as Config;
+
+    const app = createNsfwApp(db, uid(), "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/nsfw", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ allowNsfw: false, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const access = await requireNsfwRouteAccess(db, config, userId,);
+
+    expect(access,).toEqual({ ok: false, reason: "nsfw_disabled", },);
   });
 });
