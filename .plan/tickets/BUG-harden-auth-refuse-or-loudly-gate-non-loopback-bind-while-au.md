@@ -3,7 +3,7 @@
 
 # BUG: harden(auth): refuse or loudly gate non-loopback bind while auth.required=false
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-auth-config-contracts
@@ -21,3 +21,5 @@ Sources: stream-c #7. Where: src/middleware/auth/authenticate.ts:160-177 (solo f
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue efe1b48 (registry tip: 1ade396c6 Konstantin Fedotov Close issue)

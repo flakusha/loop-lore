@@ -3,7 +3,7 @@
 
 # BUG: Key-material revoke-then-insert sequences are non-transactional: a failure strands the actor with zero active keys
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-crypto
@@ -33,3 +33,5 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-4 + F-6 (gitignored; recorde
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 3210ca1 (registry tip: eea9c72d8 Konstantin Fedotov Close issue)

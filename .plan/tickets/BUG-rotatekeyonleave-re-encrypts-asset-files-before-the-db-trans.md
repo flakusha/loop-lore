@@ -3,7 +3,7 @@
 
 # BUG: rotateKeyOnLeave re-encrypts asset files before the DB transaction, so a rollback permanently destroys encrypted chat assets
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-encryption-workflow
@@ -33,3 +33,5 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-1 (report is gitignored; fin
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 5b447f9 (registry tip: bcd590b4a Konstantin Fedotov Close issue)

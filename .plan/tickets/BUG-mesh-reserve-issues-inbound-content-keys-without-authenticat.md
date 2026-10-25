@@ -3,7 +3,7 @@
 
 # BUG: Mesh reserve issues inbound content keys without authenticating the requester
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-mesh-federation-content-sharing
@@ -22,3 +22,5 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 1138d0f (registry tip: e3194b98b Konstantin Fedotov Close issue)

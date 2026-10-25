@@ -3,7 +3,7 @@
 
 # BUG: relationship duplicate guard runs before txn: concurrent same-pair creates can double-insert
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-relationships
@@ -37,3 +37,5 @@ Caveats: data race under concurrency; idempotency of create; partial failure mus
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 36b945a (registry tip: 115176553 Konstantin Fedotov Close issue)
