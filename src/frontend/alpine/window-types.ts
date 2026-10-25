@@ -10,12 +10,15 @@
 import type {
   AlpineState,
   ChatState,
-  KeynavHelpState,
   NotificationBellState,
   NotificationCenterState,
   NotificationPrefsState,
   WorldEditState,
 } from "./types";
+// Imported from the component (not the types barrel): the barrel is part of the
+// backend typecheck program, and re-exporting it would drag the component —
+// and its DOM globals — into that project.
+import type { KeynavHelpState, } from "./keynav-help";
 
 declare global {
   interface DocumentEventMap {
