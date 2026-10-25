@@ -496,4 +496,19 @@ describe("promptTemplateRoutes — guest tier read access", () => {
     const res = await anon.handle(new Request("http://localhost/api/templates",),);
     expect(res.status,).toBe(401,);
   });
+
+  test("a context that never went through the auth derive gets no implicit read", async () => {
+    // No derive at all: extractAuth reads `undefined` for both fields. The
+    // gate must treat a missing identity as unauthenticated (401), not as
+    // an authenticated caller — pins the truthy-id check in
+    // requireGuestReadable against extractAuth's `string | null` cast.
+    const bare = new Elysia({ name: "test-prompt-templates-bare", },)
+      .use(promptTemplateRoutes({ database: db, },),) as unknown as Elysia;
+
+    const list = await bare.handle(new Request("http://localhost/api/templates",),);
+    expect(list.status,).toBe(401,);
+
+    const one = await bare.handle(new Request("http://localhost/api/templates/preset-roleplay",),);
+    expect(one.status,).toBe(401,);
+  });
 });
