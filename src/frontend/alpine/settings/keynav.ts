@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { t, } from "../i18n";
 import {
   getKeymap,
   isKeyboardNavEnabled,
@@ -9,12 +10,6 @@ import {
   validateKeymapCombo,
 } from "../shortcuts";
 import type { SettingsState, } from "./types";
-
-/** Read the client-side translation helper registered by the i18n bundle. */
-function globalT(): ((key: string,) => string) | undefined {
-  const g: { t?: (k: string,) => string } = globalThis;
-  return g.t;
-}
 
 /**
  * Keyboard-shortcut editor section for the /settings page.
@@ -69,6 +64,9 @@ export function keynav(): Partial<SettingsState> & ThisType<SettingsState> {
     handleRebindKeydown(e: KeyboardEvent,) {
       if (!this.rebindingAction) { return; }
       e.preventDefault();
+      // Keep the capture exclusive: the document-level keynav listener must
+      // not see these keys (? would pop the help overlay, g arms a sequence).
+      e.stopPropagation();
       if (e.key === "Escape") {
         this.cancelRebind();
         return;
@@ -114,8 +112,8 @@ export function keynav(): Partial<SettingsState> & ThisType<SettingsState> {
      */
     actionLabel(action: string,) {
       const i18nKey = `frontend.keynav.actions.${action}`;
-      const translated = globalT()?.(i18nKey,);
-      return translated && translated !== i18nKey ? translated : action;
+      const translated = t(i18nKey,);
+      return translated === i18nKey ? action : translated;
     },
   };
 }
