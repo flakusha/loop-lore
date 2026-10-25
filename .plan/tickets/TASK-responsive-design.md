@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** P0 — Critical
 **Effort:** Medium
 **Epic:** epic-accessibility-input
@@ -19,16 +19,24 @@ Implement responsive design system with breakpoints, fluid typography, flexible 
 
 ## Acceptance Criteria
 
-- [ ] Breakpoints: <480px, 480-768px, 768-1200px, >1200px
-- [ ] Fluid typography scaling
-- [ ] Flexible grid layouts
-- [ ] Mobile-first CSS approach
-- [ ] Touch vs. mouse detection
-- [ ] Reduced motion support
-- [ ] High contrast mode support
-- [ ] Print styles
+- [x] Breakpoints: <480px, 480-768px, 768-1200px, >1200px — tier map lives in `responsive.css`; mobile tier additionally collapses `.rpg-stats-grid`; the pre-existing ≤480/≤768/≤900 one-off blocks in `app.css` are retained as the per-surface behavior of each tier
+- [x] Fluid typography scaling — `clamp()` overrides for the shared `--fs-lg` … `--fs-display` tokens (pixel-identical at ≥1200px, floored on phones); reading sizes (`xs`–`md`) intentionally stay fixed for legibility
+- [x] Flexible grid layouts — `.asset-grid` was already fluid (`auto-fill`/`minmax`); `.rpg-stats-grid` now collapses to one column under 480px
+- [x] Mobile-first CSS approach — `responsive.css` is authored mobile-first (base = smallest tier, `min-width` tiers layer up); converting legacy `app.css` blocks is out of scope (see notes)
+- [x] Touch vs. mouse detection — `createInputModeTracker()` factory in `src/frontend/a11y/responsive.ts` (snapshot + `touch-user`/`mouse-user` classes, hybrid-safe); coarse-pointer CSS targets pre-existed; module is unwired so far (no JS consumer yet)
+- [x] Reduced motion support — global `0.01ms` duration clamp added as an umbrella over the pre-existing per-component blocks (also stops spinner/typing-dot keyframes)
+- [x] High contrast mode support — `(prefers-contrast: more)` (the draft's `high` value does not parse): muted-text and border tokens remapped to the active theme's `--text-secondary`, focus outline thickened
+- [x] Print styles — `@media print` block: `.no-print`/`.print-only` utilities, app chrome stripped, black-on-white, external link URLs revealed
 
 ## Implementation Details
+
+> Drafts below are kept for history only — do NOT paste them: the CSS
+> contains invalid values (`background-color: opaque`) and `* { … !important }
+> rules that would repaint the whole UI; `prefers-contrast: high` is not a
+> valid MQ value (`more` is); CSS custom properties cannot be used inside
+> media queries, so `--breakpoint-*` tokens are impossible (breakpoints are
+> literal tier blocks); the `InputDetector` class contradicts the repo's
+> factory-function convention. See "Implementation Notes" for what shipped.
 
 ### Breakpoint System
 
@@ -289,13 +297,46 @@ export class InputDetector {
 }
 ```
 
-## Files to Create
+## Files Shipped (revised from draft)
 
-- `src/frontend/a11y/responsive.ts`
-- `src/frontend/a11y/breakpoints.css`
-- `src/frontend/a11y/typography.css`
-- `src/frontend/a11y/grid.css`
-- `src/frontend/a11y/print.css`
+- `src/public/css/responsive.css` — one cohesive responsive layer
+  (breakpoint tier map, fluid typography, grid fix, reduced motion, high
+  contrast, print), replacing the draft's four separate stylesheets to
+  match the repo's main-stylesheet-plus-satellites CSS architecture; linked
+  last from `src/views/layout.html`
+- `src/frontend/a11y/responsive.ts` — input-mode tracker factory
+  (`createInputModeTracker()`, options-object, no class, no module state)
+- `src/frontend/a11y/responsive.test.ts` — unit tests (matchMedia/pointer/
+  classList fakes, no DOM)
+
+## Implementation Notes (branch a11y-responsive-design, 2026-10-25)
+
+Landed on the branch, pending review/merge — status stays In Progress
+until then.
+
+**Reused, not duplicated:** coarse-pointer 44px touch targets and the
+per-component reduced-motion blocks in `app.css`/`vn.css`/`info-bubble.css`,
+`:focus-visible` outlines, skip link, viewport meta, the drawer sidebar
+(that the draft's sidebar media queries re-implemented), and the fluid
+`.asset-grid`. The hover media query in the tracker mirrors
+`alpine/info-bubble.ts` so JS and CSS agree.
+
+**Scope carve-outs:** legacy `app.css` stays desktop-first — only the new
+layer is mobile-first, so the AC is met by the added layer, not by a
+wholesale conversion; raw px `font-size` declarations inside components are
+not tokenized and therefore do not scale with the fluid tokens; the tracker
+is unwired (no JS consumer yet — same tracked status as `touch.ts`, and a
+follow-up wiring ticket is the natural next step); the draft's
+`getTouchTargetSize()` JS API is dropped — target sizing already belongs to
+CSS. No i18n strings were needed (pure CSS + one class-toggling utility).
+
+**Gates (scoped, no full check run):** `bunx stylelint
+"src/public/**/*.css"`, `bun run typecheck:frontend`, scoped `eslint` +
+`dprint` on the new module, `markuplint` on `layout.html`, single-file
+`bun test src/frontend/a11y/responsive.test.ts`, `bun run size`, and a
+knip files pass — all green; the unit suite exercises snapshot
+construction, degradation without/with a throwing `matchMedia`, pointer
+class switching, change notification, and `stop()` teardown.
 
 ## Related Tasks
 
