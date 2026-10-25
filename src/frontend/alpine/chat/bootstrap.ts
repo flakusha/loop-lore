@@ -33,6 +33,7 @@ import { chatSectionsNav, } from "../chat-sections-nav";
 import { chatSettings, } from "../chat-settings";
 import { actorModelActions, } from "../chat-settings/actor-models";
 import { chatSideChannels, } from "../chat-side-channels";
+import { chatTouchGestures, } from "../chat-touch-gestures";
 import { chatUtils, } from "../chat-utils";
 import { chatVariants, } from "../chat-variants";
 import { attachValidateDraft, createComposerPreSend, } from "../composer-pre-send";
@@ -108,6 +109,7 @@ export function chatState() {
     ...messageTranslate,
     ...chatInvites,
     ...worldChannels,
+    ...chatTouchGestures,
 
     // Lifecycle must be last: sub-modules such as commandPalette also expose init().
     ...chatLifecycle,
