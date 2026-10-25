@@ -77,11 +77,13 @@ async function seedActor(db: Kysely<DB>, id: string, userId: string,): Promise<v
 }
 
 let db: Kysely<DB>;
+let rawSqlite: Database;
 
 beforeAll(async () => {
   createLogger({ level: "warn", },);
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = OFF",);
+  rawSqlite = sqlite;
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
 
   const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
@@ -191,6 +193,30 @@ describe("registerPublicKey", () => {
     await revokePublicKey({ database: db, actorId: OWNER_ID, },);
     const row = await getActivePublicKey({ database: db, actorId: OWNER_ID, },);
     expect(row,).toBeNull();
+  });
+
+  test("keeps the old key active when the insert fails (BUG-key-material-revoke-then-insert-sequences-are-non-transactio)", async () => {
+    await registerPublicKey({ database: db, actorId: OWNER_ID, publicKeyJwk: sampleJwk(1,), },);
+
+    // Fail the SECOND write (the insert) after the soft-revoke.
+    rawSqlite.exec(
+      `CREATE TRIGGER fail_pubkey_insert BEFORE INSERT ON actor_e2e_pubkeys
+       BEGIN SELECT RAISE(ABORT, 'simulated pubkey insert failure'); END;`,
+    );
+
+    try {
+      await expect(
+        registerPublicKey({ database: db, actorId: OWNER_ID, publicKeyJwk: sampleJwk(2,), },),
+      ).rejects.toThrow();
+
+      // The revoke must roll back with the failed insert — the actor must
+      // never be left with zero active pubkeys.
+      const active = await getActivePublicKey({ database: db, actorId: OWNER_ID, },);
+      expect(active,).not.toBeNull();
+      expect(active!.publicKeyJwk.x,).toBe(sampleJwk(1,).x,);
+    } finally {
+      rawSqlite.exec("DROP TRIGGER fail_pubkey_insert;",);
+    }
   });
 });
 
