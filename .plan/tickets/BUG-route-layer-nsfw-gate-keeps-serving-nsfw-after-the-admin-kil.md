@@ -3,7 +3,7 @@
 
 # BUG: Route-layer NSFW gate keeps serving NSFW after the admin kill switch is turned off
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -21,3 +21,5 @@ Route-layer NSFW gate reads the boot-time file Config, not the effective (file p
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue eaa16ea (registry tip: 6cb9c0997 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-)

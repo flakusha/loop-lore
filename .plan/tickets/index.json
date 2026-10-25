@@ -646,7 +646,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-APPLYFLAG-SKIPS-SELF-TARGET-GUARD": {
     "hash": "af59426",
@@ -942,7 +942,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "epic": "epic-assistant-creative-studio-workflows",
@@ -2929,7 +2929,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CONFIG-MENU-PATCH-STORES-THE-RAW-VALUE-FOR-USER-SCOPE-SETTIN": {
     "hash": "c77b7e9",
@@ -8610,7 +8610,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU": {
     "hash": "911cb41",
@@ -8918,7 +8918,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET": {
     "hash": "36b98b4",
