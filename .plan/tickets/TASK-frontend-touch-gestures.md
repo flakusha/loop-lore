@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-accessibility-input, epic-3d-generation
@@ -37,19 +37,26 @@ missing unit tests, per epic Phase 2 ("Touch gesture system … swipe/tap/long-p
 
 ## Acceptance Criteria
 
-- [ ] `src/frontend/touch.ts` imported by ≥1 built bundle (registered through
+- [x] `src/frontend/touch.ts` imported by ≥1 built bundle (registered through
       `src/frontend/alpine/index.ts` or `alpine-init.ts`) so it is no longer dead code
-- [ ] Wire `onSwipe` into a real chat surface (chat message swipe-left → delete/
+      (2026-10-25: imported by `src/frontend/alpine/chat-touch-gestures.ts` →
+      `chat/bootstrap.ts` → `chat/index.ts`, part of the `alpine/index.ts` bundle)
+- [x] Wire `onSwipe` into a real chat surface (chat message swipe-left → delete/
       archive; swipe-right → reply/edit, matching epic gesture map). If chat
       integration is out of scope for the first pass, wire into gallery
       swipe-between-images instead and state the choice in the ticket.
-- [ ] Wire `onLongPress` into at least one context-menu surface (or document why skip)
-- [ ] `src/frontend/touch.test.ts` unit tests defending observable contract:
+      (2026-10-25: swipe-left → archive-confirm dialog, swipe-right → edit on
+      `#message-list` — the same actions the 📦 Archive and ✏️ Edit buttons dispatch)
+- [x] Wire `onLongPress` into at least one context-menu surface (or document why skip)
+      (2026-10-25: long-press on a message row opens the existing message context
+      menu via `openContextMenu`)
+- [x] `src/frontend/touch.test.ts` unit tests defending observable contract:
       swipe direction + threshold, tap click-fallback under reduced-motion/non-touch,
       long-press timer + cleanup on cancel/unmount. Run `bun test src/frontend/touch.test.ts`.
-- [ ] `bun run check` green; no lint errors introduced
+- [x] `bun run check` green; no lint errors introduced
 - [ ] Sidebar inline swipe logic may be consolidated onto the util (optional,
-      non-blocking) so there is one touch implementation, not two
+      non-blocking) so there is one touch implementation, not two (skipped:
+      optional AC; the sidebar swipe tracks mid-gesture and stays as-is)
 
 ## Notes / Risks
 
