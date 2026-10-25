@@ -6,7 +6,7 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertLocations, insertLocationStates, insertWorlds, } from "../../test-utils/insert-helpers";
+import { insertLocations, insertLocationStates, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { validateConnections, } from "./location-connections";
 import { locationRoutes, } from "./locations-routes";
@@ -310,5 +310,68 @@ describe("locationRoutes — list q filter", () => {
     const { names, total, } = await listNames("?q=zzz-no-such-location",);
     expect(names,).toEqual([],);
     expect(total,).toBe(0,);
+  });
+});
+
+/**
+ * The guest tier (`auth.guestAccess`): an account-less visitor may read the
+ * locations of a PUBLIC world — list and detail — and nothing else. Location
+ * mutations go through `requireWorldOwner`, which denies the null user id.
+ */
+describe("locationRoutes — guest tier read access", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+  let publicWorldId: string;
+  let privateWorldId: string;
+  let locationId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, sqlite, } = await createTestDb());
+
+    const ownerId = uid();
+    await insertUsers(db, `loc-guest-owner-${ownerId}`, "Loc Guest Owner", { id: ownerId, } as never,);
+    publicWorldId = await insertWorlds(db, ownerId, "Guest Public World", { visibility: "public", },);
+    privateWorldId = await insertWorlds(db, ownerId, "Guest Private World", { visibility: "private", },);
+    locationId = await insertLocations(db, publicWorldId, "Guest Tavern",);
+  },);
+
+  afterAll(async () => {
+    await sqlite.close();
+  },);
+
+  test("a guest lists the locations of a public world", async () => {
+    const guest = appWithAuth(db, null, "guest",);
+    const res = await guest.handle(new Request(`${BASE}/api/worlds/${publicWorldId}/locations`,),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { id: string; name: string }[]; pagination: { total: number } };
+    expect(body.data.map((loc,) => loc.id),).toContain(locationId,);
+    expect(body.pagination.total,).toBe(1,);
+  });
+
+  test("a guest reads one location of a public world", async () => {
+    const guest = appWithAuth(db, null, "guest",);
+    const res = await guest.handle(new Request(`${BASE}/api/worlds/${publicWorldId}/locations/${locationId}`,),);
+    expect(res.status,).toBe(200,);
+    expect(((await res.json()) as { name: string }).name,).toBe("Guest Tavern",);
+  });
+
+  test("a guest cannot read the locations of a private world", async () => {
+    const guest = appWithAuth(db, null, "guest",);
+    const res = await guest.handle(new Request(`${BASE}/api/worlds/${privateWorldId}/locations`,),);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("a guest cannot create a location", async () => {
+    const guest = appWithAuth(db, null, "guest",);
+    const res = await guest.handle(
+      new Request(`${BASE}/api/worlds/${publicWorldId}/locations`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Guest Location", },),
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
   });
 });

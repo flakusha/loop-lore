@@ -124,6 +124,17 @@ describe("template service CRUD", () => {
     const images = await listTemplates(db, userId, "image",);
     expect(images.every((t,) => !t.isPreset),).toBe(true,);
   });
+
+  test("a null user (guest tier) lists and resolves presets only", async () => {
+    const listed = await listTemplates(db, null,);
+    expect(listed.length,).toBeGreaterThan(0,);
+    expect(listed.every((t,) => t.isPreset && !t.isOwner),).toBe(true,);
+
+    const preset = await resolveTemplateDef(db, "preset-roleplay", null,);
+    expect(preset?.preset?.id,).toBe("preset-roleplay",);
+    // Owner rows (userId-scoped) are unreachable without an account.
+    expect(await resolveTemplateDef(db, "tmpl-nope", null,),).toBeNull();
+  });
 });
 
 describe("payload rendering", () => {

@@ -29,11 +29,11 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
     .get(
       `${prefix}/worlds`,
       async (ctx: any,) => {
-        const { userId, } = extractAuth(ctx,);
+        const { userId, userRole, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
         const pageSize = Number(ctx.query?.pageSize,) || 20;
         const q = typeof ctx.query?.q === "string" ? ctx.query.q : undefined;
-        return handleListWorlds(database, page, pageSize, userId, q,);
+        return handleListWorlds(database, page, pageSize, userId, userRole, q,);
       },
       {
         response: {

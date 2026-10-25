@@ -14,7 +14,7 @@ import { Type, } from "@sinclair/typebox";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { TemplateModality, } from "../../db/enums";
-import { TEMPLATE_MODALITIES, } from "../../db/enums";
+import { TEMPLATE_MODALITIES, UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { CreateTemplateInput, } from "../../generation/template-service";
 import {
@@ -27,6 +27,7 @@ import {
   updateTemplate,
 } from "../../generation/template-service";
 import { parseTemplatePayload, } from "../../generation/template-types";
+import type { TranslatorFn, } from "../../i18n/types";
 import { notFound, } from "../../validation/middleware";
 import {
   ErrorResponse,
@@ -35,12 +36,27 @@ import {
   TemplateSummaryResponse,
   TemplateUpdateBody,
 } from "../../validation/schemas";
-import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, unauthorizedResponse, } from "../http-utils";
 
 const MODALITIES = TEMPLATE_MODALITIES;
 
 const IdParams = Type.Object({ id: Type.String(), },);
 const ListQuery = Type.Object({ modality: Type.Optional(Type.String(),), },);
+
+/**
+ * The guest-open read gate the list/retrieve routes share: an authenticated
+ * caller passes, as does the synthetic guest tier (no account, role
+ * `guest`) — everyone else (anonymous without the tier, e.g. the derive
+ * denied the request) keeps the canonical 401 `requireUserId` returned
+ * before the tier existed.
+ * @param ctx - Elysia request context
+ * @returns error Response when the caller may not read, null when OK
+ */
+function requireGuestReadable(ctx: unknown,): Response | null {
+  const { userId, userRole, } = extractAuth(ctx,);
+  if (userId !== null || userRole === UserRole.Guest) { return null; }
+  return unauthorizedResponse(undefined, (ctx as { t?: TranslatorFn }).t,);
+}
 
 /**
  * @param root0 - Handler options
@@ -54,11 +70,13 @@ export function templateCrudRoutes(
 ) {
   return new Elysia({ name: "template-crud", },)
     .get(`${prefix}/templates`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      // Guest-open read: the synthetic guest tier lists the built-in presets
+      // (it owns no rows); anonymous callers without the tier keep the 401.
+      const denied = requireGuestReadable(ctx,);
+      if (denied) { return denied; }
       const requested = ctx.query.modality as TemplateModality | undefined;
       const modality = requested && MODALITIES.includes(requested,) ? requested : undefined;
-      const templates = await listTemplates(database, userId, modality,);
+      const templates = await listTemplates(database, extractAuth(ctx,).userId, modality,);
       return jsonResponse({ templates, },);
     }, {
       query: ListQuery,
@@ -82,9 +100,11 @@ export function templateCrudRoutes(
       detail: { summary: "Create a prompt template", tags: ["Templates",], },
     },)
     .get(`${prefix}/templates/:id`, async (ctx,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const def = await resolveTemplateDef(database, ctx.params.id, userId,);
+      // Guest-open read: the guest tier resolves built-in presets; owner
+      // rows stay behind the account (resolveTemplateDef returns null).
+      const denied = requireGuestReadable(ctx,);
+      if (denied) { return denied; }
+      const def = await resolveTemplateDef(database, ctx.params.id, extractAuth(ctx,).userId,);
       if (def?.preset) {
         return jsonResponse({
           template: {
