@@ -173,13 +173,16 @@ outright until a guest-tier policy exists.
 - [x] With `auth.guestAccess=true`, an unauthenticated request derives a
       guest context (`userRole=guest`, no user/session rows) and can reach
       read-mostly public routes; with the flag off, behavior is unchanged.
-- [ ] Guest can list and read `visibility=public` chats, public assets, and
+- [x] Guest can list and read `visibility=public` chats, public assets, and
       public worlds without an account. (Chats and assets: Phase 2 shipped —
       `GET /api/chats` lists public chats only, `GET /api/chats/:id` and the
       message reads admit a guest on a public chat, and a guest reads
-      `visibility=public` assets. Public worlds: partially —
-      `GET /api/worlds/:worldId` reads a PUBLIC world; world listing lands in
-      Phase 3.)
+      `visibility=public` assets. Worlds: Phase 3 shipped — `GET /api/worlds`
+      lists PUBLIC worlds to the guest tier (role-gated; unlisted/private
+      excluded), `GET /api/worlds/:worldId` reads a PUBLIC world, and the
+      location list/detail reads opt in via `requireWorldAccess(...,
+      { allowGuest: true })`. The actor list serves a guest PUBLIC actors
+      only, matching what the single-actor read already admitted.)
 - [x] No mutation route is reachable as guest: `requireUserId` denies the
       null user id, and the `guest` role holds no write permission, so the
       routes that guard by role alone deny it too.
@@ -262,6 +265,40 @@ read routes opt into the guest tier explicitly.
 Read-only public world browsing; guest surface for story feed, public
 templates, docs.
 → `TASK-guest-world-public-browse-read-only-public-worlds.md`, `TASK-guest-public-functionality-surface-feed-templates-docs.md`
+
+**Shipped.** World listing joined the Phase 1 detail read, and the public
+template surface opened to the guest tier:
+
+- `GET /api/worlds` admits the guest tier to its PUBLIC-only arm, gated on
+  the `world.view` grant the same way the chat list gates on `chat.join`:
+  an id-less caller without the guest role matches nothing, so a denied
+  derive never degrades into anonymous enumeration of the catalog.
+  Unlisted and private worlds stay invisible to a guest; the owned/public/
+  member arms for authenticated callers are unchanged.
+- The read-only location surface (`GET /api/worlds/:worldId/locations` and
+  `/locations/:locId`) opted in with `requireWorldAccess(...,
+  { allowGuest: true })` — the Phase 1 pattern on the rest of the read
+  routes a guest needs. Location writes stay behind `requireWorldOwner`
+  (403 for a guest). The deeper world surfaces — timelines, conditions,
+  karma, factions, storage, export, the world→chats view and the GM state
+  routes — stay closed: they are gameplay/GM surfaces, not public metadata.
+- `GET /api/actors` gained the guest arm the single-actor read already
+  had: PUBLIC actors only, role-gated on `character.view`. Before Phase 3
+  a null-id caller on that route listed every user's cast, guests
+  included — the tier fix closes that enumeration hole.
+- Public templates: the flat `/api/templates` list/retrieve routes are
+  guest-open for the built-in LLM presets (`listTemplates` /
+  `resolveTemplateDef` accept a null user and serve presets only). Create,
+  patch, delete, apply, and the transfer pack I/O keep `requireUserId`;
+  the per-modality nested routes stay authenticated (owner rows only, no
+  public content to serve).
+- Docs need no change: `handleDocsRequest` (`src/server/static-files.ts`)
+  serves outside the auth derive and honors the `docs.public` whitelist,
+  so the anonymous path already covers the guest.
+- The public story feed did **not** ship: `epic-public-feed` does not
+  exist and there is no feed route to admit a guest to — blocked on that
+  epic, nothing invented in its place. The login "continue as guest"
+  entry stays with `epic-frontend-login`.
 
 ### Phase 4: Hardening
 

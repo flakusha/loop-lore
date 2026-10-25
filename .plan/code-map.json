@@ -1203,12 +1203,6 @@
       "source": ".plan/tickets/TASK-replace-hand-rolled-image-header-probing-in-src-assets-with-.md"
     }
   ],
-  "src/assets/controller.acl.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
-    }
-  ],
   "src/assets/controller.routes.test.ts": [
     {
       "kind": "ticket",
@@ -1767,12 +1761,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/crypto.md"
-    }
-  ],
-  "src/assets/service/delete.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/assets/service/delete.ts": [
@@ -2623,24 +2611,10 @@
       "source": ".plan/tickets/FEAT-creative-process-commit-gating.md"
     }
   ],
-  "src/assistant/commands/create-entity-lore.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    }
-  ],
   "src/assistant/commands/create-entity-lore.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/assistant/commands/create-entity.ts": [
@@ -2797,12 +2771,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-gm-flows.md"
-    }
-  ],
-  "src/assistant/commands/generation-stubs.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     }
   ],
   "src/assistant/commands/gm-guidance.ts": [
@@ -3013,10 +2981,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     }
   ],
   "src/assistant/commands/narrate.ts": [
@@ -3291,10 +3255,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     }
   ],
   "src/assistant/commands/workflow-dispatch.test.ts": [
@@ -4336,10 +4296,6 @@
   "src/assistant/prompt/sections/lore-activation.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-055.md"
     },
     {
@@ -4363,10 +4319,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-npc-lore-access.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -4399,10 +4351,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-and-group-chat-correctness-defects.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -4508,10 +4456,6 @@
   "src/assistant/prompt/sections/nsfw-context.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
     },
     {
@@ -4536,15 +4480,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -8287,12 +8223,6 @@
       "source": ".plan/tickets/BUG-relationship-duplicate-guard-runs-before-txn-concurrent-same.md"
     }
   ],
-  "src/characters/services/shared-service-utils.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
-    }
-  ],
   "src/characters/services/skills-service-bridge.ts": [
     {
       "kind": "epic",
@@ -9311,10 +9241,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-message-translations-chat-first.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/chat/mode-switch.ts": [
@@ -12975,28 +12901,6 @@
       "source": "docs/spec/config-extensions.md"
     }
   ],
-  "src/config/hot-apply-consumers.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
-    }
-  ],
-  "src/config/hot-apply.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
-    }
-  ],
-  "src/config/hot-apply.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
-    }
-  ],
   "src/config/hot-reload.test.ts": [
     {
       "kind": "ticket",
@@ -13011,10 +12915,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-continuous-improvement.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
     },
     {
       "kind": "ticket",
@@ -13350,10 +13250,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-outfit-change-aux-task-and-typebox-schema.md"
     },
     {
@@ -13487,12 +13383,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-allow-data-dir-to-be-overridden-by-env-var.md"
-    }
-  ],
-  "src/config/schema-class/json-schema/seeding.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
     }
   ],
   "src/config/schema-class/json-schema/server.ts": [
@@ -13909,24 +13799,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-server-host-config-and-host-env-override-are-dead-start-ts-n.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
     }
   ],
   "src/config/schema/seeding.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-lorebook-template-seeding.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
     },
     {
       "kind": "ticket",
@@ -13938,14 +13816,6 @@
     }
   ],
   "src/config/schema/testing.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-no-gate-checks-that-a-declared-config-key-has-a-reader-so-wr.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
@@ -14885,12 +14755,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-publication-translation-batch-cron.md"
-    }
-  ],
-  "src/cron/dag": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
     }
   ],
   "src/cron/dag/engine.test.ts": [
@@ -17317,16 +17181,6 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
-  "src/db/generated/db-types.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
-    }
-  ],
   "src/db/guard-triggers-update-twins.test.ts": [
     {
       "kind": "ticket",
@@ -17861,14 +17715,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
     },
     {
       "kind": "ticket",
@@ -19362,23 +19208,11 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotions-avatar-edit-model.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -19868,10 +19702,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
     {
@@ -19977,10 +19807,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -20286,10 +20112,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-create-test-db-custom-dialect-can-bypass-settestdatabase.md"
     },
     {
@@ -20339,10 +20161,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -20618,10 +20436,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-cross-chat-global-memory.md"
     },
     {
@@ -20827,10 +20641,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -21196,10 +21006,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md"
     },
     {
@@ -21375,12 +21181,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-user-theming-system.md"
-    }
-  ],
-  "src/eslint-rules/options-object-params.mjs": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
     }
   ],
   "src/export/sillytavern-v2.ts": [
@@ -22447,10 +22247,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
     },
     {
       "kind": "ticket",
@@ -25462,10 +25258,6 @@
     }
   ],
   "src/frontend/alpine/user-notifications.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-epic-frontend-notifications-verify-bell-prefs-ui-c.md"
@@ -28764,10 +28556,6 @@
   "src/generation/auto-gen/fire-random-event.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md"
     }
   ],
@@ -29091,12 +28879,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
-    }
-  ],
-  "src/generation/auto-gen/story-mode.coverage.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/generation/auto-gen/story-mode.test.ts": [
@@ -31291,12 +31073,6 @@
       "source": ".plan/epics/epic-tts-foundation.md"
     }
   ],
-  "src/generation/providers/failover-key-scope.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
-    }
-  ],
   "src/generation/providers/ollama-native/http.ts": [
     {
       "kind": "epic",
@@ -31373,12 +31149,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md"
-    }
-  ],
-  "src/generation/providers/registry-branches.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/generation/providers/registry.test.ts": [
@@ -31605,12 +31375,6 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
-    }
-  ],
-  "src/generation/providers/user-api-key.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/generation/providers/user-api-key.ts": [
@@ -34939,10 +34703,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/middleware/auth/authenticate.ts": [
@@ -35442,10 +35202,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     },
     {
@@ -35471,10 +35227,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-age-gate.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -35622,10 +35374,6 @@
     }
   ],
   "src/middleware/nsfw-gate/request-context.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-residual-review-nits-nsfw-ignoremoderation-escape-hatch-char.md"
@@ -36024,10 +35772,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-buildrecentevents-matches-chat-ids-with-an-unbounded-like-pr.md"
     },
     {
@@ -36120,14 +35864,6 @@
   "src/nsfw/capability-gate.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-033.md"
     },
     {
@@ -36177,12 +35913,6 @@
       "source": "docs/spec/nsfw-integration.md"
     }
   ],
-  "src/nsfw/moderation-service": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
-    }
-  ],
   "src/nsfw/moderation-service.ts": [
     {
       "kind": "epic",
@@ -36208,22 +35938,10 @@
   "src/nsfw/moderation-service/appeals-reversal.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/nsfw/moderation-service/appeals.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeal-approvedby-taken-from-request-body.md"
@@ -36254,10 +35972,6 @@
     }
   ],
   "src/nsfw/moderation-service/audit.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-getauditlog-performedby-exposed-to-moderators.md"
@@ -36434,15 +36148,7 @@
   "src/nsfw/runtime-config.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -39361,20 +39067,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     }
   ],
   "src/routes/admin-nsfw.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     }
   ],
   "src/routes/admin-templates/profiles.ts": [
@@ -42974,10 +42672,6 @@
   "src/routes/import/lorebook.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     },
     {
@@ -44464,10 +44158,6 @@
   "src/routes/notifications/index.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/EPIC-2026-21.md"
     }
   ],
@@ -44478,10 +44168,6 @@
     }
   ],
   "src/routes/notifications/stream.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-notification-stream-error-unreachable.md"
@@ -44677,12 +44363,6 @@
       "source": ".plan/epics/epic-faction-reputation.md"
     }
   ],
-  "src/routes/nsfw/shared.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
-    }
-  ],
   "src/routes/openapi.ts": [
     {
       "kind": "epic",
@@ -44789,12 +44469,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
-    }
-  ],
-  "src/routes/quests": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
     }
   ],
   "src/routes/quests.test.ts": [
@@ -45384,10 +45058,6 @@
   "src/routes/story-items": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
     }
   ],
@@ -45439,10 +45109,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-entity-access.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md"
     },
     {
       "kind": "ticket",
@@ -46882,10 +46548,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     },
     {
@@ -46953,10 +46615,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
     }
   ],
   "src/routes/worlds.test.ts": [
@@ -47029,10 +46687,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-autonomy-config-surface-layering-presets-and-overrides.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
   "src/routes/worlds/autonomy-routes.ts": [
@@ -51653,17 +51307,7 @@
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
     }
   ],
-  "src/seeding/users.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
-    }
-  ],
   "src/seeding/users.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-ts-import-extensions-user-seeding-session.md"
@@ -51916,10 +51560,6 @@
   "src/server/start.test.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-server-exit-non-zero-on-uncaughtexception-unhandledrejec.md"
     },
     {
@@ -51994,10 +51634,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-eager-db-init-creates-on-disk-db-on-test-import.md"
     },
     {
@@ -52023,10 +51659,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md"
     },
     {
       "kind": "ticket",
@@ -52151,6 +51783,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-guest-access.md"
     },
     {
       "kind": "epic",
@@ -52805,12 +52441,6 @@
       "source": ".plan/tickets/TASK-sd-cpp-provider.md"
     }
   ],
-  "src/services/trade": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
-    }
-  ],
   "src/services/trade-core": [
     {
       "kind": "ticket",
@@ -53124,10 +52754,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-origin-capture-generation-seeding.md"
     },
     {
@@ -53157,10 +52783,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -53326,10 +52948,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-sc10-player-state-machine-adapters.md"
     }
   ],
@@ -53372,10 +52990,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
     },
     {
@@ -53403,10 +53017,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-items.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md"
     },
     {
       "kind": "ticket",
@@ -53877,12 +53487,6 @@
       "source": "docs/spec/testing.md"
     }
   ],
-  "src/story/whatif-simulator.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
-    }
-  ],
   "src/story/whatif-simulator.ts": [
     {
       "kind": "epic",
@@ -54135,10 +53739,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-peer-registry-workload-columns.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -55786,10 +55386,6 @@
   "src/utils/safe-buffer": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-181-pre-existing-options-object-params-eslint-warnings-acros.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
     }
   ],
@@ -55921,12 +55517,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-markdown-heading-parse-and-import.md"
-    }
-  ],
-  "src/utils/safe-regexp.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-diff-scoped-coverage-gate-floors-files-the-branch-did-not-au.md"
     }
   ],
   "src/utils/scratch.ts": [
@@ -56063,10 +55653,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     },
     {
       "kind": "ticket",
@@ -56550,10 +56136,6 @@
     }
   ],
   "src/validation/schemas/responses.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-affordance-action-parser.md"
@@ -57755,12 +57337,6 @@
       "source": ".plan/tickets/TASK-043.md"
     }
   ],
-  "src/worlds/conditions.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
-    }
-  ],
   "src/worlds/license.ts": [
     {
       "kind": "epic",
@@ -57787,10 +57363,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-worlds-extension.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ]
 }
