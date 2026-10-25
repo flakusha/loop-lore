@@ -4,6 +4,7 @@
 # BUG: acceptResponse applies world events before the turn write, so a rejected turn keeps applied world mutations
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — src/story/game-master/accept.ts:104-106 checks TransitionError before any write, then wraps applyEvents + the turn UPDATE in one `state.db.transaction()` (:108-114) with the previously-unfed `trx` seam now passed to applyEvents (:110); world events and the turn write are atomic.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-assistant-gm-flows
@@ -24,7 +25,7 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-5 (gitignored; recorded here
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): src/story/game-master/accept.ts:104-106 checks TransitionError before any write, then wraps applyEvents + the turn UPDATE in one `state.db.transaction()` (:108-114) with the previously-unfed `trx` seam now passed to applyEvents (:110); world events and the turn write are atomic.
 
 **Acceptance Criteria:**
 
