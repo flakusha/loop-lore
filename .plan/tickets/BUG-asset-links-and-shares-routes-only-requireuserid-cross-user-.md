@@ -4,6 +4,7 @@
 # BUG: Asset links and shares routes only requireUserId - cross-user enumeration
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — asset link and share routes are gated by `requireAssetOwner` (src/assets/controller.ts:119-130; applied at :380-381 GET links, :390 POST link, :406 DELETE link, :461 share delete, :477-478 GET shares) returning a 404 notOwnerResponse; missing-vs-foreign collapse pinned in src/assets/controller.acl.test.ts:148.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-auth-access
@@ -14,7 +15,7 @@ GET /assets/:id/links (src/assets/controller.ts:350) and GET /assets/:id/shares 
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): asset link and share routes are gated by `requireAssetOwner` (src/assets/controller.ts:119-130; applied at :380-381 GET links, :390 POST link, :406 DELETE link, :461 share delete, :477-478 GET shares) returning a 404 notOwnerResponse; missing-vs-foreign collapse pinned in src/assets/controller.acl.test.ts:148.
 
 **Acceptance Criteria:**
 
