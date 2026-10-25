@@ -15,7 +15,7 @@
  * craft (material consumption + output) and `TradeService.trade` for the gold
  * payment from requester to crafter.
  */
-import { type Kysely, Selectable, sql, } from "kysely";
+import { type Kysely, type Selectable, sql, } from "kysely";
 import type { QualityLevel, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { CraftingOrders, } from "../../db/schema-crafting";
