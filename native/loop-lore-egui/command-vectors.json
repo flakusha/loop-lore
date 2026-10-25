@@ -36,15 +36,15 @@
       "name": "caption"
     },
     {
+      "name": "char-update",
+      "requiredRole": "member"
+    },
+    {
       "name": "char-list",
       "requiredRole": "member"
     },
     {
       "name": "char-get",
-      "requiredRole": "member"
-    },
-    {
-      "name": "char-update",
       "requiredRole": "member"
     },
     {
@@ -133,15 +133,15 @@
       "name": "study"
     },
     {
+      "name": "item-update",
+      "requiredRole": "member"
+    },
+    {
       "name": "item-list",
       "requiredRole": "member"
     },
     {
       "name": "item-get",
-      "requiredRole": "member"
-    },
-    {
-      "name": "item-update",
       "requiredRole": "member"
     },
     {
@@ -265,9 +265,9 @@
         "translate",
         "tl",
         "caption",
+        "char-update",
         "char-list",
         "char-get",
-        "char-update",
         "context",
         "create",
         "debug",
@@ -294,9 +294,9 @@
         "persuade",
         "hide",
         "study",
+        "item-update",
         "item-list",
         "item-get",
-        "item-update",
         "inventory",
         "link",
         "loc-list",
@@ -334,9 +334,9 @@
         "battle",
         "translate",
         "caption",
+        "char-update",
         "char-list",
         "char-get",
-        "char-update",
         "create",
         "detail",
         "constraint",
