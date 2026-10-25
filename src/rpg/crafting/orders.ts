@@ -15,7 +15,7 @@
  * craft (material consumption + output) and `TradeService.trade` for the gold
  * payment from requester to crafter.
  */
-import type { Kysely, Selectable, } from "kysely";
+import { type Kysely, Selectable, sql, } from "kysely";
 import type { QualityLevel, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { CraftingOrders, } from "../../db/schema-crafting";
@@ -162,6 +162,38 @@ export class CraftingOrderService {
       return { ok: false, reason: "order is not accepted by a crafter", };
     }
 
+    // Claim before any side effect (loadOfferForAccept precedent): flip
+    // accepted → fulfilling only while the row still carries `accepted`.
+    // A concurrent fulfil's claim matches zero rows and returns WITHOUT
+    // crafting or paying — previously both fulfils read `accepted`, and
+    // both crafted and both paid. Raw SQL + numAffectedRows per the repo's
+    // CAS pattern (src/db/optimistic-locking.ts) — the Kysely query
+    // builder's UpdateResult does not surface affected rows on this driver.
+    const claim = await sql`
+      update ${sql.table("crafting_orders",)}
+      set status = ${"fulfilling"}, updated_at = ${new Date().toISOString()}
+      where ${sql.ref("id",)} = ${orderId} and ${sql.ref("status",)} = ${"accepted"}
+    `.execute(this.db,);
+
+    if (Number(claim.numAffectedRows,) === 0) {
+      return {
+        ok: false,
+        reason: "order is no longer accepted (already fulfilled, cancelled, or being fulfilled)",
+      };
+    }
+
+    // Hand the claim back on failure: the order returns to `accepted`, so
+    // the fulfil is retryable and cancelOrder (open|accepted) is reachable
+    // again. Side effects already committed by the failing leg stay (same
+    // semantics as the pre-fix code, which never reached the status flip).
+    const releaseClaim = async (): Promise<void> => {
+      await this.db.updateTable("crafting_orders",)
+        .set({ status: "accepted", updated_at: new Date().toISOString(), },)
+        .where("id", "=", orderId,)
+        .where("status", "=", "fulfilling",)
+        .execute();
+    };
+
     let attempt: CraftResult;
     try {
       attempt = await this.process.attemptCraft({
@@ -170,6 +202,7 @@ export class CraftingOrderService {
         recipeId: order.recipe_id,
       },);
     } catch (error) {
+      await releaseClaim();
       return { ok: false, reason: error instanceof Error ? error.message : String(error,), };
     }
 
@@ -183,12 +216,16 @@ export class CraftingOrderService {
         price: order.offered_payment,
       },);
 
-      if (!paid.success) { return { ok: false, reason: "payment failed", }; }
+      if (!paid.success) {
+        await releaseClaim();
+        return { ok: false, reason: "payment failed", };
+      }
     }
 
     await this.db.updateTable("crafting_orders",)
       .set({ status: "fulfilled", updated_at: new Date().toISOString(), },)
       .where("id", "=", orderId,)
+      .where("status", "=", "fulfilling",)
       .execute();
 
     return { ok: true, attemptId: attempt.attemptId, };
