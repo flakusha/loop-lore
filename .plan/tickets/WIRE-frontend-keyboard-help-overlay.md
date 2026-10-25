@@ -224,3 +224,5 @@ without a reload), and is registered in the Alpine bundle
 
 
 git issue: 837bc93
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 837bc93 (registry tip: 863c0451c Konstantin Fedotov Auto-closed: appended .md marker marks WIRE-FRONTEND-KEYBOARD-HELP-OVER)

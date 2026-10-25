@@ -5509,7 +5509,7 @@
     "epic": "epic-api-rate-limiting",
     "tags": [],
     "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "epic": "epic-nsfw-moderation-priority",
@@ -6950,7 +6950,7 @@
     "epic": "epic-aux-enrichment-pipeline",
     "tags": [],
     "source": ".plan/tickets/BUG-mood-and-relationship-services-mutate-multi-row-state-withou.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-MOOD-LAST-MOOD-CHANGE-FIX-IS-A-NO-OP-FOR-ALL-PRODUCTION-CALL": {
     "hash": "1d65877",
@@ -27225,7 +27225,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "assistant",
       "modification",
@@ -58117,7 +58117,7 @@
     "label": "wire",
     "priority": "Medium",
     "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md",
-    "status": "draft",
+    "status": "done",
     "tags": [],
     "title": "Frontend Keyboard Navigation Help Overlay (`?`)",
     "type": "WIRE"
