@@ -197,8 +197,8 @@ export async function insertLogEntries(
 /** Insert a meta_progression row. */
 export async function insertMetaProgression(
   db: Db,
-  opts?: {
-    player_id?: string;
+  opts: {
+    player_id: string;
     total_playthroughs?: number;
     endings_seen?: string;
     secrets_found?: string;
@@ -209,7 +209,7 @@ export async function insertMetaProgression(
     updated_at?: string;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("meta_progression",).values({
     ...restOpts,
@@ -285,15 +285,15 @@ export async function insertModelRoleOverrides(
   db: Db,
   provider: string,
   model: string,
-  opts?: {
-    role?: ModelRole;
+  opts: {
+    role: ModelRole;
     created_at?: string;
     updated_at?: string;
     temperature?: number | null;
     max_tokens?: number | null;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("model_role_overrides",).values({
     provider,
@@ -333,8 +333,8 @@ export async function insertNotifications(
 /** Insert a plugin_state row. */
 export async function insertPluginState(
   db: Db,
-  opts?: {
-    name?: string;
+  opts: {
+    name: string;
     status?: PluginStatus;
     enabled_at?: string | null;
     disabled_at?: string | null;
@@ -343,7 +343,7 @@ export async function insertPluginState(
     config_json?: string | null;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("plugin_state",).values({
     ...restOpts,
@@ -434,9 +434,9 @@ export async function insertSessions(
 export async function insertSystemConfig(
   db: Db,
   value: string,
-  opts?: { key?: string; description?: string | null; created_at?: string; updated_at?: string },
+  opts: { key: string; description?: string | null; created_at?: string; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("system_config",).values({
     value,
@@ -3655,9 +3655,9 @@ export async function insertMemoryEmbeddings(
   db: Db,
   vector_blob: Uint8Array,
   created_at: number,
-  opts?: { memory_id?: string; model?: string; dimensions?: number },
+  opts: { memory_id: string; model?: string; dimensions?: number },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("memory_embeddings",).values({
     vector_blob,
@@ -4140,9 +4140,9 @@ export async function insertMessageSearchTokens(
 export async function insertWorkflowSessions(
   db: Db,
   workflow_id: string,
-  opts?: { chat_id?: string; step_values?: string; confirmed?: number; updated_at?: string },
+  opts: { chat_id: string; step_values?: string; confirmed?: number; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("workflow_sessions",).values({
     workflow_id,
@@ -4154,8 +4154,8 @@ export async function insertWorkflowSessions(
 /** Insert a mesh_peers row. */
 export async function insertMeshPeers(
   db: Db,
-  opts?: {
-    origin?: string;
+  opts: {
+    origin: string;
     state?: string;
     capabilities?: string;
     last_seen?: string | null;
@@ -4170,7 +4170,7 @@ export async function insertMeshPeers(
     shared_token_enc?: string | null;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("mesh_peers",).values({
     ...restOpts,
@@ -4222,9 +4222,9 @@ export async function insertMeshDeliveries(
   origin: string,
   content_hash: string,
   clock: number,
-  opts?: { content_id?: string; received_at?: string },
+  opts: { content_id: string; received_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("mesh_deliveries",).values({
     origin,
@@ -4239,9 +4239,9 @@ export async function insertMeshDeliveries(
 export async function insertMeshInboundKeys(
   db: Db,
   encrypted_key: string,
-  opts?: { peer_origin?: string; previous_encrypted_key?: string | null; created_at?: string; updated_at?: string },
+  opts: { peer_origin: string; previous_encrypted_key?: string | null; created_at?: string; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("mesh_inbound_keys",).values({
     encrypted_key,
@@ -4413,9 +4413,9 @@ export async function insertActorLocations(
   db: Db,
   physical_location_id: string,
   spatial_location_id: string,
-  opts?: { actor_id?: string; entered_at?: string },
+  opts: { actor_id: string; entered_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("actor_locations",).values({
     physical_location_id,
@@ -4810,8 +4810,8 @@ export async function insertAutonomyBudget(
 export async function insertWorldSimulationState(
   db: Db,
   next_tick_at: string,
-  opts?: {
-    world_id?: string;
+  opts: {
+    world_id: string;
     paused?: number;
     last_run_at?: string | null;
     last_error?: string | null;
@@ -4819,7 +4819,7 @@ export async function insertWorldSimulationState(
     updated_at?: string;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("world_simulation_state",).values({
     next_tick_at,
@@ -5040,9 +5040,9 @@ export async function insertNpcMigrations(
 /** Insert a world_travel_budget row. */
 export async function insertWorldTravelBudget(
   db: Db,
-  opts?: { world_id?: string; spent?: number; ceiling?: number; window_start_tick?: number; updated_at?: string },
+  opts: { world_id: string; spent?: number; ceiling?: number; window_start_tick?: number; updated_at?: string },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("world_travel_budget",).values({
     ...restOpts,
@@ -5344,8 +5344,8 @@ export async function insertLocationEdges(
 /** Insert a world_conditions row. */
 export async function insertWorldConditions(
   db: Db,
-  opts?: {
-    world_id?: string;
+  opts: {
+    world_id: string;
     weather?: string;
     time_of_day?: string;
     season?: string;
@@ -5359,7 +5359,7 @@ export async function insertWorldConditions(
     updated_at?: string;
   },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("world_conditions",).values({
     ...restOpts,
@@ -6059,9 +6059,9 @@ export async function insertCharacterStatAllocation(
   allocated_wis: number,
   allocated_cha: number,
   allocated_at: string,
-  opts?: { actor_id?: string; allocated_by_user_id?: string | null },
+  opts: { actor_id: string; allocated_by_user_id?: string | null },
 ): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const { id: providedId, ...restOpts } = opts as { id?: string };
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("character_stat_allocation",).values({
     world_id,

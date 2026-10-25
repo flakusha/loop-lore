@@ -215,6 +215,7 @@ describe("deleteAsset", () => {
       },).execute();
 
       await db.insertInto("personas",).values({
+        id: crypto.randomUUID(),
         user_id: owner.id,
         name: "Avatar Persona",
         avatar_asset_id: ASSET_ID,

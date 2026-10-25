@@ -481,7 +481,6 @@ export const PeerAuthModeSchema = t.UnionEnum(["tls", "host-local",],);
 export const PeerBudgetModeSchema = t.UnionEnum(["advisory", "hard",],);
 export const PeerInstanceKindSchema = t.UnionEnum(["business", "rpg", "assistant", "dedicated-gpu", "general",],);
 export const PeerLinkKindSchema = t.UnionEnum(["loopback", "remote",],);
-
 export const PeerWorkloadClassSchema = t.UnionEnum([
   "chat",
   "image",
@@ -3212,6 +3211,7 @@ export const MeshOutboxSchema = t.Object({
   chat_id: t.Optional(t.String(),),
 },);
 
+// ── task_dependencies ────────────────────────────────────────────
 export const TaskDependenciesSchema = t.Object({
   task_id: t.String(),
   depends_on_task_id: t.String(),
@@ -3219,6 +3219,7 @@ export const TaskDependenciesSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
+// ── travel_parties ────────────────────────────────────────────
 export const TravelPartiesSchema = t.Object({
   world_id: t.String(),
   name: t.String(),
@@ -3236,6 +3237,7 @@ export const TravelPartiesSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
+// ── npc_migrations ────────────────────────────────────────────
 export const NpcMigrationsSchema = t.Object({
   world_id: t.String(),
   actor_id: t.String(),
@@ -3250,6 +3252,7 @@ export const NpcMigrationsSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
+// ── world_travel_budget ────────────────────────────────────────────
 export const WorldTravelBudgetSchema = t.Object({
   world_id: t.Optional(t.String(),),
   spent: t.Optional(t.Number(),),
@@ -3258,6 +3261,7 @@ export const WorldTravelBudgetSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
+// ── world_event_log ────────────────────────────────────────────
 export const WorldEventLogSchema = t.Object({
   world_id: t.String(),
   event_type: t.String(),
@@ -3269,6 +3273,7 @@ export const WorldEventLogSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
+// ── location_discovery ────────────────────────────────────────────
 export const LocationDiscoverySchema = t.Object({
   world_id: t.String(),
   location_id: t.String(),

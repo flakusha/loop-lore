@@ -10,7 +10,7 @@
  *   2. `executeReversal` (this file) performs the actual user-side lift
  *      (unblock / unban / unshadow), closed under dual-admin confirmation.
  */
-import { jsonStringifyOr, } from "../../utils";
+import { jsonStringifyOr, uid, } from "../../utils";
 import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
 /** */
@@ -141,6 +141,10 @@ export async function notifyModeratorReversal(
 ): Promise<void> {
   try {
     await thisL.db.insertInto("notifications",).values({
+      // `id` is a TEXT PRIMARY KEY with no DB default — the app must supply
+      // it. Omitting it stores NULL, which makes the row unaddressable and
+      // breaks the notification list validation on the client.
+      id: uid(),
       user_id: moderatorId,
       type: "appeal.reversed",
       title: "Moderation action reversed via appeal",

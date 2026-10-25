@@ -24,7 +24,7 @@ import type {
 
 // ── world_avatar_config ────────────────────────────────────────────
 export interface WorldAvatarConfig {
-  id: Generated<string>;
+  id: string;
   world_id: string;
   actor_id: string;
   selection_rule_override: AvatarSelectionRule | null;
@@ -36,7 +36,7 @@ export interface WorldAvatarConfig {
 
 // ── admin_character_overrides ────────────────────────────────────────────
 export interface AdminCharacterOverrides {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   admin_id: string;
   action: AdminOverrideAction;
@@ -49,7 +49,7 @@ export interface AdminCharacterOverrides {
 
 // ── character_arousal ────────────────────────────────────────────
 export interface CharacterArousal {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string | null;
   level: Generated<number>;
@@ -63,7 +63,7 @@ export interface CharacterArousal {
 
 // ── character_availability ────────────────────────────────────────────
 export interface CharacterAvailability {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   status: Generated<string>;
   usage_policy: string | null;
@@ -76,7 +76,7 @@ export interface CharacterAvailability {
 
 // ── character_avatar_config ────────────────────────────────────────────
 export interface CharacterAvatarConfig {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   selection_rule: Generated<string>;
   weights: string | null;
@@ -87,7 +87,7 @@ export interface CharacterAvatarConfig {
 
 // ── character_avatars ────────────────────────────────────────────
 export interface CharacterAvatars {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   asset_id: string;
   label: string;
@@ -101,7 +101,7 @@ export interface CharacterAvatars {
 
 // ── character_body_profile ────────────────────────────────────────────
 export interface CharacterBodyProfile {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   stamina: Generated<number>;
   flexibility: Generated<number>;
@@ -121,7 +121,7 @@ export interface CharacterBodyProfile {
 
 // ── character_desire_profile ────────────────────────────────────────────
 export interface CharacterDesireProfile {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   turn_ons: Generated<string>;
   turn_offs: Generated<string>;
@@ -137,7 +137,7 @@ export interface CharacterDesireProfile {
 
 // ── character_emotions ────────────────────────────────────────────
 export interface CharacterEmotions {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   emotion_id: string;
   intensity: Generated<number>;
@@ -149,7 +149,7 @@ export interface CharacterEmotions {
 
 // ── character_fantasies ────────────────────────────────────────────
 export interface CharacterFantasies {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   fantasy_name: string;
   category: FantasyCategory;
@@ -167,7 +167,7 @@ export interface CharacterFantasies {
 
 // ── character_heat_cycle ────────────────────────────────────────────
 export interface CharacterHeatCycle {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   species: Generated<string>;
   cycle_length_days: Generated<number>;
@@ -180,7 +180,7 @@ export interface CharacterHeatCycle {
 
 // ── character_intimacy ────────────────────────────────────────────
 export interface CharacterIntimacy {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   target_actor_id: string;
   world_id: string | null;
@@ -193,7 +193,7 @@ export interface CharacterIntimacy {
 
 // ── character_licensing ────────────────────────────────────────────
 export interface CharacterLicensing {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   license_type: LicenseType;
   custom_license_text: string | null;
@@ -207,7 +207,7 @@ export interface CharacterLicensing {
 
 // ── character_location_traits ────────────────────────────────────────────
 export interface CharacterLocationTraits {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   location_id: string;
   trait_name: string;
@@ -224,7 +224,7 @@ export interface CharacterLocationTraits {
 
 // ── character_mood ────────────────────────────────────────────
 export interface CharacterMood {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string | null;
   happiness: Generated<number>;
@@ -239,7 +239,7 @@ export interface CharacterMood {
 
 // ── character_permanent_traits ────────────────────────────────────────────
 export interface CharacterPermanentTraits {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   trait_category: TraitCategory;
   trait_name: string;
@@ -251,7 +251,7 @@ export interface CharacterPermanentTraits {
 
 // ── character_relationships ────────────────────────────────────────────
 export interface CharacterRelationships {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   target_actor_id: string;
   world_id: string | null;
@@ -269,7 +269,7 @@ export interface CharacterRelationships {
 
 // ── character_seduction_skills ────────────────────────────────────────────
 export interface CharacterSeductionSkills {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   skill_category: SeductionSkillCategory;
   skill_name: string;
@@ -283,7 +283,7 @@ export interface CharacterSeductionSkills {
 
 // ── character_world_setup ────────────────────────────────────────────
 export interface CharacterWorldSetup {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string;
   starting_inventory: Generated<string>;
@@ -298,7 +298,7 @@ export interface CharacterWorldSetup {
 
 // ── character_world_traits ────────────────────────────────────────────
 export interface CharacterWorldTraits {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string;
   trait_category: WorldTraitCategory;
@@ -312,7 +312,7 @@ export interface CharacterWorldTraits {
 
 // ── emotions ────────────────────────────────────────────
 export interface Emotions {
-  id: Generated<string>;
+  id: string;
   name: string;
   display_name: string;
   category: string;
@@ -324,7 +324,7 @@ export interface Emotions {
 
 // ── mood_events ────────────────────────────────────────────
 export interface MoodEvents {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   world_id: string | null;
   event_type: string;
@@ -337,7 +337,7 @@ export interface MoodEvents {
 
 // ── location_nsfw_config ────────────────────────────────────────────
 export interface LocationNsfwConfig {
-  id: Generated<string>;
+  id: string;
   location_id: string;
   location_type: NsfwLocationType;
   privacy_level: Generated<string>;
@@ -351,7 +351,7 @@ export interface LocationNsfwConfig {
 
 // ── nsfw_encounters ────────────────────────────────────────────
 export interface NsfwEncounters {
-  id: Generated<string>;
+  id: string;
   world_id: string | null;
   encounter_type: NsfwEncounterType;
   intensity: Generated<ContentIntensity>;
@@ -368,7 +368,7 @@ export interface NsfwEncounters {
 
 // ── character_license_history ────────────────────────────────────────────
 export interface CharacterLicenseHistory {
-  id: Generated<string>;
+  id: string;
   actor_id: string;
   license_type: string;
   custom_license_text: string | null;
