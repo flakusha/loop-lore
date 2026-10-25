@@ -20472,6 +20472,19 @@
     "title": "GDPR & User Data Rights",
     "type": "FEAT"
   },
+  "FEAT-GENERATED-FRONTEND-REFERENCE-DOCS-TYPEDOC-TO-VITEPRESS": {
+    "hash": "b145d6f",
+    "git_issue": "b145d6f",
+    "extid": "FEAT-GENERATED-FRONTEND-REFERENCE-DOCS-TYPEDOC-TO-VITEPRESS",
+    "type": "FEAT",
+    "title": "Generated frontend reference docs (Typedoc to VitePress)",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-generated-frontend-reference-docs-typedoc-to-vitepress.md",
+    "status": "Not Started"
+  },
   "FEAT-GENERIC-2D-GRAPH-CANVAS-RENDERER-REUSING-GAME-CANVAS": {
     "hash": "4dbc02d",
     "git_issue": "4dbc02d",
