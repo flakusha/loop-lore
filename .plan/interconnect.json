@@ -618,7 +618,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md",
       "title": "Appeal-reversal notification is stored with a NULL id, which hides the user's whole notification list",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/migrations/001_init.ts",
         "src/db/schema-core.ts",
@@ -903,7 +903,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md",
       "title": "Assistant-created lore entries are stored with a NULL id, so their cooldown never starts",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/commands/create-entity-lore.ts",
         "src/assistant/prompt/sections/lore-activation.ts",
@@ -2799,7 +2799,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md",
       "title": "Config-file reload silently re-enables NSFW after the admin turned it off",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/prompt/sections/nsfw-policy.ts",
         "src/config/hot-apply-consumers.ts",
@@ -8106,7 +8106,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md",
       "title": "Route-layer NSFW gate keeps serving NSFW after the admin kill switch is turned off",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/prompt/sections/nsfw-policy.ts",
         "src/config/hot-apply.ts",
@@ -8385,7 +8385,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md",
       "title": "Seeded-user config option seedActor is never read, so the mirror actor row is always created",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/config/schema/seeding.ts",
         "src/seeding/users.ts"
