@@ -22827,6 +22827,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-responsive-design.md"
     }
   ],
   "src/frontend/alpine/audio.ts": [

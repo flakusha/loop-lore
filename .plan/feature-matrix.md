@@ -614,7 +614,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | fe-be-db | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | feature | 15 | 2 | 0 | 13 | 0 | 0 | 0 |
 | feature-flags | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| federation | 24 | 8 | 1 | 1 | 1 | 0 | 13 |
+| federation | 24 | 9 | 1 | 1 | 1 | 0 | 12 |
 | feed | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | feeds | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | ffi | 3 | 0 | 2 | 1 | 0 | 0 | 0 |
@@ -1354,7 +1354,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | seasons | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | secrets | 5 | 0 | 0 | 0 | 1 | 0 | 4 |
 | sectioning | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| security | 41 | 12 | 3 | 8 | 0 | 0 | 18 |
+| security | 41 | 13 | 3 | 8 | 0 | 0 | 17 |
 | seed | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | seeding | 12 | 1 | 0 | 8 | 0 | 0 | 3 |
 | seen | 6 | 0 | 0 | 5 | 0 | 0 | 1 |
@@ -1690,7 +1690,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2727 | 1086 | 45 | 898 | 32 | 0 | 666 |
+| (untagged) | 2727 | 1088 | 45 | 898 | 32 | 0 | 664 |
 
 ## By epic × status
 
@@ -1755,7 +1755,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-battle-ui | 9 | 1 | 0 | 8 | 0 | 0 | 0 |
 | epic-benchmark-ci-regression | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-blog-system | 6 | 1 | 1 | 1 | 0 | 0 | 3 |
-| epic-byok-api-keys | 8 | 4 | 0 | 1 | 0 | 0 | 3 |
+| epic-byok-api-keys | 8 | 5 | 0 | 1 | 0 | 0 | 2 |
 | EPIC-byok-api-keys | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-byok-local-models | 8 | 2 | 0 | 3 | 0 | 0 | 3 |
 | EPIC-byok-local-models | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -1769,7 +1769,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-character-world-setup | 5 | 2 | 0 | 1 | 0 | 0 | 2 |
 | epic-character-xp-leveling | 11 | 11 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-composer-flows | 10 | 9 | 0 | 0 | 0 | 0 | 1 |
-| epic-chat-context-optimization | 25 | 2 | 0 | 17 | 1 | 0 | 5 |
+| epic-chat-context-optimization | 25 | 3 | 0 | 17 | 1 | 0 | 4 |
 | epic-chat-context-optimization, epic-group-chat | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-chat-lifecycle-moderation | 50 | 25 | 1 | 20 | 0 | 0 | 4 |
 | epic-chat-lifecycle-moderation, epic-assistant-gm-flows | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -2017,7 +2017,7 @@ Total tickets: **3977** — untagged: **2727** — unbound to epic: **1018**
 | epic-world-locations | 11 | 1 | 0 | 10 | 0 | 0 | 0 |
 | epic-world-locations, epic-config-templates, epic-chat-transfer-location | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
-| epic-world-travel-time | 6 | 1 | 0 | 1 | 0 | 0 | 4 |
+| epic-world-travel-time | 6 | 2 | 0 | 1 | 0 | 0 | 3 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
 | (unbound) | 1018 | 638 | 46 | 33 | 43 | 0 | 258 |
 
