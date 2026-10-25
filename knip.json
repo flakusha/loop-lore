@@ -321,6 +321,14 @@
     // Same class as the entries above: run-browser-tests.ts discovers by directory glob, knip
     // cannot trace a shell glob as an import edge.
     "tests/e2e/flows/browser/egui-transfer.browser.ts",
+    // Chat interaction coverage (B1/B2/B4/B5/B7). Same class as the entries
+    // above: run-browser-tests.ts discovers by directory glob, knip cannot
+    // trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/chat-branches.browser.ts",
+    "tests/e2e/flows/browser/chat-composer-interactions.browser.ts",
+    "tests/e2e/flows/browser/chat-memory-panel.browser.ts",
+    "tests/e2e/flows/browser/chat-message-actions.browser.ts",
+    "tests/e2e/flows/browser/chat-settings-save.browser.ts",
     // Standalone CLI entry points, invoked via `bun run` shell strings
     // (package.json scripts), never statically imported — knip cannot trace
     // a shell-string invocation as an import edge. Same class as the
