@@ -4,6 +4,7 @@
 # BUG: Failover replays primary BYO key to fallback vendors
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — call-with-failover re-resolves the API key per provider (`resolveApiKey(name)` in src/generation/providers/call-with-failover.ts:87-92), so the primary's BYO key is never replayed to fallback vendors; resolver threaded on every multi-provider dispatch (registry.ts:129-156, provider-request.ts:73, call-llm.ts:170, merge-llm-call.ts:56); scope pinned by src/generation/providers/failover-key-scope.test.ts.
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-byok-api-keys
@@ -15,7 +16,7 @@ Cross-vendor key disclosure: callWithFailover passes same req (same apiKey) to e
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): call-with-failover re-resolves the API key per provider (`resolveApiKey(name)` in src/generation/providers/call-with-failover.ts:87-92), so the primary's BYO key is never replayed to fallback vendors; resolver threaded on every multi-provider dispatch (registry.ts:129-156, provider-request.ts:73, call-llm.ts:170, merge-llm-call.ts:56); scope pinned by src/generation/providers/failover-key-scope.test.ts.
 
 **Acceptance Criteria:**
 
