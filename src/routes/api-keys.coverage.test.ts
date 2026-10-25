@@ -187,4 +187,29 @@ describe("apiKeysRoutes coverage", () => {
 
     expect(del.status,).toBe(404,);
   });
+
+  test("two racing stores for the same provider land as one row, both 200", async () => {
+    const app = makeApp(db, userId, testConfig(),);
+    const body = {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify({ name: "test-prov", provider: "test-prov", api_key: "sk-race", },),
+    } as const;
+
+    // BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows: the
+    // read-then-insert upsert let both racers pass the lookup; with the 078
+    // unique index the loser crashed with a constraint error instead. The
+    // atomic ON CONFLICT upsert makes both requests succeed and converge.
+    const [a, b,] = await Promise.all([
+      app.handle(new Request("http://localhost/api/user-api-keys", { ...body, },),),
+      app.handle(new Request("http://localhost/api/user-api-keys", { ...body, },),),
+    ],);
+
+    expect(a.status,).toBe(200,);
+    expect(b.status,).toBe(200,);
+
+    const list = await app.handle(new Request("http://localhost/api/user-api-keys",),);
+    const keys: { provider_name: string }[] = await list.json();
+    expect(keys.filter((k,) => k.provider_name === "test-prov"),).toHaveLength(1,);
+  });
 });

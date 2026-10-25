@@ -97,27 +97,12 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
         },);
       }
 
-      // Upsert — insert or update if provider already exists for this user
-      const existing = await database
-        .selectFrom("user_api_keys",)
-        .select("id",)
-        .where("user_id", "=", userId,)
-        .where("provider_name", "=", providerName,)
-        .executeTakeFirst();
-
-      if (existing) {
-        await database
-          .updateTable("user_api_keys",)
-          .set({
-            api_key_encrypted: encrypted,
-            updated_at: new Date().toISOString(),
-          },)
-          .where("id", "=", existing.id,)
-          .execute();
-
-        return jsonResponse({ ok: true, provider: providerName, },);
-      }
-
+      // Atomic upsert
+      // (BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows):
+      // the old read-then-write window let two concurrent POSTs both insert
+      // (dup rows, arbitrary executeTakeFirst reads) — and after the 078
+      // unique index, it turned the loser into a constraint crash. The
+      // conflict-target upsert makes the raced pair one insert + one update.
       await database
         .insertInto("user_api_keys",)
         .values({
@@ -126,6 +111,12 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
           provider_name: providerName,
           api_key_encrypted: encrypted,
         },)
+        .onConflict((oc,) =>
+          oc.columns(["user_id", "provider_name",],).doUpdateSet({
+            api_key_encrypted: encrypted,
+            updated_at: new Date().toISOString(),
+          },)
+        )
         .execute();
 
       return jsonResponse({ ok: true, provider: providerName, },);
