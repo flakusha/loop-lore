@@ -109,12 +109,14 @@ function makeState(): {
   };
 
   return Object.assign(state, chatTouchGestures, {
-    // Concrete defaults narrow the Partial's `| undefined` so the declared
-    // return type holds after Object.assign.
+    // Concrete re-declarations narrow the Partial's `| undefined` so the
+    // declared return type holds after Object.assign.
     _touchSwipeTarget: null,
     _touchOnControl: false,
     _touchGesturesEl: null,
     _touchGesturesCleanups: [] as (() => void)[],
+    setupTouchGestures: chatTouchGestures.setupTouchGestures!,
+    teardownTouchGestures: chatTouchGestures.teardownTouchGestures!,
   },);
 }
 
