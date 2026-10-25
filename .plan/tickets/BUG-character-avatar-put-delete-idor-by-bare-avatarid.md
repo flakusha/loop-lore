@@ -4,6 +4,7 @@
 # BUG: Character avatar PUT/DELETE IDOR by bare avatarId
 
 **Status:** Done
+**Status Note:** stale-resolved (verified 2026-10-25) — PUT and DELETE /api/v1/character-avatars/:avatarId (src/routes/character-avatars.ts:124-130, :166-172) fetch the avatar and return 404 unless `avatar.actorId === actorId` before writing/deleting; driver-level IDOR regressions pinned in src/routes/character-avatars.test.ts:573-671 (describe "Authorization — resource-level (IDOR)", read/update/delete at :628/:639/:658).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-asset-transform-metadata
@@ -14,7 +15,7 @@ src/routes/character-avatars.ts:105-156 authorize the PATH actor (requireActorAc
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Closure rationale (verified 2026-10-25 against the current implementation): PUT and DELETE /api/v1/character-avatars/:avatarId (src/routes/character-avatars.ts:124-130, :166-172) fetch the avatar and return 404 unless `avatar.actorId === actorId` before writing/deleting; driver-level IDOR regressions pinned in src/routes/character-avatars.test.ts:573-671 (describe "Authorization — resource-level (IDOR)", read/update/delete at :628/:639/:658).
 
 **Acceptance Criteria:**
 
