@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * /item-list, /item-get, /inventory — assistant read access to item definitions
- * and the items a character carries.
+ * /item-list, /item-get, /item-update, /inventory — assistant access to item
+ * definitions and the items a character carries. `/item-update` previews a
+ * mutation the `PUT` branch of `handleDefinition` applies.
  *
  * Item data is world-scoped and owner-scoped, so every command here runs
  * `checkWorldOwnership` from `src/routes/story-items/handlers.ts` before any
@@ -13,6 +14,7 @@
 
 import { checkWorldOwnership, } from "../../routes/story-items/handlers";
 import { type ItemInstance, ItemsService, } from "../../story/items";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 const DENIED = "not found or access denied";
@@ -111,6 +113,164 @@ registerCommand("item-get", async (args, ctx,): Promise<CommandResult> => {
     ].filter(Boolean,).join("\n",),
     action: "item-get",
     actionPayload: { item: def, instances, },
+    handled: true,
+  };
+}, { requiredRole: "member", },);
+
+/**
+ * Update fields `/item-update` accepts, keyed as the user writes them. They map
+ * onto what `handleDefinition` (`src/routes/story-items/handlers.ts`) reads
+ * from the `PUT /api/v1/worlds/:worldId/items/:itemId` body.
+ */
+const ITEM_UPDATE_STRING_FIELDS = ["name", "description", "category", "rarity",] as const;
+/** Numeric fields `/item-update` accepts. */
+const ITEM_UPDATE_NUMBER_FIELDS = ["value", "weight",] as const;
+/** Every accepted field, for unknown-field error messages. */
+const ALL_ITEM_UPDATE_FIELDS = [...ITEM_UPDATE_STRING_FIELDS, ...ITEM_UPDATE_NUMBER_FIELDS, "properties",] as const;
+
+/**
+ * One `key=value` pair parsed out of an `/item-update` argument list.
+ */
+export type ItemUpdatePatch = Partial<
+  Record<(typeof ALL_ITEM_UPDATE_FIELDS)[number], string | number | Record<string, unknown>>
+>;
+
+/** A JSON object (arrays excluded) — the shape the route stores in `properties`. */
+function isJsonObject(value: unknown,): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value,);
+}
+
+export type ParseItemUpdatesResult =
+  | { ok: true; updates: ItemUpdatePatch }
+  | { ok: false; error: string };
+
+/**
+ * Parse `key=value` update pairs from the text after the item id. Values may
+ * be quoted to include spaces; unquoted values end at whitespace. Tokens that
+ * are not `key=value` pairs are ignored. A repeated key is LAST-WINS: the
+ * final pair overwrites earlier ones in the returned patch.
+ * @param input - raw argument text after the item id
+ * @returns ok with the allowed-field patch, or an error describing the first bad pair
+ */
+export function parseItemUpdates(input: string,): ParseItemUpdatesResult {
+  const pairRe = /([a-zA-Z]+)\s*=\s*("([^"]*)"|'([^']*)'|(\S+))/g;
+  const updates: ItemUpdatePatch = {};
+  let matched = false;
+
+  for (const match of input.matchAll(pairRe,)) {
+    matched = true;
+    const key = match[1] ?? "";
+    const value = match[3] ?? match[4] ?? match[5] ?? "";
+
+    if ((ITEM_UPDATE_STRING_FIELDS as readonly string[]).includes(key,)) {
+      if (key === "name" && value === "") {
+        return { ok: false, error: 'Field "name" expects a non-empty item name, got "".', };
+      }
+
+      updates[key as keyof ItemUpdatePatch] = value;
+      continue;
+    }
+
+    if ((ITEM_UPDATE_NUMBER_FIELDS as readonly string[]).includes(key,)) {
+      const num = Number(value,);
+      if (!Number.isFinite(num,)) {
+        return { ok: false, error: `Field "${key}" expects a number, got "${value}".`, };
+      }
+
+      updates[key as keyof ItemUpdatePatch] = num;
+      continue;
+    }
+
+    if (key === "properties") {
+      const parsed = safeJsonParse<unknown>(value,);
+      if (!parsed.ok || !isJsonObject(parsed.value,)) {
+        return {
+          ok: false,
+          error: 'Field "properties" expects a JSON object, e.g. properties={"damage":"1d6"}.',
+        };
+      }
+
+      updates.properties = parsed.value;
+      continue;
+    }
+
+    return {
+      ok: false,
+      error: `Unknown item field "${key}" — allowed: ${ALL_ITEM_UPDATE_FIELDS.join(", ",)}.`,
+    };
+  }
+
+  if (!matched) {
+    return {
+      ok: false,
+      error: 'No updates parsed — use key=value pairs, e.g. name="Iron Sword" value=50.',
+    };
+  }
+
+  return { ok: true, updates, };
+}
+
+registerCommand("item-update", async (args, ctx,): Promise<CommandResult> => {
+  const itemId = args[0];
+  if (!itemId) {
+    return {
+      systemMessage: 'Usage: /item-update <item-id> name="Iron Sword" value=50 description="…"',
+      handled: true,
+    };
+  }
+
+  const db = ctx.db;
+  if (!db) {
+    return { systemMessage: "**Items unavailable:** command context missing database.", handled: true, };
+  }
+
+  // Same resolve-then-guard ordering `/item-get` uses: the world must be known
+  // before `checkWorldOwnership` runs, and in a world-scoped chat a foreign
+  // world's item is never even identified. The guard is the exact one
+  // `handleDefinition` applies to its own `PUT` handler, so the preview never
+  // confirms a write the route would refuse. "Missing" and "not owned"
+  // produce byte-identical messages so the id cannot be used as an existence
+  // oracle.
+  const DENIED = `Item ${itemId} not found or access denied.`;
+  const chatWorldId = ctx.activeChat?.worldId;
+  const byId = db.selectFrom("items",).select(["id", "name", "world_id",],).where("id", "=", itemId,);
+  const row = chatWorldId
+    ? await byId.where("world_id", "=", chatWorldId,).executeTakeFirst()
+    : await byId.executeTakeFirst();
+
+  if (!row) {
+    return { systemMessage: DENIED, handled: true, };
+  }
+
+  const owned = await checkWorldOwnership(db, row.world_id, ctx.userId ?? null, ctx.userRole ?? null,);
+  if (!owned) {
+    return { systemMessage: DENIED, handled: true, };
+  }
+
+  const parsed = parseItemUpdates(args.slice(1,).join(" ",),);
+  if (!parsed.ok) {
+    return { systemMessage: `**Item update rejected:** ${parsed.error}`, handled: true, };
+  }
+
+  const changes = Object.entries(parsed.updates,)
+    .map(([field, value,],) => {
+      const serialized = typeof value === "object" ? safeJsonStringify(value,) : { ok: true, value, };
+      return `- **${field}** → ${serialized.ok ? serialized.value : ""}`;
+    },)
+    .join("\n",);
+
+  return {
+    systemMessage: [
+      `**Update preview** — **${row.name}** [${itemId}] will change:\n\n${changes}`,
+      "Confirm in the dialog to apply.",
+    ].join("\n\n",),
+    action: "item-update",
+    actionPayload: {
+      itemId,
+      worldId: row.world_id,
+      updates: parsed.updates,
+      name: row.name,
+    },
     handled: true,
   };
 }, { requiredRole: "member", },);

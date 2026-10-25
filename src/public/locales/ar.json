@@ -1598,7 +1598,9 @@
     "networkErrorDuringRetry": "Network error during retry",
     "classifierVocabSaved": "تم حفظ المفردات",
     "classifierTagsSaved": "تم حفظ وسوم المصنف",
-    "classifierTagsSaveFailed": "فشل حفظ وسوم المصنف"
+    "classifierTagsSaveFailed": "فشل حفظ وسوم المصنف",
+    "characterUpdated": "تم تحديث الشخصية {name}",
+    "failedUpdateCharacter": "فشل تحديث الشخصية"
   },
   "status": {
     "characterResponding": "الشخصية ترد...",

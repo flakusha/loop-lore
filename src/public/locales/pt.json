@@ -1598,7 +1598,9 @@
     "networkErrorDuringRetry": "Network error during retry",
     "classifierVocabSaved": "Vocabulário salvo",
     "classifierTagsSaved": "Etiquetas do classificador salvas",
-    "classifierTagsSaveFailed": "Falha ao salvar as etiquetas do classificador"
+    "classifierTagsSaveFailed": "Falha ao salvar as etiquetas do classificador",
+    "characterUpdated": "Personagem {name} atualizado",
+    "failedUpdateCharacter": "Falha ao atualizar personagem"
   },
   "status": {
     "characterResponding": "O personagem está respondendo...",
