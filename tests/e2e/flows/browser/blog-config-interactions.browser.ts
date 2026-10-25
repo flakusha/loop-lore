@@ -18,7 +18,6 @@
  * @pillar web-ui
  */
 
-import type { Page, } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { trackPageErrors, } from "../../helpers/htmx-alpine";
@@ -32,6 +31,8 @@ interface ConfigField {
 
 interface ConfigSection {
   key: string;
+  /** UI grouping bucket (domain); matches ConfigMenuSection.group. */
+  group?: string;
   fields: ConfigField[];
 }
 
@@ -123,7 +124,6 @@ describe("Blog and config interactions E2E", () => {
       const checkbox = page.locator(`#cf-${field}`,);
       const before = await checkbox.isChecked();
       await checkbox.click();
-      const afterClick = await checkbox.isChecked();
       const patchRes = page.waitForResponse(
         (res,) => res.url().includes("/api/config-menu",) && res.request().method() === "PATCH",
         { timeout: 15_000, },
