@@ -14,12 +14,29 @@ Route-layer NSFW gate reads the boot-time file Config, not the effective (file p
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+The route-layer NSFW gate evaluated the boot-time file `Config`, while every writer (the admin panel, the file watcher) updates the runtime store — so the admin kill switch never reached `POST /api/v1/nsfw/*`. The ticket's own proposed fix was taken as written: evaluate the effective NSFW config at the read site and merge the file value with the runtime store.
+
+- `allowNsfw = file AND runtime`: NSFW is served only when the file config allows it AND the runtime store allows it. The store carries the admin override and the live file value, so the admin's "off" vetoes the file's "on", and a deployment that disables NSFW in the file keeps it disabled. This is the convention the prompt sections already use (`src/assistant/prompt/sections/nsfw-policy.ts:23-24`, `src/assistant/prompt/sections/nsfw-context.ts:21-22`).
+- `nsfwMinAge = runtime`: the threshold comes from the store, which holds the admin's value.
+
+Alternatives considered: (a) drop the `config` parameter from the gate functions and read the store alone — rejected, it churns ~50 call sites across 10 files and the store's defaults would silently override a per-request file config; (b) mutate the boot `Config` object in place from the admin route — rejected, spooky action at a distance, and the file watcher replaces the config object anyway; (c) thread a dedicated "effective NSFW config" object through the route layer — the same churn as (a).
+
+Relation to BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-: same subsystem, one root area — the NSFW effective value had no single owner (boot file config vs. a flat runtime store). This commit makes the route layer read the store; the sibling ticket splits that store into a file layer and an admin-override layer so a config reload cannot push the file value back over the admin value. Both land on this branch, one commit per ticket.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+**Resolution:**
+
+- Fix: `src/nsfw/runtime-config.ts:88-98` — new `effectiveNsfwConfig(fileConfig)` merges the request's file config with the live runtime store (`allowNsfw = file AND runtime`, `nsfwMinAge = runtime`).
+- Read sites now use it: `src/middleware/nsfw-gate/access.ts:37` (`canAccessNsfw` → `evaluateNsfwBase`) and `src/middleware/nsfw-gate/access.ts:164-169` (the batched participant weakest-link check → `findBlockedParticipant`); `src/middleware/nsfw-gate/request-context.ts:116-118` and `:127` cover the consent path (`checkNsfwWithConsent` → `resolveRequestContext`) that the NSFW routes use for the actor/chat-scoped checks.
+- Tests: `src/routes/admin-nsfw.test.ts` — "admin NSFW kill-switch reaches the route layer > PUT allowNsfw=false blocks NSFW route access".
+  - Before the fix: FAIL — the route gate answered `{ ok: true, userId }` (the boot file config still said `allowNsfw: true`), i.e. the kill switch did not block the route.
+  - After the fix: PASS — `requireNsfwRouteAccess` answers `{ ok: false, reason: "nsfw_disabled" }`.
+  - The test drives the real admin route (`PUT /api/admin/nsfw`) and then the real route-layer gate (`requireNsfwRouteAccess`) against a user who clears every other gate (adult, age gate accepted), so the only reason for the denial is the admin toggle.
+- Known limitation, fixed by the sibling ticket on this branch: the runtime store still keeps the admin value and the file value in one slot, so an unrelated config-file reload pushes the file value back into the store and the route layer follows it (BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-).
 
 **Resolved:** 2026-10-25 registry-driven close: git issue eaa16ea (registry tip: 6cb9c0997 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-)
