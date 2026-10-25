@@ -3,7 +3,7 @@
 
 # BUG: Config-file reload silently re-enables NSFW after the admin turned it off
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -21,3 +21,5 @@ An unrelated config-file reload reverts the admin NSFW override in the runtime s
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue b751a45 (registry tip: 7b385be8a Konstantin Fedotov Auto-closed: appended .md marker marks BUG-CONFIG-FILE-RELOAD-SILENTLY-)
