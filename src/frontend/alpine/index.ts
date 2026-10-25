@@ -31,6 +31,7 @@ import "./htmx";
 import "./i18n";
 import "./info-bubble";
 import "./key-management";
+import "./keynav-help";
 import "./location-explorer";
 import "./location-graph";
 import "./memory-panel";

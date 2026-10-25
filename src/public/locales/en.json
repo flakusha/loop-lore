@@ -51,7 +51,46 @@
     "archive": "Archive",
     "clearAll": "Clear all",
     "removeFilter": "Remove filter",
-    "user": "User"
+    "user": "User",
+    "actions": "Actions"
+  },
+  "frontend": {
+    "keynav": {
+      "tab": "Keyboard",
+      "help": {
+        "title": "Keyboard Shortcuts",
+        "toggle": "Show keyboard shortcuts",
+        "close": "Close overlay",
+        "colKey": "Key",
+        "colAction": "Action",
+        "hint": "Press ? to toggle this overlay"
+      },
+      "actions": {
+        "toggle-help": "Toggle shortcut help",
+        "goto-chatlist": "Go to chat list",
+        "goto-personas": "Go to personas",
+        "goto-characters": "Go to characters",
+        "goto-settings": "Go to settings",
+        "goto-gallery": "Go to gallery",
+        "goto-home": "Go to home",
+        "prev-chat": "Previous chat",
+        "next-chat": "Next chat",
+        "scroll-down": "Scroll down",
+        "scroll-up": "Scroll up"
+      },
+      "editor": {
+        "title": "Keyboard shortcuts",
+        "hint": "Click Rebind, then press a key (or a g-pair like g g). ? , Escape and the g prefix are reserved.",
+        "rebind": "Rebind",
+        "reset": "Reset to defaults",
+        "pressKey": "Press a key…",
+        "pressAnother": "Press second key…",
+        "invalid": "Not a valid shortcut (single key or g-pair only, no bare modifiers).",
+        "reserved": "That key is reserved and cannot be rebound.",
+        "duplicate": "That key is already used by another shortcut.",
+        "optIn": "Keyboard navigation is off. Enable the “keynav” flag to use shortcuts and this editor."
+      }
+    }
   },
   "auth": {
     "login": "Log In",

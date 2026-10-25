@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** In Progress — overlay wired 2026-10-25 (`a11y-keynav-phase3`); focus trap ACs remain open
 **Priority:** Medium
 **Effort:** Small
 **Epic:** (none — proposed epic never materialized)
@@ -169,15 +169,33 @@ kbd {
 
 ## Acceptance Criteria
 
-- [ ] `?` key opens the help overlay
-- [ ] Overlay reads shortcuts from `getKeymap()` registry
-- [ ] All strings are i18n-localised (no hardcoded English labels)
-- [ ] Escape closes the overlay
-- [ ] Focus is trapped inside overlay while open
+- [x] `?` key opens the help overlay
+- [x] Overlay reads shortcuts from `getKeymap()` registry
+- [x] All strings are i18n-localised (no hardcoded English labels)
+- [x] Escape closes the overlay
+- [ ] Focus is trapped inside overlay while open (`@alpinejs/focus` not loaded; `x-trap` from the original design is not in effect — markup stays keyboard-accessible, Tab reaches the close control)
 - [ ] Focus returns to previously focused element on close
-- [ ] `prefers-reduced-motion` disables overlay animation
-- [ ] Overlay is keyboard-accessible (Tab navigation works)
-- [ ] Unit test: overlay open/close state, focus trap
+- [x] `prefers-reduced-motion` disables overlay animation
+- [x] Overlay is keyboard-accessible (Tab navigation works)
+- [x] Unit test: overlay open/close state (`src/frontend/alpine/keynav-help.test.ts`); focus trap still untested (no trap)
+
+## Implementation Note (2026-10-25, `a11y-keynav-phase3`)
+
+Wired, but with two deviations from the original design:
+
+1. `resolveIncludes()` runs only on view content (`loadView`), never on the
+   layout itself, so `{{> keynav-help.html}}` in `layout.html` would have
+   rendered literally. The overlay markup was inlined into `layout.html`
+   (sidebar footer, opt-in help button) and the now-redundant
+   `src/components/chat/keynav-help.html` partial was removed.
+2. `src/public/css/**` was off-limits on the branch (sibling worktrees), so
+   the pre-existing `mobile-keynav.css` (previously referenced by nothing)
+   is linked from the layout instead of appending rules to `app.css`.
+
+`keynavHelp()` now also gates the help button on the `keynav` flag
+(`navEnabled`), re-reads the keymap on every open (rebound combos show up
+without a reload), and is registered in the Alpine bundle
+(`src/frontend/alpine/index.ts`) and `window-types.ts`.
 
 ## Files
 

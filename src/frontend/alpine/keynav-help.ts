@@ -6,19 +6,40 @@
  *
  * Lists all registered shortcuts from shortcuts.ts getKeymap().
  * Opened by the ? key (dispatches keynav:toggle-help) or
- * from the help button in the nav.
+ * from the help button in the layout sidebar footer (opt-in via the
+ * `keynav` localStorage flag).
  */
 
-import { getKeymap, } from "./shortcuts";
+import { getKeymap, isKeyboardNavEnabled, type ShortcutEntry, } from "./shortcuts";
+
+/** State exposed to the Alpine template in layout.html. */
+export interface KeynavHelpState {
+  open: boolean;
+  /** Whether the opt-in `keynav` flag is set; gates the help button. */
+  navEnabled: boolean;
+  shortcuts: ShortcutEntry[];
+  init(): void;
+  toggle(): void;
+  close(): void;
+  label(key: string,): string;
+}
+
+/** Read the client-side translation helper registered by the i18n bundle. */
+function globalT(): ((key: string,) => string) | undefined {
+  const g: { t?: (k: string,) => string } = globalThis;
+  return g.t;
+}
 
 /**
  * Alpine component for the keynav help overlay.
- * Reads shortcuts from the keymap registry.
- * @returns {{ open: boolean; shortcuts: ShortcutEntry[]; init(): void; toggle(): void; close(): void; label(key: string): string; }}
+ * Reads shortcuts from the keymap registry (re-read on every open so
+ * rebound combos show up without a reload).
+ * @returns The Alpine x-data state
  */
-export function keynavHelp() {
+export function keynavHelp(): KeynavHelpState {
   return {
     open: false,
+    navEnabled: isKeyboardNavEnabled(),
     shortcuts: getKeymap(),
 
     /**
@@ -27,14 +48,15 @@ export function keynavHelp() {
     init() {
       // Listen for ? key dispatched by shortcuts.ts
       window.addEventListener("keynav:toggle-help", () => this.toggle(),);
-      // Also open from any help button in templates
     },
 
     /**
      * @returns {void}
      */
     toggle() {
+      if (!this.navEnabled) { return; }
       this.open = !this.open;
+      if (this.open) { this.shortcuts = getKeymap(); }
       document.body.style.overflow = this.open ? "hidden" : "";
     },
 
@@ -48,13 +70,18 @@ export function keynavHelp() {
     },
 
     /**
-     * Translate an i18n key via the global t() helper.
+     * Translate an action id via the global t() helper.
      * Falls back to the action name if no translation exists.
-     * @param key
+     * @param key - Action id from the keymap
+     * @returns The translated label, or the raw action id
      */
     label(key: string,): string {
-      const fn = (globalThis as unknown as { t?: (k: string,) => string }).t;
-      return fn ? fn(key,) : key;
+      const i18nKey = `frontend.keynav.actions.${key}`;
+      const fn = globalT();
+      const translated = fn?.(i18nKey,);
+      return translated && translated !== i18nKey ? translated : key;
     },
   };
 }
+
+globalThis.keynavHelp = keynavHelp;
