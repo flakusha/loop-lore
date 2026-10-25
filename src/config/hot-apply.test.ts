@@ -4,7 +4,11 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { ageGateConfig, initAgeGate, } from "../age-gate/controller";
 import { createLogger, getLogger, type LogLevel, setGlobalLogger, } from "../logger";
-import { getRuntimeNsfwConfig, resetNsfwRuntimeConfig, } from "../nsfw/runtime-config";
+import {
+  getRuntimeNsfwConfig,
+  initNsfwRuntimeConfig,
+  resetNsfwRuntimeConfig,
+} from "../nsfw/runtime-config";
 import {
   applyConfigChange,
   applyConfigWrite,
@@ -210,5 +214,21 @@ describe("applyConfigWrite", () => {
     resetConfigHotApply();
     const applied = applyConfigWrite("logging.level", "error",);
     expect(applied,).toBe(false,);
+  });
+
+  test("an admin NSFW override survives a config-file reload", () => {
+    const config = makeConfig();
+    initNsfwRuntimeConfig(config.nsfw,);
+
+    // The admin turns NSFW off from the panel (persisted in `system_config`).
+    expect(applyConfigWrite("nsfw.allowNsfw", "false",),).toBe(true,);
+    expect(getRuntimeNsfwConfig().allowNsfw,).toBe(false,);
+
+    // An unrelated config-file reload re-reads the file — it still says true.
+    const reloaded = makeConfig();
+    const change = applyConfigChange("nsfw", reloaded,);
+
+    expect(getRuntimeNsfwConfig().allowNsfw,).toBe(false,);
+    expect(change.changedPaths,).not.toContain("nsfw.allowNsfw",);
   });
 });
