@@ -32,6 +32,26 @@ let ownerId: string;
 let worldId: string;
 let chatId: string;
 
+// The d20 is crypto-random, so a bare roll can land a natural 1 — which the
+// interaction service resolves as a CRITICAL FAILURE regardless of the DC.
+// Rig the die so the success path under test is deterministic.
+const withForcedDie = async (value: number, run: () => Promise<void>,): Promise<void> => {
+  const original = crypto.getRandomValues;
+  Object.defineProperty(crypto, "getRandomValues", {
+    configurable: true,
+    value: (array: Uint32Array,) => {
+      array[0] = value - 1;
+      return array;
+    },
+  },);
+
+  try {
+    await run();
+  } finally {
+    Object.defineProperty(crypto, "getRandomValues", { configurable: true, value: original, },);
+  }
+};
+
 beforeEach(async () => {
   createLogger({ level: "error", },);
   fixture = await createTestDb();
@@ -253,18 +273,22 @@ describe("awardSkillUsageXp", () => {
   test("resolveInteraction pays the exercised skill on success", async () => {
     const actorId = await seedActor("Resolved User",);
     const skillId = await seedSkill(actorId, "persuasion",);
-    // DC 1: any d20 roll succeeds, so no die rigging is needed.
-    const resolution = await resolveInteraction(db, {
-      command: "persuade",
-      category: "social",
-      actorId,
-      chatId,
-      worldId,
-      skill: "persuasion",
-      difficulty: 1,
+    // DC 1: a rigged non-natural-1 roll always succeeds, so the payout path
+    // under test is the deterministic one.
+    let resolution: Awaited<ReturnType<typeof resolveInteraction>> | undefined;
+    await withForcedDie(15, async () => {
+      resolution = await resolveInteraction(db, {
+        command: "persuade",
+        category: "social",
+        actorId,
+        chatId,
+        worldId,
+        skill: "persuasion",
+        difficulty: 1,
+      },);
     },);
 
-    expect(resolution.id,).not.toBeNull();
+    expect(resolution?.id,).not.toBeNull();
 
     const skill = await db.selectFrom("character_skills",).selectAll().where("id", "=", skillId,)
       .executeTakeFirstOrThrow();
