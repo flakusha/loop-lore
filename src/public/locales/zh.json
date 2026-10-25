@@ -1598,7 +1598,9 @@
     "networkErrorDuringRetry": "Network error during retry",
     "classifierVocabSaved": "词表已保存",
     "classifierTagsSaved": "分类标签已保存",
-    "classifierTagsSaveFailed": "保存分类标签失败"
+    "classifierTagsSaveFailed": "保存分类标签失败",
+    "characterUpdated": "角色 {name} 已更新",
+    "failedUpdateCharacter": "更新角色失败"
   },
   "status": {
     "characterResponding": "角色正在回复……",

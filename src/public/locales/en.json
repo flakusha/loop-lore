@@ -1682,7 +1682,9 @@
     "networkErrorDuringRetry": "Network error during retry",
     "classifierVocabSaved": "Vocabulary saved",
     "classifierTagsSaved": "Classifier tags saved",
-    "classifierTagsSaveFailed": "Failed to save classifier tags"
+    "classifierTagsSaveFailed": "Failed to save classifier tags",
+    "characterUpdated": "Character {name} updated",
+    "failedUpdateCharacter": "Failed to update character"
   },
   "wizard": {
     "previewTitle": "Create {type} — Preview",

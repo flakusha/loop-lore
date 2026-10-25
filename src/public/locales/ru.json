@@ -1598,7 +1598,9 @@
     "networkErrorDuringRetry": "Network error during retry",
     "classifierVocabSaved": "Словарь сохранён",
     "classifierTagsSaved": "Теги классификатора сохранены",
-    "classifierTagsSaveFailed": "Не удалось сохранить теги классификатора"
+    "classifierTagsSaveFailed": "Не удалось сохранить теги классификатора",
+    "characterUpdated": "Персонаж {name} обновлён",
+    "failedUpdateCharacter": "Не удалось обновить персонажа"
   },
   "status": {
     "characterResponding": "Персонаж отвечает...",

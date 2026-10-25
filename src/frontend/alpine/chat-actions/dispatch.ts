@@ -186,6 +186,66 @@ const actionHandlers: Record<string, ActionHandler> = {
     }
   },
 
+  "char-update": async (ctx, payload,) => {
+    const charId = (payload?.charId as string) ?? "";
+    const name = (payload?.name as string) ?? "";
+    const updates = (payload?.updates ?? {}) as Record<string, unknown>;
+    const contentVersion = payload?.contentVersion as number | undefined;
+    if (!charId || Object.keys(updates,).length === 0 || contentVersion === undefined) {
+      log.warn("char-update: missing required payload fields", { payload, },);
+      return;
+    }
+
+    if (!confirm(`Apply the pending update to character "${name || charId}"?`,)) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/actors/${charId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ ...updates, contentVersion, },),
+      },);
+
+      let failed = !res.ok;
+      if (res.ok) {
+        const body = (await res.json().catch(() => null)) as { ok?: boolean } | null;
+        failed = body?.ok === false;
+      }
+
+      ctx.$dispatch?.("show-toast", {
+        type: failed ? "error" : "success",
+        message: failed ? t("toasts.failedUpdateCharacter",) : t("toasts.characterUpdated", { name, },),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedUpdateCharacter",), },);
+    }
+  },
+
+  "item-update": async (ctx, payload,) => {
+    const itemId = (payload?.itemId as string) ?? "";
+    const worldId = (payload?.worldId as string) ?? "";
+    const name = (payload?.name as string) ?? "";
+    const updates = (payload?.updates ?? {}) as Record<string, unknown>;
+    if (!itemId || !worldId || Object.keys(updates,).length === 0) {
+      log.warn("item-update: missing required payload fields", { payload, },);
+      return;
+    }
+
+    if (!confirm(`Apply the pending update to item "${name || itemId}"?`,)) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/worlds/${worldId}/items/${itemId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody(updates,),
+      },);
+
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok ? t("toasts.itemUpdated",) : t("toasts.failedUpdateItem",),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedUpdateItem",), },);
+    }
+  },
+
   "create-quest": async (ctx, payload, chatId,) => {
     await dispatchQuestAction(ctx, (payload?.description as string) ?? "", chatId,);
   },

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for the character read commands: /char-list, /char-get.
+ * Tests for the character commands: /char-list, /char-get, /char-update.
  *
  * Characters have no world scope, so the guard under test is `actors.owner_id`:
  * another user's character is neither listed nor readable, and the refusal is
@@ -22,8 +22,9 @@ import {
 import type { CommandContext, CommandHandler, } from "./registry";
 import { getCommand, } from "./registry";
 
-// Side-effect import: the handlers register themselves on module load.
-import "./characters-access";
+// Named import doubles as the side-effect import: the handlers register
+// themselves on module load.
+import { parseCharacterUpdates, } from "./characters-access";
 
 function mustGet(name: string,): CommandHandler {
   const handler = getCommand(name,);
@@ -33,6 +34,7 @@ function mustGet(name: string,): CommandHandler {
 
 const charList = mustGet("char-list",);
 const charGet = mustGet("char-get",);
+const charUpdate = mustGet("char-update",);
 
 describe("character commands", () => {
   let db: Kysely<DB>;
@@ -187,5 +189,94 @@ describe("character commands", () => {
     expect((await charGet([charId,], { chatId: "chat-1", userId: ownerId, },)).systemMessage,).toContain(
       "missing database",
     );
+  });
+
+  // ── /char-update ──────────────────────────────────────────
+
+  test("shows usage with no character id", async () => {
+    expect((await charUpdate([], ctx(),)).systemMessage,).toContain("Usage: /char-update <char-id>",);
+  });
+
+  test("previews allowed fields with the row's content version", async () => {
+    const result = await charUpdate([
+      charId,
+      'displayName="Iria the Bold"',
+      "avatarFocusX=12.5",
+      "llmAssistEnabled=true",
+    ], ctx(),);
+
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("char-update",);
+    expect(result.systemMessage,).toContain("Iria",);
+    expect(result.systemMessage,).toContain("displayName",);
+
+    const payload = result.actionPayload as Record<string, unknown>;
+    expect(payload.charId,).toBe(charId,);
+    expect(payload.name,).toBe("Iria",);
+    expect(payload.updates,).toEqual({
+      displayName: "Iria the Bold",
+      avatarFocusX: 12.5,
+      llmAssistEnabled: true,
+    },);
+
+    const row = await db.selectFrom("actors",).select("row_version",).where("id", "=", charId,).executeTakeFirst();
+    expect(payload.contentVersion,).toBe(row!.row_version,);
+  });
+
+  test("denies another user's character", async () => {
+    const theirs = await insertActors(db, "Theirs", { actor_type: ActorType.Character, owner_id: otherId, },);
+    const result = await charUpdate([theirs, "displayName=Hijack",], ctx(),);
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage,).toBe(`Character ${theirs} not found or access denied.`,);
+  });
+
+  test("a missing character is worded identically to a denied one", async () => {
+    const missingId = `actor-${crypto.randomUUID()}`;
+    const absent = await charUpdate([missingId, "displayName=Ghost",], ctx(),);
+    const theirs = await insertActors(db, "Theirs", { actor_type: ActorType.Character, owner_id: otherId, },);
+    const denied = await charUpdate([theirs, "displayName=Hijack",], ctx(),);
+
+    expect(absent.systemMessage!.replace(missingId, "<id>",),).toBe(denied.systemMessage!.replace(theirs, "<id>",),);
+  });
+
+  test("refuses an actor id that is not a character", async () => {
+    const narrator = await insertActors(db, "Voice", { actor_type: ActorType.Narrator, owner_id: ownerId, },);
+    expect((await charUpdate([narrator, "displayName=Voice",], ctx(),)).systemMessage,).toBe(
+      `Character ${narrator} not found or access denied.`,
+    );
+  });
+
+  test("rejects unknown fields, bad numbers and bad booleans", async () => {
+    const unknown = await charUpdate([charId, "hp=99",], ctx(),);
+    expect(unknown.action,).toBeUndefined();
+    expect(unknown.systemMessage,).toContain("Unknown character field",);
+    expect(unknown.systemMessage,).toContain("hp",);
+
+    const badNumber = await charUpdate([charId, "avatarFocusX=tall",], ctx(),);
+    expect(badNumber.systemMessage,).toContain('expects a number, got "tall"',);
+
+    const badBoolean = await charUpdate([charId, "llmAssistEnabled=maybe",], ctx(),);
+    expect(badBoolean.systemMessage,).toContain('expects true or false, got "maybe"',);
+  });
+
+  test("reports missing context instead of throwing", async () => {
+    // Without a user the ownership guard fails closed with the same denial as
+    // any other unauthorized caller.
+    expect((await charUpdate([charId, "displayName=X",], { chatId: "chat-1", db, },)).systemMessage,).toBe(
+      `Character ${charId} not found or access denied.`,
+    );
+
+    expect((await charUpdate([charId, "displayName=X",], { chatId: "chat-1", userId: ownerId, },)).systemMessage,)
+      .toContain(
+        "missing database",
+      );
+  });
+
+  test("parseCharacterUpdates: last-wins on repeated keys and ignores non-pairs", async () => {
+    const parsed = parseCharacterUpdates('description="one" nonsense description="two"',);
+    expect(parsed,).toEqual({ ok: true, updates: { description: "two", }, },);
+
+    const empty = parseCharacterUpdates("no pairs here",);
+    expect(empty,).toEqual({ ok: false, error: expect.stringContaining("No updates parsed",), },);
   });
 });

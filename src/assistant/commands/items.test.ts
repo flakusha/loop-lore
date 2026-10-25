@@ -24,8 +24,9 @@ import {
 import type { CommandContext, CommandHandler, } from "./registry";
 import { getCommand, } from "./registry";
 
-// Side-effect import: the handlers register themselves on module load.
-import "./items";
+// Named import doubles as the side-effect import: the handlers register
+// themselves on module load.
+import { parseItemUpdates, } from "./items";
 
 function mustGet(name: string,): CommandHandler {
   const handler = getCommand(name,);
@@ -35,6 +36,7 @@ function mustGet(name: string,): CommandHandler {
 
 const itemList = mustGet("item-list",);
 const itemGet = mustGet("item-get",);
+const itemUpdate = mustGet("item-update",);
 const inventory = mustGet("inventory",);
 
 describe("item commands", () => {
@@ -337,5 +339,102 @@ describe("item commands", () => {
     const bogus = await itemList([otherWorldId,], ctx({ userId: plainId, userRole: "wizard", activeChat: inWorld, },),);
     expect(bogus.systemMessage,).toBe(DENIAL,);
     expect(bogus.action,).toBeUndefined();
+  });
+
+  // ── /item-update ──────────────────────────────────────────
+
+  test("shows usage with no item id", async () => {
+    expect((await itemUpdate([], ctx(),)).systemMessage,).toContain("Usage: /item-update <item-id>",);
+  });
+
+  test("previews allowed fields with the item's world", async () => {
+    const result = await itemUpdate([itemId, 'name="Iron Sword Mk2"', "value=75", "weight=3.5",], ctx(),);
+
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("item-update",);
+    expect(result.systemMessage,).toContain("Iron Sword",);
+    expect(result.systemMessage,).toContain("name",);
+
+    const payload = result.actionPayload as Record<string, unknown>;
+    expect(payload.itemId,).toBe(itemId,);
+    expect(payload.worldId,).toBe(worldId,);
+    expect(payload.name,).toBe("Iron Sword",);
+    expect(payload.updates,).toEqual({ name: "Iron Sword Mk2", value: 75, weight: 3.5, },);
+  });
+
+  test("previews a JSON properties object", async () => {
+    const result = await itemUpdate([itemId, 'properties={"damage":"1d6"}',], ctx(),);
+    const payload = result.actionPayload as Record<string, unknown>;
+    expect(payload.updates,).toEqual({ properties: { damage: "1d6", }, },);
+  });
+
+  test("denies an item in a world the caller does not own", async () => {
+    const foreign = await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
+    const result = await itemUpdate([foreign, "name=Hijack",], ctx(),);
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage,).toBe(`Item ${foreign} not found or access denied.`,);
+  });
+
+  test("a missing item is worded identically to a denied one", async () => {
+    const foreign = await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
+    const missingId = `item-${crypto.randomUUID()}`;
+
+    const denied = await itemUpdate([foreign, "name=Hijack",], ctx(),);
+    const absent = await itemUpdate([missingId, "name=Ghost",], ctx(),);
+
+    expect(absent.systemMessage!.replace(missingId, "<id>",),).toBe(denied.systemMessage!.replace(foreign, "<id>",),);
+  });
+
+  test("ignores an item that lives in another world than the chat", async () => {
+    const foreign = await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
+    const result = await itemUpdate([foreign, "name=Hijack",], ctx(),);
+    expect(result.systemMessage,).toBe(`Item ${foreign} not found or access denied.`,);
+    expect(result.action,).toBeUndefined();
+  });
+
+  test("rejects unknown fields, bad numbers and bad properties JSON", async () => {
+    const unknown = await itemUpdate([itemId, "durability=9",], ctx(),);
+    expect(unknown.action,).toBeUndefined();
+    expect(unknown.systemMessage,).toContain("Unknown item field",);
+    expect(unknown.systemMessage,).toContain("durability",);
+
+    const badNumber = await itemUpdate([itemId, "value=priceless",], ctx(),);
+    expect(badNumber.systemMessage,).toContain('expects a number, got "priceless"',);
+
+    const badProps = await itemUpdate([itemId, "properties=[1,2]",], ctx(),);
+    expect(badProps.systemMessage,).toContain('Field "properties" expects a JSON object',);
+  });
+
+  test("reports missing context instead of throwing", async () => {
+    expect(
+      (await itemUpdate([itemId, "name=X",], {
+        chatId: "chat-1",
+        userId: ownerId,
+        activeChat: { id: "c", worldId, },
+      },)).systemMessage,
+    ).toContain("**Items unavailable:** command context missing database.",);
+  });
+
+  test("lets a non-owner with an admin-class role preview an update", async () => {
+    const foreign = await insertItems(db, otherWorldId, "Foreign Blade", ItemCategory.Weapon, {},);
+    const callerId = `admin-${crypto.randomUUID()}`;
+    await insertUsers(db, "admin-item-update", "Admin", { id: callerId, role: UserRole.Admin, },);
+
+    const result = await itemUpdate(
+      [foreign, "name=Renamed",],
+      ctx({ userId: callerId, userRole: UserRole.Admin, activeChat: { id: "chat-1", worldId: otherWorldId, }, },),
+    );
+
+    expect(result.action,).toBe("item-update",);
+    const payload = result.actionPayload as Record<string, unknown>;
+    expect(payload.worldId,).toBe(otherWorldId,);
+  });
+
+  test("parseItemUpdates: last-wins on repeated keys and ignores non-pairs", async () => {
+    const parsed = parseItemUpdates('description="one" nonsense description="two"',);
+    expect(parsed,).toEqual({ ok: true, updates: { description: "two", }, },);
+
+    const empty = parseItemUpdates("no pairs here",);
+    expect(empty,).toEqual({ ok: false, error: expect.stringContaining("No updates parsed",), },);
   });
 });

@@ -1598,7 +1598,9 @@
     "networkErrorDuringRetry": "Network error during retry",
     "classifierVocabSaved": "Vocabulaire enregistré",
     "classifierTagsSaved": "Étiquettes du classificateur enregistrées",
-    "classifierTagsSaveFailed": "Échec de l'enregistrement des étiquettes du classificateur"
+    "classifierTagsSaveFailed": "Échec de l'enregistrement des étiquettes du classificateur",
+    "characterUpdated": "Personnage {name} mis à jour",
+    "failedUpdateCharacter": "Échec de la mise à jour du personnage"
   },
   "status": {
     "characterResponding": "Le personnage répond...",

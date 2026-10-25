@@ -1598,7 +1598,9 @@
     "networkErrorDuringRetry": "Network error during retry",
     "classifierVocabSaved": "Vokabular gespeichert",
     "classifierTagsSaved": "Klassifikator-Tags gespeichert",
-    "classifierTagsSaveFailed": "Klassifikator-Tags konnten nicht gespeichert werden"
+    "classifierTagsSaveFailed": "Klassifikator-Tags konnten nicht gespeichert werden",
+    "characterUpdated": "Charakter {name} aktualisiert",
+    "failedUpdateCharacter": "Charakter konnte nicht aktualisiert werden"
   },
   "status": {
     "characterResponding": "Charakter antwortet...",
