@@ -51,7 +51,8 @@
     "rename": "Rename",
     "filter": "Filter…",
     "archive": "Archive",
-    "user": "Usuário"
+    "user": "Usuário",
+    "actions": "Ações"
   },
   "auth": {
     "login": "Log In",
@@ -1979,5 +1980,44 @@
   "battle": {
     "turnOrder": "Turn order",
     "health": "Health"
+  },
+  "frontend": {
+    "keynav": {
+      "tab": "Teclado",
+      "help": {
+        "title": "Atalhos de teclado",
+        "toggle": "Mostrar atalhos de teclado",
+        "close": "Fechar sobreposição",
+        "colKey": "Tecla",
+        "colAction": "Ação",
+        "hint": "Pressione ? para alternar esta sobreposição"
+      },
+      "actions": {
+        "toggle-help": "Alternar ajuda de atalhos",
+        "goto-chatlist": "Ir para a lista de chats",
+        "goto-personas": "Ir para personas",
+        "goto-characters": "Ir para personagens",
+        "goto-settings": "Ir para as configurações",
+        "goto-gallery": "Ir para a galeria",
+        "goto-home": "Ir para o início",
+        "prev-chat": "Chat anterior",
+        "next-chat": "Próximo chat",
+        "scroll-down": "Rolar para baixo",
+        "scroll-up": "Rolar para cima"
+      },
+      "editor": {
+        "title": "Atalhos de teclado",
+        "hint": "Clique em Reatribuir e pressione uma tecla (ou um par g como g g). ? , Escape e o prefixo g são reservados.",
+        "rebind": "Reatribuir",
+        "reset": "Restaurar padrões",
+        "enable": "Ativar navegação por teclado",
+        "enableHint": "Ativa o conjunto de atalhos keynav (? para ajuda, pares g, rolagem j/k). Os atalhos permanecem desligados até você ativá-los aqui.",
+        "pressKey": "Pressione uma tecla…",
+        "pressAnother": "Pressione a segunda tecla…",
+        "invalid": "Atalho inválido (apenas tecla única ou par g, sem modificadores isolados).",
+        "reserved": "Essa tecla é reservada e não pode ser reatribuída.",
+        "duplicate": "Essa tecla já é usada por outro atalho."
+      }
+    }
   }
 }

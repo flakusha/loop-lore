@@ -51,7 +51,8 @@
     "rename": "Rename",
     "filter": "Filter…",
     "archive": "Archive",
-    "user": "Benutzer"
+    "user": "Benutzer",
+    "actions": "Aktionen"
   },
   "auth": {
     "login": "Log In",
@@ -1979,5 +1980,44 @@
   "battle": {
     "turnOrder": "Turn order",
     "health": "Health"
+  },
+  "frontend": {
+    "keynav": {
+      "tab": "Tastatur",
+      "help": {
+        "title": "Tastenkürzel",
+        "toggle": "Tastenkürzel anzeigen",
+        "close": "Overlay schließen",
+        "colKey": "Taste",
+        "colAction": "Aktion",
+        "hint": "Drücke ?, um dieses Overlay ein- oder auszublenden"
+      },
+      "actions": {
+        "toggle-help": "Kürzel-Hilfe umschalten",
+        "goto-chatlist": "Zur Chatliste wechseln",
+        "goto-personas": "Zu den Personas wechseln",
+        "goto-characters": "Zu den Charakteren wechseln",
+        "goto-settings": "Zu den Einstellungen wechseln",
+        "goto-gallery": "Zur Galerie wechseln",
+        "goto-home": "Zur Startseite wechseln",
+        "prev-chat": "Vorheriger Chat",
+        "next-chat": "Nächster Chat",
+        "scroll-down": "Nach unten scrollen",
+        "scroll-up": "Nach oben scrollen"
+      },
+      "editor": {
+        "title": "Tastenkürzel",
+        "hint": "Klicke auf „Neu belegen“ und drücke eine Taste (oder ein g-Paar wie g g). ?, Escape und der Präfix g sind reserviert.",
+        "rebind": "Neu belegen",
+        "reset": "Auf Standard zurücksetzen",
+        "enable": "Tastaturnavigation aktivieren",
+        "enableHint": "Aktiviert die keynav-Kürzel (? für Hilfe, g-Paare, j/k-Scrollen). Die Kürzel bleiben aus, bis du sie hier aktivierst.",
+        "pressKey": "Taste drücken…",
+        "pressAnother": "Zweite Taste drücken…",
+        "invalid": "Ungültiges Kürzel (nur Einzeltaste oder g-Paar, keine bloßen Modifikatoren).",
+        "reserved": "Diese Taste ist reserviert und kann nicht belegt werden.",
+        "duplicate": "Diese Taste ist bereits einem anderen Kürzel zugewiesen."
+      }
+    }
   }
 }

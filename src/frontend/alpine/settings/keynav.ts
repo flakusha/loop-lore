@@ -6,6 +6,7 @@ import {
   getKeymap,
   isKeyboardNavEnabled,
   resetKeymapOverrides,
+  setKeyboardNavEnabled,
   setKeymapOverride,
   validateKeymapCombo,
 } from "../shortcuts";
@@ -33,6 +34,19 @@ export function keynav(): Partial<SettingsState> & ThisType<SettingsState> {
       this.keynavEnabled = isKeyboardNavEnabled();
       this.keymap = getKeymap();
       this.cancelRebind();
+    },
+
+    /**
+     * Checkbox handler for the keyboard-navigation opt-in toggle.
+     * Persists the `keynav` flag; the editor rows stay visible but inert
+     * while the flag is off.
+     * @param enabled - Desired state from the checkbox
+     * @returns {void}
+     */
+    toggleKeyboardNav(enabled: boolean,) {
+      setKeyboardNavEnabled(enabled,);
+      this.keynavEnabled = isKeyboardNavEnabled();
+      if (!enabled) { this.cancelRebind(); }
     },
 
     /**

@@ -51,7 +51,8 @@
     "rename": "Rename",
     "filter": "Filter…",
     "archive": "Archive",
-    "user": "ユーザー"
+    "user": "ユーザー",
+    "actions": "アクション"
   },
   "auth": {
     "login": "Log In",
@@ -1979,5 +1980,44 @@
   "battle": {
     "turnOrder": "Turn order",
     "health": "Health"
+  },
+  "frontend": {
+    "keynav": {
+      "tab": "キーボード",
+      "help": {
+        "title": "キーボードショートカット",
+        "toggle": "キーボードショートカットを表示",
+        "close": "オーバーレイを閉じる",
+        "colKey": "キー",
+        "colAction": "アクション",
+        "hint": "? キーでこのオーバーレイを切り替えます"
+      },
+      "actions": {
+        "toggle-help": "ショートカットヘルプの切り替え",
+        "goto-chatlist": "チャット一覧へ移動",
+        "goto-personas": "ペルソナへ移動",
+        "goto-characters": "キャラクターへ移動",
+        "goto-settings": "設定へ移動",
+        "goto-gallery": "ギャラリーへ移動",
+        "goto-home": "ホームへ移動",
+        "prev-chat": "前のチャット",
+        "next-chat": "次のチャット",
+        "scroll-down": "下へスクロール",
+        "scroll-up": "上へスクロール"
+      },
+      "editor": {
+        "title": "キーボードショートカット",
+        "hint": "「再割り当て」をクリックしてキーを押してください（g g のような g ペアも可）。? 、Escape、接頭辞 g は予約されています。",
+        "rebind": "再割り当て",
+        "reset": "デフォルトに戻す",
+        "enable": "キーボードナビゲーションを有効にする",
+        "enableHint": "keynav ショートカット（? でヘルプ、g ペア、j/k スクロール）を有効にします。ここで有効にするまでショートカットは無効のままです。",
+        "pressKey": "キーを押してください…",
+        "pressAnother": "2つ目のキーを押してください…",
+        "invalid": "無効なショートカットです（単一キーまたは g ペアのみ。修飾キー単独は不可）。",
+        "reserved": "そのキーは予約されており、再割り当てできません。",
+        "duplicate": "そのキーは別のショートカットで既に使われています。"
+      }
+    }
   }
 }

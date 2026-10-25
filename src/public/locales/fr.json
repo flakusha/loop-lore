@@ -51,7 +51,8 @@
     "rename": "Rename",
     "filter": "Filter…",
     "archive": "Archive",
-    "user": "Utilisateur"
+    "user": "Utilisateur",
+    "actions": "Actions"
   },
   "auth": {
     "login": "Log In",
@@ -1979,5 +1980,44 @@
   "battle": {
     "turnOrder": "Turn order",
     "health": "Health"
+  },
+  "frontend": {
+    "keynav": {
+      "tab": "Clavier",
+      "help": {
+        "title": "Raccourcis clavier",
+        "toggle": "Afficher les raccourcis clavier",
+        "close": "Fermer la fenêtre",
+        "colKey": "Touche",
+        "colAction": "Action",
+        "hint": "Appuyez sur ? pour afficher ou masquer cette fenêtre"
+      },
+      "actions": {
+        "toggle-help": "Afficher ou masquer l'aide des raccourcis",
+        "goto-chatlist": "Aller à la liste des chats",
+        "goto-personas": "Aller aux personas",
+        "goto-characters": "Aller aux personnages",
+        "goto-settings": "Aller aux paramètres",
+        "goto-gallery": "Aller à la galerie",
+        "goto-home": "Aller à l'accueil",
+        "prev-chat": "Chat précédent",
+        "next-chat": "Chat suivant",
+        "scroll-down": "Défiler vers le bas",
+        "scroll-up": "Défiler vers le haut"
+      },
+      "editor": {
+        "title": "Raccourcis clavier",
+        "hint": "Cliquez sur Réassigner, puis appuyez sur une touche (ou une paire g comme g g). ? , Échap. et le préfixe g sont réservés.",
+        "rebind": "Réassigner",
+        "reset": "Rétablir les valeurs par défaut",
+        "enable": "Activer la navigation clavier",
+        "enableHint": "Active le jeu de raccourcis keynav (? pour l'aide, paires g, défilement j/k). Les raccourcis restent désactivés tant que vous ne les activez pas ici.",
+        "pressKey": "Appuyez sur une touche…",
+        "pressAnother": "Appuyez sur la deuxième touche…",
+        "invalid": "Raccourci invalide (touche simple ou paire g uniquement, sans modificateur seul).",
+        "reserved": "Cette touche est réservée et ne peut pas être réassignée.",
+        "duplicate": "Cette touche est déjà utilisée par un autre raccourci."
+      }
+    }
   }
 }

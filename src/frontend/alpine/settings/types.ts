@@ -85,6 +85,7 @@ export interface SettingsState {
   onTempInput(): void;
 
   loadKeymapSection(): void;
+  toggleKeyboardNav(enabled: boolean,): void;
   startRebind(action: string,): void;
   cancelRebind(): void;
   handleRebindKeydown(e: KeyboardEvent,): void;
