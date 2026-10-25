@@ -636,7 +636,7 @@
     "type": "BUG"
   },
   "BUG-APPEAL-REVERSAL-NOTIFICATION-IS-STORED-WITH-A-NULL-ID-WHICH-": {
-    "hash": "pending",
+    "hash": "e490c6a",
     "extid": "BUG-APPEAL-REVERSAL-NOTIFICATION-IS-STORED-WITH-A-NULL-ID-WHICH-",
     "type": "BUG",
     "title": "Appeal-reversal notification is stored with a NULL id, which hides the user's whole notification list",
@@ -645,7 +645,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-appeal-reversal-notification-is-stored-with-a-null-id-which-.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "e490c6a"
   },
   "BUG-APPLYFLAG-SKIPS-SELF-TARGET-GUARD": {
     "hash": "af59426",
@@ -931,7 +932,7 @@
     "status": "Not Started"
   },
   "BUG-ASSISTANT-CREATED-LORE-ENTRIES-ARE-STORED-WITH-A-NULL-ID-SO-": {
-    "hash": "pending",
+    "hash": "b1ade27",
     "extid": "BUG-ASSISTANT-CREATED-LORE-ENTRIES-ARE-STORED-WITH-A-NULL-ID-SO-",
     "type": "BUG",
     "title": "Assistant-created lore entries are stored with a NULL id, so their cooldown never starts",
@@ -940,7 +941,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-assistant-created-lore-entries-are-stored-with-a-null-id-so-.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "b1ade27"
   },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "epic": "epic-assistant-creative-studio-workflows",
@@ -1907,7 +1909,7 @@
     "epic": "epic-byok-api-keys",
     "tags": [],
     "source": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-BYOK-STORE-REJECTS-NON-OPENAICOMPATIBLE-PROVIDER-NAMES": {
     "hash": "2ee554c",
@@ -2917,7 +2919,7 @@
     "type": "BUG"
   },
   "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-": {
-    "hash": "pending",
+    "hash": "b751a45",
     "extid": "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-",
     "type": "BUG",
     "title": "Config-file reload silently re-enables NSFW after the admin turned it off",
@@ -2926,7 +2928,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-config-file-reload-silently-re-enables-nsfw-after-the-admin-.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "b751a45"
   },
   "BUG-CONFIG-MENU-PATCH-STORES-THE-RAW-VALUE-FOR-USER-SCOPE-SETTIN": {
     "hash": "c77b7e9",
@@ -6684,7 +6687,7 @@
     "label": "correctness",
     "priority": "high",
     "source": ".plan/tickets/BUG-message-idempotency-key-dedup-not-db-enforced-concurrent-dup.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Message idempotency-key dedup not DB-enforced - concurrent duplicate messages",
     "type": "BUG"
@@ -7969,7 +7972,7 @@
     "epic": "epic-security-sandboxing",
     "tags": [],
     "source": ".plan/tickets/BUG-plugin-route-registry-lacks-ownership-enforcement-idor.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-PLUGIN-STATE-IS-AUTO-APPROVED-ON-FIRST-SIGHT": {
     "hash": "9085fe0",
@@ -8612,7 +8615,7 @@
     "status": "Not Started"
   },
   "BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-SERVING-NSFW-AFTER-THE-ADMIN-KIL": {
-    "hash": "pending",
+    "hash": "eaa16ea",
     "extid": "BUG-ROUTE-LAYER-NSFW-GATE-KEEPS-SERVING-NSFW-AFTER-THE-ADMIN-KIL",
     "type": "BUG",
     "title": "Route-layer NSFW gate keeps serving NSFW after the admin kill switch is turned off",
@@ -8621,7 +8624,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "eaa16ea"
   },
   "BUG-ROUTES-CHARACTER-AVATARS-SUBDIR-IS-SHADOWED-BY-FLAT-FILE-CRU": {
     "hash": "911cb41",
@@ -8919,7 +8923,7 @@
     "type": "BUG"
   },
   "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR": {
-    "hash": "pending",
+    "hash": "d71ac02",
     "extid": "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR",
     "type": "BUG",
     "title": "Seeded-user config option seedActor is never read, so the mirror actor row is always created",
@@ -8928,7 +8932,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-seeded-user-config-option-seedactor-is-never-read-so-the-mir.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "d71ac02"
   },
   "BUG-SEEN-POLLER-STARVES-SHARED-DEFAULT-RATE-LIMIT-BUCKET": {
     "hash": "36b98b4",
@@ -39847,7 +39852,7 @@
     "type": "TASK"
   },
   "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO": {
-    "hash": "pending",
+    "hash": "db7edfa",
     "extid": "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO",
     "type": "TASK",
     "title": "Generated DB types mark every primary key as DB-generated, so an id-less INSERT type-checks and stores a NULL id",
@@ -39856,7 +39861,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "db7edfa"
   },
   "TASK-GENERATION-ASSET-PERSISTENCE-CONTRACT": {
     "epic": "epic-asset-platform-capabilities",
