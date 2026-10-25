@@ -732,6 +732,7 @@
       "title": "Asset links and shares routes only requireUserId - cross-user enumeration",
       "status": "done",
       "srcRefs": [
+        "src/assets/controller.acl.test.ts",
         "src/assets/controller.ts",
         "src/assets/service/read.ts",
         "src/routes/http-utils/errors.ts"
@@ -1826,7 +1827,12 @@
       "path": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md",
       "title": "BYO decrypt failure silently falls back to server key",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/generation/providers/call-with-failover.ts",
+        "src/generation/providers/registry.ts",
+        "src/generation/providers/user-api-key.test.ts",
+        "src/generation/providers/user-api-key.ts"
+      ],
       "related": []
     },
     {
@@ -3869,7 +3875,8 @@
       "title": "Failover replays primary BYO key to fallback vendors",
       "status": "done",
       "srcRefs": [
-        "src/generation/providers/call-with-failover.ts"
+        "src/generation/providers/call-with-failover.ts",
+        "src/generation/providers/failover-key-scope.test.ts"
       ],
       "related": []
     },
@@ -4350,6 +4357,7 @@
       "title": "formatMemoryDate throws on every rendered memory row — never spread onto component",
       "status": "done",
       "srcRefs": [
+        "src/frontend/alpine/memory-panel.test.ts",
         "src/frontend/alpine/memory-panel.ts"
       ],
       "related": []
@@ -5229,6 +5237,7 @@
       "title": "harden(auth): refuse or loudly gate non-loopback bind while auth.required=false",
       "status": "done",
       "srcRefs": [
+        "src/config/load/safety.ts",
         "src/config/sections/auth.ts",
         "src/config/sections/server.ts",
         "src/middleware/auth/authenticate.ts",
@@ -5244,6 +5253,8 @@
       "status": "done",
       "srcRefs": [
         "src/middleware/csrf.ts",
+        "src/middleware/rate-limit.ts",
+        "src/routes/telemetry.test.ts",
         "src/routes/telemetry.ts"
       ],
       "related": []
@@ -5661,6 +5672,7 @@
       "title": "isPluginActive fails open for core plugins on any DB error",
       "status": "done",
       "srcRefs": [
+        "src/plugins/loader.discovery-failures.test.ts",
         "src/plugins/loader.ts"
       ],
       "related": []
@@ -6269,9 +6281,14 @@
       "title": "Mesh reserve issues inbound content keys without authenticating the requester",
       "status": "done",
       "srcRefs": [
+        "src/cron/jobs.ts",
+        "src/federation/fan-out.ts",
+        "src/federation/mesh-proof.ts",
+        "src/federation/outbox.ts",
         "src/federation/peer-keys.ts",
         "src/federation/sharing.ts",
-        "src/routes/federation-mesh.ts"
+        "src/routes/federation-mesh.ts",
+        "src/routes/federation.test.ts"
       ],
       "related": []
     },
@@ -6558,6 +6575,7 @@
       "title": "Mood and relationship services mutate multi-row state without transactions",
       "status": "done",
       "srcRefs": [
+        "src/characters/services/mood-service.test.ts",
         "src/characters/services/mood-service/apply-happiness-delta.ts",
         "src/characters/services/mood-service/get-mood.ts",
         "src/characters/services/mood-service/log-event.ts",
@@ -7757,6 +7775,7 @@
       "title": "Quest engine double-advances from stale in-memory progress and completes via a non-transactional multi-write sequence",
       "status": "done",
       "srcRefs": [
+        "src/story/quest-engine/progress.coverage.test.ts",
         "src/story/quest-engine/progress.ts"
       ],
       "related": []
@@ -7907,7 +7926,9 @@
       "title": "Re-wrapped DEK artifacts lack context binding (no AAD), enabling cross-chat key confusion on import",
       "status": "done",
       "srcRefs": [
+        "src/crypto/byok.ts",
         "src/federation/cipher.ts",
+        "src/federation/dek-rewrap.test.ts",
         "src/federation/dek-rewrap.ts"
       ],
       "related": []
@@ -8026,6 +8047,7 @@
       "status": "done",
       "srcRefs": [
         "src/characters/services/relationships-service/write.ts",
+        "src/routes/character-relationships.test.ts",
         "src/routes/character-relationships.ts"
       ],
       "related": []
@@ -8471,12 +8493,14 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md",
       "title": "Service-layer multi-query mutations run without transactions or conditional writes",
-      "status": "Not Started",
+      "status": "in_progress",
       "srcRefs": [
+        "src/characters/services/mood-service/log-event.ts",
         "src/rpg/achievements/service/crud.ts",
         "src/rpg/achievements/service/progress.ts",
         "src/rpg/blog/service/posts.ts",
         "src/rpg/body-systems/service/heat.ts",
+        "src/rpg/crafting/orders.test.ts",
         "src/rpg/crafting/orders.ts",
         "src/rpg/encounters/service/phases.ts",
         "src/rpg/level/service.ts",
@@ -8484,6 +8508,7 @@
         "src/rpg/questions/service.ts",
         "src/rpg/replayability/service/endings.ts",
         "src/services/agency/bdi-nightly.ts",
+        "src/services/trade/balance.test.ts",
         "src/services/trade/balance.ts",
         "src/services/trade/core.ts",
         "src/story/items/instances.ts"
@@ -9046,6 +9071,7 @@
       "srcRefs": [
         "src/chat/service/merge/merge-result-rows.ts",
         "src/routes/messages/swipe-race-insert.ts",
+        "src/utils/swipe-retry.test.ts",
         "src/utils/swipe-retry.ts"
       ],
       "related": []
@@ -9349,7 +9375,9 @@
       "title": "Trade offer accept and sentinel creation are check-then-act races",
       "status": "done",
       "srcRefs": [
+        "src/db/optimistic-locking.ts",
         "src/services/trade/lifecycle.ts",
+        "src/services/trade/offers-race.test.ts",
         "src/services/trade/offers.ts"
       ],
       "related": []
@@ -9398,6 +9426,7 @@
       "status": "done",
       "srcRefs": [
         "src/locations/routes.ts",
+        "src/locations/travel-engine.test.ts",
         "src/routes/worlds/fractal-travel-routes.ts"
       ],
       "related": []
@@ -9671,7 +9700,11 @@
       "path": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md",
       "title": "user_api_keys non-unique index + read-then-write upsert allows dup rows",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/db/078_user_api_keys_unique.test.ts",
+        "src/routes/api-keys.coverage.test.ts",
+        "src/routes/api-keys.ts"
+      ],
       "related": []
     },
     {
@@ -10007,6 +10040,7 @@
       "status": "done",
       "srcRefs": [
         "src/db/index.ts",
+        "src/routes/worlds/worlds-delete.test.ts",
         "src/routes/worlds/worlds-delete.ts"
       ],
       "related": []
@@ -10030,6 +10064,7 @@
       "status": "done",
       "srcRefs": [
         "src/locations/tree.ts",
+        "src/routes/worlds/locations-reparent.ts",
         "src/routes/worlds/locations.ts"
       ],
       "related": []
@@ -18734,7 +18769,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md",
       "title": "Assistant Entity Modification & Addition Commands",
-      "status": "done",
+      "status": "Not Started",
       "srcRefs": [
         "src/assistant/adapter/entity.ts",
         "src/assistant/adapter/modify.ts",
@@ -32834,9 +32869,7 @@
       "srcRefs": [
         "src/frontend/a11y/a11y.css",
         "src/frontend/a11y/focus-manager.ts",
-        "src/frontend/a11y/skip-links.ts",
-        "src/frontend/alpine/focus.ts",
-        "src/frontend/alpine/shortcuts.ts"
+        "src/frontend/a11y/skip-links.ts"
       ],
       "related": []
     },
@@ -45723,18 +45756,17 @@
       "kind": "ticket",
       "path": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md",
       "title": "Frontend Keyboard Navigation Help Overlay (`?`)",
-      "status": "done",
+      "status": "Not Started",
       "srcRefs": [
         "src/components/chat/keynav-help.html",
         "src/frontend/alpine/chat-panels.ts",
         "src/frontend/alpine/focus.ts",
         "src/frontend/alpine/i18n.ts",
-        "src/frontend/alpine/index.ts",
         "src/frontend/alpine/keynav-help.test.ts",
         "src/frontend/alpine/keynav-help.ts",
         "src/frontend/alpine/shortcuts.ts",
-        "src/public/css/mobile-keynav.css",
-        "src/public/locales/en.json",
+        "src/i18n/locales/en.json",
+        "src/public/css/app.css",
         "src/views/layout.html"
       ],
       "related": []
@@ -45879,7 +45911,6 @@
       "title": "Accessibility & Input Systems",
       "status": "in_progress",
       "srcRefs": [
-        "src/components/chat/keynav-help.html",
         "src/frontend/a11y/a11y.css",
         "src/frontend/a11y/focus-manager.ts",
         "src/frontend/a11y/keyboard-shortcuts.ts",
@@ -45890,11 +45921,8 @@
         "src/frontend/alpine/chat-touch-gestures.test.ts",
         "src/frontend/alpine/chat-touch-gestures.ts",
         "src/frontend/alpine/focus.ts",
-        "src/frontend/alpine/index.ts",
-        "src/frontend/alpine/shortcuts.ts",
         "src/frontend/touch.test.ts",
-        "src/frontend/touch.ts",
-        "src/views/layout.html"
+        "src/frontend/touch.ts"
       ],
       "related": []
     },
@@ -52726,6 +52754,7 @@
     {
       "path": "src/assets/controller.acl.test.ts",
       "owners": [
+        "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
         "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
@@ -56696,6 +56725,7 @@
     {
       "path": "src/characters/services/mood-service.test.ts",
       "owners": [
+        "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
         "BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call",
         "TASK-041"
       ]
@@ -56731,6 +56761,7 @@
       "path": "src/characters/services/mood-service/log-event.ts",
       "owners": [
         "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
+        "BUG-service-layer-multi-query-mutations-run-without-transactions",
         "TASK-041"
       ]
     },
@@ -59100,8 +59131,7 @@
     {
       "path": "src/components/chat/keynav-help.html",
       "owners": [
-        "WIRE-frontend-keyboard-help-overlay",
-        "epic-accessibility-input"
+        "WIRE-frontend-keyboard-help-overlay"
       ]
     },
     {
@@ -59740,6 +59770,7 @@
       "path": "src/config/load/safety.ts",
       "owners": [
         "BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d",
+        "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
         "TASK-cleanup-banned-types-console-logging-magic-strings",
         "TASK-cors-middleware",
         "epic-local-process-swarm"
@@ -60614,6 +60645,7 @@
       "path": "src/cron/jobs.ts",
       "owners": [
         "BUG-federation-authorization-who-may-publish-an-actor-undefined",
+        "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
         "TASK-bdi-plan-recompute-implementation",
         "TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot",
         "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
@@ -60795,6 +60827,7 @@
       "path": "src/crypto/byok.ts",
       "owners": [
         "BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f",
+        "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
         "TASK-assistant-entity-access-quota-engine",
         "TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations",
         "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
@@ -61278,6 +61311,12 @@
       "path": "src/db/070_messages_outfit_id.test.ts",
       "owners": [
         "TASK-messages-outfit-id-column"
+      ]
+    },
+    {
+      "path": "src/db/078_user_api_keys_unique.test.ts",
+      "owners": [
+        "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows"
       ]
     },
     {
@@ -62846,6 +62885,7 @@
     {
       "path": "src/db/optimistic-locking.ts",
       "owners": [
+        "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
         "TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play",
         "TASK-format-version-migration",
         "TASK-guard-sql-ref-identifier-construction-in-optimistic-locking",
@@ -63828,7 +63868,8 @@
     {
       "path": "src/federation/dek-rewrap.test.ts",
       "owners": [
-        "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst"
+        "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
+        "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin"
       ]
     },
     {
@@ -63882,6 +63923,7 @@
         "BUG-federation-authorization-who-may-publish-an-actor-undefined",
         "BUG-federation-fan-out-queues-outbox-retries-only-for-push-failu",
         "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o",
+        "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
         "TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke",
         "TASK-fanout-chatid-default-deny",
         "TASK-licensing-publish-authorization-predicate",
@@ -63922,6 +63964,12 @@
       ]
     },
     {
+      "path": "src/federation/mesh-proof.ts",
+      "owners": [
+        "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat"
+      ]
+    },
+    {
       "path": "src/federation/negotiation.ts",
       "owners": [
         "epic-federation-offload-quotas"
@@ -63932,6 +63980,7 @@
       "owners": [
         "BUG-federation-authorization-who-may-publish-an-actor-undefined",
         "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o",
+        "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
         "BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-",
         "epic-federation-offload-quotas"
       ]
@@ -65580,7 +65629,6 @@
     {
       "path": "src/frontend/alpine/focus.ts",
       "owners": [
-        "TASK-keyboard-navigation",
         "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
         "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-modal-focus-trap",
@@ -65719,9 +65767,7 @@
         "TASK-publication-reader-locale-selector",
         "TASK-publication-viewer-read-mode",
         "TASK-shared-text-surface-toolbar",
-        "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-navigation-global-keymap",
-        "epic-accessibility-input",
         "epic-encryption-workflow",
         "epic-experimental-egui-frontend",
         "epic-frontend-age-gate",
@@ -65826,6 +65872,12 @@
       "path": "src/frontend/alpine/memory-panel-core.ts",
       "owners": [
         "BUG-memory-panel-never-renders-memories-in-any-chat-response-env"
+      ]
+    },
+    {
+      "path": "src/frontend/alpine/memory-panel.test.ts",
+      "owners": [
+        "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s"
       ]
     },
     {
@@ -66165,11 +66217,9 @@
         "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
         "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
         "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
-        "TASK-keyboard-navigation",
         "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-keyboard-navigation-global-keymap",
-        "WIRE-frontend-touch-swipe-gestures",
-        "epic-accessibility-input"
+        "WIRE-frontend-touch-swipe-gestures"
       ]
     },
     {
@@ -69700,6 +69750,7 @@
     {
       "path": "src/generation/providers/call-with-failover.ts",
       "owners": [
+        "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
         "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
         "FEAT-llm-resource-aware-admission-control",
         "TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p",
@@ -69791,6 +69842,7 @@
     {
       "path": "src/generation/providers/failover-key-scope.test.ts",
       "owners": [
+        "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
         "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
@@ -69862,6 +69914,7 @@
       "path": "src/generation/providers/registry.ts",
       "owners": [
         "BUG-allowuserapikey-defined-but-never-enforced",
+        "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
         "BUG-size-strict-pre-existing-dev-drift",
         "FEAT-background",
         "FEAT-llama-swap-rotation-exclusion-policy",
@@ -69938,6 +69991,7 @@
     {
       "path": "src/generation/providers/user-api-key.test.ts",
       "owners": [
+        "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
         "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
@@ -69945,6 +69999,7 @@
       "path": "src/generation/providers/user-api-key.ts",
       "owners": [
         "BUG-allowuserapikey-defined-but-never-enforced",
+        "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
         "FEAT-model-native-locale-config"
       ]
     },
@@ -70523,6 +70578,12 @@
         "TASK-publication-reader-locale-selector",
         "TASK-unit-translation-service",
         "epic-publication-i18n"
+      ]
+    },
+    {
+      "path": "src/i18n/locales/en.json",
+      "owners": [
+        "WIRE-frontend-keyboard-help-overlay"
       ]
     },
     {
@@ -71385,6 +71446,12 @@
         "TASK-coverage-waiver-locations-at-78-under-check-gate",
         "TASK-location-crud-tree-connections",
         "epic-locations"
+      ]
+    },
+    {
+      "path": "src/locations/travel-engine.test.ts",
+      "owners": [
+        "BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor"
       ]
     },
     {
@@ -72266,6 +72333,7 @@
       "path": "src/middleware/rate-limit.ts",
       "owners": [
         "BUG-429-responses-omit-retry-after-and-x-ratelimit-headers",
+        "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
         "BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl",
         "BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou",
         "BUG-nsfw-export-bundle-no-access-log",
@@ -73083,7 +73151,8 @@
     {
       "path": "src/plugins/loader.discovery-failures.test.ts",
       "owners": [
-        "BUG-fix-plugins-make-plugin-discovery-failures-visible"
+        "BUG-fix-plugins-make-plugin-discovery-failures-visible",
+        "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error"
       ]
     },
     {
@@ -73441,6 +73510,7 @@
         "TASK-location-explorer",
         "TASK-text-effects-overlays",
         "TASK-visual-novel-mode",
+        "WIRE-frontend-keyboard-help-overlay",
         "WIRE-frontend-mobile-off-canvas-drawer",
         "WIRE-frontend-mobile-sticky-bottom-composer",
         "WIRE-frontend-touch-swipe-gestures",
@@ -73470,8 +73540,7 @@
     {
       "path": "src/public/css/mobile-keynav.css",
       "owners": [
-        "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
-        "WIRE-frontend-keyboard-help-overlay"
+        "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css"
       ]
     },
     {
@@ -73515,8 +73584,7 @@
         "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
         "TASK-branch-merge-frontend-wizard-ui",
         "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
-        "TASK-info-bubbles",
-        "WIRE-frontend-keyboard-help-overlay"
+        "TASK-info-bubbles"
       ]
     },
     {
@@ -74893,6 +74961,7 @@
     {
       "path": "src/routes/api-keys.coverage.test.ts",
       "owners": [
+        "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
         "epic-byok-api-keys"
       ]
     },
@@ -74908,6 +74977,7 @@
       "owners": [
         "BUG-allowuserapikey-defined-but-never-enforced",
         "BUG-byok-store-rejects-non-openaicompatible-provider-names",
+        "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
         "FEAT-byok-api-keys",
         "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
         "epic-byok-api-keys",
@@ -75369,6 +75439,12 @@
       "path": "src/routes/character-mood.ts",
       "owners": [
         "TASK-mood-core"
+      ]
+    },
+    {
+      "path": "src/routes/character-relationships.test.ts",
+      "owners": [
+        "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c"
       ]
     },
     {
@@ -76393,6 +76469,7 @@
     {
       "path": "src/routes/federation.test.ts",
       "owners": [
+        "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
         "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
         "TASK-federation-peer-capability-advertisement",
         "TASK-federation-peer-registry-workload-columns",
@@ -78197,6 +78274,7 @@
     {
       "path": "src/routes/telemetry.test.ts",
       "owners": [
+        "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
         "BUG-telemetry-errors-leaks-raw-event-data",
         "BUG-telemetry-purge-unbounded-days",
         "TASK-admin-llm-execution-analytics-per-model-per-provider-rollups"
@@ -79041,7 +79119,8 @@
     {
       "path": "src/routes/worlds/locations-reparent.ts",
       "owners": [
-        "BUG-locations-reparent-guard-silently-reverted-by-d572dddec"
+        "BUG-locations-reparent-guard-silently-reverted-by-d572dddec",
+        "BUG-world-location-reparent-has-no-cycle-self-descendant-checks-"
       ]
     },
     {
@@ -79102,6 +79181,12 @@
       "path": "src/routes/worlds/world-stream.ts",
       "owners": [
         "TASK-egui-sse-response-streaming-through-the-browser-bridge"
+      ]
+    },
+    {
+      "path": "src/routes/worlds/worlds-delete.test.ts",
+      "owners": [
+        "BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h"
       ]
     },
     {
@@ -79500,6 +79585,12 @@
       "owners": [
         "TASK-complete-crafting-system-services",
         "epic-crafting-professions"
+      ]
+    },
+    {
+      "path": "src/rpg/crafting/orders.test.ts",
+      "owners": [
+        "BUG-service-layer-multi-query-mutations-run-without-transactions"
       ]
     },
     {
@@ -82840,6 +82931,12 @@
       ]
     },
     {
+      "path": "src/services/trade/balance.test.ts",
+      "owners": [
+        "BUG-service-layer-multi-query-mutations-run-without-transactions"
+      ]
+    },
+    {
       "path": "src/services/trade/balance.ts",
       "owners": [
         "BUG-service-layer-multi-query-mutations-run-without-transactions",
@@ -82887,6 +82984,12 @@
       "owners": [
         "BUG-npc-buy-and-sell-double-record-trade-history",
         "epic-economy-trading"
+      ]
+    },
+    {
+      "path": "src/services/trade/offers-race.test.ts",
+      "owners": [
+        "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-"
       ]
     },
     {
@@ -83394,6 +83497,12 @@
       "path": "src/story/quest-engine/lifecycle.ts",
       "owners": [
         "TASK-quest-status-transitions-bypass-state-machine"
+      ]
+    },
+    {
+      "path": "src/story/quest-engine/progress.coverage.test.ts",
+      "owners": [
+        "BUG-quest-engine-double-advances-from-stale-in-memory-progress-a"
       ]
     },
     {
@@ -84659,6 +84768,12 @@
       ]
     },
     {
+      "path": "src/utils/swipe-retry.test.ts",
+      "owners": [
+        "BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq"
+      ]
+    },
+    {
       "path": "src/utils/swipe-retry.ts",
       "owners": [
         "BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq",
@@ -85237,7 +85352,6 @@
         "TASK-info-bubbles",
         "TASK-responsive-design",
         "WIRE-frontend-keyboard-help-overlay",
-        "epic-accessibility-input",
         "epic-docs-reconciliation",
         "epic-frontend-headers-management"
       ]
@@ -102100,6 +102214,11 @@
     {
       "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
       "kind": "produces",
+      "to": "src/assets/controller.acl.test.ts"
+    },
+    {
+      "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
+      "kind": "produces",
       "to": "src/assets/controller.ts"
     },
     {
@@ -103216,6 +103335,26 @@
       "from": "BUG-bun-test-src-full-suite-is-order-dependent-cross-file-contam",
       "kind": "produces",
       "to": "src/validation/schemas/chat.test.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "produces",
+      "to": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "produces",
+      "to": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "produces",
+      "to": "src/generation/providers/user-api-key.test.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "produces",
+      "to": "src/generation/providers/user-api-key.ts"
     },
     {
       "from": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
@@ -105278,6 +105417,11 @@
       "to": "src/generation/providers/call-with-failover.ts"
     },
     {
+      "from": "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
+      "kind": "produces",
+      "to": "src/generation/providers/failover-key-scope.test.ts"
+    },
+    {
       "from": "BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie",
       "kind": "produces",
       "to": "src/federation/clearance.test.ts"
@@ -105716,6 +105860,11 @@
       "from": "BUG-flagcontent-has-toctou-race-on-duplicate-flag-check-select-t",
       "kind": "produces",
       "to": "src/nsfw/moderation-service/flags.ts"
+    },
+    {
+      "from": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
+      "kind": "produces",
+      "to": "src/frontend/alpine/memory-panel.test.ts"
     },
     {
       "from": "BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s",
@@ -106730,6 +106879,11 @@
     {
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "kind": "produces",
+      "to": "src/config/load/safety.ts"
+    },
+    {
+      "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
+      "kind": "produces",
       "to": "src/config/sections/auth.ts"
     },
     {
@@ -106751,6 +106905,16 @@
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
       "kind": "produces",
       "to": "src/middleware/csrf.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "produces",
+      "to": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "produces",
+      "to": "src/routes/telemetry.test.ts"
     },
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
@@ -107216,6 +107380,11 @@
       "from": "BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad",
       "kind": "produces",
       "to": "src/social-hub/adapters/irc.ts"
+    },
+    {
+      "from": "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error",
+      "kind": "produces",
+      "to": "src/plugins/loader.discovery-failures.test.ts"
     },
     {
       "from": "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error",
@@ -107700,6 +107869,26 @@
     {
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "kind": "produces",
+      "to": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "produces",
+      "to": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "produces",
+      "to": "src/federation/mesh-proof.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "produces",
+      "to": "src/federation/outbox.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "produces",
       "to": "src/federation/peer-keys.ts"
     },
     {
@@ -107711,6 +107900,11 @@
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "kind": "produces",
       "to": "src/routes/federation-mesh.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "produces",
+      "to": "src/routes/federation.test.ts"
     },
     {
       "from": "BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh",
@@ -107946,6 +108140,11 @@
       "from": "BUG-module-level-in-memory-state-grows-without-eviction",
       "kind": "produces",
       "to": "src/utils/safe-fetch/fetch.ts"
+    },
+    {
+      "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
+      "kind": "produces",
+      "to": "src/characters/services/mood-service.test.ts"
     },
     {
       "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
@@ -109160,6 +109359,11 @@
     {
       "from": "BUG-quest-engine-double-advances-from-stale-in-memory-progress-a",
       "kind": "produces",
+      "to": "src/story/quest-engine/progress.coverage.test.ts"
+    },
+    {
+      "from": "BUG-quest-engine-double-advances-from-stale-in-memory-progress-a",
+      "kind": "produces",
       "to": "src/story/quest-engine/progress.ts"
     },
     {
@@ -109270,7 +109474,17 @@
     {
       "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
       "kind": "produces",
+      "to": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "produces",
       "to": "src/federation/cipher.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "produces",
+      "to": "src/federation/dek-rewrap.test.ts"
     },
     {
       "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
@@ -109371,6 +109585,11 @@
       "from": "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
       "kind": "produces",
       "to": "src/characters/services/relationships-service/write.ts"
+    },
+    {
+      "from": "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
+      "kind": "produces",
+      "to": "src/routes/character-relationships.test.ts"
     },
     {
       "from": "BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c",
@@ -109785,6 +110004,11 @@
     {
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
       "kind": "produces",
+      "to": "src/characters/services/mood-service/log-event.ts"
+    },
+    {
+      "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
+      "kind": "produces",
       "to": "src/rpg/achievements/service/crud.ts"
     },
     {
@@ -109801,6 +110025,11 @@
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
       "kind": "produces",
       "to": "src/rpg/body-systems/service/heat.ts"
+    },
+    {
+      "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
+      "kind": "produces",
+      "to": "src/rpg/crafting/orders.test.ts"
     },
     {
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
@@ -109836,6 +110065,11 @@
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
       "kind": "produces",
       "to": "src/services/agency/bdi-nightly.ts"
+    },
+    {
+      "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
+      "kind": "produces",
+      "to": "src/services/trade/balance.test.ts"
     },
     {
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
@@ -110545,6 +110779,11 @@
     {
       "from": "BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq",
       "kind": "produces",
+      "to": "src/utils/swipe-retry.test.ts"
+    },
+    {
+      "from": "BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq",
+      "kind": "produces",
       "to": "src/utils/swipe-retry.ts"
     },
     {
@@ -110895,7 +111134,17 @@
     {
       "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
       "kind": "produces",
+      "to": "src/db/optimistic-locking.ts"
+    },
+    {
+      "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
+      "kind": "produces",
       "to": "src/services/trade/lifecycle.ts"
+    },
+    {
+      "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
+      "kind": "produces",
+      "to": "src/services/trade/offers-race.test.ts"
     },
     {
       "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
@@ -110936,6 +111185,11 @@
       "from": "BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor",
       "kind": "produces",
       "to": "src/locations/routes.ts"
+    },
+    {
+      "from": "BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor",
+      "kind": "produces",
+      "to": "src/locations/travel-engine.test.ts"
     },
     {
       "from": "BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor",
@@ -111216,6 +111470,21 @@
       "from": "BUG-usebattleitem-consumes-inventory-and-persists-battle-outside",
       "kind": "produces",
       "to": "src/rpg/service/battles/items.ts"
+    },
+    {
+      "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "kind": "produces",
+      "to": "src/db/078_user_api_keys_unique.test.ts"
+    },
+    {
+      "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "kind": "produces",
+      "to": "src/routes/api-keys.coverage.test.ts"
+    },
+    {
+      "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "kind": "produces",
+      "to": "src/routes/api-keys.ts"
     },
     {
       "from": "BUG-user-message-swipe-insert-retries-all-errors-and-mislabels-t",
@@ -111560,6 +111829,11 @@
     {
       "from": "BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h",
       "kind": "produces",
+      "to": "src/routes/worlds/worlds-delete.test.ts"
+    },
+    {
+      "from": "BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h",
+      "kind": "produces",
       "to": "src/routes/worlds/worlds-delete.ts"
     },
     {
@@ -111571,6 +111845,11 @@
       "from": "BUG-world-location-reparent-has-no-cycle-self-descendant-checks-",
       "kind": "produces",
       "to": "src/locations/tree.ts"
+    },
+    {
+      "from": "BUG-world-location-reparent-has-no-cycle-self-descendant-checks-",
+      "kind": "produces",
+      "to": "src/routes/worlds/locations-reparent.ts"
     },
     {
       "from": "BUG-world-location-reparent-has-no-cycle-self-descendant-checks-",
@@ -134468,16 +134747,6 @@
       "to": "src/frontend/a11y/skip-links.ts"
     },
     {
-      "from": "TASK-keyboard-navigation",
-      "kind": "produces",
-      "to": "src/frontend/alpine/focus.ts"
-    },
-    {
-      "from": "TASK-keyboard-navigation",
-      "kind": "produces",
-      "to": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
       "from": "TASK-krea-2-reference-edit-diagnosis",
       "kind": "produces",
       "to": "src/generation/lora/discovery-comfyui.ts"
@@ -146215,11 +146484,6 @@
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
-      "to": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "produces",
       "to": "src/frontend/alpine/keynav-help.test.ts"
     },
     {
@@ -146235,12 +146499,12 @@
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
-      "to": "src/public/css/mobile-keynav.css"
+      "to": "src/i18n/locales/en.json"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "produces",
-      "to": "src/public/locales/en.json"
+      "to": "src/public/css/app.css"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
@@ -146465,11 +146729,6 @@
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
-      "to": "src/components/chat/keynav-help.html"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "produces",
       "to": "src/frontend/a11y/a11y.css"
     },
     {
@@ -146520,27 +146779,12 @@
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
-      "to": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "produces",
-      "to": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "produces",
       "to": "src/frontend/touch.test.ts"
     },
     {
       "from": "epic-accessibility-input",
       "kind": "produces",
       "to": "src/frontend/touch.ts"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "produces",
-      "to": "src/views/layout.html"
     },
     {
       "from": "epic-achievements",
@@ -165280,6 +165524,12 @@
     {
       "from": "BUG-429-responses-omit-retry-after-and-x-ratelimit-headers",
       "kind": "sibling",
+      "to": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-429-responses-omit-retry-after-and-x-ratelimit-headers",
+      "kind": "sibling",
       "to": "BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl",
       "via": "src/middleware/rate-limit.ts"
     },
@@ -170554,6 +170804,12 @@
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
       "kind": "sibling",
+      "to": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "via": "src/generation/providers/registry.ts; src/generation/providers/user-api-key.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
       "to": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
       "via": "src/generation/providers/provider-instances.ts; src/routes/api-keys.providers.test.ts; src/routes/api-keys.ts"
     },
@@ -170574,6 +170830,12 @@
       "kind": "sibling",
       "to": "BUG-size-strict-pre-existing-dev-drift",
       "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "via": "src/routes/api-keys.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
@@ -173400,6 +173662,12 @@
       "kind": "sibling",
       "to": "TASK-gallery-fuzzy-search-pagination",
       "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/assets/controller.acl.test.ts"
     },
     {
       "from": "BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-",
@@ -181976,6 +182244,240 @@
       "via": "src/frontend"
     },
     {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "BUG-size-strict-pre-existing-dev-drift",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "FEAT-background",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "FEAT-llama-swap-rotation-exclusion-policy",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "FEAT-llm-resource-aware-admission-control",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "FEAT-llm-scheduler-config-surface",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "FEAT-model-native-locale-config",
+      "via": "src/generation/providers/user-api-key.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-comfyui-first-class-chat-selection",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-distributed-generation-integration",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-effect-v4-retry-schedule-parity-spike-on-the-provider-call-p",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-emotions-avatar-edit-model",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-dispatch-compose-failover",
+      "via": "src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/generation/providers/user-api-key.test.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-harness-model-routing",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-llama-swap-native-support-cpu-resident-classifier-model-reci",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-resource-provision-routing-facade",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-route-plugin-calls-through-the-shared-provider-path",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-sam3-direct-provider-via-meta-model-api",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-sd-multi-provider-text2img-fallback-documented-but-nonexiste",
+      "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-unit-translation-service",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-animated-raster",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-llm-svg-pipeline",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
+      "via": "src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-comfyui-plugin",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-distributed-compute-sharing",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-llama-swap",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-llm-request-scheduler",
+      "via": "src/generation/providers/call-with-failover.ts; src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-platform-integrations",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-provider-plugin-ecosystem",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-resource-provision",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-sam3-segmentation-integration",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
+      "kind": "sibling",
+      "to": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
       "from": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
       "kind": "sibling",
       "to": "FEAT-byok-api-keys",
@@ -189389,6 +189891,12 @@
       "from": "BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun",
       "kind": "sibling",
       "to": "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o",
+      "via": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun",
+      "kind": "sibling",
+      "to": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "via": "src/federation/fan-out.ts"
     },
     {
@@ -197338,6 +197846,12 @@
     {
       "from": "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
       "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/generation/providers/failover-key-scope.test.ts"
+    },
+    {
+      "from": "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
+      "kind": "sibling",
       "to": "TASK-route-plugin-calls-through-the-shared-provider-path",
       "via": "src/generation/providers/call-with-failover.ts"
     },
@@ -197381,6 +197895,12 @@
       "from": "BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie",
       "kind": "sibling",
       "to": "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o",
+      "via": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-fan-out-content-clearance-gate-is-opt-in-on-a-caller-supplie",
+      "kind": "sibling",
+      "to": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "via": "src/federation/fan-out.ts"
     },
     {
@@ -198004,6 +198524,12 @@
     {
       "from": "BUG-federation-authorization-who-may-publish-an-actor-undefined",
       "kind": "sibling",
+      "to": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "via": "src/cron/jobs.ts; src/federation/fan-out.ts; src/federation/outbox.ts"
+    },
+    {
+      "from": "BUG-federation-authorization-who-may-publish-an-actor-undefined",
+      "kind": "sibling",
       "to": "BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-",
       "via": "src/federation/outbox.ts"
     },
@@ -198209,6 +198735,12 @@
       "from": "BUG-federation-fan-out-queues-outbox-retries-only-for-push-failu",
       "kind": "sibling",
       "to": "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o",
+      "via": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-federation-fan-out-queues-outbox-retries-only-for-push-failu",
+      "kind": "sibling",
+      "to": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "via": "src/federation/fan-out.ts"
     },
     {
@@ -198546,6 +199078,12 @@
       "kind": "sibling",
       "to": "epic-worlds-extension",
       "via": "src/db/schema.ts"
+    },
+    {
+      "from": "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o",
+      "kind": "sibling",
+      "to": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "via": "src/federation/fan-out.ts; src/federation/outbox.ts"
     },
     {
       "from": "BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o",
@@ -199337,7 +199875,7 @@
       "from": "BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d",
       "kind": "sibling",
       "to": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
-      "via": "src/config/sections/auth.ts"
+      "via": "src/config/load/safety.ts; src/config/sections/auth.ts"
     },
     {
       "from": "BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d",
@@ -200555,7 +201093,7 @@
       "from": "BUG-fix-plugins-make-plugin-discovery-failures-visible",
       "kind": "sibling",
       "to": "BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error",
-      "via": "src/plugins/loader.ts"
+      "via": "src/plugins/loader.discovery-failures.test.ts; src/plugins/loader.ts"
     },
     {
       "from": "BUG-fix-plugins-make-plugin-discovery-failures-visible",
@@ -208522,6 +209060,18 @@
     {
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "kind": "sibling",
+      "to": "TASK-cleanup-banned-types-console-logging-magic-strings",
+      "via": "src/config/load/safety.ts"
+    },
+    {
+      "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
+      "kind": "sibling",
+      "to": "TASK-cors-middleware",
+      "via": "src/config/load/safety.ts"
+    },
+    {
+      "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
+      "kind": "sibling",
       "to": "TASK-cron-migrate-existing-timers",
       "via": "src/server/start.ts"
     },
@@ -208721,7 +209271,7 @@
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
       "kind": "sibling",
       "to": "epic-local-process-swarm",
-      "via": "src/config/sections/server.ts; src/server/start.ts"
+      "via": "src/config/load/safety.ts; src/config/sections/server.ts; src/server/start.ts"
     },
     {
       "from": "BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au",
@@ -208750,6 +209300,48 @@
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
       "kind": "sibling",
+      "to": "BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "BUG-nsfw-export-bundle-no-access-log",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "BUG-pruneexpired-boundary-comment-states-opposite-of-implementat",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "BUG-rate-limit-sliding-window-expiry-uses-cutoff-off-by-one-reta",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "BUG-refund-contract-invites-over-admission-in-peek-record-flows-",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "BUG-register-rate-limiter-consumes-on-username-collision-retries",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
       "to": "BUG-size-strict-pre-existing-dev-drift",
       "via": "src/middleware/csrf.ts"
     },
@@ -208757,13 +209349,13 @@
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
       "kind": "sibling",
       "to": "BUG-telemetry-errors-leaks-raw-event-data",
-      "via": "src/routes/telemetry.ts"
+      "via": "src/routes/telemetry.test.ts; src/routes/telemetry.ts"
     },
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
       "kind": "sibling",
       "to": "BUG-telemetry-purge-unbounded-days",
-      "via": "src/routes/telemetry.ts"
+      "via": "src/routes/telemetry.test.ts; src/routes/telemetry.ts"
     },
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
@@ -208776,6 +209368,12 @@
       "kind": "sibling",
       "to": "BUG-v1-csrf-exempt-set-missing-api-v1-prefixes-for-session-mint-",
       "via": "src/middleware/csrf.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "BUG-webhook-rate-limit-budget-is-consumed-before-signature-verif",
+      "via": "src/middleware/rate-limit.ts"
     },
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
@@ -208805,7 +209403,7 @@
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
       "kind": "sibling",
       "to": "TASK-admin-llm-execution-analytics-per-model-per-provider-rollups",
-      "via": "src/routes/telemetry.ts"
+      "via": "src/routes/telemetry.test.ts; src/routes/telemetry.ts"
     },
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
@@ -208816,8 +209414,74 @@
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
       "kind": "sibling",
+      "to": "TASK-federation-performance-quota-enforcement",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-guest-rate-limiting-audit-logging-for-guest-reads",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
       "to": "TASK-harness-stats-dashboard",
       "via": "src/routes/telemetry.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-middleware-in-progress-status-endpoint-for-long-running-requ",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-middleware-request-id-elysia-derive",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-rate-limit-coverage-expansion",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-agent-api-router-and-token-scope-",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-agent-task-queue-concurrency-caps-worktree",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-health-liveness-readiness-probes",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "TASK-register-username-race-and-rate-limiter-multi-instance-gap",
+      "via": "src/middleware/rate-limit.ts"
     },
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
@@ -208828,8 +209492,44 @@
     {
       "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
       "kind": "sibling",
+      "to": "epic-api-rate-limiting",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "epic-architecture",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "epic-db-cold-storage-high-perf",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/middleware/rate-limit.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
       "to": "epic-logging",
       "via": "src/routes/telemetry.ts"
+    },
+    {
+      "from": "BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te",
+      "kind": "sibling",
+      "to": "epic-recursive-self-improvement",
+      "via": "src/middleware/rate-limit.ts"
     },
     {
       "from": "BUG-hsts-header-missing-from-response-policy",
@@ -209039,12 +209739,6 @@
       "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "BUG-html-lang-hardcoded-no-dir-handling-for-i18n",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -211187,7 +211881,7 @@
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
       "kind": "sibling",
       "to": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
-      "via": "src/federation/dek-rewrap.ts"
+      "via": "src/federation/dek-rewrap.test.ts; src/federation/dek-rewrap.ts"
     },
     {
       "from": "BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst",
@@ -212572,6 +213266,12 @@
     {
       "from": "BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f",
       "kind": "sibling",
+      "to": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f",
+      "kind": "sibling",
       "to": "TASK-assistant-entity-access-quota-engine",
       "via": "src/crypto/byok.ts"
     },
@@ -213004,12 +213704,6 @@
     {
       "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
       "kind": "sibling",
-      "to": "TASK-keyboard-navigation",
-      "via": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
@@ -213023,12 +213717,6 @@
       "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
-      "via": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "BUG-keynav-handler-isolation-logs-via-console-error-instead-of-l",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -213040,12 +213728,6 @@
     {
       "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
       "kind": "sibling",
-      "to": "TASK-keyboard-navigation",
-      "via": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
@@ -213059,12 +213741,6 @@
       "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
-      "via": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "BUG-keynav-stale-unsubscribe-deletes-live-handler-set",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -213442,12 +214118,6 @@
     {
       "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
       "kind": "sibling",
-      "to": "epic-accessibility-input",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "BUG-locale-json-is-embedded-in-a-script-tag-without-html-escapin",
-      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/routes/views/layout.ts; src/views/layout.html"
     },
@@ -213725,7 +214395,7 @@
       "from": "BUG-locations-reparent-guard-silently-reverted-by-d572dddec",
       "kind": "sibling",
       "to": "BUG-world-location-reparent-has-no-cycle-self-descendant-checks-",
-      "via": "src/locations/tree.ts; src/routes/worlds/locations.ts"
+      "via": "src/locations/tree.ts; src/routes/worlds/locations-reparent.ts; src/routes/worlds/locations.ts"
     },
     {
       "from": "BUG-locations-reparent-guard-silently-reverted-by-d572dddec",
@@ -215758,6 +216428,12 @@
     {
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "kind": "sibling",
+      "to": "BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-",
+      "via": "src/federation/outbox.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
       "to": "FEAT-activitypub-federation",
       "via": "src/routes/federation-mesh.ts"
     },
@@ -215770,14 +216446,62 @@
     {
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "kind": "sibling",
+      "to": "TASK-bdi-plan-recompute-implementation",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
       "to": "TASK-bootstrap-mesh-peers-from-config-federation-peers-at-boot",
-      "via": "src/federation/sharing.ts; src/routes/federation-mesh.ts"
+      "via": "src/cron/jobs.ts; src/federation/sharing.ts; src/routes/federation-mesh.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
+      "via": "src/routes/federation.test.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke",
+      "via": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep",
+      "via": "src/cron/jobs.ts"
     },
     {
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "kind": "sibling",
       "to": "TASK-expose-dek-export-and-import-over-the-federation-wire-routes",
       "via": "src/federation/sharing.ts; src/routes/federation-mesh.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-fanout-chatid-default-deny",
+      "via": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-capability-advertisement",
+      "via": "src/routes/federation.test.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/routes/federation.test.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-workload-wire-endpoints",
+      "via": "src/routes/federation.test.ts"
     },
     {
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
@@ -215794,6 +216518,24 @@
     {
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "kind": "sibling",
+      "to": "TASK-gm-beat-scheduling",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-licensing-publish-authorization-predicate",
+      "via": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-licensing-publish-enforcement-point",
+      "via": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
       "to": "TASK-mesh-coordinator-server-knowledge-db",
       "via": "src/federation/peer-keys.ts"
     },
@@ -215806,8 +216548,74 @@
     {
       "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
       "kind": "sibling",
+      "to": "TASK-publication-translation-batch-cron",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-scheduler-implementation-internal-cron-jobs",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-story-auto-drive-scheduler",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "TASK-wire-the-chat-write-path-to-fanoutcontent-as-the-production-",
+      "via": "src/cron/jobs.ts; src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "epic-actor-autonomy-story-drive",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "epic-archival-workflow",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "epic-exploration-discovery",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
       "to": "epic-federation-offload-quotas",
-      "via": "src/federation/peer-keys.ts; src/federation/sharing.ts"
+      "via": "src/federation/outbox.ts; src/federation/peer-keys.ts; src/federation/sharing.ts; src/routes/federation.test.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "epic-licensing",
+      "via": "src/federation/fan-out.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "epic-locations",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/cron/jobs.ts"
+    },
+    {
+      "from": "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
+      "kind": "sibling",
+      "to": "epic-research-agency-decision",
+      "via": "src/cron/jobs.ts"
     },
     {
       "from": "BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh",
@@ -218615,7 +219423,7 @@
       "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
       "kind": "sibling",
       "to": "BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call",
-      "via": "src/characters/services/mood-service/update-mood.ts"
+      "via": "src/characters/services/mood-service.test.ts; src/characters/services/mood-service/update-mood.ts"
     },
     {
       "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
@@ -218632,8 +219440,14 @@
     {
       "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
       "kind": "sibling",
+      "to": "BUG-service-layer-multi-query-mutations-run-without-transactions",
+      "via": "src/characters/services/mood-service/log-event.ts"
+    },
+    {
+      "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
+      "kind": "sibling",
       "to": "TASK-041",
-      "via": "src/characters/services/mood-service/apply-happiness-delta.ts; src/characters/services/mood-service/log-event.ts"
+      "via": "src/characters/services/mood-service.test.ts; src/characters/services/mood-service/apply-happiness-delta.ts; src/characters/services/mood-service/log-event.ts"
     },
     {
       "from": "BUG-mood-and-relationship-services-mutate-multi-row-state-withou",
@@ -219989,12 +220803,6 @@
       "from": "BUG-notification-bell-visible-on-login-register-pages",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "BUG-notification-bell-visible-on-login-register-pages",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -224878,6 +225686,30 @@
     {
       "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "TASK-epic17-encryption-e2e-expansion",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
       "to": "TASK-expose-dek-export-and-import-over-the-federation-wire-routes",
       "via": "src/federation/dek-rewrap.ts"
     },
@@ -224886,6 +225718,12 @@
       "kind": "sibling",
       "to": "TASK-federation-admin-peer-and-quota-routes",
       "via": "src/federation/dek-rewrap.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "TASK-federation-same-host-loopback-peer-auth",
+      "via": "src/crypto/byok.ts"
     },
     {
       "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
@@ -224902,8 +225740,50 @@
     {
       "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
       "kind": "sibling",
+      "to": "TASK-mesh-encrypted-content-sharing-reservation-duplication",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "TASK-provider-wiring-settings-convention-for-byok-and-resource-pr",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "TASK-resource-provision-credential-store",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
       "to": "epic-federation-offload-quotas",
-      "via": "src/federation/dek-rewrap.ts"
+      "via": "src/crypto/byok.ts; src/federation/dek-rewrap.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
+      "to": "epic-resource-provision",
+      "via": "src/crypto/byok.ts"
     },
     {
       "from": "BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets",
@@ -228360,6 +229240,12 @@
       "kind": "sibling",
       "to": "TASK-036",
       "via": "src/rpg/encounters/service/phases.ts"
+    },
+    {
+      "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
+      "kind": "sibling",
+      "to": "TASK-041",
+      "via": "src/characters/services/mood-service/log-event.ts"
     },
     {
       "from": "BUG-service-layer-multi-query-mutations-run-without-transactions",
@@ -234376,6 +235262,36 @@
     {
       "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
       "kind": "sibling",
+      "to": "TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play",
+      "via": "src/db/optimistic-locking.ts"
+    },
+    {
+      "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
+      "kind": "sibling",
+      "to": "TASK-format-version-migration",
+      "via": "src/db/optimistic-locking.ts"
+    },
+    {
+      "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
+      "kind": "sibling",
+      "to": "TASK-guard-sql-ref-identifier-construction-in-optimistic-locking",
+      "via": "src/db/optimistic-locking.ts"
+    },
+    {
+      "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
+      "kind": "sibling",
+      "to": "TASK-publication-artifact-versioning",
+      "via": "src/db/optimistic-locking.ts"
+    },
+    {
+      "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
+      "kind": "sibling",
+      "to": "epic-db-cold-storage-high-perf",
+      "via": "src/db/optimistic-locking.ts"
+    },
+    {
+      "from": "BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-",
+      "kind": "sibling",
       "to": "epic-economy-trading",
       "via": "src/services/trade/lifecycle.ts"
     },
@@ -235696,6 +236612,12 @@
     {
       "from": "BUG-undefined-css-custom-properties-break-rendering",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "BUG-undefined-css-custom-properties-break-rendering",
+      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -235830,6 +236752,30 @@
       "kind": "sibling",
       "to": "epic-reactive-actor-appearance",
       "via": "src/rpg/service/battles/items.ts"
+    },
+    {
+      "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "kind": "sibling",
+      "to": "FEAT-byok-api-keys",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "kind": "sibling",
+      "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/routes/api-keys.coverage.test.ts; src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows",
+      "kind": "sibling",
+      "to": "epic-platform-integrations",
+      "via": "src/routes/api-keys.ts"
     },
     {
       "from": "BUG-user-message-swipe-insert-retries-all-errors-and-mislabels-t",
@@ -258232,6 +259178,12 @@
     {
       "from": "TASK-025",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-025",
+      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -265367,12 +266319,6 @@
       "from": "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
       "kind": "sibling",
       "to": "TASK-info-bubbles",
-      "via": "src/public/locales/en.json"
-    },
-    {
-      "from": "TASK-ac10-enumeration-safe-auth-error-strings-login-only",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/locales/en.json"
     },
     {
@@ -282148,19 +283094,7 @@
     {
       "from": "TASK-author-suggestion-resolution-surface",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-author-suggestion-resolution-surface",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-author-suggestion-resolution-surface",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -286528,12 +287462,6 @@
     {
       "from": "TASK-blog-frontend-authoring",
       "kind": "sibling",
-      "to": "epic-accessibility-input",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "TASK-blog-frontend-authoring",
-      "kind": "sibling",
       "to": "epic-blog-system",
       "via": "src/frontend/alpine/blog.ts; src/frontend/pages/blog.ts; src/views/blog.html"
     },
@@ -287428,19 +288356,7 @@
     {
       "from": "TASK-book-unit-editor-review-surface",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-book-unit-editor-review-surface",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-book-unit-editor-review-surface",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -288288,12 +289204,6 @@
       "kind": "sibling",
       "to": "TASK-message-carriage-table-migration-admin-read",
       "via": "src/routes/messages/read.ts"
-    },
-    {
-      "from": "TASK-branch-merge-frontend-wizard-ui",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/locales/en.json"
     },
     {
       "from": "TASK-branch-merge-frontend-wizard-ui",
@@ -292204,19 +293114,7 @@
     {
       "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-character-stat-allocation-frontend-modal-and-edit-integration",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -294568,6 +295466,12 @@
     {
       "from": "TASK-chat-feature-component-buttons",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-chat-feature-component-buttons",
+      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -296392,6 +297296,12 @@
     {
       "from": "TASK-chat-flow-section-navigation",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-chat-flow-section-navigation",
+      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -297034,6 +297944,12 @@
     {
       "from": "TASK-chat-message-search",
       "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-chat-message-search",
+      "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
       "via": "src/public/css/app.css"
     },
@@ -297185,6 +298101,12 @@
       "from": "TASK-chat-room-filters",
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-chat-room-filters",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/css/app.css"
     },
     {
@@ -300341,12 +301263,6 @@
       "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "TASK-comfyui-builder-track-a-alpine-preset-chain-form",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -305758,19 +306674,7 @@
     {
       "from": "TASK-comparison-grid-frontend",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-comparison-grid-frontend",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-comparison-grid-frontend",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -306682,19 +307586,7 @@
     {
       "from": "TASK-comparison-two-cell-diff-modes",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-comparison-two-cell-diff-modes",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-comparison-two-cell-diff-modes",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -308296,12 +309188,6 @@
     {
       "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
       "kind": "sibling",
-      "to": "epic-accessibility-input",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "TASK-correct-dead-file-references-and-store-shape-drift-in-the-in",
-      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -308878,12 +309764,6 @@
     {
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
-      "to": "TASK-keyboard-navigation",
-      "via": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
-      "kind": "sibling",
       "to": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
       "via": "src/frontend/fe-fetch.ts"
     },
@@ -308957,12 +309837,6 @@
       "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
-      "via": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "TASK-coverage-waiver-frontend-alpine-shortcuts-ts-at-36-under-che",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/shortcuts.ts"
     },
     {
@@ -312586,12 +313460,6 @@
     {
       "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
       "kind": "sibling",
-      "to": "epic-accessibility-input",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "TASK-define-shared-nav-state-contract-between-client-side-routing",
-      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -313732,12 +314600,6 @@
     {
       "from": "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/locales/en.json"
-    },
-    {
-      "from": "TASK-delete-orphaned-locale-keys-across-all-10-locale-files-leave",
-      "kind": "sibling",
       "to": "epic-auth-access",
       "via": "src/frontend/alpine/admin-users.ts"
     },
@@ -314021,7 +314883,7 @@
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/public/css/mobile-keynav.css"
+      "via": "src/public/css/app.css"
     },
     {
       "from": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
@@ -315821,12 +316683,6 @@
       "from": "TASK-docs-ui-endpoint-linkage",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "TASK-docs-ui-endpoint-linkage",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -322702,12 +323558,6 @@
     {
       "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
       "kind": "sibling",
-      "to": "epic-accessibility-input",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "TASK-fb3-frontend-hub-index-ovr-subsystems",
-      "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
     },
@@ -324952,19 +325802,7 @@
     {
       "from": "TASK-finalize-notification-bell-header-wiring",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-finalize-notification-bell-header-wiring",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-finalize-notification-bell-header-wiring",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -326920,12 +327758,6 @@
     {
       "from": "TASK-frontend-touch-gestures",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-frontend-touch-gestures",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -326951,7 +327783,7 @@
       "from": "TASK-frontend-touch-gestures",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/alpine/index.ts; src/frontend/touch.test.ts; src/frontend/touch.ts"
+      "via": "src/frontend/a11y/touch-gestures.ts; src/frontend/alpine/chat-touch-gestures.ts; src/frontend/touch.test.ts; src/frontend/touch.ts"
     },
     {
       "from": "TASK-frontend-touch-gestures",
@@ -327094,12 +327926,6 @@
     {
       "from": "TASK-frontend-view-model-extraction",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-frontend-view-model-extraction",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
     },
@@ -327108,12 +327934,6 @@
       "kind": "sibling",
       "to": "WIRE-nsfw-audit-page-missing-inline-authz",
       "via": "src/routes/views/plugin-pages.ts"
-    },
-    {
-      "from": "TASK-frontend-view-model-extraction",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
-      "via": "src/frontend/alpine/index.ts"
     },
     {
       "from": "TASK-frontend-view-model-extraction",
@@ -333586,12 +334406,6 @@
     {
       "from": "TASK-i18n-alpine-client",
       "kind": "sibling",
-      "to": "epic-accessibility-input",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "TASK-i18n-alpine-client",
-      "kind": "sibling",
       "to": "epic-analytics-observability",
       "via": "src/elysia-app.ts"
     },
@@ -333851,12 +334665,6 @@
       "from": "TASK-i18n-template-strings",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "TASK-i18n-template-strings",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/views/layout.html"
     },
     {
@@ -334871,19 +335679,13 @@
       "from": "TASK-info-bubbles",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts; src/public/locales/en.json; src/views/layout.html"
+      "via": "src/views/layout.html"
     },
     {
       "from": "TASK-info-bubbles",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
       "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-info-bubbles",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
-      "via": "src/frontend/alpine/index.ts; src/views/layout.html"
     },
     {
       "from": "TASK-info-bubbles",
@@ -336724,44 +337526,8 @@
     {
       "from": "TASK-keyboard-navigation",
       "kind": "sibling",
-      "to": "TASK-simplification-sweep-micro-cleanups-and-single-implementatio",
-      "via": "src/frontend/alpine/focus.ts"
-    },
-    {
-      "from": "TASK-keyboard-navigation",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "TASK-keyboard-navigation",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-modal-focus-trap",
-      "via": "src/frontend/alpine/focus.ts"
-    },
-    {
-      "from": "TASK-keyboard-navigation",
-      "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "TASK-keyboard-navigation",
-      "kind": "sibling",
-      "to": "WIRE-frontend-mobile-off-canvas-drawer",
-      "via": "src/frontend/alpine/focus.ts"
-    },
-    {
-      "from": "TASK-keyboard-navigation",
-      "kind": "sibling",
-      "to": "WIRE-frontend-touch-swipe-gestures",
-      "via": "src/frontend/alpine/shortcuts.ts"
-    },
-    {
-      "from": "TASK-keyboard-navigation",
-      "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/a11y.css; src/frontend/a11y/focus-manager.ts; src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
+      "via": "src/frontend/a11y/a11y.css; src/frontend/a11y/focus-manager.ts"
     },
     {
       "from": "TASK-krea-2-reference-edit-diagnosis",
@@ -338363,6 +339129,12 @@
       "from": "TASK-location-explorer",
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
+      "via": "src/public/css/app.css"
+    },
+    {
+      "from": "TASK-location-explorer",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
       "via": "src/public/css/app.css"
     },
     {
@@ -342304,19 +343076,7 @@
     {
       "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-middleware-browser-side-storage-request-hash-reconciliation",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -349810,19 +350570,7 @@
     {
       "from": "TASK-publication-reader-locale-selector",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-publication-reader-locale-selector",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-publication-reader-locale-selector",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -350224,19 +350972,7 @@
     {
       "from": "TASK-publication-viewer-read-mode",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-publication-viewer-read-mode",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-publication-viewer-read-mode",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -354341,7 +355077,7 @@
       "from": "TASK-responsive-design",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/a11y/responsive.ts; src/views/layout.html"
+      "via": "src/frontend/a11y/responsive.ts"
     },
     {
       "from": "TASK-responsive-design",
@@ -356362,19 +357098,7 @@
     {
       "from": "TASK-shared-text-surface-toolbar",
       "kind": "sibling",
-      "to": "WIRE-frontend-keyboard-help-overlay",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-shared-text-surface-toolbar",
-      "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "TASK-shared-text-surface-toolbar",
-      "kind": "sibling",
-      "to": "epic-accessibility-input",
       "via": "src/frontend/alpine/index.ts"
     },
     {
@@ -357972,6 +358696,12 @@
       "kind": "sibling",
       "to": "TASK-visual-novel-mode",
       "via": "src/public/css/app.css; src/views/chat.html"
+    },
+    {
+      "from": "TASK-text-effects-overlays",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/css/app.css"
     },
     {
       "from": "TASK-text-effects-overlays",
@@ -360366,6 +361096,12 @@
       "kind": "sibling",
       "to": "TASK-vn-template-actions",
       "via": "src/components/chat/chat-settings-modal.html; src/frontend/vn/transition-engine.ts; src/frontend/vn/typewriter.ts"
+    },
+    {
+      "from": "TASK-visual-novel-mode",
+      "kind": "sibling",
+      "to": "WIRE-frontend-keyboard-help-overlay",
+      "via": "src/public/css/app.css"
     },
     {
       "from": "TASK-visual-novel-mode",
@@ -363083,55 +363819,43 @@
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "WIRE-frontend-keyboard-navigation-global-keymap",
-      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts"
+      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/shortcuts.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "WIRE-frontend-mobile-off-canvas-drawer",
-      "via": "src/frontend/alpine/focus.ts"
+      "via": "src/frontend/alpine/focus.ts; src/public/css/app.css"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "WIRE-frontend-mobile-sticky-bottom-composer",
+      "via": "src/public/css/app.css"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "WIRE-frontend-touch-swipe-gestures",
-      "via": "src/frontend/alpine/shortcuts.ts"
+      "via": "src/frontend/alpine/shortcuts.ts; src/public/css/app.css"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/components/chat/keynav-help.html; src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts; src/views/layout.html"
+      "via": "src/frontend/alpine/focus.ts"
+    },
+    {
+      "from": "WIRE-frontend-keyboard-help-overlay",
+      "kind": "sibling",
+      "to": "epic-chat-lifecycle-moderation",
+      "via": "src/public/css/app.css"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
       "kind": "sibling",
       "to": "epic-docs-reconciliation",
       "via": "src/views/layout.html"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "epic-encryption-workflow",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "epic-experimental-egui-frontend",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "epic-frontend-age-gate",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "WIRE-frontend-keyboard-help-overlay",
-      "kind": "sibling",
-      "to": "epic-frontend-component-architecture",
-      "via": "src/frontend/alpine/index.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-help-overlay",
@@ -363173,7 +363897,7 @@
       "from": "WIRE-frontend-keyboard-navigation-global-keymap",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/alpine/focus.ts; src/frontend/alpine/index.ts; src/frontend/alpine/shortcuts.ts"
+      "via": "src/frontend/alpine/focus.ts"
     },
     {
       "from": "WIRE-frontend-keyboard-navigation-global-keymap",
@@ -363275,7 +363999,7 @@
       "from": "WIRE-frontend-touch-swipe-gestures",
       "kind": "sibling",
       "to": "epic-accessibility-input",
-      "via": "src/frontend/alpine/shortcuts.ts; src/frontend/touch.ts"
+      "via": "src/frontend/touch.ts"
     },
     {
       "from": "WIRE-frontend-touch-swipe-gestures",
@@ -363378,42 +364102,6 @@
       "kind": "sibling",
       "to": "epic-video-generation",
       "via": "src/db/enums-content.ts"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "sibling",
-      "to": "epic-docs-reconciliation",
-      "via": "src/views/layout.html"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "sibling",
-      "to": "epic-encryption-workflow",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "sibling",
-      "to": "epic-experimental-egui-frontend",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "sibling",
-      "to": "epic-frontend-age-gate",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "sibling",
-      "to": "epic-frontend-component-architecture",
-      "via": "src/frontend/alpine/index.ts"
-    },
-    {
-      "from": "epic-accessibility-input",
-      "kind": "sibling",
-      "to": "epic-frontend-headers-management",
-      "via": "src/views/layout.html"
     },
     {
       "from": "epic-achievements",

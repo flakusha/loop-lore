@@ -1206,6 +1206,10 @@
   "src/assets/controller.acl.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-links-and-shares-routes-only-requireuserid-cross-user-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
@@ -8132,6 +8136,10 @@
   "src/characters/services/mood-service.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-mood-and-relationship-services-mutate-multi-row-state-withou.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-mood-last-mood-change-fix-is-a-no-op-for-all-production-call.md"
     },
     {
@@ -8179,6 +8187,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-mood-and-relationship-services-mutate-multi-row-state-withou.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md"
     },
     {
       "kind": "ticket",
@@ -13242,6 +13254,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-auth-refuse-or-loudly-gate-non-loopback-bind-while-au.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
     },
     {
@@ -14944,6 +14960,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md"
     },
     {
@@ -15361,6 +15381,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md"
     },
     {
       "kind": "ticket",
@@ -16267,6 +16291,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-messages-outfit-id-column.md"
+    }
+  ],
+  "src/db/078_user_api_keys_unique.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md"
     }
   ],
   "src/db/__tests__/schema-roundtrip.test.ts": [
@@ -19218,6 +19248,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
     },
     {
@@ -21587,6 +21621,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-importchatdek-throws-on-chat-keys-primary-key-collision-inst.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md"
     }
   ],
   "src/federation/dek-rewrap.ts": [
@@ -21706,6 +21744,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-c5-swarm-mergeable-skip-preservation-with-beat-reclaim-parke.md"
     },
     {
@@ -21793,6 +21835,12 @@
       "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md"
     }
   ],
+  "src/federation/mesh-proof.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md"
+    }
+  ],
   "src/federation/negotiation.ts": [
     {
       "kind": "epic",
@@ -21811,6 +21859,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md"
     },
     {
       "kind": "ticket",
@@ -24737,6 +24789,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-panel-never-renders-memories-in-any-chat-response-env.md"
+    }
+  ],
+  "src/frontend/alpine/memory-panel.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s.md"
     }
   ],
   "src/frontend/alpine/memory-panel.ts": [
@@ -31084,6 +31142,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-failover-replays-primary-byo-key-to-fallback-vendors.md"
     },
     {
@@ -31344,6 +31406,10 @@
   "src/generation/providers/failover-key-scope.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-failover-replays-primary-byo-key-to-fallback-vendors.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
@@ -31504,6 +31570,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
@@ -31660,6 +31730,10 @@
   "src/generation/providers/user-api-key.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generated-db-types-mark-every-primary-key-as-db-generated-so.md"
     }
   ],
@@ -31667,6 +31741,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-allowuserapikey-defined-but-never-enforced.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md"
     },
     {
       "kind": "ticket",
@@ -34079,6 +34157,12 @@
       "source": "docs/spec/exploration-discovery.md"
     }
   ],
+  "src/locations/travel-engine.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-travel-route-stop-delete-ignores-routeid-cross-world-idor.md"
+    }
+  ],
   "src/locations/travel-engine.ts": [
     {
       "kind": "epic",
@@ -35758,6 +35842,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
     },
     {
@@ -37103,6 +37191,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-plugins-make-plugin-discovery-failures-visible.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-ispluginactive-fails-open-for-core-plugins-on-any-db-error.md"
     }
   ],
   "src/plugins/loader.ts": [
@@ -39981,6 +40073,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md"
     }
   ],
   "src/routes/api-keys.providers.test.ts": [
@@ -40009,6 +40105,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-byok-store-rejects-non-openaicompatible-provider-names.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-user-api-keys-non-unique-index-read-then-write-upsert-allows.md"
     },
     {
       "kind": "ticket",
@@ -40791,6 +40891,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-core.md"
+    }
+  ],
+  "src/routes/character-relationships.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-relationship-bidirectional-reverse-row-grafts-onto-foreign-c.md"
     }
   ],
   "src/routes/character-relationships.ts": [
@@ -42479,6 +42585,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-federation-offload-quotas.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat.md"
     },
     {
       "kind": "ticket",
@@ -45616,6 +45726,10 @@
   "src/routes/telemetry.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-harden-telemetry-gate-or-rate-limit-anonymous-post-api-v1-te.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     },
     {
@@ -47173,6 +47287,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-locations-reparent-guard-silently-reverted-by-d572dddec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-world-location-reparent-has-no-cycle-self-descendant-checks-.md"
     }
   ],
   "src/routes/worlds/locations-routes.test.ts": [
@@ -47287,6 +47405,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
+    }
+  ],
+  "src/routes/worlds/worlds-delete.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-world-delete-untransactioned-missing-travel-cleanup-fk-500-h.md"
     }
   ],
   "src/routes/worlds/worlds-delete.ts": [
@@ -47893,6 +48017,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-complete-crafting-system-services.md"
+    }
+  ],
+  "src/rpg/crafting/orders.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md"
     }
   ],
   "src/rpg/crafting/orders.ts": [
@@ -52893,6 +53023,12 @@
       "source": ".plan/tickets/TASK-implement-trade.md"
     }
   ],
+  "src/services/trade/balance.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md"
+    }
+  ],
   "src/services/trade/balance.ts": [
     {
       "kind": "epic",
@@ -52965,6 +53101,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-npc-buy-and-sell-double-record-trade-history.md"
+    }
+  ],
+  "src/services/trade/offers-race.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-trade-offer-accept-and-sentinel-creation-are-check-then-act-.md"
     }
   ],
   "src/services/trade/offers.ts": [
@@ -53763,6 +53905,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-quest-status-transitions-bypass-state-machine.md"
+    }
+  ],
+  "src/story/quest-engine/progress.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-quest-engine-double-advances-from-stale-in-memory-progress-a.md"
     }
   ],
   "src/story/quest-engine/progress.ts": [
@@ -56031,6 +56179,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-system-format-contract.md"
+    }
+  ],
+  "src/utils/swipe-retry.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq.md"
     }
   ],
   "src/utils/swipe-retry.ts": [

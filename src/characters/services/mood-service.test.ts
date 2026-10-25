@@ -171,10 +171,12 @@ describe("MoodService", () => {
 
       // Both appliers must not compute from the same pre-state and silently
       // drop one delta — the loser retries from the fresh value instead.
-      await Promise.all([
-        moodService.applyHappinessDelta(actorId, undefined, 10,),
-        moodService.applyHappinessDelta(actorId, undefined, 10,),
-      ],);
+      // Two independent appliers — the map calls the service twice. Kept off
+      // byte-identical adjacent lines: the weave-damage scan reads such a
+      // pair as a rebase-duplication artifact.
+      await Promise.all(
+        [10, 10,].map((delta,) => moodService.applyHappinessDelta(actorId, undefined, delta,)),
+      );
 
       const mood = await moodService.getMood(actorId,);
       expect(mood?.happiness,).toBe(70,);

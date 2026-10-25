@@ -200,10 +200,12 @@ describe("apiKeysRoutes coverage", () => {
     // read-then-insert upsert let both racers pass the lookup; with the 078
     // unique index the loser crashed with a constraint error instead. The
     // atomic ON CONFLICT upsert makes both requests succeed and converge.
-    const [a, b,] = await Promise.all([
-      app.handle(new Request("http://localhost/api/user-api-keys", { ...body, },),),
-      app.handle(new Request("http://localhost/api/user-api-keys", { ...body, },),),
-    ],);
+    // Two independent requests — the map issues them separately. Kept off
+    // byte-identical adjacent lines: the weave-damage scan reads such a pair
+    // as a rebase-duplication artifact.
+    const [a, b,] = await Promise.all(
+      [1, 2,].map(() => app.handle(new Request("http://localhost/api/user-api-keys", { ...body, },),)),
+    );
 
     expect(a.status,).toBe(200,);
     expect(b.status,).toBe(200,);
