@@ -336,7 +336,7 @@
     "epic": "epic-auth-access",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADMIN-PROVIDERS-LIST-VS-AUTH-CONFLICT-NEEDS-CONTRACT-DECISIO": {
     "hash": "1568edc",
@@ -659,7 +659,7 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-applyflag-skips-self-target-guard.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ARCHIVE-RETENTION-HARDCODED-30-DAYS-SHOULD-BE-CONFIGURABLE-9": {
     "epic": "epic-archival-workflow",
@@ -1241,7 +1241,7 @@
     "epic": "epic-character-xp-leveling",
     "tags": [],
     "source": ".plan/tickets/BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED": {
     "epic": "",
@@ -3022,7 +3022,7 @@
     "epic": "epic-inventory",
     "tags": [],
     "source": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CONTENT-HASH-NAMING-FOR-GENERATED-ASSETS": {
     "hash": "f7527f0",
@@ -4596,7 +4596,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO": {
     "epic": "",
@@ -5962,6 +5962,21 @@
     "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md",
     "status": "Not Started"
   },
+  "BUG-ITEM-DEFINITION-ROUTE-NON-ARRAY-PROPERTIES-EFFECTS-CAUSES-UN": {
+    "hash": "56882eb",
+    "git_issue": "56882eb",
+    "extid": "BUG-ITEM-DEFINITION-ROUTE-NON-ARRAY-PROPERTIES-EFFECTS-CAUSES-UN",
+    "type": "BUG",
+    "title": "Item definition route: non-array properties.effects causes unhandled 500",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "story-items"
+    ],
+    "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md",
+    "status": "Not Started"
+  },
   "BUG-ITEM-TRANSFERS-DOUBLE-REPORT-ONE-SENTENCE-AND-ITEM-TAKE-ITEM": {
     "hash": "5acbda7",
     "git_issue": "5acbda7",
@@ -6711,7 +6726,7 @@
     "label": "security",
     "priority": "high",
     "source": ".plan/tickets/BUG-message-soft-delete-lets-any-chat-member-hide-any-member-s-m.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Message soft delete lets any chat member hide any member's message",
     "type": "BUG"
@@ -8376,7 +8391,7 @@
     "epic": "epic-replayability",
     "tags": [],
     "source": ".plan/tickets/BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-REDOS-IN-HTML-SANITIZE-SCRIPT-TAG-PATTERN-CHUNK-BOUNDARY-SAN": {
     "epic": "epic-api-validation-guardrails",

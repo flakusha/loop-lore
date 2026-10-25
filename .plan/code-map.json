@@ -45442,6 +45442,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
@@ -53368,6 +53372,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
     },
     {
@@ -53395,6 +53403,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-items.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md"
     },
     {
       "kind": "ticket",

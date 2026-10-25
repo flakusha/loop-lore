@@ -3,7 +3,7 @@
 
 # BUG: awardXp only levels up once per call (multi-level overflow lost)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-character-xp-leveling
@@ -21,3 +21,5 @@ When xpAmount exceeds multiple level thresholds, awardXp (src/rpg/seduction/serv
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue 0a1aa03 (registry tip: 848750e75 Konstantin Fedotov Close issue)

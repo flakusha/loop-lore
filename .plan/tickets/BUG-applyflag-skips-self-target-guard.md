@@ -3,7 +3,7 @@
 
 # BUG: applyFlag skips self-target guard
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-chat-lifecycle-moderation
@@ -21,3 +21,5 @@ applyFlag (src/chat/moderation.ts:529-536) has no self-target guard, unlike appl
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-25 registry-driven close: git issue af59426 (registry tip: 69a86282e Konstantin Fedotov Close issue)

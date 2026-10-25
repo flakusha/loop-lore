@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3652
+- tickets: 3653
 - epics: 347
 - src paths owned: 4421
-- edges: produces 11565, consumes 403, sibling 34815, owns 2649, related 1191
+- edges: produces 11568, consumes 403, sibling 34831, owns 2649, related 1191
 
 ## Shared src hubs
 
@@ -1535,7 +1535,7 @@ output is byte-identical for identical inputs.
 | `src/routes/story-items` | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-item-asset-avatar-display-in-inventory-trading-and-provision` |
 | `src/routes/story-items.ts` | `TASK-world-item-frontend`, `TASK-world-item-instance-npc` |
 | `src/routes/story-items/definitions.ts` | `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-hoist-inline-route-response-schemas-to-exported-consts`, `TASK-item-definition-crud-frontend-editor`, `TASK-item-edit-permissions-history` |
-| `src/routes/story-items/handlers.ts` | `BUG-size-strict-pre-existing-dev-drift`, `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-character-item-inventory`, `TASK-assistant-entity-access-modification-addition`, `TASK-assistant-entity-access-schema`, `epic-assistant-entity-access` |
+| `src/routes/story-items/handlers.ts` | `BUG-item-definition-route-non-array-properties-effects-causes-un`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-assistant-entity-access-adapter`, `TASK-assistant-entity-access-character-item-inventory`, `TASK-assistant-entity-access-modification-addition`, `TASK-assistant-entity-access-schema`, `epic-assistant-entity-access` |
 | `src/routes/story-items/instances.ts` | `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-actor-items-crud-ownership`, `TASK-frontend-story-item-instance-transfer`, `TASK-hoist-inline-route-response-schemas-to-exported-consts`, `epic-inventory-system` |
 | `src/routes/story-orchestration/index.ts` | `BUG-2025-001-missing-data-id-start-chat-button`, `BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m` |
 | `src/routes/story-turns.ts` | `TASK-frontend-story-turn-by-id`, `epic-terminal-ui` |
@@ -1814,8 +1814,8 @@ output is byte-identical for identical inputs.
 | `src/story/index.ts` | `TASK-authoring-creation`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` |
 | `src/story/items` | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros`, `TASK-sc10-player-state-machine-adapters`, `epic-immersion-consistency-gate` |
 | `src/story/items/balance.ts` | `TASK-056`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-item-system-extensions` |
-| `src/story/items/definitions.ts` | `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-049`, `TASK-050`, `TASK-054`, `TASK-055`, `epic-item-systems-unification` |
-| `src/story/items/effects.ts` | `TASK-052`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-item-system-extensions`, `epic-items` |
+| `src/story/items/definitions.ts` | `BUG-item-definition-route-non-array-properties-effects-causes-un`, `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-049`, `TASK-050`, `TASK-054`, `TASK-055`, `epic-item-systems-unification` |
+| `src/story/items/effects.ts` | `BUG-item-definition-route-non-array-properties-effects-causes-un`, `TASK-052`, `TASK-delete-unreferenced-generation-story-assistant-and-chat-code`, `epic-item-system-extensions`, `epic-items` |
 | `src/story/items/index.ts` | `BUG-security-merge-build-break-instances-ts`, `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-049`, `TASK-050`, `TASK-implement-trade`, `TASK-item-edit-permissions-history`, `TASK-link-npc-inventory`, `epic-item-systems-unification` |
 | `src/story/items/instances.test.ts` | `TASK-028`, `TASK-054` |
 | `src/story/items/instances.ts` | `BUG-security-merge-build-break-instances-ts`, `BUG-service-layer-multi-query-mutations-run-without-transactions`, `BUG-size-strict-pre-existing-dev-drift`, `BUG-story-destroy-partial-quantity-update-path-missing-world-id-`, `BUG-story-items-cross-world-idor-read-transfer-destroy`, `TASK-019-enforce-state-machine-validators-at-write`, `TASK-049`, `TASK-050`, `TASK-051`, `TASK-053`, `TASK-054`, `TASK-actor-items-crud-ownership`, `TASK-clean-transfer-orphans`, `TASK-item-inventory-view-page`, `TASK-make-world-item-transfer-atomic-when-the-destination-actor-i`, `epic-inventory`, `epic-inventory-system`, `epic-item-system-extensions`, `epic-item-systems-unification`, `epic-items` |
@@ -6211,6 +6211,9 @@ output is byte-identical for identical inputs.
 | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin` | produces | `src/frontend/alpine/i18n.ts` | - |
 | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin` | produces | `src/frontend/i18n.ts` | - |
 | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin` | produces | `src/i18n/translator.ts` | - |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | produces | `src/routes/story-items/handlers.ts` | - |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | produces | `src/story/items/definitions.ts` | - |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | produces | `src/story/items/effects.ts` | - |
 | `BUG-item-transfers-double-report-one-sentence-and-item-take-item` | produces | `src/regex/index.ts` | - |
 | `BUG-item-transfers-double-report-one-sentence-and-item-take-item` | produces | `src/regex/story-events.ts` | - |
 | `BUG-item-transfers-double-report-one-sentence-and-item-take-item` | produces | `src/story/events/extraction.ts` | - |
@@ -25642,6 +25645,22 @@ output is byte-identical for identical inputs.
 | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin` | sibling | `WIRE-frontend-keyboard-help-overlay` | `src/frontend/alpine/i18n.ts` |
 | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin` | sibling | `epic-frontend-internationalization` | `src/frontend/i18n.ts; src/i18n/translator.ts` |
 | `BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin` | sibling | `epic-publication-i18n` | `src/i18n/translator.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `BUG-size-strict-pre-existing-dev-drift` | `src/routes/story-items/handlers.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `BUG-story-items-cross-world-idor-read-transfer-destroy` | `src/routes/story-items/handlers.ts; src/story/items/definitions.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-049` | `src/story/items/definitions.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-050` | `src/story/items/definitions.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-052` | `src/story/items/effects.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-054` | `src/story/items/definitions.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-055` | `src/story/items/definitions.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-assistant-entity-access-adapter` | `src/routes/story-items/handlers.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-assistant-entity-access-character-item-inventory` | `src/routes/story-items/handlers.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-assistant-entity-access-modification-addition` | `src/routes/story-items/handlers.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-assistant-entity-access-schema` | `src/routes/story-items/handlers.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `TASK-delete-unreferenced-generation-story-assistant-and-chat-code` | `src/story/items/effects.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `epic-assistant-entity-access` | `src/routes/story-items/handlers.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `epic-item-system-extensions` | `src/story/items/effects.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `epic-item-systems-unification` | `src/story/items/definitions.ts` |
+| `BUG-item-definition-route-non-array-properties-effects-causes-un` | sibling | `epic-items` | `src/story/items/effects.ts` |
 | `BUG-item-transfers-double-report-one-sentence-and-item-take-item` | sibling | `BUG-size-strict-pre-existing-dev-drift` | `src/story/events/extraction.ts` |
 | `BUG-item-transfers-double-report-one-sentence-and-item-take-item` | sibling | `TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre` | `src/regex/index.ts` |
 | `BUG-item-transfers-double-report-one-sentence-and-item-take-item` | sibling | `TASK-doc-spec-regex-extraction` | `src/regex/index.ts` |

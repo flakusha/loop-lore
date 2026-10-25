@@ -328,7 +328,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-providers-list-endpoint-is-public.md",
       "title": "Admin providers list endpoint is public",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/admin/providers.ts"
       ],
@@ -643,7 +643,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-applyflag-skips-self-target-guard.md",
       "title": "applyFlag skips self-target guard",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/moderation.ts"
       ],
@@ -1217,7 +1217,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-awardxp-only-levels-up-once-per-call-multi-level-overflow-lo.md",
       "title": "awardXp only levels up once per call (multi-level overflow lost)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/seduction/service/skills.ts"
       ],
@@ -2904,7 +2904,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md",
       "title": "consumeInventoryUnit uses stale quantity (TOCTOU on inventory)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/service/battles/items.ts"
       ],
@@ -4348,7 +4348,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-formatmemorydate-throws-on-every-rendered-memory-row-never-s.md",
       "title": "formatMemoryDate throws on every rendered memory row — never spread onto component",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/memory-panel.ts"
       ],
@@ -5679,6 +5679,19 @@
       "related": []
     },
     {
+      "id": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "ticket",
+      "path": ".plan/tickets/BUG-item-definition-route-non-array-properties-effects-causes-un.md",
+      "title": "Item definition route: non-array properties.effects causes unhandled 500",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/routes/story-items/handlers.ts",
+        "src/story/items/definitions.ts",
+        "src/story/items/effects.ts"
+      ],
+      "related": []
+    },
+    {
       "id": "BUG-item-transfers-double-report-one-sentence-and-item-take-item",
       "kind": "ticket",
       "path": ".plan/tickets/BUG-item-transfers-double-report-one-sentence-and-item-take-item.md",
@@ -6338,7 +6351,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-message-soft-delete-lets-any-chat-member-hide-any-member-s-m.md",
       "title": "Message soft delete lets any chat member hide any member's message",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/messages/update.ts"
       ],
@@ -7903,7 +7916,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-recordsecretfound-read-modify-write-loses-concurrent-secrets.md",
       "title": "recordSecretFound read-modify-write loses concurrent secrets",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/replayability/service/playthrough.ts"
       ],
@@ -78071,6 +78084,7 @@
     {
       "path": "src/routes/story-items/handlers.ts",
       "owners": [
+        "BUG-item-definition-route-non-array-properties-effects-causes-un",
         "BUG-size-strict-pre-existing-dev-drift",
         "BUG-story-items-cross-world-idor-read-transfer-destroy",
         "TASK-assistant-entity-access-adapter",
@@ -83175,6 +83189,7 @@
     {
       "path": "src/story/items/definitions.ts",
       "owners": [
+        "BUG-item-definition-route-non-array-properties-effects-causes-un",
         "BUG-story-items-cross-world-idor-read-transfer-destroy",
         "TASK-049",
         "TASK-050",
@@ -83186,6 +83201,7 @@
     {
       "path": "src/story/items/effects.ts",
       "owners": [
+        "BUG-item-definition-route-non-array-properties-effects-causes-un",
         "TASK-052",
         "TASK-delete-unreferenced-generation-story-assistant-and-chat-code",
         "epic-item-system-extensions",
@@ -107177,6 +107193,21 @@
       "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
       "kind": "produces",
       "to": "src/i18n/translator.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "produces",
+      "to": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "produces",
+      "to": "src/story/items/definitions.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "produces",
+      "to": "src/story/items/effects.ts"
     },
     {
       "from": "BUG-item-transfers-double-report-one-sentence-and-item-take-item",
@@ -212200,6 +212231,102 @@
       "kind": "sibling",
       "to": "epic-publication-i18n",
       "via": "src/i18n/translator.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "BUG-size-strict-pre-existing-dev-drift",
+      "via": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "BUG-story-items-cross-world-idor-read-transfer-destroy",
+      "via": "src/routes/story-items/handlers.ts; src/story/items/definitions.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-049",
+      "via": "src/story/items/definitions.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-050",
+      "via": "src/story/items/definitions.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-052",
+      "via": "src/story/items/effects.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-054",
+      "via": "src/story/items/definitions.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-055",
+      "via": "src/story/items/definitions.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-adapter",
+      "via": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-character-item-inventory",
+      "via": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-modification-addition",
+      "via": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-schema",
+      "via": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "TASK-delete-unreferenced-generation-story-assistant-and-chat-code",
+      "via": "src/story/items/effects.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "epic-assistant-entity-access",
+      "via": "src/routes/story-items/handlers.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "epic-item-system-extensions",
+      "via": "src/story/items/effects.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "epic-item-systems-unification",
+      "via": "src/story/items/definitions.ts"
+    },
+    {
+      "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
+      "kind": "sibling",
+      "to": "epic-items",
+      "via": "src/story/items/effects.ts"
     },
     {
       "from": "BUG-item-transfers-double-report-one-sentence-and-item-take-item",
