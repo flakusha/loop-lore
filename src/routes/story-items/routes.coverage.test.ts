@@ -321,4 +321,27 @@ describe("story-items route coverage", () => {
       (await req("DELETE", `/api/worlds/${worldId}/item-instances/${instanceId}`, stranger, "user",)).status,
     ).toBe(404,);
   });
+
+  test("definitions POST rejects a non-array properties.effects with 400", async () => {
+    const res = await req("POST", `/api/worlds/${worldId}/items`, owner, "user", {
+      name: "Bad Effects",
+      properties: { effects: "x", },
+    },);
+
+    expect(res.status,).toBe(400,);
+    const body: { error: string } = await res.json();
+    expect(body.error,).toMatch(/effects must be an array/,);
+  });
+
+  test("definitions PUT rejects a non-array properties.effects with 400", async () => {
+    const itemId = await createDefinition("Hexed Charm",);
+
+    const res = await req("PUT", `/api/worlds/${worldId}/items/${itemId}`, owner, "user", {
+      properties: { effects: "x", },
+    },);
+
+    expect(res.status,).toBe(400,);
+    const body: { error: string } = await res.json();
+    expect(body.error,).toMatch(/effects must be an array/,);
+  });
 });
