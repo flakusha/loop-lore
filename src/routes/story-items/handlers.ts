@@ -7,6 +7,7 @@ import type { Kysely, } from "kysely";
 import { ItemCategory, ItemRarity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { DuplicateItemDefinitionError, ItemsService, } from "../../story/items";
+import { parseItemEffects, } from "../../story/items/effects";
 import { can, } from "../../users/permissions";
 import { safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
@@ -98,6 +99,18 @@ export async function handleDefinition(
   if (body?.value != null) { updates.value = body.value; }
   if (body?.weight != null) { updates.weight = body.weight; }
   if (body?.properties != null) {
+    const properties = (body.properties as Record<string, unknown>) ?? {};
+    if (properties.effects !== undefined) {
+      try {
+        parseItemEffects(properties.effects,);
+      } catch (error) {
+        return jsonError({
+          message: error instanceof Error ? error.message : "Invalid properties.effects",
+          status: HttpStatus.BadRequest,
+        },);
+      }
+    }
+
     const r = safeJsonStringify(body.properties,);
     if (r.ok) { updates.properties = r.value; }
   }
@@ -158,6 +171,18 @@ export async function handleDefinitions(
   }
 
   if (!body?.name) { return jsonError({ message: "name is required", status: HttpStatus.BadRequest, },); }
+  const properties = (body.properties as Record<string, unknown>) ?? {};
+  if (properties.effects !== undefined) {
+    try {
+      parseItemEffects(properties.effects,);
+    } catch (error) {
+      return jsonError({
+        message: error instanceof Error ? error.message : "Invalid properties.effects",
+        status: HttpStatus.BadRequest,
+      },);
+    }
+  }
+
   let id: string;
   try {
     id = await items.createDefinition({
@@ -168,7 +193,7 @@ export async function handleDefinitions(
       rarity: enumOr(body.rarity, Object.values(ItemRarity,), "common",),
       stackable: (body.stackable as boolean) ?? false,
       maxStack: (body.maxStack as number) ?? 1,
-      properties: (body.properties as Record<string, unknown>) ?? {},
+      properties,
       value: (body.value as number) ?? 0,
       weight: (body.weight as number) ?? 0,
     },);
