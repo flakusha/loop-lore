@@ -30,7 +30,7 @@ import {
 } from "./context.mjs";
 import { applyGateFilter, } from "./filter.mjs";
 import { ADVISORY_GATES, checks, } from "./gate-table.mjs";
-import { applyDiffScopedStaticGates, } from "./gates-scope.mjs";
+import { applyDiffScopedStaticGates, browserSpecPaths, } from "./gates-scope.mjs";
 import { filterPaths, SKIP_PATTERNS, } from "./test-skip.mjs";
 
 // Re-exported so `runner.mjs` keeps one import site for the assembled table.
@@ -199,6 +199,10 @@ const BROWSER_SPEC_DIR = "tests/e2e/flows/browser/";
  * quoted because this string is executed through a shell — the script uses
  * Bun.spawn with an env object, where no quoting is needed.
  *
+ * The spec paths are `./`-prefixed (`browserSpecPaths`): `bun test` reads a
+ * bare path as a name FILTER, and a `*.browser.ts` spec never matches that
+ * filter — the scoped gate failed on every spec-only diff until the prefix.
+ *
  * The scoped form runs only the specs the diff touched. Narrowing is allowed
  * ONLY when the mapping is unambiguous: every changed path is either a spec
  * that still exists, or a file under `tests/e2e/` whose change is confined to
@@ -232,7 +236,9 @@ function e2eBrowserCommand() {
   // its disappearance can break the harness: fall back rather than guess.
   const specGone = specs.some((f,) => !existsSync(path.resolve(PROJECT_ROOT, f,),));
   if (specOnly && !specGone) {
-    return `E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY='*' bun test --max-concurrency=1 ${specs.join(" ",)}`;
+    return `E2E_SAFEGUARD=1 HTTP_PROXY= NO_PROXY='*' bun test --max-concurrency=1 ${
+      browserSpecPaths(specs,).join(" ",)
+    }`;
   }
   // Ambiguous: no spec changed, a spec was deleted, or anything else rode along
   // with the specs. There is no narrower answer than "all of them" -- whether
