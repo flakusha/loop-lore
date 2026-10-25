@@ -10,7 +10,7 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { createInputModeTracker, HOVER_QUERY, REDUCED_MOTION_QUERY, } from "./responsive";
 
-import type { PointerEventSource, } from "./responsive";
+import type { InputModeSnapshot, PointerEventSource, } from "./responsive";
 
 type Globals = Record<string, unknown>;
 
@@ -167,13 +167,14 @@ describe("createInputModeTracker", () => {
   // ── media query changes ──────────────────────────────────────────────
 
   test("media query changes update the snapshot and notify", () => {
-    const changes: boolean[] = [];
-    const tracker = createInputModeTracker({ onChange: (s,) => changes.push(s.reducedMotion,), },);
+    const changes: InputModeSnapshot[] = [];
+    const tracker = createInputModeTracker({ onChange: (s,) => changes.push(s,), },);
     const state = queries.get(REDUCED_MOTION_QUERY,)!;
     state.matches = true;
     state.listeners.forEach((listener,) => listener({ matches: true, },));
     expect(tracker.current().reducedMotion,).toBe(true,);
-    expect(changes.at(-1,),).toBe(true,);
+    // Full-shape: exactly the three snapshot keys, nothing else.
+    expect(changes.at(-1,),).toEqual({ pointer: null, hoverCapable: false, reducedMotion: true, },);
     tracker.stop();
   });
 
@@ -195,5 +196,20 @@ describe("createInputModeTracker", () => {
     state.listeners.forEach((listener,) => listener({ matches: true, },));
 
     expect(tracker.current(),).toEqual({ pointer: "touch", hoverCapable: false, reducedMotion: false, },);
+  });
+
+  test("a second stop is a no-op", () => {
+    const events = createFakeEvents();
+    const target = createFakeTarget();
+    const tracker = createInputModeTracker({ target, events, },);
+    firePointerDown(events, "touch",);
+    tracker.stop();
+    tracker.stop();
+
+    expect(target.has("touch-user",),).toBe(false,);
+    expect(target.has("mouse-user",),).toBe(false,);
+
+    firePointerDown(events, "mouse",);
+    expect(tracker.current().pointer,).toBe("touch",);
   });
 });
