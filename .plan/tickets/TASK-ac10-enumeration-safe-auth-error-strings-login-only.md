@@ -3,14 +3,14 @@
 
 # TASK: AC10 enumeration-safe auth error strings (login-only)
 
-**Status:** Not Started
+**Status:** Done (Status Note: implemented in commit 8187ec1b9 — unified "Invalid username or password." / 401 / auth.invalidCredentials across unknown-user, wrong-password, and disabled/deactivated logins; auth.accountLocked key removed from all 10 locales with naturalized invalidCredentials translations; login.test.ts asserts identical message + JSON status shape; tsc, eslint, dprint, auth tests (38 pass), and i18n gates green.)
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-auth-access
 
 **Summary:**
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** S (unified login strings plus locale reconciliation and test updates)
 **Summary:** Login failures return one identical message for unknown-user, wrong-password, and locked-or-gated states, removing the state oracle. Login-only scope.
@@ -29,6 +29,6 @@
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

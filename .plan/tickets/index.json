@@ -24410,7 +24410,7 @@
     "epic": "epic-auth-access",
     "tags": [],
     "source": ".plan/tickets/TASK-ac10-enumeration-safe-auth-error-strings-login-only.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-AC9-NOTIFYFACTORCHANGE-TRIGGER-HELPER-LADDER-READY-NO-TABLES": {
     "hash": "c0108a5",

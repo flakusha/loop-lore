@@ -1697,7 +1697,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1036**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2741 | 1254 | 45 | 891 | 31 | 0 | 520 |
+| (untagged) | 2741 | 1255 | 45 | 891 | 31 | 0 | 519 |
 
 ## By epic × status
 
@@ -1749,7 +1749,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1036**
 | epic-assistant-gm-flows, epic-conversation-branching | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-assistant-step-planning | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | epic-audio-video-sound | 11 | 2 | 0 | 6 | 0 | 0 | 3 |
-| epic-auth-access | 20 | 9 | 0 | 8 | 0 | 0 | 3 |
+| epic-auth-access | 20 | 10 | 0 | 8 | 0 | 0 | 2 |
 | epic-auth-channel-provisioning | 19 | 0 | 0 | 14 | 0 | 0 | 5 |
 | epic-auth-config-contracts | 6 | 3 | 0 | 0 | 0 | 0 | 3 |
 | epic-authoring-creation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
