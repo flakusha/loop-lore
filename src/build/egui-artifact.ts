@@ -132,16 +132,21 @@ export function rustSourceHash(projectRoot: string,): string {
  * the success path of `build:egui`; a skipped build removes it along with the
  * bundle, so a stamp never outlives the artifact it describes.
  *
+ * Async by contract: the write must have landed before the caller reports the
+ * build finished, otherwise the next `readEguiArtifactState` sees no stamp and
+ * `build:verify` exits 1 on a build that actually succeeded. A failed write
+ * rejects instead of surfacing as an unhandled rejection.
+ *
  * @param projectRoot - repo root the bundle lives under
  * @param options.wasmBindgenVersion - CLI version that produced the glue
- * @returns absolute path of the stamp written
+ * @returns promise of the absolute path of the stamp written
  * @throws {Error} when the wasm is missing or the stamp cannot be written — a
  *   build that cannot record its provenance cannot claim freshness later
  */
-export function writeEguiStamp(
+export async function writeEguiStamp(
   projectRoot: string,
   options: { wasmBindgenVersion: string },
-): string {
+): Promise<string> {
   const wasmPath = path.join(projectRoot, EGUI_BUNDLE_DIR, EGUI_WASM_FILE,);
   const stamp: EguiBuildStamp = {
     rustSourceHash: rustSourceHash(projectRoot,),
@@ -156,7 +161,7 @@ export function writeEguiStamp(
   }
 
   const stampPath = path.join(projectRoot, EGUI_STAMP_FILE,);
-  Bun.write(stampPath, serialized.value,);
+  await Bun.write(stampPath, serialized.value,);
   return stampPath;
 }
 
