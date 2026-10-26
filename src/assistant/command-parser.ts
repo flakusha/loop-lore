@@ -37,10 +37,13 @@ export function parseCommand(input: string,): ParsedCommand | null {
   const trimmed = input.trim();
   if (!trimmed.startsWith("/",) || trimmed.length < 2) { return null; }
 
-  // Split on first whitespace to separate command from args
-  const spaceIdx = trimmed.indexOf(" ",);
-  const command = (spaceIdx === -1 ? trimmed.slice(1,) : trimmed.slice(1, spaceIdx,)).toLowerCase();
-  const rawArgs = spaceIdx === -1 ? "" : trimmed.slice(spaceIdx + 1,);
+  // Split on the first *any* whitespace character to separate command from
+  // args: `indexOf(" ")` only recognised U+0020, so a tab-separated
+  // `/roll<TAB>2d6` parsed the command as `roll<TAB>2d6` and never dispatched.
+  const separator = /\s/.exec(trimmed,);
+  const separatorIdx = separator?.index ?? -1;
+  const command = (separatorIdx === -1 ? trimmed.slice(1,) : trimmed.slice(1, separatorIdx,)).toLowerCase();
+  const rawArgs = separatorIdx === -1 ? "" : trimmed.slice(separatorIdx + 1,);
   const args: string[] = [];
   for (const part of rawArgs.split(/\s+/,)) { if (part) { args.push(part,); } }
 

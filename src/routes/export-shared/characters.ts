@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { exportToCcV3Json, } from "../../characters/exporters/ccv3";
+import { exportActorLorebooks, } from "../../characters/exporters/lorebook";
 import { exportToPng, } from "../../characters/exporters/png";
 import { exportToYaml, } from "../../characters/exporters/yaml";
 import { withLicenseExtension, } from "../../characters/license-enforcement";
@@ -53,6 +54,14 @@ export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> 
 
   const licensingByActor = new Map(licensingRows.map((r,) => [r.actor_id, r,]),);
 
+  // Rebuild each character's lorebook in one query: without it the ZIP cards
+  // carried no `character_book` and an import → export round trip lost the lore
+  // (BUG-community-share-missing-lorebook-export).
+  const lorebooks = await exportActorLorebooks(
+    ctx.database,
+    characters.map((c,) => c.id),
+  );
+
   for (const char of characters) {
     const canonical: CanonicalCharacter = {
       name: char.display_name,
@@ -69,6 +78,7 @@ export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> 
       creator: char.creator ?? undefined,
       creator_notes: char.creator_notes ?? undefined,
       alternate_greetings: char.alternate_greetings ? jsonParseOr(char.alternate_greetings, [],) : undefined,
+      lorebook: lorebooks.get(char.id,),
     };
 
     const filename = char.display_name.replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();

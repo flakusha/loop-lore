@@ -32,6 +32,17 @@ export async function importWorldSetup(
 ): Promise<void> {
   if (!data || !worldId) { return; }
 
+  // The bundle names the world it was exported from. Writing it into a
+  // different world silently mis-files the whole setup, so a mismatch is a
+  // reported skip rather than a write.
+  if (data.worldId && data.worldId !== worldId) {
+    result.errors.push(
+      `World setup belongs to world "${data.worldId}", not "${worldId}"; skipped.`,
+    );
+
+    return;
+  }
+
   try {
     await CharacterWorldSetupService(db,).upsertWorldSetup({
       actorId,

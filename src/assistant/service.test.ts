@@ -40,10 +40,16 @@ describe("generateResponse", () => {
     expect(generateResponse({ userInput: "", },),).toBeNull();
   });
 
-  it("lets the earlier-registered keyword win on shared matches", () => {
-    // "help" and "/help" both match "/help" (word boundary after "/"); the
-    // first entry in RESPONSE_MAP takes precedence.
+  it("routes the bare /help command to its own menu entry", () => {
+    // "help" and "/help" both match "/help" (the leading "/" is a `\W`
+    // boundary); the longest keyword wins so the command reaches its menu.
     const response = generateResponse({ userInput: "/help", },);
+    expect(response?.content,).toContain("Commands:",);
+    expect(response?.confidence,).toBe(1,);
+  });
+
+  it("keeps the generic help copy for the keyword without the slash", () => {
+    const response = generateResponse({ userInput: "can you help me", },);
     expect(response?.content,).toContain("Try sending a message",);
   });
 

@@ -44,8 +44,11 @@ export function exportBaseFields(character: CanonicalCharacter,): Record<string,
     data.tags = character.tags;
   }
 
-  // Metadata
+  // Metadata — `creator_notes` lives on the canonical card and in the TOML /
+  // YAML exporters, so dropping it here silently stripped it from every CCv2 /
+  // CCv3 export.
   if (character.creator) { data.creator = character.creator; }
+  if (character.creator_notes) { data.creator_notes = character.creator_notes; }
   if (character.character_version) { data.character_version = character.character_version; }
 
   // Identity (FEAT-character-spec-inclusion-race-origin-culture)

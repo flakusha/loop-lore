@@ -34,6 +34,10 @@ export interface CharacterSystemsExport {
   traits?: {
     permanent: Record<string, unknown>[];
     world: Record<string, unknown>[];
+    /**
+     * Location-scoped traits, each carrying its `locationId` (the row is keyed
+     * by actor + location, not by world).
+     */
     location: Record<string, unknown>[];
   };
   mood?: Record<string, unknown>;
@@ -46,6 +50,11 @@ export interface CharacterSystemsExport {
   licensing?: Record<string, unknown>;
   availability?: Record<string, unknown>;
   worldSetup?: {
+    /**
+     * World the bundle was exported from. The importer compares it against its
+     * target `worldId` so a bundle cannot land in the wrong row.
+     */
+    worldId: string;
     startingInventory: WorldSetupInventoryItem[];
     loreEntries: WorldSetupLoreEntry[];
     backstory: string | null;
@@ -78,15 +87,44 @@ export async function exportCharacterSystems(
     characterId: actorId,
   };
 
-  // Export traits
+  // Export traits.
+  //
+  // Location traits (Layer 3) are keyed per location and carry no category, so
+  // they get their own mapping instead of `mapTraitForExport`. The row has no
+  // world column, so world scoping joins `locations` — previously this array
+  // was hardcoded empty, which made location-scoped traits unexportable.
   const permanentTraits = await traitsService.getPermanentTraits(actorId,);
   const worldTraits = worldId
     ? await traitsService.getWorldTraits(actorId, worldId,)
     : [];
 
-  const locationTraits: Record<string, unknown>[] = []; // Location traits need locationId
+  const locationTraitRows = worldId
+    ? await db
+      .selectFrom("character_location_traits",)
+      .innerJoin("locations", "locations.id", "character_location_traits.location_id",)
+      .selectAll("character_location_traits",)
+      .where("character_location_traits.actor_id", "=", actorId,)
+      .where("locations.world_id", "=", worldId,)
+      .execute()
+    : await db
+      .selectFrom("character_location_traits",)
+      .selectAll()
+      .where("actor_id", "=", actorId,)
+      .execute();
 
-  if (permanentTraits.length > 0 || worldTraits.length > 0) {
+  const locationTraits: Record<string, unknown>[] = Array.from(locationTraitRows, (row,) => ({
+    locationId: row.location_id,
+    name: row.trait_name,
+    value: row.trait_value,
+    bonus: row.bonus ?? 0,
+    penalty: row.penalty ?? 0,
+    // Passthrough of the `effects` JSON column: the trait service re-stringifies
+    // whatever string it is handed, so a parsed object here would round-trip as
+    // a double-encoded JSON string.
+    effects: row.effects,
+  }),);
+
+  if (permanentTraits.length > 0 || worldTraits.length > 0 || locationTraits.length > 0) {
     exportData.traits = {
       permanent: Array.from(permanentTraits, (t,) => mapTraitForExport(t,),),
       world: Array.from(worldTraits, (t,) => mapTraitForExport(t,),),
@@ -112,10 +150,23 @@ export async function exportCharacterSystems(
     exportData.relationships = Array.from(relationships, (r,) => mapRelationshipForExport(r,),);
   }
 
-  // Export avatars
+  // Export avatars. World overrides live in `world_avatar_config`, keyed by
+  // (actor, world), so they ride along only when the bundle is world-scoped.
   const avatars = await avatarService.getAvatars(actorId,);
   const avatarConfig = await avatarService.getAvatarConfig(actorId,);
-  if (avatars.length > 0) {
+  const worldAvatarConfig = worldId
+    ? await avatarService.getWorldAvatarConfig(actorId, worldId,)
+    : undefined;
+
+  const worldConfigs: Record<string, unknown>[] | undefined = worldAvatarConfig
+    ? [{
+      worldId: worldAvatarConfig.worldId,
+      selectionRule: worldAvatarConfig.selectionRuleOverride,
+      weights: worldAvatarConfig.weightsOverride,
+    },]
+    : undefined;
+
+  if (avatars.length > 0 || worldConfigs) {
     exportData.avatars = {
       avatars: Array.from(avatars, (a,) => mapAvatarForExport(a,),),
       config: avatarConfig
@@ -125,6 +176,7 @@ export async function exportCharacterSystems(
           fallbackOrder: avatarConfig.fallbackOrder,
         }
         : undefined,
+      worldConfigs,
     };
   }
 
@@ -167,6 +219,7 @@ export async function exportCharacterSystems(
 
     if (setup) {
       exportData.worldSetup = {
+        worldId: setup.world_id,
         startingInventory: jsonParseOr(setup.starting_inventory, [] as WorldSetupInventoryItem[],),
         loreEntries: jsonParseOr(setup.lore_entries, [] as WorldSetupLoreEntry[],),
         backstory: setup.backstory,

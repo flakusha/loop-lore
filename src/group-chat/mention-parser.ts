@@ -25,6 +25,15 @@ const log: Logger = new Proxy({} as Logger, {
   },
 },);
 
+/**
+ * Actor mention token: `@name` where `name` is letters/digits/underscore/hyphen.
+ *
+ * The lookbehind rejects an `@` preceded by a word character, so an email
+ * address (`bob@example.com`) is not misread as a mention of `example`. Both
+ * this parser and the composer's pre-send validator compile this same source.
+ */
+export const MENTION_TOKEN_PATTERN = String.raw`(?<!\w)@([A-Za-z0-9_-]+)`;
+
 /** Parsed mention result */
 export interface ParsedMention {
   /** The raw mention text (e.g., "@Luna") */
@@ -53,7 +62,7 @@ export function parseMentions(text: string,): ParsedMention[] {
   // Multi-word display names resolve downstream via `resolveMention` prefix
   // matching — capturing trailing prose here would poison exact/prefix matching
   // ("@Luna hello" must parse to "Luna", not "Luna hello").
-  const mentionRegex = /@([A-Za-z0-9_-]+)/g;
+  const mentionRegex = new RegExp(MENTION_TOKEN_PATTERN, "g",);
   let match = mentionRegex.exec(text,);
 
   while (match !== null) {
@@ -189,8 +198,12 @@ export function stripLeadingMention(text: string,): string {
   return text.trimStart().slice(match[0].length,).trimStart();
 }
 
-/** Asset mention token: `@asset:<id>` where id is a gallery asset id. */
-const ASSET_MENTION_REGEX = /@asset:([A-Za-z0-9_-]+)/g;
+/**
+ * Asset mention token: `@asset:<id>` where id is a gallery asset id. The same
+ * word-boundary lookbehind as {@link MENTION_TOKEN_PATTERN} keeps an email
+ * address from being stripped as an attachment reference.
+ */
+const ASSET_MENTION_REGEX = /(?<!\w)@asset:([A-Za-z0-9_-]+)/g;
 
 /**
  * Extract `@asset:<id>` attachment mentions from message text

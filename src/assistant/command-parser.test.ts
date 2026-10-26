@@ -45,6 +45,13 @@ describe("command-parser", () => {
       expect(result,).toEqual({ command: "roll", args: ["2d6",], raw: "/roll 2d6", },);
     });
 
+    test("splits on any whitespace, not just U+0020", () => {
+      // A tab-separated command used to parse as one token (`roll\t2d6`), so it
+      // never dispatched.
+      expect(parseCommand("/roll\t2d6",),).toEqual({ command: "roll", args: ["2d6",], raw: "/roll\t2d6", },);
+      expect(parseCommand("/roll\n2d6",),).toEqual({ command: "roll", args: ["2d6",], raw: "/roll\n2d6", },);
+    });
+
     test("handles extra whitespace between args", () => {
       const result = parseCommand("/roll  2d6   +3",);
       expect(result,).toEqual({ command: "roll", args: ["2d6", "+3",], raw: "/roll  2d6   +3", },);

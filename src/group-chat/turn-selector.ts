@@ -235,8 +235,11 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
  */
 export function checkPaused(storyState: string | null,): boolean {
   if (!storyState) { return false; }
-  const result = safeJsonParse<{ isPaused?: boolean }>(storyState,);
-  return result.ok && result.value.isPaused === true;
+  // `safeJsonParse` reports `{ ok: true, value: null }` for the literal `null`
+  // (and for any scalar), so the value must be null-checked before the field
+  // read — otherwise a `story_state` of `"null"` throws a TypeError.
+  const result = safeJsonParse<{ isPaused?: boolean } | null>(storyState,);
+  return result.ok && result.value?.isPaused === true;
 }
 
 /**

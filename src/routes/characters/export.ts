@@ -5,7 +5,9 @@ import { Elysia, t, } from "elysia";
 import { readFileSync, } from "node:fs";
 import { createCharx, } from "../../characters/charx";
 import { exportToCcV2Json, } from "../../characters/exporters/ccv2";
-import { exportToCcV3Json, } from "../../characters/exporters/ccv3";
+import { exportToCcV3, exportToCcV3Json, } from "../../characters/exporters/ccv3";
+import { exportActorLorebook, } from "../../characters/exporters/lorebook";
+import { exportLorebook, } from "../../characters/exporters/shared";
 import { exportToToml, } from "../../characters/exporters/toml";
 import { exportToYaml, } from "../../characters/exporters/yaml";
 import {
@@ -59,6 +61,12 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         },);
       }
 
+      // Rebuild the lorebook from `actor_lore_entries`: the import epilogue
+      // writes `character_book` into those rows, and nothing read them back, so
+      // a shared character lost its whole lorebook on export
+      // (BUG-community-share-missing-lorebook-export).
+      const lorebook = await exportActorLorebook(database, ctx.params.actorId,);
+
       // Convert to canonical format
       const canonical: CanonicalCharacter = {
         name: actor.display_name,
@@ -78,6 +86,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         alternate_greetings: actor.alternate_greetings
           ? jsonParseOr(actor.alternate_greetings, [],)
           : undefined,
+        lorebook,
       };
 
       const safeName = actor.display_name.replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
@@ -147,6 +156,11 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
             character_version: canonical.character_version,
             alternate_greetings: canonical.alternate_greetings,
             tags: canonical.tags,
+            // Same lorebook epilogue as the JSON formats: the embedded PNG card
+            // silently dropped `character_book`.
+            character_book: canonical.lorebook
+              ? exportLorebook(canonical.lorebook,)
+              : undefined,
             ...licenseData,
           };
 
@@ -161,28 +175,21 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
 
         case "charx": {
-          const v3Data: Record<string, unknown> = {
-            spec: "chara_card_v3",
-            data: {
-              name: canonical.name,
-              description: canonical.description,
-              personality: canonical.personality,
-              appearance: canonical.appearance,
-              default_outfit: canonical.default_outfit,
-              outfits: canonical.outfits,
-              scenario: canonical.scenario,
-              first_mes: canonical.welcome_message,
-              mes_example: canonical.mes_example,
-              system_prompt: canonical.system_prompt,
-              post_history_instructions: canonical.post_history_instructions,
-              creator_notes: canonical.creator_notes,
-              creator: canonical.creator,
-              character_version: canonical.character_version,
-              alternate_greetings: canonical.alternate_greetings,
-              tags: canonical.tags,
-              ...licenseData,
-            },
-          };
+          // Derive the payload from the canonical CCv3 exporter instead of
+          // hand-copying fields: the copy had already drifted and never emitted
+          // `character_book` (nor the card timestamps), so a charx round trip
+          // silently lost the whole lorebook
+          // (BUG-community-share-missing-lorebook-export).
+          const v3Data = exportToCcV3(canonical,);
+          const v3Payload = v3Data.data as Record<string, unknown>;
+          if (licensing) {
+            const extensions = typeof v3Payload["extensions"] === "object" && v3Payload["extensions"] !== null
+              ? v3Payload["extensions"] as Record<string, unknown>
+              : {};
+
+            extensions["license"] = licenseExtension(licensing,);
+            v3Payload["extensions"] = extensions;
+          }
 
           // Fetch linked assets for the character
           const assetRows = await database

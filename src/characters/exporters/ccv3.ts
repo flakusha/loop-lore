@@ -21,9 +21,10 @@ export function exportToCcV3(character: CanonicalCharacter,): Record<string, unk
   // V3 additions
   if (character.nickname) { data.nickname = character.nickname; }
 
-  // Timestamps (milliseconds)
-  data.creation_date = Date.now();
-  data.modification_date = Date.now();
+  // Timestamps (milliseconds) — keep the imported dates so an export → import →
+  // export round trip is lossless; only a card created here falls back to now.
+  data.creation_date = character.creation_date ?? Date.now();
+  data.modification_date = character.modification_date ?? Date.now();
 
   // Lorebook (V3: includes use_regex field)
   if (character.lorebook) {
