@@ -3,7 +3,7 @@
 
 # BUG: Admin system-config DELETE returns 400 for keys the test expects to delete as 204
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-admin
@@ -30,3 +30,5 @@ Decide which side is wrong: if the allowlist is correct, the test must use a rea
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue d69dc94 (registry tip: d7ebc88f7 Konstantin Fedotov Close issue)

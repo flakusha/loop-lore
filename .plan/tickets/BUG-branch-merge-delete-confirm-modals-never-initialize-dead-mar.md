@@ -3,7 +3,7 @@
 
 # BUG: Branch merge/delete confirm modals never initialize — dead markup
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -30,3 +30,5 @@ FIX DIRECTION: Ensure the merge/delete confirm modals are initialized by Alpine 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 48922f4 (registry tip: e1bb130a3 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: supports_vision never refreshed on capability update
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-model-metadata-read
@@ -22,3 +22,5 @@ Insert derives supports_vision from modalities (model-capabilities.ts:83) but au
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 55f7fd3 (registry tip: bbbaead47 Konstantin Fedotov Close issue)

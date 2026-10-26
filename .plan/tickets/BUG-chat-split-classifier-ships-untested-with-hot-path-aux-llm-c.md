@@ -3,7 +3,7 @@
 
 # BUG: chat split-classifier ships untested with hot-path aux LLM call against own scope
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-conversation-branching
@@ -39,3 +39,5 @@ Caveats: hot-path latency/cost; BYO-key authorization parity for future reuse; T
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e20f01c (registry tip: 6da574392 Konstantin Fedotov Close issue)

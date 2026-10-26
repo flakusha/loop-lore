@@ -3,7 +3,7 @@
 
 # BUG: Character and chat-setup example configs document fields the code drops
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-character-world-setup
@@ -21,3 +21,5 @@ Three example configs promise behaviour that does not exist. (1) configs/templat
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue d6d83f7 (registry tip: 277944844 Konstantin Fedotov Close issue)

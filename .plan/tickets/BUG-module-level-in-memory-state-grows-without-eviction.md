@@ -3,7 +3,7 @@
 
 # BUG: Module-level in-memory state grows without eviction
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-runtime-memory-state-hygiene
@@ -31,3 +31,5 @@ Sibling already filed separately: src/generation/continuation.ts Maps.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 368aa6d (registry tip: c5d9d6b7d Konstantin Fedotov Close issue)

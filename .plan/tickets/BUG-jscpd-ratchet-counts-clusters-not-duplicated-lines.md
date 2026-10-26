@@ -3,7 +3,7 @@
 
 # BUG: jscpd-ratchet-counts-clusters-not-duplicated-lines
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-continuous-improvement
@@ -30,3 +30,5 @@ Fix direction: record duplicated-LINES percentage rather than raw cluster count.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 47b15be (registry tip: 07e0ff8f2 Konstantin Fedotov Close issue)

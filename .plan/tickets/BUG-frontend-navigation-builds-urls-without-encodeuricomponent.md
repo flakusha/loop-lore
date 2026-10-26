@@ -3,7 +3,7 @@
 
 # BUG: Frontend navigation builds URLs without encodeURIComponent
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-routing
@@ -27,3 +27,5 @@ Source: .tmp/longcat/review-assets-db-frontend.md N20, N21, N22.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 24ed0d7 (registry tip: 0bd193ab8 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: deriveRumors exposes internal actor UUID in user-facing text
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-faction-reputation
@@ -21,3 +21,5 @@ The rumor string (src/rpg/reputation.ts:156) embeds actorId (a UUID) directly in
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 4db0605 (registry tip: 6cc29d684 Konstantin Fedotov Close issue)

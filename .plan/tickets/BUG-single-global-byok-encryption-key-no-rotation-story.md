@@ -3,7 +3,7 @@
 
 # BUG: Single global BYOK encryption key, no rotation story
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-byok-api-keys
@@ -22,3 +22,5 @@ All users share one secret; rotation = mass re-encryption, no versioning; legacy
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 4a052a5 (registry tip: ede7b5506 Konstantin Fedotov Close issue)

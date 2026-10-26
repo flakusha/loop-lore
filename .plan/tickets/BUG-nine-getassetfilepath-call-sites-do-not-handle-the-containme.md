@@ -3,7 +3,7 @@
 
 # BUG: Nine getAssetFilePath call sites do not handle the containment throw
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Critical
 **Effort:** Medium
 **Epic:** epic-security-sandboxing
@@ -38,3 +38,5 @@ Source: .tmp/step-5/repository-review.md F8; .tmp/step-5/concurrent-session-coll
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 5a6372a (registry tip: 096996784 Konstantin Fedotov Close issue)

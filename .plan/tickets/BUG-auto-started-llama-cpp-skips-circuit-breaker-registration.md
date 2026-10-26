@@ -3,7 +3,7 @@
 
 # BUG: Auto-started llama.cpp skips circuit-breaker registration
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem
@@ -22,3 +22,5 @@ registerProvider without circuitBreaker.register (init-background-services.ts:76
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue cb06262 (registry tip: 6b86146d2 Konstantin Fedotov Close issue)

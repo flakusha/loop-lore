@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Medium
 **Type:** Task
@@ -89,3 +89,5 @@ Mutating commands (`/world-update`, `/world-delete`, `/loc-update`) require user
 - `src/routes/worlds/worlds.ts` — World CRUD handlers
 - `src/routes/worlds/access.ts` — `requireWorldAccess`, `requireWorldOwner`
 - `src/routes/worlds/locations.ts` — Location CRUD handlers
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e5e4128 (registry tip: 7b5b2e3e9 Konstantin Fedotov Close issue)

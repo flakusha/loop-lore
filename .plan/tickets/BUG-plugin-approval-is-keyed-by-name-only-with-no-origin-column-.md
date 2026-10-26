@@ -3,7 +3,7 @@
 
 # BUG: Plugin approval is keyed by name only with no origin column: a community plugin inherits a core plugin's approval
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-plugin-system
@@ -33,3 +33,5 @@ Source: .tmp/glm-review/deep-plugins-1015.md F-2 + F-6; prior-findings-status-10
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 5d27599 (registry tip: cce61ea6a Konstantin Fedotov Close issue)

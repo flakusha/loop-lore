@@ -3,7 +3,7 @@
 
 # BUG: Asset silent catch blocks swallow failures with no log
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logging
@@ -33,3 +33,5 @@ Acceptance: each site logs the swallowed error via the module logger before retu
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e31af47 (registry tip: 91fdf380d Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: New-chat e2e reads the create response body after navigation has already committed
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing
@@ -29,3 +29,5 @@ Fix direction: take the chat id from the `?chatid=` URL after `location.assign`,
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 15b3750 (registry tip: 00aa76742 Konstantin Fedotov Close issue)

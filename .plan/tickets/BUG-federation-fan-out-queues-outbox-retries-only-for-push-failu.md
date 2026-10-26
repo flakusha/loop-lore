@@ -3,7 +3,7 @@
 
 # BUG: Federation fan-out queues outbox retries only for push failures
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas
@@ -21,3 +21,5 @@ Evidence (approved finding 4, P2; .tmp/concern-dev-2026-10-07.md, .tmp/concern-f
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e7650fb (registry tip: 6201750e9 Konstantin Fedotov Close issue)

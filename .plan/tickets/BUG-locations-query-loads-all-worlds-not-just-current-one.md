@@ -3,7 +3,7 @@
 
 # BUG: Locations query loads all worlds not just current one
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-locations
@@ -21,3 +21,5 @@ The alive set in src/rpg/world-travel/travel.ts:169 is built from SELECT id, wor
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c1c56b0 (registry tip: ba0507fb5 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Diff-scoped runs silently pass having run zero tests, on two distinct paths
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline
@@ -75,3 +75,5 @@ Note also that the existing ticket's `.md` file is **untracked in git** — it i
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 14acc26 (registry tip: 4b6d55c13 Konstantin Fedotov Close issue)

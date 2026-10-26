@@ -3,7 +3,7 @@
 
 # BUG: tui-egui-fixes hold landing: page-1-only client, gallery has_more regression, TUI stale-chat race, unawaited stamp write
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -38,3 +38,5 @@ Caveats: client/server contract parity; stale-state races on chat switch; partia
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 8a7a393 (registry tip: e67d5c507 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: sanitizeHtml is not idempotent — tag-removal reassembly can assemble fresh script markup (mXSS class)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -34,3 +34,5 @@ TEST NOTE: KNOWN RESIDUAL pins for the counterexamples above already exist in sr
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e88cce6 (registry tip: 9298f25e6 Konstantin Fedotov Close issue)

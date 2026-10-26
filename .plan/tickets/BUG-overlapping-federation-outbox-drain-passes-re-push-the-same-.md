@@ -3,7 +3,7 @@
 
 # BUG: Overlapping federation outbox drain passes re-push the same rows
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas
@@ -21,3 +21,5 @@ Evidence (approved finding 9, P3; .tmp/concern-dev-2026-10-07.md, .tmp/concern-f
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 96279b9 (registry tip: b36d02c86 Konstantin Fedotov Close issue)

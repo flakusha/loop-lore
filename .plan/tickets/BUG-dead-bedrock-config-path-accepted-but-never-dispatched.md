@@ -3,7 +3,7 @@
 
 # BUG: Dead Bedrock config path accepted but never dispatched
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem
@@ -22,3 +22,5 @@ bedrock?: BedrockProviderConfig exists (providers.ts:119-140), type union lists 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 3edc50d (registry tip: b465ae053 Konstantin Fedotov Close issue)

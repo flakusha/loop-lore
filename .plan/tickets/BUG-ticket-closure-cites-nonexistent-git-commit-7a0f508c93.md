@@ -6,7 +6,7 @@
 <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-tooling-improvement
@@ -58,3 +58,5 @@ Alternatively (or additionally): add a guard to `giwt close` that verifies the c
 - [ ] `BUG-test-e2e-env-default-mismatch.md` (f511378) is updated to cite the correct commit `b53b1b7b8` at closure.
 
 git issue: 83bdf58
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 83bdf58 (registry tip: 10cbefa7b Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: --gates=<csv> equals-form is silently ignored; only the space-separated form is parsed
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline
@@ -80,3 +80,5 @@ Parse both spellings — match `arg === flag` for the space form and `arg.starts
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue fcbfd8f (registry tip: 629628816 Konstantin Fedotov Close issue)

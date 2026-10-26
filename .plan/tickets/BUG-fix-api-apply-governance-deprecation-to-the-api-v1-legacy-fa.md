@@ -3,7 +3,7 @@
 
 # BUG: fix(api): apply governance + deprecation to the /api/v1 legacy fallback path
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-governance
@@ -21,3 +21,5 @@ Sources: stream-a #3 (kept separate per instruction; cross-links: primary T02, r
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue afe12b9 (registry tip: cf805b555 Konstantin Fedotov Close issue)

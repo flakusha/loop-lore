@@ -3,7 +3,7 @@
 
 # BUG: parsePagination default 50 silently overrides ActorsQuery schema default 20
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-actors
@@ -38,3 +38,5 @@ Caveats: contract change to pagination defaults; no auth impact; no partial fail
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 3f7bbc4 (registry tip: f232bdb35 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Ollama-native provider drops GenerationMessage.images so filename-only captions persist as alt_text
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem
@@ -21,3 +21,5 @@ Evidence (approved finding 6, P2; .tmp/concern-dev-2026-10-07.md, .tmp/concern-f
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 02bb0b3 (registry tip: ebbcdf6df Konstantin Fedotov Close issue)

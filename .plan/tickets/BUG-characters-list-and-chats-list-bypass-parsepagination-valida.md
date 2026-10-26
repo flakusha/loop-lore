@@ -3,7 +3,7 @@
 
 # BUG: characters-list and chats-list bypass parsePagination validation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-api-validation-guardrails
@@ -44,3 +44,5 @@ and correctly clamps page >= 1 and pageSize 1..200.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 29f5b01 (registry tip: 33b6d1eec Konstantin Fedotov Close issue)
