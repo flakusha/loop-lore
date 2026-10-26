@@ -3,7 +3,8 @@
 
 # TASK-2026-openwebui-cancel-generation-wiring: Wire `cancelGeneration()` Alpine Method to SSE Abort Endpoint
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** (commit 318f149b7) — Ticket's sketch was stale on three points, verified against the code: the method is implemented in `src/frontend/alpine/chat-generations.ts:168` (not a stub in `chat-types/core.ts`, which is interface-only), and the shipped endpoint is `POST /api/v1/generation/cancel` with a `{chatId}` JSON body (not `DELETE /api/generation/cancel/:chatId`) — the fetch side was already wired. The real gap was local teardown: `isGenerating`/`activeAttemptId` only reset on success and the `connectGenerationSSE` EventSource was never closed. Fixed with a `finally` block (reset + `_generationEventSource?.close()`), preserving stream buffers so the partial bubble survives until the persisted draft is loaded; "Generation cancelled" toast (`toasts.generationCancelled`) stays on the success path — no `appendStatus` mechanism exists, the toast is the module's status-line pattern. Stop button unchanged (chat.html:42-56 VN stop, `@click="cancelGeneration()"`). Extended unit tests in `chat-generations.test.ts` cover path/method/body, ES close on success, and state reset on error response and on network throw.
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-openwebui-parity

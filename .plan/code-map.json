@@ -23578,6 +23578,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-cancel-generation-wiring.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-sse-response-streaming-through-the-browser-bridge.md"
     },
     {

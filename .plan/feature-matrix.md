@@ -656,7 +656,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1036**
 | free-will | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | fresh | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | friends | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
-| frontend | 161 | 41 | 7 | 66 | 0 | 0 | 47 |
+| frontend | 161 | 42 | 7 | 66 | 0 | 0 | 46 |
 | fts | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | furniture | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | future | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -677,7 +677,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1036**
 | gating | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | gc | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | gdpr | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
-| generation | 42 | 9 | 1 | 14 | 2 | 0 | 16 |
+| generation | 42 | 10 | 1 | 14 | 2 | 0 | 15 |
 | generation-flow-control | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | generational | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | geography | 2 | 0 | 0 | 1 | 1 | 0 | 0 |
@@ -1467,7 +1467,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1036**
 | story-points | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | story-state | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | story-steering | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| streaming | 13 | 0 | 1 | 1 | 0 | 0 | 11 |
+| streaming | 13 | 1 | 1 | 1 | 0 | 0 | 10 |
 | structured | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | structured-output | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | structured-spec | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
@@ -1944,7 +1944,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1036**
 | epic-nsfw-ui | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
 | epic-observability-telemetry | 2 | 1 | 0 | 1 | 0 | 0 | 0 |
 | epic-openapi-reference | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
-| epic-openwebui-parity | 9 | 0 | 0 | 0 | 0 | 0 | 9 |
+| epic-openwebui-parity | 9 | 1 | 0 | 0 | 0 | 0 | 8 |
 | epic-output-control-transforms | 17 | 10 | 0 | 4 | 0 | 0 | 3 |
 | epic-party-migration | 10 | 0 | 0 | 1 | 0 | 0 | 9 |
 | epic-performance-dashboard-slo | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
