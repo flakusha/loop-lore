@@ -165,10 +165,12 @@ describeOrSkip("sendWithPreferredMode", () => {
 
 // ── Generation SSE lifecycle (stale-guard + status poll + cancel) ──
 let genHandler: ((url: string,) => Response) | null = null;
+const apiCalls: { url: string; init?: RequestInit }[] = [];
 // Hoisted: chat-generations binds the stubbed apiFetch for the tests below.
 if (ISOLATED) {
   mock.module("./htmx", () => ({
-    apiFetch: async (url: string,) => {
+    apiFetch: async (url: string, init?: RequestInit,) => {
+      apiCalls.push({ url, init, },);
       if (genHandler) { return genHandler(url,); }
       return new Response("{}", { status: 200, },);
     },
@@ -435,6 +437,22 @@ describeOrSkip("cancelGeneration", () => {
     expect(host.toasts.length,).toBe(1,);
   });
 
+  test("posts the cancel endpoint for the active chat", async () => {
+    stubGlobals(null,);
+    genHandler = () => jsonRes({ ok: true, },);
+    apiCalls.length = 0;
+    const host = genHost();
+    await chatGenerations.cancelGeneration!.call(asState(host,),);
+    const call = apiCalls.find((c,) => c.url === "/api/v1/generation/cancel");
+    expect(call,).toBeDefined();
+    expect(call!.init?.method,).toBe("POST",);
+    expect(JSON.parse(String(call!.init?.body,),),).toMatchObject({
+      chatId: "chat-1",
+      reason: "user_cancel",
+      source: "user",
+    },);
+  });
+
   test("clears flags on acknowledgement", async () => {
     stubGlobals(null,);
     genHandler = () => jsonRes({ ok: true, },);
@@ -447,12 +465,50 @@ describeOrSkip("cancelGeneration", () => {
     expect(host.toasts.length,).toBe(1,);
   });
 
-  test("error toast on rejection", async () => {
+  test("closes the EventSource on acknowledgement", async () => {
+    stubGlobals(null,);
+    genHandler = () => jsonRes({ ok: true, },);
+    const host = genHost();
+    host.isGenerating = true;
+    const es = new FakeEventSource("/api/v1/generation/stream/chat-1",);
+    host._generationEventSource = es;
+    await chatGenerations.cancelGeneration!.call(asState(host,),);
+    expect(es.closed,).toBe(true,);
+    expect(host._generationEventSource,).toBeNull();
+    expect(host.isGenerating,).toBe(false,);
+  });
+
+  test("resets state and closes the stream on error response", async () => {
     stubGlobals(null,);
     genHandler = () => jsonRes({ ok: false, error: "nope", },);
     const host = genHost();
+    host.isGenerating = true;
+    host.activeAttemptId = "a1";
+    const es = new FakeEventSource("/api/v1/generation/stream/chat-1",);
+    host._generationEventSource = es;
     await chatGenerations.cancelGeneration!.call(asState(host,),);
     expect(host.isGenerating,).toBe(false,);
+    expect(host.activeAttemptId,).toBeNull();
+    expect(es.closed,).toBe(true,);
+    expect(host.toasts.length,).toBe(1,);
+  });
+
+  test("resets state in finally and closes the stream when the request throws", async () => {
+    stubGlobals(null,);
+    genHandler = () => {
+      throw new Error("down",);
+    };
+
+    const host = genHost();
+    host.isGenerating = true;
+    host.activeAttemptId = "a1";
+    const es = new FakeEventSource("/api/v1/generation/stream/chat-1",);
+    host._generationEventSource = es;
+    await chatGenerations.cancelGeneration!.call(asState(host,),);
+    expect(host.isGenerating,).toBe(false,);
+    expect(host.activeAttemptId,).toBeNull();
+    expect(es.closed,).toBe(true,);
+    expect(host._generationEventSource,).toBeNull();
     expect(host.toasts.length,).toBe(1,);
   });
 

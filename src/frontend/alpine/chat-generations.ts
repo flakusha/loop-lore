@@ -186,8 +186,6 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
 
       const data = await response.json();
       if (response.ok && data.ok) {
-        this.isGenerating = false;
-        this.activeAttemptId = null;
         this.$dispatch?.("show-toast", { type: "info", message: t("toasts.generationCancelled",), },);
       } else {
         this.$dispatch?.("show-toast", {
@@ -197,6 +195,17 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       }
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorCancellingGeneration",), },);
+    } finally {
+      // Local teardown must happen even when the server call fails — a stale
+      // spinner or a still-open stream would block the composer until the
+      // next stream-error / SSE reconnect. Closing the EventSource ends the
+      // SSE locally; the server-side abort stops token emission. Stream
+      // buffers are left intact so the partial bubble stays visible until
+      // the next message load renders the persisted draft.
+      this.isGenerating = false;
+      this.activeAttemptId = null;
+      this._generationEventSource?.close();
+      this._generationEventSource = null;
     }
   },
 
