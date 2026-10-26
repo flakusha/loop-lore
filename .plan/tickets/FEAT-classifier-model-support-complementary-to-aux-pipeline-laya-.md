@@ -6,6 +6,7 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Large
+**Epic:** epic-classifier-template-packs
 **Summary:** Dedicated classifier models (Laya/Jev-class) as a complement to the generative AUX pipeline — classifier ModelRole value, routing with generative fallback, fine-tune-vs-Jev decision per label set.
 **Context:** Classifier-shaped AUX tasks (NSFW, intent, transitions, injection-check) currently route through generative LLMs via callAux; grounded state and Laya/Jev facts in ## Summary below.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
@@ -26,6 +27,8 @@ Laya facts (huggingface.co/convaiinnovations/laya, Apache-2.0):
 - Jev: closed API, $0.042/1M tokens, 236-276ms p50, better at 50+ options out-of-box.
 
 Scope: add classifier ModelRole value + VALID_ROLES entry, route classifier-shaped AUX tasks to it with generative fallback (callAux null path already exists), document fine-tune-vs-Jev decision per label set. See sibling tickets for llama-swap recipe, llama.cpp/TS path, eval harness.
+
+Update 2026-10-26: llama.cpp now serves native decision models over `POST /v1/systemone` (typed `choice`/`score`/`noul`, probabilities, zero generated text), so the serving story for a dedicated classifier is no longer "run the Laya decision head outside llama.cpp" — see `TASK-llama-cpp-decision-model-client-for-aux-classification.md` for the client and `TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving.md` for the serving verdicts.
 
 ## Acceptance Criteria
 
