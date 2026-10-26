@@ -39,7 +39,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
   test("3a. admin PATCHes USER-scope key 'theme' — writes to admin's OWN settings?", async () => {
     const app = makeApp(db, "admin",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "theme", value: "dark", },),
@@ -68,7 +68,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
   test("3b. user PATCHes key NOT in SettingsUpdateAllowedKeys → 400?", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "isAdmin", value: "true", },),
@@ -86,7 +86,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     const app = makeApp(db, "user",);
     const originalValue = { email: true, push: false, };
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "notifications", value: originalValue, },),
@@ -116,7 +116,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
   test("3d. coerceValue number — NaN persisted?", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "fontSize", value: "abc", },),
@@ -138,7 +138,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
   test("3f. unauthenticated PATCH → 401?", async () => {
     const app = makeApp(db, null,);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "theme", value: "dark", },),
@@ -151,7 +151,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
 
   test("3f2. anonymous GET → 401?", async () => {
     const app = makeApp(db, null,);
-    const res = await app.handle(new Request("http://localhost/api/config-menu",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/config-menu",),);
     console.log("3f2. anon GET status:", res.status,);
     expect(res.status,).toBe(401,);
   });
@@ -159,7 +159,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
   test("3g. prototype-pollution key '__proto__' via PATCH", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "__proto__", value: "polluted", },),
@@ -177,7 +177,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
   test("3g2. prototype-pollution key 'constructor' via PATCH", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "constructor", value: "polluted", },),
@@ -198,7 +198,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
 
     const app = makeApp(db, "user",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "theme", value: "dark", },),
@@ -227,7 +227,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     // But admin is not in SettingsUpdateAllowedKeys check? Let's see...
     const app = makeApp(db, "admin",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "theme", value: "dark", },),
@@ -250,7 +250,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
   test("3j. user PATCH admin-scope key → 403?", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "registration_open", value: "true", },),
@@ -264,7 +264,7 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
   test("3k. admin PATCH non-editable admin field → 400?", async () => {
     const app = makeApp(db, "admin",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "server.port", value: "9999", },),
@@ -275,9 +275,9 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     expect(res.status,).toBe(400,);
   });
 
-  test("3l. GET /api/config-menu — admin sees 26 sections, 139 fields?", async () => {
+  test("3l. GET /api/v1/config-menu — admin sees 26 sections, 139 fields?", async () => {
     const app = makeApp(db, "admin",);
-    const res = await app.handle(new Request("http://localhost/api/config-menu",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/config-menu",),);
     const body = await res.json() as { role: string; sections: Array<{ key: string; fields: unknown[] }> };
     console.log("3l. admin role:", body.role,);
     console.log("3l. admin sections count:", body.sections.length,);
@@ -285,9 +285,9 @@ describe("NEGATIVE SPACE — config-menu adversarial tests", () => {
     console.log("3l. admin total fields:", totalFields,);
   });
 
-  test("3m. GET /api/config-menu — user sees 1 section, 15 fields?", async () => {
+  test("3m. GET /api/v1/config-menu — user sees 1 section, 15 fields?", async () => {
     const app = makeApp(db, "user",);
-    const res = await app.handle(new Request("http://localhost/api/config-menu",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/config-menu",),);
     const body = await res.json() as { role: string; sections: Array<{ key: string; fields: unknown[] }> };
     console.log("3m. user role:", body.role,);
     console.log("3m. user sections count:", body.sections.length,);

@@ -85,9 +85,13 @@ describe("v1 API enforcement (unversioned /api/* must redirect)", () => {
     expect(res.status,).toBe(200,);
   });
 
-  test("agency stays intentionally unversioned (bare mount, not in barrel)", async () => {
-    const agency = await app.handle(new Request("http://localhost/api/agency/balance",),);
-    expect(agency.status,).not.toBe(308,);
+  test("agency is versioned: bare /api/agency/* 308s to /api/v1", async () => {
+    const bare = await app.handle(new Request("http://localhost/api/agency/balance",),);
+    expect(bare.status,).toBe(308,);
+    expect(bare.headers.get("location",),).toBe("/api/v1/agency/balance",);
+
+    const versioned = await app.handle(new Request("http://localhost/api/v1/agency/balance",),);
+    expect(versioned.status,).not.toBe(308,);
   });
 
   test("/api/views/* stays unversioned (not redirected)", async () => {
