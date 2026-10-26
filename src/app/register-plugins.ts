@@ -7,7 +7,13 @@
  * Two groups are registered here:
  * - Infra/HTML modules that are deliberately NEVER versioned: `health`,
  *   `liveness`, `metrics`, `federation`, `build-id`, `views` (server-rendered
- *   `/views/*`). These take no prefix parameter.
+ *   `/views/*`). `liveness`, `metrics`, `federation`, `build-id` and `views`
+ *   take no prefix parameter. `health` takes one and is mounted here with the
+ *   unversioned `/api` probe prefix: the deploy checklist requires
+ *   `curl -fsS .../api/health` to answer `200` (a 308 fails it) and
+ *   `v1-enforcement.test.ts` pins that unversioned infra surfaces answer
+ *   directly. The v1 barrel (`src/routes/v1/base-surface.ts`) mounts the same
+ *   factory with an explicit `/api/v1` so `/api/v1/health` stays available.
  * - Migrated JSON modules (`agency`, `memory-audit`, `location-explorer`,
  *   `game-state`, `story-orchestration`, `config-menu`) whose factory defaults
  *   to `prefix = "/api/v1"`. Register each EXACTLY ONCE with the default -
@@ -57,7 +63,9 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   const { database, config, asyncStore, } = opts;
   const handleOpts = { database, config, asyncStore, };
   // ── Public routes (auth runs but won't block) ───────────────────────────────
-  app.use(healthRoutes(handleOpts,),);
+  // Explicit unversioned probe prefix: the `/api` default is load-bearing (see
+  // the header comment), so pin it here rather than relying on the default.
+  app.use(healthRoutes(handleOpts, "/api",),);
   app.use(livenessRoutes({ database: handleOpts.database, config, },),);
   app.use(metricsRoutes({ config, },),);
   app.use(federationRoutes({ config, database, },),);

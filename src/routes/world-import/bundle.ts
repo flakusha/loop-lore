@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 300
+// One transactional bundle import: every section shares the id maps built for
+// the sections before it (locations -> quests/lore remap), so the sections
+// cannot be split without threading those maps through each helper.
+
 import type { Insertable, Kysely, } from "kysely";
 import {
   DifficultyReroll,
