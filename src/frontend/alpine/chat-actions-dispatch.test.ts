@@ -762,7 +762,7 @@ describeOrSkip("dispatchCommandAction impersonate", () => {
 
 
 describeOrSkip("dispatchCommandAction world-update / world-delete", () => {
-  const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+  const priorConfirm = (globalThis as { confirm?: (message?: string) => boolean }).confirm;
   afterEach(() => {
     (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
   },);
@@ -872,7 +872,6 @@ describeOrSkip("dispatchCommandAction world-update / world-delete", () => {
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to delete world", },],);
   });
 },);
-
 
 
 describeOrSkip("dispatchCommandAction item mutations", () => {
@@ -1084,4 +1083,3 @@ describeOrSkip("dispatchCommandAction item mutations", () => {
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to pick up item", },],);
   });
 },);
-
