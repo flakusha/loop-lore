@@ -3035,7 +3035,7 @@
       "federation"
     ],
     "source": ".plan/tickets/BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-CONSUMEINVENTORYUNIT-USES-STALE-QUANTITY-TOCTOU-ON-INVENTORY": {
     "hash": "aba5489",

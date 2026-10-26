@@ -616,7 +616,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | fe-be-db | 1 | 0 | 0 | 0 | 1 | 0 | 0 |
 | feature | 15 | 2 | 0 | 13 | 0 | 0 | 0 |
 | feature-flags | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
-| federation | 24 | 11 | 1 | 1 | 1 | 0 | 10 |
+| federation | 24 | 12 | 1 | 1 | 1 | 0 | 9 |
 | feed | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | feeds | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | ffi | 3 | 0 | 2 | 1 | 0 | 0 | 0 |
@@ -2026,7 +2026,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-world-management-ui | 8 | 6 | 0 | 2 | 0 | 0 | 0 |
 | epic-world-travel-time | 6 | 3 | 0 | 1 | 0 | 0 | 2 |
 | epic-worlds-extension | 5 | 0 | 0 | 4 | 0 | 0 | 1 |
-| (unbound) | 1035 | 663 | 46 | 33 | 43 | 0 | 250 |
+| (unbound) | 1035 | 664 | 46 | 33 | 43 | 0 | 249 |
 
 ## Ticket detail
 
