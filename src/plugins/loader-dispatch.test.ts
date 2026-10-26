@@ -1,9 +1,34 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { getLogger, setGlobalLogger, type Logger, } from "../logger";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { createLogger, getLogger, setGlobalLogger, type Logger, } from "../logger";
 import { dispatchPluginRoute, registry, unloadAllPlugins, } from "./loader";
+
+/** Root logger found at file start; null means this file installed its own. */
+let previousRoot: Logger | null = null;
+
+// Resource contract: this file owns the process-global root logger for its
+// duration. `registry.addRoutes` resolves its warning sink through
+// `getChildLogger`, which returns null until a root exists, and the
+// duplicate-route test swaps that root for a capture stub — so a root must
+// exist and its absence must be restorable. A root installed by an earlier
+// file is never replaced; one this file installs is cleared in `afterAll`,
+// so the file passes alone, in any order, and leaves no global behind.
+beforeAll(() => {
+  try {
+    previousRoot = getLogger();
+  } catch {
+    previousRoot = null;
+    createLogger({ level: "error", },);
+  }
+},);
+
+afterAll(() => {
+  // `setGlobalLogger` has no "clear" variant; null is the reset seam the
+  // logger's own tests use, and it restores the absent state exactly.
+  if (previousRoot === null) { setGlobalLogger(null as unknown as Logger,); }
+},);
 
 beforeEach(() => {
   registry.register({

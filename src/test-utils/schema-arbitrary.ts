@@ -32,14 +32,24 @@ const objectArb = (node: SchemaNode,): fc.Arbitrary<unknown> => {
   const properties = node.properties ?? {};
   const required = new Set(node.required ?? [],);
   const budget = node.maxProperties ?? Object.keys(properties,).length;
-  const fields: Record<string, fc.Arbitrary<unknown>> = {};
-  const keys: string[] = [];
-  for (const [key, sub,] of Object.entries(properties,)) {
-    if (keys.length >= budget) { break; }
+  const keys = Object.keys(properties,).slice(0, budget,);
 
-    const arb = schemaToArbitrary(sub as TSchema,);
-    fields[key] = required.has(key,) ? arb : fc.option(arb, { freq: 2, nil: undefined, },);
-    keys.push(key,);
+  // `minProperties` counts PRESENT keys, which `fc.record` cannot express: the
+  // only lever is to stop treating declared properties as optional. Lift the
+  // first optional keys to mandatory until the floor is met — otherwise a
+  // schema such as `NpcStateBody` (`minProperties: 1`) generates `{}` and the
+  // property test reports the mapper's drift, not a schema bug.
+  const floor = Math.min(node.minProperties ?? 0, keys.length,);
+  const present = new Set(keys.filter((key,) => required.has(key,)),);
+  for (const key of keys) {
+    if (present.size >= floor) { break; }
+    present.add(key,);
+  }
+
+  const fields: Record<string, fc.Arbitrary<unknown>> = {};
+  for (const key of keys) {
+    const arb = schemaToArbitrary(properties[key] as TSchema,);
+    fields[key] = present.has(key,) ? arb : fc.option(arb, { freq: 2, nil: undefined, },);
   }
 
   // An object with NO declared property is still open when `additionalProperties`
@@ -72,9 +82,9 @@ const objectArb = (node: SchemaNode,): fc.Arbitrary<unknown> => {
 
   // `fc.option(nil: undefined)` leaves an omitted optional key present with an
   // undefined value; strip exactly those, never a key the schema requires.
-  return fc.record(fields, { requiredKeys: keys.filter((k,) => required.has(k,)), },)
+  return fc.record(fields, { requiredKeys: keys.filter((k,) => present.has(k,)), },)
     .map((record,) =>
-      Object.fromEntries(Object.entries(record,).filter(([k, v,],) => v !== undefined || required.has(k,)),)
+      Object.fromEntries(Object.entries(record,).filter(([k, v,],) => v !== undefined || present.has(k,)),)
     );
 };
 

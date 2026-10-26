@@ -22,7 +22,7 @@
 import { describe, expect, it, } from "bun:test";
 import type { ImageProviderConfig, } from "../../config/schema";
 import { createLogger, } from "../../logger";
-import { generateImages, } from "./index";
+import { generateImages, generateImagesWithFailover, } from "./index";
 import type { ImageGenFailure, } from "./types";
 
 // Backend warn paths and the workflow loader call getLogger(), which
@@ -116,4 +116,73 @@ describe("generateImages", () => {
     // skip instead of asserting against the stub.
     expect(dispatchIsReal,).toBe(probe.ok === false,);
   });
+});
+
+// Every case below uses `not-a-url` base URLs, so each attempt fails at the
+// URL guard (400) without touching the network: the failover walk itself is
+// what is under test, not any backend's error transport.
+describe("generateImagesWithFailover", () => {
+  const failing = (name: string, purpose: ImageProviderConfig["purpose"],): ImageProviderConfig => ({
+    ...BASE,
+    name,
+    purpose,
+    baseUrl: "not-a-url",
+  });
+
+  itRealDispatch("returns a 501 failure when no provider is configured", async () => {
+    const outcome = await generateImagesWithFailover(undefined, "generate", OPTS,);
+
+    expect(outcome.ok,).toBe(false,);
+    expect((outcome as ImageGenFailure).status,).toBe(501,);
+    expect((outcome as ImageGenFailure).error,).toContain("No image generation provider configured",);
+  },);
+
+  itRealDispatch("attempts the purpose-ordered list once each and returns the LAST failure", async () => {
+    const providers = [
+      failing("edit-only", "edit",),
+      failing("gen-a", "generate",),
+      failing("gen-b", "generate",),
+    ];
+
+    const asked: string[] = [];
+
+    const outcome = await generateImagesWithFailover(providers, "generate", OPTS, async (name,) => {
+      asked.push(name,);
+      return undefined;
+    },);
+
+    expect(asked,).toEqual(["gen-a", "gen-b", "edit-only",],);
+    expect(outcome.ok,).toBe(false,);
+    expect((outcome as ImageGenFailure).status,).toBe(400,);
+    expect((outcome as ImageGenFailure).error,).toContain("Invalid image provider URL",);
+  },);
+
+  itRealDispatch("honors the caller key on the first candidate, per-provider after that", async () => {
+    const providers = [failing("gen-a", "generate",), failing("gen-b", "generate",),];
+    const asked: string[] = [];
+
+    const outcome = await generateImagesWithFailover(
+      providers,
+      "generate",
+      { ...OPTS, apiKey: "caller-key", },
+      async (name,) => {
+        asked.push(name,);
+        return `resolved-${name}`;
+      },
+    );
+
+    // The caller's key is spent on the first backend only; a key stored for
+    // backend A is never handed to backend B (double-billing guard).
+    expect(asked,).toEqual(["gen-b",],);
+    expect(outcome.ok,).toBe(false,);
+  },);
+
+  itRealDispatch("a single configured provider behaves like generateImages", async () => {
+    const provider = failing("only", "generate",);
+
+    const viaFailover = await generateImagesWithFailover([provider,], "generate", OPTS,);
+    const direct = await generateImages(provider, OPTS,);
+
+    expect(viaFailover,).toEqual(direct,);
+  },);
 });
