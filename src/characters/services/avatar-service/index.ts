@@ -40,6 +40,7 @@ import {
   upsertWorldAvatarConfig as upsertWorldAvatarConfigDispatch,
 } from "./world-config";
 
+export type { UpsertAvatarConfigOpts, } from "./config";
 export type {
   Avatar,
   AvatarConfig,

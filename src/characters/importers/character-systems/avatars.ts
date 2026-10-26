@@ -4,12 +4,11 @@
 // Import avatar data into the character systems importer result.
 
 import type { Kysely, } from "kysely";
-import { AvatarSelectionRule, } from "../../../db/enums";
-import type { AvatarTagType, } from "../../../db/enums";
+import { AvatarSelectionRule, AvatarTagType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import type { CharacterSystemsExport, ExportedWorldAvatarConfig, } from "../../exporters/character-systems";
 import { AvatarService, } from "../../services/avatar-service";
-import type { UpsertWorldAvatarConfigOpts, } from "../../services/avatar-service";
+import type { UpsertAvatarConfigOpts, UpsertWorldAvatarConfigOpts, } from "../../services/avatar-service";
 import { errMsg, } from "../../shared/character-systems-utils";
 import type { CharacterSystemsImportResult, } from "./types";
 
@@ -54,14 +53,15 @@ export async function importAvatars(
   }
 
   if (data.config) {
-    try {
-      await avatarService.upsertAvatarConfig(actorId, {
-        selectionRule: data.config.selectionRule as any,
-        weights: data.config.weights as any,
-        fallbackOrder: data.config.fallbackOrder as any,
-      },);
-    } catch (error: unknown) {
-      result.errors.push(`Failed to import avatar config: ${errMsg(error,)}`,);
+    const config = parseAvatarConfig(data.config,);
+    if (!config) {
+      result.errors.push("Skipped malformed avatar config entry.",);
+    } else {
+      try {
+        await avatarService.upsertAvatarConfig(actorId, config,);
+      } catch (error: unknown) {
+        result.errors.push(`Failed to import avatar config: ${errMsg(error,)}`,);
+      }
     }
   }
 
@@ -122,9 +122,29 @@ interface ParsedWorldAvatarConfig {
  * @returns the validated entry, or undefined when it is unusable
  */
 function parseWorldAvatarConfig(raw: unknown,): ParsedWorldAvatarConfig | undefined {
-  if (typeof raw !== "object" || raw === null || Array.isArray(raw,)) { return; }
+  if (typeof raw !== "object" || raw === null) { return; }
+
+  const config = parseAvatarConfig(raw,);
+  if (!config) { return; }
 
   const sourceWorldId = "worldId" in raw && typeof raw.worldId === "string" ? raw.worldId : undefined;
+
+  return {
+    sourceWorldId,
+    opts: { selectionRuleOverride: config.selectionRule, weightsOverride: config.weights, },
+  };
+}
+
+/**
+ * Validate an imported avatar config. The bundle is parsed JSON, so an unknown
+ * selection rule, a non-numeric weight or an unknown tag must be reported
+ * rather than written into `character_avatar_config`.
+ * @param raw - `avatars.config` straight from the bundle
+ * @returns the validated options, or undefined when unusable
+ */
+function parseAvatarConfig(raw: unknown,): UpsertAvatarConfigOpts | undefined {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw,)) { return; }
+
   const selectionRule = "selectionRule" in raw && typeof raw.selectionRule === "string"
     ? raw.selectionRule
     : undefined;
@@ -134,10 +154,38 @@ function parseWorldAvatarConfig(raw: unknown,): ParsedWorldAvatarConfig | undefi
   const weights = "weights" in raw ? readWeightMap(raw.weights,) : undefined;
   if (weights === null) { return; }
 
-  return {
-    sourceWorldId,
-    opts: { selectionRuleOverride: selectionRule, weightsOverride: weights, },
-  };
+  const fallbackOrder = "fallbackOrder" in raw ? readTagList(raw.fallbackOrder,) : undefined;
+  if (fallbackOrder === null) { return; }
+
+  return { selectionRule, weights, fallbackOrder, };
+}
+
+/**
+ * Read a tag list, rejecting unknown tags.
+ * @param raw - Candidate `fallbackOrder` value from the bundle
+ * @returns the tag list, undefined when absent, or null when malformed
+ */
+function readTagList(raw: unknown,): AvatarTagType[] | null | undefined {
+  if (raw === undefined) { return; }
+  if (!Array.isArray(raw,)) { return null; }
+
+  const tags: AvatarTagType[] = [];
+  for (const tag of raw) {
+    if (typeof tag !== "string" || !isTagType(tag,)) { return null; }
+
+    tags.push(tag,);
+  }
+
+  return tags;
+}
+
+/**
+ * Whether a value is one of the declared avatar tag types.
+ * @param value - Candidate tag string
+ * @returns true when the tag is declared in {@link AvatarTagType}
+ */
+function isTagType(value: string,): value is AvatarTagType {
+  return Object.values(AvatarTagType,).includes(value as AvatarTagType,);
 }
 
 /**

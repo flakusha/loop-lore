@@ -25,8 +25,10 @@
  * a versioned envelope `v2:salt:iv:ciphertext` exists so a future key
  * rotation can carry its key-generation tag per record instead of relying on
  * one global secret. `encryptVersioned` emits it; `decryptValue` reads it AND
- * both bare legacy formats, so rows sealed under any generation decrypt
- * without a one-shot rewrite. The `key_version` columns added by migration
+ * both bare legacy formats, so v2 + both legacy generations decrypt in place.
+ * A DIFFERENT version tag is refused loudly (the caller does not hold that
+ * generation's key), never mis-decrypted under the current one. The
+ * `key_version` columns added by migration
  * 080 (`user_api_keys`, `mesh_peers`) default to 1 = bare (unversioned)
  * format, matching every row written before the column existed.
  */
