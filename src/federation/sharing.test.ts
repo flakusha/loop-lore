@@ -6,7 +6,9 @@ import type { Kysely, } from "kysely";
 import type { DuplicationPolicy, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { pskCipher, } from "./cipher";
+import { grantChatFederationConsent, revokeChatFederationConsent, } from "./clearance";
 import { upsertPeer, } from "./coordinator";
 import { pushEnvelope, receiveDelivery, } from "./delivery";
 import { resolveDuplicationPolicy, selectDuplicationTargets, } from "./duplication";
@@ -540,7 +542,6 @@ describe("sender fan-out", () => {
     const { db, } = await createTestDb();
     await twoPeers(db,);
     // Seed a chat without consent — the gate denies before any network call.
-    const { insertChats, insertUsers, } = await import("../test-utils/insert-helpers");
     const user = await insertUsers(db, "u-noconsent", "U",);
     await insertChats(db, "no consent chat", user, { id: "chat-noconsent", encryption_level: "standard", },);
 
@@ -567,6 +568,49 @@ describe("sender fan-out", () => {
       .selectFrom("mesh_outbox",)
       .select("id",)
       .where("content_id", "=", "fan-noconsent",)
+      .execute();
+
+    expect(rows,).toHaveLength(0,);
+  });
+
+  test("consent revoked between reserve and push is NOT exported and NOT retried", async () => {
+    const { db, } = await createTestDb();
+    await twoPeers(db,);
+    // Deterministic TOCTOU reproduction: consent is granted so the pre-flight
+    // gate passes, then revoked inside the reserve handler — i.e. inside the
+    // reserve->push window. Without the pre-push re-check the push fires once.
+    const user = await insertUsers(db, "u-toctou", "U",);
+    await insertChats(db, "toctou chat", user, { id: "chat-toctou", encryption_level: "standard", },);
+    await grantChatFederationConsent(db, "chat-toctou",);
+
+    const pushes: string[] = [];
+    const post = (async (url: string,) => {
+      if (url.endsWith("/api/mesh-reserve",)) {
+        await revokeChatFederationConsent(db, "chat-toctou",);
+        return { ok: true, status: 200, body: { reservationId: "r-toctou", }, };
+      }
+
+      pushes.push(url,);
+      return { ok: true, status: 200, body: { verdict: "stored", }, };
+    }) as PeerPost;
+
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
+      id: "fan-toctou",
+      content: "secret",
+      chatId: "chat-toctou",
+      clock: 14,
+    },);
+
+    expect(result.stored,).toEqual([],);
+    expect(result.failed,).toHaveLength(2,);
+    expect(result.failed[0]?.error,).toContain("content clearance denied",);
+    expect(pushes,).toEqual([],);
+
+    // A consent denial after reservation is not retryable either.
+    const rows = await db
+      .selectFrom("mesh_outbox",)
+      .select("id",)
+      .where("content_id", "=", "fan-toctou",)
       .execute();
 
     expect(rows,).toHaveLength(0,);
