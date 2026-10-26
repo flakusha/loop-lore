@@ -6,14 +6,15 @@ import { extractImageMetadata, } from "../assets/metadata";
 import { persistGeneratedImages, } from "../assets/service";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
-import { pickSdProvider, } from "../config/schema";
+import { listSdProviders, } from "../config/schema";
 import { AssetType, } from "../db/enums";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
-import { generateImages, } from "./image-engine";
+import { generateImagesWithFailover, } from "./image-engine";
 import type { LoRAConfig, } from "./lora/types";
+import { userApiKeyResolver, } from "./providers/user-api-key";
 import {
   applyImageTemplate,
   getOwnedTemplate,
@@ -111,8 +112,24 @@ export async function handleImageGeneration(
   }
 
   const config = loadConfig();
-  const sdConfig = pickSdProvider(config.generation.providers.sd, "generate",);
-  if (!sdConfig) {
+
+  // LoRA opt-in: only comfyui + sd-server/sdcpp support it — restrict the
+  // failover candidates to capable backends instead of rejecting the request
+  // outright when the top pick cannot serve a LoRA run.
+  const sdCandidates = listSdProviders(config.generation.providers.sd, "generate",)
+    .filter((p,) => !req.lora || p.apiFamily === "comfyui" || p.apiFamily === "sdcpp");
+
+  if (req.lora && sdCandidates.length === 0) {
+    return Response.json(
+      {
+        error: "LoRA is not supported by any configured image backend. Use comfyui or sd-server.",
+        status: 400,
+      },
+      { status: 400, },
+    );
+  }
+
+  if (sdCandidates.length === 0) {
     return Response.json(
       {
         error: "No image generation provider configured. Set config.generation.providers.sd in your config file.",
@@ -120,20 +137,6 @@ export async function handleImageGeneration(
       },
       { status: 501, },
     );
-  }
-
-  // LoRA opt-in: only comfyui + sd-server/sdcpp support it. Reject mismatched backends early.
-  if (req.lora) {
-    const supported = sdConfig.apiFamily === "comfyui" || sdConfig.apiFamily === "sdcpp";
-    if (!supported) {
-      return Response.json(
-        {
-          error: `LoRA is not supported on backend "${sdConfig.apiFamily}". Use comfyui or sd-server.`,
-          status: 400,
-        },
-        { status: 400, },
-      );
-    }
   }
 
   const n = Math.min(req.n ?? 1, 4,);
@@ -165,22 +168,27 @@ export async function handleImageGeneration(
     throw error;
   }
 
-  const outcome = await generateImages(sdConfig, {
-    prompt,
-    n,
-    size: req.size,
-    outputFormat,
-    steps: req.steps,
-    cfgScale: req.cfgScale,
-    samplerName: req.sampler_name,
-    negativePrompt,
-    seed: req.seed,
-    enableHr: req.enable_hr,
-    hrScale: req.hr_scale,
-    denoisingStrength: req.denoising_strength,
-    workflow: req.workflow,
-    lora: req.lora,
-  },);
+  const outcome = await generateImagesWithFailover(
+    sdCandidates,
+    "generate",
+    {
+      prompt,
+      n,
+      size: req.size,
+      outputFormat,
+      steps: req.steps,
+      cfgScale: req.cfgScale,
+      samplerName: req.sampler_name,
+      negativePrompt,
+      seed: req.seed,
+      enableHr: req.enable_hr,
+      hrScale: req.hr_scale,
+      denoisingStrength: req.denoising_strength,
+      workflow: req.workflow,
+      lora: req.lora,
+    },
+    userApiKeyResolver({ userId, config, db, },),
+  );
 
   if (!outcome.ok) {
     return Response.json(

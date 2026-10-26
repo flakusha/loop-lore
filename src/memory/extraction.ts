@@ -14,6 +14,7 @@ import type { DB, } from "../db";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { jsonParseOr, } from "../utils";
+import { sanitizeEmotionImpact, } from "./emotion-impact";
 import { resolveReviewStatus, storeMemories, } from "./extraction-store";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
 
@@ -77,7 +78,12 @@ export async function extractMemories(
 
     const result: ExtractedMemory[] = [];
     for (const m of parsed) {
-      if (m.confidence >= 0.5 && m.content.length > 10) { result.push(m,); }
+      if (m.confidence >= 0.5 && m.content.length > 10) {
+        // Validate the optional emotion-impact field: an LLM-hallucinated
+        // shape is dropped, not the memory. Neutral normalizes to none.
+        const emotionImpact = sanitizeEmotionImpact(m.emotionImpact,);
+        result.push(emotionImpact ? { ...m, emotionImpact, } : m,);
+      }
     }
 
     return result;

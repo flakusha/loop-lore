@@ -298,3 +298,23 @@ export function parseExpiryMs(input: unknown,): number | null {
   const parsed = Date.parse(input,);
   return Number.isNaN(parsed,) ? null : parsed;
 }
+
+/**
+ * Calculate age in whole years from a birth date string.
+ * Shared by the age gate (`src/age-gate/service.ts`) and formerly the NSFW
+ * gate — one implementation so both gates cannot drift.
+ * @param birthDate - birth date string parseable by {@link toDate}.
+ * @returns age in years, or null when birthDate is not a valid date.
+ */
+export function calculateAge(birthDate: string,): number | null {
+  const birth = toDate(birthDate,);
+  if (Number.isNaN(birth.getTime(),)) { return null; }
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const monthDiff = now.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age;
+}

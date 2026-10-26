@@ -83,32 +83,40 @@ export function computeContextWindow(
     retained.push(msg,);
   }
 
-  // Phase 2: Add older messages from newest to oldest until budget exhausted
+  // Phase 2: Add older messages from newest to oldest until budget exhausted.
+  // BREAK at the first non-fit: continuing past it would retain even-older
+  // messages and punch a hole in the middle of the history, so the prompt
+  // would present a non-contiguous conversation (BUG-chat-minors-variant).
   for (let i = olderMessages.length - 1; i >= 0; i--) {
     const msg = olderMessages[i]!;
     const msgTokens = msg.tokenCount || estimateTokens(msg.content,);
 
-    if (totalTokens + msgTokens <= maxTokens) {
-      totalTokens += msgTokens;
-      retained.push(msg,); // append, then sort at end
+    if (totalTokens + msgTokens > maxTokens) {
+      break;
     }
-    // Messages that don't fit become promotion candidates
+
+    totalTokens += msgTokens;
+    retained.push(msg,); // append, then sort at end
   }
 
   // Sort retained messages back to chronological order
   retained.sort((a, b,) => a.createdAt.localeCompare(b.createdAt,));
 
-  // Phase 3: If over budget (recent messages alone exceed maxTokens), trim oldest recent
+  // Phase 3: If over budget (recent messages alone exceed maxTokens), trim
+  // oldest recent. Same contiguity rule as phase 2: keep the newest contiguous
+  // run that fits, never skip a middle message (BUG-chat-minors-variant).
   if (totalTokens > maxTokens) {
     let trimmedTokens = 0;
     const trimmed: MessageRef[] = [];
     for (let i = retained.length - 1; i >= 0; i--) {
       const msg = retained[i]!;
       const msgTokens = msg.tokenCount || estimateTokens(msg.content,);
-      if (trimmedTokens + msgTokens <= maxTokens) {
-        trimmedTokens += msgTokens;
-        trimmed.push(msg,);
+      if (trimmedTokens + msgTokens > maxTokens) {
+        break;
       }
+
+      trimmedTokens += msgTokens;
+      trimmed.push(msg,);
     }
 
     trimmed.sort((a, b,) => a.createdAt.localeCompare(b.createdAt,));

@@ -3,8 +3,9 @@
 
 # BUG: Diff-scoped gates miss test files that only collide when run in the same process
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 2d6dcf3): Verified: scripts/check/parallel/gates.mjs:73-104 runs src tests only diff-scoped under bun test --isolate (one file per process, structurally blind to shared-process collisions); no unscoped/subsystem-directory run exists anywhere in scripts/.
+**Status Note:** [2026-10-26 fix pass] FIXED per ticket direction. `coverageCommand()`'s scoped branch now runs a companion UNSCOPED `bun test --parallel=N src/<mod>/ ...` (no --isolate, E2E_SAFEGUARD=1) before the scoped --isolate run: every touched top-level src/ subsystem's WHOLE test directory, derived from CHANGED_FILES (all src/ entries — deliberately NOT SCOPED_DIFF_SRC_FILES, which excludes *.test.ts, so TEST-ONLY diffs — the exact collision scenario — are covered; a test-only diff previously NOOPed the gate entirely and now runs the companion alone). Verified by assembling the real gate command for --diff-base HEAD~3: companion prefix present with correct dir targets, scoped run + coverage floor chained after.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline

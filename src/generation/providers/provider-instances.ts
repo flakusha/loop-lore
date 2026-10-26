@@ -7,7 +7,8 @@
  *
  * The provider registry (initializeProviders) dispatches to the
  * openaiCompatible instances, the anthropic instance and the ollamaNative
- * instance; bedrock is configured but has no provider implementation yet.
+ * instance. Providers without a registry implementation (e.g. bedrock) are
+ * rejected at config load, so every name listed here is dispatchable.
  */
 
 import type { Config, } from "../../config/schema";
@@ -62,16 +63,11 @@ export function listProviderInstances(config: Config,): ProviderInstance[] {
 }
 
 /**
- * Find a configured provider instance by name — the registry-backed kinds
- * plus the configured bedrock instance.
+ * Find a configured provider instance by name.
  * @param config
  * @param name
  * @returns the instance, or undefined when the name is not configured
  */
 export function findProviderInstance(config: Config, name: string,): ProviderInstance | undefined {
-  const bedrock = config.generation?.providers?.bedrock;
-  return listProviderInstances(config,).find((instance,) => instance.name === name) ??
-    (bedrock?.name === name
-      ? { name: bedrock.name, allowUserApiKey: bedrock.allowUserApiKey !== false, }
-      : undefined);
+  return listProviderInstances(config,).find((instance,) => instance.name === name);
 }

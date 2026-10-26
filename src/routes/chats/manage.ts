@@ -83,7 +83,11 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           const result = await getChat(database, id,);
           if (!result) { return notFound("Chat not found",); }
-          return jsonResponse({ ...result.chat, participants: result.participants, },);
+          return jsonResponse({
+            ...result.chat,
+            participants: result.participants,
+            character_id: result.characterId,
+          },);
         },
         { params: ChatIdParams, },
       )

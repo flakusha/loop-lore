@@ -4,6 +4,7 @@
 # BUG: Single global BYOK encryption key, no rotation story
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-C verify + fix pass] Minimal ticket-directed step landed: migration `080_byok_key_version.ts` adds `key_version` (integer, NOT NULL, default 1 = bare format) to `user_api_keys` and `mesh_peers` (the two tables carrying BYOK-encrypted values); `src/crypto/byok.ts` adds `encryptVersioned` (emits `v2:salt:iv:ciphertext`, `BYOK_KEY_VERSION = 2`) and `decryptValue` now reads ALL THREE formats (versioned, bare 3-chunk, legacy 2-chunk), failing loudly on unknown versions. Existing rows need no rewrite — reads accept old and new. One-shot re-encrypt under per-generation keys remains future work (this ticket's full scope); writers still emit the bare format until that lands. Regenerated: db:sync-types, db:sync-manifest, schemas:check. Verified: bun test src/crypto/byok.test.ts src/db/migrations.test.ts src/db/migration-roundtrip.test.ts (282 pass).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-byok-api-keys

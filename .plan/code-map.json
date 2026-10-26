@@ -156,6 +156,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
     },
     {
@@ -1045,6 +1049,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-error-envelope.md"
+    }
+  ],
+  "src/app": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
     }
   ],
   "src/app.rs": [
@@ -1964,7 +1974,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-content-hash-naming-for-generated-assets.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-wire-encryption-for-generated-images.md"
     },
     {
       "kind": "ticket",
@@ -2632,6 +2650,12 @@
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-entity-access.md"
     },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md"
+    }
+  ],
+  "src/assistant/commands/characters-update.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md"
@@ -5298,6 +5322,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-workflow-confirm-session-treats-optional-steps-as-required.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-harness-topic-session-attach.md"
     },
     {
@@ -7173,10 +7201,20 @@
       "source": ".plan/tickets/TASK-030.md"
     }
   ],
+  "src/characters/exporters": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/characters/exporters.test.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-spec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md"
     },
     {
       "kind": "ticket",
@@ -7210,11 +7248,21 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md"
+    }
+  ],
+  "src/characters/exporters/character-systems.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md"
     }
   ],
   "src/characters/exporters/character-systems.ts": [
@@ -7235,6 +7283,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    }
+  ],
+  "src/characters/exporters/lorebook.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
+  "src/characters/exporters/lorebook.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
     }
   ],
   "src/characters/exporters/png.ts": [
@@ -7287,6 +7347,12 @@
       "source": ".plan/tickets/TASK-character-creator-prerogative.md"
     }
   ],
+  "src/characters/importers": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/characters/importers/character-systems.ts": [
     {
       "kind": "epic",
@@ -7297,6 +7363,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-domain-residual-defects.md"
+    }
+  ],
+  "src/characters/importers/character-systems/avatars.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md"
     }
   ],
   "src/characters/importers/character-systems/licensing.ts": [
@@ -7317,6 +7389,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-domain-residual-defects.md"
+    }
+  ],
+  "src/characters/importers/character-systems/traits.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md"
     }
   ],
   "src/characters/importers/character-systems/world-setup.ts": [
@@ -7469,6 +7547,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-expand-character-templates-to-canonical-fields.md"
+    }
+  ],
+  "src/characters/normalizers/ccv3.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md"
     }
   ],
   "src/characters/normalizers/ccv3.ts": [
@@ -8626,6 +8710,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-066.md"
     },
     {
@@ -8963,6 +9051,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
     },
     {
       "kind": "ticket",
@@ -11145,6 +11237,12 @@
       "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
     }
   ],
+  "src/chat/split.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
+    }
+  ],
   "src/chat/token-counter.ts": [
     {
       "kind": "epic",
@@ -12912,6 +13010,10 @@
   "src/config": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-observability-config-section.md"
     },
     {
@@ -13326,6 +13428,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
     },
     {
@@ -13407,6 +13513,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-api-telemetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dead-bedrock-config-path-accepted-but-never-dispatched.md"
     }
   ],
   "src/config/schema-class.ts": [
@@ -14801,6 +14911,12 @@
       "source": ".plan/tickets/BUG-character-template-validator-rejects-every-legal-content-rat.md"
     }
   ],
+  "src/config/templates-loader/merge-domains.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-and-chat-setup-example-configs-document-fields-the.md"
+    }
+  ],
   "src/config/templates-loader/merge.ts": [
     {
       "kind": "epic",
@@ -15467,6 +15583,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-byok-api-keys.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md"
     }
   ],
   "src/crypto/byok.ts": [
@@ -15493,6 +15613,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md"
     },
     {
       "kind": "ticket",
@@ -17688,6 +17812,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-sqlite-foreign-keys-pragma-set-twice-redundant.md"
     },
     {
@@ -17801,6 +17929,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-settestdatabase-global-leak-on-test-throw.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md"
     },
     {
       "kind": "ticket",
@@ -21314,6 +21446,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o.md"
     },
     {
@@ -21521,6 +21657,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-user-theming-system.md"
+    }
+  ],
+  "src/eslint-rules/no-extensionless-require.mjs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi.md"
     }
   ],
   "src/eslint-rules/options-object-params.mjs": [
@@ -21943,6 +22085,12 @@
       "source": ".plan/tickets/TASK-instance-switching-backend-instances-handles-actor-map.md"
     }
   ],
+  "src/federation/local-webfinger.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
+    }
+  ],
   "src/federation/mesh-proof.ts": [
     {
       "kind": "ticket",
@@ -22169,6 +22317,28 @@
       "source": ".plan/tickets/TASK-federation-performance-quota-enforcement.md"
     }
   ],
+  "src/federation/remote-actor-document.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
+    }
+  ],
+  "src/federation/remote-actor.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
+    }
+  ],
+  "src/federation/remote-actor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations-architecture.md"
+    }
+  ],
   "src/federation/sharing.test.ts": [
     {
       "kind": "ticket",
@@ -22283,6 +22453,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/federation-trust-mechanism.md"
+    }
+  ],
+  "src/federation/webfinger.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
+    }
+  ],
+  "src/federation/webfinger.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
     }
   ],
   "src/frontend": [
@@ -24242,6 +24424,10 @@
     }
   ],
   "src/frontend/alpine/composer-pre-send.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assistant-and-group-chat-correctness-defects.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tests-delete-app-installed-globals-breaking-every-later-test.md"
@@ -29032,6 +29218,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-participant-user-actors-injected-in-auto-gen-path.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-single-chat-pause-not-gating-autoreply.md"
     },
     {
@@ -29199,6 +29389,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-participant-user-actors-injected-in-auto-gen-path.md"
     },
     {
       "kind": "ticket",
@@ -31702,6 +31896,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-dead-bedrock-config-path-accepted-but-never-dispatched.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
@@ -32827,6 +33025,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-publication-i18n.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md"
     },
     {
       "kind": "ticket",
@@ -34505,6 +34707,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-logging.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con.md"
     },
     {
       "kind": "ticket",
@@ -39508,6 +39714,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
     },
     {
@@ -41249,6 +41459,12 @@
       "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
     }
   ],
+  "src/routes/characters/export.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-community-share-missing-lorebook-export.md"
+    }
+  ],
   "src/routes/characters/export.ts": [
     {
       "kind": "ticket",
@@ -42753,6 +42969,12 @@
       "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
     }
   ],
+  "src/routes/federation-webfinger.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
+    }
+  ],
   "src/routes/federation.test.ts": [
     {
       "kind": "epic",
@@ -42787,6 +43009,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md"
     },
     {
       "kind": "ticket",
@@ -43533,6 +43759,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-message-seen-state.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md"
     },
     {
       "kind": "ticket",
@@ -46187,6 +46417,12 @@
       "source": ".plan/tickets/TASK-typed-userid-accessor-replacing-the-ctx-as-any-userid-cluste.md"
     }
   ],
+  "src/routes/v1": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md"
+    }
+  ],
   "src/routes/v1/actors-surface.ts": [
     {
       "kind": "epic",
@@ -46215,6 +46451,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-gm-shadow-notes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop.md"
     },
     {
       "kind": "ticket",
@@ -46640,6 +46880,10 @@
     }
   ],
   "src/routes/views/character-growth-section.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-growth-editor-arc-description-not-json-encoded.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css.md"
@@ -52312,6 +52556,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-auto-started-llama-cpp-skips-circuit-breaker-registration.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-character-seed-dedupes-on-display-name.md"
     },
     {
@@ -54688,6 +54936,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-plan-index-orphan-phantom-cleanup.md"
     }
   ],
@@ -55101,6 +55353,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-simplification-cleanup-ranked-execution-order-and-dead-vs-un.md"
+    }
+  ],
+  "src/tui": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
     }
   ],
   "src/tui/api-contract.test.ts": [

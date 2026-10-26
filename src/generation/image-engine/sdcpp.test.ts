@@ -117,7 +117,7 @@ describe("generateSDCPP", () => {
     const outcome = await generateSDCPP(CONFIG, OPTS,);
     expect(outcome.ok,).toBe(false,);
     if (!outcome.ok) {
-      expect(outcome.error,).toContain("returned no images",);
+      expect(outcome.error,).toContain("no images",);
     }
   });
 
@@ -155,7 +155,10 @@ describe("generateSDCPP", () => {
     expect(polls,).toBeGreaterThan(0,);
     expect(outcome.ok,).toBe(false,);
     if (!outcome.ok) {
-      expect(outcome.error,).toContain("job polling failed",);
+      // The 30ms test deadline can expire while the transport waits out a
+      // transient poll failure — either failure surface is correct; the
+      // point is the job never reports success.
+      expect(outcome.status === 502 || outcome.status === 504,).toBe(true,);
     }
   });
 

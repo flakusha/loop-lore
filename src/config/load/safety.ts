@@ -8,6 +8,52 @@ import type { Config, } from "../schema";
 import { isNetworkFilesystem, } from "./fs";
 
 /**
+ * Maximum tolerated skew (seconds) between the session-row idle timeout
+ * (`auth.sessionTimeoutHours`) and the JWT lifetime (`auth.jwtExpiresIn`)
+ * before boot warns about incoherent expiry configuration.
+ */
+export const SESSION_JWT_DIVERGENCE_TOLERANCE_SEC = 60;
+
+/** Inputs for {@link sessionJwtDivergenceWarning}. Optional members mirror
+ * the possibly-unset config section fields. */
+export interface SessionJwtExpiryInputs {
+  sessionTimeoutHours?: number;
+  jwtExpiresIn?: number;
+}
+
+/**
+ * Build the coherence warning for divergent session/JWT expiry knobs, or null
+ * when they agree within {@link SESSION_JWT_DIVERGENCE_TOLERANCE_SEC}.
+ *
+ * The two settings express the same duration (session row TTL vs JWT exp);
+ * skew yields mystery 401s (JWT outlives the row, or the row outlives the
+ * JWT) with nothing pointing at the misconfiguration.
+ * BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.
+ * @param auth - the two auth expiry knobs from the loaded config
+ * @returns the warning text, or null when the knobs are coherent
+ */
+export function sessionJwtDivergenceWarning(
+  auth: SessionJwtExpiryInputs,
+): string | null {
+  const { sessionTimeoutHours, jwtExpiresIn, } = auth;
+  // Partial/parsed configs may omit a knob; nothing to compare then.
+  if (sessionTimeoutHours === undefined || jwtExpiresIn === undefined) {
+    return null;
+  }
+
+  const sessionSec = sessionTimeoutHours * 3600;
+  const diffSec = Math.abs(sessionSec - jwtExpiresIn,);
+  if (diffSec <= SESSION_JWT_DIVERGENCE_TOLERANCE_SEC) { return null; }
+
+  return "AUTH CONFIG: auth.sessionTimeoutHours and auth.jwtExpiresIn diverge: " +
+    `sessionTimeoutHours = ${auth.sessionTimeoutHours}h (${sessionSec}s) vs ` +
+    `jwtExpiresIn = ${auth.jwtExpiresIn}s (${diffSec}s apart). The session row ` +
+    "TTL and the JWT lifetime should agree, or sessions will 401 while the " +
+    "JWT still verifies (or vice versa) with no error pointing at the skew. " +
+    "Fix: set both knobs to the same duration.";
+}
+
+/**
  * Validate database safety constraints.
  * Rejects SQLite for multi-instance deployments and warns on network filesystems.
  * @param config
@@ -95,6 +141,14 @@ export function isLoopbackHost(host: string,): boolean {
  */
 export function validateAuthSafety(config: Config,): void {
   const { auth, } = config;
+
+  // ── Coherence warning: session row TTL vs JWT lifetime ──
+  // Fires in both solo and multi-user modes: skew between the two knobs
+  // yields mystery 401s regardless of auth mode.
+  const divergence = sessionJwtDivergenceWarning(auth,);
+  if (divergence !== null) {
+    getLogger().child({ module: "config-safety", },).warn(divergence,);
+  }
 
   if (!auth.required) {
     // Solo mode auto-authenticates every request as the solo super-user

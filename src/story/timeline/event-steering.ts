@@ -193,22 +193,27 @@ export async function rollSteering(
   }
 
   const now = new Date().toISOString();
-  await db
-    .updateTable("world_event_steerings",)
-    .set({ status: SteeringStatus.Manifested, resolved_at: now, },)
-    .where("id", "=", id,)
-    .execute();
+  // Status flip and timeline append must commit together: a crash between two
+  // independent writes would mark the steering Manifested while the timeline
+  // event is lost (BUG-timeline-event-steering).
+  await db.transaction().execute(async (trx,) => {
+    await trx
+      .updateTable("world_event_steerings",)
+      .set({ status: SteeringStatus.Manifested, resolved_at: now, },)
+      .where("id", "=", id,)
+      .execute();
 
-  await appendTimelineEvents({
-    db,
-    worldId: row.world_id,
-    storyId: null,
-    events: [{
-      type: WorldEventType.WorldLoreUpdate,
-      timestamp: now,
-      description: row.description,
-      data: { steeringId: id, },
-    },],
+    await appendTimelineEvents({
+      db: trx,
+      worldId: row.world_id,
+      storyId: null,
+      events: [{
+        type: WorldEventType.WorldLoreUpdate,
+        timestamp: now,
+        description: row.description,
+        data: { steeringId: id, },
+      },],
+    },);
   },);
 
   return true;
@@ -246,23 +251,27 @@ export async function resolveSteering(
   }
 
   const now = new Date().toISOString();
-  await db
-    .updateTable("world_event_steerings",)
-    .set({ status: manifest ? SteeringStatus.Manifested : SteeringStatus.Dismissed, resolved_at: now, },)
-    .where("id", "=", id,)
-    .execute();
+  // Same atomicity contract as rollSteering: the dismissal/manifestation stamp
+  // and the appended timeline event commit or roll back together.
+  await db.transaction().execute(async (trx,) => {
+    await trx
+      .updateTable("world_event_steerings",)
+      .set({ status: manifest ? SteeringStatus.Manifested : SteeringStatus.Dismissed, resolved_at: now, },)
+      .where("id", "=", id,)
+      .execute();
 
-  if (manifest) {
-    await appendTimelineEvents({
-      db,
-      worldId: row.world_id,
-      storyId: null,
-      events: [{
-        type: WorldEventType.WorldLoreUpdate,
-        timestamp: now,
-        description: row.description,
-        data: { steeringId: id, },
-      },],
-    },);
-  }
+    if (manifest) {
+      await appendTimelineEvents({
+        db: trx,
+        worldId: row.world_id,
+        storyId: null,
+        events: [{
+          type: WorldEventType.WorldLoreUpdate,
+          timestamp: now,
+          description: row.description,
+          data: { steeringId: id, },
+        },],
+      },);
+    }
+  },);
 }

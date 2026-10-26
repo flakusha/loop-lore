@@ -8,9 +8,11 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { initAgeGate, } from "../../age-gate/controller";
 import type { Config, } from "../../config/schema/config";
 import { NsfwSection, } from "../../config/sections";
 import type { DB, } from "../../db";
+import { AgeGateMode, } from "../../db/enums";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -46,10 +48,15 @@ describe("resolveRequestContext", () => {
 
   beforeAll(async () => {
     createLogger({ level: "warn", },);
+    // The NSFW age verdict now delegates to the ageGate.* runtime config
+    // (BUG-two-gates-age-gate-keys) — enable it so the age checks fire.
+    initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
     ({ db, } = await createTestDb());
   },);
 
   afterAll(async () => {
+    // Reset the global age-gate singleton so later files see the default-off.
+    initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
     await db.destroy();
   },);
 

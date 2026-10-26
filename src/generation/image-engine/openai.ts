@@ -22,7 +22,7 @@ export async function generateOpenAI(
   const url = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/v1/images/generations`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(sdConfig.apiKey && { Authorization: `Bearer ${sdConfig.apiKey}`, }),
+    ...((opts.apiKey ?? sdConfig.apiKey) && { Authorization: `Bearer ${opts.apiKey ?? sdConfig.apiKey}`, }),
   };
 
   const payload = safeJsonStringify({

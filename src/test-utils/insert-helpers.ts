@@ -476,7 +476,7 @@ export async function insertUserApiKeys(
   user_id: string,
   provider_name: string,
   api_key_encrypted: string,
-  opts?: { id?: string; created_at?: string; updated_at?: string },
+  opts?: { id?: string; created_at?: string; updated_at?: string; key_version?: number },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -4168,6 +4168,7 @@ export async function insertMeshPeers(
     allowed_workload_classes?: string;
     sticky_enabled?: number;
     shared_token_enc?: string | null;
+    key_version?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = opts as { id?: string };

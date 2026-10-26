@@ -899,6 +899,7 @@ export const UserApiKeysSchema = t.Object({
   api_key_encrypted: t.String(),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  key_version: t.Optional(t.Number(),),
 },);
 
 // ── users ────────────────────────────────────────────
@@ -2830,6 +2831,7 @@ export const MeshPeersSchema = t.Object({
   allowed_workload_classes: t.Optional(t.String(),),
   sticky_enabled: t.Optional(t.Number(),),
   shared_token_enc: t.Optional(t.String(),),
+  key_version: t.Optional(t.Number(),),
 },);
 
 // ── mesh_negotiations ────────────────────────────────────────────

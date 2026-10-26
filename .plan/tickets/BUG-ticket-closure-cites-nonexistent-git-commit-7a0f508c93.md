@@ -7,6 +7,7 @@
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-C verify + fix pass] Citation corrected: BOTH `7a0f508c93` and the "real commit" `b53b1b7b8` named in this ticket fail `git cat-file -t` in this odb — the b53b1b7b8 citation was itself invalid. Actual fix commit located via `git log --all --grep` and verified dev-reachable: `1c62abd4278fbcd097b773e1bae1684a166b8e7f` ("fix(e2e): export E2E_SAFEGUARD=1 in developer-facing e2e scripts", 2026-10-10; identical twin f829977acd0f...). Correction recorded in `.plan/tickets/BUG-test-e2e-env-default-mismatch.md` (## Closure citation correction). FOLLOW-UP still open: no gate validates closure-cited commit SHAs (plan:validate has no sha-resolve sub-check; `giwt sync-reconcile gitObjectExists` covers registry git_issue refs only) — needs the `git-sha-resolve` sub-check proposed below.
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-tooling-improvement

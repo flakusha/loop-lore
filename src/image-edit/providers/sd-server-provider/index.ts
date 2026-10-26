@@ -12,14 +12,18 @@
  * families) threaded with an explicit `SDServerHost` handle. The class is kept
  * so callers can `new SDServerEditProvider()`.
  */
+import { extractImageMetadata, } from "../../../assets/metadata";
+import { createAsset, linkAsset, } from "../../../assets/service";
 import { loadConfig, } from "../../../config/load";
 import {
   type ImageProviderConfig,
   pickSdProvider,
 } from "../../../config/schema";
+import { getDatabase, } from "../../../db";
 import type { ImageApiFamily, } from "../../../db/enums-config";
 import { getLogger, } from "../../../logger";
 import { safeFetch, } from "../../../utils";
+import { mustFromBase64, } from "../../../utils/safe-buffer";
 import { validateProviderUrl, } from "../../../utils/url-validation";
 import type {
   ImageEditBackend,
@@ -31,6 +35,7 @@ import type {
   SDServerCapabilities,
   WorkflowTemplate,
 } from "../../types";
+import type { SdServerRawImage, } from "./families";
 import {
   executeImg2Img as executeImg2ImgDispatch,
   executeTxt2Img as executeTxt2ImgDispatch,
@@ -153,23 +158,86 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
 
     onProgress?.({ status: "pending", message: "Building request...", },);
 
-    switch (template.category) {
-      case "txt2img": {
-        return executeTxt2ImgDispatch(this, request.params, cfg, onProgress,);
+    // Families return raw wire images; THIS method owns persistence (same
+    // contract as the ComfyUI provider): every returned URL resolves to a
+    // real asset row created BEFORE the run reports completion.
+    const config = loadConfig();
+    const database = getDatabase();
+    const uploadDir = config.assets.uploadDir;
+
+    const dispatch = (): Promise<SdServerRawImage[]> => {
+      switch (template.category) {
+        case "txt2img": {
+          return executeTxt2ImgDispatch(this, request.params, cfg, onProgress,);
+        }
+
+        case "img2img": {
+          return executeImg2ImgDispatch(this, request.params, cfg, onProgress,);
+        }
+
+        case "upscale": {
+          return executeUpscaleDispatch(this, request.params, onProgress,);
+        }
+
+        case "inpaint":
+        case "controlnet": {
+          throw new Error(`sd-server does not support category: ${template.category}`,);
+        }
+      }
+    };
+
+    const rawImages = await dispatch();
+
+    onProgress?.({ status: "running", progress: 0.9, message: "Persisting images...", },);
+
+    const results: ImageEditResult[] = [];
+    for (const [i, raw,] of rawImages.entries()) {
+      const buffer = mustFromBase64(raw.b64,);
+      const ext = (raw.mimeType.split("/",)[1] ?? "png").toLowerCase();
+      const meta = extractImageMetadata(buffer,);
+      const filename = `sdserver-${template.id}-${Date.now()}-${i}.${ext === "jpeg" ? "jpg" : ext}`;
+
+      const { asset, } = await createAsset({
+        database,
+        input: {
+          ownerId: opts.ownerId,
+          filename,
+          mimeType: raw.mimeType,
+          assetType: "image",
+          sizeBytes: buffer.length,
+          buffer,
+          altText: `sd-server ${template.name}: ${meta.width}x${meta.height} ${meta.format}`,
+          // Each sd-server run is a new item; identical bytes must not
+          // collapse onto an earlier asset row (ComfyUI provider parity).
+          dedupe: false,
+        },
+        uploadDir,
+      },);
+
+      if (request.chatId) {
+        await linkAsset({
+          database,
+          assetId: asset.id,
+          link: { entityType: "chat", entityId: request.chatId, label: template.name, },
+        },);
       }
 
-      case "img2img": {
-        return executeImg2ImgDispatch(this, request.params, cfg, onProgress,);
+      if (request.messageId) {
+        await linkAsset({
+          database,
+          assetId: asset.id,
+          link: { entityType: "message", entityId: request.messageId, label: template.name, },
+        },);
       }
 
-      case "upscale": {
-        return executeUpscaleDispatch(this, request.params, onProgress,);
-      }
-
-      case "inpaint":
-      case "controlnet": {
-        throw new Error(`sd-server does not support category: ${template.category}`,);
-      }
+      results.push({
+        id: asset.id,
+        filename: asset.filename,
+        url: `/api/assets/${asset.id}/raw`,
+        mimeType: asset.mime_type,
+      },);
     }
+
+    return results;
   }
 }

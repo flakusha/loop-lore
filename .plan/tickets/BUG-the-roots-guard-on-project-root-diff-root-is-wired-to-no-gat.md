@@ -4,6 +4,7 @@
 # BUG: The roots guard on PROJECT_ROOT/DIFF_ROOT is wired to no gate and no CI job
 
 **Status:** Done
+**Status Note:** [2026-10-26 fix pass] WIRED. New blocking gate `"check - roots": "bun test scripts/check/parallel/roots.test.ts"` added to scripts/check/parallel/gate-table.mjs (NOT folded into the coverage gate, per this ticket). Verified BOTH directions: `bun run check --gates "check - roots"` → PASS with the correct hop; with PROJECT_ROOT sabotaged to the pre-split one-level hop the check fails (GPG pre-flight exit 1, the ticket's documented mode) AND `bun test scripts/check/parallel/roots.test.ts` directly fails 6/8 — the gate executes the real guard, it is not decorative. Hop restored clean afterwards.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline

@@ -104,7 +104,29 @@ function coverageCommand() {
     } --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && ${scriptsRun}bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${skipNote}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
-  if (SCOPED_DIFF_SRC_FILES.length === 0) { return NOOP_OK; }
+  // BUG-2d6dcf3 companion: the scoped run below executes each diff test file
+  // in its own process (--isolate), so it is structurally blind to collisions
+  // that only appear when two files SHARE a process (observed 2026-10-01:
+  // `bun test src/image-edit/` red while every scoped file passed in
+  // isolation). Before the scoped run, each touched subsystem's WHOLE test
+  // directory runs once unscoped — no --isolate — so presence-based
+  // intra-directory collisions surface before finalize while the full suite
+  // stays expensive. E2E_SAFEGUARD=1 for the same reason as the scoped run:
+  // a src/ test may transitively load the e2e helpers.
+  //
+  // Targets derive from CHANGED_FILES (all src/ entries), NOT from
+  // SCOPED_DIFF_SRC_FILES: that list excludes *.test.ts, so a TEST-ONLY diff
+  // — the exact collision scenario — would otherwise produce zero companion
+  // targets and the guard would silently not exist where it matters most.
+  const companionTargets = subsystemTestTargets(CHANGED_FILES,);
+  const companionRun = companionTargets.length > 0
+    ? `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${companionTargets.join(" ",)}`
+    : "";
+  // A test-only diff has no src implementation file to floor, so the scoped
+  // lcov branch would NOOP — but the collision guard must still run.
+  if (SCOPED_DIFF_SRC_FILES.length === 0) {
+    return companionRun.length > 0 ? companionRun : NOOP_OK;
+  }
   // BUG-37a3763: floor diff-touched files individually — a scoped lcov can
   // never satisfy whole-module floors (bun emits records only for files the
   // scoped tests loaded).
@@ -119,9 +141,9 @@ function coverageCommand() {
   // anything but an in-memory DB / /tmp uploads without it. It was missing,
   // so a scoped run that reached the e2e helpers failed on the safeguard
   // rather than on the change under test.
-  return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
+  return [companionRun, `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
     filteredPaths.join(" ",)
-  } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}${skipNote}`;
+  } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}${skipNote}`,].filter((c,) => c.length > 0,).join(" && ");
 }
 
 /**
@@ -147,6 +169,27 @@ function walkTestFiles(root, dir,) {
     }
   }
   return out.sort();
+}
+
+/**
+ * BUG-2d6dcf3: derive the unscoped companion targets from the diff's own
+ * src/ files. Each `src/<mod>/...` path collapses to its subsystem directory
+ * (`src/<mod>/`); a test file directly under `src/` has no subsystem and runs
+ * by itself. Derived from SCOPED_DIFF_SRC_FILES rather than
+ * SCOPED_COVERAGE_PATHS, which can also carry tests/e2e/** entries that must
+ * not be re-run unscoped here.
+ *
+ * @param {string[]} files - repo-relative diff files under src/
+ * @returns {string[]} sorted dir/file targets for a shared-process run
+ */
+function subsystemTestTargets(files,) {
+  const targets = new Set();
+  for (const f of files) {
+    if (!f.startsWith("src/",)) { continue; }
+    const segments = f.split("/",);
+    targets.add(segments.length > 2 ? `${segments[0]}/${segments[1]}/` : f);
+  }
+  return [...targets,].sort();
 }
 
 checks["coverage - per-module line %"] = coverageCommand();

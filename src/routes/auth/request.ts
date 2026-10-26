@@ -7,7 +7,7 @@ import {
   type RateLimitResult,
 } from "../../middleware/rate-limit";
 import { HttpStatus, } from "../http-utils";
-import { escapeHtml, } from "./responses";
+import { errorJson, escapeHtml, wantsJson, } from "./responses";
 /**
  * Parse the registration/login form body — returns null when malformed.
  * BUG-auth-login-silent-fail / BUG-auth-register-silent-fail: the previous
@@ -54,26 +54,45 @@ async function parseCredentials(
 /**
  * 429 rate-limit response with X-RateLimit-* + Retry-After headers
  * (BUG-429-responses-omit-retry-after-and-x-ratelimit-headers).
+ *
+ * Content-negotiates like every other auth error
+ * (BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-):
+ * `wantsJson` clients receive the shared JSON error envelope, htmx/browser
+ * form posts keep the inline HTML body. Both branches carry the full
+ * rate-limit header set so backoff logic works for either content type.
  * @param options
+ * @param options.request - incoming request, consulted for content negotiation
  * @param options.limit - limiter decision carrying the reset window
  * @param options.t - translator; when absent `fallbackMessage` is shown
  * @param options.fallbackMessage - English fallback for the shared key
- * @returns the 429 HTML response carrying the rate-limit headers
+ * @returns the negotiated 429 response carrying the rate-limit headers
  */
-function rateLimitHtml(
-  options: { limit: RateLimitResult; t?: TranslatorFn; fallbackMessage: string },
+function rateLimitResponse(
+  options: { request: Request; limit: RateLimitResult; t?: TranslatorFn; fallbackMessage: string },
 ): Response {
-  const { limit, t, fallbackMessage, } = options;
+  const { request, limit, t, fallbackMessage, } = options;
+  const headers = rateLimitHeaders(limit, limit.resetSec,);
+  if (wantsJson(request,)) {
+    const body = errorJson(HttpStatus.TooManyRequests, t ? "errors.rateLimited" : fallbackMessage, t,);
+    const merged = new Headers(body.headers,);
+    for (const [name, value,] of Object.entries(headers,)) {
+      merged.set(name, value,);
+    }
+
+    return new Response(body.body, { status: body.status, headers: merged, },);
+  }
+
+  const resolved = t ? t("errors.rateLimited",) : fallbackMessage;
   return new Response(
-    `<p class="error-msg">${escapeHtml(t ? t("errors.rateLimited",) : fallbackMessage,)}</p>`,
+    `<p class="error-msg">${escapeHtml(resolved,)}</p>`,
     {
       status: HttpStatus.TooManyRequests,
       headers: {
         "Content-Type": "text/html; charset=utf-8",
-        ...rateLimitHeaders(limit, limit.resetSec,),
+        ...headers,
       },
     },
   );
 }
 
-export { parseCredentials, rateLimitHtml, };
+export { parseCredentials, rateLimitResponse, };

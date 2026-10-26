@@ -59,7 +59,7 @@ async function requireWorldAccess(
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { worlds: { ":worldId": { ...; }; }; }; } & { ...; }, { ...; }, { ...; }>}
  */
-export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api",) {
+export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api/v1",) {
   const { database, } = opts;
 
   return (

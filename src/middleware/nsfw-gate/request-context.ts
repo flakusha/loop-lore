@@ -182,7 +182,7 @@ export async function resolveRequestContext(args: RequestContextArgs,): Promise<
  * @param excludeUserId
  */
 function findBlockedParticipantFrom(
-  gateConfig: { allowNsfw: boolean; nsfwMinAge: number },
+  gateConfig: { allowNsfw: boolean },
   inputs: Map<string, GateInputs>,
   participantIds: string[],
   excludeUserId: string,

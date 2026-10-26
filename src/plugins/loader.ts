@@ -20,6 +20,7 @@ import { PluginStatus } from "../db/enums";
 import type { DB, PluginState } from "../db/schema";
 import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
+import { normalizePluginRoutePath, } from "./registry-policy";
 import { mergePluginConfig } from "./config-merge";
 import { defaultPluginStatus, readStoredPluginConfig, } from "./config-store";
 import { checkRouteAccess, type PluginCaller, } from "./route-access";
@@ -400,8 +401,12 @@ export async function dispatchPluginRoute(
   { request, caller, t, }: DispatchPluginRouteOpts,
 ): Promise<Response | null> {
   const url = new URL(request.url);
+  // Routes are registered normalized (trailing slash collapsed), so the
+  // incoming path is normalized the same way before the exact compare
+  // (BUG-fix-plugins-define-plugin-route-matching-semantics).
+  const pathname = normalizePluginRoutePath(url.pathname,);
   for (const route of registry.getEnabledRoutes()) {
-    if (url.pathname !== route.path || request.method !== route.method) { continue; }
+    if (pathname !== route.path || request.method !== route.method) { continue; }
 
     const denial = checkRouteAccess({ route, request, caller, t, },);
     if (denial) { return denial; }

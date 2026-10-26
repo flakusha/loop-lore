@@ -6,7 +6,7 @@ import {
   createRateLimiter,
   type RateLimiter,
 } from "../../middleware/rate-limit";
-import { parseCredentials, rateLimitHtml, } from "./request";
+import { parseCredentials, rateLimitResponse, } from "./request";
 import {
   errorHtml,
   errorJson,
@@ -182,7 +182,7 @@ export {
   getTokenFromCookie,
   loginLimiter,
   parseCredentials,
-  rateLimitHtml,
+  rateLimitResponse,
   registerLimiter,
   setTokenCookie,
   TOKEN_COOKIE,

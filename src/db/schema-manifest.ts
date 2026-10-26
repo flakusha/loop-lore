@@ -811,6 +811,7 @@ export const SCHEMA = new SchemaManifest()
     allowed_workload_classes: col("text", { notNull: true, hasDefault: true, },),
     sticky_enabled: col("integer", { notNull: true, hasDefault: true, },),
     shared_token_enc: col("text",),
+    key_version: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("mesh_reservations", {
     id: col("text", { primaryKey: true, },),
@@ -2910,6 +2911,7 @@ export const SCHEMA = new SchemaManifest()
     api_key_encrypted: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    key_version: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("users", {
     id: col("text", { primaryKey: true, },),

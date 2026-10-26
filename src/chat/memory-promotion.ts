@@ -79,6 +79,7 @@ export async function storeMemoriesWithScope(
         confidence: memory.confidence,
         importance: memory.importance,
         keywords: jsonStringifyOr(memory.keywords,),
+        emotion_impact: memory.emotionImpact ? jsonStringifyOr(memory.emotionImpact,) : null,
         source_chat_id: chatId,
         scope,
         privacy: "shared",

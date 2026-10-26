@@ -31,7 +31,7 @@ import { deriveChatKeyForChat, getSmk, } from "../crypto";
 import { AssetAlphaStatus, AssetVisibility, TransformContext, } from "../db/enums";
 import type { AssetLinkEntity, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { getLogger, } from "../logger";
+import { getChildLogger, } from "../logger";
 import {
   badRequestResponse,
   conflictResponse,
@@ -88,9 +88,11 @@ import { isSignedUrlAction, resolveSignedUrlSecret, signAssetUrl, } from "./sign
  */
 export function transformErrorResponse(err: unknown,): Response {
   if (err instanceof InvalidTransformError) { return badRequestResponse(err.message,); }
-  getLogger()
-    .child({ module: "assets.controller", },)
-    .error("Asset transform upsert failed", err instanceof Error ? err : new Error(String(err,),),);
+  // getChildLogger is memoised per name — no per-statement .child() construction.
+  getChildLogger("assets.controller",)?.error(
+    "Asset transform upsert failed",
+    err instanceof Error ? err : new Error(String(err,),),
+  );
 
   return internalErrorResponse("Transform could not be saved",);
 }
@@ -130,6 +132,22 @@ export async function requireAssetOwner(
 }
 
 /**
+ * Narrow the auth-derived context fields (`userId` / `userRole`) that the
+ * app-level auth middleware sets at runtime. They are statically invisible
+ * on this self-contained Elysia instance, so they are validated structurally
+ * instead of casting the whole context away (BUG-route-bootstrap-as-any).
+ * @param ctx - Elysia route context.
+ * @returns Auth fields, null when absent or of the wrong type.
+ */
+function authOf(ctx: object,): { userId: string | null; userRole: string | null } {
+  const candidate = ctx as { userId?: unknown; userRole?: unknown };
+  return {
+    userId: typeof candidate.userId === "string" ? candidate.userId : null,
+    userRole: typeof candidate.userRole === "string" ? candidate.userRole : null,
+  };
+}
+
+/**
  * @param {{ database: Kysely<DB>; config: Config }} { database, config, }
  * @param {unknown} prefix
  * @throws {Error}
@@ -153,8 +171,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const entityType = searchParams.get("entity_type",) ?? undefined;
         const entityId = searchParams.get("entity_id",) ?? undefined;
         const label = searchParams.get("label",) ?? undefined;
-        const userId = (ctx as any).userId as string | null ?? null;
-        const userRole = (ctx as any).userRole as string | null ?? null;
+        const { userId, userRole, } = authOf(ctx,);
 
         const result = await listAssets(database, {
           page,
@@ -176,8 +193,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       // route directly on the parent app avoids this issue.
       // ── Single asset routes ──────────────────────────
       .get(`${prefix}/assets/:id`, async (ctx,) => {
-        const userId = (ctx as any).userId as string | null ?? null;
-        const userRole = (ctx as any).userRole as string | null ?? null;
+        const { userId, userRole, } = authOf(ctx,);
         const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);
         if (resolved instanceof Response) { return resolved; }
         // Surface the matted cut-out id when one exists so renderers can opt
@@ -245,11 +261,12 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           return badRequestResponse("Invalid context",);
         }
 
+        const { userId, userRole, } = authOf(ctx,);
         const resolved = await resolveAsset(
           database,
           ctx.params.id,
-          (ctx as any).userId ?? null,
-          (ctx as any).userRole ?? null,
+          userId,
+          userRole,
         );
 
         if (resolved instanceof Response) { return resolved; }
@@ -287,12 +304,13 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       .get(`${prefix}/assets/:id/raw`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
         const chatId = searchParams.get("chatId",) ?? undefined;
+        const { userId, userRole, } = authOf(ctx,);
         return handleServeRaw({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
-          actorId: (ctx as any).userId ?? null,
-          actorRole: (ctx as any).userRole ?? null,
+          actorId: userId,
+          actorRole: userRole,
           chatId,
           ...signedUrlAuth(searchParams, "raw", config,),
         },);
@@ -300,37 +318,40 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       .get(`${prefix}/assets/:id/download`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
         const chatId = searchParams.get("chatId",) ?? undefined;
+        const { userId, userRole, } = authOf(ctx,);
         return handleDownload({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
-          actorId: (ctx as any).userId ?? null,
-          actorRole: (ctx as any).userRole ?? null,
+          actorId: userId,
+          actorRole: userRole,
           chatId,
           ...signedUrlAuth(searchParams, "download", config,),
         },);
       },)
       .get(`${prefix}/assets/:id/thumb`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
+        const { userId, userRole, } = authOf(ctx,);
         return handleServeCompressed({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
           variant: "thumb",
-          actorId: (ctx as any).userId ?? null,
-          actorRole: (ctx as any).userRole ?? null,
+          actorId: userId,
+          actorRole: userRole,
           ...signedUrlAuth(searchParams, "thumb", config,),
         },);
       },)
       .get(`${prefix}/assets/:id/compressed`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
+        const { userId, userRole, } = authOf(ctx,);
         return handleServeCompressed({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
           variant: "compressed",
-          actorId: (ctx as any).userId ?? null,
-          actorRole: (ctx as any).userRole ?? null,
+          actorId: userId,
+          actorRole: userRole,
           ...signedUrlAuth(searchParams, "compressed", config,),
         },);
       },)
@@ -345,8 +366,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         // fetch public bytes through the direct serve path instead.
         const authedId = requireUserId(ctx,);
         if (typeof authedId !== "string") { return authedId; }
-        const userId = (ctx as any).userId as string | null ?? null;
-        const userRole = (ctx as any).userRole as string | null ?? null;
+        const { userId, userRole, } = authOf(ctx,);
         const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);
         if (resolved instanceof Response) { return resolved; }
 
@@ -514,9 +534,10 @@ export async function handleUpload({
   try {
     formData = await request.formData();
   } catch (error) {
-    getLogger()
-      .child({ module: "assets.controller", },)
-      .error("Failed to parse multipart form data", error instanceof Error ? error : new Error(String(error,),),);
+    getChildLogger("assets.controller",)?.error(
+      "Failed to parse multipart form data",
+      error instanceof Error ? error : new Error(String(error,),),
+    );
 
     return badRequestResponse("Failed to parse multipart form data",);
   }
@@ -557,12 +578,10 @@ export async function handleUpload({
       try {
         chatKey = await deriveChatKeyForChat(database, chatId, smk,);
       } catch (error) {
-        getLogger()
-          .child({ module: "assets.controller", },)
-          .error(
-            "Chat key derivation failed; refusing to store the upload unencrypted",
-            error instanceof Error ? error : new Error(String(error,),),
-          );
+        getChildLogger("assets.controller",)?.error(
+          "Chat key derivation failed; refusing to store the upload unencrypted",
+          error instanceof Error ? error : new Error(String(error,),),
+        );
 
         return internalErrorResponse("Could not encrypt the upload for this chat",);
       }

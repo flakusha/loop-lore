@@ -5,6 +5,7 @@
 import type { Kysely, } from "kysely";
 import { RelationshipsService, } from "../../../characters/services/relationships-service";
 import type { DB, } from "../../../db/schema";
+import { parseEmotionImpact, } from "../../../memory/emotion-impact";
 import type { ProvisionContext, } from "../../../memory/provision";
 import type { MemoryEntry, } from "../../../memory/types";
 import { safeJsonParse, } from "../../../utils";
@@ -142,6 +143,7 @@ export async function fetchActorMemories(
     scope: (r.scope ?? "character") as MemoryEntry["scope"],
     privacy: (r.privacy ?? "shared") as MemoryEntry["privacy"],
     shareability: r.shareability,
+    emotionImpact: parseEmotionImpact(r.emotion_impact,),
     expiresAt: r.expires_at ?? undefined,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
