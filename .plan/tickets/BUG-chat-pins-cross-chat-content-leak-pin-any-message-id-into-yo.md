@@ -3,7 +3,7 @@
 
 # BUG: chat-pins cross-chat content leak: pin any message id into your own chat
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -35,6 +35,6 @@ On POST, resolve the message and require `message.chat_id === chatId` (reuse `re
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
