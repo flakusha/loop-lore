@@ -143,7 +143,7 @@ export async function listUsableBattleItems(
  * @param deps - Service dependencies
  * @param params - Battle, actor, target and item resolution
  * @returns The consumed item + updated roster
- * @throws {Error} When the actor/target/item is unusable in this battle or the stock was concurrently modified.
+ * @throws {Error} When the actor/target/item is unusable in this battle, the stack vanished, or the row was modified inside the consuming transaction.
  */
 export async function useBattleItem(
   deps: RpgServiceDeps,
@@ -204,7 +204,7 @@ export async function useBattleItem(
   await deps.database.transaction().execute(async (trx,) => {
     const trxDeps: RpgServiceDeps = { ...deps, database: trx, };
 
-    remaining = await consumeInventoryUnit(trxDeps, item.id, item.quantity,);
+    remaining = await consumeInventoryUnit(trxDeps, item.id,);
 
     await persistBattle(
       trxDeps,
@@ -231,25 +231,34 @@ export async function useBattleItem(
 
 /**
  * Decrement a stack by one; delete the row when it empties.
- * @param deps
- * @param itemId
- * @param current
+ *
+ * The stock is re-read INSIDE the caller's transaction instead of reusing the
+ * quantity seen by the pre-transaction listing: a concurrent use between that
+ * listing and this write must not make the battle action fail, and the
+ * conditional `quantity = current` write still detects a modification landing
+ * inside this transaction (BUG-consumeinventoryunit-uses-stale-quantity-toctou).
+ * @param deps - Service dependencies (a transaction handle when called from the battle flow)
+ * @param itemId - The `actor_items` row to consume one unit from
  * @returns The remaining quantity (0 when the row was deleted)
- * @throws {Error} When the item row was concurrently modified.
+ * @throws {Error} When the item is no longer in inventory or its row was concurrently modified.
  */
 async function consumeInventoryUnit(
   deps: RpgServiceDeps,
   itemId: string,
-  current: number,
 ): Promise<number> {
-  if (current <= 1) {
-    const owner = await deps.database
-      .selectFrom("actor_items",)
-      .select("actor_id",)
-      .where("id", "=", itemId,)
-      .executeTakeFirst();
+  const row = await deps.database
+    .selectFrom("actor_items",)
+    .select(["quantity", "actor_id",],)
+    .where("id", "=", itemId,)
+    .executeTakeFirst();
 
-    if (owner?.actor_id) { await triggerItemOutfitChange(deps.database, owner.actor_id, itemId,); }
+  const current = row?.quantity ?? 0;
+  if (current <= 0) {
+    throw new Error(`Item ${itemId} is no longer in inventory`,);
+  }
+
+  if (current <= 1) {
+    if (row?.actor_id) { await triggerItemOutfitChange(deps.database, row.actor_id, itemId,); }
 
     const result = await deps.database
       .deleteFrom("actor_items",)

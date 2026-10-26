@@ -8,7 +8,7 @@
  * `serializeBattle`) they are built from.
  */
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
-import type { Kysely, } from "kysely";
+import { type Kysely, type KyselyPlugin, type RootOperationNode, TableNode, } from "kysely";
 import { splitItemArgs, } from "../../assistant/commands/battle-actions.js";
 import {
   actingCombatant,
@@ -51,6 +51,38 @@ const stats: StatBlock = { str: 16, dex: 14, con: 12, int: 10, wis: 8, cha: 6, }
 /** Metadata JSON encoding an on-use heal effect. */
 const healMeta = (amount: number,): string =>
   JSON.stringify({ effects: [{ kind: "on_use", action: "heal", payload: { amount, }, },], },);
+
+/** True when `node` is a SELECT whose FROM includes `actor_items`. */
+function selectsActorItems(node: RootOperationNode,): boolean {
+  if (node.kind !== "SelectQueryNode") { return false; }
+  return node.from?.froms.some((from,) => TableNode.is(from,) && JSON.stringify(from,).includes("actor_items",)) ??
+    false;
+}
+
+/**
+ * Fire `sideEffect` right after the first `actor_items` SELECT completes — the
+ * deterministic stand-in for a concurrent consumer that commits between the
+ * battle action's inventory listing and its own write. The write goes through
+ * the raw handle: a nested Kysely query would re-enter the driver.
+ */
+function interleaveAfterActorItemsRead(sideEffect: () => void,): KyselyPlugin {
+  let armed = false;
+  let fired = false;
+  return {
+    transformQuery: (args,) => {
+      if (!fired && selectsActorItems(args.node,)) { armed = true; }
+      return args.node;
+    },
+    transformResult: (args,) => {
+      if (armed && !fired) {
+        fired = true;
+        sideEffect();
+      }
+
+      return Promise.resolve(args.result,);
+    },
+  };
+}
 
 /**
  * @param id
@@ -319,6 +351,103 @@ describe("battle item + social service", () => {
     } finally {
       sqlite.exec("DROP TRIGGER fail_battle_persist_tx;",);
     }
+  });
+
+  it("useBattleItem consumes the stock it finds inside the transaction (BUG-consumeinventoryunit-uses-stale-quantity-toctou)", async () => {
+    const actorId = uid();
+    await seedActor(db, createdBy, actorId,);
+    const itemId = "dr-race";
+    await insertActorItems(db, actorId, "Healing Draught", "consumable" as never, {
+      id: itemId,
+      quantity: 2,
+      metadata: healMeta(6,),
+    },);
+
+    const battle = await startBattle({ database: db, }, {
+      chatId: uid(),
+      createdBy,
+      combatants: [makeCombatant(actorId, "Alice", false, 20,), makeCombatant("orc-race", "Orc", true, 15,),],
+    },);
+
+    const orc = battle.combatants.find((c,) => c.id === "orc-race")!;
+    orc.hp = 10;
+    await persistBattle(
+      { database: db, },
+      battle.id,
+      battle.round,
+      battle.turnIndex,
+      battle.combatants,
+      battle.log,
+      BattleStatus.Active,
+    );
+
+    // A concurrent consumer takes one unit after the battle action listed the
+    // inventory but before its transaction reads the stock. The consumption must
+    // use the quantity observed inside the transaction, not the stale one.
+    const raced = db.withPlugin(interleaveAfterActorItemsRead(
+      () => {
+        sqlite.run("UPDATE actor_items SET quantity = 1 WHERE id = ?", [itemId,],);
+      },
+    ),);
+
+    const result = await useBattleItem({ database: raced, }, {
+      battleId: battle.id,
+      actorId,
+      targetId: "orc-race",
+      itemId: "Healing Draught",
+    },);
+
+    // The last unit was consumed, so the stack row is gone.
+    expect(result.item.quantity,).toBe(0,);
+    const row = await db
+      .selectFrom("actor_items",)
+      .select(["quantity",],)
+      .where("id", "=", itemId,)
+      .executeTakeFirst();
+
+    expect(row,).toBeUndefined();
+  });
+
+  it("useBattleItem reports a vanished stack instead of a concurrent-modification error", async () => {
+    const actorId = uid();
+    await seedActor(db, createdBy, actorId,);
+    const itemId = "dr-gone";
+    await insertActorItems(db, actorId, "Healing Draught", "consumable" as never, {
+      id: itemId,
+      quantity: 2,
+      metadata: healMeta(6,),
+    },);
+
+    const battle = await startBattle({ database: db, }, {
+      chatId: uid(),
+      createdBy,
+      combatants: [makeCombatant(actorId, "Alice", false, 20,), makeCombatant("orc-gone", "Orc", true, 15,),],
+    },);
+
+    const orc = battle.combatants.find((c,) => c.id === "orc-gone")!;
+    orc.hp = 10;
+    await persistBattle(
+      { database: db, },
+      battle.id,
+      battle.round,
+      battle.turnIndex,
+      battle.combatants,
+      battle.log,
+      BattleStatus.Active,
+    );
+
+    const raced = db.withPlugin(interleaveAfterActorItemsRead(
+      () => {
+        sqlite.run("DELETE FROM actor_items WHERE id = ?", [itemId,],);
+      },
+    ),);
+
+    await expect(useBattleItem({ database: raced, }, {
+      battleId: battle.id,
+      actorId,
+      targetId: "orc-gone",
+      itemId: "Healing Draught",
+    },),).rejects.toThrow(`Item ${itemId} is no longer in inventory`,);
   });
 
   it("useBattleItem rejects unknown actors, targets, and items", async () => {
