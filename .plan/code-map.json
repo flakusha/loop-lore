@@ -8683,6 +8683,12 @@
       "source": ".plan/tickets/BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just.md"
     }
   ],
+  "src/characters/shared/character-systems-utils.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md"
+    }
+  ],
   "src/characters/spec.test.ts": [
     {
       "kind": "epic",
