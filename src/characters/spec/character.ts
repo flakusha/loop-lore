@@ -209,6 +209,13 @@ export interface CanonicalCharacter {
   creator?: string;
   creator_notes?: string;
   character_version?: string;
+  /**
+   * Card timestamps in epoch milliseconds, carried through import → export so a
+   * re-export keeps the author's original dates. Absent when the source card
+   * carried none; CCv3 export then falls back to `Date.now()`.
+   */
+  creation_date?: number;
+  modification_date?: number;
   nickname?: string | null;
   content_rating?: ContentRating;
   nsfw_categories?: string[];

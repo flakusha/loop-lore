@@ -33,6 +33,23 @@ describe("detectAvatarChangeIntent", () => {
     expect(detectAvatarChangeIntent("he walks away", config,),).toBeNull();
   });
 
+  test("skips empty and whitespace-only patterns", () => {
+    // An empty pattern is a substring of every message; matching it would pin
+    // the avatar to that emotion for the whole session.
+    const withEmpty: AvatarTemplateConfig = {
+      merge: "replace",
+      emotions: {},
+      intentPatterns: [
+        { pattern: "", emotion: "blank", },
+        { pattern: "   ", emotion: "spaces", },
+        { pattern: "smile", emotion: "happy", },
+      ],
+    };
+
+    expect(detectAvatarChangeIntent("he walks away", withEmpty,),).toBeNull();
+    expect(detectAvatarChangeIntent("she smiles", withEmpty,),).toBe("happy",);
+  });
+
   test("returns the first matching emotion in config order", () => {
     const ordered: AvatarTemplateConfig = {
       merge: "replace",

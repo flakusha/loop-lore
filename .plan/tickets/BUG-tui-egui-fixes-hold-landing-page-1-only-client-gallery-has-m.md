@@ -4,6 +4,8 @@
 # BUG: tui-egui-fixes hold landing: page-1-only client, gallery has_more regression, TUI stale-chat race, unawaited stamp write
 
 **Status:** Done
+**Status Note:** [2026-10-26 final pass] NOT-FIXED — untouched by this pass; no partial edits left behind. B1 (egui `fetch_messages` reads only page 1 of `api::messages_url(chat_id, 1)`; `native/loop-lore-egui/src/app.rs` still present at 33.6K with no pagination-aware re-fetch), B2 (gallery `has_more` false under filters), B3 (TUI `loadMessages` stale-chat guard) and B4 (`writeEguiStamp` fire-and-forget) all still need their own slice with Rust + `src/tui` + `src/build/egui-artifact.ts` verification; nothing here can be honestly closed from a TypeScript-only pass, and the ticket's own `**Status:** Done` is not supported by evidence in this tree.
+
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement

@@ -5,6 +5,7 @@ import {
   detectPassToken,
   extractMentionedActorIds,
   parseInitiativeFlag,
+  parseMentions,
 } from "../../../group-chat/mention-parser";
 import type { PreSendValidation, } from "./send-gate";
 
@@ -34,13 +35,12 @@ export function validatePreSend(
       .map((p,) => p.displayName.toLowerCase()),
   );
 
-  const tokenRegex = /@([A-Za-z0-9_-]+)/g;
+  // Reuse the server's parser instead of a second copy of the token regex: the
+  // two copies had already drifted (no word-boundary guard, so `bob@example.com`
+  // reported an unresolved mention of `example`).
   const unresolvedMentions: string[] = [];
-  let match = tokenRegex.exec(text,);
-  while (match !== null) {
-    const name = match[1]!;
-    if (!resolvedNames.has(name.toLowerCase(),)) { unresolvedMentions.push(name,); }
-    match = tokenRegex.exec(text,);
+  for (const mention of parseMentions(text,)) {
+    if (!resolvedNames.has(mention.name.toLowerCase(),)) { unresolvedMentions.push(mention.name,); }
   }
 
   const { isInitiative, } = parseInitiativeFlag(text,);

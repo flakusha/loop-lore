@@ -29,13 +29,29 @@ import type { GmToolDetection, GmToolName, } from "./gm-tool-detection";
 /** Confidence threshold for executing a detected tool request. */
 const CONFIDENCE_THRESHOLD = 0.7;
 
+/** One detector tool → registered command mapping. */
+interface ToolCommandMapping {
+  /** Registered command name. */
+  command: string;
+  /** Args prepended ahead of every detected parameter (sub-command selector). */
+  prefixArgs?: string[];
+  /**
+   * Parameter keys in the order the target command expects them as positional
+   * args. The AUX model returns `params` as an unordered JSON object, so
+   * reading `Object.values` order let a reordered model response silently
+   * change the command that ran. Keys absent from this list are appended in
+   * alphabetical order, keeping the argv deterministic.
+   */
+  paramOrder: string[];
+}
+
 /** Mapping from detector tool names to registered command names. */
-const TOOL_COMMANDS: Partial<Record<GmToolName, { command: string; prefixArgs?: string[] }>> = {
-  roll_dice: { command: "roll", },
-  check_stats: { command: "stats", },
-  summarize: { command: "summarize", },
-  generate_npc: { command: "create", prefixArgs: ["npc",], },
-  generate_item: { command: "create", prefixArgs: ["item",], },
+const TOOL_COMMANDS: Partial<Record<GmToolName, ToolCommandMapping>> = {
+  roll_dice: { command: "roll", paramOrder: ["dice", "modifier",], },
+  check_stats: { command: "stats", paramOrder: ["target", "stat",], },
+  summarize: { command: "summarize", paramOrder: [], },
+  generate_npc: { command: "create", prefixArgs: ["npc",], paramOrder: ["name", "role", "setting", "description",], },
+  generate_item: { command: "create", prefixArgs: ["item",], paramOrder: ["name", "type", "description",], },
 };
 
 /** Options for {@link executeGmToolRequest}. */
@@ -55,14 +71,28 @@ export type GmToolOutcome = { handled: true; response: Response } | { handled: f
 
 /**
  * Convert detection params into positional command args: string and number
- * values are kept (in insertion order), everything else is dropped.
+ * values are kept, everything else is dropped.
+ *
+ * Argument order comes from the mapping's declared {@link ToolCommandMapping.paramOrder},
+ * never from the JSON object's key order: undeclared keys trail the declared
+ * ones alphabetically so the argv is reproducible.
  * @param params - Detection params from the AUX model
+ * @param paramOrder - Declared parameter keys, in command-argument order
+ * @returns Non-empty positional args
  */
-function paramsToArgs(params: Record<string, unknown>,): string[] {
-  return Object.values(params,)
-    .filter((v,): v is string | number => typeof v === "string" || typeof v === "number")
-    .map(String,)
-    .filter((v,) => v.length > 0);
+function paramsToArgs(params: Record<string, unknown>, paramOrder: string[],): string[] {
+  const readArg = (key: string,): string => {
+    const value = params[key];
+    return typeof value === "string" || typeof value === "number" ? String(value,) : "";
+  };
+
+  const declared = new Set(paramOrder,);
+  const args = paramOrder.map(readArg,);
+  for (const key of Object.keys(params,).filter((k,) => !declared.has(k,)).sort()) {
+    args.push(readArg(key,),);
+  }
+
+  return args.filter((v,) => v.length > 0);
 }
 
 /**
@@ -94,6 +124,23 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
   );
 
   if (!chatRecord || !isGmModeChat(chatRecord.gm_config,)) { return noop; }
+
+  // The request runs in the caller's name: the AUX call resolves the BYO apiKey
+  // by this id and `CommandContext.userId` carries it to the handlers. That is
+  // only sound for a user principal — user actors are keyed by `users.id`
+  // (`actors.id === users.id`), which is what makes `actorId` usable as the
+  // user id. Any other actor type is not a principal, so fail closed rather
+  // than resolve a key that belongs to someone else.
+  const actingActor = await database
+    .selectFrom("actors",)
+    .select(["actor_type",],)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+
+  if (actingActor?.actor_type !== "user") {
+    logger.debug("GM tool request from a non-user actor; skipping", { actorId, },);
+    return noop;
+  }
 
   let detection: GmToolDetection | null = null;
   try {
@@ -145,7 +192,7 @@ export async function executeGmToolRequest(opts: GmToolRequestOptions,): Promise
     userRole,
   };
 
-  const args = [...(mapping.prefixArgs ?? []), ...paramsToArgs(detection.params,),];
+  const args = [...(mapping.prefixArgs ?? []), ...paramsToArgs(detection.params, mapping.paramOrder,),];
   let result: CommandResult;
   try {
     result = await handler(args, cmdCtx,);

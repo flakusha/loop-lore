@@ -108,7 +108,10 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
     task: "auto-reply",
   },);
 
-  await compactPromptHistory(prompt.messages, 32_000,);
+  // Compact against the budget the assembler actually enforced, not the 32K
+  // default: a model with a smaller context window would otherwise pass a
+  // prompt the provider rejects straight through.
+  await compactPromptHistory(prompt.messages, prompt.tokenBudget,);
   log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 
   // For initial greeting (no parentMessageId), skip generation tracking

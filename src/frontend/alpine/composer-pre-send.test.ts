@@ -336,6 +336,11 @@ describe("validatePreSend", () => {
     expect(out.unknownAssetRefs,).toEqual([],);
   });
 
+  test("does not report an email address as an unresolved mention", () => {
+    const out = validatePreSend("mail me at bob@example.com", participants, [],);
+    expect(out.unresolvedMentions,).toEqual([],);
+  });
+
   test("deduplicates repeated unresolved mentions", () => {
     const out = validatePreSend("@Carol @Carol @Carol", participants, [],);
     expect(out.unresolvedMentions,).toEqual(["Carol",],);
