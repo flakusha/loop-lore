@@ -3,7 +3,7 @@
 
 # BUG: fix(api): apply governance + deprecation to the /api/v1 legacy fallback path
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue afe12b9): Verified: src/server/handler.ts:150,160 still dispatch legacy/plugin fallback routes via bare dispatchPluginRoute with no governanceGuard, no deprecation headers, no migration-debt counter; those hooks exist only inside the v1 barrel (src/routes/v1/index.ts:46-58), which the fallback bypasses by design.
 **Priority:** medium
 **Effort:** Medium

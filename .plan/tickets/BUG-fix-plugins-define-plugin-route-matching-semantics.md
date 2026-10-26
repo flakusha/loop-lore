@@ -4,6 +4,7 @@
 # BUG: fix(plugins): define plugin route matching semantics
 
 **Status:** Done
+**Status Note (2026-10-26 gate fallout):** the duplicate-registration warning is routed through `getChildLogger("plugin-registry")`, which returns null until a root logger exists — `src/plugins/loader-dispatch.test.ts` called `getLogger()` to snapshot the root before swapping in its capture stub, so under the shared coverage run (no root logger) the test threw "Logger not initialized" instead of asserting the warning. The suite now creates a root logger in `beforeAll`; the registry behaviour is unchanged.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-mechanics-governance
