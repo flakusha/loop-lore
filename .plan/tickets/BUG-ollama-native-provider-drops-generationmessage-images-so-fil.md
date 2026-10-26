@@ -4,6 +4,7 @@
 # BUG: Ollama-native provider drops GenerationMessage.images so filename-only captions persist as alt_text
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: buildBody serializes images: src/generation/providers/ollama-native/http.ts:71; caption route populates GenerationMessage.images (caption-route.ts:138-156). Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-ollama-native-provider-drops-generationmessage-images-so-fil.md
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem

@@ -4,6 +4,7 @@
 # BUG: Character and chat-setup example configs document fields the code drops
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] NEEDS-FIX-WITH-DETAILS (issue d6d83f7): Item 2 fixed: extend/override semantics now match the docs (src/config/templates-loader/merge-domains.ts:58-108; templates-loader.test.ts:720-764). Items 1 and 3 remain: character.example.yaml:129-130 still claims loadouts[] is read by the wardrobe service (loadout-bridge.ts:55-71 reads only actor_wardrobe/actor_items rows; no item_match consumer in src); chat-setup.example.yaml:20-21 documents worldId and gmConfig.assistantRole, neither read by toTemplateDefault (src/chat/service/templates.ts:104-122). Docs-vs-code mismatch needs the same correct-the-docs-or-implement decision.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-character-world-setup

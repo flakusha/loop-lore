@@ -4,6 +4,7 @@
 # BUG: Admin plugin enable route leaves half-registered onLoad state that the loader's own rollback removes
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] NEEDS-FIX-WITH-DETAILS (issue c4dd53c): Half fixed: enable-route catch (src/routes/plugins/index.ts:129-136) now setEnabled(false) + resetPluginInit(name) + error log. Still diverges from the loader rollback (loader.ts:219-220 does initializedPlugins.delete AND registry.unregister): partial tools/routes/events registered by a throwing onLoad stay in the registry and a retry re-runs onLoad over leftovers. Remaining work: unregister (or track+remove partial additions) in the catch.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-plugin-system

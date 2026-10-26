@@ -4,6 +4,7 @@
 # BUG: New-chat e2e reads chat_participants once before the best-effort persona PUT completes
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: bounded poll 30x200ms over chat_participants: tests/e2e/flows/browser/new-chat-advanced-fields.browser.ts:162-184. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-new-chat-e2e-reads-chat-participants-once-before-the-best-ef.md
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing

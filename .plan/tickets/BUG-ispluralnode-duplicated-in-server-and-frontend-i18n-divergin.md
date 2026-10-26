@@ -4,6 +4,7 @@
 # BUG: isPluralNode duplicated in server and frontend i18n, diverging silently: a plural key renders as the raw key in the browser
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: shared leaf src/i18n/plurals.ts imported by server (translator.ts:11-14) and frontend (i18n.ts:11); frontend resolveKey count-aware leaf (i18n.ts:94-99); flatten keeps plural nodes as leaves (:119-124). Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-internationalization

@@ -9,6 +9,7 @@
 
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: FEAT-messaging-bridge-extensions.md now defines the activation mechanism (SWARM_BRIDGE_SIGNAL=0|1 flag, :41) and documents Signal as deferred/experimental (:16,33) — the trigger-or-permanent-deferral ask is satisfied at spec level.
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-federation-swarm-sync

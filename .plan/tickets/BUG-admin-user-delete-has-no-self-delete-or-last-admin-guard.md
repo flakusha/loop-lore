@@ -4,6 +4,7 @@
 # BUG: Admin user DELETE has no self-delete or last-admin guard
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 2e1a123): src/routes/admin/users.ts:206-212 rejects self-delete; :228-243 rejects deleting the last admin (counts remaining admins excluding the target). Exactly the ticket's fix direction.
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-auth-access

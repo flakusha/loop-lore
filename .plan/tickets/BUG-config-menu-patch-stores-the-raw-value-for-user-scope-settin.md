@@ -4,6 +4,7 @@
 # BUG: Config-menu PATCH stores the raw value for user-scope settings and leaks admin key names
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue c77b7e9): src/routes/config-menu.ts:131 persists the coerced value for user scope; oracle leak closed (:104-108 — non-admins get uniform 400 for admin-scoped keys).
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-settings

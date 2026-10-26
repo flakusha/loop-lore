@@ -3,7 +3,8 @@
 
 # BUG: Auto-started llama.cpp skips circuit-breaker registration
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue cb06262): Verified: src/server/init-background-services.ts:83-88 calls registerProvider(name, new OpenAiCompatibleProvider(...)) with no circuitBreaker.register anywhere in the file (imports at :6 confirm it is not even imported).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem

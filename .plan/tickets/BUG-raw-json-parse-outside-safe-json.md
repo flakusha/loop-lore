@@ -4,6 +4,7 @@
 # BUG: Raw JSON.parse used outside safeJson — 3 sites need audit for untrusted input handling
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: src/utils/safe-json.ts exists (safeJsonParse/safeJsonStringify/jsonParseOr) with tests; sampled production parses are app-controlled DB columns (out of scope per ticket).
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-api-validation-guardrails

@@ -4,6 +4,7 @@
 # BUG: Static asset serving never applies immutable caching and crashes on directory paths
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: src/server/static-files.ts:6,47-49 uses shared HASHED_ASSET_PATTERN + immutable header (:65); static-mime.ts:54-70 strips ;q= params; safe-fetch/fetch.ts:173-181,202-209 enforces maxSize both via content-length and body; logger/limits.ts:36-47 binary-search reserves suffix room.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-asset-platform-capabilities

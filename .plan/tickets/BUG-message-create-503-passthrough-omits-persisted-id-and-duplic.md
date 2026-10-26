@@ -4,6 +4,7 @@
 # BUG: Message-create 503 passthrough omits persisted id and duplicates user messages on retry
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: 503 body carries persisted id+context (create.ts:258 -> create-response.ts:28+; pinned create-response.test.ts:81-93, create.coverage.test.ts:413-438); client mints one Idempotency-Key per logical turn (chat-send.ts:172-185; fe-fetch.ts:55-58). Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-message-create-503-passthrough-omits-persisted-id-and-duplic.md
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-messages

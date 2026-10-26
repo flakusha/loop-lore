@@ -3,7 +3,8 @@
 
 # BUG: Diff-scoped gates miss test files that only collide when run in the same process
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 2d6dcf3): Verified: scripts/check/parallel/gates.mjs:73-104 runs src tests only diff-scoped under bun test --isolate (one file per process, structurally blind to shared-process collisions); no unscoped/subsystem-directory run exists anywhere in scripts/.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline

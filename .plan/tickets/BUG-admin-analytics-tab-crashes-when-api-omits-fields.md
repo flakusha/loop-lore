@@ -4,6 +4,7 @@
 # BUG: Admin analytics tab crashes when API omits fields
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 05bcb6e): src/views/admin.html:1914 and :1920 now use (conversationOverview.averageSessionLength ?? 0).toFixed(1) / (avgLatencyMs ?? 0).toFixed(0) — omitted API fields no longer throw.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-frontend-admin

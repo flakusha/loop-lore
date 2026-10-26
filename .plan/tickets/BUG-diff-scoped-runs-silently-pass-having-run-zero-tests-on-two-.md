@@ -4,6 +4,7 @@
 # BUG: Diff-scoped runs silently pass having run zero tests, on two distinct paths
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] NEEDS-FIX-WITH-DETAILS (issue 14acc26): Path B fixed: runner.mjs:179-187 marks noop gates as skipped (not passed); report.mjs:192 and report-ls.mjs:88 surface the skip count. Path A partial: context.mjs:214-219 catches diff-base module-init failure with a diagnostic and exit 2, but the exit happens at import time before main(), so the acceptance criterion 'check report is still written' is unmet on that path.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline

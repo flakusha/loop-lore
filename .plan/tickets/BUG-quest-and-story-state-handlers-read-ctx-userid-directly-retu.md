@@ -4,6 +4,7 @@
 # BUG: Quest and story-state handlers read ctx.userId directly, returning 404 instead of 401
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: all cited sites now use requireUserId — src/routes/quests/progress.ts:27,53; src/routes/quests/quest.ts:26,44,70; src/routes/story-states/location.ts:26,44.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-quests-encounters
