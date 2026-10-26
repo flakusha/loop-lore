@@ -79,6 +79,37 @@ describe("exportToCcV2Json", () => {
   });
 });
 
+describe("metadata fields on CCv2 / CCv3", () => {
+  test("carries creator_notes through both card formats", () => {
+    const character: CanonicalCharacter = {
+      ...testCharacter,
+      creator_notes: "Please credit the author.",
+    };
+
+    expect(JSON.parse(exportToCcV2Json(character,),).data.creator_notes,).toBe("Please credit the author.",);
+    expect(JSON.parse(exportToCcV3Json(character,),).data.creator_notes,).toBe("Please credit the author.",);
+  });
+
+  test("preserves imported CCv3 timestamps instead of stamping Date.now()", () => {
+    const character: CanonicalCharacter = {
+      ...testCharacter,
+      creation_date: 1_600_000_000_000,
+      modification_date: 1_700_000_000_000,
+    };
+
+    const data = JSON.parse(exportToCcV3Json(character,),).data;
+    expect(data.creation_date,).toBe(1_600_000_000_000,);
+    expect(data.modification_date,).toBe(1_700_000_000_000,);
+  });
+
+  test("stamps a fresh card when the canonical carries no timestamps", () => {
+    const before = Date.now();
+    const data = JSON.parse(exportToCcV3Json(testCharacter,),).data;
+    expect(typeof data.creation_date,).toBe("number",);
+    expect(data.creation_date,).toBeGreaterThanOrEqual(before,);
+  });
+});
+
 describe("exportToCcV3Json", () => {
   test("exports valid CCv3 JSON", () => {
     const json = exportToCcV3Json(testCharacter,);

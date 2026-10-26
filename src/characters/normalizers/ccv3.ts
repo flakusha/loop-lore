@@ -61,6 +61,8 @@ export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacte
     ...buildCanonicalFields(raw,),
     nickname: cardData.nickname,
     extensions: cardData.extensions,
+    creation_date: typeof cardData.creation_date === "number" ? cardData.creation_date : undefined,
+    modification_date: typeof cardData.modification_date === "number" ? cardData.modification_date : undefined,
     lorebook,
     assets,
   };

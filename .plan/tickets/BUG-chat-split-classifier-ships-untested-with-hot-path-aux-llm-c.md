@@ -4,6 +4,8 @@
 # BUG: chat split-classifier ships untested with hot-path aux LLM call against own scope
 
 **Status:** In Progress
+**Status Note:** [2026-10-26 final pass] NOT-FIXED — unchanged by this pass, no partial edits left behind. Verified against the current tree: `src/chat/split-classifier.ts` still exists with no colocated test (no `src/chat/split-classifier.test.ts`; no test file imports `classifySplitIntent`), so the aux-JSON gating and the null/garbage fallback remain unexercised. Nothing in src/chat was touched this pass, so the hot-path decision (drop the per-message aux roundtrip or record the scope decision) is still open and needs its own slice: add `src/chat/split-classifier.test.ts` modelled on `src/chat/split.test.ts` (regex hit returns `source: regex` without calling aux; aux JSON parsed; null/garbage/non-boolean falls back to `{false,false,none}`), then decide the wiring in `src/chat/scene/handle-scene-transitions.ts`. This ticket must not be closed on the sibling fixes in this pass.
+
 **Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue e20f01c): No split-classifier test file exists repo-wide; the project's own baseline still lists it as an uncovered gap (scripts/check/test-gaps-baseline.json:227, src/chat/split-classifier.ts#classifySplitIntent). Hot path unchanged: handle-scene-transitions.ts:99 awaits classifySplitIntent per user message with a blocking aux LLM roundtrip on regex miss (split-classifier.ts:34-38); no scope decision recorded in code.
 **Priority:** high
 **Effort:** Medium

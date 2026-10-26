@@ -192,6 +192,26 @@ export async function fetchChatAndRole(
 }
 
 /**
+ * Describe the rejected legs of the dispatch lookups.
+ *
+ * `dispatchCommand` issues the chat-context and recent-messages reads as one
+ * `allSettled` batch, so a blanket error message blamed the chat-context
+ * lookup even when the messages query was the leg that failed.
+ * @param settled - Settled results, chat context first
+ * @returns One `"<leg>: <reason>"` string per rejected leg (empty when all fulfilled)
+ */
+function describeLookupFailures(settled: PromiseSettledResult<unknown>[],): string[] {
+  const failures: string[] = [];
+  for (const [index, outcome,] of settled.entries()) {
+    if (outcome.status !== "rejected") { continue; }
+    const leg = index === 0 ? "chat context lookup" : "recent messages lookup";
+    failures.push(`${leg}: ${toErrorMessage(outcome.reason,)}`,);
+  }
+
+  return failures;
+}
+
+/**
  * Attempt to dispatch a slash command from the given content.
  *
  * Returns `{ handled: true, response }` when a registered command took over
@@ -202,7 +222,7 @@ export async function fetchChatAndRole(
  * @param actorId
  * @param chatId
  * @param content
- * @throws {Error}
+ * @throws {Error} When the chat-context or recent-messages lookup rejects
  * @returns {Promise<{ handled: true; response: Response; } | { handled: false; }>}
  */
 export async function dispatchCommand(
@@ -250,9 +270,12 @@ export async function dispatchCommand(
   ],);
 
   // The chat-context helper never rejects (internal allSettled); a messages
-  // rejection throws so behavior matches sequential await.
-  if (settled.some((r,) => r.status === "rejected")) {
-    throw new Error("dispatchCommand: chat context lookup failed",);
+  // rejection throws so behavior matches sequential await. Failures are
+  // labelled per leg: a single blanket message blamed the chat-context lookup
+  // even when the messages query was the leg that failed.
+  const failures = describeLookupFailures(settled,);
+  if (failures.length > 0) {
+    throw new Error(`dispatchCommand: ${failures.join("; ",)}`,);
   }
 
   const context = settled[0]?.status === "fulfilled"
@@ -338,7 +361,16 @@ export async function dispatchCommand(
   if (!result.handled) { return { handled: false, }; }
 
   if (result.systemMessage) {
-    await insertCommandSystemMessage(database, config, chatId, actorId, result.systemMessage,);
+    // The handler already ran its side effects; a failed system-message insert
+    // must not surface as an unhandled 500 that hides the completed command.
+    try {
+      await insertCommandSystemMessage(database, config, chatId, actorId, result.systemMessage,);
+    } catch (error) {
+      log().warn("command system message insert failed", {
+        command: commandName,
+        error: toErrorMessage(error,),
+      },);
+    }
   }
 
   log().info("Command dispatched", { command: commandName, handled: true, },);

@@ -25,7 +25,11 @@ export function detectAvatarChangeIntent(
   const lower = input.toLowerCase();
 
   for (const pattern of avatarConfig.intentPatterns) {
-    if (lower.includes(pattern.pattern.toLowerCase(),)) {
+    // An empty (or whitespace-only) pattern is a substring of every message,
+    // so it would pin the avatar to its emotion for the whole session.
+    const needle = pattern.pattern.trim().toLowerCase();
+    if (needle.length === 0) { continue; }
+    if (lower.includes(needle,)) {
       return pattern.emotion;
     }
   }
