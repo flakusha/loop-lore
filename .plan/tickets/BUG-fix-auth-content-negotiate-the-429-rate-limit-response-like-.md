@@ -3,7 +3,7 @@
 
 # BUG: fix(auth): content-negotiate the 429 rate-limit response like other auth errors
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 7a46501): Verified: src/routes/auth/request.ts:63-66 rateLimitHtml always returns the HTML 429; callers login.ts:46, register.ts:45, demo-login.ts:144 never consult wantsJson (which exists at responses.ts:42 and is used by errorResponse :99) — JSON clients still get HTML on 429.
 **Priority:** low
 **Effort:** Medium

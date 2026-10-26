@@ -4,6 +4,7 @@
 # BUG: Two gates read age_gate_accepted_at under divergent config keys with no single source of truth
 
 **Status:** Done
+**Status Note (2026-10-26 gate fallout):** the delegation to `getStatus(ageGate.*)` landed in `src/middleware/nsfw-gate/base-eval.ts`, and with it a documented semantic change: when `ageGate.enabled=false` (the default, and the state in which no `birth_date`/`age_gate_accepted_at` is ever stored — see `docs/frontend/age-gate.md`) the NSFW age component passes everyone, matching `checkAgeGate`'s no-op. The batch updated the `src/middleware/nsfw-gate/*` and `src/generation/auto-gen/*` suites to `initAgeGate({enabled:true})`, but `src/routes/nsfw/index.test.ts` ("underage user → 403") and `src/routes/assets.test.ts` (two batch-download NSFW-gate tests) still ran against the default-off store and now got 200. Both files now enable the age gate in `beforeAll` / reset it in `afterAll`, the same convention as the other NSFW-gate suites; the gate verdicts themselves are unchanged. Note for future hardening: a self-declared minor still passes when the operator disables age gating entirely — that is intentional parity with `checkAgeGate`, not an oversight.
 **Priority:** high
 **Effort:** Medium
 **Caveats:** config-drift, stale-state, default-off-in-two-places

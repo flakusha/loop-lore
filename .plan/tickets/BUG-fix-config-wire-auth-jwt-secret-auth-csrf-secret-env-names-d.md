@@ -3,7 +3,7 @@
 
 # BUG: fix(config): wire AUTH_JWT_SECRET/AUTH_CSRF_SECRET env names (documented names are ignored)
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 87d3164): Verified: src/config/schema-class/env-map.ts:68,85 auto-generates AUTH_JWTSECRET/AUTH_CSRFSECRET and the manual override table (:102-214) has no AUTH_JWT_SECRET/AUTH_CSRF_SECRET entries; env lookup is exact-match, while docs and error strings still instruct AUTH_JWT_SECRET (src/config/load/safety.ts:130,141,165; sections/auth.ts:105,111) — the documented env names remain silently ignored.
 **Priority:** high
 **Effort:** Medium
