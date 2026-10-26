@@ -50767,6 +50767,12 @@
       "source": ".plan/tickets/TASK-action-applicability-gate.md"
     }
   ],
+  "src/rpg/service/battles-actions.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory.md"
+    }
+  ],
   "src/rpg/service/battles.ts": [
     {
       "kind": "ticket",
