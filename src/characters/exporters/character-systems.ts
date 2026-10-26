@@ -27,6 +27,13 @@ import type {
   WorldSetupLoreEntry,
 } from "../world-setup/types";
 
+/** One exported avatar config — the same option pair the service accepts. */
+export interface ExportedAvatarConfig {
+  selectionRule?: AvatarSelectionRule;
+  weights?: Partial<Record<AvatarTagType, number>>;
+  fallbackOrder?: AvatarTagType[];
+}
+
 /**
  * One exported per-world avatar override. Declared concretely (not
  * `Record<string, unknown>`) so the importer can consume it without an
@@ -56,7 +63,7 @@ export interface CharacterSystemsExport {
   relationships?: Record<string, unknown>[];
   avatars?: {
     avatars: Record<string, unknown>[];
-    config?: Record<string, unknown>;
+    config?: ExportedAvatarConfig;
     worldConfigs?: ExportedWorldAvatarConfig[];
   };
   licensing?: Record<string, unknown>;
