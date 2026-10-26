@@ -24000,7 +24000,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-2026-openwebui-cancel-generation-wiring.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "frontend",
       "streaming",
