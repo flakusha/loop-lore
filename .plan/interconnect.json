@@ -61,7 +61,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-a-community-plugin-named-core-disables-all-five-built-in-too.md",
       "title": "A community plugin named 'core' disables all five built-in tools",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/plugins/loader.ts",
         "src/plugins/registry-policy.ts",
@@ -121,7 +121,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-activitypub-actor-keys-table-and-src-crypto-activitypub-keys.md",
       "title": "activitypub_actor_keys table and src/crypto/activitypub-keys.ts have no production reader",
-      "status": "Blocked",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/federation-consent.ts",
         "src/crypto/activitypub-keys.ts",
@@ -172,7 +172,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-actor-memory-tables-carry-no-emotion-impact-so-emotion-to-me.md",
       "title": "Actor memory tables carry no emotion_impact, so emotion-to-memory integration has no persistence",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/context-window.ts",
         "src/db/column-types.ts",
@@ -226,7 +226,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-analytics-tab-crashes-when-api-omits-fields.md",
       "title": "Admin analytics tab crashes when API omits fields",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/views/admin.html"
       ],
@@ -248,7 +248,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-audit-pagination-uses-1-so-an-empty-result-set-reports.md",
       "title": "admin-audit pagination uses || 1, so an empty result set reports one page",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/admin-audit.ts"
       ],
@@ -316,7 +316,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-plugin-enable-route-leaves-half-registered-onload-stat.md",
       "title": "Admin plugin enable route leaves half-registered onLoad state that the loader's own rollback removes",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/plugins/loader.ts",
         "src/routes/plugins/index.ts"
@@ -339,7 +339,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-providers-list-vs-auth-conflict-needs-contract-decisio.md",
       "title": "admin providers list-vs-auth conflict needs contract decision",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend",
         "src/routes/admin/providers.ts"
@@ -379,7 +379,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp.md",
       "title": "Admin system-config DELETE returns 400 for keys the test expects to delete as 204",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/admin/system-config.test.ts",
         "src/routes/admin/system-config.ts"
@@ -413,7 +413,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-admin-user-delete-has-no-self-delete-or-last-admin-guard.md",
       "title": "Admin user DELETE has no self-delete or last-admin guard",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/admin/users.ts"
       ],
@@ -458,7 +458,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ai-action-billable-llm-endpoint-classified-300-min-chatpolic.md",
       "title": "ai-action billable LLM endpoint classified 300/min chatPolicy",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/api-governance/rate-limiting/policies.ts",
         "src/routes/messages/ai-action.ts"
@@ -537,7 +537,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ambient-audio-route-links-generated-assets-to-arbitrary-mess.md",
       "title": "Ambient audio route links generated assets to arbitrary messageId with no chat-membership check",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/audio-gen-route.ts"
       ],
@@ -577,7 +577,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-answerquestion-ignores-time-limit-expired-questions-still-an.md",
       "title": "answerQuestion ignores time_limit (expired questions still answerable)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/questions/service.ts"
       ],
@@ -767,7 +767,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-asset-silent-catch-blocks-swallow-failures-with-no-log.md",
       "title": "Asset silent catch blocks swallow failures with no log",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/assets/serve-raw.ts",
@@ -828,7 +828,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con.md",
       "title": "assets catch-log cluster: Error serialized as {} loses stack; controller builds child logger per statement",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/logger/index.ts"
       ],
@@ -901,7 +901,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-assistant-and-group-chat-correctness-defects.md",
       "title": "Assistant and group-chat correctness defects",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/command-parser.ts",
         "src/assistant/gm-tool-execution.ts",
@@ -1083,7 +1083,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-authenticate-last-seen-at-update-swallows-errors-silently.md",
       "title": "authenticate last_seen_at update swallows errors silently",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/middleware/auth/authenticate.ts"
       ],
@@ -1159,7 +1159,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-auto-started-llama-cpp-skips-circuit-breaker-registration.md",
       "title": "Auto-started llama.cpp skips circuit-breaker registration",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -1402,7 +1402,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar.md",
       "title": "Branch merge/delete confirm modals never initialize — dead markup",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/components/chat/branch-list-panel.html"
       ],
@@ -1413,7 +1413,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-branch-switch-persists-but-never-swaps-displayed-messages.md",
       "title": "Branch switch persists but never swaps displayed messages",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/chat-branches.ts"
       ],
@@ -1687,7 +1687,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-bug-orphaned-remnants-of-the-removed-gate-in-the-check-runne.md",
       "title": "orphaned remnants of the removed `test - unit` gate in the check runner (dead SCOPED_TESTS, stale HEAVY_NAMES entry, stale comment)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -1768,7 +1768,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-buildskilltree-silently-drops-orphan-nodes.md",
       "title": "buildSkillTree silently drops orphan nodes",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/skills/service/tree.ts"
       ],
@@ -1900,7 +1900,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-caption-route-never-sends-image-bytes-to-the-model.md",
       "title": "Caption route never sends image bytes to the model",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/caption-route.ts"
       ],
@@ -1935,7 +1935,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-character-and-chat-setup-example-configs-document-fields-the.md",
       "title": "Character and chat-setup example configs document fields the code drops",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/templates.ts"
       ],
@@ -1959,7 +1959,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-character-ccv3-export-and-import-lose-fields-on-round-trip.md",
       "title": "Character CCv3 export and import lose fields on round-trip",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters",
         "src/characters/exporters/character-systems.ts",
@@ -2039,7 +2039,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-character-growth-editor-arc-description-not-json-encoded.md",
       "title": "Character growth editor arc description not JSON-encoded",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/views/partials/character-growth-editor.html"
       ],
@@ -2095,7 +2095,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-character-licensing-panel-frozen-on-loading-licensing-alpine.md",
       "title": "Character licensing panel frozen on 'Loading licensing…' — Alpine effects dead after htmx load",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -2131,7 +2131,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-character-template-validator-rejects-every-legal-content-rat.md",
       "title": "Character template validator rejects every legal content_rating",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/validator/constants.ts",
         "src/config/sections/templates.ts",
@@ -2194,7 +2194,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-characters-list-and-chats-list-bypass-parsepagination-valida.md",
       "title": "characters-list and chats-list bypass parsePagination validation",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/characters/list.ts",
         "src/routes/chats/list.ts",
@@ -2430,7 +2430,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-chat-minors-variant-put-never-persists-context-holes-fork-tx.md",
       "title": "Chat minors: variant PUT never persists, context holes, fork txn, purge FK",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/context-window.ts",
         "src/chat/service/branch-fork.ts",
@@ -2602,7 +2602,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md",
       "title": "chat split-classifier ships untested with hot-path aux LLM call against own scope",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/scene/handle-scene-transitions.ts",
         "src/chat/service/split.ts",
@@ -2766,7 +2766,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-co-authored-by-trailer-validation-gap-on-base-branches.md",
       "title": "Co-Authored-By trailer validation gap on base branches",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -2804,7 +2804,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-community-share-missing-lorebook-export.md",
       "title": "Community lorebook share has no export epilogue",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters",
         "src/characters/exporters/ccv2.ts",
@@ -2856,7 +2856,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-config-menu-patch-stores-the-raw-value-for-user-scope-settin.md",
       "title": "Config-menu PATCH stores the raw value for user-scope settings and leaks admin key names",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/config-menu.ts"
       ],
@@ -2867,7 +2867,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-config-menu-saved-preference-reverts-after-reload.md",
       "title": "Config-menu saved preference reverts after reload",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -2945,7 +2945,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-content-hash-naming-for-generated-assets.md",
       "title": "Content-hash naming for generated assets",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -3185,7 +3185,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-dead-bedrock-config-path-accepted-but-never-dispatched.md",
       "title": "Dead Bedrock config path accepted but never dispatched",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -3261,7 +3261,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-deriverumors-exposes-internal-actor-uuid-in-user-facing-text.md",
       "title": "deriveRumors exposes internal actor UUID in user-facing text",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/reputation.ts"
       ],
@@ -3286,7 +3286,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-dev-red-at-head-assistant-command-module-split-broke-registr.md",
       "title": "Dev red at HEAD: assistant command-module split broke registration and e2e import; uncommitted repair must land via worktree",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/commands/characters-access.test.ts",
         "src/assistant/commands/characters-access.ts",
@@ -3356,7 +3356,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-diff-scoped-gates-miss-test-files-that-only-collide-when-run.md",
       "title": "Diff-scoped gates miss test files that only collide when run in the same process",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/index.ts"
       ],
@@ -3367,7 +3367,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-diff-scoped-runs-silently-pass-having-run-zero-tests-on-two-.md",
       "title": "Diff-scoped runs silently pass having run zero tests, on two distinct paths",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -3468,7 +3468,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-e2e-browser-baseline-gate-ignores-diff-base-while-the-covera.md",
       "title": "e2e - browser (baseline) gate ignores --diff-base while the coverage gate honors it",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/commands/finalize.ts"
       ],
@@ -3479,7 +3479,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-e2e-navigation-new-chat-404-page-error.md",
       "title": "Navigation e2e \"creates new chat\" fails on an unhandled 404 page error",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -3586,7 +3586,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-email-adapter-ingests-mail-addressed-to-anyone-and-falls-bac.md",
       "title": "Email adapter ingests mail addressed to anyone and falls back to an unvalidated first To entry as bridge target",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/integrations/email/adapter.ts"
       ],
@@ -3743,7 +3743,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-encryption-flow-browser-ts-is-not-covered-by-expected-404-no.md",
       "title": "encryption-flow.browser.ts is not covered by EXPECTED_404_NOISE_ALLOWLIST, so the by-design game-state 404 flakes it under load",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -3853,7 +3853,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-export-sse-job-map-never-evicted-completed-zip-buffers-retai.md",
       "title": "export-sse job Map never evicted; completed ZIP buffers retained forever",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/export-sse/jobs.ts",
         "src/routes/export-sse/start.ts",
@@ -3892,7 +3892,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-extractjsonobject-slices-an-unbounded-llm-response-before-js.md",
       "title": "extractJsonObject slices an unbounded LLM response before JSON.parse",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/turning/classifier-selection.ts"
       ],
@@ -4044,7 +4044,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-federation-fan-out-queues-outbox-retries-only-for-push-failu.md",
       "title": "Federation fan-out queues outbox retries only for push failures",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/federation/fan-out.ts"
       ],
@@ -4068,7 +4068,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-federation-outbox-drain-skips-export-consent-re-check-mesh-o.md",
       "title": "Federation outbox drain skips export-consent re-check (mesh_outbox has no chat_id)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/federation/fan-out.ts",
         "src/federation/outbox.ts"
@@ -4080,7 +4080,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-federation-test-harness-needs-in-process-fixtures.md",
       "title": "Federation test harness needs in-process fixtures",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4110,7 +4110,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa.md",
       "title": "fix(api): apply governance + deprecation to the /api/v1 legacy fallback path",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/v1/index.ts",
         "src/server/handler.ts"
@@ -4135,7 +4135,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso.md",
       "title": "fix(api): unify error/response envelopes, kill raw Response.json errors",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/auth/responses.ts",
         "src/routes/http-utils/errors.ts",
@@ -4149,7 +4149,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-.md",
       "title": "fix(auth): content-negotiate the 429 rate-limit response like other auth errors",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/auth/request.ts",
         "src/routes/auth/responses.ts"
@@ -4173,7 +4173,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive.md",
       "title": "fix(auth): warn when sessionTimeoutHours and jwtExpiresIn diverge",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/config/sections/auth.ts",
         "src/routes/auth/session.ts"
@@ -4185,7 +4185,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-config-wire-auth-jwt-secret-auth-csrf-secret-env-names-d.md",
       "title": "fix(config): wire AUTH_JWT_SECRET/AUTH_CSRF_SECRET env names (documented names are ignored)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/config/load/safety.ts",
         "src/config/schema-class/env-map.ts",
@@ -4223,7 +4223,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-integrations-wire-bridge-secrets-seams-or-return-503-not.md",
       "title": "fix(integrations): wire bridge/secrets seams or return 503-not-configured",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/v1/index.ts",
         "src/routes/v1/integrations-surface.ts"
@@ -4235,7 +4235,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-plugins-append-onload-registrations-to-manifest-registra.md",
       "title": "fix(plugins): append onLoad registrations to manifest registrations",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/plugins/loader.ts",
         "src/plugins/registry-store.ts"
@@ -4247,7 +4247,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-plugins-define-plugin-route-matching-semantics.md",
       "title": "fix(plugins): define plugin route matching semantics",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/plugins/loader.ts",
         "src/plugins/registry-store.ts"
@@ -4271,7 +4271,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance.md",
       "title": "fix(routing): bring POST /api/v1/assets under barrel governance or pin the carve-out",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/elysia-app.ts",
@@ -4284,7 +4284,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop.md",
       "title": "fix(routing): consolidate versioned mounts into v1 barrel, drop unversioned halves",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/app/register-plugins.ts",
         "src/elysia-app.ts"
@@ -4296,7 +4296,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-fix-routing-mount-story-orchestration-agency-config-menu-und.md",
       "title": "fix(routing): mount story-orchestration, agency, config-menu under /api/v1 or declare unversioned-by-spec",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/app/register-plugins.ts",
         "src/routes/actor-memories.ts",
@@ -4463,7 +4463,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-frontend-handlers-swallow-api-errors-silently-with-no-user-f.md",
       "title": "frontend handlers swallow API errors silently with no user feedback",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/pages/characters.ts",
         "src/frontend/vn/choice-cards.ts",
@@ -4499,7 +4499,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-frontend-navigation-builds-urls-without-encodeuricomponent.md",
       "title": "Frontend navigation builds URLs without encodeURIComponent",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/pages/characters.ts",
         "src/frontend/pages/worlds.ts"
@@ -4601,7 +4601,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-gates-csv-equals-form-is-silently-ignored-only-the-space-sep.md",
       "title": "--gates=<csv> equals-form is silently ignored; only the space-separated form is parsed",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4714,7 +4714,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-generation-service-silent-catch-blocks-mask-production-error.md",
       "title": "generation service silent catch blocks mask production errors",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/auto-gen/handle-generation-error.ts",
         "src/generation/auto-gen/resolve-known-names.ts"
@@ -4726,7 +4726,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-get-admin-model-roles-schema-array-vs-service-record-mismatc.md",
       "title": "GET admin/model-roles schema Array vs service Record mismatch",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4818,7 +4818,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-gif-picker-button-dead-in-real-chat-view-gifopen-never-flips.md",
       "title": "Gif picker button dead in real chat view — _gifOpen never flips",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4850,7 +4850,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-giwt-auto-close-asserts-a-ticket-is-done-when-no-md-marker-e.md",
       "title": "giwt auto-close asserts a ticket is done when no .md marker exists and the work is unmerged",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4859,7 +4859,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-giwt-finalize-auto-stash-collides-with-shared-dev-wip.md",
       "title": "giwt finalize auto-stash collides with shared-dev WIP",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4868,7 +4868,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-giwt-finalize-instructs-a-forbidden-dev-checkout-action.md",
       "title": "giwt finalize instructs a forbidden dev-checkout action",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4897,7 +4897,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-giwt-sync-fix-mutates-repo-wide-refs-issues-shared-across-al.md",
       "title": "giwt sync --fix mutates repo-wide refs/issues/* shared across all worktrees with no worktree scoping",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4906,7 +4906,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent.md",
       "title": "giwt sync --fix needs two passes to converge when an index entry points at a closed issue with an open same-extid duplicate",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/tickets/sync-index.ts"
       ],
@@ -4917,7 +4917,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status.md",
       "title": "giwt sync --fix writes an out-of-vocabulary status",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/commands/sync.ts",
         "src/tickets/sync-index.ts",
@@ -4930,7 +4930,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-giwt-sync-fix-writes-lowercase-git-statuses-into-ticket-md-f.md",
       "title": "giwt sync --fix writes lowercase git statuses into ticket .md files, breaking the status-vocab gate",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5167,7 +5167,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-group-participant-user-actors-injected-in-auto-gen-path.md",
       "title": "Group participant user actors injected in auto-gen path",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5436,7 +5436,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-image-audio-providers-have-no-byo-key-or-failover.md",
       "title": "Image/audio providers have no BYO key or failover",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5505,7 +5505,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-image-edit-provider-and-template-capabilities-disagree.md",
       "title": "Image-edit provider and template capabilities disagree",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/image-edit/providers/comfyui-provider.ts",
         "src/image-edit/providers/sd-server-provider/index.ts",
@@ -5521,7 +5521,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-image-edit-run-crashes-on-missing-params-and-the-template-re.md",
       "title": "Image-edit /run crashes on missing params and the template registry is not hydrated or idempotent",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/image-edit/routes.ts",
         "src/image-edit/template-registry.ts"
@@ -5575,7 +5575,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c.md",
       "title": "Impersonate toggle can never activate — no chats route emits character_id",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/chat-utils/gallery.ts",
         "src/routes"
@@ -5638,7 +5638,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-index-json-records-epic-source-paths-under-plan-tickets-for-.md",
       "title": "index.json records epic source paths under .plan/tickets/ for epic entries",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5734,7 +5734,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin.md",
       "title": "isPluralNode duplicated in server and frontend i18n, diverging silently: a plural key renders as the raw key in the browser",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/i18n.ts",
         "src/frontend/i18n.ts",
@@ -5761,7 +5761,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-item-transfers-double-report-one-sentence-and-item-take-item.md",
       "title": "Item transfers double-report one sentence and ITEM_TAKE/ITEM_DROP capture only the first character of the item name",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/regex/index.ts",
         "src/regex/story-events.ts",
@@ -5785,7 +5785,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-jscpd-ratchet-counts-clusters-not-duplicated-lines.md",
       "title": "jscpd-ratchet-counts-clusters-not-duplicated-lines",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5794,7 +5794,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-jscpd-ratchet-gate-advisory-not-blocking.md",
       "title": "jscpd-ratchet-gate-advisory-not-blocking",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5812,7 +5812,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-jscpd-ratchet-update-cannot-raise-baseline.md",
       "title": "jscpd-ratchet-update-cannot-raise-baseline",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5914,7 +5914,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-kysely-any-type-safety-gaps-in-db-layer.md",
       "title": "Kysely<any> type safety gaps in DB layer",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5923,7 +5923,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-leader-and-swarm-topologies-lack-simultaneous-write-arbitrat.md",
       "title": "Leader and swarm topologies lack simultaneous-write arbitration",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -5965,7 +5965,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-llama-swap-autostart-registers-no-llm-provider.md",
       "title": "llama-swap autostart registers no LLM provider",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -6026,7 +6026,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-locations-query-loads-all-worlds-not-just-current-one.md",
       "title": "Locations query loads all worlds not just current one",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpg/world-travel/travel.ts"
       ],
@@ -6078,7 +6078,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-logger-skipcensor-opt-out-is-unreachable-and-dbenabled-confi.md",
       "title": "Logger skipCensor opt-out is unreachable and dbEnabled config is never read",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -6111,7 +6111,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-logout-browser-e2e-races-its-own-navigation-and-needs-retry-.md",
       "title": "Logout browser e2e races its own navigation and needs retry-on-abort",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -6196,7 +6196,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-memory-audit-tab-always-404s-route-shape-mismatch.md",
       "title": "Memory audit tab always 404s — route shape mismatch",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/memory-audit.ts"
       ],
@@ -6271,7 +6271,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-memory-panel-fully-inert-in-direct-chats-participants-never-.md",
       "title": "Memory panel fully inert in direct chats — participants never loaded",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/chat/world.ts"
       ],
@@ -6282,7 +6282,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-memory-panel-never-renders-memories-in-any-chat-response-env.md",
       "title": "Memory panel never renders memories in any chat — response envelope mismatch",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/memory-panel-core.ts"
       ],
@@ -6304,7 +6304,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass.md",
       "title": "Merge wizard dead-ends at step 1 — selected sources never passed",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/chat-branch-merge.ts"
       ],
@@ -6360,7 +6360,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-message-create-503-passthrough-omits-persisted-id-and-duplic.md",
       "title": "Message-create 503 passthrough omits persisted id and duplicates user messages on retry",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/chat-send.ts",
         "src/frontend/fe-fetch.ts",
@@ -6610,7 +6610,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-module-level-in-memory-state-grows-without-eviction.md",
       "title": "Module-level in-memory state grows without eviction",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/battle/social-integration/offensive.ts",
         "src/battle/social-integration/support.ts",
@@ -6722,7 +6722,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-new-chat-e2e-reads-chat-participants-once-before-the-best-ef.md",
       "title": "New-chat e2e reads chat_participants once before the best-effort persona PUT completes",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/pages/new-chat/submit.ts"
       ],
@@ -6733,7 +6733,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-new-chat-e2e-reads-the-create-response-body-after-navigation.md",
       "title": "New-chat e2e reads the create response body after navigation has already committed",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/pages/new-chat/submit.ts"
       ],
@@ -6786,7 +6786,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-nine-getassetfilepath-call-sites-do-not-handle-the-containme.md",
       "title": "Nine getAssetFilePath call sites do not handle the containment throw",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assets/matting-routes.ts",
         "src/assets/serve-handlers.ts",
@@ -6804,7 +6804,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-no-image-provider-plugin-seam-adding-family-touches-7-sites.md",
       "title": "No image-provider plugin seam; adding family touches 7+ sites",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -6839,7 +6839,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-non-stream-generation-catch-relies-on-a-logging-claim-that-i.md",
       "title": "non-stream generation catch relies on a logging claim that is false",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/auto-gen/handle-generation-error.ts",
         "src/generation/generate-route/non-stream.ts"
@@ -6865,7 +6865,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-notification-bell-visible-on-login-register-pages.md",
       "title": "Notification bell visible on login/register pages",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/views/layout.html"
       ],
@@ -6887,7 +6887,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-notification-prefs-silently-succeed-for-unknown-users-and-lo.md",
       "title": "Notification prefs silently succeed for unknown users and lose concurrent updates",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/notifications/service/prefs.ts"
       ],
@@ -6898,7 +6898,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-notification-sse-tick-swallows-errors-silently.md",
       "title": "Notification SSE tick swallows errors silently",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -7278,7 +7278,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ollama-native-provider-drops-generationmessage-images-so-fil.md",
       "title": "Ollama-native provider drops GenerationMessage.images so filename-only captions persist as alt_text",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/caption-route.ts",
         "src/generation/providers/ollama-native/http.ts"
@@ -7302,7 +7302,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ollamanative-singleton-blocks-second-native-ollama.md",
       "title": "ollamaNative singleton blocks second native Ollama",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -7311,7 +7311,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-openai-compatible-streaming-body-has-no-idle-read-timeout-af.md",
       "title": "OpenAI-compatible streaming body has no idle/read timeout after headers",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/providers/openai-compatible/core.ts",
         "src/generation/providers/openai-compatible/http.ts"
@@ -7334,7 +7334,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-.md",
       "title": "Overlapping federation outbox drain passes re-push the same rows",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/cron/registry.ts",
         "src/federation/outbox.ts"
@@ -7346,7 +7346,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ownership-transfer-writes-actor-id-into-chats-created-by-fk-.md",
       "title": "Ownership transfer writes actor id into chats.created_by (FK users.id) → 400",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/ownership.ts",
         "src/routes/chats/ownership.ts"
@@ -7379,7 +7379,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-parsepagination-default-50-silently-overrides-actorsquery-sc.md",
       "title": "parsePagination default 50 silently overrides ActorsQuery schema default 20",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/http-utils/parse.ts",
         "src/routes/characters/list.ts",
@@ -7405,7 +7405,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-patrolroute-cast-without-array-validation.md",
       "title": "patrolRoute cast without array validation",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/rpc/npc-navigation/service/processing.ts"
       ],
@@ -7564,7 +7564,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-.md",
       "title": "Plugin approval is keyed by name only with no origin column: a community plugin inherits a core plugin's approval",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/migrations/001_init.ts",
         "src/plugins/loader.ts",
@@ -7732,7 +7732,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-probes-ts-liveness-accepts-any-http-response-including-404-a.md",
       "title": "probes.ts liveness accepts any HTTP response including 404 and 500",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/services/server-external-manager/probes.ts"
       ],
@@ -7743,7 +7743,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-probes-ts-stale-llama-swap-health-route-claim.md",
       "title": "probes.ts stale llama-swap health route claim",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/services/server-external-manager/probes.ts"
       ],
@@ -7799,7 +7799,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-quest-and-story-state-handlers-read-ctx-userid-directly-retu.md",
       "title": "Quest and story-state handlers read ctx.userId directly, returning 404 instead of 401",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/character-emotions/actor.ts",
         "src/routes/quests/progress.ts",
@@ -7813,7 +7813,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-quest-and-story-state-routes-discard-notification-rejections.md",
       "title": "Quest and story-state routes discard notification rejections with an empty catch",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/quests/handlers.ts",
         "src/routes/story-states/handlers.ts"
@@ -7932,7 +7932,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer.md",
       "title": "Raw Buffer.allocUnsafe/alloc exists in src/ alongside SafeBuffer guards — inconsistency at 0 sites",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/transport/compression.ts"
       ],
@@ -7952,7 +7952,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-raw-json-parse-outside-safe-json.md",
       "title": "Raw JSON.parse used outside safeJson — 3 sites need audit for untrusted input handling",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/utils/safe-json.ts"
       ],
@@ -8120,7 +8120,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md",
       "title": "Remote actor discovery (WebFinger resolve, host-meta) absent",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -8189,7 +8189,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-.md",
       "title": "Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assets/controller.ts",
         "src/chat/service/crud/get.ts",
@@ -8346,7 +8346,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-runtime-asset-compression-is-structurally-dead-needscompress.md",
       "title": "Runtime asset compression is structurally dead (needsCompression always false) and generates sidecars before hash injection",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/build/compress.ts",
         "src/content/compress.ts",
@@ -8387,7 +8387,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-sanitizehtml-is-not-idempotent-tag-removal-reassembly-can-as.md",
       "title": "sanitizeHtml is not idempotent — tag-removal reassembly can assemble fresh script markup (mXSS class)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/regex/html-sanitize-core.ts",
         "src/regex/html-sanitize.property.test.ts"
@@ -8413,7 +8413,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-scoped-coverage-gate-omits-the-e2e-safeguard-prefix-its-plai.md",
       "title": "Scoped coverage gate omits the E2E_SAFEGUARD prefix its plain-mode sibling sets",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -8431,7 +8431,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-sd-server-edit-returns-synthetic-asset-urls-that-404.md",
       "title": "sd-server edit returns synthetic asset URLs that 404",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -8440,7 +8440,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-sd-server-image-providers-discard-the-generated-image-and-ab.md",
       "title": "sd-server image providers discard the generated image and abort the job on one bad poll",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/image-edit/providers/comfyui-provider.ts",
         "src/image-edit/providers/sd-server-provider",
@@ -8454,7 +8454,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-sdcpp-generate-edit-duplicated-with-divergent-endpoints-and-.md",
       "title": "sdcpp generate/edit duplicated with divergent endpoints and timeouts",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -8597,7 +8597,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-settings-delete-all-data-can-never-succeed-delete-api-v1-use.md",
       "title": "Settings 'Delete All Data' can never succeed — DELETE /api/v1/users/me does not exist",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend/alpine/settings/general.ts",
         "src/routes/users/me.ts"
@@ -8672,7 +8672,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-signal-bridge-activation-trigger-undefined.md",
       "title": "Signal bridge activation trigger undefined",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -8681,7 +8681,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick.md",
       "title": "Simplification audit artifacts lost to a .tmp/ cleanup: 13 tickets cite deleted scratch",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/config/migrate-config.ts",
         "src/crypto/activitypub-keys.ts"
@@ -8707,7 +8707,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md",
       "title": "Single global BYOK encryption key, no rotation story",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -8878,7 +8878,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-sqlitedialect-reader-detection-classifies-sql-by-leading-key.md",
       "title": "SqliteDialect reader detection classifies SQL by leading keywords, misrouting EXPLAIN/commented/CTE-DML",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/db/index.ts",
         "src/db/upsert-helpers.ts"
@@ -8956,7 +8956,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-static-asset-serving-never-applies-immutable-caching-and-cra.md",
       "title": "Static asset serving never applies immutable caching and crashes on directory paths",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/content/hash-injection.ts",
         "src/logger/limits.ts",
@@ -8999,7 +8999,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m.md",
       "title": "story-controls calls /api/v1 but story-orchestration routes mount only at /api",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/app/register-plugins.ts",
         "src/elysia-app.ts",
@@ -9076,7 +9076,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-story-states-npc-location-put-schema-drift-silent-no-op-with.md",
       "title": "story-states npc/location PUT schema drift: silent no-op with vacuous green e2e",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/story-states/handlers.ts",
         "src/validation/schemas/world-state.ts"
@@ -9088,7 +9088,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-stranded-post-finalize-fix-the-audio-low-pass-coefficient-re.md",
       "title": "Stranded post-finalize fix: the audio low-pass coefficient restore is still unmerged on fix-audio-lowpass-coefficient while dev ships the spectrum regression",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/generation/audio/providers/local.ts"
       ],
@@ -9122,7 +9122,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-supports-vision-never-refreshed-on-capability-update.md",
       "title": "supports_vision never refreshed on capability update",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -9145,7 +9145,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e.md",
       "title": "sync-index type filter silently excludes IDEA tickets from every --fix mode",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -9253,7 +9253,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-test-async-store-offload-dir-fixed-path-race.md",
       "title": "# async-store tests share fixed OFFLOAD_DIR with runtime and concurrent tests",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assets/serve-handlers.coverage.test.ts",
         "src/async/offload-daemon.test.ts",
@@ -9299,7 +9299,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi.md",
       "title": "test - unhandled JSON cascade unexplained after chat-export fix",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/async/offload-daemon.test.ts",
         "src/routes/chat-export.test.ts"
@@ -9337,7 +9337,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-the-comment-only-catch-ticket-has-an-acceptance-criterion-th.md",
       "title": "The comment-only catch ticket has an acceptance criterion that cannot be satisfied",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/frontend",
         "src/frontend/alpine",
@@ -9350,7 +9350,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-the-roots-guard-on-project-root-diff-root-is-wired-to-no-gat.md",
       "title": "The roots guard on PROJECT_ROOT/DIFF_ROOT is wired to no gate and no CI job",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -9359,7 +9359,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ticket-closure-cites-nonexistent-git-commit-7a0f508c93.md",
       "title": "# Ticket closure cites nonexistent git commit (7a0f508c93)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -9368,7 +9368,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-ticket-epic-triage-and-triage-p3-idea-tickets-assign.md",
       "title": "ticket-epic-triage and triage-p3-idea-tickets assign mutually exclusive metadata to epic-npc-to-npc-social",
-      "status": "Blocked",
+      "status": "done",
       "srcRefs": [
         "src/plan/validate.ts"
       ],
@@ -9379,7 +9379,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-timeline-event-steering-manifest-status-update-and-timeline-.md",
       "title": "Timeline event steering: manifest status update and timeline append are not atomic",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/story/timeline/event-steering.ts"
       ],
@@ -9464,7 +9464,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-translate-only-providers-ride-general-failover-chains-comple.md",
       "title": "translate-only providers ride general failover chains; complete() returns a translation as a successful turn (incl. merge-LLM path)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/merge/merge-llm-call.ts",
         "src/generation/auto-gen/call-llm.ts",
@@ -9479,7 +9479,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-translation-route-silent-catch-ships-undecryptable-ciphertex.md",
       "title": "translation route silent catch ships undecryptable ciphertext to external MT and persists it",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/messages/translations.ts"
       ],
@@ -9586,7 +9586,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md",
       "title": "tui-egui-fixes hold landing: page-1-only client, gallery has_more regression, TUI stale-chat race, unawaited stamp write",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/app.rs",
         "src/build/egui-artifact.ts",
@@ -9682,7 +9682,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k.md",
       "title": "Two gates read age_gate_accepted_at under divergent config keys with no single source of truth",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/age-gate/controller.ts",
         "src/config/sections/age-gate.ts",
@@ -9802,7 +9802,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-user-message-swipe-insert-retries-all-errors-and-mislabels-t.md",
       "title": "User message swipe insert retries ALL errors and mislabels them 503",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/messages/insert-message.ts",
         "src/routes/messages/swipe-race-insert.ts"
@@ -9949,7 +9949,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-voice-notes-passes-null-userrole-disabling-admin-arm-of-chec.md",
       "title": "voice-notes passes null userRole, disabling admin arm of checkChatAccess",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/access.ts",
         "src/routes/chat-pins.ts",
@@ -10014,7 +10014,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-wire-encryption-for-generated-images.md",
       "title": "Wire encryption for generated images",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": [
         "epic-comfyui-first-class-citizen"
@@ -10025,7 +10025,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-withworldid-undefined-means-no-filter-relationship-read-upda.md",
       "title": "withWorldId undefined-means-no-filter: relationship read/update/delete can hit an arbitrary world row",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/relationships-service/read.ts",
         "src/characters/services/relationships-service/write.ts",
@@ -10039,7 +10039,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-workflow-confirm-session-treats-optional-steps-as-required.md",
       "title": "workflow confirm session treats optional steps as required",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/commands/workflow.ts",
         "src/assistant/workflow-runner.test.ts",
@@ -10169,7 +10169,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-world-import-quest-time-location-id-not-remapped-connections.md",
       "title": "World import: quest time_location_id not remapped; connections JSON copied verbatim",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/world-import/bundle.ts"
       ],
@@ -18993,7 +18993,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md",
       "title": "Assistant World & Location Access Commands",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/assistant/adapter/locations.ts",
         "src/assistant/adapter/worlds.ts",

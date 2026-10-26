@@ -3,7 +3,7 @@
 
 # BUG: non-stream generation catch relies on a logging claim that is false
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logging
@@ -29,3 +29,5 @@ Source: .tmp/longcat/review-chat.md finding 6.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue dd39811 (registry tip: 2e36f36fc Konstantin Fedotov Close issue)

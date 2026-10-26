@@ -7,7 +7,7 @@
 **Context:** `trackPageErrors` captures the message but not the failing URL, so the 404 is unattributed. The test also invokes `loadNewChatPage?.()` manually because `page.goto()` bypasses `htmx:load`, so the request may be a harness artifact rather than a real user-facing defect.
 **Acceptance Criteria:** The failing request is identified by URL; either the resource is served or the harness-induced request is excluded; the browser baseline gate passes with all 34 files green.
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-e2e-integration-testing
@@ -116,3 +116,5 @@ Found while landing `024_memory_embeddings_cascade_fk`. Unrelated to that change
 
 
 git issue: b99af61
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b99af61 (registry tip: 4364b594d Konstantin Fedotov Close issue)

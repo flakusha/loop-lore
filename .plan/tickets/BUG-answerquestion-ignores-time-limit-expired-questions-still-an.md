@@ -3,7 +3,7 @@
 
 # BUG: answerQuestion ignores time_limit (expired questions still answerable)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics
@@ -21,3 +21,5 @@ The rpg_questions row has a time_limit column (stored at src/rpg/questions/servi
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue a90f770 (registry tip: d2a5b36bc Konstantin Fedotov Close issue)

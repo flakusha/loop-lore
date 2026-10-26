@@ -3,7 +3,7 @@
 
 # BUG: Memory panel never renders memories in any chat — response envelope mismatch
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -28,3 +28,5 @@ FIX DIRECTION: Return { items, total } from the actor-memories list route (or re
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 46fcedc (registry tip: 7cfdfb954 Konstantin Fedotov Close issue)

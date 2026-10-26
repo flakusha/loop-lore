@@ -3,7 +3,7 @@
 
 # BUG: Email adapter ingests mail addressed to anyone and falls back to an unvalidated first To entry as bridge target
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-email-integration
@@ -31,3 +31,5 @@ Source: .tmp/glm-review/deep-integrations-1015.md F-3 (gitignored; recorded here
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 176dc92 (registry tip: f6a8a6b14 Konstantin Fedotov Close issue)

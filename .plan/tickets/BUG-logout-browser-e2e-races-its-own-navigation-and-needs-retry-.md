@@ -3,7 +3,7 @@
 
 # BUG: Logout browser e2e races its own navigation and needs retry-on-abort
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing
@@ -35,3 +35,5 @@ Fix landed; not yet proven. Verified by reading the code only.
 - The flake is addressed by tolerating navigation-aborted errors at the wait, NOT by a repeated-run soak. No e2e soak has been performed on this branch, so the ~17% flake rate recorded in the summary has not been re-measured after the fix.
 
 The ticket stays open until the browser e2e is actually run. Closing it requires either a green auth-session browser run or a repeated-run measurement showing the flake is gone.
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e845b8e (registry tip: fb409d3a3 Konstantin Fedotov Close issue)

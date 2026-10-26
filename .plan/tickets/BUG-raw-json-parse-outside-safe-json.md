@@ -3,7 +3,7 @@
 
 # BUG: Raw JSON.parse used outside safeJson — 3 sites need audit for untrusted input handling
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-api-validation-guardrails
@@ -37,3 +37,5 @@
 
 
 git issue: e7be482
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e7be482 (registry tip: 2cbfbdd11 Konstantin Fedotov Close issue)

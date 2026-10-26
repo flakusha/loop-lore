@@ -3,7 +3,7 @@
 
 # BUG: A community plugin named 'core' disables all five built-in tools
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-security-sandboxing
@@ -33,3 +33,5 @@ Source: .tmp/longcat/review-plugins-services.md H5.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue a06afc7 (registry tip: 5734a81c2 Konstantin Fedotov Close issue)

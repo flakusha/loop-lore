@@ -3,7 +3,7 @@
 
 # BUG: giwt auto-close asserts a ticket is done when no .md marker exists and the work is unmerged
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -57,3 +57,5 @@ A closure commit should also be signed like every other commit in this repositor
 **Context:**
 
 Found while triaging the 2026-10-03 branch-finalization block on `feat-conversation-branching`: `plan - validate` and `plan - ticket index (sync)` failed on dev and on every branch because the git issue registry said `done` for `2afc68e7` while `index.json` said `open`. No ticket anywhere references `2afc68e` or the slug `TASK-scheduled-messages-reminders`, so the premature closure was pointed at by nothing and went unnoticed. Reopening the issue via `giwt state 2afc68e7-49c0-49fa-b813-5ba804598ea2 open` made both gates exit 0.
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 082bb92 (registry tip: 888654aca Konstantin Fedotov Close issue)

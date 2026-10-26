@@ -3,7 +3,7 @@
 
 # BUG: ollamaNative singleton blocks second native Ollama
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem
@@ -22,3 +22,5 @@ GenerationProvidersConfig.ollamaNative is single object while openaiCompatible i
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c232dee (registry tip: d5f37c8d2 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Ownership transfer writes actor id into chats.created_by (FK users.id) → 400
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -25,3 +25,5 @@ FIX DIRECTION: Resolve the actor's user_id and write that to chats.created_by in
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 9140e24 (registry tip: 424fb00be Konstantin Fedotov Close issue)

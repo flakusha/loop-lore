@@ -3,7 +3,7 @@
 
 # BUG: buildSkillTree silently drops orphan nodes
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-rpg-progression
@@ -21,3 +21,5 @@ When a skill has prerequisites that reference skill IDs not present in the actor
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 174d08d (registry tip: e742884c4 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: jscpd-ratchet-update-cannot-raise-baseline
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-continuous-improvement
@@ -30,3 +30,5 @@ Fix direction: add a guarded --raise (explicit, audited, distinct from --update)
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b1cc7bb (registry tip: bf9e8305a Konstantin Fedotov Close issue)

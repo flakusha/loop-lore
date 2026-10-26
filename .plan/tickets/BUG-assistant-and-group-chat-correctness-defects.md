@@ -3,7 +3,7 @@
 
 # BUG: Assistant and group-chat correctness defects
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-group-chat
@@ -35,3 +35,5 @@ Source: .tmp/longcat/review-groupchat-assistant.md GC-1, GC-2, GC-3, GC-4, GC-5,
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 5e09182 (registry tip: 06040dd50 Konstantin Fedotov Close issue)

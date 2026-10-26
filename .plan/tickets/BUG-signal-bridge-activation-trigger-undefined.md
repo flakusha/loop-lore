@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-federation-swarm-sync
@@ -22,3 +22,5 @@ FEAT-messaging-bridge-extensions defers Signal behind a feature flag but defines
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 3ba1095 (registry tip: ccfbdea22 Konstantin Fedotov Close issue)

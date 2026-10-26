@@ -3,7 +3,7 @@
 
 # BUG: fix(routing): consolidate versioned mounts into v1 barrel, drop unversioned halves
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-api-routes
@@ -21,3 +21,5 @@ Sources: stream-a #1 (locationExplorer double-mount); stream-b #2 (gameState/loc
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 2374b1c (registry tip: fb653d3f4 Konstantin Fedotov Close issue)

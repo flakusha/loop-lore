@@ -3,7 +3,7 @@
 
 # BUG: fix(auth): content-negotiate the 429 rate-limit response like other auth errors
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-error-envelope
@@ -21,3 +21,5 @@ Sources: stream-c #9 (narrowed: the htmx-200 half of the original finding is int
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 7a46501 (registry tip: 19e1f5581 Konstantin Fedotov Close issue)

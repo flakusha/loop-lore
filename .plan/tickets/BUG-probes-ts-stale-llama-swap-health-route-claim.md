@@ -3,7 +3,7 @@
 
 # BUG: probes.ts stale llama-swap health route claim
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-local-process-swarm
@@ -29,3 +29,5 @@ Independent of any epic; found during the 2026-10-15 creative-tool research reco
 - [ ] **Concurrency / TOCTOU:** *Not applicable* — this ticket changes a comment plus which route is probed; there is no read-modify-write or check-then-act path in scope. The route correction does, however, change what "alive" means, so the companion ticket `BUG-probes-ts-liveness-accepts-any-http-response-including-404-a` must land with it or the two will disagree.
 - [ ] **Regressions:** the other probe families (llama-cpp, sd-cpp) and their tests unchanged.
 - [ ] **Repo gates:** `bun run check` green.
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 1848443 (registry tip: 1b2bdf172 Konstantin Fedotov Close issue)

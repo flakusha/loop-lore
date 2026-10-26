@@ -3,7 +3,7 @@
 
 # BUG: Admin plugin enable route leaves half-registered onLoad state that the loader's own rollback removes
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-plugin-system
@@ -31,3 +31,5 @@ Source: .tmp/glm-review/deep-plugins-1015.md F-3 (gitignored; recorded here verb
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c4dd53c (registry tip: 607b15622 Konstantin Fedotov Close issue)

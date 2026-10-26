@@ -3,7 +3,7 @@
 
 # BUG: export-sse job Map never evicted; completed ZIP buffers retained forever
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -38,3 +38,5 @@ Evict jobs on SSE completion + a timeout sweeper; stop retaining `zipBuffer` aft
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue ed44995 (registry tip: f0674ef63 Konstantin Fedotov Close issue)

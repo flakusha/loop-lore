@@ -3,7 +3,7 @@
 
 # BUG: Memory audit tab always 404s — route shape mismatch
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -30,3 +30,5 @@ FIX DIRECTION: Add an actor-level GET .../memories/audit route, or repoint the p
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 7c09b78 (registry tip: fa62357e7 Konstantin Fedotov Close issue)

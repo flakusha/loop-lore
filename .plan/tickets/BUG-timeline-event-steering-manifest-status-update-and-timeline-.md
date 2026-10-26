@@ -3,7 +3,7 @@
 
 # BUG: Timeline event steering: manifest status update and timeline append are not atomic
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-timeline-system
@@ -31,3 +31,5 @@ Source: .tmp/glm-review/deep-story-crypto-1015.md F-11 (gitignored; recorded her
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 31fd00f (registry tip: 036518af0 Konstantin Fedotov Close issue)

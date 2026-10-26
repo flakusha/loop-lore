@@ -3,7 +3,7 @@
 
 # BUG: Two gates read age_gate_accepted_at under divergent config keys with no single source of truth
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** config-drift, stale-state, default-off-in-two-places
@@ -30,3 +30,5 @@ The age gate feature was built in two stages: first the explicit `ageGate.*` end
 - [ ] Changing `nsfw.nsfwMinAge` alone does not change whether a user passes the age gate
 - [ ] The default-off for `ageGate.enabled` is defined in exactly one place (runtime store), not also in the class field default
 - [ ] A test covers: user with `age_gate_accepted_at` set passes both gates regardless of `nsfw.nsfwMinAge`; user without it is blocked by both
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b5ecf3f (registry tip: 9d5477924 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Character template validator rejects every legal content_rating
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-config-templates
@@ -25,3 +25,5 @@ Fixed by importing VALID_CONTENT_RATINGS instead of a local literal, so the voca
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 0096d4e (registry tip: 628c42e68 Konstantin Fedotov Close issue)

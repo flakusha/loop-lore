@@ -3,7 +3,7 @@
 
 # BUG: Admin user DELETE has no self-delete or last-admin guard
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-auth-access
@@ -21,3 +21,5 @@ The DELETE /api/v1/admin/users/:id handler (src/routes/admin/users.ts:200-210) p
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 2e1a123 (registry tip: 3d9d14846 Konstantin Fedotov Close issue)

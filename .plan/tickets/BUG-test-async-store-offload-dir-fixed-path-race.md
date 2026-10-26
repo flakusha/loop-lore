@@ -3,7 +3,7 @@
 
 # async-store tests share fixed OFFLOAD_DIR with runtime and concurrent tests
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-testing-qa
@@ -119,3 +119,4 @@ default-dir sweep returns `pruned: 0`.
 - Canonical evidence: `.tmp/scratchpad-audit/e2e-matrix2.sh` + `.tmp/scratchpad-audit/e2e-matrix2.txt`
 
 git issue: 3cbb21e
+**Resolved:** 2026-10-26 registry-driven close: git issue 3cbb21e (registry tip: 064d0aa0e Konstantin Fedotov Close issue)

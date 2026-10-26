@@ -3,7 +3,7 @@
 
 # BUG: Simplification audit artifacts lost to a .tmp/ cleanup: 13 tickets cite deleted scratch
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-tooling-improvement
@@ -107,3 +107,5 @@ Loss was detected by a repo-wide audit of dangling `.tmp/` citations in `.plan/`
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue dd8e139 (registry tip: ef9914616 Konstantin Fedotov Close issue)

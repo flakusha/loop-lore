@@ -3,7 +3,7 @@
 
 # BUG: story-controls calls /api/v1 but story-orchestration routes mount only at /api
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration
@@ -53,3 +53,5 @@ Option (b) alone still leaves escalate broken (defect 2) - story-controls would 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 7ff9731 (registry tip: 91390c8b1 Konstantin Fedotov Close issue)

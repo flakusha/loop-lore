@@ -3,7 +3,7 @@
 
 # BUG: voice-notes passes null userRole, disabling admin arm of checkChatAccess
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -35,3 +35,5 @@ Pass `ctx.userRole` as the fourth argument, matching every sibling call site.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 54b65a1 (registry tip: 55349f503 Konstantin Fedotov Close issue)

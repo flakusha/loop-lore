@@ -3,7 +3,7 @@
 
 # BUG: test - unhandled JSON cascade unexplained after chat-export fix
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-testing-qa
@@ -33,3 +33,5 @@ What a reproducer needs: the dev checkout environment. The failing run executed 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue d17b7a7 (registry tip: af2da6d0c Konstantin Fedotov Close issue)

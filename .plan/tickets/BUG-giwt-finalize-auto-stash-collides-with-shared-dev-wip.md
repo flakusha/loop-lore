@@ -3,7 +3,7 @@
 
 # BUG: giwt finalize auto-stash collides with shared-dev WIP
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -22,3 +22,5 @@ giwt finalize requires a clean dev index (it auto-stashes dev state around the m
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 5748237 (registry tip: 1b79107e3 Konstantin Fedotov Close issue)

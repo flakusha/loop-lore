@@ -3,7 +3,7 @@
 
 # BUG: Image-edit /run crashes on missing params and the template registry is not hydrated or idempotent
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-comfyui-plugin
@@ -35,3 +35,5 @@ Source: .tmp/longcat/review-misc-services.md M4, M8, i1, M7, i8, i9.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 57b50f5 (registry tip: 3e48162e2 Konstantin Fedotov Close issue)

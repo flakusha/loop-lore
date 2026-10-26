@@ -3,7 +3,7 @@
 
 # BUG: SqliteDialect reader detection classifies SQL by leading keywords, misrouting EXPLAIN/commented/CTE-DML
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-data-integrity-acid
@@ -51,3 +51,5 @@ Note: `bun:sqlite`'s `Statement` has no `reader` property of its own (.tmp/bun-n
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 5558811 (registry tip: e00407aab Konstantin Fedotov Close issue)

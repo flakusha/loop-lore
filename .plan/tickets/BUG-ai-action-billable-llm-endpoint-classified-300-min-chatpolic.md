@@ -3,7 +3,7 @@
 
 # BUG: ai-action billable LLM endpoint classified 300/min chatPolicy
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -39,3 +39,5 @@ Add a suffix rule giving ai-action a generation-class budget (quick one-rule fix
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue d0ecf0a (registry tip: 23c6a51b4 Konstantin Fedotov Close issue)

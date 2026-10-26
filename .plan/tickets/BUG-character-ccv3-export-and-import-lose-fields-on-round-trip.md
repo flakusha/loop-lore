@@ -3,7 +3,7 @@
 
 # BUG: Character CCv3 export and import lose fields on round-trip
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Critical
 **Effort:** Medium
 **Epic:** epic-import-export-io
@@ -31,3 +31,5 @@ Source: .tmp/longcat/review-characters.md C2, H6, H7, H8, M14.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 08f7eae (registry tip: 234539349 Konstantin Fedotov Close issue)

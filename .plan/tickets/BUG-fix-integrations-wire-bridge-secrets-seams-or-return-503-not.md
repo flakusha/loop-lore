@@ -3,7 +3,7 @@
 
 # BUG: fix(integrations): wire bridge/secrets seams or return 503-not-configured
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-mechanics-governance
@@ -21,3 +21,5 @@ Sources: stream-b #9. Where: src/routes/v1/index.ts:64 (.use(integrationsSurface
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b36adbe (registry tip: 43f1928ac Konstantin Fedotov Close issue)

@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-federation-swarm-sync
@@ -22,3 +22,5 @@ The federation epic Testing Strategy relies on local Mastodon or Lemmy or Fedify
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 9e5d529 (registry tip: 028003525 Konstantin Fedotov Close issue)

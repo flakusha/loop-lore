@@ -3,7 +3,7 @@
 
 # BUG: The comment-only catch ticket has an acceptance criterion that cannot be satisfied
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Low
 **Effort:** Medium
 **Epic:** epic-continuous-improvement
@@ -33,3 +33,5 @@ Source: .tmp/step-5/repository-review.md F3.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 8726edb (registry tip: 603faf142 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: encryption-flow.browser.ts is not covered by EXPECTED_404_NOISE_ALLOWLIST, so the by-design game-state 404 flakes it under load
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -37,3 +37,5 @@ Observed 2026-10-25: the 'e2e - browser' gate during a finalize of test-contamin
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 9dad45f (registry tip: 6dcb8014f Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-schema
@@ -34,3 +34,5 @@ Source: .tmp/longcat/review-consolidated.md nits 28, 29, 30, 31, 32, 33; .tmp/ca
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 6ab31ad (registry tip: d76e8d0c8 Konstantin Fedotov Close issue)

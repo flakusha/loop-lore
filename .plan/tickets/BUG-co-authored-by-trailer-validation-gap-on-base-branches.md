@@ -3,7 +3,7 @@
 
 # BUG: Co-Authored-By trailer validation gap on base branches
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline
@@ -21,3 +21,5 @@ scripts/check/co-author-trailers.mjs:211 — defaultRange() skips the current br
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue d05f21f (registry tip: 937fb2250 Konstantin Fedotov Close issue)
