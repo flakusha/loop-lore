@@ -12,6 +12,8 @@
  * - `/.well-known/nodeinfo` → links to the NodeInfo document
  * - `/nodeinfo/2.1` → software name/version, protocols, openRegistrations
  * - `/api/instance-state` → instance ID, version, protocols, uptime, coarse state
+ * - `/.well-known/host-meta` → XRD `lrdd` template pointing at WebFinger
+ * - `/.well-known/webfinger` → JRD for federation-consented characters only
  *
  * No secrets, user identifiers, counts, or internal topology are exposed.
  */
@@ -20,11 +22,13 @@ import { computeBuildIdentity, } from "../build/identity";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { getGossipOrigins, } from "../federation/gossip";
+import { resolveLocalActor, } from "../federation/local-webfinger";
 import { declaredWorkloadClasses, } from "../federation/peer-capabilities";
 import { createLocalPeerWorkExecutor, } from "../federation/peer-work-execute";
+import { buildHostMetaXrd, HOST_META_PATH, WEBFINGER_PATH, } from "../federation/webfinger";
 import { type MeshRouteOpts, mountMeshApi, } from "./federation-mesh";
 import { mountPeerWorkApi, } from "./federation-peer-work";
-import { jsonResponse, } from "./http-utils";
+import { HttpStatus, jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
 
@@ -57,6 +61,50 @@ export function federationRoutes(opts: MeshRouteOpts,): Elysia {
 
   const origin = config.server.publicOrigin ??
     `${config.server.tls?.cert ? "https" : "http"}://${config.server.host}:${config.server.port}`;
+
+  // RFC 6415 host-meta pointer. WebFinger itself lives at a fixed RFC 7033
+  // path, so this document is a hint for legacy resolvers — it lists no
+  // actors, no counts, and nothing about internal topology.
+  app.get(
+    HOST_META_PATH,
+    () =>
+      new Response(buildHostMetaXrd(origin,), {
+        headers: { "content-type": "application/xrd+xml; charset=utf-8", },
+      },),
+    {
+      detail: {
+        summary: "WebFinger discovery pointer",
+        description: "XRD lrdd template for /.well-known/webfinger. Federation opt-in.",
+        tags: ["Federation",],
+      },
+    },
+  );
+
+  // RFC 7033 WebFinger. Answers only for characters whose owner consented to
+  // federation, and only for this instance's own host: an unknown handle and
+  // an unpublished one both 404, so the route cannot enumerate accounts.
+  app.get(
+    WEBFINGER_PATH,
+    async (ctx,) => {
+      const resource = (ctx as { query: { resource?: string } }).query.resource;
+      if (typeof resource !== "string" || resource.length === 0) {
+        return jsonResponse({ error: "resource query parameter is required", }, HttpStatus.BadRequest,);
+      }
+
+      const match = await resolveLocalActor({ database: opts.database, origin, resource, },);
+      if (!match) { return new Response(null, { status: HttpStatus.NotFound, },); }
+      return Response.json(match.jrd, {
+        headers: { "content-type": "application/jrd+json; charset=utf-8", },
+      },);
+    },
+    {
+      detail: {
+        summary: "WebFinger actor discovery",
+        description: "JRD for acct: handles and actor URIs of federation-consented characters. Federation opt-in.",
+        tags: ["Federation",],
+      },
+    },
+  );
 
   app.get(
     "/.well-known/nodeinfo",
