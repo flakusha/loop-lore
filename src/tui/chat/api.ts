@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 300
+// size-allow: 320
+// One API client surface for the TUI chat widgets: request shaping, envelope
+// parsing and the stale-chat guards all read the same page/pagination contract.
 import { safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
 import type { ChatHost, ChatMessage, } from "./types";
 
@@ -166,14 +168,23 @@ async function fetchMessagesPage(
  * chat — reading only that page would show the opening turns forever. The first
  * read therefore learns `totalPages`, and a chat longer than one page is re-read
  * at its last page. Two requests, and only for the long ones.
+ *
+ * Both requests are chat-scoped: the widget can switch chats (clearing the
+ * list) while a page is in flight, and that chat's own `loadMessages` races
+ * this one. Every continuation therefore re-checks the requested id against
+ * `host.chatId` and drops the rows when the chat moved on — otherwise the
+ * previous chat's transcript lands in the new one's list.
  * @param host
  * @returns {Promise<void>}
  */
 export async function loadMessages(host: ChatHost,): Promise<void> {
-  if (!host.chatId) { return; }
-  const chatId = encodeURIComponent(host.chatId,);
+  const requestedChatId = host.chatId;
+  if (!requestedChatId) { return; }
+  const chatId = encodeURIComponent(requestedChatId,);
+  const stillCurrent = (): boolean => host.chatId === requestedChatId;
   try {
     const first = await fetchMessagesPage({ host, chatId, page: 1, },);
+    if (!stillCurrent()) { return; }
     if (!first.ok) {
       host.showError(first.message,);
       return;
@@ -186,6 +197,7 @@ export async function loadMessages(host: ChatHost,): Promise<void> {
     }
 
     const last = await fetchMessagesPage({ host, chatId, page: totalPages, },);
+    if (!stillCurrent()) { return; }
     if (!last.ok) {
       host.showError(last.message,);
       return;
@@ -193,6 +205,9 @@ export async function loadMessages(host: ChatHost,): Promise<void> {
 
     host.setMessages(last.page.data ?? [],);
   } catch (error) {
+    // `safeFetch` reports network failures as result objects, not throws, so a
+    // stale fetch is already dropped by the checks above; this arm only guards
+    // an unexpected throw from a host callback.
     host.showError(`Network error loading messages: ${(error as Error).message}`,);
   }
 }

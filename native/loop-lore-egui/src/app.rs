@@ -219,15 +219,29 @@ impl EguiApp {
   }
 
   /// Spawn a message-page fetch for `chat_id`.
+  ///
+  /// The endpoint pages oldest-first, so page 1 is the START of the chat: a
+  /// transcript longer than one page would open on its first rows forever.
+  /// The first read learns `pagination.totalPages` and a longer chat is
+  /// re-read at its LAST page — the same two-step the TUI does
+  /// (`src/tui/chat/api.ts`).
   fn fetch_messages(&self, chat_id: &str, ctx: &egui::Context) {
+    /// Read the NEWEST page of `chat_id`'s transcript.
+    async fn newest_page(chat_id: &str) -> Result<Vec<ChatMessage>, String> {
+      let first_url = api::messages_url(chat_id, 1);
+      let first = api::parse_messages_page(&client::get_json(&first_url).await?)?;
+      if first.total_pages <= 1 {
+        return Ok(first.messages);
+      }
+      let last_url = api::messages_url(chat_id, first.total_pages);
+      Ok(api::parse_messages_page(&client::get_json(&last_url).await?)?.messages)
+    }
+
     let events = Rc::clone(&self.events);
     let ctx = ctx.clone();
-    let url = api::messages_url(chat_id, 1);
     let chat_id = chat_id.to_string();
     client::spawn(async move {
-      let result = client::get_json(&url)
-        .await
-        .and_then(|raw| api::parse_messages_page(&raw));
+      let result = newest_page(&chat_id).await;
       events.borrow_mut().push(FetchEvent::Messages { chat_id, result });
       ctx.request_repaint();
     });

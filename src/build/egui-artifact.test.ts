@@ -30,11 +30,11 @@ function makeRoot(): string {
 }
 
 /** Plant a bundle + stamp so the fresh/stale comparison has something to read. */
-function plant(root: string, stampOverrides?: Record<string, unknown>,): void {
+async function plant(root: string, stampOverrides?: Record<string, unknown>,): Promise<void> {
   const dir = join(root, EGUI_BUNDLE_DIR,);
   mkdirSync(dir, { recursive: true, },);
   writeFileSync(join(dir, "app_bg.wasm",), "wasm-bytes",);
-  writeEguiStamp(root, { wasmBindgenVersion: "0.2.129", ...stampOverrides, },);
+  await writeEguiStamp(root, { wasmBindgenVersion: "0.2.129", ...stampOverrides, },);
 }
 
 describe("egui artifact identity", () => {
@@ -49,10 +49,10 @@ describe("egui artifact identity", () => {
     }
   });
 
-  test("fresh bundle matches the Rust sources it was built from", () => {
+  test("fresh bundle matches the Rust sources it was built from", async () => {
     const root = makeRoot();
     try {
-      plant(root,);
+      await plant(root,);
       const state = readEguiArtifactState(root,);
       expect(state.status,).toBe("fresh",);
       expect(state.stamp?.rustSourceHash,).toBe(rustSourceHash(root,),);
@@ -61,12 +61,12 @@ describe("egui artifact identity", () => {
     }
   });
 
-  test("editing a .rs file makes the bundle stale", () => {
+  test("editing a .rs file makes the bundle stale", async () => {
     // THE regression. Under the old source-hash-only check this was invisible:
     // sourceTreeHash moved, remote/local agreed, and stale wasm was served.
     const root = makeRoot();
     try {
-      plant(root,);
+      await plant(root,);
       writeFileSync(join(root, "native", "loop-lore-egui", "src", "lib.rs",), "fn main() { let _ = 1; }\n",);
       const state = readEguiArtifactState(root,);
       expect(state.status,).toBe("stale",);
@@ -76,10 +76,10 @@ describe("egui artifact identity", () => {
     }
   });
 
-  test("a bundle replaced after its build is stale", () => {
+  test("a bundle replaced after its build is stale", async () => {
     const root = makeRoot();
     try {
-      plant(root,);
+      await plant(root,);
       writeFileSync(join(root, EGUI_BUNDLE_DIR, "app_bg.wasm",), "swapped",);
       expect(readEguiArtifactState(root,).status,).toBe("stale",);
     } finally {
@@ -100,15 +100,30 @@ describe("egui artifact identity", () => {
     }
   });
 
-  test("the stamp records the resolved wasm-bindgen CLI version", () => {
+  test("the stamp records the resolved wasm-bindgen CLI version", async () => {
     const root = makeRoot();
     try {
-      plant(root, { wasmBindgenVersion: "0.2.129", },);
-      const path = writeEguiStamp(root, { wasmBindgenVersion: "0.2.129", },);
+      await plant(root, { wasmBindgenVersion: "0.2.129", },);
+      const path = await writeEguiStamp(root, { wasmBindgenVersion: "0.2.129", },);
       expect(path,).toBe(join(root, EGUI_STAMP_FILE,),);
       const stamp = JSON.parse(readFileSync(path, "utf8",),);
       expect(stamp.wasmBindgenVersion,).toBe("0.2.129",);
       expect(stamp.rustSourceHash,).toBe(rustSourceHash(root,),);
+    } finally {
+      rmSync(root, { recursive: true, force: true, },);
+    }
+  });
+
+  test("a stamp write that cannot land rejects instead of vanishing", async () => {
+    const root = makeRoot();
+    try {
+      await plant(root,);
+      // Make the stamp path a directory: the write cannot land, and the caller
+      // must see a rejection — a swallowed failure would leave a bundle with
+      // no provenance behind a green build.
+      rmSync(join(root, EGUI_STAMP_FILE,), { force: true, },);
+      mkdirSync(join(root, EGUI_STAMP_FILE,), { recursive: true, },);
+      await expect(writeEguiStamp(root, { wasmBindgenVersion: "0.2.129", },),).rejects.toThrow();
     } finally {
       rmSync(root, { recursive: true, force: true, },);
     }

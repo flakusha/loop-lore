@@ -214,8 +214,23 @@ pub fn parse_chats_page(raw: &str) -> Result<Vec<ChatSummary>, String> {
   Ok(chats)
 }
 
-/// Parse `GET /api/v1/chats/:id/messages` into message rows, preserving order.
-pub fn parse_messages_page(raw: &str) -> Result<Vec<ChatMessage>, String> {
+/// One page of `GET /api/v1/chats/:id/messages` plus the paging the server
+/// reported.
+///
+/// The route answers `jsonPaginated`, which nests its metadata under
+/// `pagination` (`src/routes/http-utils/responses.ts`); there is no top-level
+/// `total`/`totalPages` in that envelope, so only the nested shape is read.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MessagesPage {
+  /// Rows in server order — oldest first.
+  pub messages: Vec<ChatMessage>,
+  /// How many pages the chat holds; `1` when the envelope carries no paging,
+  /// so a caller that reads only page 1 is still reading the last page.
+  pub total_pages: u32,
+}
+
+/// Parse `GET /api/v1/chats/:id/messages` into rows plus the page count.
+pub fn parse_messages_page(raw: &str) -> Result<MessagesPage, String> {
   let value: serde_json::Value = serde_json::from_str(raw).map_err(|e| e.to_string())?;
   let data = value
     .get("data")
@@ -244,7 +259,17 @@ pub fn parse_messages_page(raw: &str) -> Result<Vec<ChatMessage>, String> {
         .to_string(),
     });
   }
-  Ok(messages)
+  // The metadata lives under `pagination`; an empty chat reports
+  // `totalPages: 0` and a body without paging reports nothing at all. Both
+  // mean "page 1 is the last page", which is what the caller needs.
+  let total_pages = value
+    .get("pagination")
+    .and_then(|pagination| pagination.get("totalPages"))
+    .and_then(serde_json::Value::as_u64)
+    .and_then(|pages| u32::try_from(pages).ok())
+    .unwrap_or(0)
+    .max(1);
+  Ok(MessagesPage { messages, total_pages })
 }
 
 /// Parse `POST /api/v1/chats/:id/messages` into whatever rows it echoed.
@@ -579,20 +604,37 @@ mod tests {
   }
 
   #[test]
-  fn messages_page_parses_rows_in_order() {
-    let raw = r#"{"data":[{"id":"m1","role":"user","content":"hi","created_at":"t"},{"id":"m2","role":"assistant","content":"yo"}],"total":2}"#;
-    let messages = parse_messages_page(raw).unwrap();
-    assert_eq!(messages.len(), 2);
-    assert_eq!(messages[0].content, "hi");
-    assert_eq!(messages[1].created_at, "");
+  fn messages_page_parses_rows_and_nested_paging() {
+    // The real `jsonPaginated` envelope: the metadata lives under `pagination`
+    // (`src/routes/http-utils/responses.ts`), and rows come oldest-first.
+    let raw = r#"{"data":[{"id":"m1","role":"user","content":"hi","created_at":"t"},{"id":"m2","role":"assistant","content":"yo"}],"pagination":{"total":250,"page":1,"pageSize":50,"totalPages":5},"meta":{}}"#;
+    let page = parse_messages_page(raw).unwrap();
+    assert_eq!(page.messages.len(), 2);
+    assert_eq!(page.messages[0].content, "hi");
+    assert_eq!(page.messages[1].created_at, "");
+    assert_eq!(page.total_pages, 5, "the client re-reads this page number last");
   }
 
   #[test]
   fn messages_page_skips_rows_without_id_or_role() {
-    let raw = r#"{"data":[{"id":"m1"},{"role":"user"},{"id":"m3","role":"user","content":"ok"}]}"#;
-    let messages = parse_messages_page(raw).unwrap();
-    assert_eq!(messages.len(), 1);
-    assert_eq!(messages[0].id, "m3");
+    let raw = r#"{"data":[{"id":"m1"},{"role":"user"},{"id":"m3","role":"user","content":"ok"}],"pagination":{"total":1,"page":1,"pageSize":50,"totalPages":1}}"#;
+    let page = parse_messages_page(raw).unwrap();
+    assert_eq!(page.messages.len(), 1);
+    assert_eq!(page.messages[0].id, "m3");
+  }
+
+  /// A top-level `total`/`totalPages` is NOT part of the server's envelope, so
+  /// promoting it would invent pages the chat does not have and send the
+  /// client to a page that does not exist. Only `pagination` counts.
+  #[test]
+  fn messages_page_reads_only_the_nested_pagination() {
+    let phantom = parse_messages_page(r#"{"data":[],"total":2}"#).unwrap();
+    assert_eq!(phantom.total_pages, 1);
+    // An empty chat reports `totalPages: 0`; page 1 is its last page either way.
+    let empty =
+      parse_messages_page(r#"{"data":[],"pagination":{"total":0,"page":1,"pageSize":50,"totalPages":0}}"#).unwrap();
+    assert_eq!(empty.total_pages, 1);
+    assert_eq!(empty.messages.len(), 0);
   }
 
   /// The shared conformance vectors: `message-vectors.json` holds the real

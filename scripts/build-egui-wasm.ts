@@ -291,7 +291,7 @@ function writeBrotliVariant(): void {
 
 // ── Main ─────────────────────────────────────────────────────────
 
-function main(): void {
+async function main(): Promise<void> {
   console.log("=== build:egui ===",);
   if (!existsSync(join(CRATE_DIR, "Cargo.toml",),)) {
     degrade(`${CRATE_DIR}/Cargo.toml missing`,);
@@ -312,9 +312,11 @@ function main(): void {
   const artifact = buildWasm();
   runWasmBindgen(artifact,);
   writeBrotliVariant();
-  const stamp = writeEguiStamp(OUT_ROOT, { wasmBindgenVersion: wasmBindgenVersion(), },);
+  const stamp = await writeEguiStamp(OUT_ROOT, { wasmBindgenVersion: wasmBindgenVersion(), },);
   console.log(`[build:egui] provenance stamp: ${stamp}`,);
   console.log(`[build:egui] bundle ready at ${OUT_DIR}`,);
 }
 
-main();
+// Top-level await: a rejected stamp write fails the build instead of leaving a
+// bundle with no provenance behind an exit code of 0.
+await main();
