@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas
@@ -22,3 +22,5 @@ FEAT-activitypub-federation does not specify delivery queueing, retries, idempot
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue d07462c (registry tip: 24445fa7e Konstantin Fedotov Close issue)

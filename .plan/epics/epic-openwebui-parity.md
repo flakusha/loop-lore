@@ -67,3 +67,6 @@ retry-from-point, and cancel-generation wiring end to end.
 - `TASK-2026-openwebui-tool-valves-panel.md` (open)
 - `TASK-2026-openwebui-retry-from-point.md` (open)
 - `TASK-2026-openwebui-cancel-generation-wiring.md` (open)
+
+
+git issue: 2d85513

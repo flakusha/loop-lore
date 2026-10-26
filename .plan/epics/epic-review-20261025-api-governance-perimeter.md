@@ -37,3 +37,6 @@ Folds in B-10 (guard scoped to the v1 barrel; unversioned LLM routes unthrottled
 - Findings: S-4, S-5, S-6, S-7, S-12 in .tmp/reviews/2026-10-25/review-surfaces.md
 
 **Review:** .tmp/reviews/2026-10-25/ (2026-10-25 round).
+
+
+git issue: 1d2d787

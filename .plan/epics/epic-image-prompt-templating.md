@@ -111,3 +111,6 @@ Verified gaps today:
   cross-reference).
 - `epic-config-templates.md` — shipped the loader/merge precedent this
   epic extends.
+
+
+git issue: 74c4328

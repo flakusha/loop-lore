@@ -34,10 +34,14 @@ Move the 4-file working-tree repair into a worktree branch, commit via `giwt com
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Repair landed as commit 308d71855 "fix(assistant): restore split module headers, break import cycle" — 4 files (characters-access.ts, characters-update.ts, items.ts, items-update.ts): SPDX headers restored and the import cycle broken by moving `parseCharacterUpdates` into characters-update.ts and `parseItemUpdates` into items-update.ts (the originals import and re-export them, so the registration order the frozen vectors encode is preserved). The frozen vectors file was not touched.
+
+Second acceptance item verified: bare `bun test src/frontend/alpine/command-conformance.test.ts` (no `E2E_SAFEGUARD`) → 3 pass / 0 fail; the file carries no `E2E_SAFEGUARD` reference. The split — not the env var — is what had emptied the live registry. `bun test` over the five entity-command test files → 118 pass / 0 fail.
+
+Documentation: `docs/spec/assistant-commands.md` documents the command framework and the apply/modify/add/clone/import family; it does not enumerate the world/location/character/item read commands, so no documented statement went stale and no doc change was required.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

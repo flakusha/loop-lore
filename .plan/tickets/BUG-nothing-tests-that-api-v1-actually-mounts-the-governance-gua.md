@@ -3,7 +3,7 @@
 
 # BUG: Nothing tests that /api/v1 actually mounts the governance guard end to end
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-api-governance
@@ -29,3 +29,5 @@ Fix direction: an integration test that boots the real v1 router and asserts a r
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 7d17b06 (registry tip: 750fa48b3 Konstantin Fedotov Close issue)

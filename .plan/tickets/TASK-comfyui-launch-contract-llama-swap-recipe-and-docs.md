@@ -137,3 +137,6 @@ work on a machine whose ComfyUI checkout has no `.venv`; do not touch `.venv`,
       breaks the `/comfyui` passthrough).
 - [ ] `bun run check` and `bun run plan validate` green; no real local paths,
       credentials, or host-specific values committed.
+
+
+git issue: a4f6771

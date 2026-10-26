@@ -156,3 +156,6 @@ cannot run without editing the source.
       not exist; the gates that guard this work are the plugin repo's own test
       run plus the grep guard above. In this repo the filing touches only
       `.plan/` docs, which the `plan:*` gates cover.
+
+
+git issue: 22051e0

@@ -144,3 +144,6 @@ injection section are new, following `carriage_records`.
 
 - `FEAT-message-translations-chat-first.md` — chat-first message_translations consumer (open, re-filed here from output-control-transforms 2026-10-23; `epic-output-control-transforms.md` owns output transforms, not translation carriage)
 - `TASK-translator-model-role-with-general-model-fallback.md` — translator model role (open, re-filed from aux-enrichment-pipeline 2026-10-23)
+
+
+git issue: 6b6bd74
