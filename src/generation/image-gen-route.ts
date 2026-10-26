@@ -113,29 +113,36 @@ export async function handleImageGeneration(
 
   const config = loadConfig();
 
-  // LoRA opt-in: only comfyui + sd-server/sdcpp support it — restrict the
-  // failover candidates to capable backends instead of rejecting the request
-  // outright when the top pick cannot serve a LoRA run.
-  const sdCandidates = listSdProviders(config.generation.providers.sd, "generate",)
-    .filter((p,) => !req.lora || p.apiFamily === "comfyui" || p.apiFamily === "sdcpp");
+  const configuredSd = listSdProviders(config.generation.providers.sd, "generate",);
 
-  if (req.lora && sdCandidates.length === 0) {
-    return Response.json(
-      {
-        error: "LoRA is not supported by any configured image backend. Use comfyui or sd-server.",
-        status: 400,
-      },
-      { status: 400, },
-    );
-  }
-
-  if (sdCandidates.length === 0) {
+  if (configuredSd.length === 0) {
     return Response.json(
       {
         error: "No image generation provider configured. Set config.generation.providers.sd in your config file.",
         status: 501,
       },
       { status: 501, },
+    );
+  }
+
+  // LoRA opt-in: only comfyui + sd-server/sdcpp support it — restrict the
+  // failover candidates to capable backends instead of rejecting the request
+  // outright when the top pick cannot serve a LoRA run. When NO configured
+  // backend can serve the run the request is refused, and the message names
+  // the families that refused it: an operator reading a 400 needs to know
+  // which backend has to change.
+  const sdCandidates = req.lora
+    ? configuredSd.filter((p,) => p.apiFamily === "comfyui" || p.apiFamily === "sdcpp")
+    : configuredSd;
+
+  if (sdCandidates.length === 0) {
+    const refusing = [...new Set(configuredSd.map((p,) => p.apiFamily),),].join(", ",);
+    return Response.json(
+      {
+        error: `LoRA is not supported by the configured image backend(s) (${refusing}). Use comfyui or sd-server.`,
+        status: 400,
+      },
+      { status: 400, },
     );
   }
 
