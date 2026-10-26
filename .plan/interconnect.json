@@ -504,7 +504,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-alpine-hydration-failures-undeclared-template-vars-untested.md",
       "title": "Alpine hydration failures (undeclared template vars) untested",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": [
         "epic-testing-qa"
@@ -2460,7 +2460,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-chat-pins-cross-chat-content-leak-pin-any-message-id-into-yo.md",
       "title": "chat-pins cross-chat content leak: pin any message id into your own chat",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/chat/service/polls.ts",
         "src/routes/chat-pins.ts"
@@ -4035,7 +4035,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-federation-delivery-reliability-queue-retry-idempotency-unde.md",
       "title": "Federation delivery reliability (queue, retry, idempotency) undefined",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -4576,7 +4576,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-gallery-search-401s-anonymous-users-while-grid-serves-them.md",
       "title": "Gallery search 401s anonymous users while grid serves them",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/views/plugin-dynamic.ts",
         "src/routes/views/plugin-pages.ts"
@@ -6374,7 +6374,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated.md",
       "title": "Message create re-wraps a 503 reply into 201 jsonCreated",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/routes/messages/create.ts",
         "src/routes/messages/reply.ts"
@@ -6563,7 +6563,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md",
       "title": "Modality template PATCH classifies DB read failures as 400 with raw exception message",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/elysia-app.ts",
         "src/routes/templates/index.ts",
@@ -6851,7 +6851,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md",
       "title": "Nothing tests that /api/v1 actually mounts the governance guard end to end",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/api-governance/telemetry/collector.test.ts",
         "src/routes/v1/governance.test.ts",
@@ -8545,7 +8545,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md",
       "title": "Service-layer multi-query mutations run without transactions or conditional writes",
-      "status": "in_progress",
+      "status": "done",
       "srcRefs": [
         "src/characters/services/mood-service/log-event.ts",
         "src/rpg/achievements/service/crud.ts",
@@ -18997,7 +18997,11 @@
       "srcRefs": [
         "src/assistant/adapter/locations.ts",
         "src/assistant/adapter/worlds.ts",
+        "src/assistant/commands/index.ts",
+        "src/assistant/commands/locations-update.ts",
         "src/assistant/commands/locations.ts",
+        "src/assistant/commands/worlds-access.ts",
+        "src/assistant/commands/worlds-mutate.ts",
         "src/assistant/commands/worlds.ts",
         "src/routes/worlds/access.ts",
         "src/routes/worlds/locations.ts",
@@ -32149,7 +32153,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-implement-bug-nsfw-reviewappeal-auto-reverses-actions.md",
       "title": "Implement BUG-nsfw-reviewappeal-auto-reverses-actions",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [],
       "related": []
     },
@@ -53917,6 +53921,7 @@
       "owners": [
         "TASK-assistant-entity-access-asset-access",
         "TASK-assistant-entity-access-batch-rag-asset",
+        "TASK-assistant-entity-access-world-location-access",
         "TASK-assistant-server-side-branch-command",
         "TASK-assistant-tool-injection-guard",
         "epic-assistant-entity-access"
@@ -53943,6 +53948,12 @@
       "owners": [
         "TASK-assistant-entity-access-character-item-inventory",
         "epic-assistant-entity-access"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/locations-update.ts",
+      "owners": [
+        "TASK-assistant-entity-access-world-location-access"
       ]
     },
     {
@@ -54165,7 +54176,14 @@
     {
       "path": "src/assistant/commands/worlds-access.ts",
       "owners": [
+        "TASK-assistant-entity-access-world-location-access",
         "epic-assistant-entity-access"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/worlds-mutate.ts",
+      "owners": [
+        "TASK-assistant-entity-access-world-location-access"
       ]
     },
     {
@@ -86729,7 +86747,7 @@
       "from": "TASK-assistant-entity-access-world-location-access",
       "kind": "consumes",
       "to": "epic-assistant-entity-access",
-      "via": "src/assistant/commands/locations.ts; src/routes/worlds/worlds.ts"
+      "via": "src/assistant/commands/index.ts; src/assistant/commands/locations.ts; src/assistant/commands/worlds-access.ts; src/routes/worlds/worlds.ts"
     },
     {
       "from": "TASK-async-request-response-result-store-separate-table-offload",
@@ -120256,7 +120274,27 @@
     {
       "from": "TASK-assistant-entity-access-world-location-access",
       "kind": "produces",
+      "to": "src/assistant/commands/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-world-location-access",
+      "kind": "produces",
+      "to": "src/assistant/commands/locations-update.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-world-location-access",
+      "kind": "produces",
       "to": "src/assistant/commands/locations.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-world-location-access",
+      "kind": "produces",
+      "to": "src/assistant/commands/worlds-access.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-world-location-access",
+      "kind": "produces",
+      "to": "src/assistant/commands/worlds-mutate.ts"
     },
     {
       "from": "TASK-assistant-entity-access-world-location-access",
@@ -280048,6 +280086,12 @@
     {
       "from": "TASK-assistant-entity-access-asset-access",
       "kind": "sibling",
+      "to": "TASK-assistant-entity-access-world-location-access",
+      "via": "src/assistant/commands/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-asset-access",
+      "kind": "sibling",
       "to": "TASK-assistant-server-side-branch-command",
       "via": "src/assistant/commands/index.ts"
     },
@@ -280110,6 +280154,12 @@
       "kind": "sibling",
       "to": "TASK-assistant-entity-access-rag-access",
       "via": "src/assistant/commands/rag.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-batch-rag-asset",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-world-location-access",
+      "via": "src/assistant/commands/index.ts"
     },
     {
       "from": "TASK-assistant-entity-access-batch-rag-asset",
@@ -280452,6 +280502,18 @@
       "kind": "sibling",
       "to": "epic-assistant-gm-flows",
       "via": "src/assistant/quality/entity-creation.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-world-location-access",
+      "kind": "sibling",
+      "to": "TASK-assistant-server-side-branch-command",
+      "via": "src/assistant/commands/index.ts"
+    },
+    {
+      "from": "TASK-assistant-entity-access-world-location-access",
+      "kind": "sibling",
+      "to": "TASK-assistant-tool-injection-guard",
+      "via": "src/assistant/commands/index.ts"
     },
     {
       "from": "TASK-assistant-entity-access-world-location-access",
