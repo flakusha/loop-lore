@@ -2419,6 +2419,12 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
     }
   ],
+  "src/assistant/adapter/modify.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    }
+  ],
   "src/assistant/adapter/quality.ts": [
     {
       "kind": "ticket",
@@ -2539,10 +2545,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-entity-access.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
     }
   ],
   "src/assistant/commands/assets.test.ts": [
@@ -2651,10 +2653,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-entity-access.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
     }
   ],
   "src/assistant/commands/commit.ts": [
@@ -2817,24 +2815,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
-    }
-  ],
-  "src/assistant/commands/entity-guard.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
-    }
-  ],
-  "src/assistant/commands/entity-patch-spec.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
-    }
-  ],
-  "src/assistant/commands/entity-patch.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
     }
   ],
   "src/assistant/commands/games.ts": [
