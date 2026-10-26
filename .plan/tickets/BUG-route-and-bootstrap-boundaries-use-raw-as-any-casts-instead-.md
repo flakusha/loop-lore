@@ -3,13 +3,19 @@
 
 # BUG: Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation
 
-**Status:** Done
-**Status Note:** [2026-10-26 final pass] REOPENED — closed while 2 of its 6 named sites were still cast-escaped. PARTIAL — 4 of 6 evidence sites are now cast-free, 2 remain:
+**Status:** In Progress
+**Status Note:** [2026-10-26 final pass] REOPENED — closed while named sites were still cast-escaped. PARTIAL progress:
 - FIXED `src/assets/controller.ts` — the `(ctx as any).userId as string | null` cluster is gone (zero `as any` in the file; handlers use `requireUserId`).
 - FIXED `src/routes/entity-routes/create.ts` — ctx narrowed structurally (userId/userRole typeof checks) and the dynamic table name isolated to one documented `Kysely<Record<string, unknown>>` boundary.
 - FIXED `src/db/index.ts` — the three `(parameters as any[])` casts collapse into one named `asBindings()` helper converting Kysely's `readonly unknown[]` to bun's `SQLQueryBindings[]` at the adapter boundary.
 - FIXED for the reported shape: `src/config/load/domain.ts:35` still merges domain overrides through `deepMerge`, but `deepMerge` is already generic (`src/config/load/parse.ts:11`), so the merge itself is typed; the remaining `as unknown as` is the untrusted-file trust transfer after `validateDomainConfig` (`:34`) — no removal without a schema-derived parse type.
-- REMAINING `src/chat/service/crud/get.ts:55-56` (`chatData as unknown as Record<string, unknown>`) and `src/elysia-app.ts:236-238` (`app as unknown as Elysia<any>` for `registerPlugins`/`v1Routes`) — both are Elysia/Kysely generic-width escapes, tracked by TASK-typed-userid-accessor for the ctx half.
+- FIXED `src/characters/services/shared-service-utils.ts` — `withExplicitWorldScope` and `withWorldId` now take a structural `WorldFilterable<T>` instead of `(qb as any)`, so the world-scope builders add no type escape.
+- REMAINING, verified by grep on this tree:
+  - `src/chat/service/crud/get.ts:55-56` — `chatData as unknown as Record<string, unknown>` and the same for participants (Kysely row width).
+  - `src/elysia-app.ts:175` — `app as unknown as Parameters<typeof applyCsrfPlugin>[0]`.
+  - `src/elysia-app.ts:236,238` — `app as unknown as Elysia<any>` for `registerPlugins`/`v1Routes`.
+  - `src/elysia-app.ts:325` — `return app as unknown as Elysia` (gateway return).
+  - `src/config/load/domain.ts:35` — untrusted-file trust transfer after `validateDomainConfig` (needs a schema-derived parse type).
 Verified: `bunx tsc --noEmit` clean apart from the in-flight federation edit at the time of writing.
 **Priority:** Medium
 **Effort:** Medium
@@ -42,4 +48,4 @@ Source: .tmp/longcat/review-consolidated.md nits 28, 29, 30, 31, 32, 33; .tmp/ca
 - [ ] Tests passing
 - [ ] Documentation updated
 
-**Resolved:** 2026-10-26 registry-driven close: git issue 6ab31ad (registry tip: d76e8d0c8 Konstantin Fedotov Close issue)
+**Reopened:** 2026-10-26 — the registry close (git issue 6ab31ad, tip d76e8d0c8) was premature: the sites above were still cast-escaped on dev.
