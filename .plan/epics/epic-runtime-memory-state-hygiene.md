@@ -92,3 +92,6 @@ each fixed inside their feature epic, leaving the next site to leak again.
 - `BUG-module-level-in-memory-state-grows-without-eviction.md` — primary member (open)
 - `BUG-per-sender-rate-limiter-buckets-are-never-evicted-unbounded-.md` — cross-listed (open, lives under api-rate-limiting)
 - Reference (Done precedents): `BUG-generation-continuation-maps-never-evicted-unbounded.md`, `BUG-rate-limit-in-memory-store-never-evicts-idle-keys.md`
+
+
+git issue: 23af491

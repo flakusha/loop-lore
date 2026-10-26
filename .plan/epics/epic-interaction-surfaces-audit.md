@@ -43,3 +43,6 @@ Lead slice (this epic): non-interactive `lolo` subcommands with `--json` output 
 - `TASK-tui-parity-imagegen-avatar.md` — Not Started
 - `TASK-docs-drift-api.md` — Not Started
 - `TASK-plugin-auth-runtime-seed.md` — Not Started
+
+
+git issue: 7e42f4f

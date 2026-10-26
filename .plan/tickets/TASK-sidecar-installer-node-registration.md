@@ -102,3 +102,6 @@ additional pip package.
       landing repo is the plugin repo, where loop-lore's `bun run check`
       does not exist; in this repo the filing touches only `.plan/` docs,
       which the `plan:*` gates cover.
+
+
+git issue: 17c9de6

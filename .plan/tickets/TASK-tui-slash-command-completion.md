@@ -30,3 +30,6 @@
 - `src/routes/commands/index.ts` (registry route the TUI now consumes)
 
 **Resolved:** 2026-10-16 — option (a) of the command-palette gap: strip renders above the input box inside `ChatWidget`'s own box. Tab owns completion only while matches exist, so the existing Tab focus switch is untouched when nothing is completing. Registry fetch is one-shot and settled on failure, so a 500 does not re-request on every keystroke.
+
+
+git issue: 577506a

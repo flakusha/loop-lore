@@ -510,7 +510,7 @@
     "epic": "epic-e2e-integration-testing",
     "tags": [],
     "source": ".plan/tickets/BUG-alpine-hydration-failures-undeclared-template-vars-untested.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED": {
     "epic": "",
@@ -4242,7 +4242,7 @@
     "label": "bug",
     "priority": "medium",
     "source": ".plan/tickets/BUG-federation-delivery-reliability-queue-retry-idempotency-unde.md",
-    "status": "not-yet-implemented",
+    "status": "done",
     "tags": [],
     "title": "Federation delivery reliability (queue, retry, idempotency) undefined",
     "type": "BUG"
@@ -4818,7 +4818,7 @@
     "epic": "epic-auth-access",
     "tags": [],
     "source": ".plan/tickets/BUG-gallery-search-401s-anonymous-users-while-grid-serves-them.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-GAME-STATE-BLOCK-REGEX-TRUNCATES-PAYLOADS-CONTAINING-AN-INNE": {
     "hash": "1071224",
@@ -6726,7 +6726,7 @@
     "label": "correctness",
     "priority": "high",
     "source": ".plan/tickets/BUG-message-create-re-wraps-a-503-reply-into-201-jsoncreated.md",
-    "status": "Not Started",
+    "status": "done",
     "tags": [],
     "title": "Message create re-wraps a 503 reply into 201 jsonCreated",
     "type": "BUG"
@@ -6937,7 +6937,7 @@
     "epic": "epic-error-envelope",
     "tags": [],
     "source": ".plan/tickets/BUG-modality-template-patch-classifies-db-read-failures-as-400-w.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-MODEL-COMPARISONS-ANALYTICS-LEAKS-ALL-USERS-ROWS-MISSING-USE": {
     "epic": "",
@@ -7236,7 +7236,7 @@
     "epic": "epic-api-governance",
     "tags": [],
     "source": ".plan/tickets/BUG-nothing-tests-that-api-v1-actually-mounts-the-governance-gua.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-NOTIFICATION-BELL-VISIBLE-ON-LOGIN-REGISTER-PAGES": {
     "hash": "64b4832",
@@ -9050,7 +9050,7 @@
     "epic": "epic-data-integrity-acid",
     "tags": [],
     "source": ".plan/tickets/BUG-service-layer-multi-query-mutations-run-without-transactions.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-SERVICES-TRADECORE-VALIDATELINES-LACKS-WORLD-ID-FILTER-CROSS": {
     "epic": "",
@@ -12148,7 +12148,7 @@
     "type": "EPIC"
   },
   "EPIC-AUTH-CONFIG-CONTRACTS": {
-    "hash": "pending",
+    "hash": "f4e2fa6",
     "extid": "EPIC-AUTH-CONFIG-CONTRACTS",
     "type": "EPIC",
     "title": "Auth Config Contracts",
@@ -12162,8 +12162,9 @@
       "contracts",
       "hardening"
     ],
-    "source": ".plan/tickets/epic-auth-config-contracts.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-auth-config-contracts.md",
+    "status": "Not Started",
+    "git_issue": "f4e2fa6"
   },
   "EPIC-AUTHORING-CREATION": {
     "epic": "",
@@ -12228,7 +12229,7 @@
     "type": "EPIC"
   },
   "EPIC-AVATAR-DOGFOOD": {
-    "hash": "pending",
+    "hash": "1ee81d2",
     "extid": "EPIC-AVATAR-DOGFOOD",
     "type": "EPIC",
     "title": "Avatar Dogfood Defaults",
@@ -12242,8 +12243,9 @@
       "assets",
       "dogfood"
     ],
-    "source": ".plan/tickets/epic-avatar-dogfood.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-avatar-dogfood.md",
+    "status": "Not Started",
+    "git_issue": "1ee81d2"
   },
   "EPIC-AVATAR-REGENERATION-CONTROL": {
     "epic": "",
@@ -12807,7 +12809,7 @@
     "type": "EPIC"
   },
   "EPIC-CLASSIFIER-TEMPLATE-PACKS": {
-    "hash": "pending",
+    "hash": "e237e4c",
     "extid": "EPIC-CLASSIFIER-TEMPLATE-PACKS",
     "type": "EPIC",
     "title": "Classifier Template Packs",
@@ -12820,8 +12822,9 @@
       "templates",
       "config"
     ],
-    "source": ".plan/tickets/epic-classifier-template-packs.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-classifier-template-packs.md",
+    "status": "Not Started",
+    "git_issue": "e237e4c"
   },
   "EPIC-CLI-TOOLING-OPTIQUE": {
     "epic": "",
@@ -12881,7 +12884,7 @@
     "git_issue": "6e95cc2"
   },
   "EPIC-COMFYUI-LIFECYCLE": {
-    "hash": "pending",
+    "hash": "33453cb",
     "extid": "EPIC-COMFYUI-LIFECYCLE",
     "type": "EPIC",
     "title": "ComfyUI Lifecycle (provisioning, launch contract, portability)",
@@ -12897,8 +12900,9 @@
       "portability",
       "contract-tests"
     ],
-    "source": ".plan/tickets/epic-comfyui-lifecycle.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-comfyui-lifecycle.md",
+    "status": "Not Started",
+    "git_issue": "33453cb"
   },
   "EPIC-COMFYUI-PLUGIN": {
     "epic": "",
@@ -14017,7 +14021,7 @@
     "type": "EPIC"
   },
   "EPIC-FEDERATION-OFFLOAD-QUOTAS": {
-    "hash": "pending",
+    "hash": "94093e2",
     "extid": "EPIC-FEDERATION-OFFLOAD-QUOTAS",
     "type": "EPIC",
     "title": "Federated Workload Offload & Instance Quotas",
@@ -14034,8 +14038,9 @@
       "admin",
       "storage"
     ],
-    "source": ".plan/tickets/epic-federation-offload-quotas.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-federation-offload-quotas.md",
+    "status": "Not Started",
+    "git_issue": "94093e2"
   },
   "EPIC-FEDERATION-SWARM-SYNC": {
     "epic": "",
@@ -14791,7 +14796,7 @@
     "type": "EPIC"
   },
   "EPIC-IMAGE-PROMPT-TEMPLATING": {
-    "hash": "pending",
+    "hash": "74c4328",
     "extid": "EPIC-IMAGE-PROMPT-TEMPLATING",
     "type": "EPIC",
     "title": "Image Prompt Templating & Variance",
@@ -14805,8 +14810,9 @@
       "config",
       "comfyui"
     ],
-    "source": ".plan/tickets/epic-image-prompt-templating.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-image-prompt-templating.md",
+    "status": "Not Started",
+    "git_issue": "74c4328"
   },
   "EPIC-IMMERSION-CONSISTENCY-GATE": {
     "epic": "",
@@ -14949,7 +14955,7 @@
     "type": "EPIC"
   },
   "EPIC-INTERACTION-SURFACES-AUDIT": {
-    "hash": "pending",
+    "hash": "7e42f4f",
     "extid": "EPIC-INTERACTION-SURFACES-AUDIT",
     "type": "EPIC",
     "title": "Interaction Surfaces Audit — Headless CLI + Surface Parity",
@@ -14965,8 +14971,9 @@
       "seeding",
       "dogfood"
     ],
-    "source": ".plan/tickets/epic-interaction-surfaces-audit.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-interaction-surfaces-audit.md",
+    "status": "Not Started",
+    "git_issue": "7e42f4f"
   },
   "EPIC-INVENTORY": {
     "epic": "",
@@ -15886,7 +15893,7 @@
     "type": "EPIC"
   },
   "EPIC-MULTILINGUAL-CARRIAGE": {
-    "hash": "pending",
+    "hash": "6b6bd74",
     "extid": "EPIC-MULTILINGUAL-CARRIAGE",
     "type": "EPIC",
     "title": "Multilingual Carriage — Hidden Per-Message Language/Context Carriage",
@@ -15900,8 +15907,9 @@
       "prompt-injection",
       "privacy"
     ],
-    "source": ".plan/tickets/epic-multilingual-carriage.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-multilingual-carriage.md",
+    "status": "Not Started",
+    "git_issue": "6b6bd74"
   },
   "EPIC-MULTIMODAL-ASSET-REUSE": {
     "epic": "",
@@ -16219,7 +16227,7 @@
     "type": "EPIC"
   },
   "EPIC-OPENWEBUI-PARITY": {
-    "hash": "pending",
+    "hash": "2d85513",
     "extid": "EPIC-OPENWEBUI-PARITY",
     "type": "EPIC",
     "title": "Open WebUI Parity",
@@ -16233,8 +16241,9 @@
       "streaming",
       "tool-calling"
     ],
-    "source": ".plan/tickets/epic-openwebui-parity.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-openwebui-parity.md",
+    "status": "Not Started",
+    "git_issue": "2d85513"
   },
   "EPIC-OUTPUT-CONTROL-TRANSFORMS": {
     "epic": "",
@@ -16314,7 +16323,7 @@
     "type": "EPIC"
   },
   "EPIC-PLATFORM-API-ADOPTION": {
-    "hash": "pending",
+    "hash": "321b751",
     "extid": "EPIC-PLATFORM-API-ADOPTION",
     "type": "EPIC",
     "title": "Platform API Adoption",
@@ -16327,8 +16336,9 @@
       "apis",
       "modernization"
     ],
-    "source": ".plan/tickets/epic-platform-api-adoption.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-platform-api-adoption.md",
+    "status": "Not Started",
+    "git_issue": "321b751"
   },
   "EPIC-PLATFORM-INTEGRATIONS": {
     "epic": "",
@@ -16809,7 +16819,7 @@
     "type": "EPIC"
   },
   "EPIC-REACTIVE-ACTOR-APPEARANCE": {
-    "hash": "pending",
+    "hash": "3ef07a8",
     "extid": "EPIC-REACTIVE-ACTOR-APPEARANCE",
     "type": "EPIC",
     "title": "Reactive Actor Appearance",
@@ -16830,8 +16840,9 @@
       "identity-lock",
       "img2img"
     ],
-    "source": ".plan/tickets/epic-reactive-actor-appearance.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-reactive-actor-appearance.md",
+    "status": "Not Started",
+    "git_issue": "3ef07a8"
   },
   "EPIC-REALTIME-TRANSPORTS": {
     "epic": "",
@@ -16903,7 +16914,7 @@
     "git_issue": "4ab9b9c"
   },
   "EPIC-RELATION-GRAPH-CANVAS": {
-    "hash": "pending",
+    "hash": "b5de589",
     "extid": "EPIC-RELATION-GRAPH-CANVAS",
     "type": "EPIC",
     "title": "Relation Graph Canvas",
@@ -16917,8 +16928,9 @@
       "visualization",
       "2d"
     ],
-    "source": ".plan/tickets/epic-relation-graph-canvas.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-relation-graph-canvas.md",
+    "status": "Not Started",
+    "git_issue": "b5de589"
   },
   "EPIC-RELATIONSHIPS": {
     "epic": "",
@@ -17082,7 +17094,7 @@
     "type": "EPIC"
   },
   "EPIC-REVIEW-20261025-API-GOVERNANCE-PERIMETER": {
-    "hash": "pending",
+    "hash": "1d2d787",
     "extid": "EPIC-REVIEW-20261025-API-GOVERNANCE-PERIMETER",
     "type": "EPIC",
     "title": "API Governance Perimeter (2026-10-25 review round E-1)",
@@ -17096,11 +17108,12 @@
       "versioning",
       "review-2026-10-25"
     ],
-    "source": ".plan/tickets/epic-review-20261025-api-governance-perimeter.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-review-20261025-api-governance-perimeter.md",
+    "status": "Not Started",
+    "git_issue": "1d2d787"
   },
   "EPIC-REVIEW-20261025-DEAD-CODE-SWEEP": {
-    "hash": "pending",
+    "hash": "ebedbe0",
     "extid": "EPIC-REVIEW-20261025-DEAD-CODE-SWEEP",
     "type": "EPIC",
     "title": "Dead-Code & Cutover-Debris Sweep + Gate Blind Spots (2026-10-25 review round E-3)",
@@ -17114,11 +17127,12 @@
       "gates",
       "review-2026-10-25"
     ],
-    "source": ".plan/tickets/epic-review-20261025-dead-code-sweep.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-review-20261025-dead-code-sweep.md",
+    "status": "Not Started",
+    "git_issue": "ebedbe0"
   },
   "EPIC-REVIEW-20261025-PARALLEL-MERGE-INTEGRATION": {
-    "hash": "pending",
+    "hash": "d0e1be1",
     "extid": "EPIC-REVIEW-20261025-PARALLEL-MERGE-INTEGRATION",
     "type": "EPIC",
     "title": "Parallel-Merge Integration Sweep (2026-10-25 review round E-2)",
@@ -17132,8 +17146,9 @@
       "translation",
       "review-2026-10-25"
     ],
-    "source": ".plan/tickets/epic-review-20261025-parallel-merge-integration.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-review-20261025-parallel-merge-integration.md",
+    "status": "Not Started",
+    "git_issue": "d0e1be1"
   },
   "EPIC-REVIEW-CHECK-PARALLEL-RAM-2026-09-03": {
     "epic": "",
@@ -17325,7 +17340,7 @@
     "type": "EPIC"
   },
   "EPIC-RUNTIME-MEMORY-STATE-HYGIENE": {
-    "hash": "pending",
+    "hash": "23af491",
     "extid": "EPIC-RUNTIME-MEMORY-STATE-HYGIENE",
     "type": "EPIC",
     "title": "Runtime Memory State Hygiene",
@@ -17339,8 +17354,9 @@
       "observability",
       "review-rules"
     ],
-    "source": ".plan/tickets/epic-runtime-memory-state-hygiene.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-runtime-memory-state-hygiene.md",
+    "status": "Not Started",
+    "git_issue": "23af491"
   },
   "EPIC-SAM3-SEGMENTATION-INTEGRATION": {
     "hash": "b6fd26b",
@@ -17435,7 +17451,7 @@
     "type": "EPIC"
   },
   "EPIC-SERVER-LIFECYCLE-HARDENING": {
-    "hash": "pending",
+    "hash": "5ca048c",
     "extid": "EPIC-SERVER-LIFECYCLE-HARDENING",
     "type": "EPIC",
     "title": "Server Lifecycle Hardening",
@@ -17449,8 +17465,9 @@
       "boot",
       "hardening"
     ],
-    "source": ".plan/tickets/epic-server-lifecycle-hardening.md",
-    "status": "Not Started"
+    "source": ".plan/epics/epic-server-lifecycle-hardening.md",
+    "status": "Not Started",
+    "git_issue": "5ca048c"
   },
   "EPIC-SHARED-CLIENT-SDK": {
     "epic": "",
@@ -28548,7 +28565,7 @@
     "status": "Not Started"
   },
   "TASK-AVATAR-DOGFOOD-ASSISTANT-GENERATION": {
-    "hash": "pending",
+    "hash": "747ea17",
     "extid": "TASK-AVATAR-DOGFOOD-ASSISTANT-GENERATION",
     "type": "TASK",
     "title": "Avatar Dogfood — Assistant Generation Wiring",
@@ -28557,10 +28574,11 @@
     "epic": "epic-avatar-dogfood",
     "tags": [],
     "source": ".plan/tickets/TASK-avatar-dogfood-assistant-generation.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "747ea17"
   },
   "TASK-AVATAR-DOGFOOD-E2E-VERIFY": {
-    "hash": "pending",
+    "hash": "e5fc3f7",
     "extid": "TASK-AVATAR-DOGFOOD-E2E-VERIFY",
     "type": "TASK",
     "title": "Avatar Dogfood — E2E Verification",
@@ -28569,10 +28587,11 @@
     "epic": "epic-avatar-dogfood",
     "tags": [],
     "source": ".plan/tickets/TASK-avatar-dogfood-e2e-verify.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "e5fc3f7"
   },
   "TASK-AVATAR-DOGFOOD-PROMOTE-DEFAULTS": {
-    "hash": "pending",
+    "hash": "9d91dd6",
     "extid": "TASK-AVATAR-DOGFOOD-PROMOTE-DEFAULTS",
     "type": "TASK",
     "title": "Avatar Dogfood — Promote to Defaults",
@@ -28581,10 +28600,11 @@
     "epic": "epic-avatar-dogfood",
     "tags": [],
     "source": ".plan/tickets/TASK-avatar-dogfood-promote-defaults.md",
-    "status": "in_progress"
+    "status": "in_progress",
+    "git_issue": "9d91dd6"
   },
   "TASK-AVATAR-DOGFOOD-WEBP-EXPORT": {
-    "hash": "pending",
+    "hash": "b1b252a",
     "extid": "TASK-AVATAR-DOGFOOD-WEBP-EXPORT",
     "type": "TASK",
     "title": "Avatar Dogfood — WebP Masters + Export Op",
@@ -28593,7 +28613,8 @@
     "epic": "epic-avatar-dogfood",
     "tags": [],
     "source": ".plan/tickets/TASK-avatar-dogfood-webp-export.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "b1b252a"
   },
   "TASK-AVATAR-FRAMING-COLUMN-MIGRATION-FUTURE": {
     "hash": "2b7ab4e",
@@ -33150,7 +33171,7 @@
     "git_issue": "be1f42a"
   },
   "TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS": {
-    "hash": "pending",
+    "hash": "a4f6771",
     "extid": "TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS",
     "type": "TASK",
     "title": "ComfyUI launch contract — make the tracked llama-swap recipe honest and document the flag set",
@@ -33165,7 +33186,8 @@
       "portability"
     ],
     "source": ".plan/tickets/TASK-comfyui-launch-contract-llama-swap-recipe-and-docs.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "a4f6771"
   },
   "TASK-COMFYUI-NODE-DISCOVERY": {
     "epic": "epic-comfyui-plugin",
@@ -33364,7 +33386,7 @@
     "git_issue": "2301e67"
   },
   "TASK-COMIC-PAGE-COMPOSITION-STRATEGY": {
-    "hash": "pending",
+    "hash": "6e938fe",
     "extid": "TASK-COMIC-PAGE-COMPOSITION-STRATEGY",
     "type": "TASK",
     "title": "Comic Page Composition Strategy — per-panel compose, sequence, or one-shot",
@@ -33373,7 +33395,8 @@
     "epic": "epic-narrative-publishing-workflows",
     "tags": [],
     "source": ".plan/tickets/TASK-comic-page-composition-strategy.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "6e938fe"
   },
   "TASK-COMIC-PAGE-PANEL-LAYOUT-MODEL": {
     "hash": "30b6225",
@@ -36204,7 +36227,7 @@
     "status": "Not Started"
   },
   "TASK-DOCS-DRIFT-API": {
-    "hash": "pending",
+    "hash": "8d608f6",
     "extid": "TASK-DOCS-DRIFT-API",
     "type": "TASK",
     "title": "Docs drift — login body, `lolo -h`, OpenAPI coverage, stale specs",
@@ -36213,7 +36236,8 @@
     "epic": "epic-interaction-surfaces-audit.md",
     "tags": [],
     "source": ".plan/tickets/TASK-docs-drift-api.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "8d608f6"
   },
   "TASK-DOCS-FIX-DANGLING-LINKS": {
     "epic": "epic-docs-reconciliation",
@@ -41362,7 +41386,7 @@
     "type": "TASK"
   },
   "TASK-HEADLESS-CLI-ASSETS-CHARACTERS": {
-    "hash": "pending",
+    "hash": "d4b1488",
     "extid": "TASK-HEADLESS-CLI-ASSETS-CHARACTERS",
     "type": "TASK",
     "title": "Headless CLI — assets + characters (`lolo assets|characters --json`)",
@@ -41371,10 +41395,11 @@
     "epic": "epic-interaction-surfaces-audit.md",
     "tags": [],
     "source": ".plan/tickets/TASK-headless-cli-assets-characters.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "d4b1488"
   },
   "TASK-HEADLESS-CLI-CHAT-GENERATE": {
-    "hash": "pending",
+    "hash": "154562c",
     "extid": "TASK-HEADLESS-CLI-CHAT-GENERATE",
     "type": "TASK",
     "title": "Headless CLI — chat + generate (`lolo chat|generate --json`)",
@@ -41383,7 +41408,8 @@
     "epic": "epic-interaction-surfaces-audit.md",
     "tags": [],
     "source": ".plan/tickets/TASK-headless-cli-chat-generate.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "154562c"
   },
   "TASK-HEADLESS-MODE-ALTERNATIVE-FRONTENDS": {
     "epic": "epic-headless-alternative-frontends",
@@ -42124,7 +42150,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-implement-bug-nsfw-reviewappeal-auto-reverses-actions.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Implement BUG-nsfw-reviewappeal-auto-reverses-actions",
     "type": "TASK"
@@ -45194,7 +45220,7 @@
     "type": "TASK"
   },
   "TASK-MESSAGE-CARRIAGE-BACKFILL-PRIVACY": {
-    "hash": "pending",
+    "hash": "b37dfa1",
     "extid": "TASK-MESSAGE-CARRIAGE-BACKFILL-PRIVACY",
     "type": "TASK",
     "title": "Message carriage backfill + privacy",
@@ -45203,10 +45229,11 @@
     "epic": "epic-multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/TASK-message-carriage-backfill-privacy.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "b37dfa1"
   },
   "TASK-MESSAGE-CARRIAGE-CLASSIFICATION-INTEGRATION": {
-    "hash": "pending",
+    "hash": "b1c7116",
     "extid": "TASK-MESSAGE-CARRIAGE-CLASSIFICATION-INTEGRATION",
     "type": "TASK",
     "title": "Message carriage classification integration",
@@ -45215,10 +45242,11 @@
     "epic": "epic-multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/TASK-message-carriage-classification-integration.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "b1c7116"
   },
   "TASK-MESSAGE-CARRIAGE-FILL-PATH-DETECTION": {
-    "hash": "pending",
+    "hash": "05341a5",
     "extid": "TASK-MESSAGE-CARRIAGE-FILL-PATH-DETECTION",
     "type": "TASK",
     "title": "Message carriage fill path + detection",
@@ -45227,10 +45255,11 @@
     "epic": "epic-multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/TASK-message-carriage-fill-path-detection.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "05341a5"
   },
   "TASK-MESSAGE-CARRIAGE-PROMPT-INJECTION-SECTION": {
-    "hash": "pending",
+    "hash": "aa1ee76",
     "extid": "TASK-MESSAGE-CARRIAGE-PROMPT-INJECTION-SECTION",
     "type": "TASK",
     "title": "Message carriage prompt injection section",
@@ -45239,10 +45268,11 @@
     "epic": "epic-multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/TASK-message-carriage-prompt-injection-section.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "aa1ee76"
   },
   "TASK-MESSAGE-CARRIAGE-TABLE-MIGRATION-ADMIN-READ": {
-    "hash": "pending",
+    "hash": "26493aa",
     "extid": "TASK-MESSAGE-CARRIAGE-TABLE-MIGRATION-ADMIN-READ",
     "type": "TASK",
     "title": "Message carriage table migration + admin read path",
@@ -45251,10 +45281,11 @@
     "epic": "epic-multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/TASK-message-carriage-table-migration-admin-read.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "26493aa"
   },
   "TASK-MESSAGE-CARRIAGE-TRANSLATOR-TICKET-CLOSEOUT": {
-    "hash": "pending",
+    "hash": "578b57f",
     "extid": "TASK-MESSAGE-CARRIAGE-TRANSLATOR-TICKET-CLOSEOUT",
     "type": "TASK",
     "title": "Message carriage translator-ticket closeout",
@@ -45263,7 +45294,8 @@
     "epic": "epic-multilingual-carriage",
     "tags": [],
     "source": ".plan/tickets/TASK-message-carriage-translator-ticket-closeout.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "578b57f"
   },
   "TASK-MESSAGE-POLLS-VOTES": {
     "epic": "epic-chat-rich-engagement",
@@ -48530,7 +48562,7 @@
     "type": "TASK"
   },
   "TASK-PLUGIN-AUTH-RUNTIME-SEED": {
-    "hash": "pending",
+    "hash": "994687d",
     "extid": "TASK-PLUGIN-AUTH-RUNTIME-SEED",
     "type": "TASK",
     "title": "Plugin auth surface + runtime seed endpoint",
@@ -48539,7 +48571,8 @@
     "epic": "epic-interaction-surfaces-audit.md",
     "tags": [],
     "source": ".plan/tickets/TASK-plugin-auth-runtime-seed.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "994687d"
   },
   "TASK-PLUGIN-BROWSER": {
     "epic": "epic-plugin-management-ui",
@@ -53608,7 +53641,7 @@
     "git_issue": "9bde045"
   },
   "TASK-SIDECAR-HARDCODED-LITERALS-CONFIGURABLE-DEFAULTS": {
-    "hash": "pending",
+    "hash": "22051e0",
     "extid": "TASK-SIDECAR-HARDCODED-LITERALS-CONFIGURABLE-DEFAULTS",
     "type": "TASK",
     "title": "Sidecar hardcoded literals become configurable defaults",
@@ -53617,10 +53650,11 @@
     "epic": "epic-reference-conditioned-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-sidecar-hardcoded-literals-configurable-defaults.md",
-    "status": "Blocked"
+    "status": "Blocked",
+    "git_issue": "22051e0"
   },
   "TASK-SIDECAR-INSTALLER-NODE-REGISTRATION": {
-    "hash": "pending",
+    "hash": "17c9de6",
     "extid": "TASK-SIDECAR-INSTALLER-NODE-REGISTRATION",
     "type": "TASK",
     "title": "Sidecar gains a real installer and node registration",
@@ -53629,10 +53663,11 @@
     "epic": "epic-reference-conditioned-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-sidecar-installer-node-registration.md",
-    "status": "Blocked"
+    "status": "Blocked",
+    "git_issue": "17c9de6"
   },
   "TASK-SIDECAR-REVEAL-CROSS-PLATFORM": {
-    "hash": "pending",
+    "hash": "cca0cb4",
     "extid": "TASK-SIDECAR-REVEAL-CROSS-PLATFORM",
     "type": "TASK",
     "title": "Sidecar reveal action stops shelling out to explorer.exe",
@@ -53641,7 +53676,8 @@
     "epic": "epic-reference-conditioned-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-sidecar-reveal-cross-platform.md",
-    "status": "Blocked"
+    "status": "Blocked",
+    "git_issue": "cca0cb4"
   },
   "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS": {
     "epic": "(none — proposed epic never materialized)",
@@ -54066,7 +54102,7 @@
     "type": "TASK"
   },
   "TASK-SPLIT-REUNITE-AUX-CLASSIFICATION": {
-    "hash": "pending",
+    "hash": "c189f2e",
     "extid": "TASK-SPLIT-REUNITE-AUX-CLASSIFICATION",
     "type": "TASK",
     "title": "Split/Reunite Aux (0-shot) Classification",
@@ -54075,7 +54111,8 @@
     "epic": "epic-chat-transfer-location",
     "tags": [],
     "source": ".plan/tickets/TASK-split-reunite-aux-classification.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "c189f2e"
   },
   "TASK-SPLIT-SERVER": {
     "epic": "epic-file-splitting",
@@ -55939,7 +55976,7 @@
     "type": "TASK"
   },
   "TASK-TUI-CHAT-CREATE-API-SILENT-CATCH": {
-    "hash": "pending",
+    "hash": "0dbdc9f",
     "extid": "TASK-TUI-CHAT-CREATE-API-SILENT-CATCH",
     "type": "TASK",
     "title": "TUI: silent `catch {}` in chat-create-api.ts",
@@ -55948,7 +55985,8 @@
     "epic": "epic-terminal-ui",
     "tags": [],
     "source": ".plan/tickets/TASK-tui-chat-create-api-silent-catch.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "0dbdc9f"
   },
   "TASK-TUI-CHAT-PICKER": {
     "hash": "ebcb788",
@@ -55993,7 +56031,7 @@
     "type": "TASK"
   },
   "TASK-TUI-FIRE-AND-FORGET-VOID-WITHOUT-CATCH": {
-    "hash": "pending",
+    "hash": "9ec5332",
     "extid": "TASK-TUI-FIRE-AND-FORGET-VOID-WITHOUT-CATCH",
     "type": "TASK",
     "title": "TUI: fire-and-forget `void` without `.catch()`",
@@ -56002,7 +56040,8 @@
     "epic": "epic-terminal-ui",
     "tags": [],
     "source": ".plan/tickets/TASK-tui-fire-and-forget-void-without-catch.md",
-    "status": "Not Started"
+    "status": "Not Started",
+    "git_issue": "9ec5332"
   },
   "TASK-TUI-MARKUP-INJECTION-UNENCODED-URLS-AND-SHUTDOWN-HYGIENE": {
     "hash": "d178e87",
@@ -56018,7 +56057,7 @@
     "status": "done"
   },
   "TASK-TUI-MODELS-OVERLAY": {
-    "hash": "pending",
+    "hash": "f5a0e2d",
     "extid": "TASK-TUI-MODELS-OVERLAY",
     "type": "TASK",
     "title": "TUI admin models overlay",
@@ -56031,10 +56070,11 @@
       "models"
     ],
     "source": ".plan/tickets/TASK-tui-models-overlay.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "f5a0e2d"
   },
   "TASK-TUI-PARITY-IMAGEGEN-AVATAR": {
-    "hash": "pending",
+    "hash": "11749aa",
     "extid": "TASK-TUI-PARITY-IMAGEGEN-AVATAR",
     "type": "TASK",
     "title": "TUI parity — image-gen + avatar attach",
@@ -56043,7 +56083,8 @@
     "epic": "epic-interaction-surfaces-audit.md",
     "tags": [],
     "source": ".plan/tickets/TASK-tui-parity-imagegen-avatar.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "11749aa"
   },
   "TASK-TUI-SHELL-TESTABILITY": {
     "hash": "47b85ad",
@@ -56062,7 +56103,7 @@
     "status": "done"
   },
   "TASK-TUI-SLASH-COMMAND-COMPLETION": {
-    "hash": "pending",
+    "hash": "577506a",
     "extid": "TASK-TUI-SLASH-COMMAND-COMPLETION",
     "type": "TASK",
     "title": "TUI slash-command completion from the live registry",
@@ -56075,7 +56116,8 @@
       "commands"
     ],
     "source": ".plan/tickets/TASK-tui-slash-command-completion.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "577506a"
   },
   "TASK-TUI-SPEC-SYNC": {
     "hash": "769db3d",

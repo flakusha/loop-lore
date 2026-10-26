@@ -56,3 +56,6 @@ If the concern is cosmetic (the empty catch block looks like a silent swallow), 
 
 - [ ] Audited; confirmed catches are deliberate Result-returning fallbacks, not silent swallows
 - [ ] Optional: add clarifying comment to catch blocks
+
+
+git issue: 0dbdc9f

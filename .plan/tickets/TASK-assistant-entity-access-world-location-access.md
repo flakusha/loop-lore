@@ -4,7 +4,7 @@
 # TASK: Assistant World & Location Access Commands
 
 **Summary:** (none captured)
-**Context:** (none captured)
+**Context:** Landed on dev: `/world-list` + `/world-get` in `src/assistant/commands/worlds-access.ts` (78359f6c1), `/world-update` + `/world-delete` in `src/assistant/commands/worlds-mutate.ts` (eb7cbfae2), `/loc-list` + `/loc-get` in `src/assistant/commands/locations.ts` (78359f6c1), `/loc-update` in `src/assistant/commands/locations-update.ts` (dc5be1832) — all registered in `src/assistant/commands/index.ts`. Unit tests: `src/assistant/commands/{worlds-access,worlds-mutate,locations}.test.ts`; the five entity-command test files run 118 pass / 0 fail.
 **Acceptance Criteria:** (none captured)
 
 
@@ -55,27 +55,27 @@ Mutating commands (`/world-update`, `/world-delete`, `/loc-update`) require user
 
 ## Tasks
 
-- [ ] Implement `worldListHandler` — Paginated world list
-- [ ] Implement `worldGetHandler` — World details with lore and locations
-- [ ] Implement `worldUpdateHandler` — Update world metadata with confirmation
-- [ ] Implement `worldDeleteHandler` — Delete world with cascade
-- [ ] Implement `locListHandler` — Locations in a world
-- [ ] Implement `locGetHandler` — Location details
-- [ ] Implement `locUpdateHandler` — Update location metadata
-- [ ] Register all commands in the assistant command registry
-- [ ] Unit tests for all handlers
+- [x] Implement `worldListHandler` — Paginated world list
+- [x] Implement `worldGetHandler` — World details with lore and locations
+- [x] Implement `worldUpdateHandler` — Update world metadata with confirmation
+- [x] Implement `worldDeleteHandler` — Delete world with cascade
+- [x] Implement `locListHandler` — Locations in a world
+- [x] Implement `locGetHandler` — Location details
+- [x] Implement `locUpdateHandler` — Update location metadata
+- [x] Register all commands in the assistant command registry
+- [x] Unit tests for all handlers
 
 ## Acceptance Criteria
 
-- [ ] `/world-list` returns owned + public + joined worlds
-- [ ] `/world-get` returns world details + lore + locations
-- [ ] `/world-update` modifies metadata with confirmation
-- [ ] `/world-delete` cascades and requires owner confirmation
-- [ ] `/loc-list` returns locations in a world
-- [ ] `/loc-get` returns location details + connections
-- [ ] `/loc-update` modifies location metadata with confirmation
-- [ ] All commands use existing access guards
-- [ ] Unit tests pass
+- [x] `/world-list` returns owned + public + joined worlds
+- [x] `/world-get` returns world details + lore + locations
+- [x] `/world-update` modifies metadata with confirmation
+- [x] `/world-delete` cascades and requires owner confirmation
+- [x] `/loc-list` returns locations in a world
+- [x] `/loc-get` returns location details + connections
+- [x] `/loc-update` modifies location metadata with confirmation
+- [x] All commands use existing access guards
+- [x] Unit tests pass
 
 ## Files
 

@@ -3,7 +3,7 @@
 
 # BUG: Message create re-wraps a 503 reply into 201 jsonCreated
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-error-envelope
@@ -25,3 +25,5 @@ src/routes/messages/create.ts:227-229 spreads reply.response?.json() into jsonCr
 ## Review 2026-10-04
 
 OPEN on dev - src/routes/messages/create.ts:227-228 still does return jsonCreated({ ...(await reply.response?.json?.()), context }) whenever reply.replied; reply.ts returns a 503 jsonError on swipe-insert exhaustion (src/routes/messages/reply.ts:200, insert-message.ts:121-122), so the client still gets 201 with an error body. No worktree modifies create.ts.
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 41e355c (registry tip: f1ac11ada Konstantin Fedotov Close issue)

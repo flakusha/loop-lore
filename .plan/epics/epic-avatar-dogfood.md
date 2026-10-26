@@ -106,3 +106,6 @@ the app cannot yet produce its own face.
 - `epic-wardrobe-avatar-variants.md` — outfit-scoped variants, out of scope here
 - `epic-emotion-avatar-message-binding.md` — consumes avatar bindings
 - `epic-asset-transform-metadata.md` — crop metadata for promoted art
+
+
+git issue: 1ee81d2

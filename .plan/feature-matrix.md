@@ -1697,7 +1697,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | zero-trust | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | zod | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | zstd | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
-| (untagged) | 2741 | 1097 | 45 | 898 | 31 | 0 | 670 |
+| (untagged) | 2741 | 1105 | 45 | 896 | 31 | 0 | 664 |
 
 ## By epic × status
 
@@ -1727,7 +1727,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-analytics-observability | 17 | 9 | 0 | 2 | 0 | 0 | 6 |
 | epic-anonymity-decentralization | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-api-first-foundation | 9 | 1 | 0 | 8 | 0 | 0 | 0 |
-| epic-api-governance | 6 | 0 | 0 | 3 | 0 | 0 | 3 |
+| epic-api-governance | 6 | 1 | 0 | 3 | 0 | 0 | 2 |
 | epic-api-library-distribution | 13 | 0 | 0 | 3 | 0 | 0 | 10 |
 | epic-api-openapi | 1 | 0 | 0 | 0 | 0 | 0 | 1 |
 | epic-api-rate-limiting | 9 | 8 | 0 | 0 | 0 | 0 | 1 |
@@ -1749,7 +1749,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-assistant-gm-flows, epic-conversation-branching | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | epic-assistant-step-planning | 3 | 0 | 0 | 0 | 0 | 0 | 3 |
 | epic-audio-video-sound | 11 | 1 | 0 | 6 | 0 | 0 | 4 |
-| epic-auth-access | 20 | 6 | 0 | 8 | 0 | 0 | 6 |
+| epic-auth-access | 20 | 7 | 0 | 8 | 0 | 0 | 5 |
 | epic-auth-channel-provisioning | 19 | 0 | 0 | 14 | 0 | 0 | 5 |
 | epic-auth-config-contracts | 6 | 1 | 0 | 0 | 0 | 0 | 5 |
 | epic-authoring-creation | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -1811,7 +1811,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-cron-scheduler | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | epic-cross-platform-portability | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
 | epic-crypto | 35 | 14 | 3 | 14 | 0 | 0 | 4 |
-| epic-data-integrity-acid | 11 | 1 | 0 | 5 | 0 | 0 | 5 |
+| epic-data-integrity-acid | 11 | 2 | 0 | 5 | 0 | 0 | 4 |
 | epic-database-backup-recovery | 7 | 1 | 0 | 5 | 0 | 0 | 1 |
 | epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-db-asset-snapshot-recovery | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
@@ -1826,7 +1826,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-disease-poison | 3 | 1 | 0 | 2 | 0 | 0 | 0 |
 | epic-distributed-compute-sharing | 7 | 0 | 0 | 7 | 0 | 0 | 0 |
 | epic-docs-reconciliation | 11 | 4 | 3 | 1 | 0 | 0 | 3 |
-| epic-e2e-integration-testing | 22 | 2 | 0 | 14 | 0 | 0 | 6 |
+| epic-e2e-integration-testing | 22 | 3 | 0 | 14 | 0 | 0 | 5 |
 | epic-economy-trading | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | epic-economy-trading, epic-actor-autonomy-story-drive | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-editorial-workflow | 5 | 0 | 0 | 0 | 0 | 0 | 5 |
@@ -1838,14 +1838,14 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-encryption-workflow | 4 | 1 | 1 | 1 | 0 | 0 | 1 |
 | epic-enemies-monsters | 9 | 0 | 0 | 1 | 0 | 0 | 8 |
 | epic-entity-generation-workflows | 5 | 0 | 0 | 5 | 0 | 0 | 0 |
-| epic-error-envelope | 5 | 0 | 0 | 1 | 0 | 0 | 4 |
+| epic-error-envelope | 5 | 2 | 0 | 1 | 0 | 0 | 2 |
 | epic-experimental-egui-frontend | 13 | 11 | 0 | 0 | 0 | 0 | 2 |
 | epic-exploration-discovery | 4 | 1 | 0 | 2 | 0 | 0 | 1 |
 | epic-external-creative-tool-bridge | 7 | 0 | 0 | 3 | 0 | 0 | 4 |
 | epic-external-tooling-build | 8 | 0 | 0 | 0 | 0 | 0 | 8 |
 | epic-faction-reputation | 7 | 2 | 0 | 1 | 0 | 0 | 4 |
 | epic-fe-be-harmonization | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| epic-federation-offload-quotas | 20 | 16 | 0 | 1 | 0 | 0 | 3 |
+| epic-federation-offload-quotas | 20 | 17 | 0 | 0 | 0 | 0 | 3 |
 | epic-federation-swarm-sync | 15 | 7 | 0 | 4 | 0 | 0 | 4 |
 | epic-file-splitting | 5 | 1 | 0 | 4 | 0 | 0 | 0 |
 | epic-fractal-locations | 13 | 0 | 0 | 0 | 0 | 0 | 13 |
@@ -1940,7 +1940,7 @@ Total tickets: **3994** — untagged: **2741** — unbound to epic: **1035**
 | epic-nsfw-game-mechanics, epic-social-interaction | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-nsfw-game-mechanics, epic-weather-environment | 1 | 0 | 0 | 1 | 0 | 0 | 0 |
 | epic-nsfw-integration-gaps | 12 | 5 | 0 | 7 | 0 | 0 | 0 |
-| epic-nsfw-moderation-priority | 17 | 13 | 0 | 4 | 0 | 0 | 0 |
+| epic-nsfw-moderation-priority | 17 | 14 | 0 | 3 | 0 | 0 | 0 |
 | epic-nsfw-ui | 4 | 0 | 0 | 4 | 0 | 0 | 0 |
 | epic-observability-telemetry | 2 | 0 | 0 | 1 | 0 | 0 | 1 |
 | epic-openapi-reference | 4 | 0 | 0 | 4 | 0 | 0 | 0 |

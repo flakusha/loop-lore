@@ -57,3 +57,6 @@ foundation, backend-first data contracts, and per-family graph semantics.
 - `TASK-memory-relation-graph-on-2d-canvas.md` (open)
 - `TASK-story-entity-relation-graph-on-2d-canvas.md` (open)
 - `TASK-story-timeline-view-on-2d-canvas.md` (open)
+
+
+git issue: b5de589

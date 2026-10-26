@@ -31,3 +31,6 @@ the `file` hook already resolves webp via `mimeFromExtension`.
 ## Linked Epics
 
 - `epic-avatar-dogfood.md`
+
+
+git issue: b1b252a
