@@ -333,6 +333,29 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     expect(res.status,).toBe(501,);
   });
 
+  // (5b) No provider at all + lora → 501 (the configuration gap wins over the
+  // LoRA capability guard; a 400 here would blame the model backend for a
+  // missing config section).
+
+  it("returns HTTP 501 (not 400) when LoRA is requested with no provider configured", async () => {
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
+      loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
+        ...defaultConfig,
+        generation: { providers: { sd: [], }, },
+      }),
+    }),);
+
+    const { handleImageGeneration: handleNoProviderLora, } = await import("./image-gen-route");
+    const body = makeBody({ prompt: "any prompt", lora: LORA_CONFIG, },);
+    const res = await handleNoProviderLora(body, await migratedDb(), "test-user",);
+
+    expect(res.status,).toBe(501,);
+    const json = await res.json() as { error: string };
+    expect(json.error,).toContain("No image generation provider configured",);
+  });
+
   // (6) openai backend + lora → HTTP 400 (non-fallible guard)
 
   it("returns HTTP 400 when LoRA is requested with an unsupported backend (openai)", async () => {

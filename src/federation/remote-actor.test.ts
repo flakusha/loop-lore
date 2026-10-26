@@ -16,7 +16,14 @@
 import { afterEach, describe, expect, test, } from "bun:test";
 import type { HostResolver, } from "../utils/url-validation";
 import type { RemoteFetch, RemoteFetchResponse, } from "./remote-actor";
-import { discoverWebFingerEndpoint, resolveRemoteActor, } from "./remote-actor";
+import {
+  ACTOR_ACCEPT,
+  discoverWebFingerEndpoint,
+  HOST_META_ACCEPT,
+  REMOTE_DISCOVERY_MAX_BODY,
+  REMOTE_DISCOVERY_TIMEOUT_MS,
+  resolveRemoteActor,
+} from "./remote-actor";
 
 const PEER = "https://remote.example";
 const ACTOR_URI = `${PEER}/users/alice`;
@@ -373,5 +380,60 @@ describe("resolveRemoteActor — real fetch path", () => {
     const result = await resolveRemoteActor(`${origin}/users/alice`, { allowPrivateHosts: true, },);
 
     expect(result.ok ? null : result.reason,).toBe("actor-unavailable",);
+  });
+});
+
+describe("discovery limits and Accept headers", () => {
+  test("host-meta is asked for with HOST_META_ACCEPT, the actor document with ACTOR_ACCEPT", async () => {
+    const accepts: Array<{ url: string; accept: string }> = [];
+    const fetchImpl: RemoteFetch = async (url, accept,) => {
+      accepts.push({ url, accept, },);
+      const body = url === ACTOR_URI ? ACTOR_BODY : url === WEBFINGER_URL ? JRD_BODY : "";
+      const found = url !== `${PEER}/.well-known/host-meta`;
+      return { ok: found, status: found ? 200 : 404, body, };
+    };
+
+    const result = await resolveRemoteActor("acct:alice@remote.example", {
+      fetchImpl,
+      resolveHost: publicResolve,
+    },);
+
+    expect(result.ok,).toBe(true,);
+    // The media type each hop asks for is what a real peer content-negotiates on.
+    expect(accepts,).toEqual([
+      { url: `${PEER}/.well-known/host-meta`, accept: HOST_META_ACCEPT, },
+      { url: WEBFINGER_URL, accept: "application/activity+json", },
+      { url: ACTOR_URI, accept: ACTOR_ACCEPT, },
+    ],);
+  });
+
+  test("ACTOR_ACCEPT prefers AS2 JSON over JSON-LD, HOST_META_ACCEPT leads with XRD", () => {
+    // The first type in the header is the peer's preferred answer; a peer that
+    // only speaks AS2 must not have to fall back to a lower-q JSON-LD entry.
+    expect(ACTOR_ACCEPT.split(",",).map((part,) => part.trim())[0],).toBe("application/activity+json",);
+    expect(ACTOR_ACCEPT,).toContain("application/ld+json",);
+    expect(HOST_META_ACCEPT.split(",",).map((part,) => part.trim())[0],).toBe("application/xrd+xml",);
+  });
+
+  test("the default fetch refuses an actor document over REMOTE_DISCOVERY_MAX_BODY", async () => {
+    const oversized = JSON.stringify({
+      ...(JSON.parse(ACTOR_BODY,) as Record<string, unknown>),
+      padding: "x".repeat(REMOTE_DISCOVERY_MAX_BODY,),
+    },);
+
+    const origin = servePeer({ actor: oversized, },);
+
+    const result = await resolveRemoteActor(`${origin}/users/alice`, { allowPrivateHosts: true, },);
+
+    // The cap trips inside the transport, so the body never reaches the parser.
+    expect(result.ok ? null : result.reason,).toBe("actor-unavailable",);
+  });
+
+  test("REMOTE_DISCOVERY_TIMEOUT_MS is a bounded positive request budget", () => {
+    expect(Number.isInteger(REMOTE_DISCOVERY_TIMEOUT_MS,),).toBe(true,);
+    expect(REMOTE_DISCOVERY_TIMEOUT_MS,).toBeGreaterThan(0,);
+    // A discovery hop that outlives a browser-level request timeout is useless.
+    expect(REMOTE_DISCOVERY_TIMEOUT_MS,).toBeLessThanOrEqual(30_000,);
+    expect(REMOTE_DISCOVERY_MAX_BODY,).toBeGreaterThan(0,);
   });
 });

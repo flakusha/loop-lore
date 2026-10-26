@@ -24,7 +24,12 @@ import { afterEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import { governanceRateLimiter, } from "../../api-governance/rate-limiting/instance";
 import { metrics, } from "../../api-governance/telemetry/collector";
-import { governanceEndpoints, governanceGuard, } from "./governance";
+import {
+  governanceAfterHook,
+  governanceBeforeHook,
+  governanceEndpoints,
+  governanceGuard,
+} from "./governance";
 
 function makeApp(userId: string | undefined, userRole: string | null = "user",) {
   return new Elysia({ name: "gov-test", },)
@@ -146,5 +151,104 @@ describe("governanceEndpoints", () => {
     expect(ok.headers.get("content-type",),).toContain("text/plain",);
     const body = await ok.text();
     expect(body,).toContain("loop_lore_uptime_seconds",);
+  });
+});
+
+// The same hooks drive the non-barrel surfaces (legacy plugin dispatch and the
+// standalone multipart upload route), so their standalone contract is pinned
+// here rather than only through an Elysia app.
+//
+// RESOURCE CONTRACT for this block: the only shared state touched is the
+// process-global `governanceRateLimiter` (bucket keyed `user-hook-1`/
+// `user-hook-2`, destroyed by the file-level `afterEach`) and `metrics`, which
+// every test here that reads it resets first AND last. No DB, no port.
+describe("standalone governance hooks", () => {
+  test("the before hook seeds the latency clock even when governance is disabled", () => {
+    const ctx: Record<string, unknown> = {
+      request: new Request("http://localhost/api/v1/anything",),
+      userId: "user-hook-1",
+    };
+
+    expect(governanceBeforeHook(() => false)(ctx,),).toBeUndefined();
+    expect(typeof ctx.__governanceStart,).toBe("number",);
+  });
+
+  test("an unauthenticated request passes without spending a bucket", () => {
+    const ctx: Record<string, unknown> = { request: new Request("http://localhost/api/v1/anything",), };
+
+    expect(governanceBeforeHook(() => true)(ctx,),).toBeUndefined();
+    expect(ctx.__governanceRateLimited,).toBeUndefined();
+  });
+
+  test("an exhausted bucket answers 429 with the rate-limit headers and flags the request", async () => {
+    const before = governanceBeforeHook(() => true);
+    let blocked: Response | undefined;
+
+    // The auth policy allows 10 requests per window; the 11th is refused.
+    for (let attempt = 0; attempt < 11; attempt++) {
+      const ctx: Record<string, unknown> = {
+        request: new Request("http://localhost/api/v1/auth/ping",),
+        userId: "user-hook-2",
+      };
+
+      const verdict = before(ctx,);
+      if (verdict) {
+        blocked = verdict;
+        expect(ctx.__governanceRateLimited,).toBe(true,);
+      }
+    }
+
+    expect(blocked?.status,).toBe(429,);
+    expect(blocked?.headers.get("x-ratelimit-hit",),).toBe("1",);
+    expect(blocked?.headers.get("ratelimit-remaining",),).toBe("0",);
+    expect(blocked?.headers.get("retry-after",),).toBeTruthy();
+    expect(blocked?.headers.get("ratelimit-reset",),).toBeTruthy();
+    const body = await blocked?.json() as { code: string };
+    expect(body.code,).toBe("TOO_MANY_REQUESTS",);
+  });
+
+  test("the after hook records the status under a low-cardinality route", () => {
+    metrics.reset();
+    const ctx = {
+      request: new Request("http://localhost/api/v1/assets/3f2b8d1c-0a4e-4c3f-8d6b-2a1f9c7e5d40/x",),
+      response: new Response(null, { status: 404, },),
+      __governanceStart: Date.now() - 5,
+    };
+
+    expect(governanceAfterHook(() => true)(ctx,),).toBe(ctx.response,);
+
+    const routes = metrics.snapshot().routes;
+    const stats = routes.find((entry,) => entry.route === "/api/v1/assets/:id/x");
+    expect(stats?.requests,).toBe(1,);
+    expect(stats?.errors,).toBe(0,);
+    // The id must never become a metric label.
+    expect(routes.some((entry,) => entry.route.includes("3f2b8d1c",)),).toBe(false,);
+    metrics.reset();
+  });
+
+  test("the after hook skips a request the 429 branch already counted", () => {
+    metrics.reset();
+    const ctx = {
+      request: new Request("http://localhost/api/v1/auth/ping",),
+      response: new Response(null, { status: 429, },),
+      __governanceStart: Date.now(),
+      __governanceRateLimited: true,
+    };
+
+    governanceAfterHook(() => true)(ctx,);
+
+    expect(metrics.snapshot().routes,).toEqual([],);
+    metrics.reset();
+  });
+
+  test("the after hook is a passthrough when governance is disabled", () => {
+    metrics.reset();
+    const response = new Response("ok",);
+
+    expect(
+      governanceAfterHook(() => false)({ request: new Request("http://localhost/api/v1/anything",), response, },),
+    ).toBe(response,);
+
+    expect(metrics.snapshot().routes,).toEqual([],);
   });
 });

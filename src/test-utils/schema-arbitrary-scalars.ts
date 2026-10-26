@@ -20,6 +20,7 @@ export interface SchemaNode {
   exclusiveMaximum?: number;
   minItems?: number;
   maxItems?: number;
+  minProperties?: number;
   maxProperties?: number;
   required?: string[];
   properties?: Record<string, SchemaNode>;

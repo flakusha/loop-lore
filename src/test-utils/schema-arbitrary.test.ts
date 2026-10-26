@@ -102,6 +102,19 @@ describe("optional object properties", () => {
       expect(Object.keys(value as object,),).toEqual(["id",],);
     }
   });
+
+  test("minProperties lifts optional keys to mandatory until the floor is met", () => {
+    // `minProperties` counts PRESENT keys; without promotion the mapper emits
+    // `{}` and every property test reports mapper drift (NpcStateBody).
+    const schema = t.Object(
+      { a: t.Optional(t.String(),), b: t.Optional(t.Integer(),), c: t.Optional(t.Boolean(),), },
+      { minProperties: 2, },
+    );
+
+    for (const value of checkAllValid(schema, 200,)) {
+      expect(Object.keys(value as object,).length,).toBeGreaterThanOrEqual(2,);
+    }
+  });
 });
 
 describe("closed value sets", () => {

@@ -138,12 +138,25 @@ describe("Quest update notification world mute E2E", () => {
 
     expect(prefs.status,).toBe(200,);
 
+    // Only the fields the PUT handler persists are accepted (NpcStateBody);
+    // any other shape is a 422, not a silent no-op update.
     const updated = await ownerApi.put(
       `/api/v1/worlds/${SEED.world.id}/npc-states/${SEED.character.id}`,
-      { npc_id: SEED.character.id, state_key: "status", state_value: "resting", },
+      { mentalState: "resting", },
     );
 
     expect(updated.status,).toBe(200,);
+
+    // The PUT must actually persist the field, not just bump updated_at — the
+    // old schema silently ignored this body and the green assert hid it.
+    const row = await server.db
+      .selectFrom("npc_states",)
+      .select("mental_state",)
+      .where("actor_id", "=", SEED.character.id,)
+      .where("world_id", "=", SEED.world.id,)
+      .executeTakeFirst();
+
+    expect(row?.mental_state,).toBe("resting",);
 
     expect(await waitForNotification(server, SEED.user.id, NotificationType.GmAction,),).toBeGreaterThan(0,);
 

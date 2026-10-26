@@ -10,7 +10,7 @@
  * of inaccessible ids (no existence oracle), NSFW rating visibility, the
  * assets-disabled guard, and the empty-selection validation error.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import JSZip from "jszip";
 import type { Kysely, } from "kysely";
@@ -18,11 +18,12 @@ import { randomUUID, } from "node:crypto";
 import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { initAgeGate, } from "../age-gate/controller";
 import { createAsset, } from "../assets/service";
 import { makeMinimalPng, } from "../assets/test-helpers";
 import type { Config, } from "../config/schema";
 import { createConfigSchema, } from "../config/schema-class";
-import { AssetLinkEntity, AssetType, AssetVisibility, } from "../db/enums";
+import { AgeGateMode, AssetLinkEntity, AssetType, AssetVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
@@ -33,12 +34,27 @@ import {
 } from "../test-utils/insert-helpers";
 import { assetsRoutes, zipEntryName, } from "./assets";
 
+// Resource contract: the NSFW age verdict delegates to the process-global
+// ageGate.* runtime singleton (BUG-two-gates-age-gate-keys), and with the
+// default-off every caller passes the NSFW gate. This file therefore owns that
+// singleton for its own duration — enabled here, restored to the disabled
+// state in `afterAll` so the file passes alone, in any order, and leaves no
+// global behind. Disabled + "none" is observably identical to the store's
+// initial value (`isEnabled = enabled && mode !== "none"`).
+beforeAll(() => {
+  initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+},);
+
+afterAll(() => {
+  initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
+},);
+
 interface Fixture {
   db: Kysely<DB>;
   uploadDir: string;
   ownerId: string;
   strangerId: string;
-  /** User past the age gate — passes canAccessNsfw under default config. */
+  /** User past the age gate — birth date + acceptance pass canAccessNsfw. */
   clearedUserId: string;
 }
 
@@ -284,7 +300,7 @@ describe("POST /api/assets/batch-download", () => {
       const { id: safe, } = await createPngAsset(fx, fx.ownerId, "safe.png",);
       const nsfw = await createNsfwFlaggedAsset(fx, fx.ownerId, "nsfw.png",);
 
-      // No birth_date / age gate → canAccessNsfw denies under default config.
+      // No birth_date and no acceptance → the enabled age gate denies.
       const res = await post(makeApp(fx, fx.ownerId,), "/api/assets/batch-download", { ids: [safe, nsfw,], },);
       expect(res.status,).toBe(200,);
       const entries = await zipEntries(res,);

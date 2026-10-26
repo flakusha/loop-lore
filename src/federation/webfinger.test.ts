@@ -11,12 +11,16 @@
 import { describe, expect, test, } from "bun:test";
 import {
   acctSubject,
+  ACTIVITY_JSON,
+  ACTIVITY_LD_JSON,
   applyWebFingerTemplate,
   buildActorJrd,
   buildHostMetaXrd,
   defaultWebFingerTemplate,
   extractLrddTemplate,
+  HOST_META_PATH,
   parseAcctResource,
+  WEBFINGER_PATH,
 } from "./webfinger";
 
 describe("parseAcctResource", () => {
@@ -136,5 +140,36 @@ describe("buildActorJrd", () => {
     },],);
 
     expect(acctSubject("alice", "lore.example",),).toBe(jrd.subject,);
+  });
+});
+
+describe("protocol constants", () => {
+  test("the well-known paths are the RFC-fixed ones", () => {
+    // RFC 6415 §4 and RFC 7033 §4 pin both locations; a peer only probes these.
+    expect(HOST_META_PATH,).toBe("/.well-known/host-meta",);
+    expect(WEBFINGER_PATH,).toBe("/.well-known/webfinger",);
+  });
+
+  test("the host-meta document advertises WEBFINGER_PATH", () => {
+    const xrd = buildHostMetaXrd("https://lore.example",);
+
+    expect(xrd,).toContain(`https://lore.example${WEBFINGER_PATH}?resource={uri}`,);
+    expect(defaultWebFingerTemplate("https://lore.example",),).toBe(
+      `https://lore.example${WEBFINGER_PATH}?resource={uri}`,
+    );
+  });
+
+  test("ACTIVITY_JSON is the AS2 media type and is what a JRD advertises", () => {
+    expect(ACTIVITY_JSON,).toBe("application/activity+json",);
+
+    const jrd = buildActorJrd("acct:alice@lore.example", "https://lore.example/users/a",);
+    expect(jrd.links[0]?.type,).toBe(ACTIVITY_JSON,);
+  });
+
+  test("ACTIVITY_LD_JSON is JSON-LD carrying the ActivityStreams profile", () => {
+    // The profile parameter is what makes a JSON-LD document an AS2 document;
+    // a bare `application/ld+json` would not identify the vocabulary.
+    expect(ACTIVITY_LD_JSON.startsWith("application/ld+json",),).toBe(true,);
+    expect(ACTIVITY_LD_JSON,).toContain('profile="https://www.w3.org/ns/activitystreams"',);
   });
 });
