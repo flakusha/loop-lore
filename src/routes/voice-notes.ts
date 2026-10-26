@@ -56,7 +56,13 @@ export function voiceNoteRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (typeof userId !== "string") { return userId; }
       const chatId = ctx.params.id;
 
-      const access = await checkChatAccess(database, chatId, userId, null,);
+      const access = await checkChatAccess(
+        database,
+        chatId,
+        userId,
+        (ctx as { userRole?: string | null }).userRole ?? null,
+      );
+
       if (!access.ok) { return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, },); }
 
       if (!config.assets.enabled) {

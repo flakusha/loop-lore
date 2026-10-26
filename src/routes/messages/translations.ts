@@ -16,6 +16,7 @@ import { Elysia, t, } from "elysia";
 import { translateMessageToLocale, } from "../../chat/message-translations";
 import { getMessageWithAccess, } from "../../chat/service";
 import { normalizeBcp47Tag, } from "../../i18n/bcp47";
+import { getLogger, } from "../../logger";
 import {
   ErrorResponse,
   MessageIdParams,
@@ -183,8 +184,21 @@ export function translationRoutes(opts: HandlerOpts, prefix = "/api",) {
             key_id: message.key_id as string | null,
             chat_id: message.chat_id as string,
           },);
-        } catch {
-          plaintext = message.content as string;
+        } catch (error) {
+          // Never ship undecryptable ciphertext to an external MT provider
+          // (and never persist what it returns). Fail the request instead.
+          getLogger()
+            .child({ module: "messages-translations", },)
+            .error(
+              "Failed to decrypt message content for translation",
+              error instanceof Error ? error : new Error(String(error,),),
+            );
+
+          return jsonError({
+            message: "Message content could not be decrypted for translation",
+            status: HttpStatus.UnprocessableEntity,
+            code: ErrorCode.ValidationError,
+          },);
         }
 
         const outcome = await translateMessageToLocale(database, config, {

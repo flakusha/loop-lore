@@ -97,19 +97,30 @@ describe("story-state routes", () => {
     expect(body.weather,).toBe("rainy",);
   });
 
-  test("PUT location state touches the row and returns it", async () => {
+  test("PUT location state applies the weather field and returns the row", async () => {
     const res = await makeApp(db, "owner", "user",).handle(
       putJson(`http://localhost/api/locations/${LOCATION_ID}/state`, {
-        location_id: LOCATION_ID,
-        state_key: "weather",
-        state_value: "sunny",
+        weather: "sunny",
       },),
     );
 
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { id: string; location_id: string; updated_at: string };
+    const body = await res.json() as { id: string; location_id: string; updated_at: string; weather: string };
     expect(body.location_id,).toBe(LOCATION_ID,);
+    expect(body.weather,).toBe("sunny",);
     expect(typeof body.updated_at,).toBe("string",);
+  });
+
+  test("PUT location state rejects the old state_key shape (422, no silent no-op)", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      putJson(`http://localhost/api/locations/${LOCATION_ID}/state`, {
+        location_id: LOCATION_ID,
+        state_key: "weather",
+        state_value: "stormy",
+      },),
+    );
+
+    expect(res.status,).toBe(422,);
   });
 
   test("PUT location state rejects a missing body (422)", async () => {
@@ -150,19 +161,30 @@ describe("story-state routes", () => {
     expect(body.health,).toBe(10,);
   });
 
-  test("PUT NPC state touches the row and returns it", async () => {
+  test("PUT NPC state applies the health field and returns the row", async () => {
     const res = await makeApp(db, "owner", "user",).handle(
       putJson(`http://localhost/api/worlds/${WORLD_ID}/npc-states/${NPC_ID}`, {
-        npc_id: NPC_ID,
-        state_key: "health",
-        state_value: 7,
+        health: 7,
       },),
     );
 
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { actor_id: string; updated_at: string };
+    const body = await res.json() as { actor_id: string; updated_at: string; health: number };
     expect(body.actor_id,).toBe(NPC_ID,);
+    expect(body.health,).toBe(7,);
     expect(typeof body.updated_at,).toBe("string",);
+  });
+
+  test("PUT NPC state rejects the old state_key shape (422, no silent no-op)", async () => {
+    const res = await makeApp(db, "owner", "user",).handle(
+      putJson(`http://localhost/api/worlds/${WORLD_ID}/npc-states/${NPC_ID}`, {
+        npc_id: NPC_ID,
+        state_key: "health",
+        state_value: 1,
+      },),
+    );
+
+    expect(res.status,).toBe(422,);
   });
 
   test("PUT NPC state rejects a missing body (422)", async () => {

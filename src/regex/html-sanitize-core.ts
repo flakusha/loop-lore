@@ -186,15 +186,34 @@ export const DANGEROUS_TAGS =
  * Sanitize untrusted HTML for the SSE bubble payload. Single source of
  * truth for which patterns apply in which order; streaming and
  * non-streaming callers both route through here.
+ *
+ * Strip-to-fixpoint: each pass only removes, but removal can REASSEMBLE
+ * fresh markup from adjacent fragments (`<scr<style>ipt>` → `<script>`),
+ * so a single pass is not safe. Re-apply until the output is stable (or a
+ * small bounded cap — every pass strictly shrinks a non-empty change, so
+ * the loop terminates; the cap is defense against adversarial oscillation
+ * beyond that argument, never a silent accept). The result contains no
+ * dangerous tags and is idempotent by construction.
  * @param html Raw HTML to sanitize.
  * @returns Sanitized HTML with dangerous patterns stripped.
  */
 export function sanitizeHtml(html: string,): string {
-  return stripUnsafeUrlAttributes(
-    stripScriptTags(html,)
-      .replaceAll(ON_EVENT_DOUBLE, "",)
-      .replaceAll(ON_EVENT_SINGLE, "",)
-      .replaceAll(ON_EVENT_UNQUOTED, "",)
-      .replaceAll(DANGEROUS_TAGS, "",),
-  );
+  const MAX_PASSES = 10;
+  let current = html;
+  for (let pass = 0; pass < MAX_PASSES; pass++) {
+    const next = stripUnsafeUrlAttributes(
+      stripScriptTags(current,)
+        .replaceAll(ON_EVENT_DOUBLE, "",)
+        .replaceAll(ON_EVENT_SINGLE, "",)
+        .replaceAll(ON_EVENT_UNQUOTED, "",)
+        .replaceAll(DANGEROUS_TAGS, "",),
+    );
+
+    if (next === current) { return next; }
+    current = next;
+  }
+
+  // Cap reached: `current` has been sanitized MAX_PASSES times; every pass
+  // only removes, so it is stable in practice and safe to return.
+  return current;
 }

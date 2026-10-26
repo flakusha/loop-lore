@@ -138,6 +138,32 @@ describe("message translation routes", () => {
     expect(providerCalls,).toBe(0,);
   });
 
+  test("POST on an undecryptable message 422s without a provider call", async () => {
+    // Corrupt the row: claims gzip encoding but the body is not gzip →
+    // decodeContent throws inside resolveMessageContent.
+    await fixture.db.updateTable("messages",)
+      .set({ content: "hello world", content_encoding: "gzip", key_id: null, },)
+      .where("id", "=", messageId,)
+      .execute();
+
+    const res = await makeApp(fixture.db, ownerId,).handle(
+      new Request(`http://localhost/api/messages/${messageId}/translations`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ locale: "es", },),
+      },),
+    );
+
+    // The old behaviour fell back to the raw ciphertext and shipped it to
+    // the MT provider; the fix fails the request instead.
+    expect(res.status,).toBe(422,);
+    expect(providerCalls,).toBe(0,);
+    const rows = await fixture.db.selectFrom("message_translations",).selectAll()
+      .where("message_id", "=", messageId,).execute();
+
+    expect(rows,).toHaveLength(0,);
+  });
+
   test("POST with a well-formed non-catalog locale is accepted (not a 400)", async () => {
     const res = await makeApp(fixture.db, ownerId,).handle(
       new Request(`http://localhost/api/messages/${messageId}/translations`, {

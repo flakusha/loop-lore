@@ -3,14 +3,13 @@
 
 /**
  * Property suite for the SSE sanitize pipeline (fuzz-candidates #11).
- * Universal invariants over arbitrary strings: sanitizing never throws and
- * never grows the text (every stage only removes). Single-pass idempotence
- * and output safety are NOT universal: stage removals can assemble new
- * markup from adjacent fragments (`<scr<style>ipt>` → `<script>`); those
- * counterexamples are pinned below as the module's documented residual
- * risk — the browser sink runs DOMPurify, which is the primary guard
- * (html-sanitize-core.ts header). The module's own ON_EVENT_* patterns are
- * the oracle for handler attributes.
+ * Universal invariants over arbitrary strings: sanitizing never throws,
+ * never grows the text, is IDEMPOTENT, and the output contains no script
+ * openers (strip-to-fixpoint: reassembly from adjacent fragments is
+ * re-stripped on the next pass — the former KNOWN RESIDUAL mXSS pins are
+ * flipped). The module's own ON_EVENT_* patterns remain the oracle for
+ * handler attributes; the browser sink's DOMPurify is still the primary
+ * guard (html-sanitize-core.ts header).
  *
  * Resource contract: pure string functions — no I/O, no shared state.
  */
@@ -62,15 +61,26 @@ describe("sanitizeHtml — properties", () => {
     expect(sanitizeHtml("<script>alert(1)</script>ok",),).toBe("ok",);
   });
 
-  test("KNOWN RESIDUAL: fragment removal can assemble new script markup", () => {
-    // Documented, deliberately accepted (defense-in-depth; DOMPurify is the
-    // primary sink guard). Pinned so the boundary stays visible — a future
-    // fixpoint fix should flip these assertions deliberately.
+  test("FIXPOINT (was KNOWN RESIDUAL): fragment reassembly is re-stripped; output is stable and script-free", () => {
+    // The old single-pass pipeline assembled '<scr<style>ipt>alert(1)' into
+    // a live '<script>' opener. Strip-to-fixpoint re-strips it.
     const assembled = sanitizeHtml("<scr<style>ipt>alert(1)",);
-    expect(assembled,).toBe("<script>alert(1)",);
-    expect(hasScriptOpen(assembled,),).toBe(true,);
-    expect(sanitizeHtml(assembled,),).toBe("",); // the second pass removes what the first assembled
+    expect(hasScriptOpen(assembled,),).toBe(false,);
+    expect(sanitizeHtml(assembled,),).toBe(assembled,); // idempotent
+
     const nested = sanitizeHtml("<scr<script>x</script>ipt>alert(1)",);
-    expect(nested,).toBe("<script>alert(1)",);
+    expect(hasScriptOpen(nested,),).toBe(false,);
+    expect(sanitizeHtml(nested,),).toBe(nested,);
+  });
+
+  test("output is idempotent and script-free for arbitrary input", () => {
+    fc.assert(
+      fc.property(fc.string({ maxLength: 200, },), (x,) => {
+        const once = sanitizeHtml(x,);
+        expect(sanitizeHtml(once,),).toBe(once,);
+        expect(hasScriptOpen(once,),).toBe(false,);
+      },),
+      RUNS,
+    );
   });
 });
