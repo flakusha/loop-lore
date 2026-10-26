@@ -32,7 +32,7 @@ export function loadDomainConfigs(directory: string, baseConfig: Config,): Confi
           const content = readFileSync(domainPath, "utf8",);
           const parsed = parseFileContent(content, ext.slice(1,),);
           validateDomainConfig(domain, parsed, domainPath,);
-          config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
+          config = deepMerge(config, parsed,);
         } catch (error) {
           throw new Error(`Failed to parse domain config ${domainPath}: ${(error as Error).message}`, {
             cause: error,

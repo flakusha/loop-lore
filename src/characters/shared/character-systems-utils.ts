@@ -4,6 +4,8 @@
 // Field mapping constants for character systems export/import
 // Eliminates 82 hardcoded field name pairs across exporter and importer
 
+import type { AvatarTagType, } from "../../db/enums";
+
 /** Licensing fields: [dbColumn, exportField] pairs */
 export const LICENSING_FIELDS: [string, string,][] = [
   ["license_type", "licenseType",],
@@ -137,6 +139,15 @@ export function mapRelationshipForExport(
   };
 }
 
+/** One exported avatar row (the shape `mapAvatarForExport` produces). */
+export interface ExportedAvatar {
+  assetId: string;
+  label: string;
+  tags?: Partial<Record<AvatarTagType, string>>;
+  isPrimary?: boolean;
+  sortOrder?: number;
+}
+
 /**
  * Map an avatar to export format
  * @param avatar
@@ -145,17 +156,17 @@ export function mapRelationshipForExport(
  * @param avatar.tags
  * @param avatar.isPrimary
  * @param avatar.sortOrder
- * @returns void
+ * @returns ExportedAvatar
  */
 export function mapAvatarForExport(
   avatar: {
     assetId: string;
     label: string;
-    tags: Record<string, unknown>;
-    isPrimary: boolean;
-    sortOrder: number;
+    tags?: Partial<Record<AvatarTagType, string>>;
+    isPrimary?: boolean;
+    sortOrder?: number;
   },
-): Record<string, unknown> {
+): ExportedAvatar {
   return {
     assetId: avatar.assetId,
     label: avatar.label,
