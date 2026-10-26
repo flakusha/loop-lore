@@ -43,7 +43,7 @@ export function loadConfig(cwd?: string,): Config {
     try {
       const content = readFileSync(defaultFound.path, "utf8",);
       const parsed = parseFileContent(content, defaultFound.ext,);
-      config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
+      config = deepMerge(config, parsed,);
     } catch (error) {
       throw new Error(`Failed to parse config file ${defaultFound.path}: ${(error as Error).message}`, {
         cause: error,
@@ -58,7 +58,7 @@ export function loadConfig(cwd?: string,): Config {
     try {
       const content = readFileSync(mainFound.path, "utf8",);
       const parsed = parseFileContent(content, mainFound.ext,);
-      config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
+      config = deepMerge(config, parsed,);
     } catch (error) {
       throw new Error(`Failed to parse config file ${mainFound.path}: ${(error as Error).message}`, {
         cause: error,
@@ -77,7 +77,7 @@ export function loadConfig(cwd?: string,): Config {
     try {
       const content = readFileSync(localFound.path, "utf8",);
       const parsed = parseFileContent(content, localFound.ext,);
-      config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
+      config = deepMerge(config, parsed,);
     } catch (error) {
       throw new Error(`Failed to parse config file ${localFound.path}: ${(error as Error).message}`, {
         cause: error,
@@ -113,9 +113,9 @@ export function loadConfig(cwd?: string,): Config {
       // Flat ENV_MAP-style keys (TELEMETRY_PII_SECRET, ...) hoist to their
       // nested config paths; explicit nested keys in the same file win.
       config = deepMerge(
-        config as unknown as Record<string, unknown>,
+        config,
         normalizeConfig(liftFlatEnvKeys(parsed, ENV_MAP,),),
-      ) as unknown as Config;
+      );
     } catch (error) {
       throw new Error(`Failed to parse ${envConfigPath}: ${(error as Error).message}`, {
         cause: error,

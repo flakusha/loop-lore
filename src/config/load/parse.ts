@@ -8,21 +8,24 @@
  * @param overrides
  * @returns T
  */
-export function deepMerge<T extends Record<string, unknown>,>(base: T, overrides: Partial<T>,): T {
+export function deepMerge<T extends object,>(base: T, overrides: Partial<T> | Record<string, unknown>,): T {
   const result = { ...base, };
-  for (const key of Object.keys(overrides,)) {
-    const k = key as keyof T;
-    const value = overrides[k];
+  // Single documented boundary: generic T may be an interface without an
+  // index signature, so writes go through one record view of the copy.
+  const resultRecord = result as Record<string, unknown>;
+  const overrideRecord = overrides as Record<string, unknown>;
+  for (const key of Object.keys(overrideRecord,)) {
+    const value = overrideRecord[key];
     if (value !== undefined) {
-      const baseValue = base[k];
+      const baseValue = (base as Record<string, unknown>)[key];
       const isObject = typeof value === "object" &&
         !Array.isArray(value,) &&
         typeof baseValue === "object" &&
         baseValue != null;
 
-      result[k] = isObject
-        ? (deepMerge(baseValue as Record<string, unknown>, value as Record<string, unknown>,) as T[keyof T])
-        : (value as T[keyof T]);
+      resultRecord[key] = isObject
+        ? deepMerge(baseValue as Record<string, unknown>, value as Record<string, unknown>,)
+        : value;
     }
   }
 

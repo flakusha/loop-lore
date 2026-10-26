@@ -22,6 +22,7 @@ import {
   mapTraitForExport,
   toExportFields,
 } from "../shared/character-systems-utils";
+import type { ExportedAvatar, } from "../shared/character-systems-utils";
 import type {
   WorldSetupInventoryItem,
   WorldSetupLoreEntry,
@@ -62,7 +63,7 @@ export interface CharacterSystemsExport {
   mood?: Record<string, unknown>;
   relationships?: Record<string, unknown>[];
   avatars?: {
-    avatars: Record<string, unknown>[];
+    avatars: ExportedAvatar[];
     config?: ExportedAvatarConfig;
     worldConfigs?: ExportedWorldAvatarConfig[];
   };
