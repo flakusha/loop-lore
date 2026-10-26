@@ -12488,6 +12488,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-2026-openwebui-cancel-generation-wiring.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-slash-command-typed-token-autocomplete.md"
     },
     {
