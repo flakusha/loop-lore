@@ -20,7 +20,9 @@ Grounded state:
 - Auto-start schema (src/config/schema/auto-start.ts) only spawns the proxy (configPath) — models live in external llama-swap YAML, so NO code change needed for serving; this is config + docs work.
 - Jev-analogue: remote integration pattern = openaiCompatible provider instance (src/generation/providers/registry.ts initializeProviders) pointed at remote endpoint; same seam serves a remote classifier.
 
-Scope: DONE in configs/config.llama-swap.example.yaml — `laya-english` + `laya-multilingual` entries (fr0stbit3 GGUFs via `-hf`, `--embeddings --pooling none`, `-c/-ub/-b 2048`, `ttl: 0`, `unlisted: true`, members of the persistent `helpers` group). CPU is llama.cpp's default — no `-ngl` flag needed (earlier draft wrongly used `--n-gpu-layers 0`). Decision head is NOT in the GGUF (`laya-head.safetensors` + `laya_head.py` run outside llama.cpp). Remaining: verify proxy serves classifier + LLM concurrently (TTL must not evict).
+Scope: DONE in configs/config.llama-swap.example.yaml — `laya-english` + `laya-multilingual` entries (fr0stbit3 GGUFs via `-hf`, `--embeddings --pooling none`, `-c/-ub/-b 2048`, `ttl: 0`, `unlisted: true`, members of the persistent `helpers` group). CPU is llama.cpp's default — no `-ngl` flag needed (earlier draft wrongly used `--n-gpu-layers 0`). Decision head is NOT in the backbone-only GGUF (`laya-head.safetensors` + `laya_head.py` run outside llama.cpp).
+
+Verified 2026-10-26: llama-swap proxies the decision endpoint unchanged — `POST http://localhost:7180/v1/systemone` with `model` = the llama-swap model id returned 200 for a text `choice`+`noul` request (probabilities, `output_tokens: 0`). So the proxy needs no special route for decision models; only the served GGUF must be a native decision model. Remaining: verify proxy serves classifier + LLM concurrently (TTL must not evict).
 
 ## Acceptance Criteria
 
