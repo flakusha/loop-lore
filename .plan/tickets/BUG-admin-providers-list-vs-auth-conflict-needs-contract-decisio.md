@@ -3,7 +3,7 @@
 
 # BUG: admin providers list-vs-auth conflict needs contract decision
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-auth-access
@@ -39,3 +39,5 @@ Caveats: authorization boundary change; stale-state risk if external callers rel
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 1568edc (registry tip: ae3f8bcac Konstantin Fedotov Close issue)

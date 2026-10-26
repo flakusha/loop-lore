@@ -3,7 +3,7 @@
 
 # BUG: Static asset serving never applies immutable caching and crashes on directory paths
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-asset-platform-capabilities
@@ -31,3 +31,5 @@ Source: .tmp/longcat/review-infrastructure.md M1, M2, M3, L1, L2, L3, L4.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b1bff1d (registry tip: 7d306ad30 Konstantin Fedotov Close issue)

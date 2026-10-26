@@ -3,7 +3,7 @@
 
 # BUG: ticket-epic-triage and triage-p3-idea-tickets assign mutually exclusive metadata to epic-npc-to-npc-social
 
-**Status:** Blocked
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -112,3 +112,5 @@ Partly. Established empirically in the `chore-file-epic-binding-ticket` worktree
 - Pre-existing on `dev`, unrelated to this conflict: the `linkage` advisory reporting 1256 unbound tickets, and `feature-matrix.md` lacking rows for epics that do not exist on `dev`.
 - No gate run in this investigation used `--fix`, `giwt sync`, `plan:sync:fix`, or any mutating operation. The only temporary edit to this worktree (a probe of the linkage gate against A's content) was reverted; `git status --porcelain` is clean.
 - Filing this ticket makes the `tickets` and `code-map` gates fail on this branch with "ticket index out of sync" and "code-map.json is stale". Both are caused solely by this file being absent from `.plan/tickets/index.json`. Verified by control: removing this file and re-running `--gates tickets,code-map` returns `✓ tickets OK / ✓ code-map OK`, so both are green on `dev`. The documented remedy is `giwt sync --fix --import` after staging, which was out of scope for this task; whoever finalizes this branch should run it before the gates.
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e66db81 (registry tip: 6ce44f098 Konstantin Fedotov Close issue)

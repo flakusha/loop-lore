@@ -3,7 +3,7 @@
 
 # BUG: Impersonate toggle can never activate — no chats route emits character_id
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -30,3 +30,5 @@ FIX DIRECTION: Emit character_id on the chats detail response so loadCharacterIn
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 12f087e (registry tip: c74e26173 Konstantin Fedotov Close issue)

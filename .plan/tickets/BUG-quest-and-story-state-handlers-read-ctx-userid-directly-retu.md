@@ -3,7 +3,7 @@
 
 # BUG: Quest and story-state handlers read ctx.userId directly, returning 404 instead of 401
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-quests-encounters
@@ -31,3 +31,5 @@ Source: .tmp/longcat/review-consolidated.md nits 23, 24, 25.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e73cbde (registry tip: 14db1dd58 Konstantin Fedotov Close issue)

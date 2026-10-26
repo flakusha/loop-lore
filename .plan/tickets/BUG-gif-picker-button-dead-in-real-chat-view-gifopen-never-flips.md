@@ -3,7 +3,7 @@
 
 # BUG: Gif picker button dead in real chat view — _gifOpen never flips
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -29,3 +29,5 @@ FIX DIRECTION: Trace the runtime click path (outside-click closer vs handler ord
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c926e5a (registry tip: 3adda8031 Konstantin Fedotov Close issue)

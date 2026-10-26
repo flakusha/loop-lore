@@ -3,7 +3,7 @@
 
 # BUG: Raw Buffer.allocUnsafe/alloc exists in src/ alongside SafeBuffer guards — inconsistency at 0 sites
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-api-validation-guardrails
@@ -37,3 +37,5 @@ The backlog entry's "65 sites" claim appears to be stale (it likely counted `Buf
 
 
 git issue: e09e0f9
+
+**Resolved:** 2026-10-26 registry-driven close: git issue e09e0f9 (registry tip: 31f31e4c2 Konstantin Fedotov Close issue)

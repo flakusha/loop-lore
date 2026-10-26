@@ -3,7 +3,7 @@
 
 # BUG: llama-swap autostart registers no LLM provider
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-llama-swap
@@ -22,3 +22,5 @@ startLlamaSwap starts proxy but registers nothing (init-background-services.ts:1
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 81c0b72 (registry tip: 4f5d4a78d Konstantin Fedotov Close issue)

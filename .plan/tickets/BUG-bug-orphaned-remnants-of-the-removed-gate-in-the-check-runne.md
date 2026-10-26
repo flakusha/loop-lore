@@ -3,7 +3,7 @@
 
 # BUG: orphaned remnants of the removed `test - unit` gate in the check runner (dead SCOPED_TESTS, stale HEAVY_NAMES entry, stale comment)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline
@@ -29,3 +29,5 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue f6705a5 (registry tip: ccbdc5d8b Konstantin Fedotov Close issue)

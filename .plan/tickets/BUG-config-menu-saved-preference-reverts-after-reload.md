@@ -3,7 +3,7 @@
 
 # BUG: Config-menu saved preference reverts after reload
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -27,3 +27,5 @@ FIX DIRECTION: Root-cause the read-back path for config-menu preferences and mak
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 8387b00 (registry tip: 6649324fc Konstantin Fedotov Close issue)

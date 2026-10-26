@@ -3,7 +3,7 @@
 
 # BUG: sdcpp generate/edit duplicated with divergent endpoints and timeouts
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-comfyui-plugin
@@ -22,3 +22,5 @@ image-engine/sdcpp.ts (img_gen, config deadline) vs sd-server-provider/families.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 92b1011 (registry tip: 20c692f53 Konstantin Fedotov Close issue)

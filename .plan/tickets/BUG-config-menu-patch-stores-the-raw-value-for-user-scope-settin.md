@@ -3,7 +3,7 @@
 
 # BUG: Config-menu PATCH stores the raw value for user-scope settings and leaks admin key names
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-settings
@@ -29,3 +29,5 @@ Source: .tmp/cat-jam/review-routes-config.md P1 findings 1 and 3.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c77b7e9 (registry tip: f5e8e3bb0 Konstantin Fedotov Close issue)

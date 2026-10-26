@@ -3,7 +3,7 @@
 
 # BUG: jscpd-ratchet-gate-advisory-not-blocking
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-continuous-improvement
@@ -29,3 +29,5 @@ Fix direction: reconcile the documentation with the registry — either move the
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue bc37d87 (registry tip: 9abb7042c Konstantin Fedotov Close issue)

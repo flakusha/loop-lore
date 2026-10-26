@@ -3,7 +3,7 @@
 
 # BUG: Community lorebook share has no export epilogue
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-import-export-io
@@ -76,3 +76,5 @@ stale; the gap is real.
 
 
 git issue: 1485a72
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 1485a72 (registry tip: 7d68bcd87 Konstantin Fedotov Close issue)

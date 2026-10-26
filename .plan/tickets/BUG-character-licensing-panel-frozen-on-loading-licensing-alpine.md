@@ -3,7 +3,7 @@
 
 # BUG: Character licensing panel frozen on 'Loading licensing…' — Alpine effects dead after htmx load
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -28,3 +28,5 @@ FIX DIRECTION: Route the factory/loadLicensing mutations through Alpine's reacti
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 93b85cd (registry tip: 54575f70f Konstantin Fedotov Close issue)

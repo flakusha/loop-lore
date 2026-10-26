@@ -3,7 +3,7 @@
 
 # BUG: Image-edit provider and template capabilities disagree
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-comfyui-plugin
@@ -30,3 +30,5 @@ Source: .tmp/longcat/review-misc-services.md M5, M6, i3, i4, i5, i7, i10.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 9d307c4 (registry tip: a1bebdc8a Konstantin Fedotov Close issue)

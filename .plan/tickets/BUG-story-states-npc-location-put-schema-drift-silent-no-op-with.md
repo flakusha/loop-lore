@@ -3,7 +3,7 @@
 
 # BUG: story-states npc/location PUT schema drift: silent no-op with vacuous green e2e
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -41,3 +41,5 @@ Align `NpcStateBody`/`LocationStateBody` to the handler field set (or vice versa
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 065ca42 (registry tip: afedcf68c Konstantin Fedotov Close issue)

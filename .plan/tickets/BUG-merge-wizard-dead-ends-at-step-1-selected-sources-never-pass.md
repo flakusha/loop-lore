@@ -3,7 +3,7 @@
 
 # BUG: Merge wizard dead-ends at step 1 — selected sources never passed
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -27,3 +27,5 @@ FIX DIRECTION: Pass the selected sources into the wizard component (or have it r
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 1476e6d (registry tip: fe37aae99 Konstantin Fedotov Close issue)

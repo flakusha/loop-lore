@@ -3,7 +3,7 @@
 
 # BUG: frontend handlers swallow API errors silently with no user feedback
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-components
@@ -65,3 +65,5 @@ does not update.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 1e2c548 (registry tip: 82464fcdc Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # BUG: fix(api): unify error/response envelopes, kill raw Response.json errors
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-error-envelope
@@ -21,3 +21,5 @@ Sources: stream-b #8 (envelope inconsistencies, broad); stream-c #8 (500/PARSE_E
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 39603d6 (registry tip: e06736d60 Konstantin Fedotov Close issue)

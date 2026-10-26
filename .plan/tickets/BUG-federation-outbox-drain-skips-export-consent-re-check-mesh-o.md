@@ -3,7 +3,7 @@
 
 # BUG: Federation outbox drain skips export-consent re-check (mesh_outbox has no chat_id)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-mesh-federation-content-sharing
@@ -21,3 +21,5 @@ Evidence (approved finding 5, P2; .tmp/concern-dev-2026-10-07.md, .tmp/concern-f
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue f38633a (registry tip: 9511d026b Konstantin Fedotov Close issue)

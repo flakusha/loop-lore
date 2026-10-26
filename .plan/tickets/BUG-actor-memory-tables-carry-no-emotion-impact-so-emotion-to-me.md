@@ -3,7 +3,7 @@
 
 # BUG: Actor memory tables carry no emotion_impact, so emotion-to-memory integration has no persistence
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems
@@ -42,3 +42,5 @@ column before `epic-db-migration-compaction` touches it. Related design ticket:
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 9d6ac7f (registry tip: 9e4884193 Konstantin Fedotov Close issue)

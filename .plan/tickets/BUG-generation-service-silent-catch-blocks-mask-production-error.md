@@ -3,7 +3,7 @@
 
 # BUG: generation service silent catch blocks mask production errors
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logging
@@ -60,3 +60,5 @@ and no logging, making production failures invisible.
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b864f64 (registry tip: d873f619b Konstantin Fedotov Close issue)

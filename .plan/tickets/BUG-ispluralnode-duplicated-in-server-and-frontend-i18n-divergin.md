@@ -3,7 +3,7 @@
 
 # BUG: isPluralNode duplicated in server and frontend i18n, diverging silently: a plural key renders as the raw key in the browser
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-internationalization
@@ -41,3 +41,5 @@ Fix: give the frontend the same count-aware resolution the server has (a fronten
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 5f8bbe7 (registry tip: 9834dcccb Konstantin Fedotov Close issue)
