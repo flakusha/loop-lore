@@ -8,8 +8,10 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { initAgeGate, } from "../../age-gate/controller";
 import type { Config, } from "../../config/schema/config";
 import { NsfwSection, } from "../../config/sections";
+import { AgeGateMode, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { LocationNsfwService, } from "../../rpg/location-nsfw/service";
@@ -29,10 +31,19 @@ let db: Kysely<DB>;
 
 beforeAll(async () => {
   createLogger({ level: "warn", },);
+  // Resource contract: the NSFW age verdict delegates to the process-global
+  // ageGate.* runtime singleton (BUG-two-gates-age-gate-keys); with the
+  // default-off every caller passes the gate, so the underage case would see
+  // 200. This file owns that singleton for its own duration and restores the
+  // disabled state in `afterAll` — passing alone, in any order, leaving no
+  // global behind (disabled + "none" equals the store's initial value:
+  // `isEnabled = enabled && mode !== "none"`).
+  initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
   ({ db, } = await createTestDb());
 },);
 
 afterAll(async () => {
+  initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
   await db.destroy();
 },);
 

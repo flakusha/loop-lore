@@ -3,6 +3,7 @@ import { createLogger, } from "../logger";
 import {
   detectPassToken,
   extractMentionedActorIds,
+  MENTION_TOKEN_PATTERN,
   parseAssetMentions,
   parseInitiativeFlag,
   parseMentions,
@@ -281,5 +282,27 @@ describe("parseAssetMentions / stripAssetMentions (component-buttons AC6)", () =
 
   test("strip leaves plain text untouched", () => {
     expect(stripAssetMentions("no tokens here",),).toBe("no tokens here",);
+  });
+});
+
+describe("MENTION_TOKEN_PATTERN", () => {
+  test("compiled like the parser, it yields the same tokens parseMentions reports", () => {
+    // The composer's pre-send validator compiles this same exported source, so
+    // pattern and parser must never disagree about what a mention is.
+    const text = "hi @Luna and @Max-2, reach me at bob@example.com";
+    const fromPattern = [...text.matchAll(new RegExp(MENTION_TOKEN_PATTERN, "g",),),].map((match,) => match[1]);
+
+    expect(fromPattern,).toEqual(["Luna", "Max-2",],);
+    expect(fromPattern,).toEqual(parseMentions(text,).map((mention,) => mention.name),);
+  });
+
+  test("the word-boundary lookbehind keeps an email address out of the match", () => {
+    const pattern = new RegExp(MENTION_TOKEN_PATTERN, "g",);
+
+    // `bob@example.com` has a word character before the `@`: not a mention.
+    expect("bob@example.com".match(pattern,),).toBeNull();
+    expect("mail: a@b.example".match(pattern,),).toBeNull();
+    // A leading `@` after whitespace or punctuation still matches.
+    expect("(@Luna".match(pattern,),).toEqual(["@Luna",],);
   });
 });

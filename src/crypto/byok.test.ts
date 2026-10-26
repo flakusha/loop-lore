@@ -30,6 +30,20 @@ describe("versioned envelope (BUG-4a052a5)", () => {
     await expect(decryptValue(legacy, SECRET,),).rejects.toThrow();
   });
 
+  test("a bare 3-chunk value whose salt starts with 'v<N>' is not a version tag", async () => {
+    // Regression: the version branch used to key on a leading "v", so a bare
+    // row whose random base64 salt began with "v" (≈1/64) was rejected as
+    // "Unsupported BYOK key version" instead of being decrypted.
+    const bare = await encryptValue("salt-starts-with-v", SECRET,);
+    const forced = `v2${bare.slice(2,)}`; // three chunks, salt begins "v2", no `v2:` tag
+    const settled = await decryptValue(forced, SECRET,).then(
+      () => ({ ok: true, message: "", }),
+      (error: unknown,) => ({ ok: false, message: String(error,), }),
+    );
+
+    expect(settled.message,).not.toContain("Unsupported BYOK key version",);
+  });
+
   test("decryptValue rejects an unknown key version loudly", async () => {
     const encrypted = await encryptVersioned("hello", SECRET,);
     const bumped = encrypted.replace(/^v\d+/, "v999",);

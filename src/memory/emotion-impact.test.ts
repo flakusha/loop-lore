@@ -7,6 +7,7 @@
 import { describe, expect, test, } from "bun:test";
 import {
   effectiveImportance,
+  EMOTION_IMPACTS,
   emotionBoost,
   parseEmotionImpact,
   sanitizeEmotionImpact,
@@ -95,5 +96,36 @@ describe("emotion weighting", () => {
         emotionImpact: { emotion: "traumatized", intensity: 100, duration: "permanent", },
       },),
     ).toBe(1,);
+  });
+});
+
+describe("EMOTION_IMPACTS", () => {
+  test("is the vocabulary sanitizeEmotionImpact accepts", () => {
+    const accepted: string[] = [];
+
+    for (const emotion of EMOTION_IMPACTS) {
+      const parsed = sanitizeEmotionImpact({ emotion, intensity: 40, duration: "lasting", },);
+
+      if (emotion === "neutral") {
+        // Neutral carries no signal and is normalized away.
+        expect(parsed,).toBeUndefined();
+        continue;
+      }
+
+      expect(parsed?.emotion,).toBe(emotion,);
+      accepted.push(emotion,);
+    }
+
+    // A loop over an empty/shrunken list would pass vacuously: pin that every
+    // non-neutral entry actually got accepted, including the strongest one.
+    expect(accepted,).toHaveLength(EMOTION_IMPACTS.length - 1,);
+    expect(accepted,).toContain("traumatized",);
+  });
+
+  test("has no duplicates and rejects an emotion outside it", () => {
+    expect(new Set(EMOTION_IMPACTS,).size,).toBe(EMOTION_IMPACTS.length,);
+    expect(
+      sanitizeEmotionImpact({ emotion: "smug", intensity: 40, duration: "lasting", },),
+    ).toBeUndefined();
   });
 });

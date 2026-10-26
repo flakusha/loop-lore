@@ -110,6 +110,15 @@ export async function encryptValue(plaintext: string, secret: string, aad?: stri
 export const BYOK_KEY_VERSION = 2;
 
 /**
+ * Version tag at the head of a versioned envelope: `v<digits>:`.
+ *
+ * MUST NOT be relaxed to a bare leading "v": the bare wire formats begin
+ * with a random base64 salt/iv whose first character is "v" roughly 1 time
+ * in 64, and those rows are unversioned.
+ */
+const VERSION_TAG = /^v(\d+):/;
+
+/**
  * Encrypt a plaintext string into the VERSIONED envelope:
  * `v2:salt:iv:ciphertext` (version tag + three base64 chunks). The payload
  * bytes are identical to {@link encryptValue} — the tag only records which
@@ -141,14 +150,19 @@ export async function decryptValue(encrypted: string, secret: string, aad?: stri
   // 3-chunk payload. Unknown generations fail LOUDLY (they need the key of
   // that generation, which this caller does not hold) — never silently
   // mis-decrypted with the current one.
-  if (encrypted.startsWith("v",)) {
-    const tagEnd = encrypted.indexOf(":",);
-    const version = Number(encrypted.slice(1, tagEnd,),);
+  //
+  // The tag is matched as `v<digits>:` and NOT as a leading "v": the bare
+  // formats start with a random base64 salt/iv, and base64 can begin with
+  // "v" (~1 in 64 rows). A prefix test read those rows as a version tag and
+  // rejected perfectly good ciphertext as "Unsupported BYOK key version".
+  const versioned = VERSION_TAG.exec(encrypted,);
+  if (versioned !== null) {
+    const version = Number(versioned[1],);
     if (version !== BYOK_KEY_VERSION) {
-      throw new Error(`Unsupported BYOK key version: ${encrypted.slice(1, tagEnd,)}`,);
+      throw new Error(`Unsupported BYOK key version: ${versioned[1]}`,);
     }
 
-    encrypted = encrypted.slice(tagEnd + 1,);
+    encrypted = encrypted.slice(versioned[0].length,);
   }
 
   const parts = encrypted.split(":",);
