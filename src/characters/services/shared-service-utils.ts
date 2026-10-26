@@ -35,6 +35,16 @@ export async function withTransaction<T,>(
 }
 
 /**
+ * The slice of a Kysely builder the world-scope helpers need. Method syntax
+ * keeps the parameter bivariant, so a concrete `SelectQueryBuilder` (whose
+ * `where` narrows the column name) still satisfies it without a cast to `any`.
+ */
+export interface WorldFilterable<T,> {
+  where(column: string, op: "=", value: string,): T;
+  where(column: string, op: "is", value: null,): T;
+}
+
+/**
  * Apply an EXPLICIT world scope to a Kysely query builder: filter to the
  * given world when one is supplied, otherwise restrict to the global
  * (world_id IS NULL) scope — never an unscoped, world-agnostic match.
@@ -48,12 +58,16 @@ export async function withTransaction<T,>(
  * @param worldCol
  * @returns the query builder narrowed to the world, or to the global scope
  */
-export function withExplicitWorldScope<T,>(qb: T, worldId: string | undefined, worldCol = "world_id",): T {
+export function withExplicitWorldScope<T extends WorldFilterable<T>,>(
+  qb: T,
+  worldId: string | undefined,
+  worldCol = "world_id",
+): T {
   if (worldId !== undefined) {
-    return (qb as any).where(worldCol, "=", worldId,) as T;
+    return qb.where(worldCol, "=", worldId,);
   }
 
-  return (qb as any).where(worldCol, "is", null,) as T;
+  return qb.where(worldCol, "is", null,);
 }
 
 /**
@@ -76,17 +90,18 @@ export function withExplicitWorldScope<T,>(qb: T, worldId: string | undefined, w
  * @param worldCol
  * @returns the same query builder, narrowed to the world when one was given
  */
-export function withWorldId<T,>(qb: T, worldId: string | undefined, worldCol = "world_id",): T {
-  // Kysely's $if is typed per-table; the generic cast is unavoidable here.
+export function withWorldId<T extends WorldFilterable<T>,>(
+  qb: T,
+  worldId: string | undefined,
+  worldCol = "world_id",
+): T {
   // An undefined worldId means the caller is world-agnostic: add NO world
   // filter so the query spans the global (NULL) scope and every world-scoped
   // row. Forcing `world_id is null` here used to hide world-scoped rows from
   // global lookups (and let a write pair read one row set and write another).
+  if (!worldId) { return qb; }
 
-  return (qb as any).$if(
-    !!worldId,
-    (q: any,) => q.where(worldCol, "=", worldId!,),
-  ) as T;
+  return qb.where(worldCol, "=", worldId,);
 }
 
 /**

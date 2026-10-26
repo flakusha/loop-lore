@@ -17,6 +17,21 @@ import {
 import { importCharacterSystems, } from "../importers/character-systems";
 import { createTestActors, createTestLocation, createTestWorld, } from "../services/test-helpers";
 import { exportCharacterSystems, } from "./character-systems";
+import type { CharacterSystemsExport, ExportedWorldAvatarConfig, } from "./character-systems";
+
+/**
+ * Copy a bundle with one hand-edited per-world avatar entry. The entry is
+ * accepted as `unknown` because the import path must survive a bundle that no
+ * longer matches the exported shape; the cast is how the test hands it one.
+ * @param bundle - Source bundle
+ * @param entry - Replacement `worldConfigs` entry, possibly malformed
+ * @returns the tampered copy
+ */
+function withWorldConfig(bundle: CharacterSystemsExport, entry: unknown,): CharacterSystemsExport {
+  const worldConfigs = [entry,] as ExportedWorldAvatarConfig[];
+
+  return { ...bundle, avatars: { ...bundle.avatars!, worldConfigs, }, };
+}
 
 const NOW = "2026-01-01T00:00:00.000Z";
 const WORLD_ID = "cs-world";
@@ -134,6 +149,42 @@ describe("character-systems round trip", () => {
       .executeTakeFirstOrThrow();
 
     expect(config.selection_rule_override,).toBe("mood_first",);
+  });
+
+  test("rejects a world-avatar entry with an unknown selection rule", async () => {
+    const bundle = await exportCharacterSystems(db, actorId, WORLD_ID,);
+    const tampered = withWorldConfig(bundle, {
+      worldId: WORLD_ID,
+      // Deliberately outside AvatarSelectionRule: a hand-edited bundle can
+      // carry anything, and the importer must report it rather than store it.
+      selectionRule: "not-a-rule",
+      weights: { mood: 0.9, },
+    },);
+
+    const result = await importCharacterSystems(db, actorId, tampered, WORLD_ID,);
+
+    expect(result.errors,).toContain("Skipped malformed avatar world config entry.",);
+    const stored = await db
+      .selectFrom("world_avatar_config",)
+      .select(["selection_rule_override",],)
+      .where("actor_id", "=", actorId,)
+      .where("world_id", "=", WORLD_ID,)
+      .executeTakeFirstOrThrow();
+
+    expect(stored.selection_rule_override,).toBe("mood_first",);
+  });
+
+  test("rejects a world-avatar entry whose weights are not numbers", async () => {
+    const bundle = await exportCharacterSystems(db, actorId, WORLD_ID,);
+    const tampered = withWorldConfig(bundle, {
+      worldId: WORLD_ID,
+      selectionRule: "mood_first",
+      weights: { mood: "high", },
+    },);
+
+    const result = await importCharacterSystems(db, actorId, tampered, WORLD_ID,);
+
+    expect(result.errors,).toContain("Skipped malformed avatar world config entry.",);
   });
 
   test("refuses a world-setup bundle exported from a different world", async () => {

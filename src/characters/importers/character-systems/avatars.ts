@@ -4,9 +4,12 @@
 // Import avatar data into the character systems importer result.
 
 import type { Kysely, } from "kysely";
+import { AvatarSelectionRule, } from "../../../db/enums";
+import type { AvatarTagType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
-import type { CharacterSystemsExport, } from "../../exporters/character-systems";
+import type { CharacterSystemsExport, ExportedWorldAvatarConfig, } from "../../exporters/character-systems";
 import { AvatarService, } from "../../services/avatar-service";
+import type { UpsertWorldAvatarConfigOpts, } from "../../services/avatar-service";
 import { errMsg, } from "../../shared/character-systems-utils";
 import type { CharacterSystemsImportResult, } from "./types";
 
@@ -76,12 +79,19 @@ export async function importAvatars(
 async function importAvatarWorldConfigs(
   avatarService: AvatarService,
   actorId: string,
-  configs: Record<string, unknown>[],
+  configs: readonly ExportedWorldAvatarConfig[],
   result: CharacterSystemsImportResult,
   worldId?: string,
 ): Promise<void> {
   for (const config of configs) {
-    const sourceWorldId = config.worldId as string | undefined;
+    const parsed = parseWorldAvatarConfig(config,);
+    if (!parsed) {
+      result.errors.push("Skipped malformed avatar world config entry.",);
+
+      continue;
+    }
+
+    const { sourceWorldId, opts, } = parsed;
     if (!worldId || (sourceWorldId && sourceWorldId !== worldId)) {
       result.errors.push(
         `Skipped avatar world config for world "${sourceWorldId ?? "unknown"}" (import target: ${worldId ?? "none"}).`,
@@ -91,12 +101,66 @@ async function importAvatarWorldConfigs(
     }
 
     try {
-      await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
-        selectionRuleOverride: config.selectionRule as any,
-        weightsOverride: config.weights as any,
-      },);
+      await avatarService.upsertWorldAvatarConfig(actorId, worldId, opts,);
     } catch (error: unknown) {
       result.errors.push(`Failed to import avatar world config: ${errMsg(error,)}`,);
     }
   }
+}
+
+/** Validated form of one imported world-avatar entry. */
+interface ParsedWorldAvatarConfig {
+  sourceWorldId: string | undefined;
+  opts: UpsertWorldAvatarConfigOpts;
+}
+
+/**
+ * Validate one imported world-avatar entry. The bundle is parsed JSON, so a
+ * malformed `selectionRule` or a non-numeric weight must be reported rather
+ * than written into the row.
+ * @param raw - One `worldConfigs` entry straight from the bundle
+ * @returns the validated entry, or undefined when it is unusable
+ */
+function parseWorldAvatarConfig(raw: unknown,): ParsedWorldAvatarConfig | undefined {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw,)) { return; }
+
+  const sourceWorldId = "worldId" in raw && typeof raw.worldId === "string" ? raw.worldId : undefined;
+  const selectionRule = "selectionRule" in raw && typeof raw.selectionRule === "string"
+    ? raw.selectionRule
+    : undefined;
+
+  if (selectionRule !== undefined && !isSelectionRule(selectionRule,)) { return; }
+
+  const weights = "weights" in raw ? readWeightMap(raw.weights,) : undefined;
+  if (weights === null) { return; }
+
+  return {
+    sourceWorldId,
+    opts: { selectionRuleOverride: selectionRule, weightsOverride: weights, },
+  };
+}
+
+/**
+ * Whether a value is one of the declared avatar selection rules.
+ * @param value - Candidate rule string
+ * @returns true when the rule is declared in {@link AvatarSelectionRule}
+ */
+function isSelectionRule(value: string,): value is AvatarSelectionRule {
+  return Object.values(AvatarSelectionRule,).includes(value as AvatarSelectionRule,);
+}
+
+/**
+ * Read a weight map, rejecting non-numeric entries.
+ * @param raw - Candidate `weights` value from the bundle
+ * @returns the weight map, undefined when absent, or null when malformed
+ */
+function readWeightMap(raw: unknown,): Partial<Record<AvatarTagType, number>> | null | undefined {
+  if (raw === undefined) { return; }
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw,)) { return null; }
+
+  const entries = Object.entries(raw,);
+  const valid = entries.every(([, weight,],) => typeof weight === "number" && Number.isFinite(weight,));
+  if (!valid) { return null; }
+
+  return Object.fromEntries(entries,) as Partial<Record<AvatarTagType, number>>;
 }

@@ -8,6 +8,7 @@
  * and licensing data in loop-lore native JSON format.
  */
 import type { Kysely, } from "kysely";
+import type { AvatarSelectionRule, AvatarTagType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { AvatarService, } from "../services/avatar-service";
@@ -25,6 +26,17 @@ import type {
   WorldSetupInventoryItem,
   WorldSetupLoreEntry,
 } from "../world-setup/types";
+
+/**
+ * One exported per-world avatar override. Declared concretely (not
+ * `Record<string, unknown>`) so the importer can consume it without an
+ * `as any` cast at the upsert boundary.
+ */
+export interface ExportedWorldAvatarConfig {
+  worldId?: string;
+  selectionRule?: AvatarSelectionRule;
+  weights?: Partial<Record<AvatarTagType, number>>;
+}
 
 /** Complete character systems export */
 export interface CharacterSystemsExport {
@@ -45,7 +57,7 @@ export interface CharacterSystemsExport {
   avatars?: {
     avatars: Record<string, unknown>[];
     config?: Record<string, unknown>;
-    worldConfigs?: Record<string, unknown>[];
+    worldConfigs?: ExportedWorldAvatarConfig[];
   };
   licensing?: Record<string, unknown>;
   availability?: Record<string, unknown>;
@@ -158,7 +170,7 @@ export async function exportCharacterSystems(
     ? await avatarService.getWorldAvatarConfig(actorId, worldId,)
     : undefined;
 
-  const worldConfigs: Record<string, unknown>[] | undefined = worldAvatarConfig
+  const worldConfigs: ExportedWorldAvatarConfig[] | undefined = worldAvatarConfig
     ? [{
       worldId: worldAvatarConfig.worldId,
       selectionRule: worldAvatarConfig.selectionRuleOverride,
