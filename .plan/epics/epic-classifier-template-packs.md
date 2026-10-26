@@ -103,6 +103,45 @@ specifies a template registry or user-supplied classification template packs.
   > code default > classifier module degradation**. The single-prompt
   override stays for back-compat.
 
+### Phase 3 — Native decision-model transport (llama.cpp `/v1/systemone`)
+
+llama.cpp now serves **native decision models** (PR #29818): `llama-server`
+exposes `POST /v1/systemone`, answering typed `choice` / `score` / `noul`
+questions with probabilities and zero generated text. Measured against the local
+llama-swap proxy on 2026-10-26 (text `choice`+`noul` → 200 with per-option
+probabilities; `images` → 502 through the proxy; `videos` → 400 — the decision
+path has no video input upstream).
+
+A decision model needs no system prompt — it needs **criteria** (option keys +
+descriptions) and **instructions** per question. That maps onto this epic's
+registry one-to-one:
+
+| Registry field | Decision-model use |
+| --- | --- |
+| `labels` | `choice` criteria keys (a task with no labels needs a `noul` question instead) |
+| pack `template` | description per criterion — the pack's prompt text becomes the option descriptions the model scores |
+| task `purpose` | the `instructions` string of the question |
+| `preferClassifier` | decides whether the task may take the decision transport at all |
+
+So a template pack serves both transports: as a generative system prompt on the
+auxiliary path, and as option descriptions on the decision path. The client
+work is `TASK-llama-cpp-decision-model-client-for-aux-classification.md`.
+
+Known upstream limits to design around: a GGUF without `<arch>.decision.*`
+metadata → 501; question + options must fit one batch; LAYA-type models
+silently truncate options to their trained head budget; `score` confidence can
+be 0.0 next to a usable expected level — cutoffs belong per model and per
+quantization.
+
+## Tasks
+
+- 🟡 `TASK-llama-cpp-decision-model-client-for-aux-classification.md` — native
+  llama.cpp decision-model transport (`POST /v1/systemone`, typed
+  `choice`/`score`/`noul`) for the `ModelRole.Classifier` role — not started;
+  see Phase 3 above
+- 🟡 `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-.md` —
+  dedicated classifier role (Laya/Jev) with generative fallback — not started
+
 ## Open questions
 
 1. Same-task competition: first-match-by-priority vs merge of multiple
