@@ -89,7 +89,7 @@ describe("locationExplorerRoutes", () => {
 
   test("location-explorer returns all locations + states for a world", async () => {
     const app = createApp(db, userId,);
-    const res = await app.handle(new Request(`http://localhost/api/worlds/${worldId}/location-explorer`,),);
+    const res = await app.handle(new Request(`http://localhost/api/v1/worlds/${worldId}/location-explorer`,),);
     expect(res.status,).toBe(200,);
     const locations = (await res.json()).data.locations as { name: string; parent_location_id: string | null }[];
     expect(locations.map((l,) => l.name),).toEqual(expect.arrayContaining(["Tavern", "Cave",],),);
@@ -110,7 +110,7 @@ describe("locationExplorerRoutes", () => {
 
     const app = createApp(db, userId,);
     const res = await app.handle(
-      new Request(`http://localhost/api/worlds/${worldId}/locations/${locTavern}/details`,),
+      new Request(`http://localhost/api/v1/worlds/${worldId}/locations/${locTavern}/details`,),
     );
 
     expect(res.status,).toBe(200,);
@@ -126,13 +126,13 @@ describe("locationExplorerRoutes", () => {
     const other = uid();
     await insertUser(db, other,);
     const app = createApp(db, other, "user",);
-    const res = await app.handle(new Request(`http://localhost/api/worlds/${worldId}/location-explorer`,),);
+    const res = await app.handle(new Request(`http://localhost/api/v1/worlds/${worldId}/location-explorer`,),);
     expect(res.status,).toBe(404,);
   });
 
   test("unauthenticated request is 401", async () => {
     const app = createApp(db, null,);
-    const res = await app.handle(new Request(`http://localhost/api/worlds/${worldId}/location-explorer`,),);
+    const res = await app.handle(new Request(`http://localhost/api/v1/worlds/${worldId}/location-explorer`,),);
     expect(res.status,).toBe(401,);
   });
 });

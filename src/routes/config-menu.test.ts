@@ -45,15 +45,15 @@ afterAll(() => {
 },);
 
 describe("config-menu routes", () => {
-  test("GET /api/config-menu returns 401 for anonymous", async () => {
+  test("GET /api/v1/config-menu returns 401 for anonymous", async () => {
     const app = makeApp(db, null,);
-    const res = await app.handle(new Request("http://localhost/api/config-menu",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/config-menu",),);
     expect(res.status,).toBe(401,);
   });
 
-  test("GET /api/config-menu returns admin sections for admin", async () => {
+  test("GET /api/v1/config-menu returns admin sections for admin", async () => {
     const app = makeApp(db, "admin",);
-    const res = await app.handle(new Request("http://localhost/api/config-menu",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/config-menu",),);
     expect(res.status,).toBe(200,);
     const body = await res.json();
     expect(body.role,).toBe("admin",);
@@ -65,9 +65,9 @@ describe("config-menu routes", () => {
     expect(regOpen.editable,).toBe(true,);
   });
 
-  test("GET /api/config-menu returns only user sections for non-admin", async () => {
+  test("GET /api/v1/config-menu returns only user sections for non-admin", async () => {
     const app = makeApp(db, "user",);
-    const res = await app.handle(new Request("http://localhost/api/config-menu",),);
+    const res = await app.handle(new Request("http://localhost/api/v1/config-menu",),);
     expect(res.status,).toBe(200,);
     const body = await res.json();
     expect(body.role,).toBe("user",);
@@ -76,10 +76,10 @@ describe("config-menu routes", () => {
     expect(body.sections[0].scope,).toBe("user",);
   });
 
-  test("PATCH /api/config-menu returns 401 for anonymous", async () => {
+  test("PATCH /api/v1/config-menu returns 401 for anonymous", async () => {
     const app = makeApp(db, null,);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "theme", value: "dark", },),
@@ -89,10 +89,10 @@ describe("config-menu routes", () => {
     expect(res.status,).toBe(401,);
   });
 
-  test("PATCH /api/config-menu returns 400 for non-admin writing admin key", async () => {
+  test("PATCH /api/v1/config-menu returns 400 for non-admin writing admin key", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "registration_open", value: "true", },),
@@ -102,10 +102,10 @@ describe("config-menu routes", () => {
     expect(res.status,).toBe(400,);
   });
 
-  test("PATCH /api/config-menu returns 400 for unknown key", async () => {
+  test("PATCH /api/v1/config-menu returns 400 for unknown key", async () => {
     const app = makeApp(db, "admin",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "nonexistent_key", value: "x", },),
@@ -115,10 +115,10 @@ describe("config-menu routes", () => {
     expect(res.status,).toBe(400,);
   });
 
-  test("PATCH /api/config-menu rejects non-editable admin field", async () => {
+  test("PATCH /api/v1/config-menu rejects non-editable admin field", async () => {
     const app = makeApp(db, "admin",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "server.port", value: "9999", },),
@@ -130,10 +130,10 @@ describe("config-menu routes", () => {
     expect(rows.length,).toBe(0,);
   });
 
-  test("PATCH /api/config-menu admin writes system_config", async () => {
+  test("PATCH /api/v1/config-menu admin writes system_config", async () => {
     const app = makeApp(db, "admin",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "registration_open", value: "true", },),
@@ -146,10 +146,10 @@ describe("config-menu routes", () => {
     expect(body.key,).toBe("registration_open",);
   });
 
-  test("PATCH /api/config-menu user writes settings", async () => {
+  test("PATCH /api/v1/config-menu user writes settings", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "theme", value: "dark", },),
@@ -166,7 +166,7 @@ describe("config-menu routes", () => {
     const app = makeApp(db, "admin",);
 
     const patch = await app.handle(
-      new Request("http://localhost/api/config-menu", {
+      new Request("http://localhost/api/v1/config-menu", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ key: "registration_open", value: "false", },),
@@ -175,7 +175,7 @@ describe("config-menu routes", () => {
 
     expect(patch.status,).toBe(200,);
 
-    const get = await app.handle(new Request("http://localhost/api/config-menu",),);
+    const get = await app.handle(new Request("http://localhost/api/v1/config-menu",),);
     expect(get.status,).toBe(200,);
     const body = await get.json() as {
       sections: { fields: { key: string; default?: unknown }[] }[];

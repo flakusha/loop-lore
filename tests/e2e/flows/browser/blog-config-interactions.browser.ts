@@ -11,7 +11,7 @@
  * Resource contract:
  *  - The blog test creates one blog_posts row with a Date.now-unique title.
  *  - The config test flips one user-role boolean field (chosen dynamically
- *    from the /api/config-menu catalog) — it lands in the solo user's
+ *    from the /api/v1/config-menu catalog) — it lands in the solo user's
  *    users.settings, scoped to this file's own in-memory database.
  *  - No files or ports are created; DB writes ride the harness rollback
  *    (no test mutates anything outside the transaction).
@@ -101,7 +101,7 @@ describe("Blog and config interactions E2E", () => {
 
       // Pick the first editable boolean field from the role-filtered catalog.
       const target = await page.evaluate(async () => {
-        const res = await fetch("/api/config-menu", { headers: { Accept: "application/json", }, },);
+        const res = await fetch("/api/v1/config-menu", { headers: { Accept: "application/json", }, },);
         const data = (await res.json()) as { sections: ConfigSection[] };
         for (const section of data.sections ?? []) {
           const field = (section.fields ?? []).find((f,) => f.editable && f.type === "boolean");
@@ -125,7 +125,7 @@ describe("Blog and config interactions E2E", () => {
       const before = await checkbox.isChecked();
       await checkbox.click();
       const patchRes = page.waitForResponse(
-        (res,) => res.url().includes("/api/config-menu",) && res.request().method() === "PATCH",
+        (res,) => res.url().includes("/api/v1/config-menu",) && res.request().method() === "PATCH",
         { timeout: 15_000, },
       );
 
