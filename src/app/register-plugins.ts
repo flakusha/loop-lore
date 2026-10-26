@@ -4,11 +4,18 @@
 /**
  * Plugin registration for the Elysia app.
  *
- * Registers ONLY the route modules that stay unversioned. Every other module is
- * mounted by the v1 barrel (`src/routes/v1/index.ts` -> the per-section
- * surfaces) under `/api/v1`, so mounting it here as well would serve the same
- * path unversioned and defeat the 308 version redirect enforced by
- * `versionResolver`. See `docs/spec/api-versioning.md`.
+ * Two groups are registered here:
+ * - Infra/HTML modules that are deliberately NEVER versioned: `health`,
+ *   `liveness`, `metrics`, `federation`, `build-id`, `views` (server-rendered
+ *   `/views/*`). These take no prefix parameter.
+ * - Migrated JSON modules (`agency`, `memory-audit`, `location-explorer`,
+ *   `game-state`, `story-orchestration`, `config-menu`) whose factory defaults
+ *   to `prefix = "/api/v1"`. Register each EXACTLY ONCE with the default -
+ *   passing the prefix explicitly (or mounting a second time) duplicates the
+ *   same routes and defeats the 308 version redirect enforced by
+ *   `versionResolver`. They are NOT part of the v1 barrel
+ *   (`src/routes/v1/index.ts`), which mounts the per-section surfaces instead.
+ * See `docs/spec/api-versioning.md`.
  */
 import type { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
@@ -21,7 +28,6 @@ import { gameStateRoutes, } from "../routes/game-state";
 import { healthRoutes, } from "../routes/health";
 import { livenessRoutes, } from "../routes/liveness";
 import { locationExplorerRoutes, } from "../routes/location-explorer";
-import { memoryAuditRoutes, } from "../routes/memory-audit";
 import { metricsRoutes, } from "../routes/metrics";
 import { storyOrchestrationRoutes, } from "../routes/story-orchestration";
 import { viewRoutes, } from "../routes/views";
@@ -59,10 +65,11 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
 
   // ── Migrated route modules ───────────────────────────────────────────────────
   app.use(agencyRoutes({ database: handleOpts.database, },),);
-  app.use(memoryAuditRoutes({ database: handleOpts.database, },),);
+  // memory-audit is NOT mounted here: `actorMemoriesRoutes` nests it inside the
+  // v1 actors surface (`src/routes/v1/actors-surface.ts` -> actor-memories.ts:173),
+  // so a mount here would duplicate every /api/v1 memory-audit route.
   app.use(locationExplorerRoutes(handleOpts,),);
-  app.use(locationExplorerRoutes(handleOpts, "/api/v1",),);
-  app.use(gameStateRoutes(handleOpts, "/api/v1",),);
+  app.use(gameStateRoutes(handleOpts,),);
   app.use(storyOrchestrationRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
   app.use(configMenuRoutes({ database: handleOpts.database, },),);
