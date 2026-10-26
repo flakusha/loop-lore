@@ -39,3 +39,6 @@
 ## Non-goals
 
 - Adding JSON login / token endpoint (new auth surface). Building v2.
+
+
+git issue: 8d608f6

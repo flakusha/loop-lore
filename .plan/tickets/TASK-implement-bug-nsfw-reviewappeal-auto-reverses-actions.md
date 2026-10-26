@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-nsfw-moderation-priority
@@ -22,3 +22,5 @@ Two-phase reversal: reviewAppeal(approved) records pending_reversal; new execute
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue ab7f915 (registry tip: 4b8e21335 Konstantin Fedotov Close issue)

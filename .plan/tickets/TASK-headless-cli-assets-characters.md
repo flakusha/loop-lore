@@ -32,3 +32,6 @@ Asset upload (`POST /api/v1/assets` multipart) and character create/import (`POS
 ## Non-goals
 
 - Chat/generate subcommands (sibling ticket). Batch download/delete, wardrobe, emotion-avatar jobs.
+
+
+git issue: d4b1488

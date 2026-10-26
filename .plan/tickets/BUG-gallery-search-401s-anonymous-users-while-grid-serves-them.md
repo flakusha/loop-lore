@@ -3,7 +3,7 @@
 
 # BUG: Gallery search 401s anonymous users while grid serves them
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-auth-access
@@ -21,3 +21,5 @@ Evidence (approved finding 7, P3; .tmp/concern-dev-2026-10-07.md, .tmp/concern-a
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue 2362ef9 (registry tip: f692a642f Konstantin Fedotov Close issue)

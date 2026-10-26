@@ -97,3 +97,6 @@ new authorization path is introduced.
 - [ ] The epic section `### Page composition strategy (review 2026-10-16)` in `.plan/epics/epic-narrative-publishing-workflows.md` remains the decision record and is cited in this ticket's module header; if the decision changes, the epic section is edited first and this ticket follows it
 - [ ] No new panel column, no second layout mode, and no change to `layout_json`'s schema — `TASK-comic-page-panel-layout-model.md` keeps sole ownership of that shape and its write path
 - [ ] Mode C (one-shot page generation) is not implemented, not half-implemented, and not capability-probed by this ticket; it stays deferred and capability-gated as the epic section records
+
+
+git issue: 6e938fe

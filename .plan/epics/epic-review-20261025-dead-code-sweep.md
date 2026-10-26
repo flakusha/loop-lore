@@ -32,3 +32,6 @@ Knip's dead-code gates pass while whole modules, duplicate helpers, and orphaned
 - Findings: F-5, F-7, S-10, S-11 in .tmp/reviews/2026-10-25/ (review-core.md / review-surfaces.md)
 
 **Review:** .tmp/reviews/2026-10-25/ (2026-10-25 round).
+
+
+git issue: ebedbe0

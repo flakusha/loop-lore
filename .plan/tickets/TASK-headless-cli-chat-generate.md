@@ -33,3 +33,6 @@ No scriptable entry point for chat/generation: every scripted scenario needs han
 
 - Assets/characters subcommands (sibling ticket `TASK-headless-cli-assets-characters.md`).
 - TUI changes; interactive prompts.
+
+
+git issue: 154562c

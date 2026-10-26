@@ -168,3 +168,6 @@ themselves.
 - `epic-byok-api-keys.md` — BYOK credential scope, incl. why it excludes image providers
 - `TASK-external-comfyui-plugin-repo-integration-contract.md` — the external-plugin consumption contract
 - `docs/spec/integrations/llm-serving.md` — where the launch prose lives
+
+
+git issue: 33453cb

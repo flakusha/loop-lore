@@ -3,7 +3,7 @@
 
 # BUG: Alpine hydration failures (undeclared template vars) untested
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing
@@ -24,3 +24,5 @@ BUG-alpine-init-hydration records undeclared Alpine template vars (showGmPanel, 
 - [ ] bun run check green.
 
 **Related:** .plan/epics/epic-testing-qa.md
+
+**Resolved:** 2026-10-26 registry-driven close: git issue b0ab7a1 (registry tip: 1bee804a2 Konstantin Fedotov Close issue)

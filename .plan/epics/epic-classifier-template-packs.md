@@ -123,3 +123,6 @@ specifies a template registry or user-supplied classification template packs.
   classifier surface review; this epic adds the template layer above it.
 - `epic-config-templates.md` — Done; shipped the loader/merge/registry
   this epic extends with a multi-file classifiers domain.
+
+
+git issue: e237e4c
