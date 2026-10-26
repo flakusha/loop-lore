@@ -63,6 +63,9 @@ export const uiStoreDefinition: Record<string, unknown> = {
   branches: [] as ChatBranchRow[],
   // ── Branch merge wizard (FEA-2026-047) ──────────────────
   mergeModalOpen: false,
+  // Sources selected by the caller (branch panel / context menu); the wizard
+  // modal seeds its local state from here when it opens (BUG-1476e6d).
+  mergeSources: [] as import("../alpine/chat-types/merge-state").MergeSourceTip[],
   // ── Transition-mode picker (location-transition remainder) ──
   showTransitionPicker: false,
   transitionDestinationId: "",

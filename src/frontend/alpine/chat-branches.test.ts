@@ -64,12 +64,13 @@ interface Toast {
  * @param overrides.toasts
  */
 function buildCtx(
-  overrides: { activeChat?: string | null; toasts?: Toast[] } = {},
+  overrides: { activeChat?: string | null; toasts?: Toast[]; loadMessages?: () => Promise<void> } = {},
 ): ChatState {
   const toasts: Toast[] = overrides.toasts ?? [];
   const base: Record<string, unknown> = {
     activeChat: overrides.activeChat === undefined ? "chat-1" : overrides.activeChat,
     currentChat: { id: "chat-1", type: "direct", name: "Chat", },
+    loadMessages: overrides.loadMessages,
     $dispatch(event: string, detail: Record<string, unknown>,) {
       if (event === "show-toast") {
         toasts.push({ type: detail.type as string, message: detail.message as string, },);
@@ -273,6 +274,42 @@ describeOrSkip("chatBranches — switchBranch", () => {
     expect(uiStore.showBranchMenu,).toBe(false,);
     expect(fetchCalls[1]?.url,).toContain("/branches",);
     expect(toasts.some((t,) => t.type === "success"),).toBe(true,);
+  });
+
+  // BUG-324a2c9: switching branches swaps the displayed message chain, so the
+  // message list must reload after a successful switch.
+  test("reloads the message list after a successful switch", async () => {
+    let messageReloads = 0;
+    mockFetch(200, { data: { activeBranchId: "b1", }, },);
+    await chatBranches.switchBranch!.call(
+      buildCtx({
+        loadMessages: () => {
+          messageReloads++;
+          return Promise.resolve();
+        },
+      },),
+      "b1",
+    );
+
+    expect(messageReloads,).toBe(1,);
+  });
+
+  test("does not reload messages when the switch fails", async () => {
+    let messageReloads = 0;
+    mockFetch(404,);
+    const toasts: Toast[] = [];
+    await chatBranches.switchBranch!.call(
+      buildCtx({
+        toasts,
+        loadMessages: () => {
+          messageReloads++;
+          return Promise.resolve();
+        },
+      },),
+      "missing",
+    );
+
+    expect(messageReloads,).toBe(0,);
   });
 
   test("toasts an error and skips the reload when the switch fails", async () => {
