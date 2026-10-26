@@ -285,6 +285,50 @@ describeOrSkip("actorLicensingFactory", () => {
     expect(a._licActorId,).toBe("actor-a",);
     expect(b._licActorId,).toBe("actor-b",);
   });
+
+  // BUG-93b85cd: setActorId (and the async loads it fires) must run against
+  // Alpine's reactive proxy, not the raw Object.create'd target — otherwise
+  // the async continuations write license/licenseLoading off-proxy and the
+  // panel stays frozen on 'Loading licensing…'.
+  test("routes async load writes through Alpine's reactive proxy", async () => {
+    const writtenProps: PropertyKey[] = [];
+    const realAlpine = (globalThis as Record<string, unknown>).Alpine;
+    (globalThis as Record<string, unknown>).Alpine = {
+      reactive: <T,>(value: T,): T =>
+        new Proxy(value as object, {
+          set(target, prop, next,) {
+            writtenProps.push(prop,);
+            (target as Record<PropertyKey, unknown>)[prop] = next;
+            return true;
+          },
+        },) as T,
+    };
+
+    handler = async () =>
+      Response.json({
+        id: "lic-2",
+        actor_id: "actor-proxy",
+        license_type: "cc0",
+        custom_license_text: null,
+        attribution: null,
+        allow_derivatives: 1,
+        allow_commercial: 1,
+        share_alike: 0,
+        created_at: "",
+        updated_at: "",
+      },);
+
+    try {
+      const state = actorLicensingFactory("actor-proxy",);
+      await flush();
+      expect(state._licActorId,).toBe("actor-proxy",);
+      expect(state.license?.license_type,).toBe("cc0",);
+      expect(writtenProps,).toContain("license",);
+      expect(writtenProps,).toContain("licenseLoading",);
+    } finally {
+      (globalThis as Record<string, unknown>).Alpine = realAlpine;
+    }
+  });
 },);
 
 describeOrSkip("actorLicensing.loadLicenseHistory", () => {

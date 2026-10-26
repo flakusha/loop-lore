@@ -185,6 +185,9 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     await this.fireStartupQuickReplies();
     // Proactive messaging scheduler — poll for due character-initiated messages.
     this.startProactiveScheduler();
+    // BUG-c3e407b: participants are needed in direct chats too — the memory
+    // panel resolves the character actor from _chatParticipants. Only the
+    // group-only loads (turn order, addable actors) stay gated on isGroupChat.
     if (this.isGroupChat) {
       // Participant/turn-order/actor loads are independent — overlap them.
       const groupLoad = await Promise.allSettled([
@@ -194,6 +197,9 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
       ],);
 
       if (groupLoad.some((r,) => r.status === "rejected")) { throw new Error("group chat load failed",); }
+    } else {
+      const directLoad = await Promise.allSettled([this.loadParticipants(),],);
+      if (directLoad.some((r,) => r.status === "rejected")) { throw new Error("chat participant load failed",); }
     }
   },
 
