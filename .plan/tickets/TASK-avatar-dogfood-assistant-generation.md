@@ -30,3 +30,6 @@ generation backend, no webp work.
 ## Linked Epics
 
 - `epic-avatar-dogfood.md`
+
+
+git issue: 747ea17

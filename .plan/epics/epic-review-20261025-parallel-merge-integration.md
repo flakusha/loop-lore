@@ -30,3 +30,6 @@ Parallel workstreams merged without integration: each half works in isolation an
 - Findings: F-4, S-8, S-10 in .tmp/reviews/2026-10-25/ (review-core.md / review-surfaces.md)
 
 **Review:** .tmp/reviews/2026-10-25/ (2026-10-25 round).
+
+
+git issue: d0e1be1

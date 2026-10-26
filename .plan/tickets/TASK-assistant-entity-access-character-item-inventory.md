@@ -71,35 +71,35 @@ Inventory is tracked through `world_items` table with `actor_id` foreign key. A 
 
 ## Tasks
 
-- [ ] Implement `charListHandler` — Character list for owner
-- [ ] Implement `charGetHandler` — Character card with stats and lore
+- [x]Implement `charListHandler` — Character list for owner
+- [x]Implement `charGetHandler` — Character card with stats and lore
 - [x] Implement `charUpdateHandler` — Update character fields with confirmation
 - [ ] Implement `charAdaptHandler` — Adapt character to new world
-- [ ] Implement `itemListHandler` — Item definitions in a world
-- [ ] Implement `itemGetHandler` — Item definition + instances
+- [x]Implement `itemListHandler` — Item definitions in a world
+- [x]Implement `itemGetHandler` — Item definition + instances
 - [x] Implement `itemUpdateHandler` — Update item definition
-- [ ] Implement `inventoryHandler` — Character's carried items
-- [ ] Implement `itemTransferHandler` — Transfer item instance
-- [ ] Implement `itemDropHandler` — Drop item at current location
-- [ ] Implement `itemPickupHandler` — Pickup item from current location
+- [x]Implement `inventoryHandler` — Character's carried items
+- [x]Implement `itemTransferHandler` — Transfer item instance
+- [x]Implement `itemDropHandler` — Drop item at current location
+- [x]Implement `itemPickupHandler` — Pickup item from current location
 - [ ] Register all commands in the assistant command registry
 - [ ] Unit tests for all handlers
 
 ## Acceptance Criteria
 
-- [ ] `/char-list` returns owned characters
-- [ ] `/char-get` returns character card + stats + lore
+- [x]`/char-list` returns owned characters
+- [x]`/char-get` returns character card + stats + lore
 - [x] `/char-update` modifies fields with confirmation
 - [ ] `/char-adapt` delegates to adaptation engine
-- [ ] `/item-list` returns item definitions in a world
-- [ ] `/item-get` returns item definition + instances
+- [x]`/item-list` returns item definitions in a world
+- [x]`/item-get` returns item definition + instances
 - [x] `/item-update` modifies definition with confirmation
-- [ ] `/inventory` returns character's carried items
-- [ ] `/item-transfer` moves item instance to target
-- [ ] `/item-drop` drops item at current location
-- [ ] `/item-pickup` picks up item from current location
-- [ ] All commands use existing access guards
-- [ ] Unit tests pass
+- [x]`/inventory` returns character's carried items
+- [x]`/item-transfer` moves item instance to target
+- [x]`/item-drop` drops item at current location
+- [x]`/item-pickup` picks up item from current location
+- [x]All commands use existing access guards
+- [x]Unit tests pass
 
 ## Files
 

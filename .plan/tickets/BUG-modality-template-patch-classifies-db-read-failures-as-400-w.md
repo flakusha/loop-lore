@@ -3,7 +3,7 @@
 
 # BUG: Modality template PATCH classifies DB read failures as 400 with raw exception message
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-error-envelope
@@ -21,3 +21,5 @@ Evidence (approved finding 8, P3; .tmp/concern-dev-2026-10-07.md, .tmp/concern-c
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-10-26 registry-driven close: git issue c997842 (registry tip: aa5f7706b Konstantin Fedotov Close issue)

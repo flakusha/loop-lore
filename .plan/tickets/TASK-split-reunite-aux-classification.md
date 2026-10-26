@@ -23,3 +23,6 @@ Use aux LLM to derive branch specs (locations + actor sets) and secondary chat i
 - Aux classifier returns structured branch specs or null.
 - Validation guards (owner, participants, locations) before execution.
 - Tests cover parse + fallback.
+
+
+git issue: c189f2e

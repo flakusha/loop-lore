@@ -81,3 +81,6 @@ and the footer's honesty were wrong.
 ## Known-branch-red: the `tickets` gate
 
 On this branch `bun run plan:validate` is **expected-red** at exactly one gate — `tickets`, with `ticket index out of sync` and 6 orphan `.md` files. This is structural, not a defect: `giwt sync` refuses to write `index.json` from a linked worktree (it reports "index write deferred — linked worktree; regenerated post-merge on the target branch"), so the index cannot converge until this branch merges. Do not re-run `bun run plan:sync:fix` to chase it — that run changed no orphan count and instead rewrote four unrelated tickets' statuses into the worktree, where they were discarded as collateral. Every other gate (`format`, `code-map`, `status-vocab`, `links`, `spdx`, `naming`, `epics-doc`, `matrix`, `backlog`) must stay OK.
+
+
+git issue: f5a0e2d

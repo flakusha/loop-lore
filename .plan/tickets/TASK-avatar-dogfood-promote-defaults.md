@@ -33,3 +33,6 @@ only — no webp in this slice.
 ## Linked Epics
 
 - `epic-avatar-dogfood.md`
+
+
+git issue: 9d91dd6

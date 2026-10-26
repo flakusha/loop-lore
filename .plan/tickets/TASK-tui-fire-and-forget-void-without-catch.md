@@ -60,3 +60,6 @@ The following sites call Result-returning or self-caching functions and are tech
 
 - Safe-by-design sites should be left as-is; adding `.catch()` to them would be unnecessary churn
 - The `app.ts:203` IIFE is the primary compliance gap worth addressing
+
+
+git issue: 9ec5332
