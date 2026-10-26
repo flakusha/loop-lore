@@ -193,7 +193,7 @@
       "integrations"
     ],
     "source": ".plan/tickets/BUG-adapter-secrets-lookup-uses-the-untrusted-path-segment-as-a-.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "BUG-ADDXP-ACCEPTS-NEGATIVE-XP-PRODUCING-NAN-LEVEL-STORED-IN-DB": {
     "hash": "8924253",
