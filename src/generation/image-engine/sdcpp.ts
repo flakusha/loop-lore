@@ -3,11 +3,12 @@
 
 import type { ImageProviderConfig, } from "../../config/schema";
 import { getLogger, type Logger, } from "../../logger";
-import { safeFetch, safeJsonStringify, } from "../../utils";
+import { safeJsonStringify, } from "../../utils";
 import { discoverLoras, } from "../lora/discovery";
 import { injectSdCppLora, } from "../lora/discovery-sdserver";
 import type { LoRAModel, } from "../lora/types";
 import { decodeImages, failure, } from "./helpers";
+import { runSdServerJob, sdServerAuthHeaders, SdServerJobError, } from "./sd-server-jobs";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 
 /**
@@ -76,72 +77,23 @@ export async function generateSDCPP(
   },);
 
   // Job status carries base64 images — can exceed safeFetch's default size cap.
-  const submitResult = await safeFetch<{ id: string }>(sdcppUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", },
-    body: sdcppPayload.ok ? sdcppPayload.value : "{}",
-    timeout: 30_000,
-    maxSize: Number.MAX_SAFE_INTEGER,
-    handle401: false,
-  },);
-
-  if (!submitResult.ok) {
-    return failure(`sd.cpp job submission failed: ${submitResult.error.message}`, 502,);
-  }
-
-  const { id: jobId, } = submitResult.data;
-  if (!jobId) {
-    return failure("sd.cpp job submission returned no job id", 502,);
-  }
-
-  const genTimeout = sdConfig.generationTimeout ?? 300_000;
-  const pollInterval = 500;
-  const deadline = Date.now() + genTimeout;
-
-  let jobDone = false;
-  let jobImages: string[] = [];
-
-  while (!jobDone && Date.now() < deadline) {
-    const jobUrl = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/jobs/${jobId}`;
-    const statusResult = await safeFetch<{
-      status: string;
-      progress?: number;
-      images?: string[];
-      error?: string;
-    }>(jobUrl, {
-      timeout: 10_000,
-      maxSize: Number.MAX_SAFE_INTEGER,
-      handle401: false,
+  // Submit + poll live in the shared sd-server transport (single implementation
+  // for image-engine and image-edit); the timeout source is `generationTimeout`.
+  try {
+    const jobImages = await runSdServerJob({
+      baseUrl: sdConfig.baseUrl.replace(/\/+$/, "",),
+      endpoint: "img_gen",
+      body: sdcppPayload.ok ? sdcppPayload.value : {},
+      headers: sdServerAuthHeaders(opts.apiKey ?? sdConfig.apiKey,),
+      generationTimeoutMs: sdConfig.generationTimeout,
     },);
 
-    if (!statusResult.ok) {
-      return failure(`sd.cpp job polling failed: ${statusResult.error.message}`, 502,);
+    return decodeImages(jobImages, outputFormat === "jpeg" ? "image/jpeg" : "image/png",);
+  } catch (error) {
+    if (error instanceof SdServerJobError) {
+      return failure(error.message, error.status,);
     }
 
-    const statusData = statusResult.data;
-
-    if (statusData.status === "done") {
-      if (!statusData.images || statusData.images.length === 0) {
-        return failure("sd.cpp job completed but returned no images", 502,);
-      }
-
-      jobImages = statusData.images;
-      jobDone = true;
-    } else if (statusData.status === "failed" || statusData.status === "cancelled") {
-      return failure(
-        `sd.cpp job ${statusData.status}: ${statusData.error ?? "no detail"}`,
-        502,
-      );
-    }
-
-    if (!jobDone) {
-      await new Promise((r,) => setTimeout(r, pollInterval,));
-    }
+    throw error;
   }
-
-  if (!jobDone) {
-    return failure("sd.cpp job timed out", 504,);
-  }
-
-  return decodeImages(jobImages, "image/png",);
 }

@@ -13,7 +13,7 @@ import type { RateLimiter, } from "../../middleware/rate-limit";
 import { uid, } from "../../utils";
 import { HttpStatus, } from "../http-utils";
 import { createSessionAndCookie, } from "./session";
-import { errorResponse, getClientIp, parseCredentials, rateLimitHtml, registerLimiter, } from "./shared";
+import { errorResponse, getClientIp, parseCredentials, rateLimitResponse, registerLimiter, } from "./shared";
 
 /**
  * Enforce registration-open + rate-limit gates.
@@ -42,7 +42,8 @@ function checkRegisterGate(
   // refunds the slot reserved below on every such skip path.
   const regLimit = limiter.peek(ip,);
   if (!regLimit.allowed) {
-    return rateLimitHtml({
+    return rateLimitResponse({
+      request,
       limit: regLimit,
       t,
       fallbackMessage: "Too many registration attempts. Try again later.",

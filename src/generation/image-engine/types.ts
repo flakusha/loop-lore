@@ -22,6 +22,10 @@ export interface ImageGenOptions {
   workflow?: string;
   /** Optional LoRA model to inject into the generation pipeline. */
   lora?: LoRAConfig;
+  /** BYO API key for this request (resolved user key). When set it overrides
+   * the server-configured key on transports that send auth (openai, sdapi,
+   * sd.cpp). ComfyUI's client has no auth seam and ignores it. */
+  apiKey?: string;
 }
 
 /** Success carries the generated images and their mime type. */

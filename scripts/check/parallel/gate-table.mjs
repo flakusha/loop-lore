@@ -215,6 +215,16 @@ export const checks = {
   // Banned-pattern findings are collected in the non-blocking report below.
   // Epic coverage remains manual; current planning debt is non-blocking.
 
+  // Roots guard (BUG-e994806): scripts/check/parallel/roots.test.ts is the
+  // only guard on the PROJECT_ROOT/DIFF_ROOT hop and nothing ran it — a wrong
+  // one-level hop exit(1)s the GPG pre-flight on every run, or silently
+  // resolves zero diff files while all gates report success. It is a cheap
+  // resource-contract test (asserts on module-level constants only), so it
+  // needs no heavy-gate scheduling, and it is deliberately NOT folded into
+  // the coverage gate: mixing a constant-assertion scripts/ file into a
+  // per-module/per-file lcov floor couples two unrelated contracts.
+  "check - roots": "bun test scripts/check/parallel/roots.test.ts",
+
   // Branch hygiene: classify local branches vs a base ref (delete vs review).
   // ADVISORY. The verdict depends on the branch topology of the moment — a
   // branch that reads REVIEW today becomes PATCH-EQ once dev lands its work,

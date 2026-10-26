@@ -60,7 +60,11 @@ export async function writeThumbnail(
   try {
     encoded = await encodeThumbnail(buffer,);
   } catch (error) {
-    getChildLogger("assets:thumbnail",)?.warn({ message: "thumbnail encode failed", error, },);
+    getChildLogger("assets:thumbnail",)?.warn(
+      "thumbnail encode failed",
+      { error: error instanceof Error ? error.stack ?? error.message : String(error,), },
+    );
+
     return null;
   }
 

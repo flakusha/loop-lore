@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { calculateAge, } from "./constants";
+import { calculateAge, } from "../../utils/date";
 
 describe("calculateAge", () => {
   test("computes age from a valid birth date", () => {

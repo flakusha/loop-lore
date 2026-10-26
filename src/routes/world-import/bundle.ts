@@ -14,7 +14,7 @@ import {
   WorldVisibility,
 } from "../../db/enums-story";
 import type { DB, Locations, LocationStates, Quests, WorldLoreEntries, Worlds, WorldStates, } from "../../db/schema";
-import { uid, } from "../../utils";
+import { jsonStringifyOr, safeJsonParse, uid, } from "../../utils";
 import type { WorldBundle, } from "../export-shared";
 import { num, rowOf, rowsOf, str, strOrNull, } from "./rows";
 import type { ImportCounts, } from "./types";
@@ -143,6 +143,30 @@ export async function importWorldBundle(
       },);
     }
 
+    // Rewrite travel-connection ids BEFORE the insert: connections may
+    // reference locations that appear later in the bundle, so the id map is
+    // only complete once every row has been pre-assigned a new id. Ids that
+    // do not resolve inside the bundle are dropped rather than left dangling
+    // in the imported world (BUG-world-import-quest-time-location-id).
+    for (let i = 0; i < locationRows.length; i++) {
+      const row = locationRows[i];
+      const values = locationValues[i];
+      if (!row || !values) { continue; }
+      const raw = str(row, "connections",) ?? "[]";
+      const parsed = safeJsonParse<unknown>(raw,);
+      const connIds = parsed.ok && Array.isArray(parsed.value,)
+        ? parsed.value.filter((id,): id is string => typeof id === "string")
+        : [];
+
+      values.connections = jsonStringifyOr(
+        connIds.flatMap((oldId,) => {
+          const mapped = locationIdMap.get(oldId,);
+          return mapped ? [mapped,] : [];
+        },),
+        "[]",
+      );
+    }
+
     if (locationValues.length > 0) {
       await trx.insertInto("locations",).values(locationValues,).execute();
     }
@@ -196,6 +220,15 @@ export async function importWorldBundle(
     const questRows = rowsOf(bundle.quests,);
     for (const row of questRows) {
       const newId = uid();
+      // Remap through the location id map; null when the referenced location
+      // is not part of the bundle — OLD ids cannot exist in the fresh world,
+      // so a raw copy would violate the quests FK and abort the whole import
+      // transaction (BUG-world-import-quest-time-location-id).
+      const oldTimeLocationId = strOrNull(row, "time_location_id",);
+      const timeLocationId = oldTimeLocationId
+        ? locationIdMap.get(oldTimeLocationId,) ?? null
+        : null;
+
       await trx.insertInto("quests",).values(
         {
           id: newId,
@@ -211,7 +244,7 @@ export async function importWorldBundle(
           target: num(row, "target",) ?? 1,
           start_time: strOrNull(row, "start_time",),
           deadline: strOrNull(row, "deadline",),
-          time_location_id: strOrNull(row, "time_location_id",),
+          time_location_id: timeLocationId,
           rewards: str(row, "rewards",) ?? "[]",
           narrative_hooks: str(row, "narrative_hooks",) ?? "[]",
           completed_at: strOrNull(row, "completed_at",),

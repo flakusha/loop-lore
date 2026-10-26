@@ -29,6 +29,76 @@ function normalizeRoute(pathname: string,): string {
 }
 
 /**
+ * Governance before-handle hook: per-user rate limiting by route policy.
+ *
+ * Standalone so non-barrel surfaces (the legacy plugin-dispatch fallback in
+ * `src/server/handler.ts` and the standalone multipart upload route in
+ * `src/elysia-app.ts`) apply the IDENTICAL 429 logic as the v1 barrel
+ * (BUG-fix-api-apply-governance-deprecation-to-the-api-v1-legacy-fa,
+ * BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance).
+ * Self-sufficient: seeds `__governanceStart` when no derive ran.
+ * @param enabled - governance enable predicate
+ * @returns {function} an Elysia-compatible onBeforeHandle / route `before` hook
+ */
+export function governanceBeforeHook(enabled: () => boolean,): (ctx: any,) => Response | undefined {
+  return (ctx: any,) => {
+    (ctx as Record<string, unknown>).__governanceStart ??= Date.now();
+    if (!enabled()) { return undefined; }
+    const userId = ctx.userId as string | undefined;
+    if (!userId) { return undefined; } // unauthenticated abuse is stopped at the auth endpoints' own limiters
+    const url = new URL(ctx.request.url,);
+    const policy = policyForRoute(url.pathname,);
+    const verdict = governanceRateLimiter.consume(`${userId}:${policy.name}`, policy,);
+    if (!verdict.allowed) {
+      // Count the 429 exactly once here and flag the request so the
+      // onAfterHandle telemetry hook skips it (Elysia runs onAfterHandle
+      // for beforeHandle-returned responses too).
+      (ctx as Record<string, unknown>).__governanceRateLimited = true;
+      metrics.recordRequest(
+        normalizeRoute(url.pathname,),
+        HttpStatus.TooManyRequests,
+        Date.now() - (ctx.__governanceStart as number),
+      );
+
+      const body = jsonError("Rate limit exceeded", HttpStatus.TooManyRequests, ErrorCode.TooManyRequests,);
+      const headers = new Headers(body.headers,);
+      headers.set("x-ratelimit-hit", "1",);
+      headers.set("ratelimit-limit", String(verdict.limit,),);
+      headers.set("ratelimit-remaining", "0",);
+      const retryAfterSec = Math.max(1, Math.ceil(verdict.retryAfterSec ?? policy.windowMs / 1000,),);
+      headers.set("ratelimit-reset", String(retryAfterSec,),);
+      headers.set("retry-after", String(retryAfterSec,),);
+      return new Response(body.body, { status: body.status, headers, },);
+    }
+
+    return undefined;
+  };
+}
+
+/**
+ * Governance after-handle hook: request metrics (status + latency).
+ * Standalone counterpart of {@link governanceBeforeHook}; see there.
+ * @param enabled - governance enable predicate
+ * @returns {function} an Elysia-compatible onAfterHandle / route `afterHandle` hook
+ */
+export function governanceAfterHook(enabled: () => boolean,): (ctx: any,) => unknown {
+  return (ctx: any,) => {
+    if (!enabled()) { return ctx.response as unknown; }
+    const url = new URL(ctx.request.url,);
+    const response = ctx.response as unknown;
+    if ((ctx as Record<string, unknown>).__governanceRateLimited === true) {
+      // Already counted by the 429 branch in onBeforeHandle — counting
+      // again would double-report rate-limited traffic.
+      return response;
+    }
+
+    const status = response instanceof Response ? response.status : HttpStatus.OK;
+    metrics.recordRequest(normalizeRoute(url.pathname,), status, Date.now() - (ctx.__governanceStart as number),);
+    return response;
+  };
+}
+
+/**
  * @param {{ enabled?: () => boolean }} opts
  * @param opts.enabled
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: { readonly __governanceStart: number; }; resolve: {}; schema: {}; standaloneSchema: {}; response: { ...; }; }, { ...; }>}
@@ -37,49 +107,8 @@ export function governanceGuard(opts: { enabled?: () => boolean } = {},) {
   const enabled = opts.enabled ?? (() => true);
   return new Elysia({ name: "v1-governance-guard", },)
     .derive(() => ({ __governanceStart: Date.now(), }))
-    .onBeforeHandle((ctx: any,) => {
-      if (!enabled()) { return; }
-      const userId = ctx.userId as string | undefined;
-      if (!userId) { return; } // unauthenticated abuse is stopped at the auth endpoints' own limiters
-      const url = new URL(ctx.request.url,);
-      const policy = policyForRoute(url.pathname,);
-      const verdict = governanceRateLimiter.consume(`${userId}:${policy.name}`, policy,);
-      if (!verdict.allowed) {
-        // Count the 429 exactly once here and flag the request so the
-        // onAfterHandle telemetry hook skips it (Elysia runs onAfterHandle
-        // for beforeHandle-returned responses too).
-        (ctx as Record<string, unknown>).__governanceRateLimited = true;
-        metrics.recordRequest(
-          normalizeRoute(url.pathname,),
-          HttpStatus.TooManyRequests,
-          Date.now() - (ctx.__governanceStart as number),
-        );
-
-        const body = jsonError("Rate limit exceeded", HttpStatus.TooManyRequests, ErrorCode.TooManyRequests,);
-        const headers = new Headers(body.headers,);
-        headers.set("x-ratelimit-hit", "1",);
-        headers.set("ratelimit-limit", String(verdict.limit,),);
-        headers.set("ratelimit-remaining", "0",);
-        const retryAfterSec = Math.max(1, Math.ceil(verdict.retryAfterSec ?? policy.windowMs / 1000,),);
-        headers.set("ratelimit-reset", String(retryAfterSec,),);
-        headers.set("retry-after", String(retryAfterSec,),);
-        return new Response(body.body, { status: body.status, headers, },);
-      }
-    },)
-    .onAfterHandle((ctx: any,) => {
-      if (!enabled()) { return ctx.response as unknown; }
-      const url = new URL(ctx.request.url,);
-      const response = ctx.response as unknown;
-      if ((ctx as Record<string, unknown>).__governanceRateLimited === true) {
-        // Already counted by the 429 branch in onBeforeHandle — counting
-        // again would double-report rate-limited traffic.
-        return response;
-      }
-
-      const status = response instanceof Response ? response.status : HttpStatus.OK;
-      metrics.recordRequest(normalizeRoute(url.pathname,), status, Date.now() - (ctx.__governanceStart as number),);
-      return response;
-    },)
+    .onBeforeHandle(governanceBeforeHook(enabled,),)
+    .onAfterHandle(governanceAfterHook(enabled,),)
     // Promote derive + hooks onto the mounting instance - Elysia keeps plugin
     // hooks local to the plugin's own routes unless scoped explicitly.
     .as("scoped",);

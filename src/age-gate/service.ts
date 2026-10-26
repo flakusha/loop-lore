@@ -14,7 +14,7 @@
 import type { Kysely, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import { parseExpiryMs, toDate, } from "../utils/date";
+import { calculateAge, parseExpiryMs, toDate, } from "../utils/date";
 
 /** Result of an age gate status check. */
 export interface AgeGateStatus {
@@ -78,6 +78,11 @@ export interface AcceptAgeGateOpts {
  *
  * When age gate is disabled (`enabled=false` or `mode="none"`),
  * returns `{ isEnabled: false, hasPassed: true }` — no gating at all.
+ *
+ * Single source of truth for the age verdict: `checkAgeGate` in
+ * `src/routes/chats/create.ts` and the NSFW base-eval
+ * (`src/middleware/nsfw-gate/base-eval.ts`) both delegate here, so the two
+ * gates cannot return contradictory verdicts for the same user.
  * @param config - Age-gate configuration.
  * @param user - User record with birth_date and age_gate_accepted_at.
  * @returns Current age-gate status.
@@ -92,8 +97,16 @@ export function getStatus(
     return { isEnabled: false, hasPassed: true, minimumAge: config.minimumAge, mode: "none", };
   }
 
-  // User must have a birth date AND have accepted the gate
-  const hasPassed = user?.birth_date != null && Boolean(user?.age_gate_accepted_at,);
+  // User must have a valid birth date, have accepted the gate, AND meet the
+  // configured minimum age. Accept-time validation (validateAge) prevents
+  // underage rows, but stored data can drift — re-check at decision time so
+  // an accepted-but-underage user never passes.
+  const hasPassed = user?.birth_date != null &&
+    Boolean(user?.age_gate_accepted_at,) &&
+    (() => {
+      const age = calculateAge(user.birth_date,);
+      return age !== null && age >= config.minimumAge;
+    })();
 
   return { isEnabled: true, hasPassed, minimumAge: config.minimumAge, mode: config.mode, };
 }

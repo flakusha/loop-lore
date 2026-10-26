@@ -4,6 +4,7 @@
 # TASK: Delete unreferenced generation, story, assistant and chat code (nsfw-context section needs an owner decision)
 
 **Status:** Not Started
+**Status Note:** [2026-10-26] EVIDENCE SOURCE GONE: this ticket cites `.tmp/simplification/*.md`, deleted by a .tmp cleanup on 2026-10-12 and never git-tracked (verified unrecoverable — see BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick / dd8e139). Every count, finding number, or ranking taken from those citations is UNSOURCED; re-derive against the current tree before acting. The ticket's substance (file:line scope lists, MUST RETAIN lists, re-derive commands) stands on its own; only the audit citations dangle.
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-assistant-generation-extensions

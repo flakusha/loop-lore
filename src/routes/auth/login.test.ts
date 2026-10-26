@@ -282,6 +282,55 @@ describe("handleLogin — rate limiting", () => {
     // X-RateLimit-Limit stays informational; not auto-attached to 200 in the
     // current handler. The header is only attached to the 429 branch.
   });
+
+  // BUG-fix-auth-content-negotiate-the-429-rate-limit-response-like-:
+  // JSON API clients handle every other auth error as a JSON envelope; the
+  // 429 backoff response must negotiate the same way.
+  test("429 for a JSON client carries the JSON envelope + rate-limit headers", async () => {
+    for (let i = 0; i < 10; i++) {
+      await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(), undefined, null, loginLimiter,);
+    }
+
+    const blocked = await handleLogin(
+      makeRequest(loginBody(USERNAME, "wrong",), { Accept: "application/json", },),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
+
+    expect(blocked.status,).toBe(429,);
+    expect(blocked.headers.get("Content-Type",),).toContain("application/json",);
+    const body = await blocked.json() as { error: string; code: string; meta: { api_version: string } };
+    expect(body.error,).toContain("Too many",);
+    expect(body.code,).toBe("TOO_MANY_REQUESTS",);
+    expect(body.meta.api_version,).toBe("1",);
+    expect(blocked.headers.get("Retry-After",),).toBeDefined();
+    expect(blocked.headers.get("X-RateLimit-Limit",),).toBe("10",);
+    expect(blocked.headers.get("X-RateLimit-Remaining",),).toBe("0",);
+    expect(blocked.headers.get("X-RateLimit-Reset",),).toBeDefined();
+  });
+
+  test("429 keeps the HTML body for htmx form posts", async () => {
+    for (let i = 0; i < 10; i++) {
+      await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(), undefined, null, loginLimiter,);
+    }
+
+    const blocked = await handleLogin(
+      makeRequest(loginBody(USERNAME, "wrong",), { "HX-Request": "true", Accept: "application/json", },),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
+
+    expect(blocked.status,).toBe(429,);
+    expect(blocked.headers.get("Content-Type",),).toContain("text/html",);
+    expect(await blocked.text(),).toContain("error-msg",);
+    expect(blocked.headers.get("Retry-After",),).toBeDefined();
+  });
 });
 
 describe("handleDemoLogin", () => {

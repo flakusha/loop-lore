@@ -143,6 +143,15 @@ export function loadConfig(cwd?: string,): Config {
     config.generation.providers.sd = [sd,];
   }
 
+  // 7.5. Reject providers with no registry implementation. A configured but
+  //      undispatchable provider would otherwise resolve by name (BYO-key
+  //      checks, instance listings) and only fail at generation time.
+  if (config.generation.providers.bedrock) {
+    throw new Error(
+      "generation.providers.bedrock is configured, but no Bedrock provider implementation exists — remove the bedrock block from your config",
+    );
+  }
+
   validateConfig(config,);
   validateDatabaseSafety(config,);
   validateAuthSafety(config,);

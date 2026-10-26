@@ -8,7 +8,7 @@
  * @module plugin-registry
  */
 
-import { assertPluginCanRegister } from "./registry-policy";
+import { assertPluginCanRegister, assertPluginRoutePath, normalizePluginRoutePath } from "./registry-policy";
 import { RegistryStore } from "./registry-store";
 import type {
   LoadedPlugin,
@@ -21,6 +21,7 @@ import type {
   EventHandlerDefinition,
   MigrationDefinition,
 } from "./types";
+import { getChildLogger } from "../logger";
 
 export { PLUGIN_ORIGIN_CAPABILITIES } from "./registry-policy";
 
@@ -41,13 +42,52 @@ class PluginRegistry {
   }
 
   /**
+   * Register routes for a plugin. Paths are normalized (trailing slash
+   * collapsed), `:param` paths are rejected, and a duplicate method+path
+   * registration logs a loud warning instead of silently pinning dispatch to
+   * whichever route was registered first
+   * (BUG-fix-plugins-define-plugin-route-matching-semantics).
    * @param pluginName
    * @param defs
-   * @throws When the plugin is unknown or cannot register routes.
+   * @throws When the plugin is unknown, cannot register routes, or a path carries a :param segment.
    */
-  addRoutes(pluginName: string, defs: RouteDefinition[]): void {
-    this.assertCanRegister(pluginName, "routes");
-    this.store.setRoutes(pluginName, defs);
+  addRoutes(pluginName: string, defs: RouteDefinition[],): void {
+    this.assertCanRegister(pluginName, "routes",);
+    for (const def of defs) {
+      assertPluginRoutePath(pluginName, def.path,);
+    }
+
+    this.warnDuplicateRoutes(pluginName, defs,);
+    this.store.appendRoutes(
+      pluginName,
+      defs.map((def,) => ({ ...def, path: normalizePluginRoutePath(def.path,), })),
+    );
+  }
+
+  /**
+   * Log a warning for every incoming def that duplicates an already-registered
+   * method+path (in any plugin, including earlier defs in the same batch).
+   * Dispatch still resolves by registration order — the warning just makes the
+   * shadowing visible instead of silent.
+   * @param pluginName
+   * @param defs
+   */
+  private warnDuplicateRoutes(pluginName: string, defs: RouteDefinition[],): void {
+    if (defs.length === 0) { return; }
+
+    const log = getChildLogger("plugin-registry",);
+    if (!log) { return; }
+
+    for (const def of defs) {
+      const normalized = normalizePluginRoutePath(def.path,);
+      const existing = this.store.findRoute(def.method, normalized,);
+      if (existing) {
+        log.warn(
+          `Duplicate plugin route registration: ${def.method} ${normalized} is already registered` +
+            ` (${pluginName}); the earlier registration wins dispatch`,
+        );
+      }
+    }
   }
 
   /**
@@ -57,7 +97,7 @@ class PluginRegistry {
    */
   addTools(pluginName: string, defs: ToolDefinition[]): void {
     this.assertCanRegister(pluginName, "tools");
-    this.store.setTools(pluginName, defs);
+    this.store.appendTools(pluginName, defs);
   }
 
   /**
@@ -67,7 +107,7 @@ class PluginRegistry {
    */
   addAgentRoles(pluginName: string, defs: AgentRoleDefinition[]): void {
     this.assertCanRegister(pluginName, "agentRoles");
-    this.store.setAgentRoles(pluginName, defs);
+    this.store.appendAgentRoles(pluginName, defs);
   }
 
   /**
@@ -77,7 +117,7 @@ class PluginRegistry {
    */
   addUIComponents(pluginName: string, defs: UIComponentDefinition[]): void {
     this.assertCanRegister(pluginName, "uiComponents");
-    this.store.setUIComponents(pluginName, defs);
+    this.store.appendUIComponents(pluginName, defs);
   }
 
   /**
@@ -87,7 +127,7 @@ class PluginRegistry {
    */
   addEventHandlers(pluginName: string, defs: EventHandlerDefinition[]): void {
     this.assertCanRegister(pluginName, "eventHandlers");
-    this.store.setEventHandlers(pluginName, defs);
+    this.store.appendEventHandlers(pluginName, defs);
   }
 
   /**
@@ -97,7 +137,7 @@ class PluginRegistry {
    */
   addMigrations(pluginName: string, defs: MigrationDefinition[]): void {
     this.assertCanRegister(pluginName, "migrations");
-    this.store.setMigrations(pluginName, defs);
+    this.store.appendMigrations(pluginName, defs);
   }
 
   // ── Accessors ─────────────────────────────────────────────
