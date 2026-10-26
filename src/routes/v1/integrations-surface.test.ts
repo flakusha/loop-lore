@@ -238,4 +238,31 @@ describe("integrations webhook surface", () => {
     expect(result.ok,).toBe(false,);
     if (!result.ok) { expect(result.code,).toBe("invalid_signature",); }
   });
+
+  test("prototype-chain magic keys on the adapter segment return unknown_adapter", async () => {
+    const deps: WebhookIngestDeps = {
+      adapterSecrets: { [ADAPTER]: SECRET, },
+      limiter: {
+        check: () => true,
+        clear: () => {},
+        consume: () => ({ allowed: true, limit: 1, remaining: 0, resetSec: 60, }),
+        destroy: () => {},
+        peek: () => ({ allowed: true, limit: 1, remaining: 0, resetSec: 60, }),
+        record: () => {},
+        refund: () => {},
+        reset: () => {},
+      },
+    };
+
+    // `__proto__`, `constructor`, and `toString` are inherited properties on
+    // a plain object; the lookup must treat them as not found.
+    for (const adapter of ["__proto__", "constructor", "toString",]) {
+      const result = await ingestWebhook(
+        { deps, adapter, rawBody: VALID_BODY, signature: sign(VALID_BODY,), },
+      );
+
+      expect(result.ok,).toBe(false,);
+      if (!result.ok) { expect(result.code,).toBe("unknown_adapter",); }
+    }
+  });
 });
