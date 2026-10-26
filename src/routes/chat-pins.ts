@@ -9,12 +9,14 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
+import { getChildLogger, } from "../logger";
 import { can, } from "../users/permissions";
 import { uid, } from "../utils";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 
 import { forbiddenResponse, requireUserId, } from "./http-utils";
+import { resolveMessageAccess, } from "./message-seen-helpers";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -56,6 +58,9 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
               "actors.display_name",
             ],)
             .where("chat_pins.chat_id", "=", chatId,)
+            // Defence in depth: only surface content of messages that live in
+            // the listed chat, never a message id pinned from another chat.
+            .where("messages.chat_id", "=", chatId,)
             .orderBy("chat_pins.pinned_at", "asc",)
             .execute();
 
@@ -89,6 +94,35 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!access.ok) { return notFound("Chat not found",); }
 
           const { messageId, } = ctx.body as { messageId: string };
+
+          // The message must belong to this chat and be visible to the caller.
+          // Without this check any message id could be pinned into the caller's
+          // chat and its content read back through GET /pins.
+          const messageChatId = await resolveMessageAccess(
+            database,
+            messageId,
+            userId,
+            ctx.userRole as string | null,
+          );
+
+          if (typeof messageChatId !== "string") {
+            getChildLogger("chat-pins",)?.warn("pin rejected: message not accessible", {
+              chatId,
+              messageId,
+            },);
+
+            return forbiddenResponse("Message does not belong to this chat",);
+          }
+
+          if (messageChatId !== chatId) {
+            getChildLogger("chat-pins",)?.warn("pin rejected: message belongs to another chat", {
+              chatId,
+              messageId,
+              messageChatId,
+            },);
+
+            return forbiddenResponse("Message does not belong to this chat",);
+          }
 
           // Check if already pinned
           const existing = await database
@@ -143,19 +177,22 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
           const access = await checkChatAccess(database, chatId, userId, ctx.userRole as string | null,);
           if (!access.ok) { return notFound("Chat not found",); }
 
-          // Only pinner, chat owner, or admin can unpin
+          // Only pinner, chat owner, or admin can unpin. The pin is scoped to
+          // this chat so a pinId from another chat can never be unpinned here.
           const pin = await database
             .selectFrom("chat_pins",)
-            .select("pinned_by",)
+            .select(["pinned_by", "chat_id",],)
             .where("id", "=", pinId,)
+            .where("chat_id", "=", chatId,)
             .executeTakeFirst();
 
           if (!pin) { return notFound("Pin not found",); }
 
+          // The owner/admin check is evaluated against the pin's own chat.
           const chat = await database
             .selectFrom("chats",)
             .select("created_by",)
-            .where("id", "=", chatId,)
+            .where("id", "=", pin.chat_id,)
             .executeTakeFirst();
 
           if (!chat) { return notFound("Chat not found",); }
@@ -168,7 +205,11 @@ export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
             return forbiddenResponse("Not authorized to unpin",);
           }
 
-          const deleted = await database.deleteFrom("chat_pins",).where("id", "=", pinId,).executeTakeFirst();
+          const deleted = await database
+            .deleteFrom("chat_pins",)
+            .where("id", "=", pinId,)
+            .where("chat_id", "=", chatId,)
+            .executeTakeFirst();
 
           if (!deleted || deleted.numDeletedRows === 0n) { return notFound("Pin not found",); }
           return Response.json({ ok: true, },);
