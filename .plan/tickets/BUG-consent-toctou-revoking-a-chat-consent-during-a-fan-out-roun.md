@@ -3,10 +3,11 @@
 
 # BUG: Consent TOCTOU: revoking a chat consent during a fan-out round still exports once
 
-**Status:** Wontfix
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Tags:** federation
+**Status Note:** [2026-10-26] fixed — the earlier Wontfix verdict was overturned: `fanOutContent` now re-checks `authorizeChatExport` between `requestReservation` and `pushEnvelope` (src/federation/fan-out.ts:230-239), and a mid-window denial is classified non-retryable so no outbox row is queued; a deterministic regression test revokes consent inside the reserve handler and asserts no push and no retry (3699bccda).
 
 **Summary:**
 
