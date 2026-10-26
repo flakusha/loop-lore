@@ -154,6 +154,7 @@ describe("Alpine state contract E2E", () => {
         "gmAssistantTab",
         "hasActiveChat",
         "mergeModalOpen",
+        "mergeSources",
         "newSideChannelName",
         "showBackgroundPanel",
         "showBranchMenu",

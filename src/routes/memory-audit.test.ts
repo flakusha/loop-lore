@@ -4,7 +4,7 @@
 /**
  * E2E tests for the memory audit route (FEAT-075).
  *
- * Covers the observable contract of GET /api/actors/:actorId/memories/audit
+ * Covers the observable contract of GET /api/v1/actors/:actorId/memories/audit
  * (the actor-level URL the memory panel fetches): ownership gating, action
  * filtering, cursor pagination round-trip, and graceful handling of corrupt
  * cursors.
@@ -36,7 +36,7 @@ async function getAudit(
   query = "",
 ): Promise<{ status: number; body: { entries: Array<Record<string, unknown>>; nextCursor?: string | null } }> {
   const res = await makeApp(db,).handle(
-    new Request(`http://localhost/api/actors/${actorId}/memories/audit${query}`,),
+    new Request(`http://localhost/api/v1/actors/${actorId}/memories/audit${query}`,),
   );
 
   return {

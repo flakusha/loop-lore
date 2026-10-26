@@ -148,7 +148,7 @@ describe("story-orchestration routes", () => {
 
   test("GET /story/state reports the turn snapshot", async () => {
     const chatId = await seedChat();
-    const res = await makeApp(db,).handle(new Request(`http://localhost/api/chats/${chatId}/story/state`,),);
+    const res = await makeApp(db,).handle(new Request(`http://localhost/api/v1/chats/${chatId}/story/state`,),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as {
       chatId: string;
@@ -165,7 +165,7 @@ describe("story-orchestration routes", () => {
 
   test("GET /story/state 404s for an unknown chat", async () => {
     const res = await makeApp(db,).handle(
-      new Request(`http://localhost/api/chats/${MISSING_CHAT}/story/state`,),
+      new Request(`http://localhost/api/v1/chats/${MISSING_CHAT}/story/state`,),
     );
 
     expect(res.status,).toBe(404,);
@@ -175,21 +175,21 @@ describe("story-orchestration routes", () => {
     const chatId = await seedChat();
     const app = makeApp(db,);
 
-    const paused = await app.handle(request("POST", `http://localhost/api/chats/${chatId}/story/pause`,),);
+    const paused = await app.handle(request("POST", `http://localhost/api/v1/chats/${chatId}/story/pause`,),);
     expect(paused.status,).toBe(200,);
     expect((await paused.json() as { ok: boolean; isPaused: boolean }).isPaused,).toBe(true,);
 
-    const resumed = await app.handle(request("POST", `http://localhost/api/chats/${chatId}/story/resume`,),);
+    const resumed = await app.handle(request("POST", `http://localhost/api/v1/chats/${chatId}/story/resume`,),);
     expect(resumed.status,).toBe(200,);
     expect((await resumed.json() as { ok: boolean; isPaused: boolean }).isPaused,).toBe(false,);
 
-    const state = await app.handle(new Request(`http://localhost/api/chats/${chatId}/story/state`,),);
+    const state = await app.handle(new Request(`http://localhost/api/v1/chats/${chatId}/story/state`,),);
     expect((await state.json() as { isPaused: boolean }).isPaused,).toBe(false,);
   });
 
   test("POST /story/pause 404s for an unknown chat", async () => {
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${MISSING_CHAT}/story/pause`,),
+      request("POST", `http://localhost/api/v1/chats/${MISSING_CHAT}/story/pause`,),
     );
 
     expect(res.status,).toBe(404,);
@@ -201,7 +201,7 @@ describe("story-orchestration routes", () => {
     const actorId = await seedParticipant(chatId,);
 
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/step`, { forceActorId: actorId, },),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/step`, { forceActorId: actorId, },),
     );
 
     expect(res.status,).toBe(200,);
@@ -217,7 +217,7 @@ describe("story-orchestration routes", () => {
   test("POST /story/configure persists strategy, maxTurns and thresholds", async () => {
     const chatId = await seedChat();
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/configure`, {
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/configure`, {
         turnStrategy: "round_robin",
         maxTurns: 12,
         qualityThresholds: { coherence: 0.5, roleplay: 0.75, },
@@ -241,7 +241,7 @@ describe("story-orchestration routes", () => {
   test("POST /story/configure rejects an unknown turn strategy (422)", async () => {
     const chatId = await seedChat();
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/configure`, { turnStrategy: "nonsense", },),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/configure`, { turnStrategy: "nonsense", },),
     );
 
     expect(res.status,).toBe(422,);
@@ -249,7 +249,7 @@ describe("story-orchestration routes", () => {
 
   test("POST /story/configure 404s for an unknown chat", async () => {
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${MISSING_CHAT}/story/configure`, {},),
+      request("POST", `http://localhost/api/v1/chats/${MISSING_CHAT}/story/configure`, {},),
     );
 
     expect(res.status,).toBe(404,);
@@ -259,7 +259,7 @@ describe("story-orchestration routes", () => {
     const worldId = await seedWorld();
     const chatId = await seedChat({ worldId, },);
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/narration`, { text: "The door creaks.", },),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/narration`, { text: "The door creaks.", },),
     );
 
     expect(res.status,).toBe(200,);
@@ -269,7 +269,7 @@ describe("story-orchestration routes", () => {
   test("POST /story/narration rejects a chat without a world (400)", async () => {
     const chatId = await seedChat();
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/narration`, { text: "hi", },),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/narration`, { text: "hi", },),
     );
 
     expect(res.status,).toBe(400,);
@@ -285,7 +285,7 @@ describe("story-orchestration routes", () => {
     },);
 
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${chatId}/gm/escalate`,),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/gm/escalate`,),
     );
 
     expect(res.status,).toBe(200,);
@@ -308,7 +308,7 @@ describe("story-orchestration routes", () => {
     },);
 
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${chatId}/gm/escalate`,),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/gm/escalate`,),
     );
 
     expect(res.status,).toBe(404,);
@@ -316,7 +316,7 @@ describe("story-orchestration routes", () => {
 
   test("POST /gm/escalate 404s for an unknown chat", async () => {
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${MISSING_CHAT}/gm/escalate`,),
+      request("POST", `http://localhost/api/v1/chats/${MISSING_CHAT}/gm/escalate`,),
     );
 
     expect(res.status,).toBe(404,);
@@ -327,7 +327,7 @@ describe("story-orchestration routes", () => {
     const app = new Elysia({ name: "test-anon", },)
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
-    const res = await app.handle(new Request(`http://localhost/api/chats/${chatId}/story/state`,),);
+    const res = await app.handle(new Request(`http://localhost/api/v1/chats/${chatId}/story/state`,),);
     expect(res.status,).toBe(401,);
   });
 
@@ -339,7 +339,7 @@ describe("story-orchestration routes", () => {
       .derive(() => ({ userId: otherUserId, userRole: "user" as const, }))
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
-    const res = await app.handle(new Request(`http://localhost/api/chats/${chatId}/story/state`,),);
+    const res = await app.handle(new Request(`http://localhost/api/v1/chats/${chatId}/story/state`,),);
     expect(res.status,).toBe(403,);
   });
 
@@ -349,7 +349,7 @@ describe("story-orchestration routes", () => {
     const strangerActorId = crypto.randomUUID();
     await insertActors(db, "Stranger", { id: strangerActorId, },);
     const res = await makeApp(db,).handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/step`, { forceActorId: strangerActorId, },),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/step`, { forceActorId: strangerActorId, },),
     );
 
     expect(res.status,).toBe(403,);
@@ -361,7 +361,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      new Request(`http://localhost/api/chats/${chatId}/story/step`, {
+      new Request(`http://localhost/api/v1/chats/${chatId}/story/step`, {
         method: "POST",
         headers: { "content-type": "application/json", },
         body: "{}",
@@ -385,7 +385,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      request("POST", `http://localhost/api/chats/${chatId}/gm/escalate`,),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/gm/escalate`,),
     );
 
     expect(res.status,).toBe(403,);
@@ -398,7 +398,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      new Request(`http://localhost/api/chats/${chatId}/story/narration`, {
+      new Request(`http://localhost/api/v1/chats/${chatId}/story/narration`, {
         method: "POST",
         headers: { "content-type": "application/json", },
         body: JSON.stringify({ text: "hello", },),
@@ -414,7 +414,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/pause`,),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/pause`,),
     );
 
     expect(res.status,).toBe(401,);
@@ -426,7 +426,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/resume`,),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/resume`,),
     );
 
     expect(res.status,).toBe(401,);
@@ -438,7 +438,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      new Request(`http://localhost/api/chats/${chatId}/story/configure`, {
+      new Request(`http://localhost/api/v1/chats/${chatId}/story/configure`, {
         method: "POST",
         headers: { "content-type": "application/json", },
         body: "{}",
@@ -454,7 +454,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      request("POST", `http://localhost/api/chats/${chatId}/gm/escalate`,),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/gm/escalate`,),
     );
 
     expect(res.status,).toBe(401,);
@@ -469,7 +469,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/pause`,),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/pause`,),
     );
 
     expect(res.status,).toBe(403,);
@@ -484,7 +484,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      request("POST", `http://localhost/api/chats/${chatId}/story/resume`,),
+      request("POST", `http://localhost/api/v1/chats/${chatId}/story/resume`,),
     );
 
     expect(res.status,).toBe(403,);
@@ -499,7 +499,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      new Request(`http://localhost/api/chats/${chatId}/story/configure`, {
+      new Request(`http://localhost/api/v1/chats/${chatId}/story/configure`, {
         method: "POST",
         headers: { "content-type": "application/json", },
         body: "{}",
@@ -519,7 +519,7 @@ describe("story-orchestration routes", () => {
       .use(storyOrchestrationRoutes({ database: db, config: testConfig, },),);
 
     const res = await app.handle(
-      new Request(`http://localhost/api/chats/${chatId}/story/narration`, {
+      new Request(`http://localhost/api/v1/chats/${chatId}/story/narration`, {
         method: "POST",
         headers: { "content-type": "application/json", },
         body: JSON.stringify({ text: "hello", },),

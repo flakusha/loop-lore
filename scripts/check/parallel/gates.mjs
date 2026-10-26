@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 300
+// One command-assembly pass: the coverage builder, the scope filters and the
+// per-gate command bodies all read the same run context (DIFF_BASE, changed
+// files, skip patterns), so splitting them would thread that context through
+// every helper for no separation gain.
+
 /**
  * Gate command assembly. The static registry (`checks`, `ADVISORY_GATES`) lives
  * in `gate-table.mjs`; this module replaces its NOOP placeholders with the real
@@ -141,9 +147,12 @@ function coverageCommand() {
   // anything but an in-memory DB / /tmp uploads without it. It was missing,
   // so a scoped run that reached the e2e helpers failed on the safeguard
   // rather than on the change under test.
-  return [companionRun, `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
-    filteredPaths.join(" ",)
-  } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}${skipNote}`,].filter((c,) => c.length > 0,).join(" && ");
+  return [
+    companionRun,
+    `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
+      filteredPaths.join(" ",)
+    } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}${skipNote}`,
+  ].filter((c,) => c.length > 0).join(" && ",);
 }
 
 /**
@@ -187,7 +196,7 @@ function subsystemTestTargets(files,) {
   for (const f of files) {
     if (!f.startsWith("src/",)) { continue; }
     const segments = f.split("/",);
-    targets.add(segments.length > 2 ? `${segments[0]}/${segments[1]}/` : f);
+    targets.add(segments.length > 2 ? `${segments[0]}/${segments[1]}/` : f,);
   }
   return [...targets,].sort();
 }
