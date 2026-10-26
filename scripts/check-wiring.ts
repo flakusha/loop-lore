@@ -83,6 +83,9 @@ const NON_MOUNT_POINTS = new Set([
   "authPublicRoutes", // mounted via auth/ barrel (name preserved)
   "authProtectedRoutes", // mounted via auth/ barrel
   "wardrobeBindingRoutes", // mounted via wardrobe.ts barrel
+  // Nested inside actorMemoriesRoutes (v1 actors surface -> actor-memories.ts),
+  // so mounting it in register-plugins.ts would duplicate every /api/v1 route.
+  "memoryAuditRoutes",
 ],);
 
 // Documented deferrals — intentionally not mounted.
