@@ -4,6 +4,7 @@
 # BUG: patrolRoute cast without array validation
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: Array.isArray guard: src/rpc/npc-navigation/service/processing.ts:154. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-patrolroute-cast-without-array-validation.md
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-npc-navigation

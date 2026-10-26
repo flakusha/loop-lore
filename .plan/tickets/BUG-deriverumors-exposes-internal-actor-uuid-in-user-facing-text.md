@@ -4,6 +4,7 @@
 # BUG: deriveRumors exposes internal actor UUID in user-facing text
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 4db0605): src/rpg/reputation.ts:149 looks up display_name; :163 interpolates actorName into the rumor text — no raw UUID in user-facing output.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-faction-reputation

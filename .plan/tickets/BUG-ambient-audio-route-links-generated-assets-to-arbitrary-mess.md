@@ -4,6 +4,7 @@
 # BUG: Ambient audio route links generated assets to arbitrary messageId with no chat-membership check
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] NEEDS-FIX-WITH-DETAILS (issue 0fa3a70): audio-gen-route.ts fixed: :67-76 resolves messageId to its chat (404 unknown, 400 mismatch) and :78-81 runs checkChatAccess on the resolved chat. Residual: image-gen-route.ts still accepts messageId (:33) and links it (:194-201) with the access check only under if (req.chatId) (:78-82) — the arbitrary-message link IDOR the ticket explicitly said to fix in image-gen-route.ts remains.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-audio-video-sound

@@ -3,7 +3,8 @@
 
 # BUG: Community lorebook share has no export epilogue
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 1485a72): Verified: both export paths build CanonicalCharacter with no lorebook (src/routes/characters/export.ts:63-81; src/routes/export-shared/characters.ts:20-72, no lore join), so exporters/ccv3.ts:29-30 never emits character_book; import side exists (src/routes/import/actor.ts:93-95). Round-trip still loses all lorebook data.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-import-export-io

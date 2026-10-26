@@ -4,6 +4,7 @@
 # BUG: giwt finalize auto-stash collides with shared-dev WIP
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: META pinned node_modules/giwt: merge moved to staging worktree + CAS ref move (staging.ts:7-11); dev synced lazily, never stashed (dev-restore.ts:18-19, staging-sync.ts); finalize.ts:118-121. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-giwt-finalize-auto-stash-collides-with-shared-dev-wip.md
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-tooling-improvement

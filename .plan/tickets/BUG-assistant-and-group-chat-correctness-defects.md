@@ -3,7 +3,8 @@
 
 # BUG: Assistant and group-chat correctness defects
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 5e09182): 1 of 11 sub-defects fixed: /help matching rebuilt from RESPONSE_MAP keys with (?:^|\W) prefix (src/assistant/service.ts:69). Verified still broken: intent.ts:28 empty-pattern includes() always true; workflow-runner.ts:107,143 String.replace with string replacement ($-interpolation, single-shot); turn-selector.ts:239 result.value null crash; command-parser.ts:41 space-only separator; prepare-generation.ts:111 hardcoded 32_000 vs prompt.tokenBudget; routes/messages/command.ts narrow try (:297-302,:341) + allSettled mislabeled failure (:241-256); gm-tool-execution.ts:100,144 actorId-as-userId and :61-64 paramsToArgs flattening; prompt/sections/lore.ts:145 floating promise; mention-parser.ts:56 boundary-less @regex.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-group-chat

@@ -4,6 +4,7 @@
 # BUG: chat-pins cross-chat content leak: pin any message id into your own chat
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 2d5152c): src/routes/chat-pins.ts:101-117 resolves the message via resolveMessageAccess and rejects when messageChatId !== chatId; GET adds chat_id scoping (:61-63); unpin is pinId+chat_id scoped with owner check (:185-195).
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

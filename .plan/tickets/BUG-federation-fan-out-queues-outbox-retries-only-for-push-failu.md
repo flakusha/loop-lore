@@ -4,6 +4,7 @@
 # BUG: Federation fan-out queues outbox retries only for push failures
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue e7650fb): src/federation/fan-out.ts:212-260: requestReservation, sealContent and pushEnvelope all sit inside one try; the catch queues outbox retry for ANY post-clearance failure — only clearance denials skip the queue.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas

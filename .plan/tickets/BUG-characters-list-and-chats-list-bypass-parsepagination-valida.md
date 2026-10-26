@@ -4,6 +4,7 @@
 # BUG: characters-list and chats-list bypass parsePagination validation
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 29f5b01): src/routes/characters/list.ts:27 and src/routes/chats/list.ts:151 now run query params through parsePagination (clamping helper src/routes/http-utils/parse.ts:39-42).
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-api-validation-guardrails

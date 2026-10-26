@@ -4,6 +4,7 @@
 # BUG: Wire encryption for generated images
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: PersistGeneratedImagesOpts carries encryptionTier/chatKey/keyId/pipelineConfig (src/assets/service/persist-generated.ts:38-42) and forwards them to createAsset (:89-93).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-encryption-workflow

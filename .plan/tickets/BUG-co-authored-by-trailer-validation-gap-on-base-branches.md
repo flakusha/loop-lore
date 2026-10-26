@@ -4,6 +4,7 @@
 # BUG: Co-Authored-By trailer validation gap on base branches
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue d05f21f): scripts/check/co-author-trailers.mjs:218-221 audits HEAD~1..HEAD on dev/main/master; wired into .githooks/pre-commit:50 and prepare-commit-msg:19; unit-tested (co-author-trailers.test.mjs:11).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline

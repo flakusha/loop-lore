@@ -4,6 +4,7 @@
 # BUG: non-stream generation catch relies on a logging claim that is false
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: false comment gone; failGeneration failure logged: src/generation/generate-route/non-stream.ts:250-254. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-non-stream-generation-catch-relies-on-a-logging-claim-that-i.md
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logging

@@ -4,6 +4,7 @@
 # BUG: Scoped coverage gate omits the E2E_SAFEGUARD prefix its plain-mode sibling sets
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: scripts/check/parallel/gates.mjs:122 prefixes E2E_SAFEGUARD=1 on the scoped coverage command, with explanatory comment at :116-121.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline

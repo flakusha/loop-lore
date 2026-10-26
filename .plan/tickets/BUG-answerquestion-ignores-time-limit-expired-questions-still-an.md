@@ -4,6 +4,7 @@
 # BUG: answerQuestion ignores time_limit (expired questions still answerable)
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue a90f770): src/rpg/questions/service.ts:216-221: answerQuestion now computes created_at + time_limit and throws QuestionError 'not_open' when expired, before the status check.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-rpg-mechanics

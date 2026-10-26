@@ -4,6 +4,7 @@
 # BUG: buildSkillTree silently drops orphan nodes
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 174d08d): src/rpg/skills/service/tree.ts:90-93: nodes whose prerequisites are absent now push to roots with an explanatory comment instead of silently vanishing.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-rpg-progression

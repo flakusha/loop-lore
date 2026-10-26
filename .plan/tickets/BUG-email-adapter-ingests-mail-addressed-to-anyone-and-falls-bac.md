@@ -3,7 +3,8 @@
 
 # BUG: Email adapter ingests mail addressed to anyone and falls back to an unvalidated first To entry as bridge target
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 176dc92): Verified verbatim intact: src/integrations/email/adapter.ts:231-236 falls back to recipients[0] with no isEmailAddress filter on candidates and no default-deny; senderAddress (spam-gate.ts:93-95) still returns raw lowercased header values unvalidated.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-email-integration

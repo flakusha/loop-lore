@@ -4,6 +4,7 @@
 # BUG: Character template validator rejects every legal content_rating
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 0096d4e): src/config/templates-loader/validation-domains.ts:8,18 now imports VALID_CONTENT_RATINGS from characters/validator/constants as the single source; regression coverage over all four nsfw ratings at templates-loader.test.ts:526.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-config-templates

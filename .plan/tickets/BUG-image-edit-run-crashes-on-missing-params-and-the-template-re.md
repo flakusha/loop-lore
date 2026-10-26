@@ -4,6 +4,7 @@
 # BUG: Image-edit /run crashes on missing params and the template registry is not hydrated or idempotent
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: all six items fixed: routes.ts:123 ensureWorkflowRegistry; :105-110 validateImageEditBody; validation/schemas/image-edit.ts:110 === undefined; template-registry.ts:192,201 WeakSet; :189 replaceManaged; routes.ts:182-183 backend+category. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-image-edit-run-crashes-on-missing-params-and-the-template-re.md
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-comfyui-plugin

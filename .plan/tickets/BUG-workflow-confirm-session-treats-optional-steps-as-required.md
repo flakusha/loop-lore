@@ -4,6 +4,7 @@
 # BUG: workflow confirm session treats optional steps as required
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: src/assistant/commands/workflow.ts:135-137 delegates to missingStepIds which filters required !== false (src/assistant/workflow-session.ts:65-67); runner mirrors it (workflow-runner.ts:126-128).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-workflow-engine

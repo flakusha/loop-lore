@@ -4,6 +4,7 @@
 # BUG: extractJsonObject slices an unbounded LLM response before JSON.parse
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue cb56562): src/turning/classifier-selection.ts:70-77 caps extraction at EXTRACT_JSON_MAX_BYTES = 64KiB and returns null (fail-open) when no balanced object fits in the window.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem

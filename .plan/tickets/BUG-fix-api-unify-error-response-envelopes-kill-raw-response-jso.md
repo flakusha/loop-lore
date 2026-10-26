@@ -4,6 +4,7 @@
 # BUG: fix(api): unify error/response envelopes, kill raw Response.json errors
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] NEEDS-FIX-WITH-DETAILS (issue 39603d6): Central helper fixed: routes/http-utils/errors.ts:54,57 always emits { error, code, meta } with STATUS_TO_CODE defaults (410/502/504/500 covered). Remaining: raw codeless Response.json({error},{status}) sites live in routes, e.g. src/routes/message-reactions.ts:188-191 — the ticket's sweep of raw response-json sites is incomplete.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-error-envelope

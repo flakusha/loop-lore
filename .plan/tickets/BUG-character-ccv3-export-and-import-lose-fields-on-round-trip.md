@@ -3,7 +3,8 @@
 
 # BUG: Character CCv3 export and import lose fields on round-trip
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 08f7eae): All 5 sub-defects verified present: exporters/shared.ts:47-49 omits creator_notes; normalizers/ccv3.ts:60-66 never maps creation/modification_date and exporters/ccv3.ts:25-26 hardcodes Date.now(); exporters/character-systems.ts:87,93 locationTraits hardcoded empty; importers/character-systems/world-setup.ts:33 uses caller worldId with no payload check; character-systems.ts:44 worldConfigs declared but written nowhere in src.
 **Priority:** Critical
 **Effort:** Medium
 **Epic:** epic-import-export-io

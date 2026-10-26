@@ -4,6 +4,7 @@
 # BUG: Stranded post-finalize fix: the audio low-pass coefficient restore is still unmerged on fix-audio-lowpass-coefficient while dev ships the spectrum regression
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: src/generation/audio/providers/local.ts:50-53 carries the original-texture coefficient 1/(2*pi*cutoff/sampleRate+1) with a do-not-simplify guard — the branch fix is on dev.
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-tooling-improvement

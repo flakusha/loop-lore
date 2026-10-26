@@ -3,7 +3,8 @@
 
 # BUG: Dead Bedrock config path accepted but never dispatched
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 3edc50d): Verified: no BedrockProvider class exists in src; initializeProviders (src/generation/providers/registry.ts:243-292) has no bedrock branch; schema still declares bedrock config (src/config/schema providers.ts:115); provider-instances.ts:74-76 now returns a name-only stub instance, so the dead path resolves by name while remaining undispatchable — neither implemented nor rejected.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-provider-plugin-ecosystem

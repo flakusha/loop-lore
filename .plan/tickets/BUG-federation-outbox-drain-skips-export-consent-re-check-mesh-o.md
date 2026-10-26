@@ -4,6 +4,7 @@
 # BUG: Federation outbox drain skips export-consent re-check (mesh_outbox has no chat_id)
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue f38633a): src/federation/outbox.ts:192-197: drain re-applies authorizeChatExport for chat rows before pushing; queueOutboxRetry persists chatId/chat_id (outbox.ts:45,56) so the per-chat gate survives retries.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-mesh-federation-content-sharing

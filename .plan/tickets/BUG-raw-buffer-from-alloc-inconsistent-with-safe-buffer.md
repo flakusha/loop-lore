@@ -4,6 +4,7 @@
 # BUG: Raw Buffer.allocUnsafe/alloc exists in src/ alongside SafeBuffer guards — inconsistency at 0 sites
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: grep confirms zero Buffer.allocUnsafe in src/; src/utils/safe-buffer/ guards remain in use (e.g. src/transport/compression.ts).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-api-validation-guardrails

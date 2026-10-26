@@ -4,6 +4,7 @@
 # async-store tests share fixed OFFLOAD_DIR with runtime and concurrent tests
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: src/async/spill.ts:16-75 — SPILL_ROOT + per-pid DEFAULT_DIR + setOffloadDir/resetOffloadDir test seam; matches the ticket's recorded fix.
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-testing-qa
