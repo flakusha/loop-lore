@@ -4,6 +4,7 @@
 import type { Config, } from "../config/schema/config";
 import type { Db, } from "../db/index";
 import { OpenAiCompatibleProvider, registerProvider, } from "../generation";
+import { circuitBreaker, } from "../generation/providers/circuit-breaker";
 import type { Logger, } from "../logger/types";
 import { setRegexTelemetryEnabled, } from "../regex/telemetry";
 import { flushRegexTelemetry, } from "../regex/telemetry-flush";
@@ -94,6 +95,8 @@ export async function initBackgroundServices(
                 models: {},
               },),
             );
+
+            circuitBreaker.register(name,);
 
             if (!config.generation.defaultProvider) {
               config.generation.defaultProvider = name;

@@ -742,6 +742,23 @@ describe("origin-scoped approval", () => {
     expect(await res?.text(),).toBe("core",);
   });
 
+  // BUG-fix-plugins-append-onload-registrations-to-manifest-registra:
+  // a plugin declaring manifest apiRoutes AND registering routes from onLoad
+  // must serve BOTH — the onLoad registration appends, never replaces.
+  test("manifest routes and onLoad-registered routes coexist after append semantics", async () => {
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-append", "append",), });
+
+    await loadSinglePlugin(db, "fixture-append", dir, "core",);
+
+    const routes = registry.getPluginRoutes("fixture-append",);
+    expect(routes.map((r,) => r.path,),).toEqual(["/fixture-append/static", "/fixture-append/dynamic",],);
+
+    const staticRes = await dispatchPluginRoute({ request: new Request("http://x/fixture-append/static",), },);
+    expect(await staticRes?.text(),).toBe("static",);
+    const dynamicRes = await dispatchPluginRoute({ request: new Request("http://x/fixture-append/dynamic",), },);
+    expect(await dynamicRes?.text(),).toBe("dynamic",);
+  });
+
   test("an unapproved community plugin never runs onLoad", async () => {
     const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-unapproved", "unapproved",), });
 

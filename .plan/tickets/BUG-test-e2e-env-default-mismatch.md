@@ -96,4 +96,12 @@ Verification: `bun run test:e2e` invoked from a shell with `E2E_SAFEGUARD` unset
 - `scripts/check-parallel.mjs:486` — already-correct canonical invocation.
 - `package.json:66` (`test:coverage`) and `package.json:120` (`ci`) — already-correct script-level prefixes.
 
+## Closure citation correction (2026-10-26)
+
+The issue was closed citing commit `7a0f508c93`, which is not a valid git object (`git cat-file -t` fails; no ref contains it). The follow-up "real commit" `b53b1b7b8` named in BUG-ticket-closure-cites-nonexistent-git-commit-7a0f508c93 ALSO does not resolve in this odb — that citation was itself invalid. The actual fix commit, located via `git log --all --grep` and verified reachable from dev (`git merge-base --is-ancestor`), is:
+
+`1c62abd4278fbcd097b773e1bae1684a166b8e7f` — "fix(e2e): export E2E_SAFEGUARD=1 in developer-facing e2e scripts" (2026-10-10; an identical twin `f829977acd0fddea35ee1d9919af708bfe86d1dd` exists on dev/probe-stale from a re-land; both carry the same tree change).
+
+Follow-up (still open, tracked by 83bdf58): no gate validates commit SHAs cited at closure — `plan:validate` checks format/linkage/backlog/naming/epics but not sha resolvability.
+
 git issue: f511378

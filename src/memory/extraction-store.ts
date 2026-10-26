@@ -93,6 +93,7 @@ export async function storeMemories(
           confidence: memory.confidence,
           importance: memory.importance,
           keywords: jsonStringifyOr(memory.keywords,),
+          emotion_impact: memory.emotionImpact ? jsonStringifyOr(memory.emotionImpact,) : null,
           source_chat_id: chatId,
           source_message_id: sourceMessageIds[0] ?? null,
           source_message_ids: jsonStringifyOr(sourceMessageIds,),

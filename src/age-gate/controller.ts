@@ -18,6 +18,7 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
+import { AgeGateSection, } from "../config/sections/age-gate";
 import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
@@ -34,7 +35,9 @@ import { jsonError, jsonResponse, } from "../routes/http-utils";
  */
 /** In-memory store for age-gate configuration. */
 class AgeGateConfigStore {
-  private config: AgeGateConfig = { enabled: false, minimumAge: 18, mode: "self-declaration", };
+  // Seed from the config-section defaults — the single place the default-off
+  // (`enabled: false`) is defined (BUG-two-gates-age-gate-keys).
+  private config: AgeGateConfig = new AgeGateSection();
 
   /**
    * Initialize the store with config.

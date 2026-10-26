@@ -27,7 +27,7 @@ const startTime = Date.now();
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
-export function healthRoutes(_opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
+export function healthRoutes(_opts: { database: Db; config: Config }, prefix = "/api/v1",): Elysia {
   return new Elysia().get(`${prefix}/health`, () => {
     const providers = getHealthCache();
     const degraded = hasUnhealthyProviders();

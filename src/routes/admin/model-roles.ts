@@ -45,7 +45,23 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         return jsonResponse({ roles: resolved, overrides, validRoles: VALID_ROLES, },);
       }, {
         response: {
-          200: t.Object({ roles: t.Array(t.Any(),), overrides: t.Array(t.Any(),), validRoles: t.Array(t.String(),), },),
+          200: t.Object(
+            {
+              roles: t.Array(t.Any(),),
+              overrides: t.Record(
+                t.String(),
+                t.Object(
+                  {
+                    provider: t.String(),
+                    model: t.String(),
+                    temperature: t.Union([t.Number(), t.Null(),],),
+                    maxTokens: t.Union([t.Number(), t.Null(),],),
+                  },
+                ),
+              ),
+              validRoles: t.Array(t.String(),),
+            },
+          ),
           403: ErrorResponse,
         },
       },)

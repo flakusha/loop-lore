@@ -231,6 +231,7 @@ export interface UserApiKeys {
   api_key_encrypted: string;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  key_version: Generated<number>;
 }
 
 // ── users ────────────────────────────────────────────
@@ -1176,6 +1177,7 @@ export interface MeshPeers {
   allowed_workload_classes: Generated<string>;
   sticky_enabled: Generated<number>;
   shared_token_enc: string | null;
+  key_version: Generated<number>;
 }
 
 // ── mesh_negotiations ────────────────────────────────────────────

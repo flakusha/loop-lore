@@ -44,7 +44,7 @@ interface RouteCtx {
  * @param prefix - route prefix (default `/api`)
  * @returns Elysia instance with the two game-state GET routes
  */
-export function gameStateRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
+export function gameStateRoutes(opts: HandleOpts, prefix = "/api/v1",): Elysia {
   const { database, } = opts;
 
   return (

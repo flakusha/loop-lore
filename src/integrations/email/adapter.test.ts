@@ -197,6 +197,67 @@ describe("EmailAdapter.ingest", () => {
     expect(envelope.target,).toBe("a@b.test",);
   });
 
+  test("default-denies foreign mail when a mailbox is configured", async () => {
+    const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "bot@loop.example", mailboxAddress: "inbox@loop.example", },);
+
+    const error = (() => {
+      try {
+        // Addressed to a third party — must not be ingested with that
+        // third party as the bridge target.
+        adapter.ingest(inboundMail({ to: ["victim@anywhere.example",], },),);
+        return null;
+      } catch (cause) {
+        return cause;
+      }
+    })();
+
+    expect(error,).toBeInstanceOf(EmailAdapterError,);
+    expect((error as EmailAdapterError).code,).toBe("invalid_recipient",);
+  });
+
+  test("skips group addresses when falling back without a mailbox", async () => {
+    const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "bot@loop.example", },);
+
+    for (const to of [["undisclosed-recipients:;",], ["undisclosed-recipients:;", "peer@x.test",],]) {
+      const error = (() => {
+        try {
+          adapter.ingest(inboundMail({ to, },),);
+          return null;
+        } catch (cause) {
+          return cause;
+        }
+      })();
+
+      if (to.length === 1) {
+        // No well-formed candidate → typed rejection, not a garbage target.
+        expect(error,).toBeInstanceOf(EmailAdapterError,);
+        expect((error as EmailAdapterError).code,).toBe("invalid_recipient",);
+      } else {
+        // First WELL-FORMED address wins, group addresses are skipped.
+        expect(error,).toBeNull();
+      }
+    }
+  });
+
+  test("rejects mail whose From header is not a bare address", async () => {
+    const adapter = createEmailAdapter();
+    await adapter.connect({ smtpUser: "bot@loop.example", },);
+
+    const error = (() => {
+      try {
+        adapter.ingest(inboundMail({ from: "undisclosed-recipients:;", },),);
+        return null;
+      } catch (cause) {
+        return cause;
+      }
+    })();
+
+    expect(error,).toBeInstanceOf(EmailAdapterError,);
+    expect((error as EmailAdapterError).code,).toBe("invalid_sender",);
+  });
+
   test("synthesizes a redelivery-stable id when Message-ID is missing", async () => {
     const adapter = createEmailAdapter();
     await adapter.connect({ smtpUser: "bot@loop.example", },);
@@ -283,12 +344,13 @@ describe("email family wiring (gate → bridge)", () => {
     expect(outbound.ok,).toBe(true,);
     expect(sent.map((message,) => message.to),).toEqual(["dest@other.test",],);
 
-    adapter.ingest(inboundMail({ from: "Friend <friend@sender.example>", },),);
+    adapter.ingest(inboundMail({ from: "Friend <friend@sender.example>", to: ["inbox@loop.example",], },),);
     expect(received.map((message,) => message.author),).toEqual(["friend@sender.example",],);
 
     // A quarantined sender never reaches the chat.
     adapter.ingest(inboundMail({
       from: "stranger@other.test",
+      to: ["inbox@loop.example",],
       messageId: "<zz@other.test>",
       subject: "Buy",
       body: "things",

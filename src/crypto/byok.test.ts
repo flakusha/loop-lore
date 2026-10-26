@@ -3,9 +3,39 @@
  */
 
 import { describe, expect, test, } from "bun:test";
-import { decryptValue, encryptValue, } from "./byok";
+import { BYOK_KEY_VERSION, decryptValue, encryptValue, encryptVersioned, } from "./byok";
 
 const SECRET = "test-secret-32-bytes-long!!!!"; // arbitrary passphrase
+
+// Resource contract: pure crypto round-trips — no files, ports, DBs, or
+// module-level mutable state; safe under any parallel bun test scheduling.
+describe("versioned envelope (BUG-4a052a5)", () => {
+  test("encryptVersioned emits v2:salt:iv:ciphertext (4 colon chunks)", async () => {
+    const encrypted = await encryptVersioned("hello", SECRET,);
+    const parts = encrypted.split(":",);
+    expect(parts,).toHaveLength(4,);
+    expect(parts[0],).toBe(`v${BYOK_KEY_VERSION}`,);
+  });
+
+  test("decryptValue accepts the versioned envelope (round-trip)", async () => {
+    const encrypted = await encryptVersioned("sk-versioned-key", SECRET,);
+    await expect(decryptValue(encrypted, SECRET,),).resolves.toBe("sk-versioned-key",);
+  });
+
+  test("decryptValue still accepts BOTH bare legacy formats alongside the envelope", async () => {
+    const bare = await encryptValue("mixed-rows", SECRET,);
+    const legacy = "AAAAAAAAAAAAAAAAAAAAAA:AAAAAAAAAAAAAAAAAAAAAA"; // shape only
+    await expect(decryptValue(bare, SECRET,),).resolves.toBe("mixed-rows",);
+    // legacy 2-chunk: wrong-secret failure proves the branch was reached
+    await expect(decryptValue(legacy, SECRET,),).rejects.toThrow();
+  });
+
+  test("decryptValue rejects an unknown key version loudly", async () => {
+    const encrypted = await encryptVersioned("hello", SECRET,);
+    const bumped = encrypted.replace(/^v\d+/, "v999",);
+    await expect(decryptValue(bumped, SECRET,),).rejects.toThrow(/Unsupported BYOK key version/,);
+  });
+});
 
 describe("encryptValue / decryptValue", () => {
   test("round-trip: encrypt then decrypt returns original", async () => {

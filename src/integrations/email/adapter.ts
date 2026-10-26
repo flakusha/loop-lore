@@ -15,6 +15,7 @@
 // with the spam gate as the bridge's inboundGate — §7).
 
 import { createHash, randomUUID, } from "node:crypto";
+import { getChildLogger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
 import type { AdapterMessage, AdapterMessageHandler, ProtocolAdapter, } from "../adapter";
 import { senderAddress, } from "./spam-gate";
@@ -28,12 +29,13 @@ export const EMAIL_SYNTHETIC_DOMAIN = "loop-lore.local";
 /** Typed adapter failures (spec §10): `not_configured` is the unconfigured
  * case — zero transport, zero address, ingest before connect — never a
  * crash; `invalid_recipient` is an envelope with no usable loop-lore
- * recipient in To/Cc. */
+ * recipient in To/Cc; `invalid_sender` is an envelope whose From header
+ * does not parse to a bare email address. */
 export class EmailAdapterError extends Error {
   /** Failure kind. */
-  readonly code: "not_configured" | "invalid_recipient";
+  readonly code: "not_configured" | "invalid_recipient" | "invalid_sender";
 
-  constructor(code: "not_configured" | "invalid_recipient", message: string,) {
+  constructor(code: "not_configured" | "invalid_recipient" | "invalid_sender", message: string,) {
     super(message,);
     this.name = "EmailAdapterError";
     this.code = code;
@@ -91,7 +93,8 @@ export interface EmailAdapter extends ProtocolAdapter {
    * forwards the envelope into MessageBridge.receive with the spam gate
    * as the bridge's inboundGate.
    * @throws {EmailAdapterError} `not_configured` when the adapter is not
-   * connected; `invalid_recipient` when To/Cc has no usable address. */
+   * connected; `invalid_recipient` when To/Cc has no usable address;
+   * `invalid_sender` when From does not parse to a bare email address. */
   ingest(raw: InboundEmail,): AdapterMessage;
 }
 
@@ -228,12 +231,42 @@ export function createEmailAdapter(options: EmailAdapterOptions = {},): EmailAda
         throw new EmailAdapterError("not_configured", "email adapter ingest: not connected/configured",);
       }
 
-      const recipients = raw.to.map(senderAddress,);
-      const mailbox = mailboxAddress !== undefined && recipients.includes(mailboxAddress,)
-        ? mailboxAddress
-        : recipients[0];
+      // Reject unparseable From headers before they become an author
+      // identity: a group header like `undisclosed-recipients:;` must not
+      // pass the nonempty guard and flow into the bridge/spam gate.
+      const author = senderAddress(raw.from,);
+      if (!isEmailAddress(author,)) {
+        getChildLogger("integrations/email",)?.warn(
+          "email adapter ingest: rejecting mail with an unparseable From address",
+          { from: raw.from, recipients: [...raw.to,], },
+        );
+
+        throw new EmailAdapterError(
+          "invalid_sender",
+          `email adapter ingest: unparseable From header (${raw.from})`,
+        );
+      }
+
+      // Default-deny recipient selection: with a configured mailbox, ONLY
+      // mail addressed to that mailbox is bridged — foreign mail (a third
+      // party's To/Cc, group addresses like `undisclosed-recipients:;`)
+      // must not be ingested with an attacker-influenced bridge target.
+      // Without a mailbox, fall back to the first well-formed address.
+      const candidates = raw.to.map(senderAddress,);
+      const mailbox = mailboxAddress !== undefined
+        ? (candidates.includes(mailboxAddress,) ? mailboxAddress : undefined)
+        : candidates.find(isEmailAddress,);
 
       if (mailbox === undefined || mailbox === "") {
+        getChildLogger("integrations/email",)?.warn(
+          "email adapter ingest: rejecting mail with no usable loop-lore recipient",
+          {
+            configuredMailbox: mailboxAddress,
+            recipients: [...raw.to,],
+            from: raw.from,
+          },
+        );
+
         throw new EmailAdapterError(
           "invalid_recipient",
           `email adapter ingest: no usable loop-lore recipient in To/Cc (${raw.to.length} entries)`,
@@ -242,7 +275,7 @@ export function createEmailAdapter(options: EmailAdapterOptions = {},): EmailAda
 
       const envelope: AdapterMessage = {
         id: raw.messageId ?? stableMessageId(raw,),
-        author: senderAddress(raw.from,),
+        author,
         target: mailbox,
         body: raw.subject === undefined ? raw.body : `${raw.subject}\n\n${raw.body}`,
         timestamp: raw.date ?? now(),

@@ -4,6 +4,7 @@
 # BUG: index.json records epic source paths under .plan/tickets/ for epic entries
 
 **Status:** Done
+**Status Note:** [2026-10-26 fix pass] FIXED. One-off script (.tmp/, deleted after use) rewrote all 304 `source` paths matching `.plan/tickets/epic-*.md` to the real `.plan/epics/<filename>` (matched by filename; 304/304 files existed, 0 missing, 3691 other entries untouched). Verified with check-only `bun run plan:sync`: 🟢 No phantom entries, 🟢 no orphan files, 🟢 no hash mismatches (exit 1 comes from the pre-existing 78 stale-open git issues reopened by the 2026-10-26 sweep — unrelated to this change).
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-tooling-improvement

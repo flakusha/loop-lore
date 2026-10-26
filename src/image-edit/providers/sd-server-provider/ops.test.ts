@@ -89,8 +89,7 @@ describe("executeTxt2Img", () => {
         },);
 
         expect(results,).toHaveLength(1,);
-        expect(results[0]!.filename,).toMatch(/^sdserver-[0-9a-f]{8}-0\.png$/,);
-        expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
+        expect(results[0]!.b64,).toBeTypeOf("string",);
         expect(results[0]!.mimeType,).toBe("image/png",);
       },
     );
@@ -183,7 +182,7 @@ describe("executeTxt2Img", () => {
       async () => {
         const results = await executeTxt2Img(makeHost(ImageApiFamily.Sdapi,), {}, makeCfg(),);
         expect(results,).toHaveLength(2,);
-        expect(results[0]!.filename,).toMatch(/^sdapi-[0-9a-f]{8}-0\.png$/,);
+        expect(results[0]!.b64,).toBe("b64a",);
       },
     );
 
@@ -205,8 +204,7 @@ describe("executeTxt2Img", () => {
         }, makeCfg(),);
 
         expect(results,).toHaveLength(2,);
-        expect(results[0]!.filename,).toMatch(/^openai-[0-9a-f]{8}-0\.png$/,);
-        expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
+        expect(results[0]!.b64,).toBe("x",);
       },
     );
 
@@ -294,8 +292,7 @@ describe("executeUpscale", () => {
         },);
 
         expect(results,).toHaveLength(1,);
-        expect(results[0]!.filename,).toMatch(/^upscaled-[0-9a-f]{8}\.png$/,);
-        expect(results[0]!.url,).toBe(`/api/assets/${results[0]!.id}/raw`,);
+        expect(results[0]!.b64,).toBe("b64out",);
         expect(results[0]!.mimeType,).toBe("image/png",);
       },
     );

@@ -708,6 +708,20 @@
           "type": "string",
           "description": "Default provider name"
         },
+        "flowControl": {
+          "type": "object",
+          "description": "Concurrency regulation for generation endpoints (0 = unbounded)",
+          "properties": {
+            "maxConcurrentGlobal": {
+              "type": "number",
+              "description": "Max simultaneous tracked generations server-wide"
+            },
+            "maxConcurrentPerChat": {
+              "type": "number",
+              "description": "Max simultaneous tracked generations per chat"
+            }
+          }
+        },
         "defaultModels": {
           "type": "object",
           "description": "Default model per provider"
@@ -2038,6 +2052,116 @@
             "merge",
             "templates"
           ]
+        },
+        "classifiers": {
+          "type": "object",
+          "description": "Classifier template packs — user-supplied 0-shot classification templates loaded from configs/templates/classifiers/*.yaml",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "classifiers": {
+              "type": "object",
+              "description": "Classifier template packs keyed by id",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique template id"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Human-readable label"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "serves": {
+                    "type": "array",
+                    "description": "Aux decision points this template can answer",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "Context tags required on the selection query",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "when": {
+                    "type": "object",
+                    "description": "Structured guards that must all hold",
+                    "properties": {
+                      "chatMode": {
+                        "type": "array",
+                        "description": "Chat mode whitelist: direct | group | story | battle",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "direct",
+                            "group",
+                            "story",
+                            "battle"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "priority": {
+                    "type": "number",
+                    "description": "Higher wins among matching templates"
+                  },
+                  "params": {
+                    "type": "object",
+                    "description": "Sampling overrides for the aux call",
+                    "properties": {
+                      "timeoutMs": {
+                        "type": "number"
+                      },
+                      "temperature": {
+                        "type": "number"
+                      },
+                      "maxTokens": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "labels": {
+                    "type": "array",
+                    "description": "Expected output vocabulary",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "template": {
+                    "type": "string",
+                    "description": "System prompt replacing the purpose default"
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "serves",
+                  "tags",
+                  "template"
+                ]
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "classifiers"
+          ]
         }
       },
       "required": [
@@ -2045,7 +2169,8 @@
         "sd",
         "avatar",
         "imageEdit",
-        "character"
+        "character",
+        "classifiers"
       ]
     },
     "characters": {

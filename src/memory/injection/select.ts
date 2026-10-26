@@ -4,6 +4,7 @@
 /**
  * Batch memory selection for injection.
  */
+import { effectiveImportance, } from "../emotion-impact";
 import type { MemoryEntry, } from "../types";
 import { shouldInjectMemory, } from "./decide";
 import {
@@ -20,7 +21,7 @@ import {
  * @param ctx - Current injection context
  * @param comfort - Character comfort settings
  * @param injectionHistory - Map of memoryId → last turn injected
- * @returns Memories to inject, sorted by importance descending
+ * @returns Memories to inject, sorted by emotion-weighted importance descending
  */
 export function selectMemoriesForInjection(
   memories: MemoryEntry[],
@@ -32,8 +33,10 @@ export function selectMemoriesForInjection(
   const selected: MemoryEntry[] = [];
   const rejected: { memory: MemoryEntry; reason: string; probability: number }[] = [];
 
-  // Sort by importance descending — most important first
-  const sorted = [...memories,].sort((a, b,) => b.importance - a.importance);
+  // Sort by emotion-weighted importance descending — most important first.
+  // Sustained emotional charges (TASK-memory-emotion-impact) lift equal-
+  // importance memories; impact-free entries order exactly by importance.
+  const sorted = [...memories,].sort((a, b,) => effectiveImportance(b,) - effectiveImportance(a,));
 
   for (const memory of sorted) {
     if (selected.length >= config.maxPerMessage) {

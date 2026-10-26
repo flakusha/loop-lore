@@ -397,6 +397,50 @@ describe("storeMemories", () => {
     expect(rows[0]?.keywords,).toBe('["fact"]',);
   });
 
+  it("persists the emotion impact as JSON and stores null without one", async () => {
+    const stored = await storeMemories(db, "actor-ex", "chat-ex", [
+      {
+        content: "A traumatic betrayal remembered",
+        memoryType: mt("fact",),
+        confidence: 0.9,
+        importance: 4,
+        keywords: [],
+        emotionImpact: {
+          emotion: "traumatized",
+          intensity: 90,
+          duration: "permanent",
+          target: "char-wolf",
+        },
+      },
+      {
+        content: "A plain unemotional fact stored",
+        memoryType: mt("fact",),
+        confidence: 0.8,
+        importance: 3,
+        keywords: [],
+      },
+    ],);
+
+    expect(stored,).toBe(2,);
+
+    const rows = await db
+      .selectFrom("actor_memories",)
+      .select(["content", "emotion_impact",],)
+      .where("actor_id", "=", "actor-ex",)
+      .execute();
+
+    const emotional = rows.find((r,) => r.content === "A traumatic betrayal remembered");
+    const plain = rows.find((r,) => r.content === "A plain unemotional fact stored");
+    expect(JSON.parse(emotional!.emotion_impact!,),).toEqual({
+      emotion: "traumatized",
+      intensity: 90,
+      duration: "permanent",
+      target: "char-wolf",
+    },);
+
+    expect(plain!.emotion_impact,).toBeNull();
+  });
+
   it("skips duplicates of existing content for the same actor", async () => {
     const memory = {
       content: "Only stored once ever",

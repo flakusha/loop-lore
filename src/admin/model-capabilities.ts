@@ -65,6 +65,7 @@ export async function upsertModelCapabilities(
             context_window: model.contextWindow ?? null,
             max_output: model.maxOutput ?? null,
             supports_tools: model.toolCalling ? 1 : 0,
+            supports_vision: model.modalities?.includes("image",) ? 1 : 0,
             supports_thinking: model.thinking ? 1 : 0,
             modalities: model.modalities ? jsonStringifyOr(model.modalities,) : null,
             param_size: model.paramSize ?? null,
