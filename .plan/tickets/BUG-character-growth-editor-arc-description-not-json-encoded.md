@@ -4,6 +4,7 @@
 # BUG: Character growth editor arc description not JSON-encoded
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue ec7ebd3): Live render path src/routes/views/character-growth-section.ts:82-84 JSON-encodes via jsonStringifyOr + escapeAttr; regression-pinned by character-growth-section.test.ts:68. The raw {{.InitialArcDescription}} survives only in the dead partial src/views/partials/character-growth-editor.html:24 (no render sites in src).
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-character-growth

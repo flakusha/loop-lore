@@ -4,6 +4,7 @@
 # BUG: frontend handlers swallow API errors silently with no user feedback
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: toasts/event feedback present: src/frontend/pages/characters.ts:191-195, src/frontend/vn/choice-cards.ts:237-242, src/frontend/vn/question-cards.ts:189-195,232-237. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-frontend-handlers-swallow-api-errors-silently-with-no-user-f.md
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-components

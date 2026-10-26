@@ -4,6 +4,7 @@
 # BUG: Actor memory tables carry no emotion_impact, so emotion-to-memory integration has no persistence
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] NEEDS-FIX-WITH-DETAILS (issue 9d6ac7f): Schema half landed: migration 069_actor_memories_emotion_impact.ts adds the column (schema-story.ts:309). But emotion_impact/emotionImpact still has ZERO writers and readers in src (only generated files + insert-helpers.ts:3639), so emotion-to-memory persistence still does not happen; the ticket's own wire-or-drop decision (wire into src/memory/ + context-window.ts, or drop) is still open.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems

@@ -3,7 +3,8 @@
 
 # BUG: Chat minors: variant PUT never persists, context holes, fork txn, purge FK
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 6f5e8fb): Items 1 and 3 fixed: variant PUT demoted to a stateless GET (src/routes/messages/read.ts:245-249) and fork now flips active_branch_id inside the transaction (src/chat/service/branch-fork.ts:132-136; caller branches.ts:97-101). Items 2 and 4 remain: context-window.ts:87-117 still retains non-contiguous history after a non-fit message (context holes); purge path src/routes/messages/archiving.ts:122-125 deletes on chat_id+archived_at with no fork-point/structural guard.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-chat-context-optimization

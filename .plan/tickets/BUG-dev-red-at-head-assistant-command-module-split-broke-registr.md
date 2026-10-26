@@ -4,6 +4,7 @@
 # BUG: Dev red at HEAD: assistant command-module split broke registration and e2e import; uncommitted repair must land via worktree
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 2c64956): src/assistant/commands/characters-update.ts:72 owns parseCharacterUpdates and registers char-update (:122); characters-access.ts:16-23 re-imports it to preserve registration order; covered by command-conformance.test.ts:16-35 against the frozen egui command vectors (no E2E_SAFEGUARD dependency).
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

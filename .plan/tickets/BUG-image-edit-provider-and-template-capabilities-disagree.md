@@ -4,6 +4,7 @@
 # BUG: Image-edit provider and template capabilities disagree
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: all six items fixed: inpaint.ts:19 comfyui-only; sd-server capabilities read autoStart.sdCpp (index.ts:107-118); img2img emotion modifier ops.ts:127-138; LoadImage filenames resolved pre-build (comfyui-image-upload.ts:35-36, comfyui-provider.ts:166-180); lora.ts:28 warns; mimeType lowercased+jpg->jpeg (comfyui-provider.ts:196-204). Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-image-edit-provider-and-template-capabilities-disagree.md
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-comfyui-plugin

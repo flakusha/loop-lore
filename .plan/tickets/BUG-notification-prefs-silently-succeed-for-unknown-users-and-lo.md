@@ -4,6 +4,7 @@
 # BUG: Notification prefs silently succeed for unknown users and lose concurrent updates
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: transaction + user-existence + row-count checks: src/notifications/service/prefs.ts:72,:79-81,:99-107. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-notification-prefs-silently-succeed-for-unknown-users-and-lo.md
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-notifications

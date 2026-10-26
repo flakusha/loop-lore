@@ -4,6 +4,7 @@
 # BUG: authenticate last_seen_at update swallows errors silently
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 869eda3): src/middleware/auth/authenticate.ts:117-118 catch now warns via getLog()?.warn('Failed to update last_seen_at', ...) — no longer a silent `/* non-critical */` swallow.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logging

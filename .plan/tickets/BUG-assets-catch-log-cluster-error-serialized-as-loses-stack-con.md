@@ -3,7 +3,8 @@
 
 # BUG: assets catch-log cluster: Error serialized as {} loses stack; controller builds child logger per statement
 
-**Status:** Done
+**Status:** In Progress
+**Status Note:** [2026-10-26 sweep-A verify] NOT-FIXED (issue 2e001b6): Verified: serve-raw.ts:86 (and :157) still pass the Error inside the message object; src/logger/logger.ts:132-133 populates entry.error only from the 2nd argument, so the nested Error serializes as {} and stack/message are lost. Same shape at signed-url.ts:191, shares.ts:74, thumbnail.ts:63; controller.ts:517-519,:560-562 still builds a child logger per statement instead of a memoised getChildLogger. Ticket e31af47 added logging but not this ticket's error-as-2nd-arg contract.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-logging

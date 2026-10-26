@@ -4,6 +4,7 @@
 # BUG: Asset silent catch blocks swallow failures with no log
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue e31af47): Every cited site logs before its sentinel: serve-raw.ts:86,157; controller.ts:517-519; signed-url.ts:191; service/shares.ts:74; service/thumbnail.ts:63.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-logging

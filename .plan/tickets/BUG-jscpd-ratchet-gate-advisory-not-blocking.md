@@ -4,6 +4,7 @@
 # BUG: jscpd-ratchet-gate-advisory-not-blocking
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: docs reconciled to advisory: gate-table.mjs:249-251 ADVISORY_GATES rationale; gates.mjs:252-258; AGENTS.md:312-319. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-jscpd-ratchet-gate-advisory-not-blocking.md
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-continuous-improvement

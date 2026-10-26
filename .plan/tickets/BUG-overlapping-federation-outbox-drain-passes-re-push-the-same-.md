@@ -4,6 +4,7 @@
 # BUG: Overlapping federation outbox drain passes re-push the same rows
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: drainInFlight guard: src/federation/outbox.ts:144-154 (comment cites the >=250s overlap window). Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-overlapping-federation-outbox-drain-passes-re-push-the-same-.md
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-federation-offload-quotas

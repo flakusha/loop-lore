@@ -4,6 +4,7 @@
 # BUG: Quest and story-state routes discard notification rejections with an empty catch
 
 **Status:** Done
+**Status Note:** Verified 2026-10-26: all four .catch(() => {}) sites now log via getChildLogger — src/routes/quests/handlers.ts:186-188,237-239; src/routes/story-states/handlers.ts:80-82,169-171.
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-quests-encounters

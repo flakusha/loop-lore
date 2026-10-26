@@ -4,6 +4,7 @@
 # BUG: Frontend navigation builds URLs without encodeURIComponent
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: encodeURIComponent present: src/frontend/pages/characters.ts:176,243-247 (id + format, undefined-format guard) and src/frontend/pages/worlds.ts:59. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-frontend-navigation-builds-urls-without-encodeuricomponent.md
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-frontend-routing

@@ -4,6 +4,7 @@
 # BUG: --gates=<csv> equals-form is silently ignored; only the space-separated form is parsed
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: parseGateFlag honours both spellings: scripts/check/parallel/context.mjs:53-68 (equals form :54,:57-58; empty --gates= exits 2 :63-66); test scripts/check-parallel.gates.test.mjs:460-464. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-gates-csv-equals-form-is-silently-ignored-only-the-space-sep.md
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline

@@ -4,6 +4,7 @@
 # BUG: admin providers list-vs-auth conflict needs contract decision
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 1568edc): Contract landed admin-only: src/routes/admin/providers.ts:28-30 gates GET /api/providers behind requirePermissionUserId(ctx,'admin.system'); admin surface has anonymous-401/non-admin-403 coverage (providers.test.ts:135-151,183-199,212-237). Residual doc drift (non-blocking): stale 'Public providers list (no auth)' comment providers.ts:27, 'No authentication required' description :48, and mislabeled vacuous tests providers.test.ts:86,109 which pass only because makeApp derives admin.
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-auth-access

@@ -4,6 +4,7 @@
 # BUG: Content-hash naming for generated assets
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue f7527f0): src/assets/service/persist-generated.ts:63-65: filename stem is the SHA-256 of the bytes and populates content_hash (byte-identical re-run collapses to duplicate:true); test-backed at persist-generated.test.ts:133-135.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-comfyui-first-class-citizen

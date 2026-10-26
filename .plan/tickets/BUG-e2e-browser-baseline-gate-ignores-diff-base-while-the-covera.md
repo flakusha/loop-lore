@@ -4,6 +4,7 @@
 # BUG: e2e - browser (baseline) gate ignores --diff-base while the coverage gate honors it
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue 5c4bf12): scripts/check/parallel/gates.mjs:224-230 e2eBrowserCommand honors DIFF_BASE (full run vs NOOP_OK when no relevant changes) and includes the conservative spec-only-diff narrowing guard the ticket required.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-cicd-pipeline

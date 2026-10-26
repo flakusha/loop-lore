@@ -4,6 +4,7 @@
 # BUG: Admin system-config DELETE returns 400 for keys the test expects to delete as 204
 
 **Status:** Done
+**Status Note:** [2026-10-26 sweep-A verify] FIXED (issue d69dc94): Route validates the key against stored rows, not a static allowlist: system-config.ts:212-215 uses getAllConfig = SELECT from system_config (src/admin/config.ts:47-48), and the test seeds delete.me first (system-config.test.ts:236). Re-ran the file on dev: bun test src/routes/admin/system-config.test.ts = 25 pass / 0 fail.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-admin

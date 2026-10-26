@@ -4,6 +4,7 @@
 # BUG: giwt sync --fix needs two passes to converge when an index entry points at a closed issue with an open same-extid duplicate
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: META pinned node_modules/giwt: relink closes the open duplicate in the same pass (sync-fix-index.ts:268-290; sync-fix-status.ts:92-96); pinned exit-0 single-pass test sync-index-run.test.ts:813-842. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent.md
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement

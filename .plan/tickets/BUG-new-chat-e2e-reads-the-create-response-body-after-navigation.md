@@ -4,6 +4,7 @@
 # BUG: New-chat e2e reads the create response body after navigation has already committed
 
 **Status:** Done
+**Status Note:** 2026-10-26 sweep-B code verify: chat id matched from DB row on unique name, not the doomed body: new-chat-advanced-fields.browser.ts:142-160. Findings: .tmp/reviews/2026-10-26-sweep-B/BUG-new-chat-e2e-reads-the-create-response-body-after-navigation.md
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing
