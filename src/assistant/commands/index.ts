@@ -25,6 +25,7 @@ import "./impersonate";
 import "./improve";
 import "./interaction";
 import "./items";
+import "./items-instance";
 import "./items-update";
 import "./link";
 import "./locations";

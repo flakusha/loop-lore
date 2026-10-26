@@ -30,6 +30,9 @@ import { getCommand, } from "./registry";
 // Named import doubles as the side-effect import: the handlers register
 // themselves on module load.
 import { parseItemUpdates, } from "./items";
+// The instance mutations live in their own module; import it for its
+// registrations too.
+import "./items-instance";
 
 function mustGet(name: string,): CommandHandler {
   const handler = getCommand(name,);
