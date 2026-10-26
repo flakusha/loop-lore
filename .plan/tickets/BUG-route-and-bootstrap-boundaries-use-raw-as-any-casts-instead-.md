@@ -3,8 +3,17 @@
 
 # BUG: Route and bootstrap boundaries use raw 'as any' casts instead of typed context or schema validation
 
-**Status:** In Progress
-**Status Note:** [2026-10-26 final pass] REOPENED — closed while named sites were still cast-escaped. PARTIAL progress:
+**Status:** Done
+**Status Note:** [2026-10-26 final pass] RESOLVED — every named site is now cast-free (26386ccfb):
+- FIXED `src/chat/service/crud/get.ts:55-56` — `getChat` returns `Selectable<Chats>` / `Selectable<ChatParticipants>` rows; both `as unknown as Record<string, unknown>` casts are gone.
+- FIXED `src/elysia-app.ts:175` — `applyCsrfPlugin(app, ...)` type-checks directly; the `Parameters<typeof applyCsrfPlugin>[0]` cast is gone.
+- FIXED `src/elysia-app.ts:236,238` — `registerPlugins` now takes a structural `PluginHost` (`{ use }`), so `app as unknown as Elysia<any>` is gone; `app.use(v1Routes(...))` is called directly.
+- FIXED `src/elysia-app.ts:325` — `createApp` returns the inferred Elysia instance; the `as unknown as Elysia` gateway cast is gone. (Elysia's duplicated dist/index-vs-dist/types declarations make annotating `Elysia` here structurally impossible — the inferred return is the honest type.)
+- FIXED `src/config/load/domain.ts:35` — `deepMerge` is now generic over `object` with ONE documented record-view boundary inside `src/config/load/parse.ts`; the five `config as unknown as Record<string, unknown> … as unknown as Config` trust transfers (domain.ts:35 + load.ts:46,61,80,115) collapse to typed `deepMerge(config, parsed,)` calls. `validateDomainConfig` still gates every merge.
+- FIXED avatars importer — the exported avatar row is a declared `ExportedAvatar` shape (`src/characters/shared/character-systems-utils.ts`), `CharacterSystemsExport["avatars"]["avatars"]` is `ExportedAvatar[]`, and the per-row `tags as any` / `as string` / `as boolean` / `as number` reads are gone; `mapAvatarForExport` produces the declared shape.
+Verified: `bunx tsc --noEmit` clean; 131 targeted tests green; eslint + dprint clean.
+
+Superseded [2026-10-26] partial-pass note (its REMAINING list is resolved above):
 - FIXED `src/assets/controller.ts` — the `(ctx as any).userId as string | null` cluster is gone (zero `as any` in the file; handlers use `requireUserId`).
 - FIXED `src/routes/entity-routes/create.ts` — ctx narrowed structurally (userId/userRole typeof checks) and the dynamic table name isolated to one documented `Kysely<Record<string, unknown>>` boundary.
 - FIXED `src/db/index.ts` — the three `(parameters as any[])` casts collapse into one named `asBindings()` helper converting Kysely's `readonly unknown[]` to bun's `SQLQueryBindings[]` at the adapter boundary.
