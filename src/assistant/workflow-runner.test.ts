@@ -121,6 +121,31 @@ describe("assemblePrompt + confirmAndDispatch", () => {
     expect(dispatch.payload,).toEqual({ model: "minimax-h3", prompt, },);
   });
 
+  test("substitutes values literally and every occurrence", () => {
+    // `${..}`-style replacement once interpolated `$&` from the value and
+    // substituted only the first placeholder of a template.
+    const TWICE: AssistantWorkflowConfig = {
+      id: "twice",
+      name: "Repeated placeholder",
+      steps: [{ id: "subject", name: "Subject", type: "text", formatTemplate: "A {value} then {value}", },],
+      dispatch: {
+        backend: "generation-video",
+        target: "POST /api/generation/video",
+        payloadTemplate: { model: "{prompt}/{prompt}", note: "cost: $& literal", },
+      },
+      approval: { type: "confirm", preview: true, },
+    };
+
+    const run = startWorkflow(TWICE,);
+    buildStep(TWICE, run, "subject", "$& 100",);
+    const prompt = assemblePrompt(TWICE, run,);
+    expect(prompt,).toBe("A $& 100 then $& 100",);
+
+    confirmRun(run,);
+    const dispatch = confirmAndDispatch(TWICE, run, prompt,);
+    expect(dispatch.payload,).toEqual({ model: `${prompt}/${prompt}`, note: "cost: $& literal", },);
+  });
+
   test("refuses dispatch with missing steps", () => {
     const run = startWorkflow(WORKFLOW,);
     buildStep(WORKFLOW, run, "subject", "neon alley",);

@@ -60,6 +60,13 @@ describe("Mention Parser", () => {
       expect(result[0]!.name,).toBe("Dark",);
     });
 
+    test("does not treat an email address as a mention", () => {
+      // `bob@example.com` used to resolve as a mention of `example`.
+      expect(parseMentions("write to bob@example.com",),).toEqual([],);
+      expect(parseMentions("@Luna mail bob@example.com",),).toHaveLength(1,);
+      expect(parseMentions("@Luna mail bob@example.com",)[0]!.name,).toBe("Luna",);
+    });
+
     test("does not match @ alone without a name", () => {
       const result = parseMentions("hello @ there",);
       expect(result,).toHaveLength(0,);

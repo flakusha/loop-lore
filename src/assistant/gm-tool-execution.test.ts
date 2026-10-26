@@ -20,7 +20,7 @@ import { dispatchCommand, } from "../routes/messages/command";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import type { CommandContext, } from "./commands/registry";
-import { registerCommand, } from "./commands/registry";
+import { getCommand, getCommandRequirement, registerCommand, } from "./commands/registry";
 import type { GmToolDetection, } from "./gm-tool-detection";
 import { executeGmToolRequest, isGmModeChat, } from "./gm-tool-execution";
 
@@ -234,23 +234,84 @@ describe("executeGmToolRequest", () => {
 
     // Override the check_stats mapping's handler to capture the context the
     // GM path builds (registerCommand replaces the registration in place).
+    // The override replaces the shipped handler process-wide, so restore it in
+    // `finally` or sibling test files (stats-coverage) see the stub instead.
     let seen: CommandContext["currentCharacter"];
-    registerCommand("stats", async (_args, ctx,) => {
-      seen = ctx.currentCharacter;
-      return { handled: true, systemMessage: "stats-ok", };
-    }, { requiredRole: "member", },);
+    const original = getCommand("stats",);
+    const originalRequirement = getCommandRequirement("stats",);
+    try {
+      registerCommand("stats", async (_args, ctx,) => {
+        seen = ctx.currentCharacter;
+        return { handled: true, systemMessage: "stats-ok", };
+      }, { requiredRole: "member", },);
 
+      const outcome = await executeGmToolRequest({
+        database: db,
+        config,
+        actorId: userId,
+        chatId,
+        content: "show my stats",
+        detect: async () => detection("check_stats", 0.9,),
+      },);
+
+      expect(outcome.handled,).toBe(true,);
+      expect(seen,).toEqual({ id: charId, name: "Iria", },);
+      expect(await systemMessageCount(db, chatId,),).toBe(1,);
+    } finally {
+      if (original) { registerCommand("stats", original, { requiredRole: originalRequirement, },); }
+    }
+  });
+
+  it("skips a non-user actor: the actorId-as-userId invariant is enforced", async () => {
+    const { db, chatId, userId, } = await setupChat(true,);
+    // A character actor is not a principal, so BYO apiKey resolution keyed by
+    // its id would be wrong — the guard must fail closed before detection.
+    const npcId = await insertActors(db, "Barkeep", { actor_type: "character", owner_id: userId, },);
+    let detectCalls = 0;
     const outcome = await executeGmToolRequest({
       database: db,
       config,
-      actorId: userId,
+      actorId: npcId,
       chatId,
-      content: "show my stats",
-      detect: async () => detection("check_stats", 0.9,),
+      content: "roll a d20",
+      detect: async () => {
+        detectCalls += 1;
+        return detection("roll_dice", 0.9, { dice: "d20", },);
+      },
     },);
 
-    expect(outcome.handled,).toBe(true,);
-    expect(seen,).toEqual({ id: charId, name: "Iria", },);
-    expect(await systemMessageCount(db, chatId,),).toBe(1,);
+    expect(outcome.handled,).toBe(false,);
+    expect(detectCalls,).toBe(0,);
+    expect(await systemMessageCount(db, chatId,),).toBe(0,);
+  });
+
+  it("orders params by the tool's declared paramOrder, not JSON key order", async () => {
+    const { db, chatId, userId, } = await setupChat(true,);
+    // Capture the args the GM path builds, then restore the real registration
+    // so a sibling test file in the same process keeps the shipped handler.
+    let seenArgs: string[] = [];
+    const original = getCommand("roll",);
+    const originalRequirement = getCommandRequirement("roll",);
+    try {
+      registerCommand("roll", async (args,) => {
+        seenArgs = args;
+        return { handled: true, systemMessage: "roll-ok", };
+      }, { requiredRole: originalRequirement, },);
+
+      const outcome = await executeGmToolRequest({
+        database: db,
+        config,
+        actorId: userId,
+        chatId,
+        content: "roll 2d6 plus 3",
+        // Reversed key order vs `paramOrder: ["dice", "modifier"]`.
+        detect: async () => detection("roll_dice", 0.9, { modifier: "+3", dice: "2d6", },),
+      },);
+
+      expect(outcome.handled,).toBe(true,);
+      expect(seenArgs,).toEqual(["2d6", "+3",],);
+    } finally {
+      if (original) { registerCommand("roll", original, { requiredRole: originalRequirement, },); }
+    }
   });
 });

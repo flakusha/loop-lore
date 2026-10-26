@@ -42,6 +42,25 @@ describe("normalizeCcV3", () => {
     expect(result.nickname,).toBe("Testy",);
   });
 
+  it("maps creation_date and modification_date into the canonical card", () => {
+    // Dropping these made every export stamp `Date.now()`, losing the author's
+    // original card dates permanently.
+    const result = normalizeCcV3({
+      name: "dated",
+      creation_date: 1_600_000_000_000,
+      modification_date: 1_700_000_000_000,
+    },);
+
+    expect(result.creation_date,).toBe(1_600_000_000_000,);
+    expect(result.modification_date,).toBe(1_700_000_000_000,);
+  });
+
+  it("leaves timestamps undefined when the card carries none", () => {
+    const result = normalizeCcV3({ name: "undated", },);
+    expect(result.creation_date,).toBeUndefined();
+    expect(result.modification_date,).toBeUndefined();
+  });
+
   it("extracts data from envelope wrapper", () => {
     const input = {
       spec: "chara_card_v3",

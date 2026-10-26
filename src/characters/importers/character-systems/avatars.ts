@@ -12,10 +12,15 @@ import type { CharacterSystemsImportResult, } from "./types";
 
 /**
  * Import avatars + avatar config into the character systems importer result.
+ *
+ * `worldConfigs` entries are keyed by world; an entry whose `worldId` matches
+ * the import target is upserted, and a mismatched one is reported rather than
+ * written into the wrong world.
  * @param db
  * @param actorId
  * @param data
  * @param result
+ * @param worldId - Target world, when the import is world-scoped
  * @returns {Promise<void>}
  */
 export async function importAvatars(
@@ -23,6 +28,7 @@ export async function importAvatars(
   actorId: string,
   data: CharacterSystemsExport["avatars"],
   result: CharacterSystemsImportResult,
+  worldId?: string,
 ): Promise<void> {
   if (!data) { return; }
   const avatarService = new AvatarService(db,);
@@ -53,6 +59,44 @@ export async function importAvatars(
       },);
     } catch (error: unknown) {
       result.errors.push(`Failed to import avatar config: ${errMsg(error,)}`,);
+    }
+  }
+
+  await importAvatarWorldConfigs(avatarService, actorId, data.worldConfigs ?? [], result, worldId,);
+}
+
+/**
+ * Import per-world avatar overrides, refusing a bundle built for another world.
+ * @param avatarService - Avatar service bound to the target database
+ * @param actorId - Target character actor id
+ * @param configs - Exported `worldConfigs` entries
+ * @param result - Mutable import result (`errors`)
+ * @param worldId - Target world, when the import is world-scoped
+ */
+async function importAvatarWorldConfigs(
+  avatarService: AvatarService,
+  actorId: string,
+  configs: Record<string, unknown>[],
+  result: CharacterSystemsImportResult,
+  worldId?: string,
+): Promise<void> {
+  for (const config of configs) {
+    const sourceWorldId = config.worldId as string | undefined;
+    if (!worldId || (sourceWorldId && sourceWorldId !== worldId)) {
+      result.errors.push(
+        `Skipped avatar world config for world "${sourceWorldId ?? "unknown"}" (import target: ${worldId ?? "none"}).`,
+      );
+
+      continue;
+    }
+
+    try {
+      await avatarService.upsertWorldAvatarConfig(actorId, worldId, {
+        selectionRuleOverride: config.selectionRule as any,
+        weightsOverride: config.weights as any,
+      },);
+    } catch (error: unknown) {
+      result.errors.push(`Failed to import avatar world config: ${errMsg(error,)}`,);
     }
   }
 }

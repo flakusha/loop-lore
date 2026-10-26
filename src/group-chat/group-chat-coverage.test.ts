@@ -37,12 +37,18 @@ import { checkPaused, fetchImpersonatedActorIds, } from "./turn-selector";
 createLogger({ level: "error", },);
 
 describe("mention parsing boundaries", () => {
-  test("parseMentions records exact offsets for overlapping adjacent tokens", () => {
-    const res = parseMentions("@Luna@Max @Kai",);
+  test("parseMentions records exact offsets for adjacent tokens", () => {
+    const res = parseMentions("@Luna @Max @Kai",);
     expect(res.length,).toBe(3,);
     expect(res[0],).toMatchObject({ raw: "@Luna", name: "Luna", start: 0, end: 5, },);
-    expect(res[1],).toMatchObject({ raw: "@Max", name: "Max", start: 5, end: 9, },);
-    expect(res[2],).toMatchObject({ raw: "@Kai", name: "Kai", start: 10, end: 14, },);
+    expect(res[1],).toMatchObject({ raw: "@Max", name: "Max", start: 6, end: 10, },);
+    expect(res[2],).toMatchObject({ raw: "@Kai", name: "Kai", start: 11, end: 15, },);
+  });
+
+  test("a word character directly before the @ suppresses the token (email guard)", () => {
+    // The boundary lookbehind makes `@Luna@Max` a single token: the second `@`
+    // continues a word, exactly like an email address.
+    expect(parseMentions("@Luna@Max",),).toHaveLength(1,);
   });
 
   test("parseMentions captures trailing digits, underscores and hyphens", () => {
@@ -50,13 +56,11 @@ describe("mention parsing boundaries", () => {
     expect(res[0]?.name,).toBe("User_2-x",);
   });
 
-  test("the ASCII token regex does match the @token inside emails (known limitation)", () => {
-    // Ticket TASK-group-chat-minors flags this: the address-part token pings
-    // a participant named "example". Current behavior is asserted verbatim;
-    // tightening the regex is that ticket's fix, not this coverage's job.
-    expect(parseMentions("email me at bob@example.com",),).toEqual([
-      { raw: "@example", name: "example", start: 15, end: 23, },
-    ],);
+  test("the token regex does not match the @token inside emails", () => {
+    // BUG-assistant-and-group-chat-correctness-defects: the address-part token
+    // used to ping a participant named "example". The boundary lookbehind in
+    // MENTION_TOKEN_PATTERN closes it without breaking `@Luna`.
+    expect(parseMentions("email me at bob@example.com",),).toEqual([],);
   });
 
   test("parseMentions is ASCII-only — unicode names do not produce partial tokens", () => {
@@ -105,6 +109,15 @@ describe("checkPaused (story_state parsing)", () => {
     expect(checkPaused("not json at all",),).toBe(false,);
     expect(checkPaused('{"isPaused":false}',),).toBe(false,);
     expect(checkPaused('{"other":1}',),).toBe(false,);
+  });
+
+  test("false (not a TypeError) for JSON null and scalar payloads", () => {
+    // `safeJsonParse` reports `{ ok: true, value: null }` for these, so the
+    // field read needs a null guard.
+    expect(() => checkPaused("null",)).not.toThrow();
+    expect(checkPaused("null",),).toBe(false,);
+    expect(checkPaused("42",),).toBe(false,);
+    expect(checkPaused('"paused"',),).toBe(false,);
   });
 
   test("true only when isPaused is exactly true", () => {

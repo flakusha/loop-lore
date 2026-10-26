@@ -10,6 +10,7 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
+import JSZip from "jszip";
 import type { Kysely, } from "kysely";
 import { mkdir, rm, writeFile, } from "node:fs/promises";
 import { join, } from "node:path";
@@ -243,6 +244,38 @@ describe("characters exportRoutes coverage", () => {
     expect(res.headers.get("content-disposition",),).toContain(".charx",);
     const bytes = new Uint8Array(await res.arrayBuffer(),);
     expect([...bytes.slice(0, 2,),],).toEqual([80, 75,],);
+  });
+
+  test("charx card.json carries the actor lorebook", async () => {
+    await db.insertInto("actor_lore_entries",).values({
+      id: uid(),
+      actor_id: actorId,
+      name: "Kingdom",
+      content: "A kingdom of glass towers.",
+      keys: JSON.stringify(["kingdom",],),
+      enabled: "enabled",
+      position: "before_char",
+      insertion_order: 1,
+      priority: 5,
+      sort_order: 0,
+    },).execute();
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${actorId}/export?format=charx`,),
+    );
+
+    expect(res.status,).toBe(200,);
+    const zip = await JSZip.loadAsync(await res.arrayBuffer(),);
+    const cardFile = zip.file("card.json",);
+    expect(cardFile,).not.toBeNull();
+    const card = JSON.parse(await cardFile!.async("text",),) as {
+      data: { character_book?: { entries?: { name?: string }[] } };
+    };
+
+    // The charx payload is derived from the CCv3 exporter; a hand-copied data
+    // object used to drop `character_book` entirely.
+    expect(card.data.character_book?.entries,).toHaveLength(1,);
+    expect(card.data.character_book?.entries?.[0]?.name,).toBe("Kingdom",);
   });
 
   test("malformed alternate_greetings falls back instead of failing", async () => {

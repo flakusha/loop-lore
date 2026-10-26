@@ -52,6 +52,13 @@ const RESPONSE_MAP: Record<string, AssistantResponse[]> = {
   ],
 };
 
+// Longest keyword first: the bare `"help"` keyword also matches the input
+// `"/help"` (the leading `/` is a `\W` boundary), so a map-order scan returns
+// the generic help copy and the `/help` menu entry is unreachable. Matching
+// longest-first routes the command to its own entry.
+const ORDERED_KEYWORDS: [string, AssistantResponse[],][] = Object.entries(RESPONSE_MAP,)
+  .sort((a, b,) => b[0].length - a[0].length);
+
 /**
  * Generate an assistant response based on user input.
  * Returns null if no match found (no response needed).
@@ -63,7 +70,7 @@ export function generateResponse(params: GenerateResponseParams,): AssistantResp
   const lower = userInput.toLowerCase().trim();
 
   // Check exact matches first (word boundary or start of string)
-  for (const [keyword, responses,] of Object.entries(RESPONSE_MAP,)) {
+  for (const [keyword, responses,] of ORDERED_KEYWORDS) {
     // Use word boundary regex to avoid false positives (e.g., "helpme" matching "help")
     const escaped = keyword.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`,);
     const pattern = new RegExp(String.raw`(?:^|\W)${escaped}\b`, "i",);

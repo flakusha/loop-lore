@@ -140,16 +140,19 @@ export const loreSection: SectionBuilder = {
         .where("id", "=", entry.id,)
         .executeTakeFirst();
 
-      // If no rows affected, try world_lore_entries
+      // If no rows affected, try world_lore_entries. Awaited (not floating) so
+      // the write is sequenced with the actor-side update above and cannot
+      // outlive prompt assembly.
       if (Number(actorResult.numUpdatedRows,) === 0) {
-        void ctx.db
-          .updateTable("world_lore_entries",)
-          .set({ last_activated: now, last_verified: now, },)
-          .where("id", "=", entry.id,)
-          .execute()
-          .catch(() => {
-            // Ignore errors - cooldown / verification tracking is non-critical
-          },);
+        try {
+          await ctx.db
+            .updateTable("world_lore_entries",)
+            .set({ last_activated: now, last_verified: now, },)
+            .where("id", "=", entry.id,)
+            .execute();
+        } catch {
+          // Ignore errors - cooldown / verification tracking is non-critical
+        }
       }
     }
 

@@ -14,6 +14,22 @@ import type {
   WorkflowStepConfig,
 } from "../config/sections/templates";
 
+/**
+ * Substitute every occurrence of a `{token}` placeholder with literal text.
+ *
+ * A plain string replacement would interpolate `$&`, `` $` ``, `$'` and `$$`
+ * from the substituted *value*, and `String.replace` with a string pattern is
+ * single-shot — a template carrying the placeholder twice kept the second one
+ * literal. The function replacer and `replaceAll` close both holes.
+ * @param template - Format string containing zero or more placeholders
+ * @param token - Placeholder to substitute (e.g. `{value}`)
+ * @param value - Replacement text, inserted literally
+ * @returns Template with every placeholder replaced
+ */
+function substituteToken(template: string, token: string, value: string,): string {
+  return template.replaceAll(token, () => value,);
+}
+
 /** Mutable progress of one workflow run */
 export interface WorkflowRun {
   workflowId: string;
@@ -104,7 +120,7 @@ export function assemblePrompt(workflow: AssistantWorkflowConfig, run: WorkflowR
     const value = run.values[step.id];
     if (value === undefined) { continue; }
     const rendered = Array.isArray(value,) ? value.join(", ",) : value;
-    parts.push(step.formatTemplate.replace("{value}", rendered,),);
+    parts.push(substituteToken(step.formatTemplate, "{value}", rendered,),);
   }
 
   return parts.join("\n",);
@@ -140,7 +156,7 @@ export function confirmAndDispatch(
   const payload: Record<string, unknown> = {};
   for (const [key, template,] of Object.entries(workflow.dispatch.payloadTemplate,)) {
     payload[key] = typeof template === "string"
-      ? template.replace("{prompt}", prompt,)
+      ? substituteToken(template, "{prompt}", prompt,)
       : template;
   }
 

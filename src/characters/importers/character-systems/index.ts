@@ -49,7 +49,7 @@ export async function importCharacterSystems(
   await importTraits(db, actorId, data.traits, result, worldId,);
   await importMood(db, actorId, data.mood, result, worldId,);
   await importRelationships(db, actorId, data.relationships, result, worldId,);
-  await importAvatars(db, actorId, data.avatars, result,);
+  await importAvatars(db, actorId, data.avatars, result, worldId,);
   await importLicensing(db, actorId, data.licensing, result,);
   await importAvailability(db, actorId, data.availability, result,);
   await importWorldSetup(db, actorId, data.worldSetup, result, worldId,);
