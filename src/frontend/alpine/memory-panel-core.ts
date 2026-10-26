@@ -40,12 +40,12 @@ export const memoryPanelCore: Partial<ChatState> & ThisType<ChatState> = {
 
       const res = await apiFetch(`/api/v1/actors/${actorId}/memories`,);
       if (!res.ok) { return; }
-      const data = await res.json() as { items?: MemoryApiRow[] };
+      const data = await res.json() as { data?: MemoryApiRow[] };
 
       const characterMemories: MemoryEntry[] = [];
       const assistantMemories: MemoryEntry[] = [];
       const worldMemories: MemoryEntry[] = [];
-      const items = data.items ?? [];
+      const items = data.data ?? [];
       for (const m of items) {
         const entry = toMemoryEntry(m, "character",);
         if (entry.scope === "assistant") {

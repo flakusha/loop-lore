@@ -41,7 +41,13 @@ export const chatBranchMerge: Partial<ChatMergeState> & ThisType<ChatState> = {
    */
   async openBranchMerge(sources?: MergeSourceTip[],) {
     const store = uiStore();
-    if (store) { store.mergeModalOpen = true; }
+    if (store) {
+      // Seed sources BEFORE flipping the flag — the wizard modal's open
+      // watcher resets and then reads store.mergeSources (BUG-1476e6d).
+      store.mergeSources = sources ?? [];
+      store.mergeModalOpen = true;
+    }
+
     this.mergeStep = "sources";
     this.mergeId = null;
     this.mergeSources = sources ?? [];
@@ -61,7 +67,11 @@ export const chatBranchMerge: Partial<ChatMergeState> & ThisType<ChatState> = {
    */
   closeBranchMerge() {
     const store = uiStore();
-    if (store) { store.mergeModalOpen = false; }
+    if (store) {
+      store.mergeModalOpen = false;
+      store.mergeSources = [];
+    }
+
     this.mergeStep = "sources";
     this.mergeId = null;
     this.mergeSources = [];

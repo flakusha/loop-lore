@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
 import { ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
+import { walkMessagePath, } from "./branch-helpers";
 import type {
   ListMessagesParams,
   ServiceError,
@@ -77,6 +78,14 @@ export async function listMessages(
   const pageSize = params.pageSize ?? 20;
   const offset = (page - 1) * pageSize;
 
+  // BUG-324a2c9: with a conversation branch active (and no pinned parentId),
+  // the default list is the ACTIVE BRANCH's root-to-tip path — not every row
+  // in the chat — so switching branches actually swaps the displayed chain.
+  if (params.parentId === undefined) {
+    const branchList = await listActiveBranchPage(database, params.chatId, page, pageSize,);
+    if (branchList) { return branchList; }
+  }
+
   let countQuery = database
     .selectFrom("messages",)
     .select(database.fn.countAll<number>().as("total",),)
@@ -106,9 +115,80 @@ export async function listMessages(
     .offset(offset,)
     .execute();
 
+  const enriched = await withVariantInfo(database, params.chatId, messages,);
+
+  return { data: enriched as unknown as Record<string, unknown>[], total, };
+}
+
+/**
+ * Bug 324a2c9: page the ACTIVE branch's root-to-tip message path instead of
+ * every row in the chat. Returns null when the chat has no resolvable active
+ * branch, so unbranched chats keep the flat created_at listing.
+ * @param database
+ * @param chatId
+ * @param page
+ * @param pageSize
+ */
+async function listActiveBranchPage(
+  database: Kysely<DB>,
+  chatId: string,
+  page: number,
+  pageSize: number,
+): Promise<{ data: Record<string, unknown>[]; total: number } | null> {
+  const chat = await database
+    .selectFrom("chats",)
+    .select(["active_branch_id",],)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+
+  if (!chat?.active_branch_id) { return null; }
+
+  const branch = await database
+    .selectFrom("chat_branches",)
+    .select(["parent_message_id",],)
+    .where("id", "=", chat.active_branch_id,)
+    .where("chat_id", "=", chatId,)
+    .executeTakeFirst();
+
+  if (!branch) { return null; }
+
+  const pathIds = await walkMessagePath(database, chatId, branch.parent_message_id,);
+  if (pathIds.length === 0) { return { data: [], total: 0, }; }
+
+  // Visibility filter keeps the count contract (invisible rows are hidden).
+  const visible = await database
+    .selectFrom("messages",)
+    .selectAll()
+    .where("id", "in", pathIds,)
+    .where("chat_id", "=", chatId,)
+    .where("visibility", "=", "visible",)
+    .execute();
+
+  const byId = new Map(visible.map((row,) => [row.id, row,]),);
+  const ordered = pathIds
+    .map((id,) => byId.get(id,))
+    .filter((row,): row is (typeof visible)[number] => row !== undefined);
+
+  const offset = (page - 1) * pageSize;
+  const messages = ordered.slice(offset, offset + pageSize,);
+  const enriched = await withVariantInfo(database, chatId, messages,);
+  return { data: enriched as unknown as Record<string, unknown>[], total: ordered.length, };
+}
+
+/**
+ * Attach swipe variant counts/indexes to the page rows.
+ * @param database
+ * @param chatId
+ * @param messages
+ */
+async function withVariantInfo(
+  database: Kysely<DB>,
+  chatId: string,
+  messages: Record<string, unknown>[],
+): Promise<Record<string, unknown>[]> {
   // Compute variant counts/indexes
   const parentIdSet = new Set<string>();
-  for (const m of messages) { if (m.parent_id) { parentIdSet.add(m.parent_id,); } }
+  for (const m of messages) { if (m.parent_id) { parentIdSet.add(m.parent_id as string,); } }
   const parentIds = [...parentIdSet,];
   const variantCounts = new Map<string, number>();
   const variantIndexes = new Map<string, number>();
@@ -118,7 +198,7 @@ export async function listMessages(
       .selectFrom("messages",)
       .select(["id", "parent_id", "swipe_index", "created_at",],)
       .where("parent_id", "in", parentIds,)
-      .where("chat_id", "=", params.chatId,)
+      .where("chat_id", "=", chatId,)
       .where("visibility", "=", "visible",)
       .orderBy("swipe_index", "asc",)
       .orderBy("created_at", "asc",)
@@ -137,13 +217,11 @@ export async function listMessages(
     }
   }
 
-  const enriched = Array.from(messages, (m,) => ({
+  return Array.from(messages, (m,) => ({
     ...m,
-    variantIndex: m.parent_id ? (variantIndexes.get(m.id,) ?? 0) : undefined,
-    totalVariants: m.parent_id ? (variantCounts.get(m.parent_id,) ?? 1) : undefined,
+    variantIndex: m.parent_id ? (variantIndexes.get(m.id as string,) ?? 0) : undefined,
+    totalVariants: m.parent_id ? (variantCounts.get(m.parent_id as string,) ?? 1) : undefined,
   }),);
-
-  return { data: enriched as unknown as Record<string, unknown>[], total, };
 }
 
 /**

@@ -22,7 +22,7 @@
 import { ensureActorKey, getSmk, } from "@/crypto";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
-import { trackPageErrors, waitForAlpineState, } from "../../helpers/htmx-alpine";
+import { EXPECTED_404_NOISE_ALLOWLIST, trackPageErrors, waitForAlpineState, } from "../../helpers/htmx-alpine";
 import { SEED, seedAll, } from "../../helpers/seed";
 
 const VALID_HEX_KEY = "b".repeat(64,); // 32 bytes = 256-bit SMK
@@ -63,7 +63,10 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
   test("selecting a chat loads the chat key into window.__chatKey", async () => {
     const page = await ctx.openPage();
     // /api/v1/telemetry/event is 403 for solo — benign infrastructure noise.
-    const errors = trackPageErrors(page, { allowlist: [/Failed to load resource.*403/,], },);
+    const errors = trackPageErrors(page, {
+      allowlist: [...EXPECTED_404_NOISE_ALLOWLIST, /Failed to load resource.*403/,],
+    },);
+
     try {
       await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 30_000, },);
@@ -107,7 +110,10 @@ describe("Chat compression-encryption-decryption flow (UI)", () => {
 
   test("sending an encrypted message decrypts to plaintext after the htmx swap", async () => {
     const page = await ctx.openPage();
-    const errors = trackPageErrors(page, { allowlist: [/Failed to load resource.*403/,], },);
+    const errors = trackPageErrors(page, {
+      allowlist: [...EXPECTED_404_NOISE_ALLOWLIST, /Failed to load resource.*403/,],
+    },);
+
     try {
       await page.goto(`${ctx.url}/views/chat`, { waitUntil: "domcontentloaded", timeout: 30_000, },);
       await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 30_000, },);

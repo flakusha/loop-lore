@@ -505,26 +505,28 @@ describeOrSkip("chatWorld._selectChatInner happy path", () => {
     await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).rejects.toThrow("group chat load failed",);
   });
 
-  test("skips group loads when not a group chat", async () => {
-    let groupCalls = 0;
+  test("loads participants but skips group-only loads when not a group chat (BUG-c3e407b)", async () => {
+    const calls: string[] = [];
     const ctx = makeSelectCtx({
       isGroupChat: false,
       loadParticipants: () => {
-        groupCalls++;
+        calls.push("participants",);
         return Promise.resolve();
       },
       loadTurnOrder: () => {
-        groupCalls++;
+        calls.push("turnOrder",);
         return Promise.resolve();
       },
       loadAvailableActors: () => {
-        groupCalls++;
+        calls.push("availableActors",);
         return Promise.resolve();
       },
     },);
 
     await chatWorld._selectChatInner!.call(ctx, "c1",);
-    expect(groupCalls,).toBe(0,);
+    // Direct chats still need participants — the memory panel resolves the
+    // character actor from them.
+    expect(calls,).toEqual(["participants",],);
   });
 },);
 

@@ -203,7 +203,14 @@ export const actorLicensing: ActorLicensingState = {
  * @returns the licensing panel state bound to the actor.
  */
 export function actorLicensingFactory(actorId: string,): ActorLicensingState {
-  const state = Object.create(actorLicensing,) as ActorLicensingState;
+  const raw = Object.create(actorLicensing,) as ActorLicensingState;
+  // BUG-93b85cd: wrap the state in Alpine's reactive proxy BEFORE setActorId
+  // fires the async loads. The old order built a raw Object.create'd object
+  // and started loading immediately, so loadLicensing/loadLicenseHistory
+  // continuations wrote license/licenseLoading onto the raw target — outside
+  // Alpine's reactive proxy — leaving the panel frozen on 'Loading licensing…'.
+  const alpine = (globalThis as { Alpine?: { reactive?: <T,>(value: T,) => T } }).Alpine;
+  const state = alpine?.reactive ? alpine.reactive(raw,) : raw;
   state._licActorId = null;
   state.license = null;
   state.licenseForm = { ...EMPTY_FORM, };

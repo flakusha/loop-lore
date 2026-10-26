@@ -4,7 +4,7 @@
 /**
  * Memory audit log route (FEAT-075).
  *
- *   GET /api/actors/:actorId/memories/audit
+ *   GET /api/v1/actors/:actorId/memories/audit
  *     — paginated, action-filterable audit log for the actor's memories.
  *
  * Cursor pagination (not offset) so deep pages stay O(index) instead of
@@ -38,7 +38,7 @@ const AUDIT_ACTIONS = [
  * @returns Elysia plugin serving the memory audit endpoint.
  */
 export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Elysia {
-  const { withIdPath, parentParam, } = entityPaths({
+  const { basePath, parentParam, } = entityPaths({
     parentPrefix: "actors",
     parentParam: "actorId",
     entityPath: "memories",
@@ -53,7 +53,7 @@ export function memoryAuditRoutes(opts: { database: Db }, prefix = "/api",): Ely
   } as never, prefix,);
 
   return new Elysia({ name: "memory-audit", },)
-    .get(`${withIdPath}/audit`, async (ctx,) => {
+    .get(`${basePath}/audit`, async (ctx,) => {
       const parentId = (ctx.params as Record<string, string | undefined>)[parentParam];
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }

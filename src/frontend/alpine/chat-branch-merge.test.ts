@@ -112,6 +112,46 @@ describeOrSkip("chatBranchMerge — wizard step transitions", () => {
     expect(ctx.mergeSources,).toEqual([],);
   });
 
+  // BUG-1476e6d: the wizard modal seeds its sources from the ui store when
+  // the open flag flips, so openBranchMerge must stage the sources there
+  // BEFORE opening (and close must clear them).
+  test("openBranchMerge stages sources in the ui store before opening", async () => {
+    const store: Record<string, unknown> = { mergeModalOpen: false, mergeSources: [] as unknown[], };
+    const realAlpine = (globalThis as Record<string, unknown>).Alpine;
+    (globalThis as Record<string, unknown>).Alpine = {
+      store: (name: string,) => (name === "ui" ? store : {}),
+    };
+
+    try {
+      const ctx = buildCtx();
+      await chatBranchMerge.openBranchMerge!.call(ctx as never, SOURCES,);
+      expect(store.mergeSources,).toEqual(SOURCES,);
+      expect(store.mergeModalOpen,).toBe(true,);
+    } finally {
+      (globalThis as Record<string, unknown>).Alpine = realAlpine;
+    }
+  });
+
+  test("closeBranchMerge clears the staged store sources", () => {
+    const store: Record<string, unknown> = {
+      mergeModalOpen: true,
+      mergeSources: [{ tipMessageId: "m1", branchId: null, },],
+    };
+
+    const realAlpine = (globalThis as Record<string, unknown>).Alpine;
+    (globalThis as Record<string, unknown>).Alpine = {
+      store: (name: string,) => (name === "ui" ? store : {}),
+    };
+
+    try {
+      chatBranchMerge.closeBranchMerge!.call(buildCtx() as never,);
+      expect(store.mergeSources,).toEqual([],);
+      expect(store.mergeModalOpen,).toBe(false,);
+    } finally {
+      (globalThis as Record<string, unknown>).Alpine = realAlpine;
+    }
+  });
+
   test("initiateMerge advances to preview step on success", async () => {
     const ctx = buildCtx({ mergeSources: SOURCES, },);
     handler = async () => Response.json({ data: { mergeId: "mg-1", }, },);
