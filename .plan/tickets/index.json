@@ -19914,7 +19914,7 @@
     "status": "done"
   },
   "FEAT-CLASSIFIER-MODEL-SUPPORT-COMPLEMENTARY-TO-AUX-PIPELINE-LAYA-": {
-    "epic": "",
+    "epic": "epic-classifier-template-packs",
     "extid": "FEAT-CLASSIFIER-MODEL-SUPPORT-COMPLEMENTARY-TO-AUX-PIPELINE-LAYA-",
     "git_issue": "e9e2e32",
     "hash": "e9e2e32",
@@ -43404,6 +43404,19 @@
     "tags": [],
     "title": "Living-World Between-Session Persistence",
     "type": "TASK"
+  },
+  "TASK-LLAMA-CPP-DECISION-MODEL-CLIENT-FOR-AUX-CLASSIFICATION": {
+    "hash": "868dd2c",
+    "git_issue": "868dd2c",
+    "extid": "TASK-LLAMA-CPP-DECISION-MODEL-CLIENT-FOR-AUX-CLASSIFICATION",
+    "type": "TASK",
+    "title": "llama.cpp decision-model client for AUX classification",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-classifier-template-packs",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llama-cpp-decision-model-client-for-aux-classification.md",
+    "status": "Not Started"
   },
   "TASK-LLAMA-CPP-SUPPORT-FOR-CLASSIFIER-MODELS-GGUF-ENCODER-SERVING": {
     "epic": "epic-byok-local-models",
