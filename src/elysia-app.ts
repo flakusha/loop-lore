@@ -68,7 +68,7 @@ export interface AppDeps {
  * @param deps Database, config, and request handlers (injected to avoid elysia-app ↔ server cycle).
  * @returns Configured Elysia instance.
  */
-export function createApp(deps: AppDeps,): Elysia {
+export function createApp(deps: AppDeps,) {
   const { database, config, handleNonApiRequest, handleApiRequest, } = deps;
 
   // Wire the async request-result store once at boot.
@@ -172,7 +172,7 @@ export function createApp(deps: AppDeps,): Elysia {
   // `src/middleware/csrf-plugin.ts::csrfPlugin`. Production and the
   // integration test apply the same factory — there is no second copy
   // of the wiring to drift.
-  applyCsrfPlugin(app as unknown as Parameters<typeof applyCsrfPlugin>[0], csrfOpts,);
+  applyCsrfPlugin(app, csrfOpts,);
   // Reference CSRF_HEADER + CSRF_EXEMPT_ROUTES so tree-shakers keep the
   // route-table constant when consumers spread the module. The middleware
   // looks the routes up internally via the Set; these symbols are the
@@ -233,9 +233,9 @@ export function createApp(deps: AppDeps,): Elysia {
   // Mounted before plugins so they can read apiVersion from context.
   app.use(versionResolver(),);
 
-  registerPlugins(app as unknown as Elysia<any>, { database, config, asyncStore, },);
+  registerPlugins(app, { database, config, asyncStore, },);
 
-  (app as unknown as Elysia<any>).use(v1Routes({ database, config, asyncStore, },),);
+  app.use(v1Routes({ database, config, asyncStore, },),);
   // `all("/api/:resource/*")` here matched /api/v1/* too, causing a
   // double-prefix redirect loop (/api/v1/x → /api/v1/v1/x → 404).
 
@@ -322,5 +322,5 @@ export function createApp(deps: AppDeps,): Elysia {
     return handleNonApiRequest(request,);
   },);
 
-  return app as unknown as Elysia;
+  return app;
 }

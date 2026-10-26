@@ -39,11 +39,11 @@ export async function importAvatars(
     try {
       await avatarService.createAvatar({
         actorId,
-        assetId: avatar.assetId as string,
-        label: avatar.label as string,
-        tags: avatar.tags as any,
-        isPrimary: avatar.isPrimary as boolean,
-        sortOrder: avatar.sortOrder as number,
+        assetId: avatar.assetId,
+        label: avatar.label,
+        tags: avatar.tags,
+        isPrimary: avatar.isPrimary,
+        sortOrder: avatar.sortOrder,
       },);
 
       result.avatarsImported++;

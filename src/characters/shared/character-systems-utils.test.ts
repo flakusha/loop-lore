@@ -211,7 +211,7 @@ describe("mapRelationshipForExport", () => {
 
 describe("mapAvatarForExport", () => {
   it("maps all avatar fields", () => {
-    const tags = { kind: "portrait", };
+    const tags = { emotion: "portrait", };
     const result = mapAvatarForExport({
       assetId: "asset-7",
       label: "Main portrait",

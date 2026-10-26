@@ -51,6 +51,11 @@ export interface RegisterPluginsOpts {
   governanceEnabled?: () => boolean;
 }
 
+/** Minimal structural host: registerPlugins only mounts route-plugin instances. */
+type PluginHost = {
+  use: (plugin: Parameters<Elysia<any>["use"]>[0],) => unknown;
+};
+
 /**
  * Register every route module onto the app in the canonical order.
  * Order matters: Elysia resolves routes by path shape, and later registrations
@@ -59,7 +64,7 @@ export interface RegisterPluginsOpts {
  * @param opts
  * @returns {void}
  */
-export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): void {
+export function registerPlugins(app: PluginHost, opts: RegisterPluginsOpts,): void {
   const { database, config, asyncStore, } = opts;
   const handleOpts = { database, config, asyncStore, };
   // ── Public routes (auth runs but won't block) ───────────────────────────────
