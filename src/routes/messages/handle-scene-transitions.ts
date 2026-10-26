@@ -96,7 +96,11 @@ export async function handleSceneTransitions(
 
   const recentContent = Array.from(recentMsgs, (m,) => m.content,).reverse();
 
-  const splitClass = await classifySplitIntent(effectiveContent, [], config, database, actorId ?? undefined,);
+  // Regex-only by design: split detection here is detect-and-log, and this runs
+  // per user message. The classifier's AUX fallback is opt-in (allowAux) and
+  // belongs to the transition AUX slice, not to a second blocking roundtrip on
+  // a message that already pays one in classifyTransitionMessage below.
+  const splitClass = await classifySplitIntent(effectiveContent, config, database,);
   if (splitClass.isSplit) {
     log().info("Split narration detected", { chatId, source: splitClass.source, },);
   }
