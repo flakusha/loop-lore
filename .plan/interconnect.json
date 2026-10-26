@@ -15828,8 +15828,10 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-2026-openwebui-cancel-generation-wiring.md",
       "title": "# TASK-2026-openwebui-cancel-generation-wiring: Wire `cancelGeneration()` Alpine Method to SSE Abort Endpoint",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
+        "src/components/chat/input-area.html",
+        "src/frontend/alpine/chat-generations.ts",
         "src/frontend/alpine/chat-types/core.ts",
         "src/generation/generation-routes/cancel.ts",
         "src/lib/components/chat/Chat.svelte",
@@ -16395,7 +16397,7 @@
       "kind": "ticket",
       "path": ".plan/tickets/TASK-ac10-enumeration-safe-auth-error-strings-login-only.md",
       "title": "AC10 enumeration-safe auth error strings (login-only)",
-      "status": "Not Started",
+      "status": "done",
       "srcRefs": [
         "src/public/locales/en.json",
         "src/routes/auth/login.ts"
@@ -59586,6 +59588,7 @@
       "path": "src/components/chat/input-area.html",
       "owners": [
         "EPIC-2026-23",
+        "TASK-2026-openwebui-cancel-generation-wiring",
         "TASK-assistant-slash-command-typed-token-autocomplete",
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-prompt-improve-composer-ui",
@@ -65509,6 +65512,7 @@
         "BUG-frontend-generation-completed-telemetry-never-reaches-the-se",
         "BUG-stale-sse-stream-writes-render-into-wrong-chat",
         "BUG-xss-fail-open-when-dompurify-missing",
+        "TASK-2026-openwebui-cancel-generation-wiring",
         "TASK-egui-sse-response-streaming-through-the-browser-bridge",
         "TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing",
         "epic-experimental-egui-frontend",
@@ -118023,6 +118027,16 @@
       "from": "TASK-2026-020",
       "kind": "produces",
       "to": "src/transport/transport-coverage.test.ts"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "produces",
+      "to": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "produces",
+      "to": "src/frontend/alpine/chat-generations.ts"
     },
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",
@@ -206997,6 +207011,12 @@
     {
       "from": "BUG-frontend-generation-completed-telemetry-never-reaches-the-se",
       "kind": "sibling",
+      "to": "TASK-2026-openwebui-cancel-generation-wiring",
+      "via": "src/frontend/alpine/chat-generations.ts"
+    },
+    {
+      "from": "BUG-frontend-generation-completed-telemetry-never-reaches-the-se",
+      "kind": "sibling",
       "to": "TASK-admin-llm-execution-analytics-per-model-per-provider-rollups",
       "via": "src/routes/telemetry.ts"
     },
@@ -235929,6 +235949,12 @@
     {
       "from": "BUG-stale-sse-stream-writes-render-into-wrong-chat",
       "kind": "sibling",
+      "to": "TASK-2026-openwebui-cancel-generation-wiring",
+      "via": "src/frontend/alpine/chat-generations.ts"
+    },
+    {
+      "from": "BUG-stale-sse-stream-writes-render-into-wrong-chat",
+      "kind": "sibling",
       "to": "TASK-egui-sse-response-streaming-through-the-browser-bridge",
       "via": "src/frontend/alpine/chat-generations.ts"
     },
@@ -242487,6 +242513,12 @@
     {
       "from": "BUG-xss-fail-open-when-dompurify-missing",
       "kind": "sibling",
+      "to": "TASK-2026-openwebui-cancel-generation-wiring",
+      "via": "src/frontend/alpine/chat-generations.ts"
+    },
+    {
+      "from": "BUG-xss-fail-open-when-dompurify-missing",
+      "kind": "sibling",
       "to": "TASK-egui-sse-response-streaming-through-the-browser-bridge",
       "via": "src/frontend/alpine/chat-generations.ts"
     },
@@ -242711,6 +242743,12 @@
       "kind": "sibling",
       "to": "TASK-033",
       "via": "src/rpg/quests.ts"
+    },
+    {
+      "from": "EPIC-2026-23",
+      "kind": "sibling",
+      "to": "TASK-2026-openwebui-cancel-generation-wiring",
+      "via": "src/components/chat/input-area.html"
     },
     {
       "from": "EPIC-2026-23",
@@ -267645,6 +267683,12 @@
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",
       "kind": "sibling",
+      "to": "TASK-assistant-slash-command-typed-token-autocomplete",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
       "to": "TASK-backlog-size-strict-regression-recovery",
       "via": "src/frontend/alpine/chat-types/core.ts"
     },
@@ -267699,8 +267743,20 @@
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",
       "kind": "sibling",
+      "to": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
       "to": "TASK-dynamic-avatars-dota-style",
       "via": "src/views/chat.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
+      "to": "TASK-egui-sse-response-streaming-through-the-browser-bridge",
+      "via": "src/frontend/alpine/chat-generations.ts"
     },
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",
@@ -267719,6 +267775,12 @@
       "kind": "sibling",
       "to": "TASK-encryption-browser-pre-encrypt",
       "via": "src/views/chat.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
+      "to": "TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing",
+      "via": "src/frontend/alpine/chat-generations.ts"
     },
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",
@@ -267743,6 +267805,12 @@
       "kind": "sibling",
       "to": "TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto",
       "via": "src/views/chat.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
+      "to": "TASK-prompt-improve-composer-ui",
+      "via": "src/components/chat/input-area.html"
     },
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",
@@ -267777,6 +267845,12 @@
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",
       "kind": "sibling",
+      "to": "WIRE-frontend-mobile-sticky-bottom-composer",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
       "to": "epic-agency-story-points",
       "via": "src/views/chat.html"
     },
@@ -267789,8 +267863,38 @@
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",
       "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/frontend/alpine/chat-generations.ts"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
+      "to": "epic-frontend-chat-commands",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
+      "to": "epic-frontend-components",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
+      "to": "epic-frontend-emoji-reactions",
+      "via": "src/components/chat/input-area.html"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
       "to": "epic-gallery-batch-operations",
       "via": "src/frontend/alpine/chat-types/core.ts"
+    },
+    {
+      "from": "TASK-2026-openwebui-cancel-generation-wiring",
+      "kind": "sibling",
+      "to": "epic-narrative-publishing-workflows",
+      "via": "src/frontend/alpine/chat-generations.ts"
     },
     {
       "from": "TASK-2026-openwebui-cancel-generation-wiring",

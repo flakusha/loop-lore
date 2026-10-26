@@ -11,7 +11,7 @@ output is byte-identical for identical inputs.
 - tickets: 3667
 - epics: 350
 - src paths owned: 4480
-- edges: produces 11740, consumes 404, sibling 35477, owns 2648, related 1191
+- edges: produces 11742, consumes 404, sibling 35492, owns 2648, related 1191
 
 ## Shared src hubs
 
@@ -451,7 +451,7 @@ output is byte-identical for identical inputs.
 | `src/components/chat/gm-panel.html` | `BUG-whitenote-ui-types-rejected-422`, `TASK-assistant-gm-flows`, `TASK-gm-panel`, `TASK-gm-shadow-notes`, `TASK-gm-story-notes-role-access-matrix`, `TASK-gm-whitenotes`, `epic-assistant-gm-flows`, `epic-gm-shadow-notes`, `epic-story-mode-ui` |
 | `src/components/chat/gm-quests-panel.html` | `FEAT-quest-log-ui-extended-to-full-spec-quest-browser`, `epic-story-mode-ui` |
 | `src/components/chat/gm-story-panel.html` | `FEAT-per-chat-assistant-gm-frontend`, `TASK-frontend-story-mode-ui` |
-| `src/components/chat/input-area.html` | `EPIC-2026-23`, `TASK-assistant-slash-command-typed-token-autocomplete`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-prompt-improve-composer-ui`, `WIRE-frontend-mobile-sticky-bottom-composer`, `epic-frontend-chat-commands`, `epic-frontend-components`, `epic-frontend-emoji-reactions` |
+| `src/components/chat/input-area.html` | `EPIC-2026-23`, `TASK-2026-openwebui-cancel-generation-wiring`, `TASK-assistant-slash-command-typed-token-autocomplete`, `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css`, `TASK-prompt-improve-composer-ui`, `WIRE-frontend-mobile-sticky-bottom-composer`, `epic-frontend-chat-commands`, `epic-frontend-components`, `epic-frontend-emoji-reactions` |
 | `src/components/chat/keynav-help.html` | `WIRE-frontend-keyboard-help-overlay`, `epic-accessibility-input` |
 | `src/components/chat/location-panel.html` | `TASK-bound-linked-travel-prompts`, `TASK-chat-location-frontend` |
 | `src/components/chat/memory-panel.html` | `BUG-audit-panel-details-not-expandable`, `BUG-audit-panel-renders-action-text-labels-instead-of-icons` |
@@ -747,7 +747,7 @@ output is byte-identical for identical inputs.
 | `src/frontend/alpine/chat-branch-merge.ts` | `BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass`, `TASK-branch-merge-frontend-wizard-ui`, `TASK-branch-merge-tests-and-coverage`, `epic-conversation-branching` |
 | `src/frontend/alpine/chat-branches.ts` | `BUG-branch-switch-persists-but-never-swaps-displayed-messages`, `FEAT-047`, `TASK-branch-merge-frontend-wizard-ui` |
 | `src/frontend/alpine/chat-drafts.ts` | `TASK-composer-draft-persistence`, `TASK-composer-primitive-extraction` |
-| `src/frontend/alpine/chat-generations.ts` | `BUG-frontend-generation-completed-telemetry-never-reaches-the-se`, `BUG-stale-sse-stream-writes-render-into-wrong-chat`, `BUG-xss-fail-open-when-dompurify-missing`, `TASK-egui-sse-response-streaming-through-the-browser-bridge`, `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing`, `epic-experimental-egui-frontend`, `epic-narrative-publishing-workflows` |
+| `src/frontend/alpine/chat-generations.ts` | `BUG-frontend-generation-completed-telemetry-never-reaches-the-se`, `BUG-stale-sse-stream-writes-render-into-wrong-chat`, `BUG-xss-fail-open-when-dompurify-missing`, `TASK-2026-openwebui-cancel-generation-wiring`, `TASK-egui-sse-response-streaming-through-the-browser-bridge`, `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing`, `epic-experimental-egui-frontend`, `epic-narrative-publishing-workflows` |
 | `src/frontend/alpine/chat-group.ts` | `EPIC-2026-23`, `TASK-assistant-slash-command-typed-token-autocomplete`, `epic-frontend-components` |
 | `src/frontend/alpine/chat-messages.ts` | `BUG-out-of-order-fetch-race-in-loadmessages`, `BUG-rate-limit-policies-starve-normal-chat-traffic-with-429s`, `EPIC-2026-24`, `TASK-composer-primitive-extraction`, `TASK-emotion-avatar-message-binding`, `TASK-message-reactions-in-out-context`, `epic-frontend-components`, `epic-frontend-emoji-reactions` |
 | `src/frontend/alpine/chat-outfit-switcher.ts` | `TASK-chat-avatar-resolver-outfit-aware`, `epic-reactive-actor-appearance` |
@@ -8246,6 +8246,8 @@ output is byte-identical for identical inputs.
 | `TASK-181-pre-existing-options-object-params-eslint-warnings-acros` | produces | `src/utils/safe-buffer` | - |
 | `TASK-2026-020` | produces | `src/group-chat/group-chat-coverage.test.ts` | - |
 | `TASK-2026-020` | produces | `src/transport/transport-coverage.test.ts` | - |
+| `TASK-2026-openwebui-cancel-generation-wiring` | produces | `src/components/chat/input-area.html` | - |
+| `TASK-2026-openwebui-cancel-generation-wiring` | produces | `src/frontend/alpine/chat-generations.ts` | - |
 | `TASK-2026-openwebui-cancel-generation-wiring` | produces | `src/frontend/alpine/chat-types/core.ts` | - |
 | `TASK-2026-openwebui-cancel-generation-wiring` | produces | `src/generation/generation-routes/cancel.ts` | - |
 | `TASK-2026-openwebui-cancel-generation-wiring` | produces | `src/lib/components/chat/Chat.svelte` | - |
@@ -24697,6 +24699,7 @@ output is byte-identical for identical inputs.
 | `BUG-frontend-generation-completed-telemetry-never-reaches-the-se` | sibling | `FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard` | `src/routes/telemetry.ts` |
 | `BUG-frontend-generation-completed-telemetry-never-reaches-the-se` | sibling | `FEAT-error-monitoring-alerting` | `src/routes/telemetry.ts` |
 | `BUG-frontend-generation-completed-telemetry-never-reaches-the-se` | sibling | `FEAT-feat-telemetry-telemetry-quota-and-abuse-dashboard` | `src/routes/telemetry.ts` |
+| `BUG-frontend-generation-completed-telemetry-never-reaches-the-se` | sibling | `TASK-2026-openwebui-cancel-generation-wiring` | `src/frontend/alpine/chat-generations.ts` |
 | `BUG-frontend-generation-completed-telemetry-never-reaches-the-se` | sibling | `TASK-admin-llm-execution-analytics-per-model-per-provider-rollups` | `src/routes/telemetry.ts` |
 | `BUG-frontend-generation-completed-telemetry-never-reaches-the-se` | sibling | `TASK-egui-sse-response-streaming-through-the-browser-bridge` | `src/frontend/alpine/chat-generations.ts` |
 | `BUG-frontend-generation-completed-telemetry-never-reaches-the-se` | sibling | `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing` | `src/frontend/alpine/chat-generations.ts` |
@@ -29519,6 +29522,7 @@ output is byte-identical for identical inputs.
 | `BUG-stale-audit-claim-aux-emotion-mood-task-tables` | sibling | `epic-file-splitting` | `src/generation/auto-gen/auto-generation.ts` |
 | `BUG-stale-audit-claim-aux-emotion-mood-task-tables` | sibling | `epic-reactive-actor-appearance` | `src/generation/auto-gen/content-hooks.ts; src/generation/auto-gen/store-message.ts` |
 | `BUG-stale-sse-stream-writes-render-into-wrong-chat` | sibling | `BUG-xss-fail-open-when-dompurify-missing` | `src/frontend/alpine/chat-generations.ts` |
+| `BUG-stale-sse-stream-writes-render-into-wrong-chat` | sibling | `TASK-2026-openwebui-cancel-generation-wiring` | `src/frontend/alpine/chat-generations.ts` |
 | `BUG-stale-sse-stream-writes-render-into-wrong-chat` | sibling | `TASK-egui-sse-response-streaming-through-the-browser-bridge` | `src/frontend/alpine/chat-generations.ts` |
 | `BUG-stale-sse-stream-writes-render-into-wrong-chat` | sibling | `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing` | `src/frontend/alpine/chat-generations.ts` |
 | `BUG-stale-sse-stream-writes-render-into-wrong-chat` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/chat-generations.ts` |
@@ -30612,6 +30616,7 @@ output is byte-identical for identical inputs.
 | `BUG-wshandler-send-queues-messages-while-disconnected-but-never-` | sibling | `epic-federation-offload-quotas` | `src/transport/ws.ts` |
 | `BUG-wshandler-send-queues-messages-while-disconnected-but-never-` | sibling | `epic-game-frontend-scenes` | `src/transport/ws.ts` |
 | `BUG-wshandler-send-queues-messages-while-disconnected-but-never-` | sibling | `epic-transport-expansion` | `src/transport/ws.ts` |
+| `BUG-xss-fail-open-when-dompurify-missing` | sibling | `TASK-2026-openwebui-cancel-generation-wiring` | `src/frontend/alpine/chat-generations.ts` |
 | `BUG-xss-fail-open-when-dompurify-missing` | sibling | `TASK-egui-sse-response-streaming-through-the-browser-bridge` | `src/frontend/alpine/chat-generations.ts` |
 | `BUG-xss-fail-open-when-dompurify-missing` | sibling | `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing` | `src/frontend/alpine/chat-generations.ts` |
 | `BUG-xss-fail-open-when-dompurify-missing` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/chat-generations.ts` |
@@ -30650,6 +30655,7 @@ output is byte-identical for identical inputs.
 | `EPIC-2026-22` | sibling | `epic-assistant-generation-extensions` | `src/assistant/commands/dice.ts` |
 | `EPIC-2026-23` | sibling | `TASK-029` | `src/rpg/quests.ts` |
 | `EPIC-2026-23` | sibling | `TASK-033` | `src/rpg/quests.ts` |
+| `EPIC-2026-23` | sibling | `TASK-2026-openwebui-cancel-generation-wiring` | `src/components/chat/input-area.html` |
 | `EPIC-2026-23` | sibling | `TASK-action-applicability-gate` | `src/assistant/commands/registry.ts` |
 | `EPIC-2026-23` | sibling | `TASK-assistant-capability-disclosure` | `src/assistant/commands/registry.ts` |
 | `EPIC-2026-23` | sibling | `TASK-assistant-command-execution-intent-detection` | `src/assistant/command-parser.ts` |
@@ -34805,6 +34811,7 @@ output is byte-identical for identical inputs.
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-3d-view-modes-ui` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-add-consent-route-and-ui-to-grant-and-revoke-chat-federation` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-assistant-creative-studio-workflow-gallery-batch` | `src/frontend/alpine/chat-types/core.ts` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-assistant-slash-command-typed-token-autocomplete` | `src/components/chat/input-area.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-backlog-size-strict-regression-recovery` | `src/frontend/alpine/chat-types/core.ts` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-character-multi-avatar` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-chat-autorenaming` | `src/views/chat.html` |
@@ -34814,22 +34821,32 @@ output is byte-identical for identical inputs.
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-chat-message-search` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-chat-sectioning-multi-location` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-conversation-branching` | `src/views/chat.html` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css` | `src/components/chat/input-area.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-dynamic-avatars-dota-style` | `src/views/chat.html` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-egui-sse-response-streaming-through-the-browser-bridge` | `src/frontend/alpine/chat-generations.ts` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-emotion-intent-detection` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-emotions-avatar-edit-model` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-encryption-browser-pre-encrypt` | `src/views/chat.html` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing` | `src/frontend/alpine/chat-generations.ts` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-frontend-view-model-extraction` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-gm-panel` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-harness-canvas-viz` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-htmx-to-egui-to-htmx-transfers-with-browser-side-context-sto` | `src/views/chat.html` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-prompt-improve-composer-ui` | `src/components/chat/input-area.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-rigged-model-buffer-render` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-story-points-prototype` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-text-effects-overlays` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-thinking-tag-context-prune` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `TASK-visual-novel-mode` | `src/views/chat.html` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `WIRE-frontend-mobile-sticky-bottom-composer` | `src/components/chat/input-area.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-agency-story-points` | `src/views/chat.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-architecture` | `src/views/chat.html` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-experimental-egui-frontend` | `src/frontend/alpine/chat-generations.ts` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-frontend-chat-commands` | `src/components/chat/input-area.html` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-frontend-components` | `src/components/chat/input-area.html` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-frontend-emoji-reactions` | `src/components/chat/input-area.html` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-gallery-batch-operations` | `src/frontend/alpine/chat-types/core.ts` |
+| `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-narrative-publishing-workflows` | `src/frontend/alpine/chat-generations.ts` |
 | `TASK-2026-openwebui-cancel-generation-wiring` | sibling | `epic-visual-novel-mode` | `src/views/chat.html` |
 | `TASK-2026-openwebui-comfyui-websocket-progress` | sibling | `TASK-2026-openwebui-retry-from-point` | `src/generation/stream-buffer.ts` |
 | `TASK-2026-openwebui-comfyui-websocket-progress` | sibling | `TASK-2026-openwebui-sse-reconnect-replay` | `src/generation/stream-buffer.ts` |
