@@ -15,11 +15,26 @@ import { join, } from "node:path";
 const SCRIPT = join(import.meta.dir, "version-bump.ts",);
 
 /**
+ * Environment for every git child process in this file.
+ *
+ * `GIT_DIR`/`GIT_WORK_TREE` are cleared so a hook context (pre-commit runs the
+ * suite) cannot redirect these writes into the real checkout, and
+ * `GIT_CEILING_DIRECTORIES` stops git from discovering an enclosing repository
+ * if the private repo is ever not created.
+ */
+const GIT_ENV: NodeJS.ProcessEnv = {
+  ...process.env,
+  GIT_DIR: undefined,
+  GIT_WORK_TREE: undefined,
+  GIT_CEILING_DIRECTORIES: tmpdir(),
+};
+
+/**
  * @param cwd - directory to run git in
  * @param args - git argv; passed as an array, never through a shell
  */
 function git(cwd: string, args: string[],): void {
-  execFileSync("git", args, { cwd, stdio: "ignore", },);
+  execFileSync("git", args, { cwd, env: GIT_ENV, stdio: "ignore", },);
 }
 
 /**
@@ -38,6 +53,7 @@ function repoWithTag(tag: string,): string {
   writeFileSync(join(dir, "blob",), "x\n",);
   const sha = execFileSync("git", ["hash-object", "-w", "blob",], {
     cwd: dir,
+    env: GIT_ENV,
     encoding: "utf8",
   },).trim();
 
@@ -57,7 +73,7 @@ describe("version-bump git invocation", () => {
     try {
       // `predict` is the default read-only action; it calls getLatestTag and
       // getCommitsSinceTag, which is where the tag name used to reach a shell.
-      const proc = Bun.spawnSync(["bun", SCRIPT,], { cwd: dir, stdout: "pipe", stderr: "pipe", },);
+      const proc = Bun.spawnSync(["bun", SCRIPT,], { cwd: dir, env: GIT_ENV, stdout: "pipe", stderr: "pipe", },);
 
       expect(existsSync(marker,),).toBe(false,);
       // The run must still have happened, or the assertion above proves nothing.
@@ -70,7 +86,7 @@ describe("version-bump git invocation", () => {
   test("a benign x.y.z tag is still read as the current version", () => {
     const dir = repoWithTag("1.2.3",);
     try {
-      const proc = Bun.spawnSync(["bun", SCRIPT,], { cwd: dir, stdout: "pipe", stderr: "pipe", },);
+      const proc = Bun.spawnSync(["bun", SCRIPT,], { cwd: dir, env: GIT_ENV, stdout: "pipe", stderr: "pipe", },);
 
       expect(proc.exitCode,).toBe(0,);
       // The in-process tag filter/sort must still resolve the real latest tag.
