@@ -12,7 +12,7 @@
 
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import { setConfig, } from "../admin/config";
+import { getAllConfig, setConfig, } from "../admin/config";
 import { buildConfigMenu, type ConfigMenuField, type ConfigMenuSection, } from "../config/sections/menu";
 import type { DB, } from "../db/schema";
 import { can, } from "../users/permissions";
@@ -52,6 +52,43 @@ function coerceValue(raw: unknown, type: ConfigMenuField["type"],): string {
   return String(raw ?? "",);
 }
 
+/**
+ * Convert a stored system_config string to the field's catalog type.
+ * @param stored - raw persisted value (always a string in system_config)
+ * @param type - catalog field type
+ * @returns the typed value for the menu payload
+ */
+function typedStoredValue(stored: string, type: ConfigMenuField["type"],): unknown {
+  if (type === "boolean") { return stored === "true"; }
+  if (type === "number") { return Number(stored,); }
+  if (type === "array" || type === "object") { return jsonParseOr(stored, stored,); }
+  return stored;
+}
+
+/**
+ * Overlay persisted system_config values onto the admin catalog: a field
+ * whose key has a persisted row shows that value (typed per the field) in
+ * place of the static JSON-schema default, so a saved admin preference
+ * survives a reload instead of reverting in the UI.
+ * @param sections - catalog sections to overlay onto (mutated in place)
+ * @param persisted - system_config rows keyed by config key
+ * @returns {void}
+ */
+function overlayPersistedValues(
+  sections: ConfigMenuSection[],
+  persisted: Map<string, string>,
+): void {
+  for (const section of sections) {
+    if (section.scope !== "admin") { continue; }
+    for (const field of section.fields) {
+      const stored = persisted.get(field.key,);
+      if (stored !== undefined) {
+        field.default = typedStoredValue(stored, field.type,);
+      }
+    }
+  }
+}
+
 export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
   return new Elysia({ name: "config-menu", },)
     .get("/api/config-menu", async (ctx: ConfigMenuCtx,) => {
@@ -59,6 +96,14 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts,) {
       if (typeof userId !== "string") { return userId; }
       const isAdmin = can(ctx.userRole, "admin.system",);
       const sections = buildConfigMenu(isAdmin,);
+      if (isAdmin) {
+        // Read back persisted system_config so GET reflects saved admin
+        // preferences (PATCH writes here), not just schema defaults.
+        const rows = await getAllConfig(database,);
+        const persisted = new Map(rows.map((e,) => [e.key, e.value,]),);
+        overlayPersistedValues(sections, persisted,);
+      }
+
       return jsonResponse({ role: isAdmin ? "admin" : "user", sections, },);
     }, {
       response: {

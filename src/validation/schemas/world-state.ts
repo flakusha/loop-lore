@@ -15,17 +15,30 @@ export const WorldStateCreateBody = t.Object({
   description: t.Optional(t.String(),),
 },);
 
+// The PUT handlers read these exact fields (handlers.ts intFields/strFields/
+// jsonFields + locationId); the schema mirrors them so an unrelated body
+// (e.g. the old state_key/state_value shape) is rejected with 422 instead of
+// silently no-oping while still bumping updated_at.
 export const NpcStateBody = t.Object({
-  npc_id: t.String({ format: "uuid", },),
-  state_key: t.String({ minLength: 1, },),
-  state_value: t.Any(),
-},);
+  health: t.Optional(t.Integer(),),
+  mentalState: t.Optional(t.String(),),
+  knowledge: t.Optional(t.Any(),),
+  relationships: t.Optional(t.Any(),),
+  schedule: t.Optional(t.Any(),),
+  locationId: t.Optional(t.String({ format: "uuid", },),),
+}, { minProperties: 1, },);
 
+// handleLocationState reads description_override/atmosphere/time_of_day/
+// weather strings and npcsPresent/itemsAvailable/hazards JSON payloads.
 export const LocationStateBody = t.Object({
-  location_id: t.String({ format: "uuid", },),
-  state_key: t.String({ minLength: 1, },),
-  state_value: t.Any(),
-},);
+  description_override: t.Optional(t.String(),),
+  atmosphere: t.Optional(t.String(),),
+  time_of_day: t.Optional(t.String(),),
+  weather: t.Optional(t.String(),),
+  npcsPresent: t.Optional(t.Any(),),
+  itemsAvailable: t.Optional(t.Any(),),
+  hazards: t.Optional(t.Any(),),
+}, { minProperties: 1, },);
 
 // ── Game state (2D canvas) schemas ────────────────────────
 

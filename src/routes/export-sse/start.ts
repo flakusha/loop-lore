@@ -8,7 +8,7 @@ import { getLogger, type Logger, } from "../../logger";
 import { resolveUserIdFromRequest, } from "../../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonError, } from "../http-utils";
-import { jobs, processExport, sseData, } from "./jobs";
+import { jobs, processExport, pruneJobs, sseData, } from "./jobs";
 import type { ExportJob, HandlerOpts, } from "./types";
 
 /**
@@ -59,6 +59,7 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
         createdAt: new Date(),
       };
 
+      pruneJobs();
       jobs.set(jobId, job,);
 
       // Start processing in background

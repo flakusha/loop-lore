@@ -519,6 +519,59 @@ describe("transferOwnership", () => {
     expect(result.error.message,).toContain("already the current owner",);
   });
 
+  /**
+   * Regression: newOwnerId names an ACTOR; chats.created_by is users.id.
+   * An adopted character actor (owner_id set, user_id null) must transfer
+   * by writing its owning user, not the actor id (which tripped the FK → 400).
+   */
+  test("transfer to an adopted character actor writes its owning user into created_by", async () => {
+    const adopterId = randomUUID();
+    const characterActorId = randomUUID();
+    await insertUsers(db, `adopter-${adopterId}`, "Adopter", { id: adopterId, } as never,);
+    await insertActors(db, "Adopted Hero", {
+      id: characterActorId,
+      user_id: null,
+      owner_id: adopterId,
+    } as never,);
+
+    const result = await transferOwnership(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      newOwnerId: characterActorId,
+    },);
+
+    expect(result.ok,).toBe(true,);
+    const chat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
+      .executeTakeFirst();
+
+    expect(chat?.created_by,).toBe(adopterId,);
+
+    // The participant rows still identify actors, not users.
+    const participant = await db.selectFrom("chat_participants",).select("role_in_chat",)
+      .where("chat_id", "=", CHAT_ID,).where("actor_id", "=", characterActorId,)
+      .executeTakeFirst();
+
+    expect(participant?.role_in_chat,).toBe(ChatParticipantRole.Owner,);
+  });
+
+  test("transfer to an actor with no owning user is a 400, not an FK failure", async () => {
+    const orphanActorId = randomUUID();
+    await insertActors(db, "Orphan Actor", { id: orphanActorId, } as never,);
+
+    const result = await transferOwnership(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      newOwnerId: orphanActorId,
+    },);
+
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { return; }
+    expect(result.error.code,).toBe("bad_request",);
+    expect(result.error.message,).toContain("no owning user",);
+  });
+
   test("reason longer than 500 chars is truncated in the audit meta", async () => {
     const reason = "r".repeat(600,);
     const result = await transferOwnership(db, {
@@ -570,6 +623,8 @@ describe("transferOwnership — tx error mapping (stubbed db)", () => {
         chain(
           table === "chats"
             ? { id: CHAT_ID, created_by: OWNER_ID, }
+            : table === "actors"
+            ? { user_id: PARTICIPANT_ID, owner_id: null, }
             : { actor_id: PARTICIPANT_ID, role_in_chat: "member", },
         ),
       transaction: () => ({

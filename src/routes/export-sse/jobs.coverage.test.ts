@@ -18,7 +18,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { uid, } from "../../utils";
 import { downloadRoutes, } from "./download";
-import { jobs, processExport, sseData, } from "./jobs";
+import { jobs, processExport, pruneJobs, sseData, } from "./jobs";
 import { startRoutes, } from "./start";
 import { statusRoutes, } from "./status";
 import type { ExportJob, } from "./types";
@@ -227,6 +227,38 @@ describe("export-sse jobs helpers", () => {
     expect(failed?.status,).toBe("failed",);
     expect(failed?.error?.length ?? 0,).toBeGreaterThan(0,);
     jobs.delete(job.id,);
+  });
+
+  test("pruneJobs evicts finished jobs past the TTL and bounds the map, keeping live jobs", () => {
+    const stale = stageJob(db, {
+      status: "completed",
+      completedAt: new Date(Date.now() - 2 * 60 * 60 * 1000,),
+      zipBuffer: Buffer.from("PKstale",),
+    },);
+
+    const fresh = stageJob(db, { status: "completed", completedAt: new Date(), },);
+    const live = stageJob(db, { status: "processing", },);
+    // stageJob replaces `id` last; rename them into the cov- namespace.
+    jobs.delete(stale.id,);
+    stale.id = `cov-stale-${stale.id}`;
+    jobs.set(stale.id, stale,);
+    jobs.delete(fresh.id,);
+    fresh.id = `cov-fresh-${fresh.id}`;
+    jobs.set(fresh.id, fresh,);
+    jobs.delete(live.id,);
+    live.id = `cov-live-${live.id}`;
+    jobs.set(live.id, live,);
+
+    pruneJobs();
+
+    // TTL eviction: the hour-old finished job (and its buffer) is gone.
+    expect(jobs.has(stale.id,),).toBe(false,);
+    // Fresh finished and still-live jobs survive.
+    expect(jobs.has(fresh.id,),).toBe(true,);
+    expect(jobs.has(live.id,),).toBe(true,);
+
+    jobs.delete(fresh.id,);
+    jobs.delete(live.id,);
   });
 });
 

@@ -21,6 +21,46 @@ import type { ExportJob, } from "./types";
 // In-memory job store (in production, use Redis or DB)
 const jobs = new Map<string, ExportJob>();
 
+/** How long a finished job (and its zip buffer) stays in memory. */
+const JOB_TTL_MS = 30 * 60 * 1000;
+/** Hard cap on retained jobs; the oldest finished jobs are evicted first. */
+const MAX_JOBS = 100;
+
+/**
+ * Evict finished jobs past the TTL and bound the map size. Runs without
+ * timers: called when a job is created and when one finishes. Finished jobs
+ * hold their whole zip buffer, so leaving them in the Map forever leaked
+ * memory for the process lifetime (BUG-export-sse-completed-zipbuffer-...
+ * class fix, mirroring the other in-memory generation Maps).
+ * @param now - current time (injectable for tests)
+ * @returns {void}
+ */
+function pruneJobs(now = new Date(),): void {
+  const cutoff = now.getTime() - JOB_TTL_MS;
+  for (const [id, job,] of jobs) {
+    if (job.completedAt && job.completedAt.getTime() < cutoff) {
+      jobs.delete(id,);
+    }
+  }
+
+  while (jobs.size > MAX_JOBS) {
+    // Evict the oldest FINISHED job; a Map preserves insertion order, and
+    // jobs are inserted at creation, so a scan finds the earliest finished one.
+    let oldestId: string | undefined;
+    let oldestAt = Infinity;
+    for (const [id, job,] of jobs) {
+      const at = job.completedAt?.getTime() ?? Infinity;
+      if (at < oldestAt) {
+        oldestAt = at;
+        oldestId = id;
+      }
+    }
+
+    if (oldestId === undefined) { break; }
+    jobs.delete(oldestId,);
+  }
+}
+
 /**
  * @param obj
  * @returns the payload wrapped as one SSE `data:` frame
@@ -210,6 +250,8 @@ async function processExport(
     job.completedAt = new Date();
     job.progress = job.total;
     job.currentStep = "Export completed";
+    // The buffer now sits in the Map — bound the retention immediately.
+    pruneJobs(job.completedAt,);
   } catch (error) {
     job.status = "failed";
     job.error = error instanceof Error ? error.message : "Unknown error";
@@ -217,4 +259,4 @@ async function processExport(
   }
 }
 
-export { jobs, processExport, sseData, };
+export { jobs, processExport, pruneJobs, sseData, };
