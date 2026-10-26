@@ -381,6 +381,7 @@
       "title": "Admin system-config DELETE returns 400 for keys the test expects to delete as 204",
       "status": "done",
       "srcRefs": [
+        "src/admin/config.ts",
         "src/routes/admin/system-config.test.ts",
         "src/routes/admin/system-config.ts"
       ],
@@ -830,7 +831,8 @@
       "title": "assets catch-log cluster: Error serialized as {} loses stack; controller builds child logger per statement",
       "status": "done",
       "srcRefs": [
-        "src/logger/index.ts"
+        "src/logger/index.ts",
+        "src/logger/logger.ts"
       ],
       "related": []
     },
@@ -909,6 +911,7 @@
         "src/assistant/prompt/sections/lore.ts",
         "src/assistant/service.ts",
         "src/assistant/workflow-runner.ts",
+        "src/frontend/alpine/composer-pre-send.test.ts",
         "src/frontend/alpine/composer-pre-send/validate.ts",
         "src/generation/auto-gen/prepare-generation.ts",
         "src/group-chat/mention-parser.ts",
@@ -1160,7 +1163,9 @@
       "path": ".plan/tickets/BUG-auto-started-llama-cpp-skips-circuit-breaker-registration.md",
       "title": "Auto-started llama.cpp skips circuit-breaker registration",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/server/init-background-services.ts"
+      ],
       "related": []
     },
     {
@@ -1937,7 +1942,8 @@
       "title": "Character and chat-setup example configs document fields the code drops",
       "status": "done",
       "srcRefs": [
-        "src/chat/service/templates.ts"
+        "src/chat/service/templates.ts",
+        "src/config/templates-loader/merge-domains.ts"
       ],
       "related": []
     },
@@ -1962,10 +1968,17 @@
       "status": "done",
       "srcRefs": [
         "src/characters",
+        "src/characters/exporters.test.ts",
+        "src/characters/exporters/ccv3.ts",
+        "src/characters/exporters/character-systems.test.ts",
         "src/characters/exporters/character-systems.ts",
         "src/characters/exporters/shared.ts",
+        "src/characters/importers/character-systems/avatars.ts",
+        "src/characters/importers/character-systems/traits.ts",
         "src/characters/importers/character-systems/world-setup.ts",
-        "src/characters/normalizers/ccv3.ts"
+        "src/characters/normalizers/ccv3.test.ts",
+        "src/characters/normalizers/ccv3.ts",
+        "src/characters/spec/character.ts"
       ],
       "related": []
     },
@@ -2041,6 +2054,7 @@
       "title": "Character growth editor arc description not JSON-encoded",
       "status": "done",
       "srcRefs": [
+        "src/routes/views/character-growth-section.ts",
         "src/views/partials/character-growth-editor.html"
       ],
       "related": []
@@ -2604,11 +2618,17 @@
       "title": "chat split-classifier ships untested with hot-path aux LLM call against own scope",
       "status": "done",
       "srcRefs": [
+        "src/aux-pipeline/runner.ts",
+        "src/chat",
         "src/chat/scene/handle-scene-transitions.ts",
         "src/chat/service/split.ts",
         "src/chat/split-classifier.test.ts",
         "src/chat/split-classifier.ts",
-        "src/routes/chats/create.ts"
+        "src/chat/split.test.ts",
+        "src/federation/remote-actor-document.test.ts",
+        "src/routes/chats/create.ts",
+        "src/routes/messages/handle-scene-transitions.test.ts",
+        "src/routes/messages/handle-scene-transitions.ts"
       ],
       "related": [
         "FEAT-classifier-template-packs-user-config",
@@ -2807,10 +2827,15 @@
       "status": "done",
       "srcRefs": [
         "src/characters",
+        "src/characters/exporters",
         "src/characters/exporters/ccv2.ts",
         "src/characters/exporters/ccv3.ts",
+        "src/characters/exporters/lorebook.test.ts",
+        "src/characters/exporters/lorebook.ts",
+        "src/characters/importers",
         "src/routes/actor-lore-entries.ts",
         "src/routes/characters",
+        "src/routes/characters/export.coverage.test.ts",
         "src/routes/characters/export.ts",
         "src/routes/export-shared",
         "src/routes/export-shared/characters.ts",
@@ -2946,7 +2971,9 @@
       "path": ".plan/tickets/BUG-content-hash-naming-for-generated-assets.md",
       "title": "Content-hash naming for generated assets",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/assets/service/persist-generated.ts"
+      ],
       "related": []
     },
     {
@@ -3186,7 +3213,10 @@
       "path": ".plan/tickets/BUG-dead-bedrock-config-path-accepted-but-never-dispatched.md",
       "title": "Dead Bedrock config path accepted but never dispatched",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/config/schema",
+        "src/generation/providers/registry.ts"
+      ],
       "related": []
     },
     {
@@ -3290,6 +3320,7 @@
       "srcRefs": [
         "src/assistant/commands/characters-access.test.ts",
         "src/assistant/commands/characters-access.ts",
+        "src/assistant/commands/characters-update.ts",
         "src/assistant/commands/items.test.ts",
         "src/frontend/alpine/command-conformance.test.ts"
       ],
@@ -4140,6 +4171,7 @@
         "src/routes/auth/responses.ts",
         "src/routes/http-utils/errors.ts",
         "src/routes/http-utils/responses.ts",
+        "src/routes/message-reactions.ts",
         "src/validation/middleware.ts"
       ],
       "related": []
@@ -4175,6 +4207,7 @@
       "title": "fix(auth): warn when sessionTimeoutHours and jwtExpiresIn diverge",
       "status": "done",
       "srcRefs": [
+        "src/config",
         "src/config/sections/auth.ts",
         "src/routes/auth/session.ts"
       ],
@@ -4249,6 +4282,7 @@
       "title": "fix(plugins): define plugin route matching semantics",
       "status": "done",
       "srcRefs": [
+        "src/plugins/loader-dispatch.test.ts",
         "src/plugins/loader.ts",
         "src/plugins/registry-store.ts"
       ],
@@ -4287,7 +4321,9 @@
       "status": "done",
       "srcRefs": [
         "src/app/register-plugins.ts",
-        "src/elysia-app.ts"
+        "src/elysia-app.ts",
+        "src/routes/actor-memories.ts",
+        "src/routes/v1/actors-surface.ts"
       ],
       "related": []
     },
@@ -4298,9 +4334,12 @@
       "title": "fix(routing): mount story-orchestration, agency, config-menu under /api/v1 or declare unversioned-by-spec",
       "status": "done",
       "srcRefs": [
+        "src/app",
         "src/app/register-plugins.ts",
+        "src/elysia-app.ts",
         "src/routes/actor-memories.ts",
         "src/routes/config-menu.ts",
+        "src/routes/v1",
         "src/routes/v1/index.ts",
         "src/server/handler.ts"
       ],
@@ -5168,7 +5207,10 @@
       "path": ".plan/tickets/BUG-group-participant-user-actors-injected-in-auto-gen-path.md",
       "title": "Group participant user actors injected in auto-gen path",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/generation/auto-gen/group-cascade.ts",
+        "src/generation/auto-gen/prepare-generation.ts"
+      ],
       "related": []
     },
     {
@@ -5437,7 +5479,9 @@
       "path": ".plan/tickets/BUG-image-audio-providers-have-no-byo-key-or-failover.md",
       "title": "Image/audio providers have no BYO key or failover",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/generation/image-gen-route.test.ts"
+      ],
       "related": []
     },
     {
@@ -5738,6 +5782,7 @@
       "srcRefs": [
         "src/frontend/alpine/i18n.ts",
         "src/frontend/i18n.ts",
+        "src/i18n/plurals.ts",
         "src/i18n/translator.ts"
       ],
       "related": []
@@ -8121,7 +8166,16 @@
       "path": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md",
       "title": "Remote actor discovery (WebFinger resolve, host-meta) absent",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/federation/local-webfinger.ts",
+        "src/federation/remote-actor-document.ts",
+        "src/federation/remote-actor.test.ts",
+        "src/federation/remote-actor.ts",
+        "src/federation/webfinger.test.ts",
+        "src/federation/webfinger.ts",
+        "src/routes/federation-webfinger.test.ts",
+        "src/routes/federation.ts"
+      ],
       "related": []
     },
     {
@@ -8194,6 +8248,7 @@
         "src/assets/controller.ts",
         "src/chat/service/crud/get.ts",
         "src/config/load/domain.ts",
+        "src/config/load/parse.ts",
         "src/db/index.ts",
         "src/elysia-app.ts",
         "src/routes/entity-routes/create.ts"
@@ -8708,7 +8763,14 @@
       "path": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md",
       "title": "Single global BYOK encryption key, no rotation story",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/crypto/byok.test.ts",
+        "src/crypto/byok.ts",
+        "src/db/migration-roundtrip.test.ts",
+        "src/db/migrations.test.ts",
+        "src/federation/peer-keys.test.ts",
+        "src/generation/providers/user-api-key.test.ts"
+      ],
       "related": []
     },
     {
@@ -9079,6 +9141,8 @@
       "status": "done",
       "srcRefs": [
         "src/routes/story-states/handlers.ts",
+        "src/test-utils/schema-arbitrary.ts",
+        "src/validation/schema-fuzz.generated.test.ts",
         "src/validation/schemas/world-state.ts"
       ],
       "related": []
@@ -9146,7 +9210,9 @@
       "path": ".plan/tickets/BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e.md",
       "title": "sync-index type filter silently excludes IDEA tickets from every --fix mode",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/tickets/sync-index.ts"
+      ],
       "related": []
     },
     {
@@ -9302,6 +9368,7 @@
       "status": "done",
       "srcRefs": [
         "src/async/offload-daemon.test.ts",
+        "src/eslint-rules/no-extensionless-require.mjs",
         "src/routes/chat-export.test.ts"
       ],
       "related": []
@@ -9588,8 +9655,14 @@
       "title": "tui-egui-fixes hold landing: page-1-only client, gallery has_more regression, TUI stale-chat race, unawaited stamp write",
       "status": "done",
       "srcRefs": [
+        "src/api.rs",
         "src/app.rs",
+        "src/build",
+        "src/build/egui-artifact.test.ts",
         "src/build/egui-artifact.ts",
+        "src/gallery.rs",
+        "src/tui",
+        "src/tui/chat/api.test.ts",
         "src/tui/chat/api.ts"
       ],
       "related": []
@@ -9687,7 +9760,9 @@
         "src/age-gate/controller.ts",
         "src/config/sections/age-gate.ts",
         "src/middleware/nsfw-gate/base-eval.ts",
-        "src/routes/chats/create.ts"
+        "src/routes/assets.test.ts",
+        "src/routes/chats/create.ts",
+        "src/routes/nsfw/index.test.ts"
       ],
       "related": []
     },
@@ -10015,7 +10090,9 @@
       "path": ".plan/tickets/BUG-wire-encryption-for-generated-images.md",
       "title": "Wire encryption for generated images",
       "status": "done",
-      "srcRefs": [],
+      "srcRefs": [
+        "src/assets/service/persist-generated.ts"
+      ],
       "related": [
         "epic-comfyui-first-class-citizen"
       ]
@@ -10043,7 +10120,8 @@
       "srcRefs": [
         "src/assistant/commands/workflow.ts",
         "src/assistant/workflow-runner.test.ts",
-        "src/assistant/workflow-runner.ts"
+        "src/assistant/workflow-runner.ts",
+        "src/assistant/workflow-session.ts"
       ],
       "related": []
     },
@@ -52263,6 +52341,7 @@
       "path": "src/admin/config.ts",
       "owners": [
         "BUG-admin-set-secrets-stored-plaintext-in-system-config",
+        "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
         "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
         "BUG-archive-retention-hardcoded-30-days-should-be-configurable-9",
         "FEAT-chat-archive-retention-config-archive-retention-days-admin-s",
@@ -52880,6 +52959,7 @@
       "path": "src/api.rs",
       "owners": [
         "BUG-egui-sent-message-echo-empty",
+        "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
         "TASK-egui-gallery-surface-grid-filters-thumbnails-upload"
       ]
     },
@@ -52899,6 +52979,12 @@
       "path": "src/api/errors.ts",
       "owners": [
         "epic-error-envelope"
+      ]
+    },
+    {
+      "path": "src/app",
+      "owners": [
+        "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und"
       ]
     },
     {
@@ -53327,7 +53413,9 @@
     {
       "path": "src/assets/service/persist-generated.ts",
       "owners": [
+        "BUG-content-hash-naming-for-generated-assets",
         "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+        "BUG-wire-encryption-for-generated-images",
         "TASK-asset-provenance-ledger-for-generated-assets",
         "TASK-avatar-dogfood-assistant-generation",
         "TASK-comparison-fan-out-engine",
@@ -53731,6 +53819,12 @@
       "owners": [
         "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
         "epic-assistant-entity-access"
+      ]
+    },
+    {
+      "path": "src/assistant/commands/characters-update.ts",
+      "owners": [
+        "BUG-dev-red-at-head-assistant-command-module-split-broke-registr"
       ]
     },
     {
@@ -55213,6 +55307,7 @@
     {
       "path": "src/assistant/workflow-session.ts",
       "owners": [
+        "BUG-workflow-confirm-session-treats-optional-steps-as-required",
         "TASK-harness-topic-session-attach",
         "TASK-workflow-persist-run-sessions-beyond-process-memory",
         "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
@@ -55679,6 +55774,7 @@
       "owners": [
         "BUG-admin-auxtelemetry-leaks-userid-chatid",
         "BUG-callaux-graceful-failure-throws-on-empty-config",
+        "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
         "BUG-emotion-mood-hook-stale-llm-javadoc",
         "BUG-inbound-federation-content-not-moderated-before-display",
         "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-",
@@ -56148,6 +56244,12 @@
       ]
     },
     {
+      "path": "src/build",
+      "owners": [
+        "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m"
+      ]
+    },
+    {
       "path": "src/build/compress.ts",
       "owners": [
         "BUG-runtime-asset-compression-is-structurally-dead-needscompress",
@@ -56164,6 +56266,12 @@
       "owners": [
         "TASK-delete-69-dead-src-files-reported-by-knip",
         "TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep"
+      ]
+    },
+    {
+      "path": "src/build/egui-artifact.test.ts",
+      "owners": [
+        "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m"
       ]
     },
     {
@@ -56330,8 +56438,15 @@
       ]
     },
     {
+      "path": "src/characters/exporters",
+      "owners": [
+        "BUG-community-share-missing-lorebook-export"
+      ]
+    },
+    {
       "path": "src/characters/exporters.test.ts",
       "owners": [
+        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
         "TASK-fix-ts2322-exporters-test",
         "epic-character-spec"
       ]
@@ -56353,9 +56468,16 @@
     {
       "path": "src/characters/exporters/ccv3.ts",
       "owners": [
+        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
         "BUG-community-share-missing-lorebook-export",
         "TASK-epic14-import-export-reconciliation",
         "epic-import-export-io"
+      ]
+    },
+    {
+      "path": "src/characters/exporters/character-systems.test.ts",
+      "owners": [
+        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip"
       ]
     },
     {
@@ -56370,6 +56492,18 @@
       "path": "src/characters/exporters/index.ts",
       "owners": [
         "epic-import-export-io"
+      ]
+    },
+    {
+      "path": "src/characters/exporters/lorebook.test.ts",
+      "owners": [
+        "BUG-community-share-missing-lorebook-export"
+      ]
+    },
+    {
+      "path": "src/characters/exporters/lorebook.ts",
+      "owners": [
+        "BUG-community-share-missing-lorebook-export"
       ]
     },
     {
@@ -56408,6 +56542,12 @@
       ]
     },
     {
+      "path": "src/characters/importers",
+      "owners": [
+        "BUG-community-share-missing-lorebook-export"
+      ]
+    },
+    {
       "path": "src/characters/importers/character-systems.ts",
       "owners": [
         "epic-import-export-io"
@@ -56417,6 +56557,12 @@
       "path": "src/characters/importers/character-systems/availability.ts",
       "owners": [
         "TASK-character-domain-residual-defects"
+      ]
+    },
+    {
+      "path": "src/characters/importers/character-systems/avatars.ts",
+      "owners": [
+        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip"
       ]
     },
     {
@@ -56431,6 +56577,12 @@
       "path": "src/characters/importers/character-systems/templates.ts",
       "owners": [
         "TASK-character-domain-residual-defects"
+      ]
+    },
+    {
+      "path": "src/characters/importers/character-systems/traits.ts",
+      "owners": [
+        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip"
       ]
     },
     {
@@ -56548,6 +56700,12 @@
       "owners": [
         "FEAT-expand-character-templates-to-canonical-fields",
         "epic-import-export-io"
+      ]
+    },
+    {
+      "path": "src/characters/normalizers/ccv3.test.ts",
+      "owners": [
+        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip"
       ]
     },
     {
@@ -57243,6 +57401,7 @@
     {
       "path": "src/characters/spec/character.ts",
       "owners": [
+        "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
         "FEAT-066",
         "FEAT-expand-character-templates-to-canonical-fields",
         "TASK-alignment-speech-social-context",
@@ -57482,6 +57641,7 @@
     {
       "path": "src/chat",
       "owners": [
+        "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
         "TASK-coverage-waiver-chat-ownership-async-body-limit",
         "TASK-recon-test-coverage",
         "TASK-reconciliation-plan",
@@ -58614,6 +58774,12 @@
     },
     {
       "path": "src/chat/split-classifier.ts",
+      "owners": [
+        "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c"
+      ]
+    },
+    {
+      "path": "src/chat/split.test.ts",
       "owners": [
         "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c"
       ]
@@ -59830,6 +59996,7 @@
     {
       "path": "src/config",
       "owners": [
+        "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
         "TASK-observability-config-section"
       ]
     },
@@ -60040,6 +60207,7 @@
     {
       "path": "src/config/load/parse.ts",
       "owners": [
+        "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
         "TASK-adopt-bun-yaml-to-replace-js-yaml",
         "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
         "epic-configs-path-resolution"
@@ -60087,6 +60255,7 @@
     {
       "path": "src/config/schema",
       "owners": [
+        "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
         "epic-api-telemetry"
       ]
     },
@@ -60805,6 +60974,12 @@
       ]
     },
     {
+      "path": "src/config/templates-loader/merge-domains.ts",
+      "owners": [
+        "BUG-character-and-chat-setup-example-configs-document-fields-the"
+      ]
+    },
+    {
       "path": "src/config/templates-loader/merge.ts",
       "owners": [
         "TASK-templates-loader-merge-strategy-consistency",
@@ -61117,6 +61292,7 @@
     {
       "path": "src/crypto/byok.test.ts",
       "owners": [
+        "BUG-single-global-byok-encryption-key-no-rotation-story",
         "epic-byok-api-keys"
       ]
     },
@@ -61125,6 +61301,7 @@
       "owners": [
         "BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f",
         "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+        "BUG-single-global-byok-encryption-key-no-rotation-story",
         "TASK-assistant-entity-access-quota-engine",
         "TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations",
         "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
@@ -62205,6 +62382,7 @@
         "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
         "BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num",
         "BUG-settestdatabase-global-leak-on-test-throw",
+        "BUG-single-global-byok-encryption-key-no-rotation-story",
         "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
         "TASK-019-audit-columns",
         "TASK-019-content-versioning-heavy-tables",
@@ -62241,6 +62419,7 @@
         "BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade",
         "BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num",
         "BUG-settestdatabase-global-leak-on-test-throw",
+        "BUG-single-global-byok-encryption-key-no-rotation-story",
         "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
         "TASK-019-audit-columns",
         "TASK-019-content-versioning-heavy-tables",
@@ -63969,6 +64148,7 @@
         "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
         "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
         "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+        "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
         "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
         "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
         "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -64048,6 +64228,12 @@
       "path": "src/endpoints/themes.js",
       "owners": [
         "FEAT-user-theming-system"
+      ]
+    },
+    {
+      "path": "src/eslint-rules/no-extensionless-require.mjs",
+      "owners": [
+        "BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi"
       ]
     },
     {
@@ -64261,6 +64447,12 @@
       ]
     },
     {
+      "path": "src/federation/local-webfinger.ts",
+      "owners": [
+        "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent"
+      ]
+    },
+    {
       "path": "src/federation/mesh-proof.ts",
       "owners": [
         "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat"
@@ -64337,6 +64529,7 @@
     {
       "path": "src/federation/peer-keys.test.ts",
       "owners": [
+        "BUG-single-global-byok-encryption-key-no-rotation-story",
         "TASK-federation-same-host-loopback-peer-auth"
       ]
     },
@@ -64438,6 +64631,30 @@
       ]
     },
     {
+      "path": "src/federation/remote-actor-document.test.ts",
+      "owners": [
+        "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c"
+      ]
+    },
+    {
+      "path": "src/federation/remote-actor-document.ts",
+      "owners": [
+        "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent"
+      ]
+    },
+    {
+      "path": "src/federation/remote-actor.test.ts",
+      "owners": [
+        "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent"
+      ]
+    },
+    {
+      "path": "src/federation/remote-actor.ts",
+      "owners": [
+        "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent"
+      ]
+    },
+    {
       "path": "src/federation/sharing.test.ts",
       "owners": [
         "BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun",
@@ -64489,6 +64706,18 @@
       "path": "src/federation/storage-usage.ts",
       "owners": [
         "TASK-federation-storage-quota-accounting"
+      ]
+    },
+    {
+      "path": "src/federation/webfinger.test.ts",
+      "owners": [
+        "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent"
+      ]
+    },
+    {
+      "path": "src/federation/webfinger.ts",
+      "owners": [
+        "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent"
       ]
     },
     {
@@ -65803,6 +66032,7 @@
     {
       "path": "src/frontend/alpine/composer-pre-send.test.ts",
       "owners": [
+        "BUG-assistant-and-group-chat-correctness-defects",
         "BUG-tests-delete-app-installed-globals-breaking-every-later-test"
       ]
     },
@@ -68557,6 +68787,7 @@
     {
       "path": "src/gallery.rs",
       "owners": [
+        "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
         "TASK-egui-gallery-surface-grid-filters-thumbnails-upload"
       ]
     },
@@ -68875,6 +69106,7 @@
         "BUG-group-chat-mention-prefix-collision",
         "BUG-group-chat-silence-pass-not-implemented",
         "BUG-group-chat-talkativity-not-surfaced-in-prompt",
+        "BUG-group-participant-user-actors-injected-in-auto-gen-path",
         "BUG-single-chat-pause-not-gating-autoreply",
         "TASK-chat-variant-behavioral-wiring",
         "TASK-group-chat-minors-from-2026-10-04-review",
@@ -68948,6 +69180,7 @@
         "BUG-assistant-and-group-chat-correctness-defects",
         "BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction",
         "BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va",
+        "BUG-group-participant-user-actors-injected-in-auto-gen-path",
         "TASK-outfit-change-hook",
         "TASK-validate-expansion-config-at-load-time",
         "epic-context-injection-correctness",
@@ -69681,6 +69914,7 @@
     {
       "path": "src/generation/image-gen-route.test.ts",
       "owners": [
+        "BUG-image-audio-providers-have-no-byo-key-or-failover",
         "TASK-comparison-tests-set-lifecycle-fan-out-comparability"
       ]
     },
@@ -70231,6 +70465,7 @@
       "owners": [
         "BUG-allowuserapikey-defined-but-never-enforced",
         "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+        "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
         "BUG-size-strict-pre-existing-dev-drift",
         "BUG-translate-only-providers-ride-general-failover-chains-comple",
         "FEAT-background",
@@ -70309,6 +70544,7 @@
       "path": "src/generation/providers/user-api-key.test.ts",
       "owners": [
         "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+        "BUG-single-global-byok-encryption-key-no-rotation-story",
         "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so"
       ]
     },
@@ -70900,6 +71136,7 @@
     {
       "path": "src/i18n/plurals.ts",
       "owners": [
+        "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
         "TASK-010-plurals",
         "TASK-delete-unreferenced-platform-service-util-modules-dead-barre",
         "epic-publication-i18n"
@@ -71888,6 +72125,7 @@
     {
       "path": "src/logger/logger.ts",
       "owners": [
+        "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con",
         "TASK-dedup-top-jscpd-clone-clusters",
         "TASK-logger-censor-bypasses-message-field-pii-secret-leak",
         "TASK-logging-censor-exact-match-rules-error-stack-path-leak",
@@ -73460,6 +73698,12 @@
       ]
     },
     {
+      "path": "src/plugins/loader-dispatch.test.ts",
+      "owners": [
+        "BUG-fix-plugins-define-plugin-route-matching-semantics"
+      ]
+    },
+    {
       "path": "src/plugins/loader.discovery-failures.test.ts",
       "owners": [
         "BUG-fix-plugins-make-plugin-discovery-failures-visible",
@@ -74795,6 +75039,7 @@
       "owners": [
         "BUG-delete-audit-action-has-no-unit-test",
         "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
+        "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
         "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
         "TASK-actors-api-routes",
         "TASK-memory-history-search-bind-message-chain-reconstructable-con"
@@ -75303,6 +75548,12 @@
       "path": "src/routes/asset-notes.ts",
       "owners": [
         "epic-creative-studio"
+      ]
+    },
+    {
+      "path": "src/routes/assets.test.ts",
+      "owners": [
+        "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k"
       ]
     },
     {
@@ -75888,6 +76139,12 @@
         "WIRE-characters-create-avatar-linking-missing",
         "WIRE-impersonate-command-palette-no-actionpayload-dispatch",
         "WIRE-nsfw-audit-page-missing-inline-authz"
+      ]
+    },
+    {
+      "path": "src/routes/characters/export.coverage.test.ts",
+      "owners": [
+        "BUG-community-share-missing-lorebook-export"
       ]
     },
     {
@@ -76798,6 +77055,12 @@
       ]
     },
     {
+      "path": "src/routes/federation-webfinger.test.ts",
+      "owners": [
+        "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent"
+      ]
+    },
+    {
       "path": "src/routes/federation.test.ts",
       "owners": [
         "BUG-mesh-reserve-issues-inbound-content-keys-without-authenticat",
@@ -76812,6 +77075,7 @@
       "path": "src/routes/federation.ts",
       "owners": [
         "BUG-backfill-of-historical-posts-on-new-follower-unspecified",
+        "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
         "FEAT-activitypub-federation",
         "IDEA-cross-instance-conversation-threading-mention-inreplyto",
         "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
@@ -77249,6 +77513,7 @@
     {
       "path": "src/routes/message-reactions.ts",
       "owners": [
+        "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
         "TASK-fix-message-reactions-access",
         "TASK-message-reactions-in-out-context",
         "TASK-message-seen-state-service-route",
@@ -77502,8 +77767,15 @@
       ]
     },
     {
+      "path": "src/routes/messages/handle-scene-transitions.test.ts",
+      "owners": [
+        "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c"
+      ]
+    },
+    {
       "path": "src/routes/messages/handle-scene-transitions.ts",
       "owners": [
+        "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
         "FEAT-chat-transfer-location-change",
         "TASK-chat-branch-merge",
         "TASK-chat-locations-worlds-finalize-current-implementation"
@@ -78000,6 +78272,12 @@
       "path": "src/routes/nsfw/body.ts",
       "owners": [
         "BUG-nsfw-body-profile-mass-assignment-raw-body-into-updateprofil"
+      ]
+    },
+    {
+      "path": "src/routes/nsfw/index.test.ts",
+      "owners": [
+        "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k"
       ]
     },
     {
@@ -78775,8 +79053,15 @@
       ]
     },
     {
+      "path": "src/routes/v1",
+      "owners": [
+        "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und"
+      ]
+    },
+    {
       "path": "src/routes/v1/actors-surface.ts",
       "owners": [
+        "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
         "BUG-rate-limit-misses-post-emotion-avatars-single",
         "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
         "epic-achievements",
@@ -78975,6 +79260,7 @@
     {
       "path": "src/routes/views/character-growth-section.ts",
       "owners": [
+        "BUG-character-growth-editor-arc-description-not-json-encoded",
         "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
         "TASK-growth-epic-reconciliation"
       ]
@@ -82790,6 +83076,7 @@
     {
       "path": "src/server/init-background-services.ts",
       "owners": [
+        "BUG-auto-started-llama-cpp-skips-circuit-breaker-registration",
         "BUG-character-seed-dedupes-on-display-name",
         "BUG-fix-server-log-rejected-background-init-promises-with-module",
         "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
@@ -84136,6 +84423,7 @@
     {
       "path": "src/test-utils/schema-arbitrary.ts",
       "owners": [
+        "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
         "TASK-property-test-the-db-schemas-insert-read-round-trip",
         "TASK-property-test-the-status-machines-and-composite-validators",
         "epic-fuzzing-infrastructure"
@@ -84152,6 +84440,7 @@
       "owners": [
         "BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent",
         "BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status",
+        "BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e",
         "TASK-plan-index-orphan-phantom-cleanup"
       ]
     },
@@ -84376,6 +84665,12 @@
       ]
     },
     {
+      "path": "src/tui",
+      "owners": [
+        "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m"
+      ]
+    },
+    {
       "path": "src/tui/api-contract.test.ts",
       "owners": [
         "TASK-tui-api-contract-smoke-tests"
@@ -84468,6 +84763,7 @@
       "path": "src/tui/chat/api.test.ts",
       "owners": [
         "BUG-tui-blind-to-llm-assistant-turns",
+        "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
         "TASK-tui",
         "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene"
       ]
@@ -85214,6 +85510,7 @@
     {
       "path": "src/validation/schema-fuzz.generated.test.ts",
       "owners": [
+        "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
         "TASK-frontend-view-model-extraction",
         "TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d",
         "epic-fuzzing-infrastructure"
@@ -102184,6 +102481,11 @@
     {
       "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
       "kind": "produces",
+      "to": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "produces",
       "to": "src/routes/admin/system-config.test.ts"
     },
     {
@@ -102667,6 +102969,11 @@
       "to": "src/logger/index.ts"
     },
     {
+      "from": "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con",
+      "kind": "produces",
+      "to": "src/logger/logger.ts"
+    },
+    {
       "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
       "kind": "produces",
       "to": "src/assets/controller.routes.test.ts"
@@ -102760,6 +103067,11 @@
       "from": "BUG-assistant-and-group-chat-correctness-defects",
       "kind": "produces",
       "to": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "BUG-assistant-and-group-chat-correctness-defects",
+      "kind": "produces",
+      "to": "src/frontend/alpine/composer-pre-send.test.ts"
     },
     {
       "from": "BUG-assistant-and-group-chat-correctness-defects",
@@ -103115,6 +103427,11 @@
       "from": "BUG-auto-rotation-config-drift",
       "kind": "produces",
       "to": "src/server/start.ts"
+    },
+    {
+      "from": "BUG-auto-started-llama-cpp-skips-circuit-breaker-registration",
+      "kind": "produces",
+      "to": "src/server/init-background-services.ts"
     },
     {
       "from": "BUG-aux-pipeline-prompt-reexport-asymmetry",
@@ -103797,6 +104114,11 @@
       "to": "src/chat/service/templates.ts"
     },
     {
+      "from": "BUG-character-and-chat-setup-example-configs-document-fields-the",
+      "kind": "produces",
+      "to": "src/config/templates-loader/merge-domains.ts"
+    },
+    {
       "from": "BUG-character-avatar-put-delete-idor-by-bare-avatarid",
       "kind": "produces",
       "to": "src/characters/services/avatar/crud.ts"
@@ -103814,6 +104136,21 @@
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
       "kind": "produces",
+      "to": "src/characters/exporters.test.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "produces",
+      "to": "src/characters/exporters/ccv3.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "produces",
+      "to": "src/characters/exporters/character-systems.test.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "produces",
       "to": "src/characters/exporters/character-systems.ts"
     },
     {
@@ -103824,12 +104161,32 @@
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
       "kind": "produces",
+      "to": "src/characters/importers/character-systems/avatars.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "produces",
+      "to": "src/characters/importers/character-systems/traits.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "produces",
       "to": "src/characters/importers/character-systems/world-setup.ts"
     },
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
       "kind": "produces",
+      "to": "src/characters/normalizers/ccv3.test.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "produces",
       "to": "src/characters/normalizers/ccv3.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "produces",
+      "to": "src/characters/spec/character.ts"
     },
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
@@ -103910,6 +104267,11 @@
       "from": "BUG-character-federation-lacks-owner-consent-or-nsfw-gate",
       "kind": "produces",
       "to": "src/crypto/activitypub-keys.ts"
+    },
+    {
+      "from": "BUG-character-growth-editor-arc-description-not-json-encoded",
+      "kind": "produces",
+      "to": "src/routes/views/character-growth-section.ts"
     },
     {
       "from": "BUG-character-growth-editor-arc-description-not-json-encoded",
@@ -104529,6 +104891,11 @@
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "produces",
+      "to": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "produces",
       "to": "src/chat/scene/handle-scene-transitions.ts"
     },
     {
@@ -104549,7 +104916,32 @@
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "produces",
+      "to": "src/chat/split.test.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "produces",
+      "to": "src/chat"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "produces",
+      "to": "src/federation/remote-actor-document.test.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "produces",
       "to": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "produces",
+      "to": "src/routes/messages/handle-scene-transitions.test.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "produces",
+      "to": "src/routes/messages/handle-scene-transitions.ts"
     },
     {
       "from": "BUG-chat-sse-shares-generation-rate-bucket",
@@ -104704,12 +105096,37 @@
     {
       "from": "BUG-community-share-missing-lorebook-export",
       "kind": "produces",
+      "to": "src/characters/exporters/lorebook.test.ts"
+    },
+    {
+      "from": "BUG-community-share-missing-lorebook-export",
+      "kind": "produces",
+      "to": "src/characters/exporters/lorebook.ts"
+    },
+    {
+      "from": "BUG-community-share-missing-lorebook-export",
+      "kind": "produces",
+      "to": "src/characters/exporters"
+    },
+    {
+      "from": "BUG-community-share-missing-lorebook-export",
+      "kind": "produces",
+      "to": "src/characters/importers"
+    },
+    {
+      "from": "BUG-community-share-missing-lorebook-export",
+      "kind": "produces",
       "to": "src/characters"
     },
     {
       "from": "BUG-community-share-missing-lorebook-export",
       "kind": "produces",
       "to": "src/routes/actor-lore-entries.ts"
+    },
+    {
+      "from": "BUG-community-share-missing-lorebook-export",
+      "kind": "produces",
+      "to": "src/routes/characters/export.coverage.test.ts"
     },
     {
       "from": "BUG-community-share-missing-lorebook-export",
@@ -104890,6 +105307,11 @@
       "from": "BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory",
       "kind": "produces",
       "to": "src/rpg/service/battles/items.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "produces",
+      "to": "src/assets/service/persist-generated.ts"
     },
     {
       "from": "BUG-content-hooks-ts-missing-imports-breaks-typecheck",
@@ -105102,6 +105524,16 @@
       "to": "src/db/reinit.ts"
     },
     {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "produces",
+      "to": "src/config/schema"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "produces",
+      "to": "src/generation/providers/registry.ts"
+    },
+    {
       "from": "BUG-dead-code-guard-in-advancepartytravel",
       "kind": "produces",
       "to": "src/rpg/world-travel/travel.test.ts"
@@ -105165,6 +105597,11 @@
       "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
       "kind": "produces",
       "to": "src/assistant/commands/characters-access.ts"
+    },
+    {
+      "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
+      "kind": "produces",
+      "to": "src/assistant/commands/characters-update.ts"
     },
     {
       "from": "BUG-dev-red-at-head-assistant-command-module-split-broke-registr",
@@ -106034,6 +106471,11 @@
     {
       "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
       "kind": "produces",
+      "to": "src/routes/message-reactions.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "produces",
       "to": "src/validation/middleware.ts"
     },
     {
@@ -106060,6 +106502,11 @@
       "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
       "kind": "produces",
       "to": "src/config/sections/auth.ts"
+    },
+    {
+      "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
+      "kind": "produces",
+      "to": "src/config"
     },
     {
       "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
@@ -106129,6 +106576,11 @@
     {
       "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
       "kind": "produces",
+      "to": "src/plugins/loader-dispatch.test.ts"
+    },
+    {
+      "from": "BUG-fix-plugins-define-plugin-route-matching-semantics",
+      "kind": "produces",
       "to": "src/plugins/loader.ts"
     },
     {
@@ -106172,9 +106624,29 @@
       "to": "src/elysia-app.ts"
     },
     {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "produces",
+      "to": "src/routes/actor-memories.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "produces",
+      "to": "src/routes/v1/actors-surface.ts"
+    },
+    {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "produces",
       "to": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "produces",
+      "to": "src/app"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "produces",
+      "to": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -106190,6 +106662,11 @@
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "produces",
       "to": "src/routes/v1/index.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "produces",
+      "to": "src/routes/v1"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -107042,6 +107519,16 @@
       "to": "src/routes/chat-context/context-budget.ts"
     },
     {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "produces",
+      "to": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "produces",
+      "to": "src/generation/auto-gen/prepare-generation.ts"
+    },
+    {
       "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
       "kind": "produces",
       "to": "src/assistant/entity-spec/handoff.ts"
@@ -107447,6 +107934,11 @@
       "to": "src/middleware/idempotency"
     },
     {
+      "from": "BUG-image-audio-providers-have-no-byo-key-or-failover",
+      "kind": "produces",
+      "to": "src/generation/image-gen-route.test.ts"
+    },
+    {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
       "kind": "produces",
       "to": "src/assets/controller.ts"
@@ -107820,6 +108312,11 @@
       "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
       "kind": "produces",
       "to": "src/frontend/i18n.ts"
+    },
+    {
+      "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
+      "kind": "produces",
+      "to": "src/i18n/plurals.ts"
     },
     {
       "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
@@ -110022,6 +110519,46 @@
       "to": "src/characters/services/relationships-service/write.ts"
     },
     {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "produces",
+      "to": "src/federation/local-webfinger.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "produces",
+      "to": "src/federation/remote-actor-document.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "produces",
+      "to": "src/federation/remote-actor.test.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "produces",
+      "to": "src/federation/remote-actor.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "produces",
+      "to": "src/federation/webfinger.test.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "produces",
+      "to": "src/federation/webfinger.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "produces",
+      "to": "src/routes/federation-webfinger.test.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "produces",
+      "to": "src/routes/federation.ts"
+    },
+    {
       "from": "BUG-resolveuseridfromrequest-missing-user-status-check",
       "kind": "produces",
       "to": "src/middleware/auth/token.ts"
@@ -110090,6 +110627,11 @@
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "produces",
       "to": "src/config/load/domain.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "produces",
+      "to": "src/config/load/parse.ts"
     },
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
@@ -110637,6 +111179,36 @@
       "to": "src/routes/messages/reply.ts"
     },
     {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "produces",
+      "to": "src/crypto/byok.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "produces",
+      "to": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "produces",
+      "to": "src/db/migration-roundtrip.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "produces",
+      "to": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "produces",
+      "to": "src/federation/peer-keys.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "produces",
+      "to": "src/generation/providers/user-api-key.test.ts"
+    },
+    {
       "from": "BUG-size-strict-pre-existing-dev-drift",
       "kind": "produces",
       "to": "src/assets/controller/handlers.ts"
@@ -111169,6 +111741,16 @@
     {
       "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
       "kind": "produces",
+      "to": "src/test-utils/schema-arbitrary.ts"
+    },
+    {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "produces",
+      "to": "src/validation/schema-fuzz.generated.test.ts"
+    },
+    {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "produces",
       "to": "src/validation/schemas/world-state.ts"
     },
     {
@@ -111215,6 +111797,11 @@
       "from": "BUG-swipe-race-classifier-matches-the-composite-idempotency-uniq",
       "kind": "produces",
       "to": "src/utils/swipe-retry.ts"
+    },
+    {
+      "from": "BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e",
+      "kind": "produces",
+      "to": "src/tickets/sync-index.ts"
     },
     {
       "from": "BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d",
@@ -111365,6 +111952,11 @@
       "from": "BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi",
       "kind": "produces",
       "to": "src/async/offload-daemon.test.ts"
+    },
+    {
+      "from": "BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi",
+      "kind": "produces",
+      "to": "src/eslint-rules/no-extensionless-require.mjs"
     },
     {
       "from": "BUG-test-unhandled-json-cascade-unexplained-after-chat-export-fi",
@@ -111759,7 +112351,17 @@
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
       "kind": "produces",
+      "to": "src/api.rs"
+    },
+    {
+      "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "kind": "produces",
       "to": "src/app.rs"
+    },
+    {
+      "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "kind": "produces",
+      "to": "src/build/egui-artifact.test.ts"
     },
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
@@ -111769,7 +112371,27 @@
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
       "kind": "produces",
+      "to": "src/build"
+    },
+    {
+      "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "kind": "produces",
+      "to": "src/gallery.rs"
+    },
+    {
+      "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "kind": "produces",
+      "to": "src/tui/chat/api.test.ts"
+    },
+    {
+      "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "kind": "produces",
       "to": "src/tui/chat/api.ts"
+    },
+    {
+      "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "kind": "produces",
+      "to": "src/tui"
     },
     {
       "from": "BUG-tui-send-inherits-the-30s-default-safefetch-timeout-against-",
@@ -111854,7 +112476,17 @@
     {
       "from": "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k",
       "kind": "produces",
+      "to": "src/routes/assets.test.ts"
+    },
+    {
+      "from": "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k",
+      "kind": "produces",
       "to": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k",
+      "kind": "produces",
+      "to": "src/routes/nsfw/index.test.ts"
     },
     {
       "from": "BUG-type-scanallproviders-db-param-as-kysely-db-instead-of-unkno",
@@ -112157,6 +112789,11 @@
       "to": "src/routes/gm-notes/schemas.ts"
     },
     {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "produces",
+      "to": "src/assets/service/persist-generated.ts"
+    },
+    {
       "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
       "kind": "produces",
       "to": "src/characters/services/relationships-service/read.ts"
@@ -112190,6 +112827,11 @@
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
       "kind": "produces",
       "to": "src/assistant/workflow-runner.ts"
+    },
+    {
+      "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
+      "kind": "produces",
+      "to": "src/assistant/workflow-session.ts"
     },
     {
       "from": "BUG-workflow-library-img2img-row-has-no-parameters",
@@ -166645,7 +167287,7 @@
       "from": "BUG-access-log-never-records-userid-handle-x-user-id-header-neve",
       "kind": "sibling",
       "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
     },
     {
       "from": "BUG-access-log-never-records-userid-handle-x-user-id-header-neve",
@@ -170166,6 +170808,12 @@
     {
       "from": "BUG-admin-auxtelemetry-leaks-userid-chatid",
       "kind": "sibling",
+      "to": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-admin-auxtelemetry-leaks-userid-chatid",
+      "kind": "sibling",
       "to": "BUG-emotion-mood-hook-stale-llm-javadoc",
       "via": "src/aux-pipeline/runner.ts"
     },
@@ -170569,7 +171217,7 @@
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
       "kind": "sibling",
       "to": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
-      "via": "src/routes/admin/system-config.test.ts"
+      "via": "src/admin/config.ts; src/routes/admin/system-config.test.ts"
     },
     {
       "from": "BUG-admin-set-secrets-stored-plaintext-in-system-config",
@@ -170754,6 +171402,36 @@
     {
       "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
       "kind": "sibling",
+      "to": "BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen",
+      "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "sibling",
+      "to": "BUG-archive-retention-hardcoded-30-days-should-be-configurable-9",
+      "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "sibling",
+      "to": "FEAT-chat-archive-retention-config-archive-retention-days-admin-s",
+      "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "sibling",
+      "to": "TASK-adopt-bun-yaml-to-replace-js-yaml",
+      "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "sibling",
+      "to": "TASK-autonomy-rate-governor-for-llm-actors",
+      "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "sibling",
       "to": "TASK-comfyui-first-class-admin-workflows",
       "via": "src/routes/admin/system-config.ts"
     },
@@ -170766,6 +171444,18 @@
     {
       "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
       "kind": "sibling",
+      "to": "TASK-restart-required-indicator-on-system-config-changes",
+      "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "sibling",
+      "to": "TEST-admin-seeddefaults-silent-duplicate-skip-untested",
+      "via": "src/admin/config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "sibling",
       "to": "epic-comfyui-first-class-citizen",
       "via": "src/routes/admin/system-config.ts"
     },
@@ -170774,6 +171464,12 @@
       "kind": "sibling",
       "to": "epic-frontend-admin",
       "via": "src/routes/admin/system-config.ts"
+    },
+    {
+      "from": "BUG-admin-system-config-delete-returns-400-for-keys-the-test-exp",
+      "kind": "sibling",
+      "to": "epic-recursive-self-improvement",
+      "via": "src/admin/config.ts"
     },
     {
       "from": "BUG-admin-template-update-writes-to-unvalidated-detail-mode-keys",
@@ -171500,6 +172196,12 @@
       "kind": "sibling",
       "to": "BUG-byok-store-rejects-non-openaicompatible-provider-names",
       "via": "src/generation/providers/provider-instances.ts; src/routes/api-keys.providers.test.ts; src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-allowuserapikey-defined-but-never-enforced",
+      "kind": "sibling",
+      "to": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "via": "src/generation/providers/registry.ts"
     },
     {
       "from": "BUG-allowuserapikey-defined-but-never-enforced",
@@ -175014,6 +175716,24 @@
     {
       "from": "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con",
       "kind": "sibling",
+      "to": "TASK-dedup-top-jscpd-clone-clusters",
+      "via": "src/logger/logger.ts"
+    },
+    {
+      "from": "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con",
+      "kind": "sibling",
+      "to": "TASK-logger-censor-bypasses-message-field-pii-secret-leak",
+      "via": "src/logger/logger.ts"
+    },
+    {
+      "from": "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con",
+      "kind": "sibling",
+      "to": "TASK-logging-censor-exact-match-rules-error-stack-path-leak",
+      "via": "src/logger/logger.ts"
+    },
+    {
+      "from": "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con",
+      "kind": "sibling",
       "to": "TASK-per-chat-auto-translation-layer",
       "via": "src/logger/index.ts"
     },
@@ -175032,8 +175752,14 @@
     {
       "from": "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con",
       "kind": "sibling",
+      "to": "epic-logging-telemetry",
+      "via": "src/logger/logger.ts"
+    },
+    {
+      "from": "BUG-assets-catch-log-cluster-error-serialized-as-loses-stack-con",
+      "kind": "sibling",
       "to": "epic-logging",
-      "via": "src/logger/index.ts"
+      "via": "src/logger/index.ts; src/logger/logger.ts"
     },
     {
       "from": "BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par",
@@ -175584,8 +176310,20 @@
     {
       "from": "BUG-assistant-and-group-chat-correctness-defects",
       "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/prepare-generation.ts"
+    },
+    {
+      "from": "BUG-assistant-and-group-chat-correctness-defects",
+      "kind": "sibling",
       "to": "BUG-mention-parser-regex-fails-on-multi-word-names",
       "via": "src/group-chat/mention-parser.ts"
+    },
+    {
+      "from": "BUG-assistant-and-group-chat-correctness-defects",
+      "kind": "sibling",
+      "to": "BUG-tests-delete-app-installed-globals-breaking-every-later-test",
+      "via": "src/frontend/alpine/composer-pre-send.test.ts"
     },
     {
       "from": "BUG-assistant-and-group-chat-correctness-defects",
@@ -178786,6 +179524,36 @@
       "via": "src/server/start.ts"
     },
     {
+      "from": "BUG-auto-started-llama-cpp-skips-circuit-breaker-registration",
+      "kind": "sibling",
+      "to": "BUG-character-seed-dedupes-on-display-name",
+      "via": "src/server/init-background-services.ts"
+    },
+    {
+      "from": "BUG-auto-started-llama-cpp-skips-circuit-breaker-registration",
+      "kind": "sibling",
+      "to": "BUG-fix-server-log-rejected-background-init-promises-with-module",
+      "via": "src/server/init-background-services.ts"
+    },
+    {
+      "from": "BUG-auto-started-llama-cpp-skips-circuit-breaker-registration",
+      "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "via": "src/server/init-background-services.ts"
+    },
+    {
+      "from": "BUG-auto-started-llama-cpp-skips-circuit-breaker-registration",
+      "kind": "sibling",
+      "to": "epic-character-core-system",
+      "via": "src/server/init-background-services.ts"
+    },
+    {
+      "from": "BUG-auto-started-llama-cpp-skips-circuit-breaker-registration",
+      "kind": "sibling",
+      "to": "epic-cron-scheduler",
+      "via": "src/server/init-background-services.ts"
+    },
+    {
       "from": "BUG-aux-pipeline-prompt-reexport-asymmetry",
       "kind": "sibling",
       "to": "BUG-classify-intent-confidence-unbounded",
@@ -179310,6 +180078,12 @@
     {
       "from": "BUG-backfill-of-historical-posts-on-new-follower-unspecified",
       "kind": "sibling",
+      "to": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "via": "src/routes/federation.ts"
+    },
+    {
+      "from": "BUG-backfill-of-historical-posts-on-new-follower-unspecified",
+      "kind": "sibling",
       "to": "BUG-simplification-audit-artifacts-lost-to-a-tmp-cleanup-13-tick",
       "via": "src/crypto/activitypub-keys.ts"
     },
@@ -179815,6 +180589,12 @@
       "from": "BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s",
       "kind": "sibling",
       "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-browser-teardown-destroys-the-db-before-flushing-the-async-s",
+      "kind": "sibling",
+      "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "via": "src/elysia-app.ts"
     },
     {
@@ -181129,6 +181909,12 @@
       "from": "BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain",
       "kind": "sibling",
       "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain",
+      "kind": "sibling",
+      "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "via": "src/elysia-app.ts"
     },
     {
@@ -183006,8 +183792,20 @@
     {
       "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
       "kind": "sibling",
+      "to": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
       "to": "BUG-failover-replays-primary-byo-key-to-fallback-vendors",
       "via": "src/generation/providers/call-with-failover.ts"
+    },
+    {
+      "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
+      "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "via": "src/generation/providers/user-api-key.test.ts"
     },
     {
       "from": "BUG-byo-decrypt-failure-silently-falls-back-to-server-key",
@@ -183272,6 +184070,12 @@
       "kind": "sibling",
       "to": "epic-platform-integrations",
       "via": "src/routes/api-keys.ts"
+    },
+    {
+      "from": "BUG-callaux-graceful-failure-throws-on-empty-config",
+      "kind": "sibling",
+      "to": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "BUG-callaux-graceful-failure-throws-on-empty-config",
@@ -183642,6 +184446,12 @@
     {
       "from": "BUG-cascade-mid-cascade-pause-ignores-abort",
       "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-cascade-mid-cascade-pause-ignores-abort",
+      "kind": "sibling",
       "to": "BUG-middleware-requestid-dual-write-last-wins",
       "via": "src/generation/auto-gen/auto-generation.ts"
     },
@@ -183787,7 +184597,31 @@
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
       "kind": "sibling",
       "to": "BUG-community-share-missing-lorebook-export",
-      "via": "src/characters"
+      "via": "src/characters; src/characters/exporters/ccv3.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "FEAT-066",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "FEAT-expand-character-templates-to-canonical-fields",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "TASK-alignment-speech-social-context",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "TASK-char-template-full-model-coverage",
+      "via": "src/characters/spec/character.ts"
     },
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
@@ -183798,8 +184632,32 @@
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
       "kind": "sibling",
+      "to": "TASK-character-internal-traits",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "TASK-epic14-import-export-reconciliation",
+      "via": "src/characters/exporters/ccv3.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
       "to": "TASK-faction-leaders-and-cadre-generation",
       "via": "src/characters"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "TASK-fix-ts2322-exporters-test",
+      "via": "src/characters/exporters.test.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "TASK-frontend-surfaces-for-richer-character-extensions",
+      "via": "src/characters/spec/character.ts"
     },
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
@@ -183810,8 +184668,56 @@
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
       "kind": "sibling",
+      "to": "TASK-migration-tooling-for-legacy-to-rich-character-data",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "TASK-shared-character-domain-models",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "TASK-skill-check-slash-commands",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "TASK-wire-plugin-bundles-to-richer-character-extensions",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "epic-character-growth",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "epic-character-internal-traits",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "epic-character-spec",
+      "via": "src/characters/exporters.test.ts; src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
+      "to": "epic-character-world-integration",
+      "via": "src/characters/spec/character.ts"
+    },
+    {
+      "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
+      "kind": "sibling",
       "to": "epic-import-export-io",
-      "via": "src/characters/normalizers/ccv3.ts"
+      "via": "src/characters/exporters/ccv3.ts; src/characters/normalizers/ccv3.ts"
     },
     {
       "from": "BUG-character-ccv3-export-and-import-lose-fields-on-round-trip",
@@ -184093,13 +184999,13 @@
       "from": "BUG-character-growth-editor-arc-description-not-json-encoded",
       "kind": "sibling",
       "to": "TASK-delete-unreachable-view-partials-orphan-partial-and-dead-css",
-      "via": "src/views/partials/character-growth-editor.html"
+      "via": "src/routes/views/character-growth-section.ts; src/views/partials/character-growth-editor.html"
     },
     {
       "from": "BUG-character-growth-editor-arc-description-not-json-encoded",
       "kind": "sibling",
       "to": "TASK-growth-epic-reconciliation",
-      "via": "src/views/partials/character-growth-editor.html"
+      "via": "src/routes/views/character-growth-section.ts; src/views/partials/character-growth-editor.html"
     },
     {
       "from": "BUG-character-growth-editor-arc-description-not-json-encoded",
@@ -188490,6 +189396,12 @@
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "sibling",
+      "to": "BUG-emotion-mood-hook-stale-llm-javadoc",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
       "to": "BUG-encryption-tier-not-enforced",
       "via": "src/routes/chats/create.ts"
     },
@@ -188502,6 +189414,12 @@
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "sibling",
+      "to": "BUG-inbound-federation-content-not-moderated-before-display",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
       "to": "BUG-turn-skip-fires-generation-without-catch-and-on-deduped-adva",
       "via": "src/routes/chats/create.ts"
     },
@@ -188510,6 +189428,30 @@
       "kind": "sibling",
       "to": "BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k",
       "via": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "FEAT-chat-transfer-location-change",
+      "via": "src/routes/messages/handle-scene-transitions.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "FEAT-llm-request-complexity-classification",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "FEAT-llm-resource-aware-admission-control",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
@@ -188532,20 +189474,44 @@
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "sibling",
+      "to": "TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-assistant-command-execution-intent-detection",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
       "to": "TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha",
       "via": "src/chat/service/split.ts"
     },
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "sibling",
+      "to": "TASK-aux-llm-emotion-classifier",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
       "to": "TASK-chat-branch-merge",
-      "via": "src/chat/service/split.ts"
+      "via": "src/chat/service/split.ts; src/routes/messages/handle-scene-transitions.ts"
     },
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "sibling",
       "to": "TASK-chat-feature-rpg-chronological-navigation",
       "via": "src/chat/service/split.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-chat-locations-worlds-finalize-current-implementation",
+      "via": "src/routes/messages/handle-scene-transitions.ts"
     },
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
@@ -188562,6 +189528,54 @@
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "sibling",
+      "to": "TASK-coverage-waiver-chat-ownership-async-body-limit",
+      "via": "src/chat"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-dispatch-compose-failover",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-harness-model-routing",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-outfit-change-aux-task-and-typebox-schema",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-outfit-narrative-extractor-regex-prefilter",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-recon-test-coverage",
+      "via": "src/chat"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-reconciliation-plan",
+      "via": "src/chat"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-evaluator-reliability-drift-detec",
+      "via": "src/chat"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
       "to": "TASK-travel-party-migration",
       "via": "src/chat/service/split.ts"
     },
@@ -188570,6 +189584,18 @@
       "kind": "sibling",
       "to": "TASK-typescript-7-migration-typecheck-failures",
       "via": "src/chat/service/split.ts; src/routes/chats/create.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "epic-aux-enrichment-pipeline",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "epic-chat-context-optimization",
+      "via": "src/chat"
     },
     {
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
@@ -188588,6 +189614,12 @@
       "kind": "sibling",
       "to": "epic-chat-variants-taxonomy",
       "via": "src/routes/chats/create.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "BUG-chat-sse-shares-generation-rate-bucket",
@@ -190786,6 +191818,66 @@
       "via": "src/rpg/service/battles/items.ts"
     },
     {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "BUG-wire-encryption-for-generated-images",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "TASK-asset-provenance-ledger-for-generated-assets",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "TASK-comparison-fan-out-engine",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-animated-raster",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-llm-svg-pipeline",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-content-hash-naming-for-generated-assets",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
       "from": "BUG-content-hooks-ts-missing-imports-breaks-typecheck",
       "kind": "sibling",
       "to": "BUG-emotion-mood-hook-payload-missing-actor-chat",
@@ -191137,7 +192229,7 @@
       "from": "BUG-coverage-mjs-counts-top-level-src-files-as-modules",
       "kind": "sibling",
       "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
     },
     {
       "from": "BUG-coverage-mjs-counts-top-level-src-files-as-modules",
@@ -191642,6 +192734,12 @@
       "kind": "sibling",
       "to": "BUG-shadow-notes-table-missing-ttl-visibility-author-type-column",
       "via": "src/db/schema-manifest.ts"
+    },
+    {
+      "from": "BUG-create-test-db-custom-dialect-can-bypass-settestdatabase",
+      "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
     },
     {
       "from": "BUG-create-test-db-custom-dialect-can-bypass-settestdatabase",
@@ -192206,6 +193304,12 @@
       "kind": "sibling",
       "to": "BUG-shadow-notes-table-missing-ttl-visibility-author-type-column",
       "via": "src/db/migrations/001_init.ts"
+    },
+    {
+      "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
+      "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "via": "src/db/migration-roundtrip.test.ts"
     },
     {
       "from": "BUG-createasset-content-hash-dedup-is-a-check-then-act-race-with",
@@ -193072,6 +194176,204 @@
       "via": "src/db/reinit.ts"
     },
     {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "BUG-size-strict-pre-existing-dev-drift",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "BUG-translate-only-providers-ride-general-failover-chains-comple",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "FEAT-background",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "FEAT-llama-swap-rotation-exclusion-policy",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "FEAT-llm-scheduler-config-surface",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-comfyui-first-class-chat-selection",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-distributed-generation-integration",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-emotions-avatar-edit-model",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-dispatch-compose-failover",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-harness-model-routing",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-llama-swap-native-support-cpu-resident-classifier-model-reci",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-resource-provision-routing-facade",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-sam3-direct-provider-via-meta-model-api",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-unit-translation-service",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-animated-raster",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-llm-svg-pipeline",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-api-telemetry",
+      "via": "src/config/schema"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-comfyui-plugin",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-distributed-compute-sharing",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-llama-swap",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-llm-request-scheduler",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-platform-integrations",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-provider-plugin-ecosystem",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-publication-i18n",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-resource-provision",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-sam3-segmentation-integration",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
+      "from": "BUG-dead-bedrock-config-path-accepted-but-never-dispatched",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/generation/providers/registry.ts"
+    },
+    {
       "from": "BUG-dead-code-guard-in-advancepartytravel",
       "kind": "sibling",
       "to": "BUG-locations-query-loads-all-worlds-not-just-current-one",
@@ -193099,6 +194401,12 @@
       "from": "BUG-delete-audit-action-has-no-unit-test",
       "kind": "sibling",
       "to": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
+      "via": "src/routes/actor-memories.ts"
+    },
+    {
+      "from": "BUG-delete-audit-action-has-no-unit-test",
+      "kind": "sibling",
+      "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "via": "src/routes/actor-memories.ts"
     },
     {
@@ -193291,6 +194599,12 @@
       "from": "BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction",
       "kind": "sibling",
       "to": "BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va",
+      "via": "src/generation/auto-gen/prepare-generation.ts"
+    },
+    {
+      "from": "BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction",
+      "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
       "via": "src/generation/auto-gen/prepare-generation.ts"
     },
     {
@@ -193939,6 +195253,12 @@
       "from": "BUG-duplicate-migration-numeric-prefix-021",
       "kind": "sibling",
       "to": "BUG-settestdatabase-global-leak-on-test-throw",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-duplicate-migration-numeric-prefix-021",
+      "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
       "via": "src/db/migrations.test.ts"
     },
     {
@@ -194718,6 +196038,12 @@
     {
       "from": "BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va",
       "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/prepare-generation.ts"
+    },
+    {
+      "from": "BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va",
+      "kind": "sibling",
       "to": "TASK-outfit-change-hook",
       "via": "src/generation/auto-gen/prepare-generation.ts"
     },
@@ -194971,6 +196297,12 @@
       "from": "BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308",
       "kind": "sibling",
       "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-e2e-version-redirect-test-fetches-v1-paths-but-expects-308",
+      "kind": "sibling",
+      "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "via": "src/elysia-app.ts"
     },
     {
@@ -195720,6 +197052,12 @@
     {
       "from": "BUG-egui-sent-message-echo-empty",
       "kind": "sibling",
+      "to": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
+      "via": "src/api.rs"
+    },
+    {
+      "from": "BUG-egui-sent-message-echo-empty",
+      "kind": "sibling",
       "to": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
       "via": "src/api.rs"
     },
@@ -195763,6 +197101,12 @@
       "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
       "kind": "sibling",
       "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-elysia-auth-ts-dead-shim-duplicate-logic",
+      "kind": "sibling",
+      "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "via": "src/elysia-app.ts"
     },
     {
@@ -198889,13 +200233,13 @@
       "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
       "kind": "sibling",
       "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
-      "via": "src/elysia-app.ts"
+      "via": "src/elysia-app.ts; src/routes/actor-memories.ts"
     },
     {
       "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
       "kind": "sibling",
       "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
-      "via": "src/routes/actor-memories.ts"
+      "via": "src/elysia-app.ts; src/routes/actor-memories.ts"
     },
     {
       "from": "BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact",
@@ -200220,6 +201564,12 @@
     {
       "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
       "kind": "sibling",
+      "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-api-return-400-406-for-unknown-api-versions-instead-of-s",
+      "kind": "sibling",
       "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
       "via": "src/elysia-app.ts"
     },
@@ -200622,6 +201972,24 @@
     {
       "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
       "kind": "sibling",
+      "to": "TASK-fix-message-reactions-access",
+      "via": "src/routes/message-reactions.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "sibling",
+      "to": "TASK-message-reactions-in-out-context",
+      "via": "src/routes/message-reactions.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "sibling",
+      "to": "TASK-message-seen-state-service-route",
+      "via": "src/routes/message-reactions.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "sibling",
       "to": "TASK-server-edge-error-handling-gaps-in-routes-layer",
       "via": "src/validation/middleware.ts"
     },
@@ -200640,8 +202008,20 @@
     {
       "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
       "kind": "sibling",
+      "to": "epic-frontend-emoji-reactions",
+      "via": "src/routes/message-reactions.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "sibling",
       "to": "epic-guest-access",
       "via": "src/routes/http-utils/errors.ts"
+    },
+    {
+      "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
+      "kind": "sibling",
+      "to": "epic-message-seen-state",
+      "via": "src/routes/message-reactions.ts"
     },
     {
       "from": "BUG-fix-api-unify-error-response-envelopes-kill-raw-response-jso",
@@ -200756,6 +202136,12 @@
       "kind": "sibling",
       "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
       "via": "src/config/sections/auth.ts"
+    },
+    {
+      "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
+      "kind": "sibling",
+      "to": "TASK-observability-config-section",
+      "via": "src/config"
     },
     {
       "from": "BUG-fix-auth-warn-when-sessiontimeouthours-and-jwtexpiresin-dive",
@@ -200911,6 +202297,12 @@
       "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
       "kind": "sibling",
       "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h",
+      "kind": "sibling",
+      "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "via": "src/elysia-app.ts"
     },
     {
@@ -201277,6 +202669,12 @@
       "from": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
       "kind": "sibling",
       "to": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr",
+      "kind": "sibling",
+      "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "via": "src/elysia-app.ts"
     },
     {
@@ -202123,7 +203521,7 @@
       "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
       "kind": "sibling",
       "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
-      "via": "src/routes/v1/index.ts"
+      "via": "src/elysia-app.ts; src/routes/v1/index.ts"
     },
     {
       "from": "BUG-fix-routing-bring-post-api-v1-assets-under-barrel-governance",
@@ -202627,7 +204025,7 @@
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "kind": "sibling",
       "to": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts; src/routes/actor-memories.ts"
     },
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
@@ -202670,6 +204068,12 @@
       "kind": "sibling",
       "to": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "BUG-rate-limit-misses-post-emotion-avatars-single",
+      "via": "src/routes/v1/actors-surface.ts"
     },
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
@@ -202730,6 +204134,12 @@
       "kind": "sibling",
       "to": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "TASK-actors-api-routes",
+      "via": "src/routes/actor-memories.ts"
     },
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
@@ -202818,6 +204228,12 @@
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "kind": "sibling",
+      "to": "TASK-delete-dead-rpg-regex-battle-plugins-subtrees-and-shim-barre",
+      "via": "src/routes/v1/actors-surface.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
       "to": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
       "via": "src/app/register-plugins.ts; src/elysia-app.ts"
     },
@@ -202862,6 +204278,12 @@
       "kind": "sibling",
       "to": "TASK-lora-discovery-application",
       "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
+      "via": "src/routes/actor-memories.ts"
     },
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
@@ -202932,6 +204354,12 @@
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "kind": "sibling",
+      "to": "epic-achievements",
+      "via": "src/routes/v1/actors-surface.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
       "to": "epic-agency-story-points",
       "via": "src/app/register-plugins.ts"
     },
@@ -202963,7 +204391,13 @@
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "kind": "sibling",
       "to": "epic-battle-action-systems",
-      "via": "src/elysia-app.ts"
+      "via": "src/elysia-app.ts; src/routes/v1/actors-surface.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "epic-battle-integration-gaps",
+      "via": "src/routes/v1/actors-surface.ts"
     },
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
@@ -202974,8 +204408,26 @@
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
       "kind": "sibling",
+      "to": "epic-character-core-system",
+      "via": "src/routes/v1/actors-surface.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
       "to": "epic-character-growth",
       "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "epic-character-internal-traits",
+      "via": "src/routes/v1/actors-surface.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "epic-crafting-professions",
+      "via": "src/routes/v1/actors-surface.ts"
     },
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
@@ -203012,6 +204464,12 @@
       "kind": "sibling",
       "to": "epic-gallery-batch-operations",
       "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
+      "kind": "sibling",
+      "to": "epic-gm-shadow-notes",
+      "via": "src/routes/v1/actors-surface.ts"
     },
     {
       "from": "BUG-fix-routing-consolidate-versioned-mounts-into-v1-barrel-drop",
@@ -203064,8 +204522,44 @@
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "BUG-fix-server-track-and-clear-the-regex-telemetry-flush-timer-o",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "BUG-mesh-deliver-accepts-envelopes-from-untrusted-or-unknown-ori",
       "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "BUG-middleware-asyncstore-fail-dead-code",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "BUG-middleware-idempotency-table-backend-unimplemented",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "BUG-modality-template-patch-classifies-db-read-failures-as-400-w",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203088,8 +204582,20 @@
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "BUG-route-layer-nsfw-gate-keeps-serving-nsfw-after-the-admin-kil",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "BUG-story-controls-calls-api-v1-but-story-orchestration-routes-m",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203112,6 +204618,12 @@
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "BUG-version-resolver-middleware-built-not-wired",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels",
       "via": "src/routes/v1/index.ts"
     },
@@ -203119,7 +204631,19 @@
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "FEAT-035",
-      "via": "src/routes/v1/index.ts"
+      "via": "src/elysia-app.ts; src/routes/v1/index.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "FEAT-037",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203136,20 +204660,44 @@
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "TASK-2d-world-review-reconcile-shared-battle-entrance-table-with-",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "TASK-actors-api-routes",
       "via": "src/routes/actor-memories.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "TASK-admin-assistant-tooling-allowlist",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-adopt-bun-csrf-for-csrf-protection",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-api-first-foundation",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "TASK-async-request-response-result-store-separate-table-offload",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "TASK-async-store-complete-fail-lifecycle-hooks",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203166,8 +204714,32 @@
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "TASK-character-rpg-stats",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-chat-room-search-join",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-comfyui-first-class-admin-workflows",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-comfyui-first-class-workflow-library",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "TASK-cors-middleware",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203178,20 +204750,56 @@
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "TASK-creative-studio-search-api",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "TASK-effect-v4-di-wiring-spike-versus-the-handleopts-bag",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "TASK-feat-api-emit-deprecation-headers-on-legacy-unversioned-api-",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-fractal-locations-api-routes",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-frontend-client-contract-doc",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-gallery-fuzzy-search-pagination",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-guest-context-synthetic-derive-branch-auth-guestaccess-flag",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "TASK-headers-additional-useful-response-headers",
       "via": "src/server/handler.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-i18n-alpine-client",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203215,19 +204823,19 @@
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "TASK-middleware-global-idempotency-replay-for-re-fired-requests",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "TASK-middleware-idempotency-wire-into-elysia",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203239,13 +204847,31 @@
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "TASK-middleware-request-id-elysia-derive",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-agent-api-router-and-token-scope-",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-health-liveness-readiness-probes",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "TASK-server-edge-error-handling-gaps-in-routes-layer",
       "via": "src/server/handler.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "TASK-server-side-i18n-middleware",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203262,8 +204888,20 @@
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
+      "to": "TASK-wire-llm-resource-manager-into-generation-dispatch",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
       "to": "epic-agency-story-points",
       "via": "src/app/register-plugins.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-analytics-observability",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203275,13 +204913,37 @@
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "epic-api-versioning",
-      "via": "src/routes/v1/index.ts"
+      "via": "src/elysia-app.ts; src/routes/v1/index.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-architecture",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-assistant-creative-studio-workflows",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "epic-assistant-step-planning",
       "via": "src/routes/v1/index.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-battle-action-systems",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-blog-system",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -203305,31 +204967,79 @@
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "epic-db-cold-storage-high-perf",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "epic-e2e-integration-testing",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "epic-effect-v4-adoption-evaluation",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-experimental-egui-frontend",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "epic-file-splitting",
-      "via": "src/app/register-plugins.ts"
+      "via": "src/app/register-plugins.ts; src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-gallery-batch-operations",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-guest-access",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-headless-alternative-frontends",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-interaction-surfaces-audit",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-local-process-swarm",
+      "via": "src/elysia-app.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-lora-discovery-application",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
       "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
-      "via": "src/server/handler.ts"
+      "via": "src/elysia-app.ts; src/server/handler.ts"
+    },
+    {
+      "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
+      "kind": "sibling",
+      "to": "epic-openapi-reference",
+      "via": "src/elysia-app.ts"
     },
     {
       "from": "BUG-fix-routing-mount-story-orchestration-agency-config-menu-und",
@@ -207768,7 +209478,19 @@
     {
       "from": "BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent",
       "kind": "sibling",
+      "to": "BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e",
+      "via": "src/tickets/sync-index.ts"
+    },
+    {
+      "from": "BUG-giwt-sync-fix-needs-two-passes-to-converge-when-an-index-ent",
+      "kind": "sibling",
       "to": "TASK-plan-index-orphan-phantom-cleanup",
+      "via": "src/tickets/sync-index.ts"
+    },
+    {
+      "from": "BUG-giwt-sync-fix-writes-an-out-of-vocabulary-status",
+      "kind": "sibling",
+      "to": "BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e",
       "via": "src/tickets/sync-index.ts"
     },
     {
@@ -207936,6 +209658,12 @@
     {
       "from": "BUG-group-cascade-consecutive-turn-guard",
       "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-cascade-consecutive-turn-guard",
+      "kind": "sibling",
       "to": "BUG-single-chat-pause-not-gating-autoreply",
       "via": "src/generation/auto-gen-cascade.test.ts; src/generation/auto-gen/group-cascade.ts"
     },
@@ -208044,6 +209772,12 @@
     {
       "from": "BUG-group-cascade-max-turns-off-by-one",
       "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-cascade-max-turns-off-by-one",
+      "kind": "sibling",
       "to": "BUG-single-chat-pause-not-gating-autoreply",
       "via": "src/generation/auto-gen-cascade.test.ts; src/generation/auto-gen/group-cascade.ts"
     },
@@ -208088,6 +209822,12 @@
       "kind": "sibling",
       "to": "BUG-group-chat-talkativity-not-surfaced-in-prompt",
       "via": "src/generation/auto-gen-cascade.test.ts; src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-cascade-mid-cascade-pause-ignored",
+      "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/group-cascade.ts"
     },
     {
       "from": "BUG-group-cascade-mid-cascade-pause-ignored",
@@ -208190,6 +209930,12 @@
       "kind": "sibling",
       "to": "BUG-group-chat-talkativity-not-surfaced-in-prompt",
       "via": "src/generation/auto-gen-cascade.test.ts; src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-chat-mention-prefix-collision",
+      "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/group-cascade.ts"
     },
     {
       "from": "BUG-group-chat-mention-prefix-collision",
@@ -208344,6 +210090,12 @@
     {
       "from": "BUG-group-chat-silence-pass-not-implemented",
       "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-chat-silence-pass-not-implemented",
+      "kind": "sibling",
       "to": "BUG-mention-parser-regex-fails-on-multi-word-names",
       "via": "src/group-chat/mention-parser.ts"
     },
@@ -208490,6 +210242,12 @@
       "kind": "sibling",
       "to": "epic-world-chat-channels-invites",
       "via": "src/group-chat/mention-parser.test.ts; src/group-chat/mention-parser.ts"
+    },
+    {
+      "from": "BUG-group-chat-talkativity-not-surfaced-in-prompt",
+      "kind": "sibling",
+      "to": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "via": "src/generation/auto-gen/group-cascade.ts"
     },
     {
       "from": "BUG-group-chat-talkativity-not-surfaced-in-prompt",
@@ -208784,6 +210542,60 @@
       "kind": "sibling",
       "to": "epic-federation-offload-quotas",
       "via": "src/generation/generate-route/handler.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "BUG-single-chat-pause-not-gating-autoreply",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "TASK-chat-variant-behavioral-wiring",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "TASK-group-chat-minors-from-2026-10-04-review",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "TASK-outfit-change-hook",
+      "via": "src/generation/auto-gen/prepare-generation.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "TASK-poll-command-for-group-chat",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "TASK-validate-expansion-config-at-load-time",
+      "via": "src/generation/auto-gen/prepare-generation.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "epic-context-injection-correctness",
+      "via": "src/generation/auto-gen/prepare-generation.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "epic-group-chat",
+      "via": "src/generation/auto-gen/group-cascade.ts"
+    },
+    {
+      "from": "BUG-group-participant-user-actors-injected-in-auto-gen-path",
+      "kind": "sibling",
+      "to": "epic-reactive-actor-appearance",
+      "via": "src/generation/auto-gen/prepare-generation.ts"
     },
     {
       "from": "BUG-guardmessages-bypass-passes-through-every-unknown-status-not-just",
@@ -211274,6 +213086,12 @@
       "kind": "sibling",
       "to": "epic-chat-product-features",
       "via": "src/middleware/idempotency.ts"
+    },
+    {
+      "from": "BUG-image-audio-providers-have-no-byo-key-or-failover",
+      "kind": "sibling",
+      "to": "TASK-comparison-tests-set-lifecycle-fan-out-comparability",
+      "via": "src/generation/image-gen-route.test.ts"
     },
     {
       "from": "BUG-image-edit-comfyui-provider-never-uploads-input-image",
@@ -213979,7 +215797,7 @@
       "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
       "kind": "sibling",
       "to": "TASK-010-plurals",
-      "via": "src/frontend/i18n.ts; src/i18n/translator.ts"
+      "via": "src/frontend/i18n.ts; src/i18n/plurals.ts; src/i18n/translator.ts"
     },
     {
       "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
@@ -213992,6 +215810,12 @@
       "kind": "sibling",
       "to": "TASK-codemod-fetch-json-safe-utils",
       "via": "src/frontend/i18n.ts"
+    },
+    {
+      "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
+      "kind": "sibling",
+      "to": "TASK-delete-unreferenced-platform-service-util-modules-dead-barre",
+      "via": "src/i18n/plurals.ts"
     },
     {
       "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
@@ -214021,7 +215845,7 @@
       "from": "BUG-ispluralnode-duplicated-in-server-and-frontend-i18n-divergin",
       "kind": "sibling",
       "to": "epic-publication-i18n",
-      "via": "src/i18n/translator.ts"
+      "via": "src/i18n/plurals.ts; src/i18n/translator.ts"
     },
     {
       "from": "BUG-item-definition-route-non-array-properties-effects-causes-un",
@@ -214207,6 +216031,12 @@
       "from": "BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f",
       "kind": "sibling",
       "to": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f",
+      "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
       "via": "src/crypto/byok.ts"
     },
     {
@@ -219378,6 +221208,12 @@
     {
       "from": "BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade",
       "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade",
+      "kind": "sibling",
       "to": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
       "via": "src/db/migrations.test.ts"
     },
@@ -219709,6 +221545,12 @@
       "from": "BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num",
       "kind": "sibling",
       "to": "BUG-settestdatabase-global-leak-on-test-throw",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num",
+      "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
       "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
     },
     {
@@ -220670,6 +222512,12 @@
       "kind": "sibling",
       "to": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "via": "src/assets/controller.ts"
+    },
+    {
+      "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
+      "kind": "sibling",
+      "to": "BUG-wire-encryption-for-generated-images",
+      "via": "src/assets/service/persist-generated.ts"
     },
     {
       "from": "BUG-new-edit-iterations-collapse-onto-an-existing-asset-row-inst",
@@ -226698,6 +228546,12 @@
     {
       "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
       "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-re-wrapped-dek-artifacts-lack-context-binding-no-aad-enablin",
+      "kind": "sibling",
       "to": "TASK-assistant-entity-access-quota-engine",
       "via": "src/crypto/byok.ts"
     },
@@ -227356,6 +229210,36 @@
       "via": "src/characters/services/relationships-service/write.ts"
     },
     {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "sibling",
+      "to": "FEAT-activitypub-federation",
+      "via": "src/routes/federation.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "sibling",
+      "to": "IDEA-cross-instance-conversation-threading-mention-inreplyto",
+      "via": "src/routes/federation.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "sibling",
+      "to": "TASK-build-identity-hash-for-tamper-detection-searxng-style-commi",
+      "via": "src/routes/federation.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-capability-advertisement",
+      "via": "src/routes/federation.ts"
+    },
+    {
+      "from": "BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/routes/federation.ts"
+    },
+    {
       "from": "BUG-resolveuseridfromrequest-missing-user-status-check",
       "kind": "sibling",
       "to": "BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m",
@@ -227718,6 +229602,12 @@
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "sibling",
+      "to": "TASK-adopt-bun-yaml-to-replace-js-yaml",
+      "via": "src/config/load/parse.ts"
+    },
+    {
+      "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
+      "kind": "sibling",
       "to": "TASK-api-first-foundation",
       "via": "src/elysia-app.ts"
     },
@@ -227863,7 +229753,7 @@
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "sibling",
       "to": "TASK-memory-db-and-config-residual-defects-from-the-cat-jam-sweep",
-      "via": "src/assets/controller.ts"
+      "via": "src/assets/controller.ts; src/config/load/parse.ts"
     },
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
@@ -227989,7 +229879,7 @@
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
       "kind": "sibling",
       "to": "epic-configs-path-resolution",
-      "via": "src/config/load/domain.ts"
+      "via": "src/config/load/domain.ts; src/config/load/parse.ts"
     },
     {
       "from": "BUG-route-and-bootstrap-boundaries-use-raw-as-any-casts-instead-",
@@ -230520,6 +232410,12 @@
     {
       "from": "BUG-settestdatabase-global-leak-on-test-throw",
       "kind": "sibling",
+      "to": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-settestdatabase-global-leak-on-test-throw",
+      "kind": "sibling",
       "to": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
       "via": "src/db/index.ts; src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts; src/db/test-db-helpers.test.ts"
     },
@@ -231656,6 +233552,246 @@
       "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
       "via": "src/routes/messages/reply.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "BUG-sqlite-foreign-keys-pragma-set-twice-redundant",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-019-audit-columns",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-019-content-versioning-heavy-tables",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-019-hot-path-indexes",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-019-users-encryption-secret",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-asset-b1-blake3-content-store",
+      "via": "src/db/migration-roundtrip.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-asset-provenance-ledger-for-generated-assets",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-assistant-entity-access-quota-engine",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-blog-publish-unit-to-post-bridge",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-branch-merge-db-migration-039",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-branch-merge-tests-and-coverage",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-character-stat-allocation-integration-tests-e2e",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-comic-page-composition-strategy",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-comparison-set-variant-data-model",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-comparison-tests-set-lifecycle-fan-out-comparability",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-coverage-gate-true-multi-worker-fanout-investigation",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-epic17-encryption-e2e-expansion",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-federation-peer-registry-workload-columns",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-federation-same-host-loopback-peer-auth",
+      "via": "src/crypto/byok.ts; src/federation/peer-keys.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-fractal-locations-invariants-tests",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-generated-db-types-mark-every-primary-key-as-db-generated-so",
+      "via": "src/generation/providers/user-api-key.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-licensing-asset-license-columns-migration",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-locations-fractal-migration",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-memory-history-search-bind-message-chain-reconstructable-con",
+      "via": "src/db/migration-roundtrip.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-mesh-encrypted-content-sharing-reservation-duplication",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-middleware-migration-compaction-data-version-hash",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-provider-wiring-settings-convention-for-byok-and-resource-pr",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-publication-artifact-schema",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-sidecar-python-provider-for-custo",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-recursive-self-improvement-watchdog-events-table-and-telemet",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-reference-set-entity",
+      "via": "src/db/migration-roundtrip.test.ts; src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-resource-provision-credential-store",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "epic-byok-api-keys",
+      "via": "src/crypto/byok.test.ts; src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "epic-encryption-workflow",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/crypto/byok.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "epic-fractal-locations",
+      "via": "src/db/migrations.test.ts"
+    },
+    {
+      "from": "BUG-single-global-byok-encryption-key-no-rotation-story",
+      "kind": "sibling",
+      "to": "epic-resource-provision",
+      "via": "src/crypto/byok.ts"
     },
     {
       "from": "BUG-size-strict-pre-existing-dev-drift",
@@ -234892,6 +237028,36 @@
       "via": "src/generation/auto-gen/story-mode.ts"
     },
     {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "sibling",
+      "to": "TASK-frontend-view-model-extraction",
+      "via": "src/validation/schema-fuzz.generated.test.ts"
+    },
+    {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "sibling",
+      "to": "TASK-fuzzing-infrastructure-harness-runner-corpus-manager-crash-d",
+      "via": "src/validation/schema-fuzz.generated.test.ts"
+    },
+    {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "sibling",
+      "to": "TASK-property-test-the-db-schemas-insert-read-round-trip",
+      "via": "src/test-utils/schema-arbitrary.ts"
+    },
+    {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "sibling",
+      "to": "TASK-property-test-the-status-machines-and-composite-validators",
+      "via": "src/test-utils/schema-arbitrary.ts"
+    },
+    {
+      "from": "BUG-story-states-npc-location-put-schema-drift-silent-no-op-with",
+      "kind": "sibling",
+      "to": "epic-fuzzing-infrastructure",
+      "via": "src/test-utils/schema-arbitrary.ts; src/validation/schema-fuzz.generated.test.ts"
+    },
+    {
       "from": "BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle",
       "kind": "sibling",
       "to": "BUG-tool-call-result-no-frontend-rendering",
@@ -234962,6 +237128,12 @@
       "kind": "sibling",
       "to": "epic-middleware-request-lifecycle",
       "via": "src/routes/messages/swipe-race-insert.ts"
+    },
+    {
+      "from": "BUG-sync-index-type-filter-silently-excludes-idea-tickets-from-e",
+      "kind": "sibling",
+      "to": "TASK-plan-index-orphan-phantom-cleanup",
+      "via": "src/tickets/sync-index.ts"
     },
     {
       "from": "BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d",
@@ -237241,7 +239413,7 @@
       "from": "BUG-tui-blind-to-llm-assistant-turns",
       "kind": "sibling",
       "to": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
-      "via": "src/tui/chat/api.ts"
+      "via": "src/tui/chat/api.test.ts; src/tui/chat/api.ts"
     },
     {
       "from": "BUG-tui-blind-to-llm-assistant-turns",
@@ -237337,7 +239509,7 @@
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
       "kind": "sibling",
       "to": "TASK-egui-gallery-surface-grid-filters-thumbnails-upload",
-      "via": "src/app.rs"
+      "via": "src/api.rs; src/app.rs; src/gallery.rs"
     },
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
@@ -237361,7 +239533,7 @@
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
       "kind": "sibling",
       "to": "TASK-tui-markup-injection-unencoded-urls-and-shutdown-hygiene",
-      "via": "src/tui/chat/api.ts"
+      "via": "src/tui/chat/api.test.ts; src/tui/chat/api.ts"
     },
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
@@ -237385,7 +239557,7 @@
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
       "kind": "sibling",
       "to": "TASK-tui",
-      "via": "src/tui/chat/api.ts"
+      "via": "src/tui/chat/api.test.ts; src/tui/chat/api.ts"
     },
     {
       "from": "BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m",
@@ -239410,6 +241582,54 @@
       "via": "src/components/chat/gm-panel.html; src/frontend/alpine/gm-panel.ts"
     },
     {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "sibling",
+      "to": "TASK-asset-provenance-ledger-for-generated-assets",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "sibling",
+      "to": "TASK-avatar-dogfood-assistant-generation",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "sibling",
+      "to": "TASK-comparison-fan-out-engine",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-animated-raster",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "sibling",
+      "to": "TASK-vector-gen-llm-svg-pipeline",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "sibling",
+      "to": "epic-avatar-dogfood",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "sibling",
+      "to": "epic-technical-comparison-charts",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
+      "from": "BUG-wire-encryption-for-generated-images",
+      "kind": "sibling",
+      "to": "epic-vector-graphics-generation",
+      "via": "src/assets/service/persist-generated.ts"
+    },
+    {
       "from": "BUG-withworldid-undefined-means-no-filter-relationship-read-upda",
       "kind": "sibling",
       "to": "TASK-char-editor-db-storage-sync",
@@ -239556,6 +241776,12 @@
     {
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
       "kind": "sibling",
+      "to": "TASK-harness-topic-session-attach",
+      "via": "src/assistant/workflow-session.ts"
+    },
+    {
+      "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
+      "kind": "sibling",
       "to": "TASK-illustrated-book-reference-pass",
       "via": "src/assistant/workflow-runner.ts"
     },
@@ -239586,8 +241812,14 @@
     {
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
       "kind": "sibling",
+      "to": "TASK-workflow-persist-run-sessions-beyond-process-memory",
+      "via": "src/assistant/workflow-session.ts"
+    },
+    {
+      "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
+      "kind": "sibling",
       "to": "TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui",
-      "via": "src/assistant/commands/workflow.ts; src/assistant/workflow-runner.test.ts; src/assistant/workflow-runner.ts"
+      "via": "src/assistant/commands/workflow.ts; src/assistant/workflow-runner.test.ts; src/assistant/workflow-runner.ts; src/assistant/workflow-session.ts"
     },
     {
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
@@ -239611,7 +241843,7 @@
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",
       "kind": "sibling",
       "to": "epic-harness-integration",
-      "via": "src/assistant/workflow-runner.ts"
+      "via": "src/assistant/workflow-runner.ts; src/assistant/workflow-session.ts"
     },
     {
       "from": "BUG-workflow-confirm-session-treats-optional-steps-as-required",

@@ -1030,6 +1030,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
     }
   ],
@@ -1171,6 +1175,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-story-points-prototype.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/api-versioning.md"
     },
     {
       "kind": "spec",
@@ -6198,6 +6206,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
     },
     {
@@ -6931,6 +6943,12 @@
       "source": ".plan/epics/epic-blog-system.md"
     }
   ],
+  "src/build": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
+    }
+  ],
   "src/build/compress.ts": [
     {
       "kind": "epic",
@@ -6973,6 +6991,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md"
+    }
+  ],
+  "src/build/egui-artifact.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
     }
   ],
   "src/build/egui-artifact.ts": [
@@ -22196,6 +22220,10 @@
   "src/federation/peer-keys.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-same-host-loopback-peer-auth.md"
     }
   ],
@@ -22315,6 +22343,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-federation-performance-quota-enforcement.md"
+    }
+  ],
+  "src/federation/remote-actor-document.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
     }
   ],
   "src/federation/remote-actor-document.ts": [
@@ -28552,6 +28586,10 @@
   "src/gallery.rs": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-egui-gallery-surface-grid-filters-thumbnails-upload.md"
     }
   ],
@@ -30800,6 +30838,10 @@
   "src/generation/image-gen-route.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-image-audio-providers-have-no-byo-key-or-failover.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comparison-tests-set-lifecycle-fan-out-comparability.md"
     }
   ],
@@ -32061,6 +32103,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-byo-decrypt-failure-silently-falls-back-to-server-key.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md"
     },
     {
       "kind": "ticket",
@@ -37525,6 +37571,12 @@
       "source": ".plan/tickets/TASK-plugin-and-tool-runtime-residual-defects.md"
     }
   ],
+  "src/plugins/loader-dispatch.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-plugins-define-plugin-route-matching-semantics.md"
+    }
+  ],
   "src/plugins/loader.discovery-failures.test.ts": [
     {
       "kind": "ticket",
@@ -40477,6 +40529,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-creative-studio.md"
+    }
+  ],
+  "src/routes/assets.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k.md"
     }
   ],
   "src/routes/assets.ts": [
@@ -44315,7 +44373,17 @@
       "source": ".plan/tickets/TASK-vn-qa-mode.md"
     }
   ],
+  "src/routes/messages/handle-scene-transitions.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
+    }
+  ],
   "src/routes/messages/handle-scene-transitions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-transfer-location-change.md"
@@ -45255,6 +45323,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-body-profile-mass-assignment-raw-body-into-updateprofil.md"
+    }
+  ],
+  "src/routes/nsfw/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-two-gates-read-age-gate-accepted-at-under-divergent-config-k.md"
     }
   ],
   "src/routes/nsfw/location.ts": [
@@ -46753,6 +46827,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-api-contract-smoke-tests.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/api-versioning.md"
     }
   ],
   "src/routes/v1/v1-versioning.test.ts": [
@@ -54912,6 +54990,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-states-npc-location-put-schema-drift-silent-no-op-with.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-property-test-the-db-schemas-insert-read-round-trip.md"
     },
     {
@@ -55575,6 +55657,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-blind-to-llm-assistant-turns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-egui-fixes-hold-landing-page-1-only-client-gallery-has-m.md"
     },
     {
       "kind": "ticket",
@@ -56873,6 +56959,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-fuzzing-infrastructure.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-states-npc-location-put-schema-drift-silent-no-op-with.md"
     },
     {
       "kind": "ticket",
