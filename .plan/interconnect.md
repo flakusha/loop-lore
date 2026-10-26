@@ -8,10 +8,10 @@ src/ paths they own. Regenerate with `giwt plan links --write`; freshness is
 gated by `giwt plan links --check` / `giwt plan validate`. No timestamps —
 output is byte-identical for identical inputs.
 
-- tickets: 3667
+- tickets: 3668
 - epics: 350
-- src paths owned: 4480
-- edges: produces 11742, consumes 404, sibling 35492, owns 2648, related 1191
+- src paths owned: 4483
+- edges: produces 11747, consumes 405, sibling 35510, owns 2650, related 1193
 
 ## Shared src hubs
 
@@ -232,7 +232,7 @@ output is byte-identical for identical inputs.
 | `src/aux-pipeline/aux-pipeline.test.ts` | `BUG-callaux-graceful-failure-throws-on-empty-config`, `TASK-federation-peer-dispatch-compose-failover` |
 | `src/aux-pipeline/index.ts` | `BUG-aux-pipeline-prompt-reexport-asymmetry`, `TASK-aux-emotion-avatar`, `TASK-aux-enrichment-emotion-avatar-task`, `TASK-aux-environment-interaction`, `TASK-aux-gm-tool-detection`, `TASK-aux-llm-emotion-classifier`, `TASK-aux-memory-extraction`, `TASK-aux-mood-classification`, `TASK-aux-personality-drift`, `TASK-aux-scene-context`, `epic-aux-enrichment-pipeline` |
 | `src/aux-pipeline/prompts.ts` | `BUG-aux-pipeline-prompt-reexport-asymmetry`, `FEAT-aux-classification-template-registry`, `TASK-aux-emotion-avatar`, `TASK-aux-enrichment-emotion-avatar-task`, `TASK-aux-llm-emotion-classifier`, `TASK-aux-memory-extraction`, `TASK-aux-mood-classification`, `epic-aux-enrichment-pipeline`, `epic-classifier-template-packs` |
-| `src/aux-pipeline/runner.ts` | `BUG-admin-auxtelemetry-leaks-userid-chatid`, `BUG-callaux-graceful-failure-throws-on-empty-config`, `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c`, `BUG-emotion-mood-hook-stale-llm-javadoc`, `BUG-inbound-federation-content-not-moderated-before-display`, `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-`, `FEAT-llm-request-complexity-classification`, `FEAT-llm-resource-aware-admission-control`, `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts`, `TASK-assistant-command-execution-intent-detection`, `TASK-aux-llm-emotion-classifier`, `TASK-federation-peer-dispatch-compose-failover`, `TASK-harness-model-routing`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-outfit-narrative-extractor-regex-prefilter`, `epic-aux-enrichment-pipeline`, `epic-federation-offload-quotas` |
+| `src/aux-pipeline/runner.ts` | `BUG-admin-auxtelemetry-leaks-userid-chatid`, `BUG-callaux-graceful-failure-throws-on-empty-config`, `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c`, `BUG-emotion-mood-hook-stale-llm-javadoc`, `BUG-inbound-federation-content-not-moderated-before-display`, `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-`, `FEAT-llm-request-complexity-classification`, `FEAT-llm-resource-aware-admission-control`, `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts`, `TASK-assistant-command-execution-intent-detection`, `TASK-aux-llm-emotion-classifier`, `TASK-federation-peer-dispatch-compose-failover`, `TASK-harness-model-routing`, `TASK-llama-cpp-decision-model-client-for-aux-classification`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-outfit-narrative-extractor-regex-prefilter`, `epic-aux-enrichment-pipeline`, `epic-federation-offload-quotas` |
 | `src/aux-pipeline/task-detect.ts` | `epic-classifier-template-packs`, `epic-task-management-integration` |
 | `src/aux-pipeline/tasks/emotion-avatar.ts` | `BUG-emotion-mood-hook-stale-llm-javadoc`, `TASK-aux-emotion-avatar`, `TASK-aux-enrichment-emotion-avatar-task` |
 | `src/aux-pipeline/tasks/emotion.ts` | `TASK-aux-enrichment-emotion-avatar-task`, `TASK-aux-llm-emotion-classifier` |
@@ -242,7 +242,7 @@ output is byte-identical for identical inputs.
 | `src/aux-pipeline/tasks/mood.ts` | `TASK-aux-enrichment-emotion-avatar-task`, `TASK-aux-mood-classification`, `epic-aux-enrichment-pipeline` |
 | `src/aux-pipeline/tasks/personality.ts` | `TASK-aux-personality-drift`, `epic-aux-enrichment-pipeline` |
 | `src/aux-pipeline/tasks/scene-context.ts` | `TASK-aux-scene-context`, `epic-aux-enrichment-pipeline` |
-| `src/aux-pipeline/template-registry.ts` | `FEAT-aux-classification-template-registry`, `epic-classifier-template-packs` |
+| `src/aux-pipeline/template-registry.ts` | `FEAT-aux-classification-template-registry`, `TASK-llama-cpp-decision-model-client-for-aux-classification`, `epic-classifier-template-packs` |
 | `src/aux-pipeline/types.ts` | `BUG-aux-pipeline-prompt-reexport-asymmetry`, `FEAT-classifier-role-fallback-policy-in-callaux`, `TASK-aux-emotion-avatar`, `TASK-aux-enrichment-emotion-avatar-task`, `TASK-aux-gm-tool-detection`, `TASK-aux-mood-classification`, `TASK-outfit-change-aux-task-and-typebox-schema`, `TASK-outfit-narrative-extractor-regex-prefilter`, `TASK-prompt-improve-shared-service`, `epic-aux-enrichment-pipeline`, `epic-reactive-actor-appearance` |
 | `src/backup/browser-backup.ts` | `TASK-resource-provision-browser-backup`, `epic-resource-provision` |
 | `src/backup/reconciliation.ts` | `TASK-resource-provision-reconciliation`, `epic-resource-provision` |
@@ -2270,6 +2270,7 @@ output is byte-identical for identical inputs.
 | `TASK-licensing-publish-enforcement-point` | consumes | `TASK-licensing-asset-license-columns-migration` | `src/assets/service/validate.ts` |
 | `TASK-licensing-publish-enforcement-point` | consumes | `TASK-licensing-publish-authorization-predicate` | `src/federation/clearance.ts; src/federation/dek-rewrap.ts; src/federation/fan-out.ts; src/nsfw/capability-gate.ts; src/routes/worlds/access.ts; src/schemas/nsfw-rating.ts` |
 | `TASK-licensing-publish-enforcement-point` | consumes | `epic-narrative-publishing-workflows` | `src/assets/service/validate.ts` |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | consumes | `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-` | `src/aux-pipeline/runner.ts` |
 | `TASK-llm-markdown-document-prompts` | consumes | `TASK-markdown-canonical-intermediate-contract` | `src/frontend/alpine/chat-utils/sanitize.ts; src/frontend/chat-utils/render.ts; src/frontend/chat-vendor.ts` |
 | `TASK-llm-markdown-document-prompts` | consumes | `TASK-markdown-heading-parse-and-import` | `src/frontend/chat-utils/render.ts; src/frontend/chat-vendor.ts; src/utils/safe-json.ts` |
 | `TASK-loot-budget-affordance-gate` | consumes | `TASK-affordance-lookup-table` | `src/services/actor-items.ts` |
@@ -3148,7 +3149,9 @@ output is byte-identical for identical inputs.
 | `epic-cicd-pipeline` | owns | `BUG-the-roots-guard-on-project-root-diff-root-is-wired-to-no-gat` | - |
 | `epic-cicd-pipeline` | owns | `TASK-ci-cd` | - |
 | `epic-classifier-template-packs` | owns | `FEAT-aux-classification-template-registry` | - |
+| `epic-classifier-template-packs` | owns | `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-` | - |
 | `epic-classifier-template-packs` | owns | `FEAT-classifier-template-packs-user-config` | - |
+| `epic-classifier-template-packs` | owns | `TASK-llama-cpp-decision-model-client-for-aux-classification` | - |
 | `epic-cli-tooling-optique` | owns | `TASK-migrate-the-structurally-blocked-argv-call-sites-to-src-cli-` | - |
 | `epic-cli-tooling-optique` | owns | `TASK-optique-cli-tooling-integration` | - |
 | `epic-code-quality` | owns | `BUG-kysely-any-type-safety-gaps-in-db-layer` | - |
@@ -5703,6 +5706,7 @@ output is byte-identical for identical inputs.
 | `BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun` | produces | `src/federation/clearance.ts` | - |
 | `BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun` | produces | `src/federation/fan-out.ts` | - |
 | `BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun` | produces | `src/federation/sharing.test.ts` | - |
+| `BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory` | produces | `src/rpg/service/battles-actions.test.ts` | - |
 | `BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory` | produces | `src/rpg/service/battles/items.ts` | - |
 | `BUG-content-hash-naming-for-generated-assets` | produces | `src/assets/service/persist-generated.ts` | - |
 | `BUG-content-hooks-ts-missing-imports-breaks-typecheck` | produces | `src/generation/auto-gen/content-hooks.ts` | - |
@@ -11884,6 +11888,10 @@ output is byte-identical for identical inputs.
 | `TASK-link-previews-unfurl` | produces | `src/routes/link-previews.test.ts` | - |
 | `TASK-link-previews-unfurl` | produces | `src/routes/link-previews.ts` | - |
 | `TASK-listener-leak-checker-exempt-top-level-module-registrations-` | produces | `src/alpine/htmx.ts` | - |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | produces | `src/aux-pipeline/decision-client.ts` | - |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | produces | `src/aux-pipeline/decision-registry.ts` | - |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | produces | `src/aux-pipeline/runner.ts` | - |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | produces | `src/aux-pipeline/template-registry.ts` | - |
 | `TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds` | produces | `src/generation/providers/comfyui.test.ts` | - |
 | `TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds` | produces | `src/generation/providers/comfyui.ts` | - |
 | `TASK-llama-swap-native-support-cpu-resident-classifier-model-reci` | produces | `src/config/schema/auto-start.ts` | - |
@@ -17508,6 +17516,8 @@ output is byte-identical for identical inputs.
 | `TASK-licensing-publish-enforcement-point` | related | `TASK-licensing-asset-license-columns-migration` | - |
 | `TASK-licensing-publish-enforcement-point` | related | `TASK-licensing-publish-authorization-predicate` | - |
 | `TASK-licensing-publish-enforcement-point` | related | `epic-narrative-publishing-workflows` | - |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | related | `FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-` | - |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | related | `TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving` | - |
 | `TASK-llm-markdown-document-prompts` | related | `TASK-book-outline-generation-workflow` | - |
 | `TASK-llm-markdown-document-prompts` | related | `TASK-comic-storyboard-panel-generation-workflow` | - |
 | `TASK-llm-markdown-document-prompts` | related | `TASK-markdown-canonical-intermediate-contract` | - |
@@ -18684,6 +18694,7 @@ output is byte-identical for identical inputs.
 | `BUG-admin-auxtelemetry-leaks-userid-chatid` | sibling | `TASK-delete-unreferenced-route-validation-modules-dead-helpers-an` | `src/routes/admin/aux-telemetry.ts` |
 | `BUG-admin-auxtelemetry-leaks-userid-chatid` | sibling | `TASK-federation-peer-dispatch-compose-failover` | `src/aux-pipeline/runner.ts` |
 | `BUG-admin-auxtelemetry-leaks-userid-chatid` | sibling | `TASK-harness-model-routing` | `src/aux-pipeline/runner.ts` |
+| `BUG-admin-auxtelemetry-leaks-userid-chatid` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `BUG-admin-auxtelemetry-leaks-userid-chatid` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
 | `BUG-admin-auxtelemetry-leaks-userid-chatid` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/aux-pipeline/runner.ts` |
 | `BUG-admin-auxtelemetry-leaks-userid-chatid` | sibling | `epic-aux-enrichment-pipeline` | `src/aux-pipeline/runner.ts; src/routes/admin/aux-telemetry.test.ts` |
@@ -20896,6 +20907,7 @@ output is byte-identical for identical inputs.
 | `BUG-callaux-graceful-failure-throws-on-empty-config` | sibling | `TASK-aux-llm-emotion-classifier` | `src/aux-pipeline/runner.ts` |
 | `BUG-callaux-graceful-failure-throws-on-empty-config` | sibling | `TASK-federation-peer-dispatch-compose-failover` | `src/aux-pipeline/aux-pipeline.test.ts; src/aux-pipeline/runner.ts` |
 | `BUG-callaux-graceful-failure-throws-on-empty-config` | sibling | `TASK-harness-model-routing` | `src/admin/model-roles.ts; src/aux-pipeline/runner.ts` |
+| `BUG-callaux-graceful-failure-throws-on-empty-config` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `BUG-callaux-graceful-failure-throws-on-empty-config` | sibling | `TASK-moderation-privacy-first-foundation` | `src/admin/model-roles.ts` |
 | `BUG-callaux-graceful-failure-throws-on-empty-config` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/admin/model-roles.ts; src/aux-pipeline/runner.ts` |
 | `BUG-callaux-graceful-failure-throws-on-empty-config` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/aux-pipeline/runner.ts` |
@@ -21795,6 +21807,7 @@ output is byte-identical for identical inputs.
 | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-coverage-waiver-chat-ownership-async-body-limit` | `src/chat` |
 | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-federation-peer-dispatch-compose-failover` | `src/aux-pipeline/runner.ts` |
 | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-harness-model-routing` | `src/aux-pipeline/runner.ts` |
+| `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
 | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/aux-pipeline/runner.ts` |
 | `BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c` | sibling | `TASK-recon-test-coverage` | `src/chat` |
@@ -23330,6 +23343,7 @@ output is byte-identical for identical inputs.
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `TASK-emotion-intent-detection` | `src/generation/hooks/emotion-hook.ts` |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `TASK-federation-peer-dispatch-compose-failover` | `src/aux-pipeline/runner.ts` |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `TASK-harness-model-routing` | `src/aux-pipeline/runner.ts` |
+| `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa` | `src/generation/hooks/nsfw-hook.ts` |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
 | `BUG-emotion-mood-hook-stale-llm-javadoc` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/aux-pipeline/runner.ts` |
@@ -26093,6 +26107,7 @@ output is byte-identical for identical inputs.
 | `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `TASK-fb12-admin-role-change-notifies-affected-user-admxntf` | `src/chat/moderation.ts` |
 | `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `TASK-federation-peer-dispatch-compose-failover` | `src/aux-pipeline/runner.ts` |
 | `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `TASK-harness-model-routing` | `src/aux-pipeline/runner.ts` |
+| `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `TASK-location-crud-tree-connections` | `src/db/migrations/001_init.ts` |
 | `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `TASK-moderation-privacy-first-foundation` | `src/chat/moderation.ts` |
 | `BUG-inbound-federation-content-not-moderated-before-display` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
@@ -31587,6 +31602,7 @@ output is byte-identical for identical inputs.
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-decide-llm-image-prompt-writer-fate` | `src/prompts/purposes.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-golden-corpus-and-scoring-ratchet-for-prompt-injection-signa` | `src/validation/prompt-injection.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-harness-context-templates` | `src/prompts/purposes.ts` |
+| `FEAT-aux-classification-template-registry` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/template-registry.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-llm-markdown-document-prompts` | `src/prompts/registry.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-prompt-library` | `src/prompts/registry.ts` |
 | `FEAT-aux-classification-template-registry` | sibling | `TASK-prompt-template-registry` | `src/prompts/purposes.ts; src/prompts/registry.ts` |
@@ -32708,6 +32724,7 @@ output is byte-identical for identical inputs.
 | `FEAT-llm-request-complexity-classification` | sibling | `TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos` | `src/generation/generate-route/handler.ts` |
 | `FEAT-llm-request-complexity-classification` | sibling | `TASK-harness-db-tables` | `src/memory/embeddings.ts` |
 | `FEAT-llm-request-complexity-classification` | sibling | `TASK-harness-model-routing` | `src/aux-pipeline/runner.ts` |
+| `FEAT-llm-request-complexity-classification` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `FEAT-llm-request-complexity-classification` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
 | `FEAT-llm-request-complexity-classification` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/aux-pipeline/runner.ts` |
 | `FEAT-llm-request-complexity-classification` | sibling | `TASK-rag-decomposition-index-pipeline` | `src/memory/embeddings.ts` |
@@ -32732,6 +32749,7 @@ output is byte-identical for identical inputs.
 | `FEAT-llm-resource-aware-admission-control` | sibling | `TASK-harness-canonical-usage` | `src/generation/providers/types.ts` |
 | `FEAT-llm-resource-aware-admission-control` | sibling | `TASK-harness-model-routing` | `src/aux-pipeline/runner.ts` |
 | `FEAT-llm-resource-aware-admission-control` | sibling | `TASK-harness-stats-dashboard` | `src/llm/resource-manager.ts` |
+| `FEAT-llm-resource-aware-admission-control` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `FEAT-llm-resource-aware-admission-control` | sibling | `TASK-llm-generation-bench-via-local-llama-swap-opt-in` | `src/generation/providers/types.ts` |
 | `FEAT-llm-resource-aware-admission-control` | sibling | `TASK-llm-scheduler-observability` | `src/llm/resource-manager.ts` |
 | `FEAT-llm-resource-aware-admission-control` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
@@ -35750,6 +35768,7 @@ output is byte-identical for identical inputs.
 | `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts` | sibling | `TASK-aux-llm-emotion-classifier` | `src/aux-pipeline/runner.ts` |
 | `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts` | sibling | `TASK-federation-peer-dispatch-compose-failover` | `src/aux-pipeline/runner.ts` |
 | `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts` | sibling | `TASK-harness-model-routing` | `src/admin/model-roles.ts; src/aux-pipeline/runner.ts` |
+| `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts` | sibling | `TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta` | `src/generation/caption-route.ts` |
 | `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts` | sibling | `TASK-moderation-privacy-first-foundation` | `src/admin/model-roles.ts` |
 | `TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/admin/model-roles.ts; src/aux-pipeline/runner.ts; src/generation/caption-route.ts` |
@@ -36825,6 +36844,7 @@ output is byte-identical for identical inputs.
 | `TASK-assistant-command-execution-intent-detection` | sibling | `TASK-imgedit-in-chat-command` | `src/image-edit/routes.ts` |
 | `TASK-assistant-command-execution-intent-detection` | sibling | `TASK-item-generation-review-parity-extract-category-rarity-stats-` | `src/assistant/commands/create.ts` |
 | `TASK-assistant-command-execution-intent-detection` | sibling | `TASK-item-generation` | `src/regex/intent.ts` |
+| `TASK-assistant-command-execution-intent-detection` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `TASK-assistant-command-execution-intent-detection` | sibling | `TASK-llm-markdown-document-prompts` | `src/assistant/commands/create.ts` |
 | `TASK-assistant-command-execution-intent-detection` | sibling | `TASK-message-carriage-classification-integration` | `src/generation/auto-gen/classify-intent.ts` |
 | `TASK-assistant-command-execution-intent-detection` | sibling | `TASK-nsfw-rating-schema-consent-state-machine` | `src/generation/auto-gen.ts` |
@@ -38225,6 +38245,7 @@ output is byte-identical for identical inputs.
 | `TASK-aux-llm-emotion-classifier` | sibling | `TASK-harness-model-routing` | `src/aux-pipeline/runner.ts` |
 | `TASK-aux-llm-emotion-classifier` | sibling | `TASK-hook-chain-and-moderation-robustness-in-generation-pipeline` | `src/generation/hooks/registry.ts` |
 | `TASK-aux-llm-emotion-classifier` | sibling | `TASK-hook-result-payload-carry-context` | `src/generation/hooks/registry.ts` |
+| `TASK-aux-llm-emotion-classifier` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `TASK-aux-llm-emotion-classifier` | sibling | `TASK-mood-shift-delta-tuning-word-boundary` | `src/generation/hooks/emotion-hook.ts` |
 | `TASK-aux-llm-emotion-classifier` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
 | `TASK-aux-llm-emotion-classifier` | sibling | `TASK-outfit-change-hook` | `src/generation/hooks/registry.ts` |
@@ -44907,6 +44928,7 @@ output is byte-identical for identical inputs.
 | `TASK-federation-peer-dispatch-compose-failover` | sibling | `TASK-generation-error-handling-gaps-detector-abort-void-promises` | `src/generation/auto-gen/call-llm.ts` |
 | `TASK-federation-peer-dispatch-compose-failover` | sibling | `TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos` | `src/generation/generate-route/handler.ts` |
 | `TASK-federation-peer-dispatch-compose-failover` | sibling | `TASK-harness-model-routing` | `src/aux-pipeline/runner.ts; src/generation/providers/registry.ts` |
+| `TASK-federation-peer-dispatch-compose-failover` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `TASK-federation-peer-dispatch-compose-failover` | sibling | `TASK-llama-swap-native-support-cpu-resident-classifier-model-reci` | `src/generation/providers/registry.ts` |
 | `TASK-federation-peer-dispatch-compose-failover` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
 | `TASK-federation-peer-dispatch-compose-failover` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/aux-pipeline/runner.ts` |
@@ -46262,6 +46284,7 @@ output is byte-identical for identical inputs.
 | `TASK-harness-lean-ctx-tools` | sibling | `epic-plugin-extension-points` | `src/plugins/types.ts` |
 | `TASK-harness-mcp-client-wrapper` | sibling | `TASK-mcp-client-over-stdio-and-streamable-http` | `src/integrations/mcp/client.ts` |
 | `TASK-harness-mcp-client-wrapper` | sibling | `epic-external-creative-tool-bridge` | `src/integrations/mcp/client.ts` |
+| `TASK-harness-model-routing` | sibling | `TASK-llama-cpp-decision-model-client-for-aux-classification` | `src/aux-pipeline/runner.ts` |
 | `TASK-harness-model-routing` | sibling | `TASK-llama-swap-native-support-cpu-resident-classifier-model-reci` | `src/generation/providers/registry.ts` |
 | `TASK-harness-model-routing` | sibling | `TASK-moderation-privacy-first-foundation` | `src/admin/model-roles.ts` |
 | `TASK-harness-model-routing` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/admin/model-roles.ts; src/aux-pipeline/runner.ts; src/config/schema/generation.ts; src/generation/routing/task-signal.ts` |
@@ -47219,6 +47242,11 @@ output is byte-identical for identical inputs.
 | `TASK-link-previews-unfurl` | sibling | `TASK-msg-forward-across-chats` | `src/components/chat/message-list.html` |
 | `TASK-link-previews-unfurl` | sibling | `epic-emotion-avatar-message-binding` | `src/components/chat/message-list.html` |
 | `TASK-link-previews-unfurl` | sibling | `epic-frontend-emoji-reactions` | `src/components/chat/message-list.html` |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | sibling | `TASK-outfit-change-aux-task-and-typebox-schema` | `src/aux-pipeline/runner.ts` |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | sibling | `TASK-outfit-narrative-extractor-regex-prefilter` | `src/aux-pipeline/runner.ts` |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | sibling | `epic-aux-enrichment-pipeline` | `src/aux-pipeline/runner.ts` |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | sibling | `epic-classifier-template-packs` | `src/aux-pipeline/template-registry.ts` |
+| `TASK-llama-cpp-decision-model-client-for-aux-classification` | sibling | `epic-federation-offload-quotas` | `src/aux-pipeline/runner.ts` |
 | `TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds` | sibling | `TASK-multimodal-asset-reuse` | `src/generation/providers/comfyui.ts` |
 | `TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds` | sibling | `TASK-reference-capability-probe-runtime` | `src/generation/providers/comfyui.ts` |
 | `TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds` | sibling | `TASK-reference-set-multi-image-upload` | `src/generation/providers/comfyui.ts` |

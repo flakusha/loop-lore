@@ -2961,6 +2961,7 @@
       "title": "consumeInventoryUnit uses stale quantity (TOCTOU on inventory)",
       "status": "done",
       "srcRefs": [
+        "src/rpg/service/battles-actions.test.ts",
         "src/rpg/service/battles/items.ts"
       ],
       "related": []
@@ -33326,6 +33327,23 @@
       "related": []
     },
     {
+      "id": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "ticket",
+      "path": ".plan/tickets/TASK-llama-cpp-decision-model-client-for-aux-classification.md",
+      "title": "llama.cpp decision-model client for AUX classification",
+      "status": "Not Started",
+      "srcRefs": [
+        "src/aux-pipeline/decision-client.ts",
+        "src/aux-pipeline/decision-registry.ts",
+        "src/aux-pipeline/runner.ts",
+        "src/aux-pipeline/template-registry.ts"
+      ],
+      "related": [
+        "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-",
+        "TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving"
+      ]
+    },
+    {
       "id": "TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving",
       "kind": "ticket",
       "path": ".plan/tickets/TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving.md",
@@ -55727,6 +55745,18 @@
       ]
     },
     {
+      "path": "src/aux-pipeline/decision-client.ts",
+      "owners": [
+        "TASK-llama-cpp-decision-model-client-for-aux-classification"
+      ]
+    },
+    {
+      "path": "src/aux-pipeline/decision-registry.ts",
+      "owners": [
+        "TASK-llama-cpp-decision-model-client-for-aux-classification"
+      ]
+    },
+    {
       "path": "src/aux-pipeline/eval/cli.ts",
       "owners": [
         "epic-cli-tooling-optique"
@@ -55790,6 +55820,7 @@
         "TASK-aux-llm-emotion-classifier",
         "TASK-federation-peer-dispatch-compose-failover",
         "TASK-harness-model-routing",
+        "TASK-llama-cpp-decision-model-client-for-aux-classification",
         "TASK-outfit-change-aux-task-and-typebox-schema",
         "TASK-outfit-narrative-extractor-regex-prefilter",
         "epic-aux-enrichment-pipeline",
@@ -55871,6 +55902,7 @@
       "path": "src/aux-pipeline/template-registry.ts",
       "owners": [
         "FEAT-aux-classification-template-registry",
+        "TASK-llama-cpp-decision-model-client-for-aux-classification",
         "epic-classifier-template-packs"
       ]
     },
@@ -81822,6 +81854,12 @@
       ]
     },
     {
+      "path": "src/rpg/service/battles-actions.test.ts",
+      "owners": [
+        "BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory"
+      ]
+    },
+    {
       "path": "src/rpg/service/battles.ts",
       "owners": [
         "BUG-endbattle-overwrites-completed-battles-no-active-status-guar"
@@ -88016,6 +88054,12 @@
       "via": "src/assets/service/validate.ts"
     },
     {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "consumes",
+      "to": "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
       "from": "TASK-llm-markdown-document-prompts",
       "kind": "consumes",
       "to": "TASK-markdown-canonical-intermediate-contract",
@@ -92541,7 +92585,17 @@
     {
       "from": "epic-classifier-template-packs",
       "kind": "owns",
+      "to": "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-"
+    },
+    {
+      "from": "epic-classifier-template-packs",
+      "kind": "owns",
       "to": "FEAT-classifier-template-packs-user-config"
+    },
+    {
+      "from": "epic-classifier-template-packs",
+      "kind": "owns",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification"
     },
     {
       "from": "epic-cli-tooling-optique",
@@ -105312,6 +105366,11 @@
       "from": "BUG-consent-toctou-revoking-a-chat-consent-during-a-fan-out-roun",
       "kind": "produces",
       "to": "src/federation/sharing.test.ts"
+    },
+    {
+      "from": "BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory",
+      "kind": "produces",
+      "to": "src/rpg/service/battles-actions.test.ts"
     },
     {
       "from": "BUG-consumeinventoryunit-uses-stale-quantity-toctou-on-inventory",
@@ -136219,6 +136278,26 @@
       "to": "src/alpine/htmx.ts"
     },
     {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "produces",
+      "to": "src/aux-pipeline/decision-client.ts"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "produces",
+      "to": "src/aux-pipeline/decision-registry.ts"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "produces",
+      "to": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "produces",
+      "to": "src/aux-pipeline/template-registry.ts"
+    },
+    {
       "from": "TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds",
       "kind": "produces",
       "to": "src/generation/providers/comfyui.test.ts"
@@ -164339,6 +164418,16 @@
       "to": "epic-narrative-publishing-workflows"
     },
     {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "related",
+      "to": "FEAT-classifier-model-support-complementary-to-aux-pipeline-laya-"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "related",
+      "to": "TASK-llama-cpp-support-for-classifier-models-gguf-encoder-serving"
+    },
+    {
       "from": "TASK-llm-markdown-document-prompts",
       "kind": "related",
       "to": "TASK-book-outline-generation-workflow"
@@ -170916,6 +171005,12 @@
       "from": "BUG-admin-auxtelemetry-leaks-userid-chatid",
       "kind": "sibling",
       "to": "TASK-harness-model-routing",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-admin-auxtelemetry-leaks-userid-chatid",
+      "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
       "via": "src/aux-pipeline/runner.ts"
     },
     {
@@ -184193,6 +184288,12 @@
     {
       "from": "BUG-callaux-graceful-failure-throws-on-empty-config",
       "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-callaux-graceful-failure-throws-on-empty-config",
+      "kind": "sibling",
       "to": "TASK-moderation-privacy-first-foundation",
       "via": "src/admin/model-roles.ts"
     },
@@ -189582,6 +189683,12 @@
       "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
       "kind": "sibling",
       "to": "TASK-harness-model-routing",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-chat-split-classifier-ships-untested-with-hot-path-aux-llm-c",
+      "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
       "via": "src/aux-pipeline/runner.ts"
     },
     {
@@ -198792,6 +198899,12 @@
       "from": "BUG-emotion-mood-hook-stale-llm-javadoc",
       "kind": "sibling",
       "to": "TASK-harness-model-routing",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-emotion-mood-hook-stale-llm-javadoc",
+      "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
       "via": "src/aux-pipeline/runner.ts"
     },
     {
@@ -215370,6 +215483,12 @@
       "from": "BUG-inbound-federation-content-not-moderated-before-display",
       "kind": "sibling",
       "to": "TASK-harness-model-routing",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "BUG-inbound-federation-content-not-moderated-before-display",
+      "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
       "via": "src/aux-pipeline/runner.ts"
     },
     {
@@ -248339,6 +248458,12 @@
     {
       "from": "FEAT-aux-classification-template-registry",
       "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/template-registry.ts"
+    },
+    {
+      "from": "FEAT-aux-classification-template-registry",
+      "kind": "sibling",
       "to": "TASK-llm-markdown-document-prompts",
       "via": "src/prompts/registry.ts"
     },
@@ -255065,6 +255190,12 @@
     {
       "from": "FEAT-llm-request-complexity-classification",
       "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "FEAT-llm-request-complexity-classification",
+      "kind": "sibling",
       "to": "TASK-outfit-change-aux-task-and-typebox-schema",
       "via": "src/aux-pipeline/runner.ts"
     },
@@ -255205,6 +255336,12 @@
       "kind": "sibling",
       "to": "TASK-harness-stats-dashboard",
       "via": "src/llm/resource-manager.ts"
+    },
+    {
+      "from": "FEAT-llm-resource-aware-admission-control",
+      "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "FEAT-llm-resource-aware-admission-control",
@@ -273317,6 +273454,12 @@
     {
       "from": "TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts",
       "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts",
+      "kind": "sibling",
       "to": "TASK-llm-captioner-tagpropositionsource-for-asset-alt-text-and-ta",
       "via": "src/generation/caption-route.ts"
     },
@@ -279763,6 +279906,12 @@
       "kind": "sibling",
       "to": "TASK-item-generation",
       "via": "src/regex/intent.ts"
+    },
+    {
+      "from": "TASK-assistant-command-execution-intent-detection",
+      "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "TASK-assistant-command-execution-intent-detection",
@@ -288163,6 +288312,12 @@
       "kind": "sibling",
       "to": "TASK-hook-result-payload-carry-context",
       "via": "src/generation/hooks/registry.ts"
+    },
+    {
+      "from": "TASK-aux-llm-emotion-classifier",
+      "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "TASK-aux-llm-emotion-classifier",
@@ -328259,6 +328414,12 @@
     {
       "from": "TASK-federation-peer-dispatch-compose-failover",
       "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-federation-peer-dispatch-compose-failover",
+      "kind": "sibling",
       "to": "TASK-llama-swap-native-support-cpu-resident-classifier-model-reci",
       "via": "src/generation/providers/registry.ts"
     },
@@ -336389,6 +336550,12 @@
     {
       "from": "TASK-harness-model-routing",
       "kind": "sibling",
+      "to": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-harness-model-routing",
+      "kind": "sibling",
       "to": "TASK-llama-swap-native-support-cpu-resident-classifier-model-reci",
       "via": "src/generation/providers/registry.ts"
     },
@@ -342127,6 +342294,36 @@
       "kind": "sibling",
       "to": "epic-frontend-emoji-reactions",
       "via": "src/components/chat/message-list.html"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "sibling",
+      "to": "TASK-outfit-change-aux-task-and-typebox-schema",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "sibling",
+      "to": "TASK-outfit-narrative-extractor-regex-prefilter",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "sibling",
+      "to": "epic-aux-enrichment-pipeline",
+      "via": "src/aux-pipeline/runner.ts"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "sibling",
+      "to": "epic-classifier-template-packs",
+      "via": "src/aux-pipeline/template-registry.ts"
+    },
+    {
+      "from": "TASK-llama-cpp-decision-model-client-for-aux-classification",
+      "kind": "sibling",
+      "to": "epic-federation-offload-quotas",
+      "via": "src/aux-pipeline/runner.ts"
     },
     {
       "from": "TASK-llama-swap-comfyui-endpoint-support-comfyui-auto-workarounds",
