@@ -47,6 +47,7 @@ export type {
   CreateAvatarOpts,
   UpdateAvatarOpts,
 } from "./types";
+export type { UpsertWorldAvatarConfigOpts, } from "./world-config";
 
 /**
  * Character Avatar Service
